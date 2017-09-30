@@ -22,12 +22,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * Evidence is a piece of information about a Dependency.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class Evidence implements Serializable, Comparable<Evidence> {
 
     /**
@@ -43,6 +45,26 @@ public class Evidence implements Serializable, Comparable<Evidence> {
      * Used as a multiplier for generating the value in {@link #hashCode()}.
      */
     private static final int MAGIC_HASH_MULTIPLIER = 67;
+
+    /**
+     * The name of the evidence.
+     */
+    private String name;
+
+    /**
+     * The source of the evidence.
+     */
+    private String source;
+
+    /**
+     * The value of the evidence.
+     */
+    private String value;
+
+    /**
+     * The confidence level for the evidence.
+     */
+    private Confidence confidence;
 
     /**
      * Creates a new Evidence object.
@@ -66,11 +88,6 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     }
 
     /**
-     * The name of the evidence.
-     */
-    private String name;
-
-    /**
      * Get the value of name.
      *
      * @return the value of name
@@ -87,11 +104,6 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     public void setName(String name) {
         this.name = name;
     }
-
-    /**
-     * The source of the evidence.
-     */
-    private String source;
 
     /**
      * Get the value of source.
@@ -112,30 +124,11 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     }
 
     /**
-     * The value of the evidence.
-     */
-    private String value;
-
-    /**
      * Get the value of value.
      *
      * @return the value of value
      */
     public String getValue() {
-        used = true;
-        return value;
-    }
-
-    /**
-     * Get the value of value. If setUsed is set to false this call to get will
-     * not mark the evidence as used.
-     *
-     * @param setUsed whether or not this call to getValue should cause the used
-     * flag to be updated
-     * @return the value of value
-     */
-    public String getValue(Boolean setUsed) {
-        used = used || setUsed;
         return value;
     }
 
@@ -147,34 +140,6 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     public void setValue(String value) {
         this.value = value;
     }
-
-    /**
-     * A value indicating if the Evidence has been "used" (aka read).
-     */
-    private boolean used;
-
-    /**
-     * Get the value of used.
-     *
-     * @return the value of used
-     */
-    public boolean isUsed() {
-        return used;
-    }
-
-    /**
-     * Set the value of used.
-     *
-     * @param used new value of used
-     */
-    public void setUsed(boolean used) {
-        this.used = used;
-    }
-
-    /**
-     * The confidence level for the evidence.
-     */
-    private Confidence confidence;
 
     /**
      * Get the value of confidence.

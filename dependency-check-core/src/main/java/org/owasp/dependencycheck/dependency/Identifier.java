@@ -18,12 +18,14 @@
 package org.owasp.dependencycheck.dependency;
 
 import java.io.Serializable;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * In identifier such as a CPE or dependency coordinates (i.e. GAV).
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class Identifier implements Serializable, Comparable<Identifier> {
 
     //<editor-fold defaultstate="collapsed" desc="fields">

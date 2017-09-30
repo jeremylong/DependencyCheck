@@ -31,9 +31,12 @@ public class NuspecAnalyzerTest extends BaseTest {
     private NuspecAnalyzer instance;
 
     @Before
+    @Override
     public void setUp() throws Exception {
+        super.setUp();
         instance = new NuspecAnalyzer();
-        instance.initialize();
+        instance.initialize(getSettings());
+        instance.prepare(null);
         instance.setEnabled(true);
     }
 
@@ -53,5 +56,3 @@ public class NuspecAnalyzerTest extends BaseTest {
         assertEquals(AnalysisPhase.INFORMATION_COLLECTION, instance.getAnalysisPhase());
     }
 }
-
-// vim: cc=120:sw=4:ts=4:sts=4

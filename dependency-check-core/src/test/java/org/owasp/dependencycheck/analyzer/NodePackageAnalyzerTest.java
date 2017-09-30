@@ -29,6 +29,7 @@ import java.io.File;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
  * Unit tests for NodePackageAnalyzer.
@@ -48,10 +49,13 @@ public class NodePackageAnalyzerTest extends BaseTest {
      * @throws Exception thrown if there is a problem
      */
     @Before
+    @Override
     public void setUp() throws Exception {
+        super.setUp();
         analyzer = new NodePackageAnalyzer();
         analyzer.setFilesMatched(true);
-        analyzer.initialize();
+        analyzer.initialize(getSettings());
+        analyzer.prepare(null);
     }
 
     /**
@@ -60,9 +64,10 @@ public class NodePackageAnalyzerTest extends BaseTest {
      * @throws Exception thrown if there is a problem
      */
     @After
+    @Override
     public void tearDown() throws Exception {
         analyzer.close();
-        analyzer = null;
+        super.tearDown();
     }
 
     /**
@@ -91,10 +96,10 @@ public class NodePackageAnalyzerTest extends BaseTest {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
                 "nodejs/node_modules/dns-sync/package.json"));
         analyzer.analyze(result, null);
-        final String vendorString = result.getVendorEvidence().toString();
+        final String vendorString = result.getEvidence(EvidenceType.VENDOR).toString();
         assertThat(vendorString, containsString("Sanjeev Koranga"));
         assertThat(vendorString, containsString("dns-sync_project"));
-        assertThat(result.getProductEvidence().toString(), containsString("dns-sync"));
-        assertThat(result.getVersionEvidence().toString(), containsString("0.1.0"));
+        assertThat(result.getEvidence(EvidenceType.PRODUCT).toString(), containsString("dns-sync"));
+        assertThat(result.getEvidence(EvidenceType.VERSION).toString(), containsString("0.1.0"));
     }
 }

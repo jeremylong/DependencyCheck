@@ -97,7 +97,7 @@ public class DatabaseProperties {
      *
      * @return whether or not any properties are set
      */
-    public boolean isEmpty() {
+    public synchronized boolean isEmpty() {
         return properties == null || properties.isEmpty();
     }
 
@@ -107,7 +107,7 @@ public class DatabaseProperties {
      * @param updatedValue the updated NVD CVE entry
      * @throws UpdateException is thrown if there is an update exception
      */
-    public void save(NvdCveInfo updatedValue) throws UpdateException {
+    public synchronized void save(NvdCveInfo updatedValue) throws UpdateException {
         if (updatedValue == null) {
             return;
         }
@@ -121,7 +121,7 @@ public class DatabaseProperties {
      * @param value the property value
      * @throws UpdateException is thrown if there is an update exception
      */
-    public void save(String key, String value) throws UpdateException {
+    public synchronized void save(String key, String value) throws UpdateException {
         properties.put(key, value);
         cveDB.saveProperty(key, value);
     }
@@ -133,7 +133,7 @@ public class DatabaseProperties {
      * @param key the property key
      * @return the value of the property
      */
-    public String getProperty(String key) {
+    public synchronized String getProperty(String key) {
         return properties.getProperty(key);
     }
 
@@ -145,7 +145,7 @@ public class DatabaseProperties {
      * @param defaultValue the default value
      * @return the value of the property
      */
-    public String getProperty(String key, String defaultValue) {
+    public synchronized String getProperty(String key, String defaultValue) {
         return properties.getProperty(key, defaultValue);
     }
 
@@ -154,7 +154,7 @@ public class DatabaseProperties {
      *
      * @return the collection of Database Properties
      */
-    public Properties getProperties() {
+    public synchronized Properties getProperties() {
         return properties;
     }
 
@@ -165,7 +165,7 @@ public class DatabaseProperties {
      *
      * @return a map of the database meta data
      */
-    public Map<String, String> getMetaData() {
+    public synchronized Map<String, String> getMetaData() {
         final Map<String, String> map = new TreeMap<>();
         for (Entry<Object, Object> entry : properties.entrySet()) {
             final String key = (String) entry.getKey();

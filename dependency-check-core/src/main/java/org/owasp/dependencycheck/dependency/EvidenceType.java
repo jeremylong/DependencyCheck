@@ -13,26 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2017 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.nuget;
-
-import java.io.InputStream;
+package org.owasp.dependencycheck.dependency;
 
 /**
- * Interface defining methods for parsing a Nuspec file.
+ * The types of evidence.
  *
- * @author colezlaw
- *
+ * @author jeremy long
  */
-public interface NuspecParser {
-
+public enum EvidenceType {
     /**
-     * Parse an input stream and return the resulting {@link NugetPackage}.
-     *
-     * @param stream the input stream to parse
-     * @return the populated bean
-     * @throws NuspecParseException when an exception occurs
+     * Vendor evidence.
      */
-    NugetPackage parse(InputStream stream) throws NuspecParseException;
+    VENDOR,
+    /**
+     * Product evidence.
+     */
+    PRODUCT,
+    /**
+     * Version evidence.
+     */
+    VERSION
+
 }

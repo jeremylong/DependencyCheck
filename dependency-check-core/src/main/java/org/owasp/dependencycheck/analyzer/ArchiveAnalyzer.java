@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import javax.annotation.concurrent.ThreadSafe;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
@@ -61,6 +63,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
@@ -71,7 +74,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * The count of directories created during analysis. This is used for
      * creating temporary directories.
      */
-    private static int dirCount = 0;
+    private static final AtomicInteger DIRECTORY_COUNT = new AtomicInteger(0);
     /**
      * The parent directory for the individual directories per archive.
      */
@@ -80,21 +83,11 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * The max scan depth that the analyzer will recursively extract nested
      * archives.
      */
-    private static final int MAX_SCAN_DEPTH = Settings.getInt("archive.scan.depth", 3);
+    private int maxScanDepth;
     /**
-     * Tracks the current scan/extraction depth for nested archives.
+     * The file filter used to filter supported files.
      */
-    private int scanDepth = 0;
-
-    //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
-    /**
-     * The name of the analyzer.
-     */
-    private static final String ANALYZER_NAME = "Archive Analyzer";
-    /**
-     * The phase that this analyzer is intended to run in.
-     */
-    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INITIAL;
+    private FileFilter fileFilter = null;
     /**
      * The set of things we can handle with Zip methods
      */
@@ -106,35 +99,41 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final Set<String> EXTENSIONS = newHashSet("tar", "gz", "tgz", "bz2", "tbz2");
 
-    static {
-        final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
-        if (additionalZipExt != null) {
-            final String[] ext = additionalZipExt.split("\\s*,\\s*");
-            Collections.addAll(KNOWN_ZIP_EXT, ext);
-        }
-        EXTENSIONS.addAll(KNOWN_ZIP_EXT);
-    }
-
     /**
      * Detects files with extensions to remove from the engine's collection of
      * dependencies.
      */
     private static final FileFilter REMOVE_FROM_ANALYSIS = FileFilterBuilder.newInstance()
             .addExtensions("zip", "tar", "gz", "tgz", "bz2", "tbz2").build();
-
-    /**
-     * The file filter used to filter supported files.
-     */
-    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
-
     /**
      * Detects files with .zip extension.
      */
     private static final FileFilter ZIP_FILTER = FileFilterBuilder.newInstance().addExtensions("zip").build();
 
+    //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
+    /**
+     * The name of the analyzer.
+     */
+    private static final String ANALYZER_NAME = "Archive Analyzer";
+    /**
+     * The phase that this analyzer is intended to run in.
+     */
+    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INITIAL;
+
+    /**
+     * Initializes the analyzer with the configured settings.
+     *
+     * @param settings the configured settings to use
+     */
+    @Override
+    public void initialize(Settings settings) {
+        super.initialize(settings);
+        initializeSettings();
+    }
+
     @Override
     protected FileFilter getFileFilter() {
-        return FILTER;
+        return fileFilter;
     }
 
     /**
@@ -170,15 +169,16 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * The initialize method does nothing for this Analyzer.
+     * The prepare method does nothing for this Analyzer.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException is thrown if there is an exception
      * deleting or creating temporary files
      */
     @Override
-    public void initializeFileTypeAnalyzer() throws InitializationException {
+    public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         try {
-            final File baseDir = Settings.getTempDirectory();
+            final File baseDir = getSettings().getTempDirectory();
             tempFileLocation = File.createTempFile("check", "tmp", baseDir);
             if (!tempFileLocation.delete()) {
                 setEnabled(false);
@@ -228,7 +228,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public boolean supportsParallelProcessing() {
-        return false;
+        return true;
     }
 
     /**
@@ -242,6 +242,22 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+        extractAndAnalyze(dependency, engine, 0);
+        engine.sortDependencies();
+    }
+
+    /**
+     * Extracts the contents of the archive dependency and scans for additional
+     * dependencies.
+     *
+     * @param dependency the dependency being analyzed
+     * @param engine the engine doing the analysis
+     * @param scanDepth the current scan depth; extracctAndAnalyze is recursive
+     * and will, be default, only go 3 levels deep
+     * @throws AnalysisException thrown if there is a problem analyzing the
+     * dependencies
+     */
+    private void extractAndAnalyze(Dependency dependency, Engine engine, int scanDepth) throws AnalysisException {
         final File f = new File(dependency.getActualFilePath());
         final File tmpDir = getNextTempDirectory();
         extractFiles(f, tmpDir, engine);
@@ -261,14 +277,12 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                             d.getFileName());
                     d.setFilePath(displayPath);
                     d.setFileName(displayName);
-                    d.setProjectReferences(dependency.getProjectReferences());
+                    d.addAllProjectReferences(dependency.getProjectReferences());
 
                     //TODO - can we get more evidence from the parent? EAR contains module name, etc.
                     //analyze the dependency (i.e. extract files) if it is a supported type.
-                    if (this.accept(d.getActualFile()) && scanDepth < MAX_SCAN_DEPTH) {
-                        scanDepth += 1;
-                        analyze(d, engine);
-                        scanDepth -= 1;
+                    if (this.accept(d.getActualFile()) && scanDepth < maxScanDepth) {
+                        extractAndAnalyze(d, engine, scanDepth + 1);
                     }
                 } else {
                     for (Dependency sub : dependencySet) {
@@ -288,9 +302,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         }
         if (REMOVE_FROM_ANALYSIS.accept(dependency.getActualFile())) {
             addDisguisedJarsToDependencies(dependency, engine);
-            engine.getDependencies().remove(dependency);
+            engine.removeDependency(dependency);
         }
-        Collections.sort(engine.getDependencies());
     }
 
     /**
@@ -357,8 +370,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws AnalysisException thrown if unable to create temporary directory
      */
     private File getNextTempDirectory() throws AnalysisException {
-        dirCount += 1;
-        final File directory = new File(tempFileLocation, String.valueOf(dirCount));
+        final File directory = new File(tempFileLocation, String.valueOf(DIRECTORY_COUNT.incrementAndGet()));
         //getting an exception for some directories not being able to be created; might be because the directory already exists?
         if (directory.exists()) {
             return getNextTempDirectory();
@@ -602,5 +614,20 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             ZipFile.closeQuietly(zip);
         }
         return isJar;
+    }
+
+    /**
+     * Initializes settings used by the scanning functions of the archive
+     * analyzer.
+     */
+    private void initializeSettings() {
+        maxScanDepth = getSettings().getInt("archive.scan.depth", 3);
+        final String additionalZipExt = getSettings().getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
+        if (additionalZipExt != null) {
+            final String[] ext = additionalZipExt.split("\\s*,\\s*");
+            Collections.addAll(KNOWN_ZIP_EXT, ext);
+        }
+        EXTENSIONS.addAll(KNOWN_ZIP_EXT);
+        fileFilter = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
     }
 }

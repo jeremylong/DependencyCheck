@@ -197,7 +197,7 @@
           <property name="braceAdjustment" value="0"/>
           <property name="caseIndent" value="0"/>
         </module-->
-        <module name="ArrayTrailingComma"/>
+        <!--module name="ArrayTrailingComma"/-->
         <module name="FinalLocalVariable"/>
         <module name="EqualsAvoidNull"/>
         <module name="ParameterAssignment"/>

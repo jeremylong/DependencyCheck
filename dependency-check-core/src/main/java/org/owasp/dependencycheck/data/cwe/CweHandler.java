@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.data.cwe;
 
 import java.util.HashMap;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -27,6 +28,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class CweHandler extends DefaultHandler {
 
     /**

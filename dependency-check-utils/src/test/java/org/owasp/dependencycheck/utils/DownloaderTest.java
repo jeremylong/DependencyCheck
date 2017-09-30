@@ -25,11 +25,12 @@ import org.junit.Test;
  *
  * @author Jeremy Long
  */
-public class DownloaderTest {
+public class DownloaderTest extends BaseTest {
 
     @Test
     public void testGetLastModified_file() throws Exception {
-        long timestamp = Downloader.getLastModified(new File("target/test-classes/dependencycheck.properties").toURI().toURL());
+        Downloader instance = new Downloader(getSettings());
+        long timestamp = instance.getLastModified(new File("target/test-classes/dependencycheck.properties").toURI().toURL());
         assertTrue("timestamp equal to zero?", timestamp > 0);
     }
 }

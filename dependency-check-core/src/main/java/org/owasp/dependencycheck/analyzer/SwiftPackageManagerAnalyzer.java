@@ -23,13 +23,14 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.concurrent.ThreadSafe;
 
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.EvidenceCollection;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -41,6 +42,7 @@ import org.owasp.dependencycheck.utils.Settings;
  * @author Bianca Jiang (https://twitter.com/biancajiang)
  */
 @Experimental
+@ThreadSafe
 public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
@@ -80,7 +82,7 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     @Override
-    protected void initializeFileTypeAnalyzer() {
+    protected void prepareFileTypeAnalyzer(Engine engine) {
         // NO-OP
     }
 
@@ -133,14 +135,11 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
                 return;
             }
 
-            final EvidenceCollection product = dependency.getProductEvidence();
-            final EvidenceCollection vendor = dependency.getVendorEvidence();
-
             //SPM is currently under development for SWIFT 3. Its current metadata includes package name and dependencies.
             //Future interesting metadata: version, license, homepage, author, summary, etc.
-            final String name = addStringEvidence(product, packageDescription, "name", "name", Confidence.HIGHEST);
+            final String name = addStringEvidence(dependency, EvidenceType.PRODUCT, packageDescription, "name", "name", Confidence.HIGHEST);
             if (name != null && !name.isEmpty()) {
-                vendor.addEvidence(SPM_FILE_NAME, "name_project", name, Confidence.HIGHEST);
+                dependency.addEvidence(EvidenceType.VENDOR, SPM_FILE_NAME, "name_project", name, Confidence.HIGHEST);
             }
         }
         setPackagePath(dependency);
@@ -150,14 +149,15 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
      * Extracts evidence from the package description and adds it to the given
      * evidence collection.
      *
-     * @param evidences the evidence collection to update
+     * @param dependency the dependency being analyzed
+     * @param type the type of evidence to add
      * @param packageDescription the text to extract evidence from
      * @param field the name of the field being searched for
      * @param fieldPattern the field pattern within the contents to search for
      * @param confidence the confidence level of the evidence if found
      * @return the string that was added as evidence
      */
-    private String addStringEvidence(EvidenceCollection evidences,
+    private String addStringEvidence(Dependency dependency, EvidenceType type,
             String packageDescription, String field, String fieldPattern, Confidence confidence) {
         String value = "";
 
@@ -170,7 +170,7 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
         if (value != null) {
             value = value.trim();
             if (value.length() > 0) {
-                evidences.addEvidence(SPM_FILE_NAME, field, value, confidence);
+                dependency.addEvidence(type, SPM_FILE_NAME, field, value, confidence);
             }
         }
 

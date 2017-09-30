@@ -29,6 +29,7 @@ import java.io.File;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
  * Unit tests for {@link RubyBundlerAnalyzer}.
@@ -48,10 +49,13 @@ public class RubyBundlerAnalyzerTest extends BaseTest {
      * @throws Exception thrown if there is a problem
      */
     @Before
+    @Override
     public void setUp() throws Exception {
+        super.setUp();
         analyzer = new RubyBundlerAnalyzer();
+        analyzer.initialize(getSettings());
         analyzer.setFilesMatched(true);
-        analyzer.initialize();
+        analyzer.prepare(null);
     }
 
     /**
@@ -60,9 +64,10 @@ public class RubyBundlerAnalyzerTest extends BaseTest {
      * @throws Exception thrown if there is a problem
      */
     @After
+    @Override
     public void tearDown() throws Exception {
         analyzer.close();
-        analyzer = null;
+        super.tearDown();
     }
 
     /**
@@ -93,14 +98,14 @@ public class RubyBundlerAnalyzerTest extends BaseTest {
                 "ruby/vulnerable/gems/rails-4.1.15/vendor/bundle/ruby/2.2.0/specifications/dalli-2.7.5.gemspec"));
         analyzer.analyze(result, null);
         
-        final String vendorString = result.getVendorEvidence().toString();
+        final String vendorString = result.getEvidence(EvidenceType.VENDOR).toString();
         assertThat(vendorString, containsString("Peter M. Goldstein"));
         assertThat(vendorString, containsString("Mike Perham"));
         assertThat(vendorString, containsString("peter.m.goldstein@gmail.com"));
         assertThat(vendorString, containsString("https://github.com/petergoldstein/dalli"));
         assertThat(vendorString, containsString("MIT"));
-        assertThat(result.getProductEvidence().toString(), containsString("dalli"));
-        assertThat(result.getProductEvidence().toString(), containsString("High performance memcached client for Ruby"));
-        assertThat(result.getVersionEvidence().toString(), containsString("2.7.5"));
+        assertThat(result.getEvidence(EvidenceType.PRODUCT).toString(), containsString("dalli"));
+        assertThat(result.getEvidence(EvidenceType.PRODUCT).toString(), containsString("High performance memcached client for Ruby"));
+        assertThat(result.getEvidence(EvidenceType.VERSION).toString(), containsString("2.7.5"));
     }
 }

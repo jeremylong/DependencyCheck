@@ -18,13 +18,10 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.ListIterator;
 import java.util.Set;
-import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,31 +33,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
-public class DependencyMergingAnalyzer extends AbstractAnalyzer {
+public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyzer {
 
-    //<editor-fold defaultstate="collapsed" desc="Constants and Member Variables">
     /**
      * The Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(DependencyMergingAnalyzer.class);
-    /**
-     * a flag indicating if this analyzer has run. This analyzer only runs once.
-     */
-    private boolean analyzed = false;
-
-    /**
-     * Returns a flag indicating if this analyzer has run. This analyzer only
-     * runs once. Note this is currently only used in the unit tests.
-     *
-     * @return a flag indicating if this analyzer has run. This analyzer only
-     * runs once
-     */
-    protected synchronized boolean getAnalyzed() {
-        return analyzed;
-    }
-
-    //</editor-fold>
-    //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
      * The name of the analyzer.
      */
@@ -91,18 +69,6 @@ public class DependencyMergingAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Does not support parallel processing as it only runs once and then
-     * operates on <em>all</em> dependencies.
-     *
-     * @return whether or not parallel processing is enabled
-     * @see #analyze(Dependency, Engine)
-     */
-    @Override
-    public boolean supportsParallelProcessing() {
-        return false;
-    }
-
-    /**
      * <p>
      * Returns the setting key to determine if the analyzer is enabled.</p>
      *
@@ -112,55 +78,34 @@ public class DependencyMergingAnalyzer extends AbstractAnalyzer {
     protected String getAnalyzerEnabledSettingKey() {
         return Settings.KEYS.ANALYZER_DEPENDENCY_MERGING_ENABLED;
     }
-    //</editor-fold>
 
     /**
-     * Analyzes a set of dependencies. If they have been found to be the same
-     * dependency created by more multiple FileTypeAnalyzers (i.e. a gemspec
-     * dependency and a dependency from the Bundle Audit Analyzer. The
-     * dependencies are then merged into a single reportable item.
+     * Evaluates the dependencies
      *
-     * @param ignore this analyzer ignores the dependency being analyzed
-     * @param engine the engine that is scanning the dependencies
-     * @throws AnalysisException is thrown if there is an error reading the JAR
-     * file.
+     * @param dependency a dependency to compare
+     * @param nextDependency a dependency to compare
+     * @param dependenciesToRemove a set of dependencies that will be removed
+     * @return true if a dependency is removed; otherwise false
      */
     @Override
-    protected synchronized void analyzeDependency(Dependency ignore, Engine engine) throws AnalysisException {
-        if (!analyzed) {
-            analyzed = true;
-            final Set<Dependency> dependenciesToRemove = new HashSet<>();
-            final ListIterator<Dependency> mainIterator = engine.getDependencies().listIterator();
-            //for (Dependency nextDependency : engine.getDependencies()) {
-            while (mainIterator.hasNext()) {
-                final Dependency dependency = mainIterator.next();
-                if (mainIterator.hasNext() && !dependenciesToRemove.contains(dependency)) {
-                    final ListIterator<Dependency> subIterator = engine.getDependencies().listIterator(mainIterator.nextIndex());
-                    while (subIterator.hasNext()) {
-                        final Dependency nextDependency = subIterator.next();
-                        Dependency main;
-                        if ((main = getMainGemspecDependency(dependency, nextDependency)) != null) {
-                            if (main == dependency) {
-                                mergeDependencies(dependency, nextDependency, dependenciesToRemove);
-                            } else {
-                                mergeDependencies(nextDependency, dependency, dependenciesToRemove);
-                                break; //since we merged into the next dependency - skip forward to the next in mainIterator
-                            }
-                        } else if ((main = getMainSwiftDependency(dependency, nextDependency)) != null) {
-                            if (main == dependency) {
-                                mergeDependencies(dependency, nextDependency, dependenciesToRemove);
-                            } else {
-                                mergeDependencies(nextDependency, dependency, dependenciesToRemove);
-                                break; //since we merged into the next dependency - skip forward to the next in mainIterator
-                            }
-                        }
-                    }
-                }
+    protected boolean evaluateDependencies(final Dependency dependency, final Dependency nextDependency, final Set<Dependency> dependenciesToRemove) {
+        Dependency main;
+        if ((main = getMainGemspecDependency(dependency, nextDependency)) != null) {
+            if (main == dependency) {
+                mergeDependencies(dependency, nextDependency, dependenciesToRemove);
+            } else {
+                mergeDependencies(nextDependency, dependency, dependenciesToRemove);
+                return true; //since we merged into the next dependency - skip forward to the next in mainIterator
             }
-            //removing dependencies here as ensuring correctness and avoiding ConcurrentUpdateExceptions
-            // was difficult because of the inner iterator.
-            engine.getDependencies().removeAll(dependenciesToRemove);
+        } else if ((main = getMainSwiftDependency(dependency, nextDependency)) != null) {
+            if (main == dependency) {
+                mergeDependencies(dependency, nextDependency, dependenciesToRemove);
+            } else {
+                mergeDependencies(nextDependency, dependency, dependenciesToRemove);
+                return true; //since we merged into the next dependency - skip forward to the next in mainIterator
+            }
         }
+        return false;
     }
 
     /**
@@ -176,14 +121,19 @@ public class DependencyMergingAnalyzer extends AbstractAnalyzer {
     private void mergeDependencies(final Dependency dependency, final Dependency relatedDependency, final Set<Dependency> dependenciesToRemove) {
         LOGGER.debug("Merging '{}' into '{}'", relatedDependency.getFilePath(), dependency.getFilePath());
         dependency.addRelatedDependency(relatedDependency);
-        dependency.getVendorEvidence().getEvidence().addAll(relatedDependency.getVendorEvidence().getEvidence());
-        dependency.getProductEvidence().getEvidence().addAll(relatedDependency.getProductEvidence().getEvidence());
-        dependency.getVersionEvidence().getEvidence().addAll(relatedDependency.getVersionEvidence().getEvidence());
+        for (Evidence e : relatedDependency.getEvidence(EvidenceType.VENDOR)) {
+            dependency.addEvidence(EvidenceType.VENDOR, e);
+        }
+        for (Evidence e : relatedDependency.getEvidence(EvidenceType.PRODUCT)) {
+            dependency.addEvidence(EvidenceType.PRODUCT, e);
+        }
+        for (Evidence e : relatedDependency.getEvidence(EvidenceType.VERSION)) {
+            dependency.addEvidence(EvidenceType.VERSION, e);
+        }
 
-        final Iterator<Dependency> i = relatedDependency.getRelatedDependencies().iterator();
-        while (i.hasNext()) {
-            dependency.addRelatedDependency(i.next());
-            i.remove();
+        for (Dependency d : relatedDependency.getRelatedDependencies()) {
+            dependency.addRelatedDependency(d);
+            relatedDependency.removeRelatedDependencies(d);
         }
         if (dependency.getSha1sum().equals(relatedDependency.getSha1sum())) {
             dependency.addAllProjectReferences(relatedDependency.getProjectReferences());

@@ -37,21 +37,35 @@ public class Purge extends Task {
      * The properties file location.
      */
     private static final String PROPERTIES_FILE = "task.properties";
+    /**
+     * The configured settings.
+     */
+    private Settings settings;
+
+    /**
+     * The location of the data directory that contains
+     */
+    private String dataDirectory = null;
+    /**
+     * Indicates if dependency-check should fail the build if an exception
+     * occurs.
+     */
+    private boolean failOnError = true;
 
     /**
      * Construct a new DependencyCheckTask.
      */
     public Purge() {
         super();
+
         // Call this before Dependency Check Core starts logging anything - this way, all SLF4J messages from
         // core end up coming through this tasks logger
         StaticLoggerBinder.getSingleton().setTask(this);
     }
 
-    /**
-     * The location of the data directory that contains
-     */
-    private String dataDirectory = null;
+    public Settings getSettings() {
+        return settings;
+    }
 
     /**
      * Get the value of dataDirectory.
@@ -70,12 +84,6 @@ public class Purge extends Task {
     public void setDataDirectory(String dataDirectory) {
         this.dataDirectory = dataDirectory;
     }
-
-    /**
-     * Indicates if dependency-check should fail the build if an exception
-     * occurs.
-     */
-    private boolean failOnError = true;
 
     /**
      * Get the value of failOnError.
@@ -106,7 +114,7 @@ public class Purge extends Task {
         populateSettings();
         File db;
         try {
-            db = new File(Settings.getDataDirectory(), "dc.h2.db");
+            db = new File(settings.getDataDirectory(), "dc.h2.db");
             if (db.exists()) {
                 if (db.delete()) {
                     log("Database file purged; local copy of the NVD has been removed", Project.MSG_INFO);
@@ -131,7 +139,7 @@ public class Purge extends Task {
             }
             log(msg, Project.MSG_ERR);
         } finally {
-            Settings.cleanup(true);
+            settings.cleanup(true);
         }
     }
 
@@ -143,9 +151,9 @@ public class Purge extends Task {
      * @throws BuildException thrown if the properties file cannot be read.
      */
     protected void populateSettings() throws BuildException {
-        Settings.initialize();
+        settings = new Settings();
         try (InputStream taskProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {
-            Settings.mergeProperties(taskProperties);
+            settings.mergeProperties(taskProperties);
         } catch (IOException ex) {
             final String msg = "Unable to load the dependency-check ant task.properties file.";
             if (this.failOnError) {
@@ -154,13 +162,13 @@ public class Purge extends Task {
             log(msg, ex, Project.MSG_WARN);
         }
         if (dataDirectory != null) {
-            Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
+            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
         } else {
             final File jarPath = new File(Purge.class.getProtectionDomain().getCodeSource().getLocation().getPath());
             final File base = jarPath.getParentFile();
-            final String sub = Settings.getString(Settings.KEYS.DATA_DIRECTORY);
+            final String sub = settings.getString(Settings.KEYS.DATA_DIRECTORY);
             final File dataDir = new File(base, sub);
-            Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());
+            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());
         }
     }
 }

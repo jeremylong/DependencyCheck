@@ -17,12 +17,16 @@
  */
 package org.owasp.dependencycheck.data.nuget;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * Represents the contents of a Nuspec manifest.
  *
  * @author colezlaw
  */
+@ThreadSafe
 public class NugetPackage {
+
     /**
      * The id.
      */
@@ -55,6 +59,7 @@ public class NugetPackage {
 
     /**
      * Sets the id.
+     *
      * @param id the id
      */
     public void setId(String id) {
@@ -63,6 +68,7 @@ public class NugetPackage {
 
     /**
      * Gets the id.
+     *
      * @return the id
      */
     public String getId() {
@@ -71,6 +77,7 @@ public class NugetPackage {
 
     /**
      * Sets the version.
+     *
      * @param version the version
      */
     public void setVersion(String version) {
@@ -79,6 +86,7 @@ public class NugetPackage {
 
     /**
      * Gets the version.
+     *
      * @return the version
      */
     public String getVersion() {
@@ -87,6 +95,7 @@ public class NugetPackage {
 
     /**
      * Sets the title.
+     *
      * @param title the title
      */
     public void setTitle(String title) {
@@ -95,6 +104,7 @@ public class NugetPackage {
 
     /**
      * Gets the title.
+     *
      * @return the title
      */
     public String getTitle() {
@@ -103,6 +113,7 @@ public class NugetPackage {
 
     /**
      * Sets the authors.
+     *
      * @param authors the authors
      */
     public void setAuthors(String authors) {
@@ -111,6 +122,7 @@ public class NugetPackage {
 
     /**
      * Gets the authors.
+     *
      * @return the authors
      */
     public String getAuthors() {
@@ -119,6 +131,7 @@ public class NugetPackage {
 
     /**
      * Sets the owners.
+     *
      * @param owners the owners
      */
     public void setOwners(String owners) {
@@ -127,6 +140,7 @@ public class NugetPackage {
 
     /**
      * Gets the owners.
+     *
      * @return the owners
      */
     public String getOwners() {
@@ -135,6 +149,7 @@ public class NugetPackage {
 
     /**
      * Sets the licenseUrl.
+     *
      * @param licenseUrl the licenseUrl
      */
     public void setLicenseUrl(String licenseUrl) {
@@ -143,6 +158,7 @@ public class NugetPackage {
 
     /**
      * Gets the licenseUrl.
+     *
      * @return the licenseUrl
      */
     public String getLicenseUrl() {

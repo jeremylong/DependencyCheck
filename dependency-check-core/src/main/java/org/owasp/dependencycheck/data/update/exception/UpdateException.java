@@ -17,11 +17,14 @@
  */
 package org.owasp.dependencycheck.data.update.exception;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * An exception used when an error occurs reading a setting.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class UpdateException extends Exception {
 
     /**

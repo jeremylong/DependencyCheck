@@ -58,7 +58,7 @@ public class ReportGeneratorIT extends BaseDBTestCase {
             File writeTo = new File("target/test-reports/Report.xml");
             File suppressionFile = BaseTest.getResourceAsFile(this, "incorrectSuppressions.xml");
 
-            Settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile.getAbsolutePath());
+            getSettings().setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile.getAbsolutePath());
 
             //File struts = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
             File struts = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
@@ -67,17 +67,14 @@ public class ReportGeneratorIT extends BaseDBTestCase {
             //File jetty = new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath());
             File jetty = BaseTest.getResourceAsFile(this, "org.mortbay.jetty.jar");
 
-            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
-            Engine engine = new Engine();
-
-            engine.scan(struts);
-            engine.scan(axis);
-            engine.scan(jetty);
-            engine.analyzeDependencies();
-            engine.writeReports("Test Report", "org.owasp", "dependency-check-core", "1.4.7", writeTo, "XML");
-
-            engine.cleanup();
-
+            getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+            try (Engine engine = new Engine(getSettings())) {
+                engine.scan(struts);
+                engine.scan(axis);
+                engine.scan(jetty);
+                engine.analyzeDependencies();
+                engine.writeReports("Test Report", "org.owasp", "dependency-check-core", "1.4.7", writeTo, "XML");
+            }
             InputStream xsdStream = ReportGenerator.class.getClassLoader().getResourceAsStream("schema/dependency-check.1.6.xsd");
             StreamSource xsdSource = new StreamSource(xsdStream);
             StreamSource xmlSource = new StreamSource(writeTo);

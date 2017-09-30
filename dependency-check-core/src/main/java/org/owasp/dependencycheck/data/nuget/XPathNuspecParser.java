@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.data.nuget;
 
 import java.io.IOException;
 import java.io.InputStream;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
@@ -35,6 +36,7 @@ import org.xml.sax.SAXException;
  *
  * @author colezlaw
  */
+@ThreadSafe
 public class XPathNuspecParser implements NuspecParser {
 
     /**

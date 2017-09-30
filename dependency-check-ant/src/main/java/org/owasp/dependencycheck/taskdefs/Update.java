@@ -385,7 +385,7 @@ public class Update extends Purge {
     @Override
     public void execute() throws BuildException {
         populateSettings();
-        try (Engine engine = new Engine(Update.class.getClassLoader())) {
+        try (Engine engine = new Engine(Update.class.getClassLoader(), getSettings())) {
             try {
                 engine.doUpdates();
             } catch (UpdateException ex) {
@@ -400,8 +400,6 @@ public class Update extends Purge {
                 throw new BuildException(msg, ex);
             }
             log(msg, Project.MSG_ERR);
-        } finally {
-            Settings.cleanup(true);
         }
     }
 
@@ -415,23 +413,23 @@ public class Update extends Purge {
     @Override
     protected void populateSettings() throws BuildException {
         super.populateSettings();
-        Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER, proxyServer);
-        Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);
-        Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME, proxyUsername);
-        Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPassword);
-        Settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
-        Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
-        Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
-        Settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
-        Settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
-        Settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
-        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_12_URL, cveUrl12Modified);
-        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_20_URL, cveUrl20Modified);
-        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_1_2, cveUrl12Base);
-        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER, proxyServer);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME, proxyUsername);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPassword);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_12_URL, cveUrl12Modified);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_20_URL, cveUrl20Modified);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_1_2, cveUrl12Base);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
         if (cveValidForHours != null) {
             if (cveValidForHours >= 0) {
-                Settings.setInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
+                getSettings().setInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
             } else {
                 throw new BuildException("Invalid setting: `cpeValidForHours` must be 0 or greater");
             }

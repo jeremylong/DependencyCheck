@@ -17,11 +17,15 @@
  */
 package org.owasp.dependencycheck.data.cpe;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
- * Fields is a collection of field names used within the Lucene index for CPE entries.
+ * Fields is a collection of field names used within the Lucene index for CPE
+ * entries.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public final class Fields {
 
     /**
@@ -38,7 +42,8 @@ public final class Fields {
     public static final String PRODUCT = "product";
 
     /**
-     * Private constructor as this is more of an enumeration rather then a full class.
+     * Private constructor as this is more of an enumeration rather then a full
+     * class.
      */
     private Fields() {
     }

@@ -18,14 +18,17 @@
 package org.owasp.dependencycheck.data.lucene;
 
 import java.io.Reader;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.apache.lucene.analysis.util.CharTokenizer;
 import org.apache.lucene.util.Version;
 
 /**
- * Tokenizes the input breaking it into tokens when non-alpha/numeric characters are found.
+ * Tokenizes the input breaking it into tokens when non-alpha/numeric characters
+ * are found.
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class AlphaNumericTokenizer extends CharTokenizer {
 
     /**

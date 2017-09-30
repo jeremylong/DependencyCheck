@@ -46,7 +46,6 @@ public class ExpectedObjectInputStreamTest {
             out.writeObject(data);
             out.flush();
             byte[] buf = mem.toByteArray();
-            out.close();
             ByteArrayInputStream in = new ByteArrayInputStream(buf);
             ExpectedObjectInputStream instance = new ExpectedObjectInputStream(in, "java.util.ArrayList", "org.owasp.dependencycheck.utils.SimplePojo", "java.lang.Integer", "java.lang.Number");
             instance.readObject();

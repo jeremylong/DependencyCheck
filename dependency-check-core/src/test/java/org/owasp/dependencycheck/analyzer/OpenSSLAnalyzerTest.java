@@ -28,6 +28,7 @@ import java.io.File;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
  * Unit tests for OpenSSLAnalyzerAnalyzer.
@@ -47,10 +48,13 @@ public class OpenSSLAnalyzerTest extends BaseTest {
      * @throws Exception if there is a problem
      */
     @Before
+    @Override
     public void setUp() throws Exception {
+        super.setUp();
         analyzer = new OpenSSLAnalyzer();
         analyzer.setFilesMatched(true);
-        analyzer.initialize();
+        analyzer.initialize(getSettings());
+        analyzer.prepare(null);
     }
 
     /**
@@ -59,9 +63,10 @@ public class OpenSSLAnalyzerTest extends BaseTest {
      * @throws Exception if there is a problem
      */
     @After
+    @Override
     public void tearDown() throws Exception {
         analyzer.close();
-        analyzer = null;
+        super.tearDown();
     }
 
     /**
@@ -69,8 +74,7 @@ public class OpenSSLAnalyzerTest extends BaseTest {
      */
     @Test
     public void testGetName() {
-        assertEquals("Analyzer name wrong.", "OpenSSL Source Analyzer",
-                analyzer.getName());
+        assertEquals("Analyzer name wrong.", "OpenSSL Source Analyzer", analyzer.getName());
     }
 
     /**
@@ -105,8 +109,8 @@ public class OpenSSLAnalyzerTest extends BaseTest {
                 this,
                 "openssl/opensslv.h"));
         analyzer.analyze(result, null);
-        assertThat(result.getProductEvidence().toString(), containsString("OpenSSL"));
-        assertThat(result.getVendorEvidence().toString(), containsString("OpenSSL"));
-        assertThat(result.getVersionEvidence().toString(), containsString("1.0.2c"));
+        assertThat(result.getEvidence(EvidenceType.PRODUCT).toString(), containsString("OpenSSL"));
+        assertThat(result.getEvidence(EvidenceType.VENDOR).toString(), containsString("OpenSSL"));
+        assertThat(result.getEvidence(EvidenceType.VERSION).toString(), containsString("1.0.2c"));
     }
 }

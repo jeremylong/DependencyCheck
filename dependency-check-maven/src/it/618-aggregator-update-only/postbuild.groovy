@@ -22,7 +22,7 @@ import org.apache.commons.lang.StringUtils;
  
 // Analyse number of "Checking for updates"
 String log = FileUtils.readFileToString(new File(basedir, "build.log"), Charset.defaultCharset().name());
-int count = StringUtils.countMatches(log, "Checking for updates");
+int count = StringUtils.countMatches(log, "[INFO] Checking for updates");
 if (count > 1){
     System.out.println(String.format("The update should be unique, it is %s", count));
     return false;

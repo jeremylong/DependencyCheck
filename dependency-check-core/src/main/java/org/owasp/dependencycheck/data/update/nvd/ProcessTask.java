@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
@@ -42,6 +43,7 @@ import org.xml.sax.SAXException;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class ProcessTask implements Callable<ProcessTask> {
 
     /**
@@ -114,12 +116,11 @@ public class ProcessTask implements Callable<ProcessTask> {
     @Override
     public ProcessTask call() throws Exception {
         try {
-            Settings.setInstance(settings);
             processFiles();
         } catch (UpdateException ex) {
             this.exception = ex;
         } finally {
-            Settings.cleanup(false);
+            settings.cleanup(false);
         }
         return this;
     }

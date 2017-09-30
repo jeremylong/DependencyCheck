@@ -20,13 +20,29 @@ package org.owasp.dependencycheck.data.update.cpe;
 import org.apache.commons.lang3.StringUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.data.update.exception.InvalidDataException;
 
 /**
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class Cpe {
+
+    /**
+     * The CPE identifier string (cpe:/a:vendor:product:version).
+     */
+    private String value;
+    /**
+     * The vendor portion of the identifier.
+     */
+    private String vendor;
+
+    /**
+     * The product portion of the identifier.
+     */
+    private String product;
 
     /**
      * Constructs a new Cpe Object by parsing the vendor and product from the CPE identifier value.
@@ -48,11 +64,6 @@ public class Cpe {
     }
 
     /**
-     * The CPE identifier string (cpe:/a:vendor:product:version).
-     */
-    private String value;
-
-    /**
      * Get the value of value.
      *
      * @return the value of value
@@ -69,10 +80,6 @@ public class Cpe {
     public void setValue(String value) {
         this.value = value;
     }
-    /**
-     * The vendor portion of the identifier.
-     */
-    private String vendor;
 
     /**
      * Get the value of vendor.
@@ -91,11 +98,6 @@ public class Cpe {
     public void setVendor(String vendor) {
         this.vendor = vendor;
     }
-
-    /**
-     * The product portion of the identifier.
-     */
-    private String product;
 
     /**
      * Get the value of product.

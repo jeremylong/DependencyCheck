@@ -84,27 +84,35 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * A flag indicating whether or not the Maven site is being generated.
      */
     private boolean generatingSite = false;
+    /**
+     * The configured settings.
+     */
+    private Settings settings = null;
     //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Maven bound parameters and components">
     /**
      * Sets whether or not the external report format should be used.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "metaFileName", defaultValue = "dependency-check.ser", required = true)
     private String dataFileName;
     /**
      * Sets whether or not the external report format should be used.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "failOnError", defaultValue = "true", required = true)
     private boolean failOnError;
 
     /**
      * The Maven Project Object.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "project", required = true, readonly = true)
     private MavenProject project;
     /**
      * List of Maven project of the current build
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(readonly = true, required = true, property = "reactorProjects")
     private List<MavenProject> reactorProjects;
     /**
@@ -112,18 +120,21 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * artifacts (handles both Maven 3.0 Sonatype and Maven 3.1+ eclipse Aether
      * implementations).
      */
+    @SuppressWarnings("CanBeFinal")
     @Component
     private ArtifactResolver artifactResolver;
 
     /**
      * The Maven Session.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(defaultValue = "${session}", readonly = true, required = true)
     private MavenSession session;
 
     /**
      * Remote repositories which will be searched for artifacts.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true)
     private List<ArtifactRepository> remoteRepositories;
 
@@ -136,6 +147,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * The output directory. This generally maps to "target".
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(defaultValue = "${project.build.directory}", required = true)
     private File outputDirectory;
     /**
@@ -162,11 +174,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not
      * recommended that this be turned to false. Default is true.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "autoUpdate")
     private Boolean autoUpdate;
     /**
      * Sets whether Experimental analyzers are enabled. Default is false.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "enableExperimental")
     private Boolean enableExperimental;
     /**
@@ -188,33 +202,39 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * The Maven settings.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "mavenSettings", defaultValue = "${settings}", required = false)
     private org.apache.maven.settings.Settings mavenSettings;
 
     /**
      * The maven settings proxy id.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "mavenSettingsProxyId", required = false)
     private String mavenSettingsProxyId;
 
     /**
      * The Connection Timeout.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "connectionTimeout", defaultValue = "", required = false)
     private String connectionTimeout;
     /**
      * The paths to the suppression files.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "suppressionFiles", required = false)
     private String[] suppressionFiles;
     /**
      * The paths to the suppression file.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "suppressionFile", required = false)
     private String suppressionFile;
     /**
      * The path to the hints file.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "hintsFile", defaultValue = "", required = false)
     private String hintsFile;
 
@@ -228,18 +248,21 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * Whether or not the Jar Analyzer is enabled.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "jarAnalyzerEnabled", required = false)
     private Boolean jarAnalyzerEnabled;
 
     /**
      * Whether or not the Archive Analyzer is enabled.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "archiveAnalyzerEnabled", required = false)
     private Boolean archiveAnalyzerEnabled;
 
     /**
      * Sets whether the Python Distribution Analyzer will be used.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "pyDistributionAnalyzerEnabled", required = false)
     private Boolean pyDistributionAnalyzerEnabled;
     /**
@@ -250,21 +273,25 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * Sets whether the Ruby Gemspec Analyzer will be used.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "rubygemsAnalyzerEnabled", required = false)
     private Boolean rubygemsAnalyzerEnabled;
     /**
      * Sets whether or not the openssl Analyzer should be used.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "opensslAnalyzerEnabled", required = false)
     private Boolean opensslAnalyzerEnabled;
     /**
      * Sets whether or not the CMake Analyzer should be used.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "cmakeAnalyzerEnabled", required = false)
     private Boolean cmakeAnalyzerEnabled;
     /**
      * Sets whether or not the autoconf Analyzer should be used.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "autoconfAnalyzerEnabled", required = false)
     private Boolean autoconfAnalyzerEnabled;
     /**
@@ -275,11 +302,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * Sets whether or not the Node.js Analyzer should be used.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nodeAnalyzerEnabled", required = false)
     private Boolean nodeAnalyzerEnabled;
     /**
      * Sets whether or not the Node Security Project Analyzer should be used.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nspAnalyzerEnabled", required = false)
     private Boolean nspAnalyzerEnabled;
 
@@ -292,18 +321,21 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * Whether or not the .NET Nuspec Analyzer is enabled.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nuspecAnalyzerEnabled", required = false)
     private Boolean nuspecAnalyzerEnabled;
 
     /**
      * Whether or not the Central Analyzer is enabled.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "centralAnalyzerEnabled", required = false)
     private Boolean centralAnalyzerEnabled;
 
     /**
      * Whether or not the Nexus Analyzer is enabled.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nexusAnalyzerEnabled", required = false)
     private Boolean nexusAnalyzerEnabled;
 
@@ -316,18 +348,21 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * Sets the path for the bundle-audit binary.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "bundleAuditPath", defaultValue = "", required = false)
     private String bundleAuditPath;
 
     /**
      * Whether or not the CocoaPods Analyzer is enabled.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "cocoapodsAnalyzerEnabled", required = false)
     private Boolean cocoapodsAnalyzerEnabled;
 
     /**
      * Whether or not the Swift package Analyzer is enabled.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "swiftPackageManagerAnalyzerEnabled", required = false)
     private Boolean swiftPackageManagerAnalyzerEnabled;
 
@@ -335,38 +370,45 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * The URL of a Nexus server's REST API end point
      * (http://domain/nexus/service/local).
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nexusUrl", required = false)
     private String nexusUrl;
     /**
      * Whether or not the configured proxy is used to connect to Nexus.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nexusUsesProxy", required = false)
     private Boolean nexusUsesProxy;
     /**
      * The database connection string.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "connectionString", defaultValue = "", required = false)
     private String connectionString;
 
     /**
      * The database driver name. An example would be org.h2.Driver.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "databaseDriverName", defaultValue = "", required = false)
     private String databaseDriverName;
     /**
      * The path to the database driver if it is not on the class path.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "databaseDriverPath", defaultValue = "", required = false)
     private String databaseDriverPath;
     /**
      * The server id in the settings.xml; used to retrieve encrypted passwords
      * from the settings.xml.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "serverId", defaultValue = "", required = false)
     private String serverId;
     /**
      * A reference to the settings.xml settings.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(defaultValue = "${settings}", readonly = true, required = true)
     private org.apache.maven.settings.Settings settingsXml;
     /**
@@ -388,6 +430,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * A comma-separated list of file extensions to add to analysis next to jar,
      * zip, ....
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "zipExtensions", required = false)
     private String zipExtensions;
     /**
@@ -433,38 +476,45 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * The data directory, hold DC SQL DB.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "dataDirectory", defaultValue = "", required = false)
     private String dataDirectory;
     /**
      * Data Mirror URL for CVE 1.2.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "cveUrl12Modified", defaultValue = "", required = false)
     private String cveUrl12Modified;
     /**
      * Data Mirror URL for CVE 2.0.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "cveUrl20Modified", defaultValue = "", required = false)
     private String cveUrl20Modified;
     /**
      * Base Data Mirror URL for CVE 1.2.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "cveUrl12Base", defaultValue = "", required = false)
     private String cveUrl12Base;
     /**
      * Data Mirror URL for CVE 2.0.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "cveUrl20Base", defaultValue = "", required = false)
     private String cveUrl20Base;
     /**
      * Optionally skip excessive CVE update checks for a designated duration in
      * hours.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "cveValidForHours", defaultValue = "", required = false)
     private Integer cveValidForHours;
 
     /**
      * The path to mono for .NET Assembly analysis on non-windows systems.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "pathToMono", defaultValue = "", required = false)
     private String pathToMono;
 
@@ -936,7 +986,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     protected Engine initializeEngine() throws DatabaseException {
         populateSettings();
-        return new Engine();
+        return new Engine(settings);
     }
 
     /**
@@ -945,11 +995,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * proxy url, port, and connection timeout.
      */
     protected void populateSettings() {
-        Settings.initialize();
+        settings = new Settings();
         InputStream mojoProperties = null;
         try {
             mojoProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);
-            Settings.mergeProperties(mojoProperties);
+            settings.mergeProperties(mojoProperties);
         } catch (IOException ex) {
             getLog().warn("Unable to load the dependency-check ant task.properties file.");
             if (getLog().isDebugEnabled()) {
@@ -966,9 +1016,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 }
             }
         }
-        Settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);
+        settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);
 
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, enableExperimental);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, enableExperimental);
 
         if (externalReport != null) {
             getLog().warn("The 'externalReport' option was set; this configuration option has been removed. "
@@ -980,56 +1030,57 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         final Proxy proxy = getMavenProxy();
         if (proxy != null) {
-            Settings.setString(Settings.KEYS.PROXY_SERVER, proxy.getHost());
-            Settings.setString(Settings.KEYS.PROXY_PORT, Integer.toString(proxy.getPort()));
+            settings.setString(Settings.KEYS.PROXY_SERVER, proxy.getHost());
+            settings.setString(Settings.KEYS.PROXY_PORT, Integer.toString(proxy.getPort()));
             final String userName = proxy.getUsername();
             final String password = proxy.getPassword();
-            Settings.setStringIfNotNull(Settings.KEYS.PROXY_USERNAME, userName);
-            Settings.setStringIfNotNull(Settings.KEYS.PROXY_PASSWORD, password);
-            Settings.setStringIfNotNull(Settings.KEYS.PROXY_NON_PROXY_HOSTS, proxy.getNonProxyHosts());
+            settings.setStringIfNotNull(Settings.KEYS.PROXY_USERNAME, userName);
+            settings.setStringIfNotNull(Settings.KEYS.PROXY_PASSWORD, password);
+            settings.setStringIfNotNull(Settings.KEYS.PROXY_NON_PROXY_HOSTS, proxy.getNonProxyHosts());
         }
         final String[] suppressions = determineSuppressions();
-        Settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressions);
+        settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressions);
 
-        Settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
-        Settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);
+        settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
+        settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);
 
         //File Type Analyzer Settings
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
-        Settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
-        Settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
-        Settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
+        settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
 
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, pyDistributionAnalyzerEnabled);
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED, pyPackageAnalyzerEnabled);
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED, rubygemsAnalyzerEnabled);
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_OPENSSL_ENABLED, opensslAnalyzerEnabled);
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CMAKE_ENABLED, cmakeAnalyzerEnabled);
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, autoconfAnalyzerEnabled);
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED, nspAnalyzerEnabled);
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, bundleAuditAnalyzerEnabled);
-        Settings.setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, bundleAuditPath);
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, cocoapodsAnalyzerEnabled);
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, swiftPackageManagerAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, pyDistributionAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED, pyPackageAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED, rubygemsAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_OPENSSL_ENABLED, opensslAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CMAKE_ENABLED, cmakeAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, autoconfAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED, nspAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, bundleAuditAnalyzerEnabled);
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, bundleAuditPath);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, cocoapodsAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, swiftPackageManagerAnalyzerEnabled);
 
         //Database configuration
-        Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
-        Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
-        Settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
 
         if (databaseUser == null && databasePassword == null && serverId != null) {
             final Server server = settingsXml.getServer(serverId);
             if (server != null) {
                 databaseUser = server.getUsername();
                 try {
+                    //CSOFF: LineLength
                     //The following fix was copied from:
                     //   https://github.com/bsorrentino/maven-confluence-plugin/blob/master/maven-confluence-reporting-plugin/src/main/java/org/bsc/maven/confluence/plugin/AbstractBaseConfluenceMojo.java
                     //
@@ -1037,6 +1088,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     // org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException:
                     // java.io.FileNotFoundException: ~/.settings-security.xml (No such file or directory)
                     //
+                    //CSON: LineLength
                     if (securityDispatcher instanceof DefaultSecDispatcher) {
                         ((DefaultSecDispatcher) securityDispatcher).setConfigurationFile("~/.m2/settings-security.xml");
                     }
@@ -1065,15 +1117,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
         }
 
-        Settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
-        Settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
-        Settings.setStringIfNotEmpty(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
+        settings.setStringIfNotEmpty(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
 
-        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_12_URL, cveUrl12Modified);
-        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_20_URL, cveUrl20Modified);
-        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_1_2, cveUrl12Base);
-        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
-        Settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
+        settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_12_URL, cveUrl12Modified);
+        settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_20_URL, cveUrl20Modified);
+        settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_1_2, cveUrl12Base);
+        settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
+        settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
 
         artifactScopeExcluded = new ArtifactScopeExcluded(skipTestScope, skipProvidedScope, skipSystemScope, skipRuntimeScope);
         artifactTypeExcluded = new ArtifactTypeExcluded(skipArtifactType);
@@ -1166,6 +1218,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         return artifactScopeExcluded;
     }
 
+    /**
+     * Returns the configured settings.
+     *
+     * @return the configured settings
+     */
+    protected Settings getSettings() {
+        return settings;
+    }
+
     //<editor-fold defaultstate="collapsed" desc="Methods to fail build or show summary">
     /**
      * Checks to see if a vulnerability has been identified with a CVSS score
@@ -1175,7 +1236,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @throws MojoFailureException thrown if a CVSS score is found that is
      * higher then the threshold set
      */
-    protected void checkForFailure(List<Dependency> dependencies) throws MojoFailureException {
+    protected void checkForFailure(Dependency[] dependencies) throws MojoFailureException {
         final StringBuilder ids = new StringBuilder();
         for (Dependency d : dependencies) {
             boolean addName = true;
@@ -1212,7 +1273,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @param mp the Maven project for which the summary is shown
      * @param dependencies a list of dependency objects
      */
-    protected void showSummary(MavenProject mp, List<Dependency> dependencies) {
+    protected void showSummary(MavenProject mp, Dependency[] dependencies) {
         if (showSummary) {
             final StringBuilder summary = new StringBuilder();
             for (Dependency d : dependencies) {

@@ -27,6 +27,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.utils.DBUtils;
 import org.owasp.dependencycheck.utils.DependencyVersion;
@@ -44,16 +45,13 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public final class ConnectionFactory {
 
     /**
      * The Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionFactory.class);
-    /**
-     * The version of the current DB Schema.
-     */
-    public static final String DB_SCHEMA_VERSION = Settings.getString(Settings.KEYS.DB_VERSION);
     /**
      * Resource location for SQL file used to create the database schema.
      */
@@ -69,29 +67,36 @@ public final class ConnectionFactory {
     /**
      * The database driver used to connect to the database.
      */
-    private static Driver driver = null;
+    private Driver driver = null;
     /**
      * The database connection string.
      */
-    private static String connectionString = null;
+    private String connectionString = null;
     /**
      * The username to connect to the database.
      */
-    private static String userName = null;
+    private String userName = null;
     /**
      * The password for the database.
      */
-    private static String password = null;
+    private String password = null;
     /**
      * Counter to ensure that calls to ensureSchemaVersion does not end up in an
      * endless loop.
      */
-    private static int callDepth = 0;
+    private int callDepth = 0;
+    /**
+     * The configured settings.
+     */
+    private final Settings settings;
 
     /**
      * Private constructor for this factory class; no instance is ever needed.
+     *
+     * @param settings the configured settings
      */
-    private ConnectionFactory() {
+    public ConnectionFactory(Settings settings) {
+        this.settings = settings;
     }
 
     /**
@@ -101,7 +106,7 @@ public final class ConnectionFactory {
      * @throws DatabaseException thrown if we are unable to connect to the
      * database
      */
-    public static void initialize() throws DatabaseException {
+    public synchronized void initialize() throws DatabaseException {
         //this only needs to be called once.
         if (connectionString != null) {
             return;
@@ -109,27 +114,23 @@ public final class ConnectionFactory {
         Connection conn = null;
         try {
             //load the driver if necessary
-            final String driverName = Settings.getString(Settings.KEYS.DB_DRIVER_NAME, "");
-            if (!driverName.isEmpty()) { //likely need to load the correct driver
-                LOGGER.debug("Loading driver: {}", driverName);
-                final String driverPath = Settings.getString(Settings.KEYS.DB_DRIVER_PATH, "");
+            final String driverName = settings.getString(Settings.KEYS.DB_DRIVER_NAME, "");
+            final String driverPath = settings.getString(Settings.KEYS.DB_DRIVER_PATH, "");
+            if (!driverPath.isEmpty()) {
+                LOGGER.debug("Loading driver '{}' from '{}'", driverName, driverPath);
                 try {
-                    if (!driverPath.isEmpty()) {
-                        LOGGER.debug("Loading driver from: {}", driverPath);
-                        driver = DriverLoader.load(driverName, driverPath);
-                    } else {
-                        driver = DriverLoader.load(driverName);
-                    }
+                    LOGGER.debug("Loading driver from: {}", driverPath);
+                    driver = DriverLoader.load(driverName, driverPath);
                 } catch (DriverLoadException ex) {
                     LOGGER.debug("Unable to load database driver", ex);
                     throw new DatabaseException("Unable to load database driver", ex);
                 }
             }
-            userName = Settings.getString(Settings.KEYS.DB_USER, "dcuser");
+            userName = settings.getString(Settings.KEYS.DB_USER, "dcuser");
             //yes, yes - hard-coded password - only if there isn't one in the properties file.
-            password = Settings.getString(Settings.KEYS.DB_PASSWORD, "DC-Pass1337!");
+            password = settings.getString(Settings.KEYS.DB_PASSWORD, "DC-Pass1337!");
             try {
-                connectionString = Settings.getConnectionString(
+                connectionString = settings.getConnectionString(
                         Settings.KEYS.DB_CONNECTION_STRING,
                         Settings.KEYS.DB_FILE_NAME);
             } catch (IOException ex) {
@@ -158,7 +159,7 @@ public final class ConnectionFactory {
                     connectionString = connectionString.replace("AUTO_SERVER=TRUE;", "");
                     try {
                         conn = DriverManager.getConnection(connectionString, userName, password);
-                        Settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
+                        settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
                         LOGGER.debug("Unable to start the database in server mode; reverting to single user mode");
                     } catch (SQLException sqlex) {
                         LOGGER.debug("Unable to connect to the database", ex);
@@ -169,7 +170,6 @@ public final class ConnectionFactory {
                     throw new DatabaseException("Unable to connect to the database", ex);
                 }
             }
-
             if (shouldCreateSchema) {
                 try {
                     createTables(conn);
@@ -201,16 +201,9 @@ public final class ConnectionFactory {
      * finalize method being called as during shutdown the class loader used to
      * load the driver may be unloaded prior to the driver being de-registered.
      */
-    public static void cleanup() {
+    public synchronized void cleanup() {
         if (driver != null) {
-            try {
-                DriverManager.deregisterDriver(driver);
-            } catch (SQLException ex) {
-                LOGGER.debug("An error occurred unloading the database driver", ex);
-            } catch (Throwable unexpected) {
-                LOGGER.debug(
-                        "An unexpected throwable occurred unloading the database driver", unexpected);
-            }
+            DriverLoader.cleanup(driver);
             driver = null;
         }
         connectionString = null;
@@ -226,7 +219,7 @@ public final class ConnectionFactory {
      * @throws DatabaseException thrown if there is an exception loading the
      * database connection
      */
-    public static Connection getConnection() throws DatabaseException {
+    public synchronized Connection getConnection() throws DatabaseException {
         initialize();
         Connection conn = null;
         try {
@@ -246,11 +239,36 @@ public final class ConnectionFactory {
      * @throws IOException thrown if the data directory does not exist and
      * cannot be created
      */
-    public static boolean h2DataFileExists() throws IOException {
-        final File dir = Settings.getDataDirectory();
-        final String fileName = Settings.getString(Settings.KEYS.DB_FILE_NAME);
-        final File file = new File(dir, fileName);
+    public boolean h2DataFileExists() throws IOException {
+        return h2DataFileExists(settings);
+    }
+
+    /**
+     * Determines if the H2 database file exists. If it does not exist then the
+     * data structure will need to be created.
+     *
+     * @param configuration the configured settings
+     * @return true if the H2 database file does not exist; otherwise false
+     * @throws IOException thrown if the data directory does not exist and
+     * cannot be created
+     */
+    public static boolean h2DataFileExists(Settings configuration) throws IOException {
+        final File file = getH2DataFile(configuration);
         return file.exists();
+    }
+
+    /**
+     * Returns a reference to the H2 database file.
+     *
+     * @param configuration the configured settings
+     * @return the path to the H2 database file
+     * @throws IOException thrown if there is an error
+     */
+    public static File getH2DataFile(Settings configuration) throws IOException {
+        final File dir = configuration.getDataDirectory();
+        final String fileName = configuration.getString(Settings.KEYS.DB_FILE_NAME);
+        final File file = new File(dir, fileName);
+        return file;
     }
 
     /**
@@ -258,10 +276,20 @@ public final class ConnectionFactory {
      *
      * @return true if the connection string is for an H2 database
      */
-    public static boolean isH2Connection() {
+    public boolean isH2Connection() {
+        return isH2Connection(settings);
+    }
+
+    /**
+     * Determines if the connection string is for an H2 database.
+     *
+     * @param configuration the configured settings
+     * @return true if the connection string is for an H2 database
+     */
+    public static boolean isH2Connection(Settings configuration) {
         String connStr;
         try {
-            connStr = Settings.getConnectionString(
+            connStr = configuration.getConnectionString(
                     Settings.KEYS.DB_CONNECTION_STRING,
                     Settings.KEYS.DB_FILE_NAME);
         } catch (IOException ex) {
@@ -278,7 +306,7 @@ public final class ConnectionFactory {
      * @param conn the database connection
      * @throws DatabaseException thrown if there is a Database Exception
      */
-    private static void createTables(Connection conn) throws DatabaseException {
+    private void createTables(Connection conn) throws DatabaseException {
         LOGGER.debug("Creating database structure");
         InputStream is = null;
         try {
@@ -315,7 +343,7 @@ public final class ConnectionFactory {
      * @throws DatabaseException thrown if there is an exception upgrading the
      * database schema
      */
-    private static void updateSchema(Connection conn, DependencyVersion appExpectedVersion, DependencyVersion currentDbVersion)
+    private void updateSchema(Connection conn, DependencyVersion appExpectedVersion, DependencyVersion currentDbVersion)
             throws DatabaseException {
 
         final String databaseProductName;
@@ -363,7 +391,7 @@ public final class ConnectionFactory {
             final int c1 = Integer.parseInt(currentDbVersion.getVersionParts().get(1));
             if (e0 == c0 && e1 < c1) {
                 LOGGER.warn("A new version of dependency-check is available; consider upgrading");
-                Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+                settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             } else if (e0 == c0 && e1 == c1) {
                 //do nothing - not sure how we got here, but just in case...
             } else {
@@ -382,7 +410,7 @@ public final class ConnectionFactory {
      * @throws DatabaseException thrown if the schema version is not compatible
      * with this version of dependency-check
      */
-    private static void ensureSchemaVersion(Connection conn) throws DatabaseException {
+    private void ensureSchemaVersion(Connection conn) throws DatabaseException {
         ResultSet rs = null;
         PreparedStatement ps = null;
         try {
@@ -390,7 +418,8 @@ public final class ConnectionFactory {
             ps = conn.prepareStatement("SELECT value FROM properties WHERE id = 'version'");
             rs = ps.executeQuery();
             if (rs.next()) {
-                final DependencyVersion appDbVersion = DependencyVersionUtil.parseVersion(DB_SCHEMA_VERSION);
+                final String dbSchemaVersion = settings.getString(Settings.KEYS.DB_VERSION);
+                final DependencyVersion appDbVersion = DependencyVersionUtil.parseVersion(dbSchemaVersion);
                 if (appDbVersion == null) {
                     throw new DatabaseException("Invalid application database schema");
                 }
@@ -399,7 +428,7 @@ public final class ConnectionFactory {
                     throw new DatabaseException("Invalid database schema");
                 }
                 if (appDbVersion.compareTo(db) > 0) {
-                    LOGGER.debug("Current Schema: {}", DB_SCHEMA_VERSION);
+                    LOGGER.debug("Current Schema: {}", dbSchemaVersion);
                     LOGGER.debug("DB Schema: {}", rs.getString(1));
                     updateSchema(conn, appDbVersion, db);
                     if (++callDepth < 10) {

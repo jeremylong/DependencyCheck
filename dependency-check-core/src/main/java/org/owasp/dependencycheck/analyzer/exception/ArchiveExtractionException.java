@@ -17,11 +17,14 @@
  */
 package org.owasp.dependencycheck.analyzer.exception;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * An exception thrown when files in an archive cannot be extracted.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class ArchiveExtractionException extends Exception {
 
     /**

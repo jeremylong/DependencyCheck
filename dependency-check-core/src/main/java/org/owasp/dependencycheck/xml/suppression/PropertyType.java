@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.xml.suppression;
 
 import java.util.regex.Pattern;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * A simple PropertyType used to represent a string value that could be used as a regular expression or could be case
@@ -25,6 +26,7 @@ import java.util.regex.Pattern;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class PropertyType {
 
     //<editor-fold defaultstate="collapsed" desc="properties">

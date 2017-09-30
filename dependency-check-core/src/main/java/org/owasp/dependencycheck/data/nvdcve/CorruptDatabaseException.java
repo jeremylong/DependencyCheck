@@ -17,11 +17,15 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
- * An exception used to indicate the db4o database is corrupt. This could be due to invalid data or a complete failure of the db.
+ * An exception used to indicate the db4o database is corrupt. This could be due
+ * to invalid data or a complete failure of the db.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class CorruptDatabaseException extends DatabaseException {
 
     /**

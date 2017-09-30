@@ -30,6 +30,7 @@ import java.io.File;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
  * Unit tests for PythonDistributionAnalyzer.
@@ -49,10 +50,13 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
      * @throws Exception thrown if there is a problem
      */
     @Before
+    @Override
     public void setUp() throws Exception {
+        super.setUp();
         analyzer = new PythonDistributionAnalyzer();
         analyzer.setFilesMatched(true);
-        analyzer.initialize();
+        analyzer.initialize(getSettings());
+        analyzer.prepare(null);
     }
 
     /**
@@ -61,9 +65,10 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
      * @throws Exception thrown if there is a problem
      */
     @After
+    @Override
     public void tearDown() throws Exception {
         analyzer.close();
-        analyzer = null;
+        super.tearDown();
     }
 
     /**
@@ -123,8 +128,8 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
         boolean found = false;
         analyzer.analyze(result, null);
         assertTrue("Expected vendor evidence to contain \"djangoproject\".",
-                result.getVendorEvidence().toString().contains("djangoproject"));
-        for (final Evidence e : result.getVersionEvidence()) {
+                result.getEvidence(EvidenceType.VENDOR).toString().contains("djangoproject"));
+        for (final Evidence e : result.getEvidence(EvidenceType.VERSION)) {
             if ("Version".equals(e.getName()) && "1.7.2".equals(e.getValue())) {
                 found = true;
                 break;
@@ -175,8 +180,8 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
                 context, resource));
         analyzer.analyze(result, null);
         assertTrue("Expected vendor evidence to contain \"example\".", result
-                .getVendorEvidence().toString().contains("example"));
-        for (final Evidence e : result.getVersionEvidence()) {
+                .getEvidence(EvidenceType.VENDOR).toString().contains("example"));
+        for (final Evidence e : result.getEvidence(EvidenceType.VERSION)) {
             if ("0.0.1".equals(e.getValue())) {
                 found = true;
                 break;

@@ -21,7 +21,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
 
-// Analyse number of "Checking for updates"
 String log = FileUtils.readFileToString(new File(basedir, "build.log"), Charset.defaultCharset().name());
 if (!StringUtils.contains(log, "Database file purged; local copy of the NVD has been removed")) {
     System.out.println("The database was not purged.");

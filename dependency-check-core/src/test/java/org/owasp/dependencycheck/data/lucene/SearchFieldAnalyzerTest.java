@@ -13,26 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2017 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.nuget;
+package org.owasp.dependencycheck.data.lucene;
 
-import java.io.InputStream;
+import org.apache.lucene.analysis.util.CharArraySet;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
- * Interface defining methods for parsing a Nuspec file.
  *
- * @author colezlaw
- *
+ * @author jeremy long
  */
-public interface NuspecParser {
+public class SearchFieldAnalyzerTest {
 
     /**
-     * Parse an input stream and return the resulting {@link NugetPackage}.
-     *
-     * @param stream the input stream to parse
-     * @return the populated bean
-     * @throws NuspecParseException when an exception occurs
+     * Test of getStopWords method, of class SearchFieldAnalyzer.
      */
-    NugetPackage parse(InputStream stream) throws NuspecParseException;
+    @Test
+    public void testGetStopWords() {
+        CharArraySet result = SearchFieldAnalyzer.getStopWords();
+        assertTrue(result.size() > 20);
+        assertTrue(result.contains("software"));
+    }
 }

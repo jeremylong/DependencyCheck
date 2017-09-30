@@ -17,11 +17,14 @@
  */
 package org.owasp.dependencycheck.data.nexus;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * Simple bean representing a Maven Artifact.
  *
  * @author colezlaw
  */
+@ThreadSafe
 public class MavenArtifact {
 
     /**
@@ -45,7 +48,8 @@ public class MavenArtifact {
     private String version;
 
     /**
-     * The artifact url. This may change depending on which Nexus server the search took place.
+     * The artifact url. This may change depending on which Nexus server the
+     * search took place.
      */
     private String artifactUrl;
     /**
@@ -80,7 +84,8 @@ public class MavenArtifact {
      * @param version the version
      * @param jarAvailable if the jar file is available from central
      * @param pomAvailable if the pom file is available from central
-     * @param secureDownload if the jar and pom files should be downloaded using HTTPS.
+     * @param secureDownload if the jar and pom files should be downloaded using
+     * HTTPS.
      */
     public MavenArtifact(String groupId, String artifactId, String version, boolean jarAvailable, boolean pomAvailable, boolean secureDownload) {
         this.groupId = groupId;
@@ -220,5 +225,3 @@ public class MavenArtifact {
     }
 
 }
-
-// vim: cc=120:sw=4:ts=4:sts=4

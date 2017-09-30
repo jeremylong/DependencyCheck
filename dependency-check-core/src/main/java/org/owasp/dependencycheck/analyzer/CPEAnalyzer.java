@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.lucene.analysis.util.CharArraySet;
 import org.apache.lucene.document.Document;
@@ -46,7 +47,7 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
-import org.owasp.dependencycheck.dependency.EvidenceCollection;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.exception.InitializationException;
@@ -63,6 +64,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class CPEAnalyzer extends AbstractAnalyzer {
 
     /**
@@ -93,6 +95,10 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      */
     private static final int STRING_BUILDER_BUFFER = 20;
     /**
+     * The URL to perform a search of the NVD CVE data at NIST.
+     */
+    public static final String NVD_SEARCH_URL = "https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=%s";
+    /**
      * The CPE in memory index.
      */
     private CpeMemoryIndex cpe;
@@ -100,11 +106,6 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * The CVE Database.
      */
     private CveDB cve;
-
-    /**
-     * The URL to perform a search of the NVD CVE data at NIST.
-     */
-    public static final String NVD_SEARCH_URL = "https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=%s";
 
     /**
      * Returns the name of this analyzer.
@@ -127,25 +128,16 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * The default is to support parallel processing.
-     *
-     * @return false
-     */
-    @Override
-    public boolean supportsParallelProcessing() {
-        return false;
-    }
-
-    /**
      * Creates the CPE Lucene Index.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException is thrown if there is an issue opening
      * the index.
      */
     @Override
-    public void initializeAnalyzer() throws InitializationException {
+    public void prepareAnalyzer(Engine engine) throws InitializationException {
         try {
-            this.open();
+            this.open(engine.getDatabase());
         } catch (IOException ex) {
             LOGGER.debug("Exception initializing the Lucene Index", ex);
             throw new InitializationException("An exception occurred initializing the Lucene Index", ex);
@@ -158,24 +150,23 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     /**
      * Opens the data source.
      *
+     * @param cve a reference to the NVD CVE database
      * @throws IOException when the Lucene directory to be queried does not
      * exist or is corrupt.
      * @throws DatabaseException when the database throws an exception. This
      * usually occurs when the database is in use by another process.
      */
-    public void open() throws IOException, DatabaseException {
-        if (!isOpen()) {
-            cve = CveDB.getInstance();
-            cpe = CpeMemoryIndex.getInstance();
-            try {
-                final long creationStart = System.currentTimeMillis();
-                cpe.open(cve);
-                final long creationSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - creationStart);
-                LOGGER.info("Created CPE Index ({} seconds)", creationSeconds);
-            } catch (IndexException ex) {
-                LOGGER.debug("IndexException", ex);
-                throw new DatabaseException(ex);
-            }
+    public void open(CveDB cve) throws IOException, DatabaseException {
+        this.cve = cve;
+        this.cpe = CpeMemoryIndex.getInstance();
+        try {
+            final long creationStart = System.currentTimeMillis();
+            cpe.open(cve);
+            final long creationSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - creationStart);
+            LOGGER.info("Created CPE Index ({} seconds)", creationSeconds);
+        } catch (IndexException ex) {
+            LOGGER.debug("IndexException", ex);
+            throw new DatabaseException(ex);
         }
     }
 
@@ -184,23 +175,10 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      */
     @Override
     public void closeAnalyzer() {
-        if (cve != null) {
-            cve.close();
-            cve = null;
-        }
         if (cpe != null) {
             cpe.close();
             cpe = null;
         }
-    }
-
-    /**
-     * Returns whether or not the analyzer is open.
-     *
-     * @return <code>true</code> if the analyzer is open
-     */
-    public boolean isOpen() {
-        return cpe != null && cpe.isOpen();
     }
 
     /**
@@ -217,17 +195,17 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         String vendors = "";
         String products = "";
         for (Confidence confidence : Confidence.values()) {
-            if (dependency.getVendorEvidence().contains(confidence)) {
-                vendors = addEvidenceWithoutDuplicateTerms(vendors, dependency.getVendorEvidence(), confidence);
+            if (dependency.contains(EvidenceType.VENDOR, confidence)) {
+                vendors = addEvidenceWithoutDuplicateTerms(vendors, dependency.getIterator(EvidenceType.VENDOR, confidence));
                 LOGGER.debug("vendor search: {}", vendors);
             }
-            if (dependency.getProductEvidence().contains(confidence)) {
-                products = addEvidenceWithoutDuplicateTerms(products, dependency.getProductEvidence(), confidence);
+            if (dependency.contains(EvidenceType.PRODUCT, confidence)) {
+                products = addEvidenceWithoutDuplicateTerms(products, dependency.getIterator(EvidenceType.PRODUCT, confidence));
                 LOGGER.debug("product search: {}", products);
             }
             if (!vendors.isEmpty() && !products.isEmpty()) {
-                final List<IndexEntry> entries = searchCPE(vendors, products, dependency.getVendorEvidence().getWeighting(),
-                        dependency.getProductEvidence().getWeighting());
+                final List<IndexEntry> entries = searchCPE(vendors, products, dependency.getVendorWeightings(),
+                        dependency.getProductWeightings());
                 if (entries == null) {
                     continue;
                 }
@@ -254,26 +232,24 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * attempts to prevent duplicate terms from being added.<br/<br/> Note, if
      * the evidence is longer then 200 characters it will be truncated.
      *
-     * @param text the base text.
-     * @param ec an EvidenceCollection
-     * @param confidenceFilter a Confidence level to filter the evidence by.
+     * @param text the base text
+     * @param evidence an iterable set of evidence to concatenate
      * @return the new evidence text
      */
-    private String addEvidenceWithoutDuplicateTerms(final String text, final EvidenceCollection ec, Confidence confidenceFilter) {
+    private String addEvidenceWithoutDuplicateTerms(final String text, final Iterable<Evidence> evidence) {
         final String txt = (text == null) ? "" : text;
-        final StringBuilder sb = new StringBuilder(txt.length() + (20 * ec.size()));
+        final StringBuilder sb = new StringBuilder();
         sb.append(' ').append(txt).append(' ');
-        for (Evidence e : ec.iterator(confidenceFilter)) {
-            String value = e.getValue();
-
-            //hack to get around the fact that lucene does a really good job of recognizing domains and not
-            // splitting them. TODO - put together a better lucene analyzer specific to the domain.
-            if (value.startsWith("http://")) {
-                value = value.substring(7).replaceAll("\\.", " ");
-            }
-            if (value.startsWith("https://")) {
-                value = value.substring(8).replaceAll("\\.", " ");
-            }
+        for (Evidence e : evidence) {
+            final String value = e.getValue();
+            //removed as the URLTokenizingFilter was created
+            //hack to get around the fact that lucene does a really good job of recognizing domains and not splitting them.
+//            if (value.startsWith("http://")) {
+//                value = value.substring(7).replaceAll("\\.", " ");
+//            }
+//            if (value.startsWith("https://")) {
+//                value = value.substring(8).replaceAll("\\.", " ");
+//            }
             if (sb.indexOf(" " + value + " ") < 0) {
                 sb.append(value).append(' ');
             }
@@ -466,8 +442,8 @@ public class CPEAnalyzer extends AbstractAnalyzer {
 
         //TODO - does this nullify some of the fuzzy matching that happens in the lucene search?
         // for instance CPE some-component and in the evidence we have SomeComponent.
-        if (collectionContainsString(dependency.getProductEvidence(), entry.getProduct())
-                && collectionContainsString(dependency.getVendorEvidence(), entry.getVendor())) {
+        if (collectionContainsString(dependency.getEvidence(EvidenceType.PRODUCT), entry.getProduct())
+                && collectionContainsString(dependency.getEvidence(EvidenceType.VENDOR), entry.getVendor())) {
             //&& collectionContainsVersion(dependency.getVersionEvidence(), entry.getVersion())
             isValid = true;
         }
@@ -477,11 +453,11 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     /**
      * Used to determine if the EvidenceCollection contains a specific string.
      *
-     * @param ec an EvidenceCollection
+     * @param evidence an of evidence object to check
      * @param text the text to search for
      * @return whether or not the EvidenceCollection contains the string
      */
-    private boolean collectionContainsString(EvidenceCollection ec, String text) {
+    private boolean collectionContainsString(Set<Evidence> evidence, String text) {
         //TODO - likely need to change the split... not sure if this will work for CPE with special chars
         if (text == null) {
             return false;
@@ -489,7 +465,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         final String[] words = text.split("[\\s_-]");
         final List<String> list = new ArrayList<>();
         String tempWord = null;
-        CharArraySet stopWords = SearchFieldAnalyzer.getStopWords();
+        final CharArraySet stopWords = SearchFieldAnalyzer.getStopWords();
         for (String word : words) {
             if (stopWords.contains(word)) {
                 continue;
@@ -518,11 +494,24 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         if (list.isEmpty()) {
             return false;
         }
-        boolean contains = true;
+        boolean isValid = true;
         for (String word : list) {
-            contains &= ec.containsUsedString(word);
+            boolean found = false;
+            for (Evidence e : evidence) {
+                if (e.getValue().toLowerCase().contains(word.toLowerCase())) {
+                    if ("http".equals(word) && e.getValue().contains("http:")) {
+                        continue;
+                    }
+                    found = true;
+                    break;
+                }
+            }
+            isValid &= found;
+            if (!isValid) {
+                break;
+            }
         }
-        return contains;
+        return isValid;
     }
 
     /**
@@ -535,7 +524,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * dependency.
      */
     @Override
-    protected synchronized void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         try {
             determineCPE(dependency);
         } catch (CorruptIndexException ex) {
@@ -578,7 +567,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         // if there lower confidence evidence when the current (highest) version number
         // is newer then anything in the NVD.
         for (Confidence conf : Confidence.values()) {
-            for (Evidence evidence : dependency.getVersionEvidence().iterator(conf)) {
+            for (Evidence evidence : dependency.getIterator(EvidenceType.VERSION, conf)) {
                 final DependencyVersion evVer = DependencyVersionUtil.parseVersion(evidence.getValue());
                 if (evVer == null) {
                     continue;

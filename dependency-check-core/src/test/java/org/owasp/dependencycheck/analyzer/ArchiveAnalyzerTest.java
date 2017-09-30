@@ -36,8 +36,10 @@ import org.owasp.dependencycheck.utils.Settings;
 public class ArchiveAnalyzerTest extends BaseTest {
 
     @Before
-    public void setUp() {
-        Settings.setString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, "z2, z3");
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        getSettings().setString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, "z2, z3");
     }
 
     /**
@@ -47,6 +49,7 @@ public class ArchiveAnalyzerTest extends BaseTest {
     public void testZippableExtensions() throws Exception {
         assumeFalse(isPreviouslyLoaded("org.owasp.dependencycheck.analyzer.ArchiveAnalyzer"));
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
+        instance.initialize(getSettings());
         assertTrue(instance.getFileFilter().accept(new File("c:/test.zip")));
         assertTrue(instance.getFileFilter().accept(new File("c:/test.z2")));
         assertTrue(instance.getFileFilter().accept(new File("c:/test.z3")));
@@ -55,19 +58,11 @@ public class ArchiveAnalyzerTest extends BaseTest {
 
     private boolean isPreviouslyLoaded(String className) {
         try {
-            Method m = ClassLoader.class.getDeclaredMethod("findLoadedClass", new Class[]{String.class});
+            Method m = ClassLoader.class.getDeclaredMethod("findLoadedClass", String.class);
             m.setAccessible(true);
             Object t = m.invoke(Thread.currentThread().getContextClassLoader(), className);
             return t != null;
-        } catch (NoSuchMethodException ex) {
-            Logger.getLogger(ArchiveAnalyzerTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SecurityException ex) {
-            Logger.getLogger(ArchiveAnalyzerTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(ArchiveAnalyzerTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(ArchiveAnalyzerTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvocationTargetException ex) {
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             Logger.getLogger(ArchiveAnalyzerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;

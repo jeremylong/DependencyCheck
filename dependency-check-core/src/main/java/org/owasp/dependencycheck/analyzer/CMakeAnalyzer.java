@@ -38,6 +38,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
@@ -125,11 +126,12 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Initializes the analyzer.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException thrown if an exception occurs getting an
      * instance of SHA1
      */
     @Override
-    protected void initializeFileTypeAnalyzer() throws InitializationException {
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         try {
             getSha1MessageDigest();
         } catch (IllegalStateException ex) {
@@ -171,8 +173,8 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                         m.groupCount(), m.group(0)));
                 final String group = m.group(1);
                 LOGGER.debug("Group 1: {}", group);
-                dependency.getProductEvidence().addEvidence(name, "Project",
-                        group, Confidence.HIGH);
+                dependency.addEvidence(EvidenceType.PRODUCT, name, "Project", group, Confidence.HIGH);
+                dependency.addEvidence(EvidenceType.VENDOR, name, "Project", group, Confidence.HIGH);
             }
             LOGGER.debug("Found {} matches.", count);
             analyzeSetVersionCommand(dependency, engine, contents);
@@ -223,13 +225,12 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 }
                 final MessageDigest sha1 = getSha1MessageDigest();
                 currentDep.setSha1sum(Checksum.getHex(sha1.digest(path)));
-                engine.getDependencies().add(currentDep);
+                engine.addDependency(currentDep);
             }
             final String source = currentDep.getDisplayFileName();
-            currentDep.getProductEvidence().addEvidence(source, "Product",
-                    product, Confidence.MEDIUM);
-            currentDep.getVersionEvidence().addEvidence(source, "Version",
-                    version, Confidence.MEDIUM);
+            currentDep.addEvidence(EvidenceType.PRODUCT, source, "Product", product, Confidence.MEDIUM);
+            currentDep.addEvidence(EvidenceType.VENDOR, source, "Vendor", product, Confidence.MEDIUM);
+            currentDep.addEvidence(EvidenceType.VERSION, source, "Version", version, Confidence.MEDIUM);
         }
         LOGGER.debug("Found {} matches.", count);
     }

@@ -43,17 +43,19 @@ public abstract class BaseDBTestCase extends BaseTest {
     private final static Logger LOGGER = LoggerFactory.getLogger(BaseDBTestCase.class);
 
     @Before
-    public void setUpDb() throws Exception {
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
         ensureDBExists();
     }
 
-    public static void ensureDBExists() throws Exception {
+    public void ensureDBExists() throws Exception {
         File f = new File("./target/data/dc.h2.db");
         if (f.exists() && f.isFile() && f.length() < 71680) {
             f.delete();
         }
-        File dataPath = Settings.getDataDirectory();
-        String fileName = Settings.getString(Settings.KEYS.DB_FILE_NAME);
+        File dataPath = getSettings().getDataDirectory();
+        String fileName = getSettings().getString(Settings.KEYS.DB_FILE_NAME);
         LOGGER.trace("DB file name {}", fileName);
         File dataFile = new File(dataPath, fileName);
         LOGGER.trace("Ensuring {} exists", dataFile.toString());

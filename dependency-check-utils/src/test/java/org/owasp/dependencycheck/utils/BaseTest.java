@@ -15,8 +15,8 @@
  */
 package org.owasp.dependencycheck.utils;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  *
@@ -24,13 +24,33 @@ import org.junit.BeforeClass;
  */
 public class BaseTest {
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        Settings.initialize();
+    /**
+     * The configured settings.
+     */
+    private Settings settings;
+
+    /**
+     * Initialize the {@link Settings}.
+     */
+    @Before
+    public void setUp() {
+        settings = new Settings();
     }
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        Settings.cleanup(true);
+    /**
+     * Clean the {@link Settings}.
+     */
+    @After
+    public void tearDown() {
+        settings.cleanup(true);
+    }
+
+    /**
+     * Returns the settings for the test cases.
+     *
+     * @return
+     */
+    protected Settings getSettings() {
+        return settings;
     }
 }

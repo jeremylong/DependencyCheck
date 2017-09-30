@@ -25,7 +25,6 @@ import org.owasp.dependencycheck.data.nsp.NspSearch;
 import org.owasp.dependencycheck.data.nsp.SanitizePackage;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
@@ -37,11 +36,11 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonException;
@@ -50,6 +49,7 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
 import javax.json.JsonString;
 import javax.json.JsonValue;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.URLConnectionFailureException;
 
@@ -59,6 +59,7 @@ import org.owasp.dependencycheck.utils.URLConnectionFailureException;
  *
  * @author Steve Springett
  */
+@ThreadSafe
 public class NspAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
@@ -100,17 +101,17 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Initializes the analyzer once before any analysis is performed.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException if there's an error during initialization
      */
     @Override
-    public void initializeFileTypeAnalyzer() throws InitializationException {
+    public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         LOGGER.debug("Initializing {}", getName());
-        final String searchUrl = Settings.getString(Settings.KEYS.ANALYZER_NSP_URL, DEFAULT_URL);
         try {
-            searcher = new NspSearch(new URL(searchUrl));
+            searcher = new NspSearch(getSettings());
         } catch (MalformedURLException ex) {
             setEnabled(false);
-            throw new InitializationException("The configured URL to Node Security Platform is malformed: " + searchUrl, ex);
+            throw new InitializationException("The configured URL to Node Security Platform is malformed", ex);
         }
     }
 
@@ -148,7 +149,7 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         final File file = dependency.getActualFile();
-        if (!file.isFile() || file.length()==0) {
+        if (!file.isFile() || file.length() == 0) {
             return;
         }
         try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {
@@ -197,20 +198,19 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
                 vuln.setVulnerableSoftware(new HashSet<>(Arrays.asList(vs)));
 
                 // Add the vulnerability to package.json
-                dependency.getVulnerabilities().add(vuln);
+                dependency.addVulnerability(vuln);
             }
 
             /*
              * Adds evidence about the node package itself, not any of the modules.
              */
-            final EvidenceCollection productEvidence = dependency.getProductEvidence();
-            final EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
             if (packageJson.containsKey("name")) {
                 final Object value = packageJson.get("name");
                 if (value instanceof JsonString) {
                     final String valueString = ((JsonString) value).getString();
-                    productEvidence.addEvidence(PACKAGE_JSON, "name", valueString, Confidence.HIGHEST);
-                    vendorEvidence.addEvidence(PACKAGE_JSON, "name_project", String.format("%s_project", valueString), Confidence.LOW);
+                    dependency.addEvidence(EvidenceType.PRODUCT, PACKAGE_JSON, "name", valueString, Confidence.HIGHEST);
+                    dependency.addEvidence(EvidenceType.VENDOR, PACKAGE_JSON, "name_project",
+                            String.format("%s_project", valueString), Confidence.LOW);
                 } else {
                     LOGGER.warn("JSON value not string as expected: {}", value);
                 }
@@ -259,9 +259,9 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
             /*
              * Adds general evidence to about the package.
              */
-            addToEvidence(packageJson, productEvidence, "description");
-            addToEvidence(packageJson, vendorEvidence, "author");
-            addToEvidence(packageJson, dependency.getVersionEvidence(), "version");
+            addToEvidence(dependency, EvidenceType.PRODUCT, packageJson, "description");
+            addToEvidence(dependency, EvidenceType.VENDOR, packageJson, "author");
+            addToEvidence(dependency, EvidenceType.VERSION, packageJson, "version");
             dependency.setDisplayFileName(String.format("%s/%s", file.getParentFile().getName(), file.getName()));
         } catch (URLConnectionFailureException e) {
             this.setEnabled(false);
@@ -276,19 +276,19 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Processes a part of package.json (as defined by JsonArray) and update
-     * the specified dependency with relevant info.
+     * Processes a part of package.json (as defined by JsonArray) and update the
+     * specified dependency with relevant info.
      *
      * @param dependency the Dependency to update
      * @param jsonArray the jsonArray to parse
      * @param depType the dependency type
      */
     private void processPackage(Dependency dependency, JsonArray jsonArray, String depType) {
-        JsonObjectBuilder builder = Json.createObjectBuilder();
+        final JsonObjectBuilder builder = Json.createObjectBuilder();
         for (JsonString str : jsonArray.getValuesAs(JsonString.class)) {
             builder.add(str.toString(), "");
         }
-        JsonObject jsonObject = builder.build();
+        final JsonObject jsonObject = builder.build();
         processPackage(dependency, jsonObject, depType);
     }
 
@@ -324,9 +324,12 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
                  * dependency will not actually exist but needs to be unique (due to the use of Set in Dependency).
                  * The use of related dependencies is a way to specify the actual software BOM in package.json.
                  */
+                //TODO is this actually correct?  or should these be transitive dependencies?
                 final Dependency nodeModule = new Dependency(new File(dependency.getActualFile() + "#" + entry.getKey()), true);
                 nodeModule.setDisplayFileName(entry.getKey());
-                nodeModule.setIdentifiers(new HashSet<>(Arrays.asList(moduleName, moduleVersion, moduleDepType)));
+                nodeModule.addIdentifier(moduleName);
+                nodeModule.addIdentifier(moduleVersion);
+                nodeModule.addIdentifier(moduleDepType);
                 dependency.addRelatedDependency(nodeModule);
             }
         }
@@ -336,22 +339,23 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
      * Adds information to an evidence collection from the node json
      * configuration.
      *
+     * @param dep the dependency to which the evidence will be added
+     * @param type the type of evidence to be added
      * @param json information from node.js
-     * @param collection a set of evidence about a dependency
      * @param key the key to obtain the data from the json information
      */
-    private void addToEvidence(JsonObject json, EvidenceCollection collection, String key) {
+    private void addToEvidence(Dependency dep, EvidenceType type, JsonObject json, String key) {
         if (json.containsKey(key)) {
             final JsonValue value = json.get(key);
             if (value instanceof JsonString) {
-                collection.addEvidence(PACKAGE_JSON, key, ((JsonString) value).getString(), Confidence.HIGHEST);
+                dep.addEvidence(type, PACKAGE_JSON, key, ((JsonString) value).getString(), Confidence.HIGHEST);
             } else if (value instanceof JsonObject) {
                 final JsonObject jsonObject = (JsonObject) value;
                 for (final Map.Entry<String, JsonValue> entry : jsonObject.entrySet()) {
                     final String property = entry.getKey();
                     final JsonValue subValue = entry.getValue();
                     if (subValue instanceof JsonString) {
-                        collection.addEvidence(PACKAGE_JSON,
+                        dep.addEvidence(type, PACKAGE_JSON,
                                 String.format("%s.%s", key, property),
                                 ((JsonString) subValue).getString(),
                                 Confidence.HIGHEST);

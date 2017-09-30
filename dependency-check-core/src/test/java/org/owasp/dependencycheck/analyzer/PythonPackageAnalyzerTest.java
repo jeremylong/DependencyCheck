@@ -29,6 +29,7 @@ import java.io.File;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
  * Unit tests for PythonPackageAnalyzer.
@@ -48,10 +49,13 @@ public class PythonPackageAnalyzerTest extends BaseTest {
      * @throws Exception if there is a problem
      */
     @Before
+    @Override
     public void setUp() throws Exception {
+        super.setUp();
         analyzer = new PythonPackageAnalyzer();
         analyzer.setFilesMatched(true);
-        analyzer.initialize();
+        analyzer.initialize(getSettings());
+        analyzer.prepare(null);
     }
 
     /**
@@ -60,9 +64,10 @@ public class PythonPackageAnalyzerTest extends BaseTest {
      * @throws Exception if there is a problem
      */
     @After
+    @Override
     public void tearDown() throws Exception {
         analyzer.close();
-        analyzer = null;
+        super.tearDown();
     }
 
     /**
@@ -89,9 +94,9 @@ public class PythonPackageAnalyzerTest extends BaseTest {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(
                 this, "python/eggtest/__init__.py"));
         analyzer.analyze(result, null);
-        assertTrue("Expected vendor evidence to contain \"example\".", result
-                .getVendorEvidence().toString().contains("example"));
-        for (final Evidence e : result.getVersionEvidence()) {
+        assertTrue("Expected vendor evidence to contain \"example\".", 
+                result.getEvidence(EvidenceType.VENDOR).toString().contains("example"));
+        for (final Evidence e : result.getEvidence(EvidenceType.VERSION)) {
             if ("0.0.1".equals(e.getValue())) {
                 found = true;
                 break;
@@ -99,5 +104,4 @@ public class PythonPackageAnalyzerTest extends BaseTest {
         }
         assertTrue("Version 0.0.1 not found in EggTest dependency.", found);
     }
-
 }

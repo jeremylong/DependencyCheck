@@ -28,7 +28,6 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
@@ -43,9 +42,11 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.xml.parsers.ParserConfigurationException;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.apache.commons.lang3.SystemUtils;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.utils.XmlUtils;
 
 /**
@@ -55,6 +56,7 @@ import org.owasp.dependencycheck.utils.XmlUtils;
  * @author colezlaw
  *
  */
+@ThreadSafe
 public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
@@ -91,8 +93,8 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         // Use file.separator as a wild guess as to whether this is Windows
         final List<String> args = new ArrayList<>();
         if (!SystemUtils.IS_OS_WINDOWS) {
-            if (Settings.getString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH) != null) {
-                args.add(Settings.getString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH));
+            if (getSettings().getString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH) != null) {
+                args.add(getSettings().getString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH));
             } else if (isInPath("mono")) {
                 args.add("mono");
             } else {
@@ -111,20 +113,16 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws AnalysisException if anything goes sideways
      */
     @Override
-    public void analyzeDependency(Dependency dependency, Engine engine)
-            throws AnalysisException {
-
+    public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         final File test = new File(dependency.getActualFilePath());
         if (!test.isFile()) {
             throw new AnalysisException(String.format("%s does not exist and cannot be analyzed by dependency-check",
                     dependency.getActualFilePath()));
         }
-
         if (grokAssemblyExe == null) {
             LOGGER.warn("GrokAssembly didn't get deployed");
             return;
         }
-
         final List<String> args = buildArgumentList();
         if (args == null) {
             LOGGER.warn("Assembly Analyzer was unable to execute");
@@ -172,20 +170,17 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
 
             final String version = xpath.evaluate("/assembly/version", doc);
             if (version != null) {
-                dependency.getVersionEvidence().addEvidence(new Evidence("grokassembly", "version",
-                        version, Confidence.HIGHEST));
+                dependency.addEvidence(EvidenceType.VERSION, "grokassembly", "version", version, Confidence.HIGHEST);
             }
 
             final String vendor = xpath.evaluate("/assembly/company", doc);
             if (vendor != null) {
-                dependency.getVendorEvidence().addEvidence(new Evidence("grokassembly", "vendor",
-                        vendor, Confidence.HIGH));
+                dependency.addEvidence(EvidenceType.VENDOR, "grokassembly", "vendor", vendor, Confidence.HIGH);
             }
 
             final String product = xpath.evaluate("/assembly/product", doc);
             if (product != null) {
-                dependency.getProductEvidence().addEvidence(new Evidence("grokassembly", "product",
-                        product, Confidence.HIGH));
+                dependency.addEvidence(EvidenceType.PRODUCT, "grokassembly", "product", product, Confidence.HIGH);
             }
 
         } catch (ParserConfigurationException pce) {
@@ -199,22 +194,21 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.error("----------------------------------------------------");
             throw new AnalysisException("Couldn't parse Assembly Analyzer results (GrokAssembly)", saxe);
         }
-        // This shouldn't happen
-
     }
 
     /**
      * Initialize the analyzer. In this case, extract GrokAssembly.exe to a
      * temporary location.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException thrown if anything goes wrong
      */
     @Override
-    public void initializeFileTypeAnalyzer() throws InitializationException {
+    public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         final File tempFile;
         final File cfgFile;
         try {
-            tempFile = File.createTempFile("GKA", ".exe", Settings.getTempDirectory());
+            tempFile = File.createTempFile("GKA", ".exe", getSettings().getTempDirectory());
             cfgFile = new File(tempFile.getPath() + ".config");
         } catch (IOException ex) {
             setEnabled(false);

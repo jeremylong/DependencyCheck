@@ -30,25 +30,27 @@ import org.owasp.dependencycheck.utils.Settings;
  */
 public class ${analyzerName}Test {
     
+    Settings settings = null;
+	
     public ${analyzerName}Test() {
     }
     
     @BeforeClass
     public static void setUpClass() {
-        Settings.initialize();
     }
     
     @AfterClass
     public static void tearDownClass() {
-        Settings.cleanup();
     }
     
     @Before
     public void setUp() {
+        settings = new Settings();
     }
-    
+
     @After
     public void tearDown() {
+        settings.cleanup();
     }
 
     /**
@@ -68,12 +70,14 @@ public class ${analyzerName}Test {
      */
     @Test
     public void testAnalyze() throws Exception {
+        //The engine is generally null for most analyzer test cases but can be instantiated if needed.
+        Engine engine = null;
         ${analyzerName} instance = new ${analyzerName}();
-        instance.initialize();
+        instance.initialize(settings);
+        instance.prepare(engine);
+		
         File file = new File(${analyzerName}.class.getClassLoader().getResource("test.file").toURI().getPath());
         Dependency dependency = new Dependency(file);
-        //The engine is generally null for most analyzer test cases.
-        Engine engine = null;
 
         //TODO uncomment the following line and add assertions against the dependency.
         //instance.analyze(dependency, engine);
@@ -107,7 +111,7 @@ public class ${analyzerName}Test {
     @Test
     public void testInitialize() throws Exception {
         ${analyzerName} instance = new ${analyzerName}();
-        instance.initialize();
+        instance.initialize(settings);
     }
 
     /**

@@ -23,6 +23,10 @@ import java.io.Serializable;
  * @author jeremy
  */
 public class SimplePojo implements Serializable {
+    /**
+     * The serial version UID for serialization.
+     */
+    private static final long serialVersionUID = 1L;
 
     public String s = "3";
     public Integer i = 3;

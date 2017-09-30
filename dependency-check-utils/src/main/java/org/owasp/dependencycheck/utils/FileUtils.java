@@ -102,25 +102,6 @@ public final class FileUtils {
     }
 
     /**
-     * Generates a new temporary file name that is guaranteed to be unique.
-     *
-     * @param prefix the prefix for the file name to generate
-     * @param extension the extension of the generated file name
-     * @return a temporary File
-     * @throws java.io.IOException thrown if the temporary folder could not be
-     * created
-     */
-    public static File getTempFile(String prefix, String extension) throws IOException {
-        final File dir = Settings.getTempDirectory();
-        final String tempFileName = String.format("%s%s.%s", prefix, UUID.randomUUID().toString(), extension);
-        final File tempFile = new File(dir, tempFileName);
-        if (tempFile.exists()) {
-            return getTempFile(prefix, extension);
-        }
-        return tempFile;
-    }
-
-    /**
      * Return the bit bucket for the OS. '/dev/null' for Unix and 'NUL' for
      * Windows
      *

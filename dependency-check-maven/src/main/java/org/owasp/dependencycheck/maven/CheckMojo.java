@@ -30,7 +30,6 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
-import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * Maven Plugin that checks the project dependencies to see if they have any
@@ -41,7 +40,7 @@ import org.owasp.dependencycheck.utils.Settings;
 @Mojo(
         name = "check",
         defaultPhase = LifecyclePhase.VERIFY,
-        threadSafe = false,
+        threadSafe = true,
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
         requiresOnline = true
 )
@@ -99,7 +98,7 @@ public class CheckMojo extends BaseDependencyCheckMojo {
         }
         if (engine != null) {
             ExceptionCollection exCol = scanArtifacts(getProject(), engine);
-            if (engine.getDependencies().isEmpty()) {
+            if (engine.getDependencies().length == 0) {
                 getLog().info("No dependencies were identified that could be analyzed by dependency-check");
             }
             try {
@@ -129,9 +128,9 @@ public class CheckMojo extends BaseDependencyCheckMojo {
                     throw new MojoExecutionException("One or more exceptions occurred during dependency-check analysis", exCol);
                 }
             }
-            engine.cleanup();
+            engine.close();
         }
-        Settings.cleanup();
+        getSettings().cleanup();
     }
 
     /**

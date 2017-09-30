@@ -33,6 +33,7 @@ import org.owasp.dependencycheck.utils.Settings;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
  * @author Jeremy Long
@@ -50,16 +51,17 @@ public class JarAnalyzerTest extends BaseTest {
         File file = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
         Dependency result = new Dependency(file);
         JarAnalyzer instance = new JarAnalyzer();
-        instance.initializeFileTypeAnalyzer();
+        instance.initialize(getSettings());
+        instance.prepareFileTypeAnalyzer(null);
         instance.analyze(result, null);
-        assertTrue(result.getVendorEvidence().toString().toLowerCase().contains("apache"));
-        assertTrue(result.getVendorEvidence().getWeighting().contains("apache"));
+        assertTrue(result.getEvidence(EvidenceType.VENDOR).toString().toLowerCase().contains("apache"));
+        assertTrue(result.getVendorWeightings().contains("apache"));
 
         file = BaseTest.getResourceAsFile(this, "dwr.jar");
         result = new Dependency(file);
         instance.analyze(result, null);
         boolean found = false;
-        for (Evidence e : result.getVendorEvidence()) {
+        for (Evidence e : result.getEvidence(EvidenceType.VENDOR)) {
             if (e.getName().equals("url")) {
                 assertEquals("Project url was not as expected in dwr.jar", e.getValue(), "http://getahead.ltd.uk/dwr");
                 found = true;
@@ -73,7 +75,7 @@ public class JarAnalyzerTest extends BaseTest {
         result = new Dependency(file);
         instance.analyze(result, null);
         found = false;
-        for (Evidence e : result.getProductEvidence()) {
+        for (Evidence e : result.getEvidence(EvidenceType.PRODUCT)) {
             if (e.getName().equalsIgnoreCase("package-title")
                     && e.getValue().equalsIgnoreCase("org.mortbay.http")) {
                 found = true;
@@ -83,7 +85,7 @@ public class JarAnalyzerTest extends BaseTest {
         assertTrue("package-title of org.mortbay.http not found in org.mortbay.jetty.jar", found);
 
         found = false;
-        for (Evidence e : result.getVendorEvidence()) {
+        for (Evidence e : result.getEvidence(EvidenceType.VENDOR)) {
             if (e.getName().equalsIgnoreCase("implementation-url")
                     && e.getValue().equalsIgnoreCase("http://jetty.mortbay.org")) {
                 found = true;
@@ -93,7 +95,7 @@ public class JarAnalyzerTest extends BaseTest {
         assertTrue("implementation-url of http://jetty.mortbay.org not found in org.mortbay.jetty.jar", found);
 
         found = false;
-        for (Evidence e : result.getVersionEvidence()) {
+        for (Evidence e : result.getEvidence(EvidenceType.VERSION)) {
             if (e.getName().equalsIgnoreCase("Implementation-Version")
                     && e.getValue().equalsIgnoreCase("4.2.27")) {
                 found = true;
@@ -106,7 +108,7 @@ public class JarAnalyzerTest extends BaseTest {
         file = BaseTest.getResourceAsFile(this, "org.mortbay.jmx.jar");
         result = new Dependency(file);
         instance.analyze(result, null);
-        assertEquals("org.mortbar.jmx.jar has version evidence?", result.getVersionEvidence().size(), 0);
+        assertEquals("org.mortbar.jmx.jar has version evidence?", result.getEvidence(EvidenceType.VERSION).size(), 0);
     }
 
     /**
@@ -115,7 +117,8 @@ public class JarAnalyzerTest extends BaseTest {
     @Test
     public void testAcceptSupportedExtensions() throws Exception {
         JarAnalyzer instance = new JarAnalyzer();
-        instance.initialize();
+        instance.initialize(getSettings());
+        instance.prepare(null);
         instance.setEnabled(true);
         String[] files = {"test.jar", "test.war"};
         for (String name : files) {
@@ -142,7 +145,7 @@ public class JarAnalyzerTest extends BaseTest {
         List<JarAnalyzer.ClassNameInformation> cni = new ArrayList<>();
         instance.parseManifest(result, cni);
 
-        assertTrue(result.getVersionEvidence().getEvidence("manifest: org/apache/xalan/").size() > 0);
+        assertTrue(result.getEvidence(EvidenceType.VENDOR).toString().contains("manifest: org/apache/xalan/"));
     }
 
     /**
@@ -181,14 +184,15 @@ public class JarAnalyzerTest extends BaseTest {
         JarAnalyzer instance = new JarAnalyzer();
         Dependency macOSMetaDataFile = new Dependency();
         macOSMetaDataFile
-            .setActualFilePath(FileUtils.getFile("src", "test", "resources", "._avro-ipc-1.5.0.jar").getAbsolutePath());
+                .setActualFilePath(FileUtils.getFile("src", "test", "resources", "._avro-ipc-1.5.0.jar").getAbsolutePath());
         macOSMetaDataFile.setFileName("._avro-ipc-1.5.0.jar");
         Dependency actualJarFile = new Dependency();
         actualJarFile.setActualFilePath(BaseTest.getResourceAsFile(this, "avro-ipc-1.5.0.jar").getAbsolutePath());
         actualJarFile.setFileName("avro-ipc-1.5.0.jar");
-        Engine engine = new Engine();
-        engine.setDependencies(Arrays.asList(macOSMetaDataFile, actualJarFile));
-        instance.analyzeDependency(macOSMetaDataFile, engine);
+        try (Engine engine = new Engine(getSettings())) {
+            engine.setDependencies(Arrays.asList(macOSMetaDataFile, actualJarFile));
+            instance.analyzeDependency(macOSMetaDataFile, engine);
+        }
     }
 
     @Test
@@ -196,10 +200,11 @@ public class JarAnalyzerTest extends BaseTest {
         JarAnalyzer instance = new JarAnalyzer();
         Dependency textFileWithJarExtension = new Dependency();
         textFileWithJarExtension
-            .setActualFilePath(BaseTest.getResourceAsFile(this, "textFileWithJarExtension.jar").getAbsolutePath());
+                .setActualFilePath(BaseTest.getResourceAsFile(this, "textFileWithJarExtension.jar").getAbsolutePath());
         textFileWithJarExtension.setFileName("textFileWithJarExtension.jar");
-        Engine engine = new Engine();
-        engine.setDependencies(Collections.singletonList(textFileWithJarExtension));
-        instance.analyzeDependency(textFileWithJarExtension, engine);
+        try (Engine engine = new Engine(getSettings())) {
+            engine.setDependencies(Collections.singletonList(textFileWithJarExtension));
+            instance.analyzeDependency(textFileWithJarExtension, engine);
+        }
     }
 }

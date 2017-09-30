@@ -48,11 +48,18 @@ public final class URLConnectionFactory {
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(URLConnectionFactory.class);
+    /**
+     * The configured settings.
+     */
+    private final Settings settings;
 
     /**
      * Private constructor for this factory.
+     *
+     * @param settings reference to the configured settings
      */
-    private URLConnectionFactory() {
+    public URLConnectionFactory(Settings settings) {
+        this.settings = settings;
     }
 
     /**
@@ -65,17 +72,17 @@ public final class URLConnectionFactory {
      * @throws URLConnectionFailureException thrown if there is an exception
      */
     @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE", justification = "Just being extra safe")
-    public static HttpURLConnection createHttpURLConnection(URL url) throws URLConnectionFailureException {
+    public HttpURLConnection createHttpURLConnection(URL url) throws URLConnectionFailureException {
         HttpURLConnection conn = null;
-        final String proxyHost = Settings.getString(Settings.KEYS.PROXY_SERVER);
+        final String proxyHost = settings.getString(Settings.KEYS.PROXY_SERVER);
 
         try {
             if (proxyHost != null && !matchNonProxy(url)) {
-                final int proxyPort = Settings.getInt(Settings.KEYS.PROXY_PORT);
+                final int proxyPort = settings.getInt(Settings.KEYS.PROXY_PORT);
                 final SocketAddress address = new InetSocketAddress(proxyHost, proxyPort);
 
-                final String username = Settings.getString(Settings.KEYS.PROXY_USERNAME);
-                final String password = Settings.getString(Settings.KEYS.PROXY_PASSWORD);
+                final String username = settings.getString(Settings.KEYS.PROXY_USERNAME);
+                final String password = settings.getString(Settings.KEYS.PROXY_PASSWORD);
 
                 if (username != null && password != null) {
                     final Authenticator auth = new Authenticator() {
@@ -84,7 +91,7 @@ public final class URLConnectionFactory {
                             if (proxyHost.equals(getRequestingHost()) || getRequestorType().equals(Authenticator.RequestorType.PROXY)) {
                                 LOGGER.debug("Using the configured proxy username and password");
                                 try {
-                                    if (Settings.getBoolean(Settings.KEYS.PROXY_DISABLE_SCHEMAS, true)) {
+                                    if (settings.getBoolean(Settings.KEYS.PROXY_DISABLE_SCHEMAS, true)) {
                                         System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
                                     }
                                 } catch (InvalidSettingException ex) {
@@ -103,8 +110,8 @@ public final class URLConnectionFactory {
             } else {
                 conn = (HttpURLConnection) url.openConnection();
             }
-            final int timeout = Settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT, 10000);
-            conn.setConnectTimeout(timeout);
+            final int connectionTimeout = settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT, 10000);
+            conn.setConnectTimeout(connectionTimeout);
             conn.setInstanceFollowRedirects(true);
         } catch (IOException ex) {
             if (conn != null) {
@@ -126,11 +133,11 @@ public final class URLConnectionFactory {
      * @param url the url to connect to
      * @return matching result. true: match nonProxy
      */
-    private static boolean matchNonProxy(final URL url) {
+    private boolean matchNonProxy(final URL url) {
         final String host = url.getHost();
 
         // code partially from org.apache.maven.plugins.site.AbstractDeployMojo#getProxyInfo
-        final String nonProxyHosts = Settings.getString(Settings.KEYS.PROXY_NON_PROXY_HOSTS);
+        final String nonProxyHosts = settings.getString(Settings.KEYS.PROXY_NON_PROXY_HOSTS);
         if (null != nonProxyHosts) {
             final String[] nonProxies = nonProxyHosts.split("(,)|(;)|(\\|)");
             for (final String nonProxyHost : nonProxies) {
@@ -172,14 +179,14 @@ public final class URLConnectionFactory {
      * @return a newly constructed HttpURLConnection
      * @throws URLConnectionFailureException thrown if there is an exception
      */
-    public static HttpURLConnection createHttpURLConnection(URL url, boolean proxy) throws URLConnectionFailureException {
+    public HttpURLConnection createHttpURLConnection(URL url, boolean proxy) throws URLConnectionFailureException {
         if (proxy) {
             return createHttpURLConnection(url);
         }
         HttpURLConnection conn = null;
         try {
             conn = (HttpURLConnection) url.openConnection();
-            final int timeout = Settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT, 10000);
+            final int timeout = settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT, 10000);
             conn.setConnectTimeout(timeout);
             conn.setInstanceFollowRedirects(true);
         } catch (IOException ioe) {
@@ -197,11 +204,11 @@ public final class URLConnectionFactory {
      * @param url the URL
      * @param conn the connection
      */
-    private static void configureTLS(URL url, URLConnection conn) {
+    private void configureTLS(URL url, URLConnection conn) {
         if ("https".equals(url.getProtocol())) {
             try {
                 final HttpsURLConnection secCon = (HttpsURLConnection) conn;
-                final SSLSocketFactoryEx factory = new SSLSocketFactoryEx();
+                final SSLSocketFactoryEx factory = new SSLSocketFactoryEx(settings);
                 secCon.setSSLSocketFactory(factory);
             } catch (NoSuchAlgorithmException ex) {
                 LOGGER.debug("Unsupported algorithm in SSLSocketFactoryEx", ex);

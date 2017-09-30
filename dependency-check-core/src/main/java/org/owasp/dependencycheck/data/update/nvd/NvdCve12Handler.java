@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -34,6 +35,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class NvdCve12Handler extends DefaultHandler {
 
     /**

@@ -17,11 +17,14 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * An exception thrown if an operation against the database fails.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class DatabaseException extends RuntimeException {
 
     /**

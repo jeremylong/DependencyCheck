@@ -54,49 +54,49 @@ public class EngineTest extends BaseDBTestCase {
      */
     @Test
     public void testScanFile() throws DatabaseException {
-        Engine instance = new Engine();
-        instance.addFileTypeAnalyzer(new JarAnalyzer());
-        File file = BaseTest.getResourceAsFile(this, "dwr.jar");
-        Dependency dwr = instance.scanFile(file);
-        file = BaseTest.getResourceAsFile(this, "org.mortbay.jmx.jar");
-        instance.scanFile(file);
-        assertEquals(2, instance.getDependencies().size());
+        try (Engine instance = new Engine(getSettings())) {
+            instance.addFileTypeAnalyzer(new JarAnalyzer());
+            File file = BaseTest.getResourceAsFile(this, "dwr.jar");
+            Dependency dwr = instance.scanFile(file);
+            file = BaseTest.getResourceAsFile(this, "org.mortbay.jmx.jar");
+            instance.scanFile(file);
+            assertEquals(2, instance.getDependencies().length);
 
-        file = BaseTest.getResourceAsFile(this, "dwr.jar");
-        Dependency secondDwr = instance.scanFile(file);
+            file = BaseTest.getResourceAsFile(this, "dwr.jar");
+            Dependency secondDwr = instance.scanFile(file);
 
-        assertEquals(2, instance.getDependencies().size());
-        assertEquals(dwr, secondDwr);
+            assertEquals(2, instance.getDependencies().length);
+            assertEquals(dwr, secondDwr);
+        }
     }
 
     @Test(expected = ExceptionCollection.class)
     public void exceptionDuringAnalysisTaskExecutionIsFatal() throws DatabaseException, ExceptionCollection {
-        final ExecutorService executorService = Executors.newFixedThreadPool(3);
-        final Engine instance = new Engine();
-        final List<Throwable> exceptions = new ArrayList<>();
 
-        new Expectations() {
-            {
-                analysisTask.call();
-                result = new IllegalStateException("Analysis task execution threw an exception");
-            }
-        };
+        try (Engine instance = new Engine(getSettings())) {
+            final ExecutorService executorService = Executors.newFixedThreadPool(3);
+            final List<Throwable> exceptions = new ArrayList<>();
 
-        final List<AnalysisTask> failingAnalysisTask = new ArrayList<>();
-        failingAnalysisTask.add(analysisTask);
+            new Expectations() {
+                {
+                    analysisTask.call();
+                    result = new IllegalStateException("Analysis task execution threw an exception");
+                }
+            };
 
-        new Expectations(instance) {
-            {
-                instance.getExecutorService(analyzer);
-                result = executorService;
+            final List<AnalysisTask> failingAnalysisTask = new ArrayList<>();
+            failingAnalysisTask.add(analysisTask);
 
-                instance.getAnalysisTasks(analyzer, exceptions);
-                result = failingAnalysisTask;
-            }
-        };
-
-        instance.executeAnalysisTasks(analyzer, exceptions);
-
-        assertTrue(executorService.isShutdown());
+            new Expectations(instance) {
+                {
+                    instance.getExecutorService(analyzer);
+                    result = executorService;
+                    instance.getAnalysisTasks(analyzer, exceptions);
+                    result = failingAnalysisTask;
+                }
+            };
+            instance.executeAnalysisTasks(analyzer, exceptions);
+            assertTrue(executorService.isShutdown());
+        }
     }
 }

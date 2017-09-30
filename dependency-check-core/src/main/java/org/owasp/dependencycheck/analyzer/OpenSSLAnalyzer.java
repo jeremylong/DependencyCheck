@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
@@ -38,6 +40,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
  *
  * @author Dale Visser
  */
+@ThreadSafe
 public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
@@ -144,12 +147,23 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
+     * Returns the setting for the analyzer enabled setting key.
+     *
+     * @return the setting for the analyzer enabled setting key
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+        return Settings.KEYS.ANALYZER_OPENSSL_ENABLED;
+    }
+
+    /**
      * No-op initializer implementation.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException never thrown
      */
     @Override
-    protected void initializeFileTypeAnalyzer() throws InitializationException {
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         // Nothing to do here.
     }
 
@@ -171,17 +185,17 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
         if (!contents.isEmpty()) {
             final Matcher matcher = VERSION_PATTERN.matcher(contents);
             if (matcher.find()) {
-                dependency.getVersionEvidence().addEvidence(OPENSSLV_H, "Version Constant",
+                dependency.addEvidence(EvidenceType.VERSION, OPENSSLV_H, "Version Constant",
                         getOpenSSLVersion(Long.parseLong(matcher.group(1), HEXADECIMAL)), Confidence.HIGH);
                 found = true;
             }
         }
         if (found) {
             dependency.setDisplayFileName(parentName + File.separatorChar + OPENSSLV_H);
-            dependency.getVendorEvidence().addEvidence(OPENSSLV_H, "Vendor", "OpenSSL", Confidence.HIGHEST);
-            dependency.getProductEvidence().addEvidence(OPENSSLV_H, "Product", "OpenSSL", Confidence.HIGHEST);
+            dependency.addEvidence(EvidenceType.VENDOR, OPENSSLV_H, "Vendor", "OpenSSL", Confidence.HIGHEST);
+            dependency.addEvidence(EvidenceType.PRODUCT, OPENSSLV_H, "Product", "OpenSSL", Confidence.HIGHEST);
         } else {
-            engine.getDependencies().remove(dependency);
+            engine.removeDependency(dependency);
         }
     }
 
@@ -200,15 +214,5 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
             throw new AnalysisException(
                     "Problem occurred while reading dependency file.", e);
         }
-    }
-
-    /**
-     * Returns the setting for the analyzer enabled setting key.
-     *
-     * @return the setting for the analyzer enabled setting key
-     */
-    @Override
-    protected String getAnalyzerEnabledSettingKey() {
-        return Settings.KEYS.ANALYZER_OPENSSL_ENABLED;
     }
 }

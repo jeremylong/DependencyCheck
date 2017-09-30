@@ -22,10 +22,10 @@ public class CentralSearchTest extends BaseTest {
     private CentralSearch searcher;
 
     @Before
+    @Override
     public void setUp() throws Exception {
-        String centralUrl = Settings.getString(Settings.KEYS.ANALYZER_CENTRAL_URL);
-        LOGGER.debug(centralUrl);
-        searcher = new CentralSearch(new URL(centralUrl));
+        super.setUp();
+        searcher = new CentralSearch(getSettings());
     }
 
     @Test(expected = IllegalArgumentException.class)

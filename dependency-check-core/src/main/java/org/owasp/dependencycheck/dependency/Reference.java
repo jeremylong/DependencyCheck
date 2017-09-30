@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.dependency;
 
 import java.io.Serializable;
+import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 
 /**
@@ -26,6 +27,7 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class Reference implements Serializable, Comparable<Reference> {
 
     /**

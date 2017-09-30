@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.data.lucene;
 
 import java.io.IOException;
 import java.util.LinkedList;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -33,6 +34,7 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public final class TokenPairConcatenatingFilter extends TokenFilter {
 
     /**

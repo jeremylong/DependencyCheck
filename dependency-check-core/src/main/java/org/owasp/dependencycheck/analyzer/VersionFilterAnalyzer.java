@@ -17,13 +17,15 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
-import org.owasp.dependencycheck.dependency.EvidenceCollection;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -37,7 +39,13 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class VersionFilterAnalyzer extends AbstractAnalyzer {
+
+    /**
+     * The Logger for use throughout the class
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(VersionFilterAnalyzer.class);
 
     //<editor-fold defaultstate="collapsed" desc="Constants">
     /**
@@ -112,11 +120,6 @@ public class VersionFilterAnalyzer extends AbstractAnalyzer {
     //</editor-fold>
 
     /**
-     * The Logger for use throughout the class
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(VersionFilterAnalyzer.class);
-
-    /**
      * The HintAnalyzer uses knowledge about a dependency to add additional
      * information to help in identification of identifiers or vulnerabilities.
      *
@@ -126,18 +129,18 @@ public class VersionFilterAnalyzer extends AbstractAnalyzer {
      * the dependency.
      */
     @Override
-    protected synchronized void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         String fileVersion = null;
         String pomVersion = null;
         String manifestVersion = null;
-        for (Evidence e : dependency.getVersionEvidence()) {
+        for (Evidence e : dependency.getEvidence(EvidenceType.VERSION)) {
             if (FILE.equals(e.getSource()) && VERSION.equals(e.getName())) {
-                fileVersion = e.getValue(Boolean.FALSE);
+                fileVersion = e.getValue();
             } else if ((NEXUS.equals(e.getSource()) || CENTRAL.equals(e.getSource())
                     || POM.equals(e.getSource())) && VERSION.equals(e.getName())) {
-                pomVersion = e.getValue(Boolean.FALSE);
+                pomVersion = e.getValue();
             } else if (MANIFEST.equals(e.getSource()) && IMPLEMENTATION_VERSION.equals(e.getName())) {
-                manifestVersion = e.getValue(Boolean.FALSE);
+                manifestVersion = e.getValue();
             }
         }
         //ensure we have at least two not null
@@ -150,16 +153,17 @@ public class VersionFilterAnalyzer extends AbstractAnalyzer {
             final boolean pomMatch = Objects.equals(dvPom, dvFile) || Objects.equals(dvPom, dvManifest);
             if (fileMatch || manifestMatch || pomMatch) {
                 LOGGER.debug("filtering evidence from {}", dependency.getFileName());
-                final EvidenceCollection versionEvidence = dependency.getVersionEvidence();
-                final Iterator<Evidence> itr = versionEvidence.iterator();
-                while (itr.hasNext()) {
-                    final Evidence e = itr.next();
+                final Set<Evidence> remove = new HashSet<>();
+                for (Evidence e : dependency.getEvidence(EvidenceType.VERSION)) {
                     if (!(pomMatch && VERSION.equals(e.getName())
                             && (NEXUS.equals(e.getSource()) || CENTRAL.equals(e.getSource()) || POM.equals(e.getSource())))
                             && !(fileMatch && VERSION.equals(e.getName()) && FILE.equals(e.getSource()))
                             && !(manifestMatch && MANIFEST.equals(e.getSource()) && IMPLEMENTATION_VERSION.equals(e.getName()))) {
-                        itr.remove();
+                        remove.add(e);
                     }
+                }
+                for (Evidence e : remove) {
+                    dependency.removeEvidence(EvidenceType.VERSION, e);
                 }
             }
         }

@@ -39,14 +39,18 @@ import org.owasp.dependencycheck.utils.Settings.KEYS;
  */
 public class AbstractSuppressionAnalyzerTest extends BaseTest {
 
-    /** A second suppression file to test with. */
+    /**
+     * A second suppression file to test with.
+     */
     private static final String OTHER_SUPPRESSIONS_FILE = "other-suppressions.xml";
 
-    /** Suppression file to test with. */
+    /**
+     * Suppression file to test with.
+     */
     private static final String SUPPRESSIONS_FILE = "suppressions.xml";
-
+    
     private AbstractSuppressionAnalyzer instance;
-
+    
     @Before
     public void createObjectUnderTest() throws Exception {
         instance = new AbstractSuppressionAnalyzerImpl();
@@ -75,7 +79,7 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
 
     /**
      * Test of getRules method, of class AbstractSuppressionAnalyzer for
-     * suppression file on the classpath.
+     * suppression file on the class path.
      */
     @Test
     public void testGetRulesFromSuppressionFileInClasspath() throws Exception {
@@ -84,7 +88,8 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
     }
 
     /**
-     * Assert that rules are loaded from multiple files if multiple files are denfined in the {@link Settings} singleton.
+     * Assert that rules are loaded from multiple files if multiple files are
+     * defined in the {@link Settings}.
      */
     @Test
     public void testGetRulesFromMultipleSuppressionFiles() throws Exception {
@@ -97,71 +102,75 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
         final int rulesInSecondFile = getNumberOfRulesLoadedFromPath(OTHER_SUPPRESSIONS_FILE) - rulesInCoreFile;
 
         // WHEN initializing with both suppression files
-        final String[] suppressionFiles = { SUPPRESSIONS_FILE, OTHER_SUPPRESSIONS_FILE };
-        Settings.setArrayIfNotEmpty(KEYS.SUPPRESSION_FILE, suppressionFiles);
-        instance.initialize();
+        final String[] suppressionFiles = {SUPPRESSIONS_FILE, OTHER_SUPPRESSIONS_FILE};
+        getSettings().setArrayIfNotEmpty(KEYS.SUPPRESSION_FILE, suppressionFiles);
+        instance.initialize(getSettings());
+        instance.prepare(null);
 
         // THEN rules from both files were loaded
         final int expectedSize = rulesInFirstFile + rulesInSecondFile + rulesInCoreFile;
         assertThat("Expected suppressions from both files", instance.getRuleCount(), is(expectedSize));
     }
-
+    
     @Test(expected = InitializationException.class)
     public void testFailureToLocateSuppressionFileAnywhere() throws Exception {
-        Settings.setString(Settings.KEYS.SUPPRESSION_FILE, "doesnotexist.xml");
-        instance.initialize();
+        getSettings().setString(Settings.KEYS.SUPPRESSION_FILE, "doesnotexist.xml");
+        instance.initialize(getSettings());
+        instance.prepare(null);
     }
 
     /**
-     * Return the number of rules that are loaded from the core suppression file.
+     * Return the number of rules that are loaded from the core suppression
+     * file.
      *
-     * @return the number of rules defined in the core suppresion file.
+     * @return the number of rules defined in the core suppression file.
      * @throws Exception if loading the rules fails.
      */
     private int getNumberOfRulesLoadedInCoreFile() throws Exception {
-        Settings.removeProperty(KEYS.SUPPRESSION_FILE);
-
+        getSettings().removeProperty(KEYS.SUPPRESSION_FILE);
         final AbstractSuppressionAnalyzerImpl coreFileAnalyzer = new AbstractSuppressionAnalyzerImpl();
-        coreFileAnalyzer.initialize();
+        coreFileAnalyzer.initialize(getSettings());
+        coreFileAnalyzer.prepare(null);
         return coreFileAnalyzer.getRuleCount();
     }
 
     /**
-     * Load a file into the {@link AbstractSuppressionAnalyzer} and return the number of rules loaded.
+     * Load a file into the {@link AbstractSuppressionAnalyzer} and return the
+     * number of rules loaded.
      *
      * @param path the path to load.
      * @return the number of rules that were loaded (including the core rules).
      * @throws Exception if loading the rules fails.
      */
     private int getNumberOfRulesLoadedFromPath(final String path) throws Exception {
-        Settings.setString(KEYS.SUPPRESSION_FILE, path);
-
+        getSettings().setString(KEYS.SUPPRESSION_FILE, path);
         final AbstractSuppressionAnalyzerImpl fileAnalyzer = new AbstractSuppressionAnalyzerImpl();
-        fileAnalyzer.initialize();
+        fileAnalyzer.initialize(getSettings());
+        fileAnalyzer.prepare(null);
         return fileAnalyzer.getRuleCount();
     }
-
+    
     public class AbstractSuppressionAnalyzerImpl extends AbstractSuppressionAnalyzer {
-
+        
         @Override
         public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-
+        
         @Override
         public String getName() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-
+        
         @Override
         public AnalysisPhase getAnalysisPhase() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-
+        
         @Override
         protected String getAnalyzerEnabledSettingKey() {
             return "unknown";
         }
     }
-
+    
 }

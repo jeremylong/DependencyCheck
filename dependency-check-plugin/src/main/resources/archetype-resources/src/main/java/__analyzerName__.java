@@ -23,6 +23,7 @@ import org.owasp.dependencycheck.analyzer.FileTypeAnalyzer;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * An OWASP dependency-check plug-in example. If you are not implementing a
@@ -66,7 +67,7 @@ public class ${analyzerName} implements Analyzer, FileTypeAnalyzer {
     @Override
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
         if (enabled) {
-            throw new UnsupportedOperationException("Not implemented yet.");
+            //TODO implement analyze
         }
     }
 
@@ -91,15 +92,26 @@ public class ${analyzerName} implements Analyzer, FileTypeAnalyzer {
     }
 
     /**
-     * The initialize method is called (once) prior to the analyze method being
-     * called on all of the dependencies.
+     * The initialize method is called just after instantiation of the object.
      *
-     * @throws InitializationException is thrown if an exception occurs
-     * initializing the analyzer.
+     * @param settings a reference to the configured settings
      */
     @Override
-    public void initialize() throws InitializationException {
+    public void initialize(Settings settings) {
+        //TODO implement initialize
+    }
 
+    /**
+     * The prepare method is called once just prior to repeated calls to
+     * analyze.
+     *
+     * @param engine a reference to the engine
+     * @throws InitializationException thrown when the analyzer cannot be
+     * initialized
+     */
+    @Override
+    public void prepare(Engine engine) throws InitializationException {
+        //TODO implement prepare
     }
 
     /**
@@ -116,7 +128,7 @@ public class ${analyzerName} implements Analyzer, FileTypeAnalyzer {
     /**
      * Returns whether multiple instances of the same type of analyzer can run
      * in parallel. If the analyzer does not support parallel processing it is
-	 * generally best to also mark the analyze(Dependency,Engine) as synchronized.
+     * generally best to also mark the analyze(Dependency,Engine) as synchronized.
      *
      * @return {@code true} if the analyzer supports parallel processing,
      * {@code false} else

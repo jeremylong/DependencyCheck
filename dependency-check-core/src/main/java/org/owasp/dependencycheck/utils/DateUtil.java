@@ -17,10 +17,13 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public final class DateUtil {
 
     /**
@@ -30,9 +33,10 @@ public final class DateUtil {
     }
 
     /**
-     * Determines if the epoch date is within the range specified of the compareTo epoch time. This takes the
-     * (compareTo-date)/1000/60/60/24 to get the number of days. If the calculated days is less then the range the date
-     * is considered valid.
+     * Determines if the epoch date is within the range specified of the
+     * compareTo epoch time. This takes the (compareTo-date)/1000/60/60/24 to
+     * get the number of days. If the calculated days is less then the range the
+     * date is considered valid.
      *
      * @param date the date to be checked.
      * @param compareTo the date to compare to.

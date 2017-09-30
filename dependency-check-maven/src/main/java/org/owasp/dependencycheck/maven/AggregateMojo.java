@@ -34,7 +34,6 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
-import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * Maven Plugin that checks project dependencies and the dependencies of all
@@ -46,7 +45,7 @@ import org.owasp.dependencycheck.utils.Settings;
         name = "aggregate",
         defaultPhase = LifecyclePhase.VERIFY,
         aggregator = true,
-        threadSafe = false,
+        threadSafe = true,
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
         requiresOnline = true
 )
@@ -150,8 +149,8 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         if (exCol != null && this.isFailOnError()) {
             throw new MojoExecutionException("One or more exceptions occurred during dependency-check analysis", exCol);
         }
-        engine.cleanup();
-        Settings.cleanup();
+        engine.close();
+        getSettings().cleanup();
     }
 
     /**

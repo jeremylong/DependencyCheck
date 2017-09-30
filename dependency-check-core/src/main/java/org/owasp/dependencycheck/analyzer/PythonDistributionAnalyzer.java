@@ -32,7 +32,6 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +45,8 @@ import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.UrlStringUtils;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
  * Used to analyze a Wheel or egg distribution files, or their contents in
@@ -55,30 +56,26 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Dale Visser
  */
 @Experimental
+@ThreadSafe
 public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
      * Name of egg metadata files to analyze.
      */
     private static final String PKG_INFO = "PKG-INFO";
-
     /**
      * Name of wheel metadata files to analyze.
      */
     private static final String METADATA = "METADATA";
-
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(PythonDistributionAnalyzer.class);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(PythonDistributionAnalyzer.class);
     /**
      * The count of directories created during analysis. This is used for
      * creating temporary directories.
      */
     private static final AtomicInteger DIR_COUNT = new AtomicInteger(0);
-
     /**
      * The name of the analyzer.
      */
@@ -87,52 +84,39 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
      * The phase that this analyzer is intended to run in.
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
-
     /**
      * The set of file extensions supported by this analyzer.
      */
     private static final String[] EXTENSIONS = {"whl", "egg", "zip"};
-
     /**
      * Used to match on egg archive candidate extensions.
      */
     private static final FileFilter EGG_OR_ZIP = FileFilterBuilder.newInstance().addExtensions("egg", "zip").build();
-
     /**
      * Used to detect files with a .whl extension.
      */
     private static final FileFilter WHL_FILTER = FileFilterBuilder.newInstance().addExtensions("whl").build();
-
     /**
      * The parent directory for the individual directories per archive.
      */
     private File tempFileLocation;
-
     /**
      * Filter that detects *.dist-info files (but doesn't verify they are
      * directories.
      */
-    private static final FilenameFilter DIST_INFO_FILTER = new SuffixFileFilter(
-            ".dist-info");
-
+    private static final FilenameFilter DIST_INFO_FILTER = new SuffixFileFilter(".dist-info");
     /**
      * Filter that detects files named "METADATA".
      */
-    private static final FilenameFilter EGG_INFO_FILTER = new NameFileFilter(
-            "EGG-INFO");
-
+    private static final FilenameFilter EGG_INFO_FILTER = new NameFileFilter("EGG-INFO");
     /**
      * Filter that detects files named "METADATA".
      */
-    private static final NameFileFilter METADATA_FILTER = new NameFileFilter(
-            METADATA);
-
+    private static final NameFileFilter METADATA_FILTER = new NameFileFilter(METADATA);
     /**
      * Filter that detects files named "PKG-INFO".
      */
-    private static final NameFileFilter PKG_INFO_FILTER = new NameFileFilter(
-            PKG_INFO);
-
+    private static final NameFileFilter PKG_INFO_FILTER = new NameFileFilter(PKG_INFO);
     /**
      * The file filter used to determine which files this analyzer supports.
      */
@@ -241,13 +225,14 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Makes sure a usable temporary directory is available.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException an AnalyzeException is thrown when the
      * temp directory cannot be created
      */
     @Override
-    protected void initializeFileTypeAnalyzer() throws InitializationException {
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         try {
-            final File baseDir = Settings.getTempDirectory();
+            final File baseDir = getSettings().getTempDirectory();
             tempFileLocation = File.createTempFile("check", "tmp", baseDir);
             if (!tempFileLocation.delete()) {
                 setEnabled(false);
@@ -294,41 +279,36 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static void collectWheelMetadata(Dependency dependency, File file) {
         final InternetHeaders headers = getManifestProperties(file);
-        addPropertyToEvidence(headers, dependency.getVersionEvidence(),
-                "Version", Confidence.HIGHEST);
-        addPropertyToEvidence(headers, dependency.getProductEvidence(), "Name",
-                Confidence.HIGHEST);
+        addPropertyToEvidence(dependency, EvidenceType.VERSION, Confidence.HIGHEST, headers, "Version");
+        addPropertyToEvidence(dependency, EvidenceType.PRODUCT, Confidence.HIGHEST, headers, "Name");
         final String url = headers.getHeader("Home-page", null);
-        final EvidenceCollection vendorEvidence = dependency
-                .getVendorEvidence();
         if (StringUtils.isNotBlank(url)) {
             if (UrlStringUtils.isUrl(url)) {
-                vendorEvidence.addEvidence(METADATA, "vendor", url,
-                        Confidence.MEDIUM);
+                dependency.addEvidence(EvidenceType.VENDOR, METADATA, "vendor", url, Confidence.MEDIUM);
             }
         }
-        addPropertyToEvidence(headers, vendorEvidence, "Author", Confidence.LOW);
+        addPropertyToEvidence(dependency, EvidenceType.VENDOR, Confidence.LOW, headers, "Author");
         final String summary = headers.getHeader("Summary", null);
         if (StringUtils.isNotBlank(summary)) {
-            JarAnalyzer
-                    .addDescription(dependency, summary, METADATA, "summary");
+            JarAnalyzer.addDescription(dependency, summary, METADATA, "summary");
         }
     }
 
     /**
      * Adds a value to the evidence collection.
      *
+     * @param dependency the dependency being analyzed
+     * @param type the type of evidence to add
+     * @param confidence the confidence in the evidence being added
      * @param headers the properties collection
-     * @param evidence the evidence collection to add the value
      * @param property the property name
-     * @param confidence the confidence of the evidence
      */
-    private static void addPropertyToEvidence(InternetHeaders headers,
-            EvidenceCollection evidence, String property, Confidence confidence) {
+    private static void addPropertyToEvidence(Dependency dependency, EvidenceType type, Confidence confidence,
+            InternetHeaders headers, String property) {
         final String value = headers.getHeader(property, null);
         LOGGER.debug("Property: {}, Value: {}", property, value);
         if (StringUtils.isNotBlank(value)) {
-            evidence.addEvidence(METADATA, property, value, confidence);
+            dependency.addEvidence(type, METADATA, property, value, confidence);
         }
     }
 

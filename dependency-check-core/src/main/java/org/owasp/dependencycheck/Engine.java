@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,8 +58,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.concurrent.NotThreadSafe;
+import org.owasp.dependencycheck.exception.H2DBLockException;
+import org.owasp.dependencycheck.utils.H2DBLock;
 
+//CSOFF: AvoidStarImport
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.*;
+//CSON: AvoidStarImport
+
 
 /**
  * Scans files, directories, etc. for Dependencies. Analyzers are loaded and
@@ -68,6 +75,7 @@ import static org.owasp.dependencycheck.analyzer.AnalysisPhase.*;
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class Engine implements FileFilter, AutoCloseable {
 
     /**
@@ -151,6 +159,10 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     private final List<Dependency> dependencies = Collections.synchronizedList(new ArrayList<Dependency>());
     /**
+     * The external view of the dependency list.
+     */
+    private Dependency[] dependenciesExternalView = null;
+    /**
      * A Map of analyzers grouped by Analysis phase.
      */
     private final Map<AnalysisPhase, List<Analyzer>> analyzers = new EnumMap<>(AnalysisPhase.class);
@@ -170,7 +182,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * The ClassLoader to use when dynamically loading Analyzer and Update
      * services.
      */
-    private ClassLoader serviceClassLoader;
+    private final ClassLoader serviceClassLoader;
     /**
      * A reference to the database.
      */
@@ -179,30 +191,38 @@ public class Engine implements FileFilter, AutoCloseable {
      * The Logger for use throughout the class.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(Engine.class);
+    /**
+     * The configured settings.
+     */
+    private final Settings settings;
 
     /**
      * Creates a new {@link Mode#STANDALONE} Engine.
+     *
+     * @param settings reference to the configured settings
      */
-    public Engine() {
-        this(Mode.STANDALONE);
+    public Engine(Settings settings) {
+        this(Mode.STANDALONE, settings);
     }
 
     /**
      * Creates a new Engine.
      *
      * @param mode the mode of operation
+     * @param settings reference to the configured settings
      */
-    public Engine(Mode mode) {
-        this(Thread.currentThread().getContextClassLoader(), mode);
+    public Engine(Mode mode, Settings settings) {
+        this(Thread.currentThread().getContextClassLoader(), mode, settings);
     }
 
     /**
      * Creates a new {@link Mode#STANDALONE} Engine.
      *
      * @param serviceClassLoader a reference the class loader being used
+     * @param settings reference to the configured settings
      */
-    public Engine(ClassLoader serviceClassLoader) {
-        this(serviceClassLoader, Mode.STANDALONE);
+    public Engine(ClassLoader serviceClassLoader, Settings settings) {
+        this(serviceClassLoader, Mode.STANDALONE, settings);
     }
 
     /**
@@ -210,8 +230,10 @@ public class Engine implements FileFilter, AutoCloseable {
      *
      * @param serviceClassLoader a reference the class loader being used
      * @param mode the mode of the engine
+     * @param settings reference to the configured settings
      */
-    public Engine(ClassLoader serviceClassLoader, Mode mode) {
+    public Engine(ClassLoader serviceClassLoader, Mode mode, Settings settings) {
+        this.settings = settings;
         this.serviceClassLoader = serviceClassLoader;
         this.mode = mode;
         initializeEngine();
@@ -225,28 +247,20 @@ public class Engine implements FileFilter, AutoCloseable {
      * database
      */
     protected final void initializeEngine() {
-        if (mode.isDatabseRequired()) {
-            ConnectionFactory.initialize();
-        }
         loadAnalyzers();
     }
 
     /**
      * Properly cleans up resources allocated during analysis.
      */
-    public void cleanup() {
+    @Override
+    public void close() {
         if (mode.isDatabseRequired()) {
             if (database != null) {
                 database.close();
                 database = null;
             }
-            ConnectionFactory.cleanup();
         }
-    }
-
-    @Override
-    public void close() {
-        cleanup();
     }
 
     /**
@@ -260,10 +274,16 @@ public class Engine implements FileFilter, AutoCloseable {
         for (AnalysisPhase phase : mode.getPhases()) {
             analyzers.put(phase, new ArrayList<Analyzer>());
         }
-
-        final AnalyzerService service = new AnalyzerService(serviceClassLoader);
+        boolean loadExperimental = false;
+        try {
+            loadExperimental = settings.getBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, false);
+        } catch (InvalidSettingException ex) {
+            LOGGER.trace("Experimenal setting not configured; defaulting to false");
+        }
+        final AnalyzerService service = new AnalyzerService(serviceClassLoader, loadExperimental);
         final List<Analyzer> iterator = service.getAnalyzers(mode.getPhases());
         for (Analyzer a : iterator) {
+            a.initialize(this.settings);
             analyzers.get(a.getAnalysisPhase()).add(a);
             if (a instanceof FileTypeAnalyzer) {
                 this.fileTypeAnalyzers.add((FileTypeAnalyzer) a);
@@ -282,18 +302,44 @@ public class Engine implements FileFilter, AutoCloseable {
     }
 
     /**
-     * Get the dependencies identified. The returned list is a reference to the
-     * engine's synchronized list. <b>You must synchronize on the returned
-     * list</b> when you modify and iterate over it from multiple threads. E.g.
-     * this holds for analyzers supporting parallel processing during their
-     * analysis phase.
+     * Adds a dependency.
+     *
+     * @param dependency the dependency to add
+     */
+    public synchronized void addDependency(Dependency dependency) {
+        dependencies.add(dependency);
+        dependenciesExternalView = null;
+    }
+
+    /**
+     * Sorts the dependency list.
+     */
+    public synchronized void sortDependencies() {
+        //TODO - is this actually necassary????
+        Collections.sort(dependencies);
+        dependenciesExternalView = null;
+    }
+
+    /**
+     * Removes the dependency.
+     *
+     * @param dependency the dependency to remove.
+     */
+    public synchronized void removeDependency(Dependency dependency) {
+        dependencies.remove(dependency);
+        dependenciesExternalView = null;
+    }
+
+    /**
+     * Returns a copy of the dependencies as an array.
      *
      * @return the dependencies identified
-     * @see Collections#synchronizedList(List)
-     * @see Analyzer#supportsParallelProcessing()
      */
-    public synchronized List<Dependency> getDependencies() {
-        return dependencies;
+    public synchronized Dependency[] getDependencies() {
+        if (dependenciesExternalView == null) {
+            dependenciesExternalView = dependencies.toArray(new Dependency[dependencies.size()]);
+        }
+        return dependenciesExternalView;
     }
 
     /**
@@ -304,6 +350,7 @@ public class Engine implements FileFilter, AutoCloseable {
     public synchronized void setDependencies(List<Dependency> dependencies) {
         this.dependencies.clear();
         this.dependencies.addAll(dependencies);
+        dependenciesExternalView = null;
     }
 
     /**
@@ -540,7 +587,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return the scanned dependency
      * @since v1.4.4
      */
-    protected Dependency scanFile(File file, String projectReference) {
+    protected synchronized Dependency scanFile(File file, String projectReference) {
         Dependency dependency = null;
         if (file.isFile()) {
             if (accept(file)) {
@@ -550,31 +597,31 @@ public class Engine implements FileFilter, AutoCloseable {
                 }
                 final String sha1 = dependency.getSha1sum();
                 boolean found = false;
-                synchronized (dependencies) {
-                    if (sha1 != null) {
-                        for (Dependency existing : dependencies) {
-                            if (sha1.equals(existing.getSha1sum())) {
-                                found = true;
-                                if (projectReference != null) {
-                                    existing.addProjectReference(projectReference);
-                                }
-                                if (existing.getActualFilePath() != null && dependency.getActualFilePath() != null
-                                        && !existing.getActualFilePath().equals(dependency.getActualFilePath())) {
-                                    existing.addRelatedDependency(dependency);
-                                } else {
-                                    dependency = existing;
-                                }
-                                break;
+
+                if (sha1 != null) {
+                    for (Dependency existing : dependencies) {
+                        if (sha1.equals(existing.getSha1sum())) {
+                            found = true;
+                            if (projectReference != null) {
+                                existing.addProjectReference(projectReference);
                             }
+                            if (existing.getActualFilePath() != null && dependency.getActualFilePath() != null
+                                    && !existing.getActualFilePath().equals(dependency.getActualFilePath())) {
+                                existing.addRelatedDependency(dependency);
+                            } else {
+                                dependency = existing;
+                            }
+                            break;
                         }
                     }
-                    if (!found) {
-                        dependencies.add(dependency);
-                    }
                 }
-            } else {
-                LOGGER.debug("Path passed to scanFile(File) is not a file that can be scanned by dependency-check: {}. Skipping the file.", file);
+                if (!found) {
+                    dependencies.add(dependency);
+                    dependenciesExternalView = null;
+                }
             }
+        } else {
+            LOGGER.debug("Path passed to scanFile(File) is not a file that can be scanned by dependency-check: {}. Skipping the file.", file);
         }
         return dependency;
     }
@@ -662,15 +709,14 @@ public class Engine implements FileFilter, AutoCloseable {
         }
         boolean autoUpdate = true;
         try {
-            autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
+            autoUpdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
         } catch (InvalidSettingException ex) {
             LOGGER.debug("Invalid setting for auto-update; using true.");
             exceptions.add(ex);
         }
         if (autoUpdate) {
             try {
-                database = CveDB.getInstance();
-                doUpdates();
+                doUpdates(true);
             } catch (UpdateException ex) {
                 exceptions.add(ex);
                 LOGGER.warn("Unable to update Cached Web DataSource, using local "
@@ -681,10 +727,10 @@ public class Engine implements FileFilter, AutoCloseable {
             }
         } else {
             try {
-                if (ConnectionFactory.isH2Connection() && !ConnectionFactory.h2DataFileExists()) {
+                if (ConnectionFactory.isH2Connection(settings) && !ConnectionFactory.h2DataFileExists(settings)) {
                     throw new ExceptionCollection(new NoDataException("Autoupdate is disabled and the database does not exist"), true);
                 } else {
-                    database = CveDB.getInstance();
+                    openDatabase(true, true);
                 }
             } catch (IOException ex) {
                 throw new ExceptionCollection(new DatabaseException("Autoupdate is disabled and unable to connect to the database"), true);
@@ -735,13 +781,11 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param exceptions the collection of exceptions to collect
      * @return a collection of analysis tasks
      */
-    protected List<AnalysisTask> getAnalysisTasks(Analyzer analyzer, List<Throwable> exceptions) {
+    protected synchronized List<AnalysisTask> getAnalysisTasks(Analyzer analyzer, List<Throwable> exceptions) {
         final List<AnalysisTask> result = new ArrayList<>();
-        synchronized (dependencies) {
-            for (final Dependency dependency : dependencies) {
-                final AnalysisTask task = new AnalysisTask(analyzer, dependency, this, exceptions, Settings.getInstance());
-                result.add(task);
-            }
+        for (final Dependency dependency : dependencies) {
+            final AnalysisTask task = new AnalysisTask(analyzer, dependency, this, exceptions);
+            result.add(task);
         }
         return result;
     }
@@ -766,14 +810,14 @@ public class Engine implements FileFilter, AutoCloseable {
     /**
      * Initializes the given analyzer.
      *
-     * @param analyzer the analyzer to initialize
+     * @param analyzer the analyzer to prepare
      * @throws InitializationException thrown when there is a problem
      * initializing the analyzer
      */
     protected void initializeAnalyzer(Analyzer analyzer) throws InitializationException {
         try {
             LOGGER.debug("Initializing {}", analyzer.getName());
-            analyzer.initialize();
+            analyzer.prepare(this);
         } catch (InitializationException ex) {
             LOGGER.error("Exception occurred initializing {}.", analyzer.getName());
             LOGGER.debug("", ex);
@@ -816,19 +860,124 @@ public class Engine implements FileFilter, AutoCloseable {
      * @throws UpdateException thrown if the operation fails
      */
     public void doUpdates() throws UpdateException {
+        doUpdates(false);
+    }
+
+    /**
+     * Cycles through the cached web data sources and calls update on all of
+     * them.
+     *
+     * @param remainOpen whether or not the database connection should remain
+     * open
+     * @throws UpdateException thrown if the operation fails
+     */
+    public void doUpdates(boolean remainOpen) throws UpdateException {
         if (mode.isDatabseRequired()) {
-            LOGGER.info("Checking for updates");
-            final long updateStart = System.currentTimeMillis();
-            final UpdateService service = new UpdateService(serviceClassLoader);
-            final Iterator<CachedWebDataSource> iterator = service.getDataSources();
-            while (iterator.hasNext()) {
-                final CachedWebDataSource source = iterator.next();
-                source.update();
+            H2DBLock dblock = null;
+            try {
+                if (ConnectionFactory.isH2Connection(settings)) {
+                    dblock = new H2DBLock(settings);
+                    LOGGER.debug("locking for update");
+                    dblock.lock();
+                }
+                openDatabase(false, false);
+                LOGGER.info("Checking for updates");
+                final long updateStart = System.currentTimeMillis();
+                final UpdateService service = new UpdateService(serviceClassLoader);
+                final Iterator<CachedWebDataSource> iterator = service.getDataSources();
+                while (iterator.hasNext()) {
+                    final CachedWebDataSource source = iterator.next();
+                    source.update(this);
+                }
+                database.close();
+                database = null;
+                LOGGER.info("Check for updates complete ({} ms)", System.currentTimeMillis() - updateStart);
+                if (remainOpen) {
+                    openDatabase(true, false);
+                }
+            } catch (H2DBLockException ex) {
+                throw new UpdateException("Unable to obtain an exclusive lock on the H2 database to perform updates", ex);
+            } finally {
+                if (dblock != null) {
+                    dblock.release();
+                }
             }
-            LOGGER.info("Check for updates complete ({} ms)", System.currentTimeMillis() - updateStart);
         } else {
             LOGGER.info("Skipping update check in evidence collection mode.");
         }
+    }
+
+    /**
+     * <p>
+     * This method is only public for unit/integration testing. This method
+     * should not be called by any integration that uses
+     * dependency-check-core.</p>
+     * <p>
+     * Opens the database connection.</p>
+     */
+    public void openDatabase() {
+        openDatabase(false, true);
+    }
+
+    /**
+     * <p>
+     * This method is only public for unit/integration testing. This method
+     * should not be called by any integration that uses
+     * dependency-check-core.</p>
+     * <p>
+     * Opens the database connection; if readOnly is true a copy of the database
+     * will be made.</p>
+     *
+     * @param readOnly whether or not the database connection should be readonly
+     * @param lockRequired whether or not a lock needs to be acquired when
+     * opening the database
+     */
+    public void openDatabase(boolean readOnly, boolean lockRequired) {
+        if (mode.isDatabseRequired() && database == null) {
+            //needed to update schema any required schema changes
+            database = new CveDB(settings);
+            if (readOnly
+                    && ConnectionFactory.isH2Connection(settings)
+                    && settings.getString(Settings.KEYS.DB_CONNECTION_STRING).contains("file:%s")) {
+                H2DBLock lock = null;
+                try {
+                    final File db = ConnectionFactory.getH2DataFile(settings);
+                    if (db.isFile()) {
+                        database.close();
+                        if (lockRequired) {
+                            lock = new H2DBLock(settings);
+                            lock.lock();
+                        }
+                        LOGGER.debug("copying database");
+                        final File temp = settings.getTempDirectory();
+                        final File tempDB = new File(temp, db.getName());
+                        Files.copy(db.toPath(), tempDB.toPath());
+                        LOGGER.debug("copying complete '{}'", temp.toPath());
+                        settings.setString(Settings.KEYS.DATA_DIRECTORY, temp.getPath());
+                        final String connStr = settings.getString(Settings.KEYS.DB_CONNECTION_STRING);
+                        settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connStr + "ACCESS_MODE_DATA=r");
+                        database = new CveDB(settings);
+                    }
+                } catch (IOException ex) {
+                    LOGGER.debug("Unable to open db in read only mode", ex);
+                } catch (H2DBLockException ex) {
+                    LOGGER.debug("Failed to obtain lock - unable to open db in read only mode", ex);
+                } finally {
+                    if (lock != null) {
+                        lock.release();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns a reference to the database.
+     *
+     * @return a reference to the database
+     */
+    public CveDB getDatabase() {
+        return this.database;
     }
 
     /**
@@ -874,6 +1023,15 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     public Set<FileTypeAnalyzer> getFileTypeAnalyzers() {
         return this.fileTypeAnalyzers;
+    }
+
+    /**
+     * Returns the configured settings.
+     *
+     * @return the configured settings
+     */
+    public Settings getSettings() {
+        return settings;
     }
 
     /**
@@ -932,7 +1090,7 @@ public class Engine implements FileFilter, AutoCloseable {
             throw new UnsupportedOperationException("Cannot generate report in evidence collection mode.");
         }
         final DatabaseProperties prop = database.getDatabaseProperties();
-        final ReportGenerator r = new ReportGenerator(applicationName, groupId, artifactId, version, dependencies, getAnalyzers(), prop);
+        final ReportGenerator r = new ReportGenerator(applicationName, groupId, artifactId, version, dependencies, getAnalyzers(), prop, settings);
         try {
             r.write(outputDir.getAbsolutePath(), format);
         } catch (ReportException ex) {

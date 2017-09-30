@@ -28,7 +28,7 @@ public class AnalysisTaskTest extends BaseTest {
 
     @Test
     public void shouldAnalyzeReturnsTrueForNonFileTypeAnalyzers() {
-        AnalysisTask instance = new AnalysisTask(new HintAnalyzer(), null, null, null, null);
+        AnalysisTask instance = new AnalysisTask(new HintAnalyzer(), null, null, null);
         boolean shouldAnalyze = instance.shouldAnalyze();
         assertTrue(shouldAnalyze);
     }
@@ -44,7 +44,7 @@ public class AnalysisTaskTest extends BaseTest {
             result = true;
         }};
 
-        AnalysisTask analysisTask = new AnalysisTask(fileTypeAnalyzer, dependency, null, null, Settings.getInstance());
+        AnalysisTask analysisTask = new AnalysisTask(fileTypeAnalyzer, dependency, null, null);
 
         boolean shouldAnalyze = analysisTask.shouldAnalyze();
         assertTrue(shouldAnalyze);
@@ -61,7 +61,7 @@ public class AnalysisTaskTest extends BaseTest {
             result = false;
         }};
 
-        AnalysisTask analysisTask = new AnalysisTask(fileTypeAnalyzer, dependency, null, null, Settings.getInstance());
+        AnalysisTask analysisTask = new AnalysisTask(fileTypeAnalyzer, dependency, null, null);
 
         boolean shouldAnalyze = analysisTask.shouldAnalyze();
         assertFalse(shouldAnalyze);
@@ -69,7 +69,7 @@ public class AnalysisTaskTest extends BaseTest {
 
     @Test
     public void taskAnalyzes() throws Exception {
-        final AnalysisTask analysisTask = new AnalysisTask(fileTypeAnalyzer, dependency, engine, null, Settings.getInstance());
+        final AnalysisTask analysisTask = new AnalysisTask(fileTypeAnalyzer, dependency, engine, null);
         new Expectations(analysisTask) {{
             analysisTask.shouldAnalyze();
             result = true;
@@ -85,7 +85,7 @@ public class AnalysisTaskTest extends BaseTest {
 
     @Test
     public void taskDoesNothingIfItShouldNotAnalyze() throws Exception {
-        final AnalysisTask analysisTask = new AnalysisTask(fileTypeAnalyzer, dependency, engine, null, Settings.getInstance());
+        final AnalysisTask analysisTask = new AnalysisTask(fileTypeAnalyzer, dependency, engine, null);
         new Expectations(analysisTask) {{
             analysisTask.shouldAnalyze();
             result = false;

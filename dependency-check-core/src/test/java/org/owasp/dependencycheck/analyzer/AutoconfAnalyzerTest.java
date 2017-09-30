@@ -28,13 +28,18 @@ import java.io.File;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
- * Unit tests for AutoconfAnalyzer. The test resources under autoconf/ were obtained from outside open source software projects.
- * Links to those projects are given below.
+ * Unit tests for AutoconfAnalyzer. The test resources under autoconf/ were
+ * obtained from outside open source software projects. Links to those projects
+ * are given below.
  *
  * @author Dale Visser
- * @see <a href="http://readable.sourceforge.net/">Readable Lisp S-expressions Project</a>
+ * @see <a href="http://readable.sourceforge.net/">Readable Lisp S-expressions
+ * Project</a>
  * @see <a href="https://gnu.org/software/binutils/">GNU Binutils</a>
  * @see <a href="https://gnu.org/software/ghostscript/">GNU Ghostscript</a>
  */
@@ -45,31 +50,19 @@ public class AutoconfAnalyzerTest extends BaseTest {
      */
     private AutoconfAnalyzer analyzer;
 
-    private void assertCommonEvidence(Dependency result, String product,
-            String version, String vendor) {
-        assertProductAndVersion(result, product, version);
-        assertTrue("Expected vendor evidence to contain \"" + vendor + "\".",
-                result.getVendorEvidence().toString().contains(vendor));
-    }
-
-    private void assertProductAndVersion(Dependency result, String product,
-            String version) {
-        assertTrue("Expected product evidence to contain \"" + product + "\".",
-                result.getProductEvidence().toString().contains(product));
-        assertTrue("Expected version evidence to contain \"" + version + "\".",
-                result.getVersionEvidence().toString().contains(version));
-    }
-
     /**
      * Correctly setup the analyzer for testing.
      *
      * @throws Exception thrown if there is a problem
      */
     @Before
+    @Override
     public void setUp() throws Exception {
+        super.setUp();
         analyzer = new AutoconfAnalyzer();
+        analyzer.initialize(getSettings());
         analyzer.setFilesMatched(true);
-        analyzer.initialize();
+        analyzer.prepare(null);
     }
 
     /**
@@ -78,13 +71,15 @@ public class AutoconfAnalyzerTest extends BaseTest {
      * @throws Exception thrown if there is a problem
      */
     @After
+    @Override
     public void tearDown() throws Exception {
         analyzer.close();
         analyzer = null;
+        super.tearDown();
     }
 
     /**
-     * Test whether expected evidence is gathered from Ghostscript's configure.ac.
+     * Test whether expected evidence is gathered from Ghostscript's configure.
      *
      * @throws AnalysisException is thrown when an exception occurs.
      */
@@ -93,7 +88,10 @@ public class AutoconfAnalyzerTest extends BaseTest {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(
                 this, "autoconf/ghostscript/configure.ac"));
         analyzer.analyze(result, null);
-        assertCommonEvidence(result, "ghostscript", "8.62.0", "gnu");
+        //TODO fix these
+        assertTrue(result.contains(EvidenceType.VENDOR, new Evidence("configure.ac", "Bug report address", "gnu-ghostscript-bug@gnu.org", Confidence.HIGH)));
+        assertTrue(result.contains(EvidenceType.PRODUCT, new Evidence("configure.ac", "Package", "gnu-ghostscript", Confidence.HIGHEST)));
+        assertTrue(result.contains(EvidenceType.VERSION, new Evidence("configure.ac", "Package Version", "8.62.0", Confidence.HIGHEST)));
     }
 
     /**
@@ -106,14 +104,11 @@ public class AutoconfAnalyzerTest extends BaseTest {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(
                 this, "autoconf/readable-code/configure.ac"));
         analyzer.analyze(result, null);
-        assertReadableCodeEvidence(result);
-    }
 
-    private void assertReadableCodeEvidence(final Dependency result) {
-        assertCommonEvidence(result, "readable", "1.0.7", "dwheeler");
-        final String url = "http://readable.sourceforge.net/";
-        assertTrue("Expected product evidence to contain \"" + url + "\".",
-                result.getVendorEvidence().toString().contains(url));
+        assertTrue(result.contains(EvidenceType.VENDOR, new Evidence("configure.ac", "Bug report address", "dwheeler@dwheeler.com", Confidence.HIGH)));
+        assertTrue(result.contains(EvidenceType.PRODUCT, new Evidence("configure.ac", "Package", "readable", Confidence.HIGHEST)));
+        assertTrue(result.contains(EvidenceType.VERSION, new Evidence("configure.ac", "Package Version", "1.0.7", Confidence.HIGHEST)));
+        assertTrue(result.contains(EvidenceType.VENDOR, new Evidence("configure.ac", "URL", "http://readable.sourceforge.net/", Confidence.HIGH)));
     }
 
     /**
@@ -126,11 +121,14 @@ public class AutoconfAnalyzerTest extends BaseTest {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(
                 this, "autoconf/binutils/configure"));
         analyzer.analyze(result, null);
-        assertProductAndVersion(result, "binutils", "2.25.51");
+
+        assertTrue(result.contains(EvidenceType.PRODUCT, new Evidence("configure", "NAME", "binutils", Confidence.HIGHEST)));
+        assertTrue(result.contains(EvidenceType.VERSION, new Evidence("configure", "VERSION", "2.25.51", Confidence.HIGHEST)));
     }
 
     /**
-     * Test whether expected evidence is gathered from GNU Ghostscript's configure.
+     * Test whether expected evidence is gathered from GNU Ghostscript's
+     * configure.
      *
      * @throws AnalysisException is thrown when an exception occurs.
      */
@@ -139,7 +137,11 @@ public class AutoconfAnalyzerTest extends BaseTest {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(
                 this, "autoconf/readable-code/configure"));
         analyzer.analyze(result, null);
-        assertReadableCodeEvidence(result);
+
+        assertTrue(result.contains(EvidenceType.VENDOR, new Evidence("configure", "BUGREPORT", "dwheeler@dwheeler.com", Confidence.HIGH)));
+        assertTrue(result.contains(EvidenceType.PRODUCT, new Evidence("configure", "NAME", "readable", Confidence.HIGHEST)));
+        assertTrue(result.contains(EvidenceType.VERSION, new Evidence("configure", "VERSION", "1.0.7", Confidence.HIGHEST)));
+        assertTrue(result.contains(EvidenceType.VENDOR, new Evidence("configure", "URL", "http://readable.sourceforge.net/", Confidence.HIGH)));
     }
 
     /**

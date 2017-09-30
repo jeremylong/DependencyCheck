@@ -29,12 +29,14 @@ import javax.json.stream.JsonParsingException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * Parses a Composer.lock file from an input stream. In a separate class so it can hopefully be injected.
  *
  * @author colezlaw
  */
+@NotThreadSafe
 public class ComposerLockParser {
 
     /**

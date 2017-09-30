@@ -17,11 +17,14 @@
  */
 package org.owasp.dependencycheck.data.cpe;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * An exception thrown when the there is an issue using the in-memory CPE Index.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class IndexException extends Exception {
 
     /**

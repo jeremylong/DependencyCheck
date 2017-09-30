@@ -17,11 +17,15 @@
  */
 package org.owasp.dependencycheck.data.composer;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
- * Represents an exception when handling a composer.json or composer.lock file. Generally used to wrap a downstream exception.
+ * Represents an exception when handling a composer.json or composer.lock file.
+ * Generally used to wrap a downstream exception.
  *
  * @author colezlaw
  */
+@ThreadSafe
 public class ComposerException extends RuntimeException {
 
     /**

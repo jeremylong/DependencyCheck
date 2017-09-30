@@ -3,6 +3,7 @@ package org.owasp.dependencycheck.xml;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author https://stackoverflow.com/users/823393/oldcurmudgeon
  */
+@NotThreadSafe
 public class XmlInputStream extends FilterInputStream {
 
     /**
@@ -34,11 +36,11 @@ public class XmlInputStream extends FilterInputStream {
     /**
      * Holder for everything we've read.
      */
-    private StringBuilder red = new StringBuilder();
+    private final StringBuilder red = new StringBuilder();
     /**
      * Data that needs to be pushed back.
      */
-    private StringBuilder pushBack = new StringBuilder();
+    private final StringBuilder pushBack = new StringBuilder();
     /**
      * How much we've given them.
      */

@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.reporting;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Set;
+import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.slf4j.Logger;
@@ -32,6 +33,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class EscapeTool {
 
     /**
@@ -95,6 +97,20 @@ public class EscapeTool {
             return text;
         }
         return StringEscapeUtils.escapeJson(text);
+    }
+
+    /**
+     * JavaScript encodes the provided text.
+     *
+     * @param text the text to encode
+     * @return the JavaScript encoded text
+     */
+    public String javascript(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        //until lang3 has escapeJavaScript we use this...
+        return org.apache.commons.lang.StringEscapeUtils.escapeJavaScript(text);
     }
 
     /**

@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.EvidenceCollection;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -48,6 +48,7 @@ public class VersionFilterAnalyzerTest extends BaseTest {
     @Test
     public void testGetAnalysisPhase() {
         VersionFilterAnalyzer instance = new VersionFilterAnalyzer();
+        instance.initialize(getSettings());
         AnalysisPhase expResult = AnalysisPhase.POST_INFORMATION_COLLECTION;
         AnalysisPhase result = instance.getAnalysisPhase();
         assertEquals(expResult, result);
@@ -60,6 +61,7 @@ public class VersionFilterAnalyzerTest extends BaseTest {
     @Test
     public void testGetAnalyzerEnabledSettingKey() {
         VersionFilterAnalyzer instance = new VersionFilterAnalyzer();
+        instance.initialize(getSettings());
         String expResult = Settings.KEYS.ANALYZER_VERSION_FILTER_ENABLED;
         String result = instance.getAnalyzerEnabledSettingKey();
         assertEquals(expResult, result);
@@ -71,39 +73,39 @@ public class VersionFilterAnalyzerTest extends BaseTest {
     @Test
     public void testAnalyzeDependency() throws Exception {
         Dependency dependency = new Dependency();
-        EvidenceCollection versions = dependency.getVersionEvidence();
 
-        versions.addEvidence("util", "version", "33.3", Confidence.HIGHEST);
-        versions.addEvidence("other", "version", "alpha", Confidence.HIGHEST);
-        versions.addEvidence("other", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "util", "version", "33.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "other", "version", "alpha", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "other", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
 
         VersionFilterAnalyzer instance = new VersionFilterAnalyzer();
+        instance.initialize(getSettings());
 
         instance.analyzeDependency(dependency, null);
-        assertEquals(3, versions.size());
+        assertEquals(3, dependency.getEvidence(EvidenceType.VERSION).size());
 
-        versions.addEvidence("pom", "version", "1.2.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "pom", "version", "1.2.3", Confidence.HIGHEST);
 
         instance.analyzeDependency(dependency, null);
-        assertEquals(4, versions.size());
+        assertEquals(4, dependency.getEvidence(EvidenceType.VERSION).size());
 
-        versions.addEvidence("file", "version", "1.2.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "file", "version", "1.2.3", Confidence.HIGHEST);
         instance.analyzeDependency(dependency, null);
-        assertEquals(2, versions.size());
+        assertEquals(2, dependency.getEvidence(EvidenceType.VERSION).size());
 
-        versions.addEvidence("Manifest", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "Manifest", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
         instance.analyzeDependency(dependency, null);
-        assertEquals(3, versions.size());
+        assertEquals(3, dependency.getEvidence(EvidenceType.VERSION).size());
 
-        versions.addEvidence("nexus", "version", "1.2.3", Confidence.HIGHEST);
-        versions.addEvidence("other", "version", "alpha", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "nexus", "version", "1.2.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "other", "version", "alpha", Confidence.HIGHEST);
         instance.analyzeDependency(dependency, null);
-        assertEquals(4, versions.size());
+        assertEquals(4, dependency.getEvidence(EvidenceType.VERSION).size());
 
-        versions.addEvidence("central", "version", "1.2.3", Confidence.HIGHEST);
-        versions.addEvidence("other", "version", "alpha", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "central", "version", "1.2.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "other", "version", "alpha", Confidence.HIGHEST);
         instance.analyzeDependency(dependency, null);
-        assertEquals(5, versions.size());
+        assertEquals(5, dependency.getEvidence(EvidenceType.VERSION).size());
     }
 
     /**
@@ -112,35 +114,35 @@ public class VersionFilterAnalyzerTest extends BaseTest {
     @Test
     public void testAnalyzeDependencyFilePom() throws Exception {
         Dependency dependency = new Dependency();
-        EvidenceCollection versions = dependency.getVersionEvidence();
 
-        versions.addEvidence("util", "version", "33.3", Confidence.HIGHEST);
-        versions.addEvidence("other", "version", "alpha", Confidence.HIGHEST);
-        versions.addEvidence("other", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "util", "version", "33.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "other", "version", "alpha", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "other", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
 
         VersionFilterAnalyzer instance = new VersionFilterAnalyzer();
+        instance.initialize(getSettings());
 
         instance.analyzeDependency(dependency, null);
-        assertEquals(3, versions.size());
+        assertEquals(3, dependency.getEvidence(EvidenceType.VERSION).size());
 
-        versions.addEvidence("pom", "version", "1.2.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "pom", "version", "1.2.3", Confidence.HIGHEST);
 
         instance.analyzeDependency(dependency, null);
-        assertEquals(4, versions.size());
+        assertEquals(4, dependency.getEvidence(EvidenceType.VERSION).size());
 
-        versions.addEvidence("file", "version", "1.2.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "file", "version", "1.2.3", Confidence.HIGHEST);
         instance.analyzeDependency(dependency, null);
-        assertEquals(2, versions.size());
+        assertEquals(2, dependency.getEvidence(EvidenceType.VERSION).size());
 
-        versions.addEvidence("nexus", "version", "1.2.3", Confidence.HIGHEST);
-        versions.addEvidence("other", "version", "alpha", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "nexus", "version", "1.2.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "other", "version", "alpha", Confidence.HIGHEST);
         instance.analyzeDependency(dependency, null);
-        assertEquals(3, versions.size());
+        assertEquals(3, dependency.getEvidence(EvidenceType.VERSION).size());
 
-        versions.addEvidence("central", "version", "1.2.3", Confidence.HIGHEST);
-        versions.addEvidence("other", "version", "alpha", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "central", "version", "1.2.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "other", "version", "alpha", Confidence.HIGHEST);
         instance.analyzeDependency(dependency, null);
-        assertEquals(4, versions.size());
+        assertEquals(4, dependency.getEvidence(EvidenceType.VERSION).size());
     }
 
     /**
@@ -149,25 +151,25 @@ public class VersionFilterAnalyzerTest extends BaseTest {
     @Test
     public void testAnalyzeDependencyFileManifest() throws Exception {
         Dependency dependency = new Dependency();
-        EvidenceCollection versions = dependency.getVersionEvidence();
 
-        versions.addEvidence("util", "version", "33.3", Confidence.HIGHEST);
-        versions.addEvidence("other", "version", "alpha", Confidence.HIGHEST);
-        versions.addEvidence("other", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "util", "version", "33.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "other", "version", "alpha", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "other", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
 
         VersionFilterAnalyzer instance = new VersionFilterAnalyzer();
+        instance.initialize(getSettings());
 
         instance.analyzeDependency(dependency, null);
-        assertEquals(3, versions.size());
+        assertEquals(3,  dependency.getEvidence(EvidenceType.VERSION).size());
 
-        versions.addEvidence("Manifest", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "Manifest", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
 
         instance.analyzeDependency(dependency, null);
-        assertEquals(4, versions.size());
+        assertEquals(4,  dependency.getEvidence(EvidenceType.VERSION).size());
 
-        versions.addEvidence("file", "version", "1.2.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "file", "version", "1.2.3", Confidence.HIGHEST);
         instance.analyzeDependency(dependency, null);
-        assertEquals(2, versions.size());
+        assertEquals(2,  dependency.getEvidence(EvidenceType.VERSION).size());
     }
 
     /**
@@ -176,35 +178,34 @@ public class VersionFilterAnalyzerTest extends BaseTest {
     @Test
     public void testAnalyzeDependencyPomManifest() throws Exception {
         Dependency dependency = new Dependency();
-        EvidenceCollection versions = dependency.getVersionEvidence();
 
-        versions.addEvidence("util", "version", "33.3", Confidence.HIGHEST);
-        versions.addEvidence("other", "version", "alpha", Confidence.HIGHEST);
-        versions.addEvidence("other", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "util", "version", "33.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "other", "version", "alpha", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "other", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
 
         VersionFilterAnalyzer instance = new VersionFilterAnalyzer();
+        instance.initialize(getSettings());
 
         instance.analyzeDependency(dependency, null);
-        assertEquals(3, versions.size());
+        assertEquals(3,  dependency.getEvidence(EvidenceType.VERSION).size());
 
-        versions.addEvidence("pom", "version", "1.2.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "pom", "version", "1.2.3", Confidence.HIGHEST);
 
         instance.analyzeDependency(dependency, null);
-        assertEquals(4, versions.size());
+        assertEquals(4,  dependency.getEvidence(EvidenceType.VERSION).size());
 
-        versions.addEvidence("Manifest", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "Manifest", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
         instance.analyzeDependency(dependency, null);
-        assertEquals(2, versions.size());
+        assertEquals(2,  dependency.getEvidence(EvidenceType.VERSION).size());
 
-        versions.addEvidence("nexus", "version", "1.2.3", Confidence.HIGHEST);
-        versions.addEvidence("other", "version", "alpha", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "nexus", "version", "1.2.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "other", "version", "alpha", Confidence.HIGHEST);
         instance.analyzeDependency(dependency, null);
-        assertEquals(3, versions.size());
+        assertEquals(3,  dependency.getEvidence(EvidenceType.VERSION).size());
 
-        versions.addEvidence("central", "version", "1.2.3", Confidence.HIGHEST);
-        versions.addEvidence("other", "version", "alpha", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "central", "version", "1.2.3", Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VERSION, "other", "version", "alpha", Confidence.HIGHEST);
         instance.analyzeDependency(dependency, null);
-        assertEquals(4, versions.size());
+        assertEquals(4,  dependency.getEvidence(EvidenceType.VERSION).size());
     }
-
 }

@@ -67,7 +67,7 @@
             #end
             ,"evidenceCollected": {
                 "vendorEvidence": [
-                    #foreach($evidence in $dependency.getVendorEvidence())
+                    #foreach($evidence in $dependency.getEvidence($VENDOR))
                         #if($foreach.count > 1),#end{
                             "type": "vendor",
                             "confidence": "$enc.json($evidence.getConfidence().toString())",
@@ -78,7 +78,7 @@
                     #end
                 ],
                 "productEvidence": [
-                    #foreach($evidence in $dependency.getProductEvidence())
+                    #foreach($evidence in $dependency.getEvidence($PRODUCT))
                         #if($foreach.count > 1),#end{
                             "type": "product",
                             "confidence": "$enc.json($evidence.getConfidence().toString())",
@@ -89,7 +89,7 @@
                     #end
                 ],
                 "versionEvidence": [
-                    #foreach($evidence in $dependency.getVersionEvidence())
+                    #foreach($evidence in $dependency.getEvidence($VERSION))
                     #if($foreach.count > 1),#end
                     {
                         "type": "version",
@@ -106,7 +106,6 @@
                 #foreach($id in $dependency.getIdentifiers())
                     #if($foreach.count > 1),#end
                     {
-                        "count": "$loopCount",
                         "name": "$id.value",
                         "type": "$enc.json($id.type)"
                         #if($id.confidence),"confidence": "$id.confidence"#end

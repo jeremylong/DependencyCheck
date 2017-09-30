@@ -24,7 +24,6 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.UrlStringUtils;
@@ -35,6 +34,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
@@ -44,13 +45,13 @@ import org.owasp.dependencycheck.exception.InitializationException;
  * @author Dale Visser
  */
 @Experimental
+@ThreadSafe
 public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
      * Used when compiling file scanning regex patterns.
      */
-    private static final int REGEX_OPTIONS = Pattern.DOTALL
-            | Pattern.CASE_INSENSITIVE;
+    private static final int REGEX_OPTIONS = Pattern.DOTALL | Pattern.CASE_INSENSITIVE;
 
     /**
      * Filename extensions for files to be analyzed.
@@ -58,16 +59,14 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     private static final String EXTENSIONS = "py";
 
     /**
-     * Pattern for matching the module docstring in a source file.
+     * Pattern for matching the module doc string in a source file.
      */
-    private static final Pattern MODULE_DOCSTRING = Pattern.compile(
-            "^(['\\\"]{3})(.*?)\\1", REGEX_OPTIONS);
+    private static final Pattern MODULE_DOCSTRING = Pattern.compile("^(['\\\"]{3})(.*?)\\1", REGEX_OPTIONS);
 
     /**
      * Matches assignments to version variables in Python source code.
      */
-    private static final Pattern VERSION_PATTERN = Pattern.compile(
-            "\\b(__)?version(__)? *= *(['\"]+)(\\d+\\.\\d+.*?)\\3",
+    private static final Pattern VERSION_PATTERN = Pattern.compile("\\b(__)?version(__)? *= *(['\"]+)(\\d+\\.\\d+.*?)\\3",
             REGEX_OPTIONS);
 
     /**
@@ -131,6 +130,16 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
+     * Returns the key name for the analyzers enabled setting.
+     *
+     * @return the key name for the analyzers enabled setting
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+        return Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED;
+    }
+
+    /**
      * Returns the FileFilter
      *
      * @return the FileFilter
@@ -143,10 +152,11 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * No-op initializer implementation.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException never thrown
      */
     @Override
-    protected void initializeFileTypeAnalyzer() throws InitializationException {
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         // Nothing to do here.
     }
 
@@ -181,8 +191,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
             //"The __init__.py files are required to make Python treat the directories as containing packages"
             //see section "6.4 Packages" from https://docs.python.org/2/tutorial/modules.html;
             dependency.setDisplayFileName(parentName + "/__init__.py");
-            dependency.getProductEvidence().addEvidence(file.getName(),
-                    "PackageName", parentName, Confidence.HIGHEST);
+            dependency.addEvidence(EvidenceType.PRODUCT, file.getName(), "PackageName", parentName, Confidence.HIGHEST);
 
             final File[] fileList = parent.listFiles(PY_FILTER);
             if (fileList != null) {
@@ -191,7 +200,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
         } else {
-            engine.getDependencies().remove(dependency);
+            engine.removeDependency(dependency);
         }
     }
 
@@ -211,32 +220,28 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
         try {
             contents = FileUtils.readFileToString(file, Charset.defaultCharset()).trim();
         } catch (IOException e) {
-            throw new AnalysisException(
-                    "Problem occurred while reading dependency file.", e);
+            throw new AnalysisException("Problem occurred while reading dependency file.", e);
         }
         boolean found = false;
         if (!contents.isEmpty()) {
             final String source = file.getName();
-            found = gatherEvidence(VERSION_PATTERN, contents, source,
-                    dependency.getVersionEvidence(), "SourceVersion",
-                    Confidence.MEDIUM);
+            found = gatherEvidence(dependency, EvidenceType.VERSION, VERSION_PATTERN, contents,
+                    source, "SourceVersion", Confidence.MEDIUM);
             found |= addSummaryInfo(dependency, SUMMARY_PATTERN, 4, contents,
                     source, "summary");
             if (INIT_PY_FILTER.accept(file)) {
                 found |= addSummaryInfo(dependency, MODULE_DOCSTRING, 2,
                         contents, source, "docstring");
             }
-            found |= gatherEvidence(TITLE_PATTERN, contents, source,
-                    dependency.getProductEvidence(), "SourceTitle",
-                    Confidence.LOW);
-            final EvidenceCollection vendorEvidence = dependency
-                    .getVendorEvidence();
-            found |= gatherEvidence(AUTHOR_PATTERN, contents, source,
-                    vendorEvidence, "SourceAuthor", Confidence.MEDIUM);
-            found |= gatherHomePageEvidence(URI_PATTERN, vendorEvidence,
+            found |= gatherEvidence(dependency, EvidenceType.PRODUCT, TITLE_PATTERN, contents,
+                    source, "SourceTitle", Confidence.LOW);
+
+            found |= gatherEvidence(dependency, EvidenceType.VENDOR, AUTHOR_PATTERN, contents,
+                    source, "SourceAuthor", Confidence.MEDIUM);
+            found |= gatherHomePageEvidence(dependency, EvidenceType.VENDOR, URI_PATTERN,
                     source, "URL", contents);
-            found |= gatherHomePageEvidence(HOMEPAGE_PATTERN,
-                    vendorEvidence, source, "HomePage", contents);
+            found |= gatherHomePageEvidence(dependency, EvidenceType.VENDOR, HOMEPAGE_PATTERN,
+                    source, "HomePage", contents);
         }
         return found;
     }
@@ -266,23 +271,23 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Collects evidence from the home page URL.
      *
+     * @param dependency the dependency that is being analyzed
+     * @param type the type of evidence
      * @param pattern the pattern to match
-     * @param evidence the evidence collection to add the evidence to
      * @param source the source of the evidence
      * @param name the name of the evidence
      * @param contents the home page URL
      * @return true if evidence was collected; otherwise false
      */
-    private boolean gatherHomePageEvidence(Pattern pattern,
-            EvidenceCollection evidence, String source, String name,
-            String contents) {
+    private boolean gatherHomePageEvidence(Dependency dependency, EvidenceType type, Pattern pattern,
+            String source, String name, String contents) {
         final Matcher matcher = pattern.matcher(contents);
         boolean found = false;
         if (matcher.find()) {
             final String url = matcher.group(4);
             if (UrlStringUtils.isUrl(url)) {
                 found = true;
-                evidence.addEvidence(source, name, url, Confidence.MEDIUM);
+                dependency.addEvidence(type, source, name, url, Confidence.MEDIUM);
             }
         }
         return found;
@@ -292,27 +297,22 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
      * Gather evidence from a Python source file using the given string
      * assignment regex pattern.
      *
+     * @param dependency the dependency that is being analyzed
+     * @param type the type of evidence
      * @param pattern to scan contents with
      * @param contents of Python source file
      * @param source for storing evidence
-     * @param evidence to store evidence in
      * @param name of evidence
      * @param confidence in evidence
      * @return whether evidence was found
      */
-    private boolean gatherEvidence(Pattern pattern, String contents,
-            String source, EvidenceCollection evidence, String name,
-            Confidence confidence) {
+    private boolean gatherEvidence(Dependency dependency, EvidenceType type, Pattern pattern, String contents,
+            String source, String name, Confidence confidence) {
         final Matcher matcher = pattern.matcher(contents);
         final boolean found = matcher.find();
         if (found) {
-            evidence.addEvidence(source, name, matcher.group(4), confidence);
+            dependency.addEvidence(type, source, name, matcher.group(4), confidence);
         }
         return found;
-    }
-
-    @Override
-    protected String getAnalyzerEnabledSettingKey() {
-        return Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED;
     }
 }

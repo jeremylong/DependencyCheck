@@ -31,12 +31,14 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * DriverLoader is a utility class that is used to load database drivers.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public final class DriverLoader {
 
     /**
@@ -45,31 +47,51 @@ public final class DriverLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(DriverLoader.class);
 
     /**
+     * De-registers the driver.
+     *
+     * @param driver the driver to de-register
+     */
+    public static void cleanup(Driver driver) {
+        try {
+            DriverManager.deregisterDriver(driver);
+        } catch (SQLException ex) {
+            LOGGER.debug("An error occurred unloading the database driver", ex);
+        } catch (Throwable unexpected) {
+            LOGGER.debug("An unexpected throwable occurred unloading the database driver", unexpected);
+        }
+    }
+
+    /**
      * Private constructor for a utility class.
      */
     private DriverLoader() {
     }
 
     /**
-     * Loads the specified class using the system class loader and registers the driver with the driver manager.
+     * Loads the specified class using the system class loader and registers the
+     * driver with the driver manager.
      *
      * @param className the fully qualified name of the desired class
      * @return the loaded Driver
      * @throws DriverLoadException thrown if the driver cannot be loaded
      */
     public static Driver load(String className) throws DriverLoadException {
-        final ClassLoader loader = DriverLoader.class.getClassLoader(); //ClassLoader.getSystemClassLoader();
+        final ClassLoader loader = DriverLoader.class.getClassLoader();
         return load(className, loader);
     }
 
     /**
-     * Loads the specified class by registering the supplied paths to the class loader and then registers the driver with the
-     * driver manager. The pathToDriver argument is added to the class loader so that an external driver can be loaded. Note, the
-     * pathToDriver can contain a semi-colon separated list of paths so any dependencies can be added as needed. If a path in the
-     * pathToDriver argument is a directory all files in the directory are added to the class path.
+     * Loads the specified class by registering the supplied paths to the class
+     * loader and then registers the driver with the driver manager. The
+     * pathToDriver argument is added to the class loader so that an external
+     * driver can be loaded. Note, the pathToDriver can contain a semi-colon
+     * separated list of paths so any dependencies can be added as needed. If a
+     * path in the pathToDriver argument is a directory all files in the
+     * directory are added to the class path.
      *
      * @param className the fully qualified name of the desired class
-     * @param pathToDriver the path to the JAR file containing the driver; note, this can be a semi-colon separated list of paths
+     * @param pathToDriver the path to the JAR file containing the driver; note,
+     * this can be a semi-colon separated list of paths
      * @return the loaded Driver
      * @throws DriverLoadException thrown if the driver cannot be loaded
      */
@@ -113,7 +135,8 @@ public final class DriverLoader {
     }
 
     /**
-     * Loads the specified class using the supplied class loader and registers the driver with the driver manager.
+     * Loads the specified class using the supplied class loader and registers
+     * the driver with the driver manager.
      *
      * @param className the fully qualified name of the desired class
      * @param loader the class loader to use when loading the driver
@@ -125,6 +148,8 @@ public final class DriverLoader {
             final Class c = Class.forName(className, true, loader);
             //final Class c = loader.loadClass(className);
             final Driver driver = (Driver) c.newInstance();
+
+            //TODO add usage count so we don't de-register a driver that is in use.
             final Driver shim = new DriverShim(driver);
             //using the DriverShim to get around the fact that the DriverManager won't register a driver not in the base class path
             DriverManager.registerDriver(shim);

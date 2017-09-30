@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.analyzer.JarAnalyzer;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -31,6 +32,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jeremy
  */
+@ThreadSafe
 public final class PomUtils {
 
     /**
@@ -52,6 +54,7 @@ public final class PomUtils {
      * or parsing the POM {@link Model} object
      */
     public static Model readPom(File file) throws AnalysisException {
+        //noinspection CaughtExceptionImmediatelyRethrown
         try {
             final PomParser parser = new PomParser();
             final Model model = parser.parse(file);
@@ -85,6 +88,7 @@ public final class PomUtils {
         final ZipEntry entry = jar.getEntry(path);
         Model model = null;
         if (entry != null) { //should never be null
+            //noinspection CaughtExceptionImmediatelyRethrown
             try {
                 final PomParser parser = new PomParser();
                 model = parser.parse(jar.getInputStream(entry));

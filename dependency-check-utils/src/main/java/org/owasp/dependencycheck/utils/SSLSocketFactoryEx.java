@@ -42,15 +42,21 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      * The protocols.
      */
     private String[] protocols;
+    /**
+     * The configured settings.
+     */
+    private final Settings settings;
 
     /**
      * Constructs a new SSLSocketFactory.
      *
+     * @param settings reference to the configured settings
      * @throws NoSuchAlgorithmException thrown when an algorithm is not
      * supported
      * @throws KeyManagementException thrown if initialization fails
      */
-    public SSLSocketFactoryEx() throws NoSuchAlgorithmException, KeyManagementException {
+    public SSLSocketFactoryEx(Settings settings) throws NoSuchAlgorithmException, KeyManagementException {
+        this.settings = settings;
         initSSLSocketFactoryEx(null, null, null);
     }
 
@@ -60,11 +66,14 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      * @param km the key manager
      * @param tm the trust manager
      * @param random secure random
+     * @param settings reference to the configured settings
      * @throws NoSuchAlgorithmException thrown when an algorithm is not
      * supported
      * @throws KeyManagementException thrown if initialization fails
      */
-    public SSLSocketFactoryEx(KeyManager[] km, TrustManager[] tm, SecureRandom random) throws NoSuchAlgorithmException, KeyManagementException {
+    public SSLSocketFactoryEx(KeyManager[] km, TrustManager[] tm, SecureRandom random, Settings settings)
+            throws NoSuchAlgorithmException, KeyManagementException {
+        this.settings = settings;
         initSSLSocketFactoryEx(km, tm, random);
     }
 
@@ -72,11 +81,13 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      * Constructs a new SSLSocketFactory.
      *
      * @param ctx the SSL context
+     * @param settings reference to the configured settings
      * @throws NoSuchAlgorithmException thrown when an algorithm is not
      * supported
      * @throws KeyManagementException thrown if initialization fails
      */
-    public SSLSocketFactoryEx(SSLContext ctx) throws NoSuchAlgorithmException, KeyManagementException {
+    public SSLSocketFactoryEx(SSLContext ctx, Settings settings) throws NoSuchAlgorithmException, KeyManagementException {
+        this.settings = settings;
         initSSLSocketFactoryEx(ctx);
     }
 
@@ -254,7 +265,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
     protected String[] getProtocolList() {
         SSLSocket socket = null;
         String[] availableProtocols = null;
-        final String[] preferredProtocols = Settings.getString(
+        final String[] preferredProtocols = settings.getString(
                 Settings.KEYS.DOWNLOADER_TLS_PROTOCOL_LIST,
                 "TLSv1,TLSv1.1,TLSv1.2,TLSv1.3")
                 .split(",");

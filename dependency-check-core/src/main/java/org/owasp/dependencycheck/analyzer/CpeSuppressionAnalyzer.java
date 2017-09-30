@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -26,6 +27,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class CpeSuppressionAnalyzer extends AbstractSuppressionAnalyzer {
 
     /**

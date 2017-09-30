@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import javax.annotation.concurrent.ThreadSafe;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
@@ -47,21 +49,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * <p>
  * An in memory Lucene index that contains the vendor/product combinations from
- * the CPE (application) identifiers within the NVD CVE data.
+ * the CPE (application) identifiers within the NVD CVE data.</p>
+ *
+ * This is the last remaining singleton in dependency-check-core; The use of
+ * this singleton - while it may not technically be thread-safe (one database
+ * used to build this index may not have the same entries as another) the risk
+ * of this is currently believed to be small. As this memory index consumes a
+ * large amount of memory we will remain using the singleton pattern for now.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public final class CpeMemoryIndex implements AutoCloseable {
 
+    /**
+     * Singleton instance.
+     */
+    private static final CpeMemoryIndex INSTANCE = new CpeMemoryIndex();
     /**
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(CpeMemoryIndex.class);
-    /**
-     * singleton instance.
-     */
-    private static final CpeMemoryIndex INSTANCE = new CpeMemoryIndex();
     /**
      * The in memory Lucene index.
      */
@@ -83,18 +93,10 @@ public final class CpeMemoryIndex implements AutoCloseable {
      */
     private QueryParser queryParser;
     /**
-     * The search field analyzer for the product field.
-     */
-    private SearchFieldAnalyzer productFieldAnalyzer;
-    /**
-     * The search field analyzer for the vendor field.
-     */
-    private SearchFieldAnalyzer vendorFieldAnalyzer;
-    /**
      * Track the number of current users of the Lucene index; used to track it
      * it is okay to actually close the index.
      */
-    private int usageCount = 0;
+    private final AtomicInteger usageCount = new AtomicInteger(0);
 
     /**
      * private constructor for singleton.
@@ -118,8 +120,7 @@ public final class CpeMemoryIndex implements AutoCloseable {
      * @throws IndexException thrown if there is an error creating the index
      */
     public synchronized void open(CveDB cve) throws IndexException {
-        if (INSTANCE.usageCount <= 0) {
-            INSTANCE.usageCount = 0;
+        if (INSTANCE.usageCount.addAndGet(1) == 1) {
             index = new RAMDirectory();
             buildIndex(cve);
             try {
@@ -131,7 +132,6 @@ public final class CpeMemoryIndex implements AutoCloseable {
             searchingAnalyzer = createSearchingAnalyzer();
             queryParser = new QueryParser(LuceneUtils.CURRENT_VERSION, Fields.DOCUMENT_KEY, searchingAnalyzer);
         }
-        INSTANCE.usageCount += 1;
     }
 
     /**
@@ -140,7 +140,7 @@ public final class CpeMemoryIndex implements AutoCloseable {
      * @return whether or not the index is open
      */
     public synchronized boolean isOpen() {
-        return INSTANCE.usageCount > 0;
+        return INSTANCE.usageCount.get() > 0;
     }
 
     /**
@@ -151,8 +151,8 @@ public final class CpeMemoryIndex implements AutoCloseable {
     private Analyzer createSearchingAnalyzer() {
         final Map<String, Analyzer> fieldAnalyzers = new HashMap<>();
         fieldAnalyzers.put(Fields.DOCUMENT_KEY, new KeywordAnalyzer());
-        productFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
-        vendorFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
+        final SearchFieldAnalyzer productFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
+        final SearchFieldAnalyzer vendorFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
         fieldAnalyzers.put(Fields.PRODUCT, productFieldAnalyzer);
         fieldAnalyzers.put(Fields.VENDOR, vendorFieldAnalyzer);
 
@@ -164,8 +164,9 @@ public final class CpeMemoryIndex implements AutoCloseable {
      */
     @Override
     public synchronized void close() {
-        INSTANCE.usageCount -= 1;
-        if (INSTANCE.usageCount <= 0) {
+        final int count = INSTANCE.usageCount.get() - 1;
+        if (count <= 0) {
+            INSTANCE.usageCount.set(0);
             if (searchingAnalyzer != null) {
                 searchingAnalyzer.close();
                 searchingAnalyzer = null;
@@ -218,8 +219,6 @@ public final class CpeMemoryIndex implements AutoCloseable {
         } catch (DatabaseException ex) {
             LOGGER.debug("", ex);
             throw new IndexException("Error reading CPE data", ex);
-        } catch (CorruptIndexException ex) {
-            throw new IndexException("Unable to close an in-memory index", ex);
         } catch (IOException ex) {
             throw new IndexException("Unable to close an in-memory index", ex);
         }

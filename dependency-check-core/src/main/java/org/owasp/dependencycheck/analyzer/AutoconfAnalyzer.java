@@ -22,7 +22,6 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.UrlStringUtils;
@@ -33,6 +32,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
@@ -168,15 +168,14 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
                 final String contents = getFileContents(actualFile);
                 if (!contents.isEmpty()) {
                     if (isOutputScript) {
-                        extractConfigureScriptEvidence(dependency, name,
-                                contents);
+                        extractConfigureScriptEvidence(dependency, name, contents);
                     } else {
                         gatherEvidence(dependency, name, contents);
                     }
                 }
             }
         } else {
-            engine.getDependencies().remove(dependency);
+            engine.removeDependency(dependency);
         }
     }
 
@@ -195,17 +194,13 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
             final String value = matcher.group(2);
             if (!value.isEmpty()) {
                 if (variable.endsWith("NAME")) {
-                    dependency.getProductEvidence().addEvidence(name, variable,
-                            value, Confidence.HIGHEST);
+                    dependency.addEvidence(EvidenceType.PRODUCT, name, variable, value, Confidence.HIGHEST);
                 } else if ("VERSION".equals(variable)) {
-                    dependency.getVersionEvidence().addEvidence(name, variable,
-                            value, Confidence.HIGHEST);
+                    dependency.addEvidence(EvidenceType.VERSION, name, variable, value, Confidence.HIGHEST);
                 } else if ("BUGREPORT".equals(variable)) {
-                    dependency.getVendorEvidence().addEvidence(name, variable,
-                            value, Confidence.HIGH);
+                    dependency.addEvidence(EvidenceType.VENDOR, name, variable, value, Confidence.HIGH);
                 } else if ("URL".equals(variable)) {
-                    dependency.getVendorEvidence().addEvidence(name, variable,
-                            value, Confidence.HIGH);
+                    dependency.addEvidence(EvidenceType.VENDOR, name, variable, value, Confidence.HIGH);
                 }
             }
         }
@@ -239,27 +234,19 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
             String contents) {
         final Matcher matcher = AC_INIT_PATTERN.matcher(contents);
         if (matcher.find()) {
-            final EvidenceCollection productEvidence = dependency
-                    .getProductEvidence();
-            productEvidence.addEvidence(name, "Package", matcher.group(1),
-                    Confidence.HIGHEST);
-            dependency.getVersionEvidence().addEvidence(name,
-                    "Package Version", matcher.group(2), Confidence.HIGHEST);
-            final EvidenceCollection vendorEvidence = dependency
-                    .getVendorEvidence();
+            dependency.addEvidence(EvidenceType.PRODUCT, name, "Package", matcher.group(1), Confidence.HIGHEST);
+            dependency.addEvidence(EvidenceType.VERSION, name, "Package Version", matcher.group(2), Confidence.HIGHEST);
+
             if (null != matcher.group(3)) {
-                vendorEvidence.addEvidence(name, "Bug report address",
-                        matcher.group(4), Confidence.HIGH);
+                dependency.addEvidence(EvidenceType.VENDOR, name, "Bug report address", matcher.group(4), Confidence.HIGH);
             }
             if (null != matcher.group(5)) {
-                productEvidence.addEvidence(name, "Tarname", matcher.group(6),
-                        Confidence.HIGH);
+                dependency.addEvidence(EvidenceType.PRODUCT, name, "Tarname", matcher.group(6), Confidence.HIGH);
             }
             if (null != matcher.group(7)) {
                 final String url = matcher.group(8);
                 if (UrlStringUtils.isUrl(url)) {
-                    vendorEvidence.addEvidence(name, "URL", url,
-                            Confidence.HIGH);
+                    dependency.addEvidence(EvidenceType.VENDOR, name, "URL", url, Confidence.HIGH);
                 }
             }
         }
@@ -268,11 +255,12 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Initializes the file type analyzer.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException thrown if there is an exception during
      * initialization
      */
     @Override
-    protected void initializeFileTypeAnalyzer() throws InitializationException {
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         // No initialization needed.
     }
 }

@@ -35,10 +35,12 @@ import static org.junit.Assume.assumeNotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
@@ -65,11 +67,14 @@ public class AssemblyAnalyzerTest extends BaseTest {
      * @throws Exception if anything goes sideways
      */
     @Before
+    @Override
     public void setUp() throws Exception {
+        super.setUp();
         try {
             analyzer = new AssemblyAnalyzer();
+            analyzer.initialize(getSettings());
             analyzer.accept(new File("test.dll")); // trick into "thinking it is active"
-            analyzer.initialize();
+            analyzer.prepare(null);
             assertGrokAssembly();
         } catch (Exception e) {
             if (e.getMessage().contains("Could not execute .NET AssemblyAnalyzer")) {
@@ -86,8 +91,8 @@ public class AssemblyAnalyzerTest extends BaseTest {
         // directory and they must match the resources they were created from.
         File grokAssemblyExeFile = null;
         File grokAssemblyConfigFile = null;
-        
-        File tempDirectory = Settings.getTempDirectory();
+
+        File tempDirectory = getSettings().getTempDirectory();
         for (File file : tempDirectory.listFiles()) {
             String filename = file.getName();
             if (filename.startsWith("GKA") && filename.endsWith(".exe")) {
@@ -99,10 +104,8 @@ public class AssemblyAnalyzerTest extends BaseTest {
         grokAssemblyConfigFile = new File(grokAssemblyExeFile.getPath() + ".config");
         assertTrue("The GrokAssembly config was not created.", grokAssemblyConfigFile.isFile());
 
-        assertFileContent("The GrokAssembly executable has incorrect content.", "GrokAssembly.exe",
-                grokAssemblyExeFile);
-        assertFileContent("The GrokAssembly config has incorrect content.", "GrokAssembly.exe.config",
-                grokAssemblyConfigFile);
+        assertFileContent("The GrokAssembly executable has incorrect content.", "GrokAssembly.exe", grokAssemblyExeFile);
+        assertFileContent("The GrokAssembly config has incorrect content.", "GrokAssembly.exe.config", grokAssemblyConfigFile);
     }
 
     private void assertFileContent(String message, String expectedResourceName, File actualFile) throws IOException {
@@ -128,21 +131,8 @@ public class AssemblyAnalyzerTest extends BaseTest {
         File f = BaseTest.getResourceAsFile(this, "GrokAssembly.exe");
         Dependency d = new Dependency(f);
         analyzer.analyze(d, null);
-        boolean foundVendor = false;
-        for (Evidence e : d.getVendorEvidence().getEvidence("grokassembly", "vendor")) {
-            if ("OWASP".equals(e.getValue())) {
-                foundVendor = true;
-            }
-        }
-        assertTrue(foundVendor);
-
-        boolean foundProduct = false;
-        for (Evidence e : d.getProductEvidence().getEvidence("grokassembly", "product")) {
-            if ("GrokAssembly".equals(e.getValue())) {
-                foundProduct = true;
-            }
-        }
-        assertTrue(foundProduct);
+        assertTrue(d.contains(EvidenceType.VENDOR, new Evidence("grokassembly", "vendor", "OWASP", Confidence.HIGH)));
+        assertTrue(d.contains(EvidenceType.PRODUCT, new Evidence("grokassembly", "product", "GrokAssembly", Confidence.HIGH)));
     }
 
     @Test
@@ -152,9 +142,9 @@ public class AssemblyAnalyzerTest extends BaseTest {
 
         Dependency d = new Dependency(f);
         analyzer.analyze(d, null);
-        assertTrue(d.getVersionEvidence().getEvidence().contains(new Evidence("grokassembly", "version", "1.2.13.0", Confidence.HIGHEST)));
-        assertTrue(d.getVendorEvidence().getEvidence().contains(new Evidence("grokassembly", "vendor", "The Apache Software Foundation", Confidence.HIGH)));
-        assertTrue(d.getProductEvidence().getEvidence().contains(new Evidence("grokassembly", "product", "log4net", Confidence.HIGH)));
+        assertTrue(d.contains(EvidenceType.VERSION, new Evidence("grokassembly", "version", "1.2.13.0", Confidence.HIGHEST)));
+        assertTrue(d.contains(EvidenceType.VENDOR, new Evidence("grokassembly", "vendor", "The Apache Software Foundation", Confidence.HIGH)));
+        assertTrue(d.contains(EvidenceType.PRODUCT, new Evidence("grokassembly", "product", "log4net", Confidence.HIGH)));
     }
 
     @Test
@@ -183,7 +173,7 @@ public class AssemblyAnalyzerTest extends BaseTest {
         //This test doesn't work on Windows.
         assumeFalse(System.getProperty("os.name").startsWith("Windows"));
 
-        String oldValue = Settings.getString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH);
+        String oldValue = getSettings().getString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH);
         // if oldValue is null, that means that neither the system property nor the setting has
         // been set. If that's the case, then we have to make it such that when we recover,
         // null still comes back. But you can't put a null value in a HashMap, so we have to set
@@ -191,7 +181,7 @@ public class AssemblyAnalyzerTest extends BaseTest {
         if (oldValue == null) {
             System.setProperty(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, "/yooser/bine/mono");
         } else {
-            Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, "/yooser/bine/mono");
+            getSettings().setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, "/yooser/bine/mono");
         }
 
         String oldProp = System.getProperty(LOG_KEY, "info");
@@ -200,8 +190,9 @@ public class AssemblyAnalyzerTest extends BaseTest {
             System.setProperty(LOG_KEY, "error");
             // Have to make a NEW analyzer because during setUp, it would have gotten the correct one
             AssemblyAnalyzer aanalyzer = new AssemblyAnalyzer();
+            aanalyzer.initialize(getSettings());
             aanalyzer.accept(new File("test.dll")); // trick into "thinking it is active"
-            aanalyzer.initialize();
+            aanalyzer.prepare(null);
             fail("Expected an InitializationException");
         } catch (InitializationException ae) {
             assertEquals("An error occurred with the .NET AssemblyAnalyzer", ae.getMessage());
@@ -213,13 +204,20 @@ public class AssemblyAnalyzerTest extends BaseTest {
             if (oldValue == null) {
                 System.getProperties().remove(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH);
             } else {
-                Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, oldValue);
+                getSettings().setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, oldValue);
             }
         }
     }
 
     @After
+    @Override
     public void tearDown() throws Exception {
-        analyzer.closeAnalyzer();
+        try {
+            analyzer.closeAnalyzer();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        } finally {
+            super.tearDown();
+        }
     }
 }

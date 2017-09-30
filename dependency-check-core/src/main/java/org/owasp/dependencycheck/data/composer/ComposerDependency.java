@@ -17,11 +17,14 @@
  */
 package org.owasp.dependencycheck.data.composer;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * Represents a dependency (GAV, right now) from a Composer dependency.
  *
  * @author colezlaw
  */
+@ThreadSafe
 public final class ComposerDependency {
 
     /**

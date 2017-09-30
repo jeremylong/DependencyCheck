@@ -18,21 +18,21 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.util.ArrayList;
-import org.owasp.dependencycheck.utils.InvalidSettingException;
-import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Arrays.asList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * The Analyzer Service Loader. This class loads all services that implement
- * org.owasp.dependencycheck.analyzer.Analyzer.
+ * {@link org.owasp.dependencycheck.analyzer.Analyzer}.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class AnalyzerService {
 
     /**
@@ -44,14 +44,20 @@ public class AnalyzerService {
      * The service loader for analyzers.
      */
     private final ServiceLoader<Analyzer> service;
+    /**
+     * The configured settings.
+     */
+    private final boolean loadExperimental;
 
     /**
      * Creates a new instance of AnalyzerService.
      *
      * @param classLoader the ClassLoader to use when dynamically loading
      * Analyzer and Update services
+     * @param loadExperimental whether or not to load the experimental analyzers
      */
-    public AnalyzerService(ClassLoader classLoader) {
+    public AnalyzerService(ClassLoader classLoader, boolean loadExperimental) {
+        this.loadExperimental = loadExperimental;
         service = ServiceLoader.load(Analyzer.class, classLoader);
     }
 
@@ -85,18 +91,12 @@ public class AnalyzerService {
     private List<Analyzer> getAnalyzers(List<AnalysisPhase> phases) {
         final List<Analyzer> analyzers = new ArrayList<>();
         final Iterator<Analyzer> iterator = service.iterator();
-        boolean experimentalEnabled = false;
-        try {
-            experimentalEnabled = Settings.getBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, false);
-        } catch (InvalidSettingException ex) {
-            LOGGER.error("invalid experimental setting", ex);
-        }
         while (iterator.hasNext()) {
             final Analyzer a = iterator.next();
             if (!phases.contains(a.getAnalysisPhase())) {
                 continue;
             }
-            if (!experimentalEnabled && a.getClass().isAnnotationPresent(Experimental.class)) {
+            if (!loadExperimental && a.getClass().isAnnotationPresent(Experimental.class)) {
                 continue;
             }
             LOGGER.debug("Loaded Analyzer {}", a.getName());

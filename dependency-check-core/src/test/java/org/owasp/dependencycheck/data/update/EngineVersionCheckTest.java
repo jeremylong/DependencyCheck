@@ -66,31 +66,31 @@ public class EngineVersionCheckTest extends BaseTest {
     public void testShouldUpdate() throws Exception {
         DatabaseProperties properties = new MockUp<DatabaseProperties>() {
             final private Properties properties = new Properties();
-
+            
             @Mock
             public void save(String key, String value) throws UpdateException {
                 properties.setProperty(key, value);
             }
-
+            
             @Mock
             public String getProperty(String key) {
                 return properties.getProperty(key);
             }
-
+            
         }.getMockInstance();
-
+        
         String updateToVersion = "1.2.6";
         String currentVersion = "1.2.6";
-
+        
         long lastChecked = dateToMilliseconds("2014-12-01");
         long now = dateToMilliseconds("2014-12-01");
-
-        EngineVersionCheck instance = new EngineVersionCheck();
+        
+        EngineVersionCheck instance = new EngineVersionCheck(getSettings());
         boolean expResult = false;
         instance.setUpdateToVersion(updateToVersion);
         boolean result = instance.shouldUpdate(lastChecked, now, properties, currentVersion);
         assertEquals(expResult, result);
-
+        
         updateToVersion = "1.2.5";
         currentVersion = "1.2.5";
         lastChecked = dateToMilliseconds("2014-10-01");
@@ -109,7 +109,7 @@ public class EngineVersionCheckTest extends BaseTest {
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, properties, currentVersion);
         assertEquals(expResult, result);
-
+        
         updateToVersion = "1.2.6";
         currentVersion = "1.2.5";
         lastChecked = dateToMilliseconds("2014-12-01");
@@ -118,7 +118,7 @@ public class EngineVersionCheckTest extends BaseTest {
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, properties, currentVersion);
         assertEquals(expResult, result);
-
+        
         updateToVersion = "1.2.5";
         currentVersion = "1.2.6";
         lastChecked = dateToMilliseconds("2014-12-01");
@@ -127,7 +127,7 @@ public class EngineVersionCheckTest extends BaseTest {
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, properties, currentVersion);
         assertEquals(expResult, result);
-
+        
         updateToVersion = "";
         currentVersion = "1.2.5";
         lastChecked = dateToMilliseconds("2014-12-01");
@@ -136,7 +136,7 @@ public class EngineVersionCheckTest extends BaseTest {
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, properties, currentVersion);
         assertEquals(expResult, result);
-
+        
         updateToVersion = "";
         currentVersion = "1.2.5";
         lastChecked = dateToMilliseconds("2014-12-01");
@@ -152,7 +152,7 @@ public class EngineVersionCheckTest extends BaseTest {
      */
     @Test
     public void testGetCurrentReleaseVersion() {
-        EngineVersionCheck instance = new EngineVersionCheck();
+        EngineVersionCheck instance = new EngineVersionCheck(getSettings());
         DependencyVersion minExpResult = new DependencyVersion("1.2.6");
         String release = instance.getCurrentReleaseVersion();
         DependencyVersion result = new DependencyVersion(release);

@@ -48,35 +48,34 @@ public class EngineIT extends BaseDBTestCase {
     @Test
     public void testEngine() throws IOException, InvalidSettingException, DatabaseException, ReportException, ExceptionCollection {
         String testClasses = "target/test-classes";
-        boolean autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
-        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
-        Engine instance = new Engine();
-        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
-        instance.scan(testClasses);
-        assertTrue(instance.getDependencies().size() > 0);
-        try {
-            instance.analyzeDependencies();
-        } catch (ExceptionCollection ex) {
-            Set<String> allowedMessages = new HashSet<>();
-            allowedMessages.add("bundle-audit");
-            allowedMessages.add("AssemblyAnalyzer");
-            //allowedMessages.add("Unable to connect to");
-            for (Throwable t : ex.getExceptions()) {
-                boolean isOk = false;
-                if (t.getMessage()!=null) {
-                    for (String msg : allowedMessages) {
-                        if (t.getMessage().contains(msg)) {
-                            isOk=true;
-                            break;
+        getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+        try (Engine instance = new Engine(getSettings())) {
+            instance.scan(testClasses);
+            assertTrue(instance.getDependencies().length > 0);
+            try {
+                instance.analyzeDependencies();
+            } catch (ExceptionCollection ex) {
+                Set<String> allowedMessages = new HashSet<>();
+                allowedMessages.add("bundle-audit");
+                allowedMessages.add("AssemblyAnalyzer");
+                //allowedMessages.add("Unable to connect to");
+                for (Throwable t : ex.getExceptions()) {
+                    boolean isOk = false;
+                    if (t.getMessage() != null) {
+                        for (String msg : allowedMessages) {
+                            if (t.getMessage().contains(msg)) {
+                                isOk = true;
+                                break;
+                            }
                         }
                     }
-                }
-                if (!isOk) {
-                    throw ex;
+                    if (!isOk) {
+                        throw ex;
+                    }
                 }
             }
+            instance.writeReports("dependency-check sample", new File("./target/"), "ALL");
+            instance.close();
         }
-        instance.writeReports("dependency-check sample", new File("./target/"), "ALL");
-        instance.cleanup();
     }
 }

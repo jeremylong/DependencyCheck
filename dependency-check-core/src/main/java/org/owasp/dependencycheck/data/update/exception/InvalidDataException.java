@@ -17,11 +17,15 @@
  */
 package org.owasp.dependencycheck.data.update.exception;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
- * An InvalidDataDataException is a generic exception used when trying to load the NVD CVE meta data.
+ * An InvalidDataDataException is a generic exception used when trying to load
+ * the NVD CVE meta data.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class InvalidDataException extends Exception {
 
     /**

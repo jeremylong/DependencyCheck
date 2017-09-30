@@ -26,9 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -38,29 +36,13 @@ import org.junit.Test;
 public class SettingsTest extends BaseTest {
 
     /**
-     * Initialize the {@link Settings} singleton.
-     */
-    @Before
-    public void setUp() {
-        Settings.initialize();
-    }
-
-    /**
-     * Clean the {@link Settings} singleton.
-     */
-    @After
-    public void tearDown() {
-        Settings.cleanup();
-    }
-
-    /**
      * Test of getString method, of class Settings.
      */
     @Test
     public void testGetString() {
         String key = Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS;
         String expResult = "7";
-        String result = Settings.getString(key);
+        String result = getSettings().getString(key);
         Assert.assertTrue(result.endsWith(expResult));
     }
 
@@ -71,21 +53,23 @@ public class SettingsTest extends BaseTest {
     public void testGetDataFile() throws IOException {
         String key = Settings.KEYS.DATA_DIRECTORY;
         String expResult = "data";
-        File result = Settings.getDataFile(key);
+        File result = getSettings().getDataFile(key);
         Assert.assertTrue(result.getAbsolutePath().endsWith(expResult));
     }
 
     /**
      * Test of mergeProperties method, of class Settings.
+     * @throws java.io.IOException thrown when the test fails
+     * @throws java.net.URISyntaxException thrown when the test fails
      */
     @Test
     public void testMergeProperties_String() throws IOException, URISyntaxException {
         String key = Settings.KEYS.PROXY_PORT;
-        String expResult = Settings.getString(key);
+        String expResult = getSettings().getString(key);
         File f = new File(this.getClass().getClassLoader().getResource("test.properties").toURI());
         //InputStream in = this.getClass().getClassLoader().getResourceAsStream("test.properties");
-        Settings.mergeProperties(f.getAbsolutePath());
-        String result = Settings.getString(key);
+        getSettings().mergeProperties(f.getAbsolutePath());
+        String result = getSettings().getString(key);
         Assert.assertTrue("setting didn't change?", (expResult == null && result != null) || !expResult.equals(result));
     }
 
@@ -96,8 +80,8 @@ public class SettingsTest extends BaseTest {
     public void testSetString() {
         String key = "newProperty";
         String value = "someValue";
-        Settings.setString(key, value);
-        String expResults = Settings.getString(key);
+        getSettings().setString(key, value);
+        String expResults = getSettings().getString(key);
         Assert.assertEquals(expResults, value);
     }
 
@@ -108,9 +92,9 @@ public class SettingsTest extends BaseTest {
     public void testSetStringIfNotNull() {
         String key = "nullableProperty";
         String value = "someValue";
-        Settings.setString(key, value);
-        Settings.setStringIfNotNull(key, null); // NO-OP
-        String expResults = Settings.getString(key);
+        getSettings().setString(key, value);
+        getSettings().setStringIfNotNull(key, null); // NO-OP
+        String expResults = getSettings().getString(key);
         Assert.assertEquals(expResults, value);
     }
 
@@ -121,9 +105,9 @@ public class SettingsTest extends BaseTest {
     public void testSetStringIfNotEmpty() {
         String key = "optionalProperty";
         String value = "someValue";
-        Settings.setString(key, value);
-        Settings.setStringIfNotEmpty(key, ""); // NO-OP
-        String expResults = Settings.getString(key);
+        getSettings().setString(key, value);
+        getSettings().setStringIfNotEmpty(key, ""); // NO-OP
+        String expResults = getSettings().getString(key);
         Assert.assertEquals(expResults, value);
     }
 
@@ -135,9 +119,9 @@ public class SettingsTest extends BaseTest {
         String key = "key That Doesn't Exist";
         String defaultValue = "blue bunny";
         String expResult = "blue bunny";
-        String result = Settings.getString(key);
+        String result = getSettings().getString(key);
         Assert.assertTrue(result == null);
-        result = Settings.getString(key, defaultValue);
+        result = getSettings().getString(key, defaultValue);
         Assert.assertEquals(expResult, result);
     }
 
@@ -147,7 +131,7 @@ public class SettingsTest extends BaseTest {
     @Test
     public void testGetString_String() {
         String key = Settings.KEYS.CONNECTION_TIMEOUT;
-        String result = Settings.getString(key);
+        String result = getSettings().getString(key);
         Assert.assertTrue(result == null);
     }
 
@@ -158,8 +142,8 @@ public class SettingsTest extends BaseTest {
     public void testGetInt() throws InvalidSettingException {
         String key = "SomeNumber";
         int expResult = 85;
-        Settings.setString(key, "85");
-        int result = Settings.getInt(key);
+        getSettings().setString(key, "85");
+        int result = getSettings().getInt(key);
         Assert.assertEquals(expResult, result);
     }
 
@@ -170,8 +154,8 @@ public class SettingsTest extends BaseTest {
     public void testGetIntDefault() throws InvalidSettingException {
         String key = "SomeKey";
         int expResult = 85;
-        Settings.setString(key, "blue");
-        int result = Settings.getInt(key, expResult);
+        getSettings().setString(key, "blue");
+        int result = getSettings().getInt(key, expResult);
         Assert.assertEquals(expResult, result);
     }
 
@@ -182,8 +166,8 @@ public class SettingsTest extends BaseTest {
     public void testGetLong() throws InvalidSettingException {
         String key = "SomeNumber";
         long expResult = 300L;
-        Settings.setString(key, "300");
-        long result = Settings.getLong(key);
+        getSettings().setString(key, "300");
+        long result = getSettings().getLong(key);
         Assert.assertEquals(expResult, result);
     }
 
@@ -193,14 +177,14 @@ public class SettingsTest extends BaseTest {
     @Test
     public void testGetBoolean() throws InvalidSettingException {
         String key = "SomeBoolean";
-        Settings.setString(key, "false");
+        getSettings().setString(key, "false");
         boolean expResult = false;
-        boolean result = Settings.getBoolean(key);
+        boolean result = getSettings().getBoolean(key);
         Assert.assertEquals(expResult, result);
 
         key = "something that does not exist";
         expResult = true;
-        result = Settings.getBoolean(key, true);
+        result = getSettings().getBoolean(key, true);
         Assert.assertEquals(expResult, result);
     }
 
@@ -212,11 +196,11 @@ public class SettingsTest extends BaseTest {
         String key = "SomeKey";
         String value = "value";
         String dfault = "default";
-        Settings.setString(key, value);
-        String ret = Settings.getString(key);
+        getSettings().setString(key, value);
+        String ret = getSettings().getString(key);
         Assert.assertEquals(value, ret);
-        Settings.removeProperty(key);
-        ret = Settings.getString(key, dfault);
+        getSettings().removeProperty(key);
+        ret = getSettings().getString(key, dfault);
         Assert.assertEquals(dfault, ret);
     }
 
@@ -225,11 +209,11 @@ public class SettingsTest extends BaseTest {
      */
     @Test
     public void testGetConnectionString() throws Exception {
-        String value = Settings.getConnectionString(Settings.KEYS.DB_CONNECTION_STRING, Settings.KEYS.DB_FILE_NAME);
+        String value = getSettings().getConnectionString(Settings.KEYS.DB_CONNECTION_STRING, Settings.KEYS.DB_FILE_NAME);
         Assert.assertNotNull(value);
         String msg = null;
         try {
-            value = Settings.getConnectionString("invalidKey", null);
+            value = getSettings().getConnectionString("invalidKey", null);
         } catch (InvalidSettingException e) {
             msg = e.getMessage();
         }
@@ -241,7 +225,7 @@ public class SettingsTest extends BaseTest {
      */
     @Test
     public void testGetTempDirectory() throws Exception {
-        File tmp = Settings.getTempDirectory();
+        File tmp = getSettings().getTempDirectory();
         Assert.assertTrue(tmp.exists());
     }
 
@@ -253,10 +237,10 @@ public class SettingsTest extends BaseTest {
     public void testGetArrayFromADelimitedString() {
         // GIVEN a delimited string
         final String delimitedString = "value1,value2";
-        Settings.setString("key", delimitedString);
+        getSettings().setString("key", delimitedString);
 
         // WHEN getting the array
-        final String[] array = Settings.getArray("key");
+        final String[] array = getSettings().getArray("key");
 
         // THEN the split array is returned
         assertThat("Expected the array to be non-null", array, notNullValue());
@@ -272,7 +256,7 @@ public class SettingsTest extends BaseTest {
     @Test
     public void testGetArrayWhereThePropertyIsNotSet() {
         // WHEN getting the array
-        final String[] array = Settings.getArray("key");
+        final String[] array = getSettings().getArray("key");
 
         // THEN null is returned
         assertThat("Expected the array to be null", array, nullValue());
@@ -288,10 +272,10 @@ public class SettingsTest extends BaseTest {
         final String[] array = {};
 
         // WHEN setting the array
-        Settings.setArrayIfNotEmpty("key", array);
+        getSettings().setArrayIfNotEmpty("key", array);
 
         // THEN the property was not set
-        assertThat("Expected the property to not be set", Settings.getString("key"), nullValue());
+        assertThat("Expected the property to not be set", getSettings().getString("key"), nullValue());
     }
 
     /**
@@ -304,10 +288,10 @@ public class SettingsTest extends BaseTest {
         final String[] array = null;
 
         // WHEN setting the array
-        Settings.setArrayIfNotEmpty("key", array);
+        getSettings().setArrayIfNotEmpty("key", array);
 
         // THEN the property was not set
-        assertThat("Expected the property to not be set", Settings.getString("key"), nullValue());
+        assertThat("Expected the property to not be set", getSettings().getString("key"), nullValue());
     }
 
     /**
@@ -320,10 +304,10 @@ public class SettingsTest extends BaseTest {
         final String[] array = {"value1", "value2"};
 
         // WHEN setting the array
-        Settings.setArrayIfNotEmpty("key", array);
+        getSettings().setArrayIfNotEmpty("key", array);
 
         // THEN the property is set
-        assertThat("Expected the property to be set", Settings.getString("key"), is("value1,value2"));
+        assertThat("Expected the property to be set", getSettings().getString("key"), is("value1,value2"));
     }
 
     /**
@@ -336,9 +320,9 @@ public class SettingsTest extends BaseTest {
         final String[] array = {"value1"};
 
         // WHEN setting the array
-        Settings.setArrayIfNotEmpty("key", array);
+        getSettings().setArrayIfNotEmpty("key", array);
 
         // THEN the property is set
-        assertThat("Expected the property to be set", Settings.getString("key"), is("value1"));
+        assertThat("Expected the property to be set", getSettings().getString("key"), is("value1"));
     }
 }

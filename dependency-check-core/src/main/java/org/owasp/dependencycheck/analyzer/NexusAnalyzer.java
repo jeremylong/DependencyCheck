@@ -35,6 +35,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
@@ -59,6 +61,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author colezlaw
  */
+@ThreadSafe
 public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
@@ -95,7 +98,18 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Field indicating if the analyzer is enabled.
      */
-    private final boolean enabled = checkEnabled();
+    private boolean enabled = true;
+
+    /**
+     * Initializes the analyzer with the configured settings.
+     *
+     * @param settings the configured settings to use
+     */
+    @Override
+    public void initialize(Settings settings) {
+        super.initialize(settings);
+        enabled = checkEnabled();
+    }
 
     /**
      * Determines if this analyzer is enabled
@@ -110,8 +124,8 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
          */
         boolean retval = false;
         try {
-            if (!DEFAULT_URL.equals(Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL))
-                    && Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED)) {
+            if (!DEFAULT_URL.equals(getSettings().getString(Settings.KEYS.ANALYZER_NEXUS_URL))
+                    && getSettings().getBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED)) {
                 LOGGER.info("Enabling Nexus analyzer");
                 retval = true;
             } else {
@@ -137,25 +151,25 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Initializes the analyzer once before any analysis is performed.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException if there's an error during initialization
      */
     @Override
-    public void initializeFileTypeAnalyzer() throws InitializationException {
+    public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         LOGGER.debug("Initializing Nexus Analyzer");
         LOGGER.debug("Nexus Analyzer enabled: {}", isEnabled());
         if (isEnabled()) {
             final boolean useProxy = useProxy();
-            final String searchUrl = Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL);
-            LOGGER.debug("Nexus Analyzer URL: {}", searchUrl);
+            LOGGER.debug("Using proxy: {}", useProxy);
             try {
-                searcher = new NexusSearch(new URL(searchUrl), useProxy);
+                searcher = new NexusSearch(getSettings(), useProxy);
                 if (!searcher.preflightRequest()) {
                     setEnabled(false);
                     throw new InitializationException("There was an issue getting Nexus status. Disabling analyzer.");
                 }
             } catch (MalformedURLException mue) {
                 setEnabled(false);
-                throw new InitializationException("Malformed URL to Nexus: " + searchUrl, mue);
+                throw new InitializationException("Malformed URL to Nexus", mue);
             }
         }
     }
@@ -223,7 +237,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
             dependency.addAsEvidence("nexus", ma, Confidence.HIGH);
             boolean pomAnalyzed = false;
             LOGGER.debug("POM URL {}", ma.getPomUrl());
-            for (Evidence e : dependency.getVendorEvidence()) {
+            for (Evidence e : dependency.getEvidence(EvidenceType.VENDOR)) {
                 if ("pom".equals(e.getSource())) {
                     pomAnalyzed = true;
                     break;
@@ -232,7 +246,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
             if (!pomAnalyzed && ma.getPomUrl() != null) {
                 File pomFile = null;
                 try {
-                    final File baseDir = Settings.getTempDirectory();
+                    final File baseDir = getSettings().getTempDirectory();
                     pomFile = File.createTempFile("pom", ".xml", baseDir);
                     if (!pomFile.delete()) {
                         LOGGER.warn("Unable to fetch pom.xml for {} from Nexus repository; "
@@ -240,7 +254,8 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
                         LOGGER.debug("Unable to delete temp file");
                     }
                     LOGGER.debug("Downloading {}", ma.getPomUrl());
-                    Downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);
+                    final Downloader downloader = new Downloader(getSettings());
+                    downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);
                     PomUtils.analyzePOM(dependency, pomFile);
                 } catch (DownloadFailedException ex) {
                     LOGGER.warn("Unable to download pom.xml for {} from Nexus repository; "
@@ -266,14 +281,14 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Determine if a proxy should be used.
+     * Determine if a proxy should be used for the Nexus Analyzer.
      *
      * @return {@code true} if a proxy should be used
      */
-    public static boolean useProxy() {
+    public boolean useProxy() {
         try {
-            return Settings.getString(Settings.KEYS.PROXY_SERVER) != null
-                    && Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY);
+            return getSettings().getString(Settings.KEYS.PROXY_SERVER) != null
+                    && getSettings().getBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY);
         } catch (InvalidSettingException ise) {
             LOGGER.warn("Failed to parse proxy settings.", ise);
             return false;

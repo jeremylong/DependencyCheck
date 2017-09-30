@@ -177,7 +177,7 @@ public class DependencyTest extends BaseTest {
     public void testSetIdentifiers() {
         Set<Identifier> identifiers = new HashSet<>();
         Dependency instance = new Dependency();
-        instance.setIdentifiers(identifiers);
+        instance.addIdentifiers(identifiers);
         assertNotNull(instance.getIdentifiers());
     }
 
@@ -203,57 +203,11 @@ public class DependencyTest extends BaseTest {
     @Test
     public void testGetEvidence() {
         Dependency instance = new Dependency();
-        EvidenceCollection result = instance.getEvidence();
+        Set<Evidence> result = instance.getEvidence(EvidenceType.VENDOR);
         assertNotNull(result);
-    }
-
-    /**
-     * Test of getEvidenceUsed method, of class Dependency.
-     */
-    @Test
-    public void testGetEvidenceUsed() {
-        Dependency instance = new Dependency();
-        String expResult = "used";
-
-        instance.getProductEvidence().addEvidence("used", "used", "used", Confidence.HIGH);
-        instance.getProductEvidence().addEvidence("not", "not", "not", Confidence.MEDIUM);
-        for (Evidence e : instance.getProductEvidence().iterator(Confidence.HIGH)) {
-            e.getValue();
-        }
-
-        EvidenceCollection result = instance.getEvidenceUsed();
-
-        assertEquals(1, result.size());
-        assertTrue(result.containsUsedString(expResult));
-    }
-
-    /**
-     * Test of getVendorEvidence method, of class Dependency.
-     */
-    @Test
-    public void testGetVendorEvidence() {
-        Dependency instance = new Dependency();
-        EvidenceCollection result = instance.getVendorEvidence();
+        result = instance.getEvidence(EvidenceType.PRODUCT);
         assertNotNull(result);
-    }
-
-    /**
-     * Test of getProductEvidence method, of class Dependency.
-     */
-    @Test
-    public void testGetProductEvidence() {
-        Dependency instance = new Dependency();
-        EvidenceCollection result = instance.getProductEvidence();
-        assertNotNull(result);
-    }
-
-    /**
-     * Test of getVersionEvidence method, of class Dependency.
-     */
-    @Test
-    public void testGetVersionEvidence() {
-        Dependency instance = new Dependency();
-        EvidenceCollection result = instance.getVersionEvidence();
+        result = instance.getEvidence(EvidenceType.VERSION);
         assertNotNull(result);
     }
 
@@ -265,10 +219,8 @@ public class DependencyTest extends BaseTest {
         Dependency instance = new Dependency();
         MavenArtifact mavenArtifact = new MavenArtifact("group", "artifact", "version", "url");
         instance.addAsEvidence("pom", mavenArtifact, Confidence.HIGH);
-        assertTrue(instance.getEvidence().contains(Confidence.HIGH));
-        assertFalse(instance.getEvidence().getEvidence("pom", "groupid").isEmpty());
-        assertFalse(instance.getEvidence().getEvidence("pom", "artifactid").isEmpty());
-        assertFalse(instance.getEvidence().getEvidence("pom", "version").isEmpty());
+        assertTrue(instance.contains(EvidenceType.VENDOR, Confidence.HIGH));
+        assertTrue(instance.size() > 1);
         assertFalse(instance.getIdentifiers().isEmpty());
     }
 
@@ -280,10 +232,8 @@ public class DependencyTest extends BaseTest {
         Dependency instance = new Dependency();
         MavenArtifact mavenArtifact = new MavenArtifact(null, null, null, null);
         instance.addAsEvidence("pom", mavenArtifact, Confidence.HIGH);
-        assertFalse(instance.getEvidence().contains(Confidence.HIGH));
-        assertTrue(instance.getEvidence().getEvidence("pom", "groupid").isEmpty());
-        assertTrue(instance.getEvidence().getEvidence("pom", "artifactid").isEmpty());
-        assertTrue(instance.getEvidence().getEvidence("pom", "version").isEmpty());
+        assertFalse(instance.getEvidence(EvidenceType.VENDOR).contains(Confidence.HIGH));
+        assertTrue(instance.size() == 0);
         assertTrue(instance.getIdentifiers().isEmpty());
     }
 }

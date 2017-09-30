@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.data.update.cpe;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.owasp.dependencycheck.data.update.NvdCveUpdater;
 import org.owasp.dependencycheck.data.update.exception.InvalidDataException;
 import org.owasp.dependencycheck.utils.Settings;
@@ -34,6 +35,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class CPEHandler extends DefaultHandler {
 
     /**
@@ -43,7 +45,7 @@ public class CPEHandler extends DefaultHandler {
     /**
      * The Starts with expression to filter CVE entries by CPE.
      */
-    private static final String CPE_STARTS_WITH = Settings.getString(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER, "cpe:/a:");
+    private final String cpeStartsWith;
     /**
      * The text content of the node being processed. This can be used during the
      * end element event.
@@ -61,6 +63,15 @@ public class CPEHandler extends DefaultHandler {
      * The list of CPE values.
      */
     private final List<Cpe> data = new ArrayList<>();
+
+    /**
+     * Constructs a new CPE Handler object with the configured settings.
+     *
+     * @param settings the configured settings
+     */
+    public CPEHandler(Settings settings) {
+        cpeStartsWith = settings.getString(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER, "cpe:/a:");
+    }
 
     /**
      * Returns the list of CPE values.
@@ -89,7 +100,7 @@ public class CPEHandler extends DefaultHandler {
             final String temp = attributes.getValue("deprecated");
             final String value = attributes.getValue("name");
             final boolean delete = "true".equalsIgnoreCase(temp);
-            if (!delete && value.startsWith(CPE_STARTS_WITH) && value.length() > 7) {
+            if (!delete && value.startsWith(cpeStartsWith) && value.length() > 7) {
                 try {
                     final Cpe cpe = new Cpe(value);
                     data.add(cpe);

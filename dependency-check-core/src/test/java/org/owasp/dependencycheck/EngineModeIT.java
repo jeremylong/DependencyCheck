@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -23,6 +22,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Assume;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.utils.FileUtils;
 
 /**
@@ -38,26 +38,35 @@ public class EngineModeIT extends BaseTest {
     private String originalDataDir = null;
 
     @Before
+    @Override
     public void setUp() throws Exception {
+        super.setUp();
         // Have to use System properties as the Settings object pulls from the 
         // system properties before configured properties
-        originalDataDir = Settings.getString(Settings.KEYS.DATA_DIRECTORY);
+        originalDataDir = getSettings().getString(Settings.KEYS.DATA_DIRECTORY);
         System.setProperty(Settings.KEYS.DATA_DIRECTORY, tempDir.newFolder().getAbsolutePath());
     }
 
     @After
-    public void tearDown() throws IOException {
-        //delete temp files
-        FileUtils.delete(Settings.getDataDirectory());
-        //Reset system property to original value just to be safe for other tests.
-        System.setProperty(Settings.KEYS.DATA_DIRECTORY, originalDataDir);
-
+    @Override
+    public void tearDown() throws Exception {
+        try {
+            //delete temp files
+            FileUtils.delete(getSettings().getDataDirectory());
+            //Reset system property to original value just to be safe for other tests.
+            System.setProperty(Settings.KEYS.DATA_DIRECTORY, originalDataDir);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        } finally {
+            super.tearDown();
+        }
     }
 
     @Test
     public void testEvidenceCollectionAndEvidenceProcessingModes() throws Exception {
-        List<Dependency> dependencies;
-        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_COLLECTION)) {
+        Dependency[] dependencies;
+        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_COLLECTION, getSettings())) {
+            engine.openDatabase(); //does nothing in the current mode
             assertDatabase(false);
             for (AnalysisPhase phase : Engine.Mode.EVIDENCE_COLLECTION.getPhases()) {
                 assertThat(engine.getAnalyzers(phase), is(notNullValue()));
@@ -69,14 +78,15 @@ public class EngineModeIT extends BaseTest {
             engine.scan(file);
             engine.analyzeDependencies();
             dependencies = engine.getDependencies();
-            assertThat(dependencies.size(), is(1));
-            Dependency dependency = dependencies.get(0);
-            assertTrue(dependency.getVendorEvidence().toString().toLowerCase().contains("apache"));
-            assertTrue(dependency.getVendorEvidence().getWeighting().contains("apache"));
+            assertThat(dependencies.length, is(1));
+            Dependency dependency = dependencies[0];
+            assertTrue(dependency.getEvidence(EvidenceType.VENDOR).toString().toLowerCase().contains("apache"));
+            assertTrue(dependency.getVendorWeightings().contains("apache"));
             assertTrue(dependency.getVulnerabilities().isEmpty());
         }
 
-        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING)) {
+        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, getSettings())) {
+            engine.openDatabase();
             assertDatabase(true);
             for (AnalysisPhase phase : Engine.Mode.EVIDENCE_PROCESSING.getPhases()) {
                 assertThat(engine.getAnalyzers(phase), is(notNullValue()));
@@ -84,16 +94,17 @@ public class EngineModeIT extends BaseTest {
             for (AnalysisPhase phase : Engine.Mode.EVIDENCE_COLLECTION.getPhases()) {
                 assertThat(engine.getAnalyzers(phase), is(nullValue()));
             }
-            engine.setDependencies(dependencies);
+            engine.addDependency(dependencies[0]);
             engine.analyzeDependencies();
-            Dependency dependency = dependencies.get(0);
+            Dependency dependency = dependencies[0];
             assertFalse(dependency.getVulnerabilities().isEmpty());
         }
     }
 
     @Test
     public void testStandaloneMode() throws Exception {
-        try (Engine engine = new Engine(Engine.Mode.STANDALONE)) {
+        try (Engine engine = new Engine(Engine.Mode.STANDALONE, getSettings())) {
+            engine.openDatabase();
             assertDatabase(true);
             for (AnalysisPhase phase : Engine.Mode.STANDALONE.getPhases()) {
                 assertThat(engine.getAnalyzers(phase), is(notNullValue()));
@@ -101,26 +112,21 @@ public class EngineModeIT extends BaseTest {
             File file = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
             engine.scan(file);
             engine.analyzeDependencies();
-            List<Dependency> dependencies = engine.getDependencies();
-            assertThat(dependencies.size(), is(1));
-            Dependency dependency = dependencies.get(0);
-            assertTrue(dependency.getVendorEvidence().toString().toLowerCase().contains("apache"));
-            assertTrue(dependency.getVendorEvidence().getWeighting().contains("apache"));
+            Dependency[] dependencies = engine.getDependencies();
+            assertThat(dependencies.length, is(1));
+            Dependency dependency = dependencies[0];
+            assertTrue(dependency.getEvidence(EvidenceType.VENDOR).toString().toLowerCase().contains("apache"));
+            assertTrue(dependency.getVendorWeightings().contains("apache"));
             assertFalse(dependency.getVulnerabilities().isEmpty());
         }
     }
 
     private void assertDatabase(boolean exists) throws Exception {
-        Assume.assumeThat(Settings.getString(Settings.KEYS.DB_DRIVER_NAME), is("org.h2.Driver"));
-        Path directory = Settings.getDataDirectory().toPath();
+        Assume.assumeThat(getSettings().getString(Settings.KEYS.DB_DRIVER_NAME), is("org.h2.Driver"));
+        Path directory = getSettings().getDataDirectory().toPath();
         assertThat(Files.exists(directory), is(true));
         assertThat(Files.isDirectory(directory), is(true));
-        Path database = directory.resolve(Settings.getString(Settings.KEYS.DB_FILE_NAME));
-        System.err.println(database.toString());
-        for (String f : directory.toFile().list()) {
-            System.err.println(f);
-        }
-
+        Path database = directory.resolve(getSettings().getString(Settings.KEYS.DB_FILE_NAME));
         assertThat(Files.exists(database), is(exists));
     }
 }

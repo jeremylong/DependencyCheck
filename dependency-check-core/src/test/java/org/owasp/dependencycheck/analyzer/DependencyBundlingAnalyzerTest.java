@@ -79,7 +79,7 @@ public class DependencyBundlingAnalyzerTest extends BaseTest {
 
         new Verifications() {{
             engineMock.getDependencies();
-            times = 2;
+            times = 1;
         }};
     }
 

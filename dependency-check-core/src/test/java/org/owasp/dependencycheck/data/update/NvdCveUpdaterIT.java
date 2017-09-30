@@ -17,14 +17,13 @@
  */
 package org.owasp.dependencycheck.data.update;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import org.owasp.dependencycheck.Engine;
 
 /**
  *
@@ -32,31 +31,14 @@ import static org.junit.Assert.fail;
  */
 public class NvdCveUpdaterIT extends BaseDBTestCase {
 
-    public NvdCveUpdater getUpdater() {
-        NvdCveUpdater instance = new NvdCveUpdater();
-        instance.initializeExecutorServices();
-        return instance;
-    }
-
-    /**
-     * Test of update method.
-     */
-    @Test
-    public void testUpdate() {
-        try {
-            NvdCveUpdater instance = getUpdater();
-            instance.update();
-        } catch (UpdateException ex) {
-            fail(ex.getMessage());
-        }
-    }
-
     /**
      * Test of updatesNeeded method.
      */
     @Test
     public void testUpdatesNeeded() throws Exception {
-        NvdCveUpdater instance = getUpdater();
+        NvdCveUpdater instance = new NvdCveUpdater();
+        instance.setSettings(getSettings());
+        instance.initializeExecutorServices();
         UpdateableNvdCve result = instance.getUpdatesNeeded();
         assertNotNull(result);
     }

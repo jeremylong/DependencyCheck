@@ -17,11 +17,14 @@
  */
 package org.owasp.dependencycheck.exception;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * An exception used when a dependency could not be found.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class DependencyNotFoundException extends Exception {
 
     /**

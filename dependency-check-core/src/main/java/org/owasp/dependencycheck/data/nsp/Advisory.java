@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.data.nsp;
 
 import java.util.Arrays;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * The response from NSP check API will respond with 0 or more advisories. This
@@ -25,6 +26,7 @@ import java.util.Arrays;
  *
  * @author Steve Springett
  */
+@ThreadSafe
 public class Advisory {
 
     /**

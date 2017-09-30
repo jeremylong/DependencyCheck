@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.io.IOUtils;
+import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
@@ -43,6 +45,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class EngineVersionCheck implements CachedWebDataSource {
 
     /**
@@ -62,6 +65,25 @@ public class EngineVersionCheck implements CachedWebDataSource {
      * against.
      */
     private String updateToVersion;
+    /**
+     * The configured settings.
+     */
+    private Settings settings;
+
+    /**
+     * Constructs a new engine version check utility for testing.
+     *
+     * @param settings the configured settings
+     */
+    protected EngineVersionCheck(Settings settings) {
+        this.settings = settings;
+    }
+
+    /**
+     * Constructs a new engine version check utility.
+     */
+    public EngineVersionCheck() {
+    }
 
     /**
      * Getter for updateToVersion - only used for testing. Represents the
@@ -92,12 +114,14 @@ public class EngineVersionCheck implements CachedWebDataSource {
      * be updated
      */
     @Override
-    public void update() throws UpdateException {
-        try (CveDB db = CveDB.getInstance()) {
-            final boolean autoupdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);
-            final boolean enabled = Settings.getBoolean(Settings.KEYS.UPDATE_VERSION_CHECK_ENABLED, true);
-            final String original = Settings.getString(Settings.KEYS.CVE_ORIGINAL_MODIFIED_20_URL);
-            final String current = Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL);
+    public void update(Engine engine) throws UpdateException {
+        this.settings = engine.getSettings();
+        try {
+            final CveDB db = engine.getDatabase();
+            final boolean autoupdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);
+            final boolean enabled = settings.getBoolean(Settings.KEYS.UPDATE_VERSION_CHECK_ENABLED, true);
+            final String original = settings.getString(Settings.KEYS.CVE_ORIGINAL_MODIFIED_20_URL);
+            final String current = settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL);
             /*
              * Only update if auto-update is enabled, the engine check is
              * enabled, and the NVD CVE URLs have not been modified (i.e. the
@@ -111,7 +135,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
                 final long lastChecked = Long.parseLong(properties.getProperty(ENGINE_VERSION_CHECKED_ON, "0"));
                 final long now = System.currentTimeMillis();
                 updateToVersion = properties.getProperty(CURRENT_ENGINE_RELEASE, "");
-                final String currentVersion = Settings.getString(Settings.KEYS.APPLICATION_VERSION, "0.0.0");
+                final String currentVersion = settings.getString(Settings.KEYS.APPLICATION_VERSION, "0.0.0");
                 LOGGER.debug("Last checked: {}", lastChecked);
                 LOGGER.debug("Now: {}", now);
                 LOGGER.debug("Current version: {}", currentVersion);
@@ -184,9 +208,10 @@ public class EngineVersionCheck implements CachedWebDataSource {
     protected String getCurrentReleaseVersion() {
         HttpURLConnection conn = null;
         try {
-            final String str = Settings.getString(Settings.KEYS.ENGINE_VERSION_CHECK_URL, "http://jeremylong.github.io/DependencyCheck/current.txt");
+            final String str = settings.getString(Settings.KEYS.ENGINE_VERSION_CHECK_URL, "http://jeremylong.github.io/DependencyCheck/current.txt");
             final URL url = new URL(str);
-            conn = URLConnectionFactory.createHttpURLConnection(url);
+            final URLConnectionFactory factory = new URLConnectionFactory(settings);
+            conn = factory.createHttpURLConnection(url);
             conn.connect();
             if (conn.getResponseCode() != 200) {
                 return null;

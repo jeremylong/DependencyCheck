@@ -17,10 +17,13 @@
  */
 package org.owasp.dependencycheck.xml.pom;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  *
  * @author jeremy
  */
+@ThreadSafe
 public class License {
 
     /**

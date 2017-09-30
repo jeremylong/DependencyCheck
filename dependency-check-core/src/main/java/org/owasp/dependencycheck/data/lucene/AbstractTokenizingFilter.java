@@ -18,15 +18,18 @@
 package org.owasp.dependencycheck.data.lucene;
 
 import java.util.LinkedList;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
 /**
- * An abstract tokenizing filter that can be used as the base for a tokenizing filter.
+ * An abstract tokenizing filter that can be used as the base for a tokenizing
+ * filter.
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public abstract class AbstractTokenizingFilter extends TokenFilter {
 
     /**

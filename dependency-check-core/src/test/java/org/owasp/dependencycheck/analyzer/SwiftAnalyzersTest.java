@@ -12,6 +12,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
  * Unit tests for CocoaPodsAnalyzer.
@@ -32,14 +33,18 @@ public class SwiftAnalyzersTest extends BaseTest {
      * @throws Exception thrown if there is a problem
      */
     @Before
+    @Override
     public void setUp() throws Exception {
+        super.setUp();
         podsAnalyzer = new CocoaPodsAnalyzer();
+        podsAnalyzer.initialize(getSettings());
         podsAnalyzer.setFilesMatched(true);
-        podsAnalyzer.initialize();
+        podsAnalyzer.prepare(null);
 
         spmAnalyzer = new SwiftPackageManagerAnalyzer();
+        spmAnalyzer.initialize(getSettings());
         spmAnalyzer.setFilesMatched(true);
-        spmAnalyzer.initialize();
+        spmAnalyzer.prepare(null);
     }
 
     /**
@@ -48,12 +53,15 @@ public class SwiftAnalyzersTest extends BaseTest {
      * @throws Exception thrown if there is a problem
      */
     @After
+    @Override
     public void tearDown() throws Exception {
         podsAnalyzer.close();
         podsAnalyzer = null;
 
         spmAnalyzer.close();
         spmAnalyzer = null;
+        
+        super.tearDown();
     }
 
     /**
@@ -98,13 +106,13 @@ public class SwiftAnalyzersTest extends BaseTest {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
                 "swift/cocoapods/EasyPeasy.podspec"));
         podsAnalyzer.analyze(result, null);
-        final String vendorString = result.getVendorEvidence().toString();
+        final String vendorString = result.getEvidence(EvidenceType.VENDOR).toString();
 
         assertThat(vendorString, containsString("Carlos Vidal"));
         assertThat(vendorString, containsString("https://github.com/nakiostudio/EasyPeasy"));
         assertThat(vendorString, containsString("MIT"));
-        assertThat(result.getProductEvidence().toString(), containsString("EasyPeasy"));
-        assertThat(result.getVersionEvidence().toString(), containsString("0.2.3"));
+        assertThat(result.getEvidence(EvidenceType.PRODUCT).toString(), containsString("EasyPeasy"));
+        assertThat(result.getEvidence(EvidenceType.VERSION).toString(), containsString("0.2.3"));
     }
 
     /**
@@ -118,6 +126,6 @@ public class SwiftAnalyzersTest extends BaseTest {
                 "swift/Gloss/Package.swift"));
         spmAnalyzer.analyze(result, null);
 
-        assertThat(result.getProductEvidence().toString(), containsString("Gloss"));
+        assertThat(result.getEvidence(EvidenceType.PRODUCT).toString(), containsString("Gloss"));
     }
 }
