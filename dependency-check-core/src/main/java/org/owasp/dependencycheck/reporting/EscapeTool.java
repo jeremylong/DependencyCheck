@@ -179,4 +179,57 @@ public class EscapeTool {
         }
         return StringEscapeUtils.escapeCsv(sb.toString());
     }
+
+    /**
+     * Takes a set of Identifiers, filters them to just CPEs, and formats them
+     * for confidence display in a CSV.
+     *
+     * @param ids the set of identifiers
+     * @return the formated list of confidence
+     */
+    public String csvCpeConfidence(Set<Identifier> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return "";
+        }
+        boolean addComma = false;
+        final StringBuilder sb = new StringBuilder();
+        for (Identifier id : ids) {
+            if ("cpe".equals(id.getType())) {
+                if (addComma) {
+                    sb.append(", ");
+                } else {
+                    addComma = true;
+                }
+                sb.append(id.getConfidence());
+            }
+        }
+        return StringEscapeUtils.escapeCsv(sb.toString());
+    }
+
+    /**
+     * Takes a set of Identifiers, filters them to just GAVs, and formats them
+     * for display in a CSV.
+     *
+     * @param ids the set of identifiers
+     * @return the formated list of GAV identifiers
+     */
+    public String csvGav(Set<Identifier> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return "";
+        }
+        boolean addComma = false;
+        final StringBuilder sb = new StringBuilder();
+        for (Identifier id : ids) {
+            if ("maven".equals(id.getType())) {
+                if (addComma) {
+                    sb.append(", ");
+                } else {
+                    addComma = true;
+                }
+                sb.append(id.getValue());
+            }
+        }
+        return StringEscapeUtils.escapeCsv(sb.toString());
+    }
+
 }

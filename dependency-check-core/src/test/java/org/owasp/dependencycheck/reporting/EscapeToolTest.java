@@ -21,6 +21,8 @@ import java.util.HashSet;
 import java.util.Set;
 import org.junit.Test;
 import static org.junit.Assert.*;
+
+import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Identifier;
 
 /**
@@ -228,4 +230,97 @@ public class EscapeToolTest {
         result = instance.csvCpe(ids);
         assertTrue(expResult.equals(result) || expResult2.equals(result));
     }
+
+    /**
+     * Test of csvCpeConfidence method, of class EscapeTool.
+     */
+    @Test
+    public void testCsvCpeConfidence() {
+        EscapeTool instance = new EscapeTool();
+        Set<Identifier> ids = null;
+        String expResult = "";
+        String result = instance.csvCpeConfidence(ids);
+        assertEquals(expResult, result);
+
+        ids = new HashSet<>();
+        expResult = "";
+        result = instance.csvCpeConfidence(ids);
+        assertEquals(expResult, result);
+
+        ids = new HashSet<>();
+        ids.add(new Identifier("gav", "somegroup:something:1.0", ""));
+        expResult = "";
+        result = instance.csvCpeConfidence(ids);
+        assertEquals(expResult, result);
+
+        ids = new HashSet<>();
+        Identifier i1 = new Identifier("cpe", "cpe:/a:somegroup:something:1.0", "");
+        i1.setConfidence(Confidence.HIGH);
+        ids.add(i1);
+        expResult = "HIGH";
+        result = instance.csvCpeConfidence(ids);
+        assertEquals(expResult, result);
+
+        ids = new HashSet<>();
+        i1 = new Identifier("cpe", "cpe:/a:somegroup:something:1.0", "");
+        i1.setConfidence(Confidence.HIGH);
+        ids.add(i1);
+        Identifier i2 = new Identifier("cpe", "cpe:/a:somegroup:something2:1.0", "");
+        i2.setConfidence(Confidence.MEDIUM);
+        ids.add(i2);
+        Identifier i3 = new Identifier("gav", "somegroup:something:1.0", "");
+        i3.setConfidence(Confidence.LOW);
+        ids.add(i3);
+
+        expResult = "\"HIGH, MEDIUM\"";
+        String expResult2 = "\"MEDIUM, HIGH\"";
+        result = instance.csvCpeConfidence(ids);
+        assertTrue(expResult.equals(result) || expResult2.equals(result));
+    }
+
+    /**
+     * Test of csvGav method, of class EscapeTool.
+     */
+    @Test
+    public void testCsvGav() {
+        EscapeTool instance = new EscapeTool();
+        Set<Identifier> ids = null;
+        String expResult = "";
+        String result = instance.csvGav(ids);
+        assertEquals(expResult, result);
+
+        ids = new HashSet<>();
+        expResult = "";
+        result = instance.csvGav(ids);
+        assertEquals(expResult, result);
+
+        ids = new HashSet<>();
+        ids.add(new Identifier("cpe", "somegroup:something:1.0", ""));
+        expResult = "";
+        result = instance.csvGav(ids);
+        assertEquals(expResult, result);
+
+        ids = new HashSet<>();
+        ids.add(new Identifier("maven", "somegroup:something:1.0", ""));
+        expResult = "somegroup:something:1.0";
+        result = instance.csvGav(ids);
+        assertEquals(expResult, result);
+
+        ids = new HashSet<>();
+        ids.add(new Identifier("cpe", "cpe:/a:somegroup:something:1.0", ""));
+        ids.add(new Identifier("maven", "somegroup:something:1.0", ""));
+        expResult = "somegroup:something:1.0";
+        result = instance.csvGav(ids);
+        assertEquals(expResult, result);
+
+        ids = new HashSet<>();
+        ids.add(new Identifier("maven", "somegroup:something:1.0", ""));
+        ids.add(new Identifier("cpe", "cpe:/a:somegroup:something:1.0", ""));
+        ids.add(new Identifier("maven", "somegroup:something2:1.0", ""));
+        expResult = "\"somegroup:something:1.0, somegroup:something2:1.0\"";
+        String expResult2 = "\"somegroup:something2:1.0, somegroup:something:1.0\"";
+        result = instance.csvGav(ids);
+        assertTrue(expResult.equals(result) || expResult2.equals(result));
+    }
+
 }
