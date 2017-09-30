@@ -1025,9 +1025,16 @@ public class DependencyCheckScanAgent {
             }
         }
         if (ids.length() > 0) {
-            final String msg = String.format("%n%nDependency-Check Failure:%n"
-                    + "One or more dependencies were identified with vulnerabilities that have a CVSS score greater than '%.1f': %s%n"
-                    + "See the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
+            final String msg;
+            if (showSummary) {
+                msg = String.format("%n%nDependency-Check Failure:%n"
+                        + "One or more dependencies were identified with vulnerabilities that have a CVSS score greater than '%.1f': %s%n"
+                        + "See the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
+            } else {
+                msg = String.format("%n%nDependency-Check Failure:%n"
+                        + "One or more dependencies were identified with vulnerabilities.%n%n"
+                        + "See the dependency-check report for more details.%n%n");
+            }
             throw new ScanAgentException(msg);
         }
     }
