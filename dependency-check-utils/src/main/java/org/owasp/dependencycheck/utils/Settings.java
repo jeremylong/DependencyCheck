@@ -254,6 +254,10 @@ public final class Settings {
          */
         public static final String ANALYZER_EXPERIMENTAL_ENABLED = "analyzer.experimental.enabled";
         /**
+         * The properties key for whether experimental analyzers are loaded.
+         */
+        public static final String ANALYZER_RETIRED_ENABLED = "analyzer.retired.enabled";
+        /**
          * The properties key for whether the Archive analyzer is enabled.
          */
         public static final String ANALYZER_ARCHIVE_ENABLED = "analyzer.archive.enabled";

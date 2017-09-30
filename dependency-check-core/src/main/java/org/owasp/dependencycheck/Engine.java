@@ -280,7 +280,7 @@ public class Engine implements FileFilter, AutoCloseable {
         } catch (InvalidSettingException ex) {
             LOGGER.trace("Experimenal setting not configured; defaulting to false");
         }
-        final AnalyzerService service = new AnalyzerService(serviceClassLoader, loadExperimental);
+        final AnalyzerService service = new AnalyzerService(serviceClassLoader, settings);
         final List<Analyzer> iterator = service.getAnalyzers(mode.getPhases());
         for (Analyzer a : iterator) {
             a.initialize(this.settings);

@@ -40,7 +40,7 @@ public class AnalyzerServiceTest extends BaseDBTestCase {
      */
     @Test
     public void testGetAnalyzers() {
-        AnalyzerService instance = new AnalyzerService(Thread.currentThread().getContextClassLoader(), false);
+        AnalyzerService instance = new AnalyzerService(Thread.currentThread().getContextClassLoader(), getSettings());
         List<Analyzer> result = instance.getAnalyzers();
 
         boolean found = false;
@@ -58,7 +58,7 @@ public class AnalyzerServiceTest extends BaseDBTestCase {
      */
     @Test
     public void testGetAnalyzers_SpecificPhases() throws Exception {
-        AnalyzerService instance = new AnalyzerService(Thread.currentThread().getContextClassLoader(), false);
+        AnalyzerService instance = new AnalyzerService(Thread.currentThread().getContextClassLoader(), getSettings());
         List<Analyzer> result = instance.getAnalyzers(INITIAL, FINAL);
 
         for (Analyzer a : result) {
@@ -73,25 +73,54 @@ public class AnalyzerServiceTest extends BaseDBTestCase {
      */
     @Test
     public void testGetExperimentalAnalyzers() {
-        AnalyzerService instance = new AnalyzerService(Thread.currentThread().getContextClassLoader(), false);
+        AnalyzerService instance = new AnalyzerService(Thread.currentThread().getContextClassLoader(), getSettings());
         List<Analyzer> result = instance.getAnalyzers();
         String experimental = "CMake Analyzer";
+        String retired = "Node.js Package Analyzer";
         boolean found = false;
+        boolean retiredFound = false;
         for (Analyzer a : result) {
             if (experimental.equals(a.getName())) {
                 found = true;
+            }
+            if (retired.equals(a.getName())) {
+                retiredFound = true;
             }
         }
         assertFalse("Experimental analyzer loaded when set to false", found);
+        assertFalse("Retired analyzer loaded when set to false", retiredFound);
 
-        instance = new AnalyzerService(Thread.currentThread().getContextClassLoader(), true);
+        getSettings().setBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, true);
+        instance = new AnalyzerService(Thread.currentThread().getContextClassLoader(), getSettings());
         result = instance.getAnalyzers();
         found = false;
+        retiredFound = false;
         for (Analyzer a : result) {
             if (experimental.equals(a.getName())) {
                 found = true;
             }
+            if (retired.equals(a.getName())) {
+                retiredFound = true;
+            }
         }
         assertTrue("Experimental analyzer not loaded when set to true", found);
+        assertFalse("Retired analyzer loaded when set to false", retiredFound);
+        
+        getSettings().setBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, false);
+        getSettings().setBoolean(Settings.KEYS.ANALYZER_RETIRED_ENABLED, true);
+        instance = new AnalyzerService(Thread.currentThread().getContextClassLoader(), getSettings());
+        result = instance.getAnalyzers();
+        found = false;
+        retiredFound = false;
+        for (Analyzer a : result) {
+            if (experimental.equals(a.getName())) {
+                found = true;
+            }
+            if (retired.equals(a.getName())) {
+                retiredFound = true;
+            }
+        }
+        assertFalse("Experimental analyzer loaded when set to false", found);
+        assertTrue("Retired analyzer not loaded when set to true", retiredFound);
     }
 }

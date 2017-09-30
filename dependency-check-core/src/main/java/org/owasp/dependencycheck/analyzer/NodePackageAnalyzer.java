@@ -47,8 +47,8 @@ import org.owasp.dependencycheck.dependency.EvidenceType;
  *
  * @author Dale Visser
  */
-@Experimental
 @ThreadSafe
+@Retired
 public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**

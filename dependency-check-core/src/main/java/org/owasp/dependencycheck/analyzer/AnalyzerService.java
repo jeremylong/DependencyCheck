@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
 import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * The Analyzer Service Loader. This class loads all services that implement
@@ -47,18 +49,18 @@ public class AnalyzerService {
     /**
      * The configured settings.
      */
-    private final boolean loadExperimental;
+    private final Settings settings;
 
     /**
      * Creates a new instance of AnalyzerService.
      *
      * @param classLoader the ClassLoader to use when dynamically loading
      * Analyzer and Update services
-     * @param loadExperimental whether or not to load the experimental analyzers
+     * @param settings the configured settings
      */
-    public AnalyzerService(ClassLoader classLoader, boolean loadExperimental) {
-        this.loadExperimental = loadExperimental;
+    public AnalyzerService(ClassLoader classLoader, Settings settings) {
         service = ServiceLoader.load(Analyzer.class, classLoader);
+        this.settings = settings;
     }
 
     /**
@@ -91,12 +93,23 @@ public class AnalyzerService {
     private List<Analyzer> getAnalyzers(List<AnalysisPhase> phases) {
         final List<Analyzer> analyzers = new ArrayList<>();
         final Iterator<Analyzer> iterator = service.iterator();
+        boolean experimentalEnabled = false;
+        boolean retiredEnabled = false;
+        try {
+            experimentalEnabled = settings.getBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, false);
+            retiredEnabled = settings.getBoolean(Settings.KEYS.ANALYZER_RETIRED_ENABLED, false);
+        } catch (InvalidSettingException ex) {
+            LOGGER.error("invalid experimental or retired setting", ex);
+        }
         while (iterator.hasNext()) {
             final Analyzer a = iterator.next();
             if (!phases.contains(a.getAnalysisPhase())) {
                 continue;
             }
-            if (!loadExperimental && a.getClass().isAnnotationPresent(Experimental.class)) {
+            if (!experimentalEnabled && a.getClass().isAnnotationPresent(Experimental.class)) {
+                continue;
+            }
+            if (!retiredEnabled && a.getClass().isAnnotationPresent(Retired.class)) {
                 continue;
             }
             LOGGER.debug("Loaded Analyzer {}", a.getName());
