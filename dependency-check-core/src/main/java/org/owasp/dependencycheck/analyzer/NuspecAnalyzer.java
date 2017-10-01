@@ -41,7 +41,12 @@ import org.owasp.dependencycheck.exception.InitializationException;
  * @author colezlaw
  */
 public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
-
+    
+	/**
+     * A descriptor for the type of dependencies processed or added by this analyzer
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = "NuGet";
+	
     /**
      * The logger.
      */
@@ -136,12 +141,15 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
                 throw new AnalysisException(ex);
             }
 
+            dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
             if (np.getOwners() != null) {
                 dependency.getVendorEvidence().addEvidence("nuspec", "owners", np.getOwners(), Confidence.HIGHEST);
             }
             dependency.getVendorEvidence().addEvidence("nuspec", "authors", np.getAuthors(), Confidence.HIGH);
             dependency.getVersionEvidence().addEvidence("nuspec", "version", np.getVersion(), Confidence.HIGHEST);
+            dependency.setVersion(np.getVersion());
             dependency.getProductEvidence().addEvidence("nuspec", "id", np.getId(), Confidence.HIGHEST);
+            dependency.setName(np.getId());
             if (np.getTitle() != null) {
                 dependency.getProductEvidence().addEvidence("nuspec", "title", np.getTitle(), Confidence.MEDIUM);
             }
