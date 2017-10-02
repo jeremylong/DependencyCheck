@@ -154,6 +154,7 @@ Copyright (c) 2012 - Jeremy Long
         <maven>3.1</maven>
     </prerequisites>
     <build>
+    <defaultGoal>clean install</defaultGoal>
         <pluginManagement>
             <plugins>
                 <plugin>
