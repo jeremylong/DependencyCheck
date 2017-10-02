@@ -75,6 +75,13 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     private static final String SUPPORTED_EXTENSIONS = "jar";
 
     /**
+     * There may be temporary issues when connecting to MavenCentral.
+     * In order to compensate for 99% of the issues, we perform a retry
+     * before finally raising the {@link #errorFlag}.
+     */
+    private static final int NUMBER_OF_TRIES = 5;
+
+    /**
      * The analyzer should be disabled if there are errors, so this is a flag to
      * determine if such an error has occurred.
      */
@@ -83,7 +90,8 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The searcher itself.
      */
-    private CentralSearch searcher;
+    CentralSearch searcher;
+
     /**
      * Field indicating if the analyzer is enabled.
      */
@@ -212,7 +220,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         try {
-            final List<MavenArtifact> mas = searcher.searchSha1(dependency.getSha1sum());
+            final List<MavenArtifact> mas = fetchMavenArtifacts(dependency);
             final Confidence confidence = mas.size() > 1 ? Confidence.HIGH : Confidence.HIGHEST;
             for (MavenArtifact ma : mas) {
                 LOGGER.debug("Central analyzer found artifact ({}) for dependency ({})", ma, dependency.getFileName());
@@ -256,8 +264,52 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (FileNotFoundException fnfe) {
             LOGGER.debug("Artifact not found in repository: '{}", dependency.getFileName());
         } catch (IOException ioe) {
-            LOGGER.debug("Could not connect to Central search", ioe);
+            LOGGER.warn("Could not connect to Central search. Disabling this analyzer.", ioe);
             errorFlag = true;
         }
+    }
+
+    /**
+     * Downloads the corresponding list of MavenArtifacts of the given
+     * dependency from MavenCentral.
+     * <p>
+     * As the connection to MavenCentral is known to be unreliable, we implement
+     * a simple retry logic in order to compensate for 99% of the issues.
+     *
+     * @param dependency the dependency to analyze
+     * @return the downloaded list of MavenArtifacts
+     * @throws FileNotFoundException if the specified artifact is not found
+     * @throws IOException           if connecting to MavenCentral finally failed
+     */
+    List<MavenArtifact> fetchMavenArtifacts(Dependency dependency) throws IOException {
+        IOException lastException = null;
+        long sleepingTimeBetweenRetriesInMillis = 1000;
+        int triesLeft = NUMBER_OF_TRIES;
+        while (triesLeft-- > 0) {
+            try {
+                return searcher.searchSha1(dependency.getSha1sum());
+            } catch (FileNotFoundException fnfe) {
+                // retry does not make sense, just throw the exception
+                throw fnfe;
+            } catch (IOException ioe) {
+                LOGGER.debug("Could not connect to Central search (tries left: {}): {}",
+                        triesLeft, ioe.getMessage());
+                lastException = ioe;
+
+                if (triesLeft > 0) {
+                    try {
+                        Thread.sleep(sleepingTimeBetweenRetriesInMillis);
+                        sleepingTimeBetweenRetriesInMillis *= 2;
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+        }
+
+        LOGGER.warn("Finally failed connecting to Central search." +
+                        " Giving up after {} tries. Last exception was: {}",
+                NUMBER_OF_TRIES, lastException);
+        throw lastException;
     }
 }

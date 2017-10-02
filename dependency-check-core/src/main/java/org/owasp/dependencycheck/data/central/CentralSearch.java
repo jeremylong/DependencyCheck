@@ -101,8 +101,9 @@ public class CentralSearch {
      *
      * @param sha1 the SHA-1 hash string for which to search
      * @return the populated Maven GAV.
-     * @throws IOException if it's unable to connect to the specified repository
-     * or if the specified artifact is not found.
+     * @throws FileNotFoundException if the specified artifact is not found
+     * @throws IOException           if it's unable to connect to the specified
+     *                               repository
      */
     public List<MavenArtifact> searchSha1(String sha1) throws IOException {
         if (null == sha1 || !sha1.matches("^[0-9A-Fa-f]{40}$")) {
@@ -178,9 +179,8 @@ public class CentralSearch {
                 throw new FileNotFoundException("Artifact not found in Central");
             }
         } else {
-            LOGGER.debug("Could not connect to Central received response code: {} {}",
-                    conn.getResponseCode(), conn.getResponseMessage());
-            throw new IOException("Could not connect to Central");
+            String errorMessage = "Could not connect to MavenCentral (" + conn.getResponseCode() + "): " + conn.getResponseMessage();
+            throw new IOException(errorMessage);
         }
         return result;
     }
