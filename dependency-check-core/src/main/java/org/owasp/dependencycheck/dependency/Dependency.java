@@ -148,7 +148,7 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
      * Constructs a new Dependency object.
      */
     public Dependency() {
-        //empty contructor
+        //empty constructor
     }
 
     /**

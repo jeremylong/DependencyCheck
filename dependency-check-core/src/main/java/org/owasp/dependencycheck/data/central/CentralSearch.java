@@ -74,7 +74,7 @@ public class CentralSearch {
      *
      * @param settings the configured settings
      * @throws MalformedURLException thrown if the configured URL is
-     * invalid
+     *                               invalid
      */
     public CentralSearch(Settings settings) throws MalformedURLException {
         this.settings = settings;

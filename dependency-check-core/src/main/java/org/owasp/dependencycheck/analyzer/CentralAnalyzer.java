@@ -210,7 +210,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      * Performs the analysis.
      *
      * @param dependency the dependency to analyze
-     * @param engine the engine
+     * @param engine     the engine
      * @throws AnalysisException when there's an exception during analysis
      */
     @Override
