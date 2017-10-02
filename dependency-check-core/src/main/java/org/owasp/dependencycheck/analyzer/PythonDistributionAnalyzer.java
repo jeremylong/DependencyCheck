@@ -60,6 +60,12 @@ import org.owasp.dependencycheck.dependency.EvidenceType;
 public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
+     * A descriptor for the type of dependencies processed or added by this
+     * analyzer
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = "Python.Dist";
+
+    /**
      * Name of egg metadata files to analyze.
      */
     private static final String PKG_INFO = "PKG-INFO";
@@ -167,6 +173,8 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
+
+        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
         final File actualFile = dependency.getActualFile();
         if (WHL_FILTER.accept(actualFile)) {
             collectMetadataFromArchiveFormat(dependency, DIST_INFO_FILTER,
@@ -180,7 +188,6 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
             if (metadata || PKG_INFO.equals(name)) {
                 final File parent = actualFile.getParentFile();
                 final String parentName = parent.getName();
-                dependency.setDisplayFileName(parentName + "/" + name);
                 if (parent.isDirectory()
                         && (metadata && parentName.endsWith(".dist-info")
                         || parentName.endsWith(".egg-info") || "EGG-INFO"
@@ -281,6 +288,9 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
         final InternetHeaders headers = getManifestProperties(file);
         addPropertyToEvidence(dependency, EvidenceType.VERSION, Confidence.HIGHEST, headers, "Version");
         addPropertyToEvidence(dependency, EvidenceType.PRODUCT, Confidence.HIGHEST, headers, "Name");
+        addPropertyToEvidence(dependency, EvidenceType.PRODUCT, Confidence.MEDIUM, headers, "Name");
+        dependency.setName(headers.getHeader("Name", null));
+        dependency.setVersion(headers.getHeader("Version", null));
         final String url = headers.getHeader("Home-page", null);
         if (StringUtils.isNotBlank(url)) {
             if (UrlStringUtils.isUrl(url)) {

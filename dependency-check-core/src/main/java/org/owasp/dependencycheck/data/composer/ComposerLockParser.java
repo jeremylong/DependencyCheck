@@ -60,7 +60,7 @@ public class ComposerLockParser {
      * @param inputStream the InputStream to parse
      */
     public ComposerLockParser(InputStream inputStream) {
-        LOGGER.info("Creating a ComposerLockParser");
+        LOGGER.debug("Creating a ComposerLockParser");
         this.jsonReader = Json.createReader(inputStream);
         this.composerDependencies = new ArrayList<>();
     }
@@ -69,7 +69,7 @@ public class ComposerLockParser {
      * Process the input stream to create the list of dependencies.
      */
     public void process() {
-        LOGGER.info("Beginning Composer lock processing");
+        LOGGER.debug("Beginning Composer lock processing");
         try {
             final JsonObject composer = jsonReader.readObject();
             if (composer.containsKey("packages")) {

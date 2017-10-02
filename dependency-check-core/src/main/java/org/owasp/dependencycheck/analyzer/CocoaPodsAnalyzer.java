@@ -46,6 +46,12 @@ import org.owasp.dependencycheck.utils.Settings;
 public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
+     * A descriptor for the type of dependencies processed or added by this
+     * analyzer
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = "CocoaPod";
+
+    /**
      * The logger.
      */
 //    private static final Logger LOGGER = LoggerFactory.getLogger(CocoaPodsAnalyzer.class);
@@ -124,6 +130,7 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
 
+        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
         String contents;
         try {
             contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());
@@ -140,6 +147,7 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
             if (!name.isEmpty()) {
                 dependency.addEvidence(EvidenceType.PRODUCT, PODSPEC, "name_project", name, Confidence.HIGHEST);
                 dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, "name_project", name, Confidence.HIGHEST);
+                dependency.setName(name);
             }
             final String summary = determineEvidence(contents, blockVariable, "summary");
             if (!summary.isEmpty()) {
@@ -156,14 +164,14 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
             }
             final String license = determineEvidence(contents, blockVariable, "licen[cs]es?");
             if (!license.isEmpty()) {
-                dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, "license", license, Confidence.HIGHEST);
+                dependency.setLicense(license);
             }
 
             final String version = determineEvidence(contents, blockVariable, "version");
             if (!version.isEmpty()) {
                 dependency.addEvidence(EvidenceType.VERSION, PODSPEC, "version", version, Confidence.HIGHEST);
+                dependency.setVersion(version);
             }
-
         }
 
         setPackagePath(dependency);

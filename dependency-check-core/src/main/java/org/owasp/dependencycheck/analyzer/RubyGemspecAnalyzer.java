@@ -51,6 +51,11 @@ import org.slf4j.LoggerFactory;
 public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
+     * A descriptor for the type of dependencies processed or added by this
+     * analyzer
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = "Ruby.Bundle";
+    /**
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(RubyGemspecAnalyzer.class);
@@ -58,17 +63,14 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
      * The name of the analyzer.
      */
     private static final String ANALYZER_NAME = "Ruby Gemspec Analyzer";
-
     /**
      * The phase that this analyzer is intended to run in.
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
-
     /**
      * The gemspec file extension.
      */
     private static final String GEMSPEC = "gemspec";
-
     /**
      * The file filter containing the list of file extensions that can be
      * analyzed.
@@ -133,6 +135,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
 
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
         String contents;
         try {
             contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());
@@ -148,6 +151,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
             final String name = addStringEvidence(dependency, EvidenceType.PRODUCT, contents, blockVariable, "name", "name", Confidence.HIGHEST);
             if (!name.isEmpty()) {
                 dependency.addEvidence(EvidenceType.VENDOR, GEMSPEC, "name_project", name + "_project", Confidence.LOW);
+                dependency.setName(name);
             }
             addStringEvidence(dependency, EvidenceType.PRODUCT, contents, blockVariable, "summary", "summary", Confidence.LOW);
 
@@ -160,9 +164,10 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
                     blockVariable, "version", "version", Confidence.HIGHEST);
             if (value.length() < 1) {
                 addEvidenceFromVersionFile(dependency, EvidenceType.VERSION, dependency.getActualFile());
+            } else {
+                dependency.setVersion(value);
             }
         }
-
         setPackagePath(dependency);
     }
 

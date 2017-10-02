@@ -60,6 +60,7 @@ public class JarAnalyzerTest extends BaseTest {
         file = BaseTest.getResourceAsFile(this, "dwr.jar");
         result = new Dependency(file);
         instance.analyze(result, null);
+        assertEquals(JarAnalyzer.DEPENDENCY_ECOSYSTEM,result.getEcosystem());
         boolean found = false;
         for (Evidence e : result.getEvidence(EvidenceType.VENDOR)) {
             if (e.getName().equals("url")) {

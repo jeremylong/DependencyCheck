@@ -10,6 +10,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 import java.io.File;
 import org.owasp.dependencycheck.dependency.EvidenceType;
@@ -60,7 +61,7 @@ public class SwiftAnalyzersTest extends BaseTest {
 
         spmAnalyzer.close();
         spmAnalyzer = null;
-        
+
         super.tearDown();
     }
 
@@ -110,9 +111,13 @@ public class SwiftAnalyzersTest extends BaseTest {
 
         assertThat(vendorString, containsString("Carlos Vidal"));
         assertThat(vendorString, containsString("https://github.com/nakiostudio/EasyPeasy"));
-        assertThat(vendorString, containsString("MIT"));
         assertThat(result.getEvidence(EvidenceType.PRODUCT).toString(), containsString("EasyPeasy"));
         assertThat(result.getEvidence(EvidenceType.VERSION).toString(), containsString("0.2.3"));
+        assertThat(result.getName(), equalTo("EasyPeasy"));
+        assertThat(result.getVersion(), equalTo("0.2.3"));
+        assertThat(result.getDisplayFileName(), equalTo("EasyPeasy:0.2.3"));
+        assertThat(result.getLicense(), containsString("MIT"));
+        assertThat(result.getEcosystem(), equalTo(CocoaPodsAnalyzer.DEPENDENCY_ECOSYSTEM));
     }
 
     /**
@@ -127,5 +132,9 @@ public class SwiftAnalyzersTest extends BaseTest {
         spmAnalyzer.analyze(result, null);
 
         assertThat(result.getEvidence(EvidenceType.PRODUCT).toString(), containsString("Gloss"));
+        assertThat(result.getName(), equalTo("Gloss"));
+        //TODO: when version processing is added, update the expected name.
+        assertThat(result.getDisplayFileName(), equalTo("Gloss"));
+        assertThat(result.getEcosystem(), equalTo(SwiftPackageManagerAnalyzer.DEPENDENCY_ECOSYSTEM));
     }
 }
