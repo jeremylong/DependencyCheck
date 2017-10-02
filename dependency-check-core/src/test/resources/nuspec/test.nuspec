@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <version>1.0.0</version>
+    <authors>brianfox</authors>
+    <owners>bobsmack</owners>
+    <dependencies>
+      <dependency id="ClassLibrary" version="[1.0.0]" />
+    </dependencies>
+    <id>TestDepCheck</id>
+    <title>Test Package</title>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description> Test package for Dependency Check Analyzer</description>
+    <summary />
+  </metadata>
+  <files/>
+</package>
