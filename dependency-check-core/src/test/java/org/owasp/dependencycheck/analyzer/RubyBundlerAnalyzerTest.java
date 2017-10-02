@@ -85,6 +85,7 @@ public class RubyBundlerAnalyzerTest extends BaseTest {
     public void testSupportsFiles() {
         assertThat(analyzer.accept(new File("test.gemspec")), is(false));
         assertThat(analyzer.accept(new File("specifications" + File.separator + "test.gemspec")), is(true));
+        assertThat(analyzer.accept(new File("gemspec.lock")), is(false));
     }
 
     /**
@@ -97,7 +98,7 @@ public class RubyBundlerAnalyzerTest extends BaseTest {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
                 "ruby/vulnerable/gems/rails-4.1.15/vendor/bundle/ruby/2.2.0/specifications/dalli-2.7.5.gemspec"));
         analyzer.analyze(result, null);
-        
+
         final String vendorString = result.getEvidence(EvidenceType.VENDOR).toString();
         assertThat(vendorString, containsString("Peter M. Goldstein"));
         assertThat(vendorString, containsString("Mike Perham"));
@@ -107,5 +108,9 @@ public class RubyBundlerAnalyzerTest extends BaseTest {
         assertThat(result.getEvidence(EvidenceType.PRODUCT).toString(), containsString("dalli"));
         assertThat(result.getEvidence(EvidenceType.PRODUCT).toString(), containsString("High performance memcached client for Ruby"));
         assertThat(result.getEvidence(EvidenceType.VERSION).toString(), containsString("2.7.5"));
+        assertEquals("dalli", result.getName());
+        assertEquals("2.7.5", result.getVersion());
+        assertEquals(RubyBundlerAnalyzer.DEPENDENCY_ECOSYSTEM, result.getEcosystem());
+        assertEquals("dalli:2.7.5", result.getDisplayFileName());
     }
 }

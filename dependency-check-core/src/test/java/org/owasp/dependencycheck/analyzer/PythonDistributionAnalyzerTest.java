@@ -120,8 +120,7 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(
                 this, "python/site-packages/Django-1.7.2.dist-info/METADATA"));
         djangoAssertions(result);
-        assertEquals("Django-1.7.2.dist-info/METADATA", result.getDisplayFileName());
-    }
+        }
 
     private void djangoAssertions(final Dependency result)
             throws AnalysisException {
@@ -136,6 +135,10 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
             }
         }
         assertTrue("Version 1.7.2 not found in Django dependency.", found);
+        assertEquals("1.7.2",result.getVersion());
+        assertEquals("Django",result.getName());
+        assertEquals("Django:1.7.2",result.getDisplayFileName());
+        assertEquals(PythonDistributionAnalyzer.DEPENDENCY_ECOSYSTEM,result.getEcosystem());
     }
 
     @Test
@@ -188,5 +191,9 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
             }
         }
         assertTrue("Version 0.0.1 not found in EggTest dependency.", found);
+        assertEquals("0.0.1",result.getVersion());
+        assertEquals("EggTest",result.getName());
+        assertEquals("EggTest:0.0.1",result.getDisplayFileName());
+        assertEquals(PythonDistributionAnalyzer.DEPENDENCY_ECOSYSTEM,result.getEcosystem());
     }
 }

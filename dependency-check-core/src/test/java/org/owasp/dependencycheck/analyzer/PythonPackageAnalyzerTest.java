@@ -103,5 +103,9 @@ public class PythonPackageAnalyzerTest extends BaseTest {
             }
         }
         assertTrue("Version 0.0.1 not found in EggTest dependency.", found);
+        assertEquals("0.0.1",result.getVersion());
+        assertEquals("eggtest",result.getName());
+        assertEquals("eggtest:0.0.1",result.getDisplayFileName());
+        assertEquals(PythonPackageAnalyzer.DEPENDENCY_ECOSYSTEM,result.getEcosystem());
     }
 }

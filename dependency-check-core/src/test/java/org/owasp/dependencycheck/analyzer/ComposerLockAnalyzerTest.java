@@ -32,10 +32,13 @@ import org.owasp.dependencycheck.exception.InitializationException;
 import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import org.apache.commons.lang3.ArrayUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
  * Unit tests for NodePackageAnalyzer.
@@ -93,6 +96,25 @@ public class ComposerLockAnalyzerTest extends BaseDBTestCase {
     }
 
     /**
+     * Test of basic additions to the dependency list by parsing the
+     * composer.lock file
+     *
+     * @throws AnalysisException is thrown when an exception occurs.
+     */
+    @Test
+    public void testRemoveRedundantParent() throws Exception {
+        try (Engine engine = new Engine(getSettings())) {
+            final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "composer.lock"));
+            //test that we don't remove the parent if it's not redundant by name
+            result.setDisplayFileName("NotComposer.Lock");
+            engine.addDependency(result);
+            analyzer.analyze(result, engine);
+            //make sure the composer.lock is not removed
+            assertTrue(ArrayUtils.contains(engine.getDependencies(), result));
+        }
+    }
+
+    /**
      * Test of inspect method, of class PythonDistributionAnalyzer.
      *
      * @throws AnalysisException is thrown when an exception occurs.
@@ -102,7 +124,17 @@ public class ComposerLockAnalyzerTest extends BaseDBTestCase {
         try (Engine engine = new Engine(getSettings())) {
             final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
                     "composer.lock"));
+            //simulate normal operation when the composer.lock is already added to the engine as a dependency
+            engine.addDependency(result);
             analyzer.analyze(result, engine);
+            //make sure the redundant composer.lock is removed
+            assertFalse(ArrayUtils.contains(engine.getDependencies(), result));
+            assertEquals(30, engine.getDependencies().length);
+            Dependency d = engine.getDependencies()[0];
+            assertEquals("classpreloader", d.getName());
+            assertEquals("2.0.0", d.getVersion());
+            assertThat(d.getDisplayFileName(), equalTo("classpreloader:2.0.0"));
+            assertEquals(ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM, d.getEcosystem());
         }
     }
 
