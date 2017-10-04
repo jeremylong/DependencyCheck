@@ -55,12 +55,10 @@ public class CentralAnalyzerTest {
 
         CentralAnalyzer instance = new CentralAnalyzer();
         instance.searcher = centralSearch;
+        specifySha1SumFor(dependency);
 
         final List<MavenArtifact> expectedMavenArtifacts = Collections.emptyList();
         new Expectations() {{
-            dependency.getSha1sum();
-            returns(SHA1_SUM);
-
             centralSearch.searchSha1(SHA1_SUM);
             returns(expectedMavenArtifacts);
         }};
@@ -78,12 +76,10 @@ public class CentralAnalyzerTest {
 
         CentralAnalyzer instance = new CentralAnalyzer();
         instance.searcher = centralSearch;
+        specifySha1SumFor(dependency);
 
         final List<MavenArtifact> expectedMavenArtifacts = Collections.emptyList();
         new Expectations() {{
-            dependency.getSha1sum();
-            returns(SHA1_SUM);
-
             centralSearch.searchSha1(SHA1_SUM);
             result = new IOException("Could not connect to MavenCentral (500): Internal Server Error");
             result = new IOException("Could not connect to MavenCentral (500): Internal Server Error");
@@ -103,11 +99,9 @@ public class CentralAnalyzerTest {
 
         CentralAnalyzer instance = new CentralAnalyzer();
         instance.searcher = centralSearch;
+        specifySha1SumFor(dependency);
 
         new Expectations() {{
-            dependency.getSha1sum();
-            returns(SHA1_SUM);
-
             centralSearch.searchSha1(SHA1_SUM);
             result = new FileNotFoundException("Artifact not found in Central");
         }};
@@ -123,11 +117,9 @@ public class CentralAnalyzerTest {
 
         CentralAnalyzer instance = new CentralAnalyzer();
         instance.searcher = centralSearch;
+        specifySha1SumFor(dependency);
 
         new Expectations() {{
-            dependency.getSha1sum();
-            returns(SHA1_SUM);
-
             centralSearch.searchSha1(SHA1_SUM);
             result = new IOException("no internet connection");
         }};
@@ -143,11 +135,9 @@ public class CentralAnalyzerTest {
 
         CentralAnalyzer instance = new CentralAnalyzer();
         instance.searcher = centralSearch;
+        specifySha1SumFor(dependency);
 
         new Expectations() {{
-            dependency.getSha1sum();
-            returns(SHA1_SUM);
-
             centralSearch.searchSha1(SHA1_SUM);
             result = new IOException("no internet connection");
         }};
@@ -165,5 +155,18 @@ public class CentralAnalyzerTest {
                 // do not sleep
             }
         };
+    }
+
+    /**
+     * Specifies the mock dependency's SHA1 sum.
+     *
+     * @param dependency then dependency
+     */
+    @SuppressWarnings("PMD.NonStaticInitializer")
+    private void specifySha1SumFor(final Dependency dependency) {
+        new Expectations() {{
+            dependency.getSha1sum();
+            returns(SHA1_SUM);
+        }};
     }
 }
