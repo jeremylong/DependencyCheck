@@ -30,6 +30,7 @@ public class CentralAnalyzerTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.NonStaticInitializer")
     public void testFetchMavenArtifactsWithoutException(@Mocked final CentralSearch centralSearch,
                                                         @Mocked final Dependency dependency)
             throws IOException {

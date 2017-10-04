@@ -90,7 +90,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The searcher itself.
      */
-    CentralSearch searcher;
+    protected CentralSearch searcher;
 
     /**
      * Field indicating if the analyzer is enabled.
@@ -281,7 +281,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws FileNotFoundException if the specified artifact is not found
      * @throws IOException           if connecting to MavenCentral finally failed
      */
-    List<MavenArtifact> fetchMavenArtifacts(Dependency dependency) throws IOException {
+    protected List<MavenArtifact> fetchMavenArtifacts(Dependency dependency) throws IOException {
         IOException lastException = null;
         long sleepingTimeBetweenRetriesInMillis = 1000;
         int triesLeft = NUMBER_OF_TRIES;
