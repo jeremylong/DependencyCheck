@@ -93,11 +93,6 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     protected CentralSearch searcher;
 
     /**
-     * Field indicating if the analyzer is enabled.
-     */
-    private boolean enabled = true;
-
-    /**
      * Initializes the analyzer with the configured settings.
      *
      * @param settings the configured settings to use
@@ -105,17 +100,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void initialize(Settings settings) {
         super.initialize(settings);
-        enabled = checkEnabled();
-    }
-
-    /**
-     * Determine whether to enable this analyzer or not.
-     *
-     * @return whether the analyzer should be enabled
-     */
-    @Override
-    public boolean isEnabled() {
-        return enabled;
+        setEnabled(checkEnabled());
     }
 
     /**
@@ -215,7 +200,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        if (errorFlag || !isEnabled()) {
+        if (errorFlag) {
             return;
         }
 
