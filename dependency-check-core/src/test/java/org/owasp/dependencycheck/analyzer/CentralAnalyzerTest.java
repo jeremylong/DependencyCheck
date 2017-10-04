@@ -53,6 +53,7 @@ public class CentralAnalyzerTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.NonStaticInitializer")
     public void testFetchMavenArtifactsWithSporadicIOException(@Mocked final CentralSearch centralSearch,
                                                                @Mocked final Dependency dependency)
             throws IOException {
@@ -77,6 +78,7 @@ public class CentralAnalyzerTest {
     }
 
     @Test(expected = FileNotFoundException.class)
+    @SuppressWarnings("PMD.NonStaticInitializer")
     public void testFetchMavenArtifactsRethrowsFileNotFoundException(@Mocked final CentralSearch centralSearch,
                                                                      @Mocked final Dependency dependency)
             throws IOException {
@@ -96,6 +98,7 @@ public class CentralAnalyzerTest {
     }
 
     @Test(expected = IOException.class)
+    @SuppressWarnings("PMD.NonStaticInitializer")
     public void testFetchMavenArtifactsAlwaysThrowsIOException(@Mocked final CentralSearch centralSearch,
                                                                @Mocked final Dependency dependency)
             throws IOException {
