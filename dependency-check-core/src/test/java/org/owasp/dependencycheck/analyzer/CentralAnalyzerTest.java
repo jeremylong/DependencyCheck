@@ -23,6 +23,7 @@ import mockit.MockUp;
 import mockit.Mocked;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.central.CentralSearch;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -132,6 +133,26 @@ public class CentralAnalyzerTest {
         }};
 
         instance.fetchMavenArtifacts(dependency);
+    }
+
+    @Test(expected = AnalysisException.class)
+    @SuppressWarnings("PMD.NonStaticInitializer")
+    public void testFetchMavenArtifactsAlwaysThrowsIOExceptionLetsTheAnalysisFail(@Mocked final CentralSearch centralSearch,
+                                                                                  @Mocked final Dependency dependency)
+            throws AnalysisException, IOException {
+
+        CentralAnalyzer instance = new CentralAnalyzer();
+        instance.searcher = centralSearch;
+
+        new Expectations() {{
+            dependency.getSha1sum();
+            returns(SHA1_SUM);
+
+            centralSearch.searchSha1(SHA1_SUM);
+            result = new IOException("no internet connection");
+        }};
+
+        instance.analyze(dependency, null);
     }
 
     /**

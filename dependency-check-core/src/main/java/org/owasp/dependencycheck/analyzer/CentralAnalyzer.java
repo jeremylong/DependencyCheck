@@ -77,15 +77,9 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * There may be temporary issues when connecting to MavenCentral.
      * In order to compensate for 99% of the issues, we perform a retry
-     * before finally raising the {@link #errorFlag}.
+     * before finally failing the analysis.
      */
     private static final int NUMBER_OF_TRIES = 5;
-
-    /**
-     * The analyzer should be disabled if there are errors, so this is a flag to
-     * determine if such an error has occurred.
-     */
-    private volatile boolean errorFlag = false;
 
     /**
      * The searcher itself.
@@ -200,10 +194,6 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        if (errorFlag) {
-            return;
-        }
-
         try {
             final List<MavenArtifact> mas = fetchMavenArtifacts(dependency);
             final Confidence confidence = mas.size() > 1 ? Confidence.HIGH : Confidence.HIGHEST;
@@ -249,8 +239,9 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (FileNotFoundException fnfe) {
             LOGGER.debug("Artifact not found in repository: '{}", dependency.getFileName());
         } catch (IOException ioe) {
-            LOGGER.warn("Could not connect to Central search. Disabling this analyzer.", ioe);
-            errorFlag = true;
+            final String message = "Could not connect to Central search. Analysis failed.";
+            LOGGER.error(message, ioe);
+            throw new AnalysisException(message, ioe);
         }
     }
 
@@ -292,9 +283,8 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
             }
         }
 
-        LOGGER.warn("Finally failed connecting to Central search." +
-                        " Giving up after {} tries. Last exception was: {}",
-                NUMBER_OF_TRIES, lastException);
-        throw lastException;
+        final String message = "Finally failed connecting to Central search." +
+                " Giving up after " + NUMBER_OF_TRIES + " tries.";
+        throw new IOException(message, lastException);
     }
 }
