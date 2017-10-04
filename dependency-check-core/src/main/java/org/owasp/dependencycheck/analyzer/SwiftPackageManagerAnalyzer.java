@@ -46,6 +46,12 @@ import org.owasp.dependencycheck.utils.Settings;
 public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
+     * A descriptor for the type of dependencies processed or added by this
+     * analyzer
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = "Swift.PM";
+
+    /**
      * The name of the analyzer.
      */
     private static final String ANALYZER_NAME = "SWIFT Package Manager Analyzer";
@@ -121,6 +127,8 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
 
+        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
+
         String contents;
         try {
             contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());
@@ -135,11 +143,18 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
                 return;
             }
 
-            //SPM is currently under development for SWIFT 3. Its current metadata includes package name and dependencies.
-            //Future interesting metadata: version, license, homepage, author, summary, etc.
+            // TODO SPM is currently under development for SWIFT 3. Its current metadata includes
+            // package name and dependencies.
+            // Future interesting metadata: version, license, homepage, author, summary,
+            // etc.
             final String name = addStringEvidence(dependency, EvidenceType.PRODUCT, packageDescription, "name", "name", Confidence.HIGHEST);
             if (name != null && !name.isEmpty()) {
                 dependency.addEvidence(EvidenceType.VENDOR, SPM_FILE_NAME, "name_project", name, Confidence.HIGHEST);
+                dependency.setName(name);
+            } else {
+                // if we can't get the name from the meta, then assume the name is the name of
+                // the parent folder containing the package.swift file.
+                dependency.setName(dependency.getActualFile().getParentFile().getName());
             }
         }
         setPackagePath(dependency);

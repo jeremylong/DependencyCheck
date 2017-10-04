@@ -75,6 +75,7 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
     /**
      * Cleanup any resources used.
      *
+     * @throws Exception if there is a problem
      */
     @After
     @Override
@@ -133,6 +134,21 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
         analyzer.analyze(result, null);
         final String product = "zlib";
         assertProductEvidence(result, product);
+    }
+
+    /**
+     * Test whether expected evidence is gathered from OpenCV's CVDetectPython.
+     *
+     * @throws AnalysisException is thrown when an exception occurs.
+     */
+    @Test
+    public void testAnalyzeCMakeListsPython() throws AnalysisException {
+        final Dependency result = new Dependency(BaseTest.getResourceAsFile(
+                this, "cmake/opencv/cmake/OpenCVDetectPython.cmake"));
+        analyzer.analyze(result, null);
+
+        //this one finds nothing so it falls through to the filename. Can we do better?
+        assertEquals("OpenCVDetectPython.cmake", result.getDisplayFileName());
     }
 
     private void assertProductEvidence(Dependency result, String product) {

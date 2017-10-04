@@ -49,6 +49,12 @@ import org.owasp.dependencycheck.exception.InitializationException;
 public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
+     * A descriptor for the type of dependencies processed or added by this
+     * analyzer
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = "Python.Pkg";
+
+    /**
      * Used when compiling file scanning regex patterns.
      */
     private static final int REGEX_OPTIONS = Pattern.DOTALL | Pattern.CASE_INSENSITIVE;
@@ -183,6 +189,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
+        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
         final File file = dependency.getActualFile();
         final File parent = file.getParentFile();
         final String parentName = parent.getName();
@@ -190,8 +197,8 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
             //by definition, the containing folder of __init__.py is considered the package, even the file is empty:
             //"The __init__.py files are required to make Python treat the directories as containing packages"
             //see section "6.4 Packages" from https://docs.python.org/2/tutorial/modules.html;
-            dependency.setDisplayFileName(parentName + "/__init__.py");
             dependency.addEvidence(EvidenceType.PRODUCT, file.getName(), "PackageName", parentName, Confidence.HIGHEST);
+            dependency.setName(parentName);
 
             final File[] fileList = parent.listFiles(PY_FILTER);
             if (fileList != null) {
@@ -312,6 +319,9 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
         final boolean found = matcher.find();
         if (found) {
             dependency.addEvidence(type, source, name, matcher.group(4), confidence);
+            if (type == EvidenceType.VERSION) {
+                dependency.setVersion(matcher.group(4));
+            }
         }
         return found;
     }

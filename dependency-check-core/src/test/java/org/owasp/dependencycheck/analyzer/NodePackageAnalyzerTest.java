@@ -101,5 +101,8 @@ public class NodePackageAnalyzerTest extends BaseTest {
         assertThat(vendorString, containsString("dns-sync_project"));
         assertThat(result.getEvidence(EvidenceType.PRODUCT).toString(), containsString("dns-sync"));
         assertThat(result.getEvidence(EvidenceType.VERSION).toString(), containsString("0.1.0"));
+        assertEquals(NodePackageAnalyzer.DEPENDENCY_ECOSYSTEM, result.getEcosystem());
+        assertEquals("dns-sync", result.getName());
+        assertEquals("0.1.0", result.getVersion());
     }
 }

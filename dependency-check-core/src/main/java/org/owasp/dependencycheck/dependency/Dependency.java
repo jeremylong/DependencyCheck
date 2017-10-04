@@ -127,6 +127,22 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
     private boolean isVirtual = false;
 
     /**
+     * Defines the human-recognizable name for the dependency
+     */
+    private String name;
+
+    /**
+     * Defines the human-recognizable version for the dependency
+     */
+    private String version;
+
+    /**
+     * A descriptor for the type of dependency based on which analyzer added it
+     * or collected evidence about it
+     */
+    private String ecosystem;
+
+    /**
      * Returns the package path.
      *
      * @return the package path
@@ -249,15 +265,22 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
 
     /**
      * Returns the file name to display in reports; if no display file name has
-     * been set it will default to the actual file name.
+     * been set it will default to constructing a name based on the name and
+     * version fields, otherwise it will return the actual file name.
      *
      * @return the file name to display
      */
     public String getDisplayFileName() {
-        if (displayName == null) {
-            return this.fileName;
+        if (displayName != null) {
+            return displayName;
         }
-        return this.displayName;
+        if (name == null) {
+            return fileName;
+        }
+        if (version == null) {
+            return name;
+        }
+        return name + ":" + version;
     }
 
     /**
@@ -485,6 +508,20 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
      */
     public void setLicense(String license) {
         this.license = license;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -728,5 +765,33 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
      */
     public synchronized void addSuppressedVulnerabilities(List<Vulnerability> vulns) {
         this.suppressedVulnerabilities.addAll(vulns);
+    }
+
+    /**
+     * @return the version
+     */
+    public String getVersion() {
+        return version;
+    }
+
+    /**
+     * @param version the version to set
+     */
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    /**
+     * @return the ecosystem
+     */
+    public String getEcosystem() {
+        return ecosystem;
+    }
+
+    /**
+     * @param ecosystem the ecosystem to set
+     */
+    public void setEcosystem(String ecosystem) {
+        this.ecosystem = ecosystem;
     }
 }
