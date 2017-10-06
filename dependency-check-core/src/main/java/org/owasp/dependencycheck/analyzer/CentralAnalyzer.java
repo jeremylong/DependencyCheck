@@ -75,19 +75,16 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     private static final String SUPPORTED_EXTENSIONS = "jar";
 
     /**
-     * The analyzer should be disabled if there are errors, so this is a flag to
-     * determine if such an error has occurred.
+     * There may be temporary issues when connecting to MavenCentral.
+     * In order to compensate for 99% of the issues, we perform a retry
+     * before finally failing the analysis.
      */
-    private volatile boolean errorFlag = false;
+    private static final int NUMBER_OF_TRIES = 5;
 
     /**
      * The searcher itself.
      */
-    private CentralSearch searcher;
-    /**
-     * Field indicating if the analyzer is enabled.
-     */
-    private boolean enabled = true;
+    protected CentralSearch searcher;
 
     /**
      * Initializes the analyzer with the configured settings.
@@ -97,17 +94,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void initialize(Settings settings) {
         super.initialize(settings);
-        enabled = checkEnabled();
-    }
-
-    /**
-     * Determine whether to enable this analyzer or not.
-     *
-     * @return whether the analyzer should be enabled
-     */
-    @Override
-    public boolean isEnabled() {
-        return enabled;
+        setEnabled(checkEnabled());
     }
 
     /**
@@ -202,17 +189,13 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      * Performs the analysis.
      *
      * @param dependency the dependency to analyze
-     * @param engine the engine
+     * @param engine     the engine
      * @throws AnalysisException when there's an exception during analysis
      */
     @Override
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        if (errorFlag || !isEnabled()) {
-            return;
-        }
-
         try {
-            final List<MavenArtifact> mas = searcher.searchSha1(dependency.getSha1sum());
+            final List<MavenArtifact> mas = fetchMavenArtifacts(dependency);
             final Confidence confidence = mas.size() > 1 ? Confidence.HIGH : Confidence.HIGHEST;
             for (MavenArtifact ma : mas) {
                 LOGGER.debug("Central analyzer found artifact ({}) for dependency ({})", ma, dependency.getFileName());
@@ -256,8 +239,52 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (FileNotFoundException fnfe) {
             LOGGER.debug("Artifact not found in repository: '{}", dependency.getFileName());
         } catch (IOException ioe) {
-            LOGGER.debug("Could not connect to Central search", ioe);
-            errorFlag = true;
+            final String message = "Could not connect to Central search. Analysis failed.";
+            LOGGER.error(message, ioe);
+            throw new AnalysisException(message, ioe);
         }
+    }
+
+    /**
+     * Downloads the corresponding list of MavenArtifacts of the given
+     * dependency from MavenCentral.
+     * <p>
+     * As the connection to MavenCentral is known to be unreliable, we implement
+     * a simple retry logic in order to compensate for 99% of the issues.
+     *
+     * @param dependency the dependency to analyze
+     * @return the downloaded list of MavenArtifacts
+     * @throws FileNotFoundException if the specified artifact is not found
+     * @throws IOException           if connecting to MavenCentral finally failed
+     */
+    protected List<MavenArtifact> fetchMavenArtifacts(Dependency dependency) throws IOException {
+        IOException lastException = null;
+        long sleepingTimeBetweenRetriesInMillis = 1000;
+        int triesLeft = NUMBER_OF_TRIES;
+        while (triesLeft-- > 0) {
+            try {
+                return searcher.searchSha1(dependency.getSha1sum());
+            } catch (FileNotFoundException fnfe) {
+                // retry does not make sense, just throw the exception
+                throw fnfe;
+            } catch (IOException ioe) {
+                LOGGER.debug("Could not connect to Central search (tries left: {}): {}",
+                        triesLeft, ioe.getMessage());
+                lastException = ioe;
+
+                if (triesLeft > 0) {
+                    try {
+                        Thread.sleep(sleepingTimeBetweenRetriesInMillis);
+                        sleepingTimeBetweenRetriesInMillis *= 2;
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+        }
+
+        final String message = "Finally failed connecting to Central search." +
+                " Giving up after " + NUMBER_OF_TRIES + " tries.";
+        throw new IOException(message, lastException);
     }
 }
