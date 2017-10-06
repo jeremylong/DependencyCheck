@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.utils.XmlUtils;
 import org.owasp.dependencycheck.xml.suppression.PropertyType;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -201,7 +202,20 @@ public class HintHandler extends DefaultHandler {
                         final String source = attr.getValue(SOURCE);
                         final String name = attr.getValue(NAME);
                         final String value = attr.getValue(VALUE);
-                        final Confidence confidence = Confidence.valueOf(attr.getValue(CONFIDENCE));
+                        final Confidence confidence;
+                        final String confidenceAttribute = attr.getValue(CONFIDENCE);
+                        if (confidenceAttribute == null) {
+                            confidence = null;
+                        } else {
+                            confidence = Confidence.valueOf(confidenceAttribute);
+                        }
+                        final boolean regex;
+                        final String regexAttribute = attr.getValue(REGEX);
+                        if (regexAttribute == null) {
+                            regex = false;
+                        } else {
+                            regex = XmlUtils.parseBoolean(regexAttribute);
+                        }
                         switch (hintType) {
                             case VENDOR:
                                 switch (nodeType) {
@@ -209,10 +223,10 @@ public class HintHandler extends DefaultHandler {
                                         rule.addAddVendor(source, name, value, confidence);
                                         break;
                                     case REMOVE:
-                                        rule.addRemoveVendor(source, name, value, confidence);
+                                        rule.addRemoveVendor(source, name, value, regex, confidence);
                                         break;
                                     case GIVEN:
-                                        rule.addGivenVendor(source, name, value, confidence);
+                                        rule.addGivenVendor(source, name, value, regex, confidence);
                                         break;
                                     default:
                                         break;
@@ -224,10 +238,10 @@ public class HintHandler extends DefaultHandler {
                                         rule.addAddProduct(source, name, value, confidence);
                                         break;
                                     case REMOVE:
-                                        rule.addRemoveProduct(source, name, value, confidence);
+                                        rule.addRemoveProduct(source, name, value, regex, confidence);
                                         break;
                                     case GIVEN:
-                                        rule.addGivenProduct(source, name, value, confidence);
+                                        rule.addGivenProduct(source, name, value, regex, confidence);
                                         break;
                                     default:
                                         break;
@@ -239,10 +253,10 @@ public class HintHandler extends DefaultHandler {
                                         rule.addAddVersion(source, name, value, confidence);
                                         break;
                                     case REMOVE:
-                                        rule.addRemoveVersion(source, name, value, confidence);
+                                        rule.addRemoveVersion(source, name, value, regex, confidence);
                                         break;
                                     case GIVEN:
-                                        rule.addGivenVersion(source, name, value, confidence);
+                                        rule.addGivenVersion(source, name, value, regex, confidence);
                                         break;
                                     default:
                                         break;

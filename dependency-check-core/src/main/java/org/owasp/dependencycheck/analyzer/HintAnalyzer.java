@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.Engine;
@@ -38,6 +39,7 @@ import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.xml.hints.EvidenceMatcher;
 import org.owasp.dependencycheck.xml.hints.VendorDuplicatingHintRule;
 import org.owasp.dependencycheck.xml.hints.HintParseException;
 import org.owasp.dependencycheck.xml.hints.HintParser;
@@ -140,23 +142,23 @@ public class HintAnalyzer extends AbstractAnalyzer {
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         for (HintRule hint : hints) {
             boolean matchFound = false;
-            for (Evidence given : hint.getGivenVendor()) {
-                if (dependency.contains(EvidenceType.VENDOR, given)) {
+            for (EvidenceMatcher given : hint.getGivenVendor()) {
+                if (hasMatchingEvidence(dependency.getEvidence(EvidenceType.VENDOR), given)) {
                     matchFound = true;
                     break;
                 }
             }
             if (!matchFound) {
-                for (Evidence given : hint.getGivenProduct()) {
-                    if (dependency.contains(EvidenceType.PRODUCT, given)) {
+                for (EvidenceMatcher given : hint.getGivenProduct()) {
+                    if (hasMatchingEvidence(dependency.getEvidence(EvidenceType.PRODUCT), given)) {
                         matchFound = true;
                         break;
                     }
                 }
             }
             if (!matchFound) {
-                for (Evidence given : hint.getGivenVersion()) {
-                    if (dependency.contains(EvidenceType.VERSION, given)) {
+                for (EvidenceMatcher given : hint.getGivenVersion()) {
+                    if (hasMatchingEvidence(dependency.getEvidence(EvidenceType.VERSION), given)) {
                         matchFound = true;
                         break;
                     }
@@ -180,20 +182,15 @@ public class HintAnalyzer extends AbstractAnalyzer {
                 for (Evidence e : hint.getAddVersion()) {
                     dependency.addEvidence(EvidenceType.VERSION, e);
                 }
-                for (Evidence e : hint.getRemoveVendor()) {
-                    if (dependency.contains(EvidenceType.VENDOR, e)) {
-                        dependency.removeEvidence(EvidenceType.VENDOR, e);
-                    }
+
+                for (EvidenceMatcher e : hint.getRemoveVendor()) {
+                    removeMatchingEvidences(dependency, EvidenceType.VENDOR, e);
                 }
-                for (Evidence e : hint.getRemoveProduct()) {
-                    if (dependency.contains(EvidenceType.PRODUCT, e)) {
-                        dependency.removeEvidence(EvidenceType.PRODUCT, e);
-                    }
+                for (EvidenceMatcher e : hint.getRemoveProduct()) {
+                    removeMatchingEvidences(dependency, EvidenceType.PRODUCT, e);
                 }
-                for (Evidence e : hint.getRemoveVersion()) {
-                    if (dependency.contains(EvidenceType.VERSION, e)) {
-                        dependency.removeEvidence(EvidenceType.VERSION, e);
-                    }
+                for (EvidenceMatcher e : hint.getRemoveVersion()) {
+                    removeMatchingEvidences(dependency, EvidenceType.VERSION, e);
                 }
             }
         }
@@ -211,6 +208,37 @@ public class HintAnalyzer extends AbstractAnalyzer {
         }
         for (Evidence e : newEntries) {
             dependency.addEvidence(EvidenceType.VENDOR, e);
+        }
+    }
+
+    /**
+     * Determine if there is matching evidence.
+     *
+     * @param evidences the evidence to test
+     * @param criterion the criteria for a match
+     * @return true if the evidence matches, otherwise false
+     */
+    private boolean hasMatchingEvidence(Set<Evidence> evidences, EvidenceMatcher criterion) {
+        for (Evidence evidence : evidences) {
+            if (criterion.matches(evidence)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Removes any matching evidence from the dependency.
+     *
+     * @param dependency the dependency to update
+     * @param type the type of evidence to inspect and possibly remove
+     * @param e the evidence matcher
+     */
+    private void removeMatchingEvidences(Dependency dependency, EvidenceType type, EvidenceMatcher e) {
+        for (Evidence evidence : dependency.getEvidence(type)) {
+            if (e.matches(evidence)) {
+                dependency.removeEvidence(type, evidence);
+            }
         }
     }
 

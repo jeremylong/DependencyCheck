@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hints xmlns="https://jeremylong.github.io/DependencyCheck/dependency-hint.1.1.xsd">
+	<hint>
+		<given>
+			<evidence type="product" source="product source" name="given product name" value="value" confidence="HIGH"/>
+			<evidence type="vendor" source="vendor source" name="given vendor name" value="value" confidence="HIGH"/>
+                        <evidence type="version" source="version source" name="given version name" value="value" confidence="HIGH"/>
+		</given>
+		<add>
+			<evidence type="product" source="hint analyzer" name="add product name" value="product" confidence="HIGH"/>
+			<evidence type="vendor" source="hint analyzer" name="add vendor name" value="vendor" confidence="HIGH"/>
+		</add>
+	</hint>
+	<hint>
+		<given>
+			<fileName contains="spring"/>	
+			<fileName contains="struts" regex="true" caseSensitive="true"/>	
+		</given>
+		<add>
+			<evidence type="product" source="hint analyzer" name="product" value="product" confidence="HIGH"/>
+			<evidence type="vendor" source="hint analyzer" name="vendor" value="vendor" confidence="HIGH"/>
+		</add>
+	</hint>
+	<vendorDuplicatingHint value="sun" duplicate="oracle"/>	
+	<vendorDuplicatingHint value="oracle" duplicate="sun"/>	
+</hints>
