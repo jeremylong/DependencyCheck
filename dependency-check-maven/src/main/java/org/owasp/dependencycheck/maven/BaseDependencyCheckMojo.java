@@ -803,7 +803,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                                 dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
                         getLog().debug(msg);
                     } else {
-                        final String msg = String.format("No analzer could be found for '%s:%s' in project %s",
+                        final String msg = String.format("No analyzer could be found for '%s:%s' in project %s",
                                 dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
                         getLog().warn(msg);
                     }

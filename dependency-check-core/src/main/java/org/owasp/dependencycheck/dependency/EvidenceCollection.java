@@ -25,8 +25,6 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.owasp.dependencycheck.utils.Filter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Used to maintain a collection of Evidence.
@@ -40,10 +38,6 @@ class EvidenceCollection implements Serializable {
      * The serial version UID for serialization.
      */
     private static final long serialVersionUID = 1L;
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(EvidenceCollection.class);
     /**
      * A collection of vendor evidence.
      */
