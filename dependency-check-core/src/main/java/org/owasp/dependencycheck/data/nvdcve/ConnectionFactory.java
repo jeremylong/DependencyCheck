@@ -153,7 +153,12 @@ public final class ConnectionFactory {
             LOGGER.debug("Database User: {}", userName);
 
             try {
-                conn = DriverManager.getConnection(connectionString, userName, password);
+                if (connectionString.toLowerCase().contains("integrated security=true")
+                        || connectionString.toLowerCase().contains("trusted_connection=true")) {
+                    conn = DriverManager.getConnection(connectionString);
+                } else {
+                    conn = DriverManager.getConnection(connectionString, userName, password);
+                }
             } catch (SQLException ex) {
                 if (ex.getMessage().contains("java.net.UnknownHostException") && connectionString.contains("AUTO_SERVER=TRUE;")) {
                     connectionString = connectionString.replace("AUTO_SERVER=TRUE;", "");
