@@ -151,7 +151,7 @@ Copyright (c) 2012 - Jeremy Long
         </site>
     </distributionManagement>
     <build>
-    <defaultGoal>clean install</defaultGoal>
+        <defaultGoal>clean install</defaultGoal>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -188,21 +188,6 @@ Copyright (c) 2012 - Jeremy Long
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>1.4.1</version>
-                    <executions>
-                        <execution>
-                          <id>enforce-minimal-maven-version</id>
-                          <goals>
-                              <goal>enforce</goal>
-                          </goals>
-                          <configuration>
-                              <rules>
-                                  <requireMavenVersion>
-                                      <version>3.1</version>
-                                  </requireMavenVersion>
-                              </rules>
-                          </configuration>
-                      </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -311,6 +296,27 @@ Copyright (c) 2012 - Jeremy Long
                                     <version>1.7.0</version>
                                 </requireJavaVersion>
                             </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <inherited>true</inherited>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-maven-3</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>[3.1,]</version>
+                                </requireMavenVersion>
+                            </rules>
+                            <fail>true</fail>
                         </configuration>
                     </execution>
                 </executions>
