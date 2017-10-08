@@ -21,6 +21,7 @@ import java.io.File;
 import javax.annotation.concurrent.ThreadSafe;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -54,7 +55,7 @@ public class FileNameAnalyzer extends AbstractAnalyzer {
         "METADATA",
         "PKG-INFO",
         "package.json",
-        "Package.swift",});
+        "Package.swift",}, IOCase.INSENSITIVE);
     //CSON: WhitespaceAfter
 
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
