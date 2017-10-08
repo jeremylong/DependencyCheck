@@ -137,7 +137,7 @@ public class App {
                             exitCode = -5;
                         }
                     } else {
-                        LOGGER.error("Unable to purge database; the database file does not exists: {}", db.getAbsolutePath());
+                        LOGGER.error("Unable to purge database; the database file does not exist: {}", db.getAbsolutePath());
                         exitCode = -6;
                     }
                 } catch (IOException ex) {
