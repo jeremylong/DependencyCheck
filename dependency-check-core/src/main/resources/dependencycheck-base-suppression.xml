@@ -784,4 +784,75 @@
         <cpe>cpe:/a:git_project:git</cpe>
         <cpe>cpe:/a:hub_project:hub</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: hystrix-rx-netty-metrics-stream-1.5.12.jar
+        ]]></notes>
+        <gav regex="true">^com\.netflix\.hystrix:hystrix-rx-netty-metrics-stream:.*$</gav>
+        <cpe>cpe:/a:netty_project:netty</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: cassandra-thrift-1.2.11.jar
+        ]]></notes>
+        <gav regex="true">^org\.apache\.cassandra:cassandra-thrift:.*$</gav>
+        <cpe>cpe:/a:apache:thrift</cpe>
+        <cpe>cpe:/a:apache:cassandra</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: xbean-bundleutils-3.11.1.jar
+        ]]></notes>
+        <gav regex="true">^org\.apache\.xbean:xbean-bundleutils:.*$</gav>
+        <cpe>cpe:/a:apache:geronimo</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: xbean-finder-3.11.1.jar
+        ]]></notes>
+        <gav regex="true">^org\.apache\.xbean:xbean-finder:.*$</gav>
+        <cpe>cpe:/a:finder_project:finder</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: annotation-indexer-1.4.jar
+        ]]></notes>
+        <gav regex="true">^org\.jenkins-ci:annotation-indexer:.*$</gav>
+        <cpe>cpe:/a:jenkins:jenkins</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per issue #871
+        ]]></notes>
+        <gav regex="true">^org\.sonatype\.plexus:plexus-build-api:.*$</gav>
+        <cpe>cpe:/a:spice_project:spice</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: avro-1.4.0-cassandra-1.jar
+        ]]></notes>
+        <gav regex="true">^org\.apache\.cassandra\.deps:avro:.*$</gav>
+        <cpe>cpe:/a:apache:cassandra</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: hystrix-request-servlet-1.5.12.jar
+        ]]></notes>
+        <gav regex="true">^com\.netflix\.hystrix:hystrix-request-servlet:.*$</gav>
+        <cpe>cpe:/a:request_it:request_it</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: jersey-core-1.11.jar
+        ]]></notes>
+        <gav regex="true">^com\.sun\.jersey:jersey-core:.*$</gav>
+        <cpe>cpe:/a:restful_web_services_project:restful_web_services</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: unboundid-ldapsdk-2.3.8.jar
+        ]]></notes>
+        <gav regex="true">^com\.unboundid:unboundid-ldapsdk:.*$</gav>
+        <cpe>cpe:/a:id:id-software</cpe>
+    </suppress>
 </suppressions>
