@@ -85,7 +85,7 @@ public class PurgeMojo extends BaseDependencyCheckMojo {
                         getLog().error(msg);
                     }
                 } else {
-                    final String msg = String.format("Unable to purge database; the database file does not exists: %s", db.getAbsolutePath());
+                    final String msg = String.format("Unable to purge database; the database file does not exist: %s", db.getAbsolutePath());
                     if (this.isFailOnError()) {
                         throw new MojoFailureException(msg);
                     }

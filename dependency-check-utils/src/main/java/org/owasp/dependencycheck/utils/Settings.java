@@ -922,7 +922,7 @@ public final class Settings {
      * Returns a connection string from the configured properties. If the
      * connection string contains a %s, this method will determine the 'data'
      * directory and replace the %s with the path to the data directory. If the
-     * data directory does not exists it will be created.
+     * data directory does not exist it will be created.
      *
      * @param connectionStringKey the property file key for the connection
      * string

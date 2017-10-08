@@ -126,7 +126,7 @@ public class Purge extends Task {
                     log(msg, Project.MSG_ERR);
                 }
             } else {
-                final String msg = String.format("Unable to purge database; the database file does not exists: %s", db.getAbsolutePath());
+                final String msg = String.format("Unable to purge database; the database file does not exist: %s", db.getAbsolutePath());
                 if (this.failOnError) {
                     throw new BuildException(msg);
                 }

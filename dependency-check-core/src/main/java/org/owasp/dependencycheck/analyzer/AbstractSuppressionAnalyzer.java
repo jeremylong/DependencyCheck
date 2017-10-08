@@ -179,7 +179,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
             }
             if (file != null) {
                 if (!file.exists()) {
-                    final String msg = String.format("Suppression file '%s' does not exists", file.getPath());
+                    final String msg = String.format("Suppression file '%s' does not exist", file.getPath());
                     LOGGER.warn(msg);
                     throw new SuppressionParseException(msg);
                 }
