@@ -62,6 +62,7 @@
         6. net dns is a php module
         7. Even if a node.js package exists - we aren't flagging the entire node.js
         8. Context project is drupal plugin
+        9. mail_project is ruby library
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec)|pom\.xml|package.json)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -75,6 +76,7 @@
         <cpe>cpe:/a:nodejs:node.js</cpe>
         <cpe>cpe:/a:nodejs:nodejs</cpe>
         <cpe>cpe:/a:context_project:context</cpe>
+        <cpe>cpe:/a:mail_project:mail</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -380,6 +382,13 @@
         ]]></notes>
         <gav regex="true">org\.elasticsearch:securesm:.*</gav>
         <cpe>cpe:/a:elasticsearch:elasticsearch</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Glassfish false positives.
+        ]]></notes>
+        <gav regex="true">^javax\.servlet:javax\.servlet-api:.*$</gav>
+        <cpe>cpe:/a:oracle:glassfish</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -708,5 +717,62 @@
         <cpe>cpe:/a:ruby-i18n:i18n</cpe>
         <cpe>cpe:/a:mikel_lindsaar:mail</cpe>
         <cpe>cpe:/a:rest-client_project:rest-client</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positives per issue #915
+        ]]></notes>
+        <gav regex="true">^net\.thisptr:jackson-jq:.*$</gav>
+        <cpe>cpe:/a:jq_project:jq</cpe>
+        <cpe>cpe:/a:id:id-software</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positives per issue #915
+        ]]></notes>
+        <gav regex="true">^org\.jruby\.jcodings:jcodings:.*$</gav>
+        <cpe>cpe:/a:jruby:jruby</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positives per issue #915
+        ]]></notes>
+        <gav regex="true">^org\.jruby\.joni:joni:.*$</gav>
+        <cpe>cpe:/a:jruby:jruby</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positives per issue #915
+        ]]></notes>
+        <gav regex="true">^org\.apache\.cxf\.xjc-utils:cxf-xjc-runtime:.*$</gav>
+        <cpe>cpe:/a:apache:cxf</cpe>
+    </suppress> 
+    <suppress base="true">
+        <notes><![CDATA[
+        false positives per issue #915
+        ]]></notes>
+        <gav regex="true">^javax\.validation:validation-api:.*$</gav>
+        <cpe>cpe:/a:bean_project:bean</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per issue #914
+        ]]></notes>
+        <gav regex="true">^org\.apache\.struts\.xwork:xwork-core:.*$</gav>
+        <cpe>cpe:/a:apache:struts</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per issue #908
+        ]]></notes>
+        <gav regex="true">^com\.unboundid:unboundid-ldapsdk:.*$</gav>
+        <cpe>cpe:/a:ldap_project:ldap</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per issue #894
+        ]]></notes>
+        <gav regex="true">^org\.apache\.pdfbox:fontbox:.*$</gav>
+        <cpe>cpe:/a:font_project:font</cpe>
     </suppress>
 </suppressions>
