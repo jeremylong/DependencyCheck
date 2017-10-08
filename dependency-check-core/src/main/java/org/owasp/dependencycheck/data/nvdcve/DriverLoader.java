@@ -96,7 +96,7 @@ public final class DriverLoader {
      * @throws DriverLoadException thrown if the driver cannot be loaded
      */
     public static Driver load(String className, String pathToDriver) throws DriverLoadException {
-        final URLClassLoader parent = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        final ClassLoader parent = ClassLoader.getSystemClassLoader();
         final List<URL> urls = new ArrayList<>();
         final String[] paths = pathToDriver.split(File.pathSeparator);
         for (String path : paths) {
