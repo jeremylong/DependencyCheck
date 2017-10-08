@@ -74,7 +74,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
     //<editor-fold defaultstate="collapsed" desc="Constants and Member Variables">
     /**
-     * A descriptor for the type of dependencies processed or added by this analyzer
+     * A descriptor for the type of dependencies processed or added by this
+     * analyzer
      */
     public static final String DEPENDENCY_ECOSYSTEM = "Java";
     /**
@@ -585,10 +586,15 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             addMatchingProductValues(classes, org, dependency);
         }
         // org name
-        final String orgUrl = pom.getOrganizationUrl();
+        String orgUrl = pom.getOrganizationUrl();
         if (orgUrl != null && !orgUrl.isEmpty()) {
+            if (orgUrl.startsWith("https://github.com/")) {
+                orgUrl = orgUrl.substring(19);
+                dependency.addEvidence(EvidenceType.PRODUCT, "pom", "url", orgUrl, Confidence.HIGH);
+            } else {
+                dependency.addEvidence(EvidenceType.PRODUCT, "pom", "organization url", orgUrl, Confidence.LOW);
+            }
             dependency.addEvidence(EvidenceType.VENDOR, "pom", "organization url", orgUrl, Confidence.MEDIUM);
-            dependency.addEvidence(EvidenceType.PRODUCT, "pom", "organization url", orgUrl, Confidence.LOW);
         }
         //pom name
         final String pomName = pom.getName();
@@ -610,9 +616,16 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             addMatchingProductValues(classes, trimmedDescription, dependency);
         }
 
-        final String projectURL = pom.getProjectURL();
+        String projectURL = pom.getProjectURL();
         if (projectURL != null && !projectURL.trim().isEmpty()) {
+            if (projectURL.startsWith("https://github.com/")) {
+                projectURL = projectURL.substring(19);
+                dependency.addEvidence(EvidenceType.PRODUCT, "pom", "url", projectURL, Confidence.HIGH);
+            } else {
+                dependency.addEvidence(EvidenceType.PRODUCT, "pom", "url", projectURL, Confidence.MEDIUM);
+            }
             dependency.addEvidence(EvidenceType.VENDOR, "pom", "url", projectURL, Confidence.HIGHEST);
+
         }
 
         extractLicense(pom, dependency);
@@ -700,6 +713,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 String value = atts.getValue(key);
                 if (HTML_DETECTION_PATTERN.matcher(value).find()) {
                     value = Jsoup.parse(value).text();
+                }
+                if (value.startsWith("git@github.com:")) {
+                    value = value.substring(15);
                 }
                 if (IGNORE_VALUES.contains(value)) {
                     //noinspection UnnecessaryContinue
@@ -1080,6 +1096,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             }
         }
     }
+
     /**
      * Cycles through the collection of class name information to see if parts
      * of the package names are contained in the provided value. If found, it
