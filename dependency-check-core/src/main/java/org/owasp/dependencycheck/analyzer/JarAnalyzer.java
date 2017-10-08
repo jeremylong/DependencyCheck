@@ -535,13 +535,13 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             foundSomething = true;
             dependency.addEvidence(EvidenceType.VENDOR, "pom", "groupid", groupid, Confidence.HIGHEST);
             dependency.addEvidence(EvidenceType.PRODUCT, "pom", "groupid", groupid, Confidence.LOW);
-            addMatchingVendorValues(classes, groupid, dependency);
-            addMatchingProductValues(classes, groupid, dependency);
+            addMatchingValues(classes, groupid, dependency,EvidenceType.VENDOR);
+            addMatchingValues(classes, groupid, dependency,EvidenceType.PRODUCT);
             if (parentGroupId != null && !parentGroupId.isEmpty() && !parentGroupId.equals(groupid)) {
                 dependency.addEvidence(EvidenceType.VENDOR, "pom", "parent-groupid", parentGroupId, Confidence.MEDIUM);
                 dependency.addEvidence(EvidenceType.PRODUCT, "pom", "parent-groupid", parentGroupId, Confidence.LOW);
-                addMatchingVendorValues(classes, parentGroupId, dependency);
-                addMatchingProductValues(classes, parentGroupId, dependency);
+                addMatchingValues(classes, parentGroupId, dependency,EvidenceType.VENDOR);
+                addMatchingValues(classes, parentGroupId, dependency,EvidenceType.PRODUCT);
             }
         } else {
             addAsIdentifier = false;
@@ -551,13 +551,13 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             foundSomething = true;
             dependency.addEvidence(EvidenceType.PRODUCT, "pom", "artifactid", artifactid, Confidence.HIGHEST);
             dependency.addEvidence(EvidenceType.VENDOR, "pom", "artifactid", artifactid, Confidence.LOW);
-            addMatchingVendorValues(classes, artifactid, dependency);
-            addMatchingProductValues(classes, artifactid, dependency);
+            addMatchingValues(classes, artifactid, dependency,EvidenceType.VENDOR);
+            addMatchingValues(classes, artifactid, dependency,EvidenceType.PRODUCT);
             if (parentArtifactId != null && !parentArtifactId.isEmpty() && !parentArtifactId.equals(artifactid)) {
                 dependency.addEvidence(EvidenceType.PRODUCT, "pom", "parent-artifactid", parentArtifactId, Confidence.MEDIUM);
                 dependency.addEvidence(EvidenceType.VENDOR, "pom", "parent-artifactid", parentArtifactId, Confidence.LOW);
-                addMatchingProductValues(classes, parentArtifactId, dependency);
-                addMatchingProductValues(classes, parentArtifactId, dependency);
+                addMatchingValues(classes, parentArtifactId, dependency,EvidenceType.VENDOR);
+                addMatchingValues(classes, parentArtifactId, dependency,EvidenceType.PRODUCT);
             }
         } else {
             addAsIdentifier = false;
@@ -582,8 +582,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         if (org != null && !org.isEmpty()) {
             dependency.addEvidence(EvidenceType.VENDOR, "pom", "organization name", org, Confidence.HIGH);
             dependency.addEvidence(EvidenceType.PRODUCT, "pom", "organization name", org, Confidence.LOW);
-            addMatchingVendorValues(classes, org, dependency);
-            addMatchingProductValues(classes, org, dependency);
+            addMatchingValues(classes, org, dependency,EvidenceType.VENDOR);
+            addMatchingValues(classes, org, dependency,EvidenceType.PRODUCT);
         }
         // org name
         String orgUrl = pom.getOrganizationUrl();
@@ -603,8 +603,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             foundSomething = true;
             dependency.addEvidence(EvidenceType.PRODUCT, "pom", "name", pomName, Confidence.HIGH);
             dependency.addEvidence(EvidenceType.VENDOR, "pom", "name", pomName, Confidence.HIGH);
-            addMatchingVendorValues(classes, pomName, dependency);
-            addMatchingProductValues(classes, pomName, dependency);
+            addMatchingValues(classes, pomName, dependency,EvidenceType.VENDOR);
+            addMatchingValues(classes, pomName, dependency,EvidenceType.PRODUCT);
         }
 
         //Description
@@ -612,8 +612,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         if (description != null && !description.isEmpty() && !description.startsWith("POM was created by")) {
             foundSomething = true;
             final String trimmedDescription = addDescription(dependency, description, "pom", "description");
-            addMatchingVendorValues(classes, trimmedDescription, dependency);
-            addMatchingProductValues(classes, trimmedDescription, dependency);
+            addMatchingValues(classes, trimmedDescription, dependency,EvidenceType.VENDOR);
+            addMatchingValues(classes, trimmedDescription, dependency,EvidenceType.PRODUCT);
         }
 
         String projectURL = pom.getProjectURL();
@@ -723,7 +723,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {
                     foundSomething = true;
                     dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.HIGH);
-                    addMatchingProductValues(classInformation, value, dependency);
+                    addMatchingValues(classInformation, value, dependency,EvidenceType.PRODUCT);
                 } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VERSION.toString())) {
                     hasImplementationVersion = true;
                     foundSomething = true;
@@ -733,19 +733,19 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VENDOR.toString())) {
                     foundSomething = true;
                     dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.HIGH);
-                    addMatchingVendorValues(classInformation, value, dependency);
+                    addMatchingValues(classInformation, value, dependency,EvidenceType.VENDOR);
                 } else if (key.equalsIgnoreCase(IMPLEMENTATION_VENDOR_ID)) {
                     foundSomething = true;
                     dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.MEDIUM);
-                    addMatchingVendorValues(classInformation, value, dependency);
+                    addMatchingValues(classInformation, value, dependency,EvidenceType.VENDOR);
                 } else if (key.equalsIgnoreCase(BUNDLE_DESCRIPTION)) {
                     foundSomething = true;
                     addDescription(dependency, value, "manifest", key);
-                    addMatchingProductValues(classInformation, value, dependency);
+                    addMatchingValues(classInformation, value, dependency,EvidenceType.PRODUCT);
                 } else if (key.equalsIgnoreCase(BUNDLE_NAME)) {
                     foundSomething = true;
                     dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);
-                    addMatchingProductValues(classInformation, value, dependency);
+                    addMatchingValues(classInformation, value, dependency,EvidenceType.PRODUCT);
 //                //the following caused false positives.
 //                } else if (key.equalsIgnoreCase(BUNDLE_VENDOR)) {
                 } else if (key.equalsIgnoreCase(BUNDLE_VERSION)) {
@@ -785,19 +785,19 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                             dependency.addEvidence(EvidenceType.VERSION, source, key, value, Confidence.MEDIUM);
                         } else if (key.contains("title")) {
                             dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);
-                            addMatchingProductValues(classInformation, value, dependency);
+                            addMatchingValues(classInformation, value, dependency,EvidenceType.PRODUCT);
                         } else if (key.contains("vendor")) {
                             if (key.contains("specification")) {
                                 dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.LOW);
                             } else {
                                 dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.MEDIUM);
-                                addMatchingVendorValues(classInformation, value, dependency);
+                                addMatchingValues(classInformation, value, dependency,EvidenceType.VENDOR);
                             }
                         } else if (key.contains("name")) {
                             dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);
                             dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.MEDIUM);
-                            addMatchingVendorValues(classInformation, value, dependency);
-                            addMatchingProductValues(classInformation, value, dependency);
+                            addMatchingValues(classInformation, value, dependency,EvidenceType.VENDOR);
+                            addMatchingValues(classInformation, value, dependency,EvidenceType.PRODUCT);
                         } else if (key.contains("license")) {
                             addLicense(dependency, value);
                         } else if (key.contains("description")) {
@@ -805,8 +805,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                         } else {
                             dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.LOW);
                             dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.LOW);
-                            addMatchingVendorValues(classInformation, value, dependency);
-                            addMatchingProductValues(classInformation, value, dependency);
+                            addMatchingValues(classInformation, value, dependency, EvidenceType.VERSION);
+                            addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);
                             if (value.matches(".*\\d.*")) {
                                 final StringTokenizer tokenizer = new StringTokenizer(value, " ");
                                 while (tokenizer.hasMoreElements()) {
@@ -830,18 +830,18 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {
                         foundSomething = true;
                         dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);
-                        addMatchingProductValues(classInformation, value, dependency);
+                        addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);
                     } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VERSION.toString())) {
                         foundSomething = true;
                         dependency.addEvidence(EvidenceType.VERSION, source, key, value, Confidence.MEDIUM);
                     } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VENDOR.toString())) {
                         foundSomething = true;
                         dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.MEDIUM);
-                        addMatchingVendorValues(classInformation, value, dependency);
+                        addMatchingValues(classInformation, value, dependency, EvidenceType.VENDOR);
                     } else if (key.equalsIgnoreCase(Attributes.Name.SPECIFICATION_TITLE.toString())) {
                         foundSomething = true;
                         dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);
-                        addMatchingProductValues(classInformation, value, dependency);
+                        addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);
                     }
                 }
             }
@@ -1081,7 +1081,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @param value the value to check to see if it contains a package name
      * @param dep the dependency to add new entries too
      */
-    private static void addMatchingVendorValues(List<ClassNameInformation> classes, String value, Dependency dep) {
+    private static void addMatchingValues(List<ClassNameInformation> classes, String value, Dependency dep, EvidenceType type) {
         if (value == null || value.isEmpty() || classes == null || classes.isEmpty()) {
             return;
         }
@@ -1091,33 +1091,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 final Pattern p = Pattern.compile("\b" + key + "\b");
                 if (p.matcher(text).find()) {
                     //if (text.contains(key)) { //note, package structure elements are already lowercase.
-                    dep.addEvidence(EvidenceType.VENDOR, "jar", "package name", key, Confidence.HIGHEST);
-                }
-            }
-        }
-    }
-
-    /**
-     * Cycles through the collection of class name information to see if parts
-     * of the package names are contained in the provided value. If found, it
-     * will be added as the HIGHEST confidence evidence because we have more
-     * then one source corroborating the value.
-     *
-     * @param classes a collection of class name information
-     * @param value the value to check to see if it contains a package name
-     * @param dep the dependency to add new entries too
-     */
-    private static void addMatchingProductValues(List<ClassNameInformation> classes, String value, Dependency dep) {
-        if (value == null || value.isEmpty() || classes == null || classes.isEmpty()) {
-            return;
-        }
-        final String text = value.toLowerCase();
-        for (ClassNameInformation cni : classes) {
-            for (String key : cni.getPackageStructure()) {
-                final Pattern p = Pattern.compile("\b" + key + "\b");
-                if (p.matcher(text).find()) {
-                    //if (text.contains(key)) { //note, package structure elements are already lowercase.
-                    dep.addEvidence(EvidenceType.PRODUCT, "jar", "package name", key, Confidence.HIGHEST);
+                    dep.addEvidence(type, "jar", "package name", key, Confidence.HIGHEST);
                 }
             }
         }

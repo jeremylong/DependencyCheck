@@ -209,7 +209,7 @@ public class H2DBLock {
     private double getFileAge(File file) {
         final Date d = new Date();
         final long modified = file.lastModified();
-        final double time = (d.getTime() - modified) / 1000 / 60;
+        final double time = (d.getTime() - modified) / 1000.0 / 60.0;
         LOGGER.debug("Lock file age is {} minutes", time);
         return time;
     }

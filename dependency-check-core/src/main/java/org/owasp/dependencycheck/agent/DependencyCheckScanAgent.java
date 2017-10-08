@@ -868,7 +868,8 @@ public class DependencyCheckScanAgent {
     //</editor-fold>
 
     /**
-     * Executes the Dependency-Check on the dependent libraries.
+     * Executes the Dependency-Check on the dependent libraries. <b>Note</b>, the engine
+     * object returned from this method must be closed by calling `close()`
      *
      * @return the Engine used to scan the dependencies.
      * @throws ExceptionCollection a collection of one or more exceptions that
@@ -887,6 +888,8 @@ public class DependencyCheckScanAgent {
                 engine.doUpdates();
             } catch (UpdateException ex) {
                 throw new ExceptionCollection("Unable to perform update", ex);
+            } finally {
+                engine.close();
             }
         } else {
             engine.setDependencies(this.dependencies);

@@ -274,12 +274,6 @@ public class Engine implements FileFilter, AutoCloseable {
         for (AnalysisPhase phase : mode.getPhases()) {
             analyzers.put(phase, new ArrayList<Analyzer>());
         }
-        boolean loadExperimental = false;
-        try {
-            loadExperimental = settings.getBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, false);
-        } catch (InvalidSettingException ex) {
-            LOGGER.trace("Experimenal setting not configured; defaulting to false");
-        }
         final AnalyzerService service = new AnalyzerService(serviceClassLoader, settings);
         final List<Analyzer> iterator = service.getAnalyzers(mode.getPhases());
         for (Analyzer a : iterator) {
