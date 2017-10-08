@@ -46,7 +46,15 @@ public class FileNameAnalyzer extends AbstractAnalyzer {
     private static final NameFileFilter IGNORED_FILES = new NameFileFilter(new String[]{
         "__init__.py",
         "__init__.pyc",
-        "__init__.pyo",});
+        "__init__.pyo",
+        "composer.lock",
+        "configure.in",
+        "configure.ac",
+        "Gemfile.lock",
+        "METADATA",
+        "PKG-INFO",
+        "package.json",
+        "Package.swift",});
     //CSON: WhitespaceAfter
 
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
