@@ -775,4 +775,13 @@
         <gav regex="true">^org\.apache\.pdfbox:fontbox:.*$</gav>
         <cpe>cpe:/a:font_project:font</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per issue #859
+        ]]></notes>
+        <gav regex="true">^org\.kohsuke:github-api:.*$</gav>
+        <cpe>cpe:/a:git:git</cpe>
+        <cpe>cpe:/a:git_project:git</cpe>
+        <cpe>cpe:/a:hub_project:hub</cpe>
+    </suppress>
 </suppressions>
