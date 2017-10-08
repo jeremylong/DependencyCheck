@@ -47,7 +47,7 @@ archiveAnalyzerEnabled        | Sets whether the Archive Analyzer will be used. 
 zipExtensions                 | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
 jarAnalyzer                   | Sets whether Jar Analyzer will be used.                                   | true
 centralAnalyzerEnabled        | Sets whether Central Analyzer will be used. If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer (see below). | true
-nexusAnalyzerEnabled          | Sets whether Nexus Analyzer will be used. This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
+nexusAnalyzerEnabled          | Sets whether Nexus Analyzer will be used (requires Nexus Pro). This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
 nexusUrl                      | Defines the Nexus Server's web service end point (example http://domain.enterprise/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
 nexusUsesProxy                | Whether or not the defined proxy should be used when connecting to Nexus. | true
 pyDistributionAnalyzerEnabled | Sets whether the [experimental](../analyzers/index.html) Python Distribution Analyzer will be used.               | true

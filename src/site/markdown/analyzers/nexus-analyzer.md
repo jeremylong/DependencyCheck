@@ -1,10 +1,6 @@
 Nexus Analyzer
 ==============
-
-The Nexus Analyzer has been superceded by the Central Analyzer. If both the
-Central Analyzer and Nexus Analyzer are enabled and the Nexus URL has not
-been configured to point to an instance of Nexus Pro the Nexus Analyzer will
-disable itself.
+**Requires Nexus Pro**
 
 The Nexus Analyzer will check for the Maven GAV (Group/Artifact/Version) information
 for artifacts in the scanned area. This is done by determining if an artifact exists
@@ -13,9 +9,13 @@ artifact's hash is found in the configured Nexus repository, its GAV is recorded
 an Identifier and the Group is collected as Vendor evidence, the Artifact is
 collected as Product evidence, and the Version is collected as Version evidence.
 
+The Nexus Analyzer has been superceded by the Central Analyzer. If both the
+Central Analyzer and Nexus Analyzer are enabled and the Nexus URL has not
+been configured to point to an instance of Nexus Pro the Nexus Analyzer will
+disable itself.
+
 Logging
 -------
-
 You may see a log message similar to the following during analysis:
 
     Mar 31, 2014 9:15:12 AM org.owasp.dependencycheck.analyzer.NexusAnalyzer initializeFileTypeAnalyzer
