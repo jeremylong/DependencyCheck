@@ -73,7 +73,7 @@ Create an aggregated dependency-check report within the site.
 ```
 
 $H$H$H Example 3:
-Create the DependencyCheck-report.html and fail the build for CVSS greater than 8.
+Create the DependencyCheck-report.html and fail the build for CVSS greater than or equal to 8.
 
 ```xml
 <project>

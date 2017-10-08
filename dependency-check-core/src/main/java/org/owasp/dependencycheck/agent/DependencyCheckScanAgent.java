@@ -1028,7 +1028,7 @@ public class DependencyCheckScanAgent {
             final String msg;
             if (showSummary) {
                 msg = String.format("%n%nDependency-Check Failure:%n"
-                        + "One or more dependencies were identified with vulnerabilities that have a CVSS score greater than '%.1f': %s%n"
+                        + "One or more dependencies were identified with vulnerabilities that have a CVSS score greater than or equal to '%.1f': %s%n"
                         + "See the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
             } else {
                 msg = String.format("%n%nDependency-Check Failure:%n"

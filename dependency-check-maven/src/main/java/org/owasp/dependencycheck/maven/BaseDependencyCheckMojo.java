@@ -1259,7 +1259,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities: %n%s%n%n"
                             + "See the dependency-check report for more details.%n%n", ids.toString());
                 } else {
-                    msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities that have a CVSS score greater than '%.1f': "
+                    msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities that have a CVSS score greater than or equal to '%.1f': "
                             + "%n%s%n%nSee the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
                 }
             } else {
