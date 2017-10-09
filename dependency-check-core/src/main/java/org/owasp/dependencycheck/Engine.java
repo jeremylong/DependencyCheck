@@ -129,7 +129,7 @@ public class Engine implements FileFilter, AutoCloseable {
          *
          * @return whether or not the database is required
          */
-        public boolean isDatabseRequired() {
+        private boolean isDatabaseRequired() {
             return databaseRequired;
         }
 
@@ -255,7 +255,7 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     @Override
     public void close() {
-        if (mode.isDatabseRequired()) {
+        if (mode.isDatabaseRequired()) {
             if (database != null) {
                 database.close();
                 database = null;
@@ -698,7 +698,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @throws ExceptionCollection thrown if fatal exceptions occur
      */
     private void initializeAndUpdateDatabase(final List<Throwable> exceptions) throws ExceptionCollection {
-        if (!mode.isDatabseRequired()) {
+        if (!mode.isDatabaseRequired()) {
             return;
         }
         boolean autoUpdate = true;
@@ -866,7 +866,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @throws UpdateException thrown if the operation fails
      */
     public void doUpdates(boolean remainOpen) throws UpdateException {
-        if (mode.isDatabseRequired()) {
+        if (mode.isDatabaseRequired()) {
             H2DBLock dblock = null;
             try {
                 if (ConnectionFactory.isH2Connection(settings)) {
@@ -927,7 +927,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * opening the database
      */
     public void openDatabase(boolean readOnly, boolean lockRequired) {
-        if (mode.isDatabseRequired() && database == null) {
+        if (mode.isDatabaseRequired() && database == null) {
             //needed to update schema any required schema changes
             database = new CveDB(settings);
             if (readOnly
@@ -1045,7 +1045,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @throws NoDataException thrown if no data exists in the CPE Index
      */
     private void ensureDataExists() throws NoDataException {
-        if (mode.isDatabseRequired() && (database == null || !database.dataExists())) {
+        if (mode.isDatabaseRequired() && (database == null || !database.dataExists())) {
             throw new NoDataException("No documents exist");
         }
     }
