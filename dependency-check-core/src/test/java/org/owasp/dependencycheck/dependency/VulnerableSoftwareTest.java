@@ -174,4 +174,25 @@ public class VulnerableSoftwareTest extends BaseTest {
         assertFalse(VulnerableSoftware.isPositiveInteger("01"));
         assertFalse(VulnerableSoftware.isPositiveInteger("00"));
     }
+    
+    @Test
+    public void testVersionsWithLettersComparison() {
+        VulnerableSoftware a = new VulnerableSoftware();
+        a.setName("cpe:/a:mysql:mysql:5.0.3a");
+
+        VulnerableSoftware b = new VulnerableSoftware();
+        b.setName("cpe:/a:mysql:mysql:5.0.9");
+
+        VulnerableSoftware c = new VulnerableSoftware();
+        c.setName("cpe:/a:mysql:mysql:5.0.30");
+
+        assertTrue(a.compareTo(b) < 0);
+        assertTrue(a.compareTo(c) < 0);
+
+        assertTrue(b.compareTo(a) > 0);
+        assertTrue(b.compareTo(c) < 0);
+
+        assertTrue(c.compareTo(a) > 0);
+        assertTrue(c.compareTo(b) > 0);
+    }
 }
