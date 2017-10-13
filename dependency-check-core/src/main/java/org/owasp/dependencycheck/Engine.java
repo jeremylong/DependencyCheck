@@ -66,7 +66,6 @@ import org.owasp.dependencycheck.utils.H2DBLock;
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.*;
 //CSON: AvoidStarImport
 
-
 /**
  * Scans files, directories, etc. for Dependencies. Analyzers are loaded and
  * used to process the files found by the scan, if a file is encountered and an
@@ -661,7 +660,9 @@ public class Engine implements FileFilter, AutoCloseable {
                     initializeAnalyzer(analyzer);
                 } catch (InitializationException ex) {
                     exceptions.add(ex);
-                    continue;
+                    if (ex.isFatal()) {
+                        continue;
+                    }
                 }
 
                 if (analyzer.isEnabled()) {
@@ -815,10 +816,12 @@ public class Engine implements FileFilter, AutoCloseable {
         } catch (InitializationException ex) {
             LOGGER.error("Exception occurred initializing {}.", analyzer.getName());
             LOGGER.debug("", ex);
-            try {
-                analyzer.close();
-            } catch (Throwable ex1) {
-                LOGGER.trace("", ex1);
+            if (ex.isFatal()) {
+                try {
+                    analyzer.close();
+                } catch (Throwable ex1) {
+                    LOGGER.trace("", ex1);
+                }
             }
             throw ex;
         } catch (Throwable ex) {

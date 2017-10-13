@@ -31,6 +31,28 @@ public class InitializationException extends Exception {
      * The serial version uid.
      */
     private static final long serialVersionUID = 1L;
+    /**
+     * Whether or not the exception is fatal.
+     */
+    private boolean fatal = true;
+
+    /**
+     * Get the value of fatal
+     *
+     * @return the value of fatal
+     */
+    public boolean isFatal() {
+        return fatal;
+    }
+
+    /**
+     * Set the value of fatal
+     *
+     * @param fatal new value of fatal
+     */
+    public void setFatal(boolean fatal) {
+        this.fatal = fatal;
+    }
 
     /**
      * Creates a new InitializationException.
@@ -65,5 +87,17 @@ public class InitializationException extends Exception {
      */
     public InitializationException(String msg, Throwable ex) {
         super(msg, ex);
+    }
+
+    /**
+     * Creates a new InitializationException.
+     *
+     * @param msg a message for the exception.
+     * @param ex the cause of the exception.
+     * @param fatal whether or not the exception is fatal.
+     */
+    public InitializationException(String msg, Throwable ex, boolean fatal) {
+        super(msg, ex);
+        this.fatal = fatal;
     }
 }

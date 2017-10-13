@@ -90,7 +90,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
             try {
                 loadSuppressionData();
             } catch (SuppressionParseException ex) {
-                throw new InitializationException("Error initializing the suppression analyzer: " + ex.getLocalizedMessage(), ex);
+                throw new InitializationException("Error initializing the suppression analyzer: " + ex.getLocalizedMessage(), ex, true);
             }
         }
     }
