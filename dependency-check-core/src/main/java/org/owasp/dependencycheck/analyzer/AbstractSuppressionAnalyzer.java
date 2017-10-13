@@ -120,7 +120,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
             throw new SuppressionParseException("Unable to parse the base suppression data file", ex);
         }
         final String[] suppressionFilePaths = getSettings().getArray(Settings.KEYS.SUPPRESSION_FILE);
-        List<String> failedLoadingFiles = new ArrayList<>();
+        final List<String> failedLoadingFiles = new ArrayList<>();
         if (suppressionFilePaths != null && suppressionFilePaths.length > 0) {
 
             // Load all the suppression file paths

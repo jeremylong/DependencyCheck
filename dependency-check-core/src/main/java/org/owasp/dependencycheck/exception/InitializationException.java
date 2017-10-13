@@ -37,7 +37,7 @@ public class InitializationException extends Exception {
     private boolean fatal = true;
 
     /**
-     * Get the value of fatal
+     * Get the value of fatal.
      *
      * @return the value of fatal
      */
@@ -46,7 +46,7 @@ public class InitializationException extends Exception {
     }
 
     /**
-     * Set the value of fatal
+     * Set the value of fatal.
      *
      * @param fatal new value of fatal
      */

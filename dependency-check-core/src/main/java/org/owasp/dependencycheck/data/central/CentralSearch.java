@@ -73,8 +73,7 @@ public class CentralSearch {
      * Creates a NexusSearch for the given repository URL.
      *
      * @param settings the configured settings
-     * @throws MalformedURLException thrown if the configured URL is
-     *                               invalid
+     * @throws MalformedURLException thrown if the configured URL is invalid
      */
     public CentralSearch(Settings settings) throws MalformedURLException {
         this.settings = settings;
@@ -102,8 +101,7 @@ public class CentralSearch {
      * @param sha1 the SHA-1 hash string for which to search
      * @return the populated Maven GAV.
      * @throws FileNotFoundException if the specified artifact is not found
-     * @throws IOException           if it's unable to connect to the specified
-     *                               repository
+     * @throws IOException if it's unable to connect to the specified repository
      */
     public List<MavenArtifact> searchSha1(String sha1) throws IOException {
         if (null == sha1 || !sha1.matches("^[0-9A-Fa-f]{40}$")) {
@@ -179,7 +177,7 @@ public class CentralSearch {
                 throw new FileNotFoundException("Artifact not found in Central");
             }
         } else {
-            String errorMessage = "Could not connect to MavenCentral (" + conn.getResponseCode() + "): " + conn.getResponseMessage();
+            final String errorMessage = "Could not connect to MavenCentral (" + conn.getResponseCode() + "): " + conn.getResponseMessage();
             throw new IOException(errorMessage);
         }
         return result;

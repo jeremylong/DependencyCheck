@@ -195,22 +195,23 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
     /**
      * Method that split versions for '.', '|' and '-". Then if a token start
      * with a number and then contains letters, it will split it too. For
-     * example "12a" is splitted in ["12", "a"]. This is done to support correct
+     * example "12a" is split into ["12", "a"]. This is done to support correct
      * comparison of "5.0.3a", "5.0.9" and "5.0.30".
      *
+     * @param s the string to split
      * @return an Array of String containing the tokens to be compared
      */
     private String[] split(String s) {
-        String[] splitted = s.split("(\\.|-)");
+        final Pattern pattern = Pattern.compile("^([\\d]+?)(.*)$");
+        final String[] splitted = s.split("(\\.|-)");
 
-        ArrayList<String> res = new ArrayList<>();
+        final ArrayList<String> res = new ArrayList<>();
         for (String token : splitted) {
             if (token.matches("^[\\d]+?[A-z]+")) {
-                Pattern pattern = Pattern.compile("^([\\d]+?)(.*)$");
-                Matcher matcher = pattern.matcher(token);
+                final Matcher matcher = pattern.matcher(token);
                 matcher.find();
-                String g1 = matcher.group(1);
-                String g2 = matcher.group(2);
+                final String g1 = matcher.group(1);
+                final String g2 = matcher.group(2);
 
                 res.add(g1);
                 res.add(g2);

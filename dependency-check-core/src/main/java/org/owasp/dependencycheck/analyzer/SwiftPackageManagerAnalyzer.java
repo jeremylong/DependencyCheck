@@ -47,7 +47,7 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
      * A descriptor for the type of dependencies processed or added by this
-     * analyzer
+     * analyzer.
      */
     public static final String DEPENDENCY_ECOSYSTEM = "Swift.PM";
 

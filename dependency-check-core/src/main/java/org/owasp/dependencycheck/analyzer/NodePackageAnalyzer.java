@@ -57,7 +57,7 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
     private static final Logger LOGGER = LoggerFactory.getLogger(NodePackageAnalyzer.class);
     /**
      * A descriptor for the type of dependencies processed or added by this
-     * analyzer
+     * analyzer.
      */
     public static final String DEPENDENCY_ECOSYSTEM = "npm";
     /**

@@ -50,18 +50,20 @@ public class CentralAnalyzerTest {
     @Test
     @SuppressWarnings("PMD.NonStaticInitializer")
     public void testFetchMavenArtifactsWithoutException(@Mocked final CentralSearch centralSearch,
-                                                        @Mocked final Dependency dependency)
+            @Mocked final Dependency dependency)
             throws IOException {
 
         CentralAnalyzer instance = new CentralAnalyzer();
-        instance.searcher = centralSearch;
+        instance.setCentralSearch(centralSearch);
         specifySha1SumFor(dependency);
 
         final List<MavenArtifact> expectedMavenArtifacts = Collections.emptyList();
-        new Expectations() {{
-            centralSearch.searchSha1(SHA1_SUM);
-            returns(expectedMavenArtifacts);
-        }};
+        new Expectations() {
+            {
+                centralSearch.searchSha1(SHA1_SUM);
+                returns(expectedMavenArtifacts);
+            }
+        };
 
         final List<MavenArtifact> actualMavenArtifacts = instance.fetchMavenArtifacts(dependency);
 
@@ -71,20 +73,22 @@ public class CentralAnalyzerTest {
     @Test
     @SuppressWarnings("PMD.NonStaticInitializer")
     public void testFetchMavenArtifactsWithSporadicIOException(@Mocked final CentralSearch centralSearch,
-                                                               @Mocked final Dependency dependency)
+            @Mocked final Dependency dependency)
             throws IOException {
 
         CentralAnalyzer instance = new CentralAnalyzer();
-        instance.searcher = centralSearch;
+        instance.setCentralSearch(centralSearch);
         specifySha1SumFor(dependency);
 
         final List<MavenArtifact> expectedMavenArtifacts = Collections.emptyList();
-        new Expectations() {{
-            centralSearch.searchSha1(SHA1_SUM);
-            result = new IOException("Could not connect to MavenCentral (500): Internal Server Error");
-            result = new IOException("Could not connect to MavenCentral (500): Internal Server Error");
-            result = expectedMavenArtifacts;
-        }};
+        new Expectations() {
+            {
+                centralSearch.searchSha1(SHA1_SUM);
+                result = new IOException("Could not connect to MavenCentral (500): Internal Server Error");
+                result = new IOException("Could not connect to MavenCentral (500): Internal Server Error");
+                result = expectedMavenArtifacts;
+            }
+        };
 
         final List<MavenArtifact> actualMavenArtifacts = instance.fetchMavenArtifacts(dependency);
 
@@ -94,17 +98,19 @@ public class CentralAnalyzerTest {
     @Test(expected = FileNotFoundException.class)
     @SuppressWarnings("PMD.NonStaticInitializer")
     public void testFetchMavenArtifactsRethrowsFileNotFoundException(@Mocked final CentralSearch centralSearch,
-                                                                     @Mocked final Dependency dependency)
+            @Mocked final Dependency dependency)
             throws IOException {
 
         CentralAnalyzer instance = new CentralAnalyzer();
-        instance.searcher = centralSearch;
+        instance.setCentralSearch(centralSearch);
         specifySha1SumFor(dependency);
 
-        new Expectations() {{
-            centralSearch.searchSha1(SHA1_SUM);
-            result = new FileNotFoundException("Artifact not found in Central");
-        }};
+        new Expectations() {
+            {
+                centralSearch.searchSha1(SHA1_SUM);
+                result = new FileNotFoundException("Artifact not found in Central");
+            }
+        };
 
         instance.fetchMavenArtifacts(dependency);
     }
@@ -112,35 +118,39 @@ public class CentralAnalyzerTest {
     @Test(expected = IOException.class)
     @SuppressWarnings("PMD.NonStaticInitializer")
     public void testFetchMavenArtifactsAlwaysThrowsIOException(@Mocked final CentralSearch centralSearch,
-                                                               @Mocked final Dependency dependency)
+            @Mocked final Dependency dependency)
             throws IOException {
 
         CentralAnalyzer instance = new CentralAnalyzer();
-        instance.searcher = centralSearch;
+        instance.setCentralSearch(centralSearch);
         specifySha1SumFor(dependency);
 
-        new Expectations() {{
-            centralSearch.searchSha1(SHA1_SUM);
-            result = new IOException("no internet connection");
-        }};
+        new Expectations() {
+            {
+                centralSearch.searchSha1(SHA1_SUM);
+                result = new IOException("no internet connection");
+            }
+        };
 
         instance.fetchMavenArtifacts(dependency);
     }
 
     @Test(expected = AnalysisException.class)
     @SuppressWarnings("PMD.NonStaticInitializer")
-    public void testFetchMavenArtifactsAlwaysThrowsIOExceptionLetsTheAnalysisFail(@Mocked final CentralSearch centralSearch,
-                                                                                  @Mocked final Dependency dependency)
+    public void testFetchMavenArtifactsAlwaysThrowsIOExceptionLetsTheAnalysisFail(
+            @Mocked final CentralSearch centralSearch, @Mocked final Dependency dependency)
             throws AnalysisException, IOException {
 
         CentralAnalyzer instance = new CentralAnalyzer();
-        instance.searcher = centralSearch;
+        instance.setCentralSearch(centralSearch);
         specifySha1SumFor(dependency);
 
-        new Expectations() {{
-            centralSearch.searchSha1(SHA1_SUM);
-            result = new IOException("no internet connection");
-        }};
+        new Expectations() {
+            {
+                centralSearch.searchSha1(SHA1_SUM);
+                result = new IOException("no internet connection");
+            }
+        };
 
         instance.analyze(dependency, null);
     }
@@ -164,9 +174,11 @@ public class CentralAnalyzerTest {
      */
     @SuppressWarnings("PMD.NonStaticInitializer")
     private void specifySha1SumFor(final Dependency dependency) {
-        new Expectations() {{
-            dependency.getSha1sum();
-            returns(SHA1_SUM);
-        }};
+        new Expectations() {
+            {
+                dependency.getSha1sum();
+                returns(SHA1_SUM);
+            }
+        };
     }
 }

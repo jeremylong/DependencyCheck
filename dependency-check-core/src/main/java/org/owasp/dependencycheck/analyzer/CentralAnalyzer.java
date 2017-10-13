@@ -75,16 +75,16 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     private static final String SUPPORTED_EXTENSIONS = "jar";
 
     /**
-     * There may be temporary issues when connecting to MavenCentral.
-     * In order to compensate for 99% of the issues, we perform a retry
-     * before finally failing the analysis.
+     * There may be temporary issues when connecting to MavenCentral. In order
+     * to compensate for 99% of the issues, we perform a retry before finally
+     * failing the analysis.
      */
     private static final int NUMBER_OF_TRIES = 5;
 
     /**
      * The searcher itself.
      */
-    protected CentralSearch searcher;
+    private CentralSearch searcher;
 
     /**
      * Initializes the analyzer with the configured settings.
@@ -189,7 +189,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      * Performs the analysis.
      *
      * @param dependency the dependency to analyze
-     * @param engine     the engine
+     * @param engine the engine
      * @throws AnalysisException when there's an exception during analysis
      */
     @Override
@@ -255,7 +255,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      * @param dependency the dependency to analyze
      * @return the downloaded list of MavenArtifacts
      * @throws FileNotFoundException if the specified artifact is not found
-     * @throws IOException           if connecting to MavenCentral finally failed
+     * @throws IOException if connecting to MavenCentral finally failed
      */
     protected List<MavenArtifact> fetchMavenArtifacts(Dependency dependency) throws IOException {
         IOException lastException = null;
@@ -283,8 +283,17 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
             }
         }
 
-        final String message = "Finally failed connecting to Central search." +
-                " Giving up after " + NUMBER_OF_TRIES + " tries.";
+        final String message = "Finally failed connecting to Central search."
+                + " Giving up after " + NUMBER_OF_TRIES + " tries.";
         throw new IOException(message, lastException);
+    }
+
+    /**
+     * Method used by unit tests to setup the analyzer.
+     *
+     * @param searcher the Central Search object to use.
+     */
+    protected void setCentralSearch(CentralSearch searcher) {
+        this.searcher = searcher;
     }
 }

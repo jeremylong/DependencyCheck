@@ -22,11 +22,11 @@ import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Evidence;
 
 /**
- * EvidenceMatcher can match one or more {@link Evidence}s.
- * By using regular expressions for some fields and allowing omission of
- * Evidence fields it can be used to match more than one occurrence of evidence
- * to enable hints that work for a range of similar false positives/false negatives.
- * 
+ * EvidenceMatcher can match one or more {@link Evidence}s. By using regular
+ * expressions for some fields and allowing omission of Evidence fields it can
+ * be used to match more than one occurrence of evidence to enable hints that
+ * work for a range of similar false positives/false negatives.
+ *
  * The EvidenceMatcher is used for processing Evidences of a project's
  * dependencies in conjuction with the {@code <given>} and {@code <remove>}
  * clauses of the hints file.
@@ -41,8 +41,8 @@ public class EvidenceMatcher {
     private String name;
 
     /**
-     * The source that the {@link Evidence} should have for a match.
-     * A {@code null}-value is allowed and functions as a wildcard.
+     * The source that the {@link Evidence} should have for a match. A
+     * {@code null}-value is allowed and functions as a wildcard.
      */
     private String source;
 
@@ -55,23 +55,24 @@ public class EvidenceMatcher {
      * Whether the {@link EvidenceMatcher#value} should be interpreted as a
      * regular expression.
      */
-    private boolean regex=false;
+    private boolean regex = false;
 
-    
     /**
-     * The confidence that the {@link Evidence} should have for a match.
-     * A {@code null}-value is allowed and functions as a wildcard.
+     * The confidence that the {@link Evidence} should have for a match. A
+     * {@code null}-value is allowed and functions as a wildcard.
      */
     private Confidence confidence;
 
     /**
      * Creates a new EvidenceMatcher objects.
      *
-     * @param source the source of the evidence, a source that is {@code null} indicates any source should match.
+     * @param source the source of the evidence, a source that is {@code null}
+     * indicates any source should match.
      * @param name the non-{@code null} name of the evidence.
      * @param value the non-{@code null} value of the evidence.
      * @param regex whether value is a regex.
-     * @param confidence the confidence of the evidence, a confidence that is {@code null} indicates any confidence should match.
+     * @param confidence the confidence of the evidence, a confidence that is
+     * {@code null} indicates any confidence should match.
      */
     public EvidenceMatcher(String source, String name, String value, boolean regex, Confidence confidence) {
         this.source = source;
@@ -83,11 +84,12 @@ public class EvidenceMatcher {
 
     /**
      * Tests whether the given Evidence matches this EvidenceMatcher.
-     * @param evidence
-     * @return whehter the evidence matches this matcher.
+     *
+     * @param evidence the evidence to match
+     * @return whether the evidence matches this matcher
      */
     public boolean matches(Evidence evidence) {
-        return sourceMatches(evidence) 
+        return sourceMatches(evidence)
                 && confidenceMatches(evidence)
                 && name.equalsIgnoreCase(evidence.getName())
                 && valueMatches(evidence);
@@ -100,11 +102,13 @@ public class EvidenceMatcher {
      */
     @Override
     public String toString() {
-        return "HintEvidenceMatcher{" + "name=" + name + ", source=" + source + ", value=" + value + ", confidence=" + confidence + ", regex=" + regex +'}';
+        return "HintEvidenceMatcher{" + "name=" + name + ", source=" + source + ", value=" + value
+                + ", confidence=" + confidence + ", regex=" + regex + '}';
     }
 
     /**
      * package-private getter to allow testability of the parser without mocking
+     *
      * @return The name property
      */
     String getName() {
@@ -113,6 +117,7 @@ public class EvidenceMatcher {
 
     /**
      * package-private getter to allow testability of the parser without mocking
+     *
      * @return The source property
      */
     String getSource() {
@@ -121,6 +126,7 @@ public class EvidenceMatcher {
 
     /**
      * package-private getter to allow testability of the parser without mocking
+     *
      * @return The value property
      */
     String getValue() {
@@ -129,6 +135,7 @@ public class EvidenceMatcher {
 
     /**
      * package-private getter to allow testability of the parser without mocking
+     *
      * @return The regex property
      */
     boolean isRegex() {
@@ -137,6 +144,7 @@ public class EvidenceMatcher {
 
     /**
      * package-private getter to allow testability of the parser without mocking
+     *
      * @return The confidence property
      */
     Confidence getConfidence() {
@@ -144,13 +152,17 @@ public class EvidenceMatcher {
     }
 
     /**
-     * Checks whether the value of the evidence matches this matcher.
-     * When {@link #isRegEx()} is {@code true} value is used as a 
-     * {@link java.util.regex.Pattern} that it should match. Otherwise the 
-     * value must be case-insensitive equal to the evidence's value.
-     * 
+     * Checks whether the value of the evidence matches this matcher. When
+     * {@link #isRegEx()} is {@code true} value is used as a
+     * {@link java.util.regex.Pattern} that it should match. Otherwise the value
+     * must be case-insensitive equal to the evidence's value.
+     *
      * Uses {@link Evidence#getValue(java.lang.Boolean) to avoid setting
      * evidences to used while just checking for a match.
+     *
+     * @param evidence the evidence to match
+     * @return <code>true</code> if the evidence matches; otherwise
+     * <code>false</code>
      */
     private boolean valueMatches(Evidence evidence) {
         boolean result;
@@ -163,30 +175,30 @@ public class EvidenceMatcher {
     }
 
     /**
-     * Checks whether the source of the evidence matches this matcher.
-     * If our source is {@code null} any source in the evidence matches.
-     * Otherwise the source in the evidence must be case-insensitive equal to 
-     * our source.
+     * Checks whether the source of the evidence matches this matcher. If our
+     * source is {@code null} any source in the evidence matches. Otherwise the
+     * source in the evidence must be case-insensitive equal to our source.
      *
      * @param evidence The evidence to inspect
-     * @return {@code true} is the source of the evidence matches, false otherwise.
+     * @return {@code true} is the source of the evidence matches, false
+     * otherwise.
      */
     private boolean sourceMatches(Evidence evidence) {
         return this.source == null || source.equalsIgnoreCase(evidence.getSource());
     }
-    
+
     /**
-     * Checks whether the confidence of the evidence matches this matcher.
-     * If our confidence is {@code null} any confidence in the evidence matches.
+     * Checks whether the confidence of the evidence matches this matcher. If
+     * our confidence is {@code null} any confidence in the evidence matches.
      * Otherwise the confidence in the evidence must be exactly equal to our
      * confidence.
      *
      * @param evidence The evidence to inspect
-     * @return {@code true} is the confidence of the evidence matches, false otherwise.
+     * @return {@code true} is the confidence of the evidence matches, false
+     * otherwise.
      */
     private boolean confidenceMatches(Evidence evidence) {
         return this.confidence == null || confidence.equals(evidence.getConfidence());
     }
-    
-    
+
 }

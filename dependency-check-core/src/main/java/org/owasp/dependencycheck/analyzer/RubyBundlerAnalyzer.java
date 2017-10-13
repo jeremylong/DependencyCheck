@@ -52,10 +52,11 @@ import org.owasp.dependencycheck.dependency.Dependency;
 public class RubyBundlerAnalyzer extends RubyGemspecAnalyzer {
 
     /**
-     * A descriptor for the type of dependencies processed or added by this analyzer
+     * A descriptor for the type of dependencies processed or added by this
+     * analyzer.
      */
     public static final String DEPENDENCY_ECOSYSTEM = "Ruby.Bundle";
-    
+
     /**
      * The name of the analyzer.
      */
