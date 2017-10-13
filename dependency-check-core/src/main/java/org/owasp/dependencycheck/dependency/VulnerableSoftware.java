@@ -20,7 +20,12 @@ package org.owasp.dependencycheck.dependency;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.annotation.concurrent.ThreadSafe;
+
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.data.cpe.IndexEntry;
 import org.slf4j.Logger;
@@ -188,6 +193,35 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
     }
 
     /**
+     * Method that split versions for '.', '|' and '-". Then if a token start
+     * with a number and then contains letters, it will split it too. For
+     * example "12a" is splitted in ["12", "a"]. This is done to support correct
+     * comparison of "5.0.3a", "5.0.9" and "5.0.30".
+     *
+     * @return an Array of String containing the tokens to be compared
+     */
+    private String[] split(String s) {
+        String[] splitted = s.split("(\\.|-)");
+
+        ArrayList<String> res = new ArrayList<>();
+        for (String token : splitted) {
+            if (token.matches("^[\\d]+?[A-z]+")) {
+                Pattern pattern = Pattern.compile("^([\\d]+?)(.*)$");
+                Matcher matcher = pattern.matcher(token);
+                matcher.find();
+                String g1 = matcher.group(1);
+                String g2 = matcher.group(2);
+
+                res.add(g1);
+                res.add(g2);
+                continue;
+            }
+            res.add(token);
+        }
+        return res.toArray(new String[res.size()]);
+    }
+
+    /**
      * Implementation of the comparable interface.
      *
      * @param vs the VulnerableSoftware to compare
@@ -201,8 +235,8 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
         final int max = (left.length <= right.length) ? left.length : right.length;
         if (max > 0) {
             for (int i = 0; result == 0 && i < max; i++) {
-                final String[] subLeft = left[i].split("(\\.|-)");
-                final String[] subRight = right[i].split("(\\.|-)");
+                final String[] subLeft = split(left[i]);
+                final String[] subRight = split(right[i]);
                 final int subMax = (subLeft.length <= subRight.length) ? subLeft.length : subRight.length;
                 if (subMax > 0) {
                     for (int x = 0; result == 0 && x < subMax; x++) {
