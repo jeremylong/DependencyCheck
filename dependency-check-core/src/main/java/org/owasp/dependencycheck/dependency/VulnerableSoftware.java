@@ -31,7 +31,6 @@ import org.owasp.dependencycheck.data.cpe.IndexEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * A record containing information about vulnerable software. This is referenced
  * from a vulnerability.
@@ -192,12 +191,12 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
     public String toString() {
         return "VulnerableSoftware{" + name + "[" + previousVersion + "]}";
     }
-    
+
     /**
-     * Method that split versions for '.', '|' and '-".
-     * Then if a token start with a number and then contains letters, it will split it too.
-     * For example "12a" is splitted in ["12", "a"]. 
-     * This is done to support correct comparison of "5.0.3a", "5.0.9" and "5.0.30".
+     * Method that split versions for '.', '|' and '-". Then if a token start
+     * with a number and then contains letters, it will split it too. For
+     * example "12a" is splitted in ["12", "a"]. This is done to support correct
+     * comparison of "5.0.3a", "5.0.9" and "5.0.30".
      *
      * @return an Array of String containing the tokens to be compared
      */
@@ -216,15 +215,12 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
                 res.add(g1);
                 res.add(g2);
                 continue;
-                }
-            res.add(token);
             }
-
-        return res.toArray(new String[res.size()]);
+            res.add(token);
         }
+        return res.toArray(new String[res.size()]);
+    }
 
-    
-    
     /**
      * Implementation of the comparable interface.
      *
@@ -239,8 +235,8 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
         final int max = (left.length <= right.length) ? left.length : right.length;
         if (max > 0) {
             for (int i = 0; result == 0 && i < max; i++) {
-            	final String[] subLeft = split(left[i]);
-            	final String[] subRight = split(right[i]);
+                final String[] subLeft = split(left[i]);
+                final String[] subRight = split(right[i]);
                 final int subMax = (subLeft.length <= subRight.length) ? subLeft.length : subRight.length;
                 if (subMax > 0) {
                     for (int x = 0; result == 0 && x < subMax; x++) {
