@@ -61,7 +61,9 @@ public final class XmlUtils {
     /**
      * Constructs a validating secure SAX Parser.
      *
-     * @param schemaStream One or more inputStreams with the schema(s) that the parser should be able to validate the XML against, one InputStream per schema
+     * @param schemaStream One or more inputStreams with the schema(s) that the
+     * parser should be able to validate the XML against, one InputStream per
+     * schema
      * @return a SAX Parser
      * @throws ParserConfigurationException is thrown if there is a parser
      * configuration exception
@@ -88,31 +90,31 @@ public final class XmlUtils {
     }
 
     /**
-     * Converts an attribute value representing an xsd:boolean value to a boolean using
-     * the rules as stated in the XML specification
+     * Converts an attribute value representing an xsd:boolean value to a
+     * boolean using the rules as stated in the XML specification.
      *
      * @param lexicalXSDBoolean The string-value of the boolean
      * @return the boolean value represented by {@code lexicalXSDBoolean}
-     * @throws IllegalArgumentException When {@code lexicalXSDBoolean} does
-     * fit the lexical space of the XSD boolean datatype
+     * @throws IllegalArgumentException When {@code lexicalXSDBoolean} does fit
+     * the lexical space of the XSD boolean datatype
      */
     public static boolean parseBoolean(String lexicalXSDBoolean) {
         final boolean result;
         switch (lexicalXSDBoolean) {
             case "true":
             case "1":
-                result =  true;
+                result = true;
                 break;
             case "false":
             case "0":
-                result =  false;
+                result = false;
                 break;
             default:
-                throw new IllegalArgumentException("'"+lexicalXSDBoolean+"' is not a valid xs:boolean value");
+                throw new IllegalArgumentException("'" + lexicalXSDBoolean + "' is not a valid xs:boolean value");
         }
         return result;
     }
-    
+
     /**
      * Constructs a secure SAX Parser.
      *
