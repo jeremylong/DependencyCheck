@@ -266,7 +266,7 @@ class EvidenceCollection implements Serializable {
      * Returns the unmodifiable set of evidence of the given type.
      *
      * @param type the type of evidence (vendor, product, version)
-     * @return the <b>unmodifiable<b/> set of evidence
+     * @return the unmodifiable set of evidence
      */
     public synchronized Set<Evidence> getEvidence(EvidenceType type) {
         if (null != type) {
