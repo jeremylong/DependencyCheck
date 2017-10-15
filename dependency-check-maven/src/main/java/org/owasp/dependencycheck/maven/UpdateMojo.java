@@ -26,6 +26,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.exception.ExceptionCollection;
 
 /**
  * Maven Plugin that checks the project dependencies to see if they have any
@@ -63,7 +64,7 @@ public class UpdateMojo extends BaseDependencyCheckMojo {
      * fail the build
      */
     @Override
-    public void runCheck() throws MojoExecutionException, MojoFailureException {
+    protected void runCheck() throws MojoExecutionException, MojoFailureException {
         try (Engine engine = initializeEngine()) {
             engine.doUpdates();
         } catch (DatabaseException ex) {
@@ -105,5 +106,18 @@ public class UpdateMojo extends BaseDependencyCheckMojo {
     @Override
     public String getDescription(Locale locale) {
         return "Updates the local cache of the NVD data from NIST.";
+    }
+
+    /**
+     * Throws an exception if called. The update mojo does not scan
+     * dependencies.
+     *
+     * @param engine the engine used to scan
+     * @return a collection of exceptions
+     * @throws MojoExecutionException thrown if there is an exception
+     */
+    @Override
+    protected ExceptionCollection scanDependencies(Engine engine) throws MojoExecutionException {
+        throw new UnsupportedOperationException("Operation not supported");
     }
 }

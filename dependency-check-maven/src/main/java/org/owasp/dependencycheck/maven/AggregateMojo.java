@@ -59,23 +59,15 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
     private String name = "dependency-check:aggregate";
 
     /**
-     * Executes the aggregate dependency-check goal. This runs dependency-check
-     * and generates the subsequent reports.
+     * Scans the dependencies of the projects in aggregate.
      *
-     * @throws MojoExecutionException thrown if there is ane exception running
-     * the Mojo
-     * @throws MojoFailureException thrown if dependency-check is configured to
-     * fail the build
+     * @param engine the engine used to perform the scanning
+     * @return a collection of exceptions
+     * @throws MojoExecutionException thrown if a fatal exception occurs
      */
     @Override
-    public void runCheck() throws MojoExecutionException, MojoFailureException {
-        final Engine engine = loadEngine();
-        if (engine == null) {
-            return;
-        }
-
+    protected ExceptionCollection scanDependencies(final Engine engine) throws MojoExecutionException {
         ExceptionCollection exCol = scanArtifacts(getProject(), engine);
-
         for (MavenProject childProject : getDescendants(this.getProject())) {
             final ExceptionCollection ex = scanArtifacts(childProject, engine);
             if (ex != null) {
@@ -96,61 +88,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                 }
             }
         }
-
-        try {
-            engine.analyzeDependencies();
-        } catch (ExceptionCollection ex) {
-            if (exCol == null) {
-                exCol = ex;
-            } else if (ex.isFatal()) {
-                exCol.setFatal(true);
-                exCol.getExceptions().addAll(ex.getExceptions());
-            }
-            if (exCol.isFatal()) {
-                final String msg = String.format("Fatal exception(s) analyzing %s", getProject().getName());
-                if (this.isFailOnError()) {
-                    throw new MojoExecutionException(msg, exCol);
-                }
-                getLog().error(msg);
-                if (getLog().isDebugEnabled()) {
-                    getLog().debug(exCol);
-                }
-                return;
-            } else {
-                final String msg = String.format("Exception(s) analyzing %s", getProject().getName());
-                if (getLog().isDebugEnabled()) {
-                    getLog().debug(msg, exCol);
-                }
-            }
-        }
-        File outputDir = getCorrectOutputDirectory(this.getProject());
-        if (outputDir == null) {
-            //in some regards we shouldn't be writing this, but we are anyway.
-            //we shouldn't write this because nothing is configured to generate this report.
-            outputDir = new File(this.getProject().getBuild().getDirectory());
-        }
-        try {
-            final MavenProject p = this.getProject();
-            engine.writeReports(p.getName(), p.getGroupId(), p.getArtifactId(), p.getVersion(), outputDir, getFormat());
-        } catch (ReportException ex) {
-            if (exCol == null) {
-                exCol = new ExceptionCollection("Error writing aggregate report", ex);
-            } else {
-                exCol.addException(ex);
-            }
-            if (this.isFailOnError()) {
-                throw new MojoExecutionException("One or more exceptions occurred during dependency-check analysis", exCol);
-            } else {
-                getLog().debug("One or more exceptions occurred during dependency-check analysis", exCol);
-            }
-        }
-        showSummary(this.getProject(), engine.getDependencies());
-        checkForFailure(engine.getDependencies());
-        if (exCol != null && this.isFailOnError()) {
-            throw new MojoExecutionException("One or more exceptions occurred during dependency-check analysis", exCol);
-        }
-        engine.close();
-        getSettings().cleanup();
+        return exCol;
     }
 
     /**
@@ -240,32 +178,6 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
      */
     protected boolean isMultiModule(MavenProject mavenProject) {
         return "pom".equals(mavenProject.getPackaging());
-    }
-
-    /**
-     * Initializes the engine.
-     *
-     * @return the Engine used to execute dependency-check
-     * @throws MojoExecutionException thrown if there is an exception running
-     * the Mojo
-     * @throws MojoFailureException thrown if dependency-check is configured to
-     * fail the build if severe CVEs are identified.
-     */
-    protected Engine loadEngine() throws MojoExecutionException, MojoFailureException {
-        Engine engine = null;
-        try {
-            engine = initializeEngine();
-        } catch (DatabaseException ex) {
-            if (getLog().isDebugEnabled()) {
-                getLog().debug("Database connection error", ex);
-            }
-            final String msg = "An exception occurred connecting to the local database. Please see the log file for more details.";
-            if (this.isFailOnError()) {
-                throw new MojoExecutionException(msg, ex);
-            }
-            getLog().error(msg, ex);
-        }
-        return engine;
     }
 
     @Override

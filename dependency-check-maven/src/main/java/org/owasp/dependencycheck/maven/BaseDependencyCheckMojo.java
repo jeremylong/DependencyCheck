@@ -59,6 +59,7 @@ import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.exception.DependencyNotFoundException;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
+import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.utils.Filter;
 import org.owasp.dependencycheck.utils.Settings;
 import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
@@ -902,7 +903,102 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @throws MojoFailureException thrown if dependency-check is configured to
      * fail the build
      */
-    public abstract void runCheck() throws MojoExecutionException, MojoFailureException;
+    protected void runCheck() throws MojoExecutionException, MojoFailureException {
+        try (Engine engine = initializeEngine()) {
+            ExceptionCollection exCol = scanDependencies(engine);
+            try {
+                engine.analyzeDependencies();
+            } catch (ExceptionCollection ex) {
+                exCol = handleAnalysisExceptions(exCol, ex);
+            }
+            if (exCol == null || !exCol.isFatal()) {
+
+                File outputDir = getCorrectOutputDirectory(this.getProject());
+                if (outputDir == null) {
+                    //in some regards we shouldn't be writing this, but we are anyway.
+                    //we shouldn't write this because nothing is configured to generate this report.
+                    outputDir = new File(this.getProject().getBuild().getDirectory());
+                }
+                try {
+                    final MavenProject p = this.getProject();
+                    engine.writeReports(p.getName(), p.getGroupId(), p.getArtifactId(), p.getVersion(), outputDir, getFormat());
+                } catch (ReportException ex) {
+                    if (exCol == null) {
+                        exCol = new ExceptionCollection("Error writing aggregate report", ex);
+                    } else {
+                        exCol.addException(ex);
+                    }
+                    if (this.isFailOnError()) {
+                        throw new MojoExecutionException("One or more exceptions occurred during dependency-check analysis", exCol);
+                    } else {
+                        getLog().debug("Error writting the report", ex);
+                    }
+                }
+                showSummary(this.getProject(), engine.getDependencies());
+                checkForFailure(engine.getDependencies());
+                if (exCol != null && this.isFailOnError()) {
+                    throw new MojoExecutionException("One or more exceptions occurred during dependency-check analysis", exCol);
+                }
+            }
+        } catch (DatabaseException ex) {
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Database connection error", ex);
+            }
+            final String msg = "An exception occurred connecting to the local database. Please see the log file for more details.";
+            if (this.isFailOnError()) {
+                throw new MojoExecutionException(msg, ex);
+            }
+            getLog().error(msg, ex);
+        } finally {
+            getSettings().cleanup();
+        }
+    }
+
+    /**
+     * Combines the two exception collections and if either are fatal, throw an
+     * MojoExecutionException
+     *
+     * @param currentEx the primary exception collection
+     * @param newEx the new exception collection to add
+     * @return the combined exception collection
+     * @throws MojoExecutionException
+     */
+    private ExceptionCollection handleAnalysisExceptions(ExceptionCollection currentEx, ExceptionCollection newEx) throws MojoExecutionException {
+        ExceptionCollection returnEx = currentEx;
+        if (returnEx == null) {
+            returnEx = newEx;
+        } else {
+            returnEx.getExceptions().addAll(newEx.getExceptions());
+            if (newEx.isFatal()) {
+                returnEx.setFatal(true);
+            }
+        }
+        if (returnEx.isFatal()) {
+            final String msg = String.format("Fatal exception(s) analyzing %s", getProject().getName());
+            if (this.isFailOnError()) {
+                throw new MojoExecutionException(msg, returnEx);
+            }
+            getLog().error(msg);
+            if (getLog().isDebugEnabled()) {
+                getLog().debug(returnEx);
+            }
+        } else {
+            final String msg = String.format("Exception(s) analyzing %s", getProject().getName());
+            if (getLog().isDebugEnabled()) {
+                getLog().debug(msg, returnEx);
+            }
+        }
+        return returnEx;
+    }
+
+    /**
+     * Scans the dependencies of the projects in aggregate.
+     *
+     * @param engine the engine used to perform the scanning
+     * @return a collection of exceptions
+     * @throws MojoExecutionException thrown if a fatal exception occurs
+     */
+    protected abstract ExceptionCollection scanDependencies(final Engine engine) throws MojoExecutionException;
 
     /**
      * Sets the Reporting output directory.
@@ -979,7 +1075,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     //</editor-fold>
 
     /**
-     * Initializes a new <code>Engine</code> that can be used for scanning.
+     * Initializes a new <code>Engine</code> that can be used for scanning. This
+     * method should only be called in a try-with-resources to ensure that the
+     * engine is properly closed.
      *
      * @return a newly instantiated <code>Engine</code>
      * @throws DatabaseException thrown if there is a database exception

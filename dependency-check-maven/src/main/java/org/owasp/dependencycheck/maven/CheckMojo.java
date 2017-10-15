@@ -73,67 +73,6 @@ public class CheckMojo extends BaseDependencyCheckMojo {
     }
 
     /**
-     * Executes the dependency-check engine on the project's dependencies and
-     * generates the report.
-     *
-     * @throws MojoExecutionException thrown if there is an exception executing
-     * the goal
-     * @throws MojoFailureException thrown if dependency-check is configured to
-     * fail the build
-     */
-    @Override
-    public void runCheck() throws MojoExecutionException, MojoFailureException {
-        Engine engine = null;
-        try {
-            engine = initializeEngine();
-        } catch (DatabaseException ex) {
-            if (getLog().isDebugEnabled()) {
-                getLog().debug("Database connection error", ex);
-            }
-            final String msg = "An exception occurred connecting to the local database. Please see the log file for more details.";
-            if (this.isFailOnError()) {
-                throw new MojoExecutionException(msg, ex);
-            }
-            getLog().error(msg);
-        }
-        if (engine != null) {
-            ExceptionCollection exCol = scanArtifacts(getProject(), engine);
-            if (engine.getDependencies().length == 0) {
-                getLog().info("No dependencies were identified that could be analyzed by dependency-check");
-            }
-            try {
-                engine.analyzeDependencies();
-            } catch (ExceptionCollection ex) {
-                if (this.isFailOnError() && ex.isFatal()) {
-                    throw new MojoExecutionException("One or more exceptions occurred during analysis", ex);
-                }
-                exCol = ex;
-            }
-            if (exCol == null || !exCol.isFatal()) {
-                try {
-                    final MavenProject p = this.getProject();
-                    engine.writeReports(p.getName(), p.getGroupId(), p.getArtifactId(), p.getVersion(), getCorrectOutputDirectory(), getFormat());
-                } catch (ReportException ex) {
-                    if (this.isFailOnError()) {
-                        if (exCol != null) {
-                            exCol.addException(ex);
-                        } else {
-                            exCol = new ExceptionCollection("Unable to write the dependency-check report", ex);
-                        }
-                    }
-                }
-                showSummary(getProject(), engine.getDependencies());
-                checkForFailure(engine.getDependencies());
-                if (exCol != null && this.isFailOnError()) {
-                    throw new MojoExecutionException("One or more exceptions occurred during dependency-check analysis", exCol);
-                }
-            }
-            engine.close();
-        }
-        getSettings().cleanup();
-    }
-
-    /**
      * Returns the report name.
      *
      * @param locale the location
@@ -155,6 +94,18 @@ public class CheckMojo extends BaseDependencyCheckMojo {
     public String getDescription(Locale locale) {
         return "Generates a report providing details on any published vulnerabilities within project dependencies. "
                 + "This report is a best effort and may contain false positives and false negatives.";
+    }
+    
+    /**
+     * Scans the dependencies of the project.
+     *
+     * @param engine the engine used to perform the scanning
+     * @return a collection of exceptions
+     * @throws MojoExecutionException thrown if a fatal exception occurs
+     */
+    @Override
+    protected ExceptionCollection scanDependencies(final Engine engine) throws MojoExecutionException {
+        return scanArtifacts(getProject(), engine);
     }
 
 }
