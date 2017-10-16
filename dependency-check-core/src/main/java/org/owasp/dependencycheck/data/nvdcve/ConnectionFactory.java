@@ -27,6 +27,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.utils.DBUtils;
@@ -116,15 +117,17 @@ public final class ConnectionFactory {
             //load the driver if necessary
             final String driverName = settings.getString(Settings.KEYS.DB_DRIVER_NAME, "");
             final String driverPath = settings.getString(Settings.KEYS.DB_DRIVER_PATH, "");
-            if (!driverPath.isEmpty()) {
-                LOGGER.debug("Loading driver '{}' from '{}'", driverName, driverPath);
-                try {
+            LOGGER.debug("Loading driver '{}'", driverName);
+            try {
+                if (!driverPath.isEmpty()) {
                     LOGGER.debug("Loading driver from: {}", driverPath);
                     driver = DriverLoader.load(driverName, driverPath);
-                } catch (DriverLoadException ex) {
-                    LOGGER.debug("Unable to load database driver", ex);
-                    throw new DatabaseException("Unable to load database driver", ex);
+                } else {
+                    driver = DriverLoader.load(driverName);
                 }
+            } catch (DriverLoadException ex) {
+                LOGGER.debug("Unable to load database driver", ex);
+                throw new DatabaseException("Unable to load database driver", ex);
             }
             userName = settings.getString(Settings.KEYS.DB_USER, "dcuser");
             //yes, yes - hard-coded password - only if there isn't one in the properties file.
@@ -134,10 +137,10 @@ public final class ConnectionFactory {
                         Settings.KEYS.DB_CONNECTION_STRING,
                         Settings.KEYS.DB_FILE_NAME);
             } catch (IOException ex) {
-                LOGGER.debug(
-                        "Unable to retrieve the database connection string", ex);
+                LOGGER.debug("Unable to retrieve the database connection string", ex);
                 throw new DatabaseException("Unable to retrieve the database connection string", ex);
             }
+
             boolean shouldCreateSchema = false;
             try {
                 if (connectionString.startsWith("jdbc:h2:file:")) { //H2
