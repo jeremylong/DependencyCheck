@@ -24,6 +24,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Includes methods to generate the MD5 and SHA1 checksum.
@@ -37,6 +39,11 @@ public final class Checksum {
      * Hex code characters used in getHex.
      */
     private static final String HEXES = "0123456789abcdef";
+
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(Checksum.class);
 
     /**
      * Private constructor for a utility class.
@@ -101,6 +108,30 @@ public final class Checksum {
     }
 
     /**
+     * Calculates the MD5 checksum of a specified bytes.
+     *
+     * @param bytes the bytes to generate the MD5 checksum
+     * @return the hex representation of the MD5 hash
+     */
+    public static String getMD5Checksum(byte[] bytes) {
+        MessageDigest algorithm = getMessageDigest("MD5");
+        final byte[] b = algorithm.digest(bytes);
+        return getHex(b);
+    }
+
+    /**
+     * Calculates the SHA1 checksum of a specified bytes.
+     *
+     * @param bytes the bytes to generate the MD5 checksum
+     * @return the hex representation of the SHA1 hash
+     */
+    public static String getSHA1Checksum(byte[] bytes) {
+        MessageDigest algorithm = getMessageDigest("SHA1");
+        final byte[] b = algorithm.digest(bytes);
+        return getHex(b);
+    }
+
+    /**
      * <p>
      * Converts a byte array into a hex string.</p>
      *
@@ -120,5 +151,21 @@ public final class Checksum {
             hex.append(HEXES.charAt((b & 0xF0) >> 4)).append(HEXES.charAt(b & 0x0F));
         }
         return hex.toString();
+    }
+
+    /**
+     * Returns the message digest.
+     *
+     * @param algorithm the algorithm for the message digest
+     * @return the message digest
+     */
+    private static MessageDigest getMessageDigest(String algorithm) {
+        try {
+            return MessageDigest.getInstance(algorithm);
+        } catch (NoSuchAlgorithmException e) {
+            LOGGER.error(e.getMessage());
+            final String msg = String.format("Failed to obtain the {} message digest.", algorithm);
+            throw new IllegalStateException(msg, e);
+        }
     }
 }

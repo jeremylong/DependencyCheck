@@ -17,8 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import mockit.Mock;
-import mockit.MockUp;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,12 +26,8 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.exception.InitializationException;
 
 import java.io.File;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -196,23 +190,5 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
             }
         }
         assertTrue("Expected version evidence to contain \"" + version + "\".", found);
-    }
-
-    @Test(expected = InitializationException.class)
-    public void analyzerIsDisabledInCaseOfMissingMessageDigest() throws InitializationException {
-        new MockUp<MessageDigest>() {
-            @Mock
-            MessageDigest getInstance(String ignore) throws NoSuchAlgorithmException {
-                throw new NoSuchAlgorithmException();
-            }
-        };
-
-        analyzer = new CMakeAnalyzer();
-        analyzer.setFilesMatched(true);
-        assertTrue(analyzer.isEnabled());
-        analyzer.initialize(getSettings());
-        analyzer.prepare(null);
-
-        assertFalse(analyzer.isEnabled());
     }
 }
