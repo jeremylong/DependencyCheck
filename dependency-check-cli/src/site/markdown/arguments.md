@@ -20,6 +20,7 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp; | Parameter       | Description | Requir
  \-v   | \-\-version            |                 | Print the version information. | Optional
        | \-\-cveValidForHours   | \<hours\>       | The number of hours to wait before checking for new updates from the NVD. The default is 4 hours. | Optional
        | \-\-enableExperimental |                 | Enable the [experimental analyzers](../analyzers/index.html). If not set the analyzers marked as experimental below will not be loaded or used. | Optional
+       | \-\-enableRetired      |                 | Enable the [retired analyzers](../analyzers/index.html). If not set the analyzers marked as retired below will not be loaded or used. | Optional
 
 Advanced Options
 ================
@@ -33,12 +34,12 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Paramete
        | \-\-updateonly         |                 | If set only the update phase of dependency-check will be executed; no scan will be executed and no report will be generated. | &nbsp;
        | \-\-disablePyDist      |                 | Sets whether the [experimental](../analyzers/index.html) Python Distribution Analyzer will be used.                      | false
        | \-\-disablePyPkg       |                 | Sets whether the [experimental](../analyzers/index.html) Python Package Analyzer will be used.                           | false
-       | \-\-disableNodeJS      |                 | Sets whether the [experimental](../analyzers/index.html) Node.js Package Analyzer will be used.                          | false
+       | \-\-disableNodeJS      |                 | Sets whether the [retired](../analyzers/index.html) Node.js Package Analyzer will be used.                               | false
        | \-\-disableNSP         |                 | Sets whether the NSP Analyzer will be used.                                                                              | false
        | \-\-disableRubygems    |                 | Sets whether the [experimental](../analyzers/index.html) Ruby Gemspec Analyzer will be used.                             | false
        | \-\-disableBundleAudit |                 | Sets whether the [experimental](../analyzers/index.html) Ruby Bundler Audit Analyzer will be used.                       | false
        | \-\-disableCocoapodsAnalyzer |           | Sets whether the [experimental](../analyzers/index.html) Cocoapods Analyzer will be used.                                | false
-       | \-\-disableSwiftPackageManagerAnalyzer | | Sets whether the [experimental](../analyzers/index.html) Swift Package Manager Analyzer will be used.                   | false
+       | \-\-disableSwiftPackageManagerAnalyzer | | Sets whether the [experimental](../analyzers/index.html) Swift Package Manager Analyzer will be used.                    | false
        | \-\-disableAutoconf    |                 | Sets whether the [experimental](../analyzers/index.html) Autoconf Analyzer will be used.                                 | false
        | \-\-disableOpenSSL     |                 | Sets whether the OpenSSL Analyzer will be used.                                                                          | false
        | \-\-disableCmake       |                 | Sets whether the [experimental](../analyzers/index.html) Cmake Analyzer will be disabled.                                | false

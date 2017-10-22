@@ -421,6 +421,7 @@ public class App {
         final Integer cveValidForHours = cli.getCveValidForHours();
         final Boolean autoUpdate = cli.isAutoUpdate();
         final Boolean experimentalEnabled = cli.isExperimentalEnabled();
+        final Boolean retiredEnabled = cli.isRetiredEnabled();
 
         if (propertiesFile != null) {
             try {
@@ -460,6 +461,7 @@ public class App {
 
         //File Type Analyzer Settings
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, experimentalEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIRED_ENABLED, retiredEnabled);
 
         settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, !cli.isJarDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, !cli.isArchiveDisabled());

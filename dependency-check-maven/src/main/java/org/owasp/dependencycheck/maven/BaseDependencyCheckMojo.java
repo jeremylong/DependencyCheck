@@ -185,6 +185,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "enableExperimental")
     private Boolean enableExperimental;
     /**
+     * Sets whether retired analyzers are enabled. Default is false.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "enableRetired")
+    private Boolean enableRetired;
+    /**
      * Generate aggregate reports in multi-module projects.
      *
      * @deprecated use the aggregate goal instead
@@ -1117,6 +1123,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);
 
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, enableExperimental);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIRED_ENABLED, enableRetired);
 
         if (externalReport != null) {
             getLog().warn("The 'externalReport' option was set; this configuration option has been removed. "
