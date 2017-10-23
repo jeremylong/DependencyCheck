@@ -24,16 +24,13 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
-import org.owasp.dependencycheck.exception.ReportException;
 
 /**
  * Maven Plugin that checks project dependencies and the dependencies of all
