@@ -179,6 +179,10 @@ public class Check extends Update {
      */
     private Boolean enableExperimental;
     /**
+     * Whether retired analyzers are enabled.
+     */
+    private Boolean enableRetired;
+    /**
      * Whether or not the Jar Analyzer is enabled.
      */
     private Boolean jarAnalyzerEnabled;
@@ -527,6 +531,24 @@ public class Check extends Update {
      */
     public void setEnableExperimental(Boolean enableExperimental) {
         this.enableExperimental = enableExperimental;
+    }
+
+    /**
+     * Get the value of enableRetired.
+     *
+     * @return the value of enableRetired
+     */
+    public Boolean isEnableRetired() {
+        return enableRetired;
+    }
+
+    /**
+     * Set the value of enableRetired.
+     *
+     * @param enableRetired new value of enableRetired
+     */
+    public void setEnableRetired(Boolean enableRetired) {
+        this.enableRetired = enableRetired;
     }
 
     /**
@@ -1033,6 +1055,7 @@ public class Check extends Update {
         getSettings().setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFiles.toArray(new String[suppressionFiles.size()]));
         getSettings().setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, enableExperimental);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIRED_ENABLED, enableRetired);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, pyDistributionAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED, pyPackageAnalyzerEnabled);

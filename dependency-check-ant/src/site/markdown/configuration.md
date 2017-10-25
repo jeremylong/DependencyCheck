@@ -45,6 +45,7 @@ proxyUsername         | Defines the proxy user name.                            
 proxyPassword         | Defines the proxy password.                                                                                                                                                                        | &nbsp;
 connectionTimeout     | The URL Connection Timeout.                                                                                                                                                                        | &nbsp;
 enableExperimental    | Enable the [experimental analyzers](../analyzers/index.html). If not enabled the experimental analyzers (see below) will not be loaded or used.                                                    | false
+enableRetired         | Enable the [retired analyzers](../analyzers/index.html). If not enabled the retired analyzers (see below) will not be loaded or used.                                                              | false
 suppressionFile       | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html).                                                                                      | &nbsp;
 
 The following nested elements can be set on the dependency-check task.
@@ -77,7 +78,7 @@ opensslAnalyzerEnabled        | Sets whether the openssl Analyzer should be used
 cmakeAnalyzerEnabled          | Sets whether the [experimental](../analyzers/index.html) CMake Analyzer should be used.                    | true
 autoconfAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) autoconf Analyzer should be used.                 | true
 composerAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.   | true
-nodeAnalyzerEnabled           | Sets whether the [experimental](../analyzers/index.html) Node.js Analyzer should be used.                  | true
+nodeAnalyzerEnabled           | Sets whether the [retired](../analyzers/index.html) Node.js Analyzer should be used.                  | true
 nspAnalyzerEnabled            | Sets whether the NSP Analyzer should be used.                                                              | true
 nuspecAnalyzerEnabled         | Sets whether the .NET Nuget Nuspec Analyzer will be used.                                                  | true
 cocoapodsAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used.                | true
