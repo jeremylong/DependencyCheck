@@ -20,16 +20,12 @@ package org.owasp.dependencycheck.maven;
 import java.util.Locale;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
 import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
-import org.owasp.dependencycheck.exception.ReportException;
 
 /**
  * Maven Plugin that checks the project dependencies to see if they have any
@@ -95,7 +91,7 @@ public class CheckMojo extends BaseDependencyCheckMojo {
         return "Generates a report providing details on any published vulnerabilities within project dependencies. "
                 + "This report is a best effort and may contain false positives and false negatives.";
     }
-    
+
     /**
      * Scans the dependencies of the project.
      *

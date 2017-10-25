@@ -301,6 +301,10 @@ public final class CliParser {
                 .desc("Enables the experimental analyzers.")
                 .build();
 
+        final Option retiredEnabled = Option.builder().longOpt(ARGUMENT.RETIRED)
+                .desc("Enables the experimental analyzers.")
+                .build();
+
         final Option failOnCVSS = Option.builder().argName("score").hasArg().longOpt(ARGUMENT.FAIL_ON_CVSS)
                 .desc("Specifies if the build should be failed if a CVSS score above a specified level is identified. "
                         + "The default is 11; since the CVSS scores are 0-10, by default the build will never fail.")
@@ -329,6 +333,7 @@ public final class CliParser {
                 .addOption(hintsFile)
                 .addOption(cveValidForHours)
                 .addOption(experimentalEnabled)
+                .addOption(retiredEnabled)
                 .addOption(failOnCVSS);
     }
 
@@ -1189,6 +1194,15 @@ public final class CliParser {
     }
 
     /**
+     * Returns true if the retired analyzers are enabled.
+     *
+     * @return true if the retired analyzers are enabled; otherwise null
+     */
+    public Boolean isRetiredEnabled() {
+        return (line != null && line.hasOption(ARGUMENT.RETIRED)) ? true : null;
+    }
+
+    /**
      * Returns the CVSS value to fail on.
      *
      * @return 11 if nothing is set. Otherwise it returns the int passed from
@@ -1521,6 +1535,10 @@ public final class CliParser {
          * The CLI argument to enable the experimental analyzers.
          */
         private static final String EXPERIMENTAL = "enableExperimental";
+        /**
+         * The CLI argument to enable the retired analyzers.
+         */
+        private static final String RETIRED = "enableRetired";
         /**
          * The CLI argument to enable the experimental analyzers.
          */

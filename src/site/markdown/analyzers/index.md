@@ -32,3 +32,14 @@ several teams have found them useful in their current state.
 | [Python](./python.html) | Python source files (\*.py); Package metadata files (PKG-INFO, METADATA); Package Distribution Files (\*.whl, \*.egg, \*.zip) | Regex scan of Python source files for setuptools metadata; Parse RFC822 header format for metadata in all other artifacts. |
 | [Ruby Gemspec](./ruby-gemspec.html) | Ruby makefiles (Rakefile); Ruby Gemspec files (\*.gemspec) | Regex scan Gemspec initialization blocks for metadata. |
 | [SWIFT](./swift.html) | SWIFT Package Manager's `Package.swift` | Extracts dependency information from swift package file. |
+
+Retired Analyzers
+----------------------
+The following analyzers can be enabled by enabling the _retired_ configuration
+option; see the documentation for the CLI, Ant, Maven, etc. for more information.
+These analyzers have been retired due to the higher false positive and
+false negative rates.
+
+| Analyzer | File Types Scanned | Analysis Method |
+| -------- | ------------------ | --------------- |
+| [Node.js](./nodejs.html) | NPM package specification files (package.json) | Parse JSON format for metadata. |
