@@ -22,6 +22,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import org.slf4j.Logger;
@@ -110,25 +112,53 @@ public final class Checksum {
     /**
      * Calculates the MD5 checksum of a specified bytes.
      *
+     * @param algorithm the algorithm to use (md5, sha1, etc.) to calculate the
+     * message digest
      * @param bytes the bytes to generate the MD5 checksum
      * @return the hex representation of the MD5 hash
      */
-    public static String getMD5Checksum(byte[] bytes) {
-        MessageDigest algorithm = getMessageDigest("MD5");
-        final byte[] b = algorithm.digest(bytes);
+    public static String getChecksum(String algorithm, byte[] bytes) {
+        MessageDigest digest = getMessageDigest(algorithm);
+        final byte[] b = digest.digest(bytes);
         return getHex(b);
     }
 
     /**
-     * Calculates the SHA1 checksum of a specified bytes.
+     * Calculates the MD5 checksum of the specified text.
      *
-     * @param bytes the bytes to generate the MD5 checksum
-     * @return the hex representation of the SHA1 hash
+     * @param text the text to generate the MD5 checksum
+     * @return the hex representation of the MD5
      */
-    public static String getSHA1Checksum(byte[] bytes) {
-        MessageDigest algorithm = getMessageDigest("SHA1");
-        final byte[] b = algorithm.digest(bytes);
-        return getHex(b);
+    public static String getMD5Checksum(String text) {
+        final byte[] data = stringToBytes(text);
+        return getChecksum("MD5", data);
+    }
+
+    /**
+     * Calculates the SHA1 checksum of the specified text.
+     *
+     * @param text the text to generate the SHA1 checksum
+     * @return the hex representation of the SHA1
+     */
+    public static String getSHA1Checksum(String text) {
+        final byte[] data = stringToBytes(text);
+        return getChecksum("SHA1", data);
+    }
+
+    /**
+     * Converts the given text into bytes.
+     *
+     * @param text the text to convert
+     * @return the bytes
+     */
+    private static byte[] stringToBytes(String text) {
+        byte[] data;
+        try {
+            data = text.getBytes(Charset.forName("UTF-8"));
+        } catch (UnsupportedCharsetException ex) {
+            data = text.getBytes(Charset.defaultCharset());
+        }
+        return data;
     }
 
     /**

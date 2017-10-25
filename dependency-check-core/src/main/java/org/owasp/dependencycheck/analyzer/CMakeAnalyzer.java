@@ -32,10 +32,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.owasp.dependencycheck.dependency.EvidenceType;
@@ -186,9 +183,6 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * @param engine the dependency-check engine
      * @param contents the version information
      */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
-            value = "DM_DEFAULT_ENCODING",
-            justification = "Default encoding is only used if UTF-8 is not available")
     private void analyzeSetVersionCommand(Dependency dependency, Engine engine, String contents) {
         Dependency currentDep = dependency;
 
@@ -213,14 +207,8 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 final String filePath = String.format("%s:%s", dependency.getFilePath(), product);
                 currentDep.setFilePath(filePath);
 
-                byte[] path;
-                try {
-                    path = filePath.getBytes("UTF-8");
-                } catch (UnsupportedEncodingException ex) {
-                    path = filePath.getBytes();
-                }
-                currentDep.setSha1sum(Checksum.getSHA1Checksum(path));
-                currentDep.setMd5sum(Checksum.getMD5Checksum(path));
+                currentDep.setSha1sum(Checksum.getSHA1Checksum(filePath));
+                currentDep.setMd5sum(Checksum.getMD5Checksum(filePath));
                 engine.addDependency(currentDep);
             }
             final String source = currentDep.getFileName();
