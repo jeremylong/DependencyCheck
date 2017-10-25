@@ -34,9 +34,6 @@ import org.slf4j.LoggerFactory;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
@@ -92,12 +89,7 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
-        try {
-            getSha1MessageDigest();
-        } catch (IllegalStateException ex) {
-            setEnabled(false);
-            throw new InitializationException("Unable to create SHA1 MessageDigest", ex);
-        }
+        // do nothing
     }
 
     /**
@@ -122,9 +114,9 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
                 d.setName(dep.getProject());
                 d.setVersion(dep.getVersion());
                 d.setEcosystem(DEPENDENCY_ECOSYSTEM);
-                final MessageDigest sha1 = getSha1MessageDigest();
                 d.setFilePath(filePath);
-                d.setSha1sum(Checksum.getHex(sha1.digest(filePath.getBytes(Charset.defaultCharset()))));
+                d.setSha1sum(Checksum.getSHA1Checksum(filePath));
+                d.setMd5sum(Checksum.getMD5Checksum(filePath));
                 d.addEvidence(EvidenceType.VENDOR, COMPOSER_LOCK, "vendor", dep.getGroup(), Confidence.HIGHEST);
                 d.addEvidence(EvidenceType.PRODUCT, COMPOSER_LOCK, "product", dep.getProject(), Confidence.HIGHEST);
                 d.addEvidence(EvidenceType.VERSION, COMPOSER_LOCK, "version", dep.getVersion(), Confidence.HIGHEST);
@@ -174,19 +166,5 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public AnalysisPhase getAnalysisPhase() {
         return AnalysisPhase.INFORMATION_COLLECTION;
-    }
-
-    /**
-     * Returns the sha1 message digest.
-     *
-     * @return the sha1 message digest
-     */
-    private MessageDigest getSha1MessageDigest() {
-        try {
-            return MessageDigest.getInstance("SHA1");
-        } catch (NoSuchAlgorithmException e) {
-            LOGGER.error(e.getMessage());
-            throw new IllegalStateException("Failed to obtain the SHA1 message digest.", e);
-        }
     }
 }

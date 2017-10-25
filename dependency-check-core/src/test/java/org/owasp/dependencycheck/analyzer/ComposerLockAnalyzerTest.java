@@ -17,8 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import mockit.Mock;
-import mockit.MockUp;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,11 +25,8 @@ import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.exception.InitializationException;
 
 import java.io.File;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import org.apache.commons.lang3.ArrayUtils;
 
 import static org.junit.Assert.assertEquals;
@@ -136,23 +131,5 @@ public class ComposerLockAnalyzerTest extends BaseDBTestCase {
             assertThat(d.getDisplayFileName(), equalTo("classpreloader:2.0.0"));
             assertEquals(ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM, d.getEcosystem());
         }
-    }
-
-    @Test(expected = InitializationException.class)
-    public void analyzerIsDisabledInCaseOfMissingMessageDigest() throws InitializationException {
-        new MockUp<MessageDigest>() {
-            @Mock
-            MessageDigest getInstance(String ignore) throws NoSuchAlgorithmException {
-                throw new NoSuchAlgorithmException("SHA1 is missing");
-            }
-        };
-
-        analyzer = new ComposerLockAnalyzer();
-        analyzer.setFilesMatched(true);
-        analyzer.initialize(getSettings());
-        assertTrue(analyzer.isEnabled());
-        analyzer.prepare(null);
-
-        assertFalse(analyzer.isEnabled());
     }
 }

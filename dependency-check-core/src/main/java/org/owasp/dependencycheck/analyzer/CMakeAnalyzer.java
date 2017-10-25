@@ -32,10 +32,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.owasp.dependencycheck.dependency.EvidenceType;
@@ -135,12 +132,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
-        try {
-            getSha1MessageDigest();
-        } catch (IllegalStateException ex) {
-            setEnabled(false);
-            throw new InitializationException("Unable to create SHA1 MessageDigest", ex);
-        }
+        //do nothing
     }
 
     /**
@@ -191,9 +183,6 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * @param engine the dependency-check engine
      * @param contents the version information
      */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
-            value = "DM_DEFAULT_ENCODING",
-            justification = "Default encoding is only used if UTF-8 is not available")
     private void analyzeSetVersionCommand(Dependency dependency, Engine engine, String contents) {
         Dependency currentDep = dependency;
 
@@ -218,14 +207,8 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 final String filePath = String.format("%s:%s", dependency.getFilePath(), product);
                 currentDep.setFilePath(filePath);
 
-                byte[] path;
-                try {
-                    path = filePath.getBytes("UTF-8");
-                } catch (UnsupportedEncodingException ex) {
-                    path = filePath.getBytes();
-                }
-                final MessageDigest sha1 = getSha1MessageDigest();
-                currentDep.setSha1sum(Checksum.getHex(sha1.digest(path)));
+                currentDep.setSha1sum(Checksum.getSHA1Checksum(filePath));
+                currentDep.setMd5sum(Checksum.getMD5Checksum(filePath));
                 engine.addDependency(currentDep);
             }
             final String source = currentDep.getFileName();
@@ -241,19 +224,5 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected String getAnalyzerEnabledSettingKey() {
         return Settings.KEYS.ANALYZER_CMAKE_ENABLED;
-    }
-
-    /**
-     * Returns the SHA1 message digest.
-     *
-     * @return the SHA1 message digest
-     */
-    private MessageDigest getSha1MessageDigest() {
-        try {
-            return MessageDigest.getInstance("SHA1");
-        } catch (NoSuchAlgorithmException e) {
-            LOGGER.error(e.getMessage());
-            throw new IllegalStateException("Failed to obtain the SHA1 message digest.", e);
-        }
     }
 }

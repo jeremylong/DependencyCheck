@@ -20,10 +20,15 @@ package org.owasp.dependencycheck.utils;
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import org.junit.After;
+import org.junit.AfterClass;
+import static org.junit.Assert.assertArrayEquals;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -48,15 +53,7 @@ public class ChecksumTest {
         File file = new File(this.getClass().getClassLoader().getResource("checkSumTest.file").toURI().getPath());
         byte[] expResult = {-16, -111, 92, 95, 70, -72, -49, -94, -125, -27, -83, 103, -96, -101, 55, -109};
         byte[] result = Checksum.getChecksum(algorithm, file);
-        boolean arraysAreEqual = true;
-        if (expResult.length == result.length) {
-            for (int i = 0; arraysAreEqual && i < result.length; i++) {
-                arraysAreEqual = result[i] == expResult[i];
-            }
-        } else {
-            fail("Checksum results do not match expected results.");
-        }
-        assertTrue(arraysAreEqual);
+        assertArrayEquals(expResult, result);
     }
 
     /**
@@ -126,6 +123,74 @@ public class ChecksumTest {
         //String expResult = "000102030405060708090A0B0C0D0E0F10";
         String expResult = "000102030405060708090a0b0c0d0e0f10";
         String result = Checksum.getHex(raw);
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of getChecksum method, of class Checksum.
+     */
+    @Test
+    public void testGetChecksum_String_File() throws Exception {
+        String algorithm = "MD5";
+        File file = new File(this.getClass().getClassLoader().getResource("checkSumTest.file").toURI().getPath());
+        byte[] expResult = {-16, -111, 92, 95, 70, -72, -49, -94, -125, -27, -83, 103, -96, -101, 55, -109};
+        byte[] result = Checksum.getChecksum(algorithm, file);
+        assertArrayEquals(expResult, result);
+    }
+
+    /**
+     * Test of getMD5Checksum method, of class Checksum.
+     */
+    @Test
+    public void testGetMD5Checksum_File() throws Exception {
+        File file = new File(this.getClass().getClassLoader().getResource("checkSumTest.file").toURI().getPath());
+        String expResult = "f0915c5f46b8cfa283e5ad67a09b3793";
+        String result = Checksum.getMD5Checksum(file);
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of getSHA1Checksum method, of class Checksum.
+     */
+    @Test
+    public void testGetSHA1Checksum_File() throws Exception {
+        File file = new File(this.getClass().getClassLoader().getResource("checkSumTest.file").toURI().getPath());
+        String expResult = "b8a9ff28b21bcb1d0b50e24a5243d8b51766851a";
+        String result = Checksum.getSHA1Checksum(file);
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of getChecksum method, of class Checksum.
+     */
+    @Test
+    public void testGetChecksum_String_byteArr() {
+        String algorithm = "SHA1";
+        byte[] bytes =  {-16, -111, 92, 95, 70, -72, -49, -94, -125, -27, -83, 103, -96, -101, 55, -109};
+        String expResult = "89268a389a97f0bfba13d3ff2370d8ad436e36f6";
+        String result = Checksum.getChecksum(algorithm, bytes);
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of getMD5Checksum method, of class Checksum.
+     */
+    @Test
+    public void testGetMD5Checksum_String() {
+        String text = "test string";
+        String expResult = "6f8db599de986fab7a21625b7916589c";
+        String result = Checksum.getMD5Checksum(text);
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of getSHA1Checksum method, of class Checksum.
+     */
+    @Test
+    public void testGetSHA1Checksum_String() {
+        String text = "test string";
+        String expResult = "661295c9cbf9d6b2f6428414504a8deed3020641";
+        String result = Checksum.getSHA1Checksum(text);
         assertEquals(expResult, result);
     }
 }

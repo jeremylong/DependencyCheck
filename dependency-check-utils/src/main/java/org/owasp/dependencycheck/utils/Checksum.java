@@ -22,8 +22,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Includes methods to generate the MD5 and SHA1 checksum.
@@ -37,6 +41,11 @@ public final class Checksum {
      * Hex code characters used in getHex.
      */
     private static final String HEXES = "0123456789abcdef";
+
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(Checksum.class);
 
     /**
      * Private constructor for a utility class.
@@ -101,6 +110,58 @@ public final class Checksum {
     }
 
     /**
+     * Calculates the MD5 checksum of a specified bytes.
+     *
+     * @param algorithm the algorithm to use (md5, sha1, etc.) to calculate the
+     * message digest
+     * @param bytes the bytes to generate the MD5 checksum
+     * @return the hex representation of the MD5 hash
+     */
+    public static String getChecksum(String algorithm, byte[] bytes) {
+        MessageDigest digest = getMessageDigest(algorithm);
+        final byte[] b = digest.digest(bytes);
+        return getHex(b);
+    }
+
+    /**
+     * Calculates the MD5 checksum of the specified text.
+     *
+     * @param text the text to generate the MD5 checksum
+     * @return the hex representation of the MD5
+     */
+    public static String getMD5Checksum(String text) {
+        final byte[] data = stringToBytes(text);
+        return getChecksum("MD5", data);
+    }
+
+    /**
+     * Calculates the SHA1 checksum of the specified text.
+     *
+     * @param text the text to generate the SHA1 checksum
+     * @return the hex representation of the SHA1
+     */
+    public static String getSHA1Checksum(String text) {
+        final byte[] data = stringToBytes(text);
+        return getChecksum("SHA1", data);
+    }
+
+    /**
+     * Converts the given text into bytes.
+     *
+     * @param text the text to convert
+     * @return the bytes
+     */
+    private static byte[] stringToBytes(String text) {
+        byte[] data;
+        try {
+            data = text.getBytes(Charset.forName("UTF-8"));
+        } catch (UnsupportedCharsetException ex) {
+            data = text.getBytes(Charset.defaultCharset());
+        }
+        return data;
+    }
+
+    /**
      * <p>
      * Converts a byte array into a hex string.</p>
      *
@@ -120,5 +181,21 @@ public final class Checksum {
             hex.append(HEXES.charAt((b & 0xF0) >> 4)).append(HEXES.charAt(b & 0x0F));
         }
         return hex.toString();
+    }
+
+    /**
+     * Returns the message digest.
+     *
+     * @param algorithm the algorithm for the message digest
+     * @return the message digest
+     */
+    private static MessageDigest getMessageDigest(String algorithm) {
+        try {
+            return MessageDigest.getInstance(algorithm);
+        } catch (NoSuchAlgorithmException e) {
+            LOGGER.error(e.getMessage());
+            final String msg = String.format("Failed to obtain the {} message digest.", algorithm);
+            throw new IllegalStateException(msg, e);
+        }
     }
 }
