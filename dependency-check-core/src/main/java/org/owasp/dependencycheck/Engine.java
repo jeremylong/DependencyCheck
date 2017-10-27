@@ -892,6 +892,8 @@ public class Engine implements FileFilter, AutoCloseable {
                 if (remainOpen) {
                     openDatabase(true, false);
                 }
+            } catch (DatabaseException ex) {
+                throw new UpdateException(ex.getMessage(), ex.getCause());
             } catch (H2DBLockException ex) {
                 throw new UpdateException("Unable to obtain an exclusive lock on the H2 database to perform updates", ex);
             } finally {
@@ -911,8 +913,10 @@ public class Engine implements FileFilter, AutoCloseable {
      * dependency-check-core.</p>
      * <p>
      * Opens the database connection.</p>
+     *
+     * @throws DatabaseException if the database connection could not be created
      */
-    public void openDatabase() {
+    public void openDatabase() throws DatabaseException {
         openDatabase(false, true);
     }
 
@@ -928,8 +932,9 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param readOnly whether or not the database connection should be readonly
      * @param lockRequired whether or not a lock needs to be acquired when
      * opening the database
+     * @throws DatabaseException if the database connection could not be created
      */
-    public void openDatabase(boolean readOnly, boolean lockRequired) {
+    public void openDatabase(boolean readOnly, boolean lockRequired) throws DatabaseException {
         if (mode.isDatabaseRequired() && database == null) {
             //needed to update schema any required schema changes
             database = new CveDB(settings);
@@ -956,9 +961,9 @@ public class Engine implements FileFilter, AutoCloseable {
                         database = new CveDB(settings);
                     }
                 } catch (IOException ex) {
-                    LOGGER.debug("Unable to open db in read only mode", ex);
+                    throw new DatabaseException("Unable to open db in read only mode", ex);
                 } catch (H2DBLockException ex) {
-                    LOGGER.debug("Failed to obtain lock - unable to open db in read only mode", ex);
+                    throw new DatabaseException("Failed to obtain lock - unable to open db in read only mode", ex);
                 } finally {
                     if (lock != null) {
                         lock.release();
