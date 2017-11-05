@@ -47,9 +47,9 @@ import org.slf4j.LoggerFactory;
  * <pre>
  * List&lt;Dependency&gt; dependencies = new ArrayList&lt;Dependency&gt;();
  * Dependency dependency = new Dependency(new File(FileUtils.getBitBucket()));
- * dependency.getProductEvidence().addEvidence("my-datasource", "name", "Jetty", Confidence.HIGH);
- * dependency.getVersionEvidence().addEvidence("my-datasource", "version", "5.1.10", Confidence.HIGH);
- * dependency.getVendorEvidence().addEvidence("my-datasource", "vendor", "mortbay", Confidence.HIGH);
+ * dependency.addEvidence(EvidenceType.PRODUCT, "my-datasource", "name", "Jetty", Confidence.HIGH);
+ * dependency.addEvidence(EvidenceType.VERSION, "my-datasource", "version", "5.1.10", Confidence.HIGH);
+ * dependency.addEvidence(EvidenceType.VENDOR, "my-datasource", "vendor", "mortbay", Confidence.HIGH);
  * dependencies.add(dependency);
  *
  * DependencyCheckScanAgent scan = new DependencyCheckScanAgent();
