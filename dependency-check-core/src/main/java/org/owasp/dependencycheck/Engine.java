@@ -552,9 +552,9 @@ public class Engine implements FileFilter, AutoCloseable {
                     }
                 } else {
                     final Dependency d = scanFile(f, projectReference);
-                    if(d != null){
-						deps.add(d);
-					}
+                    if (d != null) {
+                        deps.add(d);
+                    }
                 }
             }
         }
