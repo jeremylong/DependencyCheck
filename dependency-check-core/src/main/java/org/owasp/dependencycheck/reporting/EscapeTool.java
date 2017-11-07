@@ -133,7 +133,7 @@ public class EscapeTool {
      * for display in a CSV.
      *
      * @param ids the set of identifiers
-     * @return the formated list of none CPE identifiers
+     * @return the formatted list of none CPE identifiers
      */
     public String csvIdentifiers(Set<Identifier> ids) {
         if (ids == null || ids.isEmpty()) {
@@ -159,7 +159,7 @@ public class EscapeTool {
      * for display in a CSV.
      *
      * @param ids the set of identifiers
-     * @return the formated list of CPE identifiers
+     * @return the formatted list of CPE identifiers
      */
     public String csvCpe(Set<Identifier> ids) {
         if (ids == null || ids.isEmpty()) {
@@ -185,7 +185,7 @@ public class EscapeTool {
      * for confidence display in a CSV.
      *
      * @param ids the set of identifiers
-     * @return the formated list of confidence
+     * @return the formatted list of confidence
      */
     public String csvCpeConfidence(Set<Identifier> ids) {
         if (ids == null || ids.isEmpty()) {
@@ -211,7 +211,7 @@ public class EscapeTool {
      * for display in a CSV.
      *
      * @param ids the set of identifiers
-     * @return the formated list of GAV identifiers
+     * @return the formatted list of GAV identifiers
      */
     public String csvGav(Set<Identifier> ids) {
         if (ids == null || ids.isEmpty()) {
