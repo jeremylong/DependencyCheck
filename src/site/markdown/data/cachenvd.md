@@ -78,7 +78,7 @@ $CLI_SCRIPT --cveUrl20Base $NVD/nvdcve-2.0-%d.xml.gz \
 ```
 
 The script takes advantage of the `date` command's ability to parse a variety
-of date formats. The following invokation would successfully point to the
+of date formats. The following invocation would successfully point to the
 `~/NVD/2015-08-03` folder.
 
     $ ./dep-check-date.sh ~/NVD "08/03/2015" -app Foo -scan /path/to/Foo --out ~/DCreports/FooFollowup/

@@ -48,7 +48,7 @@ public class EngineVersionCheckTest extends BaseTest {
      * @return milliseconds
      */
     private long dateToMilliseconds(String date) {
-        //removed for compatability with joda-time 1.6
+        //removed for compatibility with joda-time 1.6
         //DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
         //return DateTime.parse(date, dtf).toInstant().getMillis();
         String[] dp = date.split("-");

@@ -28,7 +28,7 @@ import org.owasp.dependencycheck.dependency.Evidence;
  * work for a range of similar false positives/false negatives.
  *
  * The EvidenceMatcher is used for processing Evidences of a project's
- * dependencies in conjuction with the {@code <given>} and {@code <remove>}
+ * dependencies in conjunction with the {@code <given>} and {@code <remove>}
  * clauses of the hints file.
  *
  * @author Hans Aikema
