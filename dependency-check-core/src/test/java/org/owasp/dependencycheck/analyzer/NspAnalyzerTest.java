@@ -91,4 +91,11 @@ public class NspAnalyzerTest extends BaseTest {
         // node modules are not scanned - no evidence is collected
         assertTrue(result.size() == 0);
     }
+
+    @Test
+    public void testAnalyzeInvalidPackageMissingName() throws AnalysisException {
+        final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "nsp/minimal-invalid.json"));
+        analyzer.analyze(result, null);
+        // Upon analysis, not throwing an exception in this case, is all that's required to pass this test
+    }
 }
