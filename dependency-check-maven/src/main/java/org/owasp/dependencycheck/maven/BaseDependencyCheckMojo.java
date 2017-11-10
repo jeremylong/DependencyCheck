@@ -937,7 +937,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     if (this.isFailOnError()) {
                         throw new MojoExecutionException("One or more exceptions occurred during dependency-check analysis", exCol);
                     } else {
-                        getLog().debug("Error writting the report", ex);
+                        getLog().debug("Error writing the report", ex);
                     }
                 }
                 showSummary(this.getProject(), engine.getDependencies());

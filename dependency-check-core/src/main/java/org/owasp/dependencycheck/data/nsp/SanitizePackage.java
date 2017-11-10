@@ -69,6 +69,12 @@ public final class SanitizePackage {
      */
     public static JsonObject sanitize(JsonObject rawPackage) {
         final JsonObjectBuilder builder = Json.createObjectBuilder();
+        if (rawPackage.get("name") == null) {
+            // Reproduce the behavior of 'nsp check' by not failing on a
+            // package.json without a name field (string).
+            // https://github.com/jeremylong/DependencyCheck/issues/975
+            builder.add("name", "1");
+        }
         for (Map.Entry<String, JsonValue> entry : rawPackage.entrySet()) {
             if (WHITELIST.contains(entry.getKey())) {
                 builder.add(entry.getKey(), entry.getValue());
