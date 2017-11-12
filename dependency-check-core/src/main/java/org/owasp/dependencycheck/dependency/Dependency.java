@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * @author Jeremy Long
  */
 @ThreadSafe
-public class Dependency extends EvidenceCollection implements Serializable, Comparable<Dependency> {
+public class Dependency extends EvidenceCollection implements Serializable {
 
     /**
      * The serial version UID for serialization.
@@ -707,18 +707,6 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
      */
     public boolean isVirtual() {
         return isVirtual;
-    }
-
-    /**
-     * Implementation of the Comparable&lt;Dependency&gt; interface. The
-     * comparison is solely based on the file path.
-     *
-     * @param o a dependency to compare
-     * @return an integer representing the natural ordering
-     */
-    @Override
-    public int compareTo(Dependency o) {
-        return this.getFilePath().compareToIgnoreCase(o.getFilePath());
     }
 
     /**
