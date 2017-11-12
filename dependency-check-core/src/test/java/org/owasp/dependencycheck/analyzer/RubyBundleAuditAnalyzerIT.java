@@ -158,7 +158,7 @@ public class RubyBundleAuditAnalyzerIT extends BaseDBTestCase {
                     "ruby/vulnerable/gems/sinatra/Gemfile.lock"));
             analyzer.analyze(result, engine);
             Dependency dependency = engine.getDependencies()[0];
-            Vulnerability vulnerability = ((SortedSet<Vulnerability>)dependency.getVulnerabilities(true)).first();
+            Vulnerability vulnerability = dependency.getVulnerabilities(true).iterator().next();
             assertEquals(vulnerability.getCvssScore(), 5.0f, 0.0);
 
         } catch (InitializationException | DatabaseException | AnalysisException | UpdateException e) {
