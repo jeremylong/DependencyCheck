@@ -752,6 +752,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
                 .append(actualFilePath)
                 .append(filePath)
                 .append(fileName)
+                .append(packagePath)
                 .append(md5sum)
                 .append(sha1sum)
                 .append(identifiers)
