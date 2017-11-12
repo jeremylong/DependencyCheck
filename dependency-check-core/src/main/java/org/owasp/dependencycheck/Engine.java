@@ -309,8 +309,8 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     public synchronized void sortDependencies() {
         //TODO - is this actually necassary????
-        Collections.sort(dependencies);
-        dependenciesExternalView = null;
+//        Collections.sort(dependencies);
+//        dependenciesExternalView = null;
     }
 
     /**
