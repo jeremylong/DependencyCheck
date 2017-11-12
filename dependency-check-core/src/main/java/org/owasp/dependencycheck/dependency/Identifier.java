@@ -19,6 +19,9 @@ package org.owasp.dependencycheck.dependency;
 
 import java.io.Serializable;
 import javax.annotation.concurrent.ThreadSafe;
+import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * In identifier such as a CPE or dependency coordinates (i.e. GAV).
@@ -42,7 +45,7 @@ public class Identifier implements Serializable, Comparable<Identifier> {
      */
     private String value;
     /**
-     * The url for the identifier.
+     * The URL for the identifier.
      */
     private String url;
     /**
@@ -186,7 +189,7 @@ public class Identifier implements Serializable, Comparable<Identifier> {
      *
      * @param type the identifier type.
      * @param value the identifier value.
-     * @param url the identifier url.
+     * @param url the identifier URL.
      */
     public Identifier(String type, String value, String url) {
         this.type = type;
@@ -199,7 +202,7 @@ public class Identifier implements Serializable, Comparable<Identifier> {
      *
      * @param type the identifier type.
      * @param value the identifier value.
-     * @param url the identifier url.
+     * @param url the identifier URL.
      * @param description the description of the identifier.
      */
     public Identifier(String type, String value, String url, String description) {
@@ -207,27 +210,38 @@ public class Identifier implements Serializable, Comparable<Identifier> {
         this.description = description;
     }
 
+    /**
+     * Basic implementation of equals. This only compares the type and value of
+     * the identifier.
+     * @param obj the identifier to compare
+     * @return true if the objects are equal
+     */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
         final Identifier other = (Identifier) obj;
-        if ((this.value == null) ? (other.value != null) : !this.value.equals(other.value)) {
-            return false;
-        }
-        return !((this.type == null) ? (other.type != null) : !this.type.equals(other.type));
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.type, other.type)
+                .append(this.value, other.value)
+                .isEquals();
     }
 
+    /**
+     * Basic implementation of hasCode. Note, this only takes into consideration
+     * the type and value of the identifier.
+     * @return the hash code
+     */
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 53 * hash + (this.value != null ? this.value.hashCode() : 0);
-        hash = 53 * hash + (this.type != null ? this.type.hashCode() : 0);
-        return hash;
+        return new HashCodeBuilder(5, 49)
+                .appendSuper(super.hashCode())
+                .append(type)
+                .append(value)
+                .toHashCode();
     }
 
     /**
@@ -241,7 +255,7 @@ public class Identifier implements Serializable, Comparable<Identifier> {
     }
 
     /**
-     * Implementation of the comparator interface. This compares the value of
+     * Implementation of the comparator interface. This compares the type and value of
      * the identifier only.
      *
      * @param o the object being compared
@@ -252,6 +266,9 @@ public class Identifier implements Serializable, Comparable<Identifier> {
         if (o == null) {
             return -1;
         }
-        return this.value.compareTo(o.value);
+        return new CompareToBuilder()
+                .append(this.type, o.type)
+                .append(this.value, this.value)
+                .toComparison();
     }
 }

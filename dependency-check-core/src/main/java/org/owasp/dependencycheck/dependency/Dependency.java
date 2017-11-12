@@ -82,7 +82,7 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
     /**
      * A list of Identifiers.
      */
-    private final Set<Identifier> identifiers = new HashSet<>();
+    private final Set<Identifier> identifiers = new TreeSet<>();
     /**
      * The file name to display in reports.
      */
@@ -90,7 +90,7 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
     /**
      * A set of identifiers that have been suppressed.
      */
-    private final Set<Identifier> suppressedIdentifiers = new HashSet<>();
+    private final Set<Identifier> suppressedIdentifiers = new TreeSet<>();
     /**
      * A set of vulnerabilities that have been suppressed.
      */
@@ -747,6 +747,8 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
                 .append(this.vulnerabilities, other.vulnerabilities)
                 .append(this.projectReferences, other.projectReferences)
                 .append(this.availableVersions, other.availableVersions)
+                .append(this.version, other.version)
+                .append(this.ecosystem, other.ecosystem)
                 .isEquals();
     }
 
@@ -770,6 +772,8 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
                 .append(vulnerabilities)
                 .append(projectReferences)
                 .append(availableVersions)
+                .append(version)
+                .append(ecosystem)
                 .toHashCode();
     }
 
