@@ -208,7 +208,7 @@ have been reported. Additionally, the HTML report provides many features not fou
                     <tbody>
                 #foreach($dependency in $dependencies)
                     #if($dependency.getVulnerabilities().size()>0)
-                        #foreach($vuln in $dependency.getVulnerabilities())
+                        #foreach($vuln in $dependency.getVulnerabilities(true))
                             <tr>
                                 <td>
                                     #if($vuln.getSource().name().equals("NVD"))

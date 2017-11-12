@@ -22,6 +22,7 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
 
 import org.junit.After;
 import org.junit.Assume;
@@ -157,7 +158,7 @@ public class RubyBundleAuditAnalyzerIT extends BaseDBTestCase {
                     "ruby/vulnerable/gems/sinatra/Gemfile.lock"));
             analyzer.analyze(result, engine);
             Dependency dependency = engine.getDependencies()[0];
-            Vulnerability vulnerability = dependency.getVulnerabilities().first();
+            Vulnerability vulnerability = ((SortedSet<Vulnerability>)dependency.getVulnerabilities(true)).first();
             assertEquals(vulnerability.getCvssScore(), 5.0f, 0.0);
 
         } catch (InitializationException | DatabaseException | AnalysisException | UpdateException e) {

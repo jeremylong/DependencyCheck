@@ -1053,7 +1053,7 @@ public class DependencyCheckScanAgent {
         for (Dependency d : dependencies) {
             boolean firstEntry = true;
             final StringBuilder ids = new StringBuilder();
-            for (Vulnerability v : d.getVulnerabilities()) {
+            for (Vulnerability v : d.getVulnerabilities(true)) {
                 if (firstEntry) {
                     firstEntry = false;
                 } else {

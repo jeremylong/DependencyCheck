@@ -843,7 +843,7 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                     #set($cnt=$cnt+1)
                     <h4 id="header$cnt" class="subsectionheader expandable collaspablesubsection white">Published Vulnerabilities</h4>
                     <div id="content$cnt" class="subsectioncontent standardsubsection">
-                        #foreach($vuln in $dependency.getVulnerabilities())
+                        #foreach($vuln in $dependency.getVulnerabilities(true))
                             #set($vsctr=$vsctr+1)
                             #if($vuln.getSource().name().equals("NVD"))
                                 <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CCE for this file" onclick="copyText('$enc.javascript($dependency.DisplayFileName)', '$enc.javascript($dependency.Sha1sum)', '$enc.javascript($suppressGav)', 'cve', '$enc.javascript($vuln.name)')">suppress</button></p>
@@ -1015,7 +1015,7 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                             #set($cnt=$cnt+1)
                             <h4 id="header$cnt" class="subsectionheader expandable collaspablesubsection white">Suppressed Vulnerabilities</h4>
                             <div id="content$cnt" class="subsectioncontent standardsubsection">
-                                #foreach($vuln in $dependency.getSuppressedVulnerabilities())
+                                #foreach($vuln in $dependency.getSuppressedVulnerabilities(true))
                                     #set($vsctr=$vsctr+1)
                                     #if($vuln.getSource().name().equals("NVD"))
                                         <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span></p>

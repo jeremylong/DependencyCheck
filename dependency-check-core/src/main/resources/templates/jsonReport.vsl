@@ -132,7 +132,7 @@
 
             #if($dependency.getVulnerabilities().size()>0)
             ,"vulnerabilities": [
-            #foreach($vuln in $dependency.getVulnerabilities())#if($foreach.count > 1),#end {
+            #foreach($vuln in $dependency.getVulnerabilities(true))#if($foreach.count > 1),#end {
                 "source": "$enc.json($vuln.getSource().name())",
                 "name": "$enc.json($vuln.name)",
                 "cvssScore": "$vuln.cvssScore",
@@ -170,7 +170,7 @@
 
             #if($dependency.getSuppressedVulnerabilities().size()>0 || $dependency.getSuppressedVulnerabilities().size()>0)
             ,"suppressedVulnerabilities": [
-                #foreach($vuln in $dependency.getSuppressedVulnerabilities())#if($foreach.count > 1),#end {
+                #foreach($vuln in $dependency.getSuppressedVulnerabilities(true))#if($foreach.count > 1),#end {
                 "source": "$enc.json($vuln.getSource().name())",
                 "name": "$enc.json($vuln.name)",
                 "cvssScore": "$vuln.cvssScore",
