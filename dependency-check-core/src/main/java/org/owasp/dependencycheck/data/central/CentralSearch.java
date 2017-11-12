@@ -108,7 +108,7 @@ public class CentralSearch {
             throw new IllegalArgumentException("Invalid SHA1 format");
         }
         List<MavenArtifact> result = null;
-        final URL url = new URL(String.format("%s?q=1:\"%s\"&wt=xml", rootURL, sha1));
+        final URL url = new URL(String.format("%s?q=1:%%22%s%%22&wt=xml", rootURL, sha1));
 
         LOGGER.debug("Searching Central url {}", url);
 
