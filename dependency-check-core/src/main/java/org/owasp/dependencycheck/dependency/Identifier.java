@@ -224,7 +224,6 @@ public class Identifier implements Serializable, Comparable<Identifier> {
         final Identifier other = (Identifier) obj;
 
         return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
                 .append(this.type, other.type)
                 .append(this.value, other.value)
                 .isEquals();
@@ -238,7 +237,6 @@ public class Identifier implements Serializable, Comparable<Identifier> {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(5, 49)
-                .appendSuper(super.hashCode())
                 .append(type)
                 .append(value)
                 .toHashCode();
@@ -268,7 +266,7 @@ public class Identifier implements Serializable, Comparable<Identifier> {
         }
         return new CompareToBuilder()
                 .append(this.type, o.type)
-                .append(this.value, this.value)
+                .append(this.value, o.value)
                 .toComparison();
     }
 }
