@@ -262,7 +262,7 @@ public class Identifier implements Serializable, Comparable<Identifier> {
     @Override
     public int compareTo(Identifier o) {
         if (o == null) {
-            throw new NullPointerException("Unable to compare a null identifier");
+            throw new IllegalArgumentException("Unable to compare a null identifier");
         }
         return new CompareToBuilder()
                 .append(this.type, o.type)

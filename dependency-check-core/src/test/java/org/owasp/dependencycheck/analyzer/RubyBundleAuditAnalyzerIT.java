@@ -22,7 +22,6 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedSet;
 
 import org.junit.After;
 import org.junit.Assume;
