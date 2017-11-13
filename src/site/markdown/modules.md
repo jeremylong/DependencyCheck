@@ -10,10 +10,16 @@ build and reporting process:
 - [Maven Plugin](dependency-check-maven/index.html)
 - [SBT Plugin](https://github.com/albuch/sbt-dependency-check)
 
-In addition, dependency-check can be executed from the [command line](dependency-check-cli/index.html).
+In addition, dependency-check can be executed from the 
+[command line](dependency-check-cli/index.html).
+
+Extending dependency-check
+--------------------------
+A [dependency-check-plugin maven archetype](dependency-check-plugin/index.html]
+has been created to assist with creating your own analyzers.
 
 Core Engine
--------------------
+--------------------------
 Information about the core engine and the utilities used can be found:
 
 -  [Core](dependency-check-core/index.html)
