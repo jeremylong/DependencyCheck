@@ -297,8 +297,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private boolean hasDependencyWithFilename(final Dependency[] dependencies, final String fileName) {
         for (final Dependency dependency : dependencies) {
-            if (Paths.get(dependency.getActualFilePath()).getFileName().toString().toLowerCase()
-                    .equals(fileName.toLowerCase())) {
+            if (Paths.get(dependency.getActualFilePath()).getFileName().toString().equalsIgnoreCase(fileName)) {
                 return true;
             }
         }
