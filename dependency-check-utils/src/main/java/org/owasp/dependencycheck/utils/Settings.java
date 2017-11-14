@@ -349,6 +349,10 @@ public final class Settings {
          */
         public static final String ANALYZER_CENTRAL_URL = "analyzer.central.url";
         /**
+         * The properties key for the Central search query.
+         */
+        public static final String ANALYZER_CENTRAL_QUERY = "analyzer.central.query";
+        /**
          * The path to mono, if available.
          */
         public static final String ANALYZER_ASSEMBLY_MONO_PATH = "analyzer.assembly.mono.path";

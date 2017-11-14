@@ -51,12 +51,17 @@ import org.xml.sax.SAXException;
 public class CentralSearch {
 
     /**
-     * The URL for the Central service
+     * The URL for the Central service.
      */
     private final String rootURL;
 
     /**
-     * Whether to use the Proxy when making requests
+     * The Central Search Query.
+     */
+    private final String query;
+
+    /**
+     * Whether to use the Proxy when making requests.
      */
     private final boolean useProxy;
 
@@ -84,6 +89,14 @@ public class CentralSearch {
             throw new MalformedURLException(String.format("The configured central analyzer URL is invalid: %s", searchUrl));
         }
         this.rootURL = searchUrl;
+        final String queryStr = settings.getString(Settings.KEYS.ANALYZER_CENTRAL_QUERY);
+        LOGGER.debug("Central Search Query: {}", queryStr);
+        if (!queryStr.matches("^%s.*%s.*$")) {
+            final String msg = String.format("The configured central analyzer query parameter is invalid (it must have two %%s): %s", queryStr);
+            throw new MalformedURLException(msg);
+        }
+        this.query = queryStr;
+        LOGGER.debug("Central Search Full URL: {}", String.format(query, rootURL, "[SHA1]"));
         if (null != settings.getString(Settings.KEYS.PROXY_SERVER)) {
             useProxy = true;
             LOGGER.debug("Using proxy");
@@ -94,7 +107,7 @@ public class CentralSearch {
     }
 
     /**
-     * Searches the configured Central URL for the given sha1 hash. If the
+     * Searches the configured Central URL for the given SHA1 hash. If the
      * artifact is found, a <code>MavenArtifact</code> is populated with the
      * GAV.
      *
@@ -108,7 +121,7 @@ public class CentralSearch {
             throw new IllegalArgumentException("Invalid SHA1 format");
         }
         List<MavenArtifact> result = null;
-        final URL url = new URL(String.format("%s?q=1:%%22%s%%22&wt=xml", rootURL, sha1));
+        final URL url = new URL(String.format(query, rootURL, sha1));
 
         LOGGER.debug("Searching Central url {}", url);
 
@@ -184,10 +197,10 @@ public class CentralSearch {
     }
 
     /**
-     * Tests to determine if the gien URL is <b>invalid</b>.
+     * Tests to determine if the given URL is <b>invalid</b>.
      *
-     * @param url the url to evaluate
-     * @return true if the url is malformed; otherwise false
+     * @param url the URL to evaluate
+     * @return true if the URL is malformed; otherwise false
      */
     private boolean isInvalidURL(String url) {
         try {
