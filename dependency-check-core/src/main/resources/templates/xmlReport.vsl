@@ -140,7 +140,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 #end
 #if($dependency.getVulnerabilities().size()>0 || $dependency.getSuppressedVulnerabilities().size()>0)
             <vulnerabilities>
-#foreach($vuln in $dependency.getVulnerabilities())
+#foreach($vuln in $dependency.getVulnerabilities(true))
                 <vulnerability source="$enc.xml($vuln.getSource().name())">
                     <name>$enc.xml($vuln.name)</name>
                     <cvssScore>$vuln.cvssScore</cvssScore>
@@ -180,7 +180,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     </vulnerableSoftware>
                 </vulnerability>
 #end
-#foreach($vuln in $dependency.getSuppressedVulnerabilities())
+#foreach($vuln in $dependency.getSuppressedVulnerabilities(true))
                 <suppressedVulnerability source="$enc.xml($vuln.getSource().name())">
                     <name>$enc.xml($vuln.name)</name>
                     <cvssScore>$vuln.cvssScore</cvssScore>

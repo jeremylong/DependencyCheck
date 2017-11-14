@@ -209,7 +209,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     @Override
     public int compareTo(Evidence o) {
         if (o == null) {
-            return 1;
+            throw new IllegalArgumentException("Unable to compare null evidence");
         }
         if (StringUtils.equalsIgnoreCase(source, o.source)) {
             if (StringUtils.equalsIgnoreCase(name, o.name)) {

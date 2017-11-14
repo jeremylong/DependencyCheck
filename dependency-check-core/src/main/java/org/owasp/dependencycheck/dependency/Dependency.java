@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -46,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * @author Jeremy Long
  */
 @ThreadSafe
-public class Dependency extends EvidenceCollection implements Serializable, Comparable<Dependency> {
+public class Dependency extends EvidenceCollection implements Serializable {
 
     /**
      * The serial version UID for serialization.
@@ -95,7 +94,7 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
     /**
      * A set of vulnerabilities that have been suppressed.
      */
-    private final SortedSet<Vulnerability> suppressedVulnerabilities = new TreeSet<>(new VulnerabilityComparator());
+    private final Set<Vulnerability> suppressedVulnerabilities = new HashSet<>();
     /**
      * The description of the JAR file.
      */
@@ -107,11 +106,11 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
     /**
      * A list of vulnerabilities for this dependency.
      */
-    private final SortedSet<Vulnerability> vulnerabilities = new TreeSet<>(new VulnerabilityComparator());
+    private final Set<Vulnerability> vulnerabilities = new HashSet<>();
     /**
      * A collection of related dependencies.
      */
-    private final Set<Dependency> relatedDependencies = new TreeSet<>();
+    private final Set<Dependency> relatedDependencies = new HashSet<>();
     /**
      * A list of projects that reference this dependency.
      */
@@ -457,12 +456,53 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
     }
 
     /**
-     * Get an unmodifiable sorted set of suppressedVulnerabilities.
+     * Get the unmodifiable sorted set of vulnerabilities.
+     *
+     * @return the unmodifiable sorted set of vulnerabilities
+     */
+    public synchronized Set<Vulnerability> getVulnerabilities() {
+        return getVulnerabilities(false);
+    }
+
+    /**
+     * Get the unmodifiable list of vulnerabilities; optionally sorted.
+     *
+     * @param sorted if true the list will be sorted
+     * @return the unmodifiable list set of vulnerabilities
+     */
+    public synchronized Set<Vulnerability> getVulnerabilities(boolean sorted) {
+        Set<Vulnerability> r;
+        if (sorted) {
+            r = new TreeSet<>(vulnerabilities);
+        } else {
+            r = vulnerabilities;
+        }
+        return Collections.unmodifiableSet(r);
+    }
+
+    /**
+     * Get an unmodifiable set of suppressedVulnerabilities.
      *
      * @return the unmodifiable sorted set of suppressedVulnerabilities
      */
-    public synchronized SortedSet<Vulnerability> getSuppressedVulnerabilities() {
-        return Collections.unmodifiableSortedSet(new TreeSet<>(suppressedVulnerabilities));
+    public synchronized Set<Vulnerability> getSuppressedVulnerabilities() {
+        return getSuppressedVulnerabilities(false);
+    }
+
+    /**
+     * Get an unmodifiable, optionally sorted. set of suppressedVulnerabilities.
+     *
+     * @param sorted whether or not the set is sorted
+     * @return the unmodifiable sorted set of suppressedVulnerabilities
+     */
+    public synchronized Set<Vulnerability> getSuppressedVulnerabilities(boolean sorted) {
+        Set<Vulnerability> r;
+        if (sorted) {
+            r = new TreeSet<>(suppressedVulnerabilities);
+        } else {
+            r = suppressedVulnerabilities;
+        }
+        return Collections.unmodifiableSet(r);
     }
 
     /**
@@ -525,16 +565,7 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
     }
 
     /**
-     * Get the unmodifiable sorted set of vulnerabilities.
-     *
-     * @return the unmodifiable sorted set of vulnerabilities
-     */
-    public synchronized SortedSet<Vulnerability> getVulnerabilities() {
-        return Collections.unmodifiableSortedSet(new TreeSet<>(vulnerabilities));
-    }
-
-    /**
-     * Determines the sha1 and md5 sum for the given file.
+     * Determines the SHA1 and MD5 sum for the given file.
      *
      * @param file the file to create checksums for
      */
@@ -624,11 +655,7 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
     }
 
     /**
-     * Adds a related dependency. The internal collection is normally a
-     * {@link java.util.TreeSet}, which relies on
-     * {@link #compareTo(Dependency)}. A consequence of this is that if you
-     * attempt to add a dependency with the same file path (modulo character
-     * case) as one that is already in the collection, it won't get added.
+     * Adds a related dependency.
      *
      * @param dependency a reference to the related dependency
      */
@@ -683,18 +710,6 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
     }
 
     /**
-     * Implementation of the Comparable&lt;Dependency&gt; interface. The
-     * comparison is solely based on the file path.
-     *
-     * @param o a dependency to compare
-     * @return an integer representing the natural ordering
-     */
-    @Override
-    public int compareTo(Dependency o) {
-        return this.getFilePath().compareToIgnoreCase(o.getFilePath());
-    }
-
-    /**
      * Implementation of the equals method.
      *
      * @param obj the object to compare
@@ -720,6 +735,8 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
                 .append(this.vulnerabilities, other.vulnerabilities)
                 .append(this.projectReferences, other.projectReferences)
                 .append(this.availableVersions, other.availableVersions)
+                .append(this.version, other.version)
+                .append(this.ecosystem, other.ecosystem)
                 .isEquals();
     }
 
@@ -735,6 +752,7 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
                 .append(actualFilePath)
                 .append(filePath)
                 .append(fileName)
+                .append(packagePath)
                 .append(md5sum)
                 .append(sha1sum)
                 .append(identifiers)
@@ -743,6 +761,8 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
                 .append(vulnerabilities)
                 .append(projectReferences)
                 .append(availableVersions)
+                .append(version)
+                .append(ecosystem)
                 .toHashCode();
     }
 

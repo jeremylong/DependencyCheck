@@ -194,7 +194,7 @@ public final class Checksum {
             return MessageDigest.getInstance(algorithm);
         } catch (NoSuchAlgorithmException e) {
             LOGGER.error(e.getMessage());
-            final String msg = String.format("Failed to obtain the {} message digest.", algorithm);
+            final String msg = String.format("Failed to obtain the %s message digest.", algorithm);
             throw new IllegalStateException(msg, e);
         }
     }
