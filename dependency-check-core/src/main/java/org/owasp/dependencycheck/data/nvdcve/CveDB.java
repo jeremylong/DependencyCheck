@@ -25,6 +25,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -70,6 +71,7 @@ public final class CveDB implements AutoCloseable {
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(CveDB.class);
+    public static final int MAX_BATCH_SIZE = 1000;
     /**
      * The database connection factory.
      */
@@ -730,36 +732,51 @@ public final class CveDB implements AutoCloseable {
                 }
             }
 
-            final PreparedStatement insertReference = getPreparedStatement(INSERT_REFERENCE);
+            PreparedStatement insertReference = getPreparedStatement(INSERT_REFERENCE);
+            int countReferences = 0;
             for (Reference r : vuln.getReferences()) {
                 insertReference.setInt(1, vulnerabilityId);
                 insertReference.setString(2, r.getName());
                 insertReference.setString(3, r.getUrl());
                 insertReference.setString(4, r.getSource());
-                insertReference.execute();
+                insertReference.addBatch();
+                countReferences++;
+                if (countReferences % MAX_BATCH_SIZE == 0) {
+                    insertReference.executeBatch();
+                    insertReference = getPreparedStatement(INSERT_REFERENCE);
+                    LOGGER.info(getLogForBatchInserts(countReferences, "Completed %s batch inserts to references table: %s"));
+                    countReferences = 0;
+                } else if (countReferences == vuln.getReferences().size()) {
+                    if (LOGGER.isTraceEnabled()) {
+                        LOGGER.trace(getLogForBatchInserts(countReferences, "Completed %s batch inserts to reference table: %s"));
+                    }
+                    insertReference.executeBatch();
+                    countReferences = 0;
+                }
             }
 
-            final PreparedStatement insertSoftware = getPreparedStatement(INSERT_SOFTWARE);
-            for (VulnerableSoftware s : vuln.getVulnerableSoftware()) {
+            PreparedStatement insertSoftware = getPreparedStatement(INSERT_SOFTWARE);
+            int countSoftware = 0;
+            for (VulnerableSoftware vulnerableSoftware : vuln.getVulnerableSoftware()) {
                 int cpeProductId = 0;
                 final PreparedStatement selectCpeId = getPreparedStatement(SELECT_CPE_ID);
-                selectCpeId.setString(1, s.getName());
+                selectCpeId.setString(1, vulnerableSoftware.getName());
                 try {
                     rs = selectCpeId.executeQuery();
                     if (rs.next()) {
                         cpeProductId = rs.getInt(1);
                     }
                 } catch (SQLException ex) {
-                    throw new DatabaseException("Unable to get primary key for new cpe: " + s.getName(), ex);
+                    throw new DatabaseException("Unable to get primary key for new cpe: " + vulnerableSoftware.getName(), ex);
                 } finally {
                     DBUtils.closeResultSet(rs);
                 }
 
                 if (cpeProductId == 0) {
                     final PreparedStatement insertCpe = getPreparedStatement(INSERT_CPE);
-                    insertCpe.setString(1, s.getName());
-                    insertCpe.setString(2, s.getVendor());
-                    insertCpe.setString(3, s.getProduct());
+                    insertCpe.setString(1, vulnerableSoftware.getName());
+                    insertCpe.setString(2, vulnerableSoftware.getVendor());
+                    insertCpe.setString(3, vulnerableSoftware.getProduct());
                     insertCpe.executeUpdate();
                     cpeProductId = DBUtils.getGeneratedKey(insertCpe);
                 }
@@ -770,20 +787,24 @@ public final class CveDB implements AutoCloseable {
                 insertSoftware.setInt(1, vulnerabilityId);
                 insertSoftware.setInt(2, cpeProductId);
 
-                if (s.getPreviousVersion() == null) {
+                if (vulnerableSoftware.getPreviousVersion() == null) {
                     insertSoftware.setNull(3, java.sql.Types.VARCHAR);
                 } else {
-                    insertSoftware.setString(3, s.getPreviousVersion());
+                    insertSoftware.setString(3, vulnerableSoftware.getPreviousVersion());
                 }
-                try {
-                    insertSoftware.execute();
-                } catch (SQLException ex) {
-                    if (ex.getMessage().contains("Duplicate entry")) {
-                        final String msg = String.format("Duplicate software key identified in '%s:%s'", vuln.getName(), s.getName());
-                        LOGGER.info(msg, ex);
-                    } else {
-                        throw ex;
+                insertSoftware.addBatch();
+                countSoftware++;
+                if (countSoftware % MAX_BATCH_SIZE == 0) {
+                    executeBatch(vuln, vulnerableSoftware, insertSoftware);
+                    insertSoftware = getPreparedStatement(INSERT_SOFTWARE);
+                    LOGGER.info(getLogForBatchInserts(countSoftware, "Completed %s batch inserts software table: %s"));
+                    countSoftware = 0;
+                } else if (countSoftware == vuln.getVulnerableSoftware().size()) {
+                    if (LOGGER.isTraceEnabled()) {
+                        LOGGER.trace(getLogForBatchInserts(countSoftware, "Completed %s batch inserts software table: %s"));
+                        countReferences = 0;
                     }
+                    executeBatch(vuln, vulnerableSoftware, insertSoftware);
                 }
 
             }
@@ -793,6 +814,31 @@ public final class CveDB implements AutoCloseable {
             throw new DatabaseException(msg, ex);
         } finally {
             DBUtils.closeResultSet(rs);
+        }
+    }
+
+    private String getLogForBatchInserts(int pCountReferences, String pFormat) {
+        return String.format(pFormat, pCountReferences, new Date());
+    }
+
+    /**
+     * Executes batch inserts of vulnerabilities when MAX_BATCH_SIZE is reached
+     *
+     * @param pVulnerability
+     * @param pVulnerableSoftware
+     * @param pInsertSoftware
+     * @throws SQLException
+     */
+    private void executeBatch(Vulnerability pVulnerability, VulnerableSoftware pVulnerableSoftware, PreparedStatement pInsertSoftware) throws SQLException {
+        try {
+            pInsertSoftware.executeBatch();
+        } catch (SQLException ex) {
+            if (ex.getMessage().contains("Duplicate entry")) {
+                final String msg = String.format("Duplicate software key identified in '%s:%s'", pVulnerability.getName(), pVulnerableSoftware.getName());
+                LOGGER.info(msg, ex);
+            } else {
+                throw ex;
+            }
         }
     }
 
