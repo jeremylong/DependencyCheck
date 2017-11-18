@@ -52,6 +52,7 @@ import javax.json.JsonString;
 import javax.json.JsonValue;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.URLConnectionFailureException;
 
 /**
@@ -259,6 +260,8 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
     private Dependency createDependency(Dependency dependency, String name, String version, String scope) {
         final Dependency nodeModule = new Dependency(new File(dependency.getActualFile() + "?" + name), true);
         nodeModule.setEcosystem(DEPENDENCY_ECOSYSTEM);
+        //this is virtual - the sha1 is purely for the hyperlink in the final html report
+        nodeModule.setSha1sum(Checksum.getSHA1Checksum(String.format("%s:%s", name, version)));
         nodeModule.addEvidence(EvidenceType.PRODUCT, "package.json", "name", name, Confidence.HIGHEST);
         nodeModule.addEvidence(EvidenceType.VENDOR, "package.json", "name", name, Confidence.HIGH);
         nodeModule.addEvidence(EvidenceType.VERSION, "package.json", "version", version, Confidence.HIGHEST);
