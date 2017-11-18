@@ -98,7 +98,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
         analyzer.analyze(result, null);
         final String vendorString = result.getEvidence(EvidenceType.VENDOR).toString();
         assertThat(vendorString, containsString("Sanjeev Koranga"));
-        assertThat(vendorString, containsString("dns-sync_project"));
+        assertThat(vendorString, containsString("dns-sync"));
         assertThat(result.getEvidence(EvidenceType.PRODUCT).toString(), containsString("dns-sync"));
         assertThat(result.getEvidence(EvidenceType.VERSION).toString(), containsString("0.1.0"));
         assertEquals(NodePackageAnalyzer.DEPENDENCY_ECOSYSTEM, result.getEcosystem());

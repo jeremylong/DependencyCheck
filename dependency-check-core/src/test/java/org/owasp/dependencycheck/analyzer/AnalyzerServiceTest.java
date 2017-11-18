@@ -76,15 +76,11 @@ public class AnalyzerServiceTest extends BaseDBTestCase {
         AnalyzerService instance = new AnalyzerService(Thread.currentThread().getContextClassLoader(), getSettings());
         List<Analyzer> result = instance.getAnalyzers();
         String experimental = "CMake Analyzer";
-        String retired = "Node.js Package Analyzer";
         boolean found = false;
         boolean retiredFound = false;
         for (Analyzer a : result) {
             if (experimental.equals(a.getName())) {
                 found = true;
-            }
-            if (retired.equals(a.getName())) {
-                retiredFound = true;
             }
         }
         assertFalse("Experimental analyzer loaded when set to false", found);
@@ -99,13 +95,10 @@ public class AnalyzerServiceTest extends BaseDBTestCase {
             if (experimental.equals(a.getName())) {
                 found = true;
             }
-            if (retired.equals(a.getName())) {
-                retiredFound = true;
-            }
         }
         assertTrue("Experimental analyzer not loaded when set to true", found);
         assertFalse("Retired analyzer loaded when set to false", retiredFound);
-        
+
         getSettings().setBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, false);
         getSettings().setBoolean(Settings.KEYS.ANALYZER_RETIRED_ENABLED, true);
         instance = new AnalyzerService(Thread.currentThread().getContextClassLoader(), getSettings());
@@ -116,11 +109,8 @@ public class AnalyzerServiceTest extends BaseDBTestCase {
             if (experimental.equals(a.getName())) {
                 found = true;
             }
-            if (retired.equals(a.getName())) {
-                retiredFound = true;
-            }
         }
         assertFalse("Experimental analyzer loaded when set to false", found);
-        assertTrue("Retired analyzer not loaded when set to true", retiredFound);
+        //assertTrue("Retired analyzer not loaded when set to true", retiredFound);
     }
 }
