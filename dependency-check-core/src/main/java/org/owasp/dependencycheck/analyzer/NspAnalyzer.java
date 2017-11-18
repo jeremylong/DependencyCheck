@@ -25,7 +25,6 @@ import org.owasp.dependencycheck.data.nsp.NspSearch;
 import org.owasp.dependencycheck.data.nsp.SanitizePackage;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
@@ -36,7 +35,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -236,9 +234,9 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
                 vs.setName(advisory.getModule() + ":" + advisory.getVulnerableVersions());
                 vuln.setVulnerableSoftware(new HashSet<>(Arrays.asList(vs)));
 
-                Dependency existing = findDependency(engine, advisory.getModule(), advisory.getVersion());
+                final Dependency existing = findDependency(engine, advisory.getModule(), advisory.getVersion());
                 if (existing == null) {
-                    Dependency nodeModule = createDependency(dependency, advisory.getModule(), advisory.getVersion(), "transitive");
+                    final Dependency nodeModule = createDependency(dependency, advisory.getModule(), advisory.getVersion(), "transitive");
                     nodeModule.addVulnerability(vuln);
                     engine.addDependency(nodeModule);
                 } else {
@@ -257,6 +255,15 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
+    /**
+     * Construct a dependency object.
+     *
+     * @param dependency the parent dependency
+     * @param name the name of the dependency to create
+     * @param version the version of the dependency to create
+     * @param scope the scope of the dependency being created
+     * @return the generated dependency
+     */
     private Dependency createDependency(Dependency dependency, String name, String version, String scope) {
         final Dependency nodeModule = new Dependency(new File(dependency.getActualFile() + "?" + name), true);
         nodeModule.setEcosystem(DEPENDENCY_ECOSYSTEM);
@@ -308,7 +315,7 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
                 if (entry.getValue() != null && entry.getValue().getValueType() == JsonValue.ValueType.STRING) {
                     version = ((JsonString) entry.getValue()).getString();
                 }
-                Dependency existing = findDependency(engine, name, version);
+                final Dependency existing = findDependency(engine, name, version);
                 if (existing == null) {
                     final Dependency nodeModule = createDependency(dependency, name, version, depType);
                     engine.addDependency(nodeModule);
@@ -353,6 +360,15 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
+    /**
+     * Locates the dependency from the list of dependencies that have been
+     * scanned by the engine.
+     *
+     * @param engine the dependency-check engine
+     * @param name the name of the dependency to find
+     * @param version the version of the dependency to find
+     * @return the identified dependency; otherwise null
+     */
     private Dependency findDependency(Engine engine, String name, String version) {
         for (Dependency d : engine.getDependencies()) {
             if (DEPENDENCY_ECOSYSTEM.equals(d.getEcosystem()) && name.equals(d.getName()) && version != null && d.getVersion() != null) {
@@ -374,16 +390,18 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
                         type = "*";
                         tmp = version;
                     }
-                    String[] v = tmp.split(" ")[0].split("\\.");
-                    String[] depVersion = dependencyVersion.split("\\.");
+                    final String[] v = tmp.split(" ")[0].split("\\.");
+                    final String[] depVersion = dependencyVersion.split("\\.");
 
                     if ("^".equals(type) && v[0].equals(depVersion[0])) {
                         return d;
-                    } else if ("~".equals(type) && v.length >= 2 && depVersion.length >= 2 && v[0].equals(depVersion[0]) && v[1].equals(depVersion[1])) {
+                    } else if ("~".equals(type) && v.length >= 2 && depVersion.length >= 2
+                            && v[0].equals(depVersion[0]) && v[1].equals(depVersion[1])) {
                         return d;
                     } else if (v[0].equals("*")
                             || (v.length >= 2 && v[0].equals(depVersion[0]) && v[1].equals("*"))
-                            || (v.length >= 3 && depVersion.length >= 2 && v[0].equals(depVersion[0]) && v[1].equals(depVersion[1]) && v[2].equals("*"))) {
+                            || (v.length >= 3 && depVersion.length >= 2 && v[0].equals(depVersion[0])
+                            && v[1].equals(depVersion[1]) && v[2].equals("*"))) {
                         return d;
                     }
                 }

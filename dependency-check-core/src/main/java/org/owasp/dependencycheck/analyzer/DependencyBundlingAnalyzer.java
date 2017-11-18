@@ -461,14 +461,37 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
         return filePath != null && filePath.matches(".*\\.(ear|war)[\\\\/].*");
     }
 
+    /**
+     * Determine if the dependency ecosystem is equal in the given dependencies.
+     *
+     * @param dependency a dependency to compare
+     * @param nextDependency a dependency to compare
+     * @return true if the ecosystem is equal in both dependencies; otherwise
+     * false
+     */
     private boolean ecoSystemIs(String ecoSystem, Dependency dependency, Dependency nextDependency) {
         return ecoSystem.equals(dependency.getEcosystem()) && ecoSystem.equals(nextDependency.getEcosystem());
     }
 
+    /**
+     * Determine if the dependency name is equal in the given dependencies.
+     *
+     * @param dependency a dependency to compare
+     * @param nextDependency a dependency to compare
+     * @return true if the name is equal in both dependencies; otherwise false
+     */
     private boolean namesAreEqual(Dependency dependency, Dependency nextDependency) {
         return dependency.getName() != null && dependency.getName().equals(nextDependency.getName());
     }
 
+    /**
+     * Determine if the dependency version is equal in the given dependencies.
+     *
+     * @param dependency a dependency to compare
+     * @param nextDependency a dependency to compare
+     * @return true if the version is equal in both dependencies; otherwise
+     * false
+     */
     private boolean versionsAreEqual(Dependency dependency, Dependency nextDependency) {
         return dependency.getVersion() != null && dependency.getVersion().equals(nextDependency.getVersion());
     }

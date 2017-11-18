@@ -118,7 +118,8 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
      * removed from the main analysis loop, this function adds to this
      * collection
      */
-    public static void mergeDependencies(final Dependency dependency, final Dependency relatedDependency, final Set<Dependency> dependenciesToRemove) {
+    public static void mergeDependencies(final Dependency dependency, final Dependency relatedDependency,
+            final Set<Dependency> dependenciesToRemove) {
         LOGGER.debug("Merging '{}' into '{}'", relatedDependency.getFilePath(), dependency.getFilePath());
         dependency.addRelatedDependency(relatedDependency);
         for (Evidence e : relatedDependency.getEvidence(EvidenceType.VENDOR)) {

@@ -142,6 +142,11 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
+    /**
+     * Collects evidence from the given JSON for the associated dependency.
+     * @param json the JSON that contains the evidence to collect
+     * @param dependency the dependency to add the evidence too
+     */
     public static void gatherEvidence(final JsonObject json, Dependency dependency) {
         if (json.containsKey("name")) {
             final Object value = json.get("name");
