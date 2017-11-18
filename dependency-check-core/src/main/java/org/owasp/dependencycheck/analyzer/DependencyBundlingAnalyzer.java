@@ -135,6 +135,15 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
                 mergeDependencies(nextDependency, dependency, dependenciesToRemove);
                 return true; //since we merged into the next dependency - skip forward to the next in mainIterator
             }
+        } else if (ecoSystemIs(NspAnalyzer.DEPENDENCY_ECOSYSTEM, dependency, nextDependency)
+                && namesAreEqual(dependency, nextDependency)
+                && versionsAreEqual(dependency, nextDependency)) {
+            if (dependency.isVirtual()) {
+                DependencyMergingAnalyzer.mergeDependencies(dependency, nextDependency, dependenciesToRemove);
+            } else {
+                DependencyMergingAnalyzer.mergeDependencies(nextDependency, dependency, dependenciesToRemove);
+                return true;
+            }
         }
         return false;
     }
@@ -450,6 +459,18 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
      */
     private boolean containedInWar(String filePath) {
         return filePath != null && filePath.matches(".*\\.(ear|war)[\\\\/].*");
+    }
+
+    private boolean ecoSystemIs(String ecoSystem, Dependency dependency, Dependency nextDependency) {
+        return ecoSystem.equals(dependency.getEcosystem()) && ecoSystem.equals(nextDependency.getEcosystem());
+    }
+
+    private boolean namesAreEqual(Dependency dependency, Dependency nextDependency) {
+        return dependency.getName() != null && dependency.getName().equals(nextDependency.getName());
+    }
+
+    private boolean versionsAreEqual(Dependency dependency, Dependency nextDependency) {
+        return dependency.getVersion() != null && dependency.getVersion().equals(nextDependency.getVersion());
     }
 
 }

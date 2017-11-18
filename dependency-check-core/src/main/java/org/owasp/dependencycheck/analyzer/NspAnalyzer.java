@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -71,7 +72,11 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
      * The default URL to the NSP check API.
      */
     public static final String DEFAULT_URL = "https://api.nodesecurity.io/check";
-
+    /**
+     * A descriptor for the type of dependencies processed or added by this
+     * analyzer.
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = "npm";
     /**
      * The file name to scan.
      */
@@ -136,10 +141,10 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Returns the key used in the properties file to reference the analyzer's
-     * enabled property.x
+     * Returns the key used in the properties file to determine if the analyzer
+     * is enabled.
      *
-     * @return the analyzer's enabled property setting key
+     * @return the enabled property setting key for the analyzer
      */
     @Override
     protected String getAnalyzerEnabledSettingKey() {
@@ -152,7 +157,16 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
         if (!file.isFile() || file.length() == 0) {
             return;
         }
+
         try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {
+
+            // Retrieves the contents of package.json from the Dependency
+            final JsonObject packageJson = jsonReader.readObject();
+
+            if (dependency.getEcosystem() == null || dependency.getName() == null) {
+                NodePackageAnalyzer.gatherEvidence(packageJson, dependency);
+                dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
+            }
 
             // Do not scan the node_modules directory
             if (file.getCanonicalPath().contains(File.separator + "node_modules" + File.separator)) {
@@ -160,8 +174,31 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
                 return;
             }
 
-            // Retrieves the contents of package.json from the Dependency
-            final JsonObject packageJson = jsonReader.readObject();
+            //Processes the dependencies objects in package.json and adds all the modules as dependencies
+            if (packageJson.containsKey("dependencies")) {
+                final JsonObject dependencies = packageJson.getJsonObject("dependencies");
+                processPackage(engine, dependency, dependencies, "dependencies");
+            }
+            if (packageJson.containsKey("devDependencies")) {
+                final JsonObject dependencies = packageJson.getJsonObject("devDependencies");
+                processPackage(engine, dependency, dependencies, "devDependencies");
+            }
+            if (packageJson.containsKey("optionalDependencies")) {
+                final JsonObject dependencies = packageJson.getJsonObject("optionalDependencies");
+                processPackage(engine, dependency, dependencies, "optionalDependencies");
+            }
+            if (packageJson.containsKey("peerDependencies")) {
+                final JsonObject dependencies = packageJson.getJsonObject("peerDependencies");
+                processPackage(engine, dependency, dependencies, "peerDependencies");
+            }
+            if (packageJson.containsKey("bundleDependencies")) {
+                final JsonArray dependencies = packageJson.getJsonArray("bundleDependencies");
+                processPackage(engine, dependency, dependencies, "bundleDependencies");
+            }
+            if (packageJson.containsKey("bundledDependencies")) {
+                final JsonArray dependencies = packageJson.getJsonArray("bundledDependencies");
+                processPackage(engine, dependency, dependencies, "bundledDependencies");
+            }
 
             // Create a sanitized version of the package.json
             final JsonObject sanitizedJson = SanitizePackage.sanitize(packageJson);
@@ -192,77 +229,21 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
                  * Create a single vulnerable software object - these do not use CPEs unlike the NVD.
                  */
                 final VulnerableSoftware vs = new VulnerableSoftware();
-                //vs.setVersion(advisory.getVulnerableVersions());
-                vs.setUpdate(advisory.getPatchedVersions());
+                //TODO consider changing this to available versions on the dependency
+                //vs.setUpdate(advisory.getPatchedVersions());
+
                 vs.setName(advisory.getModule() + ":" + advisory.getVulnerableVersions());
                 vuln.setVulnerableSoftware(new HashSet<>(Arrays.asList(vs)));
 
-                // Add the vulnerability to package.json
-                dependency.addVulnerability(vuln);
-            }
-
-            /*
-             * Adds evidence about the node package itself, not any of the modules.
-             */
-            if (packageJson.containsKey("name")) {
-                final Object value = packageJson.get("name");
-                if (value instanceof JsonString) {
-                    final String valueString = ((JsonString) value).getString();
-                    dependency.addEvidence(EvidenceType.PRODUCT, PACKAGE_JSON, "name", valueString, Confidence.HIGHEST);
-                    dependency.addEvidence(EvidenceType.VENDOR, PACKAGE_JSON, "name_project",
-                            String.format("%s_project", valueString), Confidence.LOW);
+                Dependency existing = findDependency(engine, advisory.getModule(), advisory.getVersion());
+                if (existing == null) {
+                    Dependency nodeModule = createDependency(dependency, advisory.getModule(), advisory.getVersion(), "transitive");
+                    nodeModule.addVulnerability(vuln);
+                    engine.addDependency(nodeModule);
                 } else {
-                    LOGGER.warn("JSON value not string as expected: {}", value);
+                    existing.addVulnerability(vuln);
                 }
             }
-
-            /*
-             * Processes the dependencies objects in package.json and adds all the modules as related dependencies
-             */
-            if (packageJson.containsKey("dependencies")) {
-                final JsonObject dependencies = packageJson.getJsonObject("dependencies");
-                processPackage(dependency, dependencies, "dependencies");
-            }
-            if (packageJson.containsKey("devDependencies")) {
-                final JsonObject dependencies = packageJson.getJsonObject("devDependencies");
-                processPackage(dependency, dependencies, "devDependencies");
-            }
-            if (packageJson.containsKey("optionalDependencies")) {
-                final JsonObject dependencies = packageJson.getJsonObject("optionalDependencies");
-                processPackage(dependency, dependencies, "optionalDependencies");
-            }
-            if (packageJson.containsKey("peerDependencies")) {
-                final JsonObject dependencies = packageJson.getJsonObject("peerDependencies");
-                processPackage(dependency, dependencies, "peerDependencies");
-            }
-            if (packageJson.containsKey("bundleDependencies")) {
-                final JsonArray dependencies = packageJson.getJsonArray("bundleDependencies");
-                processPackage(dependency, dependencies, "bundleDependencies");
-            }
-            if (packageJson.containsKey("bundledDependencies")) {
-                final JsonArray dependencies = packageJson.getJsonArray("bundledDependencies");
-                processPackage(dependency, dependencies, "bundledDependencies");
-            }
-
-            /*
-             * Adds the license if defined in package.json
-             */
-            if (packageJson.containsKey("license")) {
-                final Object value = packageJson.get("license");
-                if (value instanceof JsonString) {
-                    dependency.setLicense(packageJson.getString("license"));
-                } else {
-                    dependency.setLicense(packageJson.getJsonObject("license").getString("type"));
-                }
-            }
-
-            /*
-             * Adds general evidence to about the package.
-             */
-            addToEvidence(dependency, EvidenceType.PRODUCT, packageJson, "description");
-            addToEvidence(dependency, EvidenceType.VENDOR, packageJson, "author");
-            addToEvidence(dependency, EvidenceType.VERSION, packageJson, "version");
-            dependency.setDisplayFileName(String.format("%s/%s", file.getParentFile().getName(), file.getName()));
         } catch (URLConnectionFailureException e) {
             this.setEnabled(false);
             throw new AnalysisException(e.getMessage(), e);
@@ -275,62 +256,62 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
+    private Dependency createDependency(Dependency dependency, String name, String version, String scope) {
+        final Dependency nodeModule = new Dependency(new File(dependency.getActualFile() + "?" + name), true);
+        nodeModule.setEcosystem(DEPENDENCY_ECOSYSTEM);
+        nodeModule.addEvidence(EvidenceType.PRODUCT, "package.json", "name", name, Confidence.HIGHEST);
+        nodeModule.addEvidence(EvidenceType.VENDOR, "package.json", "name", name, Confidence.HIGH);
+        nodeModule.addEvidence(EvidenceType.VERSION, "package.json", "version", version, Confidence.HIGHEST);
+        nodeModule.addProjectReference(dependency.getName() + ": " + scope);
+        nodeModule.setName(name);
+        nodeModule.setVersion(version);
+        nodeModule.addIdentifier("npm", String.format("%s:%s", name, version), null, Confidence.HIGHEST);
+        return nodeModule;
+    }
+
     /**
      * Processes a part of package.json (as defined by JsonArray) and update the
      * specified dependency with relevant info.
      *
+     * @param engine the dependency-check engine
      * @param dependency the Dependency to update
      * @param jsonArray the jsonArray to parse
      * @param depType the dependency type
      */
-    private void processPackage(Dependency dependency, JsonArray jsonArray, String depType) {
+    private void processPackage(Engine engine, Dependency dependency, JsonArray jsonArray, String depType) {
         final JsonObjectBuilder builder = Json.createObjectBuilder();
         for (JsonString str : jsonArray.getValuesAs(JsonString.class)) {
             builder.add(str.toString(), "");
         }
         final JsonObject jsonObject = builder.build();
-        processPackage(dependency, jsonObject, depType);
+        processPackage(engine, dependency, jsonObject, depType);
     }
 
     /**
      * Processes a part of package.json (as defined by JsonObject) and update
      * the specified dependency with relevant info.
      *
+     * @param engine the dependency-check engine
      * @param dependency the Dependency to update
      * @param jsonObject the jsonObject to parse
      * @param depType the dependency type
      */
-    private void processPackage(Dependency dependency, JsonObject jsonObject, String depType) {
+    private void processPackage(Engine engine, Dependency dependency, JsonObject jsonObject, String depType) {
         for (int i = 0; i < jsonObject.size(); i++) {
             for (Map.Entry<String, JsonValue> entry : jsonObject.entrySet()) {
-                /*
-                 * Create identifies that include the npm module and version. Since these are defined,
-                 * assign the highest confidence.
-                 */
-                final Identifier moduleName = new Identifier("npm", "Module", null, entry.getKey());
-                moduleName.setConfidence(Confidence.HIGHEST);
+
+                final String name = entry.getKey();
                 String version = "";
                 if (entry.getValue() != null && entry.getValue().getValueType() == JsonValue.ValueType.STRING) {
                     version = ((JsonString) entry.getValue()).getString();
                 }
-                final Identifier moduleVersion = new Identifier("npm", "Version", null, version);
-                moduleVersion.setConfidence(Confidence.HIGHEST);
-
-                final Identifier moduleDepType = new Identifier("npm", "Scope", null, depType);
-                moduleVersion.setConfidence(Confidence.HIGHEST);
-
-                /*
-                 * Create related dependencies for each module defined in package.json. The path to the related
-                 * dependency will not actually exist but needs to be unique (due to the use of Set in Dependency).
-                 * The use of related dependencies is a way to specify the actual software BOM in package.json.
-                 */
-                //TODO is this actually correct?  or should these be transitive dependencies?
-                final Dependency nodeModule = new Dependency(new File(dependency.getActualFile() + "#" + entry.getKey()), true);
-                nodeModule.setDisplayFileName(entry.getKey());
-                nodeModule.addIdentifier(moduleName);
-                nodeModule.addIdentifier(moduleVersion);
-                nodeModule.addIdentifier(moduleDepType);
-                dependency.addRelatedDependency(nodeModule);
+                Dependency existing = findDependency(engine, name, version);
+                if (existing == null) {
+                    final Dependency nodeModule = createDependency(dependency, name, version, depType);
+                    engine.addDependency(nodeModule);
+                } else {
+                    existing.addProjectReference(dependency.getName() + ": " + depType);
+                }
             }
         }
     }
@@ -367,5 +348,44 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.warn("JSON value not string or JSON object as expected: {}", value);
             }
         }
+    }
+
+    private Dependency findDependency(Engine engine, String name, String version) {
+        for (Dependency d : engine.getDependencies()) {
+            if (DEPENDENCY_ECOSYSTEM.equals(d.getEcosystem()) && name.equals(d.getName()) && version != null && d.getVersion() != null) {
+                String dependencyVersion = d.getVersion();
+                if (dependencyVersion.startsWith("^") || dependencyVersion.startsWith("~")) {
+                    dependencyVersion = dependencyVersion.substring(1);
+                }
+
+                if (version.equals(dependencyVersion)) {
+                    return d;
+                }
+                if (version.startsWith("^") || version.startsWith("~") || version.contains("*")) {
+                    String type;
+                    String tmp;
+                    if (version.startsWith("^") || version.startsWith("~")) {
+                        type = version.substring(0, 1);
+                        tmp = version.substring(1);
+                    } else {
+                        type = "*";
+                        tmp = version;
+                    }
+                    String[] v = tmp.split(" ")[0].split("\\.");
+                    String[] depVersion = dependencyVersion.split("\\.");
+
+                    if ("^".equals(type) && v[0].equals(depVersion[0])) {
+                        return d;
+                    } else if ("~".equals(type) && v.length >= 2 && depVersion.length >= 2 && v[0].equals(depVersion[0]) && v[1].equals(depVersion[1])) {
+                        return d;
+                    } else if (v[0].equals("*")
+                            || (v.length >= 2 && v[0].equals(depVersion[0]) && v[1].equals("*"))
+                            || (v.length >= 3 && depVersion.length >= 2 && v[0].equals(depVersion[0]) && v[1].equals(depVersion[1]) && v[2].equals("*"))) {
+                        return d;
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

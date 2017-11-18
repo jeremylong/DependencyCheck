@@ -48,7 +48,6 @@ import org.owasp.dependencycheck.dependency.EvidenceType;
  * @author Dale Visser
  */
 @ThreadSafe
-@Retired
 public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
@@ -133,26 +132,45 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
         }
         try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {
             final JsonObject json = jsonReader.readObject();
-            if (json.containsKey("name")) {
-                final Object value = json.get("name");
-                if (value instanceof JsonString) {
-                    final String valueString = ((JsonString) value).getString();
-                    dependency.setName(valueString);
-                    dependency.addEvidence(EvidenceType.PRODUCT, PACKAGE_JSON, "name", valueString, Confidence.HIGHEST);
-                    dependency.addEvidence(EvidenceType.VENDOR, PACKAGE_JSON, "name_project",
-                            String.format("%s_project", valueString), Confidence.LOW);
-                } else {
-                    LOGGER.warn("JSON value not string as expected: {}", value);
-                }
-            }
-            addToEvidence(dependency, EvidenceType.PRODUCT, json, "description");
-            addToEvidence(dependency, EvidenceType.VENDOR, json, "author");
-            final String version = addToEvidence(dependency, EvidenceType.VERSION, json, "version");
-            dependency.setVersion(version);
+
+            gatherEvidence(json, dependency);
+
         } catch (JsonException e) {
             LOGGER.warn("Failed to parse package.json file.", e);
         } catch (IOException e) {
             throw new AnalysisException("Problem occurred while reading dependency file.", e);
+        }
+    }
+
+    public static void gatherEvidence(final JsonObject json, Dependency dependency) {
+        if (json.containsKey("name")) {
+            final Object value = json.get("name");
+            if (value instanceof JsonString) {
+                final String valueString = ((JsonString) value).getString();
+                dependency.setName(valueString);
+                dependency.setPackagePath(valueString);
+                dependency.addEvidence(EvidenceType.PRODUCT, PACKAGE_JSON, "name", valueString, Confidence.HIGHEST);
+                dependency.addEvidence(EvidenceType.VENDOR, PACKAGE_JSON, "name", valueString, Confidence.HIGH);
+            } else {
+                LOGGER.warn("JSON value not string as expected: {}", value);
+            }
+        }
+        addToEvidence(dependency, EvidenceType.PRODUCT, json, "description");
+        addToEvidence(dependency, EvidenceType.VENDOR, json, "author");
+        final String version = addToEvidence(dependency, EvidenceType.VERSION, json, "version");
+        if (version != null) {
+            dependency.setVersion(version);
+            dependency.addIdentifier("npm", String.format("%s:%s", dependency.getName(), version), null, Confidence.HIGHEST);
+        }
+
+        // Adds the license if defined in package.json
+        if (json.containsKey("license")) {
+            final Object value = json.get("license");
+            if (value instanceof JsonString) {
+                dependency.setLicense(json.getString("license"));
+            } else {
+                dependency.setLicense(json.getJsonObject("license").getString("type"));
+            }
         }
     }
 
@@ -166,7 +184,7 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
      * @return the actual string set into evidence
      * @param key the key to obtain the data from the json information
      */
-    private String addToEvidence(Dependency dep, EvidenceType t, JsonObject json, String key) {
+    private static String addToEvidence(Dependency dep, EvidenceType t, JsonObject json, String key) {
         String evidenceStr = null;
         if (json.containsKey(key)) {
             final JsonValue value = json.get(key);
