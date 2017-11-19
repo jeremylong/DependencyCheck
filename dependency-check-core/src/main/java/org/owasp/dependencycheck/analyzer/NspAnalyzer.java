@@ -269,6 +269,7 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
         nodeModule.setEcosystem(DEPENDENCY_ECOSYSTEM);
         //this is virtual - the sha1 is purely for the hyperlink in the final html report
         nodeModule.setSha1sum(Checksum.getSHA1Checksum(String.format("%s:%s", name, version)));
+        nodeModule.setMd5sum(Checksum.getMD5Checksum(String.format("%s:%s", name, version)));
         nodeModule.addEvidence(EvidenceType.PRODUCT, "package.json", "name", name, Confidence.HIGHEST);
         nodeModule.addEvidence(EvidenceType.VENDOR, "package.json", "name", name, Confidence.HIGH);
         nodeModule.addEvidence(EvidenceType.VERSION, "package.json", "version", version, Confidence.HIGHEST);
