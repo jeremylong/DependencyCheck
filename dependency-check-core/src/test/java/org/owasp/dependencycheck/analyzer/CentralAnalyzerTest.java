@@ -85,7 +85,6 @@ public class CentralAnalyzerTest {
             {
                 centralSearch.searchSha1(SHA1_SUM);
                 result = new IOException("Could not connect to MavenCentral (500): Internal Server Error");
-                result = new IOException("Could not connect to MavenCentral (500): Internal Server Error");
                 result = expectedMavenArtifacts;
             }
         };
