@@ -20,7 +20,6 @@ package org.owasp.dependencycheck.analyzer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -46,7 +45,11 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
      * The Logger for use throughout the class
      */
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(NvdCveAnalyzer.class);
-    
+    /**
+     * The list of ecosystems to skip during analysis. These are skipped because
+     * there is generally a more accurate vulnerability analyzer in the
+     * pipeline.
+     */
     private List<String> skipEcosystems;
 
     /**
@@ -80,7 +83,7 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
         if (skipEcosystems.contains(dependency.getEcosystem())) {
             return;
         }
-        
+
         final CveDB cveDB = engine.getDatabase();
         for (Identifier id : dependency.getIdentifiers()) {
             if ("cpe".equals(id.getType())) {

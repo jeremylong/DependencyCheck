@@ -102,10 +102,10 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         if (engine.getMode() != Mode.EVIDENCE_COLLECTION) {
             try {
-                Settings settings = engine.getSettings();
+                final Settings settings = engine.getSettings();
                 final String[] tmp = settings.getArray(Settings.KEYS.ECOSYSTEM_SKIP_NVDCVE);
                 if (tmp != null) {
-                    List<String> skipEcosystems = Arrays.asList(tmp);
+                    final List<String> skipEcosystems = Arrays.asList(tmp);
                     if (skipEcosystems.contains(DEPENDENCY_ECOSYSTEM)
                             && !settings.getBoolean(Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED)) {
                         LOGGER.debug("NodePackageAnalyzer enabled without a corresponding vulnerability analyzer");

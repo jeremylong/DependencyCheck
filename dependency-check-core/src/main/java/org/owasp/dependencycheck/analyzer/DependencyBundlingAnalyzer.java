@@ -464,6 +464,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
     /**
      * Determine if the dependency ecosystem is equal in the given dependencies.
      *
+     * @param ecoSystem the ecosystem to validate against
      * @param dependency a dependency to compare
      * @param nextDependency a dependency to compare
      * @return true if the ecosystem is equal in both dependencies; otherwise
