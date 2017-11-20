@@ -29,6 +29,7 @@ import java.io.File;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
+import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
@@ -42,6 +43,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
      * The analyzer to test.
      */
     private NodePackageAnalyzer analyzer;
+    private Engine engine;
 
     /**
      * Correctly setup the analyzer for testing.
@@ -52,14 +54,15 @@ public class NodePackageAnalyzerTest extends BaseTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
+        engine = new Engine(this.getSettings());
         analyzer = new NodePackageAnalyzer();
         analyzer.setFilesMatched(true);
         analyzer.initialize(getSettings());
-        analyzer.prepare(null);
+        analyzer.prepare(engine);
     }
 
     /**
-     * Cleanup the analyzer's temp files, etc.
+     * Cleanup temp files, close resources, etc.
      *
      * @throws Exception thrown if there is a problem
      */
@@ -67,6 +70,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
     @Override
     public void tearDown() throws Exception {
         analyzer.close();
+        engine.close();
         super.tearDown();
     }
 

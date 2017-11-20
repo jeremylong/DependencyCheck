@@ -75,7 +75,7 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
-    public static final String DEPENDENCY_ECOSYSTEM = "npm";
+    public static final String DEPENDENCY_ECOSYSTEM = NodePackageAnalyzer.DEPENDENCY_ECOSYSTEM;
     /**
      * The file name to scan.
      */

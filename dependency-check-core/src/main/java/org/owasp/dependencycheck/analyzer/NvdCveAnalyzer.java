@@ -17,7 +17,10 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -27,6 +30,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.LoggerFactory;
 
 /**
  * NvdCveAnalyzer is a utility class that takes a project dependency and
@@ -41,7 +45,27 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
     /**
      * The Logger for use throughout the class
      */
-    //private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(NvdCveAnalyzer.class);
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(NvdCveAnalyzer.class);
+    
+    private List<String> skipEcosystems;
+
+    /**
+     * Initializes the analyzer with the configured settings.
+     *
+     * @param settings the configured settings to use
+     */
+    @Override
+    public void initialize(Settings settings) {
+        super.initialize(settings);
+        final String[] tmp = settings.getArray(Settings.KEYS.ECOSYSTEM_SKIP_NVDCVE);
+        if (tmp == null) {
+            skipEcosystems = new ArrayList<>();
+        } else {
+            LOGGER.info("Skipping NVD CVE Analysis for {}", tmp);
+            skipEcosystems = Arrays.asList(tmp);
+        }
+    }
+
     /**
      * Analyzes a dependency and attempts to determine if there are any CPE
      * identifiers for this dependency.
@@ -53,6 +77,10 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
      */
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+        if (skipEcosystems.contains(dependency.getEcosystem())) {
+            return;
+        }
+        
         final CveDB cveDB = engine.getDatabase();
         for (Identifier id : dependency.getIdentifiers()) {
             if ("cpe".equals(id.getType())) {

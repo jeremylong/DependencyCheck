@@ -442,6 +442,10 @@ public final class Settings {
          * new version available.
          */
         public static final String UPDATE_VERSION_CHECK_ENABLED = "updater.versioncheck.enabled";
+        /**
+         * The key to determine which ecosystems should skip the NVD CVE analysis.
+         */
+        public static final String ECOSYSTEM_SKIP_NVDCVE = "ecosystem.skip.nvdcve";
 
         /**
          * private constructor because this is a "utility" class containing

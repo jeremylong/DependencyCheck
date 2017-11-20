@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.json.Json;
@@ -38,8 +40,10 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonString;
 import javax.json.JsonValue;
+import org.owasp.dependencycheck.Engine.Mode;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
 
 /**
  * Used to analyze Node Package Manager (npm) package.json files, and collect
@@ -87,9 +91,35 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
         return PACKAGE_JSON_FILTER;
     }
 
+    /**
+     * Performs validation on the configuration to ensure that the correct
+     * analyzers are in place.
+     *
+     * @param engine the dependency-check engine
+     * @throws InitializationException thrown if there is a configuration error
+     */
     @Override
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
-        // NO-OP
+        if (engine.getMode() != Mode.EVIDENCE_COLLECTION) {
+            try {
+                Settings settings = engine.getSettings();
+                final String[] tmp = settings.getArray(Settings.KEYS.ECOSYSTEM_SKIP_NVDCVE);
+                if (tmp != null) {
+                    List<String> skipEcosystems = Arrays.asList(tmp);
+                    if (skipEcosystems.contains(DEPENDENCY_ECOSYSTEM)
+                            && !settings.getBoolean(Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED)) {
+                        LOGGER.debug("NodePackageAnalyzer enabled without a corresponding vulnerability analyzer");
+                        final String msg = "Invalid Configuration: enabling the Node Package Analyzer without "
+                                + "using the NSP Analyzer is not supported.";
+                        throw new InitializationException(msg);
+                    } else if (!skipEcosystems.contains(DEPENDENCY_ECOSYSTEM)) {
+                        LOGGER.warn("Using the NVD CVE Analyzer with Node.js can result in many false positives.");
+                    }
+                }
+            } catch (InvalidSettingException ex) {
+                throw new InitializationException("Unable to read configuration settings", ex);
+            }
+        }
     }
 
     /**
@@ -144,6 +174,7 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
      * Collects evidence from the given JSON for the associated dependency.
+     *
      * @param json the JSON that contains the evidence to collect
      * @param dependency the dependency to add the evidence too
      */
