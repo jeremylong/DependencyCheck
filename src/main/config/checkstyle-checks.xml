@@ -114,7 +114,7 @@
         </module>
 
         <module name="MethodCount">
-            <property name="maxTotal" value="40"/>
+            <property name="maxTotal" value="80"/>
         </module>
 
         <module name="LocalFinalVariableName"/>
