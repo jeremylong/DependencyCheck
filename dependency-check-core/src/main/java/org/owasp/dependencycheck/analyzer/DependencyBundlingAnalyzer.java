@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import com.vdurmont.semver4j.Semver;
+import com.vdurmont.semver4j.Semver.SemverType;
+import com.vdurmont.semver4j.SemverException;
 import java.io.File;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -135,10 +138,11 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
                 mergeDependencies(nextDependency, dependency, dependenciesToRemove);
                 return true; //since we merged into the next dependency - skip forward to the next in mainIterator
             }
-        } else if (ecoSystemIs(NspAnalyzer.DEPENDENCY_ECOSYSTEM, dependency, nextDependency)
+        } else if (ecoSystemIs(AbstractNpmAnalyzer.NPM_DEPENDENCY_ECOSYSTEM, dependency, nextDependency)
                 && namesAreEqual(dependency, nextDependency)
-                && versionsAreEqual(dependency, nextDependency)) {
-            if (dependency.isVirtual()) {
+                && npmVersionsMatch(dependency.getVersion(), nextDependency.getVersion())) {
+
+            if (!dependency.isVirtual()) {
                 DependencyMergingAnalyzer.mergeDependencies(dependency, nextDependency, dependenciesToRemove);
             } else {
                 DependencyMergingAnalyzer.mergeDependencies(nextDependency, dependency, dependenciesToRemove);
@@ -158,7 +162,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
      * removed from the main analysis loop, this function adds to this
      * collection
      */
-    private void mergeDependencies(final Dependency dependency, final Dependency relatedDependency, final Set<Dependency> dependenciesToRemove) {
+    public static void mergeDependencies(final Dependency dependency, final Dependency relatedDependency, final Set<Dependency> dependenciesToRemove) {
         dependency.addRelatedDependency(relatedDependency);
         for (Dependency d : relatedDependency.getRelatedDependencies()) {
             dependency.addRelatedDependency(d);
@@ -167,7 +171,9 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
         if (dependency.getSha1sum().equals(relatedDependency.getSha1sum())) {
             dependency.addAllProjectReferences(relatedDependency.getProjectReferences());
         }
-        dependenciesToRemove.add(relatedDependency);
+        if (dependenciesToRemove != null) {
+            dependenciesToRemove.add(relatedDependency);
+        }
     }
 
     /**
@@ -487,14 +493,72 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
 
     /**
      * Determine if the dependency version is equal in the given dependencies.
+     * This method attempts to evaluate version range checks.
      *
-     * @param dependency a dependency to compare
-     * @param nextDependency a dependency to compare
+     * @param current a dependency version to compare
+     * @param nextDependency a dependency version to compare
      * @return true if the version is equal in both dependencies; otherwise
      * false
      */
-    private boolean versionsAreEqual(Dependency dependency, Dependency nextDependency) {
-        return dependency.getVersion() != null && dependency.getVersion().equals(nextDependency.getVersion());
+    public static boolean npmVersionsMatch(String current, String next) {
+        String left = current;
+        String right = next;
+        if (left == null || right == null) {
+            return false;
+        }
+        if (left.equals(right) || "*".equals(left) || "*".equals(right)) {
+            return true;
+        }
+        if (left.contains(" ")) { // we have a version string from package.json
+            if (right.contains(" ")) { // we can't evaluate this ">=1.5.4 <2.0.0" vs "2 || 3"
+                return false;
+            }
+            if (!right.matches("^\\d.*$")) {
+                right = stripLeadingNonNumeric(right);
+                if (right == null) {
+                    return false;
+                }
+            }
+            try {
+                Semver v = new Semver(right, SemverType.NPM);
+                return v.satisfies(left);
+            } catch (SemverException ex) {
+                LOGGER.trace("ignore", ex);
+            }
+        } else {
+            if (!left.matches("^\\d.*$")) {
+                left = stripLeadingNonNumeric(left);
+                if (left == null) {
+                    return false;
+                }
+            }
+            try {
+                Semver v = new Semver(left, SemverType.NPM);
+                if (v.satisfies(right)) {
+                    return true;
+                }
+                if (!right.contains((" "))) {
+                    left = current;
+                    right = stripLeadingNonNumeric(right);
+                    if (right != null) {
+                        v = new Semver(right, SemverType.NPM);
+                        return v.satisfies(left);
+                    }
+                }
+            } catch (SemverException ex) {
+                LOGGER.trace("ignore", ex);
+            }
+        }
+        return false;
+    }
+
+    private static String stripLeadingNonNumeric(String str) {
+        for (int x = 0; x < str.length(); x++) {
+            if (Character.isDigit(str.codePointAt(x))) {
+                return str.substring(x);
+            }
+        }
+        return null;
     }
 
 }

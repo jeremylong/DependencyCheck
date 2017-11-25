@@ -1,7 +1,5 @@
 package org.owasp.dependencycheck.analyzer;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -36,12 +34,20 @@ public class NspAnalyzerTest extends BaseTest {
             analyzer.setFilesMatched(true);
             analyzer.initialize(getSettings());
             analyzer.prepare(engine);
-            final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "nsp/package.json"));
-            analyzer.analyze(result, engine);
-
-            assertTrue(result.getEvidence(EvidenceType.VENDOR).toString().contains("owasp-nodejs-goat"));
-            assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains("A tool to learn OWASP Top 10 for node.js developers"));
-            assertTrue(result.getEvidence(EvidenceType.VERSION).toString().contains("1.3.0"));
+            final Dependency toScan = new Dependency(BaseTest.getResourceAsFile(this, "nsp/package.json"));
+            analyzer.analyze(toScan, engine);
+            boolean found = false;
+            assertEquals("4 dependencies should be identified", 4, engine.getDependencies().length);
+            for (Dependency result : engine.getDependencies()) {
+                if ("package.json?uglify-js".equals(result.getFileName())) {
+                    found = true;
+                    assertTrue(result.getEvidence(EvidenceType.VENDOR).toString().contains("uglify-js"));
+                    assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains("uglify-js"));
+                    assertTrue(result.getEvidence(EvidenceType.VERSION).toString().contains("2.4.24"));
+                    assertTrue(result.isVirtual());
+                }
+            }
+            assertTrue("Uglify was not found", found);
         }
     }
 
@@ -62,50 +68,16 @@ public class NspAnalyzerTest extends BaseTest {
     }
 
     @Test
-    public void testAnalyzePackageJsonWithBundledDeps() throws AnalysisException, InitializationException {
-        try (Engine engine = new Engine(getSettings())) {
-            NspAnalyzer analyzer = new NspAnalyzer();
-            analyzer.setFilesMatched(true);
-            analyzer.initialize(getSettings());
-            analyzer.prepare(engine);
-            final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "nsp/bundled.deps.package.json"));
-            analyzer.analyze(result, engine);
-
-            assertTrue(result.getEvidence(EvidenceType.VENDOR).toString().contains("Philipp Dunkel <pip@pipobscure.com>"));
-            assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains("Native Access to Mac OS-X FSEvents"));
-            assertTrue(result.getEvidence(EvidenceType.VERSION).toString().contains("1.1.1"));
-        }
-    }
-
-    @Test
-    public void testAnalyzePackageJsonWithLicenseObject() throws AnalysisException, InitializationException {
-        try (Engine engine = new Engine(getSettings())) {
-            NspAnalyzer analyzer = new NspAnalyzer();
-            analyzer.setFilesMatched(true);
-            analyzer.initialize(getSettings());
-            analyzer.prepare(engine);
-            final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "nsp/license.obj.package.json"));
-            analyzer.analyze(result, engine);
-
-            assertTrue(result.getEvidence(EvidenceType.VENDOR).toString().contains("Twitter, Inc."));
-            assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains("The most popular front-end framework for developing responsive, mobile first projects on the web"));
-            assertTrue(result.getEvidence(EvidenceType.VERSION).toString().contains("3.2.0"));
-        }
-    }
-
-    @Test
     public void testAnalyzePackageJsonInNodeModulesDirectory() throws AnalysisException, InitializationException {
         try (Engine engine = new Engine(getSettings())) {
             NspAnalyzer analyzer = new NspAnalyzer();
             analyzer.setFilesMatched(true);
             analyzer.initialize(getSettings());
             analyzer.prepare(engine);
-            final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "nodejs/node_modules/dns-sync/package.json"));
-            analyzer.analyze(result, engine);
-            // package.json adds 5 bits of evidence
-            assertTrue(result.size() == 5);
-            // but no vulnerabilities were cited
-            assertTrue(result.getVulnerabilities().isEmpty());
+            final Dependency toScan = new Dependency(BaseTest.getResourceAsFile(this, "nodejs/node_modules/dns-sync/package.json"));
+            engine.addDependency(toScan);
+            analyzer.analyze(toScan, engine);
+            assertEquals("No dependencies should exist", 0, engine.getDependencies().length);
         }
     }
 

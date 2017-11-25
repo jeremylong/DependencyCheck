@@ -43,6 +43,9 @@ public class NodePackageAnalyzerTest extends BaseTest {
      * The analyzer to test.
      */
     private NodePackageAnalyzer analyzer;
+    /**
+     * A reference to the engine.
+     */
     private Engine engine;
 
     /**
@@ -87,7 +90,8 @@ public class NodePackageAnalyzerTest extends BaseTest {
      */
     @Test
     public void testSupportsFiles() {
-        assertThat(analyzer.accept(new File("package.json")), is(true));
+        assertThat(analyzer.accept(new File("package-lock.json")), is(true));
+        assertThat(analyzer.accept(new File("shrinkwrap.json")), is(true));
     }
 
     /**
@@ -96,10 +100,12 @@ public class NodePackageAnalyzerTest extends BaseTest {
      * @throws AnalysisException is thrown when an exception occurs.
      */
     @Test
-    public void testAnalyzePackageJson() throws AnalysisException {
-        final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
-                "nodejs/node_modules/dns-sync/package.json"));
-        analyzer.analyze(result, null);
+    public void testAnalyzeShrinkwrapJson() throws AnalysisException {
+        final Dependency toScan = new Dependency(BaseTest.getResourceAsFile(this,
+                "nodejs/shrinkwrap.json"));
+        analyzer.analyze(toScan, engine);
+        assertEquals("Expected 1 dependency", engine.getDependencies().length, 1);
+        final Dependency result = engine.getDependencies()[0];
         final String vendorString = result.getEvidence(EvidenceType.VENDOR).toString();
         assertThat(vendorString, containsString("Sanjeev Koranga"));
         assertThat(vendorString, containsString("dns-sync"));
@@ -108,5 +114,25 @@ public class NodePackageAnalyzerTest extends BaseTest {
         assertEquals(NodePackageAnalyzer.DEPENDENCY_ECOSYSTEM, result.getEcosystem());
         assertEquals("dns-sync", result.getName());
         assertEquals("0.1.0", result.getVersion());
+    }
+
+    /**
+     * Test of inspect method, of class PythonDistributionAnalyzer.
+     *
+     * @throws AnalysisException is thrown when an exception occurs.
+     */
+    @Test
+    public void testAnalyzePackageJsonWithShrinkwrap() throws AnalysisException {
+        final Dependency packageLock = new Dependency(BaseTest.getResourceAsFile(this,
+                "nodejs/package-lock.json"));
+        final Dependency shrinkwrap = new Dependency(BaseTest.getResourceAsFile(this,
+                "nodejs/shrinkwrap.json"));
+        engine.addDependency(packageLock);
+        engine.addDependency(shrinkwrap);
+        assertEquals(2, engine.getDependencies().length);
+        analyzer.analyze(packageLock, engine);
+        assertEquals(1, engine.getDependencies().length); //package-lock was removed without analysis
+        analyzer.analyze(shrinkwrap, engine);
+        assertEquals(1, engine.getDependencies().length); //shrinkwrap was removed with analysis adding 1 dependency
     }
 }

@@ -164,6 +164,10 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         </plugins>
     </reporting>
     <dependencies>
+        <dependency>
+            <groupId>com.vdurmont</groupId>
+            <artifactId>semver4j</artifactId>
+        </dependency>
         <!-- Note, to stay compatible with Jenkins installations only JARs compiled to 1.6 can be used -->
         <dependency>
             <groupId>joda-time</groupId>

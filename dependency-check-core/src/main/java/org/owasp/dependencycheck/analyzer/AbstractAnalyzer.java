@@ -85,6 +85,14 @@ public abstract class AbstractAnalyzer implements Analyzer {
     @Override
     public void initialize(Settings settings) {
         this.settings = settings;
+        final String key = getAnalyzerEnabledSettingKey();
+        try {
+            this.setEnabled(settings.getBoolean(key, true));
+        } catch (InvalidSettingException ex) {
+            final String msg = String.format("Invalid setting for property '%s'", key);
+            LOGGER.warn(msg);
+            LOGGER.debug(msg, ex);
+        }
     }
 
     /**
@@ -95,15 +103,6 @@ public abstract class AbstractAnalyzer implements Analyzer {
      */
     @Override
     public final void prepare(Engine engine) throws InitializationException {
-        final String key = getAnalyzerEnabledSettingKey();
-        try {
-            this.setEnabled(settings.getBoolean(key, true));
-        } catch (InvalidSettingException ex) {
-            final String msg = String.format("Invalid setting for property '%s'", key);
-            LOGGER.warn(msg);
-            LOGGER.debug(msg, ex);
-        }
-
         if (isEnabled()) {
             prepareAnalyzer(engine);
         } else {
