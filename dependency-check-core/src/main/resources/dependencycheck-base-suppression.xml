@@ -855,4 +855,19 @@
         <gav regex="true">^com\.unboundid:unboundid-ldapsdk:.*$</gav>
         <cpe>cpe:/a:id:id-software</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        jaxb-xerces and jaxb-xerces2 are completely different dependencies.
+        ]]></notes>
+        <gav regex="true">^activesoap:jaxb-xercesImpl:[01].*$</gav>
+        <cpe>cpe:/a:apache:xerces2_java</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        jaxb-xerces and jaxb-xerces2 are completely different dependencies - the sha1
+            is primarily for testing.
+        ]]></notes>
+        <sha1>73a51faadb407dccdbd77234e0d5a0a648665692</sha1>
+        <cpe>cpe:/a:apache:xerces2_java</cpe>
+    </suppress>
 </suppressions>
