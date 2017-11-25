@@ -20,7 +20,6 @@ package org.owasp.dependencycheck.analyzer;
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
@@ -30,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -38,11 +38,12 @@ import javax.json.Json;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.JsonString;
 import javax.json.JsonValue;
 import org.owasp.dependencycheck.Engine.Mode;
-import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 
 /**
@@ -52,7 +53,7 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
  * @author Dale Visser
  */
 @ThreadSafe
-public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
+public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
 
     /**
      * The logger.
@@ -62,7 +63,7 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
-    public static final String DEPENDENCY_ECOSYSTEM = "npm";
+    public static final String DEPENDENCY_ECOSYSTEM = NPM_DEPENDENCY_ECOSYSTEM;
     /**
      * The name of the analyzer.
      */
@@ -76,10 +77,18 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
      */
     public static final String PACKAGE_JSON = "package.json";
     /**
-     * Filter that detects files named "package.json".
+     * The file name to scan.
+     */
+    public static final String PACKAGE_LOCK_JSON = "package-lock.json";
+    /**
+     * The file name to scan.
+     */
+    public static final String SHRINKWRAP_JSON = "shrinkwrap.json";
+    /**
+     * Filter that detects files named "package-lock.json" or "shrinkwrap.json".
      */
     private static final FileFilter PACKAGE_JSON_FILTER = FileFilterBuilder.newInstance()
-            .addFilenames(PACKAGE_JSON).build();
+            .addFilenames(PACKAGE_LOCK_JSON, SHRINKWRAP_JSON).build();
 
     /**
      * Returns the FileFilter
@@ -103,7 +112,7 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
         if (engine.getMode() != Mode.EVIDENCE_COLLECTION) {
             try {
                 final Settings settings = engine.getSettings();
-                final String[] tmp = settings.getArray(Settings.KEYS.ECOSYSTEM_SKIP_NVDCVE);
+                final String[] tmp = settings.getArray(Settings.KEYS.ECOSYSTEM_SKIP_CPEANALYZER);
                 if (tmp != null) {
                     final List<String> skipEcosystems = Arrays.asList(tmp);
                     if (skipEcosystems.contains(DEPENDENCY_ECOSYSTEM)
@@ -113,7 +122,7 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
                                 + "using the NSP Analyzer is not supported.";
                         throw new InitializationException(msg);
                     } else if (!skipEcosystems.contains(DEPENDENCY_ECOSYSTEM)) {
-                        LOGGER.warn("Using the NVD CVE Analyzer with Node.js can result in many false positives.");
+                        LOGGER.warn("Using the CPE Analyzer with Node.js can result in many false positives.");
                     }
                 }
             } catch (InvalidSettingException ex) {
@@ -143,10 +152,10 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Returns the key used in the properties file to reference the analyzer's
-     * enabled property.
+     * Returns the key used in the properties file to reference the enabled
+     * property for the analyzer.
      *
-     * @return the analyzer's enabled property setting key
+     * @return the enabled property setting key for the analyzer
      */
     @Override
     protected String getAnalyzerEnabledSettingKey() {
@@ -155,16 +164,34 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
 
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
-        final File file = dependency.getActualFile();
+        engine.removeDependency(dependency);
+        File file = dependency.getActualFile();
         if (!file.isFile() || file.length() == 0) {
             return;
         }
+        try {
+            // Do not scan the node_modules directory
+            if (file.getCanonicalPath().contains(File.separator + "node_modules" + File.separator)) {
+                LOGGER.debug("Skipping analysis of node module: " + file.getCanonicalPath());
+                return;
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        File baseDir = file.getParentFile();
+        if (PACKAGE_LOCK_JSON.equals(dependency.getFileName())) {
+            File shrinkwrap = new File(baseDir, SHRINKWRAP_JSON);
+            if (shrinkwrap.exists()) {
+                return;
+            }
+        }
+
         try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {
             final JsonObject json = jsonReader.readObject();
-
-            gatherEvidence(json, dependency);
-
+            final String parentName = json.getString("name");
+            final String parentVersion = json.getString("version");
+            final String parentPackage = String.format("%s:%s", parentName, parentVersion);
+            processDependencies(json, baseDir, file, parentPackage, engine);
         } catch (JsonException e) {
             LOGGER.warn("Failed to parse package.json file.", e);
         } catch (IOException e) {
@@ -172,80 +199,94 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
-    /**
-     * Collects evidence from the given JSON for the associated dependency.
-     *
-     * @param json the JSON that contains the evidence to collect
-     * @param dependency the dependency to add the evidence too
-     */
-    public static void gatherEvidence(final JsonObject json, Dependency dependency) {
-        if (json.containsKey("name")) {
-            final Object value = json.get("name");
-            if (value instanceof JsonString) {
-                final String valueString = ((JsonString) value).getString();
-                dependency.setName(valueString);
-                dependency.setPackagePath(valueString);
-                dependency.addEvidence(EvidenceType.PRODUCT, PACKAGE_JSON, "name", valueString, Confidence.HIGHEST);
-                dependency.addEvidence(EvidenceType.VENDOR, PACKAGE_JSON, "name", valueString, Confidence.HIGH);
-            } else {
-                LOGGER.warn("JSON value not string as expected: {}", value);
-            }
-        }
-        addToEvidence(dependency, EvidenceType.PRODUCT, json, "description");
-        addToEvidence(dependency, EvidenceType.VENDOR, json, "author");
-        final String version = addToEvidence(dependency, EvidenceType.VERSION, json, "version");
-        if (version != null) {
-            dependency.setVersion(version);
-            dependency.addIdentifier("npm", String.format("%s:%s", dependency.getName(), version), null, Confidence.HIGHEST);
-        }
+    private void processDependencies(final JsonObject json, File baseDir, File rootFile, final String parentPackage, Engine engine) throws AnalysisException {
+        if (json.containsKey("dependencies")) {
+            JsonObject deps = json.getJsonObject("dependencies");
+            for (Map.Entry<String, JsonValue> entry : deps.entrySet()) {
+                JsonObject jo = (JsonObject) entry.getValue();
+                final String name = entry.getKey();
+                final String version = jo.getString("version");
+                File base = Paths.get(baseDir.getPath(), "node_modules", name).toFile();
+                File f = new File(base, PACKAGE_JSON);
 
-        // Adds the license if defined in package.json
-        if (json.containsKey("license")) {
-            final Object value = json.get("license");
-            if (value instanceof JsonString) {
-                dependency.setLicense(json.getString("license"));
-            } else {
-                dependency.setLicense(json.getJsonObject("license").getString("type"));
-            }
-        }
-    }
-
-    /**
-     * Adds information to an evidence collection from the node json
-     * configuration.
-     *
-     * @param dep the dependency to add the evidence
-     * @param t the type of evidence to add
-     * @param json information from node.js
-     * @return the actual string set into evidence
-     * @param key the key to obtain the data from the json information
-     */
-    private static String addToEvidence(Dependency dep, EvidenceType t, JsonObject json, String key) {
-        String evidenceStr = null;
-        if (json.containsKey(key)) {
-            final JsonValue value = json.get(key);
-            if (value instanceof JsonString) {
-                evidenceStr = ((JsonString) value).getString();
-                dep.addEvidence(t, PACKAGE_JSON, key, evidenceStr, Confidence.HIGHEST);
-            } else if (value instanceof JsonObject) {
-                final JsonObject jsonObject = (JsonObject) value;
-                for (final Map.Entry<String, JsonValue> entry : jsonObject.entrySet()) {
-                    final String property = entry.getKey();
-                    final JsonValue subValue = entry.getValue();
-                    if (subValue instanceof JsonString) {
-                        evidenceStr = ((JsonString) subValue).getString();
-                        dep.addEvidence(t, PACKAGE_JSON,
-                                String.format("%s.%s", key, property),
-                                evidenceStr,
-                                Confidence.HIGHEST);
-                    } else {
-                        LOGGER.warn("JSON sub-value not string as expected: {}", subValue);
-                    }
+                if (jo.containsKey("dependencies")) {
+                    final String subPackageName = String.format("%s/%s:%s", parentPackage, name, version);
+                    processDependencies(jo, base, rootFile, subPackageName, engine);
                 }
-            } else {
-                LOGGER.warn("JSON value not string or JSON object as expected: {}", value);
+
+                Dependency child;
+                if (f.exists()) {
+                    //TOOD - we should use the integrity value instead of calculating the SHA1/MD5
+                    child = new Dependency(f);
+                    try (JsonReader jr = Json.createReader(FileUtils.openInputStream(f))) {
+                        JsonObject childJson = jr.readObject();
+                        gatherEvidence(childJson, child);
+
+                    } catch (JsonException e) {
+                        LOGGER.warn("Failed to parse package.json file from dependency.", e);
+                    } catch (IOException e) {
+                        throw new AnalysisException("Problem occurred while reading dependency file.", e);
+                    }
+                } else {
+                    LOGGER.error("Unable to find child file {}", f.toString());
+                    child = new Dependency(rootFile, true);
+                    //TOOD - we should use the integrity value instead of calculating the SHA1/MD5
+                    child.setSha1sum(Checksum.getSHA1Checksum(String.format("%s:%s", name, version)));
+                    child.setMd5sum(Checksum.getMD5Checksum(String.format("%s:%s", name, version)));
+                    child.addEvidence(EvidenceType.VENDOR, rootFile.getName(), "name", name, Confidence.HIGHEST);
+                    child.addEvidence(EvidenceType.PRODUCT, rootFile.getName(), "name", name, Confidence.HIGHEST);
+                    child.addEvidence(EvidenceType.VERSION, rootFile.getName(), "version", version, Confidence.HIGHEST);
+                }
+                child.setName(name);
+                child.setVersion(version);
+                child.addProjectReference(parentPackage);
+                child.setEcosystem(DEPENDENCY_ECOSYSTEM);
+
+                Dependency existing = findDependency(engine, name, version);
+                if (existing != null) {
+                    if (existing.isVirtual()) {
+                        DependencyMergingAnalyzer.mergeDependencies(child, existing, null);
+                        engine.removeDependency(existing);
+                        engine.addDependency(child);
+                    } else {
+                        DependencyBundlingAnalyzer.mergeDependencies(existing, child, null);
+                    }
+                } else {
+                    engine.addDependency(child);
+                }
             }
         }
-        return evidenceStr;
+
+//            gatherEvidence(json, dependency);
+//
+//            // only run this if we are in evidence collection or the NSP analyzer has been disabled
+//            if (engine.getMode() == Mode.EVIDENCE_COLLECTION
+//                    || !engine.getSettings().getBoolean(Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED)) {
+//                //Processes the dependencies objects in package.json and adds all the modules as dependencies
+//                if (json.containsKey("dependencies")) {
+//                    final JsonObject dependencies = json.getJsonObject("dependencies");
+//                    processPackage(engine, dependency, dependencies, "dependencies");
+//                }
+//                if (json.containsKey("devDependencies")) {
+//                    final JsonObject dependencies = json.getJsonObject("devDependencies");
+//                    processPackage(engine, dependency, dependencies, "devDependencies");
+//                }
+//                if (json.containsKey("optionalDependencies")) {
+//                    final JsonObject dependencies = json.getJsonObject("optionalDependencies");
+//                    processPackage(engine, dependency, dependencies, "optionalDependencies");
+//                }
+//                if (json.containsKey("peerDependencies")) {
+//                    final JsonObject dependencies = json.getJsonObject("peerDependencies");
+//                    processPackage(engine, dependency, dependencies, "peerDependencies");
+//                }
+//                if (json.containsKey("bundleDependencies")) {
+//                    final JsonArray dependencies = json.getJsonArray("bundleDependencies");
+//                    processPackage(engine, dependency, dependencies, "bundleDependencies");
+//                }
+//                if (json.containsKey("bundledDependencies")) {
+//                    final JsonArray dependencies = json.getJsonArray("bundledDependencies");
+//                    processPackage(engine, dependency, dependencies, "bundledDependencies");
+//                }
+//            }
     }
 }

@@ -23,7 +23,6 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nsp.Advisory;
 import org.owasp.dependencycheck.data.nsp.NspSearch;
 import org.owasp.dependencycheck.data.nsp.SanitizePackage;
-import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
@@ -38,19 +37,13 @@ import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
-import javax.json.JsonString;
-import javax.json.JsonValue;
-import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
-import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.URLConnectionFailureException;
 
 /**
@@ -60,7 +53,7 @@ import org.owasp.dependencycheck.utils.URLConnectionFailureException;
  * @author Steve Springett
  */
 @ThreadSafe
-public class NspAnalyzer extends AbstractFileTypeAnalyzer {
+public class NspAnalyzer extends AbstractNpmAnalyzer {
 
     /**
      * The logger.
@@ -75,7 +68,7 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
-    public static final String DEPENDENCY_ECOSYSTEM = NodePackageAnalyzer.DEPENDENCY_ECOSYSTEM;
+    public static final String DEPENDENCY_ECOSYSTEM = NPM_DEPENDENCY_ECOSYSTEM;
     /**
      * The file name to scan.
      */
@@ -152,52 +145,26 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
 
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+        engine.removeDependency(dependency);
         final File file = dependency.getActualFile();
         if (!file.isFile() || file.length() == 0) {
             return;
+        }
+
+        try {
+            // Do not scan the node_modules directory
+            if (file.getCanonicalPath().contains(File.separator + "node_modules" + File.separator)) {
+                LOGGER.debug("Skipping analysis of node module: " + file.getCanonicalPath());
+                return;
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
 
         try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {
 
             // Retrieves the contents of package.json from the Dependency
             final JsonObject packageJson = jsonReader.readObject();
-
-            if (dependency.getEcosystem() == null || dependency.getName() == null) {
-                NodePackageAnalyzer.gatherEvidence(packageJson, dependency);
-                dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
-            }
-
-            // Do not scan the node_modules directory
-            if (file.getCanonicalPath().contains(File.separator + "node_modules" + File.separator)) {
-                LOGGER.debug("Skipping analysis of node module: " + file.getCanonicalPath());
-                return;
-            }
-
-            //Processes the dependencies objects in package.json and adds all the modules as dependencies
-            if (packageJson.containsKey("dependencies")) {
-                final JsonObject dependencies = packageJson.getJsonObject("dependencies");
-                processPackage(engine, dependency, dependencies, "dependencies");
-            }
-            if (packageJson.containsKey("devDependencies")) {
-                final JsonObject dependencies = packageJson.getJsonObject("devDependencies");
-                processPackage(engine, dependency, dependencies, "devDependencies");
-            }
-            if (packageJson.containsKey("optionalDependencies")) {
-                final JsonObject dependencies = packageJson.getJsonObject("optionalDependencies");
-                processPackage(engine, dependency, dependencies, "optionalDependencies");
-            }
-            if (packageJson.containsKey("peerDependencies")) {
-                final JsonObject dependencies = packageJson.getJsonObject("peerDependencies");
-                processPackage(engine, dependency, dependencies, "peerDependencies");
-            }
-            if (packageJson.containsKey("bundleDependencies")) {
-                final JsonArray dependencies = packageJson.getJsonArray("bundleDependencies");
-                processPackage(engine, dependency, dependencies, "bundleDependencies");
-            }
-            if (packageJson.containsKey("bundledDependencies")) {
-                final JsonArray dependencies = packageJson.getJsonArray("bundledDependencies");
-                processPackage(engine, dependency, dependencies, "bundledDependencies");
-            }
 
             // Create a sanitized version of the package.json
             final JsonObject sanitizedJson = SanitizePackage.sanitize(packageJson);
@@ -228,7 +195,8 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
                  * Create a single vulnerable software object - these do not use CPEs unlike the NVD.
                  */
                 final VulnerableSoftware vs = new VulnerableSoftware();
-                //TODO consider changing this to available versions on the dependency
+                //TODO consider changing this to available versions on the dependency 
+                //  - the update is a part of the version, not versions to update to
                 //vs.setUpdate(advisory.getPatchedVersions());
 
                 vs.setName(advisory.getModule() + ":" + advisory.getVulnerableVersions());
@@ -253,161 +221,5 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (JsonException e) {
             throw new AnalysisException(String.format("Failed to parse %s file.", file.getPath()), e);
         }
-    }
-
-    /**
-     * Construct a dependency object.
-     *
-     * @param dependency the parent dependency
-     * @param name the name of the dependency to create
-     * @param version the version of the dependency to create
-     * @param scope the scope of the dependency being created
-     * @return the generated dependency
-     */
-    private Dependency createDependency(Dependency dependency, String name, String version, String scope) {
-        final Dependency nodeModule = new Dependency(new File(dependency.getActualFile() + "?" + name), true);
-        nodeModule.setEcosystem(DEPENDENCY_ECOSYSTEM);
-        //this is virtual - the sha1 is purely for the hyperlink in the final html report
-        nodeModule.setSha1sum(Checksum.getSHA1Checksum(String.format("%s:%s", name, version)));
-        nodeModule.setMd5sum(Checksum.getMD5Checksum(String.format("%s:%s", name, version)));
-        nodeModule.addEvidence(EvidenceType.PRODUCT, "package.json", "name", name, Confidence.HIGHEST);
-        nodeModule.addEvidence(EvidenceType.VENDOR, "package.json", "name", name, Confidence.HIGH);
-        nodeModule.addEvidence(EvidenceType.VERSION, "package.json", "version", version, Confidence.HIGHEST);
-        nodeModule.addProjectReference(dependency.getName() + ": " + scope);
-        nodeModule.setName(name);
-        nodeModule.setVersion(version);
-        nodeModule.addIdentifier("npm", String.format("%s:%s", name, version), null, Confidence.HIGHEST);
-        return nodeModule;
-    }
-
-    /**
-     * Processes a part of package.json (as defined by JsonArray) and update the
-     * specified dependency with relevant info.
-     *
-     * @param engine the dependency-check engine
-     * @param dependency the Dependency to update
-     * @param jsonArray the jsonArray to parse
-     * @param depType the dependency type
-     */
-    private void processPackage(Engine engine, Dependency dependency, JsonArray jsonArray, String depType) {
-        final JsonObjectBuilder builder = Json.createObjectBuilder();
-        for (JsonString str : jsonArray.getValuesAs(JsonString.class)) {
-            builder.add(str.toString(), "");
-        }
-        final JsonObject jsonObject = builder.build();
-        processPackage(engine, dependency, jsonObject, depType);
-    }
-
-    /**
-     * Processes a part of package.json (as defined by JsonObject) and update
-     * the specified dependency with relevant info.
-     *
-     * @param engine the dependency-check engine
-     * @param dependency the Dependency to update
-     * @param jsonObject the jsonObject to parse
-     * @param depType the dependency type
-     */
-    private void processPackage(Engine engine, Dependency dependency, JsonObject jsonObject, String depType) {
-        for (int i = 0; i < jsonObject.size(); i++) {
-            for (Map.Entry<String, JsonValue> entry : jsonObject.entrySet()) {
-
-                final String name = entry.getKey();
-                String version = "";
-                if (entry.getValue() != null && entry.getValue().getValueType() == JsonValue.ValueType.STRING) {
-                    version = ((JsonString) entry.getValue()).getString();
-                }
-                final Dependency existing = findDependency(engine, name, version);
-                if (existing == null) {
-                    final Dependency nodeModule = createDependency(dependency, name, version, depType);
-                    engine.addDependency(nodeModule);
-                } else {
-                    existing.addProjectReference(dependency.getName() + ": " + depType);
-                }
-            }
-        }
-    }
-
-    /**
-     * Adds information to an evidence collection from the node json
-     * configuration.
-     *
-     * @param dep the dependency to which the evidence will be added
-     * @param type the type of evidence to be added
-     * @param json information from node.js
-     * @param key the key to obtain the data from the json information
-     */
-    private void addToEvidence(Dependency dep, EvidenceType type, JsonObject json, String key) {
-        if (json.containsKey(key)) {
-            final JsonValue value = json.get(key);
-            if (value instanceof JsonString) {
-                dep.addEvidence(type, PACKAGE_JSON, key, ((JsonString) value).getString(), Confidence.HIGHEST);
-            } else if (value instanceof JsonObject) {
-                final JsonObject jsonObject = (JsonObject) value;
-                for (final Map.Entry<String, JsonValue> entry : jsonObject.entrySet()) {
-                    final String property = entry.getKey();
-                    final JsonValue subValue = entry.getValue();
-                    if (subValue instanceof JsonString) {
-                        dep.addEvidence(type, PACKAGE_JSON,
-                                String.format("%s.%s", key, property),
-                                ((JsonString) subValue).getString(),
-                                Confidence.HIGHEST);
-                    } else {
-                        LOGGER.warn("JSON sub-value not string as expected: {}", subValue);
-                    }
-                }
-            } else {
-                LOGGER.warn("JSON value not string or JSON object as expected: {}", value);
-            }
-        }
-    }
-
-    /**
-     * Locates the dependency from the list of dependencies that have been
-     * scanned by the engine.
-     *
-     * @param engine the dependency-check engine
-     * @param name the name of the dependency to find
-     * @param version the version of the dependency to find
-     * @return the identified dependency; otherwise null
-     */
-    private Dependency findDependency(Engine engine, String name, String version) {
-        for (Dependency d : engine.getDependencies()) {
-            if (DEPENDENCY_ECOSYSTEM.equals(d.getEcosystem()) && name.equals(d.getName()) && version != null && d.getVersion() != null) {
-                String dependencyVersion = d.getVersion();
-                if (dependencyVersion.startsWith("^") || dependencyVersion.startsWith("~")) {
-                    dependencyVersion = dependencyVersion.substring(1);
-                }
-
-                if (version.equals(dependencyVersion)) {
-                    return d;
-                }
-                if (version.startsWith("^") || version.startsWith("~") || version.contains("*")) {
-                    String type;
-                    String tmp;
-                    if (version.startsWith("^") || version.startsWith("~")) {
-                        type = version.substring(0, 1);
-                        tmp = version.substring(1);
-                    } else {
-                        type = "*";
-                        tmp = version;
-                    }
-                    final String[] v = tmp.split(" ")[0].split("\\.");
-                    final String[] depVersion = dependencyVersion.split("\\.");
-
-                    if ("^".equals(type) && v[0].equals(depVersion[0])) {
-                        return d;
-                    } else if ("~".equals(type) && v.length >= 2 && depVersion.length >= 2
-                            && v[0].equals(depVersion[0]) && v[1].equals(depVersion[1])) {
-                        return d;
-                    } else if (v[0].equals("*")
-                            || (v.length >= 2 && v[0].equals(depVersion[0]) && v[1].equals("*"))
-                            || (v.length >= 3 && depVersion.length >= 2 && v[0].equals(depVersion[0])
-                            && v[1].equals(depVersion[1]) && v[2].equals("*"))) {
-                        return d;
-                    }
-                }
-            }
-        }
-        return null;
     }
 }

@@ -139,8 +139,9 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
             relatedDependency.removeRelatedDependencies(d);
         }
         dependency.addAllProjectReferences(relatedDependency.getProjectReferences());
-
-        dependenciesToRemove.add(relatedDependency);
+        if (dependenciesToRemove != null) {
+            dependenciesToRemove.add(relatedDependency);
+        }
     }
 
     /**
