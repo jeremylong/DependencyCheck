@@ -41,22 +41,15 @@
                     "identifiers": [
                         #set($loopCount=0)
                         #foreach($id in $related.getIdentifiers())
-                            #if ($id.type=="maven")
+                            #if ($id.type=="maven" || $id.type=="npm")
                                 #set($loopCount=$loopCount+1)
                                 #if($loopCount>1),#end
                                 {
                                     "type": "$enc.json($id.type)",
-                                    "name": "$id.value"
+                                    "id": "$id.value"
                                     #if ($id.url),"url": "$enc.json($id.url)"#end
                                     #if ($id.notes),"notes": "$enc.json($id.notes)"#end
-                                }
-                            #end
-                            #if ($id.type=="npm")
-                                #set($loopCount=$loopCount+1)
-                                #if($loopCount>1),#end
-                                {
-                                    "id":"$enc.json($id.value)"
-                                    ,"description":"$enc.json($id.description)"
+                                    #if ($id.description),"description":"$enc.json($id.description)"#end
                                 }
                             #end
                         #end

@@ -131,7 +131,7 @@ public class EscapeToolTest {
         assertEquals(expResult, result);
         
         text = "";
-        expResult = "";
+        expResult = "\"\"";
         result = instance.csv(text);
         assertEquals(expResult, result);
         
@@ -148,18 +148,18 @@ public class EscapeToolTest {
     public void testCsvIdentifiers() {
         EscapeTool instance = new EscapeTool();
         Set<Identifier> ids = null;
-        String expResult = "";
+        String expResult = "\"\"";
         String result = instance.csvIdentifiers(ids);
         assertEquals(expResult, result);
         
         ids = new HashSet<>();
-        expResult = "";
+        expResult = "\"\"";
         result = instance.csvIdentifiers(ids);
         assertEquals(expResult, result);
         
         ids = new HashSet<>();
         ids.add(new Identifier("cpe", "cpe:/a:somegroup:something:1.0", ""));
-        expResult = "";
+        expResult = "\"\"";
         result = instance.csvIdentifiers(ids);
         assertEquals(expResult, result);
         
@@ -193,18 +193,18 @@ public class EscapeToolTest {
     public void testCsvCpe() {
         EscapeTool instance = new EscapeTool();
         Set<Identifier> ids = null;
-        String expResult = "";
+        String expResult = "\"\"";
         String result = instance.csvCpe(ids);
         assertEquals(expResult, result);
         
         ids = new HashSet<>();
-        expResult = "";
+        expResult = "\"\"";
         result = instance.csvCpe(ids);
         assertEquals(expResult, result);
         
         ids = new HashSet<>();
         ids.add(new Identifier("gav", "somegroup:something:1.0", ""));
-        expResult = "";
+        expResult = "\"\"";
         result = instance.csvCpe(ids);
         assertEquals(expResult, result);
         
@@ -238,18 +238,18 @@ public class EscapeToolTest {
     public void testCsvCpeConfidence() {
         EscapeTool instance = new EscapeTool();
         Set<Identifier> ids = null;
-        String expResult = "";
+        String expResult = "\"\"";
         String result = instance.csvCpeConfidence(ids);
         assertEquals(expResult, result);
 
         ids = new HashSet<>();
-        expResult = "";
+        expResult = "\"\"";
         result = instance.csvCpeConfidence(ids);
         assertEquals(expResult, result);
 
         ids = new HashSet<>();
         ids.add(new Identifier("gav", "somegroup:something:1.0", ""));
-        expResult = "";
+        expResult = "\"\"";
         result = instance.csvCpeConfidence(ids);
         assertEquals(expResult, result);
 
@@ -285,18 +285,18 @@ public class EscapeToolTest {
     public void testCsvGav() {
         EscapeTool instance = new EscapeTool();
         Set<Identifier> ids = null;
-        String expResult = "";
+        String expResult = "\"\"";
         String result = instance.csvGav(ids);
         assertEquals(expResult, result);
 
         ids = new HashSet<>();
-        expResult = "";
+        expResult = "\"\"";
         result = instance.csvGav(ids);
         assertEquals(expResult, result);
 
         ids = new HashSet<>();
         ids.add(new Identifier("cpe", "somegroup:something:1.0", ""));
-        expResult = "";
+        expResult = "\"\"";
         result = instance.csvGav(ids);
         assertEquals(expResult, result);
 

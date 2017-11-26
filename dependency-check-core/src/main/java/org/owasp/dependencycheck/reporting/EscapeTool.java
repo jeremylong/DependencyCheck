@@ -123,7 +123,7 @@ public class EscapeTool {
      */
     public String csv(String text) {
         if (text == null || text.isEmpty()) {
-            return text;
+            return "\"\"";
         }
         return StringEscapeUtils.escapeCsv(text.trim().replace("\n", " "));
     }
@@ -137,7 +137,7 @@ public class EscapeTool {
      */
     public String csvIdentifiers(Set<Identifier> ids) {
         if (ids == null || ids.isEmpty()) {
-            return "";
+            return "\"\"";
         }
         boolean addComma = false;
         final StringBuilder sb = new StringBuilder();
@@ -163,7 +163,7 @@ public class EscapeTool {
      */
     public String csvCpe(Set<Identifier> ids) {
         if (ids == null || ids.isEmpty()) {
-            return "";
+            return "\"\"";
         }
         boolean addComma = false;
         final StringBuilder sb = new StringBuilder();
@@ -189,7 +189,7 @@ public class EscapeTool {
      */
     public String csvCpeConfidence(Set<Identifier> ids) {
         if (ids == null || ids.isEmpty()) {
-            return "";
+            return "\"\"";
         }
         boolean addComma = false;
         final StringBuilder sb = new StringBuilder();
@@ -215,12 +215,12 @@ public class EscapeTool {
      */
     public String csvGav(Set<Identifier> ids) {
         if (ids == null || ids.isEmpty()) {
-            return "";
+            return "\"\"";
         }
         boolean addComma = false;
         final StringBuilder sb = new StringBuilder();
         for (Identifier id : ids) {
-            if ("maven".equals(id.getType())) {
+            if ("maven".equals(id.getType()) || "npm".equals(id.getType())) {
                 if (addComma) {
                     sb.append(", ");
                 } else {
@@ -231,5 +231,4 @@ public class EscapeTool {
         }
         return StringEscapeUtils.escapeCsv(sb.toString());
     }
-
 }
