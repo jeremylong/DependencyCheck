@@ -207,7 +207,7 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
     protected Dependency findDependency(Engine engine, String name, String version) {
         for (Dependency d : engine.getDependencies()) {
             if (NPM_DEPENDENCY_ECOSYSTEM.equals(d.getEcosystem()) && name.equals(d.getName()) && version != null && d.getVersion() != null) {
-                String dependencyVersion = d.getVersion();
+                final String dependencyVersion = d.getVersion();
                 if (DependencyBundlingAnalyzer.npmVersionsMatch(version, dependencyVersion)) {
                     return d;
                 }

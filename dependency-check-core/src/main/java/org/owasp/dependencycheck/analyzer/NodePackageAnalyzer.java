@@ -165,7 +165,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         engine.removeDependency(dependency);
-        File dependencyFile = dependency.getActualFile();
+        final File dependencyFile = dependency.getActualFile();
         if (!dependencyFile.isFile() || dependencyFile.length() == 0) {
             return;
         }
@@ -178,9 +178,9 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-        File baseDir = dependencyFile.getParentFile();
+        final File baseDir = dependencyFile.getParentFile();
         if (PACKAGE_LOCK_JSON.equals(dependency.getFileName())) {
-            File shrinkwrap = new File(baseDir, SHRINKWRAP_JSON);
+            final File shrinkwrap = new File(baseDir, SHRINKWRAP_JSON);
             if (shrinkwrap.exists()) {
                 return;
             }
@@ -205,15 +205,27 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
         }
     }
 
+    /**
+     * Process the dependencies in the lock file by first parsing its
+     * dependencies and then finding the package.json for the module and adding
+     * it as a dependency.
+     *
+     * @param json
+     * @param baseDir
+     * @param rootFile
+     * @param parentPackage
+     * @param engine
+     * @throws AnalysisException
+     */
     private void processDependencies(final JsonObject json, File baseDir, File rootFile, final String parentPackage, Engine engine) throws AnalysisException {
         if (json.containsKey("dependencies")) {
-            JsonObject deps = json.getJsonObject("dependencies");
+            final JsonObject deps = json.getJsonObject("dependencies");
             for (Map.Entry<String, JsonValue> entry : deps.entrySet()) {
-                JsonObject jo = (JsonObject) entry.getValue();
+                final JsonObject jo = (JsonObject) entry.getValue();
                 final String name = entry.getKey();
                 final String version = jo.getString("version");
-                File base = Paths.get(baseDir.getPath(), "node_modules", name).toFile();
-                File f = new File(base, PACKAGE_JSON);
+                final File base = Paths.get(baseDir.getPath(), "node_modules", name).toFile();
+                final File f = new File(base, PACKAGE_JSON);
 
                 if (jo.containsKey("dependencies")) {
                     final String subPackageName = String.format("%s/%s:%s", parentPackage, name, version);
@@ -225,7 +237,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                     //TOOD - we should use the integrity value instead of calculating the SHA1/MD5
                     child = new Dependency(f);
                     try (JsonReader jr = Json.createReader(FileUtils.openInputStream(f))) {
-                        JsonObject childJson = jr.readObject();
+                        final JsonObject childJson = jr.readObject();
                         gatherEvidence(childJson, child);
 
                     } catch (JsonException e) {
@@ -248,7 +260,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                 child.addProjectReference(parentPackage);
                 child.setEcosystem(DEPENDENCY_ECOSYSTEM);
 
-                Dependency existing = findDependency(engine, name, version);
+                final Dependency existing = findDependency(engine, name, version);
                 if (existing != null) {
                     if (existing.isVirtual()) {
                         DependencyMergingAnalyzer.mergeDependencies(child, existing, null);

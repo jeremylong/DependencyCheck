@@ -162,7 +162,8 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
      * removed from the main analysis loop, this function adds to this
      * collection
      */
-    public static void mergeDependencies(final Dependency dependency, final Dependency relatedDependency, final Set<Dependency> dependenciesToRemove) {
+    public static void mergeDependencies(final Dependency dependency,
+            final Dependency relatedDependency, final Set<Dependency> dependenciesToRemove) {
         dependency.addRelatedDependency(relatedDependency);
         for (Dependency d : relatedDependency.getRelatedDependencies()) {
             dependency.addRelatedDependency(d);
@@ -496,7 +497,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
      * This method attempts to evaluate version range checks.
      *
      * @param current a dependency version to compare
-     * @param nextDependency a dependency version to compare
+     * @param next a dependency version to compare
      * @return true if the version is equal in both dependencies; otherwise
      * false
      */
@@ -520,7 +521,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
                 }
             }
             try {
-                Semver v = new Semver(right, SemverType.NPM);
+                final Semver v = new Semver(right, SemverType.NPM);
                 return v.satisfies(left);
             } catch (SemverException ex) {
                 LOGGER.trace("ignore", ex);
@@ -552,6 +553,13 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
         return false;
     }
 
+    /**
+     * Strips leading non-numeric values from the start of the string. If no
+     * numbers are present this will return null.
+     *
+     * @param str the string to modify
+     * @return the string without leading non-numeric characters
+     */
     private static String stripLeadingNonNumeric(String str) {
         for (int x = 0; x < str.length(); x++) {
             if (Character.isDigit(str.codePointAt(x))) {

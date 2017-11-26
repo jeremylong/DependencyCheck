@@ -43,7 +43,6 @@ import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
-import static org.owasp.dependencycheck.analyzer.NodePackageAnalyzer.DEPENDENCY_ECOSYSTEM;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.URLConnectionFailureException;
