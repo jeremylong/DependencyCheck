@@ -126,7 +126,7 @@ public class EscapeToolTest {
     public void testCsv() {
         String text = null;
         EscapeTool instance = new EscapeTool();
-        String expResult = null;
+        String expResult = "\"\"";
         String result = instance.csv(text);
         assertEquals(expResult, result);
         
@@ -164,22 +164,22 @@ public class EscapeToolTest {
         assertEquals(expResult, result);
         
         ids = new HashSet<>();
-        ids.add(new Identifier("gav", "somegroup:something:1.0", ""));
+        ids.add(new Identifier("maven", "somegroup:something:1.0", ""));
         expResult = "somegroup:something:1.0";
         result = instance.csvIdentifiers(ids);
         assertEquals(expResult, result);
         
         ids = new HashSet<>();
         ids.add(new Identifier("cpe", "cpe:/a:somegroup:something:1.0", ""));
-        ids.add(new Identifier("gav", "somegroup:something:1.0", ""));
+        ids.add(new Identifier("maven", "somegroup:something:1.0", ""));
         expResult = "somegroup:something:1.0";
         result = instance.csvIdentifiers(ids);
         assertEquals(expResult, result);
         
         ids = new HashSet<>();
         ids.add(new Identifier("cpe", "cpe:/a:somegroup:something:1.0", ""));
-        ids.add(new Identifier("gav", "somegroup:something:1.0", ""));
-        ids.add(new Identifier("gav", "somegroup2:something:1.2", ""));
+        ids.add(new Identifier("maven", "somegroup:something:1.0", ""));
+        ids.add(new Identifier("maven", "somegroup2:something:1.2", ""));
         expResult = "\"somegroup:something:1.0, somegroup2:something:1.2\"";
         String expResult2 = "\"somegroup2:something:1.2, somegroup:something:1.0\"";
         result = instance.csvIdentifiers(ids);
@@ -203,7 +203,7 @@ public class EscapeToolTest {
         assertEquals(expResult, result);
         
         ids = new HashSet<>();
-        ids.add(new Identifier("gav", "somegroup:something:1.0", ""));
+        ids.add(new Identifier("maven", "somegroup:something:1.0", ""));
         expResult = "\"\"";
         result = instance.csvCpe(ids);
         assertEquals(expResult, result);
@@ -216,14 +216,14 @@ public class EscapeToolTest {
         
         ids = new HashSet<>();
         ids.add(new Identifier("cpe", "cpe:/a:somegroup:something:1.0", ""));
-        ids.add(new Identifier("gav", "somegroup:something:1.0", ""));
+        ids.add(new Identifier("maven", "somegroup:something:1.0", ""));
         expResult = "cpe:/a:somegroup:something:1.0";
         result = instance.csvCpe(ids);
         assertEquals(expResult, result);
         
         ids = new HashSet<>();
         ids.add(new Identifier("cpe", "cpe:/a:somegroup:something:1.0", ""));
-        ids.add(new Identifier("gav", "somegroup:something:1.0", ""));
+        ids.add(new Identifier("maven", "somegroup:something:1.0", ""));
         ids.add(new Identifier("cpe", "cpe:/a:somegroup2:something:1.2", ""));
         expResult = "\"cpe:/a:somegroup:something:1.0, cpe:/a:somegroup2:something:1.2\"";
         String expResult2 = "\"cpe:/a:somegroup2:something:1.2, cpe:/a:somegroup:something:1.0\"";
@@ -248,7 +248,7 @@ public class EscapeToolTest {
         assertEquals(expResult, result);
 
         ids = new HashSet<>();
-        ids.add(new Identifier("gav", "somegroup:something:1.0", ""));
+        ids.add(new Identifier("maven", "somegroup:something:1.0", ""));
         expResult = "\"\"";
         result = instance.csvCpeConfidence(ids);
         assertEquals(expResult, result);
@@ -268,7 +268,7 @@ public class EscapeToolTest {
         Identifier i2 = new Identifier("cpe", "cpe:/a:somegroup:something2:1.0", "");
         i2.setConfidence(Confidence.MEDIUM);
         ids.add(i2);
-        Identifier i3 = new Identifier("gav", "somegroup:something:1.0", "");
+        Identifier i3 = new Identifier("maven", "somegroup:something:1.0", "");
         i3.setConfidence(Confidence.LOW);
         ids.add(i3);
 

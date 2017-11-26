@@ -125,7 +125,11 @@ public class EscapeTool {
         if (text == null || text.isEmpty()) {
             return "\"\"";
         }
-        return StringEscapeUtils.escapeCsv(text.trim().replace("\n", " "));
+        final String str = text.trim().replace("\n", " ");
+        if (str.length()==0) {
+            return "\"\"";
+        }
+        return StringEscapeUtils.escapeCsv(str);
     }
 
     /**
@@ -150,6 +154,9 @@ public class EscapeTool {
                 }
                 sb.append(id.getValue());
             }
+        }
+        if (sb.length()==0) {
+            return "\"\"";
         }
         return StringEscapeUtils.escapeCsv(sb.toString());
     }
@@ -177,6 +184,9 @@ public class EscapeTool {
                 sb.append(id.getValue());
             }
         }
+        if (sb.length()==0) {
+            return "\"\"";
+        }
         return StringEscapeUtils.escapeCsv(sb.toString());
     }
 
@@ -203,6 +213,9 @@ public class EscapeTool {
                 sb.append(id.getConfidence());
             }
         }
+        if (sb.length()==0) {
+            return "\"\"";
+        }
         return StringEscapeUtils.escapeCsv(sb.toString());
     }
 
@@ -228,6 +241,9 @@ public class EscapeTool {
                 }
                 sb.append(id.getValue());
             }
+        }
+        if (sb.length()==0) {
+            return "\"\"";
         }
         return StringEscapeUtils.escapeCsv(sb.toString());
     }
