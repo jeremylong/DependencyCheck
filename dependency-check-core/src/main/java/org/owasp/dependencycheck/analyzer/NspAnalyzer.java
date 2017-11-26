@@ -43,7 +43,9 @@ import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
+import static org.owasp.dependencycheck.analyzer.NodePackageAnalyzer.DEPENDENCY_ECOSYSTEM;
 import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.URLConnectionFailureException;
 
 /**
@@ -109,6 +111,16 @@ public class NspAnalyzer extends AbstractNpmAnalyzer {
         } catch (MalformedURLException ex) {
             setEnabled(false);
             throw new InitializationException("The configured URL to Node Security Platform is malformed", ex);
+        }
+        try {
+            final Settings settings = engine.getSettings();
+            final boolean nodeEnabled = settings.getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED);
+            if (!nodeEnabled) {
+                LOGGER.warn("The Node Package Analyzer has been disabled; the resulting report will only "
+                        + " contain the known vulnerable dependency - not a bill of materials for the node project.");
+            }
+        } catch (InvalidSettingException ex) {
+            throw new InitializationException("Unable to read configuration settings", ex);
         }
     }
 

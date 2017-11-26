@@ -165,33 +165,39 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         engine.removeDependency(dependency);
-        File file = dependency.getActualFile();
-        if (!file.isFile() || file.length() == 0) {
+        File dependencyFile = dependency.getActualFile();
+        if (!dependencyFile.isFile() || dependencyFile.length() == 0) {
             return;
         }
         try {
             // Do not scan the node_modules directory
-            if (file.getCanonicalPath().contains(File.separator + "node_modules" + File.separator)) {
-                LOGGER.debug("Skipping analysis of node module: " + file.getCanonicalPath());
+            if (dependencyFile.getCanonicalPath().contains(File.separator + "node_modules" + File.separator)) {
+                LOGGER.debug("Skipping analysis of node module: " + dependencyFile.getCanonicalPath());
                 return;
             }
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-        File baseDir = file.getParentFile();
+        File baseDir = dependencyFile.getParentFile();
         if (PACKAGE_LOCK_JSON.equals(dependency.getFileName())) {
             File shrinkwrap = new File(baseDir, SHRINKWRAP_JSON);
             if (shrinkwrap.exists()) {
                 return;
             }
         }
+        final File nodeModules = new File(baseDir, "node_modules");
+        if (!nodeModules.isDirectory()) {
+            LOGGER.warn("Analyzing `{}` - however, the node_modules directory does not exist. "
+                    + "Please run `npm install` prior to running dependency-check", dependencyFile.toString());
+            return;
+        }
 
-        try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {
+        try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(dependencyFile))) {
             final JsonObject json = jsonReader.readObject();
             final String parentName = json.getString("name");
             final String parentVersion = json.getString("version");
             final String parentPackage = String.format("%s:%s", parentName, parentVersion);
-            processDependencies(json, baseDir, file, parentPackage, engine);
+            processDependencies(json, baseDir, dependencyFile, parentPackage, engine);
         } catch (JsonException e) {
             LOGGER.warn("Failed to parse package.json file.", e);
         } catch (IOException e) {
@@ -228,7 +234,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                         throw new AnalysisException("Problem occurred while reading dependency file.", e);
                     }
                 } else {
-                    LOGGER.error("Unable to find child file {}", f.toString());
+                    LOGGER.warn("Unable to find node module: {}", f.toString());
                     child = new Dependency(rootFile, true);
                     //TOOD - we should use the integrity value instead of calculating the SHA1/MD5
                     child.setSha1sum(Checksum.getSHA1Checksum(String.format("%s:%s", name, version)));
@@ -256,37 +262,5 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                 }
             }
         }
-
-//            gatherEvidence(json, dependency);
-//
-//            // only run this if we are in evidence collection or the NSP analyzer has been disabled
-//            if (engine.getMode() == Mode.EVIDENCE_COLLECTION
-//                    || !engine.getSettings().getBoolean(Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED)) {
-//                //Processes the dependencies objects in package.json and adds all the modules as dependencies
-//                if (json.containsKey("dependencies")) {
-//                    final JsonObject dependencies = json.getJsonObject("dependencies");
-//                    processPackage(engine, dependency, dependencies, "dependencies");
-//                }
-//                if (json.containsKey("devDependencies")) {
-//                    final JsonObject dependencies = json.getJsonObject("devDependencies");
-//                    processPackage(engine, dependency, dependencies, "devDependencies");
-//                }
-//                if (json.containsKey("optionalDependencies")) {
-//                    final JsonObject dependencies = json.getJsonObject("optionalDependencies");
-//                    processPackage(engine, dependency, dependencies, "optionalDependencies");
-//                }
-//                if (json.containsKey("peerDependencies")) {
-//                    final JsonObject dependencies = json.getJsonObject("peerDependencies");
-//                    processPackage(engine, dependency, dependencies, "peerDependencies");
-//                }
-//                if (json.containsKey("bundleDependencies")) {
-//                    final JsonArray dependencies = json.getJsonArray("bundleDependencies");
-//                    processPackage(engine, dependency, dependencies, "bundleDependencies");
-//                }
-//                if (json.containsKey("bundledDependencies")) {
-//                    final JsonArray dependencies = json.getJsonArray("bundledDependencies");
-//                    processPackage(engine, dependency, dependencies, "bundledDependencies");
-//                }
-//            }
     }
 }
