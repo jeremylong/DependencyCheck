@@ -117,7 +117,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      * @throws SuppressionParseException thrown if the XML cannot be parsed.
      */
     private void loadSuppressionData() throws SuppressionParseException {
-        List<SuppressionRule> ruleList = new ArrayList<>()
+        List<SuppressionRule> ruleList = new ArrayList<>();
         final SuppressionParser parser = new SuppressionParser();
         final String[] suppressionFilePaths = getSettings().getArray(Settings.KEYS.SUPPRESSION_FILE);
         final List<String> failedLoadingFiles = new ArrayList<>();
