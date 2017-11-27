@@ -58,7 +58,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     /**
      * The list of suppression rules
      */
-    private SuppressionRule[] rules = null;
+    private List<SuppressionRule> rules = new ArrayList<>();
 
     /**
      * Get the number of suppression rules.
@@ -66,7 +66,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      * @return the number of suppression rules
      */
     protected int getRuleCount() {
-        return rules.length;
+        return rules.size();
     }
 
     /**
@@ -86,18 +86,24 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      */
     @Override
     public synchronized void prepareAnalyzer(Engine engine) throws InitializationException {
-        if (rules == null) {
+        if (rules == null || rules.isEmpty()) {
+            try {
+                loadSuppressionBaseData();
+            } catch (SuppressionParseException ex) {
+                throw new InitializationException("Error initializing the suppression analyzer: " + ex.getLocalizedMessage(), ex, true);
+            }
+
             try {
                 loadSuppressionData();
             } catch (SuppressionParseException ex) {
-                throw new InitializationException("Error initializing the suppression analyzer: " + ex.getLocalizedMessage(), ex, true);
+                throw new InitializationException("Warn initializing the suppression analyzer: " + ex.getLocalizedMessage(), ex, false);
             }
         }
     }
 
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        if (rules == null || rules.length <= 0) {
+        if (rules == null || rules.isEmpty()) {
             return;
         }
         for (final SuppressionRule rule : rules) {
@@ -111,14 +117,8 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      * @throws SuppressionParseException thrown if the XML cannot be parsed.
      */
     private void loadSuppressionData() throws SuppressionParseException {
-        List<SuppressionRule> ruleList;
+        List<SuppressionRule> ruleList = new ArrayList<>()
         final SuppressionParser parser = new SuppressionParser();
-        try {
-            final InputStream in = FileUtils.getResourceAsStream("dependencycheck-base-suppression.xml");
-            ruleList = parser.parseSuppressionRules(in);
-        } catch (SAXException ex) {
-            throw new SuppressionParseException("Unable to parse the base suppression data file", ex);
-        }
         final String[] suppressionFilePaths = getSettings().getArray(Settings.KEYS.SUPPRESSION_FILE);
         final List<String> failedLoadingFiles = new ArrayList<>();
         if (suppressionFilePaths != null && suppressionFilePaths.length > 0) {
@@ -133,8 +133,8 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                 }
             }
         }
-        rules = ruleList.toArray(new SuppressionRule[ruleList.size()]);
         LOGGER.debug("{} suppression rules were loaded.", ruleList.size());
+        rules.addAll(ruleList);
         if (!failedLoadingFiles.isEmpty()) {
             LOGGER.debug("{} suppression files failed to load.", failedLoadingFiles.size());
             final StringBuilder sb = new StringBuilder();
@@ -143,6 +143,24 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
             }
             throw new SuppressionParseException(sb.toString());
         }
+    }
+
+
+    /**
+     * Loads all the base suppression rules files.
+     *
+     * @throws SuppressionParseException thrown if the XML cannot be parsed.
+     */
+    private void loadSuppressionBaseData() throws SuppressionParseException {
+        final SuppressionParser parser = new SuppressionParser();
+        List<SuppressionRule> ruleList;
+        try {
+            final InputStream in = FileUtils.getResourceAsStream("dependencycheck-base-suppression.xml");
+            ruleList = parser.parseSuppressionRules(in);
+        } catch (SAXException ex) {
+            throw new SuppressionParseException("Unable to parse the base suppression data file", ex);
+        }
+        rules.addAll(ruleList) ;
     }
 
     /**
@@ -185,7 +203,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                             try {
                                 org.apache.commons.io.FileUtils.copyInputStreamToFile(suppressionsFromClasspath, file);
                             } catch (IOException ex) {
-                                throwSuppressionParseException("Unable to locate suppressions file in classpath", ex);
+                                throwSuppressionParseException("Unable to locate suppressions file in classpath", ex, suppressionFilePath);
                             }
                         }
                     }
@@ -206,13 +224,13 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                 }
             }
         } catch (DownloadFailedException ex) {
-            throwSuppressionParseException("Unable to fetch the configured suppression file", ex);
+            throwSuppressionParseException("Unable to fetch the configured suppression file", ex, suppressionFilePath);
         } catch (MalformedURLException ex) {
-            throwSuppressionParseException("Configured suppression file has an invalid URL", ex);
+            throwSuppressionParseException("Configured suppression file has an invalid URL", ex, suppressionFilePath);
         } catch (SuppressionParseException ex) {
             throw ex;
         } catch (IOException ex) {
-            throwSuppressionParseException("Unable to create temp file for suppressions", ex);
+            throwSuppressionParseException("Unable to create temp file for suppressions", ex, suppressionFilePath);
         } finally {
             if (deleteTempFile && file != null) {
                 FileUtils.delete(file);
@@ -226,11 +244,12 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      *
      * @param message the exception message
      * @param exception the cause of the exception
+     * @param suppressionFilePath the path file
      * @throws SuppressionParseException throws the generated
      * SuppressionParseException
      */
-    private void throwSuppressionParseException(String message, Exception exception) throws SuppressionParseException {
-        LOGGER.warn(message);
+    private void throwSuppressionParseException(String message, Exception exception, String suppressionFilePath) throws SuppressionParseException {
+        LOGGER.warn(String.format(message + "'%s'", suppressionFilePath));
         LOGGER.debug("", exception);
         throw new SuppressionParseException(message, exception);
     }
