@@ -281,6 +281,20 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
             final Object value = json.get("license");
             if (value instanceof JsonString) {
                 dependency.setLicense(json.getString("license"));
+            } else if (value instanceof JsonArray) {
+                final JsonArray array = (JsonArray) value;
+                final StringBuilder sb = new StringBuilder();
+                boolean addComma = false;
+                for (int x = 0; x < array.size(); x++) {
+                    if (!array.isNull(x)) {
+                        if (addComma) {
+                            sb.append(", ");
+                        } else {
+                            addComma = true;
+                        }
+                        sb.append(array.getString(x));
+                    }
+                }
             } else {
                 dependency.setLicense(json.getJsonObject("license").getString("type"));
             }
