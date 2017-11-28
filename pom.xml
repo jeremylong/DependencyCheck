@@ -320,7 +320,7 @@ Copyright (c) 2012 - Jeremy Long
                 <version>2.5</version>
                 <executions>
                     <execution>
-                        <phase>post-clean</phase>
+                        <phase>pre-clean</phase>
                         <goals>
                             <goal>update-properties</goal>
                         </goals>
@@ -330,6 +330,7 @@ Copyright (c) 2012 - Jeremy Long
                                 <exclude>org.apache.maven.shared:maven-dependency-tree</exclude>
                                 <exclude>joda-time:joda-time</exclude>
                                 <exclude>org.apache.commons:commons-lang3</exclude>
+                                <exclude>org.apache.lucene</exclude>
                             </excludes>
                         </configuration>
                     </execution>
