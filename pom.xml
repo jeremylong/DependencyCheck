@@ -315,6 +315,27 @@ Copyright (c) 2012 - Jeremy Long
         </pluginManagement>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <allowSnapshots>false</allowSnapshots>
+                            <excludes>
+                                <exclude>org.apache.maven.shared:maven-dependency-tree</exclude>
+                                <exclude>joda-time:joda-time</exclude>
+                                <exclude>org.apache.commons:commons-lang3</exclude>
+                            </excludes>
+                        </configuration>
+                        <phase>post-clean</phase>
+                        <goals>
+                            <goal>update-properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
