@@ -83,9 +83,9 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
     /**
      * The file name to scan.
      */
-    public static final String SHRINKWRAP_JSON = "shrinkwrap.json";
+    public static final String SHRINKWRAP_JSON = "npm-shrinkwrap.json";
     /**
-     * Filter that detects files named "package-lock.json" or "shrinkwrap.json".
+     * Filter that detects files named "package-lock.json" or "npm-shrinkwrap.json".
      */
     private static final FileFilter PACKAGE_JSON_FILTER = FileFilterBuilder.newInstance()
             .addFilenames(PACKAGE_LOCK_JSON, SHRINKWRAP_JSON).build();

@@ -91,7 +91,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
     @Test
     public void testSupportsFiles() {
         assertThat(analyzer.accept(new File("package-lock.json")), is(true));
-        assertThat(analyzer.accept(new File("shrinkwrap.json")), is(true));
+        assertThat(analyzer.accept(new File("npm-shrinkwrap.json")), is(true));
     }
 
     /**
@@ -102,7 +102,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
     @Test
     public void testAnalyzeShrinkwrapJson() throws AnalysisException {
         final Dependency toScan = new Dependency(BaseTest.getResourceAsFile(this,
-                "nodejs/shrinkwrap.json"));
+                "nodejs/npm-shrinkwrap.json"));
         analyzer.analyze(toScan, engine);
         assertEquals("Expected 1 dependency", engine.getDependencies().length, 1);
         final Dependency result = engine.getDependencies()[0];
@@ -126,7 +126,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
         final Dependency packageLock = new Dependency(BaseTest.getResourceAsFile(this,
                 "nodejs/package-lock.json"));
         final Dependency shrinkwrap = new Dependency(BaseTest.getResourceAsFile(this,
-                "nodejs/shrinkwrap.json"));
+                "nodejs/npm-shrinkwrap.json"));
         engine.addDependency(packageLock);
         engine.addDependency(shrinkwrap);
         assertEquals(2, engine.getDependencies().length);
