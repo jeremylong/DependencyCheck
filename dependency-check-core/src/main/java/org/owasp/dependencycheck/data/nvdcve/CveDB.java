@@ -658,7 +658,6 @@ public final class CveDB implements AutoCloseable {
         ResultSet rs = null;
         try {
             int vulnerabilityId = 0;
-            long countVulnerabilities = 0;
             final PreparedStatement selectVulnerabilityId = getPreparedStatement(SELECT_VULNERABILITY_ID);
             selectVulnerabilityId.setString(1, vuln.getName());
             rs = selectVulnerabilityId.executeQuery();
