@@ -90,6 +90,7 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
     @Override
     protected boolean evaluateDependencies(final Dependency dependency, final Dependency nextDependency, final Set<Dependency> dependenciesToRemove) {
         Dependency main;
+        //CSOFF: InnerAssignment
         if ((main = getMainGemspecDependency(dependency, nextDependency)) != null) {
             if (main == dependency) {
                 mergeDependencies(dependency, nextDependency, dependenciesToRemove);
@@ -105,6 +106,7 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
                 return true; //since we merged into the next dependency - skip forward to the next in mainIterator
             }
         }
+        //CSON: InnerAssignment
         return false;
     }
 

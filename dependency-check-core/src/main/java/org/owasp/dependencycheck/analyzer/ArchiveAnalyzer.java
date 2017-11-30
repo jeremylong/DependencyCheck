@@ -471,6 +471,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 boolean stillLooking = true;
                 int chr;
                 int nxtChr;
+                //CSOFF: InnerAssignment
+                //CSOFF: NestedIfDepth
                 while (stillLooking && (chr = in.read()) != -1) {
                     if (chr == '\n' || chr == '\r') {
                         in.mark(4);
@@ -488,6 +490,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                         }
                     }
                 }
+                //CSON: InnerAssignment
+                //CSON: NestedIfDepth
             } else {
                 in.reset();
             }

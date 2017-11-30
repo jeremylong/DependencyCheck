@@ -396,6 +396,7 @@ public final class ConnectionFactory {
             final int c0 = Integer.parseInt(currentDbVersion.getVersionParts().get(0));
             final int e1 = Integer.parseInt(appExpectedVersion.getVersionParts().get(1));
             final int c1 = Integer.parseInt(currentDbVersion.getVersionParts().get(1));
+            //CSOFF: EmptyBlock
             if (e0 == c0 && e1 < c1) {
                 LOGGER.warn("A new version of dependency-check is available; consider upgrading");
                 settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
@@ -406,6 +407,7 @@ public final class ConnectionFactory {
                         UPGRADE_HELP_URL);
                 throw new DatabaseException("Database schema is out of date");
             }
+            //CSON: EmptyBlock
         }
     }
 
