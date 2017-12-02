@@ -125,8 +125,9 @@ Copyright (c) 2012 - Jeremy Long
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <github.global.server>github</github.global.server>
         <apache.lucene.version>4.7.2</apache.lucene.version>
-        <apache.ant.version>1.10.1</apache.ant.version>
-        <slf4j.version>1.8.0-beta0</slf4j.version>
+        <apache.ant.version>1.9.9</apache.ant.version>
+        <!--upgrading to the 1.8 requires Java 8 compatability  - we are maintaining 7 atm-->
+        <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <!-- Note that Maven will use classes from the distro, ignoring declared dependencies for Maven core... -->
         <maven.api.version>3.5.2</maven.api.version>
@@ -165,14 +166,14 @@ Copyright (c) 2012 - Jeremy Long
         <maven-plugin-testing-harness.version>3.3.0</maven-plugin-testing-harness.version>
         <maven-plugin-annotations.version>3.5</maven-plugin-annotations.version>
         <maven-reporting-api.version>3.0</maven-reporting-api.version>
-        <commons-collections.version>20040616</commons-collections.version>
+        <commons-collections.version>3.2.2</commons-collections.version>
         <org.apache.velocity.version>1.7</org.apache.velocity.version>
         <plexus-sec-dispatcher.version>1.4</plexus-sec-dispatcher.version>
 
         <!-- upgrading beyond 2.2 requires reworking the dependency resolution -->
         <maven-dependency-tree.version>2.2</maven-dependency-tree.version>
 
-        <org.glassfish.javax.json.version>1.1.2</org.glassfish.javax.json.version>
+        <org.glassfish.javax.json.version>1.0.4</org.glassfish.javax.json.version>
         <maven-artifact-transfer.version>0.9.1</maven-artifact-transfer.version>
 
         
@@ -232,7 +233,7 @@ Copyright (c) 2012 - Jeremy Long
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>1.4.1</version>
+                    <version>3.0.0-M1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -327,10 +328,15 @@ Copyright (c) 2012 - Jeremy Long
                         <configuration>
                             <allowSnapshots>false</allowSnapshots>
                             <excludes>
-                                <exclude>org.apache.maven.shared:maven-dependency-tree</exclude>
-                                <exclude>joda-time:joda-time</exclude>
+                                <exclude>org.apache.maven.shared:maven-dependency-tree</exclude>Ï
                                 <exclude>org.apache.commons:commons-lang3</exclude>
                                 <exclude>org.apache.lucene</exclude>
+                                <exclude>commons-collections:commons-collections</exclude>
+                                <exclude>joda-time:joda-time</exclude>
+                                <exclude>org.slf4j</exclude>
+                                <exclude>org.apache.ant</exclude>
+                                <!--TODO remove javax.json - use GSON instead-->
+                                <exclude>org.glassfish:javax.json</exclude>
                             </excludes>
                         </configuration>
                     </execution>
@@ -363,6 +369,14 @@ Copyright (c) 2012 - Jeremy Long
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.owasp.maven.enforcer</groupId>
+                        <artifactId>class-file-format-rule</artifactId>
+                        <version>1.0.0</version>
+                    </dependency>
+                </dependencies>
+                <inherited>true</inherited>
                 <executions>
                     <execution>
                         <id>enforce-java</id>
@@ -377,13 +391,19 @@ Copyright (c) 2012 - Jeremy Long
                             </rules>
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <inherited>true</inherited>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
+                    <execution>
+                        <id>enforce-classfileformat</id>
+                        <configuration>
+                            <rules>
+                                <byteCodeRule implementation="org.owasp.maven.enforcer.rule.ClassFileFormatRule">
+                                    <supportedClassFileFormat>51</supportedClassFileFormat>
+                                </byteCodeRule>
+                            </rules>
+                        </configuration>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
                     <execution>
                         <id>enforce-maven-3</id>
                         <goals>
