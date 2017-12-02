@@ -169,7 +169,7 @@ public class NspAnalyzer extends AbstractNpmAnalyzer {
                 return;
             }
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            throw new AnalysisException("Unable to process dependency", ex);
         }
 
         try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {
@@ -206,7 +206,7 @@ public class NspAnalyzer extends AbstractNpmAnalyzer {
                  * Create a single vulnerable software object - these do not use CPEs unlike the NVD.
                  */
                 final VulnerableSoftware vs = new VulnerableSoftware();
-                //TODO consider changing this to available versions on the dependency 
+                //TODO consider changing this to available versions on the dependency
                 //  - the update is a part of the version, not versions to update to
                 //vs.setUpdate(advisory.getPatchedVersions());
 

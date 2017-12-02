@@ -91,6 +91,9 @@ public class NspAnalyzerTest extends BaseTest {
             final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "nsp/minimal-invalid.json"));
             analyzer.analyze(result, engine);
             // Upon analysis, not throwing an exception in this case, is all that's required to pass this test
+        } catch(Throwable ex) {
+            fail("This test should not throw an exception");
+            throw ex;
         }
     }
 }

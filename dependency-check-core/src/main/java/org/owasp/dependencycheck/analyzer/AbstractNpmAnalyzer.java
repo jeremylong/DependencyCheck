@@ -77,7 +77,7 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
                     accept = false;
                 }
             } catch (IOException ex) {
-                throw new RuntimeException(ex);
+                throw new RuntimeException("Unable to process dependency", ex);
             }
         }
 
@@ -211,38 +211,6 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
                 if (DependencyBundlingAnalyzer.npmVersionsMatch(version, dependencyVersion)) {
                     return d;
                 }
-//                if (dependencyVersion.startsWith("^") || dependencyVersion.startsWith("~")) {
-//                    dependencyVersion = dependencyVersion.substring(1);
-//                }
-//
-//                if (version.equals(dependencyVersion)) {
-//                    return d;
-//                }
-//                if (version.startsWith("^") || version.startsWith("~") || version.contains("*")) {
-//                    String type;
-//                    String tmp;
-//                    if (version.startsWith("^") || version.startsWith("~")) {
-//                        type = version.substring(0, 1);
-//                        tmp = version.substring(1);
-//                    } else {
-//                        type = "*";
-//                        tmp = version;
-//                    }
-//                    final String[] v = tmp.split(" ")[0].split("\\.");
-//                    final String[] depVersion = dependencyVersion.split("\\.");
-//
-//                    if ("^".equals(type) && v[0].equals(depVersion[0])) {
-//                        return d;
-//                    } else if ("~".equals(type) && v.length >= 2 && depVersion.length >= 2
-//                            && v[0].equals(depVersion[0]) && v[1].equals(depVersion[1])) {
-//                        return d;
-//                    } else if (v[0].equals("*")
-//                            || (v.length >= 2 && v[0].equals(depVersion[0]) && v[1].equals("*"))
-//                            || (v.length >= 3 && depVersion.length >= 2 && v[0].equals(depVersion[0])
-//                            && v[1].equals(depVersion[1]) && v[2].equals("*"))) {
-//                        return d;
-//                    }
-//                }
             }
         }
         return null;
@@ -295,6 +263,7 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
                         sb.append(array.getString(x));
                     }
                 }
+                dependency.setLicense(sb.toString());
             } else {
                 dependency.setLicense(json.getJsonObject("license").getString("type"));
             }

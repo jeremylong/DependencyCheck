@@ -85,7 +85,8 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
      */
     public static final String SHRINKWRAP_JSON = "npm-shrinkwrap.json";
     /**
-     * Filter that detects files named "package-lock.json" or "npm-shrinkwrap.json".
+     * Filter that detects files named "package-lock.json" or
+     * "npm-shrinkwrap.json".
      */
     private static final FileFilter PACKAGE_JSON_FILTER = FileFilterBuilder.newInstance()
             .addFilenames(PACKAGE_LOCK_JSON, SHRINKWRAP_JSON).build();
@@ -176,7 +177,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                 return;
             }
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            throw new AnalysisException("Unable to process dependency", ex);
         }
         final File baseDir = dependencyFile.getParentFile();
         if (PACKAGE_LOCK_JSON.equals(dependency.getFileName())) {
@@ -210,14 +211,15 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
      * dependencies and then finding the package.json for the module and adding
      * it as a dependency.
      *
-     * @param json
-     * @param baseDir
-     * @param rootFile
-     * @param parentPackage
-     * @param engine
-     * @throws AnalysisException
+     * @param json the data to process
+     * @param baseDir the base directory being scanned
+     * @param rootFile the root package-lock/npm-shrinkwrap being analyzed
+     * @param parentPackage the parent package name of the current node
+     * @param engine a reference to the dependency-check engine
+     * @throws AnalysisException thrown if there is an exception
      */
-    private void processDependencies(final JsonObject json, File baseDir, File rootFile, final String parentPackage, Engine engine) throws AnalysisException {
+    private void processDependencies(JsonObject json, File baseDir, File rootFile,
+            String parentPackage, Engine engine) throws AnalysisException {
         if (json.containsKey("dependencies")) {
             final JsonObject deps = json.getJsonObject("dependencies");
             for (Map.Entry<String, JsonValue> entry : deps.entrySet()) {
