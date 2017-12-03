@@ -145,8 +145,8 @@ public class H2DBLock {
                 if (lock == null || !lock.isValid()) {
                     try {
                         final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                        LOGGER.debug("Sleeping thread {} ({}) for 10 seconds because an exclusive lock on the database could not be obtained ({})",
-                                Thread.currentThread().getName(), magic, timestamp.toString());
+                        LOGGER.debug("Sleeping thread {} ({}) for {} seconds because an exclusive lock on the database could not be obtained ({})",
+                                Thread.currentThread().getName(), magic, SLEEP_DURATION / 1000, timestamp.toString());
                         Thread.sleep(SLEEP_DURATION);
                     } catch (InterruptedException ex) {
                         LOGGER.debug("sleep was interrupted.", ex);

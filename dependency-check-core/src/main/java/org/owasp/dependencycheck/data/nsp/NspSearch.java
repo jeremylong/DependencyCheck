@@ -123,6 +123,7 @@ public class NspSearch {
                     try (InputStream in = new BufferedInputStream(conn.getInputStream());
                             JsonReader jsonReader = Json.createReader(in)) {
                         final JsonArray array = jsonReader.readArray();
+
                         if (array != null) {
                             for (int i = 0; i < array.size(); i++) {
                                 final JsonObject object = array.getJsonObject(i);

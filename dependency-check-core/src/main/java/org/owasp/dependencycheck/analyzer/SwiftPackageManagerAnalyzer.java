@@ -67,7 +67,7 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
     public static final String SPM_FILE_NAME = "Package.swift";
 
     /**
-     * Filter that detects files named "package.json".
+     * Filter that detects files named "Package.swift".
      */
     private static final FileFilter SPM_FILE_FILTER = FileFilterBuilder.newInstance().addFilenames(SPM_FILE_NAME).build();
 
