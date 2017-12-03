@@ -328,15 +328,15 @@ Copyright (c) 2012 - Jeremy Long
                         <configuration>
                             <allowSnapshots>false</allowSnapshots>
                             <excludes>
-                                <exclude>org.apache.maven.shared:maven-dependency-tree</exclude>Ï
-                                <exclude>org.apache.commons:commons-lang3</exclude>
-                                <exclude>org.apache.lucene</exclude>
-                                <exclude>commons-collections:commons-collections</exclude>
-                                <exclude>joda-time:joda-time</exclude>
-                                <exclude>org.slf4j</exclude>
-                                <exclude>org.apache.ant</exclude>
+                                <exclude>org.apache.maven.shared:maven-dependency-tree:*</exclude>Ï
+                                <exclude>org.apache.commons:commons-lang3:*</exclude>
+                                <exclude>org.apache.lucene:*:*</exclude>
+                                <exclude>commons-collections:commons-collections:*</exclude>
+                                <exclude>joda-time:joda-time:*</exclude>
+                                <exclude>org.slf4j:*:*</exclude>
+                                <exclude>org.apache.ant:*:*</exclude>
                                 <!--TODO remove javax.json - use GSON instead-->
-                                <exclude>org.glassfish:javax.json</exclude>
+                                <exclude>org.glassfish:javax.json:*</exclude>
                             </excludes>
                         </configuration>
                     </execution>
