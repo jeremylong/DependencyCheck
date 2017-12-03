@@ -52,11 +52,11 @@ import org.xml.sax.SAXException;
 public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
 
     /**
-     * The Logger for use throughout the class
+     * The Logger for use throughout the class.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSuppressionAnalyzer.class);
     /**
-     * The list of suppression rules
+     * The list of suppression rules.
      */
     private List<SuppressionRule> rules = new ArrayList<>();
 
@@ -117,12 +117,11 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      * @throws SuppressionParseException thrown if the XML cannot be parsed.
      */
     private void loadSuppressionData() throws SuppressionParseException {
-        List<SuppressionRule> ruleList = new ArrayList<>();
+        final List<SuppressionRule> ruleList = new ArrayList<>();
         final SuppressionParser parser = new SuppressionParser();
         final String[] suppressionFilePaths = getSettings().getArray(Settings.KEYS.SUPPRESSION_FILE);
         final List<String> failedLoadingFiles = new ArrayList<>();
         if (suppressionFilePaths != null && suppressionFilePaths.length > 0) {
-
             // Load all the suppression file paths
             for (final String suppressionFilePath : suppressionFilePaths) {
                 try {
@@ -145,7 +144,6 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         }
     }
 
-
     /**
      * Loads all the base suppression rules files.
      *
@@ -160,7 +158,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         } catch (SAXException ex) {
             throw new SuppressionParseException("Unable to parse the base suppression data file", ex);
         }
-        rules.addAll(ruleList) ;
+        rules.addAll(ruleList);
     }
 
     /**
