@@ -32,6 +32,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonString;
 import javax.json.JsonValue;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.utils.Checksum;
 
@@ -71,17 +72,35 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
         boolean accept = super.accept(pathname);
         if (accept) {
             try {
-                // Do not scan the node_modules directory
-                if (pathname.getCanonicalPath().contains(File.separator + "node_modules" + File.separator)) {
-                    LOGGER.debug("Skipping analysis of node module: " + pathname.getCanonicalPath());
-                    accept = false;
-                }
-            } catch (IOException ex) {
-                throw new RuntimeException("Unable to process dependency", ex);
+                accept |= shouldProcess(pathname);
+            } catch (AnalysisException ex) {
+                throw new RuntimeException(ex.getMessage(), ex.getCause());
             }
         }
 
         return accept;
+    }
+
+    /**
+     * Determines if the path contains "/node_modules/" (i.e. it is a child
+     * module. This analyzer does not scan child modules.
+     *
+     * @param pathname the path to test
+     * @return <code>true</code> if the path does not contain "/node_modules/"
+     * @throws AnalysisException thrown if the canonical path cannot be obtained
+     * from the given file
+     */
+    protected boolean shouldProcess(File pathname) throws AnalysisException {
+        try {
+            // Do not scan the node_modules directory
+            if (pathname.getCanonicalPath().contains(File.separator + "node_modules" + File.separator)) {
+                LOGGER.debug("Skipping analysis of node module: " + pathname.getCanonicalPath());
+                return false;
+            }
+        } catch (IOException ex) {
+            throw new AnalysisException("Unable to process dependency", ex);
+        }
+        return true;
     }
 
     /**

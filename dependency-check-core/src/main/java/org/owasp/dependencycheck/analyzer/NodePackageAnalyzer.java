@@ -167,17 +167,8 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         engine.removeDependency(dependency);
         final File dependencyFile = dependency.getActualFile();
-        if (!dependencyFile.isFile() || dependencyFile.length() == 0) {
+        if (!dependencyFile.isFile() || dependencyFile.length() == 0 || !shouldProcess(dependencyFile)) {
             return;
-        }
-        try {
-            // Do not scan the node_modules directory
-            if (dependencyFile.getCanonicalPath().contains(File.separator + "node_modules" + File.separator)) {
-                LOGGER.debug("Skipping analysis of node module: " + dependencyFile.getCanonicalPath());
-                return;
-            }
-        } catch (IOException ex) {
-            throw new AnalysisException("Unable to process dependency", ex);
         }
         final File baseDir = dependencyFile.getParentFile();
         if (PACKAGE_LOCK_JSON.equals(dependency.getFileName())) {

@@ -158,18 +158,8 @@ public class NspAnalyzer extends AbstractNpmAnalyzer {
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         engine.removeDependency(dependency);
         final File file = dependency.getActualFile();
-        if (!file.isFile() || file.length() == 0) {
+        if (!file.isFile() || file.length() == 0 || !shouldProcess(file)) {
             return;
-        }
-
-        try {
-            // Do not scan the node_modules directory
-            if (file.getCanonicalPath().contains(File.separator + "node_modules" + File.separator)) {
-                LOGGER.debug("Skipping analysis of node module: " + file.getCanonicalPath());
-                return;
-            }
-        } catch (IOException ex) {
-            throw new AnalysisException("Unable to process dependency", ex);
         }
 
         try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {
