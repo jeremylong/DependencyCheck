@@ -20,7 +20,7 @@ Copyright (c) 2012 - Jeremy Long
 
     <groupId>org.owasp</groupId>
     <artifactId>dependency-check-parent</artifactId>
-    <version>3.0.3-SNAPSHOT</version>
+    <version>3.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -625,6 +625,11 @@ Copyright (c) 2012 - Jeremy Long
     </reporting>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.vdurmont</groupId>
+                <artifactId>semver4j</artifactId>
+                <version>2.1.0</version>
+            </dependency>
             <!-- analysis core (used by Jenkins) uses 1.6-->
             <dependency>
                 <groupId>joda-time</groupId>

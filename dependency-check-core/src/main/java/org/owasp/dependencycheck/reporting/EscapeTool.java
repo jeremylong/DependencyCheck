@@ -123,9 +123,13 @@ public class EscapeTool {
      */
     public String csv(String text) {
         if (text == null || text.isEmpty()) {
-            return text;
+            return "\"\"";
         }
-        return StringEscapeUtils.escapeCsv(text.trim().replace("\n", " "));
+        final String str = text.trim().replace("\n", " ");
+        if (str.length() == 0) {
+            return "\"\"";
+        }
+        return StringEscapeUtils.escapeCsv(str);
     }
 
     /**
@@ -137,7 +141,7 @@ public class EscapeTool {
      */
     public String csvIdentifiers(Set<Identifier> ids) {
         if (ids == null || ids.isEmpty()) {
-            return "";
+            return "\"\"";
         }
         boolean addComma = false;
         final StringBuilder sb = new StringBuilder();
@@ -151,6 +155,9 @@ public class EscapeTool {
                 sb.append(id.getValue());
             }
         }
+        if (sb.length() == 0) {
+            return "\"\"";
+        }
         return StringEscapeUtils.escapeCsv(sb.toString());
     }
 
@@ -163,7 +170,7 @@ public class EscapeTool {
      */
     public String csvCpe(Set<Identifier> ids) {
         if (ids == null || ids.isEmpty()) {
-            return "";
+            return "\"\"";
         }
         boolean addComma = false;
         final StringBuilder sb = new StringBuilder();
@@ -176,6 +183,9 @@ public class EscapeTool {
                 }
                 sb.append(id.getValue());
             }
+        }
+        if (sb.length() == 0) {
+            return "\"\"";
         }
         return StringEscapeUtils.escapeCsv(sb.toString());
     }
@@ -189,7 +199,7 @@ public class EscapeTool {
      */
     public String csvCpeConfidence(Set<Identifier> ids) {
         if (ids == null || ids.isEmpty()) {
-            return "";
+            return "\"\"";
         }
         boolean addComma = false;
         final StringBuilder sb = new StringBuilder();
@@ -203,6 +213,9 @@ public class EscapeTool {
                 sb.append(id.getConfidence());
             }
         }
+        if (sb.length() == 0) {
+            return "\"\"";
+        }
         return StringEscapeUtils.escapeCsv(sb.toString());
     }
 
@@ -215,12 +228,12 @@ public class EscapeTool {
      */
     public String csvGav(Set<Identifier> ids) {
         if (ids == null || ids.isEmpty()) {
-            return "";
+            return "\"\"";
         }
         boolean addComma = false;
         final StringBuilder sb = new StringBuilder();
         for (Identifier id : ids) {
-            if ("maven".equals(id.getType())) {
+            if ("maven".equals(id.getType()) || "npm".equals(id.getType())) {
                 if (addComma) {
                     sb.append(", ");
                 } else {
@@ -229,7 +242,9 @@ public class EscapeTool {
                 sb.append(id.getValue());
             }
         }
+        if (sb.length() == 0) {
+            return "\"\"";
+        }
         return StringEscapeUtils.escapeCsv(sb.toString());
     }
-
 }

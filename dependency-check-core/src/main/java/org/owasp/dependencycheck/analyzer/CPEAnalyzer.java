@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -106,6 +107,12 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * The CVE Database.
      */
     private CveDB cve;
+    /**
+     * The list of ecosystems to skip during analysis. These are skipped because
+     * there is generally a more accurate vulnerability analyzer in the
+     * pipeline.
+     */
+    private List<String> skipEcosystems;
 
     /**
      * Returns the name of this analyzer.
@@ -136,6 +143,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      */
     @Override
     public void prepareAnalyzer(Engine engine) throws InitializationException {
+        super.prepareAnalyzer(engine);
         try {
             this.open(engine.getDatabase());
         } catch (IOException ex) {
@@ -144,6 +152,13 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         } catch (DatabaseException ex) {
             LOGGER.debug("Exception accessing the database", ex);
             throw new InitializationException("An exception occurred accessing the database", ex);
+        }
+        final String[] tmp = engine.getSettings().getArray(Settings.KEYS.ECOSYSTEM_SKIP_CPEANALYZER);
+        if (tmp == null) {
+            skipEcosystems = new ArrayList<>();
+        } else {
+            LOGGER.info("Skipping CPE Analysis for {}", tmp);
+            skipEcosystems = Arrays.asList(tmp);
         }
     }
 
@@ -525,6 +540,9 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      */
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+        if (skipEcosystems.contains(dependency.getEcosystem())) {
+            return;
+        }
         try {
             determineCPE(dependency);
         } catch (CorruptIndexException ex) {

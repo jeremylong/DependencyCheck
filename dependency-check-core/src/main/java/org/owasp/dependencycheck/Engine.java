@@ -1039,6 +1039,15 @@ public class Engine implements FileFilter, AutoCloseable {
     }
 
     /**
+     * Returns the mode of the engine.
+     *
+     * @return the mode of the engine
+     */
+    public Mode getMode() {
+        return mode;
+    }
+
+    /**
      * Adds a file type analyzer. This has been added solely to assist in unit
      * testing the Engine.
      *

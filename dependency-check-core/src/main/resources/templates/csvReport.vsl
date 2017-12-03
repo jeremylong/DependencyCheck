@@ -17,7 +17,7 @@ Copyright (c) 2017 Jeremy Long. All Rights Reserved.
 
 @author Jeremy Long <jeremy.long@owasp.org>
 @version 1 *###
-"Project","ScanDate","DependencyName","DependencyPath","Description","License","Md5","Sha1","Identifiers","CPE","CVE","CWE","Vulnerability","Source","Severity","CVSSv2","GAV","CPE Confidence","Evidence Count"
+"Project","ScanDate","DependencyName","DependencyPath","Description","License","Md5","Sha1","Identifiers","CPE","CVE","CWE","Vulnerability","Source","Severity","CVSSv2","Build Coordinates","CPE Confidence","Evidence Count"
 #macro(writeSev $score)#if($score<4.0)"Low"#elseif($score>=7.0)"High"#else"Medium"#end#end
 #foreach($dependency in $dependencies)#if($dependency.getVulnerabilities().size()>0)
 #foreach($vuln in $dependency.getVulnerabilities(true))

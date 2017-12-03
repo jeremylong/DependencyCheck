@@ -623,7 +623,7 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                     <thead><tr style="text-align:left">
                         <th class="sortable" data-sort="string" title="The name of the dependency">Dependency</th>
                         <th class="sortable" data-sort="string" title="The Common Platform Enumeration">CPE</th>
-                        <th class="sortable" data-sort="string" title="The Maven GAV Coordinates">GAV</th>
+                        <th class="sortable" data-sort="string" title="The Build Coordinates">Coordinates</th>
                         <th class="sortable" data-sort="int" title="The highest CVE Severity">Highest Severity</th>
                         <th class="sortable" data-sort="int" title="The number of Common Vulnerability and Exposure (CVE) entries">CVE Count</th>
                         <th class="sortable" data-sort="string" title="The confidence rating dependency-check has for the identified CPE">CPE Confidence</th>
@@ -638,7 +638,7 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                         #set($cpeIdConf="")
                         #set($sortValue="")
                         #foreach($id in $dependency.getIdentifiers())
-                            #if ($id.type!="maven")
+                            #if ($id.type!="maven" && $id.type!="npm")
                                 #set($sortValue=$sortValue+$id.value)
                             #end
                         #end
@@ -646,7 +646,7 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                         #set($sortValue="")
                         #set($cpeSort=0)
                         #foreach($id in $dependency.getIdentifiers())
-                            #if ($id.type=="maven")
+                            #if ($id.type=="maven" || $id.type=="npm")
                                 #if ($mavenlink=="" || !$mavenlink.url)
                                     #set($mavenlink=$id)
                                 #end
@@ -778,7 +778,7 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                                 </li>
                                             #end
                                             #if ($id.type=="npm")
-                                                <li>$enc.html($id.value): $enc.html($id.description)</li>
+                                                <li>$enc.html($id.value)</li>
                                             #end
                                         #end
                                      </ul>
