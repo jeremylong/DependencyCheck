@@ -272,9 +272,17 @@ public final class Settings {
          */
         public static final String ANALYZER_NSP_PACKAGE_ENABLED = "analyzer.nsp.package.enabled";
         /**
-         * The properties key for whether the Nexus analyzer is enabled.
+         * The properties key for supplying the URL to the Node Security Platform API.
          */
         public static final String ANALYZER_NSP_URL = "analyzer.nsp.url";
+        /**
+         * The properties key for whether the RetireJS analyzer is enabled.
+         */
+        public static final String ANALYZER_RETIREJS_ENABLED = "analyzer.retirejs.enabled";
+        /**
+         * The properties key for defining the URL to the RetireJS repository.
+         */
+        public static final String ANALYZER_RETIREJS_REPO_JS_URL = "analyzer.retirejs.repo.js.url";
         /**
          * The properties key for whether the composer lock file analyzer is
          * enabled.
