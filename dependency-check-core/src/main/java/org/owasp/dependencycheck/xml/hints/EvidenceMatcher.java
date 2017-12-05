@@ -38,30 +38,30 @@ public class EvidenceMatcher {
     /**
      * The name that the {@link Evidence} should have for a match.
      */
-    private String name;
+    private final String name;
 
     /**
      * The source that the {@link Evidence} should have for a match. A
      * {@code null}-value is allowed and functions as a wildcard.
      */
-    private String source;
+    private final String source;
 
     /**
      * The value that the {@link Evidence} should have for a match.
      */
-    private String value;
+    private final String value;
 
     /**
      * Whether the {@link EvidenceMatcher#value} should be interpreted as a
      * regular expression.
      */
-    private boolean regex = false;
+    private final boolean regex;
 
     /**
      * The confidence that the {@link Evidence} should have for a match. A
      * {@code null}-value is allowed and functions as a wildcard.
      */
-    private Confidence confidence;
+    private final Confidence confidence;
 
     /**
      * Creates a new EvidenceMatcher objects.
