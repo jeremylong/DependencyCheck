@@ -732,7 +732,7 @@ public final class CveDB implements AutoCloseable {
                     if (countReferences % getBatchSize() == 0) {
                         insertReference.executeBatch();
                         insertReference = getPreparedStatement(INSERT_REFERENCE);
-                        LOGGER.info(getLogForBatchInserts(countReferences, "Completed %s batch inserts to references table: %s"));
+                        LOGGER.trace(getLogForBatchInserts(countReferences, "Completed %s batch inserts to references table: %s"));
                         countReferences = 0;
                     } else if (countReferences == vuln.getReferences().size()) {
                         if (LOGGER.isTraceEnabled()) {
@@ -789,7 +789,7 @@ public final class CveDB implements AutoCloseable {
                     if (countSoftware % getBatchSize() == 0) {
                         executeBatch(vuln, vulnerableSoftware, insertSoftware);
                         insertSoftware = getPreparedStatement(INSERT_SOFTWARE);
-                        LOGGER.info(getLogForBatchInserts(countSoftware, "Completed %s batch inserts software table: %s"));
+                        LOGGER.trace(getLogForBatchInserts(countSoftware, "Completed %s batch inserts software table: %s"));
                         countSoftware = 0;
                     } else if (countSoftware == vuln.getVulnerableSoftware().size()) {
                         if (LOGGER.isTraceEnabled()) {
