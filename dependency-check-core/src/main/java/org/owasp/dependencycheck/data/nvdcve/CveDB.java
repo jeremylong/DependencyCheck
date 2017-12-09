@@ -42,7 +42,6 @@ import static org.owasp.dependencycheck.data.nvdcve.CveDB.PreparedStatementCveDb
 
 //CSOFF: AvoidStarImport
 //CSON: AvoidStarImport
-
 /**
  * The database holding information about the NVD CVE data. This class is safe
  * to be accessed from multiple threads in parallel, however internally only one
@@ -191,7 +190,7 @@ public final class CveDB implements AutoCloseable {
      *
      * @param settings the configured settings
      * @throws DatabaseException thrown if there is an exception opening the
-     *                           database.
+     * database.
      */
     public CveDB(Settings settings) throws DatabaseException {
         this.settings = settings;
@@ -221,7 +220,7 @@ public final class CveDB implements AutoCloseable {
      * create a new one.
      *
      * @throws DatabaseException thrown if there is an error opening the
-     *                           database connection
+     * database connection
      */
     private synchronized void open() throws DatabaseException {
         try {
@@ -286,7 +285,7 @@ public final class CveDB implements AutoCloseable {
      * Prepares all statements to be used.
      *
      * @throws DatabaseException thrown if there is an error preparing the
-     *                           statements
+     * statements
      */
     private void prepareStatements() throws DatabaseException {
         for (PreparedStatementCveDb key : values()) {
@@ -324,7 +323,7 @@ public final class CveDB implements AutoCloseable {
      * Returns the specified prepared statement.
      *
      * @param key the prepared statement from {@link PreparedStatementCveDb} to
-     *            return
+     * return
      * @return the prepared statement
      * @throws SQLException thrown if a SQL Exception occurs
      */
@@ -387,9 +386,9 @@ public final class CveDB implements AutoCloseable {
      * given vendor and product combination. The returned list will include all
      * versions of the product that are registered in the NVD CVE data.
      *
-     * @param vendor  the identified vendor name of the dependency being analyzed
+     * @param vendor the identified vendor name of the dependency being analyzed
      * @param product the identified name of the product of the dependency being
-     *                analyzed
+     * analyzed
      * @return a set of vulnerable software
      */
     public synchronized Set<VulnerableSoftware> getCPEs(String vendor, String product) {
@@ -420,7 +419,7 @@ public final class CveDB implements AutoCloseable {
      *
      * @return the entire list of vendor/product combinations
      * @throws DatabaseException thrown when there is an error retrieving the
-     *                           data from the DB
+     * data from the DB
      */
     public synchronized Set<Pair<String, String>> getVendorProductList() throws DatabaseException {
         final Set<Pair<String, String>> data = new HashSet<>();
@@ -466,7 +465,7 @@ public final class CveDB implements AutoCloseable {
     /**
      * Saves a property to the database.
      *
-     * @param key   the property key
+     * @param key the property key
      * @param value the property value
      */
     public synchronized void saveProperty(String key, String value) {
@@ -502,6 +501,7 @@ public final class CveDB implements AutoCloseable {
      * the code.
      * <p>
      * It should be also called when DB is closed.
+     * </p>
      */
     private synchronized void clearCache() {
         vulnerabilitiesForCpeCache.clear();
@@ -726,7 +726,7 @@ public final class CveDB implements AutoCloseable {
                 insertReference.setString(2, r.getName());
                 insertReference.setString(3, r.getUrl());
                 insertReference.setString(4, r.getSource());
-                if(isBatchInsertEnabled()) {
+                if (isBatchInsertEnabled()) {
                     insertReference.addBatch();
                     countReferences++;
                     if (countReferences % getBatchSize() == 0) {
@@ -783,7 +783,7 @@ public final class CveDB implements AutoCloseable {
                 } else {
                     insertSoftware.setString(3, vulnerableSoftware.getPreviousVersion());
                 }
-                if(isBatchInsertEnabled()) {
+                if (isBatchInsertEnabled()) {
                     insertSoftware.addBatch();
                     countSoftware++;
                     if (countSoftware % getBatchSize() == 0) {
@@ -846,7 +846,8 @@ public final class CveDB implements AutoCloseable {
     }
 
     /**
-     * Executes batch inserts of vulnerabilities when property database.batchinsert.maxsize is reached
+     * Executes batch inserts of vulnerabilities when property
+     * database.batchinsert.maxsize is reached
      *
      * @param pVulnerability
      * @param pVulnerableSoftware
@@ -887,9 +888,9 @@ public final class CveDB implements AutoCloseable {
                 dd = settings.getString(Settings.KEYS.DATA_DIRECTORY);
             }
             LOGGER.error("Unable to access the local database.\n\nEnsure that '{}' is a writable directory. "
-                            + "If the problem persist try deleting the files in '{}' and running {} again. If the problem continues, please "
-                            + "create a log file (see documentation at http://jeremylong.github.io/DependencyCheck/) and open a ticket at "
-                            + "https://github.com/jeremylong/DependencyCheck/issues and include the log file.\n\n",
+                    + "If the problem persist try deleting the files in '{}' and running {} again. If the problem continues, please "
+                    + "create a log file (see documentation at http://jeremylong.github.io/DependencyCheck/) and open a ticket at "
+                    + "https://github.com/jeremylong/DependencyCheck/issues and include the log file.\n\n",
                     dd, dd, settings.getString(Settings.KEYS.APPLICATION_NAME));
             LOGGER.debug("", ex);
         } finally {
@@ -922,16 +923,16 @@ public final class CveDB implements AutoCloseable {
      * previous version argument indicates that all previous versions are
      * affected.
      *
-     * @param vendor             the vendor of the dependency being analyzed
-     * @param product            the product name of the dependency being analyzed
+     * @param vendor the vendor of the dependency being analyzed
+     * @param product the product name of the dependency being analyzed
      * @param vulnerableSoftware a map of the vulnerable software with a boolean
-     *                           indicating if all previous versions are affected
-     * @param identifiedVersion  the identified version of the dependency being
-     *                           analyzed
+     * indicating if all previous versions are affected
+     * @param identifiedVersion the identified version of the dependency being
+     * analyzed
      * @return true if the identified version is affected, otherwise false
      */
     protected Entry<String, Boolean> getMatchingSoftware(Map<String, Boolean> vulnerableSoftware, String vendor, String product,
-                                                         DependencyVersion identifiedVersion) {
+            DependencyVersion identifiedVersion) {
 
         final boolean isVersionTwoADifferentProduct = "apache".equals(vendor) && "struts".equals(product);
 
@@ -1037,6 +1038,7 @@ public final class CveDB implements AutoCloseable {
      * This method is only referenced in unused code.
      * <p>
      * Deletes unused dictionary entries from the database.
+     * </p>
      */
     public synchronized void deleteUnusedCpe() {
         clearCache();
@@ -1056,9 +1058,10 @@ public final class CveDB implements AutoCloseable {
      * MySQL if ever used due to the MERGE statement.
      * <p>
      * Merges CPE entries into the database.
+     * </p>
      *
-     * @param cpe     the CPE identifier
-     * @param vendor  the CPE vendor
+     * @param cpe the CPE identifier
+     * @param vendor the CPE vendor
      * @param product the CPE product
      */
     public synchronized void addCpe(String cpe, String vendor, String product) {
