@@ -33,7 +33,7 @@ public class DependencyVersionUtilTest extends BaseTest {
      * Test of parseVersion method, of class DependencyVersionUtil.
      */
     @Test
-    public void testParseVersion() {
+    public void testParseVersion_String() {
         final String[] fileName = {"something-0.9.5.jar", "lib2-1.1.jar", "lib1.5r4-someflag-R26.jar",
             "lib-1.2.5-dev-20050313.jar", "testlib_V4.4.0.jar", "lib-core-2.0.0-RC1-SNAPSHOT.jar",
             "lib-jsp-2.0.1_R114940.jar", "dev-api-2.3.11_R121413.jar", "lib-api-3.7-SNAPSHOT.jar",
@@ -58,5 +58,34 @@ public class DependencyVersionUtilTest extends BaseTest {
             final DependencyVersion version = DependencyVersionUtil.parseVersion(failingName);
             assertNull("Found version in name that should have failed \"" + failingName + "\".", version);
         }
+    }
+
+    /**
+     * Test of parseVersion method, of class DependencyVersionUtil.
+     */
+    @Test
+    public void testParseVersion_String_boolean() {
+        //cpe:/a:playframework:play_framework:2.1.1:rc1-2.9.x-backport
+        String text = "2.1.1.rc1.2.9.x-backport";
+        boolean firstMatchOnly = false;
+        DependencyVersion expResult = null;
+        DependencyVersion result = DependencyVersionUtil.parseVersion(text, firstMatchOnly);
+        assertNull(result);
+        firstMatchOnly = true;
+        expResult = DependencyVersionUtil.parseVersion("2.1.1.rc1");
+        result = DependencyVersionUtil.parseVersion(text, firstMatchOnly);
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of parsePreVersion method, of class DependencyVersionUtil.
+     */
+    @Test
+    public void testParsePreVersion() {
+        String text = "library-name-1.4.1r2-release.jar";
+        String expResult = "library-name";
+        String result = DependencyVersionUtil.parsePreVersion(text);
+        assertEquals(expResult, result);
+
     }
 }

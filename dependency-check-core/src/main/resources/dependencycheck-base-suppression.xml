@@ -958,7 +958,13 @@
         <gav regex="true">^org\.codehaus\.groovy:groovy-all:.*$</gav>
         <cve>CVE-2016-6497</cve>
     </suppress>
-
+    <!--suppress base="true">
+        <notes><![CDATA[
+        FP per issue #997 - actual fix was in DependencyVersionUtils
+        ]]></notes>
+        <gav regex="true">^com\.typesafe\.play:play-netty-utils:.*$</gav>
+        <cpe>cpe:/a:playframework:play_framework</cpe>
+    </suppress-->
 
     <suppress base="true">
         <notes><![CDATA[

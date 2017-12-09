@@ -70,6 +70,25 @@ public final class DependencyVersionUtil {
      * @return a DependencyVersion containing the version
      */
     public static DependencyVersion parseVersion(String text) {
+        return parseVersion(text, false);
+    }
+
+    /**
+     * <p>
+     * A utility class to extract version numbers from file names (or other
+     * strings containing version numbers.</p>
+     * <pre>
+     * Example:
+     * Give the file name: library-name-1.4.1r2-release.jar
+     * This function would return: 1.4.1.r2</pre>
+     *
+     * @param text the text being analyzed
+     * @param firstMatchOnly if <code>false</code> and more then one
+     * version string is found in the given text, null will be returned.
+     * Otherwise, the first version found will be returned.
+     * @return a DependencyVersion containing the version
+     */
+    public static DependencyVersion parseVersion(String text, boolean firstMatchOnly) {
         if (text == null) {
             return null;
         }
@@ -87,7 +106,7 @@ public final class DependencyVersionUtil {
             version = matcher.group();
         }
         //throw away the results if there are two things that look like version numbers
-        if (matcher.find()) {
+        if (!firstMatchOnly && matcher.find()) {
             return null;
         }
         if (version == null) {

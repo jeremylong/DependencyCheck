@@ -956,7 +956,7 @@ public final class CveDB implements AutoCloseable {
             } else {
                 versionText = cpe.getVersion();
             }
-            cpeVersion = DependencyVersionUtil.parseVersion(versionText);
+            cpeVersion = DependencyVersionUtil.parseVersion(versionText, true);
         } else {
             cpeVersion = new DependencyVersion("-");
         }
