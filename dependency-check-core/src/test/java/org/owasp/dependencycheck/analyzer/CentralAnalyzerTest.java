@@ -61,7 +61,7 @@ public class CentralAnalyzerTest {
         new Expectations() {
             {
                 centralSearch.searchSha1(SHA1_SUM);
-                returns(expectedMavenArtifacts);
+                returns(expectedMavenArtifacts, expectedMavenArtifacts);
             }
         };
 
@@ -176,7 +176,7 @@ public class CentralAnalyzerTest {
         new Expectations() {
             {
                 dependency.getSha1sum();
-                returns(SHA1_SUM);
+                returns(SHA1_SUM, SHA1_SUM);
             }
         };
     }
