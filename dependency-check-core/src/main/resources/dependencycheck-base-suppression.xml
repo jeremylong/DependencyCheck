@@ -63,6 +63,7 @@
         7. Even if a node.js package exists - we aren't flagging the entire node.js
         8. Context project is drupal plugin
         9. mail_project is ruby library
+        10. ldap_project is part of type3 written in php
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec)|pom\.xml|package.json)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -77,6 +78,7 @@
         <cpe>cpe:/a:nodejs:nodejs</cpe>
         <cpe>cpe:/a:context_project:context</cpe>
         <cpe>cpe:/a:mail_project:mail</cpe>
+        <cpe>cpe:/a:ldap_project:ldap</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -108,13 +110,14 @@
         <cpe>cpe:/a:oracle:glassfish</cpe>
         <cpe>cpe:/a:oracle:glassfish_server</cpe>
     </suppress>
-    <suppress base="true">
+    <!--suppress base="true">
         <notes><![CDATA[
+        This was added to a broader suppression ruleg
         Suppresses false positives on ldap_project (issue #165).
         ]]></notes>
         <gav regex="true">org\.forgerock\.opendj:opendj-ldap-sdk:.*</gav>
         <cpe>cpe:/a:ldap_project:ldap</cpe>
-    </suppress>
+    </suppress-->
     <suppress base="true">
         <notes><![CDATA[
         Suppresses false positives on the org.opensaml:xmltooling
@@ -761,13 +764,15 @@
         <gav regex="true">^org\.apache\.struts\.xwork:xwork-core:.*$</gav>
         <cpe>cpe:/a:apache:struts</cpe>
     </suppress>
-    <suppress base="true">
+    <!--suppress base="true">
         <notes><![CDATA[
+        This was added to a broader suppression.
+        
         false positive per issue #908
         ]]></notes>
         <gav regex="true">^com\.unboundid:unboundid-ldapsdk:.*$</gav>
         <cpe>cpe:/a:ldap_project:ldap</cpe>
-    </suppress>
+    </suppress-->
     <suppress base="true">
         <notes><![CDATA[
         false positive per issue #894
