@@ -17,45 +17,31 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import org.apache.commons.collections.map.ReferenceMap;
+import org.owasp.dependencycheck.data.cwe.CweDB;
+import org.owasp.dependencycheck.dependency.Reference;
+import org.owasp.dependencycheck.dependency.Vulnerability;
+import org.owasp.dependencycheck.dependency.VulnerableSoftware;
+import org.owasp.dependencycheck.utils.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.MissingResourceException;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.Set;
-import javax.annotation.concurrent.ThreadSafe;
-import org.apache.commons.collections.map.ReferenceMap;
-import org.owasp.dependencycheck.data.cwe.CweDB;
-import org.owasp.dependencycheck.dependency.Reference;
-import org.owasp.dependencycheck.dependency.Vulnerability;
-import org.owasp.dependencycheck.dependency.VulnerableSoftware;
-import org.owasp.dependencycheck.utils.DBUtils;
-import org.owasp.dependencycheck.utils.DependencyVersion;
-import org.owasp.dependencycheck.utils.DependencyVersionUtil;
-import org.owasp.dependencycheck.utils.Pair;
-import org.owasp.dependencycheck.utils.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-//CSOFF: AvoidStarImport
-import static org.owasp.dependencycheck.data.nvdcve.CveDB.PreparedStatementCveDb.*;
-//CSON: AvoidStarImport
 import static org.apache.commons.collections.map.AbstractReferenceMap.HARD;
 import static org.apache.commons.collections.map.AbstractReferenceMap.SOFT;
+import static org.owasp.dependencycheck.data.nvdcve.CveDB.PreparedStatementCveDb.*;
 
+//CSOFF: AvoidStarImport
+//CSON: AvoidStarImport
 /**
  * The database holding information about the NVD CVE data. This class is safe
  * to be accessed from multiple threads in parallel, however internally only one
@@ -70,6 +56,7 @@ public final class CveDB implements AutoCloseable {
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(CveDB.class);
+
     /**
      * The database connection factory.
      */
@@ -512,8 +499,9 @@ public final class CveDB implements AutoCloseable {
      * is not the optimal cache eviction strategy, this is good enough for
      * typical usage (update DB and then only read) and it is easier to maintain
      * the code.
-     *
+     * <p>
      * It should be also called when DB is closed.
+     * </p>
      */
     private synchronized void clearCache() {
         vulnerabilitiesForCpeCache.clear();
@@ -684,6 +672,7 @@ public final class CveDB implements AutoCloseable {
                 deleteSoftware.setInt(1, vulnerabilityId);
                 deleteSoftware.execute();
             }
+
             DBUtils.closeResultSet(rs);
 
             if (vulnerabilityId != 0) {
@@ -730,36 +719,55 @@ public final class CveDB implements AutoCloseable {
                 }
             }
 
-            final PreparedStatement insertReference = getPreparedStatement(INSERT_REFERENCE);
+            PreparedStatement insertReference = getPreparedStatement(INSERT_REFERENCE);
+            int countReferences = 0;
             for (Reference r : vuln.getReferences()) {
                 insertReference.setInt(1, vulnerabilityId);
                 insertReference.setString(2, r.getName());
                 insertReference.setString(3, r.getUrl());
                 insertReference.setString(4, r.getSource());
-                insertReference.execute();
+                if (isBatchInsertEnabled()) {
+                    insertReference.addBatch();
+                    countReferences++;
+                    if (countReferences % getBatchSize() == 0) {
+                        insertReference.executeBatch();
+                        insertReference = getPreparedStatement(INSERT_REFERENCE);
+                        LOGGER.trace(getLogForBatchInserts(countReferences, "Completed %s batch inserts to references table: %s"));
+                        countReferences = 0;
+                    } else if (countReferences == vuln.getReferences().size()) {
+                        if (LOGGER.isTraceEnabled()) {
+                            LOGGER.trace(getLogForBatchInserts(countReferences, "Completed %s batch inserts to reference table: %s"));
+                        }
+                        insertReference.executeBatch();
+                        countReferences = 0;
+                    }
+                } else {
+                    insertReference.execute();
+                }
             }
 
-            final PreparedStatement insertSoftware = getPreparedStatement(INSERT_SOFTWARE);
-            for (VulnerableSoftware s : vuln.getVulnerableSoftware()) {
+            PreparedStatement insertSoftware = getPreparedStatement(INSERT_SOFTWARE);
+            int countSoftware = 0;
+            for (VulnerableSoftware vulnerableSoftware : vuln.getVulnerableSoftware()) {
                 int cpeProductId = 0;
                 final PreparedStatement selectCpeId = getPreparedStatement(SELECT_CPE_ID);
-                selectCpeId.setString(1, s.getName());
+                selectCpeId.setString(1, vulnerableSoftware.getName());
                 try {
                     rs = selectCpeId.executeQuery();
                     if (rs.next()) {
                         cpeProductId = rs.getInt(1);
                     }
                 } catch (SQLException ex) {
-                    throw new DatabaseException("Unable to get primary key for new cpe: " + s.getName(), ex);
+                    throw new DatabaseException("Unable to get primary key for new cpe: " + vulnerableSoftware.getName(), ex);
                 } finally {
                     DBUtils.closeResultSet(rs);
                 }
 
                 if (cpeProductId == 0) {
                     final PreparedStatement insertCpe = getPreparedStatement(INSERT_CPE);
-                    insertCpe.setString(1, s.getName());
-                    insertCpe.setString(2, s.getVendor());
-                    insertCpe.setString(3, s.getProduct());
+                    insertCpe.setString(1, vulnerableSoftware.getName());
+                    insertCpe.setString(2, vulnerableSoftware.getVendor());
+                    insertCpe.setString(3, vulnerableSoftware.getProduct());
                     insertCpe.executeUpdate();
                     cpeProductId = DBUtils.getGeneratedKey(insertCpe);
                 }
@@ -770,22 +778,38 @@ public final class CveDB implements AutoCloseable {
                 insertSoftware.setInt(1, vulnerabilityId);
                 insertSoftware.setInt(2, cpeProductId);
 
-                if (s.getPreviousVersion() == null) {
+                if (vulnerableSoftware.getPreviousVersion() == null) {
                     insertSoftware.setNull(3, java.sql.Types.VARCHAR);
                 } else {
-                    insertSoftware.setString(3, s.getPreviousVersion());
+                    insertSoftware.setString(3, vulnerableSoftware.getPreviousVersion());
                 }
-                try {
-                    insertSoftware.execute();
-                } catch (SQLException ex) {
-                    if (ex.getMessage().contains("Duplicate entry")) {
-                        final String msg = String.format("Duplicate software key identified in '%s:%s'", vuln.getName(), s.getName());
-                        LOGGER.info(msg, ex);
-                    } else {
-                        throw ex;
+                if (isBatchInsertEnabled()) {
+                    insertSoftware.addBatch();
+                    countSoftware++;
+                    if (countSoftware % getBatchSize() == 0) {
+                        executeBatch(vuln, vulnerableSoftware, insertSoftware);
+                        insertSoftware = getPreparedStatement(INSERT_SOFTWARE);
+                        LOGGER.trace(getLogForBatchInserts(countSoftware, "Completed %s batch inserts software table: %s"));
+                        countSoftware = 0;
+                    } else if (countSoftware == vuln.getVulnerableSoftware().size()) {
+                        if (LOGGER.isTraceEnabled()) {
+                            LOGGER.trace(getLogForBatchInserts(countSoftware, "Completed %s batch inserts software table: %s"));
+                            countReferences = 0;
+                        }
+                        executeBatch(vuln, vulnerableSoftware, insertSoftware);
+                    }
+                } else {
+                    try {
+                        insertSoftware.execute();
+                    } catch (SQLException ex) {
+                        if (ex.getMessage().contains("Duplicate entry")) {
+                            final String msg = String.format("Duplicate software key identified in '%s:%s'", vuln.getName(), vuln.getName());
+                            LOGGER.info(msg, ex);
+                        } else {
+                            throw ex;
+                        }
                     }
                 }
-
             }
         } catch (SQLException ex) {
             final String msg = String.format("Error updating '%s'", vuln.getName());
@@ -793,6 +817,53 @@ public final class CveDB implements AutoCloseable {
             throw new DatabaseException(msg, ex);
         } finally {
             DBUtils.closeResultSet(rs);
+        }
+    }
+
+    private int getBatchSize() {
+        int max;
+        try {
+            max = settings.getInt(Settings.KEYS.MAX_BATCH_SIZE);
+        } catch (InvalidSettingException pE) {
+            max = 1000;
+        }
+        return max;
+    }
+
+    private boolean isBatchInsertEnabled() {
+        boolean batch = false;
+        try {
+            batch = settings.getBoolean(Settings.KEYS.ENABLE_BATCH_UPDATES);
+        } catch (InvalidSettingException pE) {
+            //If there's no configuration, default is to not perform batch inserts
+            batch = false;
+        }
+        return batch;
+    }
+
+    private String getLogForBatchInserts(int pCountReferences, String pFormat) {
+        return String.format(pFormat, pCountReferences, new Date());
+    }
+
+    /**
+     * Executes batch inserts of vulnerabilities when property
+     * database.batchinsert.maxsize is reached
+     *
+     * @param pVulnerability
+     * @param pVulnerableSoftware
+     * @param pInsertSoftware
+     * @throws SQLException
+     */
+    private void executeBatch(Vulnerability pVulnerability, VulnerableSoftware pVulnerableSoftware, PreparedStatement pInsertSoftware) throws SQLException {
+        try {
+            pInsertSoftware.executeBatch();
+        } catch (SQLException ex) {
+            if (ex.getMessage().contains("Duplicate entry")) {
+                final String msg = String.format("Duplicate software key identified in '%s:%s'", pVulnerability.getName(), pVulnerableSoftware.getName());
+                LOGGER.info(msg, ex);
+            } else {
+                throw ex;
+            }
         }
     }
 
@@ -965,8 +1036,9 @@ public final class CveDB implements AutoCloseable {
 
     /**
      * This method is only referenced in unused code.
-     *
+     * <p>
      * Deletes unused dictionary entries from the database.
+     * </p>
      */
     public synchronized void deleteUnusedCpe() {
         clearCache();
@@ -984,8 +1056,9 @@ public final class CveDB implements AutoCloseable {
     /**
      * This method is only referenced in unused code and will likely break on
      * MySQL if ever used due to the MERGE statement.
-     *
+     * <p>
      * Merges CPE entries into the database.
+     * </p>
      *
      * @param cpe the CPE identifier
      * @param vendor the CPE vendor
