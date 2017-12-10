@@ -448,6 +448,16 @@ public final class Settings {
         public static final String ECOSYSTEM_SKIP_CPEANALYZER = "ecosystem.skip.cpeanalyzer";
 
         /**
+         *
+         * Adds capabilities to batch insert. Tested on PostgreSQL and H2.
+         */
+        public static final String ENABLE_BATCH_UPDATES = "database.batchinsert.enabled";
+        /**
+         * Size of database batch inserts
+         */
+        public static final String MAX_BATCH_SIZE = "database.batchinsert.maxsize";
+
+        /**
          * private constructor because this is a "utility" class containing
          * constants
          */
