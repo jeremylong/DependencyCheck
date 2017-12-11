@@ -152,8 +152,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(defaultValue = "${project.build.directory}", required = true)
     private File outputDirectory;
     /**
-     * Specifies the destination directory for the generated Dependency-Check
-     * report. This generally maps to "target/site".
+     * This is a reference to the &gt;reporting&lt; sections <code>outputDirectory</code>.
+     * This cannot be configured in the dependency-check mojo directly.
+     * This generally maps to "target/site".
      */
     @Parameter(property = "project.reporting.outputDirectory", required = true)
     private File reportOutputDirectory;
