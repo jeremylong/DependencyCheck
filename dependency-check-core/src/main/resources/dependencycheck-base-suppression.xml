@@ -121,22 +121,18 @@
     <suppress base="true">
         <notes><![CDATA[
         Suppresses false positives on the org.opensaml:xmltooling
+            FP per issue #945
         ]]></notes>
         <gav regex="true">org\.opensaml:xmltooling:.*</gav>
         <cpe>cpe:/a:shibboleth:opensaml</cpe>
+        <cpe>cpe:/a:internet2:opensaml</cpe>
+        <cve>CVE-2015-0851</cve>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
         Suppresses false positives on the org.opensaml:openws
         ]]></notes>
         <gav regex="true">org\.opensaml:openws:.*</gav>
-        <cpe>cpe:/a:internet2:opensaml</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        Suppresses false positives on the org.opensaml:xmltooling
-        ]]></notes>
-        <gav regex="true">org\.opensaml:xmltooling:.*</gav>
         <cpe>cpe:/a:internet2:opensaml</cpe>
     </suppress>
     <suppress base="true">
@@ -905,13 +901,6 @@
         ]]></notes>
         <gav regex="true">^org\.alfresco\.cmis\.client:alfresco-opencmis-extension:.*$</gav>
         <cpe>cpe:/a:alfresco:alfresco</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        FP per issue #945
-        ]]></notes>
-        <gav regex="true">^org\.opensaml:xmltooling:.*$</gav>
-        <cve>CVE-2015-0851</cve>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -1814,5 +1803,140 @@
         <cve>CVE-2016-5633</cve>
         <cve>CVE-2014-6469</cve>
         <cve>CVE-2014-6491</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #943
+        ]]></notes>
+        <gav regex="true">^cn\.guoyukun\.jdbc:db2jcc_license_cu:.*$</gav>
+        <cpe>cpe:/a:ibm:db2</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #943 - instead of suppressing the whole thing, we will just
+            suppress specific CVE that are for the server
+        ]]></notes>
+        <gav regex="true">^cn\.guoyukun\.jdbc:db2jcc:.*$</gav>
+        <cve>CVE-2007-2582</cve>
+        <cve>CVE-2012-2194</cve>
+        <cve>CVE-2008-0696</cve>
+        <cve>CVE-2009-4327</cve>
+        <cve>CVE-2013-3475</cve>
+        <cve>CVE-2009-1239</cve>
+        <cve>CVE-2014-6159</cve>
+        <cve>CVE-2010-3740</cve>
+        <cve>CVE-2012-3324</cve>
+        <cve>CVE-2012-0711</cve>
+        <cve>CVE-2017-1519</cve>
+        <cve>CVE-2015-1935</cve>
+        <cve>CVE-2009-4330</cve>
+        <cve>CVE-2014-3095</cve>
+        <cve>CVE-2009-4334</cve>
+        <cve>CVE-2005-4870</cve>
+        <cve>CVE-2010-3193</cve>
+        <cve>CVE-2013-4033</cve>
+        <cve>CVE-2008-6820</cve>
+        <cve>CVE-2016-5995</cve>
+        <cve>CVE-2009-4438</cve>
+        <cve>CVE-2010-3197</cve>
+        <cve>CVE-2015-0157</cve>
+        <cve>CVE-2007-1228</cve>
+        <cve>CVE-2017-1105</cve>
+        <cve>CVE-2012-2180</cve>
+        <cve>CVE-2010-3734</cve>
+        <cve>CVE-2010-3738</cve>
+        <cve>CVE-2012-0709</cve>
+        <cve>CVE-2008-4691</cve>
+        <cve>CVE-2009-3473</cve>
+        <cve>CVE-2017-1150</cve>
+        <cve>CVE-2008-2154</cve>
+        <cve>CVE-2014-6210</cve>
+        <cve>CVE-2007-3676</cve>
+        <cve>CVE-2008-0697</cve>
+        <cve>CVE-2009-4328</cve>
+        <cve>CVE-2012-0712</cve>
+        <cve>CVE-2009-4331</cve>
+        <cve>CVE-2009-4335</cve>
+        <cve>CVE-2005-4871</cve>
+        <cve>CVE-2010-3194</cve>
+        <cve>CVE-2008-6821</cve>
+        <cve>CVE-2009-4439</cve>
+        <cve>CVE-2008-3958</cve>
+        <cve>CVE-2012-1796</cve>
+        <cve>CVE-2010-3731</cve>
+        <cve>CVE-2009-1905</cve>
+        <cve>CVE-2011-0731</cve>
+        <cve>CVE-2014-4805</cve>
+        <cve>CVE-2010-3735</cve>
+        <cve>CVE-2015-1922</cve>
+        <cve>CVE-2014-0907</cve>
+        <cve>CVE-2008-4692</cve>
+        <cve>CVE-2009-2860</cve>
+        <cve>CVE-2003-1051</cve>
+        <cve>CVE-2009-4325</cve>
+        <cve>CVE-2006-4257</cve>
+        <cve>CVE-2012-2196</cve>
+        <cve>CVE-2017-1451</cve>
+        <cve>CVE-2008-0698</cve>
+        <cve>CVE-2009-4329</cve>
+        <cve>CVE-2013-6744</cve>
+        <cve>CVE-2008-1966</cve>
+        <cve>CVE-2011-1373</cve>
+        <cve>CVE-2005-4869</cve>
+        <cve>CVE-2016-0211</cve>
+        <cve>CVE-2017-1434</cve>
+        <cve>CVE-2010-1560</cve>
+        <cve>CVE-2011-4061</cve>
+        <cve>CVE-2014-8910</cve>
+        <cve>CVE-2012-0713</cve>
+        <cve>CVE-2017-1438</cve>
+        <cve>CVE-2017-1297</cve>
+        <cve>CVE-2009-4332</cve>
+        <cve>CVE-2005-2073</cve>
+        <cve>CVE-2010-3195</cve>
+        <cve>CVE-2017-1520</cve>
+        <cve>CVE-2013-5466</cve>
+        <cve>CVE-2008-1998</cve>
+        <cve>CVE-2009-2858</cve>
+        <cve>CVE-2008-3959</cve>
+        <cve>CVE-2012-1797</cve>
+        <cve>CVE-2010-3732</cve>
+        <cve>CVE-2014-6209</cve>
+        <cve>CVE-2009-1906</cve>
+        <cve>CVE-2012-4826</cve>
+        <cve>CVE-2010-3736</cve>
+        <cve>CVE-2011-0757</cve>
+        <cve>CVE-2011-1846</cve>
+        <cve>CVE-2007-5090</cve>
+        <cve>CVE-2010-3474</cve>
+        <cve>CVE-2013-6717</cve>
+        <cve>CVE-2009-3471</cve>
+        <cve>CVE-2008-4693</cve>
+        <cve>CVE-2007-5652</cve>
+        <cve>CVE-2003-1052</cve>
+        <cve>CVE-2009-4326</cve>
+        <cve>CVE-2017-1452</cve>
+        <cve>CVE-2012-2197</cve>
+        <cve>CVE-2008-0699</cve>
+        <cve>CVE-2010-0472</cve>
+        <cve>CVE-2017-1439</cve>
+        <cve>CVE-2012-0710</cve>
+        <cve>CVE-2014-0919</cve>
+        <cve>CVE-2009-4150</cve>
+        <cve>CVE-2014-3094</cve>
+        <cve>CVE-2009-4333</cve>
+        <cve>CVE-2013-4032</cve>
+        <cve>CVE-2010-3196</cve>
+        <cve>CVE-2007-1027</cve>
+        <cve>CVE-2015-1883</cve>
+        <cve>CVE-2014-8901</cve>
+        <cve>CVE-2010-3475</cve>
+        <cve>CVE-2010-0462</cve>
+        <cve>CVE-2009-2859</cve>
+        <cve>CVE-2010-3733</cve>
+        <cve>CVE-2010-3737</cve>
+        <cve>CVE-2011-1847</cve>
+        <cve>CVE-2009-3472</cve>
+        <cve>CVE-2014-6097</cve>
     </suppress>
 </suppressions>
