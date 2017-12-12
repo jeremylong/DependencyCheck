@@ -68,6 +68,8 @@ public class H2DBLock {
      * A random string used to validate the lock.
      */
     private final String magic;
+    
+    private H2DBCleanupHook hook = null;
 
     /**
      * Constructs a new H2DB Lock object with the configured settings.
@@ -126,6 +128,7 @@ public class H2DBLock {
                             lock = null;
                             LOGGER.debug("Another process obtained a lock first ({})", Thread.currentThread().getName());
                         } else {
+                            addShutdownHook();
                             final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                             LOGGER.debug("Lock file created ({}) {} @ {}", Thread.currentThread().getName(), magic, timestamp.toString());
                         }
@@ -196,6 +199,7 @@ public class H2DBLock {
             }
         }
         lockFile = null;
+        removeShutdownHook();
         final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         LOGGER.debug("Lock released ({}) {} @ {}", Thread.currentThread().getName(), magic, timestamp.toString());
     }
@@ -212,5 +216,23 @@ public class H2DBLock {
         final double time = (d.getTime() - modified) / 1000.0 / 60.0;
         LOGGER.debug("Lock file age is {} minutes", time);
         return time;
+    }
+    
+    private void addShutdownHook() {
+        if (hook == null) {
+            hook = new H2DBCleanupHook(this);
+            Runtime.getRuntime().addShutdownHook(hook);
+        }
+    }
+    
+    private void removeShutdownHook() {
+        if (hook != null) {
+            try {
+                Runtime.getRuntime().removeShutdownHook(hook);
+            } catch (IllegalStateException ex) {
+                LOGGER.trace("ignore as we are likely shutting down", ex);
+            }
+            hook = null;
+        }
     }
 }
