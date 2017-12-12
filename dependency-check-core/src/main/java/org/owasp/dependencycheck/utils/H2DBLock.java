@@ -68,7 +68,7 @@ public class H2DBLock {
      * A random string used to validate the lock.
      */
     private final String magic;
-    
+
     private H2DBCleanupHook hook = null;
 
     /**
@@ -102,16 +102,7 @@ public class H2DBLock {
         try {
             final File dir = settings.getDataDirectory();
             lockFile = new File(dir, "dc.update.lock");
-            if (!lockFile.getParentFile().isDirectory() && !lockFile.mkdir()) {
-                throw new H2DBLockException("Unable to create path to data directory.");
-            }
-            if (lockFile.isFile() && getFileAge(lockFile) > 30) {
-                LOGGER.debug("An old db update lock file was found: {}", lockFile.getAbsolutePath());
-                if (!lockFile.delete()) {
-                    LOGGER.warn("An old db update lock file was found but the system was unable to delete "
-                            + "the file. Consider manually deleting {}", lockFile.getAbsolutePath());
-                }
-            }
+            checkState();
             int ctr = 0;
             do {
                 try {
@@ -162,6 +153,24 @@ public class H2DBLock {
             }
         } catch (IOException ex) {
             throw new H2DBLockException(ex.getMessage(), ex);
+        }
+    }
+
+    private void checkState() throws H2DBLockException {
+        if (!lockFile.getParentFile().isDirectory() && !lockFile.mkdir()) {
+            throw new H2DBLockException("Unable to create path to data directory.");
+        }
+        if (lockFile.isFile()) {
+            if (getFileAge(lockFile) > 30) {
+                LOGGER.debug("An old db update lock file was found: {}", lockFile.getAbsolutePath());
+                if (!lockFile.delete()) {
+                    LOGGER.warn("An old db update lock file was found but the system was unable to delete "
+                            + "the file. Consider manually deleting {}", lockFile.getAbsolutePath());
+                }
+            } else {
+                LOGGER.info("Lock file found `{}`", lockFile);
+                LOGGER.info("Existing update in progress; waiting for update to complete");
+            }
         }
     }
 
@@ -217,14 +226,14 @@ public class H2DBLock {
         LOGGER.debug("Lock file age is {} minutes", time);
         return time;
     }
-    
+
     private void addShutdownHook() {
         if (hook == null) {
             hook = new H2DBCleanupHook(this);
             Runtime.getRuntime().addShutdownHook(hook);
         }
     }
-    
+
     private void removeShutdownHook() {
         if (hook != null) {
             try {
