@@ -156,7 +156,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * This cannot be configured in the dependency-check mojo directly.
      * This generally maps to "target/site".
      */
-    @Parameter(property = "project.reporting.outputDirectory", required = true)
+    @Parameter(property = "project.reporting.outputDirectory", readonly = true)
     private File reportOutputDirectory;
     /**
      * Specifies if the build should be failed if a CVSS score above a specified
