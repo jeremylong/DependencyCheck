@@ -959,6 +959,15 @@
         <gav regex="true">^com\.typesafe\.play:play-netty-utils:.*$</gav>
         <cpe>cpe:/a:playframework:play_framework</cpe>
     </suppress-->
+    
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #1022
+        ]]></notes>
+        <gav regex="true">^org\.eclipse\.persistence:org\.eclipse\.persistence.*$</gav>
+        <cpe>cpe:/a:git:git</cpe>
+        <cpe>cpe:/a:git_project:git</cpe>
+    </suppress>
 
     <suppress base="true">
         <notes><![CDATA[
