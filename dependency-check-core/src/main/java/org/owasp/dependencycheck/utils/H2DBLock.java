@@ -30,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * The H2 DB lock file implementation; creates a custom lock file so that only a
+ * single instance of dependency-check can update the embedded h2 database.
  *
  * @author Jeremy Long
  */
@@ -69,7 +71,10 @@ public class H2DBLock {
      */
     private final String magic;
 
-    private H2DBCleanupHook hook = null;
+    /**
+     * The shutdown hook used to remove the lock file in case of an unexpected shutdown.
+     */
+    private H2DBShutdownHook hook = null;
 
     /**
      * Constructs a new H2DB Lock object with the configured settings.
@@ -229,18 +234,15 @@ public class H2DBLock {
 
     private void addShutdownHook() {
         if (hook == null) {
-            hook = new H2DBCleanupHook(this);
-            Runtime.getRuntime().addShutdownHook(hook);
+            hook = H2DBShutdownHookFactory.getHook(settings);
+            hook.add(this);
+
         }
     }
 
     private void removeShutdownHook() {
         if (hook != null) {
-            try {
-                Runtime.getRuntime().removeShutdownHook(hook);
-            } catch (IllegalStateException ex) {
-                LOGGER.trace("ignore as we are likely shutting down", ex);
-            }
+            hook.remove();
             hook = null;
         }
     }
