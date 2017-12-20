@@ -64,6 +64,7 @@
         8. Context project is drupal plugin
         9. mail_project is ruby library
         10. ldap_project is part of type3 written in php
+        11. user import project is used in drupal (i.e. php)
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec)|pom\.xml|package.json)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -79,6 +80,7 @@
         <cpe>cpe:/a:context_project:context</cpe>
         <cpe>cpe:/a:mail_project:mail</cpe>
         <cpe>cpe:/a:ldap_project:ldap</cpe>
+        <cpe>cpe:/a:user_import_project:user_import</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
