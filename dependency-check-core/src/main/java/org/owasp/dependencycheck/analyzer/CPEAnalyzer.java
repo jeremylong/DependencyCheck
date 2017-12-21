@@ -252,7 +252,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * @return the new evidence text
      */
     @SuppressWarnings("null")
-    private String addEvidenceWithoutDuplicateTerms(final String text, final Iterable<Evidence> evidence) {
+    protected String addEvidenceWithoutDuplicateTerms(final String text, final Iterable<Evidence> evidence) {
         final String txt = (text == null) ? "" : text;
         final StringBuilder sb = new StringBuilder(text.length() * 2);
         sb.append(' ').append(txt).append(' ');
@@ -373,7 +373,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * @return if the append was successful.
      */
     private boolean appendWeightedSearch(StringBuilder sb, String field, String searchText, Set<String> weightedText) {
-        sb.append(' ').append(field).append(":( ");
+        sb.append(field).append(":(");
 
         final String cleanText = cleanseText(searchText);
 
@@ -384,6 +384,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         if (weightedText == null || weightedText.isEmpty()) {
             LuceneUtils.appendEscapedLuceneQuery(sb, cleanText);
         } else {
+            boolean addSpace = false;
             final StringTokenizer tokens = new StringTokenizer(cleanText);
             while (tokens.hasMoreElements()) {
                 final String word = tokens.nextToken();
@@ -395,14 +396,20 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                         LuceneUtils.appendEscapedLuceneQuery(temp, word);
                         temp.append(WEIGHTING_BOOST);
                         if (!word.equalsIgnoreCase(weightedStr)) {
-                            temp.append(' ');
+                            if (temp.length() > 0) {
+                                temp.append(' ');
+                            }
                             LuceneUtils.appendEscapedLuceneQuery(temp, weightedStr);
                             temp.append(WEIGHTING_BOOST);
                         }
                         break;
                     }
                 }
-                sb.append(' ');
+                if (addSpace) {
+                    sb.append(' ');
+                } else {
+                    addSpace = true;
+                }
                 if (temp == null) {
                     LuceneUtils.appendEscapedLuceneQuery(sb, word);
                 } else {
@@ -410,7 +417,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 }
             }
         }
-        sb.append(" ) ");
+        sb.append(")");
         return true;
     }
 
