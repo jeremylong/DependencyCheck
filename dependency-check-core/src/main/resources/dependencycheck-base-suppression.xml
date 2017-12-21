@@ -1948,4 +1948,11 @@
         <cve>CVE-2009-3472</cve>
         <cve>CVE-2014-6097</cve>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive in io.vertx:vertx-config-kubernetes-configmap
+        ]]></notes>
+        <gav regex="true">^io\.vertx:vertx-config-kubernetes-configmap:.*$</gav>
+        <cpe>cpe:/a:kubernetes:kubernetes</cpe>
+    </suppress>
 </suppressions>
