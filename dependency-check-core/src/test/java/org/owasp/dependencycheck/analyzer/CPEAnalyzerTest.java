@@ -19,17 +19,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.data.cpe.IndexEntry;
-import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.dependency.Confidence;
-import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -158,61 +150,5 @@ public class CPEAnalyzerTest {
         expResult = "product:(lucene index) AND vendor:(apache software foundation)";
         result = instance.buildSearch(vendor, product, vendorWeighting, productWeightings);
         assertEquals(expResult, result);
-    }
-
-    /**
-     * Test of prepareAnalyzer method, of class CPEAnalyzer.
-     */
-    @Test
-    public void testPrepareAnalyzer() throws Exception {
-        //Part of the integration tests.
-    }
-
-    /**
-     * Test of open method, of class CPEAnalyzer.
-     */
-    @Test
-    public void testOpen() throws Exception {
-        //Part of the integration tests.
-    }
-
-    /**
-     * Test of closeAnalyzer method, of class CPEAnalyzer.
-     */
-    @Test
-    public void testCloseAnalyzer() {
-        //Part of the integration tests.
-    }
-
-    /**
-     * Test of determineCPE method, of class CPEAnalyzer.
-     */
-    @Test
-    public void testDetermineCPE() throws Exception {
-        //Part of the integration tests.
-    }
-
-    /**
-     * Test of searchCPE method, of class CPEAnalyzer.
-     */
-    @Test
-    public void testSearchCPE() {
-        //Part of the integration tests.
-    }
-
-    /**
-     * Test of analyzeDependency method, of class CPEAnalyzer.
-     */
-    @Test
-    public void testAnalyzeDependency() throws Exception {
-        //Part of the integration tests.
-    }
-
-    /**
-     * Test of determineIdentifiers method, of class CPEAnalyzer.
-     */
-    @Test
-    public void testDetermineIdentifiers() throws Exception {
-        //Part of the integration tests.
     }
 }
