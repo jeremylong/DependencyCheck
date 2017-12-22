@@ -59,19 +59,19 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         CPEAnalyzer instance = new CPEAnalyzer();
         instance.initialize(getSettings());
         String queryText = instance.buildSearch(vendor, product, null, null);
-        String expResult = " product:( struts 2 core )  AND  vendor:( apache software foundation ) ";
+        String expResult = "product:(struts 2 core) AND vendor:(apache software foundation)";
         assertTrue(expResult.equals(queryText));
 
         queryText = instance.buildSearch(vendor, product, null, productWeightings);
-        expResult = " product:(  struts^5 struts2^5 2 core )  AND  vendor:( apache software foundation ) ";
+        expResult = "product:(struts^5 struts2^5 2 core) AND vendor:(apache software foundation)";
         assertTrue(expResult.equals(queryText));
 
         queryText = instance.buildSearch(vendor, product, vendorWeightings, null);
-        expResult = " product:( struts 2 core )  AND  vendor:(  apache^5 software foundation ) ";
+        expResult = "product:(struts 2 core) AND vendor:(apache^5 software foundation)";
         assertTrue(expResult.equals(queryText));
 
         queryText = instance.buildSearch(vendor, product, vendorWeightings, productWeightings);
-        expResult = " product:(  struts^5 struts2^5 2 core )  AND  vendor:(  apache^5 software foundation ) ";
+        expResult = "product:(struts^5 struts2^5 2 core) AND vendor:(apache^5 software foundation)";
         assertTrue(expResult.equals(queryText));
         instance.close();
     }
