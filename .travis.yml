@@ -29,12 +29,12 @@ matrix:
       env:
         - JDK="JDK7"
       script:
-        - if [ ! -z "$TRAVIS_TAG" ]; then travis_wait 35 mvn install site site:stage -DreleaseTesting; else travis_wait 35 mvn install -DreleaseTesting; fi
+        - if [ ! -z "$TRAVIS_TAG" ]; then travis_wait 60 mvn install site site:stage -DreleaseTesting; else travis_wait 60 mvn install -DreleaseTesting; fi
     - jdk: oraclejdk8
       env:
         - JDK="JDK8"
       script:
-        - travis_wait 35 mvn install -DreleaseTesting
+        - travis_wait 60 mvn install -DreleaseTesting
 
 after_success:
   - if [ "$JDK" == "JDK8" ]; then 
