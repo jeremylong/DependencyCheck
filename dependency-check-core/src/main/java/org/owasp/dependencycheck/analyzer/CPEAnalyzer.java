@@ -251,20 +251,20 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * @param evidence an iterable set of evidence to concatenate
      * @return the new evidence text
      */
-    private String addEvidenceWithoutDuplicateTerms(final String text, final Iterable<Evidence> evidence) {
+    @SuppressWarnings("null")
+    protected String addEvidenceWithoutDuplicateTerms(final String text, final Iterable<Evidence> evidence) {
         final String txt = (text == null) ? "" : text;
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(txt.length() * 2);
         sb.append(' ').append(txt).append(' ');
         for (Evidence e : evidence) {
-            final String value = e.getValue();
-            //removed as the URLTokenizingFilter was created
-            //hack to get around the fact that lucene does a really good job of recognizing domains and not splitting them.
-//            if (value.startsWith("http://")) {
-//                value = value.substring(7).replaceAll("\\.", " ");
-//            }
-//            if (value.startsWith("https://")) {
-//                value = value.substring(8).replaceAll("\\.", " ");
-//            }
+            String value = e.getValue();
+            if (value.length() > 1000) {
+                value = value.substring(0, 1000);
+                final int pos = value.lastIndexOf(" ");
+                if (pos > 0) {
+                    value = value.substring(0, pos);
+                }
+            }
             if (sb.indexOf(" " + value + " ") < 0) {
                 sb.append(value).append(' ');
             }
@@ -373,7 +373,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * @return if the append was successful.
      */
     private boolean appendWeightedSearch(StringBuilder sb, String field, String searchText, Set<String> weightedText) {
-        sb.append(' ').append(field).append(":( ");
+        sb.append(field).append(":(");
 
         final String cleanText = cleanseText(searchText);
 
@@ -384,6 +384,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         if (weightedText == null || weightedText.isEmpty()) {
             LuceneUtils.appendEscapedLuceneQuery(sb, cleanText);
         } else {
+            boolean addSpace = false;
             final StringTokenizer tokens = new StringTokenizer(cleanText);
             while (tokens.hasMoreElements()) {
                 final String word = tokens.nextToken();
@@ -395,14 +396,20 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                         LuceneUtils.appendEscapedLuceneQuery(temp, word);
                         temp.append(WEIGHTING_BOOST);
                         if (!word.equalsIgnoreCase(weightedStr)) {
-                            temp.append(' ');
+                            if (temp.length() > 0) {
+                                temp.append(' ');
+                            }
                             LuceneUtils.appendEscapedLuceneQuery(temp, weightedStr);
                             temp.append(WEIGHTING_BOOST);
                         }
                         break;
                     }
                 }
-                sb.append(' ');
+                if (addSpace) {
+                    sb.append(' ');
+                } else {
+                    addSpace = true;
+                }
                 if (temp == null) {
                     LuceneUtils.appendEscapedLuceneQuery(sb, word);
                 } else {
@@ -410,7 +417,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 }
             }
         }
-        sb.append(" ) ");
+        sb.append(")");
         return true;
     }
 
