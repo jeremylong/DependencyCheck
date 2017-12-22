@@ -254,7 +254,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     @SuppressWarnings("null")
     protected String addEvidenceWithoutDuplicateTerms(final String text, final Iterable<Evidence> evidence) {
         final String txt = (text == null) ? "" : text;
-        final StringBuilder sb = new StringBuilder(text.length() * 2);
+        final StringBuilder sb = new StringBuilder(txt.length() * 2);
         sb.append(' ').append(txt).append(' ');
         for (Evidence e : evidence) {
             String value = e.getValue();
