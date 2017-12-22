@@ -1106,7 +1106,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             mojoProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);
             settings.mergeProperties(mojoProperties);
         } catch (IOException ex) {
-            getLog().warn("Unable to load the dependency-check ant task.properties file.");
+            getLog().warn("Unable to load the dependency-check maven mojo.properties file.");
             if (getLog().isDebugEnabled()) {
                 getLog().debug("", ex);
             }

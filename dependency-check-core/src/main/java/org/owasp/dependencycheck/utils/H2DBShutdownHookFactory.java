@@ -21,17 +21,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A cleanup hook that will register with the JVM to remove the H@DBLock file
- * during an unexpected shutdown.
+ * Simple factory to instantiate the H2DB Shutdown Hook.
  *
  * @author Jeremy Long
  */
-public class H2DBCleanupHook extends H2DBShutdownHook {
-
-    /**
-     * A reference to the lock file.
-     */
-    private H2DBLock lock;
+public final class H2DBShutdownHookFactory {
 
     /**
      * The logger.
@@ -39,36 +33,19 @@ public class H2DBCleanupHook extends H2DBShutdownHook {
     private static final Logger LOGGER = LoggerFactory.getLogger(H2DBShutdownHookFactory.class);
 
     /**
-     * Add the shutdown hook.
+     * Creates a new H2DB Shutdown Hook.
      *
-     * @param lock the lock object
+     * @param settings the configured settings
+     * @return the H2DB Shutdown Hook
      */
-    @Override
-    public void add(H2DBLock lock) {
-        this.lock = lock;
-        Runtime.getRuntime().addShutdownHook(this);
-    }
-
-    /**
-     * Removes the shutdown hook.
-     */
-    @Override
-    public void remove() {
+    public static H2DBShutdownHook getHook(Settings settings) {
         try {
-            Runtime.getRuntime().removeShutdownHook(this);
-        } catch (IllegalStateException ex) {
-            LOGGER.trace("ignore as we are likely shutting down", ex);
-        }
-    }
-
-    /**
-     * Releases the custom h2 lock file used by dependency-check.
-     */
-    @Override
-    public void run() {
-        if (lock != null) {
-            lock.release();
-            lock = null;
+            String className = settings.getString(Settings.KEYS.H2DB_SHUTDOWN_HOOK, "org.owasp.dependencycheck.utils.H2DBCleanupHook");
+            Class type = Class.forName(className);
+            return (H2DBShutdownHook) type.newInstance();
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+            LOGGER.debug("Failed to instantiate {}, using default shutdown hook instead", ex);
+            return new H2DBCleanupHook();
         }
     }
 }
