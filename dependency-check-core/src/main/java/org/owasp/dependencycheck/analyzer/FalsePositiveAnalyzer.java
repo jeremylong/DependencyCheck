@@ -429,19 +429,38 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                     || identifier.getValue().startsWith("cpe:/a:oracle:opensso_enterprise:")
                     || identifier.getValue().startsWith("cpe:/a:sun:opensso_enterprise:")
                     || identifier.getValue().startsWith("cpe:/a:sun:opensso:"))) {
-                final String newCpe = String.format("cpe:/a:sun:opensso_enterprise:%s", identifier.getValue().substring(22));
-                final String newCpe2 = String.format("cpe:/a:oracle:opensso_enterprise:%s", identifier.getValue().substring(22));
-                final String newCpe3 = String.format("cpe:/a:sun:opensso:%s", identifier.getValue().substring(22));
-                final String newCpe4 = String.format("cpe:/a:oracle:opensso:%s", identifier.getValue().substring(22));
+                final String[] parts = identifier.getValue().split(":");
+                final int pos = parts[0].length() + parts[1].length() + parts[2].length() + parts[3].length() + 4;
+                final String newCpe = String.format("cpe:/a:sun:opensso_enterprise:%s", identifier.getValue().substring(pos));
+                final String newCpe2 = String.format("cpe:/a:oracle:opensso_enterprise:%s", identifier.getValue().substring(pos));
+                final String newCpe3 = String.format("cpe:/a:sun:opensso:%s", identifier.getValue().substring(pos));
+                final String newCpe4 = String.format("cpe:/a:oracle:opensso:%s", identifier.getValue().substring(pos));
                 try {
                     dependency.addIdentifier("cpe", newCpe,
-                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe, "UTF-8")));
+                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe, "UTF-8")),
+                            identifier.getConfidence());
                     dependency.addIdentifier("cpe", newCpe2,
-                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe2, "UTF-8")));
+                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe2, "UTF-8")),
+                            identifier.getConfidence());
                     dependency.addIdentifier("cpe", newCpe3,
-                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe3, "UTF-8")));
+                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe3, "UTF-8")),
+                            identifier.getConfidence());
                     dependency.addIdentifier("cpe", newCpe4,
-                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe4, "UTF-8")));
+                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe4, "UTF-8")),
+                            identifier.getConfidence());
+                } catch (UnsupportedEncodingException ex) {
+                    LOGGER.debug("", ex);
+                }
+            }
+            if ("cpe".equals(identifier.getType()) && identifier.getValue() != null
+                    && identifier.getValue().startsWith("cpe:/a:apache:santuario_xml_security_for_java:")) {
+                final String[] parts = identifier.getValue().split(":");
+                final int pos = parts[0].length() + parts[1].length() + parts[2].length() + parts[3].length() + 4;
+                final String newCpe = String.format("cpe:/a:apache:xml_security_for_java:%s", identifier.getValue().substring(pos));
+                try {
+                    dependency.addIdentifier("cpe", newCpe,
+                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe, "UTF-8")),
+                            identifier.getConfidence());
                 } catch (UnsupportedEncodingException ex) {
                     LOGGER.debug("", ex);
                 }
