@@ -1,5 +1,6 @@
 language: java
 sudo: required
+group: deprecated-2017Q4
 
 env:
   global:
