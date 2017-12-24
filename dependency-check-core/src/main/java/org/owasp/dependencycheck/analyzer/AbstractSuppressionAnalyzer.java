@@ -86,7 +86,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      */
     @Override
     public synchronized void prepareAnalyzer(Engine engine) throws InitializationException {
-        if (rules == null || rules.isEmpty()) {
+        if (rules.isEmpty()) {
             try {
                 loadSuppressionBaseData();
             } catch (SuppressionParseException ex) {
@@ -103,7 +103,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
 
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        if (rules == null || rules.isEmpty()) {
+        if (rules.isEmpty()) {
             return;
         }
         for (final SuppressionRule rule : rules) {
