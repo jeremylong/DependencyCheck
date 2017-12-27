@@ -820,6 +820,11 @@ public final class CveDB implements AutoCloseable {
         }
     }
 
+    /**
+     * Returns the size of the batch.
+     *
+     * @return the size of the batch
+     */
     private int getBatchSize() {
         int max;
         try {
@@ -830,6 +835,12 @@ public final class CveDB implements AutoCloseable {
         return max;
     }
 
+    /**
+     * Determines whether or not batch insert is enabled.
+     *
+     * @return <code>true</code> if batch insert is enabled; otherwise
+     * <code>false</code>
+     */
     private boolean isBatchInsertEnabled() {
         boolean batch = false;
         try {
@@ -841,25 +852,34 @@ public final class CveDB implements AutoCloseable {
         return batch;
     }
 
+    /**
+     * Generates a logging message for batch inserts.
+     *
+     * @param pCountReferences the number of batch statements executed
+     * @param pFormat a Java String.format string
+     * @return the formated string
+     */
     private String getLogForBatchInserts(int pCountReferences, String pFormat) {
         return String.format(pFormat, pCountReferences, new Date());
     }
 
     /**
      * Executes batch inserts of vulnerabilities when property
-     * database.batchinsert.maxsize is reached
+     * database.batchinsert.maxsize is reached.
      *
-     * @param pVulnerability
-     * @param pVulnerableSoftware
-     * @param pInsertSoftware
-     * @throws SQLException
+     * @param pVulnerability the vulnerability
+     * @param pVulnerableSoftware the vulnerable software
+     * @param pInsertSoftware the prepared statement to batch execute
+     * @throws SQLException thrown when the batch cannot be executed
      */
-    private void executeBatch(Vulnerability pVulnerability, VulnerableSoftware pVulnerableSoftware, PreparedStatement pInsertSoftware) throws SQLException {
+    private void executeBatch(Vulnerability pVulnerability, VulnerableSoftware pVulnerableSoftware, PreparedStatement pInsertSoftware)
+            throws SQLException {
         try {
             pInsertSoftware.executeBatch();
         } catch (SQLException ex) {
             if (ex.getMessage().contains("Duplicate entry")) {
-                final String msg = String.format("Duplicate software key identified in '%s:%s'", pVulnerability.getName(), pVulnerableSoftware.getName());
+                final String msg = String.format("Duplicate software key identified in '%s:%s'",
+                        pVulnerability.getName(), pVulnerableSoftware.getName());
                 LOGGER.info(msg, ex);
             } else {
                 throw ex;

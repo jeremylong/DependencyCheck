@@ -43,7 +43,7 @@ public final class UrlTokenizingFilter extends AbstractTokenizingFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(UrlTokenizingFilter.class);
 
     /**
-     * Constructs a new VersionTokenizingFilter.
+     * Constructs a new UrlTokenizingFilter.
      *
      * @param stream the TokenStream that this filter will process
      */

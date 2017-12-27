@@ -18,8 +18,9 @@
 package org.owasp.dependencycheck.data.lucene;
 
 import java.io.IOException;
-import java.util.LinkedList;
 import javax.annotation.concurrent.NotThreadSafe;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -46,9 +47,10 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
      */
     private String previousWord;
     /**
-     * A list of words parsed.
+     * Keeps track if we are adding a single term or concatenating with the
+     * previous.
      */
-    private final LinkedList<String> words;
+    private boolean addSingleTerm;
 
     /**
      * Constructs a new TokenPairConcatenatingFilter.
@@ -57,7 +59,8 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
      */
     public TokenPairConcatenatingFilter(TokenStream stream) {
         super(stream);
-        words = new LinkedList<>();
+        addSingleTerm = true;
+        previousWord = null;
     }
 
     /**
@@ -70,86 +73,83 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
      */
     @Override
     public boolean incrementToken() throws IOException {
-
-        //collect all the terms into the words collection
-        while (input.incrementToken()) {
-            final String word = new String(termAtt.buffer(), 0, termAtt.length());
-            words.add(word);
-        }
-
-        //if we have a previousTerm - write it out as its own token concatenated
-        // with the current word (if one is available).
-        if (previousWord != null && !words.isEmpty()) {
-            final String word = words.getFirst();
+        if (addSingleTerm && previousWord != null) {
+            addSingleTerm = false;
             clearAttributes();
-            termAtt.append(previousWord).append(word);
-            previousWord = null;
+            termAtt.append(previousWord);
             return true;
-        }
-        //if we have words, write it out as a single token
-        if (!words.isEmpty()) {
-            final String word = words.removeFirst();
-            clearAttributes();
-            termAtt.append(word);
-            previousWord = word;
+
+        } else if (input.incrementToken()) {
+            final String word = new String(termAtt.buffer(), 0, termAtt.length());
+            if (addSingleTerm) {
+                clearAttributes();
+                termAtt.append(word);
+                previousWord = word;
+                addSingleTerm = false;
+            } else {
+                clearAttributes();
+                termAtt.append(previousWord).append(word);
+                previousWord = word;
+                addSingleTerm = true;
+            }
             return true;
         }
         return false;
     }
 
     /**
-     * <p>
-     * Resets the Filter and clears any internal state data that may have been
-     * left-over from previous uses of the Filter.</p>
-     * <p>
-     * <b>If this Filter is re-used this method must be called between
-     * uses.</b></p>
-     *
-     * @throws java.io.IOException thrown if there is an error resetting the
-     * filter
+     * {@inheritDoc}
      */
     @Override
     public void end() throws IOException {
         super.end();
         previousWord = null;
-        words.clear();
+        addSingleTerm = true;
     }
 
     /**
-     * Standard hash code implementation.
-     *
-     * @return the hash code
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset() throws IOException {
+        super.reset();
+        previousWord = null;
+        addSingleTerm = true;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 31 * hash + (this.termAtt != null ? this.termAtt.hashCode() : 0);
-        hash = 31 * hash + (this.previousWord != null ? this.previousWord.hashCode() : 0);
-        hash = 31 * hash + (this.words != null ? this.words.hashCode() : 0);
-        return hash;
+        return new HashCodeBuilder(13, 27)
+                .appendSuper(super.hashCode())
+                .append(addSingleTerm)
+                .append(previousWord)
+                .append(termAtt)
+                .build();
     }
 
     /**
-     * Standard equals implementation.
-     *
-     * @param obj the object to compare
-     * @return true if the objects are equal; otherwise false.
+     * {@inheritDoc}
      */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
             return false;
         }
-        final TokenPairConcatenatingFilter other = (TokenPairConcatenatingFilter) obj;
-        if (this.termAtt != other.termAtt && (this.termAtt == null || !this.termAtt.equals(other.termAtt))) {
-            return false;
-        }
-        if ((this.previousWord == null) ? (other.previousWord != null) : !this.previousWord.equals(other.previousWord)) {
-            return false;
-        }
-        return !(this.words != other.words && (this.words == null || !this.words.equals(other.words)));
+        final TokenPairConcatenatingFilter rhs = (TokenPairConcatenatingFilter) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(addSingleTerm, rhs.addSingleTerm)
+                .append(previousWord, rhs.previousWord)
+                .append(termAtt, rhs.termAtt)
+                .isEquals();
     }
 }

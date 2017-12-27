@@ -17,16 +17,15 @@
  */
 package org.owasp.dependencycheck.data.lucene;
 
-import java.io.Reader;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.LowerCaseFilter;
 import org.apache.lucene.analysis.core.StopAnalyzer;
 import org.apache.lucene.analysis.core.StopFilter;
+import org.apache.lucene.analysis.core.WhitespaceTokenizer;
 import org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter;
 import org.apache.lucene.analysis.util.CharArraySet;
-import org.apache.lucene.util.Version;
 
 /**
  * A Lucene field analyzer used to analyzer queries against the CPE data.
@@ -35,10 +34,6 @@ import org.apache.lucene.util.Version;
  */
 public class SearchFieldAnalyzer extends Analyzer {
 
-    /**
-     * The Lucene Version used.
-     */
-    private final Version version;
     /**
      * The list of additional stop words to use.
      */
@@ -55,7 +50,7 @@ public class SearchFieldAnalyzer extends Analyzer {
      * @return the set of stop words being used
      */
     public static CharArraySet getStopWords() {
-        final CharArraySet words = StopFilter.makeStopSet(LuceneUtils.CURRENT_VERSION, ADDITIONAL_STOP_WORDS, true);
+        final CharArraySet words = StopFilter.makeStopSet(ADDITIONAL_STOP_WORDS, true);
         words.addAll(StopAnalyzer.ENGLISH_STOP_WORDS_SET);
         return words;
     }
@@ -63,10 +58,8 @@ public class SearchFieldAnalyzer extends Analyzer {
     /**
      * Constructs a new SearchFieldAnalyzer.
      *
-     * @param version the Lucene version
      */
-    public SearchFieldAnalyzer(Version version) {
-        this.version = version;
+    public SearchFieldAnalyzer() {
         stopWords = getStopWords();
     }
 
@@ -74,15 +67,16 @@ public class SearchFieldAnalyzer extends Analyzer {
      * Creates a the TokenStreamComponents used to analyze the stream.
      *
      * @param fieldName the field that this lucene analyzer will process
-     * @param reader a reader containing the tokens
      * @return the token stream filter chain
      */
     @Override
-    protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
-        final Tokenizer source = new AlphaNumericTokenizer(version, reader);
-
+    protected TokenStreamComponents createComponents(String fieldName) {
+        //final Tokenizer source = new AlphaNumericTokenizer();
+        final Tokenizer source = new WhitespaceTokenizer();
         TokenStream stream = source;
 
+        stream = new UrlTokenizingFilter(stream);
+        stream = new AlphaNumericFilter(stream);
         stream = new WordDelimiterFilter(stream,
                 WordDelimiterFilter.GENERATE_WORD_PARTS
                 | WordDelimiterFilter.GENERATE_NUMBER_PARTS
@@ -91,9 +85,9 @@ public class SearchFieldAnalyzer extends Analyzer {
                 | WordDelimiterFilter.SPLIT_ON_NUMERICS
                 | WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE, null);
 
-        stream = new LowerCaseFilter(version, stream);
-        stream = new UrlTokenizingFilter(stream);
-        stream = new StopFilter(version, stream, stopWords);
+        stream = new LowerCaseFilter(stream);
+
+        stream = new StopFilter(stream, stopWords);
         stream = new TokenPairConcatenatingFilter(stream);
 
         return new TokenStreamComponents(source, stream);

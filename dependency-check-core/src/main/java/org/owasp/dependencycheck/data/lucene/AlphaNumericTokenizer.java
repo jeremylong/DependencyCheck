@@ -17,39 +17,37 @@
  */
 package org.owasp.dependencycheck.data.lucene;
 
-import java.io.Reader;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.apache.lucene.analysis.util.CharTokenizer;
-import org.apache.lucene.util.Version;
+import org.apache.lucene.util.AttributeFactory;
 
 /**
  * Tokenizes the input breaking it into tokens when non-alpha/numeric characters
  * are found.
  *
+ * @deprecated This class is no longer used after re-factoring the lucene
+ * analysis.
  * @author Jeremy Long
  */
 @NotThreadSafe
+@Deprecated
 public class AlphaNumericTokenizer extends CharTokenizer {
 
     /**
      * Constructs a new AlphaNumericTokenizer.
      *
-     * @param matchVersion the lucene version
-     * @param in the Reader
      */
-    public AlphaNumericTokenizer(Version matchVersion, Reader in) {
-        super(matchVersion, in);
+    public AlphaNumericTokenizer() {
+        super();
     }
 
     /**
      * Constructs a new AlphaNumericTokenizer.
      *
-     * @param matchVersion the lucene version
      * @param factory the AttributeFactory
-     * @param in the Reader
      */
-    public AlphaNumericTokenizer(Version matchVersion, AttributeFactory factory, Reader in) {
-        super(matchVersion, factory, in);
+    public AlphaNumericTokenizer(AttributeFactory factory) {
+        super(factory);
     }
 
     /**

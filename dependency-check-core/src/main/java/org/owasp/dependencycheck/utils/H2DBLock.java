@@ -72,7 +72,8 @@ public class H2DBLock {
     private final String magic;
 
     /**
-     * The shutdown hook used to remove the lock file in case of an unexpected shutdown.
+     * The shutdown hook used to remove the lock file in case of an unexpected
+     * shutdown.
      */
     private H2DBShutdownHook hook = null;
 
@@ -161,11 +162,19 @@ public class H2DBLock {
         }
     }
 
+    /**
+     * Checks the state of the custom h2 lock file and under some conditions
+     * will attempt to remove the lock file.
+     *
+     * @throws H2DBLockException thrown if the lock directory does not exist and
+     * cannot be created
+     */
     private void checkState() throws H2DBLockException {
         if (!lockFile.getParentFile().isDirectory() && !lockFile.mkdir()) {
             throw new H2DBLockException("Unable to create path to data directory.");
         }
         if (lockFile.isFile()) {
+            //TODO - this 30 minute check needs to be configurable.
             if (getFileAge(lockFile) > 30) {
                 LOGGER.debug("An old db update lock file was found: {}", lockFile.getAbsolutePath());
                 if (!lockFile.delete()) {
@@ -232,6 +241,9 @@ public class H2DBLock {
         return time;
     }
 
+    /**
+     * Adds the shutdown hook to the JVM.
+     */
     private void addShutdownHook() {
         if (hook == null) {
             hook = H2DBShutdownHookFactory.getHook(settings);
@@ -240,6 +252,9 @@ public class H2DBLock {
         }
     }
 
+    /**
+     * Removes the shutdown hook.
+     */
     private void removeShutdownHook() {
         if (hook != null) {
             hook.remove();

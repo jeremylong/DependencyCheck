@@ -33,6 +33,13 @@ public final class H2DBShutdownHookFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(H2DBShutdownHookFactory.class);
 
     /**
+     * Empty constructor for utility class.
+     */
+    private H2DBShutdownHookFactory() {
+        //empty
+    }
+
+    /**
      * Creates a new H2DB Shutdown Hook.
      *
      * @param settings the configured settings
@@ -40,8 +47,8 @@ public final class H2DBShutdownHookFactory {
      */
     public static H2DBShutdownHook getHook(Settings settings) {
         try {
-            String className = settings.getString(Settings.KEYS.H2DB_SHUTDOWN_HOOK, "org.owasp.dependencycheck.utils.H2DBCleanupHook");
-            Class type = Class.forName(className);
+            final String className = settings.getString(Settings.KEYS.H2DB_SHUTDOWN_HOOK, "org.owasp.dependencycheck.utils.H2DBCleanupHook");
+            final Class type = Class.forName(className);
             return (H2DBShutdownHook) type.newInstance();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
             LOGGER.debug("Failed to instantiate {}, using default shutdown hook instead", ex);
