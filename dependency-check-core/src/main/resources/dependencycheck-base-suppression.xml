@@ -972,6 +972,97 @@
         <cpe>cpe:/a:git:git</cpe>
         <cpe>cpe:/a:git_project:git</cpe>
     </suppress>
+    
+    <suppress base="true">
+        <notes><![CDATA[
+        general FP cleanup
+        ]]></notes>
+        <filePath regex="true">.*winstone-?(\d*\.?){0,3}\.jar</filePath>
+        <cpe>cpe:/a:jetty:jetty</cpe>
+        <cpe>cpe:/a:eclipse:jetty</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        general FP cleanup
+        ]]></notes>
+        <gav regex="true">^org\.apache\.maven\.wagon:wagon-webdav-jackrabbit:.*$</gav>
+        <cpe>cpe:/a:apache:jackrabbit</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        general FP cleanup
+        ]]></notes>
+        <gav regex="true">^org\.apache\.xbean:xbean-reflect:.*$</gav>
+        <cpe>cpe:/a:apache:geronimo</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        general FP cleanup
+        ]]></notes>
+        <gav regex="true">^org\.eclipse\.jetty\.orbit:javax\.annotation:.*$</gav>
+        <cpe>cpe:/a:eclipse:jetty</cpe>
+        <cpe>cpe:/a:jetty:jetty</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        general FP cleanup
+        ]]></notes>
+        <gav regex="true">^org\.eclipse\.jetty\.websocket:websocket-api:.*$</gav>
+        <cpe>cpe:/a:eclipse:jetty</cpe>
+        <cpe>cpe:/a:jetty:jetty</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        general FP cleanup: com.amazonaws is a drupal project
+        ]]></notes>
+        <gav regex="true">^com\.amazonaws:jmespath-java:.*$</gav>
+        <cpe>cpe:/a:amazon_aws_project:amazon_aws</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        general FP cleanup: apache_test CPE is referencing Perl code.
+        ]]></notes>
+        <gav regex="true">^org\.apache\.ant:ant-testutil:.*$</gav>
+        <cpe>cpe:/a:apache:apache_test</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        general FP cleanup: CPE is for git, not the git provider
+        ]]></notes>
+        <gav regex="true">^org\.apache\.maven\.scm:maven-scm-provider-git-commons:.*$</gav>
+        <cpe>cpe:/a:git-scm:git</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        general FP cleanup
+        ]]></notes>
+        <gav regex="true">^org\.eclipse\.jetty\.orbit:org\.apache\.taglibs\.standard\.glassfish:.*$</gav>
+        <cpe>cpe:/a:jetty:jetty</cpe>
+        <cpe>cpe:/a:eclipse:jetty</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        general FP cleanup
+        ]]></notes>
+        <gav regex="true">^org\.eclipse\.jetty\.orbit:com\.sun\.el:.*$</gav>
+        <cpe>cpe:/a:jetty:jetty</cpe>
+        <cpe>cpe:/a:eclipse:jetty</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        general FP cleanup: client vs. server mismatch
+        ]]></notes>
+        <gav regex="true">^org\.samba\.jcifs:jcifs:.*$</gav>
+        <cpe>cpe:/a:samba:samba</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        general FP cleanup
+        ]]></notes>
+        <gav regex="true">^org\.codehaus\.plexus:plexus-utils:.*$</gav>
+        <cpe>cpe:/a:spice_project:spice</cpe>
+    </suppress>
+
 
     <suppress base="true">
         <notes><![CDATA[
