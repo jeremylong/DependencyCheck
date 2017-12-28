@@ -38,7 +38,7 @@ import org.junit.Test;
  */
 public class TokenPairConcatenatingFilterTest extends BaseTokenStreamTestCase {
 
-        private final Analyzer analyzer;
+    private final Analyzer analyzer;
 
     public TokenPairConcatenatingFilterTest() {
         analyzer = new Analyzer() {
@@ -49,6 +49,7 @@ public class TokenPairConcatenatingFilterTest extends BaseTokenStreamTestCase {
             }
         };
     }
+
     /**
      * Test of incrementToken method, of class TokenPairConcatenatingFilter.
      */
@@ -62,9 +63,8 @@ public class TokenPairConcatenatingFilterTest extends BaseTokenStreamTestCase {
         expected[4] = "green";
         assertAnalyzesTo(analyzer, "red blue green", expected);
     }
-    
-    
-        /**
+
+    /**
      * copied from
      * http://svn.apache.org/repos/asf/lucene/dev/trunk/lucene/analysis/common/src/test/org/apache/lucene/analysis/en/TestEnglishMinimalStemFilter.java
      * blast some random strings through the analyzer
@@ -83,7 +83,7 @@ public class TokenPairConcatenatingFilterTest extends BaseTokenStreamTestCase {
      *
      * @throws IOException
      */
-    public void testEmptyTerm() throws IOException {
+    public void testEmptyTerm() {
         Analyzer a = new Analyzer() {
             @Override
             protected Analyzer.TokenStreamComponents createComponents(String fieldName) {
@@ -91,7 +91,11 @@ public class TokenPairConcatenatingFilterTest extends BaseTokenStreamTestCase {
                 return new Analyzer.TokenStreamComponents(tokenizer, new TokenPairConcatenatingFilter(tokenizer));
             }
         };
-        checkOneTerm(a, "", "");
+        try {
+            checkOneTerm(a, "", "");
+        } catch (IOException ex) {
+            fail("Failed test random strings: " + ex.getMessage());
+        }
     }
-     
+
 }
