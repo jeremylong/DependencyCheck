@@ -66,6 +66,7 @@
         10. ldap_project is part of type3 written in php
         11. user import project is used in drupal (i.e. php)
         12. root is a c++ project https://github.com/root-project/root/
+        13. xml_sec is a C library for XML security
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec)|pom\.xml|package.json)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -83,6 +84,7 @@
         <cpe>cpe:/a:ldap_project:ldap</cpe>
         <cpe>cpe:/a:user_import_project:user_import</cpe>
         <cpe>cpe:/a:root:root</cpe>
+        <cpe>cpe:/a:xmlsec_project:xmlsec</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
