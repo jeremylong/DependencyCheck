@@ -72,7 +72,9 @@ public final class AlphaNumericFilter extends AbstractTokenizingFilter {
             skipCounter = 0;
             while (input.incrementToken()) {
                 final String text = new String(termAtt.buffer(), 0, termAtt.length());
-
+                if (text.isEmpty()) {
+                    return true;
+                }
                 parts = text.split("[^a-zA-Z0-9]");
                 if (parts.length == 0) {
                     skipCounter += posIncrAttribute.getPositionIncrement();

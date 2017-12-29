@@ -18,9 +18,11 @@ package org.owasp.dependencycheck.data.lucene;
 import java.io.IOException;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.BaseTokenStreamTestCase;
+import static org.apache.lucene.analysis.BaseTokenStreamTestCase.checkOneTerm;
 import static org.apache.lucene.analysis.BaseTokenStreamTestCase.checkRandomData;
 import org.apache.lucene.analysis.MockTokenizer;
 import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.analysis.core.KeywordTokenizer;
 import static org.apache.lucene.util.LuceneTestCase.RANDOM_MULTIPLIER;
 import static org.apache.lucene.util.LuceneTestCase.random;
 import org.junit.Test;
@@ -81,5 +83,22 @@ public class AlphaNumericFilterTest extends BaseTokenStreamTestCase {
         } catch (IOException ex) {
             fail("Failed test random strings: " + ex.getMessage());
         }
+    }
+    
+        /**
+     * copied from
+     * http://svn.apache.org/repos/asf/lucene/dev/trunk/lucene/analysis/common/src/test/org/apache/lucene/analysis/en/TestEnglishMinimalStemFilter.java
+     *
+     * @throws IOException
+     */
+    public void testEmptyTerm() throws IOException {
+        Analyzer a = new Analyzer() {
+            @Override
+            protected Analyzer.TokenStreamComponents createComponents(String fieldName) {
+                Tokenizer tokenizer = new KeywordTokenizer();
+                return new Analyzer.TokenStreamComponents(tokenizer, new AlphaNumericFilter(tokenizer));
+            }
+        };
+        checkOneTerm(a, "", "");
     }
 }
