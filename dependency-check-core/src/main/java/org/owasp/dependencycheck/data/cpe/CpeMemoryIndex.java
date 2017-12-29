@@ -40,7 +40,6 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.RAMDirectory;
-import org.owasp.dependencycheck.data.lucene.LuceneUtils;
 import org.owasp.dependencycheck.data.lucene.SearchFieldAnalyzer;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -130,7 +129,7 @@ public final class CpeMemoryIndex implements AutoCloseable {
             }
             indexSearcher = new IndexSearcher(indexReader);
             searchingAnalyzer = createSearchingAnalyzer();
-            queryParser = new QueryParser(LuceneUtils.CURRENT_VERSION, Fields.DOCUMENT_KEY, searchingAnalyzer);
+            queryParser = new QueryParser(Fields.DOCUMENT_KEY, searchingAnalyzer);
         }
     }
 
@@ -151,8 +150,8 @@ public final class CpeMemoryIndex implements AutoCloseable {
     private Analyzer createSearchingAnalyzer() {
         final Map<String, Analyzer> fieldAnalyzers = new HashMap<>();
         fieldAnalyzers.put(Fields.DOCUMENT_KEY, new KeywordAnalyzer());
-        final SearchFieldAnalyzer productFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
-        final SearchFieldAnalyzer vendorFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
+        final SearchFieldAnalyzer productFieldAnalyzer = new SearchFieldAnalyzer();
+        final SearchFieldAnalyzer vendorFieldAnalyzer = new SearchFieldAnalyzer();
         fieldAnalyzers.put(Fields.PRODUCT, productFieldAnalyzer);
         fieldAnalyzers.put(Fields.VENDOR, vendorFieldAnalyzer);
 
@@ -196,7 +195,7 @@ public final class CpeMemoryIndex implements AutoCloseable {
      */
     private void buildIndex(CveDB cve) throws IndexException {
         try (Analyzer analyzer = createSearchingAnalyzer();
-                IndexWriter indexWriter = new IndexWriter(index, new IndexWriterConfig(LuceneUtils.CURRENT_VERSION, analyzer))) {
+                IndexWriter indexWriter = new IndexWriter(index, new IndexWriterConfig(analyzer))) {
             // Tip: reuse the Document and Fields for performance...
             // See "Re-use Document and Field instances" from
             // http://wiki.apache.org/lucene-java/ImproveIndexingSpeed
@@ -215,7 +214,7 @@ public final class CpeMemoryIndex implements AutoCloseable {
                 }
             }
             indexWriter.commit();
-            indexWriter.close(true);
+            indexWriter.close();
         } catch (DatabaseException ex) {
             LOGGER.debug("", ex);
             throw new IndexException("Error reading CPE data", ex);

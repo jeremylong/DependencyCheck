@@ -19,7 +19,6 @@ package org.owasp.dependencycheck.data.lucene;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javax.annotation.concurrent.ThreadSafe;
-import org.apache.lucene.util.Version;
 
 /**
  * <p>
@@ -30,12 +29,6 @@ import org.apache.lucene.util.Version;
  */
 @ThreadSafe
 public final class LuceneUtils {
-
-    /**
-     * The current version of Lucene being used. Declaring this one place so an
-     * upgrade doesn't require hunting through the code base.
-     */
-    public static final Version CURRENT_VERSION = Version.LUCENE_47;
 
     /**
      * Private constructor as this is a utility class.

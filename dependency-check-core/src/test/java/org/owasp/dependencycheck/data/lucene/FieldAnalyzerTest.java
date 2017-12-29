@@ -52,7 +52,7 @@ public class FieldAnalyzerTest extends BaseTest {
     @Test
     public void testAnalyzers() throws Exception {
 
-        Analyzer analyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
+        Analyzer analyzer = new SearchFieldAnalyzer();
         Directory index = new RAMDirectory();
 
         String field1 = "product";
@@ -68,16 +68,16 @@ public class FieldAnalyzerTest extends BaseTest {
             addDoc(w, field1, text1, field2, text2);
         }
 
-        //Analyzer searchingAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
+        //Analyzer searchingAnalyzer = new SearchFieldAnalyzer();
         String querystr = "product:\"(Spring Framework Core)\" vendor:(SpringSource)";
 
-        SearchFieldAnalyzer searchAnalyzerProduct = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
-        SearchFieldAnalyzer searchAnalyzerVendor = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
+        SearchFieldAnalyzer searchAnalyzerProduct = new SearchFieldAnalyzer();
+        SearchFieldAnalyzer searchAnalyzerVendor = new SearchFieldAnalyzer();
         HashMap<String, Analyzer> map = new HashMap<>();
         map.put(field1, searchAnalyzerProduct);
         map.put(field2, searchAnalyzerVendor);
-        PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(new StandardAnalyzer(LuceneUtils.CURRENT_VERSION), map);
-        QueryParser parser = new QueryParser(LuceneUtils.CURRENT_VERSION, field1, wrapper);
+        PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(new StandardAnalyzer(), map);
+        QueryParser parser = new QueryParser(field1, wrapper);
 
         Query q = parser.parse(querystr);
 
@@ -85,7 +85,7 @@ public class FieldAnalyzerTest extends BaseTest {
 
         IndexReader reader = DirectoryReader.open(index);
         IndexSearcher searcher = new IndexSearcher(reader);
-        TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
+        TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage);
         searcher.search(q, collector);
         ScoreDoc[] hits = collector.topDocs().scoreDocs;
 
@@ -99,7 +99,7 @@ public class FieldAnalyzerTest extends BaseTest {
 
         querystr = "product:(  x-stream^5 )  AND  vendor:(  thoughtworks.xstream )";
         Query q3 = parser.parse(querystr);
-        collector = TopScoreDocCollector.create(hitsPerPage, true);
+        collector = TopScoreDocCollector.create(hitsPerPage);
         searcher.search(q3, collector);
         hits = collector.topDocs().scoreDocs;
         assertEquals("x-stream", searcher.doc(hits[0].doc).get(field1));
@@ -107,7 +107,7 @@ public class FieldAnalyzerTest extends BaseTest {
     }
 
     private IndexWriter createIndex(Analyzer analyzer, Directory index) throws IOException {
-        IndexWriterConfig config = new IndexWriterConfig(LuceneUtils.CURRENT_VERSION, analyzer);
+        IndexWriterConfig config = new IndexWriterConfig( analyzer);
         return new IndexWriter(index, config);
     }
 

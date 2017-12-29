@@ -82,9 +82,11 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     private static final String WEIGHTING_BOOST = "^5";
     /**
      * A string representation of a regular expression defining characters
-     * utilized within the CPE Names.
+     * utilized within the CPE Names. Note, the :/ are included so URLs are
+     * passed into the Lucene query so that the specialized tokenizer can parse
+     * them.
      */
-    private static final String CLEANSE_CHARACTER_RX = "[^A-Za-z0-9 ._-]";
+    private static final String CLEANSE_CHARACTER_RX = "[^A-Za-z0-9 ._:/-]";
     /**
      * A string representation of a regular expression used to remove all but
      * alpha characters.

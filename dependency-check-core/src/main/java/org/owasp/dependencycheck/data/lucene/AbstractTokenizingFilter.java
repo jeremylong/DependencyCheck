@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.lucene;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.apache.lucene.analysis.TokenFilter;
@@ -38,6 +39,11 @@ public abstract class AbstractTokenizingFilter extends TokenFilter {
     private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 
     /**
+     * A collection of tokens to add to the stream.
+     */
+    private final LinkedList<String> tokens;
+
+    /**
      * Gets the CharTermAttribute.
      *
      * @return the CharTermAttribute
@@ -45,10 +51,6 @@ public abstract class AbstractTokenizingFilter extends TokenFilter {
     protected CharTermAttribute getTermAtt() {
         return termAtt;
     }
-    /**
-     * A collection of tokens to add to the stream.
-     */
-    private final LinkedList<String> tokens;
 
     /**
      * Gets the list of tokens.
@@ -67,6 +69,15 @@ public abstract class AbstractTokenizingFilter extends TokenFilter {
     public AbstractTokenizingFilter(TokenStream stream) {
         super(stream);
         tokens = new LinkedList<>();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset() throws IOException {
+        super.reset();
+        tokens.clear();
     }
 
     /**
