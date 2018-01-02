@@ -15,7 +15,7 @@ In addition, dependency-check can be executed from the
 
 Extending dependency-check
 --------------------------
-A [dependency-check-plugin maven archetype](dependency-check-plugin/index.html]
+A [dependency-check-plugin maven archetype](dependency-check-plugin/index.html)
 has been created to assist with creating your own analyzers.
 
 Core Engine
