@@ -453,13 +453,13 @@ public final class Settings {
          */
         public static final String ENABLE_BATCH_UPDATES = "database.batchinsert.enabled";
         /**
-         * Size of database batch inserts
+         * Size of database batch inserts.
          */
         public static final String MAX_BATCH_SIZE = "database.batchinsert.maxsize";
         /**
          * The key that specifies the class name of the H2 database shutdown hook.
          */
-        public static String H2DB_SHUTDOWN_HOOK = "data.h2.shutdownhook";
+        public static final String H2DB_SHUTDOWN_HOOK = "data.h2.shutdownhook";
 
         /**
          * private constructor because this is a "utility" class containing
