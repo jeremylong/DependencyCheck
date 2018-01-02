@@ -244,10 +244,13 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     }
 
     /**
+     * <p>
      * Returns the text created by concatenating the text and the values from
      * the EvidenceCollection (filtered for a specific confidence). This
-     * attempts to prevent duplicate terms from being added.<br/<br/> Note, if
-     * the evidence is longer then 200 characters it will be truncated.
+     * attempts to prevent duplicate terms from being added.</p>
+     * <p>
+     * Note, if the evidence is longer then 200 characters it will be
+     * truncated.</p>
      *
      * @param text the base text
      * @param evidence an iterable set of evidence to concatenate

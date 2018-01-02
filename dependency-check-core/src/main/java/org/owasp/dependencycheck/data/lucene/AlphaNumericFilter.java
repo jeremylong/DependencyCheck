@@ -30,7 +30,7 @@ import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
  * the terms. If a term contains a non-alphanumeric character it may be split
  * into multiple terms:
  *
- * <table>
+ * <table summary="Example filtering">
  * <tr><th>term</th><th>results in</th></tr>
  * <tr><td>bob</td><td>bob</td></tr>
  * <tr><td>bob-cat</td><td>bob cat</td></tr>
