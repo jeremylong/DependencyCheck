@@ -10,10 +10,15 @@ Vulnerability Database (NVD) hosted by NIST: https://nvd.nist.gov
 After the first batch download, as long as the plug-in is executed at least once every
 seven days the update will only take a few seconds.
 
+### Default Phase
+The dependency-check plugin is, by default, tied to the `verify` or `site` phase
+depending on if it is configured as a build or reporting plugin. The examples
+below can be executed using `mvn verify` or in the reporting example `mvn site`.
+
 #set( $H = '#' )
 
 $H$H$H Example 1:
-Create the DependencyCheck-report.html in the target directory.
+Create the dependency-check-report.html in the target directory.
 
 ```xml
 <project>
@@ -73,7 +78,7 @@ Create an aggregated dependency-check report within the site.
 ```
 
 $H$H$H Example 3:
-Create the DependencyCheck-report.html and fail the build for CVSS greater than or equal to 8.
+Create the dependency-check-report.html and fail the build for CVSS greater than or equal to 8.
 
 ```xml
 <project>
@@ -106,7 +111,7 @@ Create the DependencyCheck-report.html and fail the build for CVSS greater than 
 ```
 
 $H$H$H Example 4:
-Create the DependencyCheck-report.html and skip artifacts not bundled in distribution (Provided and Runtime scope).
+Create the dependency-check-report.html and skip artifacts not bundled in distribution (Provided and Runtime scope).
 
 ```xml
 <project>
@@ -140,7 +145,7 @@ Create the DependencyCheck-report.html and skip artifacts not bundled in distrib
 ```
 
 $H$H$H Example 5:
-Create the DependencyCheck-report.html and use internal mirroring of CVE contents.
+Create the dependency-check-report.html and use internal mirroring of CVE contents.
 
 ```xml
 <project>

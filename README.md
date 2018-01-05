@@ -42,7 +42,10 @@ $ dependency-check --project Testing --out . --scan [path to jar files to be sca
 ### Maven Plugin
 
 More detailed instructions can be found on the [dependency-check-maven github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-maven).
-The plugin can be configured using the following:
+By default, the plugin is tied to the `verify` phase (i.e. `mvn verify`). Alternatively,
+one can directly invoke the plugin via `mvn org.owasp:dependency-check-maven:check`.
+
+The dependency-check plugin can be configured using the following:
 
 ```xml
 <project>
@@ -97,7 +100,7 @@ On Windows
 > .\dependency-check-cli\target\release\bin\dependency-check.bat --project Testing --out . --scan ./src/test/resources
 ```
 
-Then load the resulting 'DependencyCheck-Report.html' into your favorite browser.
+Then load the resulting 'dependency-check-report.html' into your favorite browser.
 
 ### Docker
 

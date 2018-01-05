@@ -57,7 +57,7 @@ public class DependencyCheckTaskTest extends BaseDBTestCase {
     public void testAddFileSet() throws Exception {
         File report = new File("target/dependency-check-report.html");
         if (report.exists() && !report.delete()) {
-            throw new Exception("Unable to delete 'target/DependencyCheck-Report.html' prior to test.");
+            throw new Exception("Unable to delete 'target/dependency-check-report.html' prior to test.");
         }
         buildFileRule.executeTarget("test.fileset");
         assertTrue("DependencyCheck report was not generated", report.exists());
