@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import com.esotericsoftware.minlog.Log;
 import com.h3xstream.retirejs.repo.JsLibrary;
 import com.h3xstream.retirejs.repo.JsLibraryResult;
 import com.h3xstream.retirejs.repo.JsVulnerability;
@@ -115,6 +116,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
+        Log.ERROR();
         final Settings settings = engine.getSettings();
         try {
             initializeRetireJsRepo(engine, new URL(settings.getString(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, DEFAULT_JS_URL)));
