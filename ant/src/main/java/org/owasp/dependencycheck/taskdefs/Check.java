@@ -66,7 +66,10 @@ public class Check extends Update {
      * Whether or not the NSP Analyzer is enabled.
      */
     private Boolean nspAnalyzerEnabled;
-
+    /**
+     * Whether or not the RetireJS Analyzer is enabled.
+     */
+    private Boolean retireJsAnalyzerEnabled;
     /**
      * Whether or not the Ruby Bundle Audit Analyzer is enabled.
      */
@@ -806,6 +809,24 @@ public class Check extends Update {
     }
 
     /**
+     * Get the value of retireJsAnalyzerEnabled.
+     *
+     * @return the value of retireJsAnalyzerEnabled
+     */
+    public Boolean isRetireJsAnalyzerEnabled() {
+        return retireJsAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of retireJsAnalyzerEnabled.
+     *
+     * @param retireJsAnalyzerEnabled new value of retireJsAnalyzerEnabled
+     */
+    public void setRetireJsAnalyzerEnabled(Boolean retireJsAnalyzerEnabled) {
+        this.retireJsAnalyzerEnabled = retireJsAnalyzerEnabled;
+    }
+
+    /**
      * Get the value of rubygemsAnalyzerEnabled.
      *
      * @return the value of rubygemsAnalyzerEnabled
@@ -1072,6 +1093,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED, nspAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);

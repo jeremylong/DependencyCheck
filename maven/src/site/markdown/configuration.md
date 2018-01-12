@@ -61,6 +61,7 @@ autoconfAnalyzerEnabled       | Sets whether the [experimental](../analyzers/ind
 composerAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.   | true
 nodeAnalyzerEnabled           | Sets whether the [retired](../analyzers/index.html) Node.js Analyzer should be used.                       | true
 nspAnalyzerEnabled            | Sets whether the NSP Analyzer should be used.                                                              | true
+retireJsAnalyzerEnabled       | Sets whether the RetireJS Analyzer should be used.                                                         | true
 nuspecAnalyzerEnabled         | Sets whether the .NET Nuget Nuspec Analyzer will be used.                                                  | true
 cocoapodsAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used.                | true
 bundleAuditAnalyzerEnabled    | Sets whether the [experimental](../analyzers/index.html) Bundle Audit Analyzer should be used.             | true

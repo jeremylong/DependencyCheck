@@ -36,6 +36,7 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Paramete
        | \-\-disablePyPkg       |                 | Sets whether the [experimental](../analyzers/index.html) Python Package Analyzer will be used.                           | false
        | \-\-disableNodeJS      |                 | Sets whether the [retired](../analyzers/index.html) Node.js Package Analyzer will be used.                               | false
        | \-\-disableNSP         |                 | Sets whether the NSP Analyzer will be used.                                                                              | false
+       | \-\-disableRetireJS    |                 | Sets whether the RetireJS Analyzer will be used.                                                                         | false
        | \-\-disableRubygems    |                 | Sets whether the [experimental](../analyzers/index.html) Ruby Gemspec Analyzer will be used.                             | false
        | \-\-disableBundleAudit |                 | Sets whether the [experimental](../analyzers/index.html) Ruby Bundler Audit Analyzer will be used.                       | false
        | \-\-disableCocoapodsAnalyzer |           | Sets whether the [experimental](../analyzers/index.html) Cocoapods Analyzer will be used.                                | false

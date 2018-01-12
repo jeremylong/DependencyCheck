@@ -215,6 +215,8 @@ have been reported. Additionally, the HTML report provides many features not fou
                                     <a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a>
                                     #elseif($vuln.getSource().name().equals("NSP"))
                                     <a target="_blank" href="https://nodesecurity.io/advisories/$enc.url($vuln.name)">NSP-$enc.html($vuln.name)</a>
+                                    #elseif($vuln.getSource().name().equals("RETIREJS"))
+                                        $enc.html($vuln.name) (RetireJS)
                                     #end
                                 </td>
                                 <td>
@@ -252,6 +254,8 @@ have been reported. Additionally, the HTML report provides many features not fou
             This report contains data retrieved from the <a href="https://nvd.nist.gov">National Vulnerability Database</a>.
             <br/>
             This report may contain data retrieved from the <a href="https://nodesecurity.io">Node Security Platform</a>.
+            <br/>
+            This report may contain data retrieved from the <a href="https://retirejs.github.io/retire.js/">RetireJS Community</a>.
         </p>
     </body>
 </html>

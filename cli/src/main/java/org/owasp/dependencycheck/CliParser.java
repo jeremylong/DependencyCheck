@@ -508,6 +508,8 @@ public final class CliParser {
                         .desc("Disable the Node.js Package Analyzer.").build())
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_NSP)
                         .desc("Disable the NSP Package Analyzer.").build())
+                .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_RETIRE_JS)
+                        .desc("Disable the RetireJS Analyzer.").build())
                 .addOption(nexusUrl)
                 .addOption(nexusUsesProxy)
                 .addOption(additionalZipExtensions)
@@ -759,6 +761,16 @@ public final class CliParser {
      */
     public boolean isNspDisabled() {
         return hasDisableOption(ARGUMENT.DISABLE_NSP, Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED);
+    }
+
+    /**
+     * Returns true if the disableRetireJS command line argument was specified.
+     *
+     * @return true if the disableRetireJS command line argument was specified;
+     * otherwise false
+     */
+    public boolean isRetireJSDisabled() {
+        return hasDisableOption(ARGUMENT.DISABLE_RETIRE_JS, Settings.KEYS.ANALYZER_RETIRED_ENABLED);
     }
 
     /**
@@ -1483,6 +1495,10 @@ public final class CliParser {
          * Disables the NSP Analyzer.
          */
         public static final String DISABLE_NSP = "disableNSP";
+        /**
+         * Disables the RetireJS Analyzer.
+         */
+        public static final String DISABLE_RETIRE_JS = "disableRetireJS";
         /**
          * The URL of the nexus server.
          */
