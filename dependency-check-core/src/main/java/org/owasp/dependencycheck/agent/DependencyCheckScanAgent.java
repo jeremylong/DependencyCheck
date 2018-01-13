@@ -156,6 +156,10 @@ public class DependencyCheckScanAgent {
      */
     private String databasePassword;
     /**
+     * The starting string that identifies CPEs that are qualified to be imported.
+     */
+    private String cpeStartsWithFilter;
+    /**
      * Whether or not the Maven Central analyzer is enabled.
      */
     private boolean centralAnalyzerEnabled = true;
@@ -561,6 +565,22 @@ public class DependencyCheckScanAgent {
     }
 
     /**
+     * Sets starting string that identifies CPEs that are qualified to be imported.
+     * @param cpeStartsWithFilter filters CPEs based on this starting string (i.e. cpe:/a: )
+     */
+    public void setCpeStartsWithFilter(String cpeStartsWithFilter) {
+        this.cpeStartsWithFilter = cpeStartsWithFilter;
+    }
+
+    /**
+     * Returns the starting string that identifies CPEs that are qualified to be imported.
+     * @return the CPE starting filter (i.e. cpe:/a: )
+     */
+    public String getCpeStartsWithFilter() {
+        return cpeStartsWithFilter;
+    }
+
+    /**
      * Get the value of centralAnalyzerEnabled.
      *
      * @return the value of centralAnalyzerEnabled
@@ -948,6 +968,7 @@ public class DependencyCheckScanAgent {
         settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPassword);
         settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
         settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
+        settings.setStringIfNotEmpty(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER, cpeStartsWithFilter);
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_CENTRAL_URL, centralUrl);
         settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
