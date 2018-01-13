@@ -130,7 +130,7 @@ Copyright (c) 2012 - Jeremy Long
         <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <!-- Note that Maven will use classes from the distro, ignoring declared dependencies for Maven core... -->
-        <maven.api.version>3.5.2</maven.api.version>
+        <maven.api.version>3.1.0</maven.api.version>
         <reporting.checkstyle-plugin.version>2.17</reporting.checkstyle-plugin.version>
         <reporting.pmd-plugin.version>3.6</reporting.pmd-plugin.version>
         <doxia-module-markdown.version>1.7</doxia-module-markdown.version>
@@ -328,6 +328,8 @@ Copyright (c) 2012 - Jeremy Long
                         <configuration>
                             <allowSnapshots>false</allowSnapshots>
                             <excludes>
+                                <!-- needed to support maven 3.1.0 -->
+                                <exclude>org.apache.maven:*:*</exclude>
                                 <exclude>org.apache.maven.shared:maven-dependency-tree:*</exclude>Ï
                                 <exclude>org.apache.commons:commons-lang3:*</exclude>
                                 <exclude>org.apache.lucene:*:*</exclude>
