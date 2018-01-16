@@ -38,6 +38,14 @@
     </hint>
     <hint>
         <given>
+            <evidence type="product" source="Manifest" name="Implementation-Title" regex="true" value="spring-.*" confidence="HIGH"/>
+        </given>
+        <add>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="pivotal software" confidence="HIGHEST"/>
+        </add>
+    </hint>
+    <hint>
+        <given>
             <evidence type="product" source="Manifest" name="Bundle-Name" value="Spring Security Core" confidence="MEDIUM"/>
             <evidence type="product" source="pom" name="artifactid" value="spring-security-core" confidence="HIGH"/>	
         </given>

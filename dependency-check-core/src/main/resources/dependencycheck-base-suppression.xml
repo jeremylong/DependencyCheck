@@ -1064,7 +1064,15 @@
         <gav regex="true">^org\.codehaus\.plexus:plexus-utils:.*$</gav>
         <cpe>cpe:/a:spice_project:spice</cpe>
     </suppress>
-
+    <suppress base="true">
+       <notes><![CDATA[
+       spring ldap cleanup per issue #1060
+       ]]></notes>
+       <gav regex="true">^org\.springframework\.ldap:spring-ldap-core:.*$</gav>
+       <cpe>cpe:/a:net-ldap_project:net-ldap</cpe>
+       <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+       <cpe>cpe:/a:pivotal:spring_framework</cpe>
+    </suppress>
 
     <suppress base="true">
         <notes><![CDATA[
