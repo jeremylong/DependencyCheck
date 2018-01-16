@@ -98,7 +98,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <value>$enc.xml($evidence.getValue().trim())</value>
                 </evidence>
 #end
-#foreach($evidence in $dependency.getEvidence($PRODUCT))
+#foreach($evidence in $dependency.getEvidence($VERSION))
                 <evidence type="version" confidence="$enc.xml($evidence.getConfidence().toString())">
                     <source>$enc.xml($evidence.getSource())</source>
                     <name>$enc.xml($evidence.getName())</name>
