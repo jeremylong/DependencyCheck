@@ -139,11 +139,11 @@ public final class ExtractionUtil {
             extractArchive(new ZipArchiveInputStream(new BufferedInputStream(
                     fis)), destination, filter);
         } catch (FileNotFoundException ex) {
-            final String msg = String.format("Error extracting file `%s` with filter: %s",archive.toString(), ex.getMessage());
+            final String msg = String.format("Error extracting file `%s` with filter: %s", archive.getAbsolutePath(), ex.getMessage());
             LOGGER.debug(msg, ex);
             throw new ExtractionException(msg);
         } catch (IOException | ArchiveExtractionException ex) {
-            LOGGER.warn("Exception extracting archive '{}'.", archive.getName());
+            LOGGER.warn("Exception extracting archive '{}'.", archive.getAbsolutePath());
             LOGGER.debug("", ex);
             throw new ExtractionException("Unable to extract from archive", ex);
         }

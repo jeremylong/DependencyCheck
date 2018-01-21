@@ -976,7 +976,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 final String[] l = tempFileLocation.list();
                 if (l != null && l.length > 0) {
                     LOGGER.warn("Failed to delete the JAR Analyzder's temporary files from `{}`, "
-                            + "see the log for more details", tempFileLocation.toString());
+                            + "see the log for more details", tempFileLocation.getAbsolutePath());
                 }
             }
         }

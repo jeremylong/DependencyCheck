@@ -389,7 +389,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             try {
                 fis = new FileInputStream(archive);
             } catch (FileNotFoundException ex) {
-                final String msg = String.format("Error extracting file `%s`: %s", archive.toString(), ex.getMessage());
+                final String msg = String.format("Error extracting file `%s`: %s", archive.getAbsolutePath(), ex.getMessage());
                 LOGGER.debug(msg, ex);
                 throw new AnalysisException(msg);
             }

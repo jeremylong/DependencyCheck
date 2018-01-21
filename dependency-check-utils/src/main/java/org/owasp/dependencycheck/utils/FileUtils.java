@@ -98,6 +98,7 @@ public final class FileUtils {
         if (!tempDir.mkdirs()) {
             throw new IOException("Could not create temp directory `" + tempDir.getAbsolutePath() + "`");
         }
+        LOGGER.debug("Temporary directory is `{}`", tempDir.getAbsolutePath());
         return tempDir;
     }
 
