@@ -457,7 +457,8 @@ public final class Settings {
          */
         public static final String MAX_BATCH_SIZE = "database.batchinsert.maxsize";
         /**
-         * The key that specifies the class name of the H2 database shutdown hook.
+         * The key that specifies the class name of the H2 database shutdown
+         * hook.
          */
         public static final String H2DB_SHUTDOWN_HOOK = "data.h2.shutdownhook";
 
@@ -522,6 +523,7 @@ public final class Settings {
      */
     public synchronized void cleanup(boolean deleteTemporary) {
         if (deleteTemporary && tempDirectory != null && tempDirectory.exists()) {
+            LOGGER.debug("Deleting ALL temporary files from `{}`", tempDirectory.toString());
             FileUtils.delete(tempDirectory);
             tempDirectory = null;
         }

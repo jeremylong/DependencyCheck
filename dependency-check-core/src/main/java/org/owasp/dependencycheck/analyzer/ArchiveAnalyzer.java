@@ -206,12 +206,13 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void closeAnalyzer() throws Exception {
         if (tempFileLocation != null && tempFileLocation.exists()) {
-            LOGGER.debug("Attempting to delete temporary files");
+            LOGGER.debug("Attempting to delete temporary files from `{}`", tempFileLocation.toString());
             final boolean success = FileUtils.delete(tempFileLocation);
             if (!success && tempFileLocation.exists()) {
                 final String[] l = tempFileLocation.list();
                 if (l != null && l.length > 0) {
-                    LOGGER.warn("Failed to delete some temporary files, see the log for more details");
+                    LOGGER.warn("Failed to delete the Archive Analyzer's temporary files from `{}`, "
+                            + "see the log for more details", tempFileLocation.toString());
                 }
             }
         }
@@ -388,8 +389,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             try {
                 fis = new FileInputStream(archive);
             } catch (FileNotFoundException ex) {
-                LOGGER.debug("", ex);
-                throw new AnalysisException("Archive file was not found.", ex);
+                final String msg = String.format("Error extracting file `%s`: %s", archive.toString(), ex.getMessage());
+                LOGGER.debug(msg, ex);
+                throw new AnalysisException(msg);
             }
             BufferedInputStream in = null;
             ZipArchiveInputStream zin = null;

@@ -970,12 +970,13 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void closeAnalyzer() {
         if (tempFileLocation != null && tempFileLocation.exists()) {
-            LOGGER.debug("Attempting to delete temporary files");
+            LOGGER.debug("Attempting to delete temporary files from `{}`", tempFileLocation.toString());
             final boolean success = FileUtils.delete(tempFileLocation);
             if (!success && tempFileLocation.exists()) {
                 final String[] l = tempFileLocation.list();
                 if (l != null && l.length > 0) {
-                    LOGGER.warn("Failed to delete some temporary files, see the log for more details");
+                    LOGGER.warn("Failed to delete the JAR Analyzder's temporary files from `{}`, "
+                            + "see the log for more details", tempFileLocation.toString());
                 }
             }
         }
