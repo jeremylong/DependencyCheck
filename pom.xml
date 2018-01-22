@@ -176,7 +176,6 @@ Copyright (c) 2012 - Jeremy Long
         <org.glassfish.javax.json.version>1.0.4</org.glassfish.javax.json.version>
         <maven-artifact-transfer.version>0.9.1</maven-artifact-transfer.version>
 
-        
         <surefireArgLine/>
     </properties>
     <distributionManagement>
@@ -316,6 +315,47 @@ Copyright (c) 2012 - Jeremy Long
         </pluginManagement>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>1.6</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-all</artifactId>
+                        <version>2.4.12</version>
+                        <scope>runtime</scope>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>add-dynamic-properties-pc</id>
+                        <phase>pre-clean</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>add-dynamic-properties-init</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <scripts>
+                        <script><![CDATA[
+                        if ("dependency-check-parent".equals("${project.artifactId}")) {
+                            config = "file:///${project.basedir}/src/main/config"
+                        } else {
+                            config = "file:///${project.basedir}/../src/main/config"
+                        }
+                        project.properties['odc.config']= config
+                        ]]></script>
+                    </scripts>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
                 <version>2.5</version>
@@ -327,6 +367,7 @@ Copyright (c) 2012 - Jeremy Long
                         </goals>
                         <configuration>
                             <allowSnapshots>false</allowSnapshots>
+                            <rulesUri>${odc.config}/version-rules.xml</rulesUri>
                             <excludes>
                                 <!-- needed to support maven 3.1.0 -->
                                 <exclude>org.apache.maven:*:*</exclude>
