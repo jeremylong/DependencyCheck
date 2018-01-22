@@ -1651,7 +1651,7 @@
         FP per issue #946 - instead of suppressing the whole thing, we will just
             suppress specific CVE that are for the server
         ]]></notes>
-        <gav regex="true">^postgresql:postgresql:.*$</gav>
+        <gav regex="true">^(org\.)?postgresql:postgresql:.*$</gav>
         <cve>CVE-2017-8806</cve>
         <cve>CVE-2006-5540</cve>
         <cve>CVE-2006-5542</cve>
