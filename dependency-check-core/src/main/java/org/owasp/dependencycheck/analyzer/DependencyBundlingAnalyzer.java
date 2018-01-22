@@ -529,16 +529,16 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
         } else {
             if (!left.matches("^\\d.*$")) {
                 left = stripLeadingNonNumeric(left);
-                if (left == null) {
+                if (left == null || left.isEmpty()) {
                     return false;
                 }
             }
             try {
                 Semver v = new Semver(left, SemverType.NPM);
-                if (v.satisfies(right)) {
+                if (!right.isEmpty() && v.satisfies(right)) {
                     return true;
                 }
-                if (!right.contains((" "))) {
+                if (!right.contains(" ")) {
                     left = current;
                     right = stripLeadingNonNumeric(right);
                     if (right != null) {
@@ -548,6 +548,9 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
                 }
             } catch (SemverException ex) {
                 LOGGER.trace("ignore", ex);
+            } catch (NullPointerException ex) {
+                LOGGER.error("SemVer comparison error: left:\"{}\", right:\"{}\"", left, right);
+                LOGGER.debug("SemVer comparison resulted in NPE", ex);
             }
         }
         return false;
