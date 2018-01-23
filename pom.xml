@@ -131,8 +131,8 @@ Copyright (c) 2012 - Jeremy Long
         <logback.version>1.2.3</logback.version>
         <!-- Note that Maven will use classes from the distro, ignoring declared dependencies for Maven core... -->
         <maven.api.version>3.1.0</maven.api.version>
-        <reporting.checkstyle-plugin.version>2.17</reporting.checkstyle-plugin.version>
-        <reporting.pmd-plugin.version>3.6</reporting.pmd-plugin.version>
+        <reporting.checkstyle-plugin.version>3.0.0</reporting.checkstyle-plugin.version>
+        <reporting.pmd-plugin.version>3.8</reporting.pmd-plugin.version>
         <doxia-module-markdown.version>1.7</doxia-module-markdown.version>
         <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
         <maven-dependency-plugin.version>3.0.2</maven-dependency-plugin.version>
@@ -307,7 +307,20 @@ Copyright (c) 2012 - Jeremy Long
                         <dependency>
                             <groupId>org.codehaus.groovy</groupId>
                             <artifactId>groovy-all</artifactId>
-                            <version>2.4.11</version>
+                            <version>2.4.12</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.gmavenplus</groupId>
+                    <artifactId>gmavenplus-plugin</artifactId>
+                    <version>1.6</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.codehaus.groovy</groupId>
+                            <artifactId>groovy-all</artifactId>
+                            <version>2.4.12</version>
+                            <scope>runtime</scope>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -317,22 +330,25 @@ Copyright (c) 2012 - Jeremy Long
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
-                <version>1.6</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy-all</artifactId>
-                        <version>2.4.12</version>
-                        <scope>runtime</scope>
-                    </dependency>
-                </dependencies>
                 <executions>
                     <execution>
-                        <id>add-dynamic-properties-pc</id>
+                        <id>add-dynamic-properties-clean</id>
                         <phase>pre-clean</phase>
                         <goals>
                             <goal>execute</goal>
                         </goals>
+                        <configuration>
+                            <scripts>
+                                <script><![CDATA[
+                                if ("dependency-check-parent".equals("${project.artifactId}")) {
+                                    config = "file:///${project.basedir}/src/main/config"
+                                } else {
+                                    config = "file:///${project.basedir}/../src/main/config"
+                                }
+                                project.properties['odc.config']= config
+                                ]]></script>
+                            </scripts>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>add-dynamic-properties-init</id>
@@ -340,20 +356,20 @@ Copyright (c) 2012 - Jeremy Long
                         <goals>
                             <goal>execute</goal>
                         </goals>
+                        <configuration>
+                            <scripts>
+                                <script><![CDATA[
+                                if ("dependency-check-parent".equals("${project.artifactId}")) {
+                                    config = "file:///${project.basedir}/src/main/config"
+                                } else {
+                                    config = "file:///${project.basedir}/../src/main/config"
+                                }
+                                project.properties['odc.config']= config
+                                ]]></script>
+                            </scripts>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <scripts>
-                        <script><![CDATA[
-                        if ("dependency-check-parent".equals("${project.artifactId}")) {
-                            config = "file:///${project.basedir}/src/main/config"
-                        } else {
-                            config = "file:///${project.basedir}/../src/main/config"
-                        }
-                        project.properties['odc.config']= config
-                        ]]></script>
-                    </scripts>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -511,25 +527,6 @@ Copyright (c) 2012 - Jeremy Long
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <id>add-dynamic-properties</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>execute</goal>
-                        </goals>
-                        <configuration>
-                            <source>
-                                project.properties['invoker.mavenOpts']=project.properties.failsafeArgLine
-                            </source>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
@@ -647,7 +644,7 @@ Copyright (c) 2012 - Jeremy Long
                 <version>${maven-javadoc-plugin.version}</version>
                 <configuration>
                     <failOnError>false</failOnError>
-                    <bottom>Copyright© 2012-17 Jeremy Long. All Rights Reserved.</bottom>
+                    <bottom>Copyright© 2012-18 Jeremy Long. All Rights Reserved.</bottom>
                 </configuration>
                 <reportSets>
                     <reportSet>
@@ -662,6 +659,40 @@ Copyright (c) 2012 - Jeremy Long
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
                 <version>${maven-jxr-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${reporting.checkstyle-plugin.version}</version>
+                <configuration>
+                    <enableRulesSummary>false</enableRulesSummary>
+                    <enableFilesSummary>false</enableFilesSummary>
+                    <excludes>**/HelpMojo.java</excludes>
+                    <configLocation>${odc.config}/checkstyle-checks.xml</configLocation>
+                    <headerLocation>${odc.config}/checkstyle-header.txt</headerLocation>
+                    <suppressionsLocation>${odc.config}/checkstyle-suppressions.xml</suppressionsLocation>
+                    <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${reporting.pmd-plugin.version}</version>
+                <configuration>
+                    <targetJdk>1.6</targetJdk>
+                    <linkXRef>true</linkXRef>
+                    <sourceEncoding>utf-8</sourceEncoding>
+                    <excludes>
+                        <exclude>**/generated/*.java</exclude>
+                        <exclude>**/HelpMojo.java</exclude>
+                    </excludes>
+                    <rulesets>
+                        <ruleset>${odc.config}/dcrules.xml</ruleset>
+                        <ruleset>/rulesets/java/basic.xml</ruleset>
+                        <ruleset>/rulesets/java/imports.xml</ruleset>
+                        <ruleset>/rulesets/java/unusedcode.xml</ruleset>
+                    </rulesets>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -698,6 +729,7 @@ Copyright (c) 2012 - Jeremy Long
                     <reportSet>
                         <reports>
                             <report>report-only</report>
+                            <report>failsafe-report-only</report>
                         </reports>
                     </reportSet>
                 </reportSets>
