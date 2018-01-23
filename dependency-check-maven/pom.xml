@@ -88,40 +88,6 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                     <goalPrefix>dependency-check</goalPrefix>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>${reporting.checkstyle-plugin.version}</version>
-                <configuration>
-                    <excludes>**/HelpMojo.java</excludes>
-                    <enableRulesSummary>false</enableRulesSummary>
-                    <enableFilesSummary>false</enableFilesSummary>
-                    <configLocation>${basedir}/../src/main/config/checkstyle-checks.xml</configLocation>
-                    <headerLocation>${basedir}/../src/main/config/checkstyle-header.txt</headerLocation>
-                    <suppressionsLocation>${basedir}/../src/main/config/checkstyle-suppressions.xml</suppressionsLocation>
-                    <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>${reporting.pmd-plugin.version}</version>
-                <configuration>
-                    <targetJdk>1.6</targetJdk>
-                    <linkXRef>true</linkXRef>
-                    <sourceEncoding>utf-8</sourceEncoding>
-                    <excludes>
-                        <exclude>**/generated/**/*.java</exclude>
-                        <exclude>**/HelpMojo.java</exclude>
-                    </excludes>
-                    <rulesets>
-                        <ruleset>../src/main/config/dcrules.xml</ruleset>
-                        <ruleset>/rulesets/java/basic.xml</ruleset>
-                        <ruleset>/rulesets/java/imports.xml</ruleset>
-                        <ruleset>/rulesets/java/unusedcode.xml</ruleset>
-                    </rulesets>
-                </configuration>
-            </plugin>
         </plugins>
     </reporting>
     <dependencies>
@@ -196,6 +162,28 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             </activation>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.gmavenplus</groupId>
+                        <artifactId>gmavenplus-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>add-dynamic-properties-integ</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <scripts>
+                                        <script><![CDATA[
+                                        if (project.properties!=null && project.properties.failsafeArgLine!=null) {
+                                            project.properties['invoker.mavenOpts']=project.properties.failsafeArgLine
+                                        }
+                                        ]]></script>
+                                    </scripts>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
