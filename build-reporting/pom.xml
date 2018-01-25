@@ -62,6 +62,13 @@ Copyright (c) 2017 - Jeremy Long. All Rights Reserved.
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <executions>
@@ -76,11 +83,11 @@ Copyright (c) 2017 - Jeremy Long. All Rights Reserved.
                                 <fileSet implementation="org.apache.maven.shared.model.fileset.FileSet">
                                     <directory>${project.basedir}/../</directory>
                                     <includes>
-                                        <include>dependency-check-utils/target/coverage-reports/*.exec</include>
-                                        <include>dependency-check-core/target/coverage-reports/*.exec</include>
-                                        <include>dependency-check-cli/target/coverage-reports/*.exec</include>
-                                        <include>dependency-check-ant/target/coverage-reports/*.exec</include>
-                                        <include>dependency-check-maven/target/coverage-reports/*.exec</include>
+                                        <include>utils/target/coverage-reports/*.exec</include>
+                                        <include>core/target/coverage-reports/*.exec</include>
+                                        <include>cli/target/coverage-reports/*.exec</include>
+                                        <include>ant/target/coverage-reports/*.exec</include>
+                                        <include>maven/target/coverage-reports/*.exec</include>
                                     </includes>
                                 </fileSet>
                             </fileSets>

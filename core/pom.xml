@@ -90,6 +90,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                         <configuration>
                             <outputDirectory>${project.build.directory}/test-classes</outputDirectory>
                             <includeScope>test</includeScope>
+                            <excludeArtifactIds>dependency-check-utils</excludeArtifactIds>
                         </configuration>
                     </execution>
                 </executions>

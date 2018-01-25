@@ -24,12 +24,12 @@ Copyright (c) 2012 - Jeremy Long
     <packaging>pom</packaging>
 
     <modules>
-        <module>dependency-check-core</module>
-        <module>dependency-check-cli</module>
-        <module>dependency-check-ant</module>
-        <module>dependency-check-maven</module>
-        <module>dependency-check-utils</module>
-        <module>dependency-check-plugin</module>
+        <module>utils</module>
+        <module>core</module>
+        <module>cli</module>
+        <module>ant</module>
+        <module>maven</module>
+        <module>archetype</module>
         <module>build-reporting</module>
     </modules>
     <name>Dependency-Check</name>
@@ -164,7 +164,7 @@ Copyright (c) 2012 - Jeremy Long
         <commons-compress.version>1.15</commons-compress.version>
         <org.apache.maven.shared.file-management.version>3.0.0</org.apache.maven.shared.file-management.version>
         <maven-plugin-testing-harness.version>3.3.0</maven-plugin-testing-harness.version>
-        <maven-plugin-annotations.version>3.5</maven-plugin-annotations.version>
+        <maven-plugin-annotations.version>3.5.1</maven-plugin-annotations.version>
         <maven-reporting-api.version>3.0</maven-reporting-api.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <org.apache.velocity.version>1.7</org.apache.velocity.version>
@@ -353,6 +353,26 @@ Copyright (c) 2012 - Jeremy Long
                     <execution>
                         <id>add-dynamic-properties-init</id>
                         <phase>initialize</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <scripts>
+                                <script><![CDATA[
+                                if ("dependency-check-parent".equals("${project.artifactId}")) {
+                                    config = "file:///${project.basedir}/src/main/config"
+                                } else {
+                                    config = "file:///${project.basedir}/../src/main/config"
+                                }
+                                project.properties['odc.config']= config
+                                ]]></script>
+                            </scripts>
+                        </configuration>
+                    </execution>
+                    
+                    <execution>
+                        <id>add-dynamic-properties-site</id>
+                        <phase>pre-site</phase>
                         <goals>
                             <goal>execute</goal>
                         </goals>
@@ -620,7 +640,7 @@ Copyright (c) 2012 - Jeremy Long
                         <configuration>
                             <target name="copy xsd to site">
                                 <copy todir="target/site/">
-                                    <fileset dir="dependency-check-core/src/main/resources/schema/">
+                                    <fileset dir="core/src/main/resources/schema/">
                                         <include name="**/*.xsd"/>
                                     </fileset>
                                 </copy>
