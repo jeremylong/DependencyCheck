@@ -317,6 +317,7 @@ Copyright (c) 2012 - Jeremy Long
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
+                <!-- upgrading beyond 1.5 will cause the build to fail on Java 7 -->
                 <version>1.5</version>
                 <dependencies>
                     <dependency>
