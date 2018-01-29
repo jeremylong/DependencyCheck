@@ -2,6 +2,16 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 3.1.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.1.1) (2018-01-29)
+
+### Bug fixes
+
+- Fixed the Central Analyzer to use the updated SHA1 query syntax.
+- Reverted change that broke Maven 3.1.0 compatability; Maven 3.1.0 and beyond is once again supported.
+- False positive reduction.
+- Minor documentation cleanup.
+
+
 ## [Version 3.1.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.1.0) (2018-01-02)
 
 ### Enhancements
