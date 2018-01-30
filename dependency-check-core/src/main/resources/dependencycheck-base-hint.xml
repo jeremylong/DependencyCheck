@@ -215,4 +215,13 @@
             <evidence regex="true" type="product" source="pom" name="url" value=".*wordpress.*" confidence="HIGHEST"/>
         </remove>
     </hint>
+    <hint>
+        <given>
+            <evidence type="vendor" source="Manifest" name="Implementation-Vendor-Id" value="org.primefaces" confidence="MEDIUM"/>
+            <evidence type="vendor" source="pom" name="groupid" value="primefaces" confidence="HIGHEST"/>
+        </given>
+        <add>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="primetek" confidence="HIGHEST"/>
+        </add>
+    </hint>
 </hints>
