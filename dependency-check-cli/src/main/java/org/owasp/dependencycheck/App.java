@@ -203,7 +203,9 @@ public class App {
                     exitCode = -14;
                 }
                 for (Throwable e : ex.getExceptions()) {
-                    LOGGER.error(e.getMessage());
+                    if (e.getMessage() != null) {
+                        LOGGER.error(e.getMessage());
+                    }
                 }
             } finally {
                 settings.cleanup();
