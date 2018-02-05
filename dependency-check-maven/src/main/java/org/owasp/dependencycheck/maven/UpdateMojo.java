@@ -27,6 +27,8 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * Maven Plugin that checks the project dependencies to see if they have any
@@ -66,6 +68,13 @@ public class UpdateMojo extends BaseDependencyCheckMojo {
     @Override
     protected void runCheck() throws MojoExecutionException, MojoFailureException {
         try (Engine engine = initializeEngine()) {
+            try {
+                if (!engine.getSettings().getBoolean(Settings.KEYS.AUTO_UPDATE)) {
+                    engine.getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, true);
+                }
+            } catch (InvalidSettingException ex) {
+                engine.getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, true);
+            }
             engine.doUpdates();
         } catch (DatabaseException ex) {
             if (getLog().isDebugEnabled()) {
