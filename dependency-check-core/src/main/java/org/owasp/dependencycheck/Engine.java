@@ -760,7 +760,7 @@ public class Engine implements FileFilter, AutoCloseable {
                 } catch (ExecutionException e) {
                     throwFatalExceptionCollection("Analysis task failed with a fatal exception.", e, exceptions);
                 } catch (CancellationException e) {
-                    throwFatalExceptionCollection("Analysis task timed out.", e, exceptions);
+                    throwFatalExceptionCollection("Analysis task was cancelled.", e, exceptions);
                 }
             }
         } catch (InterruptedException e) {
