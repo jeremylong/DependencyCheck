@@ -216,42 +216,6 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
             </plugin>
         </plugins>
     </build>
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>${reporting.checkstyle-plugin.version}</version>
-                <configuration>
-                    <enableRulesSummary>false</enableRulesSummary>
-                    <enableFilesSummary>false</enableFilesSummary>
-                    <configLocation>${basedir}/../src/main/config/checkstyle-checks.xml</configLocation>
-                    <headerLocation>${basedir}/../src/main/config/checkstyle-header.txt</headerLocation>
-                    <suppressionsLocation>${basedir}/../src/main/config/checkstyle-suppressions.xml</suppressionsLocation>
-                    <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>${reporting.pmd-plugin.version}</version>
-                <configuration>
-                    <targetJdk>1.6</targetJdk>
-                    <linkXRef>true</linkXRef>
-                    <sourceEncoding>utf-8</sourceEncoding>
-                    <excludes>
-                        <exclude>**/generated/*.java</exclude>
-                    </excludes>
-                    <rulesets>
-                        <ruleset>../src/main/config/dcrules.xml</ruleset>
-                        <ruleset>/rulesets/java/basic.xml</ruleset>
-                        <ruleset>/rulesets/java/imports.xml</ruleset>
-                        <ruleset>/rulesets/java/unusedcode.xml</ruleset>
-                    </rulesets>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
     <dependencies>
         <dependency>
             <groupId>org.owasp</groupId>
