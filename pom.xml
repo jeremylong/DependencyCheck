@@ -351,9 +351,9 @@ Copyright (c) 2012 - Jeremy Long
                             <scripts>
                                 <script><![CDATA[
                                 if ("dependency-check-parent".equals("${project.artifactId}")) {
-                                    config = "file:///${project.basedir}/src/main/config"
+                                    config = "file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/src/main/config"
                                 } else {
-                                    config = "file:///${project.basedir}/../src/main/config"
+                                    config = "file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/../src/main/config"
                                 }
                                 project.properties['odc.config']= config
                                 ]]></script>
@@ -370,9 +370,9 @@ Copyright (c) 2012 - Jeremy Long
                             <scripts>
                                 <script><![CDATA[
                                 if ("dependency-check-parent".equals("${project.artifactId}")) {
-                                    config = "file:///${project.basedir}/src/main/config"
+                                    config = "file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/src/main/config"
                                 } else {
-                                    config = "file:///${project.basedir}/../src/main/config"
+                                    config = "file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/../src/main/config"
                                 }
                                 project.properties['odc.config']= config
                                 ]]></script>
@@ -390,9 +390,9 @@ Copyright (c) 2012 - Jeremy Long
                             <scripts>
                                 <script><![CDATA[
                                 if ("dependency-check-parent".equals("${project.artifactId}")) {
-                                    config = "file:///${project.basedir}/src/main/config"
+                                    config = "file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/src/main/config"
                                 } else {
-                                    config = "file:///${project.basedir}/../src/main/config"
+                                    config = "file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/../src/main/config"
                                 }
                                 project.properties['odc.config']= config
                                 ]]></script>
