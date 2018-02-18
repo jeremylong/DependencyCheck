@@ -37,7 +37,7 @@ public class NspAnalyzerTest extends BaseTest {
             final Dependency toScan = new Dependency(BaseTest.getResourceAsFile(this, "nsp/package.json"));
             analyzer.analyze(toScan, engine);
             boolean found = false;
-            assertEquals("4 dependencies should be identified", 4, engine.getDependencies().length);
+            assertEquals("5 dependencies should be identified", 5, engine.getDependencies().length);
             for (Dependency result : engine.getDependencies()) {
                 if ("package.json?uglify-js".equals(result.getFileName())) {
                     found = true;
