@@ -959,7 +959,9 @@ public class Engine implements FileFilter, AutoCloseable {
                         LOGGER.debug("copying complete '{}'", temp.toPath());
                         settings.setString(Settings.KEYS.DATA_DIRECTORY, temp.getPath());
                         final String connStr = settings.getString(Settings.KEYS.DB_CONNECTION_STRING);
-                        settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connStr + "ACCESS_MODE_DATA=r");
+                        if (!connStr.contains("ACCESS_MODE_DATA")) {
+                            settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connStr + "ACCESS_MODE_DATA=r");
+                        }
                         database = new CveDB(settings);
                     }
                 } catch (IOException ex) {
