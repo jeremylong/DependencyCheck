@@ -1,5 +1,4 @@
 language: java
-sudo: required
 group: deprecated-2017Q4
 
 env:
@@ -21,8 +20,12 @@ cache:
     - "$HOME/.m2/repository"
     - "$HOME/.sonar/cache"
 
+addons:
+  apt:
+    packages:
+      - jq
+
 before_install:
-  - sudo apt-get install jq
   - wget -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r .assets[0].browser_download_url)
 
 matrix:
