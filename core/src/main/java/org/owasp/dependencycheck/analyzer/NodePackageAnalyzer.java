@@ -186,8 +186,11 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
 
         try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(dependencyFile))) {
             final JsonObject json = jsonReader.readObject();
-            final String parentName = json.getString("name");
-            final String parentVersion = json.getString("version");
+            final String parentName = json.getString("name", "");
+            final String parentVersion = json.getString("version", "");
+            if (parentName.isEmpty() || parentVersion.isEmpty()) {
+                return;
+            }
             final String parentPackage = String.format("%s:%s", parentName, parentVersion);
             processDependencies(json, baseDir, dependencyFile, parentPackage, engine);
         } catch (JsonException e) {
