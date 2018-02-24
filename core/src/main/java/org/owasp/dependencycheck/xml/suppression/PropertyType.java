@@ -21,8 +21,9 @@ import java.util.regex.Pattern;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
- * A simple PropertyType used to represent a string value that could be used as a regular expression or could be case
- * insensitive. The equals method has been over-ridden so that the object will correctly compare to strings.
+ * A simple PropertyType used to represent a string value that could be used as
+ * a regular expression or could be case insensitive. The equals method has been
+ * over-ridden so that the object will correctly compare to strings.
  *
  * @author Jeremy Long
  */
@@ -81,6 +82,7 @@ public class PropertyType {
     public void setRegex(boolean value) {
         this.regex = value;
     }
+
     /**
      * Gets the value of the caseSensitive property.
      *
@@ -103,7 +105,8 @@ public class PropertyType {
     //</editor-fold>
 
     /**
-     * Uses the object's properties to determine if the supplied string matches the value of this property.
+     * Uses the object's properties to determine if the supplied string matches
+     * the value of this property.
      *
      * @param text the String to validate
      * @return whether the text supplied is matched by the value of the property
@@ -113,7 +116,7 @@ public class PropertyType {
             return false;
         }
         if (this.regex) {
-            Pattern rx;
+            final Pattern rx;
             if (this.caseSensitive) {
                 rx = Pattern.compile(this.value);
             } else {

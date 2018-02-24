@@ -21,9 +21,15 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
+ * <p>
+ * This is no longer used as a standalone analyzer; rather this is called by the
+ * CPE Analyzer directly. TODO - refactor this class so that is not an
+ * 'analyzer'.</p>
+ *
+ * <p>
  * The suppression analyzer processes an externally defined XML document that
  * complies with the suppressions.xsd schema. Any identified CPE entries within
- * the dependencies that match will be removed.
+ * the dependencies that match will be removed.</p>
  *
  * @author Jeremy Long
  */

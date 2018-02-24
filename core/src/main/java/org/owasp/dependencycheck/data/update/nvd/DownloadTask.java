@@ -208,7 +208,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
         }
         try (InputStream is = new FileInputStream(file)) {
             final byte[] buf = new byte[5];
-            int read;
+            final int read;
             read = is.read(buf);
             return read == 5
                     && buf[0] == '<'

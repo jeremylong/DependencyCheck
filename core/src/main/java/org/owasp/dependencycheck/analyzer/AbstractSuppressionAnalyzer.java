@@ -58,7 +58,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     /**
      * The list of suppression rules.
      */
-    private List<SuppressionRule> rules = new ArrayList<>();
+    private final List<SuppressionRule> rules = new ArrayList<>();
 
     /**
      * Get the number of suppression rules.
@@ -151,7 +151,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      */
     private void loadSuppressionBaseData() throws SuppressionParseException {
         final SuppressionParser parser = new SuppressionParser();
-        List<SuppressionRule> ruleList;
+        final List<SuppressionRule> ruleList;
         try {
             final InputStream in = FileUtils.getResourceAsStream("dependencycheck-base-suppression.xml");
             ruleList = parser.parseSuppressionRules(in);

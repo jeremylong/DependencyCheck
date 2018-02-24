@@ -225,7 +225,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                     processDependencies(jo, base, rootFile, subPackageName, engine);
                 }
 
-                Dependency child;
+                final Dependency child;
                 if (f.exists()) {
                     //TOOD - we should use the integrity value instead of calculating the SHA1/MD5
                     child = new Dependency(f);

@@ -91,7 +91,7 @@ public class MavenArtifact {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
-        String base;
+        final String base;
         if (secureDownload) {
             base = "https:" + CENTRAL_CONTENT_URL;
         } else {

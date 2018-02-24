@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.lucene;
 
+import java.io.IOException;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
@@ -43,6 +44,10 @@ public class SearchFieldAnalyzer extends Analyzer {
      * The set of stop words to use in the analyzer.
      */
     private final CharArraySet stopWords;
+    /**
+     * A reference to the concatenating filter so that it can be reset/cleared.
+     */
+    private TokenPairConcatenatingFilter concatenatingFilter;
 
     /**
      * Returns the set of stop words being used.
@@ -88,8 +93,18 @@ public class SearchFieldAnalyzer extends Analyzer {
         stream = new LowerCaseFilter(stream);
 
         stream = new StopFilter(stream, stopWords);
-        stream = new TokenPairConcatenatingFilter(stream);
+        concatenatingFilter = new TokenPairConcatenatingFilter(stream);
 
-        return new TokenStreamComponents(source, stream);
+        return new TokenStreamComponents(source, concatenatingFilter);
+    }
+
+    /**
+     * Resets the analyzer. This must be manually called between searching and
+     * indexing.
+     *
+     * @throws IOException thrown if there is an error reseting the tokenizer
+     */
+    public void reset() throws IOException {
+        concatenatingFilter.clear();
     }
 }

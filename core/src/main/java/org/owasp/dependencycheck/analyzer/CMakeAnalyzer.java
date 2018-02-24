@@ -148,7 +148,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
         dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
         final File file = dependency.getActualFile();
         final String name = file.getName();
-        String contents;
+        final String contents;
         try {
             contents = FileUtils.readFileToString(file, Charset.defaultCharset()).trim();
         } catch (IOException e) {

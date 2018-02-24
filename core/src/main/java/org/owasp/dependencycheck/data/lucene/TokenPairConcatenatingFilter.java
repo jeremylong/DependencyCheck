@@ -81,6 +81,9 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
 
         } else if (input.incrementToken()) {
             final String word = new String(termAtt.buffer(), 0, termAtt.length());
+            if (word.isEmpty()) {
+                return true;
+            }
             if (addSingleTerm) {
                 clearAttributes();
                 termAtt.append(word);
@@ -98,21 +101,11 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
     }
 
     /**
-     * {@inheritDoc}
+     * Resets the filter. This must be manually called between searching
+     * and indexing. Unable to rely on `reset` as it appears to be called between terms.
+     * @throws IOException thrown if there is an error reseting the tokenizer
      */
-    @Override
-    public void end() throws IOException {
-        super.end();
-        previousWord = null;
-        addSingleTerm = true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void reset() throws IOException {
-        super.reset();
+    public void clear() throws IOException {
         previousWord = null;
         addSingleTerm = true;
     }

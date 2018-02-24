@@ -94,10 +94,13 @@ public class FieldAnalyzerTest extends BaseTest {
         assertEquals("springsource", searcher.doc(hits[0].doc).get(field2));
 
         querystr = "product:(Apache Struts) vendor:(Apache)";
+
+        reset(searchAnalyzerProduct, searchAnalyzerVendor);
         Query q2 = parser.parse(querystr);
         assertFalse("second parsing contains previousWord from the TokenPairConcatenatingFilter", q2.toString().contains("core"));
 
         querystr = "product:(  x-stream^5 )  AND  vendor:(  thoughtworks.xstream )";
+        reset(searchAnalyzerProduct, searchAnalyzerVendor);
         Query q3 = parser.parse(querystr);
         collector = TopScoreDocCollector.create(hitsPerPage);
         searcher.search(q3, collector);
@@ -107,7 +110,7 @@ public class FieldAnalyzerTest extends BaseTest {
     }
 
     private IndexWriter createIndex(Analyzer analyzer, Directory index) throws IOException {
-        IndexWriterConfig config = new IndexWriterConfig( analyzer);
+        IndexWriterConfig config = new IndexWriterConfig(analyzer);
         return new IndexWriter(index, config);
     }
 
@@ -116,5 +119,10 @@ public class FieldAnalyzerTest extends BaseTest {
         doc.add(new TextField(field1, text1, Field.Store.YES));
         doc.add(new TextField(field2, text2, Field.Store.YES));
         w.addDocument(doc);
+    }
+
+    private void reset(SearchFieldAnalyzer searchAnalyzerProduct, SearchFieldAnalyzer searchAnalyzerVendor) throws IOException {
+        searchAnalyzerProduct.reset();
+        searchAnalyzerVendor.reset();
     }
 }

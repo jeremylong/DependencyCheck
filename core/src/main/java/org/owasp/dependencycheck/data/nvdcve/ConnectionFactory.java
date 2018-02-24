@@ -294,7 +294,7 @@ public final class ConnectionFactory {
      * @return true if the connection string is for an H2 database
      */
     public static boolean isH2Connection(Settings configuration) {
-        String connStr;
+        final String connStr;
         try {
             connStr = configuration.getConnectionString(
                     Settings.KEYS.DB_CONNECTION_STRING,

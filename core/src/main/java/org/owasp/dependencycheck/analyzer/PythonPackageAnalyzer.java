@@ -223,7 +223,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private boolean analyzeFileContents(Dependency dependency, File file)
             throws AnalysisException {
-        String contents;
+        final String contents;
         try {
             contents = FileUtils.readFileToString(file, Charset.defaultCharset()).trim();
         } catch (IOException e) {

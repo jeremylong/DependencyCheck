@@ -471,13 +471,13 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @return the unmodifiable list set of vulnerabilities
      */
     public synchronized Set<Vulnerability> getVulnerabilities(boolean sorted) {
-        Set<Vulnerability> r;
+        final Set<Vulnerability> vulnerabilitySet;
         if (sorted) {
-            r = new TreeSet<>(vulnerabilities);
+            vulnerabilitySet = new TreeSet<>(vulnerabilities);
         } else {
-            r = vulnerabilities;
+            vulnerabilitySet = vulnerabilities;
         }
-        return Collections.unmodifiableSet(r);
+        return Collections.unmodifiableSet(vulnerabilitySet);
     }
 
     /**
@@ -496,13 +496,13 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @return the unmodifiable sorted set of suppressedVulnerabilities
      */
     public synchronized Set<Vulnerability> getSuppressedVulnerabilities(boolean sorted) {
-        Set<Vulnerability> r;
+        final Set<Vulnerability> vulnerabilitySet;
         if (sorted) {
-            r = new TreeSet<>(suppressedVulnerabilities);
+            vulnerabilitySet = new TreeSet<>(suppressedVulnerabilities);
         } else {
-            r = suppressedVulnerabilities;
+            vulnerabilitySet = suppressedVulnerabilities;
         }
-        return Collections.unmodifiableSet(r);
+        return Collections.unmodifiableSet(vulnerabilitySet);
     }
 
     /**
