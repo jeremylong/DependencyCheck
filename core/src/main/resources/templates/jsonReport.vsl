@@ -15,7 +15,7 @@
         "name": "$enc.json($applicationName)",
         #if($groupID)"groupID":"$enc.json($groupID)",#end
         #if($artifactID)"artifactID":"$enc.json($artifactID)",#end
-        #if($version)"version":"$enc.json($version)",#end
+        #if($applicationVersion)"version":"$enc.json($applicationVersion)",#end
         "reportDate": "$scanDateXML",
         "credits": {
             "NVD": "This report contains data retrieved from the National Vulnerability Database: http://nvd.nist.gov",

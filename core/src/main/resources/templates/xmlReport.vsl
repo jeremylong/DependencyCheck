@@ -37,8 +37,8 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 #if ($artifactID)        
         <artifactID>$enc.xml($artifactID)</artifactID>
 #end
-#if ($version)
-        <version>$enc.xml($version)</version>
+#if ($applicationVersion)
+        <version>$enc.xml($applicationVersion)</version>
 #end
         <reportDate>$scanDateXML</reportDate>
         <credits>This report contains data retrieved from the National Vulnerability Database: https://nvd.nist.gov and from the Node Security Platform: https://nodesecurity.io</credits>

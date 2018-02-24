@@ -584,6 +584,9 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
 <a href="https://github.com/jeremylong/DependencyCheck/issues" target="_blank">github issues</a></h3>
 ]]#
             <h2 class="">Project:&nbsp;$enc.html($applicationName)</h2>
+            #if ($groupID && $artifactID && $applicationVersion)
+            <h4>$enc.html($groupID):$enc.html($artifactID):$enc.html($applicationVersion)</h4>
+            #end
             <div class="">
                 #set($depCount=$dependencies.size())
                 #set($vulnDepCount=0)
