@@ -350,8 +350,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         try (JarFile jar = new JarFile(dependency.getActualFilePath())) {
             final List<String> pomEntries = retrievePomListing(jar);
             if (pomEntries != null && pomEntries.size() <= 1) {
-                String path;
-                File pomFile;
+                final String path;
+                final File pomFile;
                 Properties pomProperties = null;
                 if (pomEntries.size() == 1) {
                     path = pomEntries.get(0);
