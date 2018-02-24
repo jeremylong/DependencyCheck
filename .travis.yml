@@ -46,19 +46,19 @@ after_success:
     fi;
 
 after_failure:
-    - cat /home/travis/build/jeremylong/DependencyCheck/dependency-check-maven/target/it/617-hierarchical-cross-deps/build.log
-    - cat /home/travis/build/jeremylong/DependencyCheck/dependency-check-maven/target/it/618-aggregator-purge/build.log
-    - cat /home/travis/build/jeremylong/DependencyCheck/dependency-check-maven/target/it/618-aggregator-update-only/build.log
-    - cat /home/travis/build/jeremylong/DependencyCheck/dependency-check-maven/target/it/629-jackson-dataformat/build.log
-    - cat /home/travis/build/jeremylong/DependencyCheck/dependency-check-maven/target/it/690-threadsafety/build.log
-    - cat /home/travis/build/jeremylong/DependencyCheck/dependency-check-maven/target/it/710-pom-parse-error/build.log
-    - cat /home/travis/build/jeremylong/DependencyCheck/dependency-check-maven/target/it/729-system-scope-resolved/build.log
-    - cat /home/travis/build/jeremylong/DependencyCheck/dependency-check-maven/target/it/729-system-scope-skipped/build.log
-    - cat /home/travis/build/jeremylong/DependencyCheck/dependency-check-maven/target/it/730-multiple-suppression-files/build.log
-    - cat /home/travis/build/jeremylong/DependencyCheck/dependency-check-maven/target/it/730-multiple-suppression-files-configs/build.log
-    - cat /home/travis/build/jeremylong/DependencyCheck/dependency-check-maven/target/it/815-broken-suppression-aggregate/build.log
-    - cat /home/travis/build/jeremylong/DependencyCheck/dependency-check-maven/target/it/846-site-plugin/build.log
-    - cat /home/travis/build/jeremylong/DependencyCheck/dependency-check-maven/target/it/false-positives/build.log
+    - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/617-hierarchical-cross-deps/build.log
+    - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/618-aggregator-purge/build.log
+    - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/618-aggregator-update-only/build.log
+    - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/629-jackson-dataformat/build.log
+    - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/690-threadsafety/build.log
+    - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/710-pom-parse-error/build.log
+    - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/729-system-scope-resolved/build.log
+    - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/729-system-scope-skipped/build.log
+    - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/730-multiple-suppression-files/build.log
+    - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/730-multiple-suppression-files-configs/build.log
+    - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/815-broken-suppression-aggregate/build.log
+    - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/846-site-plugin/build.log
+    - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/false-positives/build.log
 
 deploy:
   - provider: script
