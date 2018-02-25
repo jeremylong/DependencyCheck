@@ -34,7 +34,8 @@ format               | The report format to be generated (HTML, XML, CSV, JSON, 
 outputDirectory      | The location to write the report(s). This directory will be located in the build directory.                        | build/reports
 skipTestGroups       | When set to true (the default) all dependency groups that being with 'test' will be skipped.                       | true
 suppressionFile      | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html)       | &nbsp;
-hintsFile            | The file path to the XML hints file \- used to resolve [false negatives](../general/hints.html)       | &nbsp;
+hintsFile            | The file path to the XML hints file \- used to resolve [false negatives](../general/hints.html)                    | &nbsp;
+skip                 | If set to true dependency-check analysis will be skipped.                                                          | false
 skipConfigurations   | A list of configurations that will be skipped. This is mutually exclusive with the scanConfigurations property.    | `[]` which means no configuration is skipped.
 scanConfigurations   | A list of configurations that will be scanned, all other configurations are skipped. This is mutually exclusive with the skipConfigurations property.    | `[]` which implicitly means all configurations get scanned.
 
