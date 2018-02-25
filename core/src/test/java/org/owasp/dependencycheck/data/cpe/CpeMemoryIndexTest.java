@@ -67,19 +67,6 @@ public class CpeMemoryIndexTest extends BaseDBTestCase {
     }
 
     /**
-     * Test of open method, of class CpeMemoryIndex.
-     */
-    @Test
-    public void testOpen() throws Exception {
-//        CveDB cve = engine.getDatabase();
-//        CpeMemoryIndex instance = CpeMemoryIndex.getInstance();
-//        instance.open(cve);
-//        assertTrue(instance.isOpen());
-//        instance.close();
-        assertTrue("This is tested in the other test cases; leaving this hear so unit test does not get 're-generated'", true);
-    }
-
-    /**
      * Test of isOpen method, of class CpeMemoryIndex.
      */
     @Test
@@ -87,18 +74,6 @@ public class CpeMemoryIndexTest extends BaseDBTestCase {
         boolean expResult = true;
         boolean result = instance.isOpen();
         assertEquals(expResult, result);
-    }
-
-    /**
-     * Test of close method, of class CpeMemoryIndex.
-     */
-    @Test
-    public void testClose() throws IndexException {
-//        CpeMemoryIndex instance = CpeMemoryIndex.getInstance();
-//        instance.close();
-//        instance.open(engine.getDatabase());
-//        instance.close();
-        assertTrue("This is tested in the other test cases; leaving this hear so unit test does not get 're-generated'", true);
     }
 
     /**
