@@ -18,21 +18,14 @@
 package org.owasp.dependencycheck.data.lucene;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.BaseTokenStreamTestCase;
-import static org.apache.lucene.analysis.BaseTokenStreamTestCase.assertAnalyzesTo;
 import static org.apache.lucene.analysis.BaseTokenStreamTestCase.checkOneTerm;
-import static org.apache.lucene.analysis.BaseTokenStreamTestCase.checkRandomData;
 import org.apache.lucene.analysis.MockTokenizer;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.KeywordTokenizer;
-import static org.apache.lucene.util.LuceneTestCase.RANDOM_MULTIPLIER;
-import static org.apache.lucene.util.LuceneTestCase.random;
 import static org.junit.Assert.fail;
 
-import org.junit.Test;
 
 /**
  *

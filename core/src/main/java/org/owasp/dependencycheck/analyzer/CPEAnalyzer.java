@@ -912,7 +912,8 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 System.out.println();
             }
         } catch (InitializationException | IOException ex) {
-            throw new RuntimeException(ex);
+            System.err.println("Lucene ODC search tool failed:");
+            System.err.println(ex.getMessage());
         }
     }
 }

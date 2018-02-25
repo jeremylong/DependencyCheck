@@ -20,10 +20,8 @@ package org.owasp.dependencycheck.data.cpe;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.owasp.dependencycheck.BaseDBTestCase;
@@ -35,12 +33,8 @@ import org.owasp.dependencycheck.Engine;
  */
 public class CpeMemoryIndexTest extends BaseDBTestCase {
 
-    private static CpeMemoryIndex instance = CpeMemoryIndex.getInstance();
+    private static final CpeMemoryIndex instance = CpeMemoryIndex.getInstance();
     private static Engine engine = null;
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
 
     @AfterClass
     public static void tearDownClass() {
@@ -63,12 +57,6 @@ public class CpeMemoryIndexTest extends BaseDBTestCase {
         }
     }
 
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     /**
      * Test of getInstance method, of class CpeMemoryIndex.
      */
@@ -88,6 +76,7 @@ public class CpeMemoryIndexTest extends BaseDBTestCase {
 //        instance.open(cve);
 //        assertTrue(instance.isOpen());
 //        instance.close();
+        assertTrue("This is tested in the other test cases; leaving this hear so unit test does not get 're-generated'", true);
     }
 
     /**
@@ -109,6 +98,7 @@ public class CpeMemoryIndexTest extends BaseDBTestCase {
 //        instance.close();
 //        instance.open(engine.getDatabase());
 //        instance.close();
+        assertTrue("This is tested in the other test cases; leaving this hear so unit test does not get 're-generated'", true);
     }
 
     /**
