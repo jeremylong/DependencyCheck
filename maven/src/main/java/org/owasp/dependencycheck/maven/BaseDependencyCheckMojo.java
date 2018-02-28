@@ -228,6 +228,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "connectionTimeout", defaultValue = "", required = false)
     private String connectionTimeout;
     /**
+     * Sets whether dependency-check should check if there is a new version available.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "versionCheckEnabled", defaultValue = "true", required = false)
+    private boolean versionCheckEnabled;
+    /**
      * The paths to the suppression files.
      */
     @SuppressWarnings("CanBeFinal")
@@ -1147,6 +1153,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         final String[] suppressions = determineSuppressions();
         settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressions);
 
+        settings.setBooleanIfNotNull(Settings.KEYS.UPDATE_VERSION_CHECK_ENABLED, versionCheckEnabled);
         settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
         settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);
 
