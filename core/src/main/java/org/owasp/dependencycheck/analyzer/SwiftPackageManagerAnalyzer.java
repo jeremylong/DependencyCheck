@@ -129,7 +129,7 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
 
         dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
 
-        String contents;
+        final String contents;
         try {
             contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());
         } catch (IOException e) {

@@ -109,7 +109,7 @@ class EvidenceCollection implements Serializable {
      */
     public synchronized Iterable<Evidence> getIterator(EvidenceType type, Confidence confidence) {
         if (null != confidence && null != type) {
-            Set<Evidence> list;
+            final Set<Evidence> list;
 
             switch (type) {
                 case VENDOR:
@@ -308,8 +308,9 @@ class EvidenceCollection implements Serializable {
     }
 
     /**
-     * Returns whether or not the collection contains evidence of a
-     * specified type and confidence.
+     * Returns whether or not the collection contains evidence of a specified
+     * type and confidence.
+     *
      * @param type the type of evidence (vendor, product, version)
      * @param confidence A Confidence value.
      * @return boolean.
@@ -318,7 +319,7 @@ class EvidenceCollection implements Serializable {
         if (null == type) {
             return false;
         }
-        Set<Evidence> col;
+        final Set<Evidence> col;
         switch (type) {
             case VENDOR:
                 col = vendors;

@@ -105,7 +105,7 @@ public class NexusSearch {
         // 1) If the proxy is set, AND the setting is set to true, use the proxy
         // 2) Otherwise, don't use the proxy (either the proxy isn't configured,
         // or proxy is specifically set to false
-        HttpURLConnection conn;
+        final HttpURLConnection conn;
         final URLConnectionFactory factory = new URLConnectionFactory(settings);
         conn = factory.createHttpURLConnection(url, useProxy);
         conn.setDoOutput(true);
@@ -169,7 +169,7 @@ public class NexusSearch {
      * correctly
      */
     public boolean preflightRequest() {
-        HttpURLConnection conn;
+        final HttpURLConnection conn;
         try {
             final URL url = new URL(rootURL, "status");
             final URLConnectionFactory factory = new URLConnectionFactory(settings);

@@ -67,6 +67,7 @@
         11. user import project is used in drupal (i.e. php)
         12. root is a c++ project https://github.com/root-project/root/
         13. xml_sec is a C library for XML security
+        14. rest easy project is ruby library
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec)|pom\.xml|package.json)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -85,6 +86,7 @@
         <cpe>cpe:/a:user_import_project:user_import</cpe>
         <cpe>cpe:/a:root:root</cpe>
         <cpe>cpe:/a:xmlsec_project:xmlsec</cpe>
+        <cpe>cpe:/a:rest-client_project:rest-client</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -380,6 +382,7 @@
         <cpe>cpe:/a:pam_ssh:pam_ssh</cpe>
         <cpe>cpe:/a:sun:linux</cpe>
         <cpe>cpe:/a:sun:sunos</cpe>
+        <cpe>cpe:/a:oracle:linux</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -1065,13 +1068,13 @@
         <cpe>cpe:/a:spice_project:spice</cpe>
     </suppress>
     <suppress base="true">
-       <notes><![CDATA[
+        <notes><![CDATA[
        spring ldap cleanup per issue #1060
        ]]></notes>
-       <gav regex="true">^org\.springframework\.ldap:spring-ldap-core:.*$</gav>
-       <cpe>cpe:/a:net-ldap_project:net-ldap</cpe>
-       <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
-       <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <gav regex="true">^org\.springframework\.ldap:spring-ldap-core:.*$</gav>
+        <cpe>cpe:/a:net-ldap_project:net-ldap</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
     </suppress>
 
     <suppress base="true">

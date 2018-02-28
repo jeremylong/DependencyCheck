@@ -165,7 +165,7 @@ public class EvidenceMatcher {
      * <code>false</code>
      */
     private boolean valueMatches(Evidence evidence) {
-        boolean result;
+        final boolean result;
         if (regex) {
             result = Pattern.matches(value, evidence.getValue());
         } else {

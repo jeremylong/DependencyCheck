@@ -248,8 +248,8 @@ public class HintAnalyzer extends AbstractAnalyzer {
      * @throws HintParseException thrown if the XML cannot be parsed.
      */
     private void loadHintRules() throws HintParseException {
-        List<HintRule> localHints;
-        List<VendorDuplicatingHintRule> localVendorHints;
+        final List<HintRule> localHints;
+        final List<VendorDuplicatingHintRule> localVendorHints;
         final HintParser parser = new HintParser();
         File file = null;
         try {
