@@ -33,6 +33,7 @@ suppressionFiles            | The file paths to the XML suppression files \- use
 hintsFile                   | The file path to the XML hints file \- used to resolve [false negatives](../general/hints.html).       | &nbsp;
 enableExperimental          | Enable the [experimental analyzers](../analyzers/index.html). If not enabled the experimental analyzers (see below) will not be loaded or used. | false
 enableRetired               | Enable the [retired analyzers](../analyzers/index.html). If not enabled the retired analyzers (see below) will not be loaded or used. | false
+versionCheckEnabled         | Whether dependency-check should check if a new version of dependency-check-maven exists. | true
 
 Analyzer Configuration
 ====================
