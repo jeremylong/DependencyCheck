@@ -17,7 +17,7 @@ see the note about Central [here](./index.html).
 
 To setup a centralized database the following generalized steps can be used:
 
-<ol><li>Create the database and tables using either <a href="https://github.com/jeremylong/DependencyCheck/blob/master/dependency-check-core/src/main/resources/data/initialize.sql">initialize.sql</a>
+<ol><li>Create the database and tables using either <a href="https://github.com/jeremylong/DependencyCheck/blob/master/core/src/main/resources/data/initialize.sql">initialize.sql</a>
    or one of the other initialization scripts <a href="https://github.com/jeremylong/DependencyCheck/tree/master/dependency-check-core/src/main/resources/data">found here</a>.</li>
 <li>The account that the clients will connect using must have select granted on the tables.
      <ul><li>Note, the clients performing the scans should run with the noupdate setting. A single
@@ -31,9 +31,9 @@ To setup a centralized database the following generalized steps can be used:
        <li>The connection string, database user name, and the database user's password will also need to be configured.</li>
    </ul>
 </li></ol>
-Depending on the database being used, you may need to customize the [dbStatements.properties](https://github.com/jeremylong/DependencyCheck/blob/master/dependency-check-core/src/main/resources/data/dbStatements.properties).
+Depending on the database being used, you may need to customize the [dbStatements.properties](https://github.com/jeremylong/DependencyCheck/blob/master/core/src/main/resources/data/dbStatements.properties).
 Alternatively to modifying the dbStatements.properties it is possible to use a dialect file to support other databases.
-See [dbStatements_h2.properties](https://github.com/jeremylong/DependencyCheck/blob/master/dependency-check-core/src/main/resources/data/dbStatements_h2.properties)
+See [dbStatements_h2.properties](https://github.com/jeremylong/DependencyCheck/blob/master/core/src/main/resources/data/dbStatements_h2.properties)
 as an example.
 
 Also, if using an external database you will need to manually upgrade the schema. See [database upgrades](./upgrade.html) for more information.
