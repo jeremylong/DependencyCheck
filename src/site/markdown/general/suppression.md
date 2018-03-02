@@ -73,7 +73,7 @@ HTML version of the report. The other common scenario would be to ignore all CVE
 </suppressions>
 ```
 
-The full schema for suppression files can be found here: [suppression.xsd](https://github.com/jeremylong/DependencyCheck/blob/master/dependency-check-core/src/main/resources/schema/suppression.xsd "Suppression Schema")
+The full schema for suppression files can be found here: [suppression.xsd](https://github.com/jeremylong/DependencyCheck/blob/master/core/src/main/resources/schema/suppression.xsd "Suppression Schema")
 
 Please see the appropriate configuration option in each interfaces configuration guide:
 
