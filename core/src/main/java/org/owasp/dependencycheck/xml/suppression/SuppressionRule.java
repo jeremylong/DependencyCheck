@@ -400,8 +400,11 @@ public class SuppressionRule {
                 if (!remove) {
                     for (String entry : this.cwe) {
                         if (v.getCwe() != null) {
-                            final String toMatch = String.format("CWE-%s ", entry);
-                            final String toTest = v.getCwe().substring(0, toMatch.length()).toUpperCase();
+                            final String toMatch = String.format("CWE-%s", entry);
+                            String toTest = v.getCwe();
+                            if (toTest.contains(" ")) {
+                                toTest = toTest.substring(0, toTest.indexOf(" ")).toUpperCase();
+                            }
                             if (toTest.equals(toMatch)) {
                                 remove = true;
                                 removeVulns.add(v);
