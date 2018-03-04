@@ -31,6 +31,16 @@
             "sha1": "$enc.json($dependency.Sha1sum)"
             #if($dependency.description),"description": "$enc.json($dependency.description)"#end
             #if($dependency.license),"license": "$enc.json($dependency.license)"#end
+            #if ($dependency.projectReferences.size()>0)
+            ,"projectReferences": [
+            #set($loopCount=0)
+            #foreach($ref in $dependency.projectReferences)
+                #set($loopCount=$loopCount+1)
+                #if($loopCount>1),#end
+                "$enc.json($ref)"
+            #end
+            ]
+            #end
             #if ($dependency.getRelatedDependencies().size()>0)
             ,"relatedDependencies": [
                 #foreach($related in $dependency.getRelatedDependencies()) #if($foreach.count > 1),#end {

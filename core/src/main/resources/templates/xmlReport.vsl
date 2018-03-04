@@ -19,7 +19,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 @version 1.2
 
 *#<?xml version="1.0"?>
-<analysis xmlns="https://jeremylong.github.io/DependencyCheck/dependency-check.1.6.xsd">
+<analysis xmlns="https://jeremylong.github.io/DependencyCheck/dependency-check.1.7.xsd">
     <scanInfo>
         <engineVersion>$version</engineVersion>
 #foreach($prop in $properties.getMetaData().entrySet())
@@ -55,6 +55,13 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 #end
 #if ($dependency.license)
             <license>$enc.xml($dependency.license)</license>
+#end
+#if ($dependency.projectReferences.size()>0)
+            <projectReferences>
+#foreach($ref in $dependency.projectReferences)
+                <projectReference>$enc.xml($ref)</projectReference>
+#end
+            </projectReferences>
 #end
 #if ($dependency.getRelatedDependencies().size()>0)
             <relatedDependencies>
