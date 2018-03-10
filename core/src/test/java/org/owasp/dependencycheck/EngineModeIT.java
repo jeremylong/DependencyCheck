@@ -113,7 +113,7 @@ public class EngineModeIT extends BaseTest {
             engine.scan(file);
             engine.analyzeDependencies();
             Dependency[] dependencies = engine.getDependencies();
-            assertThat(dependencies.length, is(1));
+            assertThat(dependencies.length, is(8));
             Dependency dependency = dependencies[0];
             assertTrue(dependency.getEvidence(EvidenceType.VENDOR).toString().toLowerCase().contains("apache"));
             assertTrue(dependency.getVendorWeightings().contains("apache"));
