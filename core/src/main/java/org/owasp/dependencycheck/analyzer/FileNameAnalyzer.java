@@ -110,27 +110,27 @@ public class FileNameAnalyzer extends AbstractAnalyzer {
      */
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-
         //strip any path information that may get added by ArchiveAnalyzer, etc.
         final File f = dependency.getActualFile();
         final String fileName = FilenameUtils.removeExtension(f.getName());
+        final String ext = FilenameUtils.getExtension(f.getName());
+        if (!IGNORED_FILES.accept(f) && !"js".equals(ext)) {
+            //add version evidence
+            final DependencyVersion version = DependencyVersionUtil.parseVersion(fileName);
+            final String packageName = DependencyVersionUtil.parsePreVersion(fileName);
 
-        //add version evidence
-        final DependencyVersion version = DependencyVersionUtil.parseVersion(fileName);
-        final String packageName = DependencyVersionUtil.parsePreVersion(fileName);
-        if (version != null) {
-            // If the version number is just a number like 2 or 23, reduce the confidence
-            // a shade. This should hopefully correct for cases like log4j.jar or
-            // struts2-core.jar
-            if (version.getVersionParts() == null || version.getVersionParts().size() < 2) {
-                dependency.addEvidence(EvidenceType.VERSION, "file", "version", version.toString(), Confidence.MEDIUM);
-            } else {
-                dependency.addEvidence(EvidenceType.VERSION, "file", "version", version.toString(), Confidence.HIGHEST);
+            if (version != null) {
+                // If the version number is just a number like 2 or 23, reduce the confidence
+                // a shade. This should hopefully correct for cases like log4j.jar or
+                // struts2-core.jar
+                if (version.getVersionParts() == null || version.getVersionParts().size() < 2) {
+                    dependency.addEvidence(EvidenceType.VERSION, "file", "version", version.toString(), Confidence.MEDIUM);
+                } else {
+                    dependency.addEvidence(EvidenceType.VERSION, "file", "version", version.toString(), Confidence.HIGHEST);
+                }
+                dependency.addEvidence(EvidenceType.VERSION, "file", "name", packageName, Confidence.MEDIUM);
             }
-            dependency.addEvidence(EvidenceType.VERSION, "file", "name", packageName, Confidence.MEDIUM);
-        }
 
-        if (!IGNORED_FILES.accept(f)) {
             dependency.addEvidence(EvidenceType.PRODUCT, "file", "name", packageName, Confidence.HIGH);
             dependency.addEvidence(EvidenceType.VENDOR, "file", "name", packageName, Confidence.HIGH);
         }
