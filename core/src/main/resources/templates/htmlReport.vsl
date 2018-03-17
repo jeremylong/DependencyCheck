@@ -556,6 +556,10 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             .sortable:hover {
                 text-decoration:underline;
             }
+            pre {
+                white-space: pre-wrap;
+                font: 13px "Droid Sans",Arial,"Helvetica Neue","Lucida Grande",sans-serif
+            }
         </style>
     </head>
     <body>
@@ -716,7 +720,7 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                     <h3 class="subsectionheader standardsubsection#if($dependency.getVulnerabilities().size()==0) notvulnerable#end"><a name="l${lnkcnt}_$enc.html($dependency.Sha1sum)"></a>$enc.html($dependency.DisplayFileName)</h3>
                     <div class="subsectioncontent#if($dependency.getVulnerabilities().size()==0) notvulnerable#end">
                         #if ($dependency.description)
-                            <p><b>Description:</b>&nbsp;$enc.html($dependency.description)<br/></p>
+                            <p><b>Description:</b><pre>&nbsp;$enc.html($dependency.description)</pre><br/></p>
                         #end
                         <p>
                         #if ($dependency.license)
@@ -872,7 +876,7 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                             #if ($vuln.notes)
                                 <br/>Notes: $enc.html($vuln.notes)
                             #end</p>
-                            <p>$enc.html($vuln.description)
+                            <p><pre>$enc.html($vuln.description)</pre>
                             #if ($vuln.getReferences().size()>0)
                                 <ul>
                                 #foreach($ref in $vuln.getReferences(true))
@@ -925,7 +929,7 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                             <h3 class="subsectionheader standardsubsection">$enc.html($dependency.DisplayFileName)</h3>
                             <div class="subsectioncontent">
                                 #if ($dependency.description)
-                                    <p><b>Description:</b>&nbsp;$enc.html($dependency.description)<br/></p>
+                                    <p><b>Description:</b><pre>&nbsp;$enc.html($dependency.description)</pre><br/></p>
                                 #end
                                 <p>
                                 #if ($dependency.license)
@@ -1040,7 +1044,7 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                     #if ($vuln.notes)
                                         <br/>Notes: $enc.xml($vuln.notes)
                                     #end</p>
-                                    <p>$enc.html($vuln.description)
+                                    <p><pre>$enc.html($vuln.description)</pre>
                                         #if ($vuln.getReferences().size()>0)
                                             <ul>
                                             #foreach($ref in $vuln.getReferences(true))
