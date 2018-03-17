@@ -133,7 +133,7 @@ Copyright (c) 2012 - Jeremy Long
         <maven.api.version>3.1.0</maven.api.version>
         <reporting.checkstyle-plugin.version>3.0.0</reporting.checkstyle-plugin.version>
         <reporting.pmd-plugin.version>3.8</reporting.pmd-plugin.version>
-        <doxia-module-markdown.version>1.7</doxia-module-markdown.version>
+        <doxia-module-markdown.version>1.8</doxia-module-markdown.version>
         <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
         <maven-dependency-plugin.version>3.0.2</maven-dependency-plugin.version>
         <maven-javadoc-plugin.version>3.0.0-M1</maven-javadoc-plugin.version>
@@ -273,6 +273,13 @@ Copyright (c) 2012 - Jeremy Long
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>3.0.2</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.owasp.maven-tools</groupId>
+                            <artifactId>velocity-whitespace-resource-filter</artifactId>
+                            <version>1.0.0</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
