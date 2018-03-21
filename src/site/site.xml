@@ -16,7 +16,9 @@ limitations under the License.
 
 Copyright (c) 2013 Jeremy Long. All Rights Reserved.
 -->
-<project name="dependency-check">
+<project xmlns="http://maven.apache.org/DECORATION/1.7.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.7.0 http://maven.apache.org/xsd/decoration-1.7.0.xsd"
+  name="dependency-check">
     <skin>
         <groupId>org.apache.maven.skins</groupId>
         <artifactId>maven-fluido-skin</artifactId>
@@ -66,7 +68,9 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             </style>]]>
         </head>
         <breadcrumbs>
-            <item name=" " href="#"/>
+            <item name="OWASP" href="https://www.owasp.org/"/>
+            <item name="Dependency-Check" href="https://www.owasp.org/index.php/OWASP_Dependency_Check"/>
+            <item name="documentation" href="./"/>
         </breadcrumbs>
 
         <menu name="OWASP dependency-check">
