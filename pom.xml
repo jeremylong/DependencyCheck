@@ -133,7 +133,7 @@ Copyright (c) 2012 - Jeremy Long
         <maven.api.version>3.1.0</maven.api.version>
         <reporting.checkstyle-plugin.version>3.0.0</reporting.checkstyle-plugin.version>
         <reporting.pmd-plugin.version>3.8</reporting.pmd-plugin.version>
-        <doxia-module-markdown.version>1.7</doxia-module-markdown.version>
+        <doxia-module-markdown.version>1.8</doxia-module-markdown.version>
         <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
         <maven-dependency-plugin.version>3.0.2</maven-dependency-plugin.version>
         <maven-javadoc-plugin.version>3.0.0-M1</maven-javadoc-plugin.version>
@@ -149,6 +149,7 @@ Copyright (c) 2012 - Jeremy Long
         <joda-time.version>1.6</joda-time.version>
         <com.google.code.findbugs.annotations.version>3.0.1u2</com.google.code.findbugs.annotations.version>
         <com.google.code.gson.version>2.8.2</com.google.code.gson.version>
+        <!-- upgrade to 1.4.197 prevents Java 7 compatability -->
         <com.h2database.version>1.4.196</com.h2database.version>
         <commons-cli.version>1.4</commons-cli.version>
         <commons-io.version>2.6</commons-io.version>
@@ -424,6 +425,7 @@ Copyright (c) 2012 - Jeremy Long
                                 <exclude>joda-time:joda-time:*</exclude>
                                 <exclude>org.slf4j:*:*</exclude>
                                 <exclude>org.apache.ant:*:*</exclude>
+                                <exclude>com.h2database:h2:*</exclude>
                                 <!--TODO remove javax.json - use GSON instead-->
                                 <exclude>org.glassfish:javax.json:*</exclude>
                             </excludes>
