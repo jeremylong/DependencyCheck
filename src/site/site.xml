@@ -64,7 +64,9 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
     <body>
         <head>
             <![CDATA[<style type="text/css">
-                #bannerLeft { margin-top:-20px;margin-bottom:5px !important }
+                #bannerLeft { margin-top:-20px;margin-bottom:5px !important}
+                a.externalLink[href^=https]{padding-right:inherit;background-image:none !important}
+                a.externalLink[href^=http]{padding-right:inherit;background-image:none !important}
             </style>]]>
         </head>
         <breadcrumbs>
