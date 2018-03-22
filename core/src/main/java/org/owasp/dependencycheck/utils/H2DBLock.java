@@ -209,22 +209,33 @@ public class H2DBLock {
             }
         }
         if (lockFile != null && lockFile.isFile()) {
-            try (RandomAccessFile f = new RandomAccessFile(lockFile, "rw")) {
-                final String m = f.readLine();
-                //yes, we are explicitly calling close on an auto-closable object - this is so we can delete the file.
-                f.close();
-                if (m != null && m.equals(magic) && !lockFile.delete()) {
-                    LOGGER.error("Lock file '{}' was unable to be deleted. Please manually delete this file.", lockFile.toString());
-                    lockFile.deleteOnExit();
-                }
-            } catch (IOException ex) {
-                LOGGER.debug("Error deleting lock file", ex);
+            final String msg = readLockFile();
+            if (msg != null && msg.equals(magic) && !lockFile.delete()) {
+                LOGGER.error("Lock file '{}' was unable to be deleted. Please manually delete this file.", lockFile.toString());
+                lockFile.deleteOnExit();
             }
         }
         lockFile = null;
         removeShutdownHook();
         final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         LOGGER.debug("Lock released ({}) {} @ {}", Thread.currentThread().getName(), magic, timestamp.toString());
+    }
+
+    /**
+     * Reads the first line from the lock file and returns the results as a
+     * string.
+     *
+     * @return the first line from the lock file; or null if the contents could
+     * not be read
+     */
+    private String readLockFile() {
+        String msg = null;
+        try (RandomAccessFile f = new RandomAccessFile(lockFile, "rw")) {
+            msg = f.readLine();
+        } catch (IOException ex) {
+            LOGGER.debug(String.format("Error reading lock file: %s", lockFile), ex);
+        }
+        return msg;
     }
 
     /**

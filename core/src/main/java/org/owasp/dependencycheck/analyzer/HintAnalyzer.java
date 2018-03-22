@@ -320,8 +320,8 @@ public class HintAnalyzer extends AbstractAnalyzer {
                 }
             }
         }
-        hints = (HintRule[]) localHints.toArray(new HintRule[localHints.size()]);
-        vendorHints = (VendorDuplicatingHintRule[]) localVendorHints.toArray(new VendorDuplicatingHintRule[localVendorHints.size()]);
+        hints = localHints.toArray(new HintRule[localHints.size()]);
+        vendorHints = localVendorHints.toArray(new VendorDuplicatingHintRule[localVendorHints.size()]);
         LOGGER.debug("{} hint rules were loaded.", hints.length);
         LOGGER.debug("{} duplicating hint rules were loaded.", vendorHints.length);
     }

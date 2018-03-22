@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.concurrent.ThreadSafe;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.lucene.analysis.util.CharArraySet;
 import org.apache.lucene.document.Document;
@@ -168,7 +169,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         if (tmp == null) {
             skipEcosystems = new ArrayList<>();
         } else {
-            LOGGER.info("Skipping CPE Analysis for {}", tmp);
+            LOGGER.info("Skipping CPE Analysis for {}", StringUtils.join(tmp, ","));
             skipEcosystems = Arrays.asList(tmp);
         }
 

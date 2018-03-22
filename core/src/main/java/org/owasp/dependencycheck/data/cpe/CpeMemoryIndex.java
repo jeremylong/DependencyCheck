@@ -224,7 +224,6 @@ public final class CpeMemoryIndex implements AutoCloseable {
                 }
             }
             indexWriter.commit();
-            indexWriter.close();
         } catch (DatabaseException ex) {
             LOGGER.debug("", ex);
             throw new IndexException("Error reading CPE data", ex);

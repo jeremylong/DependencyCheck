@@ -75,7 +75,6 @@ public class EngineIT extends BaseDBTestCase {
                 }
             }
             instance.writeReports("dependency-check sample", new File("./target/"), "ALL");
-            instance.close();
         }
     }
 }

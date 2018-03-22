@@ -145,7 +145,7 @@ public final class DriverLoader {
      */
     private static Driver load(String className, ClassLoader loader) throws DriverLoadException {
         try {
-            final Class c = Class.forName(className, true, loader);
+            final Class<?> c = Class.forName(className, true, loader);
             //final Class c = loader.loadClass(className);
             final Driver driver = (Driver) c.newInstance();
 
