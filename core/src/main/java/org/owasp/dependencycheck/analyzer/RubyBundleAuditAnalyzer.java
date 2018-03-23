@@ -479,9 +479,6 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (IOException ioe) {
             throw new IOException("Unable to create temporary gem file");
         }
-        // if (!gemFile.createNewFile()) {
-        //     throw new IOException("Unable to create temporary gem file");
-        // }
         final String displayFileName = String.format("%s%c%s:%s", parentName, File.separatorChar, fileName, gem);
 
         FileUtils.write(gemFile, displayFileName, Charset.defaultCharset()); // unique contents to avoid dependency bundling
