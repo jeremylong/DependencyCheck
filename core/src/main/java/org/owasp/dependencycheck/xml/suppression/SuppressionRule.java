@@ -18,11 +18,13 @@
 package org.owasp.dependencycheck.xml.suppression;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.concurrent.NotThreadSafe;
+import javax.xml.bind.DatatypeConverter;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -75,6 +77,30 @@ public class SuppressionRule {
      * section.
      */
     private boolean base;
+
+    /**
+     * A date until which the suppression is to be retained. This can be used
+     * to make a temporary suppression that auto-expires to suppress a CVE
+     * while waiting for the vulnerability fix of the dependency to be
+     * released.
+     */
+    private Calendar until;
+
+    /**
+     * Get the (@code{nullable}) value of until
+     * @return the value of until
+     */
+    public Calendar getUntil() {
+        return until;
+    }
+
+    /**
+     * Set the value of until
+     * @param until new value of until
+     */
+    public void setUntil(Calendar until) {
+        this.until = until;
+    }
 
     /**
      * Get the value of filePath.
@@ -502,6 +528,9 @@ public class SuppressionRule {
     public String toString() {
         final StringBuilder sb = new StringBuilder(64);
         sb.append("SuppressionRule{");
+        if (until != null) {
+            sb.append("until=").append(DatatypeConverter.printDate(until)).append(',');
+        }
         if (filePath != null) {
             sb.append("filePath=").append(filePath).append(',');
         }

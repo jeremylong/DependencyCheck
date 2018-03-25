@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.xml.suppression;
 
 import java.io.File;
 import java.util.List;
+import org.junit.Assert;
 
 import static org.junit.Assert.assertTrue;
 
@@ -33,14 +34,36 @@ import org.owasp.dependencycheck.BaseTest;
 public class SuppressionParserTest extends BaseTest {
 
     /**
-     * Test of parseSuppressionRules method, of class SuppressionParser.
+     * Test of parseSuppressionRules method, of class SuppressionParser for the v1.0 suppressions XML Schema.
      */
     @Test
-    public void testParseSuppressionRules() throws Exception {
+    public void testParseSuppressionRulesV1_0() throws Exception {
         //File file = new File(this.getClass().getClassLoader().getResource("suppressions.xml").getPath());
         File file = BaseTest.getResourceAsFile(this, "suppressions.xml");
         SuppressionParser instance = new SuppressionParser();
         List<SuppressionRule> result = instance.parseSuppressionRules(file);
-        assertTrue(result.size() > 3);
+        Assert.assertEquals(5, result.size());
+    }
+    /**
+     * Test of parseSuppressionRules method, of class SuppressionParser for the v1.1 suppressions XML Schema.
+     */
+    @Test
+    public void testParseSuppressionRulesV1_1() throws Exception {
+        //File file = new File(this.getClass().getClassLoader().getResource("suppressions.xml").getPath());
+        File file = BaseTest.getResourceAsFile(this, "suppressions_1_1.xml");
+        SuppressionParser instance = new SuppressionParser();
+        List<SuppressionRule> result = instance.parseSuppressionRules(file);
+        Assert.assertEquals(5, result.size());
+    }
+    /**
+     * Test of parseSuppressionRules method, of class SuppressionParser for the v1.2 suppressions XML Schema.
+     */
+    @Test
+    public void testParseSuppressionRulesV1_2() throws Exception {
+        //File file = new File(this.getClass().getClassLoader().getResource("suppressions.xml").getPath());
+        File file = BaseTest.getResourceAsFile(this, "suppressions_1_2.xml");
+        SuppressionParser instance = new SuppressionParser();
+        List<SuppressionRule> result = instance.parseSuppressionRules(file);
+        Assert.assertEquals(4, result.size());
     }
 }
