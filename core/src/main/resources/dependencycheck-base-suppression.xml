@@ -1076,6 +1076,16 @@
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+        These affect core jackson-databind, not jackson-dataformat-xml. If a vulnerable
+            version of databind is brought in as a transitive dependency of dataformat it
+            will get flagged by itself. See issue #1150.
+        ]]></notes>
+        <gav regex="true">^com\.fasterxml\.jackson\.dataformat:.*$</gav>
+        <cve>CVE-2018-7489</cve>
+        <cve>CVE-2018-5968</cve>
+    </suppress>
 
     <suppress base="true">
         <notes><![CDATA[
