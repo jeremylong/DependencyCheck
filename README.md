@@ -84,14 +84,14 @@ The repository has some large files due to test resources. The team has tried to
 However, it is recommended that you perform a shallow clone to save yourself time:
 
 ```bash
-git clone --depth 1 git@github.com:jeremylong/DependencyCheck.git
+git clone --depth 1 https://github.com/jeremylong/DependencyCheck.git
 ```
 
 On *nix
 ```
 $ mvn install
-$ ./dependency-check-cli/target/release/bin/dependency-check.sh -h
-$ ./dependency-check-cli/target/release/bin/dependency-check.sh --project Testing --out . --scan ./src/test/resources
+$ ./cli/target/release/bin/dependency-check.sh -h
+$ ./cli/target/release/bin/dependency-check.sh --project Testing --out . --scan ./src/test/resources
 ```
 On Windows
 ```
