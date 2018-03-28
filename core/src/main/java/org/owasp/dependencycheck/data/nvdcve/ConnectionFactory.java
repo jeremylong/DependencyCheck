@@ -315,9 +315,8 @@ public final class ConnectionFactory {
      */
     private void createTables(Connection conn) throws DatabaseException {
         LOGGER.debug("Creating database structure");
-        InputStream is = null;
-        try {
-            is = FileUtils.getResourceAsStream(DB_STRUCTURE_RESOURCE);
+
+        try (InputStream is = FileUtils.getResourceAsStream(DB_STRUCTURE_RESOURCE)) {
             final String dbStructure = IOUtils.toString(is, "UTF-8");
 
             Statement statement = null;
@@ -332,8 +331,6 @@ public final class ConnectionFactory {
             }
         } catch (IOException ex) {
             throw new DatabaseException("Unable to create database schema", ex);
-        } finally {
-            IOUtils.closeQuietly(is);
         }
     }
 
@@ -361,11 +358,8 @@ public final class ConnectionFactory {
         }
         if ("h2".equalsIgnoreCase(databaseProductName)) {
             LOGGER.debug("Updating database structure");
-            InputStream is = null;
-            String updateFile = null;
-            try {
-                updateFile = String.format(DB_STRUCTURE_UPDATE_RESOURCE, currentDbVersion.toString());
-                is = FileUtils.getResourceAsStream(updateFile);
+            String updateFile = String.format(DB_STRUCTURE_UPDATE_RESOURCE, currentDbVersion.toString());
+            try (InputStream is = FileUtils.getResourceAsStream(updateFile)) {
                 if (is == null) {
                     throw new DatabaseException(String.format("Unable to load update file '%s'", updateFile));
                 }
@@ -388,8 +382,6 @@ public final class ConnectionFactory {
             } catch (IOException ex) {
                 final String msg = String.format("Upgrade SQL file does not exist: %s", updateFile);
                 throw new DatabaseException(msg, ex);
-            } finally {
-                IOUtils.closeQuietly(is);
             }
         } else {
             final int e0 = Integer.parseInt(appExpectedVersion.getVersionParts().get(0));
