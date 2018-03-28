@@ -209,8 +209,8 @@ public class RubyBundleAuditAnalyzerIT extends BaseDBTestCase {
                 Assume.assumeNoException("Exception setting up RubyBundleAuditAnalyzer; bundle audit may not be installed, or property \"analyzer.bundle.audit.path\" may not be set.", ex);
                 return;
             }
-            List<Dependency> dependencies = new ArrayList<>(Arrays.asList(engine.getDependencies()));
-            LOGGER.info("{} dependencies found.", dependencies.size());
+            Dependency[] dependencies = engine.getDependencies();
+            LOGGER.info("{} dependencies found.", dependencies.length);
         }
     }
 }
