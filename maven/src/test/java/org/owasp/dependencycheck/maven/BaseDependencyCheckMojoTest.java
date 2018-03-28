@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import mockit.Mock;
 import mockit.MockUp;
+import mockit.Tested;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -62,35 +63,38 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
         return v == 1.7;
     }
 
+    @Tested
+    MavenProject project;
+
     /**
      * Test of scanArtifacts method, of class BaseDependencyCheckMojo.
      */
     @Test
     public void testScanArtifacts() throws DatabaseException, InvalidSettingException {
+        new MockUp<MavenProject>() {
+            @Mock
+            public Set<Artifact> getArtifacts() {
+                Set<Artifact> artifacts = new HashSet<>();
+                Artifact a = new ArtifactStub();
+                try {
+                    File file = new File(Test.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+                    a.setFile(file);
+                    artifacts.add(a);
+                } catch (URISyntaxException ex) {
+                    Logger.getLogger(BaseDependencyCheckMojoTest.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                //File file = new File(this.getClass().getClassLoader().getResource("daytrader-ear-2.1.7.ear").getPath());
+
+                return artifacts;
+            }
+
+            @Mock
+            public String getName() {
+                return "test-project";
+            }
+        };
+
         if (canRun()) {
-            MavenProject project = new MockUp<MavenProject>() {
-                @Mock
-                public Set<Artifact> getArtifacts() {
-                    Set<Artifact> artifacts = new HashSet<>();
-                    Artifact a = new ArtifactStub();
-                    try {
-                        File file = new File(Test.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-                        a.setFile(file);
-                        artifacts.add(a);
-                    } catch (URISyntaxException ex) {
-                        Logger.getLogger(BaseDependencyCheckMojoTest.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    //File file = new File(this.getClass().getClassLoader().getResource("daytrader-ear-2.1.7.ear").getPath());
-
-                    return artifacts;
-                }
-
-                @Mock
-                public String getName() {
-                    return "test-project";
-                }
-            }.getMockInstance();
-
             boolean autoUpdate = getSettings().getBoolean(Settings.KEYS.AUTO_UPDATE);
             getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             try (Engine engine = new Engine(getSettings())) {
