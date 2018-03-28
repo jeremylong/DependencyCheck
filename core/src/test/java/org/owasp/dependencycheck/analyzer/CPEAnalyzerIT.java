@@ -113,7 +113,8 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
             callDetermineCPE_full("jaxb-xercesImpl-1.5.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
             callDetermineCPE_full("ehcache-core-2.2.0.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
             callDetermineCPE_full("org.mortbay.jetty.jar", "cpe:/a:mortbay_jetty:jetty:4.2.27", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
-            callDetermineCPE_full("xstream-1.4.8.jar", "cpe:/a:x-stream:xstream:1.4.8", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
+            //callDetermineCPE_full("xstream-1.4.8.jar", "cpe:/a:x-stream:xstream:1.4.8", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
+            callDetermineCPE_full("xstream-1.4.8.jar", "cpe:/a:xstream_project:xstream:1.4.8", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
         } finally {
             cpeAnalyzer.close();
         }
