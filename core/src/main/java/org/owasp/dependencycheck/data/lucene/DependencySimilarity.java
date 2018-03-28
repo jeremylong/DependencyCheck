@@ -18,14 +18,14 @@
 package org.owasp.dependencycheck.data.lucene;
 
 import javax.annotation.concurrent.NotThreadSafe;
-import org.apache.lucene.search.similarities.DefaultSimilarity;
+import org.apache.lucene.search.similarities.ClassicSimilarity;
 
 /**
  *
  * @author Jeremy Long
  */
 @NotThreadSafe
-public class DependencySimilarity extends DefaultSimilarity {
+public class DependencySimilarity extends ClassicSimilarity {
 
     /**
      * the serial version uid.
