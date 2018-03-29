@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
+import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 import org.owasp.dependencycheck.utils.Settings;
@@ -130,7 +131,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
             }
         } else if (cpeIdentifiersMatch(dependency, nextDependency)
                 && hasSameBasePath(dependency, nextDependency)
-                && vulnCountMatches(dependency, nextDependency)
+                && vulnerabilitiesMatch(dependency, nextDependency)
                 && fileNameMatch(dependency, nextDependency)) {
             if (isCore(dependency, nextDependency)) {
                 mergeDependencies(dependency, nextDependency, dependenciesToRemove);
@@ -285,16 +286,18 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
     }
 
     /**
-     * Returns true if the two dependencies have the same vulnerability count.
+     * Returns true if the two dependencies have the same vulnerabilities.
      *
      * @param dependency1 a dependency2 to compare
      * @param dependency2 a dependency2 to compare
-     * @return true if the two dependencies have the same vulnerability count
+     * @return true if the two dependencies have the same vulnerabilities
      */
-    private boolean vulnCountMatches(Dependency dependency1, Dependency dependency2) {
-        return dependency1.getVulnerabilities() != null && dependency2.getVulnerabilities() != null
-                && dependency1.getVulnerabilities().size() == dependency2.getVulnerabilities().size();
-
+    private boolean vulnerabilitiesMatch(Dependency dependency1, Dependency dependency2) {
+        Set<Vulnerability> one = dependency1.getVulnerabilities();
+        Set<Vulnerability> two = dependency2.getVulnerabilities();
+        return one != null && two != null
+                && one.size() == two.size()
+                && one.containsAll(two);
     }
 
     /**
