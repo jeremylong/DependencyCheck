@@ -1076,7 +1076,7 @@
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
     </suppress>
-    <suppress>
+    <suppress base="trye">
         <notes><![CDATA[
         These affect core jackson-databind, not jackson-dataformat-xml. If a vulnerable
             version of databind is brought in as a transitive dependency of dataformat it
