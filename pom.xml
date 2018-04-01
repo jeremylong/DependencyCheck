@@ -403,37 +403,6 @@ Copyright (c) 2012 - Jeremy Long
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <version>2.5</version>
-                <executions>
-                    <execution>
-                        <phase>pre-clean</phase>
-                        <goals>
-                            <goal>update-properties</goal>
-                        </goals>
-                        <configuration>
-                            <allowSnapshots>false</allowSnapshots>
-                            <rulesUri>${odc.config}/version-rules.xml</rulesUri>
-                            <excludes>
-                                <!-- needed to support maven 3.1.0 -->
-                                <exclude>org.apache.maven:*:*</exclude>
-                                <exclude>org.apache.maven.shared:maven-dependency-tree:*</exclude>Ï
-                                <exclude>org.apache.commons:commons-lang3:*</exclude>
-                                <exclude>org.apache.lucene:*:*</exclude>
-                                <exclude>commons-collections:commons-collections:*</exclude>
-                                <exclude>joda-time:joda-time:*</exclude>
-                                <exclude>org.slf4j:*:*</exclude>
-                                <exclude>org.apache.ant:*:*</exclude>
-                                <exclude>com.h2database:h2:*</exclude>
-                                <!--TODO remove javax.json - use GSON instead-->
-                                <exclude>org.glassfish:javax.json:*</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
@@ -1041,4 +1010,50 @@ Copyright (c) 2012 - Jeremy Long
             <scope>provided</scope>
         </dependency>
     </dependencies>
+    <profiles>
+        <profile>
+            <id>upgrade-dependencies</id>
+            <activation>
+                <property>
+                    <name>odc.upgrade</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>versions-maven-plugin</artifactId>
+                        <version>2.5</version>
+                        <executions>
+                            <execution>
+                                <phase>pre-clean</phase>
+                                <goals>
+                                    <goal>update-properties</goal>
+                                </goals>
+                                <configuration>
+                                    <allowSnapshots>false</allowSnapshots>
+                                    <rulesUri>${odc.config}/version-rules.xml</rulesUri>
+                                    <excludes>
+                                        <!-- needed to support maven 3.1.0 -->
+                                        <exclude>org.apache.maven:*:*</exclude>
+                                        <exclude>org.apache.maven.shared:maven-dependency-tree:*</exclude>Ï
+                                        <exclude>org.apache.commons:commons-lang3:*</exclude>
+                                        <exclude>org.apache.lucene:*:*</exclude>
+                                        <exclude>commons-collections:commons-collections:*</exclude>
+                                        <exclude>joda-time:joda-time:*</exclude>
+                                        <exclude>org.slf4j:*:*</exclude>
+                                        <exclude>org.apache.ant:*:*</exclude>
+                                        <exclude>com.h2database:h2:*</exclude>
+                                        <!--TODO remove javax.json - use GSON instead-->
+                                        <exclude>org.glassfish:javax.json:*</exclude>
+                                    </excludes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
