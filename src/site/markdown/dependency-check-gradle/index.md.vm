@@ -32,12 +32,10 @@ apply plugin: 'org.owasp.dependencycheck'
 
 $H$H$H Step 2, Run the dependencyCheckAnalyze task
 
-Once the dependency-check plugin is applied, if the [Java plugin](https://docs.gradle.org/current/userguide/java_plugin.html)
-is being used dependency-check will automatically be added to the `check` task.
-Alternatively, you can run dependency-check directly:
+You can run dependency-check by executing:
 
 ```bash
-gradle dependencyCheckAnalyze --info
+./gradlew dependencyCheckAnalyze
 ```
 
 The reports will be generated automatically under `build/reports` folder.

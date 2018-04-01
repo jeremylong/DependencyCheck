@@ -21,7 +21,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.concurrent.NotThreadSafe;
-import org.owasp.dependencycheck.data.update.NvdCveUpdater;
 import org.owasp.dependencycheck.data.update.exception.InvalidDataException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -58,7 +57,7 @@ public class CPEHandler extends DefaultHandler {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(NvdCveUpdater.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CPEHandler.class);
     /**
      * The list of CPE values.
      */
