@@ -176,7 +176,8 @@ Copyright (c) 2012 - Jeremy Long
 
         <org.glassfish.javax.json.version>1.0.4</org.glassfish.javax.json.version>
         <maven-artifact-transfer.version>0.9.1</maven-artifact-transfer.version>
-
+        <groovy-all.version>2.4.15</groovy-all.version>
+        
         <surefireArgLine/>
     </properties>
     <distributionManagement>
@@ -308,7 +309,7 @@ Copyright (c) 2012 - Jeremy Long
                         <dependency>
                             <groupId>org.codehaus.groovy</groupId>
                             <artifactId>groovy-all</artifactId>
-                            <version>2.4.12</version>
+                            <version>${groovy-all.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -320,7 +321,7 @@ Copyright (c) 2012 - Jeremy Long
                         <dependency>
                             <groupId>org.codehaus.groovy</groupId>
                             <artifactId>groovy-all</artifactId>
-                            <version>2.4.12</version>
+                            <version>${groovy-all.version}</version>
                             <scope>runtime</scope>
                         </dependency>
                     </dependencies>
@@ -337,7 +338,7 @@ Copyright (c) 2012 - Jeremy Long
                     <dependency>
                         <groupId>org.codehaus.groovy</groupId>
                         <artifactId>groovy-all</artifactId>
-                        <version>2.4.12</version>
+                        <version>${groovy-all.version}</version>
                         <scope>runtime</scope>
                     </dependency>
                 </dependencies>
