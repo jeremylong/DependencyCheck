@@ -2,6 +2,21 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 3.1.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.1.2) (2018-04-02)
+
+### Bug fixes
+
+- Updated the NVD URLs
+- Updated documentation
+- Add project references to the JSON and XML report; in aggregate scans using Maven or Gradle the dependencies
+  will include a reference to the project/module where they were found
+- The configuration option `versionCheckEnabled` was added to Maven to allow users to disable the check for
+  new versions of dependency-check; this will be added to gradle plugin, Ant Task, and the CLI in a future release
+- The XML and JSON reports were fixed so that the correct version number is displayed see [issue #1109](https://github.com/jeremylong/DependencyCheck/issues/1109)
+- The initial database creation time for H2 databases was improved
+- Changes made to decrease false positive and false negatives
+
+
 ## [Version 3.1.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.1.1) (2018-01-29)
 
 ### Bug fixes
