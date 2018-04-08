@@ -18,8 +18,12 @@
 package org.owasp.dependencycheck.xml.suppression;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import javax.annotation.concurrent.NotThreadSafe;
+import javax.xml.bind.DatatypeConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -31,6 +35,11 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 @NotThreadSafe
 public class SuppressionHandler extends DefaultHandler {
+
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(SuppressionHandler.class);
 
     /**
      * The suppress node, indicates the start of a new rule.
@@ -117,6 +126,10 @@ public class SuppressionHandler extends DefaultHandler {
             } else {
                 rule.setBase(false);
             }
+            final String until = currentAttributes.getValue("until");
+            if (until != null) {
+                rule.setUntil(DatatypeConverter.parseDate(until));
+            }
         }
     }
 
@@ -133,7 +146,11 @@ public class SuppressionHandler extends DefaultHandler {
         if (null != qName) {
             switch (qName) {
                 case SUPPRESS:
-                    suppressionRules.add(rule);
+                    if (rule.getUntil() != null && rule.getUntil().before(Calendar.getInstance())) {
+                        LOGGER.info("Suppression is expired for rule: {}", rule);
+                    } else {
+                        suppressionRules.add(rule);
+                    }
                     rule = null;
                     break;
                 case FILE_PATH:
