@@ -108,6 +108,27 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
                     </execution>
                 </executions>
             </plugin>
+	    <plugin>
+               <groupId>com.spotify</groupId>
+               <artifactId>dockerfile-maven-plugin</artifactId>
+	       <version>1.4.0</version>
+               <executions>
+                 <execution>
+                   <id>default</id>
+                   <goals>
+                     <goal>build</goal>
+                     <goal>push</goal>
+                   </goals>
+                 </execution>
+               </executions>
+	       <configuration>
+		  <repository>owasp/dependency-check</repository>
+		  <tag>${project.version}</tag>
+                  <buildArgs>
+                     <VERSION>${project.version}</VERSION>
+                  </buildArgs>
+               </configuration>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
