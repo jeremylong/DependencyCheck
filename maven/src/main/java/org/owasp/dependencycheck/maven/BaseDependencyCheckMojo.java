@@ -720,8 +720,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     protected ExceptionCollection scanArtifacts(MavenProject project, Engine engine) {
         try {
-            final DependencyNode dn = dependencyGraphBuilder.buildDependencyGraph(project, null, reactorProjects);
             final ProjectBuildingRequest buildingRequest = newResolveArtifactProjectBuildingRequest();
+            final DependencyNode dn = dependencyGraphBuilder.buildDependencyGraph(buildingRequest, null, reactorProjects);
             return collectDependencies(engine, project, dn.getChildren(), buildingRequest);
         } catch (DependencyGraphBuilderException ex) {
             final String msg = String.format("Unable to build dependency graph on project %s", project.getName());
