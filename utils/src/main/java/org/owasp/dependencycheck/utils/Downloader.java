@@ -270,13 +270,13 @@ public final class Downloader {
                 if (t >= 200 && t < 300) {
                     timestamp = conn.getLastModified();
                 } else {
-                    throw new DownloadFailedException(format("%s request returned a non-200 status code", httpMethod));
+                    throw new DownloadFailedException(format("%s request returned a non-200 status code: %s", httpMethod, url));
                 }
             } catch (URLConnectionFailureException ex) {
-                throw new DownloadFailedException(format("Error creating URL Connection for HTTP %s request.", httpMethod), ex);
+                throw new DownloadFailedException(format("Error creating URL Connection for HTTP %s request: %s", httpMethod, url), ex);
             } catch (IOException ex) {
                 checkForCommonExceptionTypes(ex);
-                LOGGER.error("IO Exception: " + ex.getMessage());
+                LOGGER.error(String.format("IO Exception connecting to %s: %s", url, ex.getMessage()));
                 LOGGER.debug("Exception details", ex);
                 if (ex.getCause() != null) {
                     LOGGER.debug("IO Exception cause: " + ex.getCause().getMessage(), ex.getCause());
@@ -290,7 +290,7 @@ public final class Downloader {
                 } catch (InvalidSettingException ex1) {
                     LOGGER.debug("invalid setting?", ex1);
                 }
-                throw new DownloadFailedException(format("Error making HTTP %s request.", httpMethod), ex);
+                throw new DownloadFailedException(format("Error making HTTP %s request to %s", httpMethod, url), ex);
             } finally {
                 if (conn != null) {
                     try {
