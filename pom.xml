@@ -803,7 +803,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>com.vdurmont</groupId>
                 <artifactId>semver4j</artifactId>
-                <version>2.1.0</version>
+                <version>2.2.0</version>
             </dependency>
             <!-- analysis core (used by Jenkins) uses 1.6-->
             <dependency>
