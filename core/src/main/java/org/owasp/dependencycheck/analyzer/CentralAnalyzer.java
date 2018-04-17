@@ -75,6 +75,11 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     private static final String SUPPORTED_EXTENSIONS = "jar";
 
     /**
+     * The file filter used to determine which files this analyzer supports.
+     */
+    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(SUPPORTED_EXTENSIONS).build();
+
+    /**
      * There may be temporary issues when connecting to MavenCentral. In order
      * to compensate for 99% of the issues, we perform a retry before finally
      * failing the analysis.
@@ -175,11 +180,6 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
         return ANALYSIS_PHASE;
     }
 
-    /**
-     * The file filter used to determine which files this analyzer supports.
-     */
-    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(SUPPORTED_EXTENSIONS).build();
-
     @Override
     protected FileFilter getFileFilter() {
         return FILTER;
@@ -194,20 +194,19 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+        for (Evidence e : dependency.getEvidence(EvidenceType.VENDOR)) {
+            if ("pom".equals(e.getSource())) {
+                return;
+            }
+        }
         try {
             final List<MavenArtifact> mas = fetchMavenArtifacts(dependency);
             final Confidence confidence = mas.size() > 1 ? Confidence.HIGH : Confidence.HIGHEST;
             for (MavenArtifact ma : mas) {
                 LOGGER.debug("Central analyzer found artifact ({}) for dependency ({})", ma, dependency.getFileName());
                 dependency.addAsEvidence("central", ma, confidence);
-                boolean pomAnalyzed = false;
-                for (Evidence e : dependency.getEvidence(EvidenceType.VENDOR)) {
-                    if ("pom".equals(e.getSource())) {
-                        pomAnalyzed = true;
-                        break;
-                    }
-                }
-                if (!pomAnalyzed && ma.getPomUrl() != null) {
+
+                if (ma.getPomUrl() != null) {
                     File pomFile = null;
                     try {
                         final File baseDir = getSettings().getTempDirectory();
@@ -232,7 +231,6 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                         }
                     }
                 }
-
             }
         } catch (IllegalArgumentException iae) {
             LOGGER.info("invalid sha1-hash on {}", dependency.getFileName());
