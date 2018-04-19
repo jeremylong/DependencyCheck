@@ -332,6 +332,11 @@ public final class Settings {
          */
         public static final String ANALYZER_CENTRAL_ENABLED = "analyzer.central.enabled";
         /**
+         * The properties key for whether the Central analyzer should use parallel processing.
+         */
+        public static final String ANALYZER_CENTRAL_PARALLEL_ANALYSIS = "analyzer.central.parallel.analysis";
+        
+        /**
          * The properties key for whether the OpenSSL analyzer is enabled.
          */
         public static final String ANALYZER_OPENSSL_ENABLED = "analyzer.openssl.enabled";
