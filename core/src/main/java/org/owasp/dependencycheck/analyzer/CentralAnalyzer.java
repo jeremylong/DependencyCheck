@@ -121,21 +121,6 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
         }
         return true;
     }
-    
-    /**
-     * Whether the analyzer is configured to support parallel processing.
-     *
-     * @return true if configured to support parallel processing; otherwise false
-     */
-    @Override
-    public boolean supportsParallelProcessing() {
-        try {
-            return getSettings().getBoolean(Settings.KEYS.ANALYZER_CENTRAL_PARALLEL_ANALYSIS, true);
-        } catch (InvalidSettingException ex) {
-            LOGGER.debug("Invalid setting for analyzer.central.parallel.analysis; using true.");
-        }
-        return true;
-    }
 
     /**
      * Determines if this analyzer is enabled.
