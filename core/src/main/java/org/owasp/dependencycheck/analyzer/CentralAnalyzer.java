@@ -80,11 +80,15 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(SUPPORTED_EXTENSIONS).build();
 
     /**
+     * The base wait time between retrying a failed connection to Central.
+     */
+    private static final int BASE_RETRY_WAIT = 1500;
+    /**
      * There may be temporary issues when connecting to MavenCentral. In order
      * to compensate for 99% of the issues, we perform a retry before finally
      * failing the analysis.
      */
-    private static final int NUMBER_OF_TRIES = 5;
+    private static int numberOfRetries = 7;
 
     /**
      * The searcher itself.
@@ -100,6 +104,22 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     public void initialize(Settings settings) {
         super.initialize(settings);
         setEnabled(checkEnabled());
+        numberOfRetries = getSettings().getInt(Settings.KEYS.ANALYZER_CENTRAL_RETRY_COUNT, numberOfRetries);
+    }
+    
+    /**
+     * Whether the analyzer is configured to support parallel processing.
+     *
+     * @return true if configured to support parallel processing; otherwise false
+     */
+    @Override
+    public boolean supportsParallelProcessing() {
+        try {
+            return getSettings().getBoolean(Settings.KEYS.ANALYZER_CENTRAL_PARALLEL_ANALYSIS, true);
+        } catch (InvalidSettingException ex) {
+            LOGGER.debug("Invalid setting for analyzer.central.parallel.analysis; using true.");
+        }
+        return true;
     }
 
     /**
@@ -257,8 +277,8 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      */
     protected List<MavenArtifact> fetchMavenArtifacts(Dependency dependency) throws IOException {
         IOException lastException = null;
-        long sleepingTimeBetweenRetriesInMillis = 1000;
-        int triesLeft = NUMBER_OF_TRIES;
+        long sleepingTimeBetweenRetriesInMillis = BASE_RETRY_WAIT;
+        int triesLeft = numberOfRetries;
         while (triesLeft-- > 0) {
             try {
                 return searcher.searchSha1(dependency.getSha1sum());
@@ -282,7 +302,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         final String message = "Finally failed connecting to Central search."
-                + " Giving up after " + NUMBER_OF_TRIES + " tries.";
+                + " Giving up after " + numberOfRetries + " tries.";
         throw new IOException(message, lastException);
     }
 
