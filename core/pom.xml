@@ -39,6 +39,22 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 <filtering>true</filtering>
             </resource>
             <resource>
+                <directory>${basedir}/src/main/resources/templates</directory>
+                <targetPath>templates</targetPath>
+                <excludes>
+                    <exclude>csvReport.vsl</exclude>
+                </excludes>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>${basedir}/src/main/resources/templates</directory>
+                <targetPath>templates</targetPath>
+                <includes>
+                    <include>csvReport.vsl</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
                 <directory>${basedir}/..</directory>
                 <targetPath>META-INF</targetPath>
                 <includes>
@@ -94,6 +110,10 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
