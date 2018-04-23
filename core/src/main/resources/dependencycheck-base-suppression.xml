@@ -1766,7 +1766,7 @@
         FP per issue #947 - instead of suppressing the whole thing, we will just
             suppress specific CVE that are for the server
         ]]></notes>
-        <gav regex="true">^com\.microsoft\.sqlserver:sqljdbc4:.*$</gav>
+        <gav regex="true">^com\.microsoft\.sqlserver:(sqljdbc4|mssql-jdbc):.*$</gav>
         <cve>CVE-2000-1081</cve>
         <cve>CVE-2004-1560</cve>
         <cve>CVE-2000-1083</cve>
