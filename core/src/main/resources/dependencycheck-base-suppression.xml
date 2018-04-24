@@ -2075,4 +2075,11 @@
         <gav regex="true">^io\.vertx:vertx-config-kubernetes-configmap:.*$</gav>
         <cpe>cpe:/a:kubernetes:kubernetes</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive on io.gitlab.arturbosch caused by cpe:/a:gitlab
+        ]]></notes>
+        <gav regex="true">^io\.gitlab\.arturbosch\.detekt:detekt-.+:.*$</gav>
+        <cpe>cpe:/a:gitlab:gitlab</cpe>
+    </suppress>
 </suppressions>
