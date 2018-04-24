@@ -51,7 +51,7 @@ public class SuppressionParser {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(SuppressionParser.class);
     /**
-     * The suppression schema file location for v 1.2
+     * The suppression schema file location for v 1.2.
      */
     public static final String SUPPRESSION_SCHEMA_1_2 = "schema/dependency-suppression.1.2.xsd";
     /**

@@ -293,8 +293,8 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
      * @return true if the two dependencies have the same vulnerabilities
      */
     private boolean vulnerabilitiesMatch(Dependency dependency1, Dependency dependency2) {
-        Set<Vulnerability> one = dependency1.getVulnerabilities();
-        Set<Vulnerability> two = dependency2.getVulnerabilities();
+        final Set<Vulnerability> one = dependency1.getVulnerabilities();
+        final Set<Vulnerability> two = dependency2.getVulnerabilities();
         return one != null && two != null
                 && one.size() == two.size()
                 && one.containsAll(two);

@@ -79,15 +79,15 @@ public class SuppressionRule {
     private boolean base;
 
     /**
-     * A date until which the suppression is to be retained. This can be used
-     * to make a temporary suppression that auto-expires to suppress a CVE
-     * while waiting for the vulnerability fix of the dependency to be
-     * released.
+     * A date until which the suppression is to be retained. This can be used to
+     * make a temporary suppression that auto-expires to suppress a CVE while
+     * waiting for the vulnerability fix of the dependency to be released.
      */
     private Calendar until;
 
     /**
-     * Get the (@code{nullable}) value of until
+     * Get the (@code{nullable}) value of until.
+     *
      * @return the value of until
      */
     public Calendar getUntil() {
@@ -95,7 +95,8 @@ public class SuppressionRule {
     }
 
     /**
-     * Set the value of until
+     * Set the value of until.
+     *
      * @param until new value of until
      */
     public void setUntil(Calendar until) {

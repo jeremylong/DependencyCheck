@@ -101,16 +101,17 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      * @param settings the configured settings to use
      */
     @Override
-    public void initialize(Settings settings) {
+    public synchronized void initialize(Settings settings) {
         super.initialize(settings);
         setEnabled(checkEnabled());
         numberOfRetries = getSettings().getInt(Settings.KEYS.ANALYZER_CENTRAL_RETRY_COUNT, numberOfRetries);
     }
-    
+
     /**
      * Whether the analyzer is configured to support parallel processing.
      *
-     * @return true if configured to support parallel processing; otherwise false
+     * @return true if configured to support parallel processing; otherwise
+     * false
      */
     @Override
     public boolean supportsParallelProcessing() {

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -217,10 +218,11 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * the given dependency based on the evidence contained within. The
      * dependency passed in is updated with any identified CPE values.
      *
-     * @param dependency the dependency to search for CPE entries on.
-     * @throws CorruptIndexException is thrown when the Lucene index is corrupt.
-     * @throws IOException is thrown when an IOException occurs.
-     * @throws ParseException is thrown when the Lucene query cannot be parsed.
+     * @param dependency the dependency to search for CPE entries on
+     * @throws CorruptIndexException is thrown when the Lucene index is corrupt
+     * @throws IOException is thrown when an IOException occurs
+     * @throws ParseException is thrown when the Lucene query cannot be parsed
+     * @throws AnalysisException thrown if the suppression rules failed
      */
     protected void determineCPE(Dependency dependency) throws CorruptIndexException, IOException, ParseException, AnalysisException {
         String vendors = "";
@@ -595,6 +597,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * @return <code>true</code> if an identifier was added to the dependency;
      * otherwise <code>false</code>
      * @throws UnsupportedEncodingException is thrown if UTF-8 is not supported
+     * @throws AnalysisException thrown if the suppression rules failed
      */
     protected boolean determineIdentifiers(Dependency dependency, String vendor, String product,
             Confidence currentConfidence) throws UnsupportedEncodingException, AnalysisException {
@@ -617,7 +620,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                     continue;
                 }
                 for (VulnerableSoftware vs : cpes) {
-                    DependencyVersion dbVer;
+                    final DependencyVersion dbVer;
                     if (vs.getUpdate() != null && !vs.getUpdate().isEmpty()) {
                         dbVer = DependencyVersionUtil.parseVersion(vs.getVersion() + '.' + vs.getUpdate());
                     } else {
@@ -887,30 +890,31 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * @param args not used
      */
     public static void main(String[] args) {
-        Settings props = new Settings();
+        final Settings props = new Settings();
         try (Engine en = new Engine(Engine.Mode.EVIDENCE_PROCESSING, props)) {
             en.openDatabase(false, false);
-            CPEAnalyzer analyzer = new CPEAnalyzer();
+            final CPEAnalyzer analyzer = new CPEAnalyzer();
             analyzer.initialize(props);
             analyzer.prepareAnalyzer(en);
             LOGGER.error("test");
             System.out.println("Memory index query for ODC");
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            while (true) {
-                System.out.print("Vendor: ");
-                String vendor = br.readLine();
-                System.out.print("Product: ");
-                String product = br.readLine();
-                List<IndexEntry> list = analyzer.searchCPE(vendor, product, null, null);
-                if (list == null || list.isEmpty()) {
-                    System.out.println("No results found");
-                } else {
-                    for (IndexEntry e : list) {
-                        System.out.println(String.format("%s:%s (%f)", e.getVendor(), e.getProduct(), e.getSearchScore()));
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8))) {
+                while (true) {
+                    System.out.print("Vendor: ");
+                    final String vendor = br.readLine();
+                    System.out.print("Product: ");
+                    final String product = br.readLine();
+                    final List<IndexEntry> list = analyzer.searchCPE(vendor, product, null, null);
+                    if (list == null || list.isEmpty()) {
+                        System.out.println("No results found");
+                    } else {
+                        for (IndexEntry e : list) {
+                            System.out.println(String.format("%s:%s (%f)", e.getVendor(), e.getProduct(), e.getSearchScore()));
+                        }
                     }
+                    System.out.println();
+                    System.out.println();
                 }
-                System.out.println();
-                System.out.println();
             }
         } catch (InitializationException | IOException ex) {
             System.err.println("Lucene ODC search tool failed:");

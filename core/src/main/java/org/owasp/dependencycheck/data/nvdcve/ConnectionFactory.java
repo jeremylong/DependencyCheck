@@ -358,7 +358,7 @@ public final class ConnectionFactory {
         }
         if ("h2".equalsIgnoreCase(databaseProductName)) {
             LOGGER.debug("Updating database structure");
-            String updateFile = String.format(DB_STRUCTURE_UPDATE_RESOURCE, currentDbVersion.toString());
+            final String updateFile = String.format(DB_STRUCTURE_UPDATE_RESOURCE, currentDbVersion.toString());
             try (InputStream is = FileUtils.getResourceAsStream(updateFile)) {
                 if (is == null) {
                     throw new DatabaseException(String.format("Unable to load update file '%s'", updateFile));
