@@ -411,7 +411,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 <dependency>
                     <groupId>org.postgresql</groupId>
                     <artifactId>postgresql</artifactId>
-                    <version>9.4-1204-jdbc42</version>
+                    <version>42.2.2</version>
                 </dependency>
             </dependencies>
             <build>
