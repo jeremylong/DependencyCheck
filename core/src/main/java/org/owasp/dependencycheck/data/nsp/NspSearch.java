@@ -40,6 +40,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue.ValueType;
 import static org.owasp.dependencycheck.analyzer.NspAnalyzer.DEFAULT_URL;
+import org.owasp.dependencycheck.analyzer.exception.SearchException;
 import org.owasp.dependencycheck.utils.URLConnectionFailureException;
 
 /**
@@ -95,11 +96,11 @@ public class NspSearch {
      *
      * @param packageJson the package.json file retrieved from the Dependency
      * @return a List of zero or more Advisory object
-     * @throws AnalysisException if Node Security Platform is unable to analyze
+     * @throws SearchException if Node Security Platform is unable to analyze
      * the package
      * @throws IOException if it's unable to connect to Node Security Platform
      */
-    public List<Advisory> submitPackage(JsonObject packageJson) throws AnalysisException, IOException {
+    public List<Advisory> submitPackage(JsonObject packageJson) throws SearchException, IOException {
         try {
             final List<Advisory> result = new ArrayList<>();
             final byte[] packageDatabytes = packageJson.toString().getBytes(StandardCharsets.UTF_8);
@@ -165,7 +166,7 @@ public class NspSearch {
                 case 400:
                     LOGGER.debug("Invalid payload submitted to Node Security Platform. Received response code: {} {}",
                             conn.getResponseCode(), conn.getResponseMessage());
-                    throw new AnalysisException("Could not perform NSP analysis. Invalid payload submitted to Node Security Platform.");
+                    throw new SearchException("Could not perform NSP analysis. Invalid payload submitted to Node Security Platform.");
                 default:
                     LOGGER.debug("Could not connect to Node Security Platform. Received response code: {} {}",
                             conn.getResponseCode(), conn.getResponseMessage());

@@ -43,6 +43,7 @@ import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
+import org.owasp.dependencycheck.analyzer.exception.SearchException;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.URLConnectionFailureException;
@@ -221,6 +222,9 @@ public class NspAnalyzer extends AbstractNpmAnalyzer {
             throw new AnalysisException(e.getMessage(), e);
         } catch (JsonException e) {
             throw new AnalysisException(String.format("Failed to parse %s file.", file.getPath()), e);
+        } catch (SearchException ex) {
+            LOGGER.error("NSP Analisys failed on {}", dependency.getActualFilePath());
+            throw ex;
         }
     }
 }
