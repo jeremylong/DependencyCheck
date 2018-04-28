@@ -1023,6 +1023,8 @@ public class Check extends Update {
                 throw new BuildException(msg, ex);
             }
             log(msg, ex, Project.MSG_ERR);
+        } finally {
+            getSettings().cleanup();
         }
     }
 

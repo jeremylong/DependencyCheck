@@ -400,6 +400,8 @@ public class Update extends Purge {
                 throw new BuildException(msg, ex);
             }
             log(msg, Project.MSG_ERR);
+        } finally {
+            getSettings().cleanup();
         }
     }
 
