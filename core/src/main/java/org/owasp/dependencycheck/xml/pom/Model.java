@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Properties;
 import javax.annotation.concurrent.NotThreadSafe;
 
-import org.apache.commons.lang3.text.StrLookup;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
+import org.apache.commons.text.lookup.StringLookup;
 
 /**
  * A simple pojo to hold data related to a Maven POM file.
@@ -354,15 +354,15 @@ public class Model {
         if (null == text || null == properties) {
             return text;
         }
-        final StrSubstitutor substitutor = new StrSubstitutor(new PropertyLookup(properties));
+        final StringSubstitutor substitutor = new StringSubstitutor(new PropertyLookup(properties));
         return substitutor.replace(text);
     }
 
     /**
      * Utility class that can provide values from a Properties object to a
-     * StrSubstitutor.
+     * StringSubstitutor.
      */
-    private static class PropertyLookup extends StrLookup<String> {
+    private static class PropertyLookup implements StringLookup {
 
         /**
          * Reference to the properties to lookup.
