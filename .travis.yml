@@ -49,6 +49,7 @@ after_success:
     fi;
 
 after_failure:
+    - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/740-aggregate/build.log
     - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/617-hierarchical-cross-deps/build.log
     - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/618-aggregator-purge/build.log
     - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/618-aggregator-update-only/build.log
