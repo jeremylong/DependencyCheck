@@ -905,15 +905,20 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * <code>false</code>
      */
     private boolean addReactorDependency(Engine engine, Artifact artifact) {
-        for (MavenProject project : reactorProjects) {
-            if (project.getArtifactId().equals(artifact.getArtifactId())
-                    && project.getGroupId().equals(artifact.getGroupId())
-                    && project.getVersion().equals(artifact.getVersion())) {
+        for (MavenProject prj : reactorProjects) {
+
+            getLog().debug(String.format("Comparing %s:%s%s to %s:%s:%s",
+                    artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                    prj.getGroupId(), prj.getArtifactId(), prj.getVersion()));
+
+            if (prj.getArtifactId().equals(artifact.getArtifactId())
+                    && prj.getGroupId().equals(artifact.getGroupId())
+                    && prj.getVersion().equals(artifact.getVersion())) {
 
                 final String displayName = String.format("%s:%s:%s",
-                        project.getGroupId(), project.getArtifactId(), project.getVersion());
+                        prj.getGroupId(), prj.getArtifactId(), prj.getVersion());
                 getLog().info(String.format("Unable to resolve %s as it has not been built yet - creating a virtual dependency instead.", displayName));
-                File pom = new File(project.getBasedir(), "pom.xml");
+                File pom = new File(prj.getBasedir(), "pom.xml");
                 Dependency d;
                 if (pom.isFile()) {
                     d = new Dependency(pom, true);
@@ -922,18 +927,18 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 }
                 d.setDisplayFileName(displayName);
 
-                d.addEvidence(EvidenceType.PRODUCT, "project", "artifactid", project.getArtifactId(), Confidence.HIGHEST);
-                d.addEvidence(EvidenceType.VENDOR, "project", "artifactid", project.getArtifactId(), Confidence.LOW);
+                d.addEvidence(EvidenceType.PRODUCT, "project", "artifactid", prj.getArtifactId(), Confidence.HIGHEST);
+                d.addEvidence(EvidenceType.VENDOR, "project", "artifactid", prj.getArtifactId(), Confidence.LOW);
 
-                d.addEvidence(EvidenceType.VENDOR, "project", "groupid", project.getGroupId(), Confidence.HIGHEST);
-                d.addEvidence(EvidenceType.PRODUCT, "project", "groupid", project.getGroupId(), Confidence.LOW);
+                d.addEvidence(EvidenceType.VENDOR, "project", "groupid", prj.getGroupId(), Confidence.HIGHEST);
+                d.addEvidence(EvidenceType.PRODUCT, "project", "groupid", prj.getGroupId(), Confidence.LOW);
                 d.setEcosystem(JarAnalyzer.DEPENDENCY_ECOSYSTEM);
                 //TODO unify the setName/version and package path - they are equivelent ideas submitted by two seperate committers
-                d.setName(String.format("%s:%s", project.getGroupId(), project.getArtifactId()));
-                d.setVersion(project.getVersion());
+                d.setName(String.format("%s:%s", prj.getGroupId(), prj.getArtifactId()));
+                d.setVersion(prj.getVersion());
                 d.setPackagePath(displayName);
-                JarAnalyzer.addDescription(d, project.getDescription(), "project", "description");
-                for (License l : project.getLicenses()) {
+                JarAnalyzer.addDescription(d, prj.getDescription(), "project", "description");
+                for (License l : prj.getLicenses()) {
                     StringBuilder license = new StringBuilder();
                     if (l.getName() != null) {
                         license.append(l.getName());
@@ -953,7 +958,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         return false;
     }
-    
+
     /**
      * Determines if the groupId, artifactId, and version of the Maven
      * dependency and artifact match.
@@ -1537,5 +1542,4 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     //</editor-fold>
-    
 }
