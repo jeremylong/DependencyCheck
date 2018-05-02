@@ -805,6 +805,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 try {
                     result = artifactResolver.resolveArtifact(buildingRequest, coordinate).getArtifact();
                 } catch (ArtifactResolverException ex) {
+                    getLog().debug(String.format("Aggregate : %s", aggregate));
                     if (!aggregate || addReactorDependency(engine, dependencyNode.getArtifact())) {
                         if (exCol == null) {
                             exCol = new ExceptionCollection();
