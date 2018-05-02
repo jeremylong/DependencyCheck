@@ -905,6 +905,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * <code>false</code>
      */
     private boolean addReactorDependency(Engine engine, Artifact artifact) {
+
+        getLog().debug(String.format("Checking the reactor projects (%d) for %s:%s:%s",
+                reactorProjects.size(),
+                artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion()));
+
         for (MavenProject prj : reactorProjects) {
 
             getLog().debug(String.format("Comparing %s:%s%s to %s:%s:%s",
