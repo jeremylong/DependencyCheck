@@ -806,12 +806,16 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     result = artifactResolver.resolveArtifact(buildingRequest, coordinate).getArtifact();
                 } catch (ArtifactResolverException ex) {
                     getLog().debug(String.format("Aggregate : %s", aggregate));
+                    boolean addException = true;
                     if (!aggregate || addReactorDependency(engine, dependencyNode.getArtifact())) {
+                        addException = false;
+                    }
+                    if (addException) {
                         if (exCol == null) {
                             exCol = new ExceptionCollection();
                         }
+                        exCol.addException(ex);
                     }
-                    exCol.addException(ex);
                     continue;
                 }
                 isResolved = result.isResolved();
