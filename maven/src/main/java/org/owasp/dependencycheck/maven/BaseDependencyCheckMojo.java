@@ -947,7 +947,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 d.setName(String.format("%s:%s", prj.getGroupId(), prj.getArtifactId()));
                 d.setVersion(prj.getVersion());
                 d.setPackagePath(displayName);
-                JarAnalyzer.addDescription(d, prj.getDescription(), "project", "description");
+                if (prj.getDescription() != null) {
+                    JarAnalyzer.addDescription(d, prj.getDescription(), "project", "description");
+                }
                 for (License l : prj.getLicenses()) {
                     StringBuilder license = new StringBuilder();
                     if (l.getName() != null) {
