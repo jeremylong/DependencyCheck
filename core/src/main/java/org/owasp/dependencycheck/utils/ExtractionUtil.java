@@ -86,7 +86,12 @@ public final class ExtractionUtil {
         if (archive == null || extractTo == null) {
             return;
         }
-
+        final String destPath;
+        try {
+            destPath = extractTo.getCanonicalPath();
+        } catch (IOException ex) {
+            throw new ExtractionException("Unable to extract files to destination path", ex);
+        }
         ZipEntry entry;
         try (FileInputStream fis = new FileInputStream(archive);
                 BufferedInputStream bis = new BufferedInputStream(fis);
@@ -94,6 +99,12 @@ public final class ExtractionUtil {
             while ((entry = zis.getNextEntry()) != null) {
                 if (entry.isDirectory()) {
                     final File d = new File(extractTo, entry.getName());
+                    if (!d.getCanonicalPath().startsWith(destPath)) {
+                        final String msg = String.format(
+                                "Archive (%s) contains a path that would be extracted outside of the target directory.",
+                                archive.getAbsolutePath());
+                        throw new ExtractionException(msg);
+                    }
                     if (!d.exists() && !d.mkdirs()) {
                         final String msg = String.format("Unable to create '%s'.", d.getAbsolutePath());
                         throw new ExtractionException(msg);
@@ -101,6 +112,12 @@ public final class ExtractionUtil {
                 } else {
                     final File file = new File(extractTo, entry.getName());
                     if (engine == null || engine.accept(file)) {
+                        if (!file.getCanonicalPath().startsWith(destPath)) {
+                            final String msg = String.format(
+                                    "Archive (%s) contains a file that would be extracted outside of the target directory.",
+                                    archive.getAbsolutePath());
+                            throw new ExtractionException(msg);
+                        }
                         try (FileOutputStream fos = new FileOutputStream(file)) {
                             IOUtils.copy(zis, fos);
                         } catch (FileNotFoundException ex) {
@@ -136,8 +153,7 @@ public final class ExtractionUtil {
         }
 
         try (FileInputStream fis = new FileInputStream(archive)) {
-            extractArchive(new ZipArchiveInputStream(new BufferedInputStream(
-                    fis)), destination, filter);
+            extractArchive(new ZipArchiveInputStream(new BufferedInputStream(fis)), destination, filter);
         } catch (FileNotFoundException ex) {
             final String msg = String.format("Error extracting file `%s` with filter: %s", archive.getAbsolutePath(), ex.getMessage());
             LOGGER.debug(msg, ex);
@@ -163,9 +179,17 @@ public final class ExtractionUtil {
             throws ArchiveExtractionException {
         ArchiveEntry entry;
         try {
+            String destPath = destination.getCanonicalPath();
+
             while ((entry = input.getNextEntry()) != null) {
                 if (entry.isDirectory()) {
                     final File dir = new File(destination, entry.getName());
+                    if (!dir.getCanonicalPath().startsWith(destPath)) {
+                        final String msg = String.format(
+                                "Archive contains a path (%s) that would be extracted outside of the target directory.",
+                                dir.getAbsolutePath());
+                        throw new AnalysisException(msg);
+                    }
                     if (!dir.exists() && !dir.mkdirs()) {
                         final String msg = String.format(
                                 "Unable to create directory '%s'.",
@@ -197,21 +221,30 @@ public final class ExtractionUtil {
     private static void extractFile(ArchiveInputStream input, File destination,
             FilenameFilter filter, ArchiveEntry entry) throws ExtractionException {
         final File file = new File(destination, entry.getName());
-        if (filter.accept(file.getParentFile(), file.getName())) {
-            LOGGER.debug("Extracting '{}'", file.getPath());
-            createParentFile(file);
+        try {
+            if (filter.accept(file.getParentFile(), file.getName())) {
+                final String destPath = destination.getCanonicalPath();
+                if (!file.getCanonicalPath().startsWith(destPath)) {
+                    final String msg = String.format(
+                            "Archive contains a file (%s) that would be extracted outside of the target directory.",
+                            file.getAbsolutePath());
+                    throw new ExtractionException(msg);
+                }
+                LOGGER.debug("Extracting '{}'", file.getPath());
+                createParentFile(file);
 
-            try (FileOutputStream fos = new FileOutputStream(file)) {
-                IOUtils.copy(input, fos);
-            } catch (FileNotFoundException ex) {
-                LOGGER.debug("", ex);
-                final String msg = String.format("Unable to find file '%s'.", file.getName());
-                throw new ExtractionException(msg, ex);
-            } catch (IOException ex) {
-                LOGGER.debug("", ex);
-                final String msg = String.format("IO Exception while parsing file '%s'.", file.getName());
-                throw new ExtractionException(msg, ex);
+                try (FileOutputStream fos = new FileOutputStream(file)) {
+                    IOUtils.copy(input, fos);
+                } catch (FileNotFoundException ex) {
+                    LOGGER.debug("", ex);
+                    final String msg = String.format("Unable to find file '%s'.", file.getName());
+                    throw new ExtractionException(msg, ex);
+                }
             }
+        } catch (IOException ex) {
+            LOGGER.debug("", ex);
+            final String msg = String.format("IO Exception while parsing file '%s'.", file.getName());
+            throw new ExtractionException(msg, ex);
         }
     }
 
