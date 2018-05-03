@@ -917,7 +917,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
         for (MavenProject prj : reactorProjects) {
 
-            getLog().debug(String.format("Comparing %s:%s%s to %s:%s:%s",
+            getLog().debug(String.format("Comparing %s:%s:%s to %s:%s:%s",
                     artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
                     prj.getGroupId(), prj.getArtifactId(), prj.getVersion()));
 
@@ -964,7 +964,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         d.setLicense(String.format("%s%n%s", d.getLicense(), license.toString()));
                     }
                 }
+                System.out.println(String.format("Dependency Count Before: %d", engine.getDependencies().length));
                 engine.addDependency(d);
+                System.out.println(String.format("Dependency Count after: %d", engine.getDependencies().length));
                 return true;
             }
         }
