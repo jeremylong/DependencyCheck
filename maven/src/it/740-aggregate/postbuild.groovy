@@ -19,11 +19,16 @@
 import java.nio.charset.Charset;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
- 
-String log = FileUtils.readFileToString(new File(basedir, "build.log"), Charset.defaultCharset().name());
-int count = StringUtils.countMatches(log, "Download Started for NVD CVE - 2002");
-if (count > 1){
-    System.out.println(String.format("NVD CVE was downloaded %s times, should be 0 or 1 times", count));
+
+String log = FileUtils.readFileToString(new File(basedir, "target/dependency-check-report.xml"), Charset.defaultCharset().name());
+int count = StringUtils.countMatches(log, "fourth-1.0.0-SNAPSHOT");
+if (count == 0) {
+    System.out.println(String.format("fourth-1.0.0-SNAPSHOT was not identified"));
+    return false;
+}
+count = StringUtils.countMatches(log, "org.apache.james:apache-mime4j-core:0.7.2");
+if (count == 0) {
+    System.out.println(String.format("org.apache.james:apache-mime4j-core:0.7.2 was not identified and is a dependency of fourth-1.0.0-SNAPSHOT"));
     return false;
 }
 return true;
