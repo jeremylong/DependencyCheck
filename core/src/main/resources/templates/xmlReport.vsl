@@ -117,7 +117,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <identifiers>
 #foreach($id in $dependency.getIdentifiers())
                 <identifier type="$enc.xml($id.type)" #if($id.confidence)confidence="$id.confidence"#end>
-                    <name>($id.value)</name>
+                    <name>$enc.xml($id.value)</name>
 #if( $id.url )
                     <url>$enc.xml($id.url)</url>
 #end
