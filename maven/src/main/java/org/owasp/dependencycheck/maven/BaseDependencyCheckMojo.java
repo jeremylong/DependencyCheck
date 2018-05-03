@@ -931,6 +931,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 File pom = new File(prj.getBasedir(), "pom.xml");
                 Dependency d;
                 if (pom.isFile()) {
+                    getLog().debug("Adding virtual dependency from pom.xml");
                     d = new Dependency(pom, true);
                 } else {
                     d = new Dependency(true);
@@ -964,9 +965,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         d.setLicense(String.format("%s%n%s", d.getLicense(), license.toString()));
                     }
                 }
-                System.out.println(String.format("Dependency Count Before: %d", engine.getDependencies().length));
                 engine.addDependency(d);
-                System.out.println(String.format("Dependency Count after: %d", engine.getDependencies().length));
                 return true;
             }
         }
