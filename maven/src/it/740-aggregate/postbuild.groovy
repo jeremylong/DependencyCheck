@@ -24,6 +24,7 @@ String log = FileUtils.readFileToString(new File(basedir, "target/dependency-che
 int count = StringUtils.countMatches(log, "fourth-1.0.0-SNAPSHOT");
 if (count == 0) {
     System.out.println(String.format("fourth-1.0.0-SNAPSHOT was not identified"));
+    System.out.println(log);
     return false;
 }
 count = StringUtils.countMatches(log, "org.apache.james:apache-mime4j-core:0.7.2");
