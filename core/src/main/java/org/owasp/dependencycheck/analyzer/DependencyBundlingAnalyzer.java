@@ -405,7 +405,9 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
      */
     private boolean isShadedJar(Dependency dependency, Dependency nextDependency) {
         if (dependency == null || dependency.getFileName() == null
-                || nextDependency == null || nextDependency.getFileName() == null) {
+                || nextDependency == null || nextDependency.getFileName() == null
+                || dependency.getIdentifiers().isEmpty() 
+                || nextDependency.getIdentifiers().isEmpty()) {
             return false;
         }
         final String mainName = dependency.getFileName().toLowerCase();
