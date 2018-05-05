@@ -48,8 +48,8 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         <dependency isVirtual="#if($dependency.isVirtual)true#{else}false#end">
             <fileName>$enc.xml($dependency.DisplayFileName)</fileName>
             <filePath>$enc.xml($dependency.FilePath)</filePath>
-            <md5>$enc.xml($dependency.Md5sum)</md5>
-            <sha1>$enc.xml($dependency.Sha1sum)</sha1>
+            <md5>#if($dependency.Md5sum)$enc.xml($dependency.Md5sum)#end</md5>
+            <sha1>#if($dependency.Sha1sum)$enc.xml($dependency.Sha1sum)#end</sha1>
 #if ($dependency.description)
             <description>$enc.xml($dependency.description)</description>
 #end
