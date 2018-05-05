@@ -944,6 +944,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 d.addEvidence(EvidenceType.VENDOR, "project", "groupid", prj.getGroupId(), Confidence.HIGHEST);
                 d.addEvidence(EvidenceType.PRODUCT, "project", "groupid", prj.getGroupId(), Confidence.LOW);
                 d.setEcosystem(JarAnalyzer.DEPENDENCY_ECOSYSTEM);
+                Identifier id = new Identifier();
+                id.setType("maven");
+                id.setConfidence(Confidence.HIGHEST);
+                id.setValue(displayName);
+                d.addIdentifier(id);
                 //TODO unify the setName/version and package path - they are equivelent ideas submitted by two seperate committers
                 d.setName(String.format("%s:%s", prj.getGroupId(), prj.getArtifactId()));
                 d.setVersion(prj.getVersion());
