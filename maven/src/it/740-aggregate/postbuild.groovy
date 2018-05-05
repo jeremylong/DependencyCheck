@@ -20,14 +20,15 @@ import java.nio.charset.Charset;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
-String log = FileUtils.readFileToString(new File(basedir, "target/dependency-check-report.xml"), Charset.defaultCharset().name());
-int count = StringUtils.countMatches(log, "fourth-1.0.0-SNAPSHOT");
+String report = FileUtils.readFileToString(new File(basedir, "target/dependency-check-report.xml"), Charset.defaultCharset().name());
+int count = StringUtils.countMatches(report, "org.owasp.test.aggregate:fourth:1.0.0-SNAPSHOT");
 if (count == 0) {
     System.out.println(String.format("fourth-1.0.0-SNAPSHOT was not identified"));
-    System.out.println(log);
+    System.out.println(report
+);
     return false;
 }
-count = StringUtils.countMatches(log, "org.apache.james:apache-mime4j-core:0.7.2");
+count = StringUtils.countMatches(report, "org.apache.james:apache-mime4j-core:0.7.2");
 if (count == 0) {
     System.out.println(String.format("org.apache.james:apache-mime4j-core:0.7.2 was not identified and is a dependency of fourth-1.0.0-SNAPSHOT"));
     return false;
