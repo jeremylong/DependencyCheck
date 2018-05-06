@@ -24,7 +24,6 @@ String report = FileUtils.readFileToString(new File(basedir, "target/dependency-
 int count = StringUtils.countMatches(report, "org.owasp.test.aggregate:fourth:1.0.0-SNAPSHOT");
 if (count == 0) {
     System.out.println(String.format("fourth-1.0.0-SNAPSHOT was not identified"));
-);
     return false;
 }
 count = StringUtils.countMatches(report, "org.apache.james:apache-mime4j-core:0.7.2");
