@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.io.File;
 import mockit.Mocked;
 import mockit.Verifications;
 import org.junit.Test;
@@ -59,8 +60,8 @@ public class DependencyBundlingAnalyzerTest extends BaseTest {
     }
 
     /**
-     * Test of analyze method, of class DependencyBundlingAnalyzer.
-     * The actually passed dependency does not matter. The analyzer only runs once.
+     * Test of analyze method, of class DependencyBundlingAnalyzer. The actually
+     * passed dependency does not matter. The analyzer only runs once.
      */
     @Test
     public void testAnalyze() throws Exception {
@@ -77,10 +78,12 @@ public class DependencyBundlingAnalyzerTest extends BaseTest {
         instance.analyze(null, engineMock);
         assertTrue(instance.getAnalyzed());
 
-        new Verifications() {{
-            engineMock.getDependencies();
-            times = 1;
-        }};
+        new Verifications() {
+            {
+                engineMock.getDependencies();
+                times = 1;
+            }
+        };
     }
 
     /**
@@ -138,6 +141,74 @@ public class DependencyBundlingAnalyzerTest extends BaseTest {
         right = "./a/b/c.jar";
         expResult = true;
         result = instance.firstPathIsShortest(left, right);
+        assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testIsShaded() {
+        DependencyBundlingAnalyzer instance = new DependencyBundlingAnalyzer();
+
+        Dependency left = null;
+        Dependency right = null;
+
+        boolean expResult = false;
+        boolean result = instance.isShadedJar(left, right);
+        assertEquals(expResult, result);
+
+        left = new Dependency();
+        expResult = false;
+        result = instance.isShadedJar(left, right);
+        assertEquals(expResult, result);
+
+        left = new Dependency(new File("/path/jar.jar"), true);
+        expResult = false;
+        result = instance.isShadedJar(left, right);
+        assertEquals(expResult, result);
+
+        right = new Dependency();
+        expResult = false;
+        result = instance.isShadedJar(left, right);
+        assertEquals(expResult, result);
+
+        right = new Dependency(new File("/path/pom.xml"), true);
+        expResult = false;
+        result = instance.isShadedJar(left, right);
+        assertEquals(expResult, result);
+
+        left.addIdentifier("test", "test", "http://example.com/test");
+        expResult = false;
+        result = instance.isShadedJar(left, right);
+        assertEquals(expResult, result);
+
+        right.addIdentifier("next", "next", "http://example.com/next");
+        expResult = false;
+        result = instance.isShadedJar(left, right);
+        assertEquals(expResult, result);
+
+        left.addIdentifier("next", "next", "http://example.com/next");
+        expResult = true;
+        result = instance.isShadedJar(left, right);
+        assertEquals(expResult, result);
+
+        left = new Dependency(new File("/path/pom.xml"), true);
+        left.addIdentifier("test", "test", "http://example.com/test");
+        right = new Dependency(new File("/path/jar.jar"), true);
+        right.addIdentifier("next", "next", "http://example.com/next");
+        expResult = false;
+        result = instance.isShadedJar(left, right);
+        assertEquals(expResult, result);
+        
+        right.addIdentifier("test", "test", "http://example.com/test");
+        expResult = true;
+        result = instance.isShadedJar(left, right);
+        assertEquals(expResult, result);
+        
+        left = new Dependency(new File("/path/other.jar"), true);
+        left.addIdentifier("test", "test", "http://example.com/test");
+        right = new Dependency(new File("/path/jar.jar"), true);
+        right.addIdentifier("next", "next", "http://example.com/next");
+        expResult = false;
+        result = instance.isShadedJar(left, right);
         assertEquals(expResult, result);
     }
 }
