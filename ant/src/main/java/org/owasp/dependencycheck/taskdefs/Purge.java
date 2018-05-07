@@ -112,7 +112,7 @@ public class Purge extends Task {
     @Override
     public void execute() throws BuildException {
         populateSettings();
-        File db;
+        final File db;
         try {
             db = new File(settings.getDataDirectory(), "dc.h2.db");
             if (db.exists()) {

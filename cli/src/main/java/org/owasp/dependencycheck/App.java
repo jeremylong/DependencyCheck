@@ -126,7 +126,7 @@ public class App {
                     exitCode = -4;
                     return exitCode;
                 }
-                File db;
+                final File db;
                 try {
                     db = new File(settings.getDataDirectory(), settings.getString(Settings.KEYS.DB_FILE_NAME, "dc.h2.db"));
                     if (db.exists()) {
@@ -322,7 +322,7 @@ public class App {
             LOGGER.debug("Scanning {}", file);
             final DirectoryScanner scanner = new DirectoryScanner();
             String include = file.replace('\\', '/');
-            File baseDir;
+            final File baseDir;
 
             if (include.startsWith("//")) {
                 throw new InvalidScanPathException("Unable to scan paths specified by //");
@@ -542,7 +542,7 @@ public class App {
      * @return the canonical path
      */
     protected String ensureCanonicalPath(String path) {
-        String basePath;
+        final String basePath;
         String wildCards = null;
         final String file = path.replace('\\', '/');
         if (file.contains("*") || file.contains("?")) {

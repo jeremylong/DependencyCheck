@@ -179,7 +179,7 @@ public final class ExtractionUtil {
             throws ArchiveExtractionException {
         ArchiveEntry entry;
         try {
-            String destPath = destination.getCanonicalPath();
+            final String destPath = destination.getCanonicalPath();
 
             while ((entry = input.getNextEntry()) != null) {
                 if (entry.isDirectory()) {

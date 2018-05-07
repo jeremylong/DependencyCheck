@@ -118,7 +118,7 @@ public final class Checksum {
      * @return the hex representation of the MD5 hash
      */
     public static String getChecksum(String algorithm, byte[] bytes) {
-        MessageDigest digest = getMessageDigest(algorithm);
+        final MessageDigest digest = getMessageDigest(algorithm);
         final byte[] b = digest.digest(bytes);
         return getHex(b);
     }

@@ -105,7 +105,7 @@ public final class Downloader {
      */
     public void fetchFile(URL url, File outputPath, boolean useProxy) throws DownloadFailedException {
         if ("file".equalsIgnoreCase(url.getProtocol())) {
-            File file;
+            final File file;
             try {
                 file = new File(url.toURI());
             } catch (URISyntaxException ex) {
@@ -251,7 +251,7 @@ public final class Downloader {
         long timestamp = 0;
         //TODO add the FTP protocol?
         if ("file".equalsIgnoreCase(url.getProtocol())) {
-            File lastModifiedFile;
+            final File lastModifiedFile;
             try {
                 lastModifiedFile = new File(url.toURI());
             } catch (URISyntaxException ex) {
