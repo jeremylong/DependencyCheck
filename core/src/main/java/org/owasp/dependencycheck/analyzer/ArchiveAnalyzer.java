@@ -412,6 +412,11 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                     final String uncompressedName = GzipUtils.getUncompressedFilename(archive.getName());
                     final File f = new File(destination, uncompressedName);
                     if (engine.accept(f)) {
+                        final String destPath = destination.getCanonicalPath();
+                        if (!f.getCanonicalPath().startsWith(destPath)) {
+                            final String msg = String.format("Archive (%s) contains a file that would be written outside of the destination directory", archive.getPath());
+                            throw new AnalysisException(msg);
+                        }
                         in = new BufferedInputStream(fis);
                         gin = new GzipCompressorInputStream(in);
                         decompressFile(gin, f);
@@ -420,6 +425,11 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                     final String uncompressedName = BZip2Utils.getUncompressedFilename(archive.getName());
                     final File f = new File(destination, uncompressedName);
                     if (engine.accept(f)) {
+                        final String destPath = destination.getCanonicalPath();
+                        if (!f.getCanonicalPath().startsWith(destPath)) {
+                            final String msg = String.format("Archive (%s) contains a file that would be written outside of the destination directory", archive.getPath());
+                            throw new AnalysisException(msg);
+                        }
                         in = new BufferedInputStream(fis);
                         bzin = new BZip2CompressorInputStream(in);
                         decompressFile(bzin, f);
@@ -512,8 +522,15 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     private void extractArchive(ArchiveInputStream input, File destination, Engine engine) throws ArchiveExtractionException {
         ArchiveEntry entry;
         try {
+            final String destPath = destination.getCanonicalPath();
             while ((entry = input.getNextEntry()) != null) {
                 final File file = new File(destination, entry.getName());
+                if (!file.getCanonicalPath().startsWith(destPath)) {
+                    final String msg = String.format(
+                            "Archive contains a file (%s) that would be extracted outside of the target directory.",
+                            file.getName());
+                    throw new ArchiveExtractionException(msg);
+                }
                 if (entry.isDirectory()) {
                     if (!file.exists() && !file.mkdirs()) {
                         final String msg = String.format("Unable to create directory '%s'.", file.getAbsolutePath());
