@@ -403,9 +403,11 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
      * @return true if on of the dependencies is a pom.xml and the identifiers
      * between the two collections match; otherwise false
      */
-    private boolean isShadedJar(Dependency dependency, Dependency nextDependency) {
+    protected boolean isShadedJar(Dependency dependency, Dependency nextDependency) {
         if (dependency == null || dependency.getFileName() == null
-                || nextDependency == null || nextDependency.getFileName() == null) {
+                || nextDependency == null || nextDependency.getFileName() == null
+                || dependency.getIdentifiers().isEmpty() 
+                || nextDependency.getIdentifiers().isEmpty()) {
             return false;
         }
         final String mainName = dependency.getFileName().toLowerCase();

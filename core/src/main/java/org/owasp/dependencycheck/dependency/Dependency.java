@@ -193,6 +193,17 @@ public class Dependency extends EvidenceCollection implements Serializable {
     }
 
     /**
+     * Constructs a new Dependency object.
+     *
+     * @param isVirtual specifies if the dependency is virtual indicating the
+     * file doesn't actually exist.
+     */
+    public Dependency(boolean isVirtual) {
+        this();
+        this.isVirtual = isVirtual;
+    }
+
+    /**
      * Returns the file name of the dependency.
      *
      * @return the file name of the dependency

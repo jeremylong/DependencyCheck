@@ -731,8 +731,8 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                             #end
                         #end
                             <b>File&nbsp;Path:</b>&nbsp;$enc.html($dependency.FilePath)<br/>
-                            <b>MD5:</b>&nbsp;$enc.html($dependency.Md5sum)<br/>
-                            <b>SHA1:</b>&nbsp;$enc.html($dependency.Sha1sum)
+                            <b>MD5:</b>&nbsp;#if($dependency.Md5sum)$enc.html($dependency.Md5sum)#end<br/>
+                            <b>SHA1:</b>&nbsp;#if($dependency.Sha1sum)$enc.html($dependency.Sha1sum)#end
                             #if ($dependency.projectReferences.size()==1)
                                 <br/><b>Referenced In Project/Scope:</b>
                                 #foreach($ref in $dependency.projectReferences)
@@ -940,8 +940,8 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                     #end
                                 #end
                                     <b>File&nbsp;Path:</b>&nbsp;$enc.html($dependency.FilePath)<br/>
-                                    <b>MD5:</b>&nbsp;$enc.html($dependency.Md5sum)<br/>
-                                    <b>SHA1:</b>&nbsp;$enc.html($dependency.Sha1sum)
+                                    <b>MD5:</b>&nbsp;#if($dependency.Md5sum)$enc.html($dependency.Md5sum)#end<br/>
+                                    <b>SHA1:</b>&nbsp;#if($dependency.Sha1sum)$enc.html($dependency.Sha1sum)#end
                                 </p>
                                 #set($cnt=$cnt+1)
                                 <h4 id="header$cnt" class="subsectionheader expandable expandablesubsection white">Evidence</h4>

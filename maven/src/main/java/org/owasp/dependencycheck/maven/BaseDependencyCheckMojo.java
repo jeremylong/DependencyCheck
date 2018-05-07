@@ -29,6 +29,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.License;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -51,10 +52,12 @@ import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.JarAnalyzer;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.exception.DependencyNotFoundException;
@@ -152,9 +155,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(defaultValue = "${project.build.directory}", required = true)
     private File outputDirectory;
     /**
-     * This is a reference to the &gt;reporting&lt; sections <code>outputDirectory</code>.
-     * This cannot be configured in the dependency-check mojo directly.
-     * This generally maps to "target/site".
+     * This is a reference to the &gt;reporting&lt; sections
+     * <code>outputDirectory</code>. This cannot be configured in the
+     * dependency-check mojo directly. This generally maps to "target/site".
      */
     @Parameter(property = "project.reporting.outputDirectory", readonly = true)
     private File reportOutputDirectory;
@@ -228,7 +231,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "connectionTimeout", defaultValue = "", required = false)
     private String connectionTimeout;
     /**
-     * Sets whether dependency-check should check if there is a new version available.
+     * Sets whether dependency-check should check if there is a new version
+     * available.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "versionCheckEnabled", defaultValue = "true", required = false)
@@ -719,10 +723,25 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * and scanning the dependencies
      */
     protected ExceptionCollection scanArtifacts(MavenProject project, Engine engine) {
+        return scanArtifacts(project, engine, false);
+    }
+
+    /**
+     * Scans the project's artifacts and adds them to the engine's dependency
+     * list.
+     *
+     * @param project the project to scan the dependencies of
+     * @param engine the engine to use to scan the dependencies
+     * @param aggregate whether the scan is part of an aggregate build
+     * @return a collection of exceptions that may have occurred while resolving
+     * and scanning the dependencies
+     */
+    protected ExceptionCollection scanArtifacts(MavenProject project, Engine engine, boolean aggregate) {
         try {
-            final DependencyNode dn = dependencyGraphBuilder.buildDependencyGraph(project, null, reactorProjects);
             final ProjectBuildingRequest buildingRequest = newResolveArtifactProjectBuildingRequest();
-            return collectDependencies(engine, project, dn.getChildren(), buildingRequest);
+            buildingRequest.setProject(project);
+            final DependencyNode dn = dependencyGraphBuilder.buildDependencyGraph(buildingRequest, null, reactorProjects);
+            return collectDependencies(engine, project, dn.getChildren(), buildingRequest, aggregate);
         } catch (DependencyGraphBuilderException ex) {
             final String msg = String.format("Unable to build dependency graph on project %s", project.getName());
             getLog().debug(msg, ex);
@@ -739,101 +758,111 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @param nodes the list of dependency nodes, generally obtained via the
      * DependencyGraphBuilder
      * @param buildingRequest the Maven project building request
+     * @param aggregate whether the scan is part of an aggregate build
      * @return a collection of exceptions that may have occurred while resolving
      * and scanning the dependencies
      */
     private ExceptionCollection collectDependencies(Engine engine, MavenProject project,
-            List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest) {
+            List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
         ExceptionCollection exCol = null;
         for (DependencyNode dependencyNode : nodes) {
             if (artifactScopeExcluded.passes(dependencyNode.getArtifact().getScope())
                     || artifactTypeExcluded.passes(dependencyNode.getArtifact().getType())) {
                 continue;
             }
-            exCol = collectDependencies(engine, project, dependencyNode.getChildren(), buildingRequest);
-            try {
-                boolean isResolved = false;
-                File artifactFile = null;
-                String artifactId = null;
-                String groupId = null;
-                String version = null;
-                List<ArtifactVersion> availableVersions = null;
-                if (org.apache.maven.artifact.Artifact.SCOPE_SYSTEM.equals(dependencyNode.getArtifact().getScope())) {
-                    for (org.apache.maven.model.Dependency d : project.getDependencies()) {
-                        final Artifact a = dependencyNode.getArtifact();
-                        if (d.getSystemPath() != null && artifactsMatch(d, a)) {
+            exCol = collectDependencies(engine, project, dependencyNode.getChildren(), buildingRequest, aggregate);
+            boolean isResolved = false;
+            File artifactFile = null;
+            String artifactId = null;
+            String groupId = null;
+            String version = null;
+            List<ArtifactVersion> availableVersions = null;
+            if (org.apache.maven.artifact.Artifact.SCOPE_SYSTEM.equals(dependencyNode.getArtifact().getScope())) {
+                for (org.apache.maven.model.Dependency d : project.getDependencies()) {
+                    final Artifact a = dependencyNode.getArtifact();
+                    if (d.getSystemPath() != null && artifactsMatch(d, a)) {
 
-                            artifactFile = new File(d.getSystemPath());
-                            isResolved = artifactFile.isFile();
-                            groupId = a.getGroupId();
-                            artifactId = a.getArtifactId();
-                            version = a.getVersion();
-                            availableVersions = a.getAvailableVersions();
-                            break;
-                        }
+                        artifactFile = new File(d.getSystemPath());
+                        isResolved = artifactFile.isFile();
+                        groupId = a.getGroupId();
+                        artifactId = a.getArtifactId();
+                        version = a.getVersion();
+                        availableVersions = a.getAvailableVersions();
+                        break;
                     }
-                    if (!isResolved) {
-                        getLog().error("Unable to resolve system scoped dependency: " + dependencyNode.toNodeString());
-                        if (exCol == null) {
-                            exCol = new ExceptionCollection();
-                        }
-                        exCol.addException(new DependencyNotFoundException("Unable to resolve system scoped dependency: "
-                                + dependencyNode.toNodeString()));
-                    }
-                } else {
-                    final ArtifactCoordinate coordinate = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
-                    final Artifact result = artifactResolver.resolveArtifact(buildingRequest, coordinate).getArtifact();
-                    isResolved = result.isResolved();
-                    artifactFile = result.getFile();
-                    groupId = result.getGroupId();
-                    artifactId = result.getArtifactId();
-                    version = result.getVersion();
-                    availableVersions = result.getAvailableVersions();
                 }
-                if (isResolved && artifactFile != null) {
-                    final List<Dependency> deps = engine.scan(artifactFile.getAbsoluteFile(),
-                            project.getName() + ":" + dependencyNode.getArtifact().getScope());
-                    if (deps != null) {
-                        if (deps.size() == 1) {
-                            final Dependency d = deps.get(0);
-                            if (d != null) {
-                                final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);
-                                d.addAsEvidence("pom", ma, Confidence.HIGHEST);
-                                if (availableVersions != null) {
-                                    for (ArtifactVersion av : availableVersions) {
-                                        d.addAvailableVersion(av.toString());
-                                    }
-                                }
-                                getLog().debug(String.format("Adding project reference %s on dependency %s",
-                                        project.getName(), d.getDisplayFileName()));
-                            }
-                        } else if (getLog().isDebugEnabled()) {
-                            final String msg = String.format("More than 1 dependency was identified in first pass scan of '%s' in project %s",
-                                    dependencyNode.getArtifact().getId(), project.getName());
-                            getLog().debug(msg);
-                        }
-                    } else if ("import".equals(dependencyNode.getArtifact().getScope())) {
-                        final String msg = String.format("Skipping '%s:%s' in project %s as it uses an `import` scope",
-                                dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
-                        getLog().debug(msg);
-                    } else {
-                        final String msg = String.format("No analyzer could be found for '%s:%s' in project %s",
-                                dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
-                        getLog().warn(msg);
-                    }
-                } else {
-                    final String msg = String.format("Unable to resolve '%s' in project %s",
-                            dependencyNode.getArtifact().getId(), project.getName());
-                    getLog().debug(msg);
+                if (!isResolved) {
+                    getLog().error("Unable to resolve system scoped dependency: " + dependencyNode.toNodeString());
                     if (exCol == null) {
                         exCol = new ExceptionCollection();
                     }
+                    exCol.addException(new DependencyNotFoundException("Unable to resolve system scoped dependency: "
+                            + dependencyNode.toNodeString()));
                 }
-            } catch (ArtifactResolverException ex) {
+            } else {
+                final ArtifactCoordinate coordinate = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
+                final Artifact result;
+                try {
+                    result = artifactResolver.resolveArtifact(buildingRequest, coordinate).getArtifact();
+                } catch (ArtifactResolverException ex) {
+                    getLog().debug(String.format("Aggregate : %s", aggregate));
+                    boolean addException = true;
+                    if (!aggregate || addReactorDependency(engine, dependencyNode.getArtifact())) {
+                        addException = false;
+                    }
+                    if (addException) {
+                        if (exCol == null) {
+                            exCol = new ExceptionCollection();
+                        }
+                        exCol.addException(ex);
+                    }
+                    continue;
+                }
+                isResolved = result.isResolved();
+                artifactFile = result.getFile();
+                groupId = result.getGroupId();
+                artifactId = result.getArtifactId();
+                version = result.getVersion();
+                availableVersions = result.getAvailableVersions();
+            }
+            if (isResolved && artifactFile != null) {
+                final List<Dependency> deps = engine.scan(artifactFile.getAbsoluteFile(),
+                        project.getName() + ":" + dependencyNode.getArtifact().getScope());
+                if (deps != null) {
+                    if (deps.size() == 1) {
+                        final Dependency d = deps.get(0);
+                        if (d != null) {
+                            final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);
+                            d.addAsEvidence("pom", ma, Confidence.HIGHEST);
+                            if (availableVersions != null) {
+                                for (ArtifactVersion av : availableVersions) {
+                                    d.addAvailableVersion(av.toString());
+                                }
+                            }
+                            getLog().debug(String.format("Adding project reference %s on dependency %s",
+                                    project.getName(), d.getDisplayFileName()));
+                        }
+                    } else if (getLog().isDebugEnabled()) {
+                        final String msg = String.format("More than 1 dependency was identified in first pass scan of '%s' in project %s",
+                                dependencyNode.getArtifact().getId(), project.getName());
+                        getLog().debug(msg);
+                    }
+                } else if ("import".equals(dependencyNode.getArtifact().getScope())) {
+                    final String msg = String.format("Skipping '%s:%s' in project %s as it uses an `import` scope",
+                            dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
+                    getLog().debug(msg);
+                } else {
+                    final String msg = String.format("No analyzer could be found for '%s:%s' in project %s",
+                            dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
+                    getLog().warn(msg);
+                }
+            } else {
+                final String msg = String.format("Unable to resolve '%s' in project %s",
+                        dependencyNode.getArtifact().getId(), project.getName());
+                getLog().debug(msg);
                 if (exCol == null) {
                     exCol = new ExceptionCollection();
                 }
-                exCol.addException(ex);
             }
         }
 
@@ -868,6 +897,84 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
 
         return exCol;
+    }
+
+    /**
+     * Checks if the current artifact is actually in the reactor projects that
+     * have not yet been built. If true a virtual dependency is created based on
+     * the evidence in the project.
+     *
+     * @param engine a reference to the engine being used to scan
+     * @param artifact the artifact being analyzed in the mojo
+     * @return <code>true</code> if the artifact is in the reactor; otherwise
+     * <code>false</code>
+     */
+    private boolean addReactorDependency(Engine engine, Artifact artifact) {
+
+        getLog().debug(String.format("Checking the reactor projects (%d) for %s:%s:%s",
+                reactorProjects.size(),
+                artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion()));
+
+        for (MavenProject prj : reactorProjects) {
+
+            getLog().debug(String.format("Comparing %s:%s:%s to %s:%s:%s",
+                    artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                    prj.getGroupId(), prj.getArtifactId(), prj.getVersion()));
+
+            if (prj.getArtifactId().equals(artifact.getArtifactId())
+                    && prj.getGroupId().equals(artifact.getGroupId())
+                    && prj.getVersion().equals(artifact.getVersion())) {
+
+                final String displayName = String.format("%s:%s:%s",
+                        prj.getGroupId(), prj.getArtifactId(), prj.getVersion());
+                getLog().info(String.format("Unable to resolve %s as it has not been built yet - creating a virtual dependency instead.", displayName));
+                File pom = new File(prj.getBasedir(), "pom.xml");
+                Dependency d;
+                if (pom.isFile()) {
+                    getLog().debug("Adding virtual dependency from pom.xml");
+                    d = new Dependency(pom, true);
+                } else {
+                    d = new Dependency(true);
+                }
+                d.setDisplayFileName(displayName);
+
+                d.addEvidence(EvidenceType.PRODUCT, "project", "artifactid", prj.getArtifactId(), Confidence.HIGHEST);
+                d.addEvidence(EvidenceType.VENDOR, "project", "artifactid", prj.getArtifactId(), Confidence.LOW);
+
+                d.addEvidence(EvidenceType.VENDOR, "project", "groupid", prj.getGroupId(), Confidence.HIGHEST);
+                d.addEvidence(EvidenceType.PRODUCT, "project", "groupid", prj.getGroupId(), Confidence.LOW);
+                d.setEcosystem(JarAnalyzer.DEPENDENCY_ECOSYSTEM);
+                Identifier id = new Identifier();
+                id.setType("maven");
+                id.setConfidence(Confidence.HIGHEST);
+                id.setValue(displayName);
+                d.addIdentifier(id);
+                //TODO unify the setName/version and package path - they are equivelent ideas submitted by two seperate committers
+                d.setName(String.format("%s:%s", prj.getGroupId(), prj.getArtifactId()));
+                d.setVersion(prj.getVersion());
+                d.setPackagePath(displayName);
+                if (prj.getDescription() != null) {
+                    JarAnalyzer.addDescription(d, prj.getDescription(), "project", "description");
+                }
+                for (License l : prj.getLicenses()) {
+                    StringBuilder license = new StringBuilder();
+                    if (l.getName() != null) {
+                        license.append(l.getName());
+                    }
+                    if (l.getUrl() != null) {
+                        license.append(" ").append(l.getUrl());
+                    }
+                    if (d.getLicense() == null) {
+                        d.setLicense(license.toString());
+                    } else if (!d.getLicense().contains(license)) {
+                        d.setLicense(String.format("%s%n%s", d.getLicense(), license.toString()));
+                    }
+                }
+                engine.addDependency(d);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -974,7 +1081,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @param currentEx the primary exception collection
      * @param newEx the new exception collection to add
      * @return the combined exception collection
-     * @throws MojoExecutionException thrown if dependency-check is configured to fail on errors
+     * @throws MojoExecutionException thrown if dependency-check is configured
+     * to fail on errors
      */
     private ExceptionCollection handleAnalysisExceptions(ExceptionCollection currentEx, ExceptionCollection newEx) throws MojoExecutionException {
         ExceptionCollection returnEx = currentEx;

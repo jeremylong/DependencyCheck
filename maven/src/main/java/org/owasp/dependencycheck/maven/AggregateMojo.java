@@ -64,9 +64,9 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
      */
     @Override
     protected ExceptionCollection scanDependencies(final Engine engine) throws MojoExecutionException {
-        ExceptionCollection exCol = scanArtifacts(getProject(), engine);
+        ExceptionCollection exCol = scanArtifacts(getProject(), engine, true);
         for (MavenProject childProject : getDescendants(this.getProject())) {
-            final ExceptionCollection ex = scanArtifacts(childProject, engine);
+            final ExceptionCollection ex = scanArtifacts(childProject, engine, true);
             if (ex != null) {
                 if (exCol == null) {
                     exCol = ex;
