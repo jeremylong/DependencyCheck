@@ -708,10 +708,10 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        False positive per issue #851
+        False positive per issue #851 and #1073
         ]]></notes>
         <gav regex="true">^com\.ibm\.icu:icu4j:.*$</gav>
-        <cpe>cpe:/a:icu_project:international_components_for_unicode</cpe>
+        <cpe>cpe:/a:icu[_-]project:international[_-]components[_-]for[_-]unicode</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -824,6 +824,13 @@
         ]]></notes>
         <gav regex="true">^org\.asynchttpclient:async-http-client-netty-utils:.*$</gav>
         <cpe>cpe:/a:async-http-client_project:async-http-client</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #1068
+        ]]></notes>   
+        <gav regex="true">^org\.asynchttpclient:netty-resolver-dns:.*$</gav>
+        <cpe>cpe:/a:dns-sync_project:dns-sync</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
