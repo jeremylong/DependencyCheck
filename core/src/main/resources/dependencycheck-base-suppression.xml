@@ -797,6 +797,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        false positive per issue #1093
+        ]]></notes>
+        <gav regex="true">^com\.itextpdf:font-asian:.*$</gav>
+        <cpe>cpe:/a:font_project:font</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         false positive per issue #859
         ]]></notes>
         <gav regex="true">^org\.kohsuke:github-api:.*$</gav>
