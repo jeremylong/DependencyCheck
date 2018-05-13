@@ -90,10 +90,11 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        Suppress false positives around dash.
+        Suppress false positives around dash and some node.js modules (#1095).
         ]]></notes>
         <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)$</filePath>
         <cpe>cpe:/a:dash:dash</cpe>
+        <cpe>cpe:/a:mustache.js_project:mustache.js</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
