@@ -68,6 +68,7 @@
         12. root is a c++ project https://github.com/root-project/root/
         13. xml_sec is a C library for XML security
         14. rest easy project is ruby library
+        15. hub_project is a ruby library (#1130)
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec)|pom\.xml|package.json)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -87,6 +88,7 @@
         <cpe>cpe:/a:root:root</cpe>
         <cpe>cpe:/a:xmlsec_project:xmlsec</cpe>
         <cpe>cpe:/a:rest-client_project:rest-client</cpe>
+        <cpe>cpe:/a:hub_project:hub</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
