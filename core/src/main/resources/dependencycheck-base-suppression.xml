@@ -354,6 +354,16 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per issue https://github.com/jeremylong/dependency-check-gradle/issues/61
+        ]]></notes>
+        <gav regex="true">^org\.eclipse\.jetty\.toolchain:jetty-schemas:.*$</gav>
+        <cpe>cpe:/a:mortbay_jetty:jetty</cpe>
+        <cpe>cpe:/a:mortbay:jetty</cpe>
+        <cpe>cpe:/a:jetty:jetty</cpe>
+        <cpe>cpe:/a:eclipse:jetty</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         javax.transaction false positives
         ]]></notes>
         <gav regex="true">javax\.transaction:javax\.transaction-api:.*</gav>
@@ -799,6 +809,27 @@
         file name: hystrix-rx-netty-metrics-stream-1.5.12.jar
         ]]></notes>
         <gav regex="true">^com\.netflix\.hystrix:hystrix-rx-netty-metrics-stream:.*$</gav>
+        <cpe>cpe:/a:netty_project:netty</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #1068
+        ]]></notes>
+        <gav regex="true">^org\.asynchttpclient:netty-codec-dns:.*$</gav>
+        <cpe>cpe:/a:dns-sync_project:dns-sync</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #1068
+        ]]></notes>
+        <gav regex="true">^org\.asynchttpclient:async-http-client-netty-utils:.*$</gav>
+        <cpe>cpe:/a:async-http-client_project:async-http-client</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #1068
+        ]]></notes>
+        <gav regex="true">^(?!(io\.netty|org\.jboss\.netty)).*:.*netty.*$</gav>
         <cpe>cpe:/a:netty_project:netty</cpe>
     </suppress>
     <suppress base="true">
