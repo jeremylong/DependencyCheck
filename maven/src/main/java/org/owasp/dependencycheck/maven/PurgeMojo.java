@@ -73,7 +73,7 @@ public class PurgeMojo extends BaseDependencyCheckMojo {
             getLog().error(msg);
         } else {
             populateSettings();
-            File db;
+            final File db;
             try {
                 db = new File(getSettings().getDataDirectory(), getSettings().getString(Settings.KEYS.DB_FILE_NAME, "dc.h2.db"));
                 if (db.exists()) {
