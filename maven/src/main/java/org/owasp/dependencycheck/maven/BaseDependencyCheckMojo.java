@@ -586,7 +586,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         generatingSite = false;
-        if (skip) {
+        boolean shouldSkip = Boolean.parseBoolean(System.getProperty("dependency-check.skip", Boolean.toString(skip)));
+        if (shouldSkip) {
             getLog().info("Skipping " + getName(Locale.US));
         } else {
             validateAggregate();
@@ -661,7 +662,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @throws MavenReportException if a maven report exception occurs
      */
     public void generate(Sink sink, Locale locale) throws MavenReportException {
-        if (skip) {
+        boolean shouldSkip = Boolean.parseBoolean(System.getProperty("dependency-check.skip", Boolean.toString(skip)));
+        if (shouldSkip) {
             getLog().info("Skipping report generation " + getName(Locale.US));
             return;
         }
@@ -927,9 +929,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
                 final String displayName = String.format("%s:%s:%s",
                         prj.getGroupId(), prj.getArtifactId(), prj.getVersion());
-                getLog().info(String.format("Unable to resolve %s as it has not been built yet - creating a virtual dependency instead.", displayName));
-                File pom = new File(prj.getBasedir(), "pom.xml");
-                Dependency d;
+                getLog().info(String.format("Unable to resolve %s as it has not been built yet - creating a virtual dependency instead.",
+                        displayName));
+                final File pom = new File(prj.getBasedir(), "pom.xml");
+                final Dependency d;
                 if (pom.isFile()) {
                     getLog().debug("Adding virtual dependency from pom.xml");
                     d = new Dependency(pom, true);
@@ -944,7 +947,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 d.addEvidence(EvidenceType.VENDOR, "project", "groupid", prj.getGroupId(), Confidence.HIGHEST);
                 d.addEvidence(EvidenceType.PRODUCT, "project", "groupid", prj.getGroupId(), Confidence.LOW);
                 d.setEcosystem(JarAnalyzer.DEPENDENCY_ECOSYSTEM);
-                Identifier id = new Identifier();
+                final Identifier id = new Identifier();
                 id.setType("maven");
                 id.setConfidence(Confidence.HIGHEST);
                 id.setValue(displayName);
@@ -957,7 +960,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     JarAnalyzer.addDescription(d, prj.getDescription(), "project", "description");
                 }
                 for (License l : prj.getLicenses()) {
-                    StringBuilder license = new StringBuilder();
+                    final StringBuilder license = new StringBuilder();
                     if (l.getName() != null) {
                         license.append(l.getName());
                     }
@@ -1480,8 +1483,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities: %n%s%n%n"
                             + "See the dependency-check report for more details.%n%n", ids.toString());
                 } else {
-                    msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities that have a CVSS score greater than or equal "
-                            + "to '%.1f': %n%s%n%nSee the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
+                    msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities that have a CVSS score greater than or "
+                            + "equal to '%.1f': %n%s%n%nSee the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
                 }
             } else {
                 msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities.%n%n"
