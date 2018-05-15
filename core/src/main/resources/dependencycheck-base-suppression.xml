@@ -96,11 +96,19 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        Suppress false positives around dash and node.js modules (#1095).
+        Suppress false positives by technology:
+            1. dash
+            2. node.js modules (#1095)
+            3. active directorty (#1091)
+            4. active directorty (#1091)
+            5. active directorty (#1091)
         ]]></notes>
         <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)$</filePath>
         <cpe>cpe:/a:dash:dash</cpe>
         <cpe>cpe:/a:mustache.js_project:mustache.js</cpe>
+        <cpe>cpe:/a:microsoft:active_directory</cpe>
+        <cpe>cpe:/a:microsoft:active_directory_federation_services</cpe>
+        <cpe>cpe:/a:microsoft:active_directory_services</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -142,6 +150,13 @@
         <cpe>cpe:/a:shibboleth:opensaml</cpe>
         <cpe>cpe:/a:internet2:opensaml</cpe>
         <cve>CVE-2015-0851</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP found when researching #1091
+        ]]></notes>
+        <gav regex="true">^com\.nimbusds:nimbus-jose-jwt:.*$</gav>
+        <cpe>cpe:/a:jwt_project:jwt</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
