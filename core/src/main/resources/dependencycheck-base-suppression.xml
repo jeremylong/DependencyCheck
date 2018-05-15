@@ -69,6 +69,8 @@
         13. xml_sec is a C library for XML security
         14. rest easy project is ruby library
         15. hub_project is a ruby library (#1130)
+        16. views_project is a drupal plugin (#1077)
+        17. restful_web_services_project:restful_web_services is a drupal plugin (#1077)
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec)|pom\.xml|package.json)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -89,6 +91,8 @@
         <cpe>cpe:/a:xmlsec_project:xmlsec</cpe>
         <cpe>cpe:/a:rest-client_project:rest-client</cpe>
         <cpe>cpe:/a:hub_project:hub</cpe>
+        <cpe>cpe:/a:views_project:views</cpe>
+        <cpe>cpe:/a:restful_web_services_project:restful_web_services</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
