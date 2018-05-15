@@ -93,6 +93,7 @@
         <cpe>cpe:/a:hub_project:hub</cpe>
         <cpe>cpe:/a:views_project:views</cpe>
         <cpe>cpe:/a:restful_web_services_project:restful_web_services</cpe>
+        <cpe>cpe:/a:php:php</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
