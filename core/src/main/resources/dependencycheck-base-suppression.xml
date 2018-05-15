@@ -54,23 +54,24 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        1. Sandbox is a php blog platform and should not be flagged as a CPE for java or .net dependencies.
-        2. Open media is php and won't be in a jar, dll, etc. See issue #814.
-        3. file and file_project are not assembiles or java libraries
-        4. Shim is *nix and is not an assembly or java lib. 
-        5. date_project is a drupal library
-        6. net dns is a php module
-        7. Even if a node.js package exists - we aren't flagging the entire node.js
-        8. Context project is drupal plugin
-        9. mail_project is ruby library
-        10. ldap_project is part of type3 written in php
-        11. user import project is used in drupal (i.e. php)
-        12. root is a c++ project https://github.com/root-project/root/
-        13. xml_sec is a C library for XML security
-        14. rest easy project is ruby library
-        15. hub_project is a ruby library (#1130)
-        16. views_project is a drupal plugin (#1077)
-        17. restful_web_services_project:restful_web_services is a drupal plugin (#1077)
+            1. Sandbox is a php blog platform and should not be flagged as a CPE for java or .net dependencies.
+            2. Open media is php and won't be in a jar, dll, etc. See issue #814.
+            3. file and file_project are not assembiles or java libraries
+            4. Shim is *nix and is not an assembly or java lib. 
+            5. date_project is a drupal library
+            6. net dns is a php module
+            7. Even if a node.js package exists - we aren't flagging the entire node.js
+            8. Context project is drupal plugin
+            9. mail_project is ruby library
+            10. ldap_project is part of type3 written in php
+            11. user import project is used in drupal (i.e. php)
+            12. root is a c++ project https://github.com/root-project/root/
+            13. xml_sec is a C library for XML security
+            14. rest easy project is ruby library
+            15. hub_project is a ruby library (#1130)
+            16. views_project is a drupal plugin (#1077)
+            17. restful_web_services_project:restful_web_services is a drupal plugin (#1077)
+            18. font_project is a php library (#1166)
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec)|pom\.xml|package.json)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -94,6 +95,7 @@
         <cpe>cpe:/a:views_project:views</cpe>
         <cpe>cpe:/a:restful_web_services_project:restful_web_services</cpe>
         <cpe>cpe:/a:php:php</cpe>
+        <cpe>cpe:/a:font_project:font</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
