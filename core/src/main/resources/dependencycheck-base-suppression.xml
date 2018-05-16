@@ -960,6 +960,20 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        False positive per issue #1275
+        ]]></notes>
+        <gav regex="true">^com\.typesafe\.akka:akka-stream-kafka_2\.12:.*$</gav>
+        <cpe>cpe:/a:akka:akka</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #1275
+        ]]></notes>
+        <gav regex="true">^com\.lightbend\.akka:akka-stream-alpakka-jms_2\.12:.*$</gav>
+        <cpe>cpe:/a:akka:akka</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         False positive per issue #964
         ]]></notes>
         <gav regex="true">^org\.mongodb\.morphia:.*$</gav>

@@ -354,13 +354,16 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
         final String rightName = right.getFileName().toLowerCase();
 
         final boolean returnVal;
+        //TODO - should we get rid of this merging? It removes a true BOM...
         if (!rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+") && leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+")
                 || rightName.contains("core") && !leftName.contains("core")
-                || rightName.contains("kernel") && !leftName.contains("kernel")) {
+                || rightName.contains("kernel") && !leftName.contains("kernel")
+                || rightName.contains("akka-stream") && !leftName.contains("akka-stream")) {
             returnVal = false;
         } else if (rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+") && !leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+")
                 || !rightName.contains("core") && leftName.contains("core")
-                || !rightName.contains("kernel") && leftName.contains("kernel")) {
+                || !rightName.contains("kernel") && leftName.contains("kernel")
+                || !rightName.contains("akka-stream") && leftName.contains("akka-stream")) {
             returnVal = true;
         } else {
             /*
