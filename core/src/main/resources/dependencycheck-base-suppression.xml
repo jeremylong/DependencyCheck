@@ -981,6 +981,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        False positive per issue #1259
+        ]]></notes>
+        <gav regex="true">^com\.google\.api\.grpc:proto-google-common-protos:.*$</gav>
+        <cpe>cpe:/a:grpc:grpc</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         False positive per issue #964
         ]]></notes>
         <gav regex="true">^org\.mongodb\.morphia:.*$</gav>
