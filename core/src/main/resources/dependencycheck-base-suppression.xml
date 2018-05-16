@@ -2173,6 +2173,15 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #1191
+        ]]></notes>
+        <gav regex="true">^org\.xerial:sqlite-jdbc:.*$</gav>
+        <cve>CVE-2016-6153</cve>
+        <cve>CVE-2017-10989</cve>
+        <cve>CVE-2018-8740</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         false positive in io.vertx:vertx-config-kubernetes-configmap
         ]]></notes>
         <gav regex="true">^io\.vertx:vertx-config-kubernetes-configmap:.*$</gav>
