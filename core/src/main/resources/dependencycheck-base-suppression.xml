@@ -1178,6 +1178,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        webjars are not npm, #1179
+        ]]></notes>
+        <gav regex="true">^org\.webjars\.npm:.*$</gav>
+        <cpe>cpe:/a:npm:npm</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         spring boot mongo FP per issue #1067
         ]]></notes>
         <gav regex="true">^org\.springframework\.boot:spring-boot-starter-data-mongodb:.*$</gav>
