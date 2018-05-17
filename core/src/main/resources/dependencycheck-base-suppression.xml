@@ -1171,6 +1171,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP #1064
+        ]]></notes>
+        <gav regex="true">^org\.projectlombok:lombok:.*$</gav>
+        <cpe>cpe:/a:spice_project:spice</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
        spring ldap cleanup per issue #1060
        ]]></notes>
         <gav regex="true">^org\.springframework\.ldap:spring-ldap-core:.*$</gav>
