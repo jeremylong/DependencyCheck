@@ -1178,6 +1178,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        spring boot mongo FP per issue #1067
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.boot:spring-boot-starter-data-mongodb:.*$</gav>
+        <cpe>cpe:/a:mongodb:mongodb</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
        spring ldap cleanup per issue #1060
        ]]></notes>
         <gav regex="true">^org\.springframework\.ldap:spring-ldap-core:.*$</gav>
