@@ -154,6 +154,21 @@
     </suppress-->
     <suppress base="true">
         <notes><![CDATA[
+        FP per #1027
+        ]]></notes>
+        <gav regex="true">^com\.github\.danielwegener:logback-kafka-appender:.*$</gav>
+        <cpe>cpe:/a:logback:logback</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #1027
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.kafka:spring-kafka:.*$</gav>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Suppresses false positives on the org.opensaml:xmltooling
             FP per issue #945
         ]]></notes>
