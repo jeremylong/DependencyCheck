@@ -107,6 +107,8 @@
             5. active directorty (#1091)
             5. snmp (#1248)
             5. snmp (#1248)
+            6. python (#1055)
+            7. python (#1055)
         ]]></notes>
         <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)$</filePath>
         <cpe>cpe:/a:dash:dash</cpe>
@@ -116,6 +118,8 @@
         <cpe>cpe:/a:microsoft:active_directory_services</cpe>
         <cpe>cpe:/a:snmp:snmp</cpe>
         <cpe>cpe:/a:net-snmp:net-snmp</cpe>
+        <cpe>cpe:/a:python:python</cpe>
+        <cpe>cpe:/a:python_software_foundation:python</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
