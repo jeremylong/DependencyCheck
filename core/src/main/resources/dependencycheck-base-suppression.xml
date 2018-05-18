@@ -1089,7 +1089,15 @@
         <gav regex="true">^com\.typesafe\.play:play-netty-utils:.*$</gav>
         <cpe>cpe:/a:playframework:play_framework</cpe>
     </suppress-->
-    
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #987
+        ]]></notes>
+        <gav regex="true">^org\.apache\.tomcat:tomcat-annotations-api:.*$</gav>
+        <cpe>cpe:/a:apache:tomcat</cpe>
+        <cpe>cpe:/a:apache_tomcat:apache_tomcat</cpe>
+        <cpe>cpe:/a:apache_software_foundation:tomcat</cpe>
+    </suppress>
     <suppress base="true">
         <notes><![CDATA[
         FP per issue #1022
