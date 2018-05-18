@@ -2210,6 +2210,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        false positive per #1056
+        ]]></notes>
+        <gav regex="true">^io\.fabric8:kubernetes-model:.*$</gav>
+        <cpe>cpe:/a:kubernetes:kubernetes</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         false positive on io.gitlab.arturbosch caused by cpe:/a:gitlab
         ]]></notes>
         <gav regex="true">^io\.gitlab\.arturbosch\.detekt:detekt-.+:.*$</gav>
