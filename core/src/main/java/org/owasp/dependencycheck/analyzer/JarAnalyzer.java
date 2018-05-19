@@ -612,7 +612,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
         //Description
         final String description = pom.getDescription();
-        if (description != null && !description.isEmpty() && !description.startsWith("POM was created by")) {
+        if (description != null && !description.isEmpty()
+                && !description.startsWith("POM was created by")
+                && !description.startsWith("Sonatype helps open source projects")) {
             foundSomething = true;
             final String trimmedDescription = addDescription(dependency, description, "pom", "description");
             addMatchingValues(classes, trimmedDescription, dependency, EvidenceType.VENDOR);
@@ -742,9 +744,11 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.MEDIUM);
                     addMatchingValues(classInformation, value, dependency, EvidenceType.VENDOR);
                 } else if (key.equalsIgnoreCase(BUNDLE_DESCRIPTION)) {
-                    foundSomething = true;
-                    addDescription(dependency, value, "manifest", key);
-                    addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);
+                    if (!value.startsWith("Sonatype helps open source projects")) {
+                        foundSomething = true;
+                        addDescription(dependency, value, "manifest", key);
+                        addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);
+                    }
                 } else if (key.equalsIgnoreCase(BUNDLE_NAME)) {
                     foundSomething = true;
                     dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);
@@ -804,7 +808,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                         } else if (key.contains("license")) {
                             addLicense(dependency, value);
                         } else if (key.contains("description")) {
-                            addDescription(dependency, value, "manifest", key);
+                            if (!value.startsWith("Sonatype helps open source projects")) {
+                                addDescription(dependency, value, "manifest", key);
+                            }
                         } else {
                             dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.LOW);
                             dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.LOW);

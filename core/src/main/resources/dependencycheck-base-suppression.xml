@@ -54,20 +54,24 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        1. Sandbox is a php blog platform and should not be flagged as a CPE for java or .net dependencies.
-        2. Open media is php and won't be in a jar, dll, etc. See issue #814.
-        3. file and file_project are not assembiles or java libraries
-        4. Shim is *nix and is not an assembly or java lib. 
-        5. date_project is a drupal library
-        6. net dns is a php module
-        7. Even if a node.js package exists - we aren't flagging the entire node.js
-        8. Context project is drupal plugin
-        9. mail_project is ruby library
-        10. ldap_project is part of type3 written in php
-        11. user import project is used in drupal (i.e. php)
-        12. root is a c++ project https://github.com/root-project/root/
-        13. xml_sec is a C library for XML security
-        14. rest easy project is ruby library
+            1. Sandbox is a php blog platform and should not be flagged as a CPE for java or .net dependencies.
+            2. Open media is php and won't be in a jar, dll, etc. See issue #814.
+            3. file and file_project are not assembiles or java libraries
+            4. Shim is *nix and is not an assembly or java lib. 
+            5. date_project is a drupal library
+            6. net dns is a php module
+            7. Even if a node.js package exists - we aren't flagging the entire node.js
+            8. Context project is drupal plugin
+            9. mail_project is ruby library
+            10. ldap_project is part of type3 written in php
+            11. user import project is used in drupal (i.e. php)
+            12. root is a c++ project https://github.com/root-project/root/
+            13. xml_sec is a C library for XML security
+            14. rest easy project is ruby library
+            15. hub_project is a ruby library (#1130)
+            16. views_project is a drupal plugin (#1077)
+            17. restful_web_services_project:restful_web_services is a drupal plugin (#1077)
+            18. font_project is a php library (#1166)
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec)|pom\.xml|package.json)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -87,13 +91,35 @@
         <cpe>cpe:/a:root:root</cpe>
         <cpe>cpe:/a:xmlsec_project:xmlsec</cpe>
         <cpe>cpe:/a:rest-client_project:rest-client</cpe>
+        <cpe>cpe:/a:hub_project:hub</cpe>
+        <cpe>cpe:/a:views_project:views</cpe>
+        <cpe>cpe:/a:restful_web_services_project:restful_web_services</cpe>
+        <cpe>cpe:/a:php:php</cpe>
+        <cpe>cpe:/a:font_project:font</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        Suppress false positives around dash.
+        Suppress false positives by technology:
+            1. dash
+            2. node.js modules (#1095)
+            3. active directorty (#1091)
+            4. active directorty (#1091)
+            5. active directorty (#1091)
+            5. snmp (#1248)
+            5. snmp (#1248)
+            6. python (#1055)
+            7. python (#1055)
         ]]></notes>
         <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)$</filePath>
         <cpe>cpe:/a:dash:dash</cpe>
+        <cpe>cpe:/a:mustache.js_project:mustache.js</cpe>
+        <cpe>cpe:/a:microsoft:active_directory</cpe>
+        <cpe>cpe:/a:microsoft:active_directory_federation_services</cpe>
+        <cpe>cpe:/a:microsoft:active_directory_services</cpe>
+        <cpe>cpe:/a:snmp:snmp</cpe>
+        <cpe>cpe:/a:net-snmp:net-snmp</cpe>
+        <cpe>cpe:/a:python:python</cpe>
+        <cpe>cpe:/a:python_software_foundation:python</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -128,6 +154,21 @@
     </suppress-->
     <suppress base="true">
         <notes><![CDATA[
+        FP per #1027
+        ]]></notes>
+        <gav regex="true">^com\.github\.danielwegener:logback-kafka-appender:.*$</gav>
+        <cpe>cpe:/a:logback:logback</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #1027
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.kafka:spring-kafka:.*$</gav>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Suppresses false positives on the org.opensaml:xmltooling
             FP per issue #945
         ]]></notes>
@@ -135,6 +176,13 @@
         <cpe>cpe:/a:shibboleth:opensaml</cpe>
         <cpe>cpe:/a:internet2:opensaml</cpe>
         <cve>CVE-2015-0851</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP found when researching #1091
+        ]]></notes>
+        <gav regex="true">^com\.nimbusds:nimbus-jose-jwt:.*$</gav>
+        <cpe>cpe:/a:jwt_project:jwt</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -351,6 +399,16 @@
         ]]></notes>
         <gav regex="true">io\.dropwizard\.metrics:metrics-httpclient:.*</gav>
         <cpe>cpe:/a:apache:httpclient</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue https://github.com/jeremylong/dependency-check-gradle/issues/61
+        ]]></notes>
+        <gav regex="true">^org\.eclipse\.jetty\.toolchain:jetty-schemas:.*$</gav>
+        <cpe>cpe:/a:mortbay_jetty:jetty</cpe>
+        <cpe>cpe:/a:mortbay:jetty</cpe>
+        <cpe>cpe:/a:jetty:jetty</cpe>
+        <cpe>cpe:/a:eclipse:jetty</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -698,10 +756,10 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        False positive per issue #851
+        False positive per issue #851 and #1073
         ]]></notes>
         <gav regex="true">^com\.ibm\.icu:icu4j:.*$</gav>
-        <cpe>cpe:/a:icu_project:international_components_for_unicode</cpe>
+        <cpe>cpe:/a:icu[_-]project:international[_-]components[_-]for[_-]unicode</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -787,6 +845,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        false positive per issue #1093
+        ]]></notes>
+        <gav regex="true">^com\.itextpdf:font-asian:.*$</gav>
+        <cpe>cpe:/a:font_project:font</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         false positive per issue #859
         ]]></notes>
         <gav regex="true">^org\.kohsuke:github-api:.*$</gav>
@@ -799,6 +864,34 @@
         file name: hystrix-rx-netty-metrics-stream-1.5.12.jar
         ]]></notes>
         <gav regex="true">^com\.netflix\.hystrix:hystrix-rx-netty-metrics-stream:.*$</gav>
+        <cpe>cpe:/a:netty_project:netty</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #1068
+        ]]></notes>
+        <gav regex="true">^org\.asynchttpclient:netty-codec-dns:.*$</gav>
+        <cpe>cpe:/a:dns-sync_project:dns-sync</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #1068
+        ]]></notes>
+        <gav regex="true">^org\.asynchttpclient:async-http-client-netty-utils:.*$</gav>
+        <cpe>cpe:/a:async-http-client_project:async-http-client</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #1068
+        ]]></notes>   
+        <gav regex="true">^org\.asynchttpclient:netty-resolver-dns:.*$</gav>
+        <cpe>cpe:/a:dns-sync_project:dns-sync</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #1068
+        ]]></notes>
+        <gav regex="true">^(?!(io\.netty|org\.jboss\.netty)).*:.*netty.*$</gav>
         <cpe>cpe:/a:netty_project:netty</cpe>
     </suppress>
     <suppress base="true">
@@ -890,6 +983,34 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        False positive per issue #1275
+        ]]></notes>
+        <gav regex="true">^com\.typesafe\.akka:akka-stream-kafka_2\.12:.*$</gav>
+        <cpe>cpe:/a:akka:akka</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #1275
+        ]]></notes>
+        <gav regex="true">^com\.lightbend\.akka:akka-stream-alpakka-jms_2\.12:.*$</gav>
+        <cpe>cpe:/a:akka:akka</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #1180
+        ]]></notes>
+        <gav regex="true">^com\.typesafe\.akka:akka-persistence-cassandra:.*$</gav>
+        <cpe>cpe:/a:akka:akka</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #1259
+        ]]></notes>
+        <gav regex="true">^com\.google\.api\.grpc:proto-google-common-protos:.*$</gav>
+        <cpe>cpe:/a:grpc:grpc</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         False positive per issue #964
         ]]></notes>
         <gav regex="true">^org\.mongodb\.morphia:.*$</gav>
@@ -968,7 +1089,15 @@
         <gav regex="true">^com\.typesafe\.play:play-netty-utils:.*$</gav>
         <cpe>cpe:/a:playframework:play_framework</cpe>
     </suppress-->
-    
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #987
+        ]]></notes>
+        <gav regex="true">^org\.apache\.tomcat:tomcat-annotations-api:.*$</gav>
+        <cpe>cpe:/a:apache:tomcat</cpe>
+        <cpe>cpe:/a:apache_tomcat:apache_tomcat</cpe>
+        <cpe>cpe:/a:apache_software_foundation:tomcat</cpe>
+    </suppress>
     <suppress base="true">
         <notes><![CDATA[
         FP per issue #1022
@@ -1066,6 +1195,27 @@
         ]]></notes>
         <gav regex="true">^org\.codehaus\.plexus:plexus-utils:.*$</gav>
         <cpe>cpe:/a:spice_project:spice</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP #1064
+        ]]></notes>
+        <gav regex="true">^org\.projectlombok:lombok:.*$</gav>
+        <cpe>cpe:/a:spice_project:spice</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        webjars are not npm, #1179
+        ]]></notes>
+        <gav regex="true">^org\.webjars\.npm:.*$</gav>
+        <cpe>cpe:/a:npm:npm</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        spring boot mongo FP per issue #1067
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.boot:spring-boot-starter-data-mongodb:.*$</gav>
+        <cpe>cpe:/a:mongodb:mongodb</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -2071,9 +2221,25 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #1191
+        ]]></notes>
+        <gav regex="true">^org\.xerial:sqlite-jdbc:.*$</gav>
+        <cve>CVE-2016-6153</cve>
+        <cve>CVE-2017-10989</cve>
+        <cve>CVE-2018-8740</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         false positive in io.vertx:vertx-config-kubernetes-configmap
         ]]></notes>
         <gav regex="true">^io\.vertx:vertx-config-kubernetes-configmap:.*$</gav>
+        <cpe>cpe:/a:kubernetes:kubernetes</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #1056
+        ]]></notes>
+        <gav regex="true">^io\.fabric8:kubernetes-model:.*$</gav>
         <cpe>cpe:/a:kubernetes:kubernetes</cpe>
     </suppress>
     <suppress base="true">
