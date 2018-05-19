@@ -46,7 +46,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      * The configured settings.
      */
     private final Settings settings;
-    
+
     /**
      * Simple boolean flag to prevent logging the protocols repeatedly.
      */

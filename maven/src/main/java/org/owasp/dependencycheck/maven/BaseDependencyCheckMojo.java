@@ -586,7 +586,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         generatingSite = false;
-        boolean shouldSkip = Boolean.parseBoolean(System.getProperty("dependency-check.skip", Boolean.toString(skip)));
+        final boolean shouldSkip = Boolean.parseBoolean(System.getProperty("dependency-check.skip", Boolean.toString(skip)));
         if (shouldSkip) {
             getLog().info("Skipping " + getName(Locale.US));
         } else {
@@ -662,7 +662,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @throws MavenReportException if a maven report exception occurs
      */
     public void generate(Sink sink, Locale locale) throws MavenReportException {
-        boolean shouldSkip = Boolean.parseBoolean(System.getProperty("dependency-check.skip", Boolean.toString(skip)));
+        final boolean shouldSkip = Boolean.parseBoolean(System.getProperty("dependency-check.skip", Boolean.toString(skip)));
         if (shouldSkip) {
             getLog().info("Skipping report generation " + getName(Locale.US));
             return;

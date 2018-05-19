@@ -723,7 +723,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     value = value.substring(15);
                 }
                 if (IGNORE_VALUES.contains(value)) {
-                    //noinspection UnnecessaryContinue
                     continue;
                 } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {
                     foundSomething = true;
