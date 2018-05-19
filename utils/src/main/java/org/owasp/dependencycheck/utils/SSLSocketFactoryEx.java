@@ -46,6 +46,11 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      * The configured settings.
      */
     private final Settings settings;
+    
+    /**
+     * Simple boolean flag to prevent logging the protocols repeatedly.
+     */
+    private static boolean protocolsLogged = false;
 
     /**
      * Constructs a new SSLSocketFactory.
@@ -267,7 +272,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
         String[] availableProtocols = null;
         final String[] preferredProtocols = settings.getString(
                 Settings.KEYS.DOWNLOADER_TLS_PROTOCOL_LIST,
-                "TLSv1,TLSv1.1,TLSv1.2,TLSv1.3")
+                "TLSv1.1,TLSv1.2,TLSv1.3")
                 .split(",");
         try {
             final SSLSocketFactory factory = sslCtxt.getSocketFactory();
@@ -275,15 +280,16 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
 
             availableProtocols = socket.getSupportedProtocols();
             Arrays.sort(availableProtocols);
-            if (LOGGER.isDebugEnabled()) {
+            if (LOGGER.isDebugEnabled() && !protocolsLogged) {
+                protocolsLogged = true;
                 LOGGER.debug("Available Protocols:");
                 for (String p : availableProtocols) {
                     LOGGER.debug(p);
                 }
             }
         } catch (Exception ex) {
-            LOGGER.debug("Error getting protocol list, using TLSv1", ex);
-            return new String[]{"TLSv1"};
+            LOGGER.debug("Error getting protocol list, using TLSv1.1-1.3", ex);
+            return new String[]{"TLSv1.1", "TLSv1.2", "TLSv1.3"};
         } finally {
             if (socket != null) {
                 try {
