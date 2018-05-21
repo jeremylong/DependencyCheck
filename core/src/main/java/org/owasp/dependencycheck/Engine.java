@@ -720,6 +720,13 @@ public class Engine implements FileFilter, AutoCloseable {
                         + "data instead. Results may not include recent vulnerabilities.");
                 LOGGER.debug("Update Error", ex);
             } catch (DatabaseException ex) {
+                final String msg;
+                if (ex.getMessage().contains("Unable to connect") && ConnectionFactory.isH2Connection(settings)) {
+                    msg = "Unable to update connect to the database - if this error persists it may be "
+                            + "due to a corrupt database. Consider running `purge` to delete the existing database";
+                } else {
+                    msg = "Unable to connect to the database";
+                }
                 throw new ExceptionCollection("Unable to connect to the database", ex);
             }
         } else {
