@@ -215,15 +215,15 @@ public class NspAnalyzer extends AbstractNpmAnalyzer {
             }
         } catch (URLConnectionFailureException e) {
             this.setEnabled(false);
-            throw new AnalysisException(e.getMessage(), e);
+            throw new AnalysisException("Failed to connect to the Node Security Project (NspAnalyzer); the analyzer is being disabled and may result in false negatives.", e);
         } catch (IOException e) {
             LOGGER.debug("Error reading dependency or connecting to Node Security Platform - check API", e);
             this.setEnabled(false);
-            throw new AnalysisException(e.getMessage(), e);
+            throw new AnalysisException("Failed to read results from the Node Security Project (NspAnalyzer); the analyzer is being disabled and may result in false negatives.", e);
         } catch (JsonException e) {
-            throw new AnalysisException(String.format("Failed to parse %s file.", file.getPath()), e);
+            throw new AnalysisException(String.format("Failed to parse %s file from the Node Security Platform (NspAnalyzer).", file.getPath()), e);
         } catch (SearchException ex) {
-            LOGGER.error("NSP Analisys failed on {}", dependency.getActualFilePath());
+            LOGGER.error("NspAnalyzer failed on {}", dependency.getActualFilePath());
             throw ex;
         }
     }
