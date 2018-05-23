@@ -4,6 +4,10 @@ Please see the [dependency-check google group](https://groups.google.com/forum/#
 
 ## [Version 3.2.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.2.0) (2018-05-21)
 
+### Security Fix
+
+- Unsafe unzip operations, as reported by the Snyk Security Research Team, have been corrected. If an archive (zip, jar, war, etc.) contained a name field with path traversal characters the file may have been extracted outside of the temp directory; resulting in an arbitrary file write.
+
 ### Bug Fixes
 
 - The dependency-check-maven plugin no longer uses the [Central Analyzer](https://jeremylong.github.io/DependencyCheck/analyzers/central-analyzer.html) by default
