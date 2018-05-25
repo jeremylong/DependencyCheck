@@ -1,9 +1,19 @@
 #!/bin/bash -e
 
-version=$(curl -s https://jeremylong.github.io/DependencyCheck/current.txt)
+VERSION=$(mvn -q \
+    -Dexec.executable="echo" \
+    -Dexec.args='${project.version}' \
+    --non-recursive \
+    org.codehaus.mojo:exec-maven-plugin:1.3.1:exec)
 
-docker image build -t owasp/dependency-check:${version} .
-docker tag owasp/dependency-check:${version} owasp/dependency-check:latest
-docker login
-docker push owasp/dependency-check:${version}
-docker push owasp/dependency-check:latest
+if [[ $VERSION = *"SNAPSHOT"* ]]; then
+  echo "Do not publish a snapshot version of dependency-check"
+else
+    cd cli
+    mvn package
+    mvn dockerfile:build
+    mvn dockerfile:tag@tag-version
+    mvn dockerfile:push@push-latest
+    mvn dockerfile:push@push-version
+    cd ..
+fi
