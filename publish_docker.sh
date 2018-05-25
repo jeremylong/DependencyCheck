@@ -11,9 +11,9 @@ if [[ $VERSION = *"SNAPSHOT"* ]]; then
 else
     cd cli
     mvn package
-    mvn dockerfile:build
-    mvn dockerfile:tag@tag-version
-    mvn dockerfile:push@push-latest
-    mvn dockerfile:push@push-version
+    mvn -Ddocker dockerfile:build
+    mvn -Ddocker dockerfile:tag@tag-version
+    mvn -Ddocker dockerfile:push@push-latest
+    mvn -Ddocker dockerfile:push@push-version
     cd ..
 fi
