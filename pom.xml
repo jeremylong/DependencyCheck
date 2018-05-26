@@ -92,7 +92,7 @@ Copyright (c) 2012 - Jeremy Long
         </contributor>
     </contributors>
     <scm>
-        <connection>scm:git:git@github.com:jeremylong/DependencyCheck.git</connection>
+        <connection>scm:git:https://github.com/jeremylong/DependencyCheck.git</connection>
         <url>https://github.com/jeremylong/DependencyCheck</url>
         <developerConnection>scm:git:git@github.com:jeremylong/DependencyCheck.git</developerConnection>
         <tag>HEAD</tag>

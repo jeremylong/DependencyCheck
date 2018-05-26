@@ -25,6 +25,12 @@ Copyright (c) 2017 - Jeremy Long. All Rights Reserved.
     <name>Dependency-Check Build-Reporting</name>
     <artifactId>build-reporting</artifactId>
     <packaging>pom</packaging>
+    <scm>
+        <connection>scm:git:https://github.com/jeremylong/DependencyCheck.git</connection>
+        <url>https://github.com/jeremylong/DependencyCheck/build-reporting</url>
+        <developerConnection>scm:git:git@github.com:jeremylong/DependencyCheck.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
     <dependencies>
         <dependency>
             <groupId>org.owasp</groupId>

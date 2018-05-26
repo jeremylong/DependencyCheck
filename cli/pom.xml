@@ -28,6 +28,12 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
 
     <name>Dependency-Check Command Line</name>
     <description>dependency-check-cli is an command line tool that uses dependency-check-core to detect publicly disclosed vulnerabilities associated with the scanned project dependencies. The tool will generate a report listing the dependency, any identified Common Platform Enumeration (CPE) identifiers, and the associated Common Vulnerability and Exposure (CVE) entries.</description>
+    <scm>
+        <connection>scm:git:https://github.com/jeremylong/DependencyCheck.git</connection>
+        <url>https://github.com/jeremylong/DependencyCheck/cli</url>
+        <developerConnection>scm:git:git@github.com:jeremylong/DependencyCheck.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
     <build>
         <finalName>dependency-check-${project.version}</finalName>
         <resources>

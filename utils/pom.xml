@@ -26,6 +26,12 @@ Copyright (c) 2014 - Jeremy Long. All Rights Reserved.
     <artifactId>dependency-check-utils</artifactId>
     <name>Dependency-Check Utils</name>
     <description>dependency-check-utils is a collection of common utility classes used within dependency-check that might be useful in other projects.</description>
+    <scm>
+        <connection>scm:git:https://github.com/jeremylong/DependencyCheck.git</connection>
+        <url>https://github.com/jeremylong/DependencyCheck/utils</url>
+        <developerConnection>scm:git:git@github.com:jeremylong/DependencyCheck.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
     <properties>
         <findbugs.onlyAnalyze>org.owasp.dependencycheck.utils.*</findbugs.onlyAnalyze>
     </properties>
