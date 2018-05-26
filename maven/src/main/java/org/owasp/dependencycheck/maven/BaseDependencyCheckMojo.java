@@ -831,19 +831,27 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 final List<Dependency> deps = engine.scan(artifactFile.getAbsoluteFile(),
                         project.getName() + ":" + dependencyNode.getArtifact().getScope());
                 if (deps != null) {
+                    Dependency d = null;
                     if (deps.size() == 1) {
-                        final Dependency d = deps.get(0);
-                        if (d != null) {
-                            final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);
-                            d.addAsEvidence("pom", ma, Confidence.HIGHEST);
-                            if (availableVersions != null) {
-                                for (ArtifactVersion av : availableVersions) {
-                                    d.addAvailableVersion(av.toString());
-                                }
+                        d = deps.get(0);
+                    } else {
+                        for (Dependency possible : deps) {
+                            if (artifactFile.getAbsoluteFile().equals(possible.getActualFile())) {
+                                d = possible;
+                                break;
                             }
-                            getLog().debug(String.format("Adding project reference %s on dependency %s",
-                                    project.getName(), d.getDisplayFileName()));
                         }
+                    }
+                    if (d != null) {
+                        final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);
+                        d.addAsEvidence("pom", ma, Confidence.HIGHEST);
+                        if (availableVersions != null) {
+                            for (ArtifactVersion av : availableVersions) {
+                                d.addAvailableVersion(av.toString());
+                            }
+                        }
+                        getLog().debug(String.format("Adding project reference %s on dependency %s",
+                                project.getName(), d.getDisplayFileName()));
                     } else if (getLog().isDebugEnabled()) {
                         final String msg = String.format("More than 1 dependency was identified in first pass scan of '%s' in project %s",
                                 dependencyNode.getArtifact().getId(), project.getName());

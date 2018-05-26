@@ -220,7 +220,7 @@ public class DependencyTest extends BaseTest {
         MavenArtifact mavenArtifact = new MavenArtifact("group", "artifact", "version", "url");
         instance.addAsEvidence("pom", mavenArtifact, Confidence.HIGH);
         assertTrue(instance.contains(EvidenceType.VENDOR, Confidence.HIGH));
-        assertTrue(instance.size() > 1);
+        assertEquals(3, instance.size());
         assertFalse(instance.getIdentifiers().isEmpty());
     }
 
@@ -235,5 +235,32 @@ public class DependencyTest extends BaseTest {
         assertFalse(instance.getEvidence(EvidenceType.VENDOR).contains(Confidence.HIGH));
         assertTrue(instance.size() == 0);
         assertTrue(instance.getIdentifiers().isEmpty());
+    }
+
+    /**
+     * Test of addAsEvidence method, of class Dependency.
+     */
+    @Test
+    public void testAddAsEvidenceWithExisting() {
+        Dependency instance = new Dependency();
+        MavenArtifact mavenArtifact = new MavenArtifact("group", "artifact", "version", null);
+        instance.addAsEvidence("pom", mavenArtifact, Confidence.HIGH);
+        assertFalse(instance.getEvidence(EvidenceType.VENDOR).contains(Confidence.HIGH));
+        assertTrue(instance.size() == 3);
+        assertFalse(instance.getIdentifiers().isEmpty());
+
+        for (Identifier i : instance.getIdentifiers()) {
+            assertTrue(i.getUrl() == null);
+        }
+
+        mavenArtifact = new MavenArtifact("group", "artifact", "version", "url");
+        instance.addAsEvidence("pom", mavenArtifact, Confidence.HIGH);
+        assertFalse(instance.getEvidence(EvidenceType.VENDOR).contains(Confidence.HIGH));
+        assertTrue(instance.size() == 3);
+        assertFalse(instance.getIdentifiers().isEmpty());
+
+        for (Identifier i : instance.getIdentifiers()) {
+            assertNotNull(i.getUrl());
+        }
     }
 }
