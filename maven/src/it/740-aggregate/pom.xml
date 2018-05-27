@@ -35,7 +35,7 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
                 <version>${odc.version}</version>
                 <inherited>false</inherited>
                 <configuration>
-                    <format>XML</format>
+                    <format>ALL</format>
                     <centralAnalyzerEnabled>false</centralAnalyzerEnabled>
                 </configuration>
                 <executions>
