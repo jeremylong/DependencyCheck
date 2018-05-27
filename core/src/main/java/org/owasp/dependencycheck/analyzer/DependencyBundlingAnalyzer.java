@@ -170,7 +170,9 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
             dependency.addRelatedDependency(d);
             relatedDependency.removeRelatedDependencies(d);
         }
-        if (dependency.getSha1sum().equals(relatedDependency.getSha1sum())) {
+        //TODO this null check was added for #1296 - but I believe this to be related to virtual dependencies
+        //  we may want to merge project references on virtual dependencies...
+        if (dependency.getSha1sum() != null && dependency.getSha1sum().equals(relatedDependency.getSha1sum())) {
             dependency.addAllProjectReferences(relatedDependency.getProjectReferences());
         }
         if (dependenciesToRemove != null) {
@@ -355,12 +357,16 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
 
         final boolean returnVal;
         //TODO - should we get rid of this merging? It removes a true BOM...
-        if (!rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+") && leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+")
+
+        if (left.isVirtual() && !right.isVirtual()) {
+            returnVal = true;
+        } else if (!left.isVirtual() && right.isVirtual()) {
+            returnVal = false;
+        } else if (!rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+") && leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+")
                 || rightName.contains("core") && !leftName.contains("core")
                 || rightName.contains("kernel") && !leftName.contains("kernel")
                 || rightName.contains("akka-stream") && !leftName.contains("akka-stream")
-                || rightName.contains("netty-transport") && !leftName.contains("netty-transport")
-                        ) {
+                || rightName.contains("netty-transport") && !leftName.contains("netty-transport")) {
             returnVal = false;
         } else if (rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+") && !leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+")
                 || !rightName.contains("core") && leftName.contains("core")
