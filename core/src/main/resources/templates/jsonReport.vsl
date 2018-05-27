@@ -24,11 +24,11 @@
     },
     "dependencies": [
         #foreach($dependency in $dependencies)#if($foreach.count > 1),#end{
-            "isVirtual": #if($dependency.isVirtual)true#{else}false#end,
+            "isVirtual": #if($dependency.isVirtual())true#{else}false#end,
             "fileName": "$enc.json($dependency.DisplayFileName)",
-            "filePath": "$enc.json($dependency.FilePath)",
-            "md5": "#if($dependency.Md5sum)$enc.json($dependency.Md5sum)#end",
-            "sha1": "#if($dependency.Sha1sum)$enc.json($dependency.Sha1sum)#end"
+            "filePath": "$enc.json($dependency.FilePath)"
+            #if(!$dependency.isVirtual()),"md5": "$enc.json($dependency.Md5sum)",
+            "sha1": "$enc.json($dependency.Sha1sum)"#end
             #if($dependency.description),"description": "$enc.json($dependency.description)"#end
             #if($dependency.license),"license": "$enc.json($dependency.license)"#end
             #if ($dependency.projectReferences.size()>0)
@@ -44,10 +44,10 @@
             #if ($dependency.getRelatedDependencies().size()>0)
             ,"relatedDependencies": [
                 #foreach($related in $dependency.getRelatedDependencies()) #if($foreach.count > 1),#end {
-                    "isVirtual": #if($dependency.isVirtual)true#{else}false#end,
-                    "filePath": "$enc.json($related.FilePath)",
-                    "sha1": "#if($related.Sha1sum)$enc.json($related.Sha1sum)#end",
-                    "md5": "#if($related.Md5sum)$enc.json($related.Md5sum)#end"#if($related.getIdentifiers()),
+                    "isVirtual": #if($dependency.isVirtual())true#{else}false#end,
+                    "filePath": "$enc.json($related.FilePath)"
+                    #if(!$related.isVirtual()),"sha1": "$enc.json($related.Sha1sum)",
+                    "md5": "$enc.json($related.Md5sum)"#end#if($related.getIdentifiers()),
                     "identifiers": [
                         #set($loopCount=0)
                         #foreach($id in $related.getIdentifiers())

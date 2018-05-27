@@ -45,11 +45,11 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
     </projectInfo>
     <dependencies>
 #foreach($dependency in $dependencies)
-        <dependency isVirtual="#if($dependency.isVirtual)true#{else}false#end">
+        <dependency isVirtual="#if($dependency.isVirtual())true#{else}false#end">
             <fileName>$enc.xml($dependency.DisplayFileName)</fileName>
             <filePath>$enc.xml($dependency.FilePath)</filePath>
-            <md5>#if($dependency.Md5sum)$enc.xml($dependency.Md5sum)#end</md5>
-            <sha1>#if($dependency.Sha1sum)$enc.xml($dependency.Sha1sum)#end</sha1>
+            <md5>#if(!$dependency.isVirtual())$enc.xml($dependency.Md5sum)#end</md5>
+            <sha1>#if(!$dependency.isVirtual())$enc.xml($dependency.Sha1sum)#end</sha1>
 #if ($dependency.description)
             <description>$enc.xml($dependency.description)</description>
 #end
@@ -66,10 +66,10 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 #if ($dependency.getRelatedDependencies().size()>0)
             <relatedDependencies>
 #foreach($related in $dependency.getRelatedDependencies())
-                <relatedDependency isVirtual="#if($related.isVirtual)true#{else}false#end">
+                <relatedDependency isVirtual="#if($related.isVirtual())true#{else}false#end">
                     <filePath>$enc.xml($related.FilePath)</filePath>
-                    <sha1>#if($related.Sha1sum)$enc.xml($related.Sha1sum)#end</sha1>
-                    <md5>#if($related.Md5sum)$enc.xml($related.Md5sum)#end</md5>
+                    <sha1>#if(!$related.isVirtual())$enc.xml($related.Sha1sum)#end</sha1>
+                    <md5>#if(!$related.isVirtual())$enc.xml($related.Md5sum)#end</md5>
 #foreach($id in $related.getIdentifiers())
 #if ($id.type=="maven" || $id.type=="npm")
                     <identifier type="$enc.xml($id.type)">

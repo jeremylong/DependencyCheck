@@ -731,8 +731,8 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                             #end
                         #end
                             <b>File&nbsp;Path:</b>&nbsp;$enc.html($dependency.FilePath)<br/>
-                            <b>MD5:</b>&nbsp;#if($dependency.Md5sum)$enc.html($dependency.Md5sum)#end<br/>
-                            <b>SHA1:</b>&nbsp;#if($dependency.Sha1sum)$enc.html($dependency.Sha1sum)#end
+                            #if(!$dependency.isVirtual())<b>MD5:</b>&nbsp;$enc.html($dependency.Md5sum)#end<br/>
+                            #if(!$dependency.isVirtual())<b>SHA1:</b>&nbsp;$enc.html($dependency.Sha1sum)#end
                             #if ($dependency.projectReferences.size()==1)
                                 <br/><b>Referenced In Project/Scope:</b>
                                 #foreach($ref in $dependency.projectReferences)
@@ -772,8 +772,8 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                 <li>$enc.html($related.DisplayFileName)
                                     <ul>
                                         <li>File Path:&nbsp;$enc.html($related.FilePath)</li>
-                                        <li>SHA1:&nbsp;#if($related.Sha1sum)$enc.html($related.Sha1sum)#end</li>
-                                        <li>MD5:&nbsp;#if($related.Md5sum)$enc.html($related.Md5sum)#end</li>
+                                        #if(!$related.isVirtual())<li>MD5:&nbsp;$enc.html($related.Md5sum)#end</li>
+                                        #if(!$related.isVirtual())<li>SHA1:&nbsp;$enc.html($related.Sha1sum)#end</li>
                                         #foreach($id in $related.getIdentifiers())
                                             #if( $id.url )                                                
                                                 #if ($id.type=="maven")
@@ -940,8 +940,8 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                     #end
                                 #end
                                     <b>File&nbsp;Path:</b>&nbsp;$enc.html($dependency.FilePath)<br/>
-                                    <b>MD5:</b>&nbsp;#if($dependency.Md5sum)$enc.html($dependency.Md5sum)#end<br/>
-                                    <b>SHA1:</b>&nbsp;#if($dependency.Sha1sum)$enc.html($dependency.Sha1sum)#end
+                                    #if(!$dependency.isVirtual())<b>MD5:</b>&nbsp;$enc.html($dependency.Md5sum)#end<br/>
+                                    #if(!$dependency.isVirtual())<b>SHA1:</b>&nbsp;$enc.html($dependency.Sha1sum)#end
                                 </p>
                                 #set($cnt=$cnt+1)
                                 <h4 id="header$cnt" class="subsectionheader expandable expandablesubsection white">Evidence</h4>
@@ -968,8 +968,8 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                         <li>$enc.html($related.DisplayFileName)
                                             <ul>
                                                 <li>File Path:&nbsp;$enc.html($related.FilePath)</li>
-                                                <li>SHA1:&nbsp;#if($related.Sha1sum)$enc.html($related.Sha1sum)#end</li>
-                                                <li>MD5:&nbsp;#if($related.Md5sum)$enc.html($related.Md5sum)#end</li>
+                                                #if(!$related.isVirtual())<li>MD5:&nbsp;$enc.html($related.Md5sum)#end</li>
+                                                #if(!$related.isVirtual())<li>SHA1:&nbsp;$enc.html($related.Sha1sum)#end</li>
                                              </ul>
                                         </li>
                                     #end
