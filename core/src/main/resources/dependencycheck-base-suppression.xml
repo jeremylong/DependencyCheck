@@ -72,6 +72,7 @@
             16. views_project is a drupal plugin (#1077)
             17. restful_web_services_project:restful_web_services is a drupal plugin (#1077)
             18. font_project is a php library (#1166)
+            19. amazon_aws_project is a drupal utility (#1290)
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec)|pom\.xml|package.json)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -96,6 +97,7 @@
         <cpe>cpe:/a:restful_web_services_project:restful_web_services</cpe>
         <cpe>cpe:/a:php:php</cpe>
         <cpe>cpe:/a:font_project:font</cpe>
+        <cpe>cpe:/a:amazon_aws_project:amazon_aws</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
