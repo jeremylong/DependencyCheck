@@ -2,6 +2,16 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 3.2.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.2.1) (2018-05-21)
+
+### Bug Fixes
+
+- In some cases when using the Maven or Gradle plugins the GAV coordinates were not being added as an Identifier causing suppression rules to fail; this has been resolved (#1298)
+- Documentation Update (SCM links in the maven site were broken) (#1297)
+- False positive reduction (#1290)
+- Enhanced logging output for TLS failures to better assist with debugging (#1269)
+- Resolved a Null Pointer Exception (#1296)
+
 ## [Version 3.2.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.2.0) (2018-05-21)
 
 ### Security Fix
