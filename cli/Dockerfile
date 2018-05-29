@@ -19,6 +19,7 @@ RUN unzip dependency-check-${VERSION}-release.zip -d /usr/share/            && \
     chown -R ${user}:${user} /usr/share/dependency-check                    && \
     mkdir /report                                                           && \
     chown -R ${user}:${user} /report                                        && \
+    apt-get autoremove -y                                                   && \
     rm -rf /var/lib/apt/lists/* /tmp/*
  
 USER ${user}
