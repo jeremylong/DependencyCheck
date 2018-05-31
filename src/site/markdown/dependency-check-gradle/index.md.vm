@@ -42,8 +42,8 @@ The reports will be generated automatically under `build/reports` folder.
 
 $H$H Task Configuration
 The OWASP dependency-check-gradle plugin contains three tasks: [dependencyCheckAnalyze](configuration.html),
-[dependencyCheckUpdate](configuration-update.html), and [dependencyCheckPurge](configuration-purge.html).
-Please see each tasks configuration page for more information.
+[dependencyCheckAggregate](configuration-aggregate.html), [dependencyCheckUpdate](configuration-update.html),
+and [dependencyCheckPurge](configuration-purge.html). Please see each tasks configuration page for more information.
 
 Mailing List
 ------------

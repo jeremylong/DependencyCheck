@@ -1,11 +1,12 @@
 Tasks
 ====================
 
-Task                                                | Description
-----------------------------------------------------|-----------------------
-[dependencyCheckAnalyze](configuration.html)        | Runs dependency-check against the project and generates a report.
-[dependencyCheckUpdate](configuration-update.html)  | Updates the local cache of the NVD data from NIST.
-dependencyCheckPurge                                | Deletes the local copy of the NVD. This is used to force a refresh of the data.
+Task                                                     | Description
+---------------------------------------------------------|-----------------------
+[dependencyCheckAnalyze](configuration.html)             | Runs dependency-check against the project and generates a report.
+[dependencyCheckAggregate](configuration-aggregate.html) | Runs dependency-check against a multi-project build and generates a report.
+[dependencyCheckUpdate](configuration-update.html)       | Updates the local cache of the NVD data from NIST.
+dependencyCheckPurge                                     | Deletes the local copy of the NVD. This is used to force a refresh of the data.
 
 Configuration
 ====================
