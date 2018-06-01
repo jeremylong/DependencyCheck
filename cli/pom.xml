@@ -97,7 +97,7 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <attach>false</attach> <!-- don't install/deploy this archive -->
+                    <attach>true</attach> <!-- don't install/deploy this archive -->
                 </configuration>
                 <executions>
                     <execution>
