@@ -178,6 +178,8 @@ Copyright (c) 2012 - Jeremy Long
         <org.glassfish.javax.json.version>1.0.4</org.glassfish.javax.json.version>
         <maven-artifact-transfer.version>0.9.1</maven-artifact-transfer.version>
         <groovy-all.version>2.4.15</groovy-all.version>
+        <!-- upgrading beyond 1.5 will cause the build to fail on Java 7 -->
+        <gmavenplus-plugin.version>1.6</gmavenplus-plugin.version>
         
         <surefireArgLine/>
     </properties>
@@ -324,7 +326,7 @@ Copyright (c) 2012 - Jeremy Long
                 <plugin>
                     <groupId>org.codehaus.gmavenplus</groupId>
                     <artifactId>gmavenplus-plugin</artifactId>
-                    <version>1.6</version>
+                    <version>${gmavenplus-plugin.version}</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.codehaus.groovy</groupId>
@@ -345,8 +347,7 @@ Copyright (c) 2012 - Jeremy Long
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
-                <!-- upgrading beyond 1.5 will cause the build to fail on Java 7 -->
-                <version>1.5</version>
+                <version>${gmavenplus-plugin.version}</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.codehaus.groovy</groupId>
