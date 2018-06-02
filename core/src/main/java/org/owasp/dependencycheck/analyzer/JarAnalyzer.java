@@ -506,7 +506,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         String version = pom.getVersion();
         String parentVersion = pom.getParentVersion();
 
-        if ("org.sonatype.oss".equals(parentGroupId) && "oss-parent".equals(parentArtifactId)) {
+        if (("org.sonatype.oss".equals(parentGroupId) && "oss-parent".equals(parentArtifactId))
+                || ("org.springframework.boot".equals(parentGroupId) && "spring-boot-starter-parent".equals(parentArtifactId))) {
             parentGroupId = null;
             parentArtifactId = null;
             parentVersion = null;
@@ -614,7 +615,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         final String description = pom.getDescription();
         if (description != null && !description.isEmpty()
                 && !description.startsWith("POM was created by")
-                && !description.startsWith("Sonatype helps open source projects")) {
+                && !description.startsWith("Sonatype helps open source projects")
+                && !description.endsWith("project for Spring Boot")) {
             foundSomething = true;
             final String trimmedDescription = addDescription(dependency, description, "pom", "description");
             addMatchingValues(classes, trimmedDescription, dependency, EvidenceType.VENDOR);
@@ -761,6 +763,10 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     //noinspection UnnecessaryContinue
                     continue;
                     //skipping main class as if this has important information to add it will be added during class name analysis...
+                } else if (key.equalsIgnoreCase("implementation-url")
+                        && value != null
+                        && value.startsWith("https://projects.spring.io/spring-boot/#/spring-boot-starter-parent/parent/")) {
+                    continue;
                 } else {
                     key = key.toLowerCase();
                     if (!IGNORE_KEYS.contains(key)
