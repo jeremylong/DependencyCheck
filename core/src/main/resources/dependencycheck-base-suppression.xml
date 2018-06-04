@@ -631,6 +631,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+       False positives per #1314.
+       ]]></notes>
+        <filePath regex="true">.*PKG-INFO$</filePath>
+        <cpe>cpe:/a:nodejs:nodejs</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         checkpoint firewall is not at the application layer.
         ]]></notes>
         <filePath regex="true">.*</filePath>
