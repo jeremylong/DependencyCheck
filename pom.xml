@@ -1067,6 +1067,8 @@ Copyright (c) 2012 - Jeremy Long
                                         <exclude>com.h2database:h2:*</exclude>
                                         <!--TODO remove javax.json - use GSON instead-->
                                         <exclude>org.glassfish:javax.json:*</exclude>
+                                        <!-- can't upgrade due to Java 7 support -->
+                                        <exclude>org.codehaus.gmavenplus:gmavenplus-plugin:*</exclude>
                                     </excludes>
                                 </configuration>
                             </execution>
