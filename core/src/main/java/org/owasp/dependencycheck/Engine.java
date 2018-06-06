@@ -964,7 +964,7 @@ public class Engine implements FileFilter, AutoCloseable {
                         final File tempDB = new File(temp, db.getName());
                         Files.copy(db.toPath(), tempDB.toPath());
                         LOGGER.debug("copying complete '{}'", temp.toPath());
-                        settings.setString(Settings.KEYS.DATA_DIRECTORY, temp.getPath());
+                        settings.setString(Settings.KEYS.H2_DATA_DIRECTORY, temp.getPath());
                         final String connStr = settings.getString(Settings.KEYS.DB_CONNECTION_STRING);
                         if (!connStr.contains("ACCESS_MODE_DATA")) {
                             settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connStr + "ACCESS_MODE_DATA=r");

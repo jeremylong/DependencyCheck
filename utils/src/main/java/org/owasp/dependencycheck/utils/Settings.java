@@ -114,9 +114,14 @@ public final class Settings {
          */
         public static final String DB_PASSWORD = "data.password";
         /**
-         * The base path to use for the data directory (for embedded db).
+         * The base path to use for the data directory (for embedded db and
+         * other cached resources from the Internet).
          */
         public static final String DATA_DIRECTORY = "data.directory";
+        /**
+         * The base path to use for the H2 data directory (for embedded db).
+         */
+        public static final String H2_DATA_DIRECTORY = "data.h2.directory";
         /**
          * The database file name.
          */
@@ -272,7 +277,8 @@ public final class Settings {
          */
         public static final String ANALYZER_NSP_PACKAGE_ENABLED = "analyzer.nsp.package.enabled";
         /**
-         * The properties key for supplying the URL to the Node Security Platform API.
+         * The properties key for supplying the URL to the Node Security
+         * Platform API.
          */
         public static final String ANALYZER_NSP_URL = "analyzer.nsp.url";
         /**
@@ -981,7 +987,7 @@ public final class Settings {
             throw new InvalidSettingException(msg);
         }
         if (connStr.contains("%s")) {
-            final File directory = getDataDirectory();
+            final File directory = getH2DataDirectory();
             LOGGER.debug("Data directory: {}", directory);
             String fileName = null;
             if (dbFileNameKey != null) {
@@ -1005,10 +1011,8 @@ public final class Settings {
     }
 
     /**
-     * Retrieves the directory that the JAR file exists in so that we can ensure
-     * we always use a common data directory for the embedded H2 database. This
-     * is public solely for some unit tests; otherwise this should be private.
-     *
+     * Retrieves the primary data directory that is used for caching web content. 
+     * 
      * @return the data directory to store data files
      * @throws IOException is thrown if an IOException occurs of course...
      */
@@ -1018,6 +1022,28 @@ public final class Settings {
             return path;
         }
         throw new IOException(String.format("Unable to create the data directory '%s'",
+                (path == null) ? "unknown" : path.getAbsolutePath()));
+    }
+
+    /**
+     * Retrieves the H2 data directory - if the database has been moved to the
+     * temp directory this method will return the temp directory.
+     *
+     * @return the data directory to store data files
+     * @throws IOException is thrown if an IOException occurs of course...
+     */
+    public File getH2DataDirectory() throws IOException {
+        final String h2Test = getString(Settings.KEYS.H2_DATA_DIRECTORY);
+        final File path;
+        if (h2Test != null && !h2Test.isEmpty()) {
+            path = getDataFile(Settings.KEYS.H2_DATA_DIRECTORY);
+        } else {
+            path = getDataFile(Settings.KEYS.DATA_DIRECTORY);
+        }
+        if (path != null && (path.exists() || path.mkdirs())) {
+            return path;
+        }
+        throw new IOException(String.format("Unable to create the h2 data directory '%s'",
                 (path == null) ? "unknown" : path.getAbsolutePath()));
     }
 

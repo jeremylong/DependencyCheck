@@ -55,6 +55,7 @@ public class EngineModeIT extends BaseTest {
             FileUtils.delete(getSettings().getDataDirectory());
             //Reset system property to original value just to be safe for other tests.
             System.setProperty(Settings.KEYS.DATA_DIRECTORY, originalDataDir);
+            System.clearProperty(Settings.KEYS.H2_DATA_DIRECTORY);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         } finally {

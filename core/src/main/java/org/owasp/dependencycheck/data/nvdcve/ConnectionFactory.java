@@ -272,7 +272,7 @@ public final class ConnectionFactory {
      * @throws IOException thrown if there is an error
      */
     public static File getH2DataFile(Settings configuration) throws IOException {
-        final File dir = configuration.getDataDirectory();
+        final File dir = configuration.getH2DataDirectory();
         final String fileName = configuration.getString(Settings.KEYS.DB_FILE_NAME);
         final File file = new File(dir, fileName);
         return file;
