@@ -26,5 +26,5 @@ def json = slurper.parse(new File(basedir, "target/dependency-check-report.json"
 
 assert json instanceof Map
 assert json.dependencies instanceof List
-assert json.dependencies.size()==1
+assert json.dependencies.size()==4
 return true;
