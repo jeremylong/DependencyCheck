@@ -53,15 +53,16 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
- * The RetireJS analyzer uses the manually curated list of vulnerabilities
- * from the RetireJS community along with the necessary information to assist
- * in identifying vulnerable components. Vulnerabilities documented by the
- * RetireJS community usually originate from other sources such as the NVD,
- * OSVDB, NSP, and various issue trackers.
+ * The RetireJS analyzer uses the manually curated list of vulnerabilities from
+ * the RetireJS community along with the necessary information to assist in
+ * identifying vulnerable components. Vulnerabilities documented by the RetireJS
+ * community usually originate from other sources such as the NVD, OSVDB, NSP,
+ * and various issue trackers.
  *
  * @author Steve Springett
  */
 @ThreadSafe
+@Experimental
 public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
@@ -109,7 +110,24 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
+     * Determines if the file can be analyzed by the analyzer.
+     *
+     * @param pathname the path to the file
+     * @return true if the file can be analyzed by the given analyzer; otherwise
+     * false
+     */
+    @Override
+    public boolean accept(File pathname) {
+        boolean accepted = super.accept(pathname);
+        if (accepted) {
+            // TODO - add copyright filter logic, some files may not be included
+        }
+        return accepted;
+    }
+
+    /**
      * {@inheritDoc}
+     *
      * @param engine a reference to the dependency-check engine
      * @throws InitializationException thrown if there is an exception during
      * initialization
@@ -127,12 +145,14 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
      * Initializes the local RetireJS repository
+     *
      * @param engine a reference to the dependency-check engine
      * @param repoUrl the URL to the RetireJS repo to use
      * @throws InitializationException thrown if there is an exception during
      * initialization
      */
     private void initializeRetireJsRepo(Engine engine, URL repoUrl) throws InitializationException {
+        //TODO put the following code into a CachedWebDataSource
         try {
             File dataDir = engine.getSettings().getDataDirectory();
             Settings settings = engine.getSettings();
@@ -148,7 +168,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
             if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 File repoFile = new File(dataDir, filename);
                 try (InputStream inputStream = conn.getInputStream();
-                     FileOutputStream outputStream = new FileOutputStream(repoFile)) {
+                        FileOutputStream outputStream = new FileOutputStream(repoFile)) {
 
                     int bytesRead;
                     byte[] buffer = new byte[4096];
@@ -208,9 +228,9 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
         try {
             final byte[] fileContent = IOUtils.toByteArray(new FileInputStream(dependency.getActualFile()));
             final ScannerFacade scanner = new ScannerFacade(jsRepository);
-            List<JsLibraryResult> results = scanner.scanScript(dependency.getActualFile().getAbsolutePath(), fileContent,0);
+            List<JsLibraryResult> results = scanner.scanScript(dependency.getActualFile().getAbsolutePath(), fileContent, 0);
 
-            if(results.size() > 0) {
+            if (results.size() > 0) {
                 for (JsLibraryResult libraryResult : results) {
 
                     JsLibrary lib = libraryResult.getLibrary();
