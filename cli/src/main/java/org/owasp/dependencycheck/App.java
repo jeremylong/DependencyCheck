@@ -324,9 +324,9 @@ public class App {
             String include = file.replace('\\', '/');
             final File baseDir;
 
-            if (include.startsWith("//")) {
-                throw new InvalidScanPathException("Unable to scan paths specified by //");
-            } else {
+//            if (include.startsWith("//")) {
+//                throw new InvalidScanPathException("Unable to scan paths specified by //");
+//            } else {
                 final int pos = getLastFileSeparator(include);
                 final String tmpBase = include.substring(0, pos);
                 final String tmpInclude = include.substring(pos + 1);
@@ -338,7 +338,7 @@ public class App {
                     baseDir = new File(tmpBase, tmpInclude);
                     include = "**/*";
                 }
-            }
+//            }
             scanner.setBasedir(baseDir);
             final String[] includes = {include};
             scanner.setIncludes(includes);
