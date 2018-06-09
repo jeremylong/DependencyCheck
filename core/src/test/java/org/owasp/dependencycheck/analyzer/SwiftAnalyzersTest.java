@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 
@@ -87,6 +88,7 @@ public class SwiftAnalyzersTest extends BaseTest {
     @Test
     public void testPodsSupportsFiles() {
         assertThat(podsAnalyzer.accept(new File("test.podspec")), is(true));
+        assertThat(podsAnalyzer.accept(new File("Podfile.lock")), is(true));
     }
 
     /**
@@ -103,7 +105,35 @@ public class SwiftAnalyzersTest extends BaseTest {
      * @throws AnalysisException is thrown when an exception occurs.
      */
     @Test
-    public void testCocoaPodsAnalyzer() throws AnalysisException {
+    public void testCocoaPodsPodfileAnalyzer() throws AnalysisException {
+        final Engine engine = new Engine(getSettings());
+        final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
+                "swift/cocoapods/Podfile.lock"));
+        podsAnalyzer.analyze(result, engine);
+
+        assertThat(engine.getDependencies().length, equalTo(9));
+        assertThat(engine.getDependencies()[0].getName(), equalTo("Bolts"));
+        assertThat(engine.getDependencies()[0].getVersion(), equalTo("1.9.0"));
+        assertThat(engine.getDependencies()[1].getName(), equalTo("Bolts/AppLinks"));
+        assertThat(engine.getDependencies()[1].getVersion(), equalTo("1.9.0"));
+        assertThat(engine.getDependencies()[2].getName(), equalTo("Bolts/Tasks"));
+        assertThat(engine.getDependencies()[2].getVersion(), equalTo("1.9.0"));
+        assertThat(engine.getDependencies()[3].getName(), equalTo("FBSDKCoreKit"));
+        assertThat(engine.getDependencies()[3].getVersion(), equalTo("4.33.0"));
+        assertThat(engine.getDependencies()[4].getName(), equalTo("FBSDKLoginKit"));
+        assertThat(engine.getDependencies()[4].getVersion(), equalTo("4.33.0"));
+        assertThat(engine.getDependencies()[5].getName(), equalTo("FirebaseCore"));
+        assertThat(engine.getDependencies()[5].getVersion(), equalTo("5.0.1"));
+        assertThat(engine.getDependencies()[6].getName(), equalTo("GoogleToolboxForMac/Defines"));
+        assertThat(engine.getDependencies()[6].getVersion(), equalTo("2.1.4"));
+        assertThat(engine.getDependencies()[7].getName(), equalTo("GoogleToolboxForMac/NSData+zlib"));
+        assertThat(engine.getDependencies()[7].getVersion(), equalTo("2.1.4"));
+        assertThat(engine.getDependencies()[8].getName(), equalTo("OCMock"));
+        assertThat(engine.getDependencies()[8].getVersion(), equalTo("3.4.1"));
+    }
+
+    @Test
+    public void testCocoaPodsPodspecAnalyzer() throws AnalysisException {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
                 "swift/cocoapods/EasyPeasy.podspec"));
         podsAnalyzer.analyze(result, null);

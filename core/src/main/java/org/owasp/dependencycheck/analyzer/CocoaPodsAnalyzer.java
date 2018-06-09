@@ -70,9 +70,13 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
      */
     public static final String PODSPEC = "podspec";
     /**
-     * Filter that detects files named "*.podspec".
+     * The file name to scan.
      */
-    private static final FileFilter PODSPEC_FILTER = FileFilterBuilder.newInstance().addExtensions(PODSPEC).build();
+    public static final String PODFILE_LOCK = "Podfile.lock";
+    /**
+     * Filter that detects files named "*.podspec" and "Podfile.lock".
+     */
+    private static final FileFilter PODS_FILTER = FileFilterBuilder.newInstance().addExtensions(PODSPEC).addFilenames(PODFILE_LOCK).build();
 
     /**
      * The capture group #1 is the block variable. e.g. "Pod::Spec.new do
@@ -81,13 +85,18 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
     private static final Pattern PODSPEC_BLOCK_PATTERN = Pattern.compile("Pod::Spec\\.new\\s+?do\\s+?\\|(.+?)\\|");
 
     /**
+     * The capture group #1 is the dependency name, #2 is dependency version
+     */
+    private static final Pattern PODFILE_LOCK_DEPENDENCY_PATTERN = Pattern.compile("  - \"?(.*) \\((\\d+\\.\\d+\\.\\d+)\\)\"?");
+
+    /**
      * Returns the FileFilter
      *
      * @return the FileFilter
      */
     @Override
     protected FileFilter getFileFilter() {
-        return PODSPEC_FILTER;
+        return PODS_FILTER;
     }
 
     @Override
@@ -129,7 +138,44 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
+        if (PODFILE_LOCK.equals(dependency.getFileName())) {
+            analyzePodfileLockDependencies(dependency, engine);
+        }
 
+        if (dependency.getFileName().endsWith(PODSPEC)) {
+            analyzePodspecDependency(dependency);
+        }
+    }
+
+    private void analyzePodfileLockDependencies(Dependency podfileLock, Engine engine)
+            throws AnalysisException {
+        engine.removeDependency(podfileLock);
+
+        String contents;
+        try {
+            contents = FileUtils.readFileToString(podfileLock.getActualFile(), Charset.defaultCharset());
+        } catch (IOException e) {
+            throw new AnalysisException(
+                    "Problem occurred while reading dependency file.", e);
+        }
+
+        final Matcher matcher = PODFILE_LOCK_DEPENDENCY_PATTERN.matcher(contents);
+        while (matcher.find()) {
+            String name = matcher.group(1);
+            String version = matcher.group(2);
+
+            Dependency dependency = new Dependency(podfileLock.getActualFile(), true);
+            dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
+            dependency.setName(name);
+            dependency.setVersion(version);
+            dependency.addEvidence(EvidenceType.PRODUCT, dependency.getFilePath(), "name", name, Confidence.HIGHEST);
+            dependency.addEvidence(EvidenceType.PRODUCT, dependency.getFilePath(), "version", version, Confidence.HIGHEST);
+            engine.addDependency(dependency);
+        }
+    }
+
+    private void analyzePodspecDependency(Dependency dependency)
+            throws AnalysisException {
         dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
         String contents;
         try {
