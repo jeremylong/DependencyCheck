@@ -15,7 +15,10 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 
 /**
@@ -52,5 +55,24 @@ public class BaseTest {
      */
     protected Settings getSettings() {
         return settings;
+    }
+    
+        /**
+     * Returns the given resource as a File using the object's class loader. The
+     * org.junit.Assume API is used so that test cases are skipped if the
+     * resource is not available.
+     *
+     * @param o the object used to obtain a reference to the class loader
+     * @param resource the name of the resource to load
+     * @return the resource as an File
+     */
+    public static File getResourceAsFile(Object o, String resource) {
+        try {
+            File f = new File(o.getClass().getClassLoader().getResource(resource).toURI().getPath());
+            Assume.assumeTrue(String.format("%n%n[SEVERE] Unable to load resource for test case: %s%n%n", resource), f.exists());
+            return f;
+        } catch (URISyntaxException e) {
+            throw new UnsupportedOperationException(e);
+        }
     }
 }
