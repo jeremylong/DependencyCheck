@@ -16,7 +16,7 @@ Please see the [dependency-check google group](https://groups.google.com/forum/#
 
 ### Security Fix
 
-- Unsafe unzip operations ([zip slip](https://github.com/snyk/zip-slip-vulnerability)), as reported by the Snyk Security Research Team, have been corrected. If an archive (zip, jar, war, etc.) contained a name field with path traversal characters the file may have been extracted outside of the temp directory; resulting in an arbitrary file write.
+- Unsafe unzip operations ([zip slip](https://github.com/snyk/zip-slip-vulnerability)), as reported by the Snyk Security Research Team, have been corrected. CVE-2018-12036 allows attackers to write to arbitrary files via a crafted archive that holds directory traversal filenames.
 
 ### Bug Fixes
 
