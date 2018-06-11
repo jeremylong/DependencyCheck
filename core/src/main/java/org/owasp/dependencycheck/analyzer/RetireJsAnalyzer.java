@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import com.esotericsoftware.minlog.Log;
 import com.h3xstream.retirejs.repo.JsLibrary;
 import com.h3xstream.retirejs.repo.JsLibraryResult;
 import com.h3xstream.retirejs.repo.JsVulnerability;
@@ -51,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.search.FileContentSearch;
 
 /**
  * The RetireJS analyzer uses the manually curated list of vulnerabilities from
@@ -91,13 +91,21 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
     /**
-     * The default URL to the RetireJS Javascript repository.
-     */
-    private static final String DEFAULT_JS_URL = "https://raw.githubusercontent.com/Retirejs/retire.js/master/repository/jsrepository.json";
-    /**
      * An instance of the local VulnerabilitiesRepository
      */
     private VulnerabilitiesRepository jsRepository;
+    /**
+     * The list of filters used to exclude files by file content; the intent is
+     * that this could be used to filter out a companies custom files by filter
+     * on their own copyright statements.
+     */
+    private List<String> filters = null;
+
+    /**
+     * Flag indicating whether non-vulnerable JS should be excluded if they are
+     * contained in a JAR.
+     */
+    private boolean skipNonVulnerableInJAR = true;
 
     /**
      * Returns the FileFilter.
@@ -118,11 +126,16 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public boolean accept(File pathname) {
-        boolean accepted = super.accept(pathname);
-        if (accepted) {
-            // TODO - add copyright filter logic, some files may not be included
+        try {
+            boolean accepted = super.accept(pathname);
+            if (accepted && filters != null && FileContentSearch.contains(pathname, filters)) {
+                return false;
+            }
+            return accepted;
+        } catch (IOException ex) {
+            LOGGER.warn(String.format("Error testing file %s", pathname), ex);
         }
-        return accepted;
+        return false;        
     }
 
     /**
@@ -134,7 +147,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
-        Log.ERROR();
+
         final Settings settings = engine.getSettings();
         try {
             initializeRetireJsRepo(engine, new URL(settings.getString(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, DEFAULT_JS_URL)));
@@ -216,7 +229,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Analyzes the specified Javascript file.
+     * Analyzes the specified JavaScript file.
      *
      * @param dependency the dependency to analyze.
      * @param engine the engine that is scanning the dependencies
@@ -315,5 +328,4 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
             throw new RuntimeException(e);
         }
     }
-
 }
