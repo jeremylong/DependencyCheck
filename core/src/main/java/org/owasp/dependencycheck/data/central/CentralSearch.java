@@ -169,16 +169,16 @@ public class CentralSearch {
                             }
                         }
 
-                        attributes = (NodeList) xpath.evaluate("./arr[@name='tags']/str", docs.item(i), XPathConstants.NODESET);
-                        boolean useHTTPS = false;
-                        for (int x = 0; x < attributes.getLength(); x++) {
-                            final String tmp = xpath.evaluate(".", attributes.item(x));
-                            if ("https".equals(tmp)) {
-                                useHTTPS = true;
-                            }
-                        }
+//                        attributes = (NodeList) xpath.evaluate("./arr[@name='tags']/str", docs.item(i), XPathConstants.NODESET);
+//                        boolean useHTTPS = true;//false;
+//                        for (int x = 0; x < attributes.getLength(); x++) {
+//                            final String tmp = xpath.evaluate(".", attributes.item(x));
+//                            if ("https".equals(tmp)) {
+//                                useHTTPS = true;
+//                            }
+//                        }
                         LOGGER.trace("Version: {}", v);
-                        result.add(new MavenArtifact(g, a, v, jarAvailable, pomAvailable, useHTTPS));
+                        result.add(new MavenArtifact(g, a, v, jarAvailable, pomAvailable));
                     }
                 }
             } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
