@@ -186,9 +186,6 @@ public class App {
                 } else {
                     LOGGER.error("No scan files configured");
                 }
-            } catch (InvalidScanPathException ex) {
-                LOGGER.error("An invalid scan path was detected; unable to scan '//*' paths");
-                exitCode = -10;
             } catch (DatabaseException ex) {
                 LOGGER.error(ex.getMessage());
                 exitCode = -11;
@@ -230,8 +227,6 @@ public class App {
      * @param cvssFailScore the score to fail on if a vulnerability is found
      * @return the exit code if there was an error
      *
-     * @throws InvalidScanPathException thrown if the path to scan starts with
-     * "//"
      * @throws ReportException thrown when the report cannot be generated
      * @throws DatabaseException thrown when there is an error connecting to the
      * database
@@ -240,7 +235,7 @@ public class App {
      * collection.
      */
     private int runScan(String reportDirectory, String outputFormat, String applicationName, String[] files,
-            String[] excludes, int symLinkDepth, int cvssFailScore) throws InvalidScanPathException, DatabaseException,
+            String[] excludes, int symLinkDepth, int cvssFailScore) throws DatabaseException,
             ExceptionCollection, ReportException {
         Engine engine = null;
         try {
@@ -313,32 +308,26 @@ public class App {
      * @param symLinkDepth the depth to traverse symbolic links
      * @param excludes an array of ant style excludes
      * @return returns the set of identified files
-     * @throws InvalidScanPathException thrown when the scan path is invalid
      */
-    private Set<File> scanAntStylePaths(List<String> antStylePaths, int symLinkDepth, String[] excludes)
-            throws InvalidScanPathException {
+    private Set<File> scanAntStylePaths(List<String> antStylePaths, int symLinkDepth, String[] excludes) {
         final Set<File> paths = new HashSet<>();
         for (String file : antStylePaths) {
             LOGGER.debug("Scanning {}", file);
             final DirectoryScanner scanner = new DirectoryScanner();
             String include = file.replace('\\', '/');
             final File baseDir;
+            final int pos = getLastFileSeparator(include);
+            final String tmpBase = include.substring(0, pos);
+            final String tmpInclude = include.substring(pos + 1);
+            if (tmpInclude.indexOf('*') >= 0 || tmpInclude.indexOf('?') >= 0
+                    || (new File(include)).isFile()) {
+                baseDir = new File(tmpBase);
+                include = tmpInclude;
+            } else {
+                baseDir = new File(tmpBase, tmpInclude);
+                include = "**/*";
+            }
 
-//            if (include.startsWith("//")) {
-//                throw new InvalidScanPathException("Unable to scan paths specified by //");
-//            } else {
-                final int pos = getLastFileSeparator(include);
-                final String tmpBase = include.substring(0, pos);
-                final String tmpInclude = include.substring(pos + 1);
-                if (tmpInclude.indexOf('*') >= 0 || tmpInclude.indexOf('?') >= 0
-                        || (new File(include)).isFile()) {
-                    baseDir = new File(tmpBase);
-                    include = tmpInclude;
-                } else {
-                    baseDir = new File(tmpBase, tmpInclude);
-                    include = "**/*";
-                }
-//            }
             scanner.setBasedir(baseDir);
             final String[] includes = {include};
             scanner.setIncludes(includes);
