@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -127,15 +128,19 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public boolean accept(File pathname) {
         try {
+            boolean filesMatched = super.getFilesMatched();
             boolean accepted = super.accept(pathname);
             if (accepted && filters != null && FileContentSearch.contains(pathname, filters)) {
+                if (!filesMatched) {//reset filesMatched
+                    super.setFilesMatched(filesMatched);
+                }
                 return false;
             }
             return accepted;
         } catch (IOException ex) {
             LOGGER.warn(String.format("Error testing file %s", pathname), ex);
         }
-        return false;        
+        return false;
     }
 
     /**
@@ -147,53 +152,16 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
-
-        final Settings settings = engine.getSettings();
+        File repoFile = null;
         try {
-            initializeRetireJsRepo(engine, new URL(settings.getString(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, DEFAULT_JS_URL)));
-        } catch (MalformedURLException e) {
-            throw new InitializationException("A URL to the RetireJS repositories is invalid", e);
-        }
-    }
-
-    /**
-     * Initializes the local RetireJS repository
-     *
-     * @param engine a reference to the dependency-check engine
-     * @param repoUrl the URL to the RetireJS repo to use
-     * @throws InitializationException thrown if there is an exception during
-     * initialization
-     */
-    private void initializeRetireJsRepo(Engine engine, URL repoUrl) throws InitializationException {
-        //TODO put the following code into a CachedWebDataSource
-        try {
-            File dataDir = engine.getSettings().getDataDirectory();
-            Settings settings = engine.getSettings();
-            boolean useProxy = false;
-            if (null != settings.getString(Settings.KEYS.PROXY_SERVER)) {
-                useProxy = true;
-                LOGGER.debug("Using proxy");
-            }
-            LOGGER.debug("RetireJS Repo URL: {}", repoUrl.toExternalForm());
-            final URLConnectionFactory factory = new URLConnectionFactory(settings);
-            final HttpURLConnection conn = factory.createHttpURLConnection(repoUrl, useProxy);
-            String filename = repoUrl.getFile().substring(repoUrl.getFile().lastIndexOf("/") + 1, repoUrl.getFile().length());
-            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                File repoFile = new File(dataDir, filename);
-                try (InputStream inputStream = conn.getInputStream();
-                        FileOutputStream outputStream = new FileOutputStream(repoFile)) {
-
-                    int bytesRead;
-                    byte[] buffer = new byte[4096];
-                    while ((bytesRead = inputStream.read(buffer)) != -1) {
-                        outputStream.write(buffer, 0, bytesRead);
-                    }
-                }
-            }
-            File repoFile = new File(engine.getSettings().getDataDirectory(), "jsrepository.json");
+            repoFile = new File(getSettings().getDataDirectory(), "jsrepository.json");
             this.jsRepository = new VulnerabilitiesRepositoryLoader().loadFromInputStream(new FileInputStream(repoFile));
-        } catch (IOException e) {
-            throw new InitializationException("Failed to initialize the RetireJS repo", e);
+        } catch (FileNotFoundException ex) {
+            this.setEnabled(false);
+            throw new InitializationException(String.format("RetireJS repo does not exist locally (%s)", repoFile), ex);
+        } catch (IOException ex) {
+            this.setEnabled(false);
+            throw new InitializationException("Failed to initialize the RetireJS repo", ex);
         }
     }
 

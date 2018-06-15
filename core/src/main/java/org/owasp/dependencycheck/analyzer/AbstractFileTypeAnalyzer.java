@@ -58,6 +58,16 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
         this.filesMatched = filesMatched;
     }
 
+    /**
+     * Gets the value of filesMatched. A flag indicating whether the scan
+     * included any file types this analyzer supports.
+     *
+     * @return the value of filesMatched
+     */
+    protected boolean getFilesMatched() {
+        return this.filesMatched;
+    }
+
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Final implementations for the Analyzer interface">
     /**

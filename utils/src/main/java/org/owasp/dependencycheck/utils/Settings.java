@@ -290,6 +290,11 @@ public final class Settings {
          */
         public static final String ANALYZER_RETIREJS_REPO_JS_URL = "analyzer.retirejs.repo.js.url";
         /**
+         * The properties key to control the skipping of the check for CVE
+         * updates.
+         */
+        public static final String ANALYZER_RETIREJS_REPO_VALID_FOR_HOURS = "analyzer.retirejs.repo.validforhours";
+        /**
          * The properties key for whether the composer lock file analyzer is
          * enabled.
          */

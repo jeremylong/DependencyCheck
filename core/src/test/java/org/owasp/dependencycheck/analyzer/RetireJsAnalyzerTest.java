@@ -1,3 +1,20 @@
+/*
+ * This file is part of dependency-check-cofre.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2018 Jeremy Long. All Rights Reserved.
+ */
 package org.owasp.dependencycheck.analyzer;
 
 import org.junit.After;
@@ -13,8 +30,10 @@ import org.owasp.dependencycheck.utils.Settings;
 import java.io.File;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
+import org.owasp.dependencycheck.BaseDBTestCase;
+import org.owasp.dependencycheck.data.update.RetireJSDataSource;
 
-public class RetireJsAnalyzerTest extends BaseTest {
+public class RetireJsAnalyzerTest extends BaseDBTestCase {
 
     private RetireJsAnalyzer analyzer;
     private Engine engine;
@@ -24,7 +43,9 @@ public class RetireJsAnalyzerTest extends BaseTest {
     public void setUp() throws Exception {
         super.setUp();
         engine = new Engine(getSettings());
-        engine.openDatabase(true, false);
+        engine.openDatabase(true, true);
+        RetireJSDataSource ds = new RetireJSDataSource();
+        ds.update(engine);
         analyzer = new RetireJsAnalyzer();
         analyzer.setFilesMatched(true);
         analyzer.initialize(getSettings());
@@ -35,7 +56,6 @@ public class RetireJsAnalyzerTest extends BaseTest {
     @Override
     public void tearDown() throws Exception {
         analyzer.close();
-        engine.close();
         super.tearDown();
     }
 
