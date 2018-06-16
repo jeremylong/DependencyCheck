@@ -18,8 +18,6 @@
 package org.owasp.dependencycheck.utils.search;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.owasp.dependencycheck.utils.BaseTest;
@@ -59,17 +57,15 @@ public class FileContentSearchTest extends BaseTest {
     @Test
     public void testContains_File_List() throws Exception {
         File file = BaseTest.getResourceAsFile(this, "SearchTest.txt");
-        List<String> patterns = new ArrayList<>();
-        patterns.add("jeremy long");
-        patterns.add("blue");
+        String[] patterns = {"jeremy long", "blue"};
         
         boolean expResult = false;
         boolean result = FileContentSearch.contains(file, patterns);
         assertEquals(expResult, result);
         
-        patterns.add("(?i)jeremy long");
+        String[] patterns2 = {"jeremy long", "blue", "(?i)jeremy long"};
         expResult = true;
-        result = FileContentSearch.contains(file, patterns);
+        result = FileContentSearch.contains(file, patterns2);
         assertEquals(expResult, result);
     }
 
