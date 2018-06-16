@@ -293,36 +293,4 @@ public class SettingsTest extends BaseTest {
         // THEN the property was not set
         assertThat("Expected the property to not be set", getSettings().getString("key"), nullValue());
     }
-
-    /**
-     * Assert {@link Settings#setArrayIfNotEmpty(String, String[])} with
-     * multiple values sets a delimited string.
-     */
-    @Test
-    public void testSetArrayNotEmptySetsADelimitedString() {
-        // GIVEN an array with values
-        final String[] array = {"value1", "value2"};
-
-        // WHEN setting the array
-        getSettings().setArrayIfNotEmpty("key", array);
-
-        // THEN the property is set
-        assertThat("Expected the property to be set", getSettings().getString("key"), is("value1,value2"));
-    }
-
-    /**
-     * Assert {@link Settings#setArrayIfNotEmpty(String, String[])} with a
-     * single values sets a string.
-     */
-    @Test
-    public void testSetArrayNotEmptyWithSingleValueSetsAString() {
-        // GIVEN an array with a value
-        final String[] array = {"value1"};
-
-        // WHEN setting the array
-        getSettings().setArrayIfNotEmpty("key", array);
-
-        // THEN the property is set
-        assertThat("Expected the property to be set", getSettings().getString("key"), is("value1"));
-    }
 }
