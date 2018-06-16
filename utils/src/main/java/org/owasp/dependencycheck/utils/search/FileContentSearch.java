@@ -48,7 +48,7 @@ public final class FileContentSearch {
         return false;
     }
 
-    public static boolean contains(File file, List<String> patterns) throws IOException {
+    public static boolean contains(File file, String[] patterns) throws IOException {
         List<Pattern> regexes = new ArrayList<>();
         for (String pattern : patterns) {
             regexes.add(Pattern.compile(pattern));
