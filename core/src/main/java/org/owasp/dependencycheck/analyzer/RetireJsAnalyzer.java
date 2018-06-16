@@ -33,19 +33,13 @@ import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
-import org.owasp.dependencycheck.utils.URLConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -100,7 +94,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
      * that this could be used to filter out a companies custom files by filter
      * on their own copyright statements.
      */
-    private List<String> filters = null;
+    private String[] filters = null;
 
     /**
      * Flag indicating whether non-vulnerable JS should be excluded if they are
@@ -143,6 +137,19 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
         return false;
     }
 
+    /**
+     * Initializes the analyzer with the configured settings.
+     *
+     * @param settings the configured settings to use
+     */
+    @Override
+    public void initialize(Settings settings) {
+        super.initialize(settings);
+        if (this.isEnabled()) {
+            this.filters = settings.getArray(Settings.KEYS.ANALYZER_RETIREJS_FILTERS);
+        }
+    }
+    
     /**
      * {@inheritDoc}
      *
@@ -291,6 +298,8 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
                         dependency.addVulnerability(individualVuln);
                     }
                 }
+            } else if (getSettings().getBoolean(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, false)) {
+                engine.removeDependency(dependency);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

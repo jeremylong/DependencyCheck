@@ -56,6 +56,7 @@ public class RetireJsAnalyzerTest extends BaseDBTestCase {
     @Override
     public void tearDown() throws Exception {
         analyzer.close();
+        engine.close();
         super.tearDown();
     }
 
