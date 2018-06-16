@@ -153,7 +153,8 @@ public class AppTest extends BaseTest {
         classUnderTest.populateSettings(cli);
 
         // THEN the suppression file is set in the settings for use in the application core
-        assertThat("Expected the suppression file to be set in the Settings", getSettings().getString(KEYS.SUPPRESSION_FILE), is("another-file.xml"));
+        String[] suppressionFiles = getSettings().getArray(KEYS.SUPPRESSION_FILE);
+        assertThat("Expected the suppression file to be set in the Settings", suppressionFiles[0], is("another-file.xml"));
     }
 
     /**
@@ -176,7 +177,7 @@ public class AppTest extends BaseTest {
         classUnderTest.populateSettings(cli);
 
         // THEN the suppression file is set in the settings for use in the application core
-        assertThat("Expected the suppression files to be set in the Settings with a separator", getSettings().getString(KEYS.SUPPRESSION_FILE), is("first-file.xml,another-file.xml"));
+        assertThat("Expected the suppression files to be set in the Settings with a separator", getSettings().getString(KEYS.SUPPRESSION_FILE), is("[\"first-file.xml\",\"another-file.xml\"]"));
     }
 
     private boolean testBooleanProperties(String[] args, Map<String, Boolean> expected) throws URISyntaxException, FileNotFoundException, ParseException, InvalidSettingException {
