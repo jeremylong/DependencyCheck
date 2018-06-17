@@ -335,7 +335,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
         }
         //new code
         for (Dependency child : dependency2.getRelatedDependencies()) {
-            if (hasSameBasePath(dependency1, child)) {
+            if (hasSameBasePath(child, dependency1)) {
                 return true;
             }
         }
