@@ -758,7 +758,7 @@ public class Engine implements FileFilter, AutoCloseable {
         final ExecutorService executorService = getExecutorService(analyzer);
 
         try {
-            final int timeout = settings.getInt(Settings.KEYS.TEMP_DIRECTORY, 20);
+            final int timeout = settings.getInt(Settings.KEYS.ANALYSIS_TIMEOUT, 20);
             final List<Future<Void>> results = executorService.invokeAll(analysisTasks, timeout, TimeUnit.MINUTES);
 
             // ensure there was no exception during execution
