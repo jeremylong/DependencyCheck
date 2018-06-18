@@ -331,7 +331,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "nspAnalyzerEnabled", required = false)
     private Boolean nspAnalyzerEnabled;
     /**
-     * Sets whether or not the RetireJS Analyzer should be used.
+     * Sets whether or not the Retirejs Analyzer should be used.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "retireJsAnalyzerEnabled", required = false)
@@ -542,6 +542,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "pathToMono", defaultValue = "", required = false)
     private String pathToMono;
+
+    /**
+     * The path to mono for .NET Assembly analysis on non-windows systems.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "retirejs", required = false)
+    private Retirejs retirejs;
 
     /**
      * The Proxy URL.
@@ -1313,6 +1320,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, bundleAuditPath);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, cocoapodsAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, swiftPackageManagerAnalyzerEnabled);
+
+        if (retirejs != null) {
+            settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, retirejs.getFilterNonVulnerable());
+            settings.setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, retirejs.getFilters());
+        }
 
         //Database configuration
         settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
