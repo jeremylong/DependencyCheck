@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.utils;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,8 +34,6 @@ import java.security.ProtectionDomain;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.UUID;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * A simple settings container that wraps the dependencycheck.properties file.
