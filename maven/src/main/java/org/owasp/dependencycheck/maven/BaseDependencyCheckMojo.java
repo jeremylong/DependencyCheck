@@ -544,7 +544,19 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private String pathToMono;
 
     /**
-     * The path to mono for .NET Assembly analysis on non-windows systems.
+     * The RetireJS Analyzer configuration:
+     * <pre>
+     *   filters: an array of filter patterns that are used to exclude JS files that contain a match
+     *   filterNonVulnerable: a boolean that when true will remove non-vulnerable JS from the report
+     *
+     * Example:
+     *   &lt;retirejs&gt;
+     *     &lt;filters&gt;
+     *       &lt;filter&gt;copyright 2018\(c\) Jeremy Long&lt;/filter&gt;
+     *     &lt;/filters&gt;
+     *     &lt;filterNonVulnerable&gt;true&lt;/filterNonVulnerable&gt;
+     *   &lt;/retirejs&gt;
+     * </pre>
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "retirejs", required = false)
