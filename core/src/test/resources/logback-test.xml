@@ -20,6 +20,9 @@
     <logger name="org.owasp.dependencycheck.data.central.CentralSearchTest" additivity="false" level="WARN">
         <appender-ref ref="console"/>
     </logger>
+    <logger name="org.owasp.dependencycheck.data.central.ArtifactorySearchTest" additivity="false" level="WARN">
+        <appender-ref ref="console"/>
+    </logger>
     <logger name="org.owasp.dependencycheck.data.nexus.NexusSearchTest" additivity="false" level="WARN">
         <appender-ref ref="console"/>
     </logger>
