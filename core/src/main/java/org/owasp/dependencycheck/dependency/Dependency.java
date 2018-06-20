@@ -174,7 +174,6 @@ public class Dependency extends EvidenceCollection implements Serializable {
         this.filePath = this.actualFilePath;
         this.fileName = file.getName();
         this.packagePath = filePath;
-        determineHashes(file);
     }
 
     /**
@@ -240,10 +239,9 @@ public class Dependency extends EvidenceCollection implements Serializable {
      */
     public void setActualFilePath(String actualFilePath) {
         this.actualFilePath = actualFilePath;
-        if (this.sha1sum == null) {
-            final File file = new File(this.actualFilePath);
-            determineHashes(file);
-        }
+        this.sha1sum = null;
+        this.sha256sum = null;
+        this.md5sum = null;
     }
 
     /**
@@ -316,6 +314,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @return the MD5 Checksum
      */
     public String getMd5sum() {
+        determineHashes();
         return this.md5sum;
     }
 
@@ -334,6 +333,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @return the SHA1 Checksum
      */
     public String getSha1sum() {
+        determineHashes();
         return this.sha1sum;
     }
 
@@ -347,6 +347,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
     }
 
     public String getSha256sum() {
+        determineHashes();
         return sha256sum;
     }
 
@@ -589,18 +590,21 @@ public class Dependency extends EvidenceCollection implements Serializable {
     /**
      * Determines the SHA1 and MD5 sum for the given file.
      *
-     * @param file the file to create checksums for
      */
-    private void determineHashes(File file) {
+    private void determineHashes() {
+        if (this.md5sum != null && this.sha1sum != null && this.sha256sum != null) {
+            return;
+        }
         if (isVirtual) {
             return;
         }
         try {
+            File file = getActualFile();
             this.setMd5sum(Checksum.getMD5Checksum(file));
             this.setSha1sum(Checksum.getSHA1Checksum(file));
             this.setSha256sum(Checksum.getSHA256Checksum(file));
-        } catch (IOException ex) {
-            LOGGER.warn("Unable to read '{}' to determine hashes.", file.getName());
+        } catch (IOException|RuntimeException ex) {
+            LOGGER.warn("Unable to read '{}' to determine hashes.", actualFilePath);
             LOGGER.debug("", ex);
         } catch (NoSuchAlgorithmException ex) {
             LOGGER.warn("Unable to use MD5 or SHA1 checksums.");
