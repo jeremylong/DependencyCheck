@@ -950,6 +950,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 }
                 final String key = String.format("%s:%s:%s", artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion());
                 d.setSha1sum(Checksum.getSHA1Checksum(key));
+                d.setSha256sum(Checksum.getSHA256Checksum(key));
                 d.setMd5sum(Checksum.getMD5Checksum(key));
 
                 d.setDisplayFileName(displayName);

@@ -17,6 +17,14 @@
  */
 package org.owasp.dependencycheck.dependency;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.owasp.dependencycheck.data.nexus.MavenArtifact;
+import org.owasp.dependencycheck.utils.Checksum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.concurrent.ThreadSafe;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -27,14 +35,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import javax.annotation.concurrent.ThreadSafe;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.owasp.dependencycheck.data.nexus.MavenArtifact;
-import org.owasp.dependencycheck.utils.Checksum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A program dependency. This object is one of the core components within
@@ -55,6 +55,34 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(Dependency.class);
+    /**
+     * A list of Identifiers.
+     */
+    private final Set<Identifier> identifiers = new TreeSet<>();
+    /**
+     * A set of identifiers that have been suppressed.
+     */
+    private final Set<Identifier> suppressedIdentifiers = new TreeSet<>();
+    /**
+     * A set of vulnerabilities that have been suppressed.
+     */
+    private final Set<Vulnerability> suppressedVulnerabilities = new HashSet<>();
+    /**
+     * A list of vulnerabilities for this dependency.
+     */
+    private final Set<Vulnerability> vulnerabilities = new HashSet<>();
+    /**
+     * A collection of related dependencies.
+     */
+    private final Set<Dependency> relatedDependencies = new HashSet<>();
+    /**
+     * A list of projects that reference this dependency.
+     */
+    private final Set<String> projectReferences = new HashSet<>();
+    /**
+     * A list of available versions.
+     */
+    private final List<String> availableVersions = new ArrayList<>();
     /**
      * The actual file path of the dependency on disk.
      */
@@ -80,21 +108,13 @@ public class Dependency extends EvidenceCollection implements Serializable {
      */
     private String sha1sum;
     /**
-     * A list of Identifiers.
+     * The SHA256 hash of the dependency.
      */
-    private final Set<Identifier> identifiers = new TreeSet<>();
+    private String sha256sum;
     /**
      * The file name to display in reports.
      */
     private String displayName = null;
-    /**
-     * A set of identifiers that have been suppressed.
-     */
-    private final Set<Identifier> suppressedIdentifiers = new TreeSet<>();
-    /**
-     * A set of vulnerabilities that have been suppressed.
-     */
-    private final Set<Vulnerability> suppressedVulnerabilities = new HashSet<>();
     /**
      * The description of the JAR file.
      */
@@ -103,23 +123,6 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * The license that this dependency uses.
      */
     private String license;
-    /**
-     * A list of vulnerabilities for this dependency.
-     */
-    private final Set<Vulnerability> vulnerabilities = new HashSet<>();
-    /**
-     * A collection of related dependencies.
-     */
-    private final Set<Dependency> relatedDependencies = new HashSet<>();
-    /**
-     * A list of projects that reference this dependency.
-     */
-    private final Set<String> projectReferences = new HashSet<>();
-    /**
-     * A list of available versions.
-     */
-    private final List<String> availableVersions = new ArrayList<>();
-
     /**
      * Defines an actual or virtual dependency.
      */
@@ -142,24 +145,6 @@ public class Dependency extends EvidenceCollection implements Serializable {
     private String ecosystem;
 
     /**
-     * Returns the package path.
-     *
-     * @return the package path
-     */
-    public String getPackagePath() {
-        return packagePath;
-    }
-
-    /**
-     * Sets the package path.
-     *
-     * @param packagePath the package path
-     */
-    public void setPackagePath(String packagePath) {
-        this.packagePath = packagePath;
-    }
-
-    /**
      * Constructs a new Dependency object.
      */
     public Dependency() {
@@ -178,9 +163,9 @@ public class Dependency extends EvidenceCollection implements Serializable {
     /**
      * Constructs a new Dependency object.
      *
-     * @param file the File to create the dependency object from.
+     * @param file      the File to create the dependency object from.
      * @param isVirtual specifies if the dependency is virtual indicating the
-     * file doesn't actually exist.
+     *                  file doesn't actually exist.
      */
     public Dependency(File file, boolean isVirtual) {
         this();
@@ -196,11 +181,29 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * Constructs a new Dependency object.
      *
      * @param isVirtual specifies if the dependency is virtual indicating the
-     * file doesn't actually exist.
+     *                  file doesn't actually exist.
      */
     public Dependency(boolean isVirtual) {
         this();
         this.isVirtual = isVirtual;
+    }
+
+    /**
+     * Returns the package path.
+     *
+     * @return the package path
+     */
+    public String getPackagePath() {
+        return packagePath;
+    }
+
+    /**
+     * Sets the package path.
+     *
+     * @param packagePath the package path
+     */
+    public void setPackagePath(String packagePath) {
+        this.packagePath = packagePath;
     }
 
     /**
@@ -222,6 +225,15 @@ public class Dependency extends EvidenceCollection implements Serializable {
     }
 
     /**
+     * Gets the file path of the dependency.
+     *
+     * @return the file path of the dependency
+     */
+    public String getActualFilePath() {
+        return this.actualFilePath;
+    }
+
+    /**
      * Sets the actual file path of the dependency on disk.
      *
      * @param actualFilePath the file path of the dependency
@@ -235,42 +247,12 @@ public class Dependency extends EvidenceCollection implements Serializable {
     }
 
     /**
-     * Gets the file path of the dependency.
-     *
-     * @return the file path of the dependency
-     */
-    public String getActualFilePath() {
-        return this.actualFilePath;
-    }
-
-    /**
      * Gets a reference to the File object.
      *
      * @return the File object
      */
     public File getActualFile() {
         return new File(this.actualFilePath);
-    }
-
-    /**
-     * Sets the file path of the dependency.
-     *
-     * @param filePath the file path of the dependency
-     */
-    public void setFilePath(String filePath) {
-        if (this.packagePath == null || this.packagePath.equals(this.filePath)) {
-            this.packagePath = filePath;
-        }
-        this.filePath = filePath;
-    }
-
-    /**
-     * Sets the file name to display in reports.
-     *
-     * @param displayName the name to display
-     */
-    public void setDisplayFileName(String displayName) {
-        this.displayName = displayName;
     }
 
     /**
@@ -294,6 +276,15 @@ public class Dependency extends EvidenceCollection implements Serializable {
     }
 
     /**
+     * Sets the file name to display in reports.
+     *
+     * @param displayName the name to display
+     */
+    public void setDisplayFileName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    /**
      * <p>
      * Gets the file path of the dependency.</p>
      * <p>
@@ -305,6 +296,18 @@ public class Dependency extends EvidenceCollection implements Serializable {
      */
     public String getFilePath() {
         return this.filePath;
+    }
+
+    /**
+     * Sets the file path of the dependency.
+     *
+     * @param filePath the file path of the dependency
+     */
+    public void setFilePath(String filePath) {
+        if (this.packagePath == null || this.packagePath.equals(this.filePath)) {
+            this.packagePath = filePath;
+        }
+        this.filePath = filePath;
     }
 
     /**
@@ -343,6 +346,14 @@ public class Dependency extends EvidenceCollection implements Serializable {
         this.sha1sum = sha1sum;
     }
 
+    public String getSha256sum() {
+        return sha256sum;
+    }
+
+    public void setSha256sum(String sha256sum) {
+        this.sha256sum = sha256sum;
+    }
+
     /**
      * Returns an unmodifiable List of Identifiers.
      *
@@ -366,9 +377,9 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * Adds an entry to the list of detected Identifiers for the dependency
      * file.
      *
-     * @param type the type of identifier (such as CPE)
+     * @param type  the type of identifier (such as CPE)
      * @param value the value of the identifier
-     * @param url the URL of the identifier
+     * @param url   the URL of the identifier
      */
     public synchronized void addIdentifier(String type, String value, String url) {
         final Identifier i = new Identifier(type, value, url);
@@ -379,9 +390,9 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * Adds an entry to the list of detected Identifiers for the dependency
      * file.
      *
-     * @param type the type of identifier (such as CPE)
-     * @param value the value of the identifier
-     * @param url the URL of the identifier
+     * @param type       the type of identifier (such as CPE)
+     * @param value      the value of the identifier
+     * @param url        the URL of the identifier
      * @param confidence the confidence in the Identifier being accurate
      */
     public synchronized void addIdentifier(String type, String value, String url, Confidence confidence) {
@@ -402,9 +413,9 @@ public class Dependency extends EvidenceCollection implements Serializable {
     /**
      * Adds the maven artifact as evidence.
      *
-     * @param source The source of the evidence
+     * @param source        The source of the evidence
      * @param mavenArtifact The maven artifact
-     * @param confidence The confidence level of this evidence
+     * @param confidence    The confidence level of this evidence
      */
     public void addAsEvidence(String source, MavenArtifact mavenArtifact, Confidence confidence) {
         if (mavenArtifact.getGroupId() != null && !mavenArtifact.getGroupId().isEmpty()) {
@@ -581,14 +592,13 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @param file the file to create checksums for
      */
     private void determineHashes(File file) {
-        String md5 = null;
-        String sha1 = null;
         if (isVirtual) {
             return;
         }
         try {
-            md5 = Checksum.getMD5Checksum(file);
-            sha1 = Checksum.getSHA1Checksum(file);
+            this.setMd5sum(Checksum.getMD5Checksum(file));
+            this.setSha1sum(Checksum.getSHA1Checksum(file));
+            this.setSha256sum(Checksum.getSHA256Checksum(file));
         } catch (IOException ex) {
             LOGGER.warn("Unable to read '{}' to determine hashes.", file.getName());
             LOGGER.debug("", ex);
@@ -596,8 +606,6 @@ public class Dependency extends EvidenceCollection implements Serializable {
             LOGGER.warn("Unable to use MD5 or SHA1 checksums.");
             LOGGER.debug("", ex);
         }
-        this.setMd5sum(md5);
-        this.setSha1sum(sha1);
     }
 
     /**
@@ -825,4 +833,6 @@ public class Dependency extends EvidenceCollection implements Serializable {
     public void setEcosystem(String ecosystem) {
         this.ecosystem = ecosystem;
     }
+
+
 }

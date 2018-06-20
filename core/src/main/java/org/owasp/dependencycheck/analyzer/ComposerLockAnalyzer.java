@@ -116,6 +116,7 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
                 d.setEcosystem(DEPENDENCY_ECOSYSTEM);
                 d.setFilePath(filePath);
                 d.setSha1sum(Checksum.getSHA1Checksum(filePath));
+                d.setSha256sum(Checksum.getSHA256Checksum(filePath));
                 d.setMd5sum(Checksum.getMD5Checksum(filePath));
                 d.addEvidence(EvidenceType.VENDOR, COMPOSER_LOCK, "vendor", dep.getGroup(), Confidence.HIGHEST);
                 d.addEvidence(EvidenceType.PRODUCT, COMPOSER_LOCK, "product", dep.getProject(), Confidence.HIGHEST);

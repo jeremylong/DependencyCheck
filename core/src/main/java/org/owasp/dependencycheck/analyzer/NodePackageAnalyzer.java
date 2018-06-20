@@ -246,6 +246,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                     child = new Dependency(rootFile, true);
                     //TOOD - we should use the integrity value instead of calculating the SHA1/MD5
                     child.setSha1sum(Checksum.getSHA1Checksum(String.format("%s:%s", name, version)));
+                    child.setSha256sum(Checksum.getSHA256Checksum(String.format("%s:%s", name, version)));
                     child.setMd5sum(Checksum.getMD5Checksum(String.format("%s:%s", name, version)));
                     child.addEvidence(EvidenceType.VENDOR, rootFile.getName(), "name", name, Confidence.HIGHEST);
                     child.addEvidence(EvidenceType.PRODUCT, rootFile.getName(), "name", name, Confidence.HIGHEST);

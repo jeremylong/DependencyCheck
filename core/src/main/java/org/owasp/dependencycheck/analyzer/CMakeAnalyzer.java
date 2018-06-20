@@ -208,6 +208,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 currentDep.setFilePath(filePath);
 
                 currentDep.setSha1sum(Checksum.getSHA1Checksum(filePath));
+                currentDep.setSha256sum(Checksum.getSHA256Checksum(filePath));
                 currentDep.setMd5sum(Checksum.getMD5Checksum(filePath));
                 engine.addDependency(currentDep);
             }

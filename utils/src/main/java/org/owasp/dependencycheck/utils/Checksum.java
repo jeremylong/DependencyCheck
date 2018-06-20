@@ -108,6 +108,18 @@ public final class Checksum {
         final byte[] b = getChecksum("SHA1", file);
         return getHex(b);
     }
+    /**
+     * Calculates the SH256 checksum of a specified file.
+     *
+     * @param file the file to generate the MD5 checksum
+     * @return the hex representation of the SHA1 hash
+     * @throws IOException when the file passed in does not exist
+     * @throws NoSuchAlgorithmException when the SHA1 algorithm is not available
+     */
+    public static String getSHA256Checksum(File file) throws IOException, NoSuchAlgorithmException {
+        final byte[] b = getChecksum("SHA256", file);
+        return getHex(b);
+    }
 
     /**
      * Calculates the MD5 checksum of a specified bytes.
@@ -143,6 +155,16 @@ public final class Checksum {
     public static String getSHA1Checksum(String text) {
         final byte[] data = stringToBytes(text);
         return getChecksum("SHA1", data);
+    }
+    /**
+     * Calculates the SHA1 checksum of the specified text.
+     *
+     * @param text the text to generate the SHA1 checksum
+     * @return the hex representation of the SHA1
+     */
+    public static String getSHA256Checksum(String text) {
+        final byte[] data = stringToBytes(text);
+        return getChecksum("SHA256", data);
     }
 
     /**
