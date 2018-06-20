@@ -55,6 +55,24 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(Dependency.class);
+    private static final HashingFunction MD5_HASHING_FUNCTION = new HashingFunction() {
+        @Override
+        public String hash(File file) throws IOException, NoSuchAlgorithmException {
+            return Checksum.getMD5Checksum(file);
+        }
+    };
+    private static final HashingFunction SHA1_HASHING_FUNCTION = new HashingFunction() {
+        @Override
+        public String hash(File file) throws IOException, NoSuchAlgorithmException {
+            return Checksum.getSHA1Checksum(file);
+        }
+    };
+    private static final HashingFunction SHA256_HASHING_FUNCTION = new HashingFunction() {
+        @Override
+        public String hash(File file) throws IOException, NoSuchAlgorithmException {
+            return Checksum.getSHA256Checksum(file);
+        }
+    };
     /**
      * A list of Identifiers.
      */
@@ -314,7 +332,10 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @return the MD5 Checksum
      */
     public String getMd5sum() {
-        determineHashes();
+        if (md5sum == null) {
+            this.md5sum = determineHashes(MD5_HASHING_FUNCTION);
+        }
+
         return this.md5sum;
     }
 
@@ -333,7 +354,9 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @return the SHA1 Checksum
      */
     public String getSha1sum() {
-        determineHashes();
+        if (sha1sum == null) {
+            this.sha1sum = determineHashes(SHA1_HASHING_FUNCTION);
+        }
         return this.sha1sum;
     }
 
@@ -347,7 +370,9 @@ public class Dependency extends EvidenceCollection implements Serializable {
     }
 
     public String getSha256sum() {
-        determineHashes();
+        if (sha256sum == null) {
+            this.sha256sum = determineHashes(SHA256_HASHING_FUNCTION);
+        }
         return sha256sum;
     }
 
@@ -589,27 +614,22 @@ public class Dependency extends EvidenceCollection implements Serializable {
 
     /**
      * Determines the SHA1 and MD5 sum for the given file.
-     *
      */
-    private void determineHashes() {
-        if (this.md5sum != null && this.sha1sum != null && this.sha256sum != null) {
-            return;
-        }
+    private String determineHashes(HashingFunction hashFunction) {
         if (isVirtual) {
-            return;
+            return null;
         }
         try {
             File file = getActualFile();
-            this.setMd5sum(Checksum.getMD5Checksum(file));
-            this.setSha1sum(Checksum.getSHA1Checksum(file));
-            this.setSha256sum(Checksum.getSHA256Checksum(file));
-        } catch (IOException|RuntimeException ex) {
+            return hashFunction.hash(file);
+        } catch (IOException | RuntimeException ex) {
             LOGGER.warn("Unable to read '{}' to determine hashes.", actualFilePath);
             LOGGER.debug("", ex);
         } catch (NoSuchAlgorithmException ex) {
             LOGGER.warn("Unable to use MD5 or SHA1 checksums.");
             LOGGER.debug("", ex);
         }
+        return null;
     }
 
     /**
@@ -836,6 +856,11 @@ public class Dependency extends EvidenceCollection implements Serializable {
      */
     public void setEcosystem(String ecosystem) {
         this.ecosystem = ecosystem;
+    }
+
+    interface HashingFunction {
+
+        String hash(File file) throws IOException, NoSuchAlgorithmException;
     }
 
 
