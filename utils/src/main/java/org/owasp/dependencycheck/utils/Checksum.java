@@ -46,6 +46,7 @@ public final class Checksum {
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(Checksum.class);
+    private  static final String SHA_256 = "SHA-256";
 
     /**
      * Private constructor for a utility class.
@@ -117,7 +118,7 @@ public final class Checksum {
      * @throws NoSuchAlgorithmException when the SHA1 algorithm is not available
      */
     public static String getSHA256Checksum(File file) throws IOException, NoSuchAlgorithmException {
-        final byte[] b = getChecksum("SHA256", file);
+        final byte[] b = getChecksum(SHA_256, file);
         return getHex(b);
     }
 
@@ -164,7 +165,7 @@ public final class Checksum {
      */
     public static String getSHA256Checksum(String text) {
         final byte[] data = stringToBytes(text);
-        return getChecksum("SHA256", data);
+        return getChecksum(SHA_256, data);
     }
 
     /**

@@ -154,7 +154,7 @@ public class DependencyTest extends BaseTest {
     public void testGetSha256sum() {
         File file = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
         Dependency instance = new Dependency(file);
-        String expResult = "89ce9e36aa9a9e03f1450936d2f4f8dd0f961f8b";
+        String expResult = "5c1847a10800027254fcd0073385cceb46b1dacee061f3cd465e314bec592e81";
         String result = instance.getSha256sum();
         assertEquals(expResult, result);
     }
