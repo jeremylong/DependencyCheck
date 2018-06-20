@@ -18,7 +18,6 @@ import static org.junit.Assert.*;
  * Created by colezlaw on 10/13/14.
  */
 public class CentralSearchTest extends BaseTest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CentralSearchTest.class);
     private CentralSearch searcher;
 
     @Before
