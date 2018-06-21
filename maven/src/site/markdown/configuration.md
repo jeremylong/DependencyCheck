@@ -52,6 +52,11 @@ centralAnalyzerEnabled        | Sets whether Central Analyzer will be used. If t
 nexusAnalyzerEnabled          | Sets whether Nexus Analyzer will be used (requires Nexus Pro). This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
 nexusUrl                      | Defines the Nexus Server's web service end point (example http://domain.enterprise/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
 nexusUsesProxy                | Whether or not the defined proxy should be used when connecting to Nexus. | true
+artifactoryAnalyzerEnabled    | Sets whether Artifactory analyzer will be used | false
+artifactoryAnalyzerUrl        | The Artifactory server URL. | &nbsp;
+artifactoryAnalyzerUseProxy   | Whether Artifactory should be accessed through a proxy or not. | false
+artifactoryAnalyzerParallelAnalysis | Whether the Artifactory analyzer should be run in parallel or not | true
+artifactoryAnalyzerServerId   | The id of a server defined in the settings.xml to retrieve the credentials to connect to Artifactory instance | artifactory
 pyDistributionAnalyzerEnabled | Sets whether the [experimental](../analyzers/index.html) Python Distribution Analyzer will be used.               | true
 pyPackageAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) Python Package Analyzer will be used.                    | true
 rubygemsAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) Ruby Gemspec Analyzer will be used.                      | true

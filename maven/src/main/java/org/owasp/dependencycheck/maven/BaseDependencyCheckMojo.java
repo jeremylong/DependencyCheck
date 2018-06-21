@@ -364,6 +364,24 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "artifactoryAnalyzerServerId", defaultValue = "artifactory")
     private String artifactoryAnalyzerServerId;
     /**
+     * The Artifactory URL for the Artifactory analyzer.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "artifactoryAnalyzerUrl")
+    private String artifactoryAnalyzerUrl;
+    /**
+     * Whether Artifactory should be accessed through a proxy or not
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "artifactoryAnalyzerUseProxy", defaultValue = "artifactory")
+    private Boolean artifactoryAnalyzerUseProxy;
+    /**
+     * Whether the Artifactory analyzer should be run in parallel or not.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "artifactoryAnalyzerParallelAnalysis", defaultValue = "true")
+    private Boolean artifactoryAnalyzerParallelAnalysis;
+    /**
      * Whether or not the Nexus Analyzer is enabled.
      */
     @SuppressWarnings("CanBeFinal")
@@ -1308,6 +1326,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
+
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_URL, artifactoryAnalyzerUrl);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_USES_PROXY, artifactoryAnalyzerUseProxy);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_PARALLEL_ANALYSIS, artifactoryAnalyzerParallelAnalysis);
 
         if (Boolean.TRUE.equals(artifactoryAnalyzerEnabled) && artifactoryAnalyzerServerId != null) {
             final Server server = settingsXml.getServer(artifactoryAnalyzerServerId);
