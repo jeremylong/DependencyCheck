@@ -71,6 +71,17 @@ public class Check extends Update {
      */
     private Boolean retireJsAnalyzerEnabled;
     /**
+     * The list of filters (regular expressions) used by the RetireJS Analyzer
+     * to exclude files that contain matching content..
+     */
+    @SuppressWarnings("CanBeFinal")
+    private List<String> retirejsFilters = new ArrayList<>();
+    /**
+     * Whether or not the RetireJS Analyzer filters non-vulnerable JS files from
+     * the report; default is false.
+     */
+    private Boolean retirejsFilterNonVulnerable;
+    /**
      * Whether or not the Ruby Bundle Audit Analyzer is enabled.
      */
     private Boolean bundleAuditAnalyzerEnabled;
@@ -827,6 +838,46 @@ public class Check extends Update {
     }
 
     /**
+     * Get the value of retirejsFilterNonVulnerable.
+     *
+     * @return the value of retirejsFilterNonVulnerable
+     */
+    public Boolean isRetirejsFilterNonVulnerable() {
+        return retirejsFilterNonVulnerable;
+    }
+
+    /**
+     * Set the value of retirejsFilterNonVulnerable.
+     *
+     * @param retirejsFilterNonVulnerable new value of
+ retirejsFilterNonVulnerable
+     */
+    public void setRetirejsFilterNonVulnerable(Boolean retirejsFilterNonVulnerable) {
+        this.retirejsFilterNonVulnerable = retirejsFilterNonVulnerable;
+    }
+    /**
+     * Gets retire JS Analyzers file content filters.
+     *
+     * @return retire JS Analyzers file content filters
+     */
+    public List<String> getRetirejsFilters() {
+        return retirejsFilters;
+    }
+    
+    /**
+     * Add a regular expression to the set of retire JS content filters.
+     *
+     * This is called by Ant.
+     *
+     * @param retirejsFilter the regular expression used to filter based on file
+     * content
+     */
+    public void addConfiguredRetirejsFilter(final RetirejsFilter retirejsFilter) {
+        retirejsFilters.add(retirejsFilter.getRegex());
+    }
+    
+    
+    /**
      * Get the value of rubygemsAnalyzerEnabled.
      *
      * @return the value of rubygemsAnalyzerEnabled
@@ -1094,6 +1145,9 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED, nspAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, retirejsFilterNonVulnerable);
+        getSettings().setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, retirejsFilters.toArray(new String[retirejsFilters.size()]));
+        
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
