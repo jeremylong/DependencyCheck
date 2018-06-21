@@ -1309,11 +1309,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
 
-        if (artifactoryAnalyzerEnabled && artifactoryAnalyzerServerId != null) {
+        if (Boolean.TRUE.equals(artifactoryAnalyzerEnabled) && artifactoryAnalyzerServerId != null) {
             final Server server = settingsXml.getServer(artifactoryAnalyzerServerId);
             if (server != null) {
-                settings.setString(Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME, server.getUsername());
-                settings.setString(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN, server.getPassword());
+                settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME, server.getUsername());
+                settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN, server.getPassword());
             }
         }
 
