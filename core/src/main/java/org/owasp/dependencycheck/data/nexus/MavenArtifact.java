@@ -115,7 +115,25 @@ public class MavenArtifact {
         this.artifactId = artifactId;
         this.version = version;
         this.artifactUrl = url;
-        this.pomUrl = url.substring(0, url.lastIndexOf('/')) + '/' + artifactId + '-' + version + ".pom";
+    }
+
+    /**
+     * Creates a MavenArtifact with the given attributes.
+     *
+     * @param groupId      the groupId
+     * @param artifactId   the artifactId
+     * @param version      the version
+     * @param artifactUrl  the artifactLink url
+     * @param pomAvailable if the pom file is available in the same URL as the artifact
+     */
+    public MavenArtifact(String groupId, String artifactId, String version, String artifactUrl, boolean pomAvailable) {
+        this.groupId = groupId;
+        this.artifactId = artifactId;
+        this.version = version;
+        this.artifactUrl = artifactUrl;
+        if (pomAvailable) {
+            this.pomUrl = artifactUrl.substring(0, artifactUrl.lastIndexOf('/')) + '/' + artifactId + '-' + version + ".pom";
+        }
     }
 
     /**

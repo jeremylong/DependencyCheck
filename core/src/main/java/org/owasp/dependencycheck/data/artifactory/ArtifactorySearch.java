@@ -135,7 +135,7 @@ public class ArtifactorySearch {
     }
 
 
-    List<MavenArtifact> processResponse(Dependency dependency, HttpURLConnection conn) throws IOException {
+    protected List<MavenArtifact> processResponse(Dependency dependency, HttpURLConnection conn) throws IOException {
         final JsonObject asJsonObject = new JsonParser().parse(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)).getAsJsonObject();
         final JsonArray results = asJsonObject.getAsJsonArray("results");
         final int numFound = results.size();
@@ -152,20 +152,12 @@ public class ArtifactorySearch {
         for (JsonElement jsonElement : results) {
 
             final JsonObject checksumList = jsonElement.getAsJsonObject().getAsJsonObject("checksums");
-            final String sha1 = checksumList.getAsJsonPrimitive("sha1").getAsString();
             final JsonPrimitive sha256Primitive = checksumList.getAsJsonPrimitive("sha256");
+            final String sha1 = checksumList.getAsJsonPrimitive("sha1").getAsString();
             final String sha256 = sha256Primitive == null ? null : sha256Primitive.getAsString();
             final String md5 = checksumList.getAsJsonPrimitive("md5").getAsString();
 
-            if (!md5.equals(md5sum)) {
-                throw new FileNotFoundException("Artifact found by API is not matching the md5 of the artifact (repository hash is " + md5 + WHILE_ACTUAL_IS + md5sum + ") !");
-            }
-            if (!sha1.equals(sha1sum)) {
-                throw new FileNotFoundException("Artifact found by API is not matching the SHA1 of the artifact (repository hash is " + sha1 + WHILE_ACTUAL_IS + sha1sum + ") !");
-            }
-            if (sha256 != null && !sha256.equals(sha256sum)) {
-                throw new FileNotFoundException("Artifact found by API is not matching the SHA-256 of the artifact (repository hash is " + sha256 + WHILE_ACTUAL_IS + sha256sum + ") !");
-            }
+            checkHashes(sha1sum, sha256sum, md5sum, sha1, sha256, md5);
 
             final String downloadUri = jsonElement.getAsJsonObject().getAsJsonPrimitive("downloadUri").getAsString();
 
@@ -179,10 +171,22 @@ public class ArtifactorySearch {
             final String artifactId = pathMatcher.group("artifactId");
             final String version = pathMatcher.group("version");
 
-            result.add(new MavenArtifact(groupId, artifactId, version, downloadUri));
+            result.add(new MavenArtifact(groupId, artifactId, version, downloadUri, true));
         }
 
         return result;
+    }
+
+    private void checkHashes(String sha1sum, String sha256sum, String md5sum, String sha1, String sha256, String md5) throws FileNotFoundException {
+        if (!md5.equals(md5sum)) {
+            throw new FileNotFoundException("Artifact found by API is not matching the md5 of the artifact (repository hash is " + md5 + WHILE_ACTUAL_IS + md5sum + ") !");
+        }
+        if (!sha1.equals(sha1sum)) {
+            throw new FileNotFoundException("Artifact found by API is not matching the SHA1 of the artifact (repository hash is " + sha1 + WHILE_ACTUAL_IS + sha1sum + ") !");
+        }
+        if (sha256 != null && !sha256.equals(sha256sum)) {
+            throw new FileNotFoundException("Artifact found by API is not matching the SHA-256 of the artifact (repository hash is " + sha256 + WHILE_ACTUAL_IS + sha256sum + ") !");
+        }
     }
 
 }

@@ -10,7 +10,7 @@ public class MavenArtifactTest {
     public void getPomUrl() {
         // Given
         final MavenArtifact mavenArtifact = new MavenArtifact("com.google.code.gson", "gson", "2.1",
-                "https://artifactory.techno.ingenico.com/artifactory/jcenter-cache/com/google/code/gson/gson/2.1/gson-2.1.jar");
+                "https://artifactory.techno.ingenico.com/artifactory/jcenter-cache/com/google/code/gson/gson/2.1/gson-2.1.jar", true);
         // When
         final String pomUrl = mavenArtifact.getPomUrl();
         // Then
@@ -23,7 +23,7 @@ public class MavenArtifactTest {
     public void getPomUrlWithQualifier() {
         // Given
         final MavenArtifact mavenArtifact = new MavenArtifact("com.google.code.gson", "gson", "2.8.5",
-                "https://artifactory.techno.ingenico.com/artifactory/repo1-cache/com/google/code/gson/gson/2.8.5/gson-2.8.5-sources.jar");
+                "https://artifactory.techno.ingenico.com/artifactory/repo1-cache/com/google/code/gson/gson/2.8.5/gson-2.8.5-sources.jar", true);
         // When
         final String pomUrl = mavenArtifact.getPomUrl();
         // Then
