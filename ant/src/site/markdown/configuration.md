@@ -18,6 +18,7 @@ the project's dependencies.
                       reportoutputdirectory="${basedir}"
                       reportformat="ALL">
         <suppressionfile path="${basedir}/path/to/suppression.xml" />
+        <retirejsFilter regex="copyright.*jeremy long" />
         <fileset dir="lib">
             <include name="**/*.jar"/>
         </fileset>
@@ -78,9 +79,11 @@ opensslAnalyzerEnabled        | Sets whether the openssl Analyzer should be used
 cmakeAnalyzerEnabled          | Sets whether the [experimental](../analyzers/index.html) CMake Analyzer should be used.                    | true
 autoconfAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) autoconf Analyzer should be used.                 | true
 composerAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.   | true
-nodeAnalyzerEnabled           | Sets whether the [retired](../analyzers/index.html) Node.js Analyzer should be used.                  | true
+nodeAnalyzerEnabled           | Sets whether the [retired](../analyzers/index.html) Node.js Analyzer should be used.                       | true
 nspAnalyzerEnabled            | Sets whether the NSP Analyzer should be used.                                                              | true
-retireJsAnalyzerEnabled       | Sets whether the RetireJS Analyzer should be used.                                                         | true
+retireJsAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) RetireJS Analyzer should be used.                                                         | true
+retirejsFilterNonVulnerable   | Configures the RetireJS Analyzer to remove non-vulnerable JS dependencies from the report.                 | false
+retirejsFilter                | A nested configuration that can be specified multple times; The regex defined is used to filter JS files based on content. | &nbsp;
 nuspecAnalyzerEnabled         | Sets whether the .NET Nuget Nuspec Analyzer will be used.                                                  | true
 cocoapodsAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used.                | true
 bundleAuditAnalyzerEnabled    | Sets whether the [experimental](../analyzers/index.html) Bundle Audit Analyzer should be used.             | true

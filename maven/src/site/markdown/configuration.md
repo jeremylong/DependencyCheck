@@ -61,7 +61,7 @@ autoconfAnalyzerEnabled       | Sets whether the [experimental](../analyzers/ind
 composerAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.   | true
 nodeAnalyzerEnabled           | Sets whether the [retired](../analyzers/index.html) Node.js Analyzer should be used.                       | true
 nspAnalyzerEnabled            | Sets whether the NSP Analyzer should be used.                                                              | true
-retireJsAnalyzerEnabled       | Sets whether the RetireJS Analyzer should be used.                                                         | true
+retireJsAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) RetireJS Analyzer should be used.                                                         | true
 nuspecAnalyzerEnabled         | Sets whether the .NET Nuget Nuspec Analyzer will be used.                                                  | true
 cocoapodsAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used.                | true
 bundleAuditAnalyzerEnabled    | Sets whether the [experimental](../analyzers/index.html) Bundle Audit Analyzer should be used.             | true
@@ -69,6 +69,26 @@ bundleAuditPath               | Sets the path to the bundle audit executable; on
 swiftPackageManagerAnalyzerEnabled | Sets whether the [experimental](../analyzers/index.html) Switft Package Analyzer should be used.             | true
 assemblyAnalyzerEnabled       | Sets whether the .NET Assembly Analyzer should be used.            | true
 pathToMono                    | The path to Mono for .NET assembly analysis on non-windows systems.       | &nbsp;
+
+RetireJS Configuration
+====================
+If using the [experimental](../analyzers/index.html) RetireJS Analyzer the following configuration options are available
+to control the included JS files
+
+###Example
+<pre>
+    &lt;retirejs&gt;
+        &lt;filters&gt;
+            &lt;filter&gt;Copyright\(c\) Jeremy Long&lt;/filter&gt;
+        &lt;/filters&gt;
+        &lt;filterNonVulnerable&gt;true&lt;/filterNonVulnerable&gt;
+    &lt;/retirejs&gt;
+<pre>
+
+Property            | Description                                                                                                                                                                                                            | Default Value
+--------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------
+filters             | A list of file content filters used to exclude JS files based on content. This is most commonly used to exclude JS files based on your organizations copyright so that your JS files do not get listed as a dependency.| &nbsp;
+filterNonVulnerable | A boolean controlling whether or not the Retire JS Analyzer should exclude non-vulnerable JS files from the report.                                                                                                    | false
 
 Advanced Configuration
 ====================
