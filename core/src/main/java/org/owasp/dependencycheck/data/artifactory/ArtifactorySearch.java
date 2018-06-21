@@ -152,7 +152,10 @@ public class ArtifactorySearch {
 
 
     protected List<MavenArtifact> processResponse(Dependency dependency, HttpURLConnection conn) throws IOException {
-        final JsonObject asJsonObject = new JsonParser().parse(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)).getAsJsonObject();
+        final JsonObject asJsonObject;
+        try (final InputStreamReader streamReader = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)) {
+            asJsonObject = new JsonParser().parse(streamReader).getAsJsonObject();
+        }
         final JsonArray results = asJsonObject.getAsJsonArray("results");
         final int numFound = results.size();
         if (numFound == 0) {
