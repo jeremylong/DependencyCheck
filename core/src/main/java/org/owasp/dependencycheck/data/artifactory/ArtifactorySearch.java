@@ -144,10 +144,6 @@ public class ArtifactorySearch {
         }
 
 
-        final String sha1sum = dependency.getSha1sum();
-        final String sha256sum = dependency.getSha256sum();
-        final String md5sum = dependency.getMd5sum();
-
         final List<MavenArtifact> result = new ArrayList<>(numFound);
         for (JsonElement jsonElement : results) {
 
@@ -157,7 +153,7 @@ public class ArtifactorySearch {
             final String sha256 = sha256Primitive == null ? null : sha256Primitive.getAsString();
             final String md5 = checksumList.getAsJsonPrimitive("md5").getAsString();
 
-            checkHashes(sha1sum, sha256sum, md5sum, sha1, sha256, md5);
+            checkHashes(dependency, sha1, sha256, md5);
 
             final String downloadUri = jsonElement.getAsJsonObject().getAsJsonPrimitive("downloadUri").getAsString();
 
@@ -171,19 +167,22 @@ public class ArtifactorySearch {
             final String artifactId = pathMatcher.group("artifactId");
             final String version = pathMatcher.group("version");
 
-            result.add(new MavenArtifact(groupId, artifactId, version, downloadUri, true));
+            result.add(new MavenArtifact(groupId, artifactId, version, downloadUri, MavenArtifact.derivePomUrl(artifactId, version, downloadUri)));
         }
 
         return result;
     }
 
-    private void checkHashes(String sha1sum, String sha256sum, String md5sum, String sha1, String sha256, String md5) throws FileNotFoundException {
+    private void checkHashes(Dependency dependency, String sha1, String sha256, String md5) throws FileNotFoundException {
+        final String md5sum = dependency.getMd5sum();
         if (!md5.equals(md5sum)) {
             throw new FileNotFoundException("Artifact found by API is not matching the md5 of the artifact (repository hash is " + md5 + WHILE_ACTUAL_IS + md5sum + ") !");
         }
+        final String sha1sum = dependency.getSha1sum();
         if (!sha1.equals(sha1sum)) {
             throw new FileNotFoundException("Artifact found by API is not matching the SHA1 of the artifact (repository hash is " + sha1 + WHILE_ACTUAL_IS + sha1sum + ") !");
         }
+        final String sha256sum = dependency.getSha256sum();
         if (sha256 != null && !sha256.equals(sha256sum)) {
             throw new FileNotFoundException("Artifact found by API is not matching the SHA-256 of the artifact (repository hash is " + sha256 + WHILE_ACTUAL_IS + sha256sum + ") !");
         }
