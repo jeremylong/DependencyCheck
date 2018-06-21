@@ -1,7 +1,6 @@
 package org.owasp.dependencycheck.data.artifactory;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
@@ -17,7 +16,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -33,42 +31,6 @@ public class ArtifactorySearchTest extends BaseTest {
     }
 
 
-    // This test does generate network traffic and communicates with a host
-    // you may not be able to reach. Remove the @Ignore annotation if you want to
-    // test it anyway
-    @Test
-    @Ignore
-    public void testValidSha1() throws Exception {
-        final Dependency dependency = new Dependency();
-        dependency.setSha1sum("9977a8d04e75609cf01badc4eb6a9c7198c4c5ea");
-        List<MavenArtifact> ma = searcher.search(dependency);
-        assertEquals("Incorrect group", "org.apache.maven.plugins", ma.get(0).getGroupId());
-        assertEquals("Incorrect artifact", "maven-compiler-plugin", ma.get(0).getArtifactId());
-        assertEquals("Incorrect version", "3.1", ma.get(0).getVersion());
-    }
-
-    // This test does generate network traffic and communicates with a host
-    // you may not be able to reach. Remove the @Ignore annotation if you want to
-    // test it anyway
-    @Test(expected = IOException.class)
-    @Ignore
-    public void testMissingSha1() throws Exception {
-
-        final Dependency dependency = new Dependency();
-        dependency.setSha1sum("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        searcher.search(dependency);
-    }
-
-    // This test should give us multiple results back from Central
-    @Test
-    @Ignore
-    public void testMultipleReturns() throws Exception {
-        final Dependency dependency = new Dependency();
-        dependency.setSha1sum("94a9ce681a42d0352b3ad22659f67835e560d107");
-        List<MavenArtifact> ma = searcher.search(dependency);
-        assertTrue(ma.size() > 1);
-    }
-
     @Test
     public void shouldFailWhenHostUnknown() throws IOException {
         // Given
@@ -81,39 +43,14 @@ public class ArtifactorySearchTest extends BaseTest {
         settings.setString(Settings.KEYS.ANALYZER_ARTIFACTORY_URL, "https://artifactory.techno.ingenico.com.non-existing/artifactory");
         final ArtifactorySearch artifactorySearch = new ArtifactorySearch(settings);
         // When
-        try{
+        try {
             artifactorySearch.search(dependency);
             fail();
-        }catch (UnknownHostException exception){
+        } catch (UnknownHostException exception) {
             // Then
             assertEquals("artifactory.techno.ingenico.com.non-existing", exception.getMessage());
         }
 
-    }
-    @Test
-    @Ignore
-    public void testWithRealInstance() throws IOException {
-        // Given
-        Dependency dependency = new Dependency();
-        dependency.setSha1sum("c5b4c491aecb72e7c32a78da0b5c6b9cda8dee0f");
-        dependency.setSha256sum("512b4bf6927f4864acc419b8c5109c23361c30ed1f5798170248d33040de068e");
-        dependency.setMd5sum("2d1dd0fc21ee96bccfab4353d5379649");
-
-        final Settings settings = getSettings();
-        settings.setString(Settings.KEYS.ANALYZER_ARTIFACTORY_URL, "https://artifactory.techno.ingenico.com/artifactory");
-        final ArtifactorySearch artifactorySearch = new ArtifactorySearch(settings);
-        // When
-        final List<MavenArtifact> mavenArtifacts = artifactorySearch.search(dependency);
-
-        // Then
-
-        assertEquals(1, mavenArtifacts.size());
-        final MavenArtifact artifact = mavenArtifacts.get(0);
-        assertEquals("com.google.code.gson", artifact.getGroupId());
-        assertEquals("gson", artifact.getArtifactId());
-        assertEquals("2.8.5", artifact.getVersion());
-        assertEquals("https://artifactory.techno.ingenico.com/artifactory/repo1-cache/com/google/code/gson/gson/2.8.5/gson-2.8.5-sources.jar", artifact.getArtifactUrl());
-        assertEquals("https://artifactory.techno.ingenico.com/artifactory/repo1-cache/com/google/code/gson/gson/2.8.5/gson-2.8.5.pom", artifact.getPomUrl());
     }
 
 

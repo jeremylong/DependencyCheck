@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.concurrent.ThreadSafe;
+import javax.xml.bind.DatatypeConverter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -112,6 +113,8 @@ public class ArtifactorySearch {
      */
     public List<MavenArtifact> search(Dependency dependency) throws IOException {
 
+        // TODO Investigate why sha256 parameter is not working
+        // API defined https://www.jfrog.com/confluence/display/RTF/Artifactory+REST+API#ArtifactoryRESTAPI-ChecksumSearch
         final URL url = new URL(rootURL + "/api/search/checksum?sha1=" + dependency.getSha1sum());
         LOGGER.debug("Searching Artifactory url {}", url);
 
@@ -122,9 +125,22 @@ public class ArtifactorySearch {
         final URLConnectionFactory factory = new URLConnectionFactory(settings);
         final HttpURLConnection conn = factory.createHttpURLConnection(url, useProxy);
         conn.setDoOutput(true);
+
         conn.addRequestProperty("X-Result-Detail", "info");
-        // TODO what is the best way to retrieve credentials to connect to Artifactory?
-        conn.addRequestProperty("Authorization", "Bearer " + System.getenv("artifactory.authentication.bearer.token"));
+
+        final String username = settings.getString(Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME);
+        final String apiToken = settings.getString(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN);
+        if (username != null && apiToken != null) {
+            String userpassword = username + ":" + apiToken;
+            String encodedAuthorization = DatatypeConverter.printBase64Binary(userpassword.getBytes(StandardCharsets.UTF_8));
+            conn.addRequestProperty("Authorization", "Basic " + encodedAuthorization);
+        } else {
+            final String bearerToken = settings.getString(Settings.KEYS.ANALYZER_ARTIFACTORY_BEARER_TOKEN);
+            if (bearerToken != null) {
+                conn.addRequestProperty("Authorization", "Bearer " + bearerToken);
+            }
+        }
+
         conn.connect();
         final int responseCode = conn.getResponseCode();
         if (responseCode == 200) {
