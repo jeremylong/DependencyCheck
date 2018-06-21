@@ -4,15 +4,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
-import org.owasp.dependencycheck.utils.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by colezlaw on 10/13/14.
@@ -28,7 +25,9 @@ public class CentralSearchTest extends BaseTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testNullSha1() throws Exception { searcher.searchSha1(null); }
+    public void testNullSha1() throws Exception {
+        searcher.searchSha1(null);
+    }
 
     @Test(expected = IllegalArgumentException.class)
     public void testMalformedSha1() throws Exception {
