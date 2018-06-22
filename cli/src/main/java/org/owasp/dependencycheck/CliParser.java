@@ -259,7 +259,7 @@ public final class CliParser {
                 .build();
 
         final Option excludes = Option.builder().argName("pattern").hasArg().longOpt(ARGUMENT.EXCLUDE)
-                .desc("Specify and exclusion pattern. This option can be specified multiple times"
+                .desc("Specify an exclusion pattern. This option can be specified multiple times"
                         + " and it accepts Ant style exclusions.")
                 .build();
 
@@ -469,6 +469,12 @@ public final class CliParser {
                 .desc("Purges the local NVD data cache")
                 .build();
 
+        
+        final Option retireJsFilters = Option.builder().argName("pattern").hasArg().longOpt(ARGUMENT.RETIREJS_FILTERS)
+                .desc("Specify Retire JS content filter used to exclude files from analysis based on their content; most commonly used "
+                        + "to exclude based on your applications own copyright line. This option can be specified multiple times.")
+                .build();
+        
         options.addOption(updateOnly)
                 .addOption(cve12Base)
                 .addOption(cve20Base)
@@ -510,6 +516,9 @@ public final class CliParser {
                         .desc("Disable the NSP Package Analyzer.").build())
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_RETIRE_JS)
                         .desc("Disable the RetireJS Analyzer.").build())
+                .addOption(Option.builder().longOpt(ARGUMENT.RETIREJS_FILTER_NON_VULNERABLE)
+                        .desc("Specifies that the Retire JS Analyzer should filter out non-vulnerable JS files from the report.").build())
+                .addOption(retireJsFilters)
                 .addOption(nexusUrl)
                 .addOption(nexusUsesProxy)
                 .addOption(additionalZipExtensions)
@@ -882,7 +891,24 @@ public final class CliParser {
     public String[] getExcludeList() {
         return line.getOptionValues(ARGUMENT.EXCLUDE);
     }
-
+    
+    /**
+     * Retrieves the list of retire JS content filters used to exclude JS files by content.
+     *
+     * @return the retireJS filters
+     */
+    public String[] getRetireJsFilters() {
+        return line.getOptionValues(ARGUMENT.RETIREJS_FILTERS);
+    }
+    /**
+     * Returns whether or not the retireJS analyzer should exclude non-vulnerable JS from the report.
+     *
+     * @return <code>true</code> if non-vulnerable JS should be filtered in the RetireJS Analyzer; otherwise <code>null</code>
+     */
+    public Boolean isRetireJsFilterNonVulnerable() {
+        return (line != null && line.hasOption(ARGUMENT.RETIREJS_FILTER_NON_VULNERABLE)) ? true : null;
+    }
+    
     /**
      * Returns the directory to write the reports to specified on the command
      * line.
@@ -1555,6 +1581,14 @@ public final class CliParser {
          * The CLI argument to enable the retired analyzers.
          */
         private static final String RETIRED = "enableRetired";
+        /**
+         * The CLI argument for the retire js content filters.
+         */
+        private static final String RETIREJS_FILTERS = "retirejsFilter";
+        /**
+         * The CLI argument for the retire js content filters.
+         */
+        private static final String RETIREJS_FILTER_NON_VULNERABLE = "retirejsFilterNonVulnerable";
         /**
          * The CLI argument to enable the experimental analyzers.
          */
