@@ -302,7 +302,7 @@ public final class CliParser {
                 .build();
 
         final Option retiredEnabled = Option.builder().longOpt(ARGUMENT.RETIRED)
-                .desc("Enables the experimental analyzers.")
+                .desc("Enables the retired analyzers.")
                 .build();
 
         final Option failOnCVSS = Option.builder().argName("score").hasArg().longOpt(ARGUMENT.FAIL_ON_CVSS)

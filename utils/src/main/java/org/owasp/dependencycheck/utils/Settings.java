@@ -238,6 +238,10 @@ public final class Settings {
          */
         public static final String MAX_DOWNLOAD_THREAD_POOL_SIZE = "max.download.threads";
         /**
+         * The properties key for the analysis timeout.
+         */
+        public static final String ANALYSIS_TIMEOUT = "odc.analysis.timeout";
+        /**
          * The key for the suppression file.
          */
         public static final String SUPPRESSION_FILE = "suppression.file";
