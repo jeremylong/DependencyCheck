@@ -131,7 +131,7 @@ public class MavenArtifact {
         this.artifactId = artifactId;
         this.version = version;
         this.artifactUrl = artifactUrl;
-        this.pomUrl = derivePomUrl(artifactId, version, artifactUrl);
+        this.pomUrl = pomUrl;
     }
 
     public static String derivePomUrl(String artifactId, String version, String artifactUrl) {
