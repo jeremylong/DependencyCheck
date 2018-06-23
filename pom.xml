@@ -156,7 +156,8 @@ Copyright (c) 2012 - Jeremy Long
 
         <!--upgrading beyond lang3 3.4 may cause issues with the Jenkins plugin-->
         <commons-lang3.version>3.7</commons-lang3.version>
-        <commons-text.version>1.4</commons-text.version>
+        <!-- upgrading beyond 1.3 breaks Java 7 compatability -->
+        <commons-text.version>1.3</commons-text.version>
         <com.sun.mail.mailapi.version>1.6.1</com.sun.mail.mailapi.version>
         <junit.version>4.12</junit.version>
         <hamcrest-core.version>1.3</hamcrest-core.version>
