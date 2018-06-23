@@ -1,0 +1,18 @@
+platform :ios, '9.0'
+inhibit_all_warnings!
+
+target 'MyApp' do
+  pod 'FBSDKLoginKit', '4.33.0'
+  pod 'FirebaseCore'
+
+  target "MyAppTests" do
+    inherit! :search_paths
+    pod 'OCMock', '~> 3.4'
+  end
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    puts "#{target.name}"
+  end
+end
