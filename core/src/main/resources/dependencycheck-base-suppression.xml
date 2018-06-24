@@ -776,7 +776,7 @@
         False positive per issue #851 and #1073
         ]]></notes>
         <gav regex="true">^com\.ibm\.icu:icu4j:.*$</gav>
-        <cpe>cpe:/a:icu[_-]project:international[_-]components[_-]for[_-]unicode</cpe>
+        <cpe regex="true">cpe:/a:icu[_-]project:international[_-]components[_-]for[_-]unicode:.*</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
