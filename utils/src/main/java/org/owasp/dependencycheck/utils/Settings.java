@@ -285,15 +285,16 @@ public final class Settings {
          */
         public static final String ANALYZER_RETIREJS_ENABLED = "analyzer.retirejs.enabled";
         /**
-         * The properties key for whether the RetireJS analyzer file content filters.
+         * The properties key for whether the RetireJS analyzer file content
+         * filters.
          */
         public static final String ANALYZER_RETIREJS_FILTERS = "analyzer.retirejs.filters";
         /**
-         * The properties key for whether the RetireJS analyzer should filter out non-vulnerable dependencies.
+         * The properties key for whether the RetireJS analyzer should filter
+         * out non-vulnerable dependencies.
          */
         public static final String ANALYZER_RETIREJS_FILTER_NON_VULNERABLE = "analyzer.retirejs.filternonvulnerable";
-        
-        
+
         /**
          * The properties key for defining the URL to the RetireJS repository.
          */
@@ -870,8 +871,8 @@ public final class Settings {
     public String[] getArray(final String key) {
         final String string = getString(key);
         if (string != null) {
-            if (string.charAt(0)=='{' || string.charAt(0)=='[') {
-            return new Gson().fromJson(string, String[].class);
+            if (string.charAt(0) == '{' || string.charAt(0) == '[') {
+                return new Gson().fromJson(string, String[].class);
             } else {
                 return string.split(ARRAY_SEP);
             }
@@ -1030,8 +1031,9 @@ public final class Settings {
     }
 
     /**
-     * Retrieves the primary data directory that is used for caching web content. 
-     * 
+     * Retrieves the primary data directory that is used for caching web
+     * content.
+     *
      * @return the data directory to store data files
      * @throws IOException is thrown if an IOException occurs of course...
      */

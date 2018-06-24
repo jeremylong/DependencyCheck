@@ -113,33 +113,31 @@ public class RubyBundlerAnalyzer extends RubyGemspecAnalyzer {
         final File specificationsDir = gemspecFile.getParentFile();
         if (specificationsDir != null && specificationsDir.getName().equals(SPECIFICATIONS) && specificationsDir.exists()) {
             final File parentDir = specificationsDir.getParentFile();
-            if (parentDir != null && parentDir.exists()) {
-                final File gemsDir = new File(parentDir, GEMS);
-                if (gemsDir.exists()) {
-                    final File[] matchingFiles = gemsDir.listFiles(new FilenameFilter() {
-                        @Override
-                        public boolean accept(File dir, String name) {
-                            return name.equals(gemName);
-                        }
-                    });
+            final File gemsDir = new File(parentDir, GEMS);
+            if (parentDir != null && parentDir.exists() && gemsDir.exists()) {
+                final File[] matchingFiles = gemsDir.listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        return name.equals(gemName);
+                    }
+                });
 
-                    if (matchingFiles != null && matchingFiles.length > 0) {
-                        final String gemPath = matchingFiles[0].getAbsolutePath();
-                        if (dependency.getActualFilePath().equals(dependency.getFilePath())) {
-                            if (gemPath != null) {
-                                dependency.setPackagePath(gemPath);
-                            }
-                        } else {
-                            //.gemspec's actualFilePath and filePath are different when it's from a compressed file
-                            //in which case actualFilePath is the temp directory used by decompression.
-                            //packagePath should use the filePath of the identified gem file in "gems" folder
-                            final File gemspecStub = new File(dependency.getFilePath());
-                            final File specDir = gemspecStub.getParentFile();
-                            if (specDir != null && specDir.getName().equals(SPECIFICATIONS)) {
-                                final File gemsDir2 = new File(specDir.getParentFile(), GEMS);
-                                final File packageDir = new File(gemsDir2, gemName);
-                                dependency.setPackagePath(packageDir.getAbsolutePath());
-                            }
+                if (matchingFiles != null && matchingFiles.length > 0) {
+                    final String gemPath = matchingFiles[0].getAbsolutePath();
+                    if (dependency.getActualFilePath().equals(dependency.getFilePath())) {
+                        if (gemPath != null) {
+                            dependency.setPackagePath(gemPath);
+                        }
+                    } else {
+                        //.gemspec's actualFilePath and filePath are different when it's from a compressed file
+                        //in which case actualFilePath is the temp directory used by decompression.
+                        //packagePath should use the filePath of the identified gem file in "gems" folder
+                        final File gemspecStub = new File(dependency.getFilePath());
+                        final File specDir = gemspecStub.getParentFile();
+                        if (specDir != null && specDir.getName().equals(SPECIFICATIONS)) {
+                            final File gemsDir2 = new File(specDir.getParentFile(), GEMS);
+                            final File packageDir = new File(gemsDir2, gemName);
+                            dependency.setPackagePath(packageDir.getAbsolutePath());
                         }
                     }
                 }

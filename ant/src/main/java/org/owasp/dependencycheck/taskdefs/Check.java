@@ -850,11 +850,12 @@ public class Check extends Update {
      * Set the value of retirejsFilterNonVulnerable.
      *
      * @param retirejsFilterNonVulnerable new value of
- retirejsFilterNonVulnerable
+     * retirejsFilterNonVulnerable
      */
     public void setRetirejsFilterNonVulnerable(Boolean retirejsFilterNonVulnerable) {
         this.retirejsFilterNonVulnerable = retirejsFilterNonVulnerable;
     }
+
     /**
      * Gets retire JS Analyzers file content filters.
      *
@@ -863,7 +864,7 @@ public class Check extends Update {
     public List<String> getRetirejsFilters() {
         return retirejsFilters;
     }
-    
+
     /**
      * Add a regular expression to the set of retire JS content filters.
      *
@@ -875,8 +876,7 @@ public class Check extends Update {
     public void addConfiguredRetirejsFilter(final RetirejsFilter retirejsFilter) {
         retirejsFilters.add(retirejsFilter.getRegex());
     }
-    
-    
+
     /**
      * Get the value of rubygemsAnalyzerEnabled.
      *
@@ -1147,7 +1147,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, retirejsFilterNonVulnerable);
         getSettings().setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, retirejsFilters.toArray(new String[retirejsFilters.size()]));
-        
+
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);

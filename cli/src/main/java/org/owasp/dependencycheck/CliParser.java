@@ -469,12 +469,11 @@ public final class CliParser {
                 .desc("Purges the local NVD data cache")
                 .build();
 
-        
         final Option retireJsFilters = Option.builder().argName("pattern").hasArg().longOpt(ARGUMENT.RETIREJS_FILTERS)
                 .desc("Specify Retire JS content filter used to exclude files from analysis based on their content; most commonly used "
                         + "to exclude based on your applications own copyright line. This option can be specified multiple times.")
                 .build();
-        
+
         options.addOption(updateOnly)
                 .addOption(cve12Base)
                 .addOption(cve20Base)
@@ -891,24 +890,28 @@ public final class CliParser {
     public String[] getExcludeList() {
         return line.getOptionValues(ARGUMENT.EXCLUDE);
     }
-    
+
     /**
-     * Retrieves the list of retire JS content filters used to exclude JS files by content.
+     * Retrieves the list of retire JS content filters used to exclude JS files
+     * by content.
      *
      * @return the retireJS filters
      */
     public String[] getRetireJsFilters() {
         return line.getOptionValues(ARGUMENT.RETIREJS_FILTERS);
     }
+
     /**
-     * Returns whether or not the retireJS analyzer should exclude non-vulnerable JS from the report.
+     * Returns whether or not the retireJS analyzer should exclude
+     * non-vulnerable JS from the report.
      *
-     * @return <code>true</code> if non-vulnerable JS should be filtered in the RetireJS Analyzer; otherwise <code>null</code>
+     * @return <code>true</code> if non-vulnerable JS should be filtered in the
+     * RetireJS Analyzer; otherwise <code>null</code>
      */
     public Boolean isRetireJsFilterNonVulnerable() {
         return (line != null && line.hasOption(ARGUMENT.RETIREJS_FILTER_NON_VULNERABLE)) ? true : null;
     }
-    
+
     /**
      * Returns the directory to write the reports to specified on the command
      * line.
