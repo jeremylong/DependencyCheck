@@ -224,4 +224,12 @@
             <evidence type="vendor" source="hint analyzer" name="vendor" value="primetek" confidence="HIGHEST"/>
         </add>
     </hint>
+    <hint>
+        <given>
+            <evidence type="vendor" source="Manifest" name="Implementation-Vendor" value="JBoss Inc." confidence="HIGH"/>
+        </given>
+        <add>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="redhat" confidence="HIGH"/>
+        </add>
+    </hint>
 </hints>
