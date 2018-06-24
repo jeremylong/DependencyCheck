@@ -91,8 +91,8 @@ public class RetireJSDataSource implements CachedWebDataSource {
         try {
             final boolean autoupdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);
             final boolean enabled = settings.getBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, true);
-            File repoFile = new File(settings.getDataDirectory(), "jsrepository.json");
-            boolean proceed = enabled && autoupdate && shouldUpdagte(repoFile);
+            final File repoFile = new File(settings.getDataDirectory(), "jsrepository.json");
+            final boolean proceed = enabled && autoupdate && shouldUpdagte(repoFile);
             if (proceed) {
                 LOGGER.debug("Begin RetireJS Update");
                 url = settings.getString(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, DEFAULT_JS_URL);
@@ -136,15 +136,15 @@ public class RetireJSDataSource implements CachedWebDataSource {
     /**
      * Initializes the local RetireJS repository
      *
-     * @param engine a reference to the dependency-check engine
+     * @param settings a reference to the dependency-check settings
      * @param repoUrl the URL to the RetireJS repo to use
      * @throws UpdateException thrown if there is an exception during
      * initialization
      */
     private void initializeRetireJsRepo(Settings settings, URL repoUrl) throws UpdateException {
         try {
-            File dataDir = settings.getDataDirectory();
-            File tmpDir = settings.getTempDirectory();
+            final File dataDir = settings.getDataDirectory();
+            final File tmpDir = settings.getTempDirectory();
             boolean useProxy = false;
             if (null != settings.getString(Settings.KEYS.PROXY_SERVER)) {
                 useProxy = true;
@@ -153,10 +153,10 @@ public class RetireJSDataSource implements CachedWebDataSource {
             LOGGER.debug("RetireJS Repo URL: {}", repoUrl.toExternalForm());
             final URLConnectionFactory factory = new URLConnectionFactory(settings);
             final HttpURLConnection conn = factory.createHttpURLConnection(repoUrl, useProxy);
-            String filename = repoUrl.getFile().substring(repoUrl.getFile().lastIndexOf("/") + 1, repoUrl.getFile().length());
+            final String filename = repoUrl.getFile().substring(repoUrl.getFile().lastIndexOf("/") + 1, repoUrl.getFile().length());
             if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                File tmpFile = new File(tmpDir, filename);
-                File repoFile = new File(dataDir, filename);
+                final File tmpFile = new File(tmpDir, filename);
+                final File repoFile = new File(dataDir, filename);
                 try (InputStream inputStream = conn.getInputStream();
                         FileOutputStream outputStream = new FileOutputStream(tmpFile)) {
                     IOUtils.copy(inputStream, outputStream);

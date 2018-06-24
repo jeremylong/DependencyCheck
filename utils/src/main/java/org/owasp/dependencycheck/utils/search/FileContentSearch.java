@@ -38,6 +38,15 @@ public final class FileContentSearch {
         //empty constructor for utility class.
     }
 
+    /**
+     * Determines if the given file contains the given regular expression.
+     *
+     * @param file the file to test
+     * @param pattern the pattern used to test the file
+     * @return <code>true</code> if the regular expression matches the file
+     * content; otherwise <code>false</code>
+     * @throws IOException thrown if there is an error reading the file
+     */
     public static boolean contains(File file, String pattern) throws IOException {
         try (Scanner fileScanner = new Scanner(file)) {
             final Pattern regex = Pattern.compile(pattern);
@@ -48,8 +57,17 @@ public final class FileContentSearch {
         return false;
     }
 
+    /**
+     * Determines if the given file contains the given regular expressions.
+     *
+     * @param file the file to test
+     * @param patterns the array of patterns used to test the file
+     * @return <code>true</code> if one of the regular expressions matches the
+     * file content; otherwise <code>false</code>
+     * @throws IOException thrown if there is an error reading the file
+     */
     public static boolean contains(File file, String[] patterns) throws IOException {
-        List<Pattern> regexes = new ArrayList<>();
+        final List<Pattern> regexes = new ArrayList<>();
         for (String pattern : patterns) {
             regexes.add(Pattern.compile(pattern));
         }

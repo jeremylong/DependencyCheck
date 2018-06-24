@@ -83,7 +83,7 @@ to control the included JS files
         &lt;/filters&gt;
         &lt;filterNonVulnerable&gt;true&lt;/filterNonVulnerable&gt;
     &lt;/retirejs&gt;
-<pre>
+</pre>
 
 Property            | Description                                                                                                                                                                                                            | Default Value
 --------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------

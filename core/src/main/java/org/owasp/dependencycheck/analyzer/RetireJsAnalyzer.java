@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.search.FileContentSearch;
 
@@ -122,10 +123,10 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public boolean accept(File pathname) {
         try {
-            boolean filesMatched = super.getFilesMatched();
-            boolean accepted = super.accept(pathname);
+            final boolean filesMatched = super.getFilesMatched();
+            final boolean accepted = super.accept(pathname);
             if (accepted && filters != null && FileContentSearch.contains(pathname, filters)) {
-                if (!filesMatched) {//reset filesMatched
+                if (!filesMatched) {
                     super.setFilesMatched(filesMatched);
                 }
                 return false;
@@ -149,7 +150,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
             this.filters = settings.getArray(Settings.KEYS.ANALYZER_RETIREJS_FILTERS);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      *
@@ -162,10 +163,16 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
         File repoFile = null;
         try {
             repoFile = new File(getSettings().getDataDirectory(), "jsrepository.json");
-            this.jsRepository = new VulnerabilitiesRepositoryLoader().loadFromInputStream(new FileInputStream(repoFile));
         } catch (FileNotFoundException ex) {
             this.setEnabled(false);
             throw new InitializationException(String.format("RetireJS repo does not exist locally (%s)", repoFile), ex);
+        } catch (IOException ex) {
+            this.setEnabled(false);
+            throw new InitializationException("Failed to initialize the RetireJS repo - data directory could not be created", ex);
+        }
+        try (FileInputStream in = new FileInputStream(repoFile)) {
+            this.jsRepository = new VulnerabilitiesRepositoryLoader().loadFromInputStream(in);
+
         } catch (IOException ex) {
             this.setEnabled(false);
             throw new InitializationException("Failed to initialize the RetireJS repo", ex);
@@ -216,27 +223,30 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
         try {
             final byte[] fileContent = IOUtils.toByteArray(new FileInputStream(dependency.getActualFile()));
             final ScannerFacade scanner = new ScannerFacade(jsRepository);
-            List<JsLibraryResult> results = scanner.scanScript(dependency.getActualFile().getAbsolutePath(), fileContent, 0);
+            final List<JsLibraryResult> results = scanner.scanScript(dependency.getActualFile().getAbsolutePath(), fileContent, 0);
 
             if (results.size() > 0) {
                 for (JsLibraryResult libraryResult : results) {
 
-                    JsLibrary lib = libraryResult.getLibrary();
+                    final JsLibrary lib = libraryResult.getLibrary();
                     dependency.setName(lib.getName());
                     dependency.setVersion(libraryResult.getDetectedVersion());
                     dependency.addEvidence(EvidenceType.VERSION, "file", "version", libraryResult.getDetectedVersion(), Confidence.HIGH);
                     dependency.addEvidence(EvidenceType.PRODUCT, "file", "name", libraryResult.getLibrary().getName(), Confidence.HIGH);
 
-                    List<Vulnerability> vulns = new ArrayList<>();
-                    JsVulnerability jsVuln = libraryResult.getVuln();
+                    final List<Vulnerability> vulns = new ArrayList<>();
+                    final JsVulnerability jsVuln = libraryResult.getVuln();
 
                     if (jsVuln.getIdentifiers().containsKey("CVE") || jsVuln.getIdentifiers().containsKey("osvdb")) {
                         /* CVEs and OSVDB are an array of Strings - each one a unique vulnerability.
                          * So the JsVulnerability we are operating on may actually be representing
                          * multiple vulnerabilities. */
+                        
+                        //TODO - can we refactor this to avoid russian doll syndrome (i.e. nesting)?
+                        //CSOFF: NestedForDepth
                         for (Map.Entry<String, List<String>> entry : jsVuln.getIdentifiers().entrySet()) {
-                            String key = entry.getKey();
-                            List<String> value = entry.getValue();
+                            final String key = entry.getKey();
+                            final List<String> value = entry.getValue();
                             if ("CVE".equals(key)) {
                                 for (String cve : value) {
                                     Vulnerability vuln = engine.getDatabase().getVulnerability(StringUtils.trim(cve));
@@ -256,7 +266,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
                                 }
                             } else if ("osvdb".equals(key)) {
                                 for (String osvdb : value) {
-                                    Vulnerability vuln = new Vulnerability();
+                                    final Vulnerability vuln = new Vulnerability();
                                     vuln.setName(osvdb);
                                     vuln.setSource(Vulnerability.Source.RETIREJS);
                                     vuln.setUnscoredSeverity(jsVuln.getSeverity());
@@ -268,27 +278,37 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
                             }
                             dependency.addVulnerabilities(vulns);
                         }
+                        //CSON: NestedForDepth
                     } else {
-                        Vulnerability individualVuln = new Vulnerability();
+                        final Vulnerability individualVuln = new Vulnerability();
                         /* ISSUE, BUG, etc are all individual vulnerabilities. The result of this
                          * iteration will be one vulnerability. */
                         for (Map.Entry<String, List<String>> entry : jsVuln.getIdentifiers().entrySet()) {
-                            String key = entry.getKey();
-                            List<String> value = entry.getValue();
-                            if ("issue".equals(key)) {
-                                individualVuln.setName(libraryResult.getLibrary().getName() + " issue: " + value.get(0));
-                                individualVuln.addReference(key, key, value.get(0));
-                            } else if ("bug".equals(key)) {
-                                individualVuln.setName(libraryResult.getLibrary().getName() + " bug: " + value.get(0));
-                                individualVuln.addReference(key, key, value.get(0));
-                            } else if ("summary".equals(key)) {
-                                if (null == individualVuln.getName()) {
-                                    individualVuln.setName(value.get(0));
-                                }
-                                individualVuln.setDescription(value.get(0));
-                            } else if ("release".equals(key)) {
-                                individualVuln.addReference(key, key, value.get(0));
+                            final String key = entry.getKey();
+                            final List<String> value = entry.getValue();
+                            // CSOFF: NeedBraces
+                            if (null != key) switch (key) {
+                                case "issue":
+                                    individualVuln.setName(libraryResult.getLibrary().getName() + " issue: " + value.get(0));
+                                    individualVuln.addReference(key, key, value.get(0));
+                                    break;
+                                case "bug":
+                                    individualVuln.setName(libraryResult.getLibrary().getName() + " bug: " + value.get(0));
+                                    individualVuln.addReference(key, key, value.get(0));
+                                    break;
+                                case "summary":
+                                    if (null == individualVuln.getName()) {
+                                        individualVuln.setName(value.get(0));
+                                    }
+                                    individualVuln.setDescription(value.get(0));
+                                    break;
+                                case "release":
+                                    individualVuln.addReference(key, key, value.get(0));
+                                    break;
+                                default:
+                                    break;
                             }
+                            // CSON: NeedBraces
                             individualVuln.setSource(Vulnerability.Source.RETIREJS);
                             individualVuln.setUnscoredSeverity(jsVuln.getSeverity());
                             for (String info : jsVuln.getInfo()) {
@@ -301,8 +321,8 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
             } else if (getSettings().getBoolean(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, false)) {
                 engine.removeDependency(dependency);
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (IOException | DatabaseException e) {
+            throw new AnalysisException(e);
         }
     }
 }
