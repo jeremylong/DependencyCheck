@@ -54,7 +54,7 @@ public abstract class BaseDBTestCase extends BaseTest {
         if (f.exists() && f.isFile() && f.length() < 71680) {
             f.delete();
         }
-        File dataPath = getSettings().getDataDirectory();
+        File dataPath = getSettings().getH2DataDirectory();
         String fileName = getSettings().getString(Settings.KEYS.DB_FILE_NAME);
         LOGGER.trace("DB file name {}", fileName);
         File dataFile = new File(dataPath, fileName);

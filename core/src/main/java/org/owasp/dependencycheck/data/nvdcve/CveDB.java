@@ -16,7 +16,7 @@
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.nvdcve;
-
+//CSOFF: AvoidStarImport
 import org.apache.commons.collections.map.ReferenceMap;
 import org.owasp.dependencycheck.data.cwe.CweDB;
 import org.owasp.dependencycheck.dependency.Reference;
@@ -39,8 +39,6 @@ import java.util.Map.Entry;
 import static org.apache.commons.collections.map.AbstractReferenceMap.HARD;
 import static org.apache.commons.collections.map.AbstractReferenceMap.SOFT;
 import static org.owasp.dependencycheck.data.nvdcve.CveDB.PreparedStatementCveDb.*;
-
-//CSOFF: AvoidStarImport
 //CSON: AvoidStarImport
 /**
  * The database holding information about the NVD CVE data. This class is safe

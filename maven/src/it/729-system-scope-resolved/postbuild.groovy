@@ -26,5 +26,6 @@ def json = slurper.parse(new File(basedir, "target/dependency-check-report.json"
 
 assert json instanceof Map
 assert json.dependencies instanceof List
-assert json.dependencies.size()==1
+//this could be 1 or 4 dependeing on the JVM used. In some cases JavaScript is embedded in com.sun.tools.
+assert (json.dependencies.size()==4 || json.dependencies.size()==1)
 return true;

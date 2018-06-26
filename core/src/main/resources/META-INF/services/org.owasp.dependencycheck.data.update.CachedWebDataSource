@@ -1,2 +1,3 @@
 org.owasp.dependencycheck.data.update.NvdCveUpdater
 org.owasp.dependencycheck.data.update.EngineVersionCheck
+org.owasp.dependencycheck.data.update.RetireJSDataSource

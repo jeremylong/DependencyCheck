@@ -168,4 +168,20 @@ public class DependencyCheckTaskTest extends BaseDBTestCase {
         final File report = new File("target/suppression-multiple-report.html");
         assertTrue("Expected the DependencyCheck report to be generated", report.exists());
     }
+    
+    /**
+     * Test the DependencyCheckTask retireJS configuration.
+     */
+    @Test
+    public void testRetireJsConfiguration() {
+        // GIVEN an ant task with a vulnerability using multiple was to configure the suppression file
+        final String antTaskName = "retireJS";
+
+        // WHEN executing the ant task
+        buildFileRule.executeTarget(antTaskName);
+
+        // THEN the ant task executed without error
+        final File report = new File("target/retirejs-report.html");
+        assertTrue("Expected the DependencyCheck report to be generated", report.exists());
+    }
 }

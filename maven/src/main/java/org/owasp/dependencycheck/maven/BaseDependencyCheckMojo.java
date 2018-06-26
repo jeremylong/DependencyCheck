@@ -330,6 +330,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nspAnalyzerEnabled", required = false)
     private Boolean nspAnalyzerEnabled;
+    /**
+     * Sets whether or not the Retirejs Analyzer should be used.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "retireJsAnalyzerEnabled", required = false)
+    private Boolean retireJsAnalyzerEnabled;
 
     /**
      * Whether or not the .NET Assembly Analyzer is enabled.
@@ -536,6 +542,25 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "pathToMono", defaultValue = "", required = false)
     private String pathToMono;
+
+    /**
+     * The RetireJS Analyzer configuration:
+     * <pre>
+     *   filters: an array of filter patterns that are used to exclude JS files that contain a match
+     *   filterNonVulnerable: a boolean that when true will remove non-vulnerable JS from the report
+     *
+     * Example:
+     *   &lt;retirejs&gt;
+     *     &lt;filters&gt;
+     *       &lt;filter&gt;copyright 2018\(c\) Jeremy Long&lt;/filter&gt;
+     *     &lt;/filters&gt;
+     *     &lt;filterNonVulnerable&gt;true&lt;/filterNonVulnerable&gt;
+     *   &lt;/retirejs&gt;
+     * </pre>
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "retirejs", required = false)
+    private Retirejs retirejs;
 
     /**
      * The Proxy URL.
@@ -1302,10 +1327,16 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED, nspAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, bundleAuditAnalyzerEnabled);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, bundleAuditPath);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, cocoapodsAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, swiftPackageManagerAnalyzerEnabled);
+
+        if (retirejs != null) {
+            settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, retirejs.getFilterNonVulnerable());
+            settings.setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, retirejs.getFilters());
+        }
 
         //Database configuration
         settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);

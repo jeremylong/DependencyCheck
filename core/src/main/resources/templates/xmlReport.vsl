@@ -41,7 +41,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         <version>$enc.xml($applicationVersion)</version>
 #end
         <reportDate>$scanDateXML</reportDate>
-        <credits>This report contains data retrieved from the National Vulnerability Database: https://nvd.nist.gov and from the Node Security Platform: https://nodesecurity.io</credits>
+        <credits>This report contains data retrieved from the National Vulnerability Database: https://nvd.nist.gov, Node Security Platform: https://nodesecurity.io, and the RetireJS community.</credits>
     </projectInfo>
     <dependencies>
 #foreach($dependency in $dependencies)

@@ -234,6 +234,10 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.h3xstream.retirejs</groupId>
+            <artifactId>retirejs-core</artifactId>
+        </dependency>
         <!-- The following dependencies are only used during testing 
              and must not be converted to a properties based version number -->
         <dependency>
