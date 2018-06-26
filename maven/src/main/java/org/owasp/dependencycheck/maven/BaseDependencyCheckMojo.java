@@ -364,6 +364,24 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "artifactoryAnalyzerServerId", defaultValue = "artifactory")
     private String artifactoryAnalyzerServerId;
     /**
+     * The username (only used with API token) to connect to Artifactory instance
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "artifactoryAnalyzerUsername", defaultValue = "artifactory")
+    private String artifactoryAnalyzerUsername;
+    /**
+     * The API token to connect to Artifactory instance
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "artifactoryAnalyzerApiToken", defaultValue = "artifactory")
+    private String artifactoryAnalyzerApiToken;
+    /**
+     * The bearer token to connect to Artifactory instance
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "artifactoryAnalyzerBearerToken", defaultValue = "artifactory")
+    private String artifactoryAnalyzerBearerToken;
+    /**
      * The Artifactory URL for the Artifactory analyzer.
      */
     @SuppressWarnings("CanBeFinal")
@@ -1331,12 +1349,19 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_USES_PROXY, artifactoryAnalyzerUseProxy);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_PARALLEL_ANALYSIS, artifactoryAnalyzerParallelAnalysis);
 
-        if (Boolean.TRUE.equals(artifactoryAnalyzerEnabled) && artifactoryAnalyzerServerId != null) {
-            final Server server = settingsXml.getServer(artifactoryAnalyzerServerId);
-            if (server != null) {
-                settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME, server.getUsername());
-                settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN, server.getPassword());
+
+        if (Boolean.TRUE.equals(artifactoryAnalyzerEnabled)) {
+            if (artifactoryAnalyzerServerId != null) {
+                final Server server = settingsXml.getServer(artifactoryAnalyzerServerId);
+                if (server != null) {
+                    settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME, server.getUsername());
+                    settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN, server.getPassword());
+                }
+            } else {
+                settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME, artifactoryAnalyzerUsername);
+                settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN, artifactoryAnalyzerApiToken);
             }
+            settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_BEARER_TOKEN, artifactoryAnalyzerBearerToken);
         }
 
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, pyDistributionAnalyzerEnabled);

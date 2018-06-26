@@ -56,7 +56,10 @@ artifactoryAnalyzerEnabled    | Sets whether Artifactory analyzer will be used |
 artifactoryAnalyzerUrl        | The Artifactory server URL. | &nbsp;
 artifactoryAnalyzerUseProxy   | Whether Artifactory should be accessed through a proxy or not. | false
 artifactoryAnalyzerParallelAnalysis | Whether the Artifactory analyzer should be run in parallel or not | true
-artifactoryAnalyzerServerId   | The id of a server defined in the settings.xml to retrieve the credentials to connect to Artifactory instance | artifactory
+artifactoryAnalyzerServerId   | The id of a server defined in the settings.xml to retrieve the credentials (username and API token) to connect to Artifactory instance. It is used in priority to artifactoryAnalyzerUsername and artifactoryAnalyzerApiToken | artifactory
+artifactoryAnalyzerUsername   | The user name (only used with API token) to connect to Artifactory instance | &nbsp;
+artifactoryAnalyzerApiToken   | The API token to connect to Artifactory instance, only used if the username or the API key are not defined by artifactoryAnalyzerServerId,artifactoryAnalyzerUsername or artifactoryAnalyzerApiToken | &nbsp;
+artifactoryAnalyzerBearerToken   | The bearer token to connect to Artifactory instance | &nbsp;
 pyDistributionAnalyzerEnabled | Sets whether the [experimental](../analyzers/index.html) Python Distribution Analyzer will be used.               | true
 pyPackageAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) Python Package Analyzer will be used.                    | true
 rubygemsAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) Ruby Gemspec Analyzer will be used.                      | true

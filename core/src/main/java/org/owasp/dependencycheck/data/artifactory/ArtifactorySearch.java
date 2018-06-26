@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2018 Nicolas Henneaux. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.artifactory;
 
@@ -56,7 +56,13 @@ public class ArtifactorySearch {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactorySearch.class);
 
+    /**
+     * Pattern to match the path returned by the Artifactory AQL API.
+     */
     private static final Pattern PATH_PATTERN = Pattern.compile("^/(?<groupId>.+)/(?<artifactId>[^/]+)/(?<version>[^/]+)/[^/]+$");
+    /**
+     * Extracted duplicateArtifactorySearchIT.java  comment.
+     */
     private static final String WHILE_ACTUAL_IS = " while actual is ";
     /**
      * The URL for the Central service.
