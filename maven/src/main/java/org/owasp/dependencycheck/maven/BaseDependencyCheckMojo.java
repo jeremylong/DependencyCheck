@@ -17,13 +17,6 @@
  */
 package org.owasp.dependencycheck.maven;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
@@ -70,8 +63,15 @@ import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+
 /**
- *
  * @author Jeremy Long
  */
 public abstract class BaseDependencyCheckMojo extends AbstractMojo implements MavenReport {
@@ -358,6 +358,54 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private Boolean centralAnalyzerEnabled;
 
     /**
+     * Whether or not the Artifactory Analyzer is enabled.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "artifactoryAnalyzerEnabled")
+    private Boolean artifactoryAnalyzerEnabled;
+    /**
+     * The serverId inside the settings.xml containing the username and token to access artifactory
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "artifactoryAnalyzerServerId", defaultValue = "artifactory")
+    private String artifactoryAnalyzerServerId;
+    /**
+     * The username (only used with API token) to connect to Artifactory instance
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "artifactoryAnalyzerUsername", defaultValue = "artifactory")
+    private String artifactoryAnalyzerUsername;
+    /**
+     * The API token to connect to Artifactory instance
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "artifactoryAnalyzerApiToken", defaultValue = "artifactory")
+    private String artifactoryAnalyzerApiToken;
+    /**
+     * The bearer token to connect to Artifactory instance
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "artifactoryAnalyzerBearerToken")
+    private String artifactoryAnalyzerBearerToken;
+    /**
+     * The Artifactory URL for the Artifactory analyzer.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "artifactoryAnalyzerUrl")
+    private String artifactoryAnalyzerUrl;
+    /**
+     * Whether Artifactory should be accessed through a proxy or not
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "artifactoryAnalyzerUseProxy", defaultValue = "artifactory")
+    private Boolean artifactoryAnalyzerUseProxy;
+    /**
+     * Whether the Artifactory analyzer should be run in parallel or not.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "artifactoryAnalyzerParallelAnalysis", defaultValue = "true")
+    private Boolean artifactoryAnalyzerParallelAnalysis;
+    /**
      * Whether or not the Nexus Analyzer is enabled.
      */
     @SuppressWarnings("CanBeFinal")
@@ -602,12 +650,40 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
     // </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Base Maven implementation">
+
+    /**
+     * Determines if the groupId, artifactId, and version of the Maven
+     * dependency and artifact match.
+     *
+     * @param d the Maven dependency
+     * @param a the Maven artifact
+     * @return true if the groupId, artifactId, and version match
+     */
+    private static boolean artifactsMatch(org.apache.maven.model.Dependency d, Artifact a) {
+        return (isEqualOrNull(a.getArtifactId(), d.getArtifactId()))
+                && (isEqualOrNull(a.getGroupId(), d.getGroupId()))
+                && (isEqualOrNull(a.getVersion(), d.getVersion()));
+    }
+
+    /**
+     * Compares two strings for equality; if both strings are null they are
+     * considered equal.
+     *
+     * @param left  the first string to compare
+     * @param right the second string to compare
+     * @return true if the strings are equal or if they are both null; otherwise
+     * false.
+     */
+    private static boolean isEqualOrNull(String left, String right) {
+        return (left != null && left.equals(right)) || (left == null && right == null);
+    }
+
     /**
      * Executes dependency-check.
      *
      * @throws MojoExecutionException thrown if there is an exception executing
-     * the mojo
-     * @throws MojoFailureException thrown if dependency-check failed the build
+     *                                the mojo
+     * @throws MojoFailureException   thrown if dependency-check failed the build
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -640,7 +716,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * Generates the Dependency-Check Site Report.
      *
-     * @param sink the sink to write the report to
+     * @param sink   the sink to write the report to
      * @param locale the locale to use when generating the report
      * @throws MavenReportException if a maven report exception occurs
      * @deprecated use
@@ -683,7 +759,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * Generates the Dependency-Check Site Report.
      *
-     * @param sink the sink to write the report to
+     * @param sink   the sink to write the report to
      * @param locale the locale to use when generating the report
      * @throws MavenReportException if a maven report exception occurs
      */
@@ -716,7 +792,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      *
      * @return the directory to write the report(s)
      * @throws MojoExecutionException thrown if there is an error loading the
-     * file path
+     *                                file path
      */
     protected File getCorrectOutputDirectory() throws MojoExecutionException {
         return getCorrectOutputDirectory(this.project);
@@ -746,7 +822,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * list.
      *
      * @param project the project to scan the dependencies of
-     * @param engine the engine to use to scan the dependencies
+     * @param engine  the engine to use to scan the dependencies
      * @return a collection of exceptions that may have occurred while resolving
      * and scanning the dependencies
      */
@@ -758,8 +834,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Scans the project's artifacts and adds them to the engine's dependency
      * list.
      *
-     * @param project the project to scan the dependencies of
-     * @param engine the engine to use to scan the dependencies
+     * @param project   the project to scan the dependencies of
+     * @param engine    the engine to use to scan the dependencies
      * @param aggregate whether the scan is part of an aggregate build
      * @return a collection of exceptions that may have occurred while resolving
      * and scanning the dependencies
@@ -781,17 +857,17 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Resolves the projects artifacts using Aether and scans the resulting
      * dependencies.
      *
-     * @param engine the core dependency-check engine
-     * @param project the project being scanned
-     * @param nodes the list of dependency nodes, generally obtained via the
-     * DependencyGraphBuilder
+     * @param engine          the core dependency-check engine
+     * @param project         the project being scanned
+     * @param nodes           the list of dependency nodes, generally obtained via the
+     *                        DependencyGraphBuilder
      * @param buildingRequest the Maven project building request
-     * @param aggregate whether the scan is part of an aggregate build
+     * @param aggregate       whether the scan is part of an aggregate build
      * @return a collection of exceptions that may have occurred while resolving
      * and scanning the dependencies
      */
     private ExceptionCollection collectDependencies(Engine engine, MavenProject project,
-            List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
+                                                    List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
         ExceptionCollection exCol = null;
         for (DependencyNode dependencyNode : nodes) {
             if (artifactScopeExcluded.passes(dependencyNode.getArtifact().getScope())
@@ -940,7 +1016,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * have not yet been built. If true a virtual dependency is created based on
      * the evidence in the project.
      *
-     * @param engine a reference to the engine being used to scan
+     * @param engine   a reference to the engine being used to scan
      * @param artifact the artifact being analyzed in the mojo
      * @return <code>true</code> if the artifact is in the reactor; otherwise
      * <code>false</code>
@@ -975,6 +1051,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 }
                 final String key = String.format("%s:%s:%s", artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion());
                 d.setSha1sum(Checksum.getSHA1Checksum(key));
+                d.setSha256sum(Checksum.getSHA256Checksum(key));
                 d.setMd5sum(Checksum.getMD5Checksum(key));
 
                 d.setDisplayFileName(displayName);
@@ -1019,33 +1096,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Determines if the groupId, artifactId, and version of the Maven
-     * dependency and artifact match.
-     *
-     * @param d the Maven dependency
-     * @param a the Maven artifact
-     * @return true if the groupId, artifactId, and version match
-     */
-    private static boolean artifactsMatch(org.apache.maven.model.Dependency d, Artifact a) {
-        return (isEqualOrNull(a.getArtifactId(), d.getArtifactId()))
-                && (isEqualOrNull(a.getGroupId(), d.getGroupId()))
-                && (isEqualOrNull(a.getVersion(), d.getVersion()));
-    }
-
-    /**
-     * Compares two strings for equality; if both strings are null they are
-     * considered equal.
-     *
-     * @param left the first string to compare
-     * @param right the second string to compare
-     * @return true if the strings are equal or if they are both null; otherwise
-     * false.
-     */
-    private static boolean isEqualOrNull(String left, String right) {
-        return (left != null && left.equals(right)) || (left == null && right == null);
-    }
-
-    /**
      * @return Returns a new ProjectBuildingRequest populated from the current
      * session and the current project remote repositories, used to resolve
      * artifacts.
@@ -1060,9 +1110,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Executes the dependency-check scan and generates the necessary report.
      *
      * @throws MojoExecutionException thrown if there is an exception running
-     * the scan
-     * @throws MojoFailureException thrown if dependency-check is configured to
-     * fail the build
+     *                                the scan
+     * @throws MojoFailureException   thrown if dependency-check is configured to
+     *                                fail the build
      */
     protected void runCheck() throws MojoExecutionException, MojoFailureException {
         try (Engine engine = initializeEngine()) {
@@ -1120,10 +1170,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * MojoExecutionException
      *
      * @param currentEx the primary exception collection
-     * @param newEx the new exception collection to add
+     * @param newEx     the new exception collection to add
      * @return the combined exception collection
      * @throws MojoExecutionException thrown if dependency-check is configured
-     * to fail on errors
+     *                                to fail on errors
      */
     private ExceptionCollection handleAnalysisExceptions(ExceptionCollection currentEx, ExceptionCollection newEx) throws MojoExecutionException {
         ExceptionCollection returnEx = currentEx;
@@ -1163,16 +1213,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     protected abstract ExceptionCollection scanDependencies(final Engine engine) throws MojoExecutionException;
 
     /**
-     * Sets the Reporting output directory.
-     *
-     * @param directory the output directory
-     */
-    @Override
-    public void setReportOutputDirectory(File directory) {
-        reportOutputDirectory = directory;
-    }
-
-    /**
      * Returns the report output directory.
      *
      * @return the report output directory
@@ -1180,6 +1220,16 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Override
     public File getReportOutputDirectory() {
         return reportOutputDirectory;
+    }
+
+    /**
+     * Sets the Reporting output directory.
+     *
+     * @param directory the output directory
+     */
+    @Override
+    public void setReportOutputDirectory(File directory) {
+        reportOutputDirectory = directory;
     }
 
     /**
@@ -1310,13 +1360,34 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED, artifactoryAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
-        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
-        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
         settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
+
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
+
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_URL, artifactoryAnalyzerUrl);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_USES_PROXY, artifactoryAnalyzerUseProxy);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_PARALLEL_ANALYSIS, artifactoryAnalyzerParallelAnalysis);
+
+
+        if (Boolean.TRUE.equals(artifactoryAnalyzerEnabled)) {
+            if (artifactoryAnalyzerServerId != null) {
+                final Server server = settingsXml.getServer(artifactoryAnalyzerServerId);
+                if (server != null) {
+                    settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME, server.getUsername());
+                    settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN, server.getPassword());
+                }
+            } else {
+                settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME, artifactoryAnalyzerUsername);
+                settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN, artifactoryAnalyzerApiToken);
+            }
+            settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_BEARER_TOKEN, artifactoryAnalyzerBearerToken);
+        }
 
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, pyDistributionAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED, pyPackageAnalyzerEnabled);
@@ -1496,13 +1567,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     //<editor-fold defaultstate="collapsed" desc="Methods to fail build or show summary">
+
     /**
      * Checks to see if a vulnerability has been identified with a CVSS score
      * that is above the threshold set in the configuration.
      *
      * @param dependencies the list of dependency objects
      * @throws MojoFailureException thrown if a CVSS score is found that is
-     * higher then the threshold set
+     *                              higher then the threshold set
      */
     protected void checkForFailure(Dependency[] dependencies) throws MojoFailureException {
         final StringBuilder ids = new StringBuilder();
@@ -1543,7 +1615,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Generates a warning message listing a summary of dependencies and their
      * associated CPE and CVE entries.
      *
-     * @param mp the Maven project for which the summary is shown
+     * @param mp           the Maven project for which the summary is shown
      * @param dependencies a list of dependency objects
      */
     protected void showSummary(MavenProject mp, Dependency[] dependencies) {
@@ -1584,6 +1656,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Methods to read/write the serialized data file">
+
     /**
      * Returns the key used to store the path to the data file that is saved by
      * <code>writeDataFile()</code>. This key is used in the

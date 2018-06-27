@@ -311,8 +311,10 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             //store the archives sha1 and change it so that the engine doesn't think the zip and jar file are the same
             // and add it is a related dependency.
             final String archiveSha1 = dependency.getSha1sum();
+            final String archiveSha256 = dependency.getSha256sum();
             try {
                 dependency.setSha1sum("");
+                dependency.setSha256sum("");
                 org.apache.commons.io.FileUtils.copyFile(dependency.getActualFile(), tmpLoc);
                 final List<Dependency> dependencySet = findMoreDependencies(engine, tmpLoc);
                 if (dependencySet != null && !dependencySet.isEmpty()) {
@@ -335,6 +337,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.debug("Unable to perform deep copy on '{}'", dependency.getActualFile().getPath(), ex);
             } finally {
                 dependency.setSha1sum(archiveSha1);
+                dependency.setSha256sum(archiveSha256);
             }
         }
     }

@@ -361,6 +361,36 @@ public final class Settings {
          */
         public static final String ANALYZER_NEXUS_USES_PROXY = "analyzer.nexus.proxy";
         /**
+         * The properties key for whether the Artifactory analyzer is enabled.
+         */
+        public static final String ANALYZER_ARTIFACTORY_ENABLED = "analyzer.artifactory.enabled";
+        /**
+         * The properties key for the Artifactory search URL.
+         */
+        public static final String ANALYZER_ARTIFACTORY_URL = "analyzer.artifactory.url";
+        /**
+         * The properties key for the Artifactory username.
+         */
+        public static final String ANALYZER_ARTIFACTORY_API_USERNAME = "analyzer.artifactory.api.username";
+        /**
+         * The properties key for the Artifactory API token.
+         */
+        public static final String ANALYZER_ARTIFACTORY_API_TOKEN = "analyzer.artifactory.api.token";
+        /**
+         * The properties key for the Artifactory bearer token (https://www.jfrog.com/confluence/display/RTF/Access+Tokens).
+         * It can be generated using <code>curl -u yourUserName -X POST "https://artifactory.techno.ingenico.com/artifactory/api/security/token" -d "username=yourUserName"</code>.
+         */
+        public static final String ANALYZER_ARTIFACTORY_BEARER_TOKEN = "analyzer.artifactory.bearer.token";
+        /**
+         * The properties key for using the proxy to reach Artifactory.
+         */
+        public static final String ANALYZER_ARTIFACTORY_USES_PROXY = "analyzer.artifactory.proxy";
+        /**
+         * The properties key for whether the Artifactory analyzer should use
+         * parallel processing.
+         */
+        public static final String ANALYZER_ARTIFACTORY_PARALLEL_ANALYSIS = "analyzer.artifactory.parallel.analysis";
+        /**
          * The properties key for whether the Central analyzer is enabled.
          */
         public static final String ANALYZER_CENTRAL_ENABLED = "analyzer.central.enabled";

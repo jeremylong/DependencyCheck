@@ -30,3 +30,4 @@ _site/**
 /cov-int/
 /dependency-check-core/nbproject/
 cov-scan.bat
+/core/data/dc.h2.db

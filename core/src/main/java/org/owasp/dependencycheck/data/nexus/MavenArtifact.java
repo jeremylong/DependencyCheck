@@ -23,6 +23,7 @@ import javax.annotation.concurrent.ThreadSafe;
  * Simple bean representing a Maven Artifact.
  *
  * @author colezlaw
+ * @author nhenneaux
  */
 @ThreadSafe
 public class MavenArtifact {
@@ -66,9 +67,9 @@ public class MavenArtifact {
     /**
      * Creates a MavenArtifact with the given attributes.
      *
-     * @param groupId the groupId
+     * @param groupId    the groupId
      * @param artifactId the artifactId
-     * @param version the version
+     * @param version    the version
      */
     public MavenArtifact(String groupId, String artifactId, String version) {
         this.groupId = groupId;
@@ -79,9 +80,9 @@ public class MavenArtifact {
     /**
      * Creates a MavenArtifact with the given attributes.
      *
-     * @param groupId the groupId
-     * @param artifactId the artifactId
-     * @param version the version
+     * @param groupId      the groupId
+     * @param artifactId   the artifactId
+     * @param version      the version
      * @param jarAvailable if the jar file is available from central
      * @param pomAvailable if the pom file is available from central
      */
@@ -104,16 +105,37 @@ public class MavenArtifact {
     /**
      * Creates a MavenArtifact with the given attributes.
      *
-     * @param groupId the groupId
+     * @param groupId    the groupId
      * @param artifactId the artifactId
-     * @param version the version
-     * @param url the artifactLink url
+     * @param version    the version
+     * @param url        the artifactLink url
      */
     public MavenArtifact(String groupId, String artifactId, String version, String url) {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
         this.artifactUrl = url;
+    }
+
+    /**
+     * Creates a MavenArtifact with the given attributes.
+     *
+     * @param groupId     the groupId
+     * @param artifactId  the artifactId
+     * @param version     the version
+     * @param artifactUrl the artifactLink url
+     * @param pomUrl      the pomUrl
+     */
+    public MavenArtifact(String groupId, String artifactId, String version, String artifactUrl, String pomUrl) {
+        this.groupId = groupId;
+        this.artifactId = artifactId;
+        this.version = version;
+        this.artifactUrl = artifactUrl;
+        this.pomUrl = pomUrl;
+    }
+
+    public static String derivePomUrl(String artifactId, String version, String artifactUrl) {
+        return artifactUrl.substring(0, artifactUrl.lastIndexOf('/')) + '/' + artifactId + '-' + version + ".pom";
     }
 
     /**
@@ -127,15 +149,6 @@ public class MavenArtifact {
     }
 
     /**
-     * Sets the groupId.
-     *
-     * @param groupId the groupId
-     */
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
-
-    /**
      * Gets the groupId.
      *
      * @return the groupId
@@ -145,12 +158,12 @@ public class MavenArtifact {
     }
 
     /**
-     * Sets the artifactId.
+     * Sets the groupId.
      *
-     * @param artifactId the artifactId
+     * @param groupId the groupId
      */
-    public void setArtifactId(String artifactId) {
-        this.artifactId = artifactId;
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
     /**
@@ -163,12 +176,12 @@ public class MavenArtifact {
     }
 
     /**
-     * Sets the version.
+     * Sets the artifactId.
      *
-     * @param version the version
+     * @param artifactId the artifactId
      */
-    public void setVersion(String version) {
-        this.version = version;
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
     }
 
     /**
@@ -181,12 +194,12 @@ public class MavenArtifact {
     }
 
     /**
-     * Sets the artifactUrl.
+     * Sets the version.
      *
-     * @param artifactUrl the artifactUrl
+     * @param version the version
      */
-    public void setArtifactUrl(String artifactUrl) {
-        this.artifactUrl = artifactUrl;
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     /**
@@ -196,6 +209,15 @@ public class MavenArtifact {
      */
     public String getArtifactUrl() {
         return artifactUrl;
+    }
+
+    /**
+     * Sets the artifactUrl.
+     *
+     * @param artifactUrl the artifactUrl
+     */
+    public void setArtifactUrl(String artifactUrl) {
+        this.artifactUrl = artifactUrl;
     }
 
     /**

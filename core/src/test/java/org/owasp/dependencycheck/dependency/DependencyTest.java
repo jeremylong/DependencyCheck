@@ -17,6 +17,10 @@
  */
 package org.owasp.dependencycheck.dependency;
 
+import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.data.nexus.MavenArtifact;
+
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,12 +30,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
-import org.owasp.dependencycheck.BaseTest;
-import org.owasp.dependencycheck.data.nexus.MavenArtifact;
-
 /**
- *
  * @author Jeremy Long
  */
 public class DependencyTest extends BaseTest {
@@ -149,6 +148,18 @@ public class DependencyTest extends BaseTest {
     }
 
     /**
+     * Test of getSha1sum method, of class Dependency.
+     */
+    @Test
+    public void testGetSha256sum() {
+        File file = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
+        Dependency instance = new Dependency(file);
+        String expResult = "5c1847a10800027254fcd0073385cceb46b1dacee061f3cd465e314bec592e81";
+        String result = instance.getSha256sum();
+        assertEquals(expResult, result);
+    }
+
+    /**
      * Test of setSha1sum method, of class Dependency.
      */
     @Test
@@ -157,6 +168,17 @@ public class DependencyTest extends BaseTest {
         Dependency instance = new Dependency();
         instance.setSha1sum(sha1sum);
         assertEquals(sha1sum, instance.getSha1sum());
+    }
+
+    /**
+     * Test of setSha1sum method, of class Dependency.
+     */
+    @Test
+    public void testSetSha256um() {
+        String sha256sum = "test";
+        Dependency instance = new Dependency();
+        instance.setSha256sum(sha256sum);
+        assertEquals(sha256sum, instance.getSha256sum());
     }
 
     /**
