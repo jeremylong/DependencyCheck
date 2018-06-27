@@ -28,6 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -66,7 +67,11 @@ public class ArtifactorySearchTest extends BaseTest {
         } catch (UnknownHostException exception) {
             // Then
             assertEquals("artifactory.techno.ingenico.com.non-existing", exception.getMessage());
+        } catch (SocketTimeoutException exception) {
+            // Then
+            assertEquals("connect timed out", exception.getMessage());
         }
+        
 
     }
 
