@@ -26,6 +26,7 @@ import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
@@ -133,12 +134,17 @@ public class ArtifactoryAnalyzer extends AbstractFileTypeAnalyzer {
      * @param engine a reference to the dependency-check engine
      */
     @Override
-    public void prepareFileTypeAnalyzer(Engine engine) {
+    public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         LOGGER.debug("Initializing Artifactory analyzer");
         final boolean enabled = isEnabled();
         LOGGER.debug("Artifactory analyzer enabled: {}", enabled);
         if (enabled) {
             searcher = new ArtifactorySearch(getSettings());
+            final boolean preflightRequest = searcher.preflightRequest();
+            if (!preflightRequest) {
+                setEnabled(false);
+                throw new InitializationException("There was an issue connecting to Artifactory . Disabling analyzer.");
+            }
         }
     }
 

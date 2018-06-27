@@ -379,7 +379,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * The bearer token to connect to Artifactory instance
      */
     @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "artifactoryAnalyzerBearerToken", defaultValue = "artifactory")
+    @Parameter(property = "artifactoryAnalyzerBearerToken")
     private String artifactoryAnalyzerBearerToken;
     /**
      * The Artifactory URL for the Artifactory analyzer.

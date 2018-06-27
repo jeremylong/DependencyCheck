@@ -24,6 +24,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.URLConnectionFactory;
@@ -36,10 +37,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -119,9 +122,18 @@ public class ArtifactorySearch {
      */
     public List<MavenArtifact> search(Dependency dependency) throws IOException {
 
-        // TODO Investigate why sha256 parameter is not working
-        // API defined https://www.jfrog.com/confluence/display/RTF/Artifactory+REST+API#ArtifactoryRESTAPI-ChecksumSearch
-        final URL url = new URL(rootURL + "/api/search/checksum?sha1=" + dependency.getSha1sum());
+        final String sha1sum = dependency.getSha1sum();
+        final URL url = buildUrl(sha1sum);
+        final HttpURLConnection conn = connect(url);
+        final int responseCode = conn.getResponseCode();
+        if (responseCode == 200) {
+            return processResponse(dependency, conn);
+        }
+        throw new IOException("Could not connect to Artifactory " + url + " (" + responseCode + "): " + conn.getResponseMessage());
+
+    }
+
+    private HttpURLConnection connect(URL url) throws IOException {
         LOGGER.debug("Searching Artifactory url {}", url);
 
         // Determine if we need to use a proxy. The rules:
@@ -148,12 +160,13 @@ public class ArtifactorySearch {
         }
 
         conn.connect();
-        final int responseCode = conn.getResponseCode();
-        if (responseCode == 200) {
-            return processResponse(dependency, conn);
-        }
-        throw new IOException("Could not connect to Artifactory " + url + " (" + responseCode + "): " + conn.getResponseMessage());
+        return conn;
+    }
 
+    private URL buildUrl(String sha1sum) throws MalformedURLException {
+        // TODO Investigate why sha256 parameter is not working
+        // API defined https://www.jfrog.com/confluence/display/RTF/Artifactory+REST+API#ArtifactoryRESTAPI-ChecksumSearch
+        return new URL(rootURL + "/api/search/checksum?sha1=" + sha1sum);
     }
 
 
@@ -213,4 +226,19 @@ public class ArtifactorySearch {
         }
     }
 
+    public boolean preflightRequest() {
+        try {
+            final URL url = buildUrl(Checksum.getSHA1Checksum(UUID.randomUUID().toString()));
+            final HttpURLConnection connection = connect(url);
+            if (connection.getResponseCode() != 200) {
+                LOGGER.warn("Expected 200 result from Artifactory ({}), got {}", url, connection.getResponseCode());
+                return false;
+            }
+            return true;
+        } catch (IOException e) {
+            LOGGER.error("Cannot connect to Artifactory", e);
+            return false;
+        }
+
+    }
 }
