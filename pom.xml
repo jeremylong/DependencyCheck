@@ -921,7 +921,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>com.h3xstream.retirejs</groupId>
                 <artifactId>retirejs-core</artifactId>
-                <version>3.0.0</version>
+                <version>3.0.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
