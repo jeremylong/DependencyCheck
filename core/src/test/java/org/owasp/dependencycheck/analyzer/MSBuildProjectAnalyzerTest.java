@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2018 Paul Irwin. All Rights Reserved.
  */
 package org.owasp.dependencycheck.analyzer;
 

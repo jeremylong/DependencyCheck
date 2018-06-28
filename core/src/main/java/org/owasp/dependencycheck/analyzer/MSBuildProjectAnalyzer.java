@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2018 Paul Irwin. All Rights Reserved.
  */
 package org.owasp.dependencycheck.analyzer;
 
@@ -40,7 +40,13 @@ import java.util.List;
 
 import static org.owasp.dependencycheck.analyzer.NuspecAnalyzer.DEPENDENCY_ECOSYSTEM;
 
+/**
+ * Analyzes MS Project files for dependencies.
+ *
+ * @author Paul Irwin
+ */
 @ThreadSafe
+@Experimental
 public class MSBuildProjectAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
@@ -61,7 +67,7 @@ public class MSBuildProjectAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The types of files on which this will work.
      */
-    private static final String[] SUPPORTED_EXTENSIONS = new String[] { "csproj", "vbproj" };
+    private static final String[] SUPPORTED_EXTENSIONS = new String[]{"csproj", "vbproj"};
 
     /**
      * The file filter used to determine which files this analyzer supports.

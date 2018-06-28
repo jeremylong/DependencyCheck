@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2018 Paul Irwin. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.nuget;
 
@@ -58,21 +58,21 @@ public class XPathMSBuildProjectParser implements MSBuildProjectParser {
             final XPath xpath = XPathFactory.newInstance().newXPath();
             final List<NugetPackageReference> packages = new ArrayList<>();
 
-            NodeList nodeList = (NodeList) xpath.evaluate("//PackageReference", d, XPathConstants.NODESET);
+            final NodeList nodeList = (NodeList) xpath.evaluate("//PackageReference", d, XPathConstants.NODESET);
 
             if (nodeList == null) {
                 throw new MSBuildProjectParseException("Unable to parse MSBuild project file");
             }
 
             for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                NamedNodeMap attrs = node.getAttributes();
+                final Node node = nodeList.item(i);
+                final NamedNodeMap attrs = node.getAttributes();
 
-                Node include = attrs.getNamedItem("Include");
-                Node version = attrs.getNamedItem("Version");
+                final Node include = attrs.getNamedItem("Include");
+                final Node version = attrs.getNamedItem("Version");
 
                 if (include != null && version != null) {
-                    NugetPackageReference npr = new NugetPackageReference();
+                    final NugetPackageReference npr = new NugetPackageReference();
 
                     npr.setId(include.getNodeValue());
                     npr.setVersion(version.getNodeValue());

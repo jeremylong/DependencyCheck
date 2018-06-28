@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2018 Paul Irwin. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.nuget;
 
@@ -27,8 +27,10 @@ import java.util.List;
  *
  */
 public interface MSBuildProjectParser {
+
     /**
-     * Parse an input stream and returns a collection of {@link NugetPackageReference} objects.
+     * Parse an input stream and returns a collection of
+     * {@link NugetPackageReference} objects.
      *
      * @param stream the input stream to parse
      * @return a collection of discovered package references

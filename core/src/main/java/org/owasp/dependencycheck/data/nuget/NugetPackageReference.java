@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2018 Paul Irwin. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.nuget;
 
@@ -21,9 +21,9 @@ package org.owasp.dependencycheck.data.nuget;
  * Represents a reference to a NuGet package and version.
  *
  * @author paulirwin
- *
  */
 public class NugetPackageReference {
+
     /**
      * The id.
      */
@@ -70,6 +70,9 @@ public class NugetPackageReference {
         return version;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object other) {
         if (this == other) {
@@ -83,6 +86,9 @@ public class NugetPackageReference {
                 && o.getVersion().equals(version);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         int hash = 7;
