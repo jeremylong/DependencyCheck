@@ -349,6 +349,10 @@ public final class Settings {
          */
         public static final String ANALYZER_NUSPEC_ENABLED = "analyzer.nuspec.enabled";
         /**
+         * The properties key for whether the .NET MSBuild Project analyzer is enabled.
+         */
+        public static final String ANALYZER_MSBUILD_PROJECT_ENABLED = "analyzer.msbuildproject.enabled";
+        /**
          * The properties key for whether the Nexus analyzer is enabled.
          */
         public static final String ANALYZER_NEXUS_ENABLED = "analyzer.nexus.enabled";
