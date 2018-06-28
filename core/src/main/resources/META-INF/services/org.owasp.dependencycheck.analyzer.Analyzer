@@ -12,6 +12,7 @@ org.owasp.dependencycheck.analyzer.CentralAnalyzer
 org.owasp.dependencycheck.analyzer.NexusAnalyzer
 org.owasp.dependencycheck.analyzer.ArtifactoryAnalyzer
 org.owasp.dependencycheck.analyzer.NuspecAnalyzer
+org.owasp.dependencycheck.analyzer.MSBuildProjectAnalyzer
 org.owasp.dependencycheck.analyzer.AssemblyAnalyzer
 org.owasp.dependencycheck.analyzer.PythonDistributionAnalyzer
 org.owasp.dependencycheck.analyzer.PythonPackageAnalyzer

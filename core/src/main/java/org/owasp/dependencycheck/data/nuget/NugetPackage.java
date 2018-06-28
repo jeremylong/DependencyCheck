@@ -25,17 +25,7 @@ import javax.annotation.concurrent.ThreadSafe;
  * @author colezlaw
  */
 @ThreadSafe
-public class NugetPackage {
-
-    /**
-     * The id.
-     */
-    private String id;
-
-    /**
-     * The version.
-     */
-    private String version;
+public class NugetPackage extends NugetPackageReference {
 
     /**
      * The title.
@@ -56,42 +46,6 @@ public class NugetPackage {
      * The licenseUrl.
      */
     private String licenseUrl;
-
-    /**
-     * Sets the id.
-     *
-     * @param id the id
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    /**
-     * Gets the id.
-     *
-     * @return the id
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Sets the version.
-     *
-     * @param version the version
-     */
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    /**
-     * Gets the version.
-     *
-     * @return the version
-     */
-    public String getVersion() {
-        return version;
-    }
 
     /**
      * Sets the title.
@@ -174,8 +128,7 @@ public class NugetPackage {
             return false;
         }
         final NugetPackage o = (NugetPackage) other;
-        return o.getId().equals(id)
-                && o.getVersion().equals(version)
+        return super.equals(this)
                 && o.getTitle().equals(title)
                 && o.getAuthors().equals(authors)
                 && o.getOwners().equals(owners)
@@ -185,8 +138,7 @@ public class NugetPackage {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 31 * hash + (null == id ? 0 : id.hashCode());
-        hash = 31 * hash + (null == version ? 0 : version.hashCode());
+        hash = 31 * hash + super.hashCode();
         hash = 31 * hash + (null == title ? 0 : title.hashCode());
         hash = 31 * hash + (null == authors ? 0 : authors.hashCode());
         hash = 31 * hash + (null == owners ? 0 : owners.hashCode());
