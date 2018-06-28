@@ -23,11 +23,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import org.apache.commons.cli.ParseException;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
@@ -116,14 +114,15 @@ public class CliParserTest extends BaseTest {
     }
 
     /**
-     * Test of parse method with failOnCVSS invalid argument. It should default to 11
+     * Test of parse method with failOnCVSS invalid argument. It should default
+     * to 11
      *
      * @throws Exception thrown when an exception occurs.
      */
     @Test
     public void testParse_failOnCVSSInvalidArgument() throws Exception {
 
-        String[] args = {"--failOnCVSS","bad"};
+        String[] args = {"--failOnCVSS", "bad"};
 
         CliParser instance = new CliParser(getSettings());
         instance.parse(args);
@@ -134,14 +133,15 @@ public class CliParserTest extends BaseTest {
     }
 
     /**
-     * Test of parse method with failOnCVSS invalid argument. It should default to 11
+     * Test of parse method with failOnCVSS invalid argument. It should default
+     * to 11
      *
      * @throws Exception thrown when an exception occurs.
      */
     @Test
     public void testParse_failOnCVSSValidArgument() throws Exception {
 
-        String[] args = {"--failOnCVSS","6"};
+        String[] args = {"--failOnCVSS", "6"};
 
         CliParser instance = new CliParser(getSettings());
         instance.parse(args);
@@ -305,5 +305,76 @@ public class CliParserTest extends BaseTest {
         } finally {
             System.setOut(out);
         }
+    }
+
+    /**
+     * Test of getBooleanArgument method, of class CliParser.
+     */
+    @Test
+    public void testGetBooleanArgument() throws ParseException {
+        String[] args = {"--scan", "missing.file", "--artifactoryUseProxy", "false", "--artifactoryParallelAnalysis", "true", "--project", "test"};
+
+        CliParser instance = new CliParser(getSettings());
+        try {
+            instance.parse(args);
+        } catch (FileNotFoundException ex) {
+            Assert.assertTrue(ex.getMessage().contains("Invalid 'scan' argument"));
+        }
+        Boolean expResult = null;
+        Boolean result = instance.getBooleanArgument("missingArgument");
+        Assert.assertNull(result);
+
+        expResult = false;
+        result = instance.getBooleanArgument(CliParser.ARGUMENT.ARTIFACTORY_USES_PROXY);
+        assertEquals(expResult, result);
+        expResult = true;
+        result = instance.getBooleanArgument(CliParser.ARGUMENT.ARTIFACTORY_PARALLEL_ANALYSIS);
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of getStringArgument method, of class CliParser.
+     */
+    @Test
+    public void testGetStringArgument() throws ParseException {
+
+        String[] args = {"--scan", "missing.file", "--artifactoryUsername", "blue42", "--project", "test"};
+
+        CliParser instance = new CliParser(getSettings());
+        try {
+            instance.parse(args);
+        } catch (FileNotFoundException ex) {
+            Assert.assertTrue(ex.getMessage().contains("Invalid 'scan' argument"));
+        }
+        String expResult = null;
+        String result = instance.getStringArgument("missingArgument");
+        Assert.assertNull(result);
+
+        expResult = "blue42";
+        result = instance.getStringArgument(CliParser.ARGUMENT.ARTIFACTORY_USERNAME);
+        assertEquals(expResult, result);
+    }
+    
+        /**
+     * Test of getStringArgument method, of class CliParser.
+     */
+    @Test
+    public void testHasArgument() throws ParseException {
+
+        String[] args = {"--scan", "missing.file", "--artifactoryUsername", "blue42", "--project", "test"};
+
+        CliParser instance = new CliParser(getSettings());
+        try {
+            instance.parse(args);
+        } catch (FileNotFoundException ex) {
+            Assert.assertTrue(ex.getMessage().contains("Invalid 'scan' argument"));
+        }
+        boolean expResult = false;
+        boolean result = instance.hasArgument("missingArgument");
+        assertEquals(expResult, result);
+
+        expResult = true;
+        result = instance.hasArgument(CliParser.ARGUMENT.PROJECT);
+        assertEquals(expResult, result);
     }
 }

@@ -51,7 +51,14 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Paramete
        | \-\-disableJar         |                 | Sets whether the Jar Analyzer will be disabled.                                                                          | false
        | \-\-disableComposer    |                 | Sets whether the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer will be disabled.               | false
        | \-\-disableCentral     |                 | Sets whether the Central Analyzer will be used. **Disabling this analyzer is not recommended as it could lead to false negatives (e.g. libraries that have vulnerabilities may not be reported correctly).** If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer. | false
-       | \-\-disableNexus       |                 | Sets whether the Nexus Analyzer will be used (requires Nexus Pro). Note, this has been superceded by the Central Analyzer. However, you can configure the Nexus URL to utilize an internally hosted Nexus Pro server. | false
+       | \-\-disableNexus       |                 | Sets whether the Nexus Analyzer will be used (requires Nexus v2 or Pro v3). Note, this has been superceded by the Central Analyzer. However, you can configure the Nexus URL to utilize an internally hosted Nexus server. | false
+       | \-\-enableArtifactory  |                 | Sets whether Artifactory analyzer will be used                                                             | false
+       | \-\-artifactoryUrl     | \<url\>         | The Artifactory server URL.                                                                                | &nbsp;
+       | \-\-artifactoryUseProxy    | \<true\|false\>            | Whether Artifactory should be accessed through a proxy or not.                                             | false
+       | \-\-artifactoryParallelAnalysis | \<true\|false\>       | Whether the Artifactory analyzer should be run in parallel or not                                          | true
+       | \-\-artifactoryUsername   | \<username\> | The user name (only used with API token) to connect to Artifactory instance                                | &nbsp;
+       | \-\-artifactoryApiToken    | \<token\>   | The API token to connect to Artifactory instance, only used if the username or the API key are not defined by artifactoryAnalyzerServerId,artifactoryAnalyzerUsername or artifactoryAnalyzerApiToken | &nbsp;
+       | \-\-artifactoryBearerToken | \<token\>   | The bearer token to connect to Artifactory instance                                                        | &nbsp;
        | \-\-nexus              | \<url\>         | The url to the Nexus Server's web service end point (example: http://domain.enterprise/nexus/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
        | \-\-nexusUsesProxy     | \<true\|false\> | Whether or not the defined proxy should be used when connecting to Nexus.        | true
        | \-\-disableNuspec      |                 | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.                 | false

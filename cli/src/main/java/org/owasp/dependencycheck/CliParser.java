@@ -517,6 +517,23 @@ public final class CliParser {
                         .desc("Disable the RetireJS Analyzer.").build())
                 .addOption(Option.builder().longOpt(ARGUMENT.RETIREJS_FILTER_NON_VULNERABLE)
                         .desc("Specifies that the Retire JS Analyzer should filter out non-vulnerable JS files from the report.").build())
+                .addOption(Option.builder().longOpt(ARGUMENT.ARTIFACTORY_ENABLED)
+                        .desc("Whether the Artifactory Analyzer should be enabled.").build())
+                .addOption(Option.builder().longOpt(ARGUMENT.ARTIFACTORY_PARALLEL_ANALYSIS)
+                        .desc("Whether the Artifactory Analyzer should use parallel analysis.")
+                        .argName("true/false").hasArg(true).build())
+                .addOption(Option.builder().longOpt(ARGUMENT.ARTIFACTORY_USES_PROXY)
+                        .desc("Whether the Artifactory Analyzer should use the proxy.")
+                        .argName("true/false").hasArg(true).build())
+                .addOption(Option.builder().longOpt(ARGUMENT.ARTIFACTORY_USERNAME)
+                        .desc("The Artifactory username for authentication.")
+                        .argName("username").hasArg(true).build())
+                .addOption(Option.builder().longOpt(ARGUMENT.ARTIFACTORY_API_TOKEN)
+                        .desc("The Artifactory API token.")
+                        .argName("token").hasArg(true).build())
+                .addOption(Option.builder().longOpt(ARGUMENT.ARTIFACTORY_BEARER_TOKEN)
+                        .desc("The Artifactory bearer token.")
+                        .argName("token").hasArg(true).build())
                 .addOption(retireJsFilters)
                 .addOption(nexusUrl)
                 .addOption(nexusUsesProxy)
@@ -846,6 +863,29 @@ public final class CliParser {
         } else {
             return Boolean.parseBoolean(line.getOptionValue(ARGUMENT.NEXUS_USES_PROXY));
         }
+    }
+
+    public boolean hasArgument(String argument) {
+        if (line != null && line.hasOption(argument)) {
+            return true;
+        }
+        return false;
+    }
+    public Boolean getBooleanArgument(String argument) {
+        if (line != null && line.hasOption(argument)) {
+            String value = line.getOptionValue(argument);
+            if (value != null) {
+                return Boolean.parseBoolean(value);
+            }
+        }
+        return null;
+    }
+
+    public String getStringArgument(String argument) {
+        if (line != null && line.hasOption(argument)) {
+                return line.getOptionValue(argument);
+        }
+        return null;
     }
 
     /**
@@ -1579,22 +1619,57 @@ public final class CliParser {
         /**
          * The CLI argument to enable the experimental analyzers.
          */
-        private static final String EXPERIMENTAL = "enableExperimental";
+        public static final String EXPERIMENTAL = "enableExperimental";
         /**
          * The CLI argument to enable the retired analyzers.
          */
-        private static final String RETIRED = "enableRetired";
+        public static final String RETIRED = "enableRetired";
         /**
          * The CLI argument for the retire js content filters.
          */
-        private static final String RETIREJS_FILTERS = "retirejsFilter";
+        public static final String RETIREJS_FILTERS = "retirejsFilter";
         /**
          * The CLI argument for the retire js content filters.
          */
-        private static final String RETIREJS_FILTER_NON_VULNERABLE = "retirejsFilterNonVulnerable";
+        public static final String RETIREJS_FILTER_NON_VULNERABLE = "retirejsFilterNonVulnerable";
+        /**
+         * The CLI argument for indicating if the Artifactory analyzer should be
+         * enabled.
+         */
+        public static final String ARTIFACTORY_ENABLED = "enableArtifactory";
+        /**
+         * The CLI argument for indicating if the Artifactory analyzer should
+         * use the proxy.
+         */
+        public static final String ARTIFACTORY_URL = "artifactoryUrl";
+
+        /**
+         * The CLI argument for indicating the Artifactory username.
+         */
+        public static final String ARTIFACTORY_USERNAME = "artifactoryUsername";
+        /**
+         * The CLI argument for indicating the Artifactory API token.
+         */
+        public static final String ARTIFACTORY_API_TOKEN = "artifactoryApiToken";
+        /**
+         * The CLI argument for indicating the Artifactory bearer token.
+         */
+        public static final String ARTIFACTORY_BEARER_TOKEN = "artifactoryBearerToken";
+
+        /**
+         * The CLI argument for indicating if the Artifactory analyzer should
+         * use the proxy.
+         */
+        public static final String ARTIFACTORY_USES_PROXY = "artifactoryUseProxy";
+        /**
+         * The CLI argument for indicating if the Artifactory analyzer should
+         * use the parallel analysis.
+         */
+        public static final String ARTIFACTORY_PARALLEL_ANALYSIS = "artifactoryParallelAnalysis";
+
         /**
          * The CLI argument to enable the experimental analyzers.
          */
-        private static final String FAIL_ON_CVSS = "failOnCVSS";
+        public static final String FAIL_ON_CVSS = "failOnCVSS";
     }
 }
