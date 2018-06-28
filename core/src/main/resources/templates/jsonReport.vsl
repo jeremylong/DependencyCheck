@@ -19,7 +19,8 @@
         "reportDate": "$scanDateXML",
         "credits": {
             "NVD": "This report contains data retrieved from the National Vulnerability Database: http://nvd.nist.gov",
-            "NSP": "This report may contain data retrieved from the Node Security Platform: https://nodesecurity.io"
+            "NSP": "This report may contain data retrieved from the Node Security Platform: https://nodesecurity.io",
+            "RETIREJS": "This report may contain data retrieved from the RetireJS community: https://retirejs.github.io/retire.js/"
         }
     },
     "dependencies": [

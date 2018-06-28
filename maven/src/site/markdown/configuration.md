@@ -52,6 +52,14 @@ centralAnalyzerEnabled        | Sets whether Central Analyzer will be used. If t
 nexusAnalyzerEnabled          | Sets whether Nexus Analyzer will be used (requires Nexus Pro). This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
 nexusUrl                      | Defines the Nexus Server's web service end point (example http://domain.enterprise/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
 nexusUsesProxy                | Whether or not the defined proxy should be used when connecting to Nexus. | true
+artifactoryAnalyzerEnabled    | Sets whether Artifactory analyzer will be used | false
+artifactoryAnalyzerUrl        | The Artifactory server URL. | &nbsp;
+artifactoryAnalyzerUseProxy   | Whether Artifactory should be accessed through a proxy or not. | false
+artifactoryAnalyzerParallelAnalysis | Whether the Artifactory analyzer should be run in parallel or not | true
+artifactoryAnalyzerServerId   | The id of a server defined in the settings.xml to retrieve the credentials (username and API token) to connect to Artifactory instance. It is used in priority to artifactoryAnalyzerUsername and artifactoryAnalyzerApiToken | artifactory
+artifactoryAnalyzerUsername   | The user name (only used with API token) to connect to Artifactory instance | &nbsp;
+artifactoryAnalyzerApiToken   | The API token to connect to Artifactory instance, only used if the username or the API key are not defined by artifactoryAnalyzerServerId,artifactoryAnalyzerUsername or artifactoryAnalyzerApiToken | &nbsp;
+artifactoryAnalyzerBearerToken   | The bearer token to connect to Artifactory instance | &nbsp;
 pyDistributionAnalyzerEnabled | Sets whether the [experimental](../analyzers/index.html) Python Distribution Analyzer will be used.               | true
 pyPackageAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) Python Package Analyzer will be used.                    | true
 rubygemsAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) Ruby Gemspec Analyzer will be used.                      | true
@@ -61,6 +69,7 @@ autoconfAnalyzerEnabled       | Sets whether the [experimental](../analyzers/ind
 composerAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.   | true
 nodeAnalyzerEnabled           | Sets whether the [retired](../analyzers/index.html) Node.js Analyzer should be used.                       | true
 nspAnalyzerEnabled            | Sets whether the NSP Analyzer should be used.                                                              | true
+retireJsAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) RetireJS Analyzer should be used.                                                         | true
 nuspecAnalyzerEnabled         | Sets whether the .NET Nuget Nuspec Analyzer will be used.                                                  | true
 cocoapodsAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used.                | true
 bundleAuditAnalyzerEnabled    | Sets whether the [experimental](../analyzers/index.html) Bundle Audit Analyzer should be used.             | true
@@ -68,6 +77,26 @@ bundleAuditPath               | Sets the path to the bundle audit executable; on
 swiftPackageManagerAnalyzerEnabled | Sets whether the [experimental](../analyzers/index.html) Switft Package Analyzer should be used.             | true
 assemblyAnalyzerEnabled       | Sets whether the .NET Assembly Analyzer should be used.            | true
 pathToMono                    | The path to Mono for .NET assembly analysis on non-windows systems.       | &nbsp;
+
+RetireJS Configuration
+====================
+If using the [experimental](../analyzers/index.html) RetireJS Analyzer the following configuration options are available
+to control the included JS files
+
+###Example
+<pre>
+    &lt;retirejs&gt;
+        &lt;filters&gt;
+            &lt;filter&gt;Copyright\(c\) Jeremy Long&lt;/filter&gt;
+        &lt;/filters&gt;
+        &lt;filterNonVulnerable&gt;true&lt;/filterNonVulnerable&gt;
+    &lt;/retirejs&gt;
+</pre>
+
+Property            | Description                                                                                                                                                                                                            | Default Value
+--------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------
+filters             | A list of file content filters used to exclude JS files based on content. This is most commonly used to exclude JS files based on your organizations copyright so that your JS files do not get listed as a dependency.| &nbsp;
+filterNonVulnerable | A boolean controlling whether or not the Retire JS Analyzer should exclude non-vulnerable JS files from the report.                                                                                                    | false
 
 Advanced Configuration
 ====================

@@ -127,10 +127,10 @@ public class NvdCveUpdater implements CachedWebDataSource {
             if (settings.getString(Settings.KEYS.PROXY_SERVER) == null) {
                 LOGGER.info("If you are behind a proxy you may need to configure dependency-check to use the proxy.");
             }
-            final String jre  = System.getProperty("java.version");
-            if (jre==null || jre.startsWith("1.4") || jre.startsWith("1.5") || jre.startsWith("1.6") || jre.startsWith("1.7")) {
-                LOGGER.warn("An old JRE is being used ({} {}), and likely does not have the correct root certificates or algorithms to connect to the NVD - "
-                        + "consider upgrading your JRE.", System.getProperty("java.vendor"), jre);
+            final String jre = System.getProperty("java.version");
+            if (jre == null || jre.startsWith("1.4") || jre.startsWith("1.5") || jre.startsWith("1.6") || jre.startsWith("1.7")) {
+                LOGGER.warn("An old JRE is being used ({} {}), and likely does not have the correct root certificates or algorithms "
+                        + "to connect to the NVD - consider upgrading your JRE.", System.getProperty("java.vendor"), jre);
             }
             throw new UpdateException("Unable to download the NVD CVE data.", ex);
         } catch (DatabaseException ex) {

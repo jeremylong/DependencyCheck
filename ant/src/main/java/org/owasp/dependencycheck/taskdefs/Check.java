@@ -66,7 +66,21 @@ public class Check extends Update {
      * Whether or not the NSP Analyzer is enabled.
      */
     private Boolean nspAnalyzerEnabled;
-
+    /**
+     * Whether or not the RetireJS Analyzer is enabled.
+     */
+    private Boolean retireJsAnalyzerEnabled;
+    /**
+     * The list of filters (regular expressions) used by the RetireJS Analyzer
+     * to exclude files that contain matching content..
+     */
+    @SuppressWarnings("CanBeFinal")
+    private List<String> retirejsFilters = new ArrayList<>();
+    /**
+     * Whether or not the RetireJS Analyzer filters non-vulnerable JS files from
+     * the report; default is false.
+     */
+    private Boolean retirejsFilterNonVulnerable;
     /**
      * Whether or not the Ruby Bundle Audit Analyzer is enabled.
      */
@@ -220,6 +234,36 @@ public class Check extends Update {
      * Whether or not the Swift package Analyzer is enabled.
      */
     private Boolean swiftPackageManagerAnalyzerEnabled;
+
+    /**
+     * Whether or not the Artifactory Analyzer is enabled.
+     */
+    private Boolean artifactoryAnalyzerEnabled;
+    /**
+     * The URL to Artifactory.
+     */
+    private String artifactoryAnalyzerUrl;
+    /**
+     * Whether or not Artifactory analysis should use the proxy..
+     */
+    private Boolean artifactoryAnalyzerUseProxy;
+    /**
+     * Whether or not Artifactory analysis should be parallelized.
+     */
+    private Boolean artifactoryAnalyzerParallelAnalysis;
+    /**
+     * The Artifactory username needed to connect.
+     */
+    private String artifactoryAnalyzerUsername;
+    /**
+     * The Artifactory API token needed to connect.
+     */
+    private String artifactoryAnalyzerApiToken;
+    /**
+     * The Artifactory bearer token.
+     */
+    private String artifactoryAnalyzerBearerToken;
+
     //The following code was copied Apache Ant PathConvert
     //BEGIN COPY from org.apache.tools.ant.taskdefs.PathConvert
     /**
@@ -806,6 +850,64 @@ public class Check extends Update {
     }
 
     /**
+     * Get the value of retireJsAnalyzerEnabled.
+     *
+     * @return the value of retireJsAnalyzerEnabled
+     */
+    public Boolean isRetireJsAnalyzerEnabled() {
+        return retireJsAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of retireJsAnalyzerEnabled.
+     *
+     * @param retireJsAnalyzerEnabled new value of retireJsAnalyzerEnabled
+     */
+    public void setRetireJsAnalyzerEnabled(Boolean retireJsAnalyzerEnabled) {
+        this.retireJsAnalyzerEnabled = retireJsAnalyzerEnabled;
+    }
+
+    /**
+     * Get the value of retirejsFilterNonVulnerable.
+     *
+     * @return the value of retirejsFilterNonVulnerable
+     */
+    public Boolean isRetirejsFilterNonVulnerable() {
+        return retirejsFilterNonVulnerable;
+    }
+
+    /**
+     * Set the value of retirejsFilterNonVulnerable.
+     *
+     * @param retirejsFilterNonVulnerable new value of
+     * retirejsFilterNonVulnerable
+     */
+    public void setRetirejsFilterNonVulnerable(Boolean retirejsFilterNonVulnerable) {
+        this.retirejsFilterNonVulnerable = retirejsFilterNonVulnerable;
+    }
+
+    /**
+     * Gets retire JS Analyzers file content filters.
+     *
+     * @return retire JS Analyzers file content filters
+     */
+    public List<String> getRetirejsFilters() {
+        return retirejsFilters;
+    }
+
+    /**
+     * Add a regular expression to the set of retire JS content filters.
+     *
+     * This is called by Ant.
+     *
+     * @param retirejsFilter the regular expression used to filter based on file
+     * content
+     */
+    public void addConfiguredRetirejsFilter(final RetirejsFilter retirejsFilter) {
+        retirejsFilters.add(retirejsFilter.getRegex());
+    }
+
+    /**
      * Get the value of rubygemsAnalyzerEnabled.
      *
      * @return the value of rubygemsAnalyzerEnabled
@@ -968,6 +1070,155 @@ public class Check extends Update {
         this.pathToMono = pathToMono;
     }
 
+    /**
+     * Returns the value of cmakeAnalyzerEnabled.
+     *
+     * @return the value of cmakeAnalyzerEnabled
+     */
+    public Boolean getCmakeAnalyzerEnabled() {
+        return cmakeAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of cmakeAnalyzerEnabled.
+     *
+     * @param cmakeAnalyzerEnabled new value of cmakeAnalyzerEnabled
+     */
+    public void setCmakeAnalyzerEnabled(Boolean cmakeAnalyzerEnabled) {
+        this.cmakeAnalyzerEnabled = cmakeAnalyzerEnabled;
+    }
+
+    /**
+     * Returns the value of artifactoryAnalyzerEnabled
+     *
+     * @return the value of artifactoryAnalyzerEnabled
+     */
+    public Boolean getArtifactoryAnalyzerEnabled() {
+        return artifactoryAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of artifactoryAnalyzerEnabled.
+     *
+     * @param artifactoryAnalyzerEnabled new value of artifactoryAnalyzerEnabled
+     */
+    public void setArtifactoryAnalyzerEnabled(Boolean artifactoryAnalyzerEnabled) {
+        this.artifactoryAnalyzerEnabled = artifactoryAnalyzerEnabled;
+    }
+
+    /**
+     * Returns the value of artifactoryAnalyzerUrl
+     *
+     * @return the value of artifactoryAnalyzerUrl
+     */
+    public String getArtifactoryAnalyzerUrl() {
+        return artifactoryAnalyzerUrl;
+    }
+
+    /**
+     * Set the value of artifactoryAnalyzerUrl.
+     *
+     * @param artifactoryAnalyzerUrl new value of artifactoryAnalyzerUrl
+     */
+    public void setArtifactoryAnalyzerUrl(String artifactoryAnalyzerUrl) {
+        this.artifactoryAnalyzerUrl = artifactoryAnalyzerUrl;
+    }
+
+    /**
+     * Returns the value of artifactoryAnalyzerUseProxy
+     *
+     * @return the value of artifactoryAnalyzerUseProxy
+     */
+    public Boolean getArtifactoryAnalyzerUseProxy() {
+        return artifactoryAnalyzerUseProxy;
+    }
+
+    /**
+     * Set the value of artifactoryAnalyzerUseProxy.
+     *
+     * @param artifactoryAnalyzerUseProxy new value of
+     * artifactoryAnalyzerUseProxy
+     */
+    public void setArtifactoryAnalyzerUseProxy(Boolean artifactoryAnalyzerUseProxy) {
+        this.artifactoryAnalyzerUseProxy = artifactoryAnalyzerUseProxy;
+    }
+
+    /**
+     * Returns the value of artifactoryAnalyzerParallelAnalysis
+     *
+     * @return the value of artifactoryAnalyzerParallelAnalysis
+     */
+    public Boolean getArtifactoryAnalyzerParallelAnalysis() {
+        return artifactoryAnalyzerParallelAnalysis;
+    }
+
+    /**
+     * Set the value of artifactoryAnalyzerParallelAnalysis.
+     *
+     * @param artifactoryAnalyzerParallelAnalysis new value of
+     * artifactoryAnalyzerParallelAnalysis
+     */
+    public void setArtifactoryAnalyzerParallelAnalysis(Boolean artifactoryAnalyzerParallelAnalysis) {
+        this.artifactoryAnalyzerParallelAnalysis = artifactoryAnalyzerParallelAnalysis;
+    }
+
+    /**
+     * Returns the value of artifactoryAnalyzerUsername
+     *
+     * @return the value of artifactoryAnalyzerUsername
+     */
+    public String getArtifactoryAnalyzerUsername() {
+        return artifactoryAnalyzerUsername;
+    }
+
+    /**
+     * Set the value of artifactoryAnalyzerUsername.
+     *
+     * @param artifactoryAnalyzerUsername new value of
+     * artifactoryAnalyzerUsername
+     */
+    public void setArtifactoryAnalyzerUsername(String artifactoryAnalyzerUsername) {
+        this.artifactoryAnalyzerUsername = artifactoryAnalyzerUsername;
+    }
+
+    /**
+     * Returns the value of artifactoryAnalyzerApiToken.
+     *
+     * @return the value of artifactoryAnalyzerApiToken
+     */
+    public String getArtifactoryAnalyzerApiToken() {
+        return artifactoryAnalyzerApiToken;
+    }
+
+    /**
+     * Set the value of artifactoryAnalyzerApiToken.
+     *
+     * @param artifactoryAnalyzerApiToken new value of
+     * artifactoryAnalyzerApiToken
+     */
+    public void setArtifactoryAnalyzerApiToken(String artifactoryAnalyzerApiToken) {
+        this.artifactoryAnalyzerApiToken = artifactoryAnalyzerApiToken;
+    }
+
+    /**
+     * Returns the value of artifactoryAnalyzerBearerToken.
+     *
+     * @return the value of artifactoryAnalyzerBearerToken
+     */
+    public String getArtifactoryAnalyzerBearerToken() {
+        return artifactoryAnalyzerBearerToken;
+    }
+
+    /**
+     * Set the value of artifactoryAnalyzerBearerToken.
+     *
+     * @param artifactoryAnalyzerBearerToken new value of
+     * artifactoryAnalyzerBearerToken
+     */
+    public void setArtifactoryAnalyzerBearerToken(String artifactoryAnalyzerBearerToken) {
+        this.artifactoryAnalyzerBearerToken = artifactoryAnalyzerBearerToken;
+    }
+
     @Override
     public void execute() throws BuildException {
         dealWithReferences();
@@ -1064,6 +1315,15 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED, rubygemsAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_OPENSSL_ENABLED, opensslAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_CMAKE_ENABLED, cmakeAnalyzerEnabled);
+
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED, artifactoryAnalyzerEnabled);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_URL, artifactoryAnalyzerUrl);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_USES_PROXY, artifactoryAnalyzerUseProxy);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_PARALLEL_ANALYSIS, artifactoryAnalyzerParallelAnalysis);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME, artifactoryAnalyzerUsername);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN, artifactoryAnalyzerApiToken);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_BEARER_TOKEN, artifactoryAnalyzerBearerToken);
+
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, swiftPackageManagerAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, cocoapodsAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, bundleAuditAnalyzerEnabled);
@@ -1072,6 +1332,10 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED, nspAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, retirejsFilterNonVulnerable);
+        getSettings().setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, retirejsFilters.toArray(new String[retirejsFilters.size()]));
+
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);

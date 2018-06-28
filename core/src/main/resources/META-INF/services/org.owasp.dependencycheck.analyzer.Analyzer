@@ -10,6 +10,7 @@ org.owasp.dependencycheck.analyzer.NvdCveAnalyzer
 org.owasp.dependencycheck.analyzer.VulnerabilitySuppressionAnalyzer
 org.owasp.dependencycheck.analyzer.CentralAnalyzer
 org.owasp.dependencycheck.analyzer.NexusAnalyzer
+org.owasp.dependencycheck.analyzer.ArtifactoryAnalyzer
 org.owasp.dependencycheck.analyzer.NuspecAnalyzer
 org.owasp.dependencycheck.analyzer.AssemblyAnalyzer
 org.owasp.dependencycheck.analyzer.PythonDistributionAnalyzer
@@ -19,6 +20,7 @@ org.owasp.dependencycheck.analyzer.OpenSSLAnalyzer
 org.owasp.dependencycheck.analyzer.CMakeAnalyzer
 org.owasp.dependencycheck.analyzer.NodePackageAnalyzer
 org.owasp.dependencycheck.analyzer.NspAnalyzer
+org.owasp.dependencycheck.analyzer.RetireJsAnalyzer
 org.owasp.dependencycheck.analyzer.RubyGemspecAnalyzer
 org.owasp.dependencycheck.analyzer.RubyBundlerAnalyzer
 org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer

@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,8 +34,6 @@ import java.security.ProtectionDomain;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.UUID;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * A simple settings container that wraps the dependencycheck.properties file.
@@ -114,9 +113,14 @@ public final class Settings {
          */
         public static final String DB_PASSWORD = "data.password";
         /**
-         * The base path to use for the data directory (for embedded db).
+         * The base path to use for the data directory (for embedded db and
+         * other cached resources from the Internet).
          */
         public static final String DATA_DIRECTORY = "data.directory";
+        /**
+         * The base path to use for the H2 data directory (for embedded db).
+         */
+        public static final String H2_DATA_DIRECTORY = "data.h2.directory";
         /**
          * The database file name.
          */
@@ -276,9 +280,34 @@ public final class Settings {
          */
         public static final String ANALYZER_NSP_PACKAGE_ENABLED = "analyzer.nsp.package.enabled";
         /**
-         * The properties key for whether the Nexus analyzer is enabled.
+         * The properties key for supplying the URL to the Node Security
+         * Platform API.
          */
         public static final String ANALYZER_NSP_URL = "analyzer.nsp.url";
+        /**
+         * The properties key for whether the RetireJS analyzer is enabled.
+         */
+        public static final String ANALYZER_RETIREJS_ENABLED = "analyzer.retirejs.enabled";
+        /**
+         * The properties key for whether the RetireJS analyzer file content
+         * filters.
+         */
+        public static final String ANALYZER_RETIREJS_FILTERS = "analyzer.retirejs.filters";
+        /**
+         * The properties key for whether the RetireJS analyzer should filter
+         * out non-vulnerable dependencies.
+         */
+        public static final String ANALYZER_RETIREJS_FILTER_NON_VULNERABLE = "analyzer.retirejs.filternonvulnerable";
+
+        /**
+         * The properties key for defining the URL to the RetireJS repository.
+         */
+        public static final String ANALYZER_RETIREJS_REPO_JS_URL = "analyzer.retirejs.repo.js.url";
+        /**
+         * The properties key to control the skipping of the check for CVE
+         * updates.
+         */
+        public static final String ANALYZER_RETIREJS_REPO_VALID_FOR_HOURS = "analyzer.retirejs.repo.validforhours";
         /**
          * The properties key for whether the composer lock file analyzer is
          * enabled.
@@ -331,6 +360,36 @@ public final class Settings {
          * The properties key for using the proxy to reach Nexus.
          */
         public static final String ANALYZER_NEXUS_USES_PROXY = "analyzer.nexus.proxy";
+        /**
+         * The properties key for whether the Artifactory analyzer is enabled.
+         */
+        public static final String ANALYZER_ARTIFACTORY_ENABLED = "analyzer.artifactory.enabled";
+        /**
+         * The properties key for the Artifactory search URL.
+         */
+        public static final String ANALYZER_ARTIFACTORY_URL = "analyzer.artifactory.url";
+        /**
+         * The properties key for the Artifactory username.
+         */
+        public static final String ANALYZER_ARTIFACTORY_API_USERNAME = "analyzer.artifactory.api.username";
+        /**
+         * The properties key for the Artifactory API token.
+         */
+        public static final String ANALYZER_ARTIFACTORY_API_TOKEN = "analyzer.artifactory.api.token";
+        /**
+         * The properties key for the Artifactory bearer token (https://www.jfrog.com/confluence/display/RTF/Access+Tokens).
+         * It can be generated using <code>curl -u yourUserName -X POST "https://artifactory.techno.ingenico.com/artifactory/api/security/token" -d "username=yourUserName"</code>.
+         */
+        public static final String ANALYZER_ARTIFACTORY_BEARER_TOKEN = "analyzer.artifactory.bearer.token";
+        /**
+         * The properties key for using the proxy to reach Artifactory.
+         */
+        public static final String ANALYZER_ARTIFACTORY_USES_PROXY = "analyzer.artifactory.proxy";
+        /**
+         * The properties key for whether the Artifactory analyzer should use
+         * parallel processing.
+         */
+        public static final String ANALYZER_ARTIFACTORY_PARALLEL_ANALYSIS = "analyzer.artifactory.parallel.analysis";
         /**
          * The properties key for whether the Central analyzer is enabled.
          */
@@ -617,7 +676,8 @@ public final class Settings {
      */
     public void setArrayIfNotEmpty(String key, String[] value) {
         if (null != value && value.length > 0) {
-            setString(key, StringUtils.join(value, ARRAY_SEP));
+            setString(key, new Gson().toJson(value));
+            //setString(key, StringUtils.join(value, ARRAY_SEP));
         }
     }
 
@@ -845,7 +905,11 @@ public final class Settings {
     public String[] getArray(final String key) {
         final String string = getString(key);
         if (string != null) {
-            return string.split(ARRAY_SEP);
+            if (string.charAt(0) == '{' || string.charAt(0) == '[') {
+                return new Gson().fromJson(string, String[].class);
+            } else {
+                return string.split(ARRAY_SEP);
+            }
         }
         return null;
     }
@@ -977,7 +1041,7 @@ public final class Settings {
             throw new InvalidSettingException(msg);
         }
         if (connStr.contains("%s")) {
-            final File directory = getDataDirectory();
+            final File directory = getH2DataDirectory();
             LOGGER.debug("Data directory: {}", directory);
             String fileName = null;
             if (dbFileNameKey != null) {
@@ -1001,9 +1065,8 @@ public final class Settings {
     }
 
     /**
-     * Retrieves the directory that the JAR file exists in so that we can ensure
-     * we always use a common data directory for the embedded H2 database. This
-     * is public solely for some unit tests; otherwise this should be private.
+     * Retrieves the primary data directory that is used for caching web
+     * content.
      *
      * @return the data directory to store data files
      * @throws IOException is thrown if an IOException occurs of course...
@@ -1014,6 +1077,28 @@ public final class Settings {
             return path;
         }
         throw new IOException(String.format("Unable to create the data directory '%s'",
+                (path == null) ? "unknown" : path.getAbsolutePath()));
+    }
+
+    /**
+     * Retrieves the H2 data directory - if the database has been moved to the
+     * temp directory this method will return the temp directory.
+     *
+     * @return the data directory to store data files
+     * @throws IOException is thrown if an IOException occurs of course...
+     */
+    public File getH2DataDirectory() throws IOException {
+        final String h2Test = getString(Settings.KEYS.H2_DATA_DIRECTORY);
+        final File path;
+        if (h2Test != null && !h2Test.isEmpty()) {
+            path = getDataFile(Settings.KEYS.H2_DATA_DIRECTORY);
+        } else {
+            path = getDataFile(Settings.KEYS.DATA_DIRECTORY);
+        }
+        if (path != null && (path.exists() || path.mkdirs())) {
+            return path;
+        }
+        throw new IOException(String.format("Unable to create the h2 data directory '%s'",
                 (path == null) ? "unknown" : path.getAbsolutePath()));
     }
 
