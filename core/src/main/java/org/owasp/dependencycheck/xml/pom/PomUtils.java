@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import javax.annotation.concurrent.ThreadSafe;
+import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.analyzer.JarAnalyzer;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -66,6 +67,16 @@ public final class PomUtils {
             throw ex;
         } catch (PomParseException ex) {
             LOGGER.warn("Unable to parse pom '{}'", file.getPath());
+            //todo remove test code for intermittent error.
+            try {
+                File target = new File("~/Projects/DependencyCheck/core/target/");
+                if (target.isDirectory()) {
+                    FileUtils.copyFile(file, target);
+                    LOGGER.info("Unparsable pom was copied to {}",target.toString());
+                }
+            } catch (IOException ex1) {
+                throw new RuntimeException(ex1);
+            }
             LOGGER.debug("", ex);
             throw new AnalysisException(ex);
         } catch (Throwable ex) {
