@@ -181,9 +181,9 @@ public class Dependency extends EvidenceCollection implements Serializable {
     /**
      * Constructs a new Dependency object.
      *
-     * @param file      the File to create the dependency object from.
+     * @param file the File to create the dependency object from.
      * @param isVirtual specifies if the dependency is virtual indicating the
-     *                  file doesn't actually exist.
+     * file doesn't actually exist.
      */
     public Dependency(File file, boolean isVirtual) {
         this();
@@ -192,13 +192,31 @@ public class Dependency extends EvidenceCollection implements Serializable {
         this.filePath = this.actualFilePath;
         this.fileName = file.getName();
         this.packagePath = filePath;
+        if (!isVirtual && file.isFile()) {
+            calculateChecksums(file);
+        }
+    }
+
+    /**
+     * Calculates the checksums for the given file.
+     *
+     * @param file the file used to calculate the checksums
+     */
+    private void calculateChecksums(File file) {
+        try {
+            this.md5sum = Checksum.getMD5Checksum(file);
+            this.sha1sum = Checksum.getSHA1Checksum(file);
+            this.sha256sum = Checksum.getSHA256Checksum(file);
+        } catch (NoSuchAlgorithmException | IOException ex) {
+            LOGGER.debug(String.format("Unable to calculate checksums on %s", file), ex);
+        }
     }
 
     /**
      * Constructs a new Dependency object.
      *
      * @param isVirtual specifies if the dependency is virtual indicating the
-     *                  file doesn't actually exist.
+     * file doesn't actually exist.
      */
     public Dependency(boolean isVirtual) {
         this();
@@ -260,6 +278,10 @@ public class Dependency extends EvidenceCollection implements Serializable {
         this.sha1sum = null;
         this.sha256sum = null;
         this.md5sum = null;
+        final File file = getActualFile();
+        if (file.isFile()) {
+            calculateChecksums(this.getActualFile());
+        }
     }
 
     /**
@@ -403,9 +425,9 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * Adds an entry to the list of detected Identifiers for the dependency
      * file.
      *
-     * @param type  the type of identifier (such as CPE)
+     * @param type the type of identifier (such as CPE)
      * @param value the value of the identifier
-     * @param url   the URL of the identifier
+     * @param url the URL of the identifier
      */
     public synchronized void addIdentifier(String type, String value, String url) {
         final Identifier i = new Identifier(type, value, url);
@@ -416,9 +438,9 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * Adds an entry to the list of detected Identifiers for the dependency
      * file.
      *
-     * @param type       the type of identifier (such as CPE)
-     * @param value      the value of the identifier
-     * @param url        the URL of the identifier
+     * @param type the type of identifier (such as CPE)
+     * @param value the value of the identifier
+     * @param url the URL of the identifier
      * @param confidence the confidence in the Identifier being accurate
      */
     public synchronized void addIdentifier(String type, String value, String url, Confidence confidence) {
@@ -439,9 +461,9 @@ public class Dependency extends EvidenceCollection implements Serializable {
     /**
      * Adds the maven artifact as evidence.
      *
-     * @param source        The source of the evidence
+     * @param source The source of the evidence
      * @param mavenArtifact The maven artifact
-     * @param confidence    The confidence level of this evidence
+     * @param confidence The confidence level of this evidence
      */
     public void addAsEvidence(String source, MavenArtifact mavenArtifact, Confidence confidence) {
         if (mavenArtifact.getGroupId() != null && !mavenArtifact.getGroupId().isEmpty()) {
@@ -772,6 +794,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
                 .append(this.packagePath, other.packagePath)
                 .append(this.md5sum, other.md5sum)
                 .append(this.sha1sum, other.sha1sum)
+                .append(this.sha256sum, other.sha256sum)
                 .append(this.identifiers, other.identifiers)
                 .append(this.description, other.description)
                 .append(this.license, other.license)
@@ -798,6 +821,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
                 .append(packagePath)
                 .append(md5sum)
                 .append(sha1sum)
+                .append(sha256sum)
                 .append(identifiers)
                 .append(description)
                 .append(license)
@@ -862,6 +886,5 @@ public class Dependency extends EvidenceCollection implements Serializable {
 
         String hash(File file) throws IOException, NoSuchAlgorithmException;
     }
-
 
 }

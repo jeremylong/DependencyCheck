@@ -239,12 +239,29 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                         }
                         LOGGER.debug("Downloading {}", ma.getPomUrl());
                         final Downloader downloader = new Downloader(getSettings());
-                        downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);
+                        final int maxAttempts = this.getSettings().getInt(Settings.KEYS.ANALYZER_CENTRAL_RETRY_COUNT, 3);
+                        int retryCount = 0;
+                        long sleepingTimeBetweenRetriesInMillis = BASE_RETRY_WAIT;
+                        boolean success = false;
+                        do {
+                            try {
+                                downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);
+                                success = true;
+                            } catch (DownloadFailedException ex) {
+                                try {
+                                    Thread.sleep(sleepingTimeBetweenRetriesInMillis);
+                                    sleepingTimeBetweenRetriesInMillis*=2;
+                                } catch (InterruptedException ex1) {
+                                    throw new RuntimeException(ex1);
+                                }
+                            }
+                        } while (!success && retryCount++ < maxAttempts);
                         PomUtils.analyzePOM(dependency, pomFile);
 
                     } catch (DownloadFailedException ex) {
                         LOGGER.warn("Unable to download pom.xml for {} from Central; "
                                 + "this could result in undetected CPE/CVEs.", dependency.getFileName());
+
                     } finally {
                         if (pomFile != null && pomFile.exists() && !FileUtils.deleteQuietly(pomFile)) {
                             LOGGER.debug("Failed to delete temporary pom file {}", pomFile.toString());
