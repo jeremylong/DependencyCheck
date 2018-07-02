@@ -165,7 +165,9 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
 
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        engine.removeDependency(dependency);
+        if (!PACKAGE_JSON.equals(dependency.getFileName())) {
+            engine.removeDependency(dependency);
+        }
         final File dependencyFile = dependency.getActualFile();
         if (!dependencyFile.isFile() || dependencyFile.length() == 0 || !shouldProcess(dependencyFile)) {
             return;
@@ -188,10 +190,15 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
             final JsonObject json = jsonReader.readObject();
             final String parentName = json.getString("name", "");
             final String parentVersion = json.getString("version", "");
-            if (parentName.isEmpty() || parentVersion.isEmpty()) {
+            if (parentName.isEmpty()) {
                 return;
             }
-            final String parentPackage = String.format("%s:%s", parentName, parentVersion);
+            final String parentPackage;
+            if (!parentVersion.isEmpty()) {
+                parentPackage = String.format("%s:%s", parentName, parentVersion);
+            } else {
+                parentPackage = parentName;
+            }
             processDependencies(json, baseDir, dependencyFile, parentPackage, engine);
         } catch (JsonException e) {
             LOGGER.warn("Failed to parse package.json file.", e);
@@ -251,9 +258,13 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                     child.addEvidence(EvidenceType.VENDOR, rootFile.getName(), "name", name, Confidence.HIGHEST);
                     child.addEvidence(EvidenceType.PRODUCT, rootFile.getName(), "name", name, Confidence.HIGHEST);
                     child.addEvidence(EvidenceType.VERSION, rootFile.getName(), "version", version, Confidence.HIGHEST);
+                    child.setName(name);
+                    child.setVersion(version);
+                    final String packagePath = String.format("%s:%s", name, version);
+                    child.setDisplayFileName(packagePath);
+                    child.setPackagePath(packagePath);
                 }
-                child.setName(name);
-                child.setVersion(version);
+
                 child.addProjectReference(parentPackage);
                 child.setEcosystem(DEPENDENCY_ECOSYSTEM);
 

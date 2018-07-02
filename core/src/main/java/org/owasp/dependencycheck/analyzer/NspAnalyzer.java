@@ -157,7 +157,9 @@ public class NspAnalyzer extends AbstractNpmAnalyzer {
 
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        engine.removeDependency(dependency);
+        if (dependency.getDisplayFileName().equals(dependency.getFileName()))  {
+            engine.removeDependency(dependency);
+        }
         final File file = dependency.getActualFile();
         if (!file.isFile() || file.length() == 0 || !shouldProcess(file)) {
             return;

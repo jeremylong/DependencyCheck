@@ -243,10 +243,12 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
      * @param dependency the dependency to add the evidence too
      */
     public void gatherEvidence(final JsonObject json, Dependency dependency) {
+        String displayName = null;
         if (json.containsKey("name")) {
             final Object value = json.get("name");
             if (value instanceof JsonString) {
                 final String valueString = ((JsonString) value).getString();
+                displayName = valueString;
                 dependency.setName(valueString);
                 dependency.setPackagePath(valueString);
                 dependency.addEvidence(EvidenceType.PRODUCT, PACKAGE_JSON, "name", valueString, Confidence.HIGHEST);
@@ -257,13 +259,22 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
         }
         final String desc = addToEvidence(dependency, EvidenceType.PRODUCT, json, "description");
         dependency.setDescription(desc);
-        addToEvidence(dependency, EvidenceType.VENDOR, json, "author");
+        final String vendor = addToEvidence(dependency, EvidenceType.VENDOR, json, "author");
         final String version = addToEvidence(dependency, EvidenceType.VERSION, json, "version");
         if (version != null) {
+            displayName = String.format("%s:%s", displayName, version);
             dependency.setVersion(version);
             dependency.addIdentifier("npm", String.format("%s:%s", dependency.getName(), version), null, Confidence.HIGHEST);
         }
-
+        if (displayName != null) {
+            dependency.setDisplayFileName(displayName);
+            dependency.setPackagePath(displayName);
+        } else {
+            LOGGER.warn("Unable to determine package name or version for {}", dependency.getActualFilePath());
+            if (vendor != null && !vendor.isEmpty()) {
+                dependency.setDisplayFileName(String.format("%s package.json", vendor));
+            }
+        }
         // Adds the license if defined in package.json
         if (json.containsKey("license")) {
             final Object value = json.get("license");
