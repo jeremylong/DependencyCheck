@@ -131,11 +131,34 @@ analyzers    | bundleAuditEnabled    | Sets whether or not the [experimental](..
 analyzers    | pathToBundleAudit     | The path to bundle audit.                                                                                         | &nbsp;
 analyzers    | retiredEnabled        | Sets whether the [retired analyzers](../analyzers/index.html) will be used. If not set to true the analyzers marked as experimental (see below) will not be used | false
 
+#### Additional Analyzer Configuration
+
+Config Group | Property              | Description                                                                                                       | Default Value
+-------------|-----------------------|-------------------------------------------------------------------------------------------------------------------|------------------
+artifactory  | enabled               | Sets whether Artifactory analyzer will be used                                                                    | false
+artifactory  | url                   | The Artifactory server URL.                                                                                       | &nbsp;
+artifactory  | usesProxy             | Whether Artifactory should be accessed through a proxy or not.                                                    | false
+artifactory  | parallelAnalysis      | Whether the Artifactory analyzer should be run in parallel or not.                                                | true
+artifactory  | username              | The user name (only used with API token) to connect to Artifactory instance.                                      | &nbsp;
+artifactory  | apiToken              | The API token to connect to Artifactory instance, only used if the username or the API key are not defined by artifactoryAnalyzerServerId,artifactoryAnalyzerUsername or artifactoryAnalyzerApiToken | &nbsp;
+artifactory  | bearerToken           | The bearer token to connect to Artifactory instance                                                               | &nbsp;
+retirejs     | enabled               | Sets whether the [experimental](../analyzers/index.html) RetireJS Analyzer should be used.                        | true
+retirejs     | filterNonVulnerable   | Configures the RetireJS Analyzer to remove non-vulnerable JS dependencies from the report.                        | false
+retirejs     | filters               | Configures the list of regular expessions used to filter JS files based on content.                               | &nbsp;
+
+
 #### Example
 ```groovy
 dependencyCheck {
     analyzers {
         assemblyEnabled=false
+        artifactory {
+            enabled=true
+            url='https://internal.artifactory.url'
+        }
+        retirejs {
+            filters = ['(i)copyright Jeremy Long']
+        }
     }
 }
 ```
