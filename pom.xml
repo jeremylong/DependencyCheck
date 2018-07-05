@@ -567,6 +567,10 @@ Copyright (c) 2012 - Jeremy Long
                     <argLine>${failsafeArgLine}</argLine>
                     <systemProperties>
                         <property>
+                            <name>data.directory</name>
+                            <value>${project.build.directory}/data</value>
+                        </property>
+                        <property>
                             <name>temp.directory</name>
                             <value>${project.build.directory}/temp</value>
                         </property>

@@ -72,7 +72,7 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
                     <!-- the following executions are solely to setup the test environment -->
                     <execution>
                         <id>copy-test-data.zip</id>
-                        <phase>validate</phase>
+                        <phase>pre-integration-test</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
@@ -91,7 +91,7 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
                     </execution>
                     <execution>
                         <id>copy-test-resources-1</id>
-                        <phase>validate</phase>
+                        <phase>pre-integration-test</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
@@ -110,7 +110,7 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
                     </execution>
                     <execution>
                         <id>copy-test-resources-2</id>
-                        <phase>validate</phase>
+                        <phase>pre-integration-test</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
@@ -129,7 +129,7 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
                     </execution>
                     <execution>
                         <id>copy-test-resources-3</id>
-                        <phase>validate</phase>
+                        <phase>pre-integration-test</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
@@ -148,7 +148,7 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
                     </execution>
                     <execution>
                         <id>copy-test-resources-4</id>
-                        <phase>validate</phase>
+                        <phase>pre-integration-test</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
@@ -167,7 +167,7 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
                     </execution>
                     <execution>
                         <id>copy-data</id>
-                        <phase>validate</phase>
+                        <phase>pre-integration-test</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
