@@ -32,6 +32,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.security.ProtectionDomain;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -681,10 +682,21 @@ public final class Settings {
     public void setArrayIfNotEmpty(String key, String[] value) {
         if (null != value && value.length > 0) {
             setString(key, new Gson().toJson(value));
-            //setString(key, StringUtils.join(value, ARRAY_SEP));
         }
     }
 
+    /**
+     * Sets a property value only if the array value is not null and not empty.
+     *
+     * @param key the key for the property
+     * @param value the value for the property
+     */
+    public void setArrayIfNotEmpty(String key, List<String> value) {
+        if (null != value && value.size() > 0) {
+            setString(key, new Gson().toJson(value));
+        }
+    }
+    
     /**
      * Sets a property value.
      *

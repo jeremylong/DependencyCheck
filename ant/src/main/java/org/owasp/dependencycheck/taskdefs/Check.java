@@ -1305,7 +1305,7 @@ public class Check extends Update {
     protected void populateSettings() throws BuildException {
         super.populateSettings();
         getSettings().setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);
-        getSettings().setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFiles.toArray(new String[suppressionFiles.size()]));
+        getSettings().setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFiles);
         getSettings().setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, enableExperimental);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIRED_ENABLED, enableRetired);
@@ -1334,7 +1334,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED, nspAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, retirejsFilterNonVulnerable);
-        getSettings().setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, retirejsFilters.toArray(new String[retirejsFilters.size()]));
+        getSettings().setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, retirejsFilters);
 
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
