@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.data.update.RetireJSDataSource;
 
-public class RetireJsAnalyzerTest extends BaseDBTestCase {
+public class RetireJsAnalyzerIT extends BaseDBTestCase {
 
     private RetireJsAnalyzer analyzer;
     private Engine engine;

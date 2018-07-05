@@ -34,7 +34,7 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Jeremy Long
  */
-public class DependencyCheckTaskTest extends BaseDBTestCase {
+public class DependencyCheckTaskIT extends BaseDBTestCase {
 
     @Rule
     public BuildFileRule buildFileRule = new BuildFileRule();
