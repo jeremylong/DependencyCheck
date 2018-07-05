@@ -16,10 +16,10 @@ limitations under the License.
 Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 
 @author Jeremy Long <jeremy.long@owasp.org>
-@version 1.2
+@version 1.8
 
 *#<?xml version="1.0"?>
-<analysis xmlns="https://jeremylong.github.io/DependencyCheck/dependency-check.1.7.xsd">
+<analysis xmlns="https://jeremylong.github.io/DependencyCheck/dependency-check.1.8.xsd">
     <scanInfo>
         <engineVersion>$version</engineVersion>
 #foreach($prop in $properties.getMetaData().entrySet())
@@ -50,6 +50,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <filePath>$enc.xml($dependency.FilePath)</filePath>
             <md5>#if(!$dependency.isVirtual())$enc.xml($dependency.Md5sum)#end</md5>
             <sha1>#if(!$dependency.isVirtual())$enc.xml($dependency.Sha1sum)#end</sha1>
+            <sha256>#if(!$dependency.isVirtual())$enc.xml($dependency.Sha256sum)#end</sha256>
 #if ($dependency.description)
             <description>$enc.xml($dependency.description)</description>
 #end
@@ -66,8 +67,9 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 #if ($dependency.getRelatedDependencies().size()>0)
             <relatedDependencies>
 #foreach($related in $dependency.getRelatedDependencies())
-                <relatedDependency isVirtual="#if($related.isVirtual())true#{else}false#end">
+                <relatedDependency#if($related.isVirtual()) isVirtual="true"#end>
                     <filePath>$enc.xml($related.FilePath)</filePath>
+                    <sha256>#if(!$dependency.isVirtual())$enc.xml($dependency.Sha256sum)#end</sha256>
                     <sha1>#if(!$related.isVirtual())$enc.xml($related.Sha1sum)#end</sha1>
                     <md5>#if(!$related.isVirtual())$enc.xml($related.Md5sum)#end</md5>
 #foreach($id in $related.getIdentifiers())
