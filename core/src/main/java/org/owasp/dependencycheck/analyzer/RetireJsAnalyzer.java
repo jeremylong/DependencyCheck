@@ -241,7 +241,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
                         /* CVEs and OSVDB are an array of Strings - each one a unique vulnerability.
                          * So the JsVulnerability we are operating on may actually be representing
                          * multiple vulnerabilities. */
-                        
+
                         //TODO - can we refactor this to avoid russian doll syndrome (i.e. nesting)?
                         //CSOFF: NestedForDepth
                         for (Map.Entry<String, List<String>> entry : jsVuln.getIdentifiers().entrySet()) {
@@ -287,26 +287,28 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
                             final String key = entry.getKey();
                             final List<String> value = entry.getValue();
                             // CSOFF: NeedBraces
-                            if (null != key) switch (key) {
-                                case "issue":
-                                    individualVuln.setName(libraryResult.getLibrary().getName() + " issue: " + value.get(0));
-                                    individualVuln.addReference(key, key, value.get(0));
-                                    break;
-                                case "bug":
-                                    individualVuln.setName(libraryResult.getLibrary().getName() + " bug: " + value.get(0));
-                                    individualVuln.addReference(key, key, value.get(0));
-                                    break;
-                                case "summary":
-                                    if (null == individualVuln.getName()) {
-                                        individualVuln.setName(value.get(0));
-                                    }
-                                    individualVuln.setDescription(value.get(0));
-                                    break;
-                                case "release":
-                                    individualVuln.addReference(key, key, value.get(0));
-                                    break;
-                                default:
-                                    break;
+                            if (null != key) {
+                                switch (key) {
+                                    case "issue":
+                                        individualVuln.setName(libraryResult.getLibrary().getName() + " issue: " + value.get(0));
+                                        individualVuln.addReference(key, key, value.get(0));
+                                        break;
+                                    case "bug":
+                                        individualVuln.setName(libraryResult.getLibrary().getName() + " bug: " + value.get(0));
+                                        individualVuln.addReference(key, key, value.get(0));
+                                        break;
+                                    case "summary":
+                                        if (null == individualVuln.getName()) {
+                                            individualVuln.setName(value.get(0));
+                                        }
+                                        individualVuln.setDescription(value.get(0));
+                                        break;
+                                    case "release":
+                                        individualVuln.addReference(key, key, value.get(0));
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
                             // CSON: NeedBraces
                             individualVuln.setSource(Vulnerability.Source.RETIREJS);

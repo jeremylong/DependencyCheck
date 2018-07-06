@@ -67,9 +67,9 @@ public class MavenArtifact {
     /**
      * Creates a MavenArtifact with the given attributes.
      *
-     * @param groupId    the groupId
+     * @param groupId the groupId
      * @param artifactId the artifactId
-     * @param version    the version
+     * @param version the version
      */
     public MavenArtifact(String groupId, String artifactId, String version) {
         this.groupId = groupId;
@@ -80,9 +80,9 @@ public class MavenArtifact {
     /**
      * Creates a MavenArtifact with the given attributes.
      *
-     * @param groupId      the groupId
-     * @param artifactId   the artifactId
-     * @param version      the version
+     * @param groupId the groupId
+     * @param artifactId the artifactId
+     * @param version the version
      * @param jarAvailable if the jar file is available from central
      * @param pomAvailable if the pom file is available from central
      */
@@ -105,10 +105,10 @@ public class MavenArtifact {
     /**
      * Creates a MavenArtifact with the given attributes.
      *
-     * @param groupId    the groupId
+     * @param groupId the groupId
      * @param artifactId the artifactId
-     * @param version    the version
-     * @param url        the artifactLink url
+     * @param version the version
+     * @param url the artifactLink url
      */
     public MavenArtifact(String groupId, String artifactId, String version, String url) {
         this.groupId = groupId;
@@ -120,11 +120,11 @@ public class MavenArtifact {
     /**
      * Creates a MavenArtifact with the given attributes.
      *
-     * @param groupId     the groupId
-     * @param artifactId  the artifactId
-     * @param version     the version
+     * @param groupId the groupId
+     * @param artifactId the artifactId
+     * @param version the version
      * @param artifactUrl the artifactLink url
-     * @param pomUrl      the pomUrl
+     * @param pomUrl the pomUrl
      */
     public MavenArtifact(String groupId, String artifactId, String version, String artifactUrl, String pomUrl) {
         this.groupId = groupId;
@@ -134,6 +134,14 @@ public class MavenArtifact {
         this.pomUrl = pomUrl;
     }
 
+    /**
+     * Tries to determine the URL to the pom.xml.
+     *
+     * @param artifactId the artifact id
+     * @param version the version
+     * @param artifactUrl the artifact URL
+     * @return the string representation of the URL
+     */
     public static String derivePomUrl(String artifactId, String version, String artifactUrl) {
         return artifactUrl.substring(0, artifactUrl.lastIndexOf('/')) + '/' + artifactId + '-' + version + ".pom";
     }

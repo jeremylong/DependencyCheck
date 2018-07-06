@@ -244,17 +244,19 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                         long sleepingTimeBetweenRetriesInMillis = BASE_RETRY_WAIT;
                         boolean success = false;
                         do {
+                            //CSOFF: NestedTryDepth
                             try {
                                 downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);
                                 success = true;
                             } catch (DownloadFailedException ex) {
                                 try {
                                     Thread.sleep(sleepingTimeBetweenRetriesInMillis);
-                                    sleepingTimeBetweenRetriesInMillis*=2;
+                                    sleepingTimeBetweenRetriesInMillis *= 2;
                                 } catch (InterruptedException ex1) {
                                     throw new RuntimeException(ex1);
                                 }
                             }
+                            //CSON: NestedTryDepth
                         } while (!success && retryCount++ < maxAttempts);
                         PomUtils.analyzePOM(dependency, pomFile);
 

@@ -157,7 +157,7 @@ public class CentralSearch {
                         final String a = xpath.evaluate("./str[@name='a']", docs.item(i));
                         LOGGER.trace("ArtifactId: {}", a);
                         final String v = xpath.evaluate("./str[@name='v']", docs.item(i));
-                        NodeList attributes = (NodeList) xpath.evaluate("./arr[@name='ec']/str", docs.item(i), XPathConstants.NODESET);
+                        final NodeList attributes = (NodeList) xpath.evaluate("./arr[@name='ec']/str", docs.item(i), XPathConstants.NODESET);
                         boolean pomAvailable = false;
                         boolean jarAvailable = false;
                         for (int x = 0; x < attributes.getLength(); x++) {

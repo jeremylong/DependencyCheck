@@ -21,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -62,16 +63,16 @@ public class PomProjectInputStreamTest {
 
     @Test
     public void testFilter() throws UnsupportedEncodingException, IOException {
-        InputStream in = new ByteArrayInputStream(POM.getBytes("UTF-8"));
+        InputStream in = new ByteArrayInputStream(POM.getBytes(StandardCharsets.UTF_8));
         PomProjectInputStream instance = new PomProjectInputStream(in);
-        byte[] expected = "<project></project>".getBytes("UTF-8");
+        byte[] expected = "<project></project>".getBytes(StandardCharsets.UTF_8);
         byte[] results = new byte[expected.length];
         int count = instance.read(results, 0, results.length);
         assertEquals(results.length, count);
         assertArrayEquals(expected, results);
         instance.close();
 
-        in = new ByteArrayInputStream(INVALID.getBytes("UTF-8"));
+        in = new ByteArrayInputStream(INVALID.getBytes(StandardCharsets.UTF_8));
         instance = new PomProjectInputStream(in);
         results = new byte[100];
         count = instance.read(results, 0, 100);
@@ -86,29 +87,29 @@ public class PomProjectInputStreamTest {
     @Test
     public void testFindSequence() throws IOException {
 
-        byte[] sequence = "project".getBytes("UTF-8");
-        byte[] buffer = "my big project".getBytes("UTF-8");
+        byte[] sequence = "project".getBytes(StandardCharsets.UTF_8);
+        byte[] buffer = "my big project".getBytes(StandardCharsets.UTF_8);
 
         int expResult = 7;
         int result = PomProjectInputStream.findSequence(sequence, buffer);
         assertEquals(expResult, result);
 
-        sequence = "<project".getBytes("UTF-8");
-        buffer = "my big project".getBytes("UTF-8");
+        sequence = "<project".getBytes(StandardCharsets.UTF_8);
+        buffer = "my big project".getBytes(StandardCharsets.UTF_8);
 
         expResult = -1;
         result = PomProjectInputStream.findSequence(sequence, buffer);
         assertEquals(expResult, result);
 
-        sequence = "bigger sequence".getBytes("UTF-8");
-        buffer = "buffer".getBytes("UTF-8");
+        sequence = "bigger sequence".getBytes(StandardCharsets.UTF_8);
+        buffer = "buffer".getBytes(StandardCharsets.UTF_8);
 
         expResult = -1;
         result = PomProjectInputStream.findSequence(sequence, buffer);
         assertEquals(expResult, result);
 
-        sequence = "fff".getBytes("UTF-8");
-        buffer = "buffer".getBytes("UTF-8");
+        sequence = "fff".getBytes(StandardCharsets.UTF_8);
+        buffer = "buffer".getBytes(StandardCharsets.UTF_8);
 
         expResult = -1;
         result = PomProjectInputStream.findSequence(sequence, buffer);

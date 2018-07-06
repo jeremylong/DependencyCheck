@@ -30,6 +30,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.ProtectionDomain;
 import java.util.Enumeration;
 import java.util.List;
@@ -350,7 +351,8 @@ public final class Settings {
          */
         public static final String ANALYZER_NUSPEC_ENABLED = "analyzer.nuspec.enabled";
         /**
-         * The properties key for whether the .NET MSBuild Project analyzer is enabled.
+         * The properties key for whether the .NET MSBuild Project analyzer is
+         * enabled.
          */
         public static final String ANALYZER_MSBUILD_PROJECT_ENABLED = "analyzer.msbuildproject.enabled";
         /**
@@ -382,8 +384,12 @@ public final class Settings {
          */
         public static final String ANALYZER_ARTIFACTORY_API_TOKEN = "analyzer.artifactory.api.token";
         /**
-         * The properties key for the Artifactory bearer token (https://www.jfrog.com/confluence/display/RTF/Access+Tokens).
-         * It can be generated using <code>curl -u yourUserName -X POST "https://artifactory.techno.ingenico.com/artifactory/api/security/token" -d "username=yourUserName"</code>.
+         * The properties key for the Artifactory bearer token
+         * (https://www.jfrog.com/confluence/display/RTF/Access+Tokens). It can
+         * be generated using:
+         * <pre>curl -u yourUserName -X POST \
+         *    "https://artifactory.techno.ingenico.com/artifactory/api/security/token" \
+         *    -d "username=yourUserName"</pre>.
          */
         public static final String ANALYZER_ARTIFACTORY_BEARER_TOKEN = "analyzer.artifactory.bearer.token";
         /**
@@ -696,7 +702,7 @@ public final class Settings {
             setString(key, new Gson().toJson(value));
         }
     }
-    
+
     /**
      * Sets a property value.
      *
@@ -855,7 +861,7 @@ public final class Settings {
             jarPath = Settings.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         }
         try {
-            decodedPath = URLDecoder.decode(jarPath, "UTF-8");
+            decodedPath = URLDecoder.decode(jarPath, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException ex) {
             LOGGER.trace("", ex);
         }

@@ -47,7 +47,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Class of methods to search Artifactory for hashes and determine Maven GAV from there.
+ * Class of methods to search Artifactory for hashes and determine Maven GAV
+ * from there.
  *
  * @author nhenneaux
  */
@@ -64,7 +65,7 @@ public class ArtifactorySearch {
      */
     private static final Pattern PATH_PATTERN = Pattern.compile("^/(?<groupId>.+)/(?<artifactId>[^/]+)/(?<version>[^/]+)/[^/]+$");
     /**
-     * Extracted duplicateArtifactorySearchIT.java  comment.
+     * Extracted duplicateArtifactorySearchIT.java comment.
      */
     private static final String WHILE_ACTUAL_IS = " while actual is ";
     /**
@@ -111,14 +112,15 @@ public class ArtifactorySearch {
     }
 
     /**
-     * Searches the configured Central URL for the given hash (MD5, SHA1 and SHA256). If the
-     * artifact is found, a <code>MavenArtifact</code> is populated with the
-     * GAV.
+     * Searches the configured Central URL for the given hash (MD5, SHA1 and
+     * SHA256). If the artifact is found, a <code>MavenArtifact</code> is
+     * populated with the GAV.
      *
-     * @param dependency the dependency for which to search (search is based on hashes)
+     * @param dependency the dependency for which to search (search is based on
+     * hashes)
      * @return the populated Maven GAV.
      * @throws FileNotFoundException if the specified artifact is not found
-     * @throws IOException           if it's unable to connect to the specified repository
+     * @throws IOException if it's unable to connect to the specified repository
      */
     public List<MavenArtifact> search(Dependency dependency) throws IOException {
 
@@ -133,6 +135,13 @@ public class ArtifactorySearch {
 
     }
 
+    /**
+     * Makes an connection to the given URL.
+     *
+     * @param url the URL to connect to
+     * @return the HTTP URL Connection
+     * @throws IOException thrown if there is an error making the connection
+     */
     private HttpURLConnection connect(URL url) throws IOException {
         LOGGER.debug("Searching Artifactory url {}", url);
 
@@ -149,8 +158,8 @@ public class ArtifactorySearch {
         final String username = settings.getString(Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME);
         final String apiToken = settings.getString(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN);
         if (username != null && apiToken != null) {
-            String userpassword = username + ":" + apiToken;
-            String encodedAuthorization = DatatypeConverter.printBase64Binary(userpassword.getBytes(StandardCharsets.UTF_8));
+            final String userpassword = username + ":" + apiToken;
+            final String encodedAuthorization = DatatypeConverter.printBase64Binary(userpassword.getBytes(StandardCharsets.UTF_8));
             conn.addRequestProperty("Authorization", "Basic " + encodedAuthorization);
         } else {
             final String bearerToken = settings.getString(Settings.KEYS.ANALYZER_ARTIFACTORY_BEARER_TOKEN);
@@ -163,13 +172,27 @@ public class ArtifactorySearch {
         return conn;
     }
 
+    /**
+     * Constructs the URL using the SHA1 checksum.
+     *
+     * @param sha1sum the SHA1 checksum
+     * @return the API URL to search for the given checksum
+     * @throws MalformedURLException thrown if the URL is malformed
+     */
     private URL buildUrl(String sha1sum) throws MalformedURLException {
         // TODO Investigate why sha256 parameter is not working
         // API defined https://www.jfrog.com/confluence/display/RTF/Artifactory+REST+API#ArtifactoryRESTAPI-ChecksumSearch
         return new URL(rootURL + "/api/search/checksum?sha1=" + sha1sum);
     }
 
-
+    /**
+     * Process the Artifactory response.
+     *
+     * @param dependency the dependency
+     * @param conn the HTTP URL Connection
+     * @return a list of the Maven Artifact information
+     * @throws IOException thrown if there is an I/O error
+     */
     protected List<MavenArtifact> processResponse(Dependency dependency, HttpURLConnection conn) throws IOException {
         final JsonObject asJsonObject;
         try (final InputStreamReader streamReader = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)) {
@@ -180,7 +203,6 @@ public class ArtifactorySearch {
         if (numFound == 0) {
             throw new FileNotFoundException("Artifact " + dependency + " not found in Artifactory");
         }
-
 
         final List<MavenArtifact> result = new ArrayList<>(numFound);
         for (JsonElement jsonElement : results) {
@@ -211,21 +233,41 @@ public class ArtifactorySearch {
         return result;
     }
 
+    /**
+     * Validates the hashes of the dependency.
+     *
+     * @param dependency the dependency
+     * @param sha1 the SHA1 checksum
+     * @param sha256 the SHA256 checksum
+     * @param md5 the MD5 checksum
+     * @throws FileNotFoundException thrown if one of the checksums does not
+     * match
+     */
     private void checkHashes(Dependency dependency, String sha1, String sha256, String md5) throws FileNotFoundException {
         final String md5sum = dependency.getMd5sum();
         if (!md5.equals(md5sum)) {
-            throw new FileNotFoundException("Artifact found by API is not matching the md5 of the artifact (repository hash is " + md5 + WHILE_ACTUAL_IS + md5sum + ") !");
+            throw new FileNotFoundException("Artifact found by API is not matching the md5 "
+                    + "of the artifact (repository hash is " + md5 + WHILE_ACTUAL_IS + md5sum + ") !");
         }
         final String sha1sum = dependency.getSha1sum();
         if (!sha1.equals(sha1sum)) {
-            throw new FileNotFoundException("Artifact found by API is not matching the SHA1 of the artifact (repository hash is " + sha1 + WHILE_ACTUAL_IS + sha1sum + ") !");
+            throw new FileNotFoundException("Artifact found by API is not matching the SHA1 "
+                    + "of the artifact (repository hash is " + sha1 + WHILE_ACTUAL_IS + sha1sum + ") !");
         }
         final String sha256sum = dependency.getSha256sum();
         if (sha256 != null && !sha256.equals(sha256sum)) {
-            throw new FileNotFoundException("Artifact found by API is not matching the SHA-256 of the artifact (repository hash is " + sha256 + WHILE_ACTUAL_IS + sha256sum + ") !");
+            throw new FileNotFoundException("Artifact found by API is not matching the SHA-256 "
+                    + "of the artifact (repository hash is " + sha256 + WHILE_ACTUAL_IS + sha256sum + ") !");
         }
     }
 
+    /**
+     * Performs a pre-flight request to ensure the Artifactory service is
+     * reachable.
+     *
+     * @return <code>true</code> if Artifactory could be reached; otherwise
+     * <code>false</code>.
+     */
     public boolean preflightRequest() {
         try {
             final URL url = buildUrl(Checksum.getSHA1Checksum(UUID.randomUUID().toString()));

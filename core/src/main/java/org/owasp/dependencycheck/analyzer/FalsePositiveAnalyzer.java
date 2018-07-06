@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.analyzer;
 import java.io.FileFilter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -437,16 +438,16 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                 final String newCpe4 = String.format("cpe:/a:oracle:opensso:%s", identifier.getValue().substring(pos));
                 try {
                     dependency.addIdentifier("cpe", newCpe,
-                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe, "UTF-8")),
+                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe, StandardCharsets.UTF_8.name())),
                             identifier.getConfidence());
                     dependency.addIdentifier("cpe", newCpe2,
-                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe2, "UTF-8")),
+                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe2, StandardCharsets.UTF_8.name())),
                             identifier.getConfidence());
                     dependency.addIdentifier("cpe", newCpe3,
-                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe3, "UTF-8")),
+                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe3, StandardCharsets.UTF_8.name())),
                             identifier.getConfidence());
                     dependency.addIdentifier("cpe", newCpe4,
-                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe4, "UTF-8")),
+                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe4, StandardCharsets.UTF_8.name())),
                             identifier.getConfidence());
                 } catch (UnsupportedEncodingException ex) {
                     LOGGER.debug("", ex);
@@ -459,7 +460,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                 final String newCpe = String.format("cpe:/a:apache:xml_security_for_java:%s", identifier.getValue().substring(pos));
                 try {
                     dependency.addIdentifier("cpe", newCpe,
-                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe, "UTF-8")),
+                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe, StandardCharsets.UTF_8.name())),
                             identifier.getConfidence());
                 } catch (UnsupportedEncodingException ex) {
                     LOGGER.debug("", ex);

@@ -628,11 +628,11 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                     }
                     if (dbVer == null) { //special case, no version specified - everything is vulnerable
                         hasBroadMatch = true;
-                        final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(vs.getName(), "UTF-8"));
+                        final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(vs.getName(), StandardCharsets.UTF_8.name()));
                         final IdentifierMatch match = new IdentifierMatch("cpe", vs.getName(), url, IdentifierConfidence.BROAD_MATCH, conf);
                         collected.add(match);
                     } else if (evVer.equals(dbVer)) { //yeah! exact match
-                        final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(vs.getName(), "UTF-8"));
+                        final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(vs.getName(), StandardCharsets.UTF_8.name()));
                         final IdentifierMatch match = new IdentifierMatch("cpe", vs.getName(), url, IdentifierConfidence.EXACT_MATCH, conf);
                         collected.add(match);
 
@@ -658,7 +658,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         String url = null;
         if (hasBroadMatch) { //if we have a broad match we can add the URL to the best guess.
             final String cpeUrlName = String.format("cpe:/a:%s:%s", vendor, product);
-            url = String.format(NVD_SEARCH_URL, URLEncoder.encode(cpeUrlName, "UTF-8"));
+            url = String.format(NVD_SEARCH_URL, URLEncoder.encode(cpeUrlName, StandardCharsets.UTF_8.name()));
         }
         if (bestGuessConf
                 == null) {

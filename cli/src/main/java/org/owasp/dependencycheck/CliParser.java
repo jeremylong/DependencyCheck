@@ -346,129 +346,94 @@ public final class CliParser {
      */
     @SuppressWarnings("static-access")
     private void addAdvancedOptions(final Options options) {
-
         final Option cve12Base = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.CVE_BASE_12)
                 .desc("Base URL for each year’s CVE 1.2, the %d will be replaced with the year. ")
                 .build();
-
         final Option cve20Base = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.CVE_BASE_20)
                 .desc("Base URL for each year’s CVE 2.0, the %d will be replaced with the year.")
                 .build();
-
         final Option cve12Modified = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.CVE_MOD_12)
                 .desc("URL for the modified CVE 1.2.")
                 .build();
-
         final Option cve20Modified = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.CVE_MOD_20)
                 .desc("URL for the modified CVE 2.0.")
                 .build();
-
         final Option updateOnly = Option.builder().longOpt(ARGUMENT.UPDATE_ONLY)
                 .desc("Only update the local NVD data cache; no scan will be executed.").build();
-
         final Option data = Option.builder(ARGUMENT.DATA_DIRECTORY_SHORT).argName("path").hasArg().longOpt(ARGUMENT.DATA_DIRECTORY)
                 .desc("The location of the H2 Database file. This option should generally not be set.")
                 .build();
-
         final Option nexusUrl = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.NEXUS_URL)
                 .desc("The url to the Nexus Server's REST API Endpoint (http://domain/nexus/service/local). "
                         + "If not set the Nexus Analyzer will be disabled.").build();
-
         final Option nexusUsesProxy = Option.builder().argName("true/false").hasArg().longOpt(ARGUMENT.NEXUS_USES_PROXY)
                 .desc("Whether or not the configured proxy should be used when connecting to Nexus.")
                 .build();
-
         final Option additionalZipExtensions = Option.builder().argName("extensions").hasArg()
                 .longOpt(ARGUMENT.ADDITIONAL_ZIP_EXTENSIONS)
                 .desc("A comma separated list of additional extensions to be scanned as ZIP files "
                         + "(ZIP, EAR, WAR are already treated as zip files)").build();
-
         final Option pathToMono = Option.builder().argName("path").hasArg().longOpt(ARGUMENT.PATH_TO_MONO)
                 .desc("The path to Mono for .NET Assembly analysis on non-windows systems.")
                 .build();
-
         final Option pathToBundleAudit = Option.builder().argName("path").hasArg()
                 .longOpt(ARGUMENT.PATH_TO_BUNDLE_AUDIT)
                 .desc("The path to bundle-audit for Gem bundle analysis.").build();
-
         final Option connectionTimeout = Option.builder(ARGUMENT.CONNECTION_TIMEOUT_SHORT).argName("timeout").hasArg()
                 .longOpt(ARGUMENT.CONNECTION_TIMEOUT).desc("The connection timeout (in milliseconds) to use when downloading resources.")
                 .build();
-
         final Option proxyServer = Option.builder().argName("server").hasArg().longOpt(ARGUMENT.PROXY_SERVER)
                 .desc("The proxy server to use when downloading resources.").build();
-
         final Option proxyPort = Option.builder().argName("port").hasArg().longOpt(ARGUMENT.PROXY_PORT)
                 .desc("The proxy port to use when downloading resources.").build();
-
         final Option proxyUsername = Option.builder().argName("user").hasArg().longOpt(ARGUMENT.PROXY_USERNAME)
                 .desc("The proxy username to use when downloading resources.").build();
-
         final Option proxyPassword = Option.builder().argName("pass").hasArg().longOpt(ARGUMENT.PROXY_PASSWORD)
                 .desc("The proxy password to use when downloading resources.").build();
-
         final Option connectionString = Option.builder().argName("connStr").hasArg().longOpt(ARGUMENT.CONNECTION_STRING)
                 .desc("The connection string to the database.").build();
-
         final Option dbUser = Option.builder().argName("user").hasArg().longOpt(ARGUMENT.DB_NAME)
                 .desc("The username used to connect to the database.").build();
-
         final Option dbPassword = Option.builder().argName("password").hasArg().longOpt(ARGUMENT.DB_PASSWORD)
                 .desc("The password for connecting to the database.").build();
-
         final Option dbDriver = Option.builder().argName("driver").hasArg().longOpt(ARGUMENT.DB_DRIVER)
                 .desc("The database driver name.").build();
-
         final Option dbDriverPath = Option.builder().argName("path").hasArg().longOpt(ARGUMENT.DB_DRIVER_PATH)
                 .desc("The path to the database driver; note, this does not need to be set unless the JAR is outside of the classpath.")
                 .build();
-
         final Option disableJarAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_JAR)
                 .desc("Disable the Jar Analyzer.").build();
-
         final Option disableArchiveAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_ARCHIVE)
                 .desc("Disable the Archive Analyzer.").build();
-
         final Option disableNuspecAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_NUSPEC)
                 .desc("Disable the Nuspec Analyzer.").build();
-
         final Option disableAssemblyAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_ASSEMBLY)
                 .desc("Disable the .NET Assembly Analyzer.").build();
-
         final Option disablePythonDistributionAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_PY_DIST)
                 .desc("Disable the Python Distribution Analyzer.").build();
-
         final Option disablePythonPackageAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_PY_PKG)
                 .desc("Disable the Python Package Analyzer.").build();
-
         final Option disableComposerAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_COMPOSER)
                 .desc("Disable the PHP Composer Analyzer.").build();
-
         final Option disableAutoconfAnalyzer = Option.builder()
                 .longOpt(ARGUMENT.DISABLE_AUTOCONF)
                 .desc("Disable the Autoconf Analyzer.").build();
-
         final Option disableOpenSSLAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_OPENSSL)
                 .desc("Disable the OpenSSL Analyzer.").build();
         final Option disableCmakeAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_CMAKE)
                 .desc("Disable the Cmake Analyzer.").build();
-
         final Option cocoapodsAnalyzerEnabled = Option.builder().longOpt(ARGUMENT.DISABLE_COCOAPODS)
                 .desc("Disable the CocoaPods Analyzer.").build();
         final Option swiftPackageManagerAnalyzerEnabled = Option.builder().longOpt(ARGUMENT.DISABLE_SWIFT)
                 .desc("Disable the swift package Analyzer.").build();
-
         final Option disableCentralAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_CENTRAL)
                 .desc("Disable the Central Analyzer. If this analyzer is disabled it is likely you also want to disable "
                         + "the Nexus Analyzer.").build();
-
         final Option disableNexusAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_NEXUS)
                 .desc("Disable the Nexus Analyzer.").build();
-
         final Option purge = Option.builder().longOpt(ARGUMENT.PURGE_NVD)
                 .desc("Purges the local NVD data cache")
                 .build();
-
         final Option retireJsFilters = Option.builder().argName("pattern").hasArg().longOpt(ARGUMENT.RETIREJS_FILTERS)
                 .desc("Specify Retire JS content filter used to exclude files from analysis based on their content; most commonly used "
                         + "to exclude based on your applications own copyright line. This option can be specified multiple times.")
@@ -865,15 +830,28 @@ public final class CliParser {
         }
     }
 
+    /**
+     * Returns whether or not the argument exists.
+     *
+     * @param argument the argument
+     * @return whether or not the argument exists
+     */
     public boolean hasArgument(String argument) {
         if (line != null && line.hasOption(argument)) {
             return true;
         }
         return false;
     }
+
+    /**
+     * Returns the argument boolean value.
+     *
+     * @param argument the argument
+     * @return the argument boolean value
+     */
     public Boolean getBooleanArgument(String argument) {
         if (line != null && line.hasOption(argument)) {
-            String value = line.getOptionValue(argument);
+            final String value = line.getOptionValue(argument);
             if (value != null) {
                 return Boolean.parseBoolean(value);
             }
@@ -881,9 +859,15 @@ public final class CliParser {
         return null;
     }
 
+    /**
+     * Returns the argument value.
+     *
+     * @param argument the argument
+     * @return the value of the argument
+     */
     public String getStringArgument(String argument) {
         if (line != null && line.hasOption(argument)) {
-                return line.getOptionValue(argument);
+            return line.getOptionValue(argument);
         }
         return null;
     }

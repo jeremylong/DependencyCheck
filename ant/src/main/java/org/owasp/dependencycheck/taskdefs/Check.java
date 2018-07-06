@@ -1089,7 +1089,7 @@ public class Check extends Update {
     }
 
     /**
-     * Returns the value of artifactoryAnalyzerEnabled
+     * Returns the value of artifactoryAnalyzerEnabled.
      *
      * @return the value of artifactoryAnalyzerEnabled
      */
@@ -1107,7 +1107,7 @@ public class Check extends Update {
     }
 
     /**
-     * Returns the value of artifactoryAnalyzerUrl
+     * Returns the value of artifactoryAnalyzerUrl.
      *
      * @return the value of artifactoryAnalyzerUrl
      */
@@ -1125,7 +1125,7 @@ public class Check extends Update {
     }
 
     /**
-     * Returns the value of artifactoryAnalyzerUseProxy
+     * Returns the value of artifactoryAnalyzerUseProxy.
      *
      * @return the value of artifactoryAnalyzerUseProxy
      */
@@ -1144,7 +1144,7 @@ public class Check extends Update {
     }
 
     /**
-     * Returns the value of artifactoryAnalyzerParallelAnalysis
+     * Returns the value of artifactoryAnalyzerParallelAnalysis.
      *
      * @return the value of artifactoryAnalyzerParallelAnalysis
      */
@@ -1163,7 +1163,7 @@ public class Check extends Update {
     }
 
     /**
-     * Returns the value of artifactoryAnalyzerUsername
+     * Returns the value of artifactoryAnalyzerUsername.
      *
      * @return the value of artifactoryAnalyzerUsername
      */

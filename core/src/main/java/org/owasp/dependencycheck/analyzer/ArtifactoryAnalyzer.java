@@ -59,7 +59,6 @@ public class ArtifactoryAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactoryAnalyzer.class);
 
-
     /**
      * The name of the analyzer.
      */
@@ -79,7 +78,6 @@ public class ArtifactoryAnalyzer extends AbstractFileTypeAnalyzer {
      * The file filter used to determine which files this analyzer supports.
      */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(SUPPORTED_EXTENSIONS).build();
-
 
     /**
      * The searcher itself.
@@ -188,7 +186,7 @@ public class ArtifactoryAnalyzer extends AbstractFileTypeAnalyzer {
      * Performs the analysis.
      *
      * @param dependency the dependency to analyze
-     * @param engine     the engine
+     * @param engine the engine
      * @throws AnalysisException when there's an exception during analysis
      */
     @Override
@@ -220,6 +218,15 @@ public class ArtifactoryAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
+    /**
+     * If necessary, downloads the pom.xml from Central and adds the evidence to
+     * the dependency.
+     *
+     * @param dependency the dependency to download and process the pom.xml
+     * @param ma the Maven artifact coordinates
+     * @throws IOException thrown if there is an I/O error
+     * @throws AnalysisException thrown if there is an error analyzing the pom
+     */
     private void processPom(Dependency dependency, MavenArtifact ma) throws IOException, AnalysisException {
         File pomFile = null;
         try {

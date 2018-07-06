@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -61,7 +62,7 @@ public class HintHandlerTest extends BaseTest {
         xmlReader.setContentHandler(handler);
 
         InputStream inputStream = new FileInputStream(file);
-        Reader reader = new InputStreamReader(inputStream, "UTF-8");
+        Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         InputSource in = new InputSource(reader);
         xmlReader.parse(in);
 

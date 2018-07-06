@@ -22,6 +22,7 @@ import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.owasp.dependencycheck.Engine;
@@ -138,7 +139,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             doc = builder.parse(proc.getInputStream());
 
             // Try evacuating the error stream
-            final String errorStream = IOUtils.toString(proc.getErrorStream(), "UTF-8");
+            final String errorStream = IOUtils.toString(proc.getErrorStream(), StandardCharsets.UTF_8);
             if (null != errorStream && !errorStream.isEmpty()) {
                 LOGGER.warn("Error from GrokAssembly: {}", errorStream);
             }

@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.data.cpe;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.StringUtils;
 
@@ -129,7 +130,8 @@ public class IndexEntry implements Serializable {
 
     /**
      * <p>
-     * Parses a name attribute value, from the cpe.xml, into its corresponding parts: vendor, product.</p>
+     * Parses a name attribute value, from the cpe.xml, into its corresponding
+     * parts: vendor, product.</p>
      * <p>
      * Example:</p>
      * <code>nbsp;nbsp;nbsp;cpe:/a:apache:struts:1.1:rc2</code>
@@ -138,10 +140,11 @@ public class IndexEntry implements Serializable {
      * Results in:</p> <ul> <li>Vendor: apache</li> <li>Product: struts</li>
      * </ul>
      * <p>
-     * If it is necessary to parse the CPE into more parts (i.e. to include version and revision) then you should use
-     * the {@link org.owasp.dependencycheck.dependency.VulnerableSoftware#parseName VulnerableSoftware.parseName()}.
+     * If it is necessary to parse the CPE into more parts (i.e. to include
+     * version and revision) then you should use the
+     * {@link org.owasp.dependencycheck.dependency.VulnerableSoftware#parseName VulnerableSoftware.parseName()}.
      *
-     * @param cpeName the cpe name
+     * @param cpeName the CPE name
      * @throws UnsupportedEncodingException should never be thrown...
      */
     public void parseName(String cpeName) throws UnsupportedEncodingException {
@@ -149,9 +152,9 @@ public class IndexEntry implements Serializable {
             final String cpeNameWithoutPrefix = cpeName.substring(7);
             final String[] data = StringUtils.split(cpeNameWithoutPrefix, ':');
             if (data.length >= 1) {
-                vendor = URLDecoder.decode(data[0].replace("+", "%2B"), "UTF-8");
+                vendor = URLDecoder.decode(data[0].replace("+", "%2B"), StandardCharsets.UTF_8.name());
                 if (data.length >= 2) {
-                    product = URLDecoder.decode(data[1].replace("+", "%2B"), "UTF-8");
+                    product = URLDecoder.decode(data[1].replace("+", "%2B"), StandardCharsets.UTF_8.name());
                 }
             }
         }

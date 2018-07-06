@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.dependency;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -395,10 +396,10 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
         final String text = string.replace("+", "%2B");
         String result;
         try {
-            result = URLDecoder.decode(text, "UTF-8");
+            result = URLDecoder.decode(text, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException ex) {
             try {
-                result = URLDecoder.decode(text, "ASCII");
+                result = URLDecoder.decode(text, StandardCharsets.US_ASCII.name());
             } catch (UnsupportedEncodingException ex1) {
                 result = defaultUrlDecode(text);
             }

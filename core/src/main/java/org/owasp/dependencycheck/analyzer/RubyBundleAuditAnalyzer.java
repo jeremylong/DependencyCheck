@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -179,7 +180,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             final String msg = String.format("Unexpected exit code from bundle-audit process. Disabling %s: %s", ANALYZER_NAME, exitValue);
             throw new InitializationException(msg);
         } else {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"))) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))) {
                 if (!reader.ready()) {
                     LOGGER.warn("Bundle-audit error stream unexpectedly not ready. Disabling {}", ANALYZER_NAME);
                     setEnabled(false);
@@ -287,13 +288,13 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             throw new AnalysisException(msg);
         }
         try {
-            try (BufferedReader errReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"))) {
+            try (BufferedReader errReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))) {
                 while (errReader.ready()) {
                     final String error = errReader.readLine();
                     LOGGER.warn(error);
                 }
             }
-            try (BufferedReader rdr = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"))) {
+            try (BufferedReader rdr = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
                 processBundlerAuditOutput(dependency, engine, rdr);
             }
         } catch (IOException ioe) {
