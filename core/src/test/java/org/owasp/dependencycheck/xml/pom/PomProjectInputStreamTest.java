@@ -21,10 +21,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -34,7 +30,7 @@ import static org.junit.Assert.*;
  */
 public class PomProjectInputStreamTest {
 
-    private String POM = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"
+    private final String POM = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"
             + "<!DOCTYPE xml [<!ENTITY quot \"&#34;\">\n"
             + "               <!ENTITY euro \"&#x20ac;\">\n"
             + "               <!ENTITY reg \"&#174;\">\n"
@@ -49,7 +45,7 @@ public class PomProjectInputStreamTest {
             + "               <!ENTITY szlig \"&#223;\">]>\n"
             + "<project></project>";
 
-    private String INVALID = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"
+    private final String INVALID = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"
             + "<!DOCTYPE xml [<!ENTITY quot \"&#34;\">\n"
             + "               <!ENTITY euro \"&#x20ac;\">\n"
             + "               <!ENTITY reg \"&#174;\">\n"
@@ -118,5 +114,4 @@ public class PomProjectInputStreamTest {
         result = PomProjectInputStream.findSequence(sequence, buffer);
         assertEquals(expResult, result);
     }
-
 }
