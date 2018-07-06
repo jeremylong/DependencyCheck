@@ -238,8 +238,20 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <groupId>com.h3xstream.retirejs</groupId>
             <artifactId>retirejs-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- The following dependencies are only used during testing 
              and must not be converted to a properties based version number -->
+        <dependency>
+            <groupId>org.jslipc</groupId>
+            <artifactId>jslipc</artifactId>
+            <version>0.2.0</version>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>org.apache.maven.scm</groupId>
             <artifactId>maven-scm-provider-cvsexe</artifactId>
@@ -369,12 +381,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <scope>test</scope>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>2.19.0</version>
-            <scope>test</scope>
-        </dependency>
+
     </dependencies>
     <profiles>
         <profile>

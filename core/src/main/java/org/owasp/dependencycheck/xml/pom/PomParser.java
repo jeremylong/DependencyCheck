@@ -84,7 +84,7 @@ public class PomParser {
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setContentHandler(handler);
 
-            final BOMInputStream bomStream = new BOMInputStream(new XmlInputStream(inputStream));
+            final BOMInputStream bomStream = new BOMInputStream(new XmlInputStream(new PomProjectInputStream(inputStream)));
             final ByteOrderMark bom = bomStream.getBOM();
             final String defaultEncoding = "UTF-8";
             final String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();
