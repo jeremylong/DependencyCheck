@@ -143,6 +143,7 @@ public class ReportGenerator {
      * NVD CVE data)
      * @param settings a reference to the database settings
      */
+    //CSOFF: ParameterNumber
     public ReportGenerator(String applicationName, String groupID, String artifactID, String version,
             List<Dependency> dependencies, List<Analyzer> analyzers, DatabaseProperties properties, Settings settings) {
         this(applicationName, dependencies, analyzers, properties, settings);
@@ -156,6 +157,7 @@ public class ReportGenerator {
             context.put("groupID", groupID);
         }
     }
+    //CSON: ParameterNumber
 
     /**
      * Creates a new Velocity Engine.
@@ -348,8 +350,8 @@ public class ReportGenerator {
                 throw new ReportException("Template file doesn't exist: " + logTag);
             }
 
-            try (InputStreamReader reader = new InputStreamReader(input, "UTF-8");
-                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8")) {
+            try (InputStreamReader reader = new InputStreamReader(input, StandardCharsets.UTF_8);
+                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
                 if (!velocityEngine.evaluate(context, writer, logTag, reader)) {
                     throw new ReportException("Failed to convert the template into html.");
                 }

@@ -104,7 +104,7 @@ public class MSBuildProjectAnalyzer extends AbstractFileTypeAnalyzer {
         LOGGER.debug("Checking MSBuild project file {}", dependency);
         try {
             final MSBuildProjectParser parser = new XPathMSBuildProjectParser();
-            List<NugetPackageReference> packages;
+            final List<NugetPackageReference> packages;
 
             try (FileInputStream fis = new FileInputStream(dependency.getActualFilePath())) {
                 packages = parser.parse(fis);
@@ -117,10 +117,10 @@ public class MSBuildProjectAnalyzer extends AbstractFileTypeAnalyzer {
             }
 
             for (NugetPackageReference npr : packages) {
-                Dependency child = new Dependency(dependency.getActualFile(), true);
+                final Dependency child = new Dependency(dependency.getActualFile(), true);
 
-                String id = npr.getId();
-                String version = npr.getVersion();
+                final String id = npr.getId();
+                final String version = npr.getVersion();
 
                 child.setEcosystem(DEPENDENCY_ECOSYSTEM);
                 child.setName(id);
@@ -129,14 +129,14 @@ public class MSBuildProjectAnalyzer extends AbstractFileTypeAnalyzer {
                 child.addEvidence(EvidenceType.VERSION, "msbuild", "version", version, Confidence.HIGHEST);
 
                 if (id.indexOf(".") > 0) {
-                    String[] parts = id.split("\\.");
+                    final String[] parts = id.split("\\.");
 
                     // example: Microsoft.EntityFrameworkCore
                     child.addEvidence(EvidenceType.VENDOR, "msbuild", "id", parts[0], Confidence.MEDIUM);
                     child.addEvidence(EvidenceType.PRODUCT, "msbuild", "id", parts[1], Confidence.MEDIUM);
 
                     if (parts.length > 2) {
-                        String rest = id.substring(id.indexOf(".") + 1);
+                        final String rest = id.substring(id.indexOf(".") + 1);
                         child.addEvidence(EvidenceType.PRODUCT, "msbuild", "id", rest, Confidence.MEDIUM);
                     }
                 } else {

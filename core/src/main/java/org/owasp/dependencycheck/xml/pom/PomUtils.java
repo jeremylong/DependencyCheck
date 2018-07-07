@@ -69,10 +69,10 @@ public final class PomUtils {
             LOGGER.warn("Unable to parse pom '{}'", file.getPath());
             //todo remove test code for intermittent error.
             try {
-                File target = new File("~/Projects/DependencyCheck/core/target/");
+                final File target = new File("~/Projects/DependencyCheck/core/target/");
                 if (target.isDirectory()) {
                     FileUtils.copyFile(file, target);
-                    LOGGER.info("Unparsable pom was copied to {}",target.toString());
+                    LOGGER.info("Unparsable pom was copied to {}", target.toString());
                 }
             } catch (IOException ex1) {
                 throw new RuntimeException(ex1);

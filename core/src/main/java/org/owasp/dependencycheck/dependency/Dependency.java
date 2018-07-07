@@ -55,18 +55,27 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(Dependency.class);
+    /**
+     * The MD5 hashing function.
+     */
     private static final HashingFunction MD5_HASHING_FUNCTION = new HashingFunction() {
         @Override
         public String hash(File file) throws IOException, NoSuchAlgorithmException {
             return Checksum.getMD5Checksum(file);
         }
     };
+    /**
+     * The SHA1 hashing function.
+     */
     private static final HashingFunction SHA1_HASHING_FUNCTION = new HashingFunction() {
         @Override
         public String hash(File file) throws IOException, NoSuchAlgorithmException {
             return Checksum.getSHA1Checksum(file);
         }
     };
+    /**
+     * The SHA256 hashing function.
+     */
     private static final HashingFunction SHA256_HASHING_FUNCTION = new HashingFunction() {
         @Override
         public String hash(File file) throws IOException, NoSuchAlgorithmException {
@@ -391,6 +400,11 @@ public class Dependency extends EvidenceCollection implements Serializable {
         this.sha1sum = sha1sum;
     }
 
+    /**
+     * Returns the SHA256 Checksum of the dependency.
+     *
+     * @return the SHA256 Checksum of the dependency
+     */
     public String getSha256sum() {
         if (sha256sum == null) {
             this.sha256sum = determineHashes(SHA256_HASHING_FUNCTION);
@@ -636,13 +650,16 @@ public class Dependency extends EvidenceCollection implements Serializable {
 
     /**
      * Determines the SHA1 and MD5 sum for the given file.
+     *
+     * @param hashFunction the hashing function
+     * @return the checksum
      */
     private String determineHashes(HashingFunction hashFunction) {
         if (isVirtual) {
             return null;
         }
         try {
-            File file = getActualFile();
+            final File file = getActualFile();
             return hashFunction.hash(file);
         } catch (IOException | RuntimeException ex) {
             LOGGER.warn("Unable to read '{}' to determine hashes.", actualFilePath);
@@ -882,8 +899,19 @@ public class Dependency extends EvidenceCollection implements Serializable {
         this.ecosystem = ecosystem;
     }
 
+    /**
+     * A hashing function shortcut.
+     */
     interface HashingFunction {
 
+        /**
+         * Calculates the checksum for the given file.
+         *
+         * @param file the source for the checksum
+         * @return the string representation of the checksum
+         * @throws IOException thrown if there is an I/O error
+         * @throws NoSuchAlgorithmException thrown if the algorithm is not found
+         */
         String hash(File file) throws IOException, NoSuchAlgorithmException;
     }
 

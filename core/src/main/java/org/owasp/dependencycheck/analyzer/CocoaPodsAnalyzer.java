@@ -147,11 +147,19 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
+    /**
+     * Analyzes the podfile.lock file to extract evidence for the dependency.
+     *
+     * @param podfileLock the dependency to analyze
+     * @param engine the analysis engine
+     * @throws AnalysisException thrown if there is an error analyzing the
+     * dependency
+     */
     private void analyzePodfileLockDependencies(Dependency podfileLock, Engine engine)
             throws AnalysisException {
         engine.removeDependency(podfileLock);
 
-        String contents;
+        final String contents;
         try {
             contents = FileUtils.readFileToString(podfileLock.getActualFile(), Charset.defaultCharset());
         } catch (IOException e) {
@@ -161,10 +169,10 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
 
         final Matcher matcher = PODFILE_LOCK_DEPENDENCY_PATTERN.matcher(contents);
         while (matcher.find()) {
-            String name = matcher.group(1);
-            String version = matcher.group(2);
+            final String name = matcher.group(1);
+            final String version = matcher.group(2);
 
-            Dependency dependency = new Dependency(podfileLock.getActualFile(), true);
+            final Dependency dependency = new Dependency(podfileLock.getActualFile(), true);
             dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
             dependency.setName(name);
             dependency.setVersion(version);
@@ -174,6 +182,13 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
+    /**
+     * Analyzes the podspec and adds the evidence to the dependency.
+     *
+     * @param dependency the dependency
+     * @throws AnalysisException thrown if there is an error analyzing the
+     * podspec
+     */
     private void analyzePodspecDependency(Dependency dependency)
             throws AnalysisException {
         dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);

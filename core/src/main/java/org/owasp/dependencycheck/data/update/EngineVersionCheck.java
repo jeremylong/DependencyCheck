@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.Engine;
@@ -216,7 +217,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
             if (conn.getResponseCode() != 200) {
                 return null;
             }
-            final String releaseVersion = IOUtils.toString(conn.getInputStream(), "UTF-8");
+            final String releaseVersion = IOUtils.toString(conn.getInputStream(), StandardCharsets.UTF_8);
             if (releaseVersion != null) {
                 return releaseVersion.trim();
             }

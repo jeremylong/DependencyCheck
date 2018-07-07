@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.data.update.cpe;
 import org.apache.commons.lang3.StringUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.data.update.exception.InvalidDataException;
 
@@ -56,8 +57,8 @@ public class Cpe {
         final String valueWithoutPrefix = value.substring(7);
         final String[] data = StringUtils.split(valueWithoutPrefix, ':');
         if (data.length >= 2) {
-            vendor = URLDecoder.decode(data[0].replace("+", "%2B"), "UTF-8");
-            product = URLDecoder.decode(data[1].replace("+", "%2B"), "UTF-8");
+            vendor = URLDecoder.decode(data[0].replace("+", "%2B"), StandardCharsets.UTF_8.name());
+            product = URLDecoder.decode(data[1].replace("+", "%2B"), StandardCharsets.UTF_8.name());
         } else {
             throw new InvalidDataException(String.format("CPE has an invalid format: %s", value));
         }

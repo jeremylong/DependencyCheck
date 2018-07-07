@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -46,7 +47,18 @@ public final class Checksum {
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(Checksum.class);
-    private  static final String SHA_256 = "SHA-256";
+    /**
+     * MD5 constant.
+     */
+    private static final String MD5 = "MD5";
+    /**
+     * SHA1 constant.
+     */
+    private static final String SHA1 = "SHA1";
+    /**
+     * SHA256 constant.
+     */
+    private static final String SHA256 = "SHA-256";
 
     /**
      * Private constructor for a utility class.
@@ -93,7 +105,7 @@ public final class Checksum {
      * @throws NoSuchAlgorithmException when the MD5 algorithm is not available
      */
     public static String getMD5Checksum(File file) throws IOException, NoSuchAlgorithmException {
-        final byte[] b = getChecksum("MD5", file);
+        final byte[] b = getChecksum(MD5, file);
         return getHex(b);
     }
 
@@ -106,9 +118,10 @@ public final class Checksum {
      * @throws NoSuchAlgorithmException when the SHA1 algorithm is not available
      */
     public static String getSHA1Checksum(File file) throws IOException, NoSuchAlgorithmException {
-        final byte[] b = getChecksum("SHA1", file);
+        final byte[] b = getChecksum(SHA1, file);
         return getHex(b);
     }
+
     /**
      * Calculates the SH256 checksum of a specified file.
      *
@@ -118,7 +131,7 @@ public final class Checksum {
      * @throws NoSuchAlgorithmException when the SHA1 algorithm is not available
      */
     public static String getSHA256Checksum(File file) throws IOException, NoSuchAlgorithmException {
-        final byte[] b = getChecksum(SHA_256, file);
+        final byte[] b = getChecksum(SHA256, file);
         return getHex(b);
     }
 
@@ -144,7 +157,7 @@ public final class Checksum {
      */
     public static String getMD5Checksum(String text) {
         final byte[] data = stringToBytes(text);
-        return getChecksum("MD5", data);
+        return getChecksum(MD5, data);
     }
 
     /**
@@ -155,8 +168,9 @@ public final class Checksum {
      */
     public static String getSHA1Checksum(String text) {
         final byte[] data = stringToBytes(text);
-        return getChecksum("SHA1", data);
+        return getChecksum(SHA1, data);
     }
+
     /**
      * Calculates the SHA1 checksum of the specified text.
      *
@@ -165,7 +179,7 @@ public final class Checksum {
      */
     public static String getSHA256Checksum(String text) {
         final byte[] data = stringToBytes(text);
-        return getChecksum(SHA_256, data);
+        return getChecksum(SHA256, data);
     }
 
     /**
@@ -177,7 +191,7 @@ public final class Checksum {
     private static byte[] stringToBytes(String text) {
         byte[] data;
         try {
-            data = text.getBytes(Charset.forName("UTF-8"));
+            data = text.getBytes(Charset.forName(StandardCharsets.UTF_8.name()));
         } catch (UnsupportedCharsetException ex) {
             data = text.getBytes(Charset.defaultCharset());
         }

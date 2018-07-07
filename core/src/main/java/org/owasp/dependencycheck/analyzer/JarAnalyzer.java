@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -422,7 +423,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         final String propPath = path.substring(0, path.length() - 7) + "pom.properies";
         final ZipEntry propEntry = jar.getEntry(propPath);
         if (propEntry != null) {
-            try (Reader reader = new InputStreamReader(jar.getInputStream(propEntry), "UTF-8")) {
+            try (Reader reader = new InputStreamReader(jar.getInputStream(propEntry), StandardCharsets.UTF_8)) {
                 pomProperties = new Properties();
                 pomProperties.load(reader);
                 LOGGER.debug("Read pom.properties: {}", propPath);
@@ -696,6 +697,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @return whether evidence was identified parsing the manifest
      * @throws IOException if there is an issue reading the JAR file
      */
+    //CSOFF: MethodLength
     protected boolean parseManifest(Dependency dependency, List<ClassNameInformation> classInformation)
             throws IOException {
         boolean foundSomething = false;
@@ -762,7 +764,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     //noinspection UnnecessaryContinue
                     continue;
                     //skipping main class as if this has important information to add it will be added during class name analysis...
-                } else if (key.equalsIgnoreCase("implementation-url")
+                } else if ("implementation-url".equalsIgnoreCase(key)
                         && value != null
                         && value.startsWith("https://projects.spring.io/spring-boot/#/spring-boot-starter-parent/parent/")) {
                     continue;
@@ -865,6 +867,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         }
         return foundSomething;
     }
+    //CSON: MethodLength
 
     /**
      * Adds a description to the given dependency. If the description contains
