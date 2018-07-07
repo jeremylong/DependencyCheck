@@ -29,41 +29,6 @@ import org.owasp.dependencycheck.BaseTest;
 public class CweDBTest  extends BaseTest {
 
     /**
-     * Method to serialize the CWE HashMap. This is not used in production; this is only used once during dev to create
-     * the serialized HashMap.
-     */
-//    @Test
-//    public void testUpdate() throws Exception {
-//        SAXParserFactory factory = SAXParserFactory.newInstance();
-//        SAXParser saxParser = factory.newSAXParser();
-//
-//        CweHandler handler = new CweHandler();
-//        //File file = new File(this.getClass().getClassLoader().getResource("cwe.2000.xml").getPath());
-//        File file = new File(this.getClass().getClassLoader().getResource("cwec_v2.5.xml").getPath());
-//
-//        saxParser.parse(file, handler);
-//        System.out.println("Found " + handler.getCwe().size() + " cwe entries.");
-//        Map<String, String> cwe = handler.getCwe();
-////        FileOutputStream fout = new FileOutputStream("target/current.csv");
-////        //FileOutputStream fout = new FileOutputStream("target/new.csv");
-////        PrintWriter writer = new PrintWriter(fout);
-////        for (Map.Entry<String, String> entry : cwe.entrySet()) {
-////            writer.print('"');
-////            writer.print(entry.getKey());
-////            writer.print('"');
-////            writer.print(',');
-////            writer.print('"');
-////            writer.print(entry.getValue());
-////            writer.println('"');
-////        }
-////        writer.close();
-//
-//        FileOutputStream fout = new FileOutputStream("src/main/resources/data/cwe.hashmap.serialized");
-//        ObjectOutputStream objOut = new ObjectOutputStream(fout);
-//        objOut.writeObject(cwe);
-//        objOut.close();
-//    }
-    /**
      * Test of getCweName method, of class CweDB.
      */
     @Test
