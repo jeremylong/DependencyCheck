@@ -599,6 +599,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #1344
+        ]]></notes>
+        <gav regex="true">^com\.github\.docker-java:docker-java:.*$</gav>
+        <cve>CVE-2017-7297</cve>
+     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
             These CVE only affects jackson-dataformat-xml. See issue #517.
         ]]></notes>
         <gav regex="true">com\.fasterxml\.jackson\.dataformat:jackson(?!\-dataformat\-xml).*</gav>
