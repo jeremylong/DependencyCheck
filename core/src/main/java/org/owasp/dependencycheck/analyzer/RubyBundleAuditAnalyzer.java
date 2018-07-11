@@ -62,6 +62,12 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     private static final Logger LOGGER = LoggerFactory.getLogger(RubyBundleAuditAnalyzer.class);
 
     /**
+     * A descriptor for the type of dependencies processed or added by this
+     * analyzer.
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = "Ruby.Bundle";
+
+    /**
      * The name of the analyzer.
      */
     private static final String ANALYZER_NAME = "Ruby Bundle Audit Analyzer";
@@ -484,6 +490,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
 
         FileUtils.write(gemFile, displayFileName, Charset.defaultCharset()); // unique contents to avoid dependency bundling
         final Dependency dependency = new Dependency(gemFile);
+        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
         dependency.addEvidence(EvidenceType.PRODUCT, "bundler-audit", "Name", gem, Confidence.HIGHEST);
         dependency.setDisplayFileName(displayFileName);
         dependency.setFileName(fileName);

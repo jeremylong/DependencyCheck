@@ -33,6 +33,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.Checksum;
 
 /**
  * This analyzer is used to analyze SWIFT and Objective-C packages by collecting
@@ -176,6 +177,10 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
             dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
             dependency.setName(name);
             dependency.setVersion(version);
+            dependency.setPackagePath(String.format("%s:%s", name, version));
+            dependency.setSha1sum(Checksum.getSHA1Checksum(String.format("%s:%s", name, version)));
+            dependency.setSha256sum(Checksum.getSHA256Checksum(String.format("%s:%s", name, version)));
+            dependency.setMd5sum(Checksum.getMD5Checksum(String.format("%s:%s", name, version)));
             dependency.addEvidence(EvidenceType.PRODUCT, dependency.getFilePath(), "name", name, Confidence.HIGHEST);
             dependency.addEvidence(EvidenceType.PRODUCT, dependency.getFilePath(), "version", version, Confidence.HIGHEST);
             engine.addDependency(dependency);

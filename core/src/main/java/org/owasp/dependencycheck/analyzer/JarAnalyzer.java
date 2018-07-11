@@ -396,7 +396,28 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     newDependency.setActualFilePath(pomFile.getAbsolutePath());
                     newDependency.setFileName(displayName);
                     newDependency.setFilePath(displayPath);
+                    newDependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
+                    String groupId = pom.getGroupId();
+                    String version = pom.getVersion();
+                    if (groupId == null) {
+                        groupId = pom.getParentGroupId();
+                    }
+                    if (version == null) {
+                        version = pom.getParentVersion();
+                    }
+                    if (groupId == null) {
+                        newDependency.setName(pom.getArtifactId());
+                        newDependency.setPackagePath(String.format("%s:%s", pom.getArtifactId(), version));
+                    } else {
+                        newDependency.setName(String.format("%s:%s", groupId, pom.getArtifactId()));
+                        newDependency.setPackagePath(String.format("%s:%s:%s", groupId, pom.getArtifactId(), version));
+                    }
+                    newDependency.setDisplayFileName(String.format("%s (%s)", dependency.getDisplayFileName(), newDependency.getPackagePath()));
+                    newDependency.setVersion(version);
                     setPomEvidence(newDependency, pom, null);
+                    if (dependency.getProjectReferences().size() > 0) {
+                        newDependency.addAllProjectReferences(dependency.getProjectReferences());
+                    }
                     engine.addDependency(newDependency);
                 } catch (AnalysisException ex) {
                     LOGGER.warn("An error occurred while analyzing '{}'.", dependency.getActualFilePath());

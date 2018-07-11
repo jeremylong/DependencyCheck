@@ -29,6 +29,7 @@ import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.Checksum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,6 +126,11 @@ public class MSBuildProjectAnalyzer extends AbstractFileTypeAnalyzer {
                 child.setEcosystem(DEPENDENCY_ECOSYSTEM);
                 child.setName(id);
                 child.setVersion(version);
+                child.setPackagePath(String.format("%s:%s", id, version));
+                child.setSha1sum(Checksum.getSHA1Checksum(String.format("%s:%s", id, version)));
+                child.setSha256sum(Checksum.getSHA256Checksum(String.format("%s:%s", id, version)));
+                child.setMd5sum(Checksum.getMD5Checksum(String.format("%s:%s", id, version)));
+
                 child.addEvidence(EvidenceType.PRODUCT, "msbuild", "id", id, Confidence.HIGHEST);
                 child.addEvidence(EvidenceType.VERSION, "msbuild", "version", version, Confidence.HIGHEST);
 
