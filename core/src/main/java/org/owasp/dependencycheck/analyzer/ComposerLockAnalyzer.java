@@ -113,6 +113,7 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
                 final String filePath = String.format("%s:%s/%s/%s", dependency.getFilePath(), dep.getGroup(), dep.getProject(), dep.getVersion());
                 d.setName(dep.getProject());
                 d.setVersion(dep.getVersion());
+                d.setPackagePath(String.format("%s:%s",dep.getProject(), dep.getVersion()));
                 d.setEcosystem(DEPENDENCY_ECOSYSTEM);
                 d.setFilePath(filePath);
                 d.setSha1sum(Checksum.getSHA1Checksum(filePath));

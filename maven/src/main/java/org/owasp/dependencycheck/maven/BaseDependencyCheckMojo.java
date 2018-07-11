@@ -1053,7 +1053,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 d.setSha1sum(Checksum.getSHA1Checksum(key));
                 d.setSha256sum(Checksum.getSHA256Checksum(key));
                 d.setMd5sum(Checksum.getMD5Checksum(key));
-
+                d.setEcosystem(JarAnalyzer.DEPENDENCY_ECOSYSTEM);
                 d.setDisplayFileName(displayName);
 
                 d.addEvidence(EvidenceType.PRODUCT, "project", "artifactid", prj.getArtifactId(), Confidence.HIGHEST);

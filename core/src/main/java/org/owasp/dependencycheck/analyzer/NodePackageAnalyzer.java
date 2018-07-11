@@ -239,6 +239,8 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                 if (f.exists()) {
                     //TOOD - we should use the integrity value instead of calculating the SHA1/MD5
                     child = new Dependency(f);
+                    child.setEcosystem(DEPENDENCY_ECOSYSTEM);
+
                     try (JsonReader jr = Json.createReader(FileUtils.openInputStream(f))) {
                         final JsonObject childJson = jr.readObject();
                         gatherEvidence(childJson, child);
@@ -251,6 +253,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                 } else {
                     LOGGER.warn("Unable to find node module: {}", f.toString());
                     child = new Dependency(rootFile, true);
+                    child.setEcosystem(DEPENDENCY_ECOSYSTEM);
                     //TOOD - we should use the integrity value instead of calculating the SHA1/MD5
                     child.setSha1sum(Checksum.getSHA1Checksum(String.format("%s:%s", name, version)));
                     child.setSha256sum(Checksum.getSHA256Checksum(String.format("%s:%s", name, version)));
