@@ -412,7 +412,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                         newDependency.setName(String.format("%s:%s", groupId, pom.getArtifactId()));
                         newDependency.setPackagePath(String.format("%s:%s:%s", groupId, pom.getArtifactId(), version));
                     }
-                    newDependency.setDisplayFileName(String.format("%s (%s)", dependency.getDisplayFileName(), newDependency.getPackagePath()));
+                    newDependency.setDisplayFileName(String.format("%s (shaded: %s)", dependency.getDisplayFileName(), newDependency.getPackagePath()));
                     newDependency.setVersion(version);
                     setPomEvidence(newDependency, pom, null);
                     if (dependency.getProjectReferences().size() > 0) {
