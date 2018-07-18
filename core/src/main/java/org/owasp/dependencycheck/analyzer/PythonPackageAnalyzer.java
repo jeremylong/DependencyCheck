@@ -320,7 +320,10 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
         if (found) {
             dependency.addEvidence(type, source, name, matcher.group(4), confidence);
             if (type == EvidenceType.VERSION) {
+                //TODO - this seems broken as we are cycling over py files and could be grabbing versions from multiple?
                 dependency.setVersion(matcher.group(4));
+                final String dispName = String.format("%s:%s", dependency.getName(), dependency.getVersion());
+                dependency.setDisplayFileName(dispName);
             }
         }
         return found;

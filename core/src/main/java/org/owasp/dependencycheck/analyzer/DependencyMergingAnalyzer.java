@@ -22,6 +22,7 @@ import java.util.Set;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,6 +100,13 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
                 return true; //since we merged into the next dependency - skip forward to the next in mainIterator
             }
         } else if ((main = getMainSwiftDependency(dependency, nextDependency)) != null) {
+            if (main == dependency) {
+                mergeDependencies(dependency, nextDependency, dependenciesToRemove);
+            } else {
+                mergeDependencies(nextDependency, dependency, dependenciesToRemove);
+                return true; //since we merged into the next dependency - skip forward to the next in mainIterator
+            }
+        } else if ((main = getMainAndroidDependency(dependency, nextDependency)) != null) {
             if (main == dependency) {
                 mergeDependencies(dependency, nextDependency, dependenciesToRemove);
             } else {
@@ -233,4 +241,30 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
         }
         return null;
     }
+
+    /**
+     * Determines which of the android dependencies should be considered the
+     * primary.
+     *
+     * @param dependency1 the first swift dependency to compare
+     * @param dependency2 the second swift dependency to compare
+     * @return the primary swift dependency
+     */
+    private Dependency getMainAndroidDependency(Dependency dependency1, Dependency dependency2) {
+        if (dependency1.isVirtual() || dependency2.isVirtual()) {
+            return null;
+        }
+        if ("classes.jar".equals(dependency2.getActualFile().getName())
+                && "aar".equals(FileUtils.getFileExtension(dependency1.getActualFile().getName()))
+                && dependency2.getActualFilePath().contains(dependency1.getActualFile().getName())) {
+            return dependency1;
+        }
+        if ("classes.jar".equals(dependency1.getActualFile().getName())
+                && "aar".equals(FileUtils.getFileExtension(dependency2.getActualFile().getName()))
+                && dependency1.getActualFilePath().contains(dependency2.getActualFile().getName())) {
+            return dependency2;
+        }
+        return null;
+    }
+
 }

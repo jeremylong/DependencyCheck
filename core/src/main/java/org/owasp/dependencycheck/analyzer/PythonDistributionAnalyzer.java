@@ -289,8 +289,14 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
         addPropertyToEvidence(dependency, EvidenceType.VERSION, Confidence.HIGHEST, headers, "Version");
         addPropertyToEvidence(dependency, EvidenceType.PRODUCT, Confidence.HIGHEST, headers, "Name");
         addPropertyToEvidence(dependency, EvidenceType.PRODUCT, Confidence.MEDIUM, headers, "Name");
-        dependency.setName(headers.getHeader("Name", null));
-        dependency.setVersion(headers.getHeader("Version", null));
+        
+        final String name = headers.getHeader("Name", null);
+        final String version = headers.getHeader("Version", null);
+        final String packagePath = String.format("%s:%s", name, version);
+        dependency.setName(name);
+        dependency.setVersion(version);
+        dependency.setPackagePath(packagePath);
+        dependency.setDisplayFileName(packagePath);
         final String url = headers.getHeader("Home-page", null);
         if (StringUtils.isNotBlank(url)) {
             if (UrlStringUtils.isUrl(url)) {

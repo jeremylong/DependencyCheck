@@ -91,25 +91,6 @@ public class ComposerLockAnalyzerTest extends BaseDBTestCase {
     }
 
     /**
-     * Test of basic additions to the dependency list by parsing the
-     * composer.lock file
-     *
-     * @throws AnalysisException is thrown when an exception occurs.
-     */
-    @Test
-    public void testRemoveRedundantParent() throws Exception {
-        try (Engine engine = new Engine(getSettings())) {
-            final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "composer.lock"));
-            //test that we don't remove the parent if it's not redundant by name
-            result.setDisplayFileName("NotComposer.Lock");
-            engine.addDependency(result);
-            analyzer.analyze(result, engine);
-            //make sure the composer.lock is not removed
-            assertTrue(ArrayUtils.contains(engine.getDependencies(), result));
-        }
-    }
-
-    /**
      * Test of inspect method, of class PythonDistributionAnalyzer.
      *
      * @throws AnalysisException is thrown when an exception occurs.
