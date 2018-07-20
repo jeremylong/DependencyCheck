@@ -28,6 +28,7 @@ check.dependsOn dependencyCheckAnalyze
 Property             | Description                        | Default Value
 ---------------------|------------------------------------|------------------
 autoUpdate           | Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false. | true
+analyzedTypes        | The default artifact types that will be analyzed.                                                                  | ['jar', 'aar', 'js', 'war', 'ear', 'zip']
 cveValidForHours     | Sets the number of hours to wait before checking for new updates from the NVD.                                     | 4
 failOnError          | Fails the build if an error occurs during the dependency-check analysis.                                           | true
 failBuildOnCVSS      | Specifies if the build should be failed if a CVSS score equal to or above a specified level is identified. The default is 11; since the CVSS scores are 0-10, by default the build will never fail. | 11
