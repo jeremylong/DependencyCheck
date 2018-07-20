@@ -156,6 +156,11 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
                 // the parent folder containing the package.swift file.
                 dependency.setName(dependency.getActualFile().getParentFile().getName());
             }
+            if (dependency.getVersion() != null && !dependency.getVersion().isEmpty()) {
+                dependency.setDisplayFileName(String.format("%s:%s", dependency.getName(), dependency.getVersion()));
+            } else {
+                dependency.setDisplayFileName(dependency.getName());
+            }
         }
         setPackagePath(dependency);
     }

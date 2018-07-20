@@ -313,6 +313,9 @@ public class Dependency extends EvidenceCollection implements Serializable {
         if (displayName != null) {
             return displayName;
         }
+        if (!isVirtual) {
+            return fileName;
+        }
         if (name == null) {
             return fileName;
         }
