@@ -837,10 +837,7 @@ public final class CliParser {
      * @return whether or not the argument exists
      */
     public boolean hasArgument(String argument) {
-        if (line != null && line.hasOption(argument)) {
-            return true;
-        }
-        return false;
+        return line != null && line.hasOption(argument);
     }
 
     /**

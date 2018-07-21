@@ -103,6 +103,13 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     private CveDB cvedb = null;
 
     /**
+     * If {@link #analyzeDependency(Dependency, Engine)} is called, then we have
+     * successfully initialized, and it will be necessary to disable
+     * {@link RubyGemspecAnalyzer}.
+     */
+    private boolean needToDisableGemspecAnalyzer = true;
+
+    /**
      * @return a filter that accepts files named Gemfile.lock
      */
     @Override
@@ -244,13 +251,6 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     protected String getAnalyzerEnabledSettingKey() {
         return Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED;
     }
-
-    /**
-     * If {@link #analyzeDependency(Dependency, Engine)} is called, then we have
-     * successfully initialized, and it will be necessary to disable
-     * {@link RubyGemspecAnalyzer}.
-     */
-    private boolean needToDisableGemspecAnalyzer = true;
 
     /**
      * Determines if the analyzer can analyze the given file type.

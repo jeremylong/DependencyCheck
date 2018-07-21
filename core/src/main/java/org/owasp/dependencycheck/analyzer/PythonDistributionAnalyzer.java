@@ -289,7 +289,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
         addPropertyToEvidence(dependency, EvidenceType.VERSION, Confidence.HIGHEST, headers, "Version");
         addPropertyToEvidence(dependency, EvidenceType.PRODUCT, Confidence.HIGHEST, headers, "Name");
         addPropertyToEvidence(dependency, EvidenceType.PRODUCT, Confidence.MEDIUM, headers, "Name");
-        
+
         final String name = headers.getHeader("Name", null);
         final String version = headers.getHeader("Version", null);
         final String packagePath = String.format("%s:%s", name, version);

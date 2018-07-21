@@ -39,6 +39,10 @@ public final class CweDB {
      * The Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(CweDB.class);
+    /**
+     * A HashMap of the CWE data.
+     */
+    private static final Map<String, String> CWE = loadData();
 
     /**
      * Empty private constructor as this is a utility class.
@@ -46,10 +50,6 @@ public final class CweDB {
     private CweDB() {
         //empty
     }
-    /**
-     * A HashMap of the CWE data.
-     */
-    private static final Map<String, String> CWE = loadData();
 
     /**
      * Loads a HashMap containing the CWE data from a resource found in the jar.

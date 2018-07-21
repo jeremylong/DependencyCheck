@@ -42,7 +42,7 @@ import org.junit.Before;
  */
 public class CveDBIT extends BaseDBTestCase {
     
-    CveDB instance = null;
+    private CveDB instance = null;
         
     @Before
     @Override

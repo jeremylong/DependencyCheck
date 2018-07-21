@@ -44,6 +44,14 @@ public class IndexEntry implements Serializable {
      * The documentId.
      */
     private String documentId;
+    /**
+     * The product name.
+     */
+    private String product;
+    /**
+     * The search score.
+     */
+    private float searchScore;
 
     /**
      * Get the value of documentId.
@@ -83,10 +91,6 @@ public class IndexEntry implements Serializable {
     public void setVendor(String vendor) {
         this.vendor = vendor;
     }
-    /**
-     * The product name.
-     */
-    private String product;
 
     /**
      * Get the value of product.
@@ -105,10 +109,6 @@ public class IndexEntry implements Serializable {
     public void setProduct(String product) {
         this.product = product;
     }
-    /**
-     * The search score.
-     */
-    private float searchScore;
 
     /**
      * Get the value of searchScore.

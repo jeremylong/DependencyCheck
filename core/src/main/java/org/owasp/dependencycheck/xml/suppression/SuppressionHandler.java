@@ -83,15 +83,6 @@ public class SuppressionHandler extends DefaultHandler {
      * A list of suppression rules.
      */
     private final List<SuppressionRule> suppressionRules = new ArrayList<>();
-
-    /**
-     * Get the value of suppressionRules.
-     *
-     * @return the value of suppressionRules
-     */
-    public List<SuppressionRule> getSuppressionRules() {
-        return suppressionRules;
-    }
     /**
      * The current rule being read.
      */
@@ -104,6 +95,15 @@ public class SuppressionHandler extends DefaultHandler {
      * The current node text being extracted from the element.
      */
     private StringBuilder currentText;
+
+    /**
+     * Get the value of suppressionRules.
+     *
+     * @return the value of suppressionRules
+     */
+    public List<SuppressionRule> getSuppressionRules() {
+        return suppressionRules;
+    }
 
     /**
      * Handles the start element event.

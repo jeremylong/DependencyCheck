@@ -54,6 +54,22 @@ public class ProcessTask implements Callable<ProcessTask> {
      * A field to store any update exceptions that occur during the "call".
      */
     private UpdateException exception = null;
+    /**
+     * A reference to the CveDB.
+     */
+    private final CveDB cveDB;
+    /**
+     * A reference to the callable download task.
+     */
+    private final DownloadTask filePair;
+    /**
+     * A reference to the properties.
+     */
+    private final DatabaseProperties properties;
+    /**
+     * A reference to the global settings object.
+     */
+    private final Settings settings;
 
     /**
      * Get the value of exception.
@@ -72,22 +88,6 @@ public class ProcessTask implements Callable<ProcessTask> {
     public void setException(UpdateException exception) {
         this.exception = exception;
     }
-    /**
-     * A reference to the CveDB.
-     */
-    private final CveDB cveDB;
-    /**
-     * A reference to the callable download task.
-     */
-    private final DownloadTask filePair;
-    /**
-     * A reference to the properties.
-     */
-    private final DatabaseProperties properties;
-    /**
-     * A reference to the global settings object.
-     */
-    private final Settings settings;
 
     /**
      * Constructs a new ProcessTask used to process an NVD CVE update.

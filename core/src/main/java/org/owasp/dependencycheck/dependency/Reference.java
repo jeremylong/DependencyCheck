@@ -38,6 +38,14 @@ public class Reference implements Serializable, Comparable<Reference> {
      * The name of the reference.
      */
     private String name;
+    /**
+     * the url for the reference.
+     */
+    private String url;
+    /**
+     * the source of the reference.
+     */
+    private String source;
 
     /**
      * Get the value of name.
@@ -56,10 +64,6 @@ public class Reference implements Serializable, Comparable<Reference> {
     public void setName(String name) {
         this.name = name;
     }
-    /**
-     * the url for the reference.
-     */
-    private String url;
 
     /**
      * Get the value of url.
@@ -78,10 +82,6 @@ public class Reference implements Serializable, Comparable<Reference> {
     public void setUrl(String url) {
         this.url = url;
     }
-    /**
-     * the source of the reference.
-     */
-    private String source;
 
     /**
      * Get the value of source.

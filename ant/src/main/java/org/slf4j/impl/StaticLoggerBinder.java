@@ -44,25 +44,6 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
     private Task task = null;
 
     /**
-     * Return the singleton of this class.
-     *
-     * @return the StaticLoggerBinder singleton
-     */
-    public static StaticLoggerBinder getSingleton() {
-        return SINGLETON;
-    }
-
-    /**
-     * Set the Task which will this is to log through.
-     *
-     * @param task the task through which to log
-     */
-    public void setTask(Task task) {
-        this.task = task;
-        loggerFactory = new AntLoggerFactory(task);
-    }
-
-    /**
      * Declare the version of the SLF4J API this implementation is compiled
      * against. The value of this filed is usually modified with each release.
      */
@@ -83,6 +64,26 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
      * method should always be the smae object
      */
     private ILoggerFactory loggerFactory;
+    
+    /**
+     * Return the singleton of this class.
+     *
+     * @return the StaticLoggerBinder singleton
+     */
+    public static StaticLoggerBinder getSingleton() {
+        return SINGLETON;
+    }
+
+    /**
+     * Set the Task which will this is to log through.
+     *
+     * @param task the task through which to log
+     */
+    public void setTask(Task task) {
+        this.task = task;
+        loggerFactory = new AntLoggerFactory(task);
+    }
+
 
     /**
      * Constructs a new static logger binder.

@@ -36,7 +36,7 @@ import org.junit.Before;
  */
 public class CveDBMySqlIT extends BaseTest {
 
-    CveDB instance = null;
+    private CveDB instance = null;
 
     @Before
     @Override

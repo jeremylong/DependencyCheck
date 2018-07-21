@@ -33,7 +33,7 @@ import org.junit.Before;
  */
 public class DatabasePropertiesIT extends BaseDBTestCase {
 
-    CveDB cveDb = null;
+    private CveDB cveDb = null;
 
     @Before
     @Override

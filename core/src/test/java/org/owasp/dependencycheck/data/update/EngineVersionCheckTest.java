@@ -54,6 +54,7 @@ public class EngineVersionCheckTest extends BaseTest {
 
             @Mock
             public void $init(CveDB db) {
+                //empty
             }
 
             @Mock

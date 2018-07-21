@@ -37,14 +37,15 @@ import org.slf4j.LoggerFactory;
 public final class PomUtils {
 
     /**
+     * The logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(PomUtils.class);
+
+    /**
      * empty private constructor for utility class.
      */
     private PomUtils() {
     }
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PomUtils.class);
 
     /**
      * Reads in the specified POM and converts it to a Model.

@@ -37,13 +37,19 @@ import org.xml.sax.SAXException;
 public class App {
 
     /**
+     * Empty constructor for utility class.
+     */
+    private void App() {
+    }
+
+    /**
      * The main method for the application.
      *
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        File in;
-        File out;
+        final File in;
+        final File out;
         if (args.length == 0) {
             System.err.println("Incorrect arguments - please provide one or more files as input");
             System.err.println("Download the research concepts, developer concepts, and architectural concepts view of the CWE from "
@@ -56,10 +62,16 @@ public class App {
             return;
         }
         out = new File("cwe.hashmap.serialized");
-        Map<String, String> cwe = readCweData(args);
+        final Map<String, String> cwe = readCweData(args);
         serializeCweData(cwe, out);
     }
 
+    /**
+     * Reads the CWE data from the array of files.
+     *
+     * @param files the array of files to parse
+     * @return a map of the CWE data
+     */
     private static Map<String, String> readCweData(String[] files) {
         try {
             final SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -80,6 +92,12 @@ public class App {
         return null;
     }
 
+    /**
+     * Writes the map of CWE data to disk.
+     *
+     * @param cwe the CWE data
+     * @param out the file output location
+     */
     private static void serializeCweData(Map<String, String> cwe, File out) {
         try (FileOutputStream fout = new FileOutputStream(out);
                 ObjectOutputStream objOut = new ObjectOutputStream(fout);) {

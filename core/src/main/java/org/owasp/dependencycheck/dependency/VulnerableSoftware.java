@@ -69,11 +69,15 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
      * The product update version.
      */
     private String update;
+    /**
+     * The product edition.
+     */
+    private String edition;
 
     /**
-     * Parse a CPE entry from the cpe string representation.
+     * Parse a CPE entry from the CPE string representation.
      *
-     * @param cpe a cpe entry (e.g. cpe:/a:vendor:software:version)
+     * @param cpe a CPE entry (e.g. `cpe:/a:vendor:software:version`)
      */
     public void setCpe(String cpe) {
         try {
@@ -362,10 +366,6 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
     public void setUpdate(String update) {
         this.update = update;
     }
-    /**
-     * The product edition.
-     */
-    private String edition;
 
     /**
      * Get the value of edition.

@@ -91,6 +91,11 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
     private static final String SUPPORTED_EXTENSIONS = "jar";
 
     /**
+     * The file filter used to determine which files this analyzer supports.
+     */
+    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(SUPPORTED_EXTENSIONS).build();
+
+    /**
      * The Nexus Search to be set up for this analyzer.
      */
     private NexusSearch searcher;
@@ -204,11 +209,6 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
-
-    /**
-     * The file filter used to determine which files this analyzer supports.
-     */
-    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(SUPPORTED_EXTENSIONS).build();
 
     /**
      * Returns the FileFilter

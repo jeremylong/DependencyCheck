@@ -197,6 +197,11 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     private static final byte[] ZIP_SPANNED_FIRST_BYTES = new byte[]{0x50, 0x4B, 0x07, 0x08};
 
     //</editor-fold>
+    /**
+     * The parent directory for the individual directories per archive.
+     */
+    private File tempFileLocation = null;
+
     //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
     /**
      * Returns the FileFilter.
@@ -412,7 +417,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                         newDependency.setName(String.format("%s:%s", groupId, pom.getArtifactId()));
                         newDependency.setPackagePath(String.format("%s:%s:%s", groupId, pom.getArtifactId(), version));
                     }
-                    newDependency.setDisplayFileName(String.format("%s (shaded: %s)", dependency.getDisplayFileName(), newDependency.getPackagePath()));
+                    newDependency.setDisplayFileName(String.format("%s (shaded: %s)",
+                            dependency.getDisplayFileName(), newDependency.getPackagePath()));
                     newDependency.setVersion(version);
                     setPomEvidence(newDependency, pom, null);
                     if (dependency.getProjectReferences().size() > 0) {
@@ -964,11 +970,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             d.setLicense(d.getLicense() + NEWLINE + license);
         }
     }
-
-    /**
-     * The parent directory for the individual directories per archive.
-     */
-    private File tempFileLocation = null;
 
     /**
      * Initializes the JarAnalyzer.

@@ -37,12 +37,6 @@ import javax.annotation.concurrent.ThreadSafe;
 public final class SanitizePackage {
 
     /**
-     * Private constructor for utility class.
-     */
-    private SanitizePackage() {
-        //empty
-    }
-    /**
      * Specifies a whitelist of allowable objects that package.json should
      * contain.
      */
@@ -57,6 +51,13 @@ public final class SanitizePackage {
             "bundleDependencies",
             "bundledDependencies"
     ));
+
+    /**
+     * Private constructor for utility class.
+     */
+    private SanitizePackage() {
+        //empty
+    }
 
     /**
      * The NSP API only accepts a subset of objects typically found in

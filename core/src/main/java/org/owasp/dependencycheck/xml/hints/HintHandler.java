@@ -35,6 +35,24 @@ import org.xml.sax.helpers.DefaultHandler;
 @NotThreadSafe
 public class HintHandler extends DefaultHandler {
 
+    /**
+     * Internal type to track the parent node state.
+     */
+    enum ParentType {
+        /**
+         * Marks the add node.
+         */
+        ADD,
+        /**
+         * Marks the given node.
+         */
+        GIVEN,
+        /**
+         * Marks the remove node.
+         */
+        REMOVE
+    }
+
     //<editor-fold defaultstate="collapsed" desc="Element and attribute names">
     /**
      * Element name.
@@ -121,6 +139,21 @@ public class HintHandler extends DefaultHandler {
     private final List<HintRule> hintRules = new ArrayList<>();
 
     /**
+     * The list of vendor duplicating hint rules.
+     */
+    private final List<VendorDuplicatingHintRule> vendorDuplicatingHintRules = new ArrayList<>();
+    /**
+     * The current rule being read.
+     */
+    private HintRule rule;
+
+    /**
+     * The current state of the parent node (to differentiate between 'add' and
+     * 'given').
+     */
+    private ParentType nodeType = ParentType.GIVEN;
+
+    /**
      * Returns the list of hint rules.
      *
      * @return the value of hintRules
@@ -130,11 +163,6 @@ public class HintHandler extends DefaultHandler {
     }
 
     /**
-     * The list of vendor duplicating hint rules.
-     */
-    private final List<VendorDuplicatingHintRule> vendorDuplicatingHintRules = new ArrayList<>();
-
-    /**
      * Returns the list of vendor duplicating hint rules.
      *
      * @return the list of vendor duplicating hint rules
@@ -142,34 +170,6 @@ public class HintHandler extends DefaultHandler {
     public List<VendorDuplicatingHintRule> getVendorDuplicatingHintRules() {
         return vendorDuplicatingHintRules;
     }
-
-    /**
-     * The current rule being read.
-     */
-    private HintRule rule;
-
-    /**
-     * Internal type to track the parent node state.
-     */
-    enum ParentType {
-        /**
-         * Marks the add node.
-         */
-        ADD,
-        /**
-         * Marks the given node.
-         */
-        GIVEN,
-        /**
-         * Marks the remove node.
-         */
-        REMOVE
-    }
-    /**
-     * The current state of the parent node (to differentiate between 'add' and
-     * 'given').
-     */
-    private ParentType nodeType = ParentType.GIVEN;
 
     /**
      * Handles the start element event.
