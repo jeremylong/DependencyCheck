@@ -1278,6 +1278,7 @@
             suppress specific CVE that are for the server
         ]]></notes>
         <gav regex="true">^mysql:mysql-connector-java:.*$</gav>
+        <cve>CVE-2018-3071</cve>
         <cve>CVE-2018-2759</cve>
         <cve>CVE-2017-3331</cve>
         <cve>CVE-2017-3452</cve>
