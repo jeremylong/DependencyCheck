@@ -48,6 +48,9 @@ import org.owasp.dependencycheck.utils.Settings;
  */
 public class BaseDependencyCheckMojoTest extends BaseTest {
 
+    @Tested
+    MavenProject project;
+
     /**
      * Checks if the test can be run. The test in this class fail, presumable
      * due to jmockit, if the JDK is 1.8+.
@@ -62,9 +65,6 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
         double v = Double.parseDouble(version);
         return v == 1.7;
     }
-
-    @Tested
-    MavenProject project;
 
     /**
      * Test of scanArtifacts method, of class BaseDependencyCheckMojo.
