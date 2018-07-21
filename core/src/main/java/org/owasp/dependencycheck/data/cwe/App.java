@@ -39,7 +39,7 @@ public class App {
     /**
      * Empty constructor for utility class.
      */
-    private void App() {
+    private App() {
     }
 
     /**

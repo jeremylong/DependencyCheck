@@ -36,7 +36,7 @@ public class PomProjectInputStream extends FilterInputStream {
      */
     private static final byte[] PROJECT = {60, 112, 114, 111, 106, 101, 99, 116};
     //private static final byte[] PROJECT = "<project".getBytes();
-    
+
     /**
      * The size of the buffer used to scan the input stream.
      */

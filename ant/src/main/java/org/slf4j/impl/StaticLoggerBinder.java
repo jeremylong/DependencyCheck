@@ -64,7 +64,7 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
      * method should always be the smae object
      */
     private ILoggerFactory loggerFactory;
-    
+
     /**
      * Return the singleton of this class.
      *
@@ -83,7 +83,6 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
         this.task = task;
         loggerFactory = new AntLoggerFactory(task);
     }
-
 
     /**
      * Constructs a new static logger binder.

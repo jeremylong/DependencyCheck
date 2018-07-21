@@ -438,7 +438,6 @@ public final class CliParser {
                 .desc("Specify Retire JS content filter used to exclude files from analysis based on their content; most commonly used "
                         + "to exclude based on your applications own copyright line. This option can be specified multiple times.")
                 .build();
-
         options.addOption(updateOnly)
                 .addOption(cve12Base)
                 .addOption(cve20Base)

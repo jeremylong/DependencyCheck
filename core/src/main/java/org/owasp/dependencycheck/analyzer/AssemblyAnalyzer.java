@@ -72,7 +72,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      * The list of supported extensions
      */
     private static final String[] SUPPORTED_EXTENSIONS = {"dll", "exe"};
-        /**
+    /**
      * The File Filter used to filter supported extensions.
      */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(
@@ -89,7 +89,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      * Logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(AssemblyAnalyzer.class);
-    
+
     /**
      * Builds the beginnings of a List for ProcessBuilder
      *

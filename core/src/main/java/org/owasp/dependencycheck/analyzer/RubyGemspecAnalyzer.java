@@ -153,18 +153,18 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
                 dependency.addEvidence(EvidenceType.VENDOR, GEMSPEC, "name_project", name + "_project", Confidence.LOW);
                 dependency.setName(name);
             }
-            final String description = addStringEvidence(dependency, EvidenceType.PRODUCT, contents, blockVariable, 
+            final String description = addStringEvidence(dependency, EvidenceType.PRODUCT, contents, blockVariable,
                     "summary", "summary", Confidence.LOW);
             if (description != null && !description.isEmpty()) {
                 dependency.setDescription(description);
             }
-            addStringEvidence(dependency, EvidenceType.VENDOR, contents, blockVariable, 
+            addStringEvidence(dependency, EvidenceType.VENDOR, contents, blockVariable,
                     "author", "authors?", Confidence.HIGHEST);
-            addStringEvidence(dependency, EvidenceType.VENDOR, contents, blockVariable, 
+            addStringEvidence(dependency, EvidenceType.VENDOR, contents, blockVariable,
                     "email", "emails?", Confidence.MEDIUM);
-            addStringEvidence(dependency, EvidenceType.VENDOR, contents, blockVariable, 
+            addStringEvidence(dependency, EvidenceType.VENDOR, contents, blockVariable,
                     "homepage", "homepage", Confidence.HIGHEST);
-            final String license = addStringEvidence(dependency, EvidenceType.VENDOR, contents, blockVariable, 
+            final String license = addStringEvidence(dependency, EvidenceType.VENDOR, contents, blockVariable,
                     "license", "licen[cs]es?", Confidence.HIGHEST);
             if (license != null && !license.isEmpty()) {
                 dependency.setLicense(license);
