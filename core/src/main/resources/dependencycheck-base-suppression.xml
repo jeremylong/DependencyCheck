@@ -114,6 +114,7 @@
             6. python (#1055)
             7. python (#1055)
             8. CVE-2017-16046 is for the node.js npm mariadb client (#1364)
+            9. sqlserver_project is a node js module (#1388)
         ]]></notes>
         <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)$</filePath>
         <cpe>cpe:/a:dash:dash</cpe>
@@ -126,6 +127,7 @@
         <cpe>cpe:/a:python:python</cpe>
         <cpe>cpe:/a:python_software_foundation:python</cpe>
         <cve>CVE-2017-16046</cve>
+        <cpe>cpe:/a:sqlserver_project:sqlserver</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
