@@ -2,6 +2,31 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 3.3.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.3.0) (2018-07-22)
+
+### Bug Fixes
+
+- The dependency-check-gradle plugin can now analyze multi-project android builds. See [PR #09](https://github.com/jeremylong/dependency-check-gradle/pull/90) for more information.
+- In some cases extremely large project may cause dependency-check to fail due to the analysis time. Previously, the analysis was capped at 10 minutes; the timeout was increased to 20 minutes and made configurable if this continues to be an issue for some users. See [issue #936](https://github.com/jeremylong/DependencyCheck/issues/936) for more information.
+- Some pom.xml files could not be analyzed because they contained a doctype definition. The parser has been enhanced to strip the doctype definitions.
+- Fixed issue where, in some cases, temporary files were not correctly cleaned up in Jenkins and gradle builds.
+- Fixed issue where, in some cases, files were retrieved from Maven Central using HTTP instead of HTTPS. See [issue #1325](https://github.com/jeremylong/DependencyCheck/issues/1325) for more information.
+  - Additionally, a retry count was added when attempting to download pom.xml files during analysis.
+- Fixed issue where nodejs dependencies were not correctly analyzed. See [issue #1355](https://github.com/jeremylong/DependencyCheck/issues/1355) for more information,.
+- Fixed issue where the CWE was not written to the CSV report.
+- In addition, general bug fixes, code cleanup, and false positive/negatives updates were made.
+
+### Enhancements
+
+- An Artifactory Analyzer was added that can be used to in-place of the Central Analyzer for organizations that use Artifactory.
+  - Note, for maven and gradle builds the Artifactory analyzer will not improve the analysis. The information gained by using the Central, Artifactory, or Nexus Analyzers is already obtained from the build system.
+- An experimental Retire JS analyzer has been added to analyze client side JavaScript.
+  - This utilizes information from the RetireJS repo on github. If you have a proxy that prevents access you will either need to have access granted to https://raw.githubusercontent.com/Retirejs/retire.js/master/repository/jsrepository.json or host the file internally, update the environment variable `analyzer.retirejs.repo.js.ur`, and periodically update the file.
+  - This analyzer is considered experimental, but the team expects this to be promoted quickly.
+- NuGet dependencies contained in MSBuild files are now included in the scan. See [Issue #1131](https://github.com/jeremylong/DependencyCheck/issues/1131) for more details.
+- Cocoapod's Podfile.lock is now analyzed when present. See [PR #1324](https://github.com/jeremylong/DependencyCheck/pull/1324) for more information.
+
+
 ## [Version 3.2.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.2.1) (2018-05-28)
 
 ### Bug Fixes
