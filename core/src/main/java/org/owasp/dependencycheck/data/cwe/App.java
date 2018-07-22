@@ -34,7 +34,7 @@ import org.xml.sax.SAXException;
  *
  * @author Jeremy Long
  */
-public class App {
+public final class App {
 
     /**
      * Empty constructor for utility class.

@@ -347,35 +347,28 @@ public final class CliParser {
     @SuppressWarnings("static-access")
     private void addAdvancedOptions(final Options options) {
         final Option cve12Base = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.CVE_BASE_12)
-                .desc("Base URL for each year’s CVE 1.2, the %d will be replaced with the year. ")
-                .build();
+                .desc("Base URL for each year’s CVE 1.2, the %d will be replaced with the year. ").build();
         final Option cve20Base = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.CVE_BASE_20)
-                .desc("Base URL for each year’s CVE 2.0, the %d will be replaced with the year.")
-                .build();
+                .desc("Base URL for each year’s CVE 2.0, the %d will be replaced with the year.").build();
         final Option cve12Modified = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.CVE_MOD_12)
-                .desc("URL for the modified CVE 1.2.")
-                .build();
+                .desc("URL for the modified CVE 1.2.").build();
         final Option cve20Modified = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.CVE_MOD_20)
-                .desc("URL for the modified CVE 2.0.")
-                .build();
+                .desc("URL for the modified CVE 2.0.").build();
         final Option updateOnly = Option.builder().longOpt(ARGUMENT.UPDATE_ONLY)
                 .desc("Only update the local NVD data cache; no scan will be executed.").build();
         final Option data = Option.builder(ARGUMENT.DATA_DIRECTORY_SHORT).argName("path").hasArg().longOpt(ARGUMENT.DATA_DIRECTORY)
-                .desc("The location of the H2 Database file. This option should generally not be set.")
-                .build();
+                .desc("The location of the H2 Database file. This option should generally not be set.").build();
         final Option nexusUrl = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.NEXUS_URL)
                 .desc("The url to the Nexus Server's REST API Endpoint (http://domain/nexus/service/local). "
                         + "If not set the Nexus Analyzer will be disabled.").build();
         final Option nexusUsesProxy = Option.builder().argName("true/false").hasArg().longOpt(ARGUMENT.NEXUS_USES_PROXY)
-                .desc("Whether or not the configured proxy should be used when connecting to Nexus.")
-                .build();
+                .desc("Whether or not the configured proxy should be used when connecting to Nexus.").build();
         final Option additionalZipExtensions = Option.builder().argName("extensions").hasArg()
                 .longOpt(ARGUMENT.ADDITIONAL_ZIP_EXTENSIONS)
                 .desc("A comma separated list of additional extensions to be scanned as ZIP files "
                         + "(ZIP, EAR, WAR are already treated as zip files)").build();
         final Option pathToMono = Option.builder().argName("path").hasArg().longOpt(ARGUMENT.PATH_TO_MONO)
-                .desc("The path to Mono for .NET Assembly analysis on non-windows systems.")
-                .build();
+                .desc("The path to Mono for .NET Assembly analysis on non-windows systems.").build();
         final Option pathToBundleAudit = Option.builder().argName("path").hasArg()
                 .longOpt(ARGUMENT.PATH_TO_BUNDLE_AUDIT)
                 .desc("The path to bundle-audit for Gem bundle analysis.").build();
@@ -416,8 +409,7 @@ public final class CliParser {
         final Option disableComposerAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_COMPOSER)
                 .desc("Disable the PHP Composer Analyzer.").build();
         final Option disableAutoconfAnalyzer = Option.builder()
-                .longOpt(ARGUMENT.DISABLE_AUTOCONF)
-                .desc("Disable the Autoconf Analyzer.").build();
+                .longOpt(ARGUMENT.DISABLE_AUTOCONF).desc("Disable the Autoconf Analyzer.").build();
         final Option disableOpenSSLAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_OPENSSL)
                 .desc("Disable the OpenSSL Analyzer.").build();
         final Option disableCmakeAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_CMAKE)
@@ -432,8 +424,7 @@ public final class CliParser {
         final Option disableNexusAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_NEXUS)
                 .desc("Disable the Nexus Analyzer.").build();
         final Option purge = Option.builder().longOpt(ARGUMENT.PURGE_NVD)
-                .desc("Purges the local NVD data cache")
-                .build();
+                .desc("Purges the local NVD data cache").build();
         final Option retireJsFilters = Option.builder().argName("pattern").hasArg().longOpt(ARGUMENT.RETIREJS_FILTERS)
                 .desc("Specify Retire JS content filter used to exclude files from analysis based on their content; most commonly used "
                         + "to exclude based on your applications own copyright line. This option can be specified multiple times.")
