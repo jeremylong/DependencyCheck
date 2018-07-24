@@ -142,6 +142,8 @@ public class RetireJSDataSource implements CachedWebDataSource {
      * initialization
      */
     private void initializeRetireJsRepo(Settings settings, URL repoUrl) throws UpdateException {
+        File tmpFile = null;
+        File repoFile = null;
         try {
             final File dataDir = settings.getDataDirectory();
             final File tmpDir = settings.getTempDirectory();
@@ -155,8 +157,8 @@ public class RetireJSDataSource implements CachedWebDataSource {
             final HttpURLConnection conn = factory.createHttpURLConnection(repoUrl, useProxy);
             final String filename = repoUrl.getFile().substring(repoUrl.getFile().lastIndexOf("/") + 1, repoUrl.getFile().length());
             if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                final File tmpFile = new File(tmpDir, filename);
-                final File repoFile = new File(dataDir, filename);
+                tmpFile = new File(tmpDir, filename);
+                repoFile = new File(dataDir, filename);
                 try (InputStream inputStream = conn.getInputStream();
                         FileOutputStream outputStream = new FileOutputStream(tmpFile)) {
                     IOUtils.copy(inputStream, outputStream);
@@ -164,6 +166,17 @@ public class RetireJSDataSource implements CachedWebDataSource {
                 Files.move(tmpFile.toPath(), repoFile.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
             }
         } catch (IOException e) {
+            if (e.getMessage().contains("The system cannot move the file to a different disk drive")) {
+                try {
+                    LOGGER.debug("Failed to move the file; attempting copy: " + e.getMessage());
+                    Files.copy(tmpFile.toPath(), repoFile.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                    if (!tmpFile.delete()) {
+                        tmpFile.deleteOnExit();
+                    }
+                } catch (IOException ex) {
+                    throw new UpdateException("Failed to initialize the RetireJS repo", ex);
+                }
+            }
             throw new UpdateException("Failed to initialize the RetireJS repo", e);
         }
     }
