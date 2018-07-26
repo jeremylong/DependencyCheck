@@ -20,11 +20,13 @@ package org.owasp.dependencycheck.analyzer;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nuget.NugetPackage;
+import org.owasp.dependencycheck.data.nuget.NugetPackageReference;
 import org.owasp.dependencycheck.data.nuget.NugetconfParseException;
 import org.owasp.dependencycheck.data.nuget.NugetconfParser;
 import org.owasp.dependencycheck.data.nuget.XPathNugetconfParser;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -33,6 +35,8 @@ import org.slf4j.LoggerFactory;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.List;
+
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
@@ -139,30 +143,46 @@ public class NugetconfAnalyzer extends AbstractFileTypeAnalyzer {
         LOGGER.debug("Checking Nugetconf file {}", dependency);
         try {
             final NugetconfParser parser = new XPathNugetconfParser();
-            NugetPackage np = null;
+            List<NugetPackageReference> packages = null;
             try (FileInputStream fis = new FileInputStream(dependency.getActualFilePath())) {
-                np = parser.parse(fis);
+                packages = parser.parse(fis);
             } catch (NugetconfParseException | FileNotFoundException ex) {
                 throw new AnalysisException(ex);
             }
 
-            dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
-            if (np.getOwners() != null) {
-                dependency.addEvidence(EvidenceType.VENDOR, "packages.config", "owners", np.getOwners(), Confidence.HIGHEST);
-            }
-            dependency.addEvidence(EvidenceType.VENDOR, "packages.config", "authors", np.getAuthors(), Confidence.HIGH);
-            dependency.addEvidence(EvidenceType.VERSION, "packages.config", "version", np.getVersion(), Confidence.HIGHEST);
-            dependency.addEvidence(EvidenceType.PRODUCT, "packages.config", "id", np.getId(), Confidence.HIGHEST);
-            dependency.setName(np.getId());
-            dependency.setVersion(np.getVersion());
-            final String packagePath = String.format("%s:%s", np.getId(), np.getVersion());
-            dependency.setPackagePath(packagePath);
-            dependency.setDisplayFileName(packagePath);
-            if (np.getLicenseUrl() != null && !np.getLicenseUrl().isEmpty()) {
-                dependency.setLicense(np.getLicenseUrl());
-            }
-            if (np.getTitle() != null) {
-                dependency.addEvidence(EvidenceType.PRODUCT, "packages.config", "title", np.getTitle(), Confidence.MEDIUM);
+            for (NugetPackageReference np : packages) {
+                final Dependency child = new Dependency(dependency.getActualFile(), true);
+
+                final String id = np.getId();
+                final String version = np.getVersion();
+
+                child.setEcosystem(DEPENDENCY_ECOSYSTEM);
+                child.setName(id);
+                child.setVersion(version);
+                child.setPackagePath(String.format("%s:%s", id, version));
+                child.setSha1sum(Checksum.getSHA1Checksum(String.format("%s:%s", id, version)));
+                child.setSha256sum(Checksum.getSHA256Checksum(String.format("%s:%s", id, version)));
+                child.setMd5sum(Checksum.getMD5Checksum(String.format("%s:%s", id, version)));
+                child.addEvidence(EvidenceType.VERSION, "packages.config", "version", np.getVersion(), Confidence.HIGHEST);
+                child.addEvidence(EvidenceType.PRODUCT, "packages.config", "id", np.getId(), Confidence.HIGHEST);
+
+                if (id.indexOf(".") > 0) {
+                    final String[] parts = id.split("\\.");
+
+                    // example: Microsoft.EntityFrameworkCore
+                    child.addEvidence(EvidenceType.VENDOR, "packages.config", "id", parts[0], Confidence.MEDIUM);
+                    child.addEvidence(EvidenceType.PRODUCT, "packages.config", "id", parts[1], Confidence.MEDIUM);
+
+                    if (parts.length > 2) {
+                        final String rest = id.substring(id.indexOf(".") + 1);
+                        child.addEvidence(EvidenceType.PRODUCT, "packages.config", "id", rest, Confidence.MEDIUM);
+                    }
+                } else {
+                    // example: jQuery
+                    child.addEvidence(EvidenceType.VENDOR, "packages.config", "id", id, Confidence.LOW);
+                }
+
+                engine.addDependency(child);
             }
         } catch (Throwable e) {
             throw new AnalysisException(e);

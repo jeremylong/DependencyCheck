@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.data.nuget;
 
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * Interface defining methods for parsing a Nugetconf file.
@@ -34,5 +35,5 @@ public interface NugetconfParser {
      * @return the populated bean
      * @throws NugetconfParseException when an exception occurs
      */
-    NugetPackage parse(InputStream stream) throws NugetconfParseException;
+    List<NugetPackageReference> parse(InputStream stream) throws NugetconfParseException;
 }

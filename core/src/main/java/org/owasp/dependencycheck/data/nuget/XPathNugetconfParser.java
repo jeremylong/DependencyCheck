@@ -19,6 +19,9 @@ package org.owasp.dependencycheck.data.nuget;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.concurrent.ThreadSafe;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -28,32 +31,18 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.owasp.dependencycheck.utils.XmlUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
  * Parse a Nugetconf file using XPath.
  *
- * @author colezlaw
+ * @author doshyt
  */
 @ThreadSafe
 public class XPathNugetconfParser implements NugetconfParser {
-
-    /**
-     * Gets the string value of a node or null if it's not present
-     *
-     * @param n the node to test
-     * @return the string content of the node, or null if the node itself is
-     * null
-     */
-    private String getOrNull(Node n) {
-        if (n != null) {
-            return n.getTextContent();
-        } else {
-            return null;
-        }
-    }
-
     /**
      * Parse an input stream and return the resulting {@link NugetPackage}.
      *
@@ -62,30 +51,40 @@ public class XPathNugetconfParser implements NugetconfParser {
      * @throws NugetconfParseException when an exception occurs
      */
     @Override
-    public NugetPackage parse(InputStream stream) throws NugetconfParseException {
+    public List<NugetPackageReference> parse(InputStream stream) throws NugetconfParseException {
         try {
             final DocumentBuilder db = XmlUtils.buildSecureDocumentBuilder();
             final Document d = db.parse(stream);
 
             final XPath xpath = XPathFactory.newInstance().newXPath();
-            final NugetPackage nugetconf = new NugetPackage();
+            final List<NugetPackageReference> packages = new ArrayList<>();
 
-            if (xpath.evaluate("/package/metadata/id", d, XPathConstants.NODE) == null
-                    || xpath.evaluate("/package/metadata/version", d, XPathConstants.NODE) == null
-                    || xpath.evaluate("/package/metadata/authors", d, XPathConstants.NODE) == null
-                    || xpath.evaluate("/package/metadata/description", d, XPathConstants.NODE) == null) {
-                throw new NugetconfParseException("Invalid packages.config format");
+            final NodeList nodeList = (NodeList) xpath.evaluate("//packages", d, XPathConstants.NODESET);
+
+            if (nodeList == null) {
+                throw new NugetconfParseException("Unable to parse pacakcges.config project file");
             }
 
-            nugetconf.setId(xpath.evaluate("/package/metadata/id", d));
-            nugetconf.setVersion(xpath.evaluate("/package/metadata/version", d));
-            nugetconf.setAuthors(xpath.evaluate("/package/metadata/authors", d));
-            nugetconf.setOwners(getOrNull((Node) xpath.evaluate("/package/metadata/owners", d, XPathConstants.NODE)));
-            nugetconf.setLicenseUrl(getOrNull((Node) xpath.evaluate("/package/metadata/licenseUrl", d, XPathConstants.NODE)));
-            nugetconf.setTitle(getOrNull((Node) xpath.evaluate("/package/metadata/title", d, XPathConstants.NODE)));
-            return nugetconf;
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                final Node node = nodeList.item(i);
+                final NamedNodeMap attrs = node.getAttributes();
+
+                final Node id = attrs.getNamedItem("id");
+                final Node version = attrs.getNamedItem("version");
+
+                if (id != null && version != null) {
+                    final NugetPackageReference npr = new NugetPackageReference();
+
+                    npr.setId(id.getNodeValue());
+                    npr.setVersion(version.getNodeValue());
+
+                    packages.add(npr);
+                }
+            }
+
+            return packages;
         } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException | NugetconfParseException e) {
-            throw new NugetconfParseException("Unable to parse packages.config", e);
+            throw new NugetconfParseException("Unable to parse packages.config project file", e);
         }
     }
 }
