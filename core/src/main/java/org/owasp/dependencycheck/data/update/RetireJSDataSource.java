@@ -142,8 +142,6 @@ public class RetireJSDataSource implements CachedWebDataSource {
      * initialization
      */
     private void initializeRetireJsRepo(Settings settings, URL repoUrl) throws UpdateException {
-        File tmpFile = null;
-        File repoFile = null;
         try {
             final File dataDir = settings.getDataDirectory();
             final File tmpDir = settings.getTempDirectory();
@@ -157,8 +155,8 @@ public class RetireJSDataSource implements CachedWebDataSource {
             final HttpURLConnection conn = factory.createHttpURLConnection(repoUrl, useProxy);
             final String filename = repoUrl.getFile().substring(repoUrl.getFile().lastIndexOf("/") + 1, repoUrl.getFile().length());
             if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                tmpFile = new File(tmpDir, filename);
-                repoFile = new File(dataDir, filename);
+                final File tmpFile = new File(tmpDir, filename);
+                final File repoFile = new File(dataDir, filename);
                 try (InputStream inputStream = conn.getInputStream();
                         FileOutputStream outputStream = new FileOutputStream(tmpFile)) {
                     IOUtils.copy(inputStream, outputStream);
