@@ -163,20 +163,13 @@ public class RetireJSDataSource implements CachedWebDataSource {
                         FileOutputStream outputStream = new FileOutputStream(tmpFile)) {
                     IOUtils.copy(inputStream, outputStream);
                 }
-                Files.move(tmpFile.toPath(), repoFile.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-            }
-        } catch (IOException e) {
-            if (e.getMessage().contains("The system cannot move the file to a different disk drive")) {
-                try {
-                    LOGGER.debug("Failed to move the file; attempting copy: " + e.getMessage());
-                    Files.copy(tmpFile.toPath(), repoFile.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-                    if (!tmpFile.delete()) {
-                        tmpFile.deleteOnExit();
-                    }
-                } catch (IOException ex) {
-                    throw new UpdateException("Failed to initialize the RetireJS repo", ex);
+                //using move fails if target and destination are on different disks which does happen (see #1394 and #1404)
+                Files.copy(tmpFile.toPath(), repoFile.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                if (!tmpFile.delete()) {
+                    tmpFile.deleteOnExit();
                 }
             }
+        } catch (IOException e) {
             throw new UpdateException("Failed to initialize the RetireJS repo", e);
         }
     }
