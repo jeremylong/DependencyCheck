@@ -1847,6 +1847,28 @@
         <cve>CVE-2013-1506</cve>
         <cve>CVE-2015-4833</cve>
         <cve>CVE-2015-4816</cve>
+        <cve>CVE-2018-2767</cve>
+        <cve>CVE-2018-3054</cve>
+        <cve>CVE-2018-3056</cve>
+        <cve>CVE-2018-3058</cve>
+        <cve>CVE-2018-3060</cve>
+        <cve>CVE-2018-3061</cve>
+        <cve>CVE-2018-3062</cve>
+        <cve>CVE-2018-3063</cve>
+        <cve>CVE-2018-3064</cve>
+        <cve>CVE-2018-3065</cve>
+        <cve>CVE-2018-3066</cve>
+        <cve>CVE-2018-3067</cve>
+        <cve>CVE-2018-3070</cve>
+        <cve>CVE-2018-3073</cve>
+        <cve>CVE-2018-3074</cve>
+        <cve>CVE-2018-3075</cve>
+        <cve>CVE-2018-3077</cve>
+        <cve>CVE-2018-3078</cve>
+        <cve>CVE-2018-3079</cve>
+        <cve>CVE-2018-3080</cve>
+        <cve>CVE-2018-3082</cve>
+        <cve>CVE-2018-3084</cve>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
