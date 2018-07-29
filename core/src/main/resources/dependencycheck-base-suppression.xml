@@ -75,7 +75,7 @@
             19. amazon_aws_project is a drupal utility (#1290)
             20. google android should not be flagged for the base library
         ]]></notes>
-        <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json)$</filePath>
+        <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
         <cpe>cpe:/a:openmedia:openmedia</cpe>        
         <cpe>cpe:/a:file_project:file</cpe>
