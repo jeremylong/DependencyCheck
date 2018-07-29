@@ -41,7 +41,7 @@ import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
- * Analyzer which will parse a Nuget packages config file to gather module information.
+ * Analyzer which will parse a Nuget packages.config file to gather module information.
  *
  * @author igoand
  */
@@ -140,7 +140,7 @@ public class NugetconfAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        LOGGER.debug("Checking Nugetconf file {}", dependency);
+        LOGGER.debug("Checking packages.config file {}", dependency);
         try {
             final NugetconfParser parser = new XPathNugetconfParser();
             List<NugetPackageReference> packages = null;

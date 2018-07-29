@@ -209,7 +209,7 @@ public class Check extends Update {
      */
     private Boolean nuspecAnalyzerEnabled;
     /**
-     * Whether or not the .NET Nuget config file Analyzer is enabled.
+     * Whether or not the .NET Nuget packages.config file Analyzer is enabled.
      */
     private Boolean nugetconfAnalyzerEnabled;
     /**

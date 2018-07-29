@@ -401,7 +401,7 @@ public final class CliParser {
         final Option disableNuspecAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_NUSPEC)
                 .desc("Disable the Nuspec Analyzer.").build();
         final Option disableNugetconfAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_NUGETCONF)
-        .desc("Disable the Nuget Config Analyzer.").build();
+        .desc("Disable the Nuget packages.config Analyzer.").build();
         final Option disableAssemblyAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_ASSEMBLY)
                 .desc("Disable the .NET Assembly Analyzer.").build();
         final Option disablePythonDistributionAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_PY_DIST)
@@ -1530,7 +1530,7 @@ public final class CliParser {
          */
         public static final String DISABLE_NUSPEC = "disableNuspec";
         /**
-         * Disables the Nuget Config Analyzer.
+         * Disables the Nuget packages.config Analyzer.
          */
         public static final String DISABLE_NUGETCONF = "disableNugetconf";
         /**
