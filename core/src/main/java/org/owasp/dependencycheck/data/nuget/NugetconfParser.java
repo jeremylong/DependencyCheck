@@ -21,9 +21,9 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
- * Interface defining methods for parsing a Nugetconf file.
+ * Interface defining methods for parsing a packages.config file.
  *
- * @author colezlaw
+ * @author igoand
  *
  */
 public interface NugetconfParser {

@@ -19,7 +19,6 @@ package org.owasp.dependencycheck.analyzer;
 
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.data.nuget.NugetPackage;
 import org.owasp.dependencycheck.data.nuget.NugetPackageReference;
 import org.owasp.dependencycheck.data.nuget.NugetconfParseException;
 import org.owasp.dependencycheck.data.nuget.NugetconfParser;
@@ -44,7 +43,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
 /**
  * Analyzer which will parse a Nuget packages config file to gather module information.
  *
- * @author colezlaw
+ * @author igoand
  */
 @ThreadSafe
 public class NugetconfAnalyzer extends AbstractFileTypeAnalyzer {
@@ -71,13 +70,14 @@ public class NugetconfAnalyzer extends AbstractFileTypeAnalyzer {
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
 
     /**
-     * The types of files on which this will work.
+     * The file filter used to determine which files this analyzer supports.
      */
-    private static final String SUPPORTED_EXTENSIONS = "config";
+    public static final String FILE_NAME = "packages.config";
+
     /**
      * The file filter used to determine which files this analyzer supports.
      */
-    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(SUPPORTED_EXTENSIONS).build();
+    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addFilenames(FILE_NAME).build();
 
     /**
      * Initializes the analyzer once before any analysis is performed.
@@ -166,6 +166,7 @@ public class NugetconfAnalyzer extends AbstractFileTypeAnalyzer {
                 child.addEvidence(EvidenceType.VERSION, "packages.config", "version", np.getVersion(), Confidence.HIGHEST);
                 child.addEvidence(EvidenceType.PRODUCT, "packages.config", "id", np.getId(), Confidence.HIGHEST);
 
+                // handle package names the same way as the MSBuild analyzer
                 if (id.indexOf(".") > 0) {
                     final String[] parts = id.split("\\.");
 

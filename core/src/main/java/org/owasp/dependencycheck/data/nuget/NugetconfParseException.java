@@ -20,9 +20,9 @@ package org.owasp.dependencycheck.data.nuget;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
- * Exception during the parsing of a Nugetconf file.
+ * Exception during the parsing of a packages.config file.
  *
- * @author colezlaw
+ * @author igoand
  */
 @ThreadSafe
 public class NugetconfParseException extends Exception {

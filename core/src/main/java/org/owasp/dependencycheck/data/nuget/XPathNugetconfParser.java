@@ -37,7 +37,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * Parse a Nugetconf file using XPath.
+ * Parse a packages.config file using XPath.
  *
  * @author doshyt
  */
@@ -50,6 +50,7 @@ public class XPathNugetconfParser implements NugetconfParser {
      * @return the populated bean
      * @throws NugetconfParseException when an exception occurs
      */
+
     @Override
     public List<NugetPackageReference> parse(InputStream stream) throws NugetconfParseException {
         try {
@@ -59,16 +60,15 @@ public class XPathNugetconfParser implements NugetconfParser {
             final XPath xpath = XPathFactory.newInstance().newXPath();
             final List<NugetPackageReference> packages = new ArrayList<>();
 
-            final NodeList nodeList = (NodeList) xpath.evaluate("//packages", d, XPathConstants.NODESET);
+            final NodeList nodeList = (NodeList) xpath.evaluate("/packages/package", d, XPathConstants.NODESET);
 
             if (nodeList == null) {
-                throw new NugetconfParseException("Unable to parse pacakcges.config project file");
+                throw new NugetconfParseException("Unable to parse packages.config file");
             }
 
             for (int i = 0; i < nodeList.getLength(); i++) {
                 final Node node = nodeList.item(i);
                 final NamedNodeMap attrs = node.getAttributes();
-
                 final Node id = attrs.getNamedItem("id");
                 final Node version = attrs.getNamedItem("version");
 
@@ -84,7 +84,7 @@ public class XPathNugetconfParser implements NugetconfParser {
 
             return packages;
         } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException | NugetconfParseException e) {
-            throw new NugetconfParseException("Unable to parse packages.config project file", e);
+            throw new NugetconfParseException("Unable to parse packages.config file", e);
         }
     }
 }
