@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Interface defining methods for parsing a packages.config file.
  *
- * @author igoand
+ * @author doshyt
  *
  */
 public interface NugetconfParser {

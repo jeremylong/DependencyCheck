@@ -43,7 +43,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
 /**
  * Analyzer which parses a Nuget packages.config file to gather module information.
  *
- * @author igoand
+ * @author doshyt
  */
 
 @Experimental

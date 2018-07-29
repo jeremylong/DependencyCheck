@@ -22,7 +22,7 @@ import javax.annotation.concurrent.ThreadSafe;
 /**
  * Exception during the parsing of a packages.config file.
  *
- * @author igoand
+ * @author doshyt
  */
 @ThreadSafe
 public class NugetconfParseException extends Exception {
