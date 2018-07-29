@@ -41,10 +41,12 @@ import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
- * Analyzer which will parse a Nuget packages.config file to gather module information.
+ * Analyzer which parses a Nuget packages.config file to gather module information.
  *
  * @author igoand
  */
+
+@Experimental
 @ThreadSafe
 public class NugetconfAnalyzer extends AbstractFileTypeAnalyzer {
 
