@@ -119,6 +119,7 @@ analyzers    | pyPackageEnabled      | Sets whether the [experimental](../analyz
 analyzers    | rubygemsEnabled       | Sets whether the [experimental](../analyzers/index.html) Ruby Gemspec Analyzer will be used.                      | true
 analyzers    | opensslEnabled        | Sets whether or not the openssl Analyzer should be used.                                                          | true
 analyzers    | nuspecEnabled         | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.                                                  | true
+analyzers    | nugetconfEnabled      | Sets whether or not the .NET Nuget packages.config Analyzer will be used.                                         | true
 analyzers    | assemblyEnabled       | Sets whether or not the .NET Assembly Analyzer should be used.                                                    | true
 analyzers    | pathToMono            | The path to Mono for .NET assembly analysis on non-windows systems.                                               | &nbsp;
 analyzers    | cmakeEnabled          | Sets whether or not the [experimental](../analyzers/index.html) CMake Analyzer should be used.                    | true

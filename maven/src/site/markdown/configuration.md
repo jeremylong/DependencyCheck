@@ -71,6 +71,7 @@ nodeAnalyzerEnabled           | Sets whether the [retired](../analyzers/index.ht
 nspAnalyzerEnabled            | Sets whether the NSP Analyzer should be used.                                                              | true
 retireJsAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) RetireJS Analyzer should be used.                                                         | true
 nuspecAnalyzerEnabled         | Sets whether the .NET Nuget Nuspec Analyzer will be used.                                                  | true
+nugetconfAnalyzerEnabled      | Sets whether the .NET Nuget packages.config Analyzer will be used.                                         | true
 cocoapodsAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used.                | true
 bundleAuditAnalyzerEnabled    | Sets whether the [experimental](../analyzers/index.html) Bundle Audit Analyzer should be used.             | true
 bundleAuditPath               | Sets the path to the bundle audit executable; only used if bundle audit analyzer is enabled and experimental analyzers are enabled.  | &nbsp;

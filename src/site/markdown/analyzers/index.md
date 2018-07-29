@@ -12,6 +12,7 @@ to extract identification information from the files analyzed.
 | [Node.js](./nodejs.html) | NPM package specification files (package.json) | Parses the package.json to gather a bill-of-materials for a Node JS project. |
 | [NSP](./nsp-analyzer.html) | [Node Security Project](https://nodesecurity.io) is used to analyze Node.js' `package.json` files for known vulnerable packages.|
 | [Nuspec](./nuspec-analyzer.html) | Nuget package specification file (\*.nuspec) | Uses XPath to parse specification XML. |
+| [Nugetconf](./nugetconf-analyzer.html) | Nuget packages.config file | Uses XPath to parse specification XML. |
 | [OpenSSL](./openssl.html) | OpenSSL Version Source Header File (opensslv.h) | Regex parse of the OPENSSL_VERSION_NUMBER macro definition. |
 | [Ruby bundler&#8209;audit](./bundle-audit.html) | Ruby `Gemfile.lock` files | Executes bundle-audit and incorporates the results into the dependency-check report. |
 
