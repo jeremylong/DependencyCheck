@@ -12,7 +12,6 @@ to extract identification information from the files analyzed.
 | [Node.js](./nodejs.html) | NPM package specification files (package.json) | Parses the package.json to gather a bill-of-materials for a Node JS project. |
 | [NSP](./nsp-analyzer.html) | [Node Security Project](https://nodesecurity.io) is used to analyze Node.js' `package.json` files for known vulnerable packages.|
 | [Nuspec](./nuspec-analyzer.html) | Nuget package specification file (\*.nuspec) | Uses XPath to parse specification XML. |
-| [Nugetconf](./nugetconf-analyzer.html) | Nuget packages.config file | Uses XPath to parse specification XML. |
 | [OpenSSL](./openssl.html) | OpenSSL Version Source Header File (opensslv.h) | Regex parse of the OPENSSL_VERSION_NUMBER macro definition. |
 | [Ruby bundler&#8209;audit](./bundle-audit.html) | Ruby `Gemfile.lock` files | Executes bundle-audit and incorporates the results into the dependency-check report. |
 
@@ -30,6 +29,7 @@ several teams have found them useful in their current state.
 | [CMake](./cmake.html) | CMake project files (CMakeLists.txt) and scripts (\*.cmake) | Regex scan for project initialization and version setting commands. |
 | [CocoaPods](./cocoapods.html) | CocoaPods `.podspec` files | Extracts dependency information from specification file. |
 | [Composer Lock](./composer-lock.html) | PHP [Composer](http://getcomposer.org) Lock files (composer.lock) | Parses PHP [Composer](http://getcomposer.org) lock files for exact versions of dependencies. | 
+| [Nugetconf](./nugetconf-analyzer.html) | Nuget packages.config file | Uses XPath to parse specification XML. |
 | [Python](./python.html) | Python source files (\*.py); Package metadata files (PKG-INFO, METADATA); Package Distribution Files (\*.whl, \*.egg, \*.zip) | Regex scan of Python source files for setuptools metadata; Parse RFC822 header format for metadata in all other artifacts. |
 | [Ruby Gemspec](./ruby-gemspec.html) | Ruby makefiles (Rakefile); Ruby Gemspec files (\*.gemspec) | Regex scan Gemspec initialization blocks for metadata. |
 | [RetireJS](./retirejs-analyzer.html) | JavaScript files | Analyzes JavaScript files using the [RetireJS](https://github.com/RetireJS/retire.js) database. |
