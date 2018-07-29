@@ -351,6 +351,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private Boolean nuspecAnalyzerEnabled;
 
     /**
+     * Whether or not the .NET packages.config Analyzer is enabled.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "nugetconfAnalyzerEnabled", required = false)
+    private Boolean nugetconfAnalyzerEnabled;
+
+    /**
      * Whether or not the Central Analyzer is enabled.
      */
     @SuppressWarnings("CanBeFinal")
@@ -1359,6 +1366,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         //File Type Analyzer Settings
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUGETCONF_ENABLED, nugetconfAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED, artifactoryAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
