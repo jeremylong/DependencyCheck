@@ -684,7 +684,7 @@ public class Check extends Update {
     /**
      * Sets whether or not the analyzer is enabled.
      *
-     * @param nuspecAnalyzerEnabled the value of the new setting
+     * @param nugetconfAnalyzerEnabled the value of the new setting
      */
     public void setNugetconfAnalyzerEnabled(Boolean nugetconfAnalyzerEnabled) {
         this.nugetconfAnalyzerEnabled = nugetconfAnalyzerEnabled;

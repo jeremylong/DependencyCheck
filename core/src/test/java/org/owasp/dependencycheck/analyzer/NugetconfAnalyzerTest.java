@@ -99,6 +99,9 @@ public class NugetconfAnalyzerTest extends BaseTest {
                         assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains("Newtonsoft.Json"));
                         assertTrue(result.getEvidence(EvidenceType.VERSION).toString().contains("10.0.3"));
                         break;
+                    
+                    default :
+                        break;
                     }
                 }
             assertEquals("4 dependencies should be found", 4, foundCount);
