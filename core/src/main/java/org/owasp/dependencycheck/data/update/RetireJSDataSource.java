@@ -162,7 +162,7 @@ public class RetireJSDataSource implements CachedWebDataSource {
                     IOUtils.copy(inputStream, outputStream);
                 }
                 //using move fails if target and destination are on different disks which does happen (see #1394 and #1404)
-                Files.copy(tmpFile.toPath(), repoFile.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                Files.copy(tmpFile.toPath(), repoFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 if (!tmpFile.delete()) {
                     tmpFile.deleteOnExit();
                 }
