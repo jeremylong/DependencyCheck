@@ -400,6 +400,8 @@ public final class CliParser {
                 .desc("Disable the Archive Analyzer.").build();
         final Option disableNuspecAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_NUSPEC)
                 .desc("Disable the Nuspec Analyzer.").build();
+        final Option disableNugetconfAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_NUGETCONF)
+        .desc("Disable the Nuget packages.config Analyzer.").build();
         final Option disableAssemblyAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_ASSEMBLY)
                 .desc("Disable the .NET Assembly Analyzer.").build();
         final Option disablePythonDistributionAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_PY_DIST)
@@ -460,6 +462,7 @@ public final class CliParser {
                 .addOption(disableComposerAnalyzer)
                 .addOption(disableOpenSSLAnalyzer)
                 .addOption(disableNuspecAnalyzer)
+                .addOption(disableNugetconfAnalyzer)
                 .addOption(disableCentralAnalyzer)
                 .addOption(disableNexusAnalyzer)
                 .addOption(cocoapodsAnalyzerEnabled)
@@ -621,6 +624,17 @@ public final class CliParser {
     public boolean isNuspecDisabled() {
         return hasDisableOption(ARGUMENT.DISABLE_NUSPEC, Settings.KEYS.ANALYZER_NUSPEC_ENABLED);
     }
+
+    /**
+     * Returns true if the disableNugetconf command line argument was specified.
+     *
+     * @return true if the disableNugetconf command line argument was specified;
+     * otherwise false
+     */
+    public boolean isNugetconfDisabled() {
+        return hasDisableOption(ARGUMENT.DISABLE_NUGETCONF, Settings.KEYS.ANALYZER_NUGETCONF_ENABLED);
+    }
+
 
     /**
      * Returns true if the disableAssembly command line argument was specified.
@@ -1515,6 +1529,10 @@ public final class CliParser {
          * Disables the Nuspec Analyzer.
          */
         public static final String DISABLE_NUSPEC = "disableNuspec";
+        /**
+         * Disables the Nuget packages.config Analyzer.
+         */
+        public static final String DISABLE_NUGETCONF = "disableNugetconf";
         /**
          * Disables the Central Analyzer.
          */

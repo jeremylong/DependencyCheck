@@ -209,6 +209,10 @@ public class Check extends Update {
      */
     private Boolean nuspecAnalyzerEnabled;
     /**
+     * Whether or not the .NET Nuget packages.config file Analyzer is enabled.
+     */
+    private Boolean nugetconfAnalyzerEnabled;
+    /**
      * Whether or not the PHP Composer Analyzer is enabled.
      */
     private Boolean composerAnalyzerEnabled;
@@ -659,12 +663,31 @@ public class Check extends Update {
     }
 
     /**
+     * Returns whether or not the analyzer is enabled.
+     *
+     * @return true if the analyzer is enabled
+     */
+    public Boolean isNugetconfAnalyzerEnabled() {
+        return nugetconfAnalyzerEnabled;
+    }
+
+    
+    /**
      * Sets whether or not the analyzer is enabled.
      *
      * @param nuspecAnalyzerEnabled the value of the new setting
      */
     public void setNuspecAnalyzerEnabled(Boolean nuspecAnalyzerEnabled) {
         this.nuspecAnalyzerEnabled = nuspecAnalyzerEnabled;
+    }
+
+    /**
+     * Sets whether or not the analyzer is enabled.
+     *
+     * @param nugetconfAnalyzerEnabled the value of the new setting
+     */
+    public void setNugetconfAnalyzerEnabled(Boolean nugetconfAnalyzerEnabled) {
+        this.nugetconfAnalyzerEnabled = nugetconfAnalyzerEnabled;
     }
 
     /**
@@ -1337,6 +1360,7 @@ public class Check extends Update {
         getSettings().setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, retirejsFilters);
 
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUGETCONF_ENABLED, nugetconfAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);

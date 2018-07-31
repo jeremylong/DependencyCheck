@@ -351,6 +351,10 @@ public final class Settings {
          */
         public static final String ANALYZER_NUSPEC_ENABLED = "analyzer.nuspec.enabled";
         /**
+         * The properties key for whether the .NET Nuget packages.config analyzer is enabled.
+         */
+        public static final String ANALYZER_NUGETCONF_ENABLED = "analyzer.nugetconf.enabled";
+        /**
          * The properties key for whether the .NET MSBuild Project analyzer is
          * enabled.
          */

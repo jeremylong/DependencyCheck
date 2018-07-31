@@ -62,6 +62,7 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Paramete
        | \-\-nexus              | \<url\>         | The url to the Nexus Server's web service end point (example: http://domain.enterprise/nexus/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
        | \-\-nexusUsesProxy     | \<true\|false\> | Whether or not the defined proxy should be used when connecting to Nexus.        | true
        | \-\-disableNuspec      |                 | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.                 | false
+       | \-\-disableNugetconf   |                 | Sets whether or not the [experimental](../analyzers/index.html) .NET Nuget packages.config Analyzer will be used.        | false
        | \-\-disableAssembly    |                 | Sets whether or not the .NET Assembly Analyzer should be used.                   | false
        | \-\-mono               | \<path\>        | The path to Mono for .NET Assembly analysis on non-windows systems.              | &nbsp;
        | \-\-bundleAudit        |                 | The path to the bundle-audit executable. | &nbsp;
