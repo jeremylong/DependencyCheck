@@ -36,11 +36,11 @@ public class PomParserTest {
      */
     @Test
     public void testParse_File() throws Exception {
-        File file = BaseTest.getResourceAsFile(this, "pom/plexus-utils-3.0.24.pom");
+        File file = BaseTest.getResourceAsFile(this, "pom/mailapi-1.4.3.pom");
         PomParser instance = new PomParser();
-        String expVersion = "3.0.24";
+        String expVersion = "1.4.3";
         Model result = instance.parse(file);
-        assertEquals("Invalid version extracted", expVersion, result.getVersion());
+        assertEquals("Invalid version extracted", expVersion, result.getParentVersion());
     }
 
     /**

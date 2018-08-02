@@ -64,22 +64,17 @@ public class PomProjectInputStream extends FilterInputStream {
         final byte[] buffer = new byte[BUFFER_SIZE];
         super.mark(BUFFER_SIZE);
         int count = super.read(buffer, 0, BUFFER_SIZE);
-        int adjustment = 0;
         while (count > 0) {
             final int pos = findSequence(PROJECT, buffer);
             if (pos >= 0) {
                 super.reset();
-                super.skip(pos - adjustment);
+                super.skip(pos);
                 return;
             }
             super.reset();
-            super.skip(PROJECT.length);
+            super.skip(count - PROJECT.length);
             super.mark(BUFFER_SIZE);
-            for (int i = 0; i < PROJECT.length; i++) {
-                buffer[i] = buffer[BUFFER_SIZE - PROJECT.length + i];
-            }
-            adjustment = PROJECT.length;
-            count = super.read(buffer, PROJECT.length, BUFFER_SIZE - PROJECT.length);
+            count = super.read(buffer, 0, BUFFER_SIZE);
         }
     }
 
