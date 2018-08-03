@@ -256,26 +256,41 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+        final List<ClassNameInformation> classNames = collectClassNames(dependency);
+        final String fileName = dependency.getFileName().toLowerCase();
+        if (classNames.isEmpty()
+                && (fileName.endsWith("-sources.jar")
+                || fileName.endsWith("-javadoc.jar")
+                || fileName.endsWith("-src.jar")
+                || fileName.endsWith("-doc.jar")
+                || isMacOSMetaDataFile(dependency, engine))
+                || !isZipFile(dependency)) {
+            engine.removeDependency(dependency);
+            return;
+        }
+        Exception exception = null;
+        boolean hasManifest = false;
         try {
-            final List<ClassNameInformation> classNames = collectClassNames(dependency);
-            final String fileName = dependency.getFileName().toLowerCase();
-            if (classNames.isEmpty()
-                    && (fileName.endsWith("-sources.jar")
-                    || fileName.endsWith("-javadoc.jar")
-                    || fileName.endsWith("-src.jar")
-                    || fileName.endsWith("-doc.jar")
-                    || isMacOSMetaDataFile(dependency, engine))
-                    || !isZipFile(dependency)) {
-                engine.removeDependency(dependency);
-                return;
-            }
-            final boolean hasManifest = parseManifest(dependency, classNames);
-            final boolean hasPOM = analyzePOM(dependency, classNames, engine);
-            final boolean addPackagesAsEvidence = !(hasManifest && hasPOM);
-            analyzePackageNames(classNames, dependency, addPackagesAsEvidence);
-            dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
+            hasManifest = parseManifest(dependency, classNames);
         } catch (IOException ex) {
-            throw new AnalysisException("Exception occurred reading the JAR file (" + dependency.getFileName() + ").", ex);
+            LOGGER.debug("Invalid Manifest", ex);
+            exception = ex;
+        }
+        boolean hasPOM = false;
+        try {
+            hasPOM = analyzePOM(dependency, classNames, engine);
+        } catch (AnalysisException ex) {
+            LOGGER.debug("Error parsing pom.xml", ex);
+            exception = ex;
+        }
+        final boolean addPackagesAsEvidence = !(hasManifest && hasPOM);
+        analyzePackageNames(classNames, dependency, addPackagesAsEvidence);
+        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
+
+        if (exception != null) {
+            throw new AnalysisException(String.format("A error occurred extracing evidence from "
+                    + "%s, analysis may be incomplete; please see the log for more details.",
+                    dependency.getDisplayFileName()), exception);
         }
     }
 
