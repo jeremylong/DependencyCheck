@@ -70,6 +70,8 @@ public class PomProjectInputStream extends FilterInputStream {
                 super.reset();
                 super.skip(pos);
                 return;
+            } else if (count-PROJECT.length ==0) {
+                return;
             }
             super.reset();
             super.skip(count - PROJECT.length);
