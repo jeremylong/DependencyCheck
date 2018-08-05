@@ -25,8 +25,9 @@ addons:
     packages:
       - jq
 
-before_install:
-  - wget -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r .assets[0].browser_download_url)
+#removed as the codacy integration keeps breaking the build
+#before_install:
+#  - wget -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r .assets[0].browser_download_url)
 
 matrix:
   include:
@@ -41,9 +42,10 @@ matrix:
       script:
         - travis_wait 60 mvn install -DreleaseTesting
 
+#removed from after_success as the codacy integration keeps breaking the build
+#java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Java -r build-reporting/target/coverage-reports/jacoco.xml;
 after_success:
   - if [ "$JDK" == "JDK8" ]; then 
-      java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Java -r build-reporting/target/coverage-reports/jacoco.xml;
       mvn sonar:sonar -Dsonar.java.coveragePlugin=jacoco -Dsonar.jacoco.reportPath=build-reporting/target/jacoco.xml;
       ./coverity_scan.sh; 
     fi;
