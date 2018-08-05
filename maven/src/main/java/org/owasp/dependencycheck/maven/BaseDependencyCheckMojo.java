@@ -1026,7 +1026,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             projectScan = new FileSet[]{resourcesSet, filtersSet, webappSet};
 
         } else if (aggregate) {
-            //TODO build the correct scan set for the child project?
             projectScan = new FileSet[scanSet.length];
             for (int x = 0; x < scanSet.length; x++) {
                 //deep copy of the FileSet - modifying the directory if it is not absolute.
