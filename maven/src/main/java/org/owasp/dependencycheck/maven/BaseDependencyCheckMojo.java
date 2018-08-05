@@ -874,7 +874,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @return a collection of exceptions that may have occurred while resolving
      * and scanning the dependencies
      */
-    private ExceptionCollection collectDependencies(Engine engine, MavenProject project,
+    private ExceptionCollection collectMavenDependencies(Engine engine, MavenProject project,
             List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
         ExceptionCollection exCol = null;
         for (DependencyNode dependencyNode : nodes) {
@@ -882,7 +882,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     || artifactTypeExcluded.passes(dependencyNode.getArtifact().getType())) {
                 continue;
             }
-            exCol = collectDependencies(engine, project, dependencyNode.getChildren(), buildingRequest, aggregate);
+            exCol = collectMavenDependencies(engine, project, dependencyNode.getChildren(), buildingRequest, aggregate);
             boolean isResolved = false;
             File artifactFile = null;
             String artifactId = null;
@@ -985,6 +985,28 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 }
             }
         }
+        return exCol;
+    }
+
+    /**
+     * Scans the projects dependencies including the default (or defined)
+     * FileSets.
+     *
+     * @param engine the core dependency-check engine
+     * @param project the project being scanned
+     * @param nodes the list of dependency nodes, generally obtained via the
+     * DependencyGraphBuilder
+     * @param buildingRequest the Maven project building request
+     * @param aggregate whether the scan is part of an aggregate build
+     * @return a collection of exceptions that may have occurred while resolving
+     * and scanning the dependencies
+     */
+    private ExceptionCollection collectDependencies(Engine engine, MavenProject project,
+            List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
+
+        ExceptionCollection exCol = null;
+        exCol = collectMavenDependencies(engine, project, nodes, buildingRequest, aggregate);
+
         FileSet[] projectScan = scanSet;
         if (scanSet == null || scanSet.length == 0) {
             // Define the default FileSets
@@ -1005,6 +1027,38 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
         } else if (aggregate) {
             //TODO build the correct scan set for the child project?
+            projectScan = new FileSet[scanSet.length];
+            for (int x = 0; x < scanSet.length; x++) {
+                //deep copy of the FileSet - modifying the directory if it is not absolute.
+                FileSet copyFrom = scanSet[x];
+                FileSet fsCopy = new FileSet();
+
+                File f = new File(copyFrom.getDirectory());
+                if (f.isAbsolute()) {
+                    fsCopy.setDirectory(copyFrom.getDirectory());
+                } else {
+                    try {
+                        fsCopy.setDirectory(new File(project.getBasedir(), copyFrom.getDirectory()).getCanonicalPath());
+                    } catch (IOException ex) {
+                        if (exCol == null) {
+                            exCol = new ExceptionCollection();
+                        }
+                        exCol.addException(ex);
+                        fsCopy.setDirectory(copyFrom.getDirectory());
+                    }
+                }
+                fsCopy.setDirectoryMode(copyFrom.getDirectoryMode());
+                fsCopy.setExcludes(copyFrom.getExcludes());
+                fsCopy.setFileMode(copyFrom.getFileMode());
+                fsCopy.setFollowSymlinks(copyFrom.isFollowSymlinks());
+                fsCopy.setIncludes(copyFrom.getIncludes());
+                fsCopy.setLineEnding(copyFrom.getLineEnding());
+                fsCopy.setMapper(copyFrom.getMapper());
+                fsCopy.setModelEncoding(copyFrom.getModelEncoding());
+                fsCopy.setOutputDirectory(copyFrom.getOutputDirectory());
+                fsCopy.setUseDefaultExcludes(copyFrom.isUseDefaultExcludes());
+                projectScan[x] = fsCopy;
+            }
         }
 
         // Iterate through FileSets and scan included files
