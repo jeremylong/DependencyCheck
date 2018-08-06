@@ -102,7 +102,7 @@ filterNonVulnerable | A boolean controlling whether or not the Retire JS Analyze
 Advanced Configuration
 ====================
 The following properties can be configured in the plugin. However, they are less frequently changed. One exception
-may be the cvedUrl properties, which can be used to host a mirror of the NVD within an enterprise environment.
+may be the cveUrl properties, which can be used to host a mirror of the NVD within an enterprise environment.
 
 Property             | Description                                                                                 | Default Value
 ---------------------|---------------------------------------------------------------------------------------------|------------------
