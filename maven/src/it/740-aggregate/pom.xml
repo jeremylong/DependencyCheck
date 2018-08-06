@@ -25,7 +25,7 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
     <modules>
         <module>first</module>
         <module>second</module>
-		<module>third</module>
+        <module>third</module>
     </modules>
     <build>
         <plugins>
@@ -37,6 +37,12 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
                 <configuration>
                     <format>ALL</format>
                     <centralAnalyzerEnabled>false</centralAnalyzerEnabled>
+                    <enableExperimental>true</enableExperimental>
+                    <scanSet>
+                        <fileSet>
+                            <directory>src/test</directory>
+                        </fileSet>
+                    </scanSet>
                 </configuration>
                 <executions>
                     <execution>

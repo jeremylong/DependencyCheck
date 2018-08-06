@@ -371,13 +371,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "artifactoryAnalyzerEnabled")
     private Boolean artifactoryAnalyzerEnabled;
     /**
-     * The serverId inside the settings.xml containing the username and token to access artifactory
+     * The serverId inside the settings.xml containing the username and token to
+     * access artifactory
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "artifactoryAnalyzerServerId", defaultValue = "artifactory")
     private String artifactoryAnalyzerServerId;
     /**
-     * The username (only used with API token) to connect to Artifactory instance
+     * The username (only used with API token) to connect to Artifactory
+     * instance
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "artifactoryAnalyzerUsername", defaultValue = "artifactory")
@@ -657,7 +659,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
     // </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Base Maven implementation">
-
     /**
      * Determines if the groupId, artifactId, and version of the Maven
      * dependency and artifact match.
@@ -676,7 +677,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Compares two strings for equality; if both strings are null they are
      * considered equal.
      *
-     * @param left  the first string to compare
+     * @param left the first string to compare
      * @param right the second string to compare
      * @return true if the strings are equal or if they are both null; otherwise
      * false.
@@ -689,8 +690,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Executes dependency-check.
      *
      * @throws MojoExecutionException thrown if there is an exception executing
-     *                                the mojo
-     * @throws MojoFailureException   thrown if dependency-check failed the build
+     * the mojo
+     * @throws MojoFailureException thrown if dependency-check failed the build
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -723,7 +724,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * Generates the Dependency-Check Site Report.
      *
-     * @param sink   the sink to write the report to
+     * @param sink the sink to write the report to
      * @param locale the locale to use when generating the report
      * @throws MavenReportException if a maven report exception occurs
      * @deprecated use
@@ -766,7 +767,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * Generates the Dependency-Check Site Report.
      *
-     * @param sink   the sink to write the report to
+     * @param sink the sink to write the report to
      * @param locale the locale to use when generating the report
      * @throws MavenReportException if a maven report exception occurs
      */
@@ -799,7 +800,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      *
      * @return the directory to write the report(s)
      * @throws MojoExecutionException thrown if there is an error loading the
-     *                                file path
+     * file path
      */
     protected File getCorrectOutputDirectory() throws MojoExecutionException {
         return getCorrectOutputDirectory(this.project);
@@ -829,7 +830,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * list.
      *
      * @param project the project to scan the dependencies of
-     * @param engine  the engine to use to scan the dependencies
+     * @param engine the engine to use to scan the dependencies
      * @return a collection of exceptions that may have occurred while resolving
      * and scanning the dependencies
      */
@@ -841,8 +842,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Scans the project's artifacts and adds them to the engine's dependency
      * list.
      *
-     * @param project   the project to scan the dependencies of
-     * @param engine    the engine to use to scan the dependencies
+     * @param project the project to scan the dependencies of
+     * @param engine the engine to use to scan the dependencies
      * @param aggregate whether the scan is part of an aggregate build
      * @return a collection of exceptions that may have occurred while resolving
      * and scanning the dependencies
@@ -864,24 +865,24 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Resolves the projects artifacts using Aether and scans the resulting
      * dependencies.
      *
-     * @param engine          the core dependency-check engine
-     * @param project         the project being scanned
-     * @param nodes           the list of dependency nodes, generally obtained via the
-     *                        DependencyGraphBuilder
+     * @param engine the core dependency-check engine
+     * @param project the project being scanned
+     * @param nodes the list of dependency nodes, generally obtained via the
+     * DependencyGraphBuilder
      * @param buildingRequest the Maven project building request
-     * @param aggregate       whether the scan is part of an aggregate build
+     * @param aggregate whether the scan is part of an aggregate build
      * @return a collection of exceptions that may have occurred while resolving
      * and scanning the dependencies
      */
-    private ExceptionCollection collectDependencies(Engine engine, MavenProject project,
-                                                    List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
+    private ExceptionCollection collectMavenDependencies(Engine engine, MavenProject project,
+            List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
         ExceptionCollection exCol = null;
         for (DependencyNode dependencyNode : nodes) {
             if (artifactScopeExcluded.passes(dependencyNode.getArtifact().getScope())
                     || artifactTypeExcluded.passes(dependencyNode.getArtifact().getType())) {
                 continue;
             }
-            exCol = collectDependencies(engine, project, dependencyNode.getChildren(), buildingRequest, aggregate);
+            exCol = collectMavenDependencies(engine, project, dependencyNode.getChildren(), buildingRequest, aggregate);
             boolean isResolved = false;
             File artifactFile = null;
             String artifactId = null;
@@ -984,9 +985,31 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 }
             }
         }
+        return exCol;
+    }
 
-        // Define the default FileSets
+    /**
+     * Scans the projects dependencies including the default (or defined)
+     * FileSets.
+     *
+     * @param engine the core dependency-check engine
+     * @param project the project being scanned
+     * @param nodes the list of dependency nodes, generally obtained via the
+     * DependencyGraphBuilder
+     * @param buildingRequest the Maven project building request
+     * @param aggregate whether the scan is part of an aggregate build
+     * @return a collection of exceptions that may have occurred while resolving
+     * and scanning the dependencies
+     */
+    private ExceptionCollection collectDependencies(Engine engine, MavenProject project,
+            List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
+
+        ExceptionCollection exCol = null;
+        exCol = collectMavenDependencies(engine, project, nodes, buildingRequest, aggregate);
+
+        FileSet[] projectScan = null;
         if (scanSet == null || scanSet.length == 0) {
+            // Define the default FileSets
             final FileSet resourcesSet = new FileSet();
             final FileSet filtersSet = new FileSet();
             final FileSet webappSet = new FileSet();
@@ -1000,11 +1023,46 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 }
                 exCol.addException(ex);
             }
-            scanSet = new FileSet[]{resourcesSet, filtersSet, webappSet};
+            projectScan = new FileSet[]{resourcesSet, filtersSet, webappSet};
+
+        } else if (aggregate) {
+            projectScan = new FileSet[scanSet.length];
+            for (int x = 0; x < scanSet.length; x++) {
+                //deep copy of the FileSet - modifying the directory if it is not absolute.
+                FileSet copyFrom = scanSet[x];
+                FileSet fsCopy = new FileSet();
+
+                File f = new File(copyFrom.getDirectory());
+                if (f.isAbsolute()) {
+                    fsCopy.setDirectory(copyFrom.getDirectory());
+                } else {
+                    try {
+                        fsCopy.setDirectory(new File(project.getBasedir(), copyFrom.getDirectory()).getCanonicalPath());
+                    } catch (IOException ex) {
+                        if (exCol == null) {
+                            exCol = new ExceptionCollection();
+                        }
+                        exCol.addException(ex);
+                        fsCopy.setDirectory(copyFrom.getDirectory());
+                    }
+                }
+                fsCopy.setDirectoryMode(copyFrom.getDirectoryMode());
+                fsCopy.setExcludes(copyFrom.getExcludes());
+                fsCopy.setFileMode(copyFrom.getFileMode());
+                fsCopy.setFollowSymlinks(copyFrom.isFollowSymlinks());
+                fsCopy.setIncludes(copyFrom.getIncludes());
+                fsCopy.setLineEnding(copyFrom.getLineEnding());
+                fsCopy.setMapper(copyFrom.getMapper());
+                fsCopy.setModelEncoding(copyFrom.getModelEncoding());
+                fsCopy.setOutputDirectory(copyFrom.getOutputDirectory());
+                fsCopy.setUseDefaultExcludes(copyFrom.isUseDefaultExcludes());
+                projectScan[x] = fsCopy;
+            }
         }
+
         // Iterate through FileSets and scan included files
         final FileSetManager fileSetManager = new FileSetManager();
-        for (FileSet fileSet : scanSet) {
+        for (FileSet fileSet : projectScan) {
             final String[] includedFiles = fileSetManager.getIncludedFiles(fileSet);
             for (String include : includedFiles) {
                 final File includeFile = new File(fileSet.getDirectory(), include).getAbsoluteFile();
@@ -1023,7 +1081,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * have not yet been built. If true a virtual dependency is created based on
      * the evidence in the project.
      *
-     * @param engine   a reference to the engine being used to scan
+     * @param engine a reference to the engine being used to scan
      * @param artifact the artifact being analyzed in the mojo
      * @return <code>true</code> if the artifact is in the reactor; otherwise
      * <code>false</code>
@@ -1117,9 +1175,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Executes the dependency-check scan and generates the necessary report.
      *
      * @throws MojoExecutionException thrown if there is an exception running
-     *                                the scan
-     * @throws MojoFailureException   thrown if dependency-check is configured to
-     *                                fail the build
+     * the scan
+     * @throws MojoFailureException thrown if dependency-check is configured to
+     * fail the build
      */
     protected void runCheck() throws MojoExecutionException, MojoFailureException {
         try (Engine engine = initializeEngine()) {
@@ -1177,10 +1235,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * MojoExecutionException
      *
      * @param currentEx the primary exception collection
-     * @param newEx     the new exception collection to add
+     * @param newEx the new exception collection to add
      * @return the combined exception collection
      * @throws MojoExecutionException thrown if dependency-check is configured
-     *                                to fail on errors
+     * to fail on errors
      */
     private ExceptionCollection handleAnalysisExceptions(ExceptionCollection currentEx, ExceptionCollection newEx) throws MojoExecutionException {
         ExceptionCollection returnEx = currentEx;
@@ -1382,7 +1440,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_USES_PROXY, artifactoryAnalyzerUseProxy);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_PARALLEL_ANALYSIS, artifactoryAnalyzerParallelAnalysis);
 
-
         if (Boolean.TRUE.equals(artifactoryAnalyzerEnabled)) {
             if (artifactoryAnalyzerServerId != null) {
                 final Server server = settingsXml.getServer(artifactoryAnalyzerServerId);
@@ -1575,14 +1632,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     //<editor-fold defaultstate="collapsed" desc="Methods to fail build or show summary">
-
     /**
      * Checks to see if a vulnerability has been identified with a CVSS score
      * that is above the threshold set in the configuration.
      *
      * @param dependencies the list of dependency objects
      * @throws MojoFailureException thrown if a CVSS score is found that is
-     *                              higher then the threshold set
+     * higher then the threshold set
      */
     protected void checkForFailure(Dependency[] dependencies) throws MojoFailureException {
         final StringBuilder ids = new StringBuilder();
@@ -1623,7 +1679,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Generates a warning message listing a summary of dependencies and their
      * associated CPE and CVE entries.
      *
-     * @param mp           the Maven project for which the summary is shown
+     * @param mp the Maven project for which the summary is shown
      * @param dependencies a list of dependency objects
      */
     protected void showSummary(MavenProject mp, Dependency[] dependencies) {
@@ -1664,7 +1720,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Methods to read/write the serialized data file">
-
     /**
      * Returns the key used to store the path to the data file that is saved by
      * <code>writeDataFile()</code>. This key is used in the
