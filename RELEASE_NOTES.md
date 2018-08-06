@@ -2,6 +2,21 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 3.3.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.3.1) (2018-08-06)
+
+### Bug Fixes
+
+- Fixed error handling with regard to invalid manifest files contained within JAR files; see [#1024](https://github.com/jeremylong/DependencyCheck/issues/1024).
+- Fixed parsing of pom.xml files, in some cases a SAX Exception would be thrown; see [#1400](https://github.com/jeremylong/DependencyCheck/issues/1400).
+- Fixed bug that caused dependency-check to crash if the temporary directory and data directory were on different drives; see [#1394](https://github.com/jeremylong/DependencyCheck/issues/1394).
+- Fixed bug in dependency-check-maven where an aggregate analysis did not scan all files defined in the ScanSet; see [#1421](https://github.com/jeremylong/DependencyCheck/issues/1421).
+- Fixed NPE in dependency-check-gradle that occurred when artifacts where included using `implementation files("./lib/some.jar")`; see [#91](https://github.com/jeremylong/dependency-check-gradle/issues/91).
+
+### Enhancements
+
+- An Nuget Packages.config Analyzer was added; see [#1412](https://github.com/jeremylong/DependencyCheck/issues/1412).
+
+
 ## [Version 3.3.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.3.0) (2018-07-22)
 
 ### Bug Fixes
@@ -12,7 +27,7 @@ Please see the [dependency-check google group](https://groups.google.com/forum/#
 - Fixed issue where, in some cases, temporary files were not correctly cleaned up in Jenkins and gradle builds.
 - Fixed issue where, in some cases, files were retrieved from Maven Central using HTTP instead of HTTPS. See [issue #1325](https://github.com/jeremylong/DependencyCheck/issues/1325) for more information.
   - Additionally, a retry count was added when attempting to download pom.xml files during analysis.
-- Fixed issue where nodejs dependencies were not correctly analyzed. See [issue #1355](https://github.com/jeremylong/DependencyCheck/issues/1355) for more information,.
+- Fixed issue where nodejs dependencies were not correctly analyzed. See [issue #1355](https://github.com/jeremylong/DependencyCheck/issues/1355) for more information.
 - Fixed issue where the CWE was not written to the CSV report.
 - In addition, general bug fixes, code cleanup, and false positive/negatives updates were made.
 
