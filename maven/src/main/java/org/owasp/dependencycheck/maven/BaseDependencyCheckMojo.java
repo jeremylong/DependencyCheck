@@ -1007,7 +1007,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         ExceptionCollection exCol = null;
         exCol = collectMavenDependencies(engine, project, nodes, buildingRequest, aggregate);
 
-        FileSet[] projectScan = scanSet;
+        final FileSet[] projectScan;
         if (scanSet == null || scanSet.length == 0) {
             // Define the default FileSets
             final FileSet resourcesSet = new FileSet();
