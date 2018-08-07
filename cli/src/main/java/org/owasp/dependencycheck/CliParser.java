@@ -473,8 +473,8 @@ public final class CliParser {
                 .addOption(swiftPackageManagerAnalyzerEnabled)
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_NODE_JS)
                         .desc("Disable the Node.js Package Analyzer.").build())
-                .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_NSP)
-                        .desc("Disable the NSP Package Analyzer.").build())
+                .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_NODE_AUDIT)
+                        .desc("Disable the Node Audit Analyzer.").build())
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_RETIRE_JS)
                         .desc("Disable the RetireJS Analyzer.").build())
                 .addOption(Option.builder().longOpt(ARGUMENT.RETIREJS_FILTER_NON_VULNERABLE)
@@ -754,13 +754,13 @@ public final class CliParser {
     }
 
     /**
-     * Returns true if the disableNSP command line argument was specified.
+     * Returns true if the disableNodeAudit command line argument was specified.
      *
-     * @return true if the disableNSP command line argument was specified;
+     * @return true if the disableNodeAudit command line argument was specified;
      * otherwise false
      */
-    public boolean isNspDisabled() {
-        return hasDisableOption(ARGUMENT.DISABLE_NSP, Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED);
+    public boolean isNodeAuditDisabled() {
+        return hasDisableOption(ARGUMENT.DISABLE_NODE_AUDIT, Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED);
     }
 
     /**
@@ -1556,9 +1556,9 @@ public final class CliParser {
          */
         public static final String DISABLE_NODE_JS = "disableNodeJS";
         /**
-         * Disables the NSP Analyzer.
+         * Disables the Node Audit Analyzer.
          */
-        public static final String DISABLE_NSP = "disableNSP";
+        public static final String DISABLE_NODE_AUDIT = "disableNodeAudit";
         /**
          * Disables the RetireJS Analyzer.
          */

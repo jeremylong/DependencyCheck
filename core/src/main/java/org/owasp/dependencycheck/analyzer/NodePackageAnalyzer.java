@@ -117,10 +117,10 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                 if (tmp != null) {
                     final List<String> skipEcosystems = Arrays.asList(tmp);
                     if (skipEcosystems.contains(DEPENDENCY_ECOSYSTEM)
-                            && !settings.getBoolean(Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED)) {
+                            && !settings.getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED)) {
                         LOGGER.debug("NodePackageAnalyzer enabled without a corresponding vulnerability analyzer");
                         final String msg = "Invalid Configuration: enabling the Node Package Analyzer without "
-                                + "using the NSP Analyzer is not supported.";
+                                + "using the Node Audit Analyzer is not supported.";
                         throw new InitializationException(msg);
                     } else if (!skipEcosystems.contains(DEPENDENCY_ECOSYSTEM)) {
                         LOGGER.warn("Using the CPE Analyzer with Node.js can result in many false positives.");

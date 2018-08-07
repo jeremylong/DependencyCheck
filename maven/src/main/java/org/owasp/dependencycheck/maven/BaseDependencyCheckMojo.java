@@ -325,11 +325,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "nodeAnalyzerEnabled", required = false)
     private Boolean nodeAnalyzerEnabled;
     /**
-     * Sets whether or not the Node Security Project Analyzer should be used.
+     * Sets whether or not the Node Audit Analyzer should be used.
      */
     @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "nspAnalyzerEnabled", required = false)
-    private Boolean nspAnalyzerEnabled;
+    @Parameter(property = "nodeAuditAnalyzerEnabled", required = false)
+    private Boolean nodeAuditAnalyzerEnabled;
     /**
      * Sets whether or not the Retirejs Analyzer should be used.
      */
@@ -1473,7 +1473,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, autoconfAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
-        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED, nspAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, nodeAuditAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, bundleAuditAnalyzerEnabled);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, bundleAuditPath);
