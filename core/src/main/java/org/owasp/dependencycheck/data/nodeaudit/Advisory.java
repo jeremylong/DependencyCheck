@@ -29,7 +29,7 @@ import javax.annotation.concurrent.ThreadSafe;
 public class Advisory {
 
     /**
-     * The unique ID of the advisory as issued by NPM.
+     * The unique ID of the advisory as issued by Node Security Platform.
      */
     private int id;
 
