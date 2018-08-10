@@ -55,6 +55,7 @@ public class FileNameAnalyzer extends AbstractAnalyzer {
         "METADATA",
         "PKG-INFO",
         "package.json",
+        "packages.config",
         "Package.swift",
         "classes.jar",
         "build.gradle"}, IOCase.INSENSITIVE);
