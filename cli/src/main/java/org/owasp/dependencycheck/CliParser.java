@@ -764,7 +764,7 @@ public final class CliParser {
      * otherwise false
      */
     public boolean isRetireJSDisabled() {
-        return hasDisableOption(ARGUMENT.DISABLE_RETIRE_JS, Settings.KEYS.ANALYZER_RETIRED_ENABLED);
+        return hasDisableOption(ARGUMENT.DISABLE_RETIRE_JS, Settings.KEYS.ANALYZER_RETIREJS_ENABLED);
     }
 
     /**
