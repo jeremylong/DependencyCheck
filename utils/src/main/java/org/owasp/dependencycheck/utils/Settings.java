@@ -702,7 +702,7 @@ public final class Settings {
      * @param value the value for the property
      */
     public void setArrayIfNotEmpty(String key, List<String> value) {
-        if (null != value && value.size() > 0) {
+        if (null != value && !value.isEmpty()) {
             setString(key, new Gson().toJson(value));
         }
     }
