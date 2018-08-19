@@ -492,7 +492,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         while (entries.hasMoreElements()) {
             final JarEntry entry = entries.nextElement();
             final String entryName = (new File(entry.getName())).getName().toLowerCase();
-            if (!entry.isDirectory() && "pom.xml".equals(entryName)) {
+            if (!entry.isDirectory() && "pom.xml".equals(entryName)
+                    && entry.getName().toUpperCase().startsWith("META-INF")) {
                 LOGGER.trace("POM Entry found: {}", entry.getName());
                 pomEntries.add(entry.getName());
             }
