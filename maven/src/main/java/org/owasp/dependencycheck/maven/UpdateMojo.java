@@ -31,8 +31,7 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * Maven Plugin that checks the project dependencies to see if they have any
- * known published vulnerabilities.
+ * Maven Plugin that updates the local cache of the NVD data from NIST.
  *
  * @author Jeremy Long
  */
