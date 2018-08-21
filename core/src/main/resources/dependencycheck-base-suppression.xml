@@ -663,6 +663,7 @@
        ]]></notes>
         <filePath regex="true">.*PKG-INFO$</filePath>
         <cpe>cpe:/a:nodejs:nodejs</cpe>
+        <cpe>cpe:/a:nodejs:node.js</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
