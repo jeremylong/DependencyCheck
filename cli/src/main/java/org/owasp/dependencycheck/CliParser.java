@@ -58,6 +58,8 @@ public final class CliParser {
      */
     private final Settings settings;
 
+    private static final String SUPPORTED_FORMATS = "HTML, XML, CSV, JSON, VULN, or ALL";
+
     /**
      * Constructs a new CLI Parser object with the configured settings.
      *
@@ -133,7 +135,7 @@ public final class CliParser {
                     Format.valueOf(format);
                 } catch (IllegalArgumentException ex) {
                     final String msg = String.format("An invalid 'format' of '%s' was specified. "
-                            + "Supported output formats are HTML, XML, CSV, JSON, VULN, or ALL", format);
+                            + "Supported output formats are " + SUPPORTED_FORMATS, format);
                     throw new ParseException(msg);
                 }
             }
@@ -273,7 +275,7 @@ public final class CliParser {
                 .build();
 
         final Option outputFormat = Option.builder(ARGUMENT.OUTPUT_FORMAT_SHORT).argName("format").hasArg().longOpt(ARGUMENT.OUTPUT_FORMAT)
-                .desc("The output format to write to (XML, JSON, HTML, VULN, ALL). The default is HTML.")
+                .desc("The output format to write to (" + SUPPORTED_FORMATS + "). The default is HTML.")
                 .build();
 
         final Option verboseLog = Option.builder(ARGUMENT.VERBOSE_LOG_SHORT).argName("file").hasArg().longOpt(ARGUMENT.VERBOSE_LOG)
