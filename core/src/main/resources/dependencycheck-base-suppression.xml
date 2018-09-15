@@ -892,7 +892,7 @@
         <notes><![CDATA[
         spring-session has a different version numbering than spring-core. See #1399
         ]]></notes>
-        <gav regex="true">^org\.springframework\.session:spring-session-core:.*$</gav>
+        <gav regex="true">^org\.springframework\.session:spring-session-(core|data-).*$</gav>
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
