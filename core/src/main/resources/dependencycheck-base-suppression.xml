@@ -890,6 +890,15 @@
     </suppress-->
     <suppress>
         <notes><![CDATA[
+        spring-session has a different version numbering than spring-core. See #1399
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.session:spring-session-core:.*$</gav>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
         FP per #1424
         ]]></notes>
         <gav regex="true">^stax:stax-api:.*$</gav>
