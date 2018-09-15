@@ -162,6 +162,13 @@
     </suppress-->
     <suppress base="true">
         <notes><![CDATA[
+        FP per #1479
+        ]]></notes>
+        <gav regex="true">^com.amazonaws:aws-java-sdk-simpleworkflow:.*$</gav>
+        <cpe>cpe:/a:flow_project:flow</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #1027
         ]]></notes>
         <gav regex="true">^com\.github\.danielwegener:logback-kafka-appender:.*$</gav>
