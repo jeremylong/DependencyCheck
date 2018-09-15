@@ -906,6 +906,20 @@
     </suppress>
     <suppress>
         <notes><![CDATA[
+        FP per #1398
+        ]]></notes>
+        <gav regex="true">^net\.java\.truevfs:truevfs-comp-zip:.*$</gav>
+        <cpe>cpe:/a:zip_project:zip</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+        FP per #1398
+        ]]></notes>
+        <gav regex="true">^net\.java\.truevfs:truevfs-driver-zip:.*$</gav>
+        <cpe>cpe:/a:zip_project:zip</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
         FP per #1424
         ]]></notes>
         <gav regex="true">^stax:stax-api:.*$</gav>
