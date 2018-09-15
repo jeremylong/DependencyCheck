@@ -1058,6 +1058,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 fsCopy.setUseDefaultExcludes(copyFrom.isUseDefaultExcludes());
                 projectScan[x] = fsCopy;
             }
+        } else {
+            projectScan = scanSet;
         }
 
         // Iterate through FileSets and scan included files
