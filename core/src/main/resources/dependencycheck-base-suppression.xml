@@ -160,6 +160,13 @@
         <gav regex="true">org\.forgerock\.opendj:opendj-ldap-sdk:.*</gav>
         <cpe>cpe:/a:ldap_project:ldap</cpe>
     </suppress-->
+    <suppress>
+        <notes><![CDATA[
+        FP per #1485
+        ]]></notes>
+        <gav regex="true">^org\.sonatype\.plexus:plexus-sec-dispatcher:.*$</gav>
+        <cpe>cpe:/a:sec_project:sec</cpe>
+    </suppress>
     <suppress base="true">
         <notes><![CDATA[
         FP per #1479
