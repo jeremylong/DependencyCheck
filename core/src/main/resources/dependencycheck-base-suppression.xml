@@ -899,6 +899,13 @@
     </suppress>
     <suppress>
         <notes><![CDATA[
+        FP per #1398
+        ]]></notes>
+        <gav regex="true">^net\.lingala\.zip4j:zip4j:.*$</gav>
+        <cpe>cpe:/a:zip_project:zip</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
         FP per #1424
         ]]></notes>
         <gav regex="true">^stax:stax-api:.*$</gav>
