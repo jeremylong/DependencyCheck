@@ -1029,10 +1029,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             projectScan = new FileSet[scanSet.length];
             for (int x = 0; x < scanSet.length; x++) {
                 //deep copy of the FileSet - modifying the directory if it is not absolute.
-                FileSet copyFrom = scanSet[x];
-                FileSet fsCopy = new FileSet();
+                final FileSet copyFrom = scanSet[x];
+                final FileSet fsCopy = new FileSet();
 
-                File f = new File(copyFrom.getDirectory());
+                final File f = new File(copyFrom.getDirectory());
                 if (f.isAbsolute()) {
                     fsCopy.setDirectory(copyFrom.getDirectory());
                 } else {

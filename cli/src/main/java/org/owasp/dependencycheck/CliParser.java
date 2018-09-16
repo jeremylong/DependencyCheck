@@ -57,7 +57,9 @@ public final class CliParser {
      * The configured settings.
      */
     private final Settings settings;
-
+    /**
+     * The supported reported formats.
+     */
     private static final String SUPPORTED_FORMATS = "HTML, XML, CSV, JSON, VULN, or ALL";
 
     /**
@@ -403,7 +405,7 @@ public final class CliParser {
         final Option disableNuspecAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_NUSPEC)
                 .desc("Disable the Nuspec Analyzer.").build();
         final Option disableNugetconfAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_NUGETCONF)
-        .desc("Disable the Nuget packages.config Analyzer.").build();
+                .desc("Disable the Nuget packages.config Analyzer.").build();
         final Option disableAssemblyAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_ASSEMBLY)
                 .desc("Disable the .NET Assembly Analyzer.").build();
         final Option disablePythonDistributionAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_PY_DIST)
@@ -636,7 +638,6 @@ public final class CliParser {
     public boolean isNugetconfDisabled() {
         return hasDisableOption(ARGUMENT.DISABLE_NUGETCONF, Settings.KEYS.ANALYZER_NUGETCONF_ENABLED);
     }
-
 
     /**
      * Returns true if the disableAssembly command line argument was specified.

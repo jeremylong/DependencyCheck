@@ -671,7 +671,6 @@ public class Check extends Update {
         return nugetconfAnalyzerEnabled;
     }
 
-    
     /**
      * Sets whether or not the analyzer is enabled.
      *
