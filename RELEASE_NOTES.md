@@ -2,6 +2,17 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 3.3.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.3.2) (2018-09-14)
+
+### Bug Fixes
+
+- Gradle plugin was updated to include backward compatability with gradle < v4.0; see [#95](https://github.com/jeremylong/dependency-check-gradle/issues/95).
+- Gradle plugin improved handling of Android project; see [#94](https://github.com/jeremylong/dependency-check-gradle/issues/94)
+- CLI used an incorrect key for RetireJS causing the analyzer to not be loaded in some cases; see [#1440](https://github.com/jeremylong/DependencyCheck/issues/1440).
+- Resolved failure in the `CentralAnalyzer` when the pom.xml is not available in Central; see [#1439](https://github.com/jeremylong/DependencyCheck/issues/1439).
+- Resolved exception when JAR files contain invalid pom.xml files outside of META-INF; see [#1438](https://github.com/jeremylong/DependencyCheck/issues/1438).
+- Resolved several reported false positives.
+
 ## [Version 3.3.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.3.1) (2018-08-06)
 
 ### Bug Fixes
