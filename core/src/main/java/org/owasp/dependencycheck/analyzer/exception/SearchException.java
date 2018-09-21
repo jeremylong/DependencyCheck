@@ -20,7 +20,7 @@ package org.owasp.dependencycheck.analyzer.exception;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
- * An exception thrown when an online searching fails (such as NSP).
+ * An exception thrown when an online searching fails (such as NPM).
  *
  * @author Jeremy Long
  */

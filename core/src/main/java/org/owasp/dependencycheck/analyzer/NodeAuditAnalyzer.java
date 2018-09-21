@@ -61,7 +61,7 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeAuditAnalyzer.class);
     /**
-     * The default URL to the NSP check API.
+     * The default URL to the NPM Audit API.
      */
     public static final String DEFAULT_URL = "https://registry.npmjs.org/-/npm/v1/security/audits";
     /**
@@ -183,14 +183,12 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
                  * Create a new vulnerability out of the advisory returned by nsp.
                  */
                 final Vulnerability vuln = new Vulnerability();
-                //vuln.setCvssScore(advisory.getCvssScore());
                 vuln.setDescription(advisory.getOverview());
                 vuln.setName(String.valueOf(advisory.getId()));
-
-                // TODO: NPM Audit still has a requirement on NSP but this will soon change.
-                vuln.setSource(Vulnerability.Source.NSP);
+                vuln.setUnscoredSeverity(advisory.getSeverity());
+                vuln.setSource(Vulnerability.Source.NPM);
                 vuln.addReference(
-                        "NSP",
+                        "NPM",
                         "Advisory " + advisory.getId() + ": " + advisory.getTitle(),
                         advisory.getReferences() // TODO? What was this before ?????????????
                 );
