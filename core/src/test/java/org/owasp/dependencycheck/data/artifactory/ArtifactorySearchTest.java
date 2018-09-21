@@ -61,8 +61,12 @@ public class ArtifactorySearchTest extends BaseTest {
 
     @AfterClass
     public static void restoreProxies() {
-        System.setProperty("https.proxyHost", httpsProxyHostOrig);
-        System.setProperty("https.proxyPort", httpsPortOrig);
+        if (httpsProxyHostOrig != null) {
+            System.setProperty("https.proxyHost", httpsProxyHostOrig);
+        }
+        if (httpsPortOrig != null) {
+            System.setProperty("https.proxyPort", httpsPortOrig);
+        }
     }
 
     @Before
