@@ -183,12 +183,10 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
                  * Create a new vulnerability out of the advisory returned by nsp.
                  */
                 final Vulnerability vuln = new Vulnerability();
-                //vuln.setCvssScore(advisory.getCvssScore());
                 vuln.setDescription(advisory.getOverview());
                 vuln.setName(String.valueOf(advisory.getId()));
-
-                // TODO: NPM Audit still has a requirement on NSP but this will soon change.
-                vuln.setSource(Vulnerability.Source.NSP);
+                vuln.setUnscoredSeverity(advisory.getSeverity());
+                vuln.setSource(Vulnerability.Source.NPM);
                 vuln.addReference(
                         "NPM",
                         "Advisory " + advisory.getId() + ": " + advisory.getTitle(),
