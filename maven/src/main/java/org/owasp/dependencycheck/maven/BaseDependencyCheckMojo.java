@@ -1572,14 +1572,27 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         }
                     }
                 } else {
+                    Proxy httpsProxy = null;
+                    Proxy httpProxy = null;
+
                     for (Proxy aProxy: proxies) {
-                        if (aProxy.getProtocol().equalsIgnoreCase("https") && aProxy.isActive()) {
-                            return aProxy;
+                        if (aProxy.getProtocol().equalsIgnoreCase("https") && aProxy.isActive() && httpsProxy == null) {
+                            httpsProxy = aProxy;
                         }
 
-                        if (aProxy.getProtocol().equalsIgnoreCase("http") && aProxy.isActive()) {
-                            return aProxy;
+                        if (aProxy.getProtocol().equalsIgnoreCase("http") && aProxy.isActive() && httpProxy == null) {
+                            httpProxy = aProxy;
                         }
+
+                        if (httpProxy != null && httpsProxy != null) {
+                            break;
+                        }
+                    }
+
+                    if (httpsProxy != null) {
+                        return httpsProxy;
+                    } else if (httpProxy != null) {
+                        return httpProxy;
                     }
                 }
             }
