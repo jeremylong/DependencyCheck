@@ -6,7 +6,7 @@ A sample suppression file would look like:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.2.xsd">
    <suppress>
       <notes><![CDATA[
       file name: some.jar
@@ -26,7 +26,7 @@ HTML version of the report. The other common scenario would be to ignore all CVE
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.2.xsd">
     <suppress>
         <notes><![CDATA[
         This suppresses cpe:/a:csv:csv:1.0 for some.jar in the "c:\path\to" directory.
@@ -73,7 +73,7 @@ HTML version of the report. The other common scenario would be to ignore all CVE
 </suppressions>
 ```
 
-The full schema for suppression files can be found here: [suppression.xsd](https://github.com/jeremylong/DependencyCheck/blob/master/core/src/main/resources/schema/suppression.xsd "Suppression Schema")
+The full schema for suppression files can be found here: [suppression.xsd](https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.2.xsd "Suppression Schema")
 
 Please see the appropriate configuration option in each interfaces configuration guide:
 
