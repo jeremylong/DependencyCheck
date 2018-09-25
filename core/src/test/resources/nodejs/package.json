@@ -1,0 +1,17 @@
+{
+  "name": "test",
+  "version": "0.0.1",
+  "lockfileVersion": 1,
+  "requires": true,
+  "dependencies": {
+    "dns-sync": {
+      "version": "0.1.0",
+      "resolved": "https://registry.npmjs.org/dns-sync/-/dns-sync-0.1.0.tgz",
+      "integrity": "sha1-gPcpFC513UtfSx0+Upcx7jEplHI=",
+      "requires": {
+        "debug": "2.6.9",
+        "shelljs": "0.5.3"
+      }
+    }
+  }
+}

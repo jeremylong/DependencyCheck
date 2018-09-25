@@ -163,9 +163,18 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
         return Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED;
     }
 
+    private boolean isNspEnabled(Engine engine) {
+        for (Analyzer a : engine.getAnalyzers()) {
+            if (a instanceof NodeAuditAnalyzer) {
+                return a.isEnabled();
+            }
+        }
+        return false;
+    }
+
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        if (!PACKAGE_JSON.equals(dependency.getFileName())) {
+        if (isNspEnabled(engine) && !PACKAGE_LOCK_JSON.equals(dependency.getFileName())) {
             engine.removeDependency(dependency);
         }
         final File dependencyFile = dependency.getActualFile();
@@ -173,7 +182,13 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
             return;
         }
         final File baseDir = dependencyFile.getParentFile();
-        if (PACKAGE_LOCK_JSON.equals(dependency.getFileName())) {
+        if (PACKAGE_JSON.equals(dependency.getFileName())) {
+            final File lockfile = new File(baseDir, PACKAGE_LOCK_JSON);
+            final File shrinkwrap = new File(baseDir, SHRINKWRAP_JSON);
+            if (shrinkwrap.exists() || lockfile.exists()) {
+                return;
+            }
+        } else if (PACKAGE_LOCK_JSON.equals(dependency.getFileName())) {
             final File shrinkwrap = new File(baseDir, SHRINKWRAP_JSON);
             if (shrinkwrap.exists()) {
                 return;

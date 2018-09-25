@@ -123,16 +123,18 @@ public class NodePackageAnalyzerTest extends BaseTest {
      */
     @Test
     public void testAnalyzePackageJsonWithShrinkwrap() throws AnalysisException {
-        final Dependency packageLock = new Dependency(BaseTest.getResourceAsFile(this,
-                "nodejs/package-lock.json"));
+        final Dependency packageJson = new Dependency(BaseTest.getResourceAsFile(this,
+                "nodejs/package.json"));
         final Dependency shrinkwrap = new Dependency(BaseTest.getResourceAsFile(this,
                 "nodejs/npm-shrinkwrap.json"));
-        engine.addDependency(packageLock);
+        engine.addDependency(packageJson);
         engine.addDependency(shrinkwrap);
         assertEquals(2, engine.getDependencies().length);
-        analyzer.analyze(packageLock, engine);
+        analyzer.analyze(packageJson, engine);
         assertEquals(1, engine.getDependencies().length); //package-lock was removed without analysis
+        assertTrue(shrinkwrap.equals(engine.getDependencies()[0]));
         analyzer.analyze(shrinkwrap, engine);
         assertEquals(1, engine.getDependencies().length); //shrinkwrap was removed with analysis adding 1 dependency
+        assertFalse(shrinkwrap.equals(engine.getDependencies()[0]));
     }
 }
