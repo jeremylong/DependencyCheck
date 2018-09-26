@@ -17,7 +17,9 @@
  */
 package org.owasp.dependencycheck.data.artifactory;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
@@ -40,6 +42,32 @@ import static org.mockito.Mockito.when;
 
 public class ArtifactorySearchTest extends BaseTest {
     private ArtifactorySearch searcher;
+    private static String httpsProxyHostOrig;
+    private static String httpsPortOrig;
+
+    @BeforeClass
+    public static void tinkerProxies() {
+        httpsProxyHostOrig = System.getProperty("https.proxyHost");
+        if (httpsProxyHostOrig == null) {
+            httpsProxyHostOrig = System.getenv("https.proxyHost");
+        }
+        httpsPortOrig = System.getProperty("https.proxyPort");
+        if(httpsPortOrig == null) {
+            httpsPortOrig = System.getenv("https.proxyPort");
+        }
+        System.setProperty("https.proxyHost", "");
+        System.setProperty("https.proxyPort", "");
+    }
+
+    @AfterClass
+    public static void restoreProxies() {
+        if (httpsProxyHostOrig != null) {
+            System.setProperty("https.proxyHost", httpsProxyHostOrig);
+        }
+        if (httpsPortOrig != null) {
+            System.setProperty("https.proxyPort", httpsPortOrig);
+        }
+    }
 
     @Before
     @Override

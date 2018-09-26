@@ -1571,12 +1571,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                             return proxy;
                         }
                     }
-                } else if (proxies.size() == 1) {
-                    return proxies.get(0);
                 } else {
-                    getLog().warn("Multiple proxy definitions exist in the Maven settings. In the dependency-check "
-                            + "configuration set the mavenSettingsProxyId so that the correct proxy will be used.");
-                    throw new IllegalStateException("Ambiguous proxy definition");
+                    for (Proxy aProxy: proxies) {
+                        if (aProxy.isActive()) {
+                            return aProxy;
+                        }
+                    }
                 }
             }
         }
