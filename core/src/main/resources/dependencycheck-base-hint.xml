@@ -232,4 +232,12 @@
             <evidence type="vendor" source="hint analyzer" name="vendor" value="redhat" confidence="HIGH"/>
         </add>
     </hint>
+    <hint>
+        <given>
+            <evidence type="product" source="Manifest" name="extension-name" value="org.bouncycastle.bcprovider" confidence="MEDIUM"/>
+        </given>
+        <add>
+            <evidence type="product" source="hint analyzer" name="product" value="legion-of-the-bouncy-castle-java-crytography-api" confidence="HIGH"/>
+        </add>
+    </hint>
 </hints>
