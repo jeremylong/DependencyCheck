@@ -882,7 +882,16 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     || artifactTypeExcluded.passes(dependencyNode.getArtifact().getType())) {
                 continue;
             }
-            exCol = collectMavenDependencies(engine, project, dependencyNode.getChildren(), buildingRequest, aggregate);
+            ExceptionCollection tmpCol;
+            tmpCol = collectMavenDependencies(engine, project, dependencyNode.getChildren(), buildingRequest, aggregate);
+            if (exCol!=null && tmpCol!=null) {
+                for (Throwable ex : tmpCol.getExceptions()) {
+                    exCol.addException(ex);
+                }
+            } else if (tmpCol!=null) {
+                exCol = tmpCol;
+            }
+            
             boolean isResolved = false;
             File artifactFile = null;
             String artifactId = null;
