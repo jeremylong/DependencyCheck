@@ -493,6 +493,13 @@
         <gav regex="true">org\.elasticsearch:securesm:.*</gav>
         <cpe>cpe:/a:elasticsearch:elasticsearch</cpe>
     </suppress>
+   <suppress base="true">
+       <notes><![CDATA[
+       wink-json false positive
+       ]]></notes>
+       <gav regex="true">^org\.apache\.wink:wink-json4j:.*$</gav>
+       <cpe>cpe:/a:wink:wink</cpe>
+    </suppress>
     <suppress base="true">
         <notes><![CDATA[
         Glassfish false positives.
@@ -700,6 +707,7 @@
         <gav regex="true">^org\.bouncycastle:bctsp.*$</gav>
         <cpe>cpe:/a:openpgp:openpgp</cpe>
         <cpe>cpe:/a:pgp:openpgp</cpe>
+        <cpe>cpe:/a:pgp:pgp</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
