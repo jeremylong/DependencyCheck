@@ -67,9 +67,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
+import org.apache.maven.shared.dependency.graph.traversal.CollectingDependencyNodeVisitor;
 
 /**
  * @author Jeremy Long
@@ -850,10 +855,43 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     protected ExceptionCollection scanArtifacts(MavenProject project, Engine engine, boolean aggregate) {
         try {
+            final List<String> filterItems = Collections.singletonList(String.format("%s:%s", project.getGroupId(), project.getArtifactId()));
             final ProjectBuildingRequest buildingRequest = newResolveArtifactProjectBuildingRequest();
             buildingRequest.setProject(project);
+            //For some reason the filter does not filter out the project being analyzed if we pass in teh filter used below instead of null
+            final ArtifactFilter filter = new ExcludesArtifactFilter(filterItems);
             final DependencyNode dn = dependencyGraphBuilder.buildDependencyGraph(buildingRequest, null, reactorProjects);
-            return collectDependencies(engine, project, dn.getChildren(), buildingRequest, aggregate);
+            CollectingDependencyNodeVisitor visitor = new CollectingDependencyNodeVisitor();
+            dn.accept(visitor);
+            
+            List<DependencyNode> nodes = new ArrayList<>();
+            
+            for (DependencyNode node : visitor.getNodes()) {
+                if (filter.include(node.getArtifact())) {
+                    nodes.add(node);
+                    getLog().warn("+ " + node.toNodeString() + " - " + filter.include(node.getArtifact()));
+                }
+                
+//                for (DependencyNode c : node.getChildren()) {
+//                    getLog().warn(" - " + c.toNodeString());
+//                    for (DependencyNode b : c.getChildren()) {
+//                        getLog().warn("   - " + b.toNodeString());
+//                    }
+//                }
+
+            }
+//            getLog().warn("------------------");
+//            for (DependencyNode n : dn.getChildren()) {
+//                getLog().warn("+ " + n.toNodeString());
+//                for (DependencyNode c : n.getChildren()) {
+//                    getLog().warn(" - " + c.toNodeString());
+//                    for (DependencyNode b : c.getChildren()) {
+//                        getLog().warn("   - " + b.toNodeString());
+//                    }
+//                }
+//            }
+
+            return collectDependencies(engine, project, nodes, buildingRequest, aggregate);
         } catch (DependencyGraphBuilderException ex) {
             final String msg = String.format("Unable to build dependency graph on project %s", project.getName());
             getLog().debug(msg, ex);
@@ -882,16 +920,18 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     || artifactTypeExcluded.passes(dependencyNode.getArtifact().getType())) {
                 continue;
             }
-            ExceptionCollection tmpCol;
-            tmpCol = collectMavenDependencies(engine, project, dependencyNode.getChildren(), buildingRequest, aggregate);
-            if (exCol!=null && tmpCol!=null) {
-                for (Throwable ex : tmpCol.getExceptions()) {
-                    exCol.addException(ex);
-                }
-            } else if (tmpCol!=null) {
-                exCol = tmpCol;
-            }
-            
+            //recursion is no longer needed as we are getting a flattend tree
+            //using the CollectingDependencyNodeVisitor in the calling method.
+//            ExceptionCollection tmpCol;
+//            tmpCol = collectMavenDependencies(engine, project, dependencyNode.getChildren(), buildingRequest, aggregate);
+//            if (exCol != null && tmpCol != null) {
+//                for (Throwable ex : tmpCol.getExceptions()) {
+//                    exCol.addException(ex);
+//                }
+//            } else if (tmpCol != null) {
+//                exCol = tmpCol;
+//            }
+
             boolean isResolved = false;
             File artifactFile = null;
             String artifactId = null;
@@ -1581,7 +1621,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         }
                     }
                 } else {
-                    for (Proxy aProxy: proxies) {
+                    for (Proxy aProxy : proxies) {
                         if (aProxy.isActive()) {
                             return aProxy;
                         }
