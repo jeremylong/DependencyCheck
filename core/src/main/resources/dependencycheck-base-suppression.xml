@@ -195,6 +195,13 @@
         <gav regex="true">^org\.apache\.httpcomponents:httpmime:.*$</gav>
         <cpe>cpe:/a:apache:httpclient</cpe>
      </suppress>
+     <suppress base="true">
+        <notes><![CDATA[
+        FP per #1515
+        ]]></notes>
+        <gav regex="true">^org\.eclipse\.jetty\.alpn:alpn-api:.*$</gav>
+        <cpe>cpe:/a:eclipse:jetty</cpe>
+     </suppress>
     <suppress base="true">
         <notes><![CDATA[
         FP per #1027
