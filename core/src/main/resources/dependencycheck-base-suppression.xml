@@ -199,7 +199,7 @@
         <notes><![CDATA[
         FP per #1027
         ]]></notes>
-        <gav regex="true">^org\.springframework\.kafka:spring-kafka:.*$</gav>
+        <gav regex="true">^org\.springframework\.kafka:spring-kafka.*$</gav>
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
     </suppress>
@@ -207,7 +207,7 @@
         <notes><![CDATA[
         FP per #1328
         ]]></notes>
-        <gav regex="true">^org\.springframework\.batch:spring-batch:.*$</gav>
+        <gav regex="true">^org\.springframework\.batch:spring-batch.*$</gav>
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
     </suppress>
