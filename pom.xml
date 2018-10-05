@@ -176,6 +176,7 @@ Copyright (c) 2012 - Jeremy Long
         <!-- upgrading beyond 2.2 requires reworking the dependency resolution -->
         <maven-dependency-tree.version>3.0.1</maven-dependency-tree.version>
 
+        <!-- upgrading beyond 1.0.4 will cause the build to fail on Java 7 --> 
         <org.glassfish.javax.json.version>1.0.4</org.glassfish.javax.json.version>
         <maven-artifact-transfer.version>0.10.0</maven-artifact-transfer.version>
         <groovy-all.version>2.4.15</groovy-all.version>
