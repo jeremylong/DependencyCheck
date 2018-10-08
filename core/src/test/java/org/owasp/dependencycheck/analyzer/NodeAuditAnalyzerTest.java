@@ -7,9 +7,12 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import java.io.File;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
+import org.junit.Assume;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.Settings;
 
 public class NodeAuditAnalyzerTest extends BaseTest {
 
@@ -28,7 +31,8 @@ public class NodeAuditAnalyzerTest extends BaseTest {
     }
 
     @Test
-    public void testAnalyzePackage() throws AnalysisException, InitializationException {
+    public void testAnalyzePackage() throws AnalysisException, InitializationException, InvalidSettingException {
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED), is(true));
         try (Engine engine = new Engine(getSettings())) {
             NodeAuditAnalyzer analyzer = new NodeAuditAnalyzer();
             analyzer.setFilesMatched(true);
@@ -52,7 +56,8 @@ public class NodeAuditAnalyzerTest extends BaseTest {
     }
 
     @Test
-    public void testAnalyzeEmpty() throws AnalysisException, InitializationException {
+    public void testAnalyzeEmpty() throws AnalysisException, InitializationException, InvalidSettingException {
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED), is(true));
         try (Engine engine = new Engine(getSettings())) {
             NodeAuditAnalyzer analyzer = new NodeAuditAnalyzer();
             analyzer.setFilesMatched(true);
@@ -68,7 +73,8 @@ public class NodeAuditAnalyzerTest extends BaseTest {
     }
 
     @Test
-    public void testAnalyzePackageJsonInNodeModulesDirectory() throws AnalysisException, InitializationException {
+    public void testAnalyzePackageJsonInNodeModulesDirectory() throws AnalysisException, InitializationException, InvalidSettingException {
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED), is(true));
         try (Engine engine = new Engine(getSettings())) {
             NodeAuditAnalyzer analyzer = new NodeAuditAnalyzer();
             analyzer.setFilesMatched(true);
