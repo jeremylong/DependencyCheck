@@ -29,8 +29,11 @@ import java.io.File;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
+import org.junit.Assume;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * Unit tests for NodePackageAnalyzer.
@@ -100,7 +103,8 @@ public class NodePackageAnalyzerTest extends BaseTest {
      * @throws AnalysisException is thrown when an exception occurs.
      */
     @Test
-    public void testAnalyzeShrinkwrapJson() throws AnalysisException {
+    public void testAnalyzeShrinkwrapJson() throws AnalysisException, InvalidSettingException {
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED), is(true));
         final Dependency toScan = new Dependency(BaseTest.getResourceAsFile(this,
                 "nodejs/npm-shrinkwrap.json"));
         final Dependency toCombine = new Dependency(BaseTest.getResourceAsFile(this,
@@ -133,7 +137,8 @@ public class NodePackageAnalyzerTest extends BaseTest {
      * @throws AnalysisException is thrown when an exception occurs.
      */
     @Test
-    public void testAnalyzePackageJsonWithShrinkwrap() throws AnalysisException {
+    public void testAnalyzePackageJsonWithShrinkwrap() throws AnalysisException, InvalidSettingException {
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED), is(true));
         final Dependency packageJson = new Dependency(BaseTest.getResourceAsFile(this,
                 "nodejs/package.json"));
         final Dependency shrinkwrap = new Dependency(BaseTest.getResourceAsFile(this,
