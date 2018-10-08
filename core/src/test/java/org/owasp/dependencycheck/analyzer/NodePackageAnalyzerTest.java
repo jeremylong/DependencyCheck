@@ -60,11 +60,13 @@ public class NodePackageAnalyzerTest extends BaseTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        engine = new Engine(this.getSettings());
-        analyzer = new NodePackageAnalyzer();
-        analyzer.setFilesMatched(true);
-        analyzer.initialize(getSettings());
-        analyzer.prepare(engine);
+        if (getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED)) {
+            engine = new Engine(this.getSettings());
+            analyzer = new NodePackageAnalyzer();
+            analyzer.setFilesMatched(true);
+            analyzer.initialize(getSettings());
+            analyzer.prepare(engine);
+        }
     }
 
     /**
@@ -75,9 +77,12 @@ public class NodePackageAnalyzerTest extends BaseTest {
     @After
     @Override
     public void tearDown() throws Exception {
-        analyzer.close();
-        engine.close();
+        if (getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED)) {
+            analyzer.close();
+            engine.close();
+        }
         super.tearDown();
+        
     }
 
     /**
