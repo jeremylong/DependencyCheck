@@ -60,15 +60,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        System.out.println("--------------------------");
-        System.out.println("--------------------------");
-        System.out.println("--------------------------");
-        System.out.println(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED));
-        System.out.println("--------------------------");
-        System.out.println("--------------------------");
-        System.out.println("--------------------------");
         if (getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED)) {
-            
             engine = new Engine(this.getSettings());
             analyzer = new NodePackageAnalyzer();
             analyzer.setFilesMatched(true);
