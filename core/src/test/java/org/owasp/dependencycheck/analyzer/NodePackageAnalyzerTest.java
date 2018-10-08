@@ -103,9 +103,20 @@ public class NodePackageAnalyzerTest extends BaseTest {
     public void testAnalyzeShrinkwrapJson() throws AnalysisException {
         final Dependency toScan = new Dependency(BaseTest.getResourceAsFile(this,
                 "nodejs/npm-shrinkwrap.json"));
+        final Dependency toCombine = new Dependency(BaseTest.getResourceAsFile(this,
+                "nodejs/node_modules/dns-sync/package.json"));
+        engine.addDependency(toScan);
+        engine.addDependency(toCombine);
         analyzer.analyze(toScan, engine);
-        assertEquals("Expected 1 dependency", engine.getDependencies().length, 1);
-        final Dependency result = engine.getDependencies()[0];
+        analyzer.analyze(toCombine, engine);
+        assertEquals("Expected 4 dependency", engine.getDependencies().length, 4);
+        Dependency result = null;
+        for (Dependency dep : engine.getDependencies()) {
+            if ("dns-sync".equals(dep.getName())) {
+                result = dep;
+                break;
+            }
+        }
         final String vendorString = result.getEvidence(EvidenceType.VENDOR).toString();
         assertThat(vendorString, containsString("Sanjeev Koranga"));
         assertThat(vendorString, containsString("dns-sync"));
@@ -134,7 +145,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
         assertEquals(1, engine.getDependencies().length); //package-lock was removed without analysis
         assertTrue(shrinkwrap.equals(engine.getDependencies()[0]));
         analyzer.analyze(shrinkwrap, engine);
-        assertEquals(1, engine.getDependencies().length); //shrinkwrap was removed with analysis adding 1 dependency
+        assertEquals(4, engine.getDependencies().length); //shrinkwrap was removed with analysis adding 4 dependency
         assertFalse(shrinkwrap.equals(engine.getDependencies()[0]));
     }
 }
