@@ -84,7 +84,9 @@ public class NodePackageAnalyzerTest extends BaseTest {
      * Test of getName method, of class PythonDistributionAnalyzer.
      */
     @Test
-    public void testGetName() {
+    public void testGetName() throws InvalidSettingException {
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED), is(true));
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED), is(true));
         assertThat(analyzer.getName(), is("Node.js Package Analyzer"));
     }
 
@@ -92,7 +94,9 @@ public class NodePackageAnalyzerTest extends BaseTest {
      * Test of supportsExtension method, of class PythonDistributionAnalyzer.
      */
     @Test
-    public void testSupportsFiles() {
+    public void testSupportsFiles() throws InvalidSettingException {
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED), is(true));
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED), is(true));
         assertThat(analyzer.accept(new File("package-lock.json")), is(true));
         assertThat(analyzer.accept(new File("npm-shrinkwrap.json")), is(true));
     }
@@ -105,6 +109,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
     @Test
     public void testAnalyzeShrinkwrapJson() throws AnalysisException, InvalidSettingException {
         Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED), is(true));
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED), is(true));
         final Dependency toScan = new Dependency(BaseTest.getResourceAsFile(this,
                 "nodejs/npm-shrinkwrap.json"));
         final Dependency toCombine = new Dependency(BaseTest.getResourceAsFile(this,
@@ -139,6 +144,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
     @Test
     public void testAnalyzePackageJsonWithShrinkwrap() throws AnalysisException, InvalidSettingException {
         Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED), is(true));
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED), is(true));
         final Dependency packageJson = new Dependency(BaseTest.getResourceAsFile(this,
                 "nodejs/package.json"));
         final Dependency shrinkwrap = new Dependency(BaseTest.getResourceAsFile(this,
