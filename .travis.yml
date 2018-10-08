@@ -33,7 +33,7 @@ matrix:
   include:
     - jdk: openjdk7
       env:
-        - JDK="JDK7" analyzer.node.package.enabled=false analyzer.node.audit.enabled=false
+        - JDK="JDK7" "analyzer.node.package.enabled"=false "analyzer.node.audit.enabled"=false
       script:
         - if [ ! -z "$TRAVIS_TAG" ]; then travis_wait 60 mvn install site site:stage -DreleaseTesting; else travis_wait 60 mvn install -DreleaseTesting; fi
     - jdk: oraclejdk8
