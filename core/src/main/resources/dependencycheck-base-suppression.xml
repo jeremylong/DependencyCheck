@@ -195,13 +195,34 @@
         <gav regex="true">^org\.apache\.httpcomponents:httpmime:.*$</gav>
         <cpe>cpe:/a:apache:httpclient</cpe>
      </suppress>
-     <suppress base="true">
+    <suppress base="true">
         <notes><![CDATA[
         FP per #1515
         ]]></notes>
         <gav regex="true">^org\.eclipse\.jetty\.alpn:alpn-api:.*$</gav>
         <cpe>cpe:/a:eclipse:jetty</cpe>
-     </suppress>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positives found while investigating https://github.com/jeremylong/dependency-check-gradle/issues/103
+        ]]></notes>
+        <gav regex="true">^com\.facebook\.android:facebook-android-sdk:.*$</gav>
+        <cpe>cpe:/a:facebook:facebook</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positives found while investigating https://github.com/jeremylong/dependency-check-gradle/issues/103
+        ]]></notes>
+        <gav regex="true">^com\.amazonaws:aws-android-sdk-cognitoidentityprovider-asf:.*$</gav>
+        <cpe>cpe:/a:android:android_sdk</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positives found while investigating https://github.com/jeremylong/dependency-check-gradle/issues/103
+        ]]></notes>
+        <gav regex="true">^org\.jetbrains:annotations:.*$</gav>
+        <cpe>cpe:/a:jetbrains:intellij_idea</cpe>
+    </suppress>
     <suppress base="true">
         <notes><![CDATA[
         FP per #1027
@@ -946,7 +967,7 @@
         ]]></notes>
         <gav regex="true">^stax:stax-api:.*$</gav>
         <cpe>cpe:/a:st_project:st</cpe>
-     </suppress>
+    </suppress>
     <suppress base="true">
         <notes><![CDATA[
         false positive per issue #894
