@@ -17,10 +17,10 @@
  */
 package org.owasp.dependencycheck.data.nodeaudit;
 
+import org.owasp.dependencycheck.BaseTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +35,7 @@ import org.owasp.dependencycheck.utils.URLConnectionFailureException;
 
 public class NodeAuditSearchTest extends BaseTest {
 
+/*
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeAuditSearchTest.class);
     private NodeAuditSearch searcher;
 
@@ -44,7 +45,7 @@ public class NodeAuditSearchTest extends BaseTest {
         super.setUp();
         searcher = new NodeAuditSearch(getSettings());
     }
-/*
+
     @Test
     public void testNodeAuditSearchPositive() throws Exception {
         InputStream in = BaseTest.getResourceAsStream(this, "nodeaudit/package.json");
