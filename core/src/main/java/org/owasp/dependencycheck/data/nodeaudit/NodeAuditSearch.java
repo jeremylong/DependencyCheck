@@ -125,7 +125,7 @@ public class NodeAuditSearch {
                 case 200:
                     try (InputStream in = new BufferedInputStream(conn.getInputStream());
                             JsonReader jsonReader = Json.createReader(in)) {
-                        final JSONObject jsonResponse = new org.json.JSONObject(jsonReader.readObject().toString());
+                        final JSONObject jsonResponse = new JSONObject(jsonReader.readObject().toString());
                         final NpmAuditParser parser = new NpmAuditParser();
                         return parser.parse(jsonResponse);
                     }
