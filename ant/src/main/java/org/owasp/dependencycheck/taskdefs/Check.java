@@ -854,6 +854,35 @@ public class Check extends Update {
     }
 
     /**
+     * Get the value of nodeAnalyzerEnabled.
+     *
+     * @return the value of nodeAnalyzerEnabled
+     *
+     * @deprecated As of release 3.3.3, replaced by
+     * {@link #isNodeAuditAnalyzerEnabled()}
+     */
+    @Deprecated
+    public Boolean isNspAnalyzerEnabled() {
+        log("The NspAnalyzerEnabled configuration has been deprecated and replaced by NodeAuditAnalyzerEnabled", Project.MSG_ERR);
+        log("The NspAnalyzerEnabled configuration will be removed in the next major release");
+        return nodeAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of nodeAnalyzerEnabled.
+     *
+     * @param nodeAnalyzerEnabled new value of nodeAnalyzerEnabled
+     * @deprecated As of release 3.3.3, replaced by
+     * {@link #setNodeAuditAnalyzerEnabled(java.lang.Boolean)}
+     */
+    @Deprecated
+    public void setNspAnalyzerEnabled(Boolean nodeAnalyzerEnabled) {
+        log("The NspAnalyzerEnabled configuration has been deprecated and replaced by NodeAuditAnalyzerEnabled", Project.MSG_ERR);
+        log("The NspAnalyzerEnabled configuration will be removed in the next major release");
+        this.nodeAnalyzerEnabled = nodeAnalyzerEnabled;
+    }
+
+    /**
      * Get the value of nodeAuditAnalyzerEnabled.
      *
      * @return the value of nodeAuditAnalyzerEnabled

@@ -331,6 +331,16 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "nodeAuditAnalyzerEnabled", required = false)
     private Boolean nodeAuditAnalyzerEnabled;
     /**
+     * Sets whether or not the Node Security Project Analyzer should be used.
+     *
+     * @deprecated As of release 3.3.3, replaced by
+     * {@link #nodeAuditAnalyzerEnabled}
+     */
+    @Deprecated
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "nspAnalyzerEnabled", required = false)
+    private Boolean nspAnalyzerEnabled;
+    /**
      * Sets whether or not the Retirejs Analyzer should be used.
      */
     @SuppressWarnings("CanBeFinal")
@@ -884,14 +894,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
             ExceptionCollection tmpCol;
             tmpCol = collectMavenDependencies(engine, project, dependencyNode.getChildren(), buildingRequest, aggregate);
-            if (exCol!=null && tmpCol!=null) {
+            if (exCol != null && tmpCol != null) {
                 for (Throwable ex : tmpCol.getExceptions()) {
                     exCol.addException(ex);
                 }
-            } else if (tmpCol!=null) {
+            } else if (tmpCol != null) {
                 exCol = tmpCol;
             }
-            
+
             boolean isResolved = false;
             File artifactFile = null;
             String artifactId = null;
@@ -1473,6 +1483,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, autoconfAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
+
+        if (nspAnalyzerEnabled != null) {
+            getLog().error("The nspAnalyzerEnabled configuration has been deprecated and replaced by nodeAuditAnalyzerEnabled");
+            getLog().error("The nspAnalyzerEnabled configuration will be removed in the next major release");
+            settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, nspAnalyzerEnabled);
+        }
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, nodeAuditAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, bundleAuditAnalyzerEnabled);
@@ -1581,7 +1597,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         }
                     }
                 } else {
-                    for (Proxy aProxy: proxies) {
+                    for (Proxy aProxy : proxies) {
                         if (aProxy.isActive()) {
                             return aProxy;
                         }

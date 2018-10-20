@@ -526,6 +526,8 @@ public final class CliParser {
                 .desc("The name of the project being scanned.")
                 .build();
 
+        options.addOption(Option.builder().longOpt("disableNSP")
+                        .desc("Disable the NSP Package Analyzer.").build());
         options.addOption(proxyServer);
         options.addOption(appName);
     }
@@ -760,6 +762,11 @@ public final class CliParser {
      * otherwise false
      */
     public boolean isNodeAuditDisabled() {
+        if (hasDisableOption("disableNSP", Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED)) {
+            LOGGER.error("The disableNSP argument has been deprecated and replaced by disableNodeAudit");
+            LOGGER.error("The disableNSP argument will be removed in the next version");
+            return true;
+        }
         return hasDisableOption(ARGUMENT.DISABLE_NODE_AUDIT, Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED);
     }
 
