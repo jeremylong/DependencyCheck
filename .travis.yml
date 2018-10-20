@@ -65,6 +65,7 @@ after_failure:
     - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/815-broken-suppression-aggregate/build.log
     - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/846-site-plugin/build.log
     - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/false-positives/build.log
+    - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/1512-transitive-test/build.log
 
 deploy:
   - provider: script
