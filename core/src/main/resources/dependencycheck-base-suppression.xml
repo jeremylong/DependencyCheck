@@ -160,7 +160,7 @@
         <gav regex="true">org\.forgerock\.opendj:opendj-ldap-sdk:.*</gav>
         <cpe>cpe:/a:ldap_project:ldap</cpe>
     </suppress-->
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         FP per #1485
         ]]></notes>
@@ -931,7 +931,7 @@
         <gav regex="true">^com\.unboundid:unboundid-ldapsdk:.*$</gav>
         <cpe>cpe:/a:ldap_project:ldap</cpe>
     </suppress-->
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         spring-session has a different version numbering than spring-core. See #1399
         ]]></notes>
@@ -940,28 +940,28 @@
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         FP per #1398
         ]]></notes>
         <gav regex="true">^net\.lingala\.zip4j:zip4j:.*$</gav>
         <cpe>cpe:/a:zip_project:zip</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         FP per #1398
         ]]></notes>
         <gav regex="true">^net\.java\.truevfs:truevfs-comp-zip:.*$</gav>
         <cpe>cpe:/a:zip_project:zip</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         FP per #1398
         ]]></notes>
         <gav regex="true">^net\.java\.truevfs:truevfs-driver-zip:.*$</gav>
         <cpe>cpe:/a:zip_project:zip</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         FP per #1424
         ]]></notes>
