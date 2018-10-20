@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2017 Steve Springett. All Rights Reserved.
+ * Copyright (c) 2018 Steve Springett. All Rights Reserved.
  */
 package org.owasp.dependencycheck.analyzer;
 
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.data.nsp.Advisory;
-import org.owasp.dependencycheck.data.nsp.NspSearch;
-import org.owasp.dependencycheck.data.nsp.SanitizePackage;
+import org.owasp.dependencycheck.data.nodeaudit.Advisory;
+import org.owasp.dependencycheck.data.nodeaudit.NodeAuditSearch;
+import org.owasp.dependencycheck.data.nodeaudit.SanitizePackage;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
@@ -41,7 +41,6 @@ import javax.annotation.concurrent.ThreadSafe;
 import javax.json.Json;
 import javax.json.JsonException;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
 import org.owasp.dependencycheck.analyzer.exception.SearchException;
 import org.owasp.dependencycheck.exception.InitializationException;
@@ -49,23 +48,22 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.URLConnectionFailureException;
 
 /**
- * Used to analyze Node Package Manager (npm) package.json files via Node
- * Security Platform (nsp).
+ * Used to analyze Node Package Manager (npm) package-lock.json and
+ * npm-shrinkwrap.json files via NPM Audit API.
  *
  * @author Steve Springett
  */
 @ThreadSafe
-public class NspAnalyzer extends AbstractNpmAnalyzer {
+public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
 
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(NspAnalyzer.class);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(NodeAuditAnalyzer.class);
     /**
-     * The default URL to the NSP check API.
+     * The default URL to the NPM Audit API.
      */
-    public static final String DEFAULT_URL = "https://api.nodesecurity.io/check";
+    public static final String DEFAULT_URL = "https://registry.npmjs.org/-/npm/v1/security/audits";
     /**
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
@@ -74,18 +72,22 @@ public class NspAnalyzer extends AbstractNpmAnalyzer {
     /**
      * The file name to scan.
      */
-    private static final String PACKAGE_JSON = "package.json";
+    public static final String PACKAGE_LOCK_JSON = "package-lock.json";
+    /**
+     * The file name to scan.
+     */
+    public static final String SHRINKWRAP_JSON = "npm-shrinkwrap.json";
 
     /**
-     * Filter that detects files named "package.json".
+     * Filter that detects files named "package-lock.json or npm-shrinkwrap.json".
      */
     private static final FileFilter PACKAGE_JSON_FILTER = FileFilterBuilder.newInstance()
-            .addFilenames(PACKAGE_JSON).build();
+            .addFilenames(PACKAGE_LOCK_JSON, SHRINKWRAP_JSON).build();
 
     /**
-     * The NSP Searcher.
+     * The Node Audit Searcher.
      */
-    private NspSearch searcher;
+    private NodeAuditSearch searcher;
 
     /**
      * Returns the FileFilter
@@ -107,10 +109,10 @@ public class NspAnalyzer extends AbstractNpmAnalyzer {
     public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         LOGGER.debug("Initializing {}", getName());
         try {
-            searcher = new NspSearch(getSettings());
+            searcher = new NodeAuditSearch(getSettings());
         } catch (MalformedURLException ex) {
             setEnabled(false);
-            throw new InitializationException("The configured URL to Node Security Platform is malformed", ex);
+            throw new InitializationException("The configured URL to NPM Audit API is malformed", ex);
         }
         try {
             final Settings settings = engine.getSettings();
@@ -131,7 +133,7 @@ public class NspAnalyzer extends AbstractNpmAnalyzer {
      */
     @Override
     public String getName() {
-        return "Node Security Platform Analyzer";
+        return "Node Audit Analyzer";
     }
 
     /**
@@ -152,7 +154,7 @@ public class NspAnalyzer extends AbstractNpmAnalyzer {
      */
     @Override
     protected String getAnalyzerEnabledSettingKey() {
-        return Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED;
+        return Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED;
     }
 
     @Override
@@ -167,32 +169,28 @@ public class NspAnalyzer extends AbstractNpmAnalyzer {
 
         try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {
 
-            // Retrieves the contents of package.json from the Dependency
+            // Retrieves the contents of package-lock.json from the Dependency
             final JsonObject packageJson = jsonReader.readObject();
 
-            // Create a sanitized version of the package.json
-            final JsonObject sanitizedJson = SanitizePackage.sanitize(packageJson);
-
-            // Create a new 'package' object that acts as a container for the sanitized package.json
-            final JsonObjectBuilder builder = Json.createObjectBuilder();
-            final JsonObject nspPayload = builder.add("package", sanitizedJson).build();
+            // Modify the payload to meet the NPM Audit API requirements
+            final JsonObject payload = SanitizePackage.sanitize(packageJson);
 
             // Submits the package payload to the nsp check service
-            final List<Advisory> advisories = searcher.submitPackage(nspPayload);
+            final List<Advisory> advisories = searcher.submitPackage(payload);
 
             for (Advisory advisory : advisories) {
                 /*
                  * Create a new vulnerability out of the advisory returned by nsp.
                  */
                 final Vulnerability vuln = new Vulnerability();
-                vuln.setCvssScore(advisory.getCvssScore());
                 vuln.setDescription(advisory.getOverview());
                 vuln.setName(String.valueOf(advisory.getId()));
-                vuln.setSource(Vulnerability.Source.NSP);
+                vuln.setUnscoredSeverity(advisory.getSeverity());
+                vuln.setSource(Vulnerability.Source.NPM);
                 vuln.addReference(
-                        "NSP",
+                        "NPM",
                         "Advisory " + advisory.getId() + ": " + advisory.getTitle(),
-                        advisory.getAdvisory()
+                        advisory.getReferences() // TODO? What was this before ?????????????
                 );
 
                 /*
@@ -203,12 +201,12 @@ public class NspAnalyzer extends AbstractNpmAnalyzer {
                 //  - the update is a part of the version, not versions to update to
                 //vs.setUpdate(advisory.getPatchedVersions());
 
-                vs.setName(advisory.getModule() + ":" + advisory.getVulnerableVersions());
+                vs.setName(advisory.getModuleName() + ":" + advisory.getVulnerableVersions());
                 vuln.setVulnerableSoftware(new HashSet<>(Arrays.asList(vs)));
 
-                final Dependency existing = findDependency(engine, advisory.getModule(), advisory.getVersion());
+                final Dependency existing = findDependency(engine, advisory.getModuleName(), advisory.getVersion());
                 if (existing == null) {
-                    final Dependency nodeModule = createDependency(dependency, advisory.getModule(), advisory.getVersion(), "transitive");
+                    final Dependency nodeModule = createDependency(dependency, advisory.getModuleName(), advisory.getVersion(), "transitive");
                     nodeModule.addVulnerability(vuln);
                     engine.addDependency(nodeModule);
                 } else {
@@ -217,18 +215,18 @@ public class NspAnalyzer extends AbstractNpmAnalyzer {
             }
         } catch (URLConnectionFailureException e) {
             this.setEnabled(false);
-            throw new AnalysisException("Failed to connect to the Node Security Project (NspAnalyzer); the analyzer "
+            throw new AnalysisException("Failed to connect to the NPM Audit API (NodeAuditAnalyzer); the analyzer "
                     + "is being disabled and may result in false negatives.", e);
         } catch (IOException e) {
-            LOGGER.debug("Error reading dependency or connecting to Node Security Platform - check API", e);
+            LOGGER.debug("Error reading dependency or connecting to NPM Audit API", e);
             this.setEnabled(false);
-            throw new AnalysisException("Failed to read results from the Node Security Project (NspAnalyzer); "
+            throw new AnalysisException("Failed to read results from the NPM Audit API (NodeAuditAnalyzer); "
                     + "the analyzer is being disabled and may result in false negatives.", e);
         } catch (JsonException e) {
-            throw new AnalysisException(String.format("Failed to parse %s file from the Node Security Platform "
-                    + "(NspAnalyzer).", file.getPath()), e);
+            throw new AnalysisException(String.format("Failed to parse %s file from the NPM Audit API "
+                    + "(NodeAuditAnalyzer).", file.getPath()), e);
         } catch (SearchException ex) {
-            LOGGER.error("NspAnalyzer failed on {}", dependency.getActualFilePath());
+            LOGGER.error("NodeAuditAnalyzer failed on {}", dependency.getActualFilePath());
             throw ex;
         }
     }

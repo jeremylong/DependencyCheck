@@ -4,42 +4,46 @@ import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
-
 import java.io.File;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
+import org.junit.Assume;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.Settings;
 
-public class NspAnalyzerTest extends BaseTest {
+public class NodeAuditAnalyzerTest extends BaseTest {
 
     @Test
     public void testGetName() {
-        NspAnalyzer analyzer = new NspAnalyzer();
-        assertThat(analyzer.getName(), is("Node Security Platform Analyzer"));
+        NodeAuditAnalyzer analyzer = new NodeAuditAnalyzer();
+        assertThat(analyzer.getName(), is("Node Audit Analyzer"));
     }
 
     @Test
     public void testSupportsFiles() {
-        NspAnalyzer analyzer = new NspAnalyzer();
-        assertThat(analyzer.accept(new File("package.json")), is(true));
+        NodeAuditAnalyzer analyzer = new NodeAuditAnalyzer();
+        assertThat(analyzer.accept(new File("package-lock.json")), is(true));
+        assertThat(analyzer.accept(new File("npm-shrinkwrap.json")), is(true));
+        assertThat(analyzer.accept(new File("package.json")), is(false));
     }
 
     @Test
-    public void testAnalyzePackage() throws AnalysisException, InitializationException {
+    public void testAnalyzePackage() throws AnalysisException, InitializationException, InvalidSettingException {
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED), is(true));
         try (Engine engine = new Engine(getSettings())) {
-            NspAnalyzer analyzer = new NspAnalyzer();
+            NodeAuditAnalyzer analyzer = new NodeAuditAnalyzer();
             analyzer.setFilesMatched(true);
             analyzer.initialize(getSettings());
             analyzer.prepare(engine);
-            final Dependency toScan = new Dependency(BaseTest.getResourceAsFile(this, "nsp/package.json"));
+            final Dependency toScan = new Dependency(BaseTest.getResourceAsFile(this, "nodeaudit/package-lock.json"));
             analyzer.analyze(toScan, engine);
             boolean found = false;
             assertTrue("Mpre then 1 dependency should be identified", 1 < engine.getDependencies().length);
             for (Dependency result : engine.getDependencies()) {
-                if ("package.json?uglify-js".equals(result.getFileName())) {
+                if ("package-lock.json?uglify-js".equals(result.getFileName())) {
                     found = true;
                     assertTrue(result.getEvidence(EvidenceType.VENDOR).toString().contains("uglify-js"));
                     assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains("uglify-js"));
@@ -52,13 +56,14 @@ public class NspAnalyzerTest extends BaseTest {
     }
 
     @Test
-    public void testAnalyzeEmpty() throws AnalysisException, InitializationException {
+    public void testAnalyzeEmpty() throws AnalysisException, InitializationException, InvalidSettingException {
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED), is(true));
         try (Engine engine = new Engine(getSettings())) {
-            NspAnalyzer analyzer = new NspAnalyzer();
+            NodeAuditAnalyzer analyzer = new NodeAuditAnalyzer();
             analyzer.setFilesMatched(true);
             analyzer.initialize(getSettings());
             analyzer.prepare(engine);
-            final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "nsp/empty.json"));
+            final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "nodeaudit/empty.json"));
             analyzer.analyze(result, engine);
 
             assertEquals(result.getEvidence(EvidenceType.VENDOR).size(), 0);
@@ -68,9 +73,10 @@ public class NspAnalyzerTest extends BaseTest {
     }
 
     @Test
-    public void testAnalyzePackageJsonInNodeModulesDirectory() throws AnalysisException, InitializationException {
+    public void testAnalyzePackageJsonInNodeModulesDirectory() throws AnalysisException, InitializationException, InvalidSettingException {
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED), is(true));
         try (Engine engine = new Engine(getSettings())) {
-            NspAnalyzer analyzer = new NspAnalyzer();
+            NodeAuditAnalyzer analyzer = new NodeAuditAnalyzer();
             analyzer.setFilesMatched(true);
             analyzer.initialize(getSettings());
             analyzer.prepare(engine);
@@ -81,19 +87,4 @@ public class NspAnalyzerTest extends BaseTest {
         }
     }
 
-    @Test
-    public void testAnalyzeInvalidPackageMissingName() throws AnalysisException, InitializationException {
-        try (Engine engine = new Engine(getSettings())) {
-            NspAnalyzer analyzer = new NspAnalyzer();
-            analyzer.setFilesMatched(true);
-            analyzer.initialize(getSettings());
-            analyzer.prepare(engine);
-            final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "nsp/minimal-invalid.json"));
-            analyzer.analyze(result, engine);
-            // Upon analysis, not throwing an exception in this case, is all that's required to pass this test
-        } catch (Throwable ex) {
-            fail("This test should not throw an exception");
-            throw ex;
-        }
-    }
 }

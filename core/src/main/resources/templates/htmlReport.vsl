@@ -860,8 +860,8 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                             #set($vsctr=$vsctr+1)
                             #if($vuln.getSource().name().equals("NVD"))
                                 <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CCE for this file" onclick="copyText('$enc.javascript($dependency.DisplayFileName)', '$enc.javascript($dependency.Sha1sum)', '$enc.javascript($suppressGav)', 'cve', '$enc.javascript($vuln.name)')">suppress</button></p>
-                            #elseif($vuln.getSource().name().equals("NSP"))
-                                <p><b><a target="_blank" href="https://nodesecurity.io/advisories/$enc.url($vuln.name)">NSP-$enc.html($vuln.name)</a></b></p>
+                            #elseif($vuln.getSource().name().equals("NPM"))
+                                <p><b><a target="_blank" href="https://www.npmjs.com/advisories/$enc.url($vuln.name)">NPM-$enc.html($vuln.name)</a></b></p>
                             #elseif($vuln.getSource().name().equals("RETIREJS"))
                                 <p><b>$enc.html($vuln.name)</b> (RetireJS)</p>
                             #end
@@ -908,7 +908,7 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                     #end
                                     </ul></p>
                                 #end
-                            #elseif ($vuln.getSource().name().equals("NSP"))
+                            #elseif ($vuln.getSource().name().equals("NPM"))
                                 <p>Vulnerable Software &amp; Versions:
                                     <ul>
                                     #foreach($vs in $vuln.getVulnerableSoftware())
@@ -1039,8 +1039,8 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                     #set($vsctr=$vsctr+1)
                                     #if($vuln.getSource().name().equals("NVD"))
                                         <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span></p>
-                                    #elseif($vuln.getSource().name().equals("NSP"))
-                                        <p><b><a target="_blank" href="https://nodesecurity.io/advisories/$enc.url($vuln.name)">NSP-$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span></p>
+                                    #elseif($vuln.getSource().name().equals("NPM"))
+                                        <p><b><a target="_blank" href="https://www.npmjs.com/advisories/$enc.url($vuln.name)">NPM-$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span></p>
                                     #elseif($vuln.getSource().name().equals("RETIREJS"))
                                         <p><b>$enc.html($vuln.name)</b> (RetireJS)&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span></p>
                                     #end
@@ -1096,7 +1096,7 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
             <br/><br/>
             This report contains data retrieved from the <a href="https://nvd.nist.gov">National Vulnerability Database</a>.
             <br/>
-            This report may contain data retrieved from the <a href="https://nodesecurity.io">Node Security Platform</a>.
+            This report may contain data retrieved from the <a href="https://www.npmjs.com/advisories">NPM Public Advisories</a>.
         </div>
     </body>
 </html>

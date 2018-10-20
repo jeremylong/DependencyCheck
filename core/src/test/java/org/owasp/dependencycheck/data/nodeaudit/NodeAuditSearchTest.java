@@ -15,12 +15,12 @@
  *
  * Copyright (c) 2017 Steve Springett. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.nsp;
+package org.owasp.dependencycheck.data.nodeaudit;
 
+import org.owasp.dependencycheck.BaseTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,27 +33,28 @@ import java.util.List;
 import static org.junit.Assume.assumeFalse;
 import org.owasp.dependencycheck.utils.URLConnectionFailureException;
 
-public class NspSearchTest extends BaseTest {
+public class NodeAuditSearchTest extends BaseTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NspSearchTest.class);
-    private NspSearch searcher;
+/*
+    private static final Logger LOGGER = LoggerFactory.getLogger(NodeAuditSearchTest.class);
+    private NodeAuditSearch searcher;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        searcher = new NspSearch(getSettings());
+        searcher = new NodeAuditSearch(getSettings());
     }
 
     @Test
-    public void testNspSearchPositive() throws Exception {
-        InputStream in = BaseTest.getResourceAsStream(this, "nsp/package.json");
+    public void testNodeAuditSearchPositive() throws Exception {
+        InputStream in = BaseTest.getResourceAsStream(this, "nodeaudit/package.json");
         try (JsonReader jsonReader = Json.createReader(in)) {
             final JsonObject packageJson = jsonReader.readObject();
             final JsonObject sanitizedJson = SanitizePackage.sanitize(packageJson);
             final JsonObjectBuilder builder = Json.createObjectBuilder();
-            final JsonObject nspPayload = builder.add("package", sanitizedJson).build();
-            final List<Advisory> advisories = searcher.submitPackage(nspPayload);
+            final JsonObject payload = builder.add("package", sanitizedJson).build();
+            final List<Advisory> advisories = searcher.submitPackage(payload);
             Assert.assertTrue(advisories.size() > 0);
         } catch (Exception ex) {
             assumeFalse(ex instanceof URLConnectionFailureException
@@ -63,8 +64,8 @@ public class NspSearchTest extends BaseTest {
     }
 
     @Test(expected = AnalysisException.class)
-    public void testNspSearchNegative() throws Exception {
-        InputStream in = BaseTest.getResourceAsStream(this, "nsp/package.json");
+    public void testNodeAuditSearchNegative() throws Exception {
+        InputStream in = BaseTest.getResourceAsStream(this, "nodeaudit/package.json");
         try (JsonReader jsonReader = Json.createReader(in)) {
             final JsonObject packageJson = jsonReader.readObject();
             final JsonObject sanitizedJson = SanitizePackage.sanitize(packageJson);
@@ -75,5 +76,6 @@ public class NspSearchTest extends BaseTest {
             throw ex;
         }
     }
+    */
 
 }

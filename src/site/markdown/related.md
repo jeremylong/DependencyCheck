@@ -9,7 +9,7 @@ Related FOSS Projects
 * [The Victims Project](https://github.com/victims)
 * [Ruby Bundler-Audit](https://github.com/rubysec/bundler-audit)
 * [Retire.js](http://bekk.github.io/retire.js/)
-* [Node Security Project](https://nodesecurity.io/)
+* [NPM Public Advisories](https://www.npmjs.com/advisories)
 
 Vulnerability Sources
 ------------------------

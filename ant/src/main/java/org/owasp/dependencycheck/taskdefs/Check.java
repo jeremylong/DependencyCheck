@@ -63,9 +63,9 @@ public class Check extends Update {
      */
     private Boolean nodeAnalyzerEnabled;
     /**
-     * Whether or not the NSP Analyzer is enabled.
+     * Whether or not the Node Audit Analyzer is enabled.
      */
-    private Boolean nspAnalyzerEnabled;
+    private Boolean nodeAuditAnalyzerEnabled;
     /**
      * Whether or not the RetireJS Analyzer is enabled.
      */
@@ -854,21 +854,50 @@ public class Check extends Update {
     }
 
     /**
-     * Get the value of nspAnalyzerEnabled.
+     * Get the value of nodeAnalyzerEnabled.
      *
-     * @return the value of nspAnalyzerEnabled
+     * @return the value of nodeAnalyzerEnabled
+     *
+     * @deprecated As of release 3.3.3, replaced by
+     * {@link #isNodeAuditAnalyzerEnabled()}
      */
+    @Deprecated
     public Boolean isNspAnalyzerEnabled() {
-        return nspAnalyzerEnabled;
+        log("The NspAnalyzerEnabled configuration has been deprecated and replaced by NodeAuditAnalyzerEnabled", Project.MSG_ERR);
+        log("The NspAnalyzerEnabled configuration will be removed in the next major release");
+        return nodeAnalyzerEnabled;
     }
 
     /**
-     * Set the value of nspAnalyzerEnabled.
+     * Set the value of nodeAnalyzerEnabled.
      *
-     * @param nspAnalyzerEnabled new value of nspAnalyzerEnabled
+     * @param nodeAnalyzerEnabled new value of nodeAnalyzerEnabled
+     * @deprecated As of release 3.3.3, replaced by
+     * {@link #setNodeAuditAnalyzerEnabled(java.lang.Boolean)}
      */
-    public void setNspAnalyzerEnabled(Boolean nspAnalyzerEnabled) {
-        this.nspAnalyzerEnabled = nspAnalyzerEnabled;
+    @Deprecated
+    public void setNspAnalyzerEnabled(Boolean nodeAnalyzerEnabled) {
+        log("The NspAnalyzerEnabled configuration has been deprecated and replaced by NodeAuditAnalyzerEnabled", Project.MSG_ERR);
+        log("The NspAnalyzerEnabled configuration will be removed in the next major release");
+        this.nodeAnalyzerEnabled = nodeAnalyzerEnabled;
+    }
+
+    /**
+     * Get the value of nodeAuditAnalyzerEnabled.
+     *
+     * @return the value of nodeAuditAnalyzerEnabled
+     */
+    public Boolean isNodeAuditAnalyzerEnabled() {
+        return nodeAuditAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of nodeAuditAnalyzerEnabled.
+     *
+     * @param nodeAuditAnalyzerEnabled new value of nodeAuditAnalyzerEnabled
+     */
+    public void setNodeAuditAnalyzerEnabled(Boolean nodeAuditAnalyzerEnabled) {
+        this.nodeAuditAnalyzerEnabled = nodeAuditAnalyzerEnabled;
     }
 
     /**
@@ -1353,7 +1382,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, autoconfAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
-        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED, nspAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, nodeAuditAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, retirejsFilterNonVulnerable);
         getSettings().setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, retirejsFilters);
