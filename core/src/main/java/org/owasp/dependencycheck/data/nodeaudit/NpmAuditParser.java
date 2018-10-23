@@ -49,14 +49,20 @@ public class NpmAuditParser {
         final List<Advisory> advisories = new ArrayList<>();
         final JSONObject jsonAdvisories = jsonResponse.getJSONObject("advisories");
         final Iterator<?> keys = jsonAdvisories.keys();
-        while(keys.hasNext()) {
-            final String key = (String)keys.next();
+        while (keys.hasNext()) {
+            final String key = (String) keys.next();
             final Advisory advisory = parseAdvisory(jsonAdvisories.getJSONObject(key));
             advisories.add(advisory);
         }
         return advisories;
     }
 
+    /**
+     * Parses the advisory from Node Audit.
+     *
+     * @param object the JSON object containing the advisory
+     * @return the Advisory object
+     */
     private Advisory parseAdvisory(JSONObject object) {
         final Advisory advisory = new Advisory();
         advisory.setId(object.getInt("id"));

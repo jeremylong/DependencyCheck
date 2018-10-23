@@ -872,11 +872,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             //if we pass in the filter below instead of null to the dependencyGraphBuilder
             final ArtifactFilter filter = new ExcludesArtifactFilter(filterItems);
             final DependencyNode dn = dependencyGraphBuilder.buildDependencyGraph(buildingRequest, null, reactorProjects);
-            CollectingDependencyNodeVisitor visitor = new CollectingDependencyNodeVisitor();
+            final CollectingDependencyNodeVisitor visitor = new CollectingDependencyNodeVisitor();
             dn.accept(visitor);
 
             //collect dependencies with the filter - see comment above.
-            List<DependencyNode> nodes = new ArrayList<>();
+            final List<DependencyNode> nodes = new ArrayList<>();
             for (DependencyNode node : visitor.getNodes()) {
                 if (filter.include(node.getArtifact())) {
                     nodes.add(node);

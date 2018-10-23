@@ -90,18 +90,17 @@ public class NodeAuditSearch {
     }
 
     /**
-     * Submits the package.json file to the Node Audit API and returns a
-     * list of zero or more Advisories.
+     * Submits the package.json file to the Node Audit API and returns a list of
+     * zero or more Advisories.
      *
      * @param packageJson the package.json file retrieved from the Dependency
      * @return a List of zero or more Advisory object
-     * @throws SearchException if Node Audit API is unable to analyze
-     * the package
+     * @throws SearchException if Node Audit API is unable to analyze the
+     * package
      * @throws IOException if it's unable to connect to Node Audit API
      */
     public List<Advisory> submitPackage(JsonObject packageJson) throws SearchException, IOException {
         try {
-            final List<Advisory> result = new ArrayList<>();
             final byte[] packageDatabytes = packageJson.toString().getBytes(StandardCharsets.UTF_8);
             final URLConnectionFactory factory = new URLConnectionFactory(settings);
             final HttpURLConnection conn = factory.createHttpURLConnection(nodeAuditUrl, useProxy);
@@ -151,12 +150,14 @@ public class NodeAuditSearch {
 
     /**
      * Generates a random 16 character lower-case hex string.
+     *
+     * @return a random 16 character lower-case hex string
      */
     private String generateRandomSession() {
         final int length = 16;
         final SecureRandom r = new SecureRandom();
         final StringBuilder sb = new StringBuilder();
-        while(sb.length() < length){
+        while (sb.length() < length) {
             sb.append(Integer.toHexString(r.nextInt()));
         }
         return sb.toString().substring(0, length);

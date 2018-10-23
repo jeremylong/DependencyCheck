@@ -163,7 +163,14 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
         return Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED;
     }
 
-    private boolean isNspEnabled(Engine engine) {
+    /**
+     * Determines if the Node Audit analyzer is enabled.
+     *
+     * @param engine a reference to the dependency-check engine
+     * @return <code>true</code> if the Node Audit Analyzer is enabled;
+     * otherwise <code>false</code>
+     */
+    private boolean isNodeAuditEnabled(Engine engine) {
         for (Analyzer a : engine.getAnalyzers()) {
             if (a instanceof NodeAuditAnalyzer) {
                 return a.isEnabled();
@@ -174,7 +181,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
 
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        if (isNspEnabled(engine) && !PACKAGE_LOCK_JSON.equals(dependency.getFileName())) {
+        if (isNodeAuditEnabled(engine) && !PACKAGE_LOCK_JSON.equals(dependency.getFileName())) {
             engine.removeDependency(dependency);
         }
         final File dependencyFile = dependency.getActualFile();
