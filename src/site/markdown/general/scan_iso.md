@@ -30,7 +30,7 @@ command with `sudo`.
 $ sudo mount -o loop foo.iso /mnt/foo
 ```
 
-Next, you can use Dependency-Check's [command line tool](dependency-check-cli/)
+Next, you can use Dependency-Check's [command line tool](../dependency-check-cli/index.html)
 to scan the mount point. When you are finished, run the
 [umount](http://linux.die.net/man/8/umount) command with root privileges:
 
