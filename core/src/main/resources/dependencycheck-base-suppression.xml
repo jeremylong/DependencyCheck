@@ -1974,6 +1974,7 @@
             suppress specific CVE that are for the server
         ]]></notes>
         <gav regex="true">^(org\.)?postgresql:postgresql:.*$</gav>
+        <cve>CVE-2016-7048</cve>
         <cve>CVE-2018-1115</cve>
         <cve>CVE-2017-14798</cve>
         <cve>CVE-2017-8806</cve>
