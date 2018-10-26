@@ -607,6 +607,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         }
         DependencyVersion bestGuess = new DependencyVersion("-");
         Confidence bestGuessConf = null;
+        String bestGuessURL = null;
         boolean hasBroadMatch = false;
         final List<IdentifierMatch> collected = new ArrayList<>();
 
@@ -661,6 +662,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                             && (bestGuessConf == null || bestGuessConf.compareTo(conf) > 0)) {
                         bestGuessConf = conf;
                         bestGuess = dbVer;
+                        bestGuessURL = String.format(NVD_SEARCH_URL, URLEncoder.encode(vs.getName(), StandardCharsets.UTF_8.name()));
 
                         //TODO the following isn't quite right is it? need to think about this guessing game a bit more.
                     } else if (evVer.getVersionParts().size() <= dbVer.getVersionParts().size()
@@ -686,8 +688,10 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             final String cpeUrlName = String.format("cpe:/a:%s:%s", vendor, product);
             url = String.format(NVD_SEARCH_URL, URLEncoder.encode(cpeUrlName, StandardCharsets.UTF_8.name()));
         }
-        if (bestGuessConf
-                == null) {
+        if (bestGuessURL != null) {
+            url = bestGuessURL;
+        }
+        if (bestGuessConf == null) {
             bestGuessConf = Confidence.LOW;
         }
         final IdentifierMatch match = new IdentifierMatch("cpe", cpeName, url, IdentifierConfidence.BEST_GUESS, bestGuessConf);
