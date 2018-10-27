@@ -2,6 +2,34 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 3.3.3](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.3.3) (2018-10-27)
+
+### Enhancements
+
+- Migrated the NSP Analyzer to use the Node Audit APIs instead; see [#1366](https://github.com/jeremylong/DependencyCheck/issues/1366).
+    - Note that the analyzer and configuration was changed to NodeAuditAnalyzer.
+    - Configurations for the NSP analyzer have been deprecated and will control the NodeAuditAnalyzer if used; note that the NSP configuration options will be removed in a future release.
+- The [dependency-check-gradle](https://github.com/jeremylong/dependency-check-gradle) plugin was updated to include a default scan set
+  of ['src/main/resources','src/main/webapp'] and any dependencies contained in these directories will be analyzed. The purpose of this
+  enhancement is to enable the RetireJS Analyzer to scan JavaScript files that may be included.
+
+
+### Bug Fixes
+
+- Resolved **false negative** on Bouncy Castle JAR files; see [#1500](https://github.com/jeremylong/DependencyCheck/issues/1500).
+- Resolved **false negatives** that may occur when using the Maven plugin if transitive dependencies of a library in use and is also declared as a primary dependency in a scope that is not used; see [#1512](https://github.com/jeremylong/DependencyCheck/issues/1512).
+- Resolved **false negatives** on libraries that contain an update version or timestamp tacked onto the end of the version number; see [#1537](https://github.com/jeremylong/DependencyCheck/issues/1537).
+  - The resolution for these false negatives may generate some false positives, please continue to report false positives and the engine can continue to be tuned.
+- Fixed bug preventing multiple proxies from being defined for Maven; see [#831](https://github.com/jeremylong/DependencyCheck/issues/831).
+- Updated the suppress buttons in the HTML report to generate the XML using the latest suppression schema; see [#489](https://github.com/jeremylong/DependencyCheck/issues/1489).
+- Added the `--artifactoryUrl` argument to the CLI - this was missed when the Artifactory Analyzer was previously added; see [#1492](https://github.com/jeremylong/DependencyCheck/issues/1492).
+- Updated test cases so that they no longer fail behind a proxy; see [#1493](https://github.com/jeremylong/DependencyCheck/issues/1493).
+- Resolved several reported false positives; see [#1504](https://github.com/jeremylong/DependencyCheck/issues/1504), [#1513](https://github.com/jeremylong/DependencyCheck/issues/1513),
+  [#1515](https://github.com/jeremylong/DependencyCheck/issues/1515), [#1529](https://github.com/jeremylong/DependencyCheck/issues/1529), [#1535](https://github.com/jeremylong/DependencyCheck/issues/1535),
+  and [#1437](https://github.com/jeremylong/DependencyCheck/issues/1437).
+- Fixed copy/paste error in JavaDoc; see [#1509](https://github.com/jeremylong/DependencyCheck/issues/1509).
+
+
 ## [Version 3.3.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.3.2) (2018-09-14)
 
 ### Bug Fixes
