@@ -25,8 +25,8 @@ apply plugin: 'org.owasp.dependencycheck'
 check.dependsOn dependencyCheckAggregate
 ```
 
-Property             | Description                        | Default Value
----------------------|------------------------------------|------------------
+Property             | Description                                                                                                        | Default Value
+---------------------|--------------------------------------------------------------------------------------------------------------------|------------------
 autoUpdate           | Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false. | true
 analyzedTypes        | The default artifact types that will be analyzed.                                                                  | ['jar', 'aar', 'js', 'war', 'ear', 'zip']
 cveValidForHours     | Sets the number of hours to wait before checking for new updates from the NVD.                                     | 4
@@ -40,6 +40,7 @@ hintsFile            | The file path to the XML hints file \- used to resolve [f
 skip                 | If set to true dependency-check analysis will be skipped.                                                          | false
 skipConfigurations   | A list of configurations that will be skipped. This is mutually exclusive with the scanConfigurations property.    | `[]` which means no configuration is skipped.
 scanConfigurations   | A list of configurations that will be scanned, all other configurations are skipped. This is mutually exclusive with the skipConfigurations property.    | `[]` which implicitly means all configurations get scanned.
+scanSet              | A list of directories that will be scanned for additional dependencies.                                            | ['src/main/resources','src/main/webapp']
 
 #### Example
 ```groovy
