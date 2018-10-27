@@ -635,7 +635,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 DependencyVersion evBaseVer = null;
                 //Only semantic versions used in NVD and evidence may contain an update version
                 if (maxDepth == 3 && evVer.getVersionParts().size() == 4) {
-                    String update = evVer.getVersionParts().get(3);
+                    final String update = evVer.getVersionParts().get(3);
                     if (update.matches("^(v|beta|alpha|u|rc|m|20\\d\\d).*$")) {
                         evBaseVer = new DependencyVersion();
                         evBaseVer.setVersionParts(evVer.getVersionParts().subList(0, 3));
