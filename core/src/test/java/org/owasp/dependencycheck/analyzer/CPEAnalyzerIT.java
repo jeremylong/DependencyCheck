@@ -238,30 +238,42 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
      */
     @Test
     public void testDetermineIdentifiers() throws Exception {
-        Dependency openssl = new Dependency();
-        openssl.addEvidence(EvidenceType.VENDOR, "test", "vendor", "openssl", Confidence.HIGHEST);
-        openssl.addEvidence(EvidenceType.PRODUCT, "test", "product", "openssl", Confidence.HIGHEST);
-        openssl.addEvidence(EvidenceType.VERSION, "test", "version", "1.0.1c", Confidence.HIGHEST);
+        callDetermieIdentifiers("eclipse", "jetty", "9.4.8.v20171121", "cpe:/a:eclipse:jetty:9.4.8");
+        callDetermieIdentifiers("openssl", "openssl", "1.0.1c", "cpe:/a:openssl:openssl:1.0.1c");
+    }
+
+    /**
+     * Executes the test call against DetermineIdentifiers.
+     *
+     * @param vendor
+     * @param product
+     * @param version
+     * @param expectedCpe
+     * @throws Exception
+     */
+    private void callDetermieIdentifiers(String vendor, String product, String version, String expectedCpe) throws Exception {
+        Dependency dep = new Dependency();
+        dep.addEvidence(EvidenceType.VENDOR, "test", "vendor", vendor, Confidence.HIGHEST);
+        dep.addEvidence(EvidenceType.PRODUCT, "test", "product", product, Confidence.HIGHEST);
+        dep.addEvidence(EvidenceType.VERSION, "test", "version", version, Confidence.HIGHEST);
 
         CPEAnalyzer instance = new CPEAnalyzer();
         try (Engine engine = new Engine(getSettings())) {
             engine.openDatabase(true, true);
             instance.initialize(getSettings());
             instance.prepare(engine);
-            instance.determineIdentifiers(openssl, "openssl", "openssl", Confidence.HIGHEST);
+            instance.determineIdentifiers(dep, vendor, product, Confidence.HIGHEST);
             instance.close();
         }
 
-        String expResult = "cpe:/a:openssl:openssl:1.0.1c";
-        Identifier expIdentifier = new Identifier("cpe", expResult, expResult);
         boolean found = false;
-        for (Identifier i : openssl.getIdentifiers()) {
-            if (expResult.equals(i.getValue())) {
+        for (Identifier i : dep.getIdentifiers()) {
+            if (expectedCpe.equals(i.getValue())) {
                 found = true;
                 break;
             }
         }
-        assertTrue("OpenSSL identifier not found", found);
+        assertTrue(String.format("%s:%s%s identifier not found", vendor, product, version), found);
     }
 
     /**

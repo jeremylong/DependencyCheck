@@ -607,6 +607,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         }
         DependencyVersion bestGuess = new DependencyVersion("-");
         Confidence bestGuessConf = null;
+        String bestGuessURL = null;
         boolean hasBroadMatch = false;
         final List<IdentifierMatch> collected = new ArrayList<>();
 
@@ -619,9 +620,31 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 if (evVer == null) {
                     continue;
                 }
+
+                int maxDepth = 0;
+                for (VulnerableSoftware vs : cpes) {
+                    final DependencyVersion dbVer = DependencyVersionUtil.parseVersion(vs.getVersion());
+                    if (dbVer != null) {
+                        final int count = dbVer.getVersionParts().size();
+                        if (count > maxDepth) {
+                            maxDepth = count;
+                        }
+                    }
+                }
+
+                DependencyVersion evBaseVer = null;
+                //Only semantic versions used in NVD and evidence may contain an update version
+                if (maxDepth == 3 && evVer.getVersionParts().size() == 4) {
+                    String update = evVer.getVersionParts().get(3);
+                    if (update.matches("^(v|beta|alpha|u|rc|m|20\\d\\d).*$")) {
+                        evBaseVer = new DependencyVersion();
+                        evBaseVer.setVersionParts(evVer.getVersionParts().subList(0, 3));
+                    }
+                }
+
                 for (VulnerableSoftware vs : cpes) {
                     final DependencyVersion dbVer;
-                    if (vs.getUpdate() != null && !vs.getUpdate().isEmpty()) {
+                    if (vs.getUpdate() != null && !vs.getUpdate().isEmpty() && !vs.getUpdate().startsWith("~")) {
                         dbVer = DependencyVersionUtil.parseVersion(vs.getVersion() + '.' + vs.getUpdate());
                     } else {
                         dbVer = DependencyVersionUtil.parseVersion(vs.getVersion());
@@ -635,6 +658,11 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                         final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(vs.getName(), StandardCharsets.UTF_8.name()));
                         final IdentifierMatch match = new IdentifierMatch("cpe", vs.getName(), url, IdentifierConfidence.EXACT_MATCH, conf);
                         collected.add(match);
+                    } else if (evBaseVer != null && evBaseVer.equals(dbVer)
+                            && (bestGuessConf == null || bestGuessConf.compareTo(conf) > 0)) {
+                        bestGuessConf = conf;
+                        bestGuess = dbVer;
+                        bestGuessURL = String.format(NVD_SEARCH_URL, URLEncoder.encode(vs.getName(), StandardCharsets.UTF_8.name()));
 
                         //TODO the following isn't quite right is it? need to think about this guessing game a bit more.
                     } else if (evVer.getVersionParts().size() <= dbVer.getVersionParts().size()
@@ -660,8 +688,10 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             final String cpeUrlName = String.format("cpe:/a:%s:%s", vendor, product);
             url = String.format(NVD_SEARCH_URL, URLEncoder.encode(cpeUrlName, StandardCharsets.UTF_8.name()));
         }
-        if (bestGuessConf
-                == null) {
+        if (bestGuessURL != null) {
+            url = bestGuessURL;
+        }
+        if (bestGuessConf == null) {
             bestGuessConf = Confidence.LOW;
         }
         final IdentifierMatch match = new IdentifierMatch("cpe", cpeName, url, IdentifierConfidence.BEST_GUESS, bestGuessConf);
