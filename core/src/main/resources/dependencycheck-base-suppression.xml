@@ -390,6 +390,17 @@
         <gav regex="true">org\.apache\.tomcat\.embed:tomcat-embed-el:.*</gav>
         <cpe>cpe:/a:apache:tomcat</cpe>
         <cpe>cpe:/a:apache_tomcat:apache_tomcat</cpe>
+        <cpe>cpe:/a:apache_software_foundation:tomcat</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        This suppresses false positives identified on tomcat-el-api and servlet api.
+            See #1437.
+        ]]></notes>
+        <gav regex="true">^org\.apache\.tomcat:tomcat-(servlet|el)-api:.*$</gav>
+        <cpe>cpe:/a:apache:tomcat</cpe>
+        <cpe>cpe:/a:apache_tomcat:apache_tomcat</cpe>
+        <cpe>cpe:/a:apache_software_foundation:tomcat</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
