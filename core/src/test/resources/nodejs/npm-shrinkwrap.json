@@ -26,10 +26,23 @@
       "resolved": "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz",
       "integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g="
     },
+    "pause-stream": {
+      "version": "0.0.11",
+      "resolved": "http://registry.npmjs.org/pause-stream/-/pause-stream-0.0.11.tgz",
+      "integrity": "sha1-/lo0sMvOErWqaitAPuLnO2AvFEU=",
+      "requires": {
+        "through": "2.3.8"
+      }
+    },
     "shelljs": {
       "version": "0.5.3",
       "resolved": "https://registry.npmjs.org/shelljs/-/shelljs-0.5.3.tgz",
       "integrity": "sha1-xUmCuZbHbvDB5rWfvcWCX1txMRM="
+    },
+    "through": {
+      "version": "2.3.8",
+      "resolved": "http://registry.npmjs.org/through/-/through-2.3.8.tgz",
+      "integrity": "sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU="
     }
   }
 }

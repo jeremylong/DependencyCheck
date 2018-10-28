@@ -32,6 +32,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonString;
 import javax.json.JsonValue;
+import javax.json.JsonValue.ValueType;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.utils.Checksum;
@@ -291,7 +292,7 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
                         } else {
                             addComma = true;
                         }
-                        if (array.getJsonObject(x) instanceof JsonString) {
+                        if (ValueType.STRING == array.get(x).getValueType()) {
                             sb.append(array.getString(x));
                         } else {
                             final JsonObject lo = array.getJsonObject(x);

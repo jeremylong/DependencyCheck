@@ -4,6 +4,7 @@
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
-    "dns-sync": "^0.1.3"
+    "dns-sync": "^0.1.3",
+    "pause-stream": "0.0.11"
   }
 }

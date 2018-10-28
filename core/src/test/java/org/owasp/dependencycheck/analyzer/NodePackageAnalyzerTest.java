@@ -105,7 +105,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
         assertThat(analyzer.accept(new File("package-lock.json")), is(true));
         assertThat(analyzer.accept(new File("npm-shrinkwrap.json")), is(true));
     }
-
+    
     /**
      * Test of inspect method, of class PythonDistributionAnalyzer.
      *
@@ -123,7 +123,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
         engine.addDependency(toCombine);
         analyzer.analyze(toScan, engine);
         analyzer.analyze(toCombine, engine);
-        assertEquals("Expected 4 dependency", engine.getDependencies().length, 4);
+        assertEquals("Expected 6 dependency", engine.getDependencies().length, 6);
         Dependency result = null;
         for (Dependency dep : engine.getDependencies()) {
             if ("dns-sync".equals(dep.getName())) {
@@ -161,7 +161,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
         assertEquals(1, engine.getDependencies().length); //package-lock was removed without analysis
         assertTrue(shrinkwrap.equals(engine.getDependencies()[0]));
         analyzer.analyze(shrinkwrap, engine);
-        assertEquals(4, engine.getDependencies().length); //shrinkwrap was removed with analysis adding 4 dependency
+        assertEquals(6, engine.getDependencies().length); //shrinkwrap was removed with analysis adding 6 dependency
         assertFalse(shrinkwrap.equals(engine.getDependencies()[0]));
     }
 }

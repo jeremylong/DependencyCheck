@@ -6,7 +6,8 @@ all: lint test
 
 test:
 	@NODE_ENV=test ./node_modules/.bin/mocha \
-		--reporter $(REPORTER)
+		--reporter $(REPORTER) \
+		--timeout 10000
 
 lint:
 	$(JSHINT) index.js --config $(BASE)/.jshintrc && \
