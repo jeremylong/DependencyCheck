@@ -23,7 +23,6 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assume;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
