@@ -2,6 +2,12 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 3.3.4](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.3.4) (2018-10-28)
+
+### Bug Fixes
+
+- Resolved bug with parsing license information during analysis of Node.js modules.
+
 ## [Version 3.3.3](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.3.3) (2018-10-27)
 
 ### Enhancements
@@ -12,7 +18,6 @@ Please see the [dependency-check google group](https://groups.google.com/forum/#
 - The [dependency-check-gradle](https://github.com/jeremylong/dependency-check-gradle) plugin was updated to include a default scan set
   of ['src/main/resources','src/main/webapp'] and any dependencies contained in these directories will be analyzed. The purpose of this
   enhancement is to enable the RetireJS Analyzer to scan JavaScript files that may be included.
-
 
 ### Bug Fixes
 
