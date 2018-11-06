@@ -789,15 +789,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Returns if the mojo should skip dependencyManagement section.
-     *
-     * @return whether or not the mojo should skip dependencyManagement section
-     */
-    public boolean isSkipDependencyManagement() {
-        return skipDependencyManagement;
-    }
-
-    /**
      * Generates the Dependency-Check Site Report.
      *
      * @param sink the sink to write the report to
