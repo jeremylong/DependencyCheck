@@ -28,6 +28,7 @@ skipProvidedScope           | Skip analysis for artifacts with Provided Scope.  
 skipRuntimeScope            | Skip analysis for artifacts with Runtime Scope.            | false
 skipSystemScope             | Skip analysis for artifacts with System Scope.             | false
 skipTestScope               | Skip analysis for artifacts with Test Scope.               | true
+skipDependencyManagement    | Skip analysis for dependencyManagement sections.           | true
 skipArtifactType            | A regular expression used to filter/skip artifact types.   | &nbsp;
 suppressionFiles            | The file paths to the XML suppression files \- used to suppress [false positives](../general/suppression.html). | &nbsp;
 hintsFile                   | The file path to the XML hints file \- used to resolve [false negatives](../general/hints.html).       | &nbsp;
@@ -129,4 +130,3 @@ are configured in the Maven settings file you must tell dependency-check which p
 Property             | Description                                                                          | Default Value
 ---------------------|--------------------------------------------------------------------------------------|------------------
 mavenSettingsProxyId | The id for the proxy, configured via settings.xml, that dependency-check should use. | &nbsp;
-
