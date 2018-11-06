@@ -36,12 +36,14 @@ import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
 import org.apache.maven.shared.transfer.artifact.ArtifactCoordinate;
+import org.apache.maven.shared.transfer.artifact.DefaultArtifactCoordinate;
 import org.apache.maven.shared.transfer.artifact.TransferUtils;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolverException;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
+import org.apache.maven.shared.dependency.graph.internal.DefaultDependencyNode;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.owasp.dependencycheck.Engine;
@@ -563,6 +565,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private boolean skipSystemScope = false;
 
     /**
+     * Skip Analysis for System Scope Dependencies.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "skipDependencyManagement", defaultValue = "true", required = false)
+    private boolean skipDependencyManagement = true;
+
+    /**
      * Skip analysis for dependencies which type matches this regular
      * expression.
      */
@@ -780,6 +789,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
+     * Returns if the mojo should skip dependencyManagement section.
+     *
+     * @return whether or not the mojo should skip dependencyManagement section
+     */
+    public boolean isSkipDependencyManagement() {
+        return skipDependencyManagement;
+    }
+
+    /**
      * Generates the Dependency-Check Site Report.
      *
      * @param sink the sink to write the report to
@@ -891,6 +909,48 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
     }
 
+    private DependencyNode toDependencyNode(ProjectBuildingRequest buildingRequest, DependencyNode parent, org.apache.maven.model.Dependency dependency)
+        throws ArtifactResolverException {
+
+        DefaultArtifactCoordinate coordinate = new DefaultArtifactCoordinate();
+
+        coordinate.setGroupId(dependency.getGroupId());
+        coordinate.setArtifactId(dependency.getArtifactId());
+        coordinate.setVersion(dependency.getVersion());
+        coordinate.setExtension(dependency.getType());
+        coordinate.setClassifier(dependency.getClassifier());
+
+        Artifact artifact = artifactResolver.resolveArtifact(buildingRequest, coordinate).getArtifact();
+
+        artifact.setScope(dependency.getScope());
+
+        DefaultDependencyNode node = new DefaultDependencyNode(parent, artifact, dependency.getVersion(), dependency.getScope(), null);
+
+        return node;
+
+    }
+
+    private ExceptionCollection collectDependencyManagementDependencies(ProjectBuildingRequest buildingRequest, MavenProject project,
+        List<DependencyNode> nodes, boolean aggregate) {
+        if (skipDependencyManagement || project.getDependencyManagement() == null) {
+            return null;
+        }
+
+        ExceptionCollection exCol = null;
+        for (org.apache.maven.model.Dependency dependency : project.getDependencyManagement().getDependencies()) {
+            try {
+                nodes.add(toDependencyNode(buildingRequest, null, dependency));
+            } catch (ArtifactResolverException ex) {
+                getLog().debug(String.format("Aggregate : %s", aggregate));
+                if (exCol == null) {
+                    exCol = new ExceptionCollection();
+                }
+                exCol.addException(ex);
+            }
+        }
+        return exCol;
+    }
+
     /**
      * Resolves the projects artifacts using Aether and scans the resulting
      * dependencies.
@@ -906,7 +966,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     private ExceptionCollection collectMavenDependencies(Engine engine, MavenProject project,
             List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
-        ExceptionCollection exCol = null;
+        ExceptionCollection exCol = collectDependencyManagementDependencies(buildingRequest, project, nodes, aggregate);
         for (DependencyNode dependencyNode : nodes) {
             if (artifactScopeExcluded.passes(dependencyNode.getArtifact().getScope())
                     || artifactTypeExcluded.passes(dependencyNode.getArtifact().getType())) {
