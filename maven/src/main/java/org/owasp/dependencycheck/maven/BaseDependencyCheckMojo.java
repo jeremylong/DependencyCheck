@@ -565,7 +565,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private boolean skipSystemScope = false;
 
     /**
-     * Skip Analysis for System Scope Dependencies.
+     * Skip Analysis for dependencyManagement section.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "skipDependencyManagement", defaultValue = "true", required = false)
