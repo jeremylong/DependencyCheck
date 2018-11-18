@@ -183,7 +183,8 @@ Copyright (c) 2012 - Jeremy Long
         <groovy-all.version>2.4.15</groovy-all.version>
         <!-- upgrading beyond 1.5 will cause the build to fail on Java 7 -->
         <gmavenplus-plugin.version>1.5</gmavenplus-plugin.version>
-        
+        <com.h3xstream.retirejs.core.version>3.0.2</com.h3xstream.retirejs.core.version>
+        <com.google.guava.version>27.0-jre</com.google.guava.version>
         <surefireArgLine/>
     </properties>
     <distributionManagement>
@@ -464,7 +465,7 @@ Copyright (c) 2012 - Jeremy Long
                         <configuration>
                             <rules>
                                 <requireJavaVersion>
-                                    <version>1.7.0</version>
+                                    <version>1.8.0</version>
                                 </requireJavaVersion>
                             </rules>
                         </configuration>
@@ -474,7 +475,7 @@ Copyright (c) 2012 - Jeremy Long
                         <configuration>
                             <rules>
                                 <byteCodeRule implementation="org.owasp.maven.enforcer.rule.ClassFileFormatRule">
-                                    <supportedClassFileFormat>51</supportedClassFileFormat>
+                                    <supportedClassFileFormat>52</supportedClassFileFormat>
                                 </byteCodeRule>
                             </rules>
                         </configuration>
@@ -917,9 +918,14 @@ Copyright (c) 2012 - Jeremy Long
                 <version>${apache.lucene.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${com.google.guava.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.h3xstream.retirejs</groupId>
                 <artifactId>retirejs-core</artifactId>
-                <version>3.0.1</version>
+                <version>${com.h3xstream.retirejs.core.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
