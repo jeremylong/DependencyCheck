@@ -17,7 +17,7 @@
  */
 package org.owasp.dependencycheck.data.lucene;
 
-import org.apache.lucene.analysis.util.CharArraySet;
+import org.apache.lucene.analysis.CharArraySet;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

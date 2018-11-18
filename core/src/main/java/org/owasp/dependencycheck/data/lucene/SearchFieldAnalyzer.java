@@ -25,8 +25,8 @@ import org.apache.lucene.analysis.core.LowerCaseFilter;
 import org.apache.lucene.analysis.core.StopAnalyzer;
 import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.analysis.core.WhitespaceTokenizer;
-import org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter;
-import org.apache.lucene.analysis.util.CharArraySet;
+import org.apache.lucene.analysis.miscellaneous.WordDelimiterGraphFilter;
+import org.apache.lucene.analysis.CharArraySet;
 
 /**
  * A Lucene field analyzer used to analyzer queries against the CPE data.
@@ -82,13 +82,13 @@ public class SearchFieldAnalyzer extends Analyzer {
 
         stream = new UrlTokenizingFilter(stream);
         stream = new AlphaNumericFilter(stream);
-        stream = new WordDelimiterFilter(stream,
-                WordDelimiterFilter.GENERATE_WORD_PARTS
-                | WordDelimiterFilter.GENERATE_NUMBER_PARTS
-                | WordDelimiterFilter.PRESERVE_ORIGINAL
-                | WordDelimiterFilter.SPLIT_ON_CASE_CHANGE
-                | WordDelimiterFilter.SPLIT_ON_NUMERICS
-                | WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE, null);
+        stream = new WordDelimiterGraphFilter(stream,
+                WordDelimiterGraphFilter.GENERATE_WORD_PARTS
+                | WordDelimiterGraphFilter.GENERATE_NUMBER_PARTS
+                | WordDelimiterGraphFilter.PRESERVE_ORIGINAL
+                | WordDelimiterGraphFilter.SPLIT_ON_CASE_CHANGE
+                | WordDelimiterGraphFilter.SPLIT_ON_NUMERICS
+                | WordDelimiterGraphFilter.STEM_ENGLISH_POSSESSIVE, null);
 
         stream = new LowerCaseFilter(stream);
 
