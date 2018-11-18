@@ -226,6 +226,15 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        Resolve FP that caused ant task IT to fail.
+        ]]></notes>
+        <gav regex="true">^jetty:org\.mortbay\.jetty:.*$</gav>
+        <cpe>cpe:/a:apache:http_server</cpe>
+        <cpe>cpe:/a:apache:apache_http_server</cpe>
+        <cpe>cpe:/a:free_java_web_server:free_java_web_server</cpe>
+     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         False positives found while investigating https://github.com/jeremylong/dependency-check-gradle/issues/103
         ]]></notes>
         <gav regex="true">^com\.facebook\.android:facebook-android-sdk:.*$</gav>
