@@ -20,7 +20,7 @@ Copyright (c) 2012 - Jeremy Long
 
     <groupId>org.owasp</groupId>
     <artifactId>dependency-check-parent</artifactId>
-    <version>3.4.0-SNAPSHOT</version>
+    <version>4.0.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -124,6 +124,7 @@ Copyright (c) 2012 - Jeremy Long
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <github.global.server>github</github.global.server>
+        
         <apache.lucene.version>7.5.0</apache.lucene.version>
         <apache.ant.version>1.9.9</apache.ant.version>
         <!--upgrading to the 1.8 requires Java 8 compatability  - we are maintaining 7 atm-->
@@ -427,8 +428,8 @@ Copyright (c) 2012 - Jeremy Long
                 <configuration>
                     <compilerArgument>-Xlint</compilerArgument>
                     <showDeprecation>true</showDeprecation>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
