@@ -2,6 +2,16 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 4.0.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v4.0.0) (2018-11-21)
+
+### Breaking Changes
+
+- OWASP dependency-check no longer supports running in JRE/JDK 7; JRE/JDK 8 or higher is required run dependency-check. See [#1531](https://github.com/jeremylong/DependencyCheck/issues/1531).
+
+### Bug Fixes
+
+- Upgraded dependencies to resolve published vulnerabilities (Guava and Lucene); See [#1561](https://github.com/jeremylong/DependencyCheck/issues/1561).
+
 ## [Version 3.3.4](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.3.4) (2018-10-28)
 
 ### Bug Fixes
