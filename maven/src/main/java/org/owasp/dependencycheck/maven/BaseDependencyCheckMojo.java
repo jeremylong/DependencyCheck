@@ -209,6 +209,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Deprecated
     private Boolean aggregate;
     /**
+     * Use pom dependency information for snapshot dependencies that are part of the Maven reactor while aggregate scanning a multi-module project.
+     *
+     */
+    @Parameter(property = "dependency-check.virtualSnapshotsFromReactor", defaultValue = "true")
+    private Boolean virtualSnapshotsFromReactor;
+    /**
      * The report format to be generated (HTML, XML, VULN, ALL). This
      * configuration option has no affect if using this within the Site plug-in
      * unless the externalReport is set to true. Default is HTML.
@@ -960,6 +966,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     }
                     continue;
                 }
+                if (aggregate && virtualSnapshotsFromReactor
+                        && dependencyNode.getArtifact().isSnapshot() && aggregate
+                        && addSnapshotReactorDependency(engine, dependencyNode.getArtifact())) {
+                    continue;
+                }
                 isResolved = result.isResolved();
                 artifactFile = result.getFile();
                 groupId = result.getGroupId();
@@ -1119,6 +1130,20 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * <code>false</code>
      */
     private boolean addReactorDependency(Engine engine, Artifact artifact) {
+        return addVirtualDependencyFromReactor(engine, artifact, "Unable to resolve %s as it has not been built yet - creating a virtual dependency instead.");
+    }
+
+    /**
+     * Checks if the current artifact is actually in the reactor projects. If true a virtual dependency is created based on
+     * the evidence in the project.
+     *
+     * @param engine a reference to the engine being used to scan
+     * @param artifact the artifact being analyzed in the mojo
+     * @param infoLogTemplate the template for the infoLog entry written when a virtual dependency is added. Needs a single %s placeholder for the location of the displayName in the message
+     * @return <code>true</code> if the artifact is in the reactor; otherwise
+     * <code>false</code>
+     */
+    private boolean addVirtualDependencyFromReactor(Engine engine, Artifact artifact, String infoLogTemplate) {
 
         getLog().debug(String.format("Checking the reactor projects (%d) for %s:%s:%s",
                 reactorProjects.size(),
@@ -1136,7 +1161,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
                 final String displayName = String.format("%s:%s:%s",
                         prj.getGroupId(), prj.getArtifactId(), prj.getVersion());
-                getLog().info(String.format("Unable to resolve %s as it has not been built yet - creating a virtual dependency instead.",
+                getLog().info(String.format(infoLogTemplate,
                         displayName));
                 final File pom = new File(prj.getBasedir(), "pom.xml");
                 final Dependency d;
@@ -1190,6 +1215,21 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
         }
         return false;
+    }
+
+    /**
+     * Checks if the current artifact is actually in the reactor projects. If true a virtual dependency is created based on
+     * the evidence in the project.
+     *
+     * @param engine a reference to the engine being used to scan
+     * @param artifact the artifact being analyzed in the mojo
+     * @return <code>true</code> if the artifact is a snapshot artifact in the reactor; otherwise <code>false</code>
+     */
+    private boolean addSnapshotReactorDependency(Engine engine, Artifact artifact) {
+        if (!artifact.isSnapshot()) {
+            return false;
+        }
+        return addVirtualDependencyFromReactor(engine, artifact, "Found snapshot reactor project in aggregate for %s - creating a virtual dependency as the snapshot found in the repository may contain outdated dependencies.");
     }
 
     /**
