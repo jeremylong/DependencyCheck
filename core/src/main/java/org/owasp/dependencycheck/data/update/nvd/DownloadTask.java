@@ -165,6 +165,13 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
                 ExtractionUtil.extractGzip(second);
             }
 
+            if (url1.toExternalForm().endsWith(".xml.zip") && !isXml(first)) {
+                ExtractionUtil.extractZip(first);
+            }
+            if (url2.toExternalForm().endsWith(".xml.zip") && !isXml(second)) {
+                ExtractionUtil.extractZip(second);
+            }
+
             LOGGER.info("Download Complete for NVD CVE - {}  ({} ms)", nvdCveInfo.getId(),
                     System.currentTimeMillis() - startDownload);
             if (this.processorService == null) {
