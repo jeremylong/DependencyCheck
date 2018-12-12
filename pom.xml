@@ -185,7 +185,7 @@ Copyright (c) 2012 - Jeremy Long
         <!-- upgrading beyond 1.5 will cause the build to fail on Java 7 -->
         <gmavenplus-plugin.version>1.5</gmavenplus-plugin.version>
         <com.h3xstream.retirejs.core.version>3.0.1</com.h3xstream.retirejs.core.version>
-        <com.google.guava.version>27.0-jre</com.google.guava.version>
+        <com.google.guava.version>27.0.1-jre</com.google.guava.version>
         <surefireArgLine/>
     </properties>
     <distributionManagement>
