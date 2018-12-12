@@ -320,7 +320,7 @@ public final class Downloader {
             if (cause instanceof java.net.UnknownHostException) {
                 final String msg = format("Unable to resolve domain '%s'", cause.getMessage());
                 LOGGER.error(msg);
-                throw new DownloadFailedException(msg);
+                throw new DownloadFailedException(msg, cause);
             }
             if (cause instanceof InvalidAlgorithmParameterException) {
                 final String keystore = System.getProperty("javax.net.ssl.keyStore");
