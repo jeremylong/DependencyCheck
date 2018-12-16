@@ -139,7 +139,10 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             "embed-dependency",
             "ipojo-components",
             "ipojo-extension",
-            "eclipse-sourcereferences");
+            "eclipse-sourcereferences",
+            "built-os",
+            "build-host",
+            "build-date");
     /**
      * Deprecated Jar manifest attribute, that is, nonetheless, useful for
      * analysis.
@@ -767,6 +770,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 }
                 if (value.startsWith("git@github.com:")) {
                     value = value.substring(15);
+                }
+                if (value.endsWith(".git")) {
+                    value = value.substring(0, value.length() - 4);
                 }
                 if (IGNORE_VALUES.contains(value)) {
                     continue;
