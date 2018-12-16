@@ -95,6 +95,8 @@
             19. amazon_aws_project is a drupal utility (#1290)
             20. google android should not be flagged for the base library
             21. ws_project is a node websocket client (#1535)
+            22. first_project first is an Ethereum smart contract (#1588)
+            23. interact is a php project (#1609)
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -122,6 +124,8 @@
         <cpe>cpe:/a:amazon_aws_project:amazon_aws</cpe>
         <cpe>cpe:/a:google:android</cpe>
         <cpe>cpe:/a:ws_project:ws</cpe>
+        <cpe>cpe:/a:first_project:first</cpe>
+        <cpe>cpe:/a:interact:interact</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -158,6 +162,95 @@
         <gav regex="true">(com\.sun\.jersey|org\.glassfish\.jersey\.core):jersey-(client|common):.*</gav>
         <cpe>cpe:/a:oracle:glassfish</cpe>
         <cpe>cpe:/a:oracle:oracle_client</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #1614.
+        ]]></notes>
+        <gav regex="true">^eu\.bitwalker:UserAgentUtils:.*$</gav>
+        <cpe>cpe:/a:useragent_project:useragent</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #1599
+        ]]></notes>
+        <gav regex="true">^com\.atlassian\.http:atlassian-http:.*$</gav>
+        <cpe>cpe:/a:atlassian:bitbucket</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #1595
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.security:spring-security-jwt:.*$</gav>
+        <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security_oauth</cpe>
+        <cpe>cpe:/a:jwt_project:jwt</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #1594
+        ]]></notes>
+        <gav regex="true">^org\.jfrog\.artifactory\.client:artifactory-java-client-api:.*$</gav>
+        <cve>CVE-2016-6501</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #1590
+        ]]></notes>
+        <gav regex="true">^com\.cybersource:flex-server-sdk:.*$</gav>
+        <cpe>cpe:/a:flex_project:flex</cpe>
+        <cpe>cpe:/a:id:id-software</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #1587
+        ]]></notes>
+        <gav regex="true">^org\.apache\.felix:org\.apache\.felix\.configadmin:.*$</gav>
+        <cpe>cpe:/a:cm_project:cm</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #1587
+        ]]></notes>
+        <gav regex="true">^com\.liferay:org\.apache\.felix\.configadmin:.*$</gav>
+        <cpe>cpe:/a:cm_project:cm</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #1585
+        ]]></notes>
+        <gav regex="true">^org\.apache\.geronimo\.javamail:geronimo-javamail_1\.4_mail:.*$</gav>
+        <cpe>cpe:/a:apache:geronimo</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #1585
+        ]]></notes>
+        <gav regex="true">^geronimo-spec:geronimo-spec-javamail:.*$</gav>
+        <cpe>cpe:/a:apache:geronimo</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #1585
+        ]]></notes>
+        <gav regex="true">^org\.apache\.geronimo\.javamail:geronimo-javamail_1\.4_provider:.*$</gav>
+        <cpe>cpe:/a:apache:geronimo</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #1566
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.security\.oauth\.boot:spring-security-oauth2-autoconfigure:.*$</gav>
+        <cpe>cpe:/a:pivotal_software:spring_security_oauth</cpe>
+        <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue 1581
+        ]]></notes>
+        <gav regex="true">^org\.apache\.activemq:artemis.*$</gav>
+        <cpe>cpe:/a:apache:apache_http_server</cpe>
+        <cpe>cpe:/a:apache:http_server</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
