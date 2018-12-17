@@ -127,6 +127,8 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      */
     private CpeSuppressionAnalyzer suppression;
 
+    private float minLuceneScore = 30;
+
     /**
      * Returns the name of this analyzer.
      *
@@ -173,6 +175,8 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             LOGGER.info("Skipping CPE Analysis for {}", StringUtils.join(tmp, ","));
             skipEcosystems = Arrays.asList(tmp);
         }
+
+        minLuceneScore = engine.getSettings().getFloat(Settings.KEYS.LUCENE_MIN_SCORE_FILTER, 30);
 
         suppression = new CpeSuppressionAnalyzer();
         suppression.initialize(engine.getSettings());
@@ -322,8 +326,9 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         try {
             final TopDocs docs = cpe.search(searchString, MAX_QUERY_RESULTS);
             for (ScoreDoc d : docs.scoreDocs) {
-                if (d.score >= 0.08) {
-                    final Document doc = cpe.getDocument(d.doc);
+                final Document doc = cpe.getDocument(d.doc);
+                if (d.score >= minLuceneScore) {// 0.08) {
+                    //final Document doc = cpe.getDocument(d.doc);
                     final IndexEntry entry = new IndexEntry();
                     entry.setVendor(doc.get(Fields.VENDOR));
                     entry.setProduct(doc.get(Fields.PRODUCT));
