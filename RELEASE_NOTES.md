@@ -2,6 +2,14 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 4.0.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v4.0.0) (2018-12-17)
+
+### Bug Fixes
+
+- Fixed issue with false positives due to Lucene upgrade. See [#1531](https://github.com/jeremylong/DependencyCheck/issues/1580).
+- Resolved several false positives.
+- Resolved typo in documentation.
+
 ## [Version 4.0.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v4.0.0) (2018-11-21)
 
 ### Breaking Changes
