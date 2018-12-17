@@ -176,7 +176,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             skipEcosystems = Arrays.asList(tmp);
         }
 
-        minLuceneScore = engine.getSettings().getFloat(Settings.KEYS.ECOSYSTEM_SKIP_CPEANALYZER, 30);
+        minLuceneScore = engine.getSettings().getFloat(Settings.KEYS.LUCENE_MIN_SCORE_FILTER, 30);
 
         suppression = new CpeSuppressionAnalyzer();
         suppression.initialize(engine.getSettings());
