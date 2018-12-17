@@ -2,7 +2,7 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
-## [Version 4.0.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v4.0.0) (2018-12-17)
+## [Version 4.0.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v4.0.1) (2018-12-17)
 
 ### Bug Fixes
 
