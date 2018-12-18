@@ -564,18 +564,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             groupid = parentGroupId;
         }
 
-        final String originalGroupID = groupid;
-        if (groupid != null && (groupid.startsWith("org.") || groupid.startsWith("com."))) {
-            groupid = groupid.substring(4);
-        }
-
         if ((artifactid == null || artifactid.isEmpty()) && parentArtifactId != null && !parentArtifactId.isEmpty()) {
             artifactid = parentArtifactId;
-        }
-
-        final String originalArtifactID = artifactid;
-        if (artifactid != null && (artifactid.startsWith("org.") || artifactid.startsWith("com."))) {
-            artifactid = artifactid.substring(4);
         }
 
         if ((version == null || version.isEmpty()) && parentVersion != null && !parentVersion.isEmpty()) {
@@ -625,7 +615,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         if (addAsIdentifier) {
-            dependency.addIdentifier("maven", String.format("%s:%s:%s", originalGroupID, originalArtifactID, version), null, Confidence.HIGH);
+            dependency.addIdentifier("maven", String.format("%s:%s:%s", groupid, artifactid, version), null, Confidence.HIGH);
         }
 
         // org name
