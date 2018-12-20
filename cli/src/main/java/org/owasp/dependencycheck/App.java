@@ -398,6 +398,8 @@ public class App {
         final String[] suppressionFiles = cli.getSuppressionFiles();
         final String hintsFile = cli.getHintsFile();
         final String nexusUrl = cli.getNexusUrl();
+        final String nexusUser = cli.getNexusUsername();
+        final String nexusPass = cli.getNexusPassword();
         final String databaseDriverName = cli.getDatabaseDriverName();
         final String databaseDriverPath = cli.getDatabaseDriverPath();
         final String connectionString = cli.getConnectionString();
@@ -492,6 +494,8 @@ public class App {
 
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, cli.getPathToBundleAudit());
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_USER, nexusUser);
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_PASSWORD, nexusPass);
         settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
         settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
         settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);

@@ -367,6 +367,14 @@ public final class Settings {
          */
         public static final String ANALYZER_NEXUS_URL = "analyzer.nexus.url";
         /**
+         * The properties key for the Nexus search credentials username.
+         */
+        public static final String ANALYZER_NEXUS_USER = "analyzer.nexus.username";
+        /**
+         * The properties key for the Nexus search credentials password.
+         */
+        public static final String ANALYZER_NEXUS_PASSWORD = "analyzer.nexus.password";
+        /**
          * The properties key for using the proxy to reach Nexus.
          */
         public static final String ANALYZER_NEXUS_USES_PROXY = "analyzer.nexus.proxy";

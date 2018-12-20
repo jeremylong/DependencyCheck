@@ -365,6 +365,12 @@ public final class CliParser {
         final Option nexusUrl = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.NEXUS_URL)
                 .desc("The url to the Nexus Server's REST API Endpoint (http://domain/nexus/service/local). "
                         + "If not set the Nexus Analyzer will be disabled.").build();
+        final Option nexusUsername = Option.builder().argName("username").hasArg().longOpt(ARGUMENT.NEXUS_USERNAME)
+                .desc("The username to authenticate to the Nexus Server's REST API Endpoint. "
+                        + "If not set the Nexus Analyzer will use an unauthenticated connection.").build();
+        final Option nexusPassword = Option.builder().argName("password").hasArg().longOpt(ARGUMENT.NEXUS_PASSWORD)
+                .desc("The password to authenticate to the Nexus Server's REST API Endpoint. "
+                        + "If not set the Nexus Analyzer will use an unauthenticated connection.").build();
         final Option nexusUsesProxy = Option.builder().argName("true/false").hasArg().longOpt(ARGUMENT.NEXUS_USES_PROXY)
                 .desc("Whether or not the configured proxy should be used when connecting to Nexus.").build();
         final Option additionalZipExtensions = Option.builder().argName("extensions").hasArg()
@@ -501,6 +507,8 @@ public final class CliParser {
                         .argName("url").hasArg(true).build())
                 .addOption(retireJsFilters)
                 .addOption(nexusUrl)
+                .addOption(nexusUsername)
+                .addOption(nexusPassword)
                 .addOption(nexusUsesProxy)
                 .addOption(additionalZipExtensions)
                 .addOption(pathToMono)
@@ -824,6 +832,26 @@ public final class CliParser {
         } else {
             return line.getOptionValue(ARGUMENT.NEXUS_URL);
         }
+    }
+
+    /**
+     * Returns the username to authenticate to the nexus server if one was specified.
+     *
+     * @return the username to authenticate to the nexus server; if none was specified this will
+     * return null;
+     */
+    public String getNexusUsername() {
+        return line.getOptionValue(ARGUMENT.NEXUS_USERNAME);
+    }
+
+    /**
+     * Returns the password to authenticate to the nexus server if one was specified.
+     *
+     * @return the password to authenticate to the nexus server; if none was specified this will
+     * return null;
+     */
+    public String getNexusPassword() {
+        return line.getOptionValue(ARGUMENT.NEXUS_PASSWORD);
     }
 
     /**
@@ -1574,6 +1602,14 @@ public final class CliParser {
          * The URL of the nexus server.
          */
         public static final String NEXUS_URL = "nexus";
+        /**
+         * The username for the nexus server.
+         */
+        public static final String NEXUS_USERNAME = "nexusUser";
+        /**
+         * The password for the nexus server.
+         */
+        public static final String NEXUS_PASSWORD = "nexusPass";
         /**
          * Whether or not the defined proxy should be used when connecting to
          * Nexus.

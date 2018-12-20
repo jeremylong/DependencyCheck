@@ -477,6 +477,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "nexusUrl", required = false)
     private String nexusUrl;
     /**
+     * The id of a server defined in the settings.xml that configures the credentials  (username and password) for a Nexus server's REST API end point.
+     * When not specified the communication with the Nexus server's REST API will be unauthenticated.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "nexusServerId", required = false)
+    private String nexusServerId;
+    /**
      * Whether or not the configured proxy is used to connect to Nexus.
      */
     @SuppressWarnings("CanBeFinal")
@@ -1506,6 +1513,37 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
 
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
+        if (nexusServerId != null) {
+            final Server server = settingsXml.getServer(nexusServerId);
+            if (server != null) {
+                String nexusUser = server.getUsername();
+                String nexusPassword = null;
+                try {
+                    nexusPassword = decryptServerPassword(server);
+                } catch (SecDispatcherException ex) {
+                    if (ex.getCause() instanceof FileNotFoundException
+                            || (ex.getCause() != null && ex.getCause().getCause() instanceof FileNotFoundException)) {
+                        //maybe its not encrypted?
+                        final String tmp = server.getPassword();
+                        if (tmp.startsWith("{") && tmp.endsWith("}")) {
+                            getLog().error(String.format(
+                                    "Unable to decrypt the server password for server id '%s' in settings.xml%n\tCause: %s",
+                                    serverId, ex.getMessage()));
+                        } else {
+                            nexusPassword = tmp;
+                        }
+                    } else {
+                        getLog().error(String.format(
+                                "Unable to decrypt the server password for server id '%s' in settings.xml%n\tCause: %s",
+                                serverId, ex.getMessage()));
+                    }
+                }
+                settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_USER, nexusUser);
+                settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_PASSWORD, nexusPassword);
+            } else {
+                getLog().error(String.format("Server '%s' not found in the settings.xml file", serverId));
+            }
+        }
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
 
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_URL, artifactoryAnalyzerUrl);
@@ -1562,20 +1600,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             if (server != null) {
                 databaseUser = server.getUsername();
                 try {
-                    //CSOFF: LineLength
-                    //The following fix was copied from:
-                    //   https://github.com/bsorrentino/maven-confluence-plugin/blob/master/maven-confluence-reporting-plugin/src/main/java/org/bsc/maven/confluence/plugin/AbstractBaseConfluenceMojo.java
-                    //
-                    // FIX to resolve
-                    // org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException:
-                    // java.io.FileNotFoundException: ~/.settings-security.xml (No such file or directory)
-                    //
-                    //CSON: LineLength
-                    if (securityDispatcher instanceof DefaultSecDispatcher) {
-                        ((DefaultSecDispatcher) securityDispatcher).setConfigurationFile("~/.m2/settings-security.xml");
-                    }
-
-                    databasePassword = securityDispatcher.decrypt(server.getPassword());
+                    databasePassword = decryptServerPassword(server);
                 } catch (SecDispatcherException ex) {
                     if (ex.getCause() instanceof FileNotFoundException
                             || (ex.getCause() != null && ex.getCause().getCause() instanceof FileNotFoundException)) {
@@ -1611,6 +1636,23 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
         artifactScopeExcluded = new ArtifactScopeExcluded(skipTestScope, skipProvidedScope, skipSystemScope, skipRuntimeScope);
         artifactTypeExcluded = new ArtifactTypeExcluded(skipArtifactType);
+    }
+
+    private String decryptServerPassword(Server server) throws SecDispatcherException {
+        //CSOFF: LineLength
+        //The following fix was copied from:
+        //   https://github.com/bsorrentino/maven-confluence-plugin/blob/master/maven-confluence-reporting-plugin/src/main/java/org/bsc/maven/confluence/plugin/AbstractBaseConfluenceMojo.java
+        //
+        // FIX to resolve
+        // org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException:
+        // java.io.FileNotFoundException: ~/.settings-security.xml (No such file or directory)
+        //
+        //CSON: LineLength
+        if (securityDispatcher instanceof DefaultSecDispatcher) {
+            ((DefaultSecDispatcher) securityDispatcher).setConfigurationFile("~/.m2/settings-security.xml");
+        }
+
+        return securityDispatcher.decrypt(server.getPassword());
     }
 
     /**
