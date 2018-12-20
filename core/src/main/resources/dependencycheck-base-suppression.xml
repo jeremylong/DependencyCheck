@@ -246,6 +246,14 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        Suppresses false positives per issue #1613
+        ]]></notes>
+        <gav regex="true">^com\.github\.jai-imageio.*$</gav>
+        <cpe>cpe:/a:git:git</cpe>
+        <cpe>cpe:/a:git_project:git</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Suppresses false positives per issue 1581
         ]]></notes>
         <gav regex="true">^org\.apache\.activemq:artemis.*$</gav>
