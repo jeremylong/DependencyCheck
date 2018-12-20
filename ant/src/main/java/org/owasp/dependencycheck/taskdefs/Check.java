@@ -115,6 +115,14 @@ public class Check extends Update {
      */
     private String nexusUrl;
     /**
+     * The username to authenticate to the Nexus Server's REST API Endpoint.
+     */
+    private String nexusUser;
+    /**
+     * The password to authenticate to the Nexus Server's REST API Endpoint.
+     */
+    private String nexusPassword;
+    /**
      * Whether or not the defined proxy should be used when connecting to Nexus.
      */
     private Boolean nexusUsesProxy;
@@ -1068,6 +1076,42 @@ public class Check extends Update {
     }
 
     /**
+     * Get the value of nexusUser.
+     *
+     * @return the value of nexusUser
+     */
+    public String getNexusUser() {
+        return nexusUser;
+    }
+
+    /**
+     * Set the value of nexusUser.
+     *
+     * @param nexusUser new value of nexusUser
+     */
+    public void setNexusUser(String nexusUser) {
+        this.nexusUser = nexusUser;
+    }
+
+    /**
+     * Get the value of nexusPassword.
+     *
+     * @return the value of nexusPassword
+     */
+    public String getNexusPassword() {
+        return nexusPassword;
+    }
+
+    /**
+     * Set the value of nexusPassword.
+     *
+     * @param nexusPassword new value of nexusPassword
+     */
+    public void setNexusPassword(String nexusPassword) {
+        this.nexusPassword = nexusPassword;
+    }
+
+    /**
      * Get the value of nexusUsesProxy.
      *
      * @return the value of nexusUsesProxy
@@ -1394,6 +1438,8 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
         getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_USER, nexusUser);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_PASSWORD, nexusPassword);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
         getSettings().setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
         getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);

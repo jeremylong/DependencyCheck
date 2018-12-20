@@ -71,6 +71,8 @@ jarAnalyzer                         | Sets whether the Jar Analyzer will be used
 centralAnalyzerEnabled              | Sets whether the Central Analyzer will be used. **Disabling this analyzer is not recommended as it could lead to false negatives (e.g. libraries that have vulnerabilities may not be reported correctly).** If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer (see below).                                  | true
 nexusAnalyzerEnabled                | Sets whether Nexus Analyzer will be used (requires Nexus Pro). This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
 nexusUrl                            | Defines the Nexus web service endpoint (example http://domain.enterprise/nexus/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
+nexusUser                           | The username to authenticate to the Nexus Server's web service end point. If not set the Nexus Analyzer will use an unauthenticated connection. | &nbsp;
+nexusPassword                       | The password to authenticate to the Nexus Server's web service end point. If not set the Nexus Analyzer will use an unauthenticated connection. | &nbsp;
 nexusUsesProxy                      | Whether or not the defined proxy should be used when connecting to Nexus.                                  | true
 artifactoryAnalyzerEnabled          | Sets whether Artifactory analyzer will be used                                                             | false
 artifactoryAnalyzerUrl              | The Artifactory server URL.                                                                                | &nbsp;
