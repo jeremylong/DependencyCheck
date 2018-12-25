@@ -60,6 +60,8 @@ Advanced Options
 |       | \-\-artifactoryApiToken    | \<token\>   | The API token to connect to Artifactory instance, only used if the username or the API key are not defined by artifactoryAnalyzerServerId,artifactoryAnalyzerUsername or artifactoryAnalyzerApiToken | &nbsp; |
 |       | \-\-artifactoryBearerToken | \<token\>   | The bearer token to connect to Artifactory instance                                                        | &nbsp; |
 |       | \-\-nexus              | \<url\>         | The url to the Nexus Server's web service end point (example: http://domain.enterprise/nexus/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp; |
+|       | \-\-nexusUser          |                 | The username to authenticate to the Nexus Server's web service end point. If not set the Nexus Analyzer will use an unauthenticated connection. | &nbsp; |
+|       | \-\-nexusPass          |                 | The password to authenticate to the Nexus Server's web service end point. If not set the Nexus Analyzer will use an unauthenticated connection. | &nbsp; |
 |       | \-\-nexusUsesProxy     | \<true\|false\> | Whether or not the defined proxy should be used when connecting to Nexus.        | true |
 |       | \-\-disableNuspec      |                 | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.                 | false |
 |       | \-\-disableNugetconf   |                 | Sets whether or not the [experimental](../analyzers/index.html) .NET Nuget packages.config Analyzer will be used.        | false |

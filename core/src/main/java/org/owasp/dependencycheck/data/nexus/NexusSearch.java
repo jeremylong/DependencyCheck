@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -109,6 +111,10 @@ public class NexusSearch {
         final URLConnectionFactory factory = new URLConnectionFactory(settings);
         conn = factory.createHttpURLConnection(url, useProxy);
         conn.setDoOutput(true);
+        String authHeader = buildHttpAuthHeaderValue();
+        if (!authHeader.isEmpty()) {
+            conn.addRequestProperty("Authorization", authHeader);
+        }
 
         // JSON would be more elegant, but there's not currently a dependency
         // on JSON, so don't want to add one just for this
@@ -175,6 +181,10 @@ public class NexusSearch {
             final URLConnectionFactory factory = new URLConnectionFactory(settings);
             conn = factory.createHttpURLConnection(url, useProxy);
             conn.addRequestProperty("Accept", "application/xml");
+            String authHeader = buildHttpAuthHeaderValue();
+            if (!authHeader.isEmpty()) {
+                conn.addRequestProperty("Authorization", authHeader);
+            }
             conn.connect();
             if (conn.getResponseCode() != 200) {
                 LOGGER.warn("Expected 200 result from Nexus, got {}", conn.getResponseCode());
@@ -191,5 +201,19 @@ public class NexusSearch {
             return false;
         }
         return true;
+    }
+
+    private String buildHttpAuthHeaderValue() {
+        String user = settings.getString(Settings.KEYS.ANALYZER_NEXUS_USER,"");
+        String pass = settings.getString(Settings.KEYS.ANALYZER_NEXUS_PASSWORD,"");
+        String result = "";
+        if (user.isEmpty() || pass.isEmpty()) {
+            LOGGER.debug("Skip authentication as user and/or password for nexus is empty");
+        } else {
+            StringBuilder auth = new StringBuilder(user).append(':').append(pass);
+            String base64Auth = Base64.getEncoder().encodeToString(auth.toString().getBytes(StandardCharsets.UTF_8));
+            result = new StringBuilder("Basic ").append(base64Auth).toString();
+        }
+        return result;
     }
 }
