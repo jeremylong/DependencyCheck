@@ -1519,6 +1519,16 @@
         ]]></notes>
         <gav regex="true">^mysql:mysql-connector-java:.*$</gav>
         <cve>CVE-2018-3081</cve>
+        <cve>CVE-2018-3137</cve>
+        <cve>CVE-2018-3145</cve>
+        <cve>CVE-2018-3170</cve>
+        <cve>CVE-2018-3182</cve>
+        <cve>CVE-2018-3186</cve>
+        <cve>CVE-2018-3195</cve>
+        <cve>CVE-2018-3203</cve>
+        <cve>CVE-2018-3212</cve>
+        <cve>CVE-2018-3279</cve>
+        <cve>CVE-2018-3286</cve>
         <cve>CVE-2018-3071</cve>
         <cve>CVE-2018-2759</cve>
         <cve>CVE-2017-3331</cve>
