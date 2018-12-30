@@ -23,6 +23,7 @@ import org.apache.lucene.analysis.BaseTokenStreamTestCase;
 import org.apache.lucene.analysis.MockTokenizer;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.KeywordTokenizer;
+import org.junit.Test;
 
 /**
  *
@@ -45,6 +46,7 @@ public class UrlTokenizingFilterTest extends BaseTokenStreamTestCase {
     /**
      * test some example domains
      */
+    @Test
     public void testExamples() throws IOException {
         String[] expected = new String[2];
         expected[0] = "domain";
@@ -58,6 +60,7 @@ public class UrlTokenizingFilterTest extends BaseTokenStreamTestCase {
      * http://svn.apache.org/repos/asf/lucene/dev/trunk/lucene/analysis/common/src/test/org/apache/lucene/analysis/en/TestEnglishMinimalStemFilter.java
      * blast some random strings through the analyzer
      */
+    @Test
     public void testRandomStrings() {
         try {
             checkRandomData(random(), analyzer, 1000 * RANDOM_MULTIPLIER);
@@ -72,6 +75,7 @@ public class UrlTokenizingFilterTest extends BaseTokenStreamTestCase {
      *
      * @throws IOException
      */
+    @Test
     public void testEmptyTerm() throws IOException {
         Analyzer a = new Analyzer() {
             @Override
