@@ -20,27 +20,22 @@ package org.owasp.dependencycheck.agent;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceType;
-import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.FileUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import org.owasp.dependencycheck.BaseDBTestCase;
 
-public class DependencyCheckScanAgentTest extends BaseTest {
+public class DependencyCheckScanAgentIT extends BaseDBTestCase {
 
-    private static final File DATA_DIR = new File("target/test-scan-agent/data");
     private static final File REPORT_DIR = new File("target/test-scan-agent/report");
 
     @BeforeClass
     public static void beforeClass() {
-        if (!DATA_DIR.exists()) {
-            DATA_DIR.mkdirs();
-        }
         if (!REPORT_DIR.exists()) {
             REPORT_DIR.mkdirs();
         }
@@ -55,7 +50,7 @@ public class DependencyCheckScanAgentTest extends BaseTest {
         scanAgent.execute();
 
         Dependency tomcat = scanAgent.getDependencies().get(0);
-        Assert.assertTrue(tomcat.getIdentifiers().size() > 0);
+        Assert.assertTrue(tomcat.getIdentifiers().size() >= 1);
 
         // This will change over time
         Assert.assertTrue(tomcat.getVulnerabilities().size() > 5);
@@ -64,7 +59,9 @@ public class DependencyCheckScanAgentTest extends BaseTest {
     private DependencyCheckScanAgent createScanAgent() {
         final DependencyCheckScanAgent scanAgent = new DependencyCheckScanAgent();
         scanAgent.setApplicationName("Dependency-Track");
-        scanAgent.setDataDirectory(DATA_DIR.getAbsolutePath());
+        //the following does not work because it will be over-ridden by the system
+        //  properties configured during surefire/failsafe
+        //scanAgent.setDataDirectory(DATA_DIR.getAbsolutePath());
         scanAgent.setReportOutputDirectory(REPORT_DIR.getAbsolutePath());
         scanAgent.setReportFormat(ReportGenerator.Format.XML);
         scanAgent.setAutoUpdate(true);
