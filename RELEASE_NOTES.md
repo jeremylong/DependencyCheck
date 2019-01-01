@@ -2,6 +2,24 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 4.0.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v4.0.2) (2019-01-01)
+
+### Enhancements
+
+- Added the ability for the dependency-check-maven plugin to scan the `dependencyManagement` section
+  of the `pom.xml`. Note that in the default configuration the dependency management section is skipped.
+  To enable this feature set `<skipDependencyManagement>false</skipDependencyManagement>`.
+- If using a local Nexus server (v2 or v3 pro) it is now possible to provide authentication credentials.
+  - Previous versions only worked with anonymous/unauthenticated access.
+  - See [issue #977](https://github.com/jeremylong/DependencyCheck/issues/977)
+
+### Bug Fixes
+
+- Updated fix for transitive dependencies with known vulnerabilities (guava and commons-collections) 
+  so that the upgrade occurs correctly in other integrations that utilize core; see
+  [issue #1562](https://github.com/jeremylong/DependencyCheck/issues/1561#issuecomment-450112110).
+- Resolved several false positives
+
 ## [Version 4.0.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v4.0.1) (2018-12-17)
 
 ### Bug Fixes
