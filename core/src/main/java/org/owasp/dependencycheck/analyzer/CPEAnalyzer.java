@@ -127,6 +127,12 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      */
     private CpeSuppressionAnalyzer suppression;
 
+    /**
+     * The minimum score to accept a Lucene match. While this is not recommended
+     * by the Lucene team; this weeds out several false positives. Setting the
+     * score too low results in too many false positives; whereas setting the
+     * score to high will result in false negatives.
+     */
     private float minLuceneScore = 30;
 
     /**
@@ -327,7 +333,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             final TopDocs docs = cpe.search(searchString, MAX_QUERY_RESULTS);
             for (ScoreDoc d : docs.scoreDocs) {
                 final Document doc = cpe.getDocument(d.doc);
-                if (d.score >= minLuceneScore) {// 0.08) {
+                if (d.score >= minLuceneScore) {
                     //final Document doc = cpe.getDocument(d.doc);
                     final IndexEntry entry = new IndexEntry();
                     entry.setVendor(doc.get(Fields.VENDOR));

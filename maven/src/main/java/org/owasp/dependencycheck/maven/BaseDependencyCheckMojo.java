@@ -211,7 +211,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Deprecated
     private Boolean aggregate;
     /**
-     * Use pom dependency information for snapshot dependencies that are part of the Maven reactor while aggregate scanning a multi-module project.
+     * Use pom dependency information for snapshot dependencies that are part of
+     * the Maven reactor while aggregate scanning a multi-module project.
      *
      */
     @Parameter(property = "dependency-check.virtualSnapshotsFromReactor", defaultValue = "true")
@@ -479,8 +480,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "nexusUrl", required = false)
     private String nexusUrl;
     /**
-     * The id of a server defined in the settings.xml that configures the credentials  (username and password) for a Nexus server's REST API end point.
-     * When not specified the communication with the Nexus server's REST API will be unauthenticated.
+     * The id of a server defined in the settings.xml that configures the
+     * credentials (username and password) for a Nexus server's REST API end
+     * point. When not specified the communication with the Nexus server's REST
+     * API will be unauthenticated.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nexusServerId", required = false)
@@ -913,10 +916,20 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
     }
 
-    private DependencyNode toDependencyNode(ProjectBuildingRequest buildingRequest, DependencyNode parent, org.apache.maven.model.Dependency dependency)
-        throws ArtifactResolverException {
+    /**
+     * Converts the dependency into a dependency node
+     *
+     * @param buildingRequest the Maven building request
+     * @param parent the parent node
+     * @param dependency the dependency to convert
+     * @return the resulting dependency node
+     * @throws ArtifactResolverException thrown if there is an error during
+     * conversion
+     */
+    private DependencyNode toDependencyNode(ProjectBuildingRequest buildingRequest, DependencyNode parent,
+            org.apache.maven.model.Dependency dependency) throws ArtifactResolverException {
 
-        DefaultArtifactCoordinate coordinate = new DefaultArtifactCoordinate();
+        final DefaultArtifactCoordinate coordinate = new DefaultArtifactCoordinate();
 
         coordinate.setGroupId(dependency.getGroupId());
         coordinate.setArtifactId(dependency.getArtifactId());
@@ -924,18 +937,28 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         coordinate.setExtension(dependency.getType());
         coordinate.setClassifier(dependency.getClassifier());
 
-        Artifact artifact = artifactResolver.resolveArtifact(buildingRequest, coordinate).getArtifact();
+        final Artifact artifact = artifactResolver.resolveArtifact(buildingRequest, coordinate).getArtifact();
 
         artifact.setScope(dependency.getScope());
 
-        DefaultDependencyNode node = new DefaultDependencyNode(parent, artifact, dependency.getVersion(), dependency.getScope(), null);
-
-        return node;
+        return new DefaultDependencyNode(parent, artifact, dependency.getVersion(), dependency.getScope(), null);
 
     }
 
+    /**
+     * Collects the dependencies defined in the dependency management
+     * configuration.
+     *
+     * @param buildingRequest the Maven building request
+     * @param project the Maven project
+     * @param nodes the collection to add the dependencies to from the
+     * dependency management configuration
+     * @param aggregate whether or not this is an aggregate build
+     * @return a collection of exceptions; if the return value is null no
+     * exceptions occurred
+     */
     private ExceptionCollection collectDependencyManagementDependencies(ProjectBuildingRequest buildingRequest, MavenProject project,
-        List<DependencyNode> nodes, boolean aggregate) {
+            List<DependencyNode> nodes, boolean aggregate) {
         if (skipDependencyManagement || project.getDependencyManagement() == null) {
             return null;
         }
@@ -1188,16 +1211,20 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * <code>false</code>
      */
     private boolean addReactorDependency(Engine engine, Artifact artifact) {
-        return addVirtualDependencyFromReactor(engine, artifact, "Unable to resolve %s as it has not been built yet - creating a virtual dependency instead.");
+        return addVirtualDependencyFromReactor(engine, artifact, "Unable to resolve %s as it has not been built yet "
+                + "- creating a virtual dependency instead.");
     }
 
     /**
-     * Checks if the current artifact is actually in the reactor projects. If true a virtual dependency is created based on
-     * the evidence in the project.
+     * Checks if the current artifact is actually in the reactor projects. If
+     * true a virtual dependency is created based on the evidence in the
+     * project.
      *
      * @param engine a reference to the engine being used to scan
      * @param artifact the artifact being analyzed in the mojo
-     * @param infoLogTemplate the template for the infoLog entry written when a virtual dependency is added. Needs a single %s placeholder for the location of the displayName in the message
+     * @param infoLogTemplate the template for the infoLog entry written when a
+     * virtual dependency is added. Needs a single %s placeholder for the
+     * location of the displayName in the message
      * @return <code>true</code> if the artifact is in the reactor; otherwise
      * <code>false</code>
      */
@@ -1276,18 +1303,21 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Checks if the current artifact is actually in the reactor projects. If true a virtual dependency is created based on
-     * the evidence in the project.
+     * Checks if the current artifact is actually in the reactor projects. If
+     * true a virtual dependency is created based on the evidence in the
+     * project.
      *
      * @param engine a reference to the engine being used to scan
      * @param artifact the artifact being analyzed in the mojo
-     * @return <code>true</code> if the artifact is a snapshot artifact in the reactor; otherwise <code>false</code>
+     * @return <code>true</code> if the artifact is a snapshot artifact in the
+     * reactor; otherwise <code>false</code>
      */
     private boolean addSnapshotReactorDependency(Engine engine, Artifact artifact) {
         if (!artifact.isSnapshot()) {
             return false;
         }
-        return addVirtualDependencyFromReactor(engine, artifact, "Found snapshot reactor project in aggregate for %s - creating a virtual dependency as the snapshot found in the repository may contain outdated dependencies.");
+        return addVirtualDependencyFromReactor(engine, artifact, "Found snapshot reactor project in aggregate for %s - "
+                + "creating a virtual dependency as the snapshot found in the repository may contain outdated dependencies.");
     }
 
     /**
@@ -1522,15 +1552,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
         }
         settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);
-
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, enableExperimental);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIRED_ENABLED, enableRetired);
-
         if (externalReport != null) {
             getLog().warn("The 'externalReport' option was set; this configuration option has been removed. "
                     + "Please update the dependency-check-maven plugin's configuration");
         }
-
         if (proxyUrl != null && !proxyUrl.isEmpty()) {
             getLog().warn("Deprecated configuration detected, proxyUrl will be ignored; use the maven settings to configure the proxy instead");
         }
@@ -1546,11 +1573,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         final String[] suppressions = determineSuppressions();
         settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressions);
-
         settings.setBooleanIfNotNull(Settings.KEYS.UPDATE_VERSION_CHECK_ENABLED, versionCheckEnabled);
         settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
         settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);
-
         //File Type Analyzer Settings
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
@@ -1562,12 +1587,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
         settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
-
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
         if (nexusServerId != null) {
             final Server server = settingsXml.getServer(nexusServerId);
             if (server != null) {
-                String nexusUser = server.getUsername();
+                final String nexusUser = server.getUsername();
                 String nexusPassword = null;
                 try {
                     nexusPassword = decryptServerPassword(server);
@@ -1596,11 +1620,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
         }
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
-
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_URL, artifactoryAnalyzerUrl);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_USES_PROXY, artifactoryAnalyzerUseProxy);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_PARALLEL_ANALYSIS, artifactoryAnalyzerParallelAnalysis);
-
         if (Boolean.TRUE.equals(artifactoryAnalyzerEnabled)) {
             if (artifactoryAnalyzerServerId != null) {
                 final Server server = settingsXml.getServer(artifactoryAnalyzerServerId);
@@ -1614,7 +1636,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
             settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_BEARER_TOKEN, artifactoryAnalyzerBearerToken);
         }
-
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, pyDistributionAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED, pyPackageAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED, rubygemsAnalyzerEnabled);
@@ -1623,7 +1644,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, autoconfAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
-
         if (nspAnalyzerEnabled != null) {
             getLog().error("The nspAnalyzerEnabled configuration has been deprecated and replaced by nodeAuditAnalyzerEnabled");
             getLog().error("The nspAnalyzerEnabled configuration will be removed in the next major release");
@@ -1635,17 +1655,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, bundleAuditPath);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, cocoapodsAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, swiftPackageManagerAnalyzerEnabled);
-
         if (retirejs != null) {
             settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, retirejs.getFilterNonVulnerable());
             settings.setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, retirejs.getFilters());
         }
-
         //Database configuration
         settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
         settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
         settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
-
         if (databaseUser == null && databasePassword == null && serverId != null) {
             final Server server = settingsXml.getServer(serverId);
             if (server != null) {
@@ -1674,21 +1691,26 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 getLog().error(String.format("Server '%s' not found in the settings.xml file", serverId));
             }
         }
-
         settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
         settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
         settings.setStringIfNotEmpty(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
-
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_12_URL, cveUrl12Modified);
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_20_URL, cveUrl20Modified);
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_1_2, cveUrl12Base);
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
         settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
-
         artifactScopeExcluded = new ArtifactScopeExcluded(skipTestScope, skipProvidedScope, skipSystemScope, skipRuntimeScope);
         artifactTypeExcluded = new ArtifactTypeExcluded(skipArtifactType);
     }
 
+    /**
+     * Obtains the configured password for the given server.
+     *
+     * @param server the configured server from the settings.xml
+     * @return the decrypted password from the Maven configuration
+     * @throws SecDispatcherException thrown if there is an error decrypting the
+     * password
+     */
     private String decryptServerPassword(Server server) throws SecDispatcherException {
         //CSOFF: LineLength
         //The following fix was copied from:

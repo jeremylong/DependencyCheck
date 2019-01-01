@@ -23,7 +23,7 @@ Copyright (c) 2017 - Jeremy Long. All Rights Reserved.
         <version>4.0.2-SNAPSHOT</version>
     </parent>
     <name>Dependency-Check Build-Reporting</name>
-    <artifactId>build-reporting</artifactId>
+    <artifactId>dependency-check-build-reporting</artifactId>
     <packaging>pom</packaging>
     <scm>
         <connection>scm:git:https://github.com/jeremylong/DependencyCheck.git</connection>

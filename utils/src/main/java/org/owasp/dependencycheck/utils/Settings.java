@@ -1071,7 +1071,7 @@ public final class Settings {
     public float getFloat(String key, float defaultValue) {
         float retValue = defaultValue;
         try {
-            Float.parseFloat(getString(key));
+            retValue = Float.parseFloat(getString(key));
         } catch (Throwable ignore) {
             LOGGER.trace("ignore", ignore);
         }

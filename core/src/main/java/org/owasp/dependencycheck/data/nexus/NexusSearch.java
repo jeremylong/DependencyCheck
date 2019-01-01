@@ -111,7 +111,7 @@ public class NexusSearch {
         final URLConnectionFactory factory = new URLConnectionFactory(settings);
         conn = factory.createHttpURLConnection(url, useProxy);
         conn.setDoOutput(true);
-        String authHeader = buildHttpAuthHeaderValue();
+        final String authHeader = buildHttpAuthHeaderValue();
         if (!authHeader.isEmpty()) {
             conn.addRequestProperty("Authorization", authHeader);
         }
@@ -181,7 +181,7 @@ public class NexusSearch {
             final URLConnectionFactory factory = new URLConnectionFactory(settings);
             conn = factory.createHttpURLConnection(url, useProxy);
             conn.addRequestProperty("Accept", "application/xml");
-            String authHeader = buildHttpAuthHeaderValue();
+            final String authHeader = buildHttpAuthHeaderValue();
             if (!authHeader.isEmpty()) {
                 conn.addRequestProperty("Authorization", authHeader);
             }
@@ -203,15 +203,20 @@ public class NexusSearch {
         return true;
     }
 
+    /**
+     * Constructs the base64 encoded basic authentication header value.
+     *
+     * @return the base64 encoded basic authentication header value
+     */
     private String buildHttpAuthHeaderValue() {
-        String user = settings.getString(Settings.KEYS.ANALYZER_NEXUS_USER,"");
-        String pass = settings.getString(Settings.KEYS.ANALYZER_NEXUS_PASSWORD,"");
+        final String user = settings.getString(Settings.KEYS.ANALYZER_NEXUS_USER, "");
+        final String pass = settings.getString(Settings.KEYS.ANALYZER_NEXUS_PASSWORD, "");
         String result = "";
         if (user.isEmpty() || pass.isEmpty()) {
             LOGGER.debug("Skip authentication as user and/or password for nexus is empty");
         } else {
-            StringBuilder auth = new StringBuilder(user).append(':').append(pass);
-            String base64Auth = Base64.getEncoder().encodeToString(auth.toString().getBytes(StandardCharsets.UTF_8));
+            final String auth = user + ':' + pass;
+            final String base64Auth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
             result = new StringBuilder("Basic ").append(base64Auth).toString();
         }
         return result;
