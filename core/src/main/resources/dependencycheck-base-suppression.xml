@@ -2388,6 +2388,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per issue #1662
+        ]]></notes>
+        <gav regex="true">^net\.sourceforge\.jtds:jtds:.*$</gav>
+        <cpe>cpe:/a:microsoft:sql_server</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per issue #999 - instead of suppressing the whole thing, we will just
             suppress specific CVE that are for the server
         ]]></notes>
