@@ -32,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.concurrent.ThreadSafe;
-import javax.xml.bind.DatatypeConverter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -41,6 +40,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -159,7 +159,7 @@ public class ArtifactorySearch {
         final String apiToken = settings.getString(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN);
         if (username != null && apiToken != null) {
             final String userpassword = username + ":" + apiToken;
-            final String encodedAuthorization = DatatypeConverter.printBase64Binary(userpassword.getBytes(StandardCharsets.UTF_8));
+            final String encodedAuthorization = Base64.getEncoder().encodeToString(userpassword.getBytes(StandardCharsets.UTF_8));
             conn.addRequestProperty("Authorization", "Basic " + encodedAuthorization);
         } else {
             final String bearerToken = settings.getString(Settings.KEYS.ANALYZER_ARTIFACTORY_BEARER_TOKEN);
