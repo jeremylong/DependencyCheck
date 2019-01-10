@@ -816,6 +816,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #1673
+        ]]></notes>
+        <gav regex="true">^org\.glassfish\.jersey\.media:jersey-media-moxy:.*$</gav>
+        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Drupal services false positive.
         ]]></notes>
         <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)</filePath>
