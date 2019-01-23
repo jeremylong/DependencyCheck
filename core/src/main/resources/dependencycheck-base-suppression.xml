@@ -313,7 +313,7 @@
         FP per #1229
         ]]></notes>
         <gav regex="true">^org\.slf4j:((?!slf4j-ext).)*:.*$</gav>
-        <cpe>cpe:/a:slf4j:slf4j</cpe>
+        <cve>CVE-2018-8088</cve>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
