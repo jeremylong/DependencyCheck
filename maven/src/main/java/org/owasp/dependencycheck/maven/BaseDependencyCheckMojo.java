@@ -40,9 +40,11 @@ import org.apache.maven.shared.transfer.artifact.DefaultArtifactCoordinate;
 import org.apache.maven.shared.transfer.artifact.TransferUtils;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolverException;
+import org.apache.maven.shared.artifact.filter.PatternExcludesArtifactFilter;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
+import org.apache.maven.shared.dependency.graph.filter.ArtifactDependencyNodeFilter;
 import org.apache.maven.shared.dependency.graph.internal.DefaultDependencyNode;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
@@ -74,9 +76,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
 import org.apache.maven.shared.dependency.graph.traversal.CollectingDependencyNodeVisitor;
+import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
+import org.apache.maven.shared.dependency.graph.traversal.FilteringDependencyNodeVisitor;
 
 /**
  * @author Jeremy Long
@@ -679,6 +682,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private String externalReport = null;
 
     /**
+     * The list of artifacts (and their transitive dependencies) to exclude from the check.
+     */
+    @Parameter
+    private List<String> excludes;
+
+    /**
      * The artifact scope filter.
      */
     private Filter<String> artifactScopeExcluded;
@@ -895,18 +904,20 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             buildingRequest.setProject(project);
             //For some reason the filter does not filter out the project being analyzed
             //if we pass in the filter below instead of null to the dependencyGraphBuilder
-            final ArtifactFilter filter = new ExcludesArtifactFilter(filterItems);
             final DependencyNode dn = dependencyGraphBuilder.buildDependencyGraph(buildingRequest, null, reactorProjects);
-            final CollectingDependencyNodeVisitor visitor = new CollectingDependencyNodeVisitor();
-            dn.accept(visitor);
+
+            CollectingDependencyNodeVisitor collectorVisitor = new CollectingDependencyNodeVisitor();
+            // exclude artifact by pattern and its dependencies
+            DependencyNodeVisitor transitiveFilterVisitor = new FilteringDependencyTransitiveNodeVisitor(collectorVisitor, 
+                    new ArtifactDependencyNodeFilter(new PatternExcludesArtifactFilter(getExcludes())));
+            // exclude exact artifact but not its dependencies, this filter must be appied on the root for first otherwise
+            // in case the exclude has the same groupId of the current bundle its direct dependencies are not visited
+            DependencyNodeVisitor artifactFilter = new FilteringDependencyNodeVisitor(transitiveFilterVisitor,
+                    new ArtifactDependencyNodeFilter(new ExcludesArtifactFilter(filterItems)));
+            dn.accept(artifactFilter);
 
             //collect dependencies with the filter - see comment above.
-            final List<DependencyNode> nodes = new ArrayList<>();
-            for (DependencyNode node : visitor.getNodes()) {
-                if (filter.include(node.getArtifact())) {
-                    nodes.add(node);
-                }
-            }
+            final List<DependencyNode> nodes = collectorVisitor.getNodes();
 
             return collectDependencies(engine, project, nodes, buildingRequest, aggregate);
         } catch (DependencyGraphBuilderException ex) {
@@ -1804,6 +1815,19 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     protected String getFormat() {
         return format;
+    }
+
+    /**
+     * Returns the list of excluded artifacts based on either artifact id or
+     * group id and artifact id.
+     * 
+     * @return a list of artifact to exclude
+     */
+    public List<String> getExcludes() {
+        if (excludes == null) {
+            excludes = new ArrayList<>();
+        }
+        return excludes;
     }
 
     /**
