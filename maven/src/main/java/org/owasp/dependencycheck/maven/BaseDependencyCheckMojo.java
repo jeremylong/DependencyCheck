@@ -109,7 +109,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "metaFileName", defaultValue = "dependency-check.ser", required = true)
     private String dataFileName;
     /**
-     * Sets whether or not the external report format should be used.
+     * Sets whether or not the build should be interrupted because of a failure.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "failOnError", defaultValue = "true", required = true)
