@@ -578,6 +578,16 @@ public final class Settings {
     }
 
     /**
+     * Initialize the settings object using the given properties.
+     * @param properties the properties to be used with this Settings instance
+     * @since 4.0.3
+     */
+    public Settings(final Properties properties) {
+        props = properties;
+        logProperties("Properties loaded", props);
+    }
+
+    /**
      * Initialize the settings object using the given properties file.
      *
      * @param propertiesFilePath the path to the base properties file to load
