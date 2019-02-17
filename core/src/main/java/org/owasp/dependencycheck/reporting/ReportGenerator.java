@@ -403,7 +403,7 @@ public class ReportGenerator {
             try {
                 org.apache.commons.io.FileUtils.moveFile(out, in);
             } catch (IOException ex) {
-                LOGGER.error("Unable to generate pretty report, caused by: ", ex.getMessage());
+                LOGGER.error("Unable to generate pretty report, caused by: {}", ex.getMessage());
             }
         }
     }
