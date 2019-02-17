@@ -18,7 +18,7 @@
 package org.owasp.dependencycheck.data.lucene;
 
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.lucene.analysis.TokenStream;
@@ -65,7 +65,7 @@ public final class AlphaNumericFilter extends AbstractTokenizingFilter {
      */
     @Override
     public boolean incrementToken() throws IOException {
-        final LinkedList<String> tokens = getTokens();
+        final ArrayDeque<String> tokens = getTokens();
         final CharTermAttribute termAtt = getTermAtt();
         if (tokens.isEmpty()) {
             String[] parts;

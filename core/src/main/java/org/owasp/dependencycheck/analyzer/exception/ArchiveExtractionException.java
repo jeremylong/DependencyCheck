@@ -30,7 +30,7 @@ public class ArchiveExtractionException extends Exception {
     /**
      * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 5654160114034311518L;
 
     /**
      * Creates a new ArchiveExtractionException.

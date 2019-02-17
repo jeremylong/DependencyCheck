@@ -28,9 +28,9 @@ import javax.annotation.concurrent.ThreadSafe;
 public class NugetconfParseException extends Exception {
 
     /**
-     * The serialVersionUID
+     * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1;
+    private static final long serialVersionUID = 4142434918496319245L;
 
     /**
      * Constructs a new exception with <code>null</code> as its detail message.

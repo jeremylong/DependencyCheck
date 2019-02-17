@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2018 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.cwe;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
@@ -26,16 +27,36 @@ import org.owasp.dependencycheck.BaseTest;
  *
  * @author Jeremy Long
  */
-public class CweDBTest  extends BaseTest {
+public class CweDBTest extends BaseTest {
 
     /**
-     * Test of getCweName method, of class CweDB.
+     * Test of getName method, of class CweDB.
      */
     @Test
-    public void testGetCweName() {
+    public void testGetName() {
         String cweId = "CWE-16";
         String expResult = "Configuration";
-        String result = CweDB.getCweName(cweId);
+        String result = CweDB.getName(cweId);
+        assertEquals(expResult, result);
+
+        cweId = "CWE-260000";
+        result = CweDB.getName(cweId);
+        assertNull(result);
+    }
+
+    /**
+     * Test of getFullName method, of class CweDB.
+     */
+    @Test
+    public void testGetFullName() {
+        String cweId = "CWE-16";
+        String expResult = "CWE-16 Configuration";
+        String result = CweDB.getFullName(cweId);
+        assertEquals(expResult, result);
+
+        cweId = "CWE-260000";
+        expResult = "CWE-260000";
+        result = CweDB.getFullName(cweId);
         assertEquals(expResult, result);
     }
 }

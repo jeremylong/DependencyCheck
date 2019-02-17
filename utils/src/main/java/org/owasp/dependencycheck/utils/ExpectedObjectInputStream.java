@@ -31,6 +31,7 @@ import javax.annotation.concurrent.NotThreadSafe;
  * An ObjectInputStream that will only deserialize expected classes.
  *
  * @author Jeremy Long
+ * @version $Id: $Id
  */
 @NotThreadSafe
 public class ExpectedObjectInputStream extends ObjectInputStream {
@@ -46,7 +47,7 @@ public class ExpectedObjectInputStream extends ObjectInputStream {
      *
      * @param inputStream the input stream that contains the object to deserialize
      * @param expected the fully qualified class names of the classes that can be deserialized
-     * @throws IOException thrown if there is an error reading from the stream
+     * @throws java.io.IOException thrown if there is an error reading from the stream
      */
     public ExpectedObjectInputStream(InputStream inputStream, String... expected) throws IOException {
         super(inputStream);
@@ -54,13 +55,9 @@ public class ExpectedObjectInputStream extends ObjectInputStream {
     }
 
     /**
-     * Only deserialize instances of expected classes by validating the class name prior to deserialization.
+     * {@inheritDoc}
      *
-     * @param desc the class from the object stream to validate
-     * @return the resolved class
-     * @throws java.io.IOException thrown if the class being read is not one of the expected classes or if there is an error
-     * reading from the stream
-     * @throws java.lang.ClassNotFoundException thrown if there is an error finding the class to deserialize
+     * Only deserialize instances of expected classes by validating the class name prior to deserialization.
      */
     @Override
     protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {

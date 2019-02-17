@@ -106,21 +106,18 @@ Advanced Configuration
 The following properties can be configured in the plugin. However, they are less frequently changed. One exception
 may be the cveUrl properties, which can be used to host a mirror of the NVD within an enterprise environment.
 
-Property             | Description                                                                                 | Default Value
----------------------|---------------------------------------------------------------------------------------------|------------------
-cveUrl12Modified     | URL for the modified CVE 1.2.                                                               | https://nvd.nist.gov/feeds/xml/cve/1.2/nvdcve-modified.xml.gz
-cveUrl20Modified     | URL for the modified CVE 2.0.                                                               | https://nvd.nist.gov/feeds/xml/cve/2.0/nvdcve-2.0-Modified.xml.gz
-cveUrl12Base         | Base URL for each year's CVE 1.2, the %d will be replaced with the year.                    | https://nvd.nist.gov/feeds/xml/cve/1.2/nvdcve-%d.xml.gz
-cveUrl20Base         | Base URL for each year's CVE 2.0, the %d will be replaced with the year.                    | https://nvd.nist.gov/feeds/xml/cve/2.0/nvdcve-2.0-%d.xml.gz
-connectionTimeout    | Sets the URL Connection Timeout used when downloading external data.                        | &nbsp;
-dataDirectory        | Sets the data directory to hold SQL CVEs contents. This should generally not be changed.    | ~/.m2/repository/org/owasp/dependency-check-data/
-databaseDriverName   | The name of the database driver. Example: org.h2.Driver.                                    | &nbsp;
-databaseDriverPath   | The path to the database driver JAR file; only used if the driver is not in the class path. | &nbsp;
-connectionString     | The connection string used to connect to the database.                                      | &nbsp;
-serverId             | The id of a server defined in the settings.xml; this can be used to encrypt the database password. See [password encryption](http://maven.apache.org/guides/mini/guide-encryption.html) for more information. | &nbsp;
-databaseUser         | The username used when connecting to the database.                                          | &nbsp;
-databasePassword     | The password used when connecting to the database.                                          | &nbsp;
-metaFileName         | Sets the name of the file to use for storing the metadata about the project.                | dependency-check.ser
+Property             | Description                                                                                 | Default Value                                                       |
+---------------------|---------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
+cveUrlModified       | URL for the modified CVE JSON data feed.                                                    | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-modified.json.gz |
+cveUrlBase           | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.         | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-%d.json.gz       |
+connectionTimeout    | Sets the URL Connection Timeout used when downloading external data.                        | &nbsp;                                                              |
+dataDirectory        | Sets the data directory to hold SQL CVEs contents. This should generally not be changed.    | ~/.m2/repository/org/owasp/dependency-check-data/                   |
+databaseDriverName   | The name of the database driver. Example: org.h2.Driver.                                    | &nbsp;                                                              |
+databaseDriverPath   | The path to the database driver JAR file; only used if the driver is not in the class path. | &nbsp;                                                              |
+connectionString     | The connection string used to connect to the database.                                      | &nbsp;                                                              |
+serverId             | The id of a server defined in the settings.xml; this can be used to encrypt the database password. See [password encryption](http://maven.apache.org/guides/mini/guide-encryption.html) for more information. | &nbsp; |
+databaseUser         | The username used when connecting to the database.                                          | &nbsp;                                                              |
+databasePassword     | The password used when connecting to the database.                                          | &nbsp;                                                              |
 
 Proxy Configuration
 ====================
@@ -128,6 +125,6 @@ Use [Maven's settings](https://maven.apache.org/settings.html#Proxies) to config
 dependency-check [proxy configuration](../data/proxy.html) page for additional problem solving techniques. If multiple proxies
 are configured in the Maven settings file you must tell dependency-check which proxy to use with the following property:
 
-Property             | Description                                                                          | Default Value
----------------------|--------------------------------------------------------------------------------------|------------------
-mavenSettingsProxyId | The id for the proxy, configured via settings.xml, that dependency-check should use. | &nbsp;
+Property             | Description                                                                          | Default Value |
+---------------------|--------------------------------------------------------------------------------------|---------------|
+mavenSettingsProxyId | The id for the proxy, configured via settings.xml, that dependency-check should use. | &nbsp;        |

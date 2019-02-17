@@ -19,7 +19,7 @@ package org.owasp.dependencycheck.data.lucene;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 import java.util.List;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.apache.lucene.analysis.TokenStream;
@@ -60,8 +60,9 @@ public final class UrlTokenizingFilter extends AbstractTokenizingFilter {
      * @throws IOException is thrown when an IOException occurs
      */
     @Override
+    @SuppressWarnings("StringSplitter")
     public boolean incrementToken() throws IOException {
-        final LinkedList<String> tokens = getTokens();
+        final ArrayDeque<String> tokens = getTokens();
         final CharTermAttribute termAtt = getTermAtt();
         if (tokens.isEmpty() && input.incrementToken()) {
             final String text = new String(termAtt.buffer(), 0, termAtt.length());

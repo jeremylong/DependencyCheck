@@ -50,7 +50,7 @@ public class DependencyCheckScanAgentIT extends BaseDBTestCase {
         scanAgent.execute();
 
         Dependency tomcat = scanAgent.getDependencies().get(0);
-        Assert.assertTrue(tomcat.getIdentifiers().size() >= 1);
+        Assert.assertTrue(tomcat.getVulnerableSoftwareIdentifiers().size() >= 1);
 
         // This will change over time
         Assert.assertTrue(tomcat.getVulnerabilities().size() > 5);

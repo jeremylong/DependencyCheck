@@ -106,9 +106,9 @@ public abstract class AbstractDependencyComparingAnalyzer extends AbstractAnalyz
                     }
                 }
             }
-            for (Dependency d : dependenciesToRemove) {
+            dependenciesToRemove.forEach((d) -> {
                 engine.removeDependency(d);
-            }
+            });
         }
     }
 

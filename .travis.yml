@@ -10,6 +10,9 @@ env:
     - secure: "Bh5LAk8XQnJ885jc/Lli2fhPKDx0TNZRxcJMnNo96EgwOnD+Zhw+v3u/DMCgyyrRToM8Bkca/HktrlZaRTk2htsdKZZ3RHFMCXO0fXCgpcf+wkaSYDF/lnErpSJG3Lrz8ILxJPODsrGhjaIg2++79lwhsBYtpujc6UdxFhgpffc="
 
 addons:
+  apt:
+    packages:
+      - jq
   sonarcloud:
     organization: "odc"
     token:
@@ -19,11 +22,6 @@ cache:
   directories:
     - "$HOME/.m2/repository"
     - "$HOME/.sonar/cache"
-
-addons:
-  apt:
-    packages:
-      - jq
 
 #removed as the codacy integration keeps breaking the build
 #before_install:

@@ -31,7 +31,7 @@ public class SuppressionParseException extends IOException {
     /**
      * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 9169031627810508918L;
 
     /**
      * Creates a new SuppressionParseException.

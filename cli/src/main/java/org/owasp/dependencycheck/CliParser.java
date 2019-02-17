@@ -128,9 +128,6 @@ public final class CliParser {
             if (getPathToMono() != null) {
                 validatePathExists(getPathToMono(), ARGUMENT.PATH_TO_MONO);
             }
-            if (!line.hasOption(ARGUMENT.APP_NAME) && !line.hasOption(ARGUMENT.PROJECT)) {
-                throw new ParseException("Missing '" + ARGUMENT.PROJECT + "' argument; the scan cannot be run without the an project name.");
-            }
             if (line.hasOption(ARGUMENT.OUTPUT_FORMAT)) {
                 final String format = line.getOptionValue(ARGUMENT.OUTPUT_FORMAT);
                 try {
@@ -141,12 +138,11 @@ public final class CliParser {
                     throw new ParseException(msg);
                 }
             }
-            if ((getBaseCve12Url() != null || getBaseCve20Url() != null || getModifiedCve12Url() != null || getModifiedCve20Url() != null)
-                    && (getBaseCve12Url() == null || getBaseCve20Url() == null || getModifiedCve12Url() == null || getModifiedCve20Url() == null)) {
+            if ((getBaseCveUrl() != null && getModifiedCveUrl() == null) || (getBaseCveUrl() == null && getModifiedCveUrl() != null)) {
                 final String msg = "If one of the CVE URLs is specified they must all be specified; please add the missing CVE URL.";
                 throw new ParseException(msg);
             }
-            if (line.hasOption((ARGUMENT.SYM_LINK_DEPTH))) {
+            if (line.hasOption(ARGUMENT.SYM_LINK_DEPTH)) {
                 try {
                     final int i = Integer.parseInt(line.getOptionValue(ARGUMENT.SYM_LINK_DEPTH));
                     if (i < 0) {
@@ -254,7 +250,7 @@ public final class CliParser {
                 false, "Disables the automatic updating of the CPE data.");
 
         final Option projectName = Option.builder().hasArg().argName("name").longOpt(ARGUMENT.PROJECT)
-                .desc("The name of the project being scanned. This is a required argument.")
+                .desc("The name of the project being scanned.")
                 .build();
 
         final Option path = Option.builder(ARGUMENT.SCAN_SHORT).argName("path").hasArg().longOpt(ARGUMENT.SCAN)
@@ -350,14 +346,10 @@ public final class CliParser {
      */
     @SuppressWarnings("static-access")
     private void addAdvancedOptions(final Options options) {
-        final Option cve12Base = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.CVE_BASE_12)
-                .desc("Base URL for each year’s CVE 1.2, the %d will be replaced with the year. ").build();
-        final Option cve20Base = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.CVE_BASE_20)
-                .desc("Base URL for each year’s CVE 2.0, the %d will be replaced with the year.").build();
-        final Option cve12Modified = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.CVE_MOD_12)
-                .desc("URL for the modified CVE 1.2.").build();
-        final Option cve20Modified = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.CVE_MOD_20)
-                .desc("URL for the modified CVE 2.0.").build();
+        final Option cveBase = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.CVE_BASE_URL)
+                .desc("Base URL for each year’s CVE files (json.gz), the %d will be replaced with the year. ").build();
+        final Option cveModified = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.CVE_MODIFIED_URL)
+                .desc("URL for the modified CVE (json.gz).").build();
         final Option updateOnly = Option.builder().longOpt(ARGUMENT.UPDATE_ONLY)
                 .desc("Only update the local NVD data cache; no scan will be executed.").build();
         final Option data = Option.builder(ARGUMENT.DATA_DIRECTORY_SHORT).argName("path").hasArg().longOpt(ARGUMENT.DATA_DIRECTORY)
@@ -442,10 +434,8 @@ public final class CliParser {
                         + "to exclude based on your applications own copyright line. This option can be specified multiple times.")
                 .build();
         options.addOption(updateOnly)
-                .addOption(cve12Base)
-                .addOption(cve20Base)
-                .addOption(cve12Modified)
-                .addOption(cve20Modified)
+                .addOption(cveBase)
+                .addOption(cveModified)
                 .addOption(proxyPort)
                 .addOption(proxyServer)
                 .addOption(proxyUsername)
@@ -526,18 +516,7 @@ public final class CliParser {
      */
     @SuppressWarnings({"static-access", "deprecation"})
     private void addDeprecatedOptions(final Options options) {
-
-        final Option proxyServer = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.PROXY_URL)
-                .desc("The proxy url argument is deprecated, use proxyserver instead.")
-                .build();
-        final Option appName = Option.builder(ARGUMENT.APP_NAME_SHORT).argName("name").hasArg().longOpt(ARGUMENT.APP_NAME)
-                .desc("The name of the project being scanned.")
-                .build();
-
-        options.addOption(Option.builder().longOpt("disableNSP")
-                        .desc("Disable the NSP Package Analyzer.").build());
-        options.addOption(proxyServer);
-        options.addOption(appName);
+        //all deprecated arguments have been removed (for now)
     }
 
     /**
@@ -1023,49 +1002,29 @@ public final class CliParser {
      * @return the application name.
      */
     public String getProjectName() {
-        final String appName = line.getOptionValue(ARGUMENT.APP_NAME);
         String name = line.getOptionValue(ARGUMENT.PROJECT);
-        if (name == null && appName != null) {
-            name = appName;
-            LOGGER.warn("The '{}' argument should no longer be used; use '{}' instead.", ARGUMENT.APP_NAME, ARGUMENT.PROJECT);
+        if (name == null) {
+            name = "";
         }
         return name;
     }
 
     /**
-     * Returns the base URL for the CVE 1.2 XMl file.
+     * Returns the base URL for the CVE JSON files.
      *
-     * @return the URL to the CVE 1.2 XML file.
+     * @return the base URL for the CVE JSON files
      */
-    public String getBaseCve12Url() {
-        return line.getOptionValue(ARGUMENT.CVE_BASE_12);
+    public String getBaseCveUrl() {
+        return line.getOptionValue(ARGUMENT.CVE_BASE_URL);
     }
 
     /**
-     * Returns the base URL for the CVE 2.0 XMl file.
+     * Returns the URL for the modified CVE JSON file.
      *
-     * @return the URL to the CVE 2.0 XML file.
+     * @return the URL to the modified CVE JSON file.
      */
-    public String getBaseCve20Url() {
-        return line.getOptionValue(ARGUMENT.CVE_BASE_20);
-    }
-
-    /**
-     * Returns the URL for the modified CVE 1.2 XMl file.
-     *
-     * @return the URL to the modified CVE 1.2 XML file.
-     */
-    public String getModifiedCve12Url() {
-        return line.getOptionValue(ARGUMENT.CVE_MOD_12);
-    }
-
-    /**
-     * Returns the URL for the modified CVE 2.0 XMl file.
-     *
-     * @return the URL to the modified CVE 2.0 XML file.
-     */
-    public String getModifiedCve20Url() {
-        return line.getOptionValue(ARGUMENT.CVE_MOD_20);
+    public String getModifiedCveUrl() {
+        return line.getOptionValue(ARGUMENT.CVE_MODIFIED_URL);
     }
 
     /**
@@ -1082,17 +1041,8 @@ public final class CliParser {
      *
      * @return the proxy server
      */
-    @SuppressWarnings("deprecation")
     public String getProxyServer() {
-
-        String server = line.getOptionValue(ARGUMENT.PROXY_SERVER);
-        if (server == null) {
-            server = line.getOptionValue(ARGUMENT.PROXY_URL);
-            if (server != null) {
-                LOGGER.warn("An old command line argument 'proxyurl' was detected; use proxyserver instead");
-            }
-        }
-        return server;
+        return line.getOptionValue(ARGUMENT.PROXY_SERVER);
     }
 
     /**
@@ -1388,22 +1338,6 @@ public final class CliParser {
          */
         public static final String PROJECT = "project";
         /**
-         * The long CLI argument name specifying the name of the application to
-         * be scanned.
-         *
-         * @deprecated project should be used instead
-         */
-        @Deprecated
-        public static final String APP_NAME = "app";
-        /**
-         * The short CLI argument name specifying the name of the application to
-         * be scanned.
-         *
-         * @deprecated project should be used instead
-         */
-        @Deprecated
-        public static final String APP_NAME_SHORT = "a";
-        /**
          * The long CLI argument name asking for help.
          */
         public static final String HELP = "help";
@@ -1431,13 +1365,6 @@ public final class CliParser {
          * The CLI argument name indicating the proxy server.
          */
         public static final String PROXY_SERVER = "proxyserver";
-        /**
-         * The CLI argument name indicating the proxy url.
-         *
-         * @deprecated use {@link #PROXY_SERVER} instead
-         */
-        @Deprecated
-        public static final String PROXY_URL = "proxyurl";
         /**
          * The CLI argument name indicating the proxy username.
          */
@@ -1471,19 +1398,11 @@ public final class CliParser {
         /**
          * The CLI argument name for setting the URL for the CVE Data Files.
          */
-        public static final String CVE_MOD_12 = "cveUrl12Modified";
+        public static final String CVE_MODIFIED_URL = "cveUrlModified";
         /**
          * The CLI argument name for setting the URL for the CVE Data Files.
          */
-        public static final String CVE_MOD_20 = "cveUrl20Modified";
-        /**
-         * The CLI argument name for setting the URL for the CVE Data Files.
-         */
-        public static final String CVE_BASE_12 = "cveUrl12Base";
-        /**
-         * The CLI argument name for setting the URL for the CVE Data Files.
-         */
-        public static final String CVE_BASE_20 = "cveUrl20Base";
+        public static final String CVE_BASE_URL = "cveUrlBase";
         /**
          * The short CLI argument name for setting the location of the data
          * directory.

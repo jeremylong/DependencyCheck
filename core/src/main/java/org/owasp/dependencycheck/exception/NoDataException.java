@@ -29,9 +29,9 @@ import javax.annotation.concurrent.ThreadSafe;
 public class NoDataException extends IOException {
 
     /**
-     * The serial version uid.
+     * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2048042874653986535L;
 
     /**
      * Creates a new NoDataException.

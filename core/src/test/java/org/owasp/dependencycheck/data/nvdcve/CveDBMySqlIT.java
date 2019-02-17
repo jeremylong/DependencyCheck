@@ -25,10 +25,13 @@ import org.junit.After;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.dependency.Vulnerability;
-import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Before;
+import org.owasp.dependencycheck.data.update.cpe.CpePlus;
+import us.springett.parsers.cpe.Cpe;
+import us.springett.parsers.cpe.CpeBuilder;
+import us.springett.parsers.cpe.values.Part;
 
 /**
  *
@@ -73,7 +76,7 @@ public class CveDBMySqlIT extends BaseTest {
         try {
             String vendor = "apache";
             String product = "struts";
-            Set<VulnerableSoftware> result = instance.getCPEs(vendor, product);
+            Set<CpePlus> result = instance.getCPEs(vendor, product);
             assertTrue("Has data been loaded into the MySQL DB? if not consider using the CLI to populate it", result.size() > 5);
         } catch (Exception ex) {
             System.out.println("Unable to access the My SQL database; verify that the db server is running and that the schema has been generated");
@@ -86,9 +89,10 @@ public class CveDBMySqlIT extends BaseTest {
      */
     @Test
     public void testGetVulnerabilities() throws Exception {
-        String cpeStr = "cpe:/a:apache:struts:2.1.2";
+        CpeBuilder builder = new CpeBuilder();
+        Cpe cpe = builder.part(Part.APPLICATION).vendor("apache").product("struts").version("2.1.2").build();
         try {
-            List<Vulnerability> result = instance.getVulnerabilities(cpeStr);
+            List<Vulnerability> result = instance.getVulnerabilities(cpe);
             assertTrue(result.size() > 5);
         } catch (Exception ex) {
             System.out.println("Unable to access the My SQL database; verify that the db server is running and that the schema has been generated");

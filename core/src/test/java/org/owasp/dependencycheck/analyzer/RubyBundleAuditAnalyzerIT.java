@@ -158,7 +158,7 @@ public class RubyBundleAuditAnalyzerIT extends BaseDBTestCase {
             analyzer.analyze(result, engine);
             Dependency dependency = engine.getDependencies()[0];
             Vulnerability vulnerability = dependency.getVulnerabilities(true).iterator().next();
-            assertEquals(vulnerability.getCvssScore(), 5.0f, 0.0);
+            assertEquals(5.0f, vulnerability.getCvssV2().getScore(), 0.0);
 
         } catch (InitializationException | DatabaseException | AnalysisException | UpdateException e) {
             LOGGER.warn("Exception setting up RubyBundleAuditAnalyzer. Make sure Ruby gem bundle-audit is installed. You may also need to set property \"analyzer.bundle.audit.path\".");

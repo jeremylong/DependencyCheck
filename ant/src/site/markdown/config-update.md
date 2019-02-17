@@ -33,10 +33,8 @@ may be the cvedUrl properties, which can be used to host a mirror of the NVD wit
 
 Property             | Description                                                                                           | Default Value
 ---------------------|-------------------------------------------------------------------------------------------------------|------------------
-cveUrl12Modified     | URL for the modified CVE 1.2.                                                                         | https://nvd.nist.gov/feeds/xml/cve/1.2/nvdcve-modified.xml.gz
-cveUrl20Modified     | URL for the modified CVE 2.0.                                                                         | https://nvd.nist.gov/feeds/xml/cve/2.0/nvdcve-2.0-Modified.xml.gz
-cveUrl12Base         | Base URL for each year's CVE 1.2, the %d will be replaced with the year.                              | https://nvd.nist.gov/feeds/xml/cve/1.2/nvdcve-%d.xml.gz
-cveUrl20Base         | Base URL for each year's CVE 2.0, the %d will be replaced with the year.                              | https://nvd.nist.gov/feeds/xml/cve/2.0/nvdcve-2.0-%d.xml.gz
+cveUrlModified       | URL for the modified CVE JSON data feed.                                                              | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-modified.json.gz
+cveUrlBase           | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.                   | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-%d.json.gz
 dataDirectory        | Data directory that is used to store the local copy of the NVD. This should generally not be changed. | data
 databaseDriverName   | The name of the database driver. Example: org.h2.Driver.                                              | &nbsp;
 databaseDriverPath   | The path to the database driver JAR file; only used if the driver is not in the class path.           | &nbsp;

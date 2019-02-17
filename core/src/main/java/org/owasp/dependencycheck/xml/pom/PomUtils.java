@@ -25,13 +25,14 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.analyzer.JarAnalyzer;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author jeremy
+ * @author jeremy long
  */
 @ThreadSafe
 public final class PomUtils {
@@ -76,7 +77,7 @@ public final class PomUtils {
                     LOGGER.info("Unparsable pom was copied to {}", target.toString());
                 }
             } catch (IOException ex1) {
-                throw new RuntimeException(ex1);
+                throw new UnexpectedAnalysisException(ex1);
             }
             LOGGER.debug("", ex);
             throw new AnalysisException(ex);
@@ -137,6 +138,6 @@ public final class PomUtils {
      */
     public static void analyzePOM(Dependency dependency, File pomFile) throws AnalysisException {
         final Model pom = PomUtils.readPom(pomFile);
-        JarAnalyzer.setPomEvidence(dependency, pom, null);
+        JarAnalyzer.setPomEvidence(dependency, pom, null, true);
     }
 }

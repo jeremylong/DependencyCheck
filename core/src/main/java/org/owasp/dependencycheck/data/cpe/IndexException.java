@@ -30,7 +30,7 @@ public class IndexException extends Exception {
     /**
      * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 451408623514150318L;
 
     /**
      * Creates a new IndexException.

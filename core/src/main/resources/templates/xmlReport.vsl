@@ -13,13 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+Copyright (c) 2018 Jeremy Long. All Rights Reserved.
 
 @author Jeremy Long <jeremy.long@owasp.org>
-@version 1.8
+@version 2.0
 
 *#<?xml version="1.0"?>
-<analysis xmlns="https://jeremylong.github.io/DependencyCheck/dependency-check.1.8.xsd">
+<analysis xmlns="https://jeremylong.github.io/DependencyCheck/dependency-check.2.0.xsd">
     <scanInfo>
         <engineVersion>$version</engineVersion>
 #foreach($prop in $properties.getMetaData().entrySet())
@@ -72,22 +72,24 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <sha256>#if(!$dependency.isVirtual())$enc.xml($dependency.Sha256sum)#end</sha256>
                     <sha1>#if(!$related.isVirtual())$enc.xml($related.Sha1sum)#end</sha1>
                     <md5>#if(!$related.isVirtual())$enc.xml($related.Md5sum)#end</md5>
-#foreach($id in $related.getIdentifiers())
-#if ($id.type=="maven" || $id.type=="npm")
-                    <identifier type="$enc.xml($id.type)">
-                        <name>$enc.xml($id.value)</name>
+#if($related.getSoftwareIdentifiers().size()>0)
+                    <identifiers>
+#foreach($id in $related.getSoftwareIdentifiers())
+                        <package>
+                            <id>$enc.xml($id.value)</id>
 #if( $id.url )
-                        <url>$enc.xml($id.url)</url>
+                            <url>$enc.xml($id.url)</url>
 #end
 #if( $id.description )
-                        <description>$enc.xml($id.description)</description>
+                            <description>$enc.xml($id.description)</description>
 #end
 #if ($id.notes)
-                        <notes>$enc.xml($id.notes)</notes>
+                            <notes>$enc.xml($id.notes)</notes>
 #end
-                    </identifier>
+                        </package>
 #end
-#end
+                    </identifiers>
+                    #end
                 </relatedDependency>
 #end
             </relatedDependencies>
@@ -115,11 +117,11 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 </evidence>
 #end
             </evidenceCollected>
-#if($dependency.getIdentifiers().size()>0)
+#if($dependency.getSoftwareIdentifiers().size()>0 || $dependency.getVulnerableSoftwareIdentifiers().size()>0 || $dependency.getSuppressedIdentifiers().size()>0)
             <identifiers>
-#foreach($id in $dependency.getIdentifiers())
-                <identifier type="$enc.xml($id.type)" #if($id.confidence)confidence="$id.confidence"#end>
-                    <name>$enc.xml($id.value)</name>
+#foreach($id in $dependency.getSoftwareIdentifiers())
+                <package #if($id.confidence)confidence="$id.confidence"#end>
+                    <id>$enc.xml($id.value)</id>
 #if( $id.url )
                     <url>$enc.xml($id.url)</url>
 #end
@@ -129,11 +131,22 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 #if ($id.notes)
                     <notes>$enc.xml($id.notes)</notes>
 #end
-                </identifier>
+                </package>
 #end
+#foreach($id in $dependency.getSoftwareIdentifiers())
+                <vulnerabilityIds #if($id.confidence)confidence="$id.confidence"#end>
+                    <id>$enc.xml($id.value)</id>
+#if( $id.url )      <url>$enc.xml($id.url)</url>
+#end
+#if($id.description)<description>$enc.xml($id.description)</description>
+#end
+#if ($id.notes)     <notes>$enc.xml($id.notes)</notes>
+#end
+                </vulnerabilityIds>
+            #end
 #foreach($id in $dependency.getSuppressedIdentifiers())
-                <suppressedIdentifier type="$enc.xml($id.type)" #if($id.confidence)confidence="$id.confidence"#end>
-                    <name>($id.value)</name>
+                <suppressedIdentifier #if($id.confidence)confidence="$id.confidence"#end>
+                    <id>$enc.xml($id.value)</id>
 #if( $id.url )
                     <url>$enc.xml($id.url)</url>
 #end
@@ -152,22 +165,38 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 #foreach($vuln in $dependency.getVulnerabilities(true))
                 <vulnerability source="$enc.xml($vuln.getSource().name())">
                     <name>$enc.xml($vuln.name)</name>
-                    <cvssScore>$vuln.cvssScore</cvssScore>
-                    <cvssAccessVector>#if($vuln.cvssAccessVector)$enc.xml($vuln.cvssAccessVector)#end</cvssAccessVector>
-                    <cvssAccessComplexity>#if($vuln.cvssAccessComplexity)$enc.xml($vuln.cvssAccessComplexity)#end</cvssAccessComplexity>
-                    <cvssAuthenticationr>#if($vuln.cvssAuthentication)$enc.xml($vuln.cvssAuthentication)#end</cvssAuthenticationr>
-                    <cvssConfidentialImpact>#if($vuln.cvssConfidentialityImpact)$enc.xml($vuln.cvssConfidentialityImpact)#end</cvssConfidentialImpact>
-                    <cvssIntegrityImpact>#if($vuln.cvssIntegrityImpact)$enc.xml($vuln.cvssIntegrityImpact)#end</cvssIntegrityImpact>
-                    <cvssAvailabilityImpact>#if($vuln.cvssAvailabilityImpact)$enc.xml($vuln.cvssAvailabilityImpact)#end</cvssAvailabilityImpact>
-#if ($vuln.cvssScore<4.0)
-                    <severity>Low</severity>
-#elseif ($vuln.cvssScore>=7.0)
-                    <severity>High</severity>
-#else
-                    <severity>Medium</severity>
+#if($vuln.cvssV2)
+                    <cvssV2>
+                        <score>$vuln.cvssV2.score</score>
+                        <accessVector>#if($vuln.cvssV2.accessVector)$enc.xml($vuln.cvssV2.accessVector)#end</accessVector>
+                        <accessComplexity>#if($vuln.cvssV2.accessComplexity)$enc.xml($vuln.cvssV2.accessComplexity)#end</accessComplexity>
+                        <authenticationr>#if($vuln.cvssV2.authentication)$enc.xml($vuln.cvssV2.authentication)#end</authenticationr>
+                        <confidentialImpact>#if($vuln.cvssV2.confidentialityImpact)$enc.xml($vuln.cvssV2.confidentialityImpact)#end</confidentialImpact>
+                        <integrityImpact>#if($vuln.cvssV2.integrityImpact)$enc.xml($vuln.cvssV2.integrityImpact)#end</integrityImpact>
+                        <availabilityImpact>#if($vuln.cvssV2.availabilityImpact)$enc.xml($vuln.cvssV2.availabilityImpact)#end</availabilityImpact>
+                        <severity>#if($vuln.cvssV2.severity)$enc.xml($vuln.cvssV2.severity)#end</severity>
+                    </cvssV2>
 #end
-#if ($vuln.cwe)
-                    <cwe>$enc.xml($vuln.cwe)</cwe>
+#if($vuln.cvssV3)
+                    <cvssV3>
+                        <baseScore>$vuln.cvssV3.baseScore</baseScore>
+                        <attackVector>#if($vuln.cvssV3.attackVector)$enc.xml($vuln.cvssV3.attackVector)#end</attackVector>
+                        <attackComplexity>#if($vuln.cvssV3.attackComplexity)$enc.xml($vuln.cvssV3.attackComplexity)#end</attackComplexity>
+                        <privilegesRequired>#if($vuln.cvssV3.privilegesRequired)$enc.xml($vuln.cvssV3.privilegesRequired)#end</privilegesRequired>
+                        <userInteraction>#if($vuln.cvssV3.userInteraction)$enc.xml($vuln.cvssV3.userInteraction)#end</userInteraction>
+                        <scope>#if($vuln.cvssV3.scope)$enc.xml($vuln.cvssV3.scope)#end</scope>
+                        <confidentialityImpact>#if($vuln.cvssV3.confidentialityImpact)$enc.xml($vuln.cvssV3.confidentialityImpact)#end</confidentialityImpact>
+                        <integrityImpact>#if($vuln.cvssV3.integrityImpact)$enc.xml($vuln.cvssV3.integrityImpact)#end</integrityImpact>
+                        <availabilityImpact>#if($vuln.cvssV3.availabilityImpact)$enc.xml($vuln.cvssV3.availabilityImpact)#end</availabilityImpact>
+                        <baseSeverity>#if($vuln.cvssV3.baseSeverity)$enc.xml($vuln.cvssV3.baseSeverity)#end</baseSeverity>
+                    </cvssV3>
+#end
+#if (!$vuln.cwe.cwes.isEmpty())
+                    <cwes>
+#foreach($cweEntry in $vuln.cwes.entries)
+                    <cwe>$enc.xml($cweEntry)</cwe>
+#end
+                    </cwes>
 #end
                     <description>$enc.xml($vuln.description)</description>
 #if ($vuln.notes)
@@ -177,14 +206,20 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 #foreach($ref in $vuln.getReferences())
                         <reference>
                             <source>$enc.xml($ref.source)</source>
-                            <url>$enc.xml($ref.url)</url>
+                            #if($ref.url)<url>$enc.xml($ref.url)</url>#end
                             <name>$enc.xml($ref.name)</name>
                         </reference>
 #end
                     </references>
                     <vulnerableSoftware>
 #foreach($vs in $vuln.getVulnerableSoftware())
-                        <software#if($vs.hasPreviousVersion()) allPreviousVersion="true"#end>$enc.xml($vs.name)</software>
+                        <software#if($vs == $vuln.matchedVulnerableSoftware) vulnerabilityIdMatched="true"#end
+                            #if($vs.versionStartIncluding) versionStartIncluding="$enc.xml($vs.versionStartIncluding)"#end
+                            #if($vs.versionStartExcluding) versionStartExcluding="$enc.xml($vs.versionStartExcluding)"#end
+                            #if($vs.versionEndIncluding) versionEndIncluding="$enc.xml($vs.versionEndIncluding)"#end
+                            #if($vs.versionEndExcluding) versionEndExcluding="$enc.xml($vs.versionEndExcluding)"#end
+                            #if(!$vs.vulnerable) vulnerable="$vs.vulnerable"#end
+                        >$enc.xml($vs.toCpe23FS())</software>
 #end
                     </vulnerableSoftware>
                 </vulnerability>
@@ -192,22 +227,38 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 #foreach($vuln in $dependency.getSuppressedVulnerabilities(true))
                 <suppressedVulnerability source="$enc.xml($vuln.getSource().name())">
                     <name>$enc.xml($vuln.name)</name>
-                    <cvssScore>$vuln.cvssScore</cvssScore>
-                    <cvssAccessVector>$enc.xml($vuln.cvssAccessVector)</cvssAccessVector>
-                    <cvssAccessComplexity>$enc.xml($vuln.cvssAccessComplexity)</cvssAccessComplexity>
-                    <cvssAuthenticationr>$enc.xml($vuln.cvssAuthentication)</cvssAuthenticationr>
-                    <cvssConfidentialImpact>$enc.xml($vuln.cvssConfidentialityImpact)</cvssConfidentialImpact>
-                    <cvssIntegrityImpact>$enc.xml($vuln.cvssIntegrityImpact)</cvssIntegrityImpact>
-                    <cvssAvailabilityImpact>$enc.xml($vuln.cvssAvailabilityImpact)</cvssAvailabilityImpact>
-#if ($vuln.cvssScore<4.0)
-                    <severity>Low</severity>
-#elseif ($vuln.cvssScore>=7.0)
-                    <severity>High</severity>
-#else
-                    <severity>Medium</severity>
+#if($vuln.cvssV2)
+                    <cvssV2>
+                        <score>$vuln.cvssV2.score</score>
+                        <accessVector>#if($vuln.cvssV2.accessVector)$enc.xml($vuln.cvssV2.accessVector)#end</accessVector>
+                        <accessComplexity>#if($vuln.cvssV2.accessComplexity)$enc.xml($vuln.cvssV2.accessComplexity)#end</accessComplexity>
+                        <authenticationr>#if($vuln.cvssV2.authentication)$enc.xml($vuln.cvssV2.authentication)#end</authenticationr>
+                        <confidentialImpact>#if($vuln.cvssV2.confidentialityImpact)$enc.xml($vuln.cvssV2.confidentialityImpact)#end</confidentialImpact>
+                        <integrityImpact>#if($vuln.cvssV2.integrityImpact)$enc.xml($vuln.cvssV2.integrityImpact)#end</integrityImpact>
+                        <availabilityImpact>#if($vuln.cvssV2.availabilityImpact)$enc.xml($vuln.cvssV2.availabilityImpact)#end</availabilityImpact>
+                        <severity>#if($vuln.cvssV2.severity)$enc.xml($vuln.cvssV2.severity)#end</severity>
+                    </cvssV2>
 #end
-#if ($vuln.cwe)
-                    <cwe>$enc.xml($vuln.cwe)</cwe>
+#if($vuln.cvssV3)
+                    <cvssV3>
+                        <baseScore>$vuln.cvssV3.baseScore</baseScore>
+                        <attackVector>#if($vuln.cvssV3.attackVector)$enc.xml($vuln.cvssV3.attackVector)#end</attackVector>
+                        <attackComplexity>#if($vuln.cvssV3.attackComplexity)$enc.xml($vuln.cvssV3.attackComplexity)#end</attackComplexity>
+                        <privilegesRequired>#if($vuln.cvssV3.privilegesRequired)$enc.xml($vuln.cvssV3.privilegesRequired)#end</privilegesRequired>
+                        <userInteraction>#if($vuln.cvssV3.userInteraction)$enc.xml($vuln.cvssV3.userInteraction)#end</userInteraction>
+                        <scope>#if($vuln.cvssV3.scope)$enc.xml($vuln.cvssV3.scope)#end</scope>
+                        <confidentialityImpact>#if($vuln.cvssV3.confidentialityImpact)$enc.xml($vuln.cvssV3.confidentialityImpact)#end</confidentialityImpact>
+                        <integrityImpact>#if($vuln.cvssV3.integrityImpact)$enc.xml($vuln.cvssV3.integrityImpact)#end</integrityImpact>
+                        <availabilityImpact>#if($vuln.cvssV3.availabilityImpact)$enc.xml($vuln.cvssV3.availabilityImpact)#end</availabilityImpact>
+                        <baseSeverity>#if($vuln.cvssV3.baseSeverity)$enc.xml($vuln.cvssV3.baseSeverity)#end</baseSeverity>
+                    </cvssV3>
+#end
+#if (!$vuln.cwe.cwes.isEmpty())
+                    <cwes>
+#foreach($cweEntry in $vuln.cwes.entries)
+                    <cwe>$enc.xml($cweEntry)</cwe>
+#end
+                    </cwes>
 #end
                     <description>$enc.xml($vuln.description)</description>
 #if ($vuln.notes)
@@ -224,7 +275,13 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     </references>
                     <vulnerableSoftware>
 #foreach($vs in $vuln.getVulnerableSoftware())
-                        <software#if($vs.hasPreviousVersion()) allPreviousVersion="true"#end>$enc.xml($vs.name)</software>
+                        <software#if($vs == $vuln.matchedVulnerableSoftware) "matched"="true"#end
+                            #if($vs.versionStartIncluding) versionStartIncluding="$enc.xml($vs.versionStartIncluding)"#end
+                            #if($vs.versionStartExcluding) versionStartExcluding="$enc.xml($vs.versionStartExcluding)"#end
+                            #if($vs.versionEndIncluding) versionEndIncluding="$enc.xml($vs.versionEndIncluding)"#end
+                            #if($vs.versionEndExcluding) versionEndExcluding="$enc.xml($vs.versionEndExcluding)"#end
+                            #if(!$vs.vulnerable) vulnerable="$vs.vulnerable"#end
+                        >$enc.xml($vs.toCpe23FS())</software>                            
 #end
                     </vulnerableSoftware>
                 </suppressedVulnerability>

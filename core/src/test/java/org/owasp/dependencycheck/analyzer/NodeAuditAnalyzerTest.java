@@ -66,9 +66,9 @@ public class NodeAuditAnalyzerTest extends BaseTest {
             final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "nodeaudit/empty.json"));
             analyzer.analyze(result, engine);
 
-            assertEquals(result.getEvidence(EvidenceType.VENDOR).size(), 0);
-            assertEquals(result.getEvidence(EvidenceType.PRODUCT).size(), 0);
-            assertEquals(result.getEvidence(EvidenceType.VERSION).size(), 0);
+            assertEquals(0, result.getEvidence(EvidenceType.VENDOR).size());
+            assertEquals(0, result.getEvidence(EvidenceType.PRODUCT).size());
+            assertEquals(0, result.getEvidence(EvidenceType.VERSION).size());
         }
     }
 

@@ -89,6 +89,7 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
      * @return true if a dependency is removed; otherwise false
      */
     @Override
+    @SuppressWarnings("ReferenceEquality")
     protected boolean evaluateDependencies(final Dependency dependency, final Dependency nextDependency, final Set<Dependency> dependenciesToRemove) {
         Dependency main;
         //CSOFF: InnerAssignment

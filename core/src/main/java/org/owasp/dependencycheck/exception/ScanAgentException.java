@@ -30,9 +30,9 @@ import javax.annotation.concurrent.ThreadSafe;
 public class ScanAgentException extends IOException {
 
     /**
-     * The serial version uid.
+     * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 941993541958815367L;
 
     /**
      * Creates a new ScanAgentException.

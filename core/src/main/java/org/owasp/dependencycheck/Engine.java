@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck;
 
+import com.google.common.collect.ImmutableList;
 import org.owasp.dependencycheck.analyzer.AnalysisPhase;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.AnalyzerService;
@@ -44,6 +45,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -121,7 +123,7 @@ public class Engine implements FileFilter, AutoCloseable {
         /**
          * The analysis phases included in the mode.
          */
-        private final AnalysisPhase[] phases;
+        private final ImmutableList<AnalysisPhase> phases;
 
         /**
          * Returns true if the database is required; otherwise false.
@@ -137,7 +139,7 @@ public class Engine implements FileFilter, AutoCloseable {
          *
          * @return the phases for this mode
          */
-        public AnalysisPhase[] getPhases() {
+        public ImmutableList<AnalysisPhase> getPhases() {
             return phases;
         }
 
@@ -149,14 +151,14 @@ public class Engine implements FileFilter, AutoCloseable {
          */
         Mode(boolean databaseRequired, AnalysisPhase... phases) {
             this.databaseRequired = databaseRequired;
-            this.phases = phases;
+            this.phases = Arrays.stream(phases).collect(ImmutableList.toImmutableList());
         }
     }
 
     /**
      * The list of dependencies.
      */
-    private final List<Dependency> dependencies = Collections.synchronizedList(new ArrayList<Dependency>());
+    private final List<Dependency> dependencies = Collections.synchronizedList(new ArrayList<>());
     /**
      * The external view of the dependency list.
      */
@@ -270,18 +272,18 @@ public class Engine implements FileFilter, AutoCloseable {
         if (!analyzers.isEmpty()) {
             return;
         }
-        for (AnalysisPhase phase : mode.getPhases()) {
-            analyzers.put(phase, new ArrayList<Analyzer>());
-        }
+        mode.getPhases().forEach((phase) -> {
+            analyzers.put(phase, new ArrayList<>());
+        });
         final AnalyzerService service = new AnalyzerService(serviceClassLoader, settings);
         final List<Analyzer> iterator = service.getAnalyzers(mode.getPhases());
-        for (Analyzer a : iterator) {
+        iterator.stream().forEach((a) -> {
             a.initialize(this.settings);
             analyzers.get(a.getAnalysisPhase()).add(a);
             if (a instanceof FileTypeAnalyzer) {
                 this.fileTypeAnalyzers.add((FileTypeAnalyzer) a);
             }
-        }
+        });
     }
 
     /**
@@ -470,12 +472,9 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     public List<Dependency> scan(Collection<File> files, String projectReference) {
         final List<Dependency> deps = new ArrayList<>();
-        for (File file : files) {
-            final List<Dependency> d = scan(file, projectReference);
-            if (d != null) {
-                deps.addAll(d);
-            }
-        }
+        files.stream().map((file) -> scan(file, projectReference)).filter((d) -> (d != null)).forEach((d) -> {
+            deps.addAll(d);
+        });
         return deps;
     }
 
@@ -637,7 +636,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * during analysis
      */
     public void analyzeDependencies() throws ExceptionCollection {
-        final List<Throwable> exceptions = Collections.synchronizedList(new ArrayList<Throwable>());
+        final List<Throwable> exceptions = Collections.synchronizedList(new ArrayList<>());
 
         initializeAndUpdateDatabase(exceptions);
 
@@ -678,19 +677,17 @@ public class Engine implements FileFilter, AutoCloseable {
                 }
             }
         }
-        for (AnalysisPhase phase : mode.getPhases()) {
-            final List<Analyzer> analyzerList = analyzers.get(phase);
-
-            for (Analyzer a : analyzerList) {
+        mode.getPhases().stream().map((phase) -> analyzers.get(phase)).forEach((analyzerList) -> {
+            analyzerList.forEach((a) -> {
                 closeAnalyzer(a);
-            }
-        }
+            });
+        });
 
         LOGGER.debug("\n----------------------------------------------------\nEND ANALYSIS\n----------------------------------------------------");
         final long analysisDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - analysisStart);
         LOGGER.info("Analysis Complete ({} seconds)", analysisDurationSeconds);
         if (exceptions.size() > 0) {
-            throw new ExceptionCollection("One or more exceptions occurred during dependency-check analysis", exceptions);
+            throw new ExceptionCollection(exceptions);
         }
     }
 
@@ -720,14 +717,7 @@ public class Engine implements FileFilter, AutoCloseable {
                         + "data instead. Results may not include recent vulnerabilities.");
                 LOGGER.debug("Update Error", ex);
             } catch (DatabaseException ex) {
-                final String msg;
-                if (ex.getMessage().contains("Unable to connect") && ConnectionFactory.isH2Connection(settings)) {
-                    msg = "Unable to update connect to the database - if this error persists it may be "
-                            + "due to a corrupt database. Consider running `purge` to delete the existing database";
-                } else {
-                    msg = "Unable to connect to the database";
-                }
-                throw new ExceptionCollection("Unable to connect to the database", ex);
+                throwFatalDatabaseException(ex, exceptions);
             }
         } else {
             try {
@@ -739,9 +729,29 @@ public class Engine implements FileFilter, AutoCloseable {
             } catch (IOException ex) {
                 throw new ExceptionCollection(new DatabaseException("Autoupdate is disabled and unable to connect to the database"), true);
             } catch (DatabaseException ex) {
-                throwFatalExceptionCollection("Unable to connect to the dependency-check database.", ex, exceptions);
+                throwFatalDatabaseException(ex, exceptions);
             }
         }
+    }
+
+    /**
+     * Utility method to throw a fatal database exception.
+     *
+     * @param ex the exception that was caught
+     * @param exceptions the exception collection
+     * @throws ExceptionCollection the collection of exceptions is always thrown
+     * as a fatal exception
+     */
+    private void throwFatalDatabaseException(DatabaseException ex, final List<Throwable> exceptions) throws ExceptionCollection {
+        final String msg;
+        if (ex.getMessage().contains("Unable to connect") && ConnectionFactory.isH2Connection(settings)) {
+            msg = "Unable to update connect to the database - if this error persists it may be "
+                    + "due to a corrupt database. Consider running `purge` to delete the existing database";
+        } else {
+            msg = "Unable to connect to the dependency-check database";
+        }
+        exceptions.add(new DatabaseException(msg, ex));
+        throw new ExceptionCollection(exceptions, true);
     }
 
     /**
@@ -788,10 +798,9 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     protected synchronized List<AnalysisTask> getAnalysisTasks(Analyzer analyzer, List<Throwable> exceptions) {
         final List<AnalysisTask> result = new ArrayList<>();
-        for (final Dependency dependency : dependencies) {
-            final AnalysisTask task = new AnalysisTask(analyzer, dependency, this, exceptions);
+        dependencies.stream().map((dependency) -> new AnalysisTask(analyzer, dependency, this, exceptions)).forEach((task) -> {
             result.add(task);
-        }
+        });
         return result;
     }
 
@@ -865,7 +874,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * them.
      *
      * @throws UpdateException thrown if the operation fails
-     * @throws DatabaseException if the operation fails due to a local database failure
+     * @throws DatabaseException if the operation fails due to a local database
+     * failure
      */
     public void doUpdates() throws UpdateException, DatabaseException {
         doUpdates(false);
@@ -878,7 +888,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param remainOpen whether or not the database connection should remain
      * open
      * @throws UpdateException thrown if the operation fails
-     * @throws DatabaseException if the operation fails due to a local database failure
+     * @throws DatabaseException if the operation fails due to a local database
+     * failure
      */
     public void doUpdates(boolean remainOpen) throws UpdateException, DatabaseException {
         if (mode.isDatabaseRequired()) {
@@ -1002,10 +1013,10 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     public List<Analyzer> getAnalyzers() {
         final List<Analyzer> ret = new ArrayList<>();
-        for (AnalysisPhase phase : mode.getPhases()) {
-            final List<Analyzer> analyzerList = analyzers.get(phase);
+        //insteae of forEach - we can just do a collect
+        mode.getPhases().stream().map((phase) -> analyzers.get(phase)).forEachOrdered((analyzerList) -> {
             ret.addAll(analyzerList);
-        }
+        });
         return ret;
     }
 
@@ -1021,13 +1032,9 @@ public class Engine implements FileFilter, AutoCloseable {
         if (file == null) {
             return false;
         }
-        boolean scan = false;
-        for (FileTypeAnalyzer a : this.fileTypeAnalyzers) {
-            /* note, we can't break early on this loop as the analyzers need to know if
-             they have files to work on prior to initialization */
-            scan |= a.accept(file);
-        }
-        return scan;
+        /* note, we can't break early on this loop as the analyzers need to know if
+        they have files to work on prior to initialization */
+        return this.fileTypeAnalyzers.stream().map((a) -> a.accept(file)).reduce(false, (accumulator, result) -> accumulator || result);
     }
 
     /**
@@ -1089,10 +1096,10 @@ public class Engine implements FileFilter, AutoCloseable {
      * during analysis
      */
     private void throwFatalExceptionCollection(String message, Throwable throwable, List<Throwable> exceptions) throws ExceptionCollection {
-        LOGGER.error("{}\n\n{}", throwable.getMessage(), message);
+        LOGGER.error(message);
         LOGGER.debug("", throwable);
         exceptions.add(throwable);
-        throw new ExceptionCollection(message, exceptions, true);
+        throw new ExceptionCollection(exceptions, true);
     }
 
     /**

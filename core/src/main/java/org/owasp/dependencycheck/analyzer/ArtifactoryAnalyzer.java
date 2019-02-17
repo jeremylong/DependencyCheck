@@ -130,6 +130,8 @@ public class ArtifactoryAnalyzer extends AbstractFileTypeAnalyzer {
      * Initializes the analyzer once before any analysis is performed.
      *
      * @param engine a reference to the dependency-check engine
+     * @throws InitializationException thrown when the analyzer is unable to
+     * connect to Artifactory
      */
     @Override
     public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {

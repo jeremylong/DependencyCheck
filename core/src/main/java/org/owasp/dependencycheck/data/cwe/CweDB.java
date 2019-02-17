@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2018 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.cwe;
 
@@ -79,10 +79,25 @@ public final class CweDB {
      * @param cweId the CWE ID
      * @return the full name of the CWE
      */
-    public static synchronized String getCweName(String cweId) {
+    public static synchronized String getName(String cweId) {
         if (cweId != null) {
             return CWE.get(cweId);
         }
         return null;
+    }
+
+    /**
+     * <p>
+     * Returns the full CWE name from the CWE ID.</p>
+     *
+     * @param cweId the CWE ID
+     * @return the full name of the CWE
+     */
+    public static synchronized String getFullName(String cweId) {
+        final String name = getName(cweId);
+        if (name != null) {
+            return cweId + " " + name;
+        }
+        return cweId;
     }
 }

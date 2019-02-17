@@ -50,7 +50,7 @@ public abstract class BaseDBTestCase extends BaseTest {
     }
 
     public void ensureDBExists() throws Exception {
-        File f = new File("./target/data/dc.h2.db");
+        File f = new File("./target/data/dc.mv.db");
         if (f.exists() && f.isFile() && f.length() < 71680) {
             f.delete();
         }

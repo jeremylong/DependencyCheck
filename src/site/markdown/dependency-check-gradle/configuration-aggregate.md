@@ -76,18 +76,16 @@ The following properties can be configured in the dependencyCheck task. However,
 may be the cvedUrl properties, which can be used to host a mirror of the NVD within an enterprise environment.
 Note, if ANY of the cve configuration group are set - they should all be set to ensure things work as expected.
 
-Config Group | Property          | Description                                                                                 | Default Value
--------------|-------------------|---------------------------------------------------------------------------------------------|------------------
-cve          | url12Modified     | URL for the modified CVE 1.2.                                                               | https://nvd.nist.gov/feeds/xml/cve/1.2/nvdcve-modified.xml.gz
-cve          | url20Modified     | URL for the modified CVE 2.0.                                                               | https://nvd.nist.gov/feeds/xml/cve/2.0/nvdcve-2.0-Modified.xml.gz
-cve          | url12Base         | Base URL for each year's CVE 1.2, the %d will be replaced with the year.                    | https://nvd.nist.gov/feeds/xml/cve/1.2/nvdcve-%d.xml.gz
-cve          | url20Base         | Base URL for each year's CVE 2.0, the %d will be replaced with the year.                    | https://nvd.nist.gov/feeds/xml/cve/2.0/nvdcve-2.0-%d.xml.gz
-data         | directory         | Sets the data directory to hold SQL CVEs contents. This should generally not be changed.    | &nbsp;
-data         | driver            | The name of the database driver. Example: org.h2.Driver.                                    | &nbsp;
-data         | driverPath        | The path to the database driver JAR file; only used if the driver is not in the class path. | &nbsp;
-data         | connectionString  | The connection string used to connect to the database.                                      | &nbsp;
-data         | username          | The username used when connecting to the database.                                          | &nbsp;
-data         | password          | The password used when connecting to the database.                                          | &nbsp;
+Config Group | Property          | Description                                                                                 | Default Value                                                       |
+-------------|-------------------|---------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
+cve          | cveUrlModified    | URL for the modified CVE JSON data feed.                                                    | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-modified.json.gz |
+cve          | cveUrlBase        | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.         | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-%d.json.gz       |
+data         | directory         | Sets the data directory to hold SQL CVEs contents. This should generally not be changed.    | &nbsp;                                                              |
+data         | driver            | The name of the database driver. Example: org.h2.Driver.                                    | &nbsp;                                                              |
+data         | driverPath        | The path to the database driver JAR file; only used if the driver is not in the class path. | &nbsp;                                                              |
+data         | connectionString  | The connection string used to connect to the database.                                      | &nbsp;                                                              |
+data         | username          | The username used when connecting to the database.                                          | &nbsp;                                                              |
+data         | password          | The password used when connecting to the database.                                          | &nbsp;                                                              |
 
 #### Example
 ```groovy
@@ -126,7 +124,7 @@ analyzers    | pathToMono            | The path to Mono for .NET assembly analys
 analyzers    | cmakeEnabled          | Sets whether or not the [experimental](../analyzers/index.html) CMake Analyzer should be used.                    | true
 analyzers    | autoconfEnabled       | Sets whether or not the [experimental](../analyzers/index.html) autoconf Analyzer should be used.                 | true
 analyzers    | composerEnabled       | Sets whether or not the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.   | true
-analyzers    | nodeEnabled           | Sets whether or not the [retired](../analyzers/index.html) Node.js Analyzer should be used.                  | true
+analyzers    | nodeEnabled           | Sets whether or not the Node.js Analyzer should be used.                  | true
 analyzers    | nodeAuditEnabled      | Sets whether the Node Audit Analyzer should be used.                                                                     | true
 analyzers    | cocoapodsEnabled      | Sets whether or not the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used.                | true
 analyzers    | swiftEnabled          | Sets whether or not the [experimental](../analyzers/index.html) Swift Package Manager Analyzer should be used.    | true

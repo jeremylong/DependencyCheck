@@ -32,6 +32,7 @@ import org.apache.commons.lang3.SystemUtils;
  * A collection of utilities for processing information about files.
  *
  * @author Jeremy Long
+ * @version $Id: $Id
  */
 public final class FileUtils {
 
@@ -87,7 +88,7 @@ public final class FileUtils {
      *
      * @param base the base directory to create a temporary directory within
      * @return the temporary directory
-     * @throws IOException thrown when a directory cannot be created within the
+     * @throws java.io.IOException thrown when a directory cannot be created within the
      * base directory
      */
     public static File createTempDirectory(File base) throws IOException {
@@ -117,8 +118,8 @@ public final class FileUtils {
     }
 
     /**
-     * Close the given {@link Closeable} instance, ignoring nulls, and logging
-     * any thrown {@link IOException}.
+     * Close the given {@link java.io.Closeable} instance, ignoring nulls, and logging
+     * any thrown {@link java.io.IOException}.
      *
      * @param closeable to be closed
      */
@@ -133,7 +134,7 @@ public final class FileUtils {
     }
 
     /**
-     * Gets the {@link InputStream} for this resource.
+     * Gets the {@link java.io.InputStream} for this resource.
      *
      * @param resource path
      * @return the input stream for the given resource

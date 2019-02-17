@@ -123,7 +123,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
         engine.addDependency(toCombine);
         analyzer.analyze(toScan, engine);
         analyzer.analyze(toCombine, engine);
-        assertEquals("Expected 6 dependency", engine.getDependencies().length, 6);
+        assertEquals("Expected 6 dependency", 6, engine.getDependencies().length);
         Dependency result = null;
         for (Dependency dep : engine.getDependencies()) {
             if ("dns-sync".equals(dep.getName())) {

@@ -14,11 +14,4 @@
         <sha1>384FAA82E193D4E4B0546059CA09572654BC3970</sha1>
         <cve>CVE-2014-0050</cve>
     </suppress>
-    <suppress>
-        <notes><![CDATA[
-        file name: commons-fileupload-1.2.1.jar
-        ]]></notes>
-        <sha1>384FAA82E193D4E4B0546059CA09572654BC3970</sha1>
-        <cve>CVE-2013-0248</cve>
-    </suppress>
 </suppressions>

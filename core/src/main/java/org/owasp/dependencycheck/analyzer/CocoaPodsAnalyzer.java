@@ -17,6 +17,8 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURLBuilder;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -31,9 +33,13 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.Checksum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This analyzer is used to analyze SWIFT and Objective-C packages by collecting
@@ -55,7 +61,7 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The logger.
      */
-//    private static final Logger LOGGER = LoggerFactory.getLogger(CocoaPodsAnalyzer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CocoaPodsAnalyzer.class);
     /**
      * The name of the analyzer.
      */
@@ -211,13 +217,25 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
         if (matcher.find()) {
             contents = contents.substring(matcher.end());
             final String blockVariable = matcher.group(1);
-
+            PackageURLBuilder builder = null;
             final String name = determineEvidence(contents, blockVariable, "name");
             if (!name.isEmpty()) {
                 dependency.addEvidence(EvidenceType.PRODUCT, PODSPEC, "name_project", name, Confidence.HIGHEST);
                 dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, "name_project", name, Confidence.HIGHEST);
                 dependency.setName(name);
+
+                builder = PackageURLBuilder.aPackageURL();
+                builder.withType("cocoapods").withName(name);
             }
+            final String version = determineEvidence(contents, blockVariable, "version");
+            if (!version.isEmpty()) {
+                dependency.addEvidence(EvidenceType.VERSION, PODSPEC, "version", version, Confidence.HIGHEST);
+                dependency.setVersion(version);
+                if (builder != null) {
+                    builder.withVersion(version);
+                }
+            }
+
             final String summary = determineEvidence(contents, blockVariable, "summary");
             if (!summary.isEmpty()) {
                 dependency.addEvidence(EvidenceType.PRODUCT, PODSPEC, "summary", summary, Confidence.HIGHEST);
@@ -236,10 +254,20 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
                 dependency.setLicense(license);
             }
 
-            final String version = determineEvidence(contents, blockVariable, "version");
-            if (!version.isEmpty()) {
-                dependency.addEvidence(EvidenceType.VERSION, PODSPEC, "version", version, Confidence.HIGHEST);
-                dependency.setVersion(version);
+            if (builder != null) {
+                try {
+                    final PurlIdentifier purl = new PurlIdentifier(builder.build(), homepage, Confidence.HIGHEST);
+                    dependency.addSoftwareIdentifier(purl);
+                } catch (MalformedPackageURLException ex) {
+                    LOGGER.debug("Unable to generate purl for cocoapod", ex);
+                    final StringBuilder sb = new StringBuilder("pkg:cocoapods/");
+                    sb.append(name);
+                    if (!version.isEmpty()) {
+                        sb.append("@").append(version);
+                    }
+                    final GenericIdentifier id = new GenericIdentifier(sb.toString(), Confidence.HIGHEST);
+                    dependency.addSoftwareIdentifier(id);
+                }
             }
         }
         if (dependency.getVersion() != null && !dependency.getVersion().isEmpty()) {

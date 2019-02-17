@@ -23,13 +23,22 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
 import org.owasp.dependencycheck.utils.Settings;
+import us.springett.parsers.cpe.Cpe;
+import us.springett.parsers.cpe.CpeBuilder;
+import us.springett.parsers.cpe.values.Part;
 
 /**
  *
  * @author Jeremy Long
  */
 public class FalsePositiveAnalyzerTest extends BaseTest {
+
+    /**
+     * A CPE builder object.
+     */
+    private CpeBuilder builder = new CpeBuilder();
 
     /**
      * Test of getName method, of class FalsePositiveAnalyzer.
@@ -73,12 +82,14 @@ public class FalsePositiveAnalyzerTest extends BaseTest {
         Dependency dependency = new Dependency();
         dependency.setFileName("pom.xml");
         dependency.setFilePath("pom.xml");
-        dependency.addIdentifier("cpe", "cpe:/a:file:file:1.2.1", "http://some.org/url");
+        Cpe cpe = builder.part(Part.APPLICATION).vendor("file").product("file").version("1.2.1").build();
+        CpeIdentifier id = new CpeIdentifier(cpe, "http://some.org/url", Confidence.HIGHEST);
+        dependency.addVulnerableSoftwareIdentifier(id);
         Engine engine = null;
         FalsePositiveAnalyzer instance = new FalsePositiveAnalyzer();
-        int before = dependency.getIdentifiers().size();
+        int before = dependency.getVulnerableSoftwareIdentifiers().size();
         instance.analyze(dependency, engine);
-        int after = dependency.getIdentifiers().size();
+        int after = dependency.getVulnerableSoftwareIdentifiers().size();
         assertTrue(before > after);
     }
 
@@ -86,23 +97,24 @@ public class FalsePositiveAnalyzerTest extends BaseTest {
      * Test of removeBadMatches method, of class FalsePositiveAnalyzer.
      */
     @Test
-    public void testRemoveBadMatches() {
+    public void testRemoveBadMatches() throws Exception {
         Dependency dependency = new Dependency();
         dependency.setFileName("some.jar");
         dependency.setFilePath("some.jar");
-        dependency.addIdentifier("cpe", "cpe:/a:m-core:m-core", "");
+        Cpe cpe = builder.part(Part.APPLICATION).vendor("m-core").product("m-core").build();
+        CpeIdentifier id = new CpeIdentifier(cpe, Confidence.HIGHEST);
+        dependency.addVulnerableSoftwareIdentifier(id);
 
-        assertEquals(1, dependency.getIdentifiers().size());
+        assertEquals(1, dependency.getVulnerableSoftwareIdentifiers().size());
 
         FalsePositiveAnalyzer instance = new FalsePositiveAnalyzer();
         instance.removeBadMatches(dependency);
 
-        assertEquals(0, dependency.getIdentifiers().size());
-        dependency.addIdentifier("cpe", "cpe:/a:m-core:m-core", "");
-        dependency.addEvidence(EvidenceType.PRODUCT,"test", "name", "m-core", Confidence.HIGHEST);
+        assertEquals(0, dependency.getVulnerableSoftwareIdentifiers().size());
+        dependency.addVulnerableSoftwareIdentifier(id);
+        dependency.addEvidence(EvidenceType.PRODUCT, "test", "name", "m-core", Confidence.HIGHEST);
 
         instance.removeBadMatches(dependency);
-        assertEquals(1, dependency.getIdentifiers().size());
+        assertEquals(1, dependency.getVulnerableSoftwareIdentifiers().size());
     }
-
 }

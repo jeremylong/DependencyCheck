@@ -17,11 +17,10 @@ Copyright (c) 2017 Jeremy Long. All Rights Reserved.
 
 @author Jeremy Long <jeremy.long@owasp.org>
 @version 1 *###
-"Project","ScanDate","DependencyName","DependencyPath","Description","License","Md5","Sha1","Identifiers","CPE","CVE","CWE","Vulnerability","Source","Severity","CVSSv2","Build Coordinates","CPE Confidence","Evidence Count"
-#macro(writeSev $score)#if($score<4.0)"Low"#elseif($score>=7.0)"High"#else"Medium"#end#end
+"Project","ScanDate","DependencyName","DependencyPath","Description","License","Md5","Sha1","Identifiers","CPE","CVE","CWE","Vulnerability","Source","CVSSv2_Severity", "CVSSv2_Score","CVSSv2","CVSSv3_BaseSeverity","CVSSv3_BaseScore","CVSSv3","CPE Confidence","Evidence Count"
 #foreach($dependency in $dependencies)#if($dependency.getVulnerabilities().size()>0)
 #foreach($vuln in $dependency.getVulnerabilities(true))
-$enc.csv($applicationName),$enc.csv($scanDate),$enc.csv($dependency.DisplayFileName),#if($dependency.FilePath)$enc.csv($dependency.FilePath)#end,#if($dependency.description)$enc.csv($dependency.description)#end,#if($dependency.license)$enc.csv($dependency.license)#end,#if($dependency.Md5sum)$enc.csv($dependency.Md5sum)#end,#if($dependency.Sha1sum)$enc.csv($dependency.Sha1sum)#end,#if($dependency.identifiers)$enc.csvIdentifiers($dependency.identifiers)#end,#if($dependency.identifiers)$enc.csvCpe($dependency.identifiers)#end,#if($vuln.name)$enc.csv($vuln.name)#end,#if($vuln.cwe)$enc.csv($vuln.cwe)#end,#if($vuln.description)$enc.csv($vuln.description)#end,#if($vuln.getSource().name())$enc.csv($vuln.getSource().name())#end,#writeSev($vuln.cvssScore),$vuln.cvssScore,#if($dependency.identifiers)$enc.csvGav($dependency.identifiers)#end,#if($dependency.identifiers)$enc.csvCpeConfidence($dependency.identifiers)#end,$dependency.size()
+$enc.csv($applicationName),$enc.csv($scanDate),$enc.csv($dependency.DisplayFileName),$enc.csv($dependency.FilePath),$enc.csv($dependency.description),$enc.csv($dependency.license),$enc.csv($dependency.Md5sum),$enc.csv($dependency.Sha1sum),$enc.csvIdentifiers($dependency.softwareIdentifiers),$enc.csvIdentifiers($dependency.vulnerableSoftwareIdentifiers),$enc.csv($vuln.name),#if($vuln.cwes)$enc.csv($vuln.cwes.toString())#else""#end,$enc.csv($vuln.description),$enc.csv($vuln.getSource().name()),#if($vuln.cvssV2)$enc.csv($vuln.cvssV2.severity)#else""#end,#if($vuln.cvssV2)$enc.csv($vuln.cvssV2.score)#else""#end,#if($vuln.cvssV2)$enc.csv($vuln.cvssV2.toString())#else""#end,#if($vuln.cvssV3)$enc.csv($vuln.cvssV3.baseSeverity)#else""#end,#if($vuln.cvssV3)$enc.csv($vuln.cvssV3.baseScore)#else""#end,#if($vuln.cvssV3)$enc.csv($vuln.cvssV3.toString())#else""#end,$enc.csvIdentifiers($dependency.softwareIdentifiers),$dependency.size()
 #end
 #end
 #end

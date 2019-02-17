@@ -28,7 +28,13 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
+import org.owasp.dependencycheck.dependency.naming.Identifier;
+import us.springett.parsers.cpe.Cpe;
+import us.springett.parsers.cpe.CpeBuilder;
+import us.springett.parsers.cpe.values.Part;
 
 /**
  * @author Jeremy Long
@@ -63,11 +69,12 @@ public class DependencyTest extends BaseTest {
      */
     @Test
     public void testSetActualFilePath() {
-        String actualFilePath = "file.tar";
+        String expectedPath = "file.tar";
+        String actualPath = "file.tar";
         Dependency instance = new Dependency();
         instance.setSha1sum("non-null value");
-        instance.setActualFilePath(actualFilePath);
-        assertEquals(actualFilePath, instance.getActualFilePath());
+        instance.setActualFilePath(actualPath);
+        assertEquals(expectedPath, instance.getActualFilePath());
     }
 
     /**
@@ -185,9 +192,9 @@ public class DependencyTest extends BaseTest {
      * Test of getIdentifiers method, of class Dependency.
      */
     @Test
-    public void testGetIdentifiers() {
+    public void testGetSoftwareIdentifiers() {
         Dependency instance = new Dependency();
-        Set<Identifier> result = instance.getIdentifiers();
+        Set<Identifier> result = instance.getSoftwareIdentifiers();
 
         assertNotNull(result);
     }
@@ -196,27 +203,29 @@ public class DependencyTest extends BaseTest {
      * Test of setIdentifiers method, of class Dependency.
      */
     @Test
-    public void testSetIdentifiers() {
+    public void testAddSoftwareIdentifiers() {
         Set<Identifier> identifiers = new HashSet<>();
         Dependency instance = new Dependency();
-        instance.addIdentifiers(identifiers);
-        assertNotNull(instance.getIdentifiers());
+        instance.addSoftwareIdentifiers(identifiers);
+        assertNotNull(instance.getSoftwareIdentifiers());
     }
 
     /**
      * Test of addIdentifier method, of class Dependency.
      */
     @Test
-    public void testAddIdentifier() {
-        String type = "cpe";
-        String value = "cpe:/a:apache:struts:2.1.2";
-        String url = "http://somewhere";
-        Identifier expResult = new Identifier(type, value, url);
+    public void testAddVulnerableSoftwareIIdentifier() throws Exception {
+        CpeBuilder builder = new CpeBuilder();
+        Cpe cpe = builder.part(Part.APPLICATION).vendor("apache").product("struts").version("2.1.2").build();
+        CpeIdentifier id = new CpeIdentifier(cpe, Confidence.HIGHEST);
+
+        cpe = builder.part(Part.APPLICATION).vendor("apache").product("struts").version("2.1.2").build();
+        CpeIdentifier expResult = new CpeIdentifier(cpe, Confidence.HIGHEST);
 
         Dependency instance = new Dependency();
-        instance.addIdentifier(type, value, url);
-        assertEquals(1, instance.getIdentifiers().size());
-        assertTrue("Identifier doesn't contain expected result.", instance.getIdentifiers().contains(expResult));
+        instance.addVulnerableSoftwareIdentifier(id);
+        assertEquals(1, instance.getVulnerableSoftwareIdentifiers().size());
+        assertTrue("Identifier doesn't contain expected result.", instance.getVulnerableSoftwareIdentifiers().contains(expResult));
     }
 
     /**
@@ -243,20 +252,20 @@ public class DependencyTest extends BaseTest {
         instance.addAsEvidence("pom", mavenArtifact, Confidence.HIGH);
         assertTrue(instance.contains(EvidenceType.VENDOR, Confidence.HIGH));
         assertEquals(3, instance.size());
-        assertFalse(instance.getIdentifiers().isEmpty());
+        assertFalse(instance.getSoftwareIdentifiers().isEmpty());
     }
 
     /**
      * Test of addAsEvidence method, of class Dependency.
      */
     @Test
-    public void testAddAsEvidenceWithEmptyArtefact() {
+    public void testAddAsEvidenceWithEmptyArtifact() {
         Dependency instance = new Dependency();
         MavenArtifact mavenArtifact = new MavenArtifact(null, null, null, null);
         instance.addAsEvidence("pom", mavenArtifact, Confidence.HIGH);
-        assertFalse(instance.getEvidence(EvidenceType.VENDOR).contains(Confidence.HIGH));
+        assertFalse(instance.getEvidence(EvidenceType.VENDOR).stream().anyMatch(e->e.getConfidence()==Confidence.HIGH));
         assertTrue(instance.size() == 0);
-        assertTrue(instance.getIdentifiers().isEmpty());
+        assertTrue(instance.getSoftwareIdentifiers().isEmpty());
     }
 
     /**
@@ -267,22 +276,22 @@ public class DependencyTest extends BaseTest {
         Dependency instance = new Dependency();
         MavenArtifact mavenArtifact = new MavenArtifact("group", "artifact", "version", null);
         instance.addAsEvidence("pom", mavenArtifact, Confidence.HIGH);
-        assertFalse(instance.getEvidence(EvidenceType.VENDOR).contains(Confidence.HIGH));
+        assertTrue(instance.getEvidence(EvidenceType.VENDOR).stream().anyMatch(e->e.getConfidence()==Confidence.HIGH));
         assertTrue(instance.size() == 3);
-        assertFalse(instance.getIdentifiers().isEmpty());
+        assertFalse(instance.getSoftwareIdentifiers().isEmpty());
 
-        for (Identifier i : instance.getIdentifiers()) {
-            assertTrue(i.getUrl() == null);
-        }
+        instance.getSoftwareIdentifiers().forEach((i) -> {
+            assertNull(i.getUrl());
+        });
 
         mavenArtifact = new MavenArtifact("group", "artifact", "version", "url");
         instance.addAsEvidence("pom", mavenArtifact, Confidence.HIGH);
-        assertFalse(instance.getEvidence(EvidenceType.VENDOR).contains(Confidence.HIGH));
+        assertTrue(instance.getEvidence(EvidenceType.VENDOR).stream().anyMatch(e->e.getConfidence()==Confidence.HIGH));
         assertTrue(instance.size() == 3);
-        assertFalse(instance.getIdentifiers().isEmpty());
+        assertFalse(instance.getSoftwareIdentifiers().isEmpty());
 
-        for (Identifier i : instance.getIdentifiers()) {
+        instance.getSoftwareIdentifiers().forEach((i) -> {
             assertNotNull(i.getUrl());
-        }
+        });
     }
 }

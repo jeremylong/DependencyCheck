@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURL;
+import com.github.packageurl.PackageURLBuilder;
 import com.h3xstream.retirejs.repo.JsLibrary;
 import com.h3xstream.retirejs.repo.JsLibraryResult;
 import com.h3xstream.retirejs.repo.JsVulnerability;
@@ -24,7 +27,7 @@ import com.h3xstream.retirejs.repo.ScannerFacade;
 import com.h3xstream.retirejs.repo.VulnerabilitiesRepository;
 import com.h3xstream.retirejs.repo.VulnerabilitiesRepositoryLoader;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
@@ -45,6 +48,8 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.search.FileContentSearch;
 
@@ -231,6 +236,17 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
                     final JsLibrary lib = libraryResult.getLibrary();
                     dependency.setName(lib.getName());
                     dependency.setVersion(libraryResult.getDetectedVersion());
+                    try {
+                        final PackageURL purl = PackageURLBuilder.aPackageURL().withType("javascript")
+                                .withName(lib.getName()).withVersion(libraryResult.getDetectedVersion()).build();
+                        dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));
+                    } catch (MalformedPackageURLException ex) {
+                        LOGGER.debug("Unable to build package url for retireJS", ex);
+                        final GenericIdentifier id = new GenericIdentifier("javascript:" + lib.getName() + "@"
+                                + libraryResult.getDetectedVersion(), Confidence.HIGHEST);
+                        dependency.addSoftwareIdentifier(id);
+                    }
+
                     dependency.addEvidence(EvidenceType.VERSION, "file", "version", libraryResult.getDetectedVersion(), Confidence.HIGH);
                     dependency.addEvidence(EvidenceType.PRODUCT, "file", "name", libraryResult.getLibrary().getName(), Confidence.HIGH);
 
@@ -265,16 +281,17 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
                                     vulns.add(vuln);
                                 }
                             } else if ("osvdb".equals(key)) {
-                                for (String osvdb : value) {
+                                //todo - convert to map/collect
+                                value.stream().forEach((osvdb) -> {
                                     final Vulnerability vuln = new Vulnerability();
                                     vuln.setName(osvdb);
                                     vuln.setSource(Vulnerability.Source.RETIREJS);
                                     vuln.setUnscoredSeverity(jsVuln.getSeverity());
-                                    for (String info : jsVuln.getInfo()) {
+                                    jsVuln.getInfo().forEach((info) -> {
                                         vuln.addReference("info", "info", info);
-                                    }
+                                    });
                                     vulns.add(vuln);
-                                }
+                                });
                             }
                             dependency.addVulnerabilities(vulns);
                         }

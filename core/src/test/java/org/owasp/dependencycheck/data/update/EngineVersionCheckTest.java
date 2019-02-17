@@ -15,6 +15,8 @@
  */
 package org.owasp.dependencycheck.data.update;
 
+import com.google.common.base.Splitter;
+import java.util.List;
 import java.util.Properties;
 import mockit.Injectable;
 import mockit.Mock;
@@ -158,10 +160,10 @@ public class EngineVersionCheckTest extends BaseTest {
         //removed for compatibility with joda-time 1.6
         //DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
         //return DateTime.parse(date, dtf).toInstant().getMillis();
-        String[] dp = date.split("-");
-        int y = Integer.parseInt(dp[0]);
-        int m = Integer.parseInt(dp[1]);
-        int d = Integer.parseInt(dp[2]);
+        List<String> dp = Splitter.on('-').splitToList(date);
+        int y = Integer.parseInt(dp.get(0));
+        int m = Integer.parseInt(dp.get(1));
+        int d = Integer.parseInt(dp.get(2));
         DateTime dt = new DateTime(y, m, d, 0, 0, 0, 0);
         return dt.toInstant().getMillis();
     }

@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
  * settings.
  *
  * @author Jeremy Long
+ * @version $Id: $Id
  */
 public final class URLConnectionFactory {
 
@@ -69,7 +70,7 @@ public final class URLConnectionFactory {
      *
      * @param url the url to connect to
      * @return an HttpURLConnection
-     * @throws URLConnectionFailureException thrown if there is an exception
+     * @throws org.owasp.dependencycheck.utils.URLConnectionFailureException thrown if there is an exception
      */
     @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE", justification = "Just being extra safe")
     public HttpURLConnection createHttpURLConnection(URL url) throws URLConnectionFailureException {
@@ -179,7 +180,7 @@ public final class URLConnectionFactory {
      * @param url the URL to connect to
      * @param proxy whether to use the proxy (if configured)
      * @return a newly constructed HttpURLConnection
-     * @throws URLConnectionFailureException thrown if there is an exception
+     * @throws org.owasp.dependencycheck.utils.URLConnectionFailureException thrown if there is an exception
      */
     public HttpURLConnection createHttpURLConnection(URL url, boolean proxy) throws URLConnectionFailureException {
         if (proxy) {

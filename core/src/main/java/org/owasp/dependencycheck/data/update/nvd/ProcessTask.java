@@ -20,22 +20,16 @@ package org.owasp.dependencycheck.data.update.nvd;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
-import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.utils.Settings;
-import org.owasp.dependencycheck.utils.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 /**
  * A callable task that will process a given set of NVD CVE xml files and update
@@ -61,7 +55,7 @@ public class ProcessTask implements Callable<ProcessTask> {
     /**
      * A reference to the callable download task.
      */
-    private final DownloadTask filePair;
+    private final DownloadTask downloadTask;
     /**
      * A reference to the properties.
      */
@@ -93,15 +87,15 @@ public class ProcessTask implements Callable<ProcessTask> {
      * Constructs a new ProcessTask used to process an NVD CVE update.
      *
      * @param cveDB the data store object
-     * @param filePair the download task that contains the URL references to
+     * @param downloadTask the download task that contains the URL references to
      * download
      * @param settings a reference to the global settings object; this is
      * necessary so that when the thread is started the dependencies have a
      * correct reference to the global settings.
      */
-    public ProcessTask(final CveDB cveDB, final DownloadTask filePair, Settings settings) {
+    public ProcessTask(final CveDB cveDB, final DownloadTask downloadTask, Settings settings) {
         this.cveDB = cveDB;
-        this.filePair = filePair;
+        this.downloadTask = downloadTask;
         this.properties = cveDB.getDatabaseProperties();
         this.settings = settings;
     }
@@ -126,32 +120,23 @@ public class ProcessTask implements Callable<ProcessTask> {
     }
 
     /**
-     * Imports the NVD CVE XML File into the Lucene Index.
+     * Imports the NVD CVE JSON File into the database.
      *
-     * @param file the file containing the NVD CVE XML
-     * @param oldVersion contains the file containing the NVD CVE XML 1.2
+     * @param file the file containing the NVD CVE JSON
      * @throws ParserConfigurationException is thrown if there is a parser
      * configuration exception
-     * @throws SAXException is thrown if there is a SAXException
      * @throws IOException is thrown if there is a IO Exception
      * @throws SQLException is thrown if there is a SQL exception
      * @throws DatabaseException is thrown if there is a database exception
      * @throws ClassNotFoundException thrown if the h2 database driver cannot be
      * loaded
+     * @throws UpdateException thrown if the file could not be found
      */
-    protected void importXML(File file, File oldVersion) throws ParserConfigurationException,
-            SAXException, IOException, SQLException, DatabaseException, ClassNotFoundException {
+    protected void importJSON(File file) throws ParserConfigurationException,
+            IOException, SQLException, DatabaseException, ClassNotFoundException, UpdateException {
 
-        final SAXParser saxParser = XmlUtils.buildSecureSaxParser();
-
-        final NvdCve12Handler cve12Handler = new NvdCve12Handler();
-        saxParser.parse(oldVersion, cve12Handler);
-        final Map<String, List<VulnerableSoftware>> prevVersionVulnMap = cve12Handler.getVulnerabilities();
-
-        final NvdCve20Handler cve20Handler = new NvdCve20Handler();
-        cve20Handler.setCveDB(cveDB);
-        cve20Handler.setPrevVersionVulnMap(prevVersionVulnMap);
-        saxParser.parse(file, cve20Handler);
+        final NvdCveParser parser = new NvdCveParser(settings, cveDB);
+        parser.parse(file);
     }
 
     /**
@@ -161,18 +146,18 @@ public class ProcessTask implements Callable<ProcessTask> {
      * the database
      */
     private void processFiles() throws UpdateException {
-        LOGGER.info("Processing Started for NVD CVE - {}", filePair.getNvdCveInfo().getId());
+        LOGGER.info("Processing Started for NVD CVE - {}", downloadTask.getNvdCveInfo().getId());
         final long startProcessing = System.currentTimeMillis();
         try {
-            importXML(filePair.getFirst(), filePair.getSecond());
+            importJSON(downloadTask.getFile());
             cveDB.commit();
-            properties.save(filePair.getNvdCveInfo());
-        } catch (ParserConfigurationException | SAXException | SQLException | DatabaseException | ClassNotFoundException | IOException ex) {
+            properties.save(downloadTask.getNvdCveInfo());
+        } catch (ParserConfigurationException | SQLException | DatabaseException | ClassNotFoundException | IOException ex) {
             throw new UpdateException(ex);
         } finally {
-            filePair.cleanup();
+            downloadTask.cleanup();
         }
-        LOGGER.info("Processing Complete for NVD CVE - {}  ({} ms)", filePair.getNvdCveInfo().getId(),
+        LOGGER.info("Processing Complete for NVD CVE - {}  ({} ms)", downloadTask.getNvdCveInfo().getId(),
                 System.currentTimeMillis() - startProcessing);
     }
 }

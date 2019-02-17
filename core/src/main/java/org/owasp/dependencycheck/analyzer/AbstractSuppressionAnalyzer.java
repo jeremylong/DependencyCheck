@@ -106,9 +106,9 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         if (rules.isEmpty()) {
             return;
         }
-        for (final SuppressionRule rule : rules) {
+        rules.forEach((rule) -> {
             rule.process(dependency);
-        }
+        });
     }
 
     /**
@@ -137,9 +137,9 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         if (!failedLoadingFiles.isEmpty()) {
             LOGGER.debug("{} suppression files failed to load.", failedLoadingFiles.size());
             final StringBuilder sb = new StringBuilder();
-            for (String item : failedLoadingFiles) {
+            failedLoadingFiles.forEach((item) -> {
                 sb.append(item);
-            }
+            });
             throw new SuppressionParseException(sb.toString());
         }
     }

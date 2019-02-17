@@ -31,7 +31,7 @@ public class ComposerException extends RuntimeException {
     /**
      * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 3275208069077840221L;
 
     /**
      * Creates a ComposerException with default message.

@@ -44,8 +44,8 @@ import org.owasp.dependencycheck.data.update.nvd.NvdCveInfo;
 import org.owasp.dependencycheck.data.update.nvd.ProcessTask;
 import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
 import org.owasp.dependencycheck.utils.DateUtil;
-import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
+import org.owasp.dependencycheck.utils.HttpResourceConnection;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -251,7 +251,10 @@ public class NvdCveUpdater implements CachedWebDataSource {
         for (NvdCveInfo cve : updateable) {
             if (cve.getNeedsUpdate()) {
                 final DownloadTask call = new DownloadTask(cve, processingExecutorService, cveDb, settings);
-                downloadFutures.add(downloadExecutorService.submit(call));
+                final boolean added = downloadFutures.add(downloadExecutorService.submit(call));
+                if (!added) {
+                    throw new UpdateException("Unable to add the download task for " + cve.getId());
+                }
             }
         }
 
@@ -318,7 +321,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
      * updated properties file
      */
     protected final UpdateableNvdCve getUpdatesNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
-        LOGGER.info("starting getUpdatesNeeded() ...");
+        LOGGER.debug("starting getUpdatesNeeded() ...");
         final UpdateableNvdCve updates;
         try {
             updates = retrieveCurrentTimestampsFromWeb();
@@ -387,13 +390,15 @@ public class NvdCveUpdater implements CachedWebDataSource {
     }
 
     /**
-     * Retrieves the timestamps from the NVD CVE meta data file.
+     * Retrieves the timestamps from the NVD CVE by checking the last modified
+     * date.
      *
-     * @return the timestamp from the currently published nvdcve downloads page
-     * @throws MalformedURLException thrown if the URL for the NVD CCE Meta data
-     * is incorrect.
-     * @throws DownloadFailedException thrown if there is an error downloading
-     * the nvd cve meta data file
+     * @return the last modified date from the currently published NVD CVE
+     * downloads page
+     * @throws MalformedURLException thrown if the URL for the NVD CVE data is
+     * incorrect.
+     * @throws DownloadFailedException thrown if there is an error retrieving
+     * the time stamps from the NVD CVE
      * @throws InvalidDataException thrown if there is an exception parsing the
      * timestamps
      * @throws InvalidSettingException thrown if the settings are invalid
@@ -408,49 +413,48 @@ public class NvdCveUpdater implements CachedWebDataSource {
 
         final UpdateableNvdCve updates = new UpdateableNvdCve();
 
-        final String baseUrl20 = settings.getString(Settings.KEYS.CVE_SCHEMA_2_0);
-        final String baseUrl12 = settings.getString(Settings.KEYS.CVE_SCHEMA_1_2);
+        final String baseUrl = settings.getString(Settings.KEYS.CVE_BASE_JSON);
         for (int i = start; i <= end; i++) {
-            final String url = String.format(baseUrl20, i);
-            updates.add(Integer.toString(i), url, String.format(baseUrl12, i),
-                    lastModifiedDates.get(url), true);
+            final String url = String.format(baseUrl, i);
+            updates.add(Integer.toString(i), url, lastModifiedDates.get(url), true);
         }
 
-        final String url = settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL);
-        updates.add(MODIFIED, url, settings.getString(Settings.KEYS.CVE_MODIFIED_12_URL),
+        final String url = settings.getString(Settings.KEYS.CVE_MODIFIED_JSON);
+        updates.add(MODIFIED, url,
                 lastModifiedDates.get(url), false);
         return updates;
     }
 
     /**
-     * Retrieves the timestamps from the NVD CVE meta data file.
+     * Retrieves the timestamps from the NVD CVE by checking the last modified
+     * date.
      *
      * @param startYear the first year whose item to check for the timestamp
      * @param endYear the last year whose item to check for the timestamp
      * @return the timestamps from the currently published NVD CVE downloads
      * page
-     * @throws MalformedURLException thrown if the URL for the NVD CCE Meta data
-     * is incorrect.
-     * @throws DownloadFailedException thrown if there is an error downloading
-     * the NVD CVE meta data file
+     * @throws MalformedURLException thrown if the URL for the NVD CVE data is
+     * incorrect.
+     * @throws DownloadFailedException thrown if there is an error retrieving
+     * the time stamps from the NVD CVE
      */
     private Map<String, Long> retrieveLastModifiedDates(int startYear, int endYear)
             throws MalformedURLException, DownloadFailedException {
 
         final Set<String> urls = new HashSet<>();
-        final String baseUrl20 = settings.getString(Settings.KEYS.CVE_SCHEMA_2_0);
+        final String baseUrl = settings.getString(Settings.KEYS.CVE_BASE_JSON);
         for (int i = startYear; i <= endYear; i++) {
-            final String url = String.format(baseUrl20, i);
+            final String url = String.format(baseUrl, i);
             urls.add(url);
         }
-        urls.add(settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL));
+        urls.add(settings.getString(Settings.KEYS.CVE_MODIFIED_JSON));
 
         final Map<String, Future<Long>> timestampFutures = new HashMap<>();
-        for (String url : urls) {
+        urls.forEach((url) -> {
             final TimestampRetriever timestampRetriever = new TimestampRetriever(url, settings);
             final Future<Long> future = downloadExecutorService.submit(timestampRetriever);
             timestampFutures.put(url, future);
-        }
+        });
 
         final Map<String, Long> lastModifiedDates = new HashMap<>();
         for (String url : urls) {
@@ -508,8 +512,8 @@ public class NvdCveUpdater implements CachedWebDataSource {
         public Long call() throws Exception {
             LOGGER.debug("Checking for updates from: {}", url);
             try {
-                final Downloader downloader = new Downloader(settings);
-                return downloader.getLastModified(new URL(url));
+                final HttpResourceConnection resource = new HttpResourceConnection(settings);
+                return resource.getLastModified(new URL(url));
             } finally {
                 settings.cleanup(false);
             }

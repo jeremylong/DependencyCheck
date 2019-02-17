@@ -28,9 +28,9 @@ import javax.annotation.concurrent.ThreadSafe;
 public class UpdateException extends Exception {
 
     /**
-     * The serial version uid.
+     * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -7146416046510427736L;
 
     /**
      * Creates a new UpdateException.

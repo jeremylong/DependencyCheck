@@ -28,9 +28,9 @@ import javax.annotation.concurrent.ThreadSafe;
 public class DriverLoadException extends Exception {
 
     /**
-     * the serial version uid.
+     * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -2643086540951642873L;
 
     /**
      * Creates an DriverLoadException.

@@ -29,9 +29,9 @@ import javax.annotation.concurrent.ThreadSafe;
 public class CorruptDatabaseException extends DatabaseException {
 
     /**
-     * the serial version uid.
+     * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -5651552077861934103L;
 
     /**
      * Creates an CorruptDatabaseException.

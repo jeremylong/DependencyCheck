@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURL;
+import com.github.packageurl.PackageURLBuilder;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nuget.NugetPackageReference;
@@ -38,14 +41,16 @@ import java.util.List;
 
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
- * Analyzer which parses a Nuget packages.config file to gather module information.
+ * Analyzer which parses a Nuget packages.config file to gather module
+ * information.
  *
  * @author doshyt
  */
-
 @Experimental
 @ThreadSafe
 public class NugetconfAnalyzer extends AbstractFileTypeAnalyzer {
@@ -141,6 +146,7 @@ public class NugetconfAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws AnalysisException when there's an exception during analysis
      */
     @Override
+    @SuppressWarnings("StringSplitter")
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         LOGGER.debug("Checking packages.config file {}", dependency);
         try {
@@ -161,6 +167,16 @@ public class NugetconfAnalyzer extends AbstractFileTypeAnalyzer {
                 child.setEcosystem(DEPENDENCY_ECOSYSTEM);
                 child.setName(id);
                 child.setVersion(version);
+
+                try {
+                    final PackageURL purl = PackageURLBuilder.aPackageURL().withType("nuget").withName(id).withVersion(version).build();
+                    child.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));
+                } catch (MalformedPackageURLException ex) {
+                    LOGGER.debug("Unable to build package url for nuget package", ex);
+                    final GenericIdentifier gid = new GenericIdentifier("nuget:" + id + "@" + version, Confidence.HIGHEST);
+                    child.addSoftwareIdentifier(gid);
+                }
+
                 child.setPackagePath(String.format("%s:%s", id, version));
                 child.setSha1sum(Checksum.getSHA1Checksum(String.format("%s:%s", id, version)));
                 child.setSha256sum(Checksum.getSHA256Checksum(String.format("%s:%s", id, version)));

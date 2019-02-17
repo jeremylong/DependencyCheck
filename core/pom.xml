@@ -20,7 +20,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>4.0.3-SNAPSHOT</version>
+        <version>5.0.0-M1</version>
     </parent>
 
     <artifactId>dependency-check-core</artifactId>
@@ -101,6 +101,33 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         </testResources>
         <plugins>
             <plugin>
+                <groupId>org.jsonschema2pojo</groupId>
+                <artifactId>jsonschema2pojo-maven-plugin</artifactId>
+                <configuration>
+                    <sourceDirectory>${basedir}/src/main/resources/schema/nvdcve/json</sourceDirectory>
+                    <outputDirectory>${project.build.directory}/generated-sources/java</outputDirectory>
+                    <includeGetters>true</includeGetters>
+                    <annotationStyle>gson</annotationStyle>
+                    <targetPackage>org.owasp.dependencycheck.data.nvd.json</targetPackage>
+                    <useCommonsLang3>true</useCommonsLang3>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <excludes>${project.build.directory}/generated-sources/java/**/*.java</excludes>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -143,6 +170,14 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
     </build>
     <dependencies>
         <dependency>
+            <groupId>com.github.package-url</groupId>
+            <artifactId>packageurl-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>us.springett</groupId>
+            <artifactId>cpe-parser</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.vdurmont</groupId>
             <artifactId>semver4j</artifactId>
         </dependency>
@@ -181,7 +216,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <artifactId>jmockit</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Upgrading transitive commons-collections-3.2.1 from velocity-1.7. -->
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
@@ -216,7 +250,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         </dependency>
         <dependency>
             <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
+            <artifactId>velocity-engine-core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -390,7 +424,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <scope>test</scope>
             <optional>true</optional>
         </dependency>
-
     </dependencies>
     <profiles>
         <profile>

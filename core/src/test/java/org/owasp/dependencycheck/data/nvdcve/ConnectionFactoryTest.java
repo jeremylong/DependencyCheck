@@ -24,7 +24,7 @@ import org.owasp.dependencycheck.BaseDBTestCase;
 
 /**
  *
- * @author jeremy
+ * @author jeremy long
  */
 public class ConnectionFactoryTest extends BaseDBTestCase {
 

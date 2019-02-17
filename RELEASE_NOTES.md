@@ -2,6 +2,18 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 5.0.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v5.0.0) (2018-12-21)
+
+### Breaking Changes
+
+- All previously deprecated arguments to the plugins and CLI have been removed.
+- The NVD CVE data import now uses the JSON data feeds instead of the XML data feeds.
+  - The parameter names have changed if you are mirroring the data feeds locally.
+- For developers using the core engine the identifiers have been drastically changed;
+  ODC now uses [Package URL](https://github.com/package-url/packageurl-java) for software
+  identifiers and CPE objects from [CPE-Parser](https://github.com/stevespringett/CPE-Parser)
+  for vulnerable library identifiers.
+
 ## [Version 4.0.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v4.0.2) (2019-01-01)
 
 ### Enhancements

@@ -21,11 +21,12 @@ import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.analyzer.exception.LambdaExceptionWrapper;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
+import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -54,27 +55,31 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         final CveDB cveDB = engine.getDatabase();
-        for (Identifier id : dependency.getIdentifiers()) {
-            if ("cpe".equals(id.getType())) {
-                try {
-                    final String value = id.getValue();
-                    final List<Vulnerability> vulns = cveDB.getVulnerabilities(value);
-                    dependency.addVulnerabilities(vulns);
-                } catch (DatabaseException ex) {
-                    throw new AnalysisException(ex);
-                }
-            }
-        }
-        for (Identifier id : dependency.getSuppressedIdentifiers()) {
-            if ("cpe".equals(id.getType())) {
-                try {
-                    final String value = id.getValue();
-                    final List<Vulnerability> vulns = cveDB.getVulnerabilities(value);
-                    dependency.addSuppressedVulnerabilities(vulns);
-                } catch (DatabaseException ex) {
-                    throw new AnalysisException(ex);
-                }
-            }
+        try {
+            dependency.getVulnerableSoftwareIdentifiers().stream()
+                    .filter((i) -> (i instanceof CpeIdentifier))
+                    .map(i -> (CpeIdentifier) i)
+                    .forEach(i -> {
+                        try {
+                            final List<Vulnerability> vulns = cveDB.getVulnerabilities(i.getCpe());
+                            dependency.addVulnerabilities(vulns);
+                        } catch (DatabaseException ex) {
+                            throw new LambdaExceptionWrapper(new AnalysisException(ex));
+                        }
+                    });
+            dependency.getSuppressedIdentifiers().stream()
+                    .filter((i) -> (i instanceof CpeIdentifier))
+                    .map(i -> (CpeIdentifier) i)
+                    .forEach(i -> {
+                        try {
+                            final List<Vulnerability> vulns = cveDB.getVulnerabilities(i.getCpe());
+                            dependency.addSuppressedVulnerabilities(vulns);
+                        } catch (DatabaseException ex) {
+                            throw new LambdaExceptionWrapper(new AnalysisException(ex));
+                        }
+                    });
+        } catch (LambdaExceptionWrapper ex) {
+            throw (AnalysisException) ex.getCause();
         }
     }
 

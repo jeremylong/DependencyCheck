@@ -111,7 +111,7 @@ public class Reference implements Serializable, Comparable<Reference> {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Reference)) {
             return false;
         }
         final Reference other = (Reference) obj;

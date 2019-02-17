@@ -30,7 +30,7 @@ public class AnalysisException extends Exception {
     /**
      * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 7026251107073931736L;
 
     /**
      * Creates a new AnalysisException.

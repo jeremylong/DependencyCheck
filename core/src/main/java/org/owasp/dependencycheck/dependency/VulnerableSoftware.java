@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2018 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.dependency;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.annotation.concurrent.ThreadSafe;
 
-import org.apache.commons.lang3.StringUtils;
-import org.owasp.dependencycheck.data.cpe.IndexEntry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
+import org.owasp.dependencycheck.utils.DependencyVersion;
+import us.springett.parsers.cpe.Cpe;
+import us.springett.parsers.cpe.ICpe;
+import us.springett.parsers.cpe.exceptions.CpeValidationException;
+import us.springett.parsers.cpe.values.LogicalValue;
+import us.springett.parsers.cpe.values.Part;
 
 /**
  * A record containing information about vulnerable software. This is referenced
@@ -39,383 +39,376 @@ import org.slf4j.LoggerFactory;
  * @author Jeremy Long
  */
 @ThreadSafe
-public class VulnerableSoftware extends IndexEntry implements Serializable, Comparable<VulnerableSoftware> {
+public class VulnerableSoftware extends Cpe implements Serializable {
 
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(VulnerableSoftware.class);
     /**
      * The serial version UID.
      */
-    private static final long serialVersionUID = 307319490326651052L;
+    private static final long serialVersionUID = 605319412326651052L;
 
     /**
-     * If present, indicates that previous version are vulnerable.
+     * The ending range, excluding the specified version, for matching
+     * vulnerable software
      */
-    private String previousVersion;
+    private final String versionEndExcluding;
+    /**
+     * The ending range, including the specified version, for matching
+     * vulnerable software
+     */
+    private final String versionEndIncluding;
+    /**
+     * The starting range, excluding the specified version, for matching
+     * vulnerable software
+     */
+    private final String versionStartExcluding;
+    /**
+     * the starting range, including the specified version, for matching
+     * vulnerable software
+     */
+    private final String versionStartIncluding;
+    /**
+     * A flag indicating whether this represents a vulnerable software object.
+     */
+    private final boolean vulnerable;
 
     /**
-     * The name of the cpe.
-     */
-    private String name;
-
-    /**
-     * The product version number.
-     */
-    private String version;
-
-    /**
-     * The product update version.
-     */
-    private String update;
-    /**
-     * The product edition.
-     */
-    private String edition;
-
-    /**
-     * Parse a CPE entry from the CPE string representation.
+     * Constructs a new immutable VulnerableSoftware object that represents the
+     * Well Form Named defined in the CPE 2.3 specification. Specifying
+     * <code>null</code> will be set to the default
+     * {@link us.springett.parsers.cpe.values.LogicalValue#ANY}. All values
+     * passed in must be well formed (i.e. special characters quoted with a
+     * backslash).
      *
-     * @param cpe a CPE entry (e.g. `cpe:/a:vendor:software:version`)
+     * @see <a href="https://cpe.mitre.org/specification/">CPE 2.3</a>
+     * @param part the type of entry: application, operating system, or hardware
+     * @param vendor the vendor of the CPE entry
+     * @param product the product of the CPE entry
+     * @param version the version of the CPE entry
+     * @param update the update of the CPE entry
+     * @param edition the edition of the CPE entry
+     * @param language the language of the CPE entry
+     * @param swEdition the swEdition of the CPE entry
+     * @param targetSw the targetSw of the CPE entry
+     * @param targetHw the targetHw of the CPE entry
+     * @param other the other of the CPE entry
+     * @param versionEndExcluding the ending range, excluding the specified
+     * version, for matching vulnerable software
+     * @param versionEndIncluding the ending range, including the specified
+     * version, for matching vulnerable software
+     * @param versionStartExcluding the starting range, excluding the specified
+     * version, for matching vulnerable software
+     * @param versionStartIncluding the starting range, including the specified
+     * version, for matching vulnerable software
+     * @param vulnerable whether or not this represents a vulnerable software
+     * item
+     * @throws CpeValidationException thrown if one of the CPE entries is
+     * invalid
      */
-    public void setCpe(String cpe) {
-        try {
-            parseName(cpe);
-        } catch (UnsupportedEncodingException ex) {
-            LOGGER.warn("Character encoding is unsupported for CPE '{}'.", cpe);
-            LOGGER.debug("", ex);
-            setName(cpe);
-        }
+    public VulnerableSoftware(Part part, String vendor, String product, String version,
+            String update, String edition, String language, String swEdition,
+            String targetSw, String targetHw, String other,
+            String versionEndExcluding, String versionEndIncluding, String versionStartExcluding,
+            String versionStartIncluding, boolean vulnerable) throws CpeValidationException {
+        super(part, vendor, product, version, update, edition, language, swEdition, targetSw, targetHw, other);
+        this.versionEndExcluding = versionEndExcluding;
+        this.versionEndIncluding = versionEndIncluding;
+        this.versionStartExcluding = versionStartExcluding;
+        this.versionStartIncluding = versionStartIncluding;
+        this.vulnerable = vulnerable;
     }
 
-    /**
-     * <p>
-     * Parses a name attribute value, from the cpe.xml, into its corresponding
-     * parts: vendor, product, version, update.</p>
-     * <p>
-     * Example:</p>
-     * <code>&nbsp;&nbsp;&nbsp;cpe:/a:apache:struts:1.1:rc2</code>
-     *
-     * <p>
-     * Results in:</p> <ul> <li>Vendor: apache</li> <li>Product: struts</li>
-     * <li>Version: 1.1</li> <li>Revision: rc2</li> </ul>
-     *
-     * @param cpeName the cpe name
-     * @throws UnsupportedEncodingException should never be thrown...
-     */
     @Override
-    public void parseName(String cpeName) throws UnsupportedEncodingException {
-        this.name = cpeName;
-        if (cpeName != null && cpeName.length() > 7) {
-            final String cpeNameWithoutPrefix = cpeName.substring(7);
-            final String[] data = StringUtils.split(cpeNameWithoutPrefix, ':');
-            if (data.length >= 1) {
-                this.setVendor(urlDecode(data[0]));
-            }
-            if (data.length >= 2) {
-                this.setProduct(urlDecode(data[1]));
-            }
-            if (data.length >= 3) {
-                version = urlDecode(data[2]);
-            }
-            if (data.length >= 4) {
-                update = urlDecode(data[3]);
-            }
-            if (data.length >= 5) {
-                edition = urlDecode(data[4]);
-            }
+    public int compareTo(Object o) {
+        if (o instanceof VulnerableSoftware) {
+            final VulnerableSoftware other = (VulnerableSoftware) o;
+            return new CompareToBuilder()
+                    .appendSuper(super.compareTo(other))
+                    .append(versionStartIncluding, other.versionStartIncluding)
+                    .append(versionStartExcluding, other.versionStartExcluding)
+                    .append(versionEndIncluding, other.versionEndIncluding)
+                    .append(versionEndExcluding, other.versionEndExcluding)
+                    .append(this.vulnerable, other.vulnerable)
+                    .build();
+        } else if (o instanceof Cpe) {
+            return super.compareTo(o);
         }
+        throw new UnexpectedAnalysisException("Unable to compare " + o.getClass().getCanonicalName());
     }
 
-    /**
-     * Indicates if previous versions of this software are vulnerable.
-     *
-     * @return if previous versions of this software are vulnerable
-     */
-    public boolean hasPreviousVersion() {
-        return previousVersion != null;
+    @Override
+    public int hashCode() {
+        // you pick a hard-coded, randomly chosen, non-zero, odd number
+        // ideally different for each class
+        return new HashCodeBuilder(13, 59)
+                .appendSuper(super.hashCode())
+                .append(versionEndExcluding)
+                .append(versionEndIncluding)
+                .append(versionStartExcluding)
+                .append(versionStartIncluding)
+                .toHashCode();
     }
 
-    /**
-     * Get the value of previousVersion.
-     *
-     * @return the value of previousVersion
-     */
-    public String getPreviousVersion() {
-        return previousVersion;
-    }
-
-    /**
-     * Set the value of previousVersion.
-     *
-     * @param previousVersion new value of previousVersion
-     */
-    public void setPreviousVersion(String previousVersion) {
-        this.previousVersion = previousVersion;
-    }
-
-    /**
-     * Standard equals implementation to compare this VulnerableSoftware to
-     * another object.
-     *
-     * @param obj the object to compare
-     * @return whether or not the objects are equal
-     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof VulnerableSoftware)) {
             return false;
         }
-        final VulnerableSoftware other = (VulnerableSoftware) obj;
-        return !((this.name == null) ? (other.getName() != null) : !this.name.equals(other.getName()));
+        final VulnerableSoftware rhs = (VulnerableSoftware) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(versionEndExcluding, rhs.versionEndExcluding)
+                .append(versionEndIncluding, rhs.versionEndIncluding)
+                .append(versionStartExcluding, rhs.versionStartExcluding)
+                .append(versionStartIncluding, rhs.versionStartIncluding)
+                .isEquals();
     }
 
     /**
-     * Standard implementation of hashCode.
+     * <p>
+     * Determines if the VulnerableSoftware matches the given target
+     * VulnerableSoftware. This does not follow the CPE 2.3 Specification
+     * exactly as there are cases where undefined comparisons will result in
+     * either true or false. For instance, 'ANY' will match 'm+wild cards' and
+     * NA will return false when the target has 'm+wild cards'.</p>
+     * <p>
+     * For vulnerable software matching, the implementation also takes into
+     * account version ranges as specified within the NVD data feeds.</p>
      *
-     * @return the hashCode for the object
+     * @param target the target CPE to evaluate
+     * @return <code>true</code> if the CPE matches the target; otherwise
+     * <code>false</code>
      */
     @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 83 * hash + (this.name != null ? this.name.hashCode() : 0);
-        return hash;
+    public boolean matches(ICpe target) {
+        boolean result = this.vulnerable;
+        result &= compareAttributes(this.getPart(), target.getPart());
+        result &= compareAttributes(this.getVendor(), target.getVendor());
+        result &= compareAttributes(this.getProduct(), target.getProduct());
+
+        //TODO implement versionStart etc.
+        result &= compareVersionRange(target.getVersion());
+
+        //todo - if the vulnerablity has an update we are might not be collecting it correctly...
+        // as such, this check might cause FN if the CVE has an update in the data set
+        result &= compareAttributes(this.getUpdate(), target.getUpdate());
+        result &= compareAttributes(this.getEdition(), target.getEdition());
+        result &= compareAttributes(this.getLanguage(), target.getLanguage());
+        result &= compareAttributes(this.getSwEdition(), target.getSwEdition());
+        result &= compareAttributes(this.getTargetSw(), target.getTargetSw());
+        result &= compareAttributes(this.getTargetHw(), target.getTargetHw());
+        result &= compareAttributes(this.getOther(), target.getOther());
+        return result;
     }
 
     /**
-     * Standard toString() implementation display the name and whether or not
-     * previous versions are also affected.
+     * Tests if the left matches the right.
      *
-     * @return a string representation of the object
+     * @param left the cpe to compare
+     * @param right the cpe to check
+     * @return <code>true</code> if a match is found; otherwise
+     * <code>false</code>
      */
+    public static boolean testMatch(ICpe left, ICpe right) {
+        boolean result = true;
+        result &= compareAttributes(left.getPart(), right.getPart());
+        result &= compareAttributes(left.getWellFormedVendor(), right.getWellFormedVendor());
+        result &= compareAttributes(left.getWellFormedProduct(), right.getWellFormedProduct());
+
+        if (right instanceof VulnerableSoftware) {
+            final VulnerableSoftware vs = (VulnerableSoftware) right;
+            result &= vs.vulnerable;
+            result &= compareVersionRange(vs, left.getVersion());
+        } else if (left instanceof VulnerableSoftware) {
+            final VulnerableSoftware vs = (VulnerableSoftware) left;
+            result &= vs.vulnerable;
+            result &= compareVersionRange(vs, right.getVersion());
+        } else {
+            result &= compareAttributes(left.getWellFormedVersion(), right.getWellFormedVersion());
+        }
+
+        //todo - if the vulnerablity has an update we are might not be collecting it correctly...
+        // as such, this check might cause FN if the CVE has an update in the data set
+        result &= compareAttributes(left.getWellFormedUpdate(), right.getWellFormedUpdate());
+        result &= compareAttributes(left.getWellFormedEdition(), right.getWellFormedEdition());
+        result &= compareAttributes(left.getWellFormedLanguage(), right.getWellFormedLanguage());
+        result &= compareAttributes(left.getWellFormedSwEdition(), right.getWellFormedSwEdition());
+        result &= compareAttributes(left.getWellFormedTargetSw(), right.getWellFormedTargetSw());
+        result &= compareAttributes(left.getWellFormedTargetHw(), right.getWellFormedTargetHw());
+        result &= compareAttributes(left.getWellFormedOther(), right.getWellFormedOther());
+        return result;
+    }
+
+    /**
+     * <p>
+     * Determines if the target VulnerableSoftware matches the
+     * VulnerableSoftware. This does not follow the CPE 2.3 Specification
+     * exactly as there are cases where undefined comparisons will result in
+     * either true or false. For instance, 'ANY' will match 'm+wild cards' and
+     * NA will return false when the target has 'm+wild cards'.</p>
+     * <p>
+     * For vulnerable software matching, the implementation also takes into
+     * account version ranges as specified within the NVD data feeds.</p>
+     *
+     * @param target the VulnerableSoftware to evaluate
+     * @return <code>true</code> if the target CPE matches CPE; otherwise
+     * <code>false</code>
+     */
+    @Override
+    public boolean matchedBy(ICpe target) {
+        return testMatch(target, this);
+    }
+
+    /**
+     * Evaluates the target against the version and version range checks:
+     * versionEndExcluding, versionStartExcluding versionEndIncluding, and
+     * versionStartIncluding.
+     *
+     * @param targetVersion the version to compare
+     * @return <code>true</code> if the target version is matched; otherwise
+     * <code>false</code>
+     */
+    protected boolean compareVersionRange(String targetVersion) {
+        return compareVersionRange(this, targetVersion);
+    }
+
+    /**
+     * Evaluates the target against the version and version range checks:
+     * versionEndExcluding, versionStartExcluding versionEndIncluding, and
+     * versionStartIncluding.
+     *
+     * @param vs a reference to the vulnerable software to compare
+     * @param targetVersion the version to compare
+     * @return <code>true</code> if the target version is matched; otherwise
+     * <code>false</code>
+     */
+    protected static boolean compareVersionRange(VulnerableSoftware vs, String targetVersion) {
+        if (LogicalValue.NA.getAbbreviation().equals(vs.getVersion())) {
+            return false;
+        }
+        //if any of the four conditions will be evaluated - then true;
+        boolean result = (vs.versionEndExcluding != null && !vs.versionEndExcluding.isEmpty())
+                || (vs.versionStartExcluding != null && !vs.versionStartExcluding.isEmpty())
+                || (vs.versionEndIncluding != null && !vs.versionEndIncluding.isEmpty())
+                || (vs.versionStartIncluding != null && !vs.versionStartIncluding.isEmpty());
+
+        if (!result && compareAttributes(vs.getVersion(), targetVersion)) {
+            return true;
+        }
+
+        final DependencyVersion target = new DependencyVersion(targetVersion);
+        if (target.getVersionParts().isEmpty()) {
+            return false;
+        }
+        if (result && vs.versionEndExcluding != null && !vs.versionEndExcluding.isEmpty()) {
+            final DependencyVersion endExcluding = new DependencyVersion(vs.versionEndExcluding);
+            result = endExcluding.compareTo(target) > 0;
+        }
+        if (result && vs.versionStartExcluding != null && !vs.versionStartExcluding.isEmpty()) {
+            final DependencyVersion startExcluding = new DependencyVersion(vs.versionStartExcluding);
+            result = startExcluding.compareTo(target) < 0;
+        }
+        if (result && vs.versionEndIncluding != null && !vs.versionEndIncluding.isEmpty()) {
+            final DependencyVersion endIncluding = new DependencyVersion(vs.versionEndIncluding);
+            result &= endIncluding.compareTo(target) >= 0;
+        }
+        if (result && vs.versionStartIncluding != null && !vs.versionStartIncluding.isEmpty()) {
+            final DependencyVersion startIncluding = new DependencyVersion(vs.versionStartIncluding);
+            result &= startIncluding.compareTo(target) <= 0;
+        }
+        return result;
+    }
+
+    /**
+     * Returns the versionEndExcluding.
+     *
+     * @return the versionEndExcluding
+     */
+    public String getVersionEndExcluding() {
+        return versionEndExcluding;
+    }
+
+    /**
+     * Returns the versionEndIncluding.
+     *
+     * @return the versionEndIncluding
+     */
+    public String getVersionEndIncluding() {
+        return versionEndIncluding;
+    }
+
+    /**
+     * Returns the versionStartExcluding.
+     *
+     * @return the versionStartExcluding
+     */
+    public String getVersionStartExcluding() {
+        return versionStartExcluding;
+    }
+
+    /**
+     * Returns the versionStartIncluding.
+     *
+     * @return the versionStartIncluding
+     */
+    public String getVersionStartIncluding() {
+        return versionStartIncluding;
+    }
+
+    /**
+     * Returns the value of vulnerable.
+     *
+     * @return the value of vulnerable
+     */
+    public boolean isVulnerable() {
+        return vulnerable;
+    }
+
     @Override
     public String toString() {
-        return "VulnerableSoftware{" + name + "[" + previousVersion + "]}";
-    }
-
-    /**
-     * Method that split versions for '.', '|' and '-". Then if a token start
-     * with a number and then contains letters, it will split it too. For
-     * example "12a" is split into ["12", "a"]. This is done to support correct
-     * comparison of "5.0.3a", "5.0.9" and "5.0.30".
-     *
-     * @param s the string to split
-     * @return an Array of String containing the tokens to be compared
-     */
-    private String[] split(String s) {
-        final Pattern pattern = Pattern.compile("^([\\d]+?)(.*)$");
-        final String[] splitted = s.split("(\\.|-)");
-
-        final ArrayList<String> res = new ArrayList<>();
-        for (String token : splitted) {
-            if (token.matches("^[\\d]+?[A-z]+")) {
-                final Matcher matcher = pattern.matcher(token);
-                matcher.find();
-                final String g1 = matcher.group(1);
-                final String g2 = matcher.group(2);
-
-                res.add(g1);
-                res.add(g2);
-                continue;
+        final StringBuilder sb = new StringBuilder();
+        sb.append(this.toCpe23FS());
+        boolean textAdded = false;
+        if (versionStartIncluding != null && !versionStartIncluding.isEmpty()) {
+            sb.append(" versions from (including) ")
+                    .append(versionStartIncluding);
+            textAdded = true;
+        }
+        if (versionStartExcluding != null && !versionStartExcluding.isEmpty()) {
+            if (textAdded) {
+                sb.append(";");
             }
-            res.add(token);
+            sb.append(" versions from (excluding) ")
+                    .append(versionStartExcluding);
+            textAdded = true;
         }
-        return res.toArray(new String[res.size()]);
-    }
-
-    /**
-     * Implementation of the comparable interface.
-     *
-     * @param vs the VulnerableSoftware to compare
-     * @return an integer indicating the ordering of the two objects
-     */
-    @Override
-    public int compareTo(VulnerableSoftware vs) {
-        int result = 0;
-        final String[] left = StringUtils.split(this.name, ':');
-        final String[] right = StringUtils.split(vs.getName(), ':');
-        final int max = (left.length <= right.length) ? left.length : right.length;
-        if (max > 0) {
-            for (int i = 0; result == 0 && i < max; i++) {
-                final String[] subLeft = split(left[i]);
-                final String[] subRight = split(right[i]);
-                final int subMax = (subLeft.length <= subRight.length) ? subLeft.length : subRight.length;
-                if (subMax > 0) {
-                    for (int x = 0; result == 0 && x < subMax; x++) {
-                        if (isPositiveInteger(subLeft[x]) && isPositiveInteger(subRight[x])) {
-                            try {
-                                result = Long.valueOf(subLeft[x]).compareTo(Long.valueOf(subRight[x]));
-                            } catch (NumberFormatException ex) {
-                                //ignore the exception - they obviously aren't numbers
-                                if (!subLeft[x].equalsIgnoreCase(subRight[x])) {
-                                    result = subLeft[x].compareToIgnoreCase(subRight[x]);
-                                }
-                            }
-                        } else {
-                            result = subLeft[x].compareToIgnoreCase(subRight[x]);
-                        }
-                    }
-                    if (result == 0) {
-                        if (subLeft.length > subRight.length) {
-                            result = 2;
-                        }
-                        if (subRight.length > subLeft.length) {
-                            result = -2;
-                        }
-                    }
-                } else {
-                    result = left[i].compareToIgnoreCase(right[i]);
-                }
+        if (versionEndIncluding != null && !versionEndIncluding.isEmpty()) {
+            if (textAdded) {
+                sb.append(";");
             }
-            if (result == 0) {
-                if (left.length > right.length) {
-                    result = 2;
-                }
-                if (right.length > left.length) {
-                    result = -2;
-                }
+            sb.append(" versions up to (including) ")
+                    .append(versionEndIncluding);
+            textAdded = true;
+        }
+        if (versionEndExcluding != null && !versionEndExcluding.isEmpty()) {
+            if (textAdded) {
+                sb.append(";");
             }
-        } else {
-            result = this.getName().compareToIgnoreCase(vs.getName());
+            sb.append(" versions up to (excluding) ")
+                    .append(versionEndExcluding);
+            textAdded = true;
         }
-        return result;
-    }
-
-    /**
-     * Determines if the string passed in is a positive integer. To be counted
-     * as a positive integer, the string must only contain 0-9 and must not have
-     * any leading zeros (though "0" is a valid positive integer).
-     *
-     * @param str the string to test
-     * @return true if the string only contains 0-9, otherwise false.
-     */
-    protected static boolean isPositiveInteger(final String str) {
-        if (str == null || str.isEmpty()) {
-            return false;
-        }
-
-        // numbers with leading zeros should not be treated as numbers
-        // (e.g. when comparing "01" <-> "1")
-        if (str.charAt(0) == '0' && str.length() > 1) {
-            return false;
-        }
-
-        for (int i = 0; i < str.length(); i++) {
-            final char c = str.charAt(i);
-            if (c < '0' || c > '9') {
-                return false;
+        if (!vulnerable) {
+            if (textAdded) {
+                sb.append(";");
             }
+            sb.append(" version is NOT VULNERABLE");
         }
-        return true;
-    }
-
-    /**
-     * Get the value of name.
-     *
-     * @return the value of name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Set the value of name.
-     *
-     * @param name new value of name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Get the value of version.
-     *
-     * @return the value of version
-     */
-    public String getVersion() {
-        return version;
-    }
-
-    /**
-     * Set the value of version.
-     *
-     * @param version new value of version
-     */
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    /**
-     * Get the value of update.
-     *
-     * @return the value of update
-     */
-    public String getUpdate() {
-        return update;
-    }
-
-    /**
-     * Set the value of update.
-     *
-     * @param update new value of update
-     */
-    public void setUpdate(String update) {
-        this.update = update;
-    }
-
-    /**
-     * Get the value of edition.
-     *
-     * @return the value of edition
-     */
-    public String getEdition() {
-        return edition;
-    }
-
-    /**
-     * Set the value of edition.
-     *
-     * @param edition new value of edition
-     */
-    public void setEdition(String edition) {
-        this.edition = edition;
-    }
-
-    /**
-     * Replaces '+' with '%2B' and then URL Decodes the string attempting first
-     * UTF-8, then ASCII, then default.
-     *
-     * @param string the string to URL Decode
-     * @return the URL Decoded string
-     */
-    private String urlDecode(String string) {
-        final String text = string.replace("+", "%2B");
-        String result;
-        try {
-            result = URLDecoder.decode(text, StandardCharsets.UTF_8.name());
-        } catch (UnsupportedEncodingException ex) {
-            try {
-                result = URLDecoder.decode(text, StandardCharsets.US_ASCII.name());
-            } catch (UnsupportedEncodingException ex1) {
-                result = defaultUrlDecode(text);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Call {@link java.net.URLDecoder#decode(String)} to URL decode using the
-     * default encoding.
-     *
-     * @param text www-form-encoded URL to decode
-     * @return the newly decoded String
-     */
-    @SuppressWarnings("deprecation")
-    private String defaultUrlDecode(final String text) {
-        return URLDecoder.decode(text);
+        return sb.toString();
     }
 }

@@ -111,21 +111,22 @@ public class RubyGemspecAnalyzerTest extends BaseTest {
         assertEquals("rest-client:1.7.2", result.getDisplayFileName());
     }
 
-    /**
-     * Test Rakefile analysis.
-     *
-     * @throws AnalysisException is thrown when an exception occurs.
-     */
-    //@Test  
-    //TODO: place holder to test Rakefile support
-    public void testAnalyzeRakefile() throws AnalysisException {
-        final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
-                "ruby/vulnerable/gems/rails-4.1.15/vendor/bundle/ruby/2.2.0/gems/pg-0.18.4/Rakefile"));
-        analyzer.analyze(result, null);
-        assertTrue(result.size() > 0);
-        assertEquals(RubyGemspecAnalyzer.DEPENDENCY_ECOSYSTEM, result.getEcosystem());
-        assertEquals("pg", result.getName());
-        assertEquals("0.18.4", result.getVersion());
-        assertEquals("pg:0.18.4", result.getDisplayFileName());
-    }
+//    /**
+//     * Test Rakefile analysis.
+//     *
+//     * @throws AnalysisException is thrown when an exception occurs.
+//     */
+//    @Test
+//    @Ignore
+//    //TODO: place holder to test Rakefile support
+//    public void testAnalyzeRakefile() throws AnalysisException {
+//        final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
+//                "ruby/vulnerable/gems/rails-4.1.15/vendor/bundle/ruby/2.2.0/gems/pg-0.18.4/Rakefile"));
+//        analyzer.analyze(result, null);
+//        assertTrue(result.size() > 0);
+//        assertEquals(RubyGemspecAnalyzer.DEPENDENCY_ECOSYSTEM, result.getEcosystem());
+//        assertEquals("pg", result.getName());
+//        assertEquals("0.18.4", result.getVersion());
+//        assertEquals("pg:0.18.4", result.getDisplayFileName());
+//    }
 }

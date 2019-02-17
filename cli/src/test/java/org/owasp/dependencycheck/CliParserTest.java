@@ -17,14 +17,16 @@
  */
 package org.owasp.dependencycheck;
 
+import com.google.common.base.Splitter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import java.util.List;
 import org.apache.commons.cli.ParseException;
 import org.junit.Assert;
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 /**
@@ -105,6 +107,7 @@ public class CliParserTest extends BaseTest {
         CliParser instance = new CliParser(getSettings());
         try {
             instance.parse(args);
+            Assert.fail("an argument for failOnCVSS was missing and an exception was not thrown");
         } catch (ParseException ex) {
             Assert.assertTrue(ex.getMessage().contains("Missing argument"));
         }
@@ -172,6 +175,7 @@ public class CliParserTest extends BaseTest {
 
         try {
             instance.parse(args);
+            Assert.fail("Unrecognized option should have caused an exception");
         } catch (ParseException ex) {
             Assert.assertTrue(ex.getMessage().contains("Unrecognized option"));
         }
@@ -194,6 +198,7 @@ public class CliParserTest extends BaseTest {
 
         try {
             instance.parse(args);
+            Assert.fail("Missing argument should have caused an exception");
         } catch (ParseException ex) {
             Assert.assertTrue(ex.getMessage().contains("Missing argument"));
         }
@@ -211,7 +216,7 @@ public class CliParserTest extends BaseTest {
     @Test
     public void testParse_scan_unknownFile() throws Exception {
 
-        String[] args = {"-scan", "jar.that.does.not.exist", "-app", "test"};
+        String[] args = {"-scan", "jar.that.does.not.exist", "--project", "test"};
 
         CliParser instance = new CliParser(getSettings());
         try {
@@ -233,7 +238,7 @@ public class CliParserTest extends BaseTest {
     @Test
     public void testParse_scan_withFileExists() throws Exception {
         File path = new File(this.getClass().getClassLoader().getResource("checkSumTest.file").toURI().getPath());
-        String[] args = {"-scan", path.getCanonicalPath(), "-out", "./", "-app", "test"};
+        String[] args = {"-scan", path.getCanonicalPath(), "-out", "./", "--project", "test"};
 
         CliParser instance = new CliParser(getSettings());
         instance.parse(args);
@@ -261,9 +266,9 @@ public class CliParserTest extends BaseTest {
         instance.printVersionInfo();
         try {
             baos.flush();
-            String text = (new String(baos.toByteArray())).toLowerCase();
-            String[] lines = text.split(System.getProperty("line.separator"));
-            Assert.assertEquals(1, lines.length);
+            String text = new String(baos.toByteArray(), UTF_8).toLowerCase();
+            List<String> lines = Splitter.onPattern(System.getProperty("line.separator")).splitToList(text);
+            Assert.assertTrue(lines.size() > 1);
             Assert.assertTrue(text.contains("version"));
             Assert.assertTrue(!text.contains("unknown"));
         } catch (IOException ex) {
@@ -290,15 +295,15 @@ public class CliParserTest extends BaseTest {
         String[] args = {"-h"};
         instance.parse(args);
         instance.printHelp();
-        args[0] = "-ah";
+        args[0] = "--advancedHelp";
         instance.parse(args);
         instance.printHelp();
         try {
             baos.flush();
-            String text = (new String(baos.toByteArray()));
-            String[] lines = text.split(System.getProperty("line.separator"));
-            Assert.assertTrue(lines[0].startsWith("usage: "));
-            Assert.assertTrue((lines.length > 2));
+            String text = (new String(baos.toByteArray(), UTF_8));
+            List<String> lines = Splitter.onPattern(System.getProperty("line.separator")).splitToList(text);
+            Assert.assertTrue(lines.get(0).startsWith("usage: "));
+            Assert.assertTrue((lines.size() > 2));
         } catch (IOException ex) {
             System.setOut(out);
             Assert.fail("CliParser.printVersionInfo did not write anything to system.out.");
@@ -317,6 +322,7 @@ public class CliParserTest extends BaseTest {
         CliParser instance = new CliParser(getSettings());
         try {
             instance.parse(args);
+            Assert.fail("invalid scan should have caused an error");
         } catch (FileNotFoundException ex) {
             Assert.assertTrue(ex.getMessage().contains("Invalid 'scan' argument"));
         }
@@ -326,10 +332,10 @@ public class CliParserTest extends BaseTest {
 
         expResult = false;
         result = instance.getBooleanArgument(CliParser.ARGUMENT.ARTIFACTORY_USES_PROXY);
-        assertEquals(expResult, result);
+        Assert.assertEquals(expResult, result);
         expResult = true;
         result = instance.getBooleanArgument(CliParser.ARGUMENT.ARTIFACTORY_PARALLEL_ANALYSIS);
-        assertEquals(expResult, result);
+        Assert.assertEquals(expResult, result);
     }
 
     /**
@@ -343,6 +349,7 @@ public class CliParserTest extends BaseTest {
         CliParser instance = new CliParser(getSettings());
         try {
             instance.parse(args);
+            Assert.fail("invalid scan argument should have caused an exception");
         } catch (FileNotFoundException ex) {
             Assert.assertTrue(ex.getMessage().contains("Invalid 'scan' argument"));
         }
@@ -352,10 +359,10 @@ public class CliParserTest extends BaseTest {
 
         expResult = "blue42";
         result = instance.getStringArgument(CliParser.ARGUMENT.ARTIFACTORY_USERNAME);
-        assertEquals(expResult, result);
+        Assert.assertEquals(expResult, result);
     }
-    
-        /**
+
+    /**
      * Test of getStringArgument method, of class CliParser.
      */
     @Test
@@ -366,15 +373,16 @@ public class CliParserTest extends BaseTest {
         CliParser instance = new CliParser(getSettings());
         try {
             instance.parse(args);
+            Assert.fail("invalid scan argument should have caused an exception");
         } catch (FileNotFoundException ex) {
             Assert.assertTrue(ex.getMessage().contains("Invalid 'scan' argument"));
         }
         boolean expResult = false;
         boolean result = instance.hasArgument("missingArgument");
-        assertEquals(expResult, result);
+        Assert.assertEquals(expResult, result);
 
         expResult = true;
         result = instance.hasArgument(CliParser.ARGUMENT.PROJECT);
-        assertEquals(expResult, result);
+        Assert.assertEquals(expResult, result);
     }
 }

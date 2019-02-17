@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
  * http://stackoverflow.com/questions/1037590/which-cipher-suites-to-enable-for-ssl-socket/23365536#23365536
  *
  * @author <a href="http://stackoverflow.com/users/608639/jww">jww</a>
+ * @version $Id: $Id
  */
 public class SSLSocketFactoryEx extends SSLSocketFactory {
 
@@ -56,9 +57,9 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      * Constructs a new SSLSocketFactory.
      *
      * @param settings reference to the configured settings
-     * @throws NoSuchAlgorithmException thrown when an algorithm is not
+     * @throws java.security.NoSuchAlgorithmException thrown when an algorithm is not
      * supported
-     * @throws KeyManagementException thrown if initialization fails
+     * @throws java.security.KeyManagementException thrown if initialization fails
      */
     public SSLSocketFactoryEx(Settings settings) throws NoSuchAlgorithmException, KeyManagementException {
         this.settings = settings;
@@ -72,9 +73,9 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      * @param tm the trust manager
      * @param random secure random
      * @param settings reference to the configured settings
-     * @throws NoSuchAlgorithmException thrown when an algorithm is not
+     * @throws java.security.NoSuchAlgorithmException thrown when an algorithm is not
      * supported
-     * @throws KeyManagementException thrown if initialization fails
+     * @throws java.security.KeyManagementException thrown if initialization fails
      */
     public SSLSocketFactoryEx(KeyManager[] km, TrustManager[] tm, SecureRandom random, Settings settings)
             throws NoSuchAlgorithmException, KeyManagementException {
@@ -87,9 +88,9 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      *
      * @param ctx the SSL context
      * @param settings reference to the configured settings
-     * @throws NoSuchAlgorithmException thrown when an algorithm is not
+     * @throws java.security.NoSuchAlgorithmException thrown when an algorithm is not
      * supported
-     * @throws KeyManagementException thrown if initialization fails
+     * @throws java.security.KeyManagementException thrown if initialization fails
      */
     public SSLSocketFactoryEx(SSLContext ctx, Settings settings) throws NoSuchAlgorithmException, KeyManagementException {
         this.settings = settings;
@@ -97,9 +98,9 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
     }
 
     /**
-     * Returns the default cipher suites.
+     * {@inheritDoc}
      *
-     * @return the default cipher suites
+     * Returns the default cipher suites.
      */
     @Override
     public String[] getDefaultCipherSuites() {
@@ -107,9 +108,9 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
     }
 
     /**
-     * Returns the supported cipher suites.
+     * {@inheritDoc}
      *
-     * @return the supported cipher suites
+     * Returns the supported cipher suites.
      */
     @Override
     public String[] getSupportedCipherSuites() {
@@ -135,14 +136,9 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
     }
 
     /**
-     * Creates an SSL Socket.
+     * {@inheritDoc}
      *
-     * @param s the base socket
-     * @param host the host
-     * @param port the port
-     * @param autoClose if the socket should auto-close
-     * @return the SSL Socket
-     * @throws IOException thrown if the creation fails
+     * Creates an SSL Socket.
      */
     @Override
     public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
@@ -155,14 +151,9 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
     }
 
     /**
-     * Creates a new SSL Socket.
+     * {@inheritDoc}
      *
-     * @param address the address to connect to
-     * @param port the port number
-     * @param localAddress the local address
-     * @param localPort the local port
-     * @return the SSL Socket
-     * @throws IOException thrown if the creation fails
+     * Creates a new SSL Socket.
      */
     @Override
     public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort) throws IOException {
@@ -175,14 +166,9 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
     }
 
     /**
-     * Creates a new SSL Socket.
+     * {@inheritDoc}
      *
-     * @param host the host to connect to
-     * @param port the port to connect to
-     * @param localHost the local host
-     * @param localPort the local port
-     * @return the SSL Socket
-     * @throws IOException thrown if the creation fails
+     * Creates a new SSL Socket.
      */
     @Override
     public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException {
@@ -195,12 +181,9 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
     }
 
     /**
-     * Creates a new SSL Socket.
+     * {@inheritDoc}
      *
-     * @param host the host to connect to
-     * @param port the port to connect to
-     * @return the SSL Socket
-     * @throws IOException thrown if the creation fails
+     * Creates a new SSL Socket.
      */
     @Override
     public Socket createSocket(InetAddress host, int port) throws IOException {
@@ -213,12 +196,9 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
     }
 
     /**
-     * Creates a new SSL Socket.
+     * {@inheritDoc}
      *
-     * @param host the host to connect to
-     * @param port the port to connect to
-     * @return the SSL Socket
-     * @throws IOException thrown if the creation fails
+     * Creates a new SSL Socket.
      */
     @Override
     public Socket createSocket(String host, int port) throws IOException {
