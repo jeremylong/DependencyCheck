@@ -28,13 +28,8 @@ import org.apache.lucene.search.similarities.ClassicSimilarity;
 public class DependencySimilarity extends ClassicSimilarity {
 
     /**
-     * the serial version uid.
-     */
-    private static final long serialVersionUID = 1L;
-
-    /**
      * <p>
-     * Override the default idf implementation so that frequency within all document is ignored.</p>
+     * Override the default IDF implementation so that frequency within all document is ignored.</p>
      *
      * See <a href="http://www.lucenetutorial.com/advanced-topics/scoring.html">this article</a> for more details.
      *

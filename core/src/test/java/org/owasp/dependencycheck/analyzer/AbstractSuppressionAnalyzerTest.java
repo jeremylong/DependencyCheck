@@ -150,7 +150,7 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
         return fileAnalyzer.getRuleCount();
     }
     
-    public class AbstractSuppressionAnalyzerImpl extends AbstractSuppressionAnalyzer {
+    public static class AbstractSuppressionAnalyzerImpl extends AbstractSuppressionAnalyzer {
         
         @Override
         public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {

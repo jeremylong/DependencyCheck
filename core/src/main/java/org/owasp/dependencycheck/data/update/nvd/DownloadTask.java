@@ -18,9 +18,7 @@
 package org.owasp.dependencycheck.data.update.nvd;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -30,7 +28,6 @@ import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
-import org.owasp.dependencycheck.utils.ExtractionUtil;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,11 +63,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
     /**
      * a file.
      */
-    private File first;
-    /**
-     * a file.
-     */
-    private File second;
+    private File file;
 
     /**
      * Simple constructor for the callable download task.
@@ -89,18 +82,11 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
         this.cveDB = cveDB;
         this.settings = settings;
 
-        final File file1;
-        final File file2;
-
         try {
-            file1 = File.createTempFile("cve" + nvdCveInfo.getId() + '_', ".xml", settings.getTempDirectory());
-            file2 = File.createTempFile("cve_1_2_" + nvdCveInfo.getId() + '_', ".xml", settings.getTempDirectory());
+            this.file = File.createTempFile("cve" + nvdCveInfo.getId() + '_', ".json.gz", settings.getTempDirectory());
         } catch (IOException ex) {
             throw new UpdateException("Unable to create temporary files", ex);
         }
-        this.first = file1;
-        this.second = file2;
-
     }
 
     /**
@@ -122,34 +108,23 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
     }
 
     /**
-     * Get the value of first.
+     * Get the value of file.
      *
-     * @return the value of first
+     * @return the value of file
      */
-    public File getFirst() {
-        return first;
-    }
-
-    /**
-     * Get the value of second.
-     *
-     * @return the value of second
-     */
-    public File getSecond() {
-        return second;
+    public File getFile() {
+        return file;
     }
 
     @Override
     public Future<ProcessTask> call() throws Exception {
         try {
             final URL url1 = new URL(nvdCveInfo.getUrl());
-            final URL url2 = new URL(nvdCveInfo.getOldSchemaVersionUrl());
             LOGGER.info("Download Started for NVD CVE - {}", nvdCveInfo.getId());
             final long startDownload = System.currentTimeMillis();
             try {
                 final Downloader downloader = new Downloader(settings);
-                downloader.fetchFile(url1, first);
-                downloader.fetchFile(url2, second);
+                downloader.fetchFile(url1, file);
             } catch (DownloadFailedException ex) {
                 LOGGER.warn("Download Failed for NVD CVE - {}\nSome CVEs may not be reported.", nvdCveInfo.getId());
                 if (settings.getString(Settings.KEYS.PROXY_SERVER) == null) {
@@ -157,19 +132,6 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
                 }
                 LOGGER.debug("", ex);
                 return null;
-            }
-            if (url1.toExternalForm().endsWith(".xml.gz") && !isXml(first)) {
-                ExtractionUtil.extractGzip(first);
-            }
-            if (url2.toExternalForm().endsWith(".xml.gz") && !isXml(second)) {
-                ExtractionUtil.extractGzip(second);
-            }
-
-            if (url1.toExternalForm().endsWith(".xml.zip") && !isXml(first)) {
-                ExtractionUtil.extractZip(first);
-            }
-            if (url2.toExternalForm().endsWith(".xml.zip") && !isXml(second)) {
-                ExtractionUtil.extractZip(second);
             }
 
             LOGGER.info("Download Complete for NVD CVE - {}  ({} ms)", nvdCveInfo.getId(),
@@ -193,39 +155,9 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
      * Attempts to delete the files that were downloaded.
      */
     public void cleanup() {
-        if (first != null && first.exists() && !first.delete()) {
-            LOGGER.debug("Failed to delete first temporary file {}", first.toString());
-            first.deleteOnExit();
-        }
-        if (second != null && second.exists() && !second.delete()) {
-            LOGGER.debug("Failed to delete second temporary file {}", second.toString());
-            second.deleteOnExit();
-        }
-    }
-
-    /**
-     * Checks the file header to see if it is an XML file.
-     *
-     * @param file the file to check
-     * @return true if the file is XML
-     */
-    public static boolean isXml(File file) {
-        if (file == null || !file.isFile()) {
-            return false;
-        }
-        try (InputStream is = new FileInputStream(file)) {
-            final byte[] buf = new byte[5];
-            final int read;
-            read = is.read(buf);
-            return read == 5
-                    && buf[0] == '<'
-                    && (buf[1] == '?')
-                    && (buf[2] == 'x' || buf[2] == 'X')
-                    && (buf[3] == 'm' || buf[3] == 'M')
-                    && (buf[4] == 'l' || buf[4] == 'L');
-        } catch (IOException ex) {
-            LOGGER.debug("Error checking if file is xml", ex);
-            return false;
+        if (file != null && file.exists() && !file.delete()) {
+            LOGGER.debug("Failed to delete first temporary file {}", file.toString());
+            file.deleteOnExit();
         }
     }
 }

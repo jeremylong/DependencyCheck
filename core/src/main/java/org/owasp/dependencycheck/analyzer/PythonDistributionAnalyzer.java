@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURL;
+import com.github.packageurl.PackageURLBuilder;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -47,6 +50,8 @@ import org.owasp.dependencycheck.utils.UrlStringUtils;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 
 /**
  * Used to analyze a Wheel or egg distribution files, or their contents in
@@ -63,7 +68,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
-    public static final String DEPENDENCY_ECOSYSTEM = "Python.Dist";
+    public static final String DEPENDENCY_ECOSYSTEM = "python";
 
     /**
      * Name of egg metadata files to analyze.
@@ -189,7 +194,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
                 final File parent = actualFile.getParentFile();
                 final String parentName = parent.getName();
                 if (parent.isDirectory()
-                        && (metadata && parentName.endsWith(".dist-info")
+                        && ((metadata && parentName.endsWith(".dist-info"))
                         || parentName.endsWith(".egg-info") || "EGG-INFO"
                         .equals(parentName))) {
                     collectWheelMetadata(dependency, actualFile);
@@ -307,6 +312,16 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
         final String summary = headers.getHeader("Summary", null);
         if (StringUtils.isNotBlank(summary)) {
             JarAnalyzer.addDescription(dependency, summary, METADATA, "summary");
+        }
+
+        try {
+            final PackageURL purl = PackageURLBuilder.aPackageURL().withType("pypi")
+                    .withName(name).withVersion(version).build();
+            dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));
+        } catch (MalformedPackageURLException ex) {
+            LOGGER.debug("Unable to build package url for python", ex);
+            final GenericIdentifier id = new GenericIdentifier("generic:" + name + "@" + version, Confidence.HIGHEST);
+            dependency.addSoftwareIdentifier(id);
         }
     }
 

@@ -23,13 +23,14 @@ import java.io.IOException;
  * An exception used when a download fails.
  *
  * @author Jeremy Long
+ * @version $Id: $Id
  */
 public class DownloadFailedException extends IOException {
 
     /**
-     * The serial version UID.
+     * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 4937242754894484078L;
 
     /**
      * Creates a new DownloadFailedException.

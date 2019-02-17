@@ -17,12 +17,14 @@
  */
 package org.owasp.dependencycheck.dependency;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
+import us.springett.parsers.cpe.exceptions.CpeValidationException;
+import us.springett.parsers.cpe.values.LogicalValue;
+import us.springett.parsers.cpe.values.Part;
 
 /**
  *
@@ -32,167 +34,72 @@ public class VulnerableSoftwareTest extends BaseTest {
 
     /**
      * Test of equals method, of class VulnerableSoftware.
+     *
+     * @throws CpeValidationException
      */
     @Test
-    public void testEquals() {
-        VulnerableSoftware obj = new VulnerableSoftware();
-        obj.setCpe("cpe:/a:mortbay:jetty:6.1.0");
-        VulnerableSoftware instance = new VulnerableSoftware();
-        instance.setCpe("cpe:/a:mortbay:jetty:6.1");
+    public void testEquals() throws CpeValidationException {
+        VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder();
+        VulnerableSoftware obj = null;
+        VulnerableSoftware instance = builder.part(Part.APPLICATION).vendor("mortbay").product("jetty").version("6.1").build();
         assertFalse(instance.equals(obj));
-    }
 
-    /**
-     * Test of equals method, of class VulnerableSoftware.
-     */
-    @Test
-    public void testEquals2() {
-        VulnerableSoftware obj = new VulnerableSoftware();
-        obj.setCpe("cpe:/a:mortbay:jetty:6.1.0");
-        VulnerableSoftware instance = new VulnerableSoftware();
-        instance.setCpe("cpe:/a:mortbay:jetty:6.1.0");
-        obj.setPreviousVersion("1");
+        obj = builder.part(Part.APPLICATION).vendor("mortbay").product("jetty").version("6.1.0").build();
+        instance = builder.part(Part.APPLICATION).vendor("mortbay").product("jetty").version("6.1").build();
+        assertFalse(instance.equals(obj));
+
+        obj = builder.part(Part.APPLICATION).vendor("mortbay").product("jetty").version("6.1.0").build();
+        instance = builder.part(Part.APPLICATION).vendor("mortbay").product("jetty").version("6.1.0").build();
         assertTrue(instance.equals(obj));
     }
 
     /**
-     * Test of hashCode method, of class VulnerableSoftware.
-     */
-    @Test
-    public void testHashCode() {
-        VulnerableSoftware instance = new VulnerableSoftware();
-        instance.setCpe("cpe:/a:mortbay:jetty:6.1");
-        int expResult = 1849413912;
-        int result = instance.hashCode();
-        assertEquals(expResult, result);
-    }
-
-    /**
      * Test of compareTo method, of class VulnerableSoftware.
+     * @throws CpeValidationException
      */
     @Test
-    public void testCompareTo() {
-        VulnerableSoftware vs = new VulnerableSoftware();
-        vs.setCpe("cpe:/a:mortbay:jetty:6.1.0");
-        VulnerableSoftware instance = new VulnerableSoftware();
-        instance.setCpe("cpe:/a:mortbay:jetty:6.1");
-        int expResult = -2;
-        int result = instance.compareTo(vs);
-        assertEquals(expResult, result);
-
-        vs = new VulnerableSoftware();
-        vs.setCpe("cpe:/a:yahoo:toolbar:3.1.0.20130813024103");
-        instance = new VulnerableSoftware();
-        instance.setCpe("cpe:/a:yahoo:toolbar:3.1.0.20130813024104");
-        expResult = 1;
-        result = instance.compareTo(vs);
-        assertEquals(expResult, result);
-    }
-
-    @Test
-    public void testCompareToNonNumerical() {
-        VulnerableSoftware vs = new VulnerableSoftware();
-        vs.setCpe("cpe:/a:mysql:mysql:5.1.23a");
-        VulnerableSoftware vs1 = new VulnerableSoftware();
-        vs1.setCpe("cpe:/a:mysql:mysql:5.1.23a");
-        vs1.setPreviousVersion("1");
-        assertEquals(0, vs.compareTo(vs1));
-        assertEquals(0, vs1.compareTo(vs));
-    }
-
-    @Test
-    public void testCompareToComplex() {
-        VulnerableSoftware vs = new VulnerableSoftware();
-        VulnerableSoftware vs1 = new VulnerableSoftware();
-
-        vs.setCpe("2.1");
-        vs1.setCpe("2.1.10");
-        assertTrue(vs.compareTo(vs1) < 0);
-
-        vs.setCpe("2.1.42");
-        vs1.setCpe("2.3.21");
-        assertTrue(vs.compareTo(vs1) < 0);
-
-        vs.setCpe("cpe:/a:hp:system_management_homepage:2.1.1");
-        vs1.setCpe("cpe:/a:hp:system_management_homepage:2.1.10");
-        assertTrue(vs.compareTo(vs1) < 0);
-
-        vs.setCpe("10");
-        vs1.setCpe("10-186");
-        assertTrue(vs.compareTo(vs1) < 0);
-
-        vs.setCpe("2.1.10");
-        vs1.setCpe("2.1.10-186");
-        assertTrue(vs.compareTo(vs1) < 0);
+    public void testCompareTo() throws CpeValidationException {
+        VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder();
+        VulnerableSoftware obj = builder.part(Part.APPLICATION).vendor("mortbay").product("jetty").version("6.1.0").build();
+        VulnerableSoftware instance = builder.part(Part.APPLICATION).vendor("mortbay").product("jetty").version("6.1").build();
+        int result = instance.compareTo(obj);
+        assertTrue(result<0);
         
-        vs.setCpe("cpe:/a:hp:system_management_homepage:2.1.10");
-        vs1.setCpe("cpe:/a:hp:system_management_homepage:2.1.10-186");
-        assertTrue(vs.compareTo(vs1) < 0);
-        //assertTrue(vs1.compareTo(vs)>0);
-
-        vs.setCpe("cpe:/a:ibm:security_guardium_database_activity_monitor:10.01");
-        vs1.setCpe("cpe:/a:ibm:security_guardium_database_activity_monitor:10.1");
-        assertTrue(vs.compareTo(vs1) < 0);
-
-        vs.setCpe("2.0");
-        vs1.setCpe("2.1");
-        assertTrue(vs.compareTo(vs1) < 0);
-    }
-
-    @Test
-    public void testEqualsPreviousVersion() {
-        VulnerableSoftware vs = new VulnerableSoftware();
-        vs.setCpe("cpe:/a:mysql:mysql:5.1.23a");
-        VulnerableSoftware vs1 = new VulnerableSoftware();
-        vs1.setCpe("cpe:/a:mysql:mysql:5.1.23a");
-        vs1.setPreviousVersion("1");
-        assertEquals(vs, vs1);
-        assertEquals(vs1, vs);
-
-    }
-
-    @Test
-    public void testParseCPE() {
-        VulnerableSoftware vs = new VulnerableSoftware();
-        /* Version for test taken from CVE-2008-2079 */
-        vs.setCpe("cpe:/a:mysql:mysql:5.1.23a");
-        assertEquals("mysql", vs.getVendor());
-        assertEquals("mysql", vs.getProduct());
-        assertEquals("5.1.23a", vs.getVersion());
-    }
-
-    @Test
-    public void testIspositiveInteger() {
-        assertTrue(VulnerableSoftware.isPositiveInteger("1"));
-        assertTrue(VulnerableSoftware.isPositiveInteger("10"));
-        assertTrue(VulnerableSoftware.isPositiveInteger("666"));
-        assertTrue(VulnerableSoftware.isPositiveInteger("0"));
-
-        assertFalse(VulnerableSoftware.isPositiveInteger("+1"));
-        assertFalse(VulnerableSoftware.isPositiveInteger("-1"));
-        assertFalse(VulnerableSoftware.isPositiveInteger("2.1"));
-        assertFalse(VulnerableSoftware.isPositiveInteger("01"));
-        assertFalse(VulnerableSoftware.isPositiveInteger("00"));
+        obj = builder.part(Part.APPLICATION).vendor("yahoo").product("toolbar").version("3.1.0.20130813024103").build();
+        instance = builder.part(Part.APPLICATION).vendor("yahoo").product("toolbar").version("3.1.0.20130813024104").build();
+        result = instance.compareTo(obj);
+        assertTrue(result>0);
     }
     
     @Test
-    public void testVersionsWithLettersComparison() {
-        VulnerableSoftware a = new VulnerableSoftware();
-        a.setName("cpe:/a:mysql:mysql:5.0.3a");
-
-        VulnerableSoftware b = new VulnerableSoftware();
-        b.setName("cpe:/a:mysql:mysql:5.0.9");
-
-        VulnerableSoftware c = new VulnerableSoftware();
-        c.setName("cpe:/a:mysql:mysql:5.0.30");
-
-        assertTrue(a.compareTo(b) < 0);
-        assertTrue(a.compareTo(c) < 0);
-
-        assertTrue(b.compareTo(a) > 0);
-        assertTrue(b.compareTo(c) < 0);
-
-        assertTrue(c.compareTo(a) > 0);
-        assertTrue(c.compareTo(b) > 0);
+    public void testCompareVersionRange() throws CpeValidationException {
+        VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder();
+        VulnerableSoftware instance = builder.version("2.0.0").build();
+        assertTrue(instance.compareVersionRange("2.0.0"));
+        assertFalse(instance.compareVersionRange("2.0.1"));
+        
+        instance = builder.version(LogicalValue.ANY).build();
+        assertTrue(instance.compareVersionRange("2.0.1"));
+        
+        instance = builder.version(LogicalValue.NA).build();
+        assertFalse(instance.compareVersionRange("2.0.1"));
+        
+        instance = builder.version(LogicalValue.ANY).versionEndIncluding("2.0.1").build();
+        assertTrue(instance.compareVersionRange("2.0.1"));
+        assertFalse(instance.compareVersionRange("2.0.2"));
+        
+        instance = builder.version(LogicalValue.ANY).versionEndExcluding("2.0.2").build();
+        assertTrue(instance.compareVersionRange("2.0.1"));
+        assertFalse(instance.compareVersionRange("2.0.2"));
+        
+        
+        instance = builder.version(LogicalValue.ANY).versionStartIncluding("1.0.1").build();
+        assertTrue(instance.compareVersionRange("1.0.1"));
+        assertFalse(instance.compareVersionRange("1.0.0"));
+        
+        instance = builder.version(LogicalValue.ANY).versionStartExcluding("1.0.0").build();
+        assertTrue(instance.compareVersionRange("1.0.1"));
+        assertFalse(instance.compareVersionRange("1.0.0"));
     }
+
 }

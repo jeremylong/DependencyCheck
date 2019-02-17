@@ -41,7 +41,3 @@ The following analyzers can be enabled by enabling the _retired_ configuration
 option; see the documentation for the CLI, Ant, Maven, etc. for more information.
 These analyzers have been retired due to the higher false positive and
 false negative rates.
-
-| Analyzer | File Types Scanned | Analysis Method |
-| -------- | ------------------ | --------------- |
-| [Node.js](./nodejs.html) | NPM package specification files (package.json) | Parse JSON format for metadata. |

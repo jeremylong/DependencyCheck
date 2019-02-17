@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
  * Utility for searching files.
  *
  * @author Jeremy Long
+ * @version $Id: $Id
  */
 public final class FileContentSearch {
 
@@ -45,10 +46,10 @@ public final class FileContentSearch {
      * @param pattern the pattern used to test the file
      * @return <code>true</code> if the regular expression matches the file
      * content; otherwise <code>false</code>
-     * @throws IOException thrown if there is an error reading the file
+     * @throws java.io.IOException thrown if there is an error reading the file
      */
     public static boolean contains(File file, String pattern) throws IOException {
-        try (Scanner fileScanner = new Scanner(file)) {
+        try (Scanner fileScanner = new Scanner(file, "UTF-8")) {
             final Pattern regex = Pattern.compile(pattern);
             if (fileScanner.findWithinHorizon(regex, 0) != null) {
                 return true;
@@ -64,20 +65,15 @@ public final class FileContentSearch {
      * @param patterns the array of patterns used to test the file
      * @return <code>true</code> if one of the regular expressions matches the
      * file content; otherwise <code>false</code>
-     * @throws IOException thrown if there is an error reading the file
+     * @throws java.io.IOException thrown if there is an error reading the file
      */
     public static boolean contains(File file, String[] patterns) throws IOException {
         final List<Pattern> regexes = new ArrayList<>();
         for (String pattern : patterns) {
             regexes.add(Pattern.compile(pattern));
         }
-        try (Scanner fileScanner = new Scanner(file)) {
-            for (Pattern regex : regexes) {
-                if (fileScanner.findWithinHorizon(regex, 0) != null) {
-                    return true;
-                }
-            }
+        try (Scanner fileScanner = new Scanner(file, "UTF-8")) {
+            return regexes.stream().anyMatch((regex) -> (fileScanner.findWithinHorizon(regex, 0) != null));
         }
-        return false;
     }
 }

@@ -5,6 +5,11 @@
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0
     http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
 
+    <description><![CDATA[
+    A set of rules for the ODC project to ensure loggers are utilized correctly.
+    ]]></description>
+
+    
     <rule name="LoggerChaining"
           message="Logger should be a field, don't chain it"
           class="net.sourceforge.pmd.lang.rule.XPathRule"

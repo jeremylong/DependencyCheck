@@ -37,6 +37,7 @@ import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
@@ -215,7 +216,7 @@ public class AssemblyAnalyzerTest extends BaseTest {
         try {
             analyzer.closeAnalyzer();
         } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new UnexpectedAnalysisException(ex);
         } finally {
             super.tearDown();
         }

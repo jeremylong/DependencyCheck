@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -272,18 +273,16 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                         extractAndAnalyze(d, engine, scanDepth + 1);
                     }
                 } else {
-                    for (Dependency sub : dependencySet) {
-                        if (sub.getFilePath().startsWith(tmpDir.getAbsolutePath())) {
-                            final String displayPath = String.format("%s%s",
-                                    dependency.getFilePath(),
-                                    sub.getActualFilePath().substring(tmpDir.getAbsolutePath().length()));
-                            final String displayName = String.format("%s: %s",
-                                    dependency.getFileName(),
-                                    sub.getFileName());
-                            sub.setFilePath(displayPath);
-                            sub.setFileName(displayName);
-                        }
-                    }
+                    dependencySet.stream().filter((sub) -> (sub.getFilePath().startsWith(tmpDir.getAbsolutePath()))).forEach((sub) -> {
+                        final String displayPath = String.format("%s%s",
+                                dependency.getFilePath(),
+                                sub.getActualFilePath().substring(tmpDir.getAbsolutePath().length()));
+                        final String displayName = String.format("%s: %s",
+                                dependency.getFileName(),
+                                sub.getFileName());
+                        sub.setFilePath(displayPath);
+                        sub.setFileName(displayName);
+                    });
                 }
             }
         }
@@ -320,20 +319,18 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 org.apache.commons.io.FileUtils.copyFile(dependency.getActualFile(), tmpLoc);
                 final List<Dependency> dependencySet = findMoreDependencies(engine, tmpLoc);
                 if (dependencySet != null && !dependencySet.isEmpty()) {
-                    for (Dependency d : dependencySet) {
+                    dependencySet.forEach((d) -> {
                         //fix the dependency's display name and path
                         if (d.getActualFile().equals(tmpLoc)) {
                             d.setFilePath(dependency.getFilePath());
                             d.setDisplayFileName(dependency.getFileName());
                         } else {
-                            for (Dependency sub : d.getRelatedDependencies()) {
-                                if (sub.getActualFile().equals(tmpLoc)) {
-                                    sub.setFilePath(dependency.getFilePath());
-                                    sub.setDisplayFileName(dependency.getFileName());
-                                }
-                            }
+                            d.getRelatedDependencies().stream().filter((rel) -> (rel.getActualFile().equals(tmpLoc))).forEach((rel) -> {
+                                rel.setFilePath(dependency.getFilePath());
+                                rel.setDisplayFileName(dependency.getFileName());
+                            });
                         }
-                    }
+                    });
                 }
             } catch (IOException ex) {
                 LOGGER.debug("Unable to perform deep copy on '{}'", dependency.getActualFile().getPath(), ex);
@@ -532,15 +529,18 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     private void extractArchive(ArchiveInputStream input, File destination, Engine engine) throws ArchiveExtractionException {
         ArchiveEntry entry;
         try {
-            final String destPath = destination.getCanonicalPath();
+            //final String destPath = destination.getCanonicalPath();
+            final Path d = destination.toPath();
             while ((entry = input.getNextEntry()) != null) {
-                final File file = new File(destination, entry.getName());
-                if (!file.getCanonicalPath().startsWith(destPath)) {
+                //final File file = new File(destination, entry.getName());
+                final Path f = d.resolve(entry.getName()).normalize();
+                if (!f.startsWith(d)) {
                     final String msg = String.format(
                             "Archive contains a file (%s) that would be extracted outside of the target directory.",
-                            file.getName());
+                            entry.getName());
                     throw new ArchiveExtractionException(msg);
                 }
+                final File file = f.toFile();
                 if (entry.isDirectory()) {
                     if (!file.exists() && !file.mkdirs()) {
                         final String msg = String.format("Unable to create directory '%s'.", file.getAbsolutePath());

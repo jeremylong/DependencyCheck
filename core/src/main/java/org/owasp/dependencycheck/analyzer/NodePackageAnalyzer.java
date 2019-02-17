@@ -215,8 +215,10 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
             if (parentName.isEmpty()) {
                 return;
             }
+            dependency.setName(parentName);
             final String parentPackage;
             if (!parentVersion.isEmpty()) {
+                dependency.setVersion(parentVersion);
                 parentPackage = String.format("%s:%s", parentName, parentVersion);
             } else {
                 parentPackage = parentName;

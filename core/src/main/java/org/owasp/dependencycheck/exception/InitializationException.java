@@ -28,9 +28,10 @@ import javax.annotation.concurrent.ThreadSafe;
 public class InitializationException extends Exception {
 
     /**
-     * The serial version uid.
+     * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 6034529098584358957L;
+
     /**
      * Whether or not the exception is fatal.
      */

@@ -38,6 +38,7 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
@@ -254,7 +255,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                                     Thread.sleep(sleepingTimeBetweenRetriesInMillis);
                                     sleepingTimeBetweenRetriesInMillis *= 2;
                                 } catch (InterruptedException ex1) {
-                                    throw new RuntimeException(ex1);
+                                    throw new UnexpectedAnalysisException(ex1);
                                 }
                             }
                             //CSON: NestedTryDepth

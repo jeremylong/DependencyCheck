@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.lucene;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import org.apache.lucene.analysis.Analyzer;
@@ -35,7 +36,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.store.MMapDirectory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -53,7 +54,8 @@ public class FieldAnalyzerTest extends BaseTest {
     public void testAnalyzers() throws Exception {
 
         Analyzer analyzer = new SearchFieldAnalyzer();
-        Directory index = new RAMDirectory();
+        File temp = getSettings().getTempDirectory();
+        Directory index = new MMapDirectory(temp.toPath());
 
         String field1 = "product";
         String text1 = "springframework";

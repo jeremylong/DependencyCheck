@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURL;
+import com.github.packageurl.PackageURLBuilder;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -31,8 +34,12 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This analyzer is used to analyze the SWIFT Package Manager
@@ -44,6 +51,11 @@ import org.owasp.dependencycheck.utils.Settings;
 @Experimental
 @ThreadSafe
 public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
+
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(RubyGemspecAnalyzer.class);
 
     /**
      * A descriptor for the type of dependencies processed or added by this
@@ -161,6 +173,24 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
             } else {
                 dependency.setDisplayFileName(dependency.getName());
             }
+
+            try {
+                PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType("swift").withName(dependency.getName());
+                if (dependency.getVersion() != null) {
+                    builder.withVersion(dependency.getVersion());
+                }
+                PackageURL purl = builder.build();
+                dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));
+            } catch (MalformedPackageURLException ex) {
+                LOGGER.debug("Unable to build package url for python", ex);
+                GenericIdentifier id;
+                if (dependency.getVersion() != null) {
+                    id = new GenericIdentifier("swift:" + dependency.getName() + "@" + dependency.getVersion(), Confidence.HIGHEST);
+                } else {
+                    id = new GenericIdentifier("swift:" + dependency.getName(), Confidence.HIGHEST);
+                }
+                dependency.addSoftwareIdentifier(id);
+            }
         }
         setPackagePath(dependency);
     }
@@ -193,7 +223,6 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
                 dependency.addEvidence(type, SPM_FILE_NAME, field, value, confidence);
             }
         }
-
         return value;
     }
 

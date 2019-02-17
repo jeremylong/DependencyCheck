@@ -351,13 +351,7 @@ public final class ConnectionFactory {
     private void updateSchema(Connection conn, DependencyVersion appExpectedVersion, DependencyVersion currentDbVersion)
             throws DatabaseException {
 
-        final String databaseProductName;
-        try {
-            databaseProductName = conn.getMetaData().getDatabaseProductName();
-        } catch (SQLException ex) {
-            throw new DatabaseException("Unable to get the database product name", ex);
-        }
-        if ("h2".equalsIgnoreCase(databaseProductName)) {
+        if (connectionString.startsWith("jdbc:h2:file:")) {
             LOGGER.debug("Updating database structure");
             final String updateFile = String.format(DB_STRUCTURE_UPDATE_RESOURCE, currentDbVersion.toString());
             try (InputStream is = FileUtils.getResourceAsStream(updateFile)) {
@@ -369,14 +363,10 @@ public final class ConnectionFactory {
                 Statement statement = null;
                 try {
                     statement = conn.createStatement();
-                    final boolean success = statement.execute(dbStructureUpdate);
-                    if (!success && statement.getUpdateCount() <= 0) {
-                        throw new DatabaseException(String.format("Unable to upgrade the database schema to %s",
-                                currentDbVersion.toString()));
-                    }
+                    statement.execute(dbStructureUpdate);
                 } catch (SQLException ex) {
-                    LOGGER.debug("", ex);
-                    throw new DatabaseException("Unable to update database schema", ex);
+                    throw new DatabaseException(String.format("Unable to upgrade the database schema from %s to %s",
+                            currentDbVersion.toString(), appExpectedVersion.toString()), ex);
                 } finally {
                     DBUtils.closeStatement(statement);
                 }
@@ -429,9 +419,9 @@ public final class ConnectionFactory {
                 if (db == null) {
                     throw new DatabaseException("Invalid database schema");
                 }
+                LOGGER.debug("DC Schema: {}", appDbVersion.toString());
+                LOGGER.debug("DB Schema: {}", db.toString());
                 if (appDbVersion.compareTo(db) > 0) {
-                    LOGGER.debug("Current Schema: {}", dbSchemaVersion);
-                    LOGGER.debug("DB Schema: {}", rs.getString(1));
                     updateSchema(conn, appDbVersion, db);
                     if (++callDepth < 10) {
                         ensureSchemaVersion(conn);

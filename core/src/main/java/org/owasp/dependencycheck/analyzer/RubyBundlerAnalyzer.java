@@ -55,7 +55,7 @@ public class RubyBundlerAnalyzer extends RubyGemspecAnalyzer {
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
-    public static final String DEPENDENCY_ECOSYSTEM = "Ruby.Bundle";
+    public static final String DEPENDENCY_ECOSYSTEM = RubyBundleAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
 
     /**
      * The name of the analyzer.

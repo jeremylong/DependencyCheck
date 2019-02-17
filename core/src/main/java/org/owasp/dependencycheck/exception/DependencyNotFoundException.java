@@ -28,9 +28,9 @@ import javax.annotation.concurrent.ThreadSafe;
 public class DependencyNotFoundException extends Exception {
 
     /**
-     * The serial version uid.
+     * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -1611516991448058531L;
 
     /**
      * Creates a new DependencyNotFoundException.

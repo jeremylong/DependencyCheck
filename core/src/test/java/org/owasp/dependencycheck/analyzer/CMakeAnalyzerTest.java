@@ -36,6 +36,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 
@@ -76,8 +77,6 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
     public void tearDown() throws Exception {
         try {
             analyzer.close();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
         } finally {
             super.tearDown();
         }

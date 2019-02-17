@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURL;
+import com.github.packageurl.PackageURLBuilder;
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -33,7 +36,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.exception.InitializationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Used to analyze OpenSSL source code present in the file system.
@@ -43,6 +50,10 @@ import org.owasp.dependencycheck.exception.InitializationException;
 @ThreadSafe
 public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
 
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(OpenSSLAnalyzer.class);
     /**
      * Hexadecimal.
      */
@@ -185,9 +196,20 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
         if (!contents.isEmpty()) {
             final Matcher matcher = VERSION_PATTERN.matcher(contents);
             if (matcher.find()) {
-                dependency.addEvidence(EvidenceType.VERSION, OPENSSLV_H, "Version Constant",
-                        getOpenSSLVersion(Long.parseLong(matcher.group(1), HEXADECIMAL)), Confidence.HIGH);
                 found = true;
+                final String version = getOpenSSLVersion(Long.parseLong(matcher.group(1), HEXADECIMAL));
+                dependency.addEvidence(EvidenceType.VERSION, OPENSSLV_H, "Version Constant",
+                        version, Confidence.HIGH);
+                try {
+                    final PackageURL purl = PackageURLBuilder.aPackageURL().withType("generic")
+                            .withName("openssl").withVersion(version).build();
+                    dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));
+                } catch (MalformedPackageURLException ex) {
+                    LOGGER.debug("Unable to build package url for openssl", ex);
+                    final GenericIdentifier id = new GenericIdentifier("generic:openssl@" + version, Confidence.HIGHEST);
+                    dependency.addSoftwareIdentifier(id);
+                }
+
             }
         }
         if (found) {

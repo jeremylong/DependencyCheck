@@ -31,7 +31,7 @@ public class HintParseException extends IOException {
     /**
      * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 8692689312494579153L;
 
     /**
      * Creates a new SuppressionParseException.

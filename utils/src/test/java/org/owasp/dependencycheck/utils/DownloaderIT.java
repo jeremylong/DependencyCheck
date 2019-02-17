@@ -19,7 +19,6 @@ package org.owasp.dependencycheck.utils;
 
 import java.io.File;
 import java.net.URL;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 
@@ -40,18 +39,10 @@ public class DownloaderIT extends BaseTest {
 //        Settings.setString(Settings.KEYS.CONNECTION_TIMEOUT, "1000");
 //        Settings.setString(Settings.KEYS.PROXY_PORT, "8080");
 //        Settings.setString(Settings.KEYS.PROXY_SERVER, "127.0.0.1");
-        URL url = new URL(getSettings().getString(Settings.KEYS.CVE_MODIFIED_20_URL));
+        URL url = new URL(getSettings().getString(Settings.KEYS.CVE_MODIFIED_JSON));
         File outputPath = new File("target/downloaded_cve.xml");
         Downloader downloader = new Downloader(getSettings());
         downloader.fetchFile(url, outputPath);
         assertTrue(outputPath.isFile());
-    }
-
-    @Test
-    public void testGetLastModified() throws Exception {
-        URL url = new URL(getSettings().getString(Settings.KEYS.CVE_MODIFIED_20_URL));
-        Downloader downloader = new Downloader(getSettings());
-        long timestamp = downloader.getLastModified(url);
-        assertTrue("timestamp equal to zero?", timestamp > 0);
     }
 }

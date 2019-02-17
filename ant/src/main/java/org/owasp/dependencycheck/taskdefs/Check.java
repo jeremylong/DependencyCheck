@@ -31,10 +31,9 @@ import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.FileProvider;
 import org.apache.tools.ant.types.resources.Resources;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.agent.DependencyCheckScanAgent;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
-import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
@@ -50,10 +49,6 @@ import org.slf4j.impl.StaticLoggerBinder;
 @NotThreadSafe
 public class Check extends Update {
 
-    /**
-     * System specific new line character.
-     */
-    private static final String NEW_LINE = System.getProperty("line.separator", "\n").intern();
     /**
      * Whether the ruby gemspec analyzer should be enabled.
      */
@@ -135,14 +130,6 @@ public class Check extends Update {
      * The path to Mono for .NET assembly analysis on non-windows systems.
      */
     private String pathToMono;
-
-    /**
-     * The application name for the report.
-     *
-     * @deprecated use projectName instead.
-     */
-    @Deprecated
-    private String applicationName = null;
     /**
      * The name of the project being analyzed.
      */
@@ -165,14 +152,6 @@ public class Check extends Update {
      * recommended that this be turned to false. Default is true.
      */
     private Boolean autoUpdate;
-    /**
-     * Whether only the update phase should be executed.
-     *
-     * @deprecated Use the update task instead
-     */
-    @Deprecated
-    private boolean updateOnly = false;
-
     /**
      * The report format to be generated (HTML, XML, VULN, CSV, JSON, ALL).
      * Default is HTML.
@@ -376,39 +355,13 @@ public class Check extends Update {
     }
 
     /**
-     * Get the value of applicationName.
-     *
-     * @return the value of applicationName
-     *
-     * @deprecated use projectName instead.
-     */
-    @Deprecated
-    public String getApplicationName() {
-        return applicationName;
-    }
-
-    /**
-     * Set the value of applicationName.
-     *
-     * @param applicationName new value of applicationName
-     * @deprecated use projectName instead.
-     */
-    @Deprecated
-    public void setApplicationName(String applicationName) {
-        this.applicationName = applicationName;
-    }
-
-    /**
      * Get the value of projectName.
      *
      * @return the value of projectName
      */
     public String getProjectName() {
-        if (applicationName != null) {
-            log("Configuration 'applicationName' has been deprecated, please use 'projectName' instead", Project.MSG_WARN);
-            if ("dependency-check".equals(projectName)) {
-                projectName = applicationName;
-            }
+        if (projectName == null) {
+            projectName = "";
         }
         return projectName;
     }
@@ -474,28 +427,6 @@ public class Check extends Update {
      */
     public void setAutoUpdate(Boolean autoUpdate) {
         this.autoUpdate = autoUpdate;
-    }
-
-    /**
-     * Get the value of updateOnly.
-     *
-     * @return the value of updateOnly
-     * @deprecated Use the update task instead
-     */
-    @Deprecated
-    public boolean isUpdateOnly() {
-        return updateOnly;
-    }
-
-    /**
-     * Set the value of updateOnly.
-     *
-     * @param updateOnly new value of updateOnly
-     * @deprecated Use the update task instead
-     */
-    @Deprecated
-    public void setUpdateOnly(boolean updateOnly) {
-        this.updateOnly = updateOnly;
     }
 
     /**
@@ -1320,42 +1251,30 @@ public class Check extends Update {
         validateConfiguration();
         populateSettings();
         try (Engine engine = new Engine(Check.class.getClassLoader(), getSettings())) {
-            if (isUpdateOnly()) {
-                log("Deprecated 'UpdateOnly' property set; please use the UpdateTask instead", Project.MSG_WARN);
-                try {
-                    engine.doUpdates();
-                } catch (UpdateException ex) {
-                    if (this.isFailOnError()) {
-                        throw new BuildException(ex);
-                    }
-                    log(ex.getMessage(), Project.MSG_ERR);
-                }
-            } else {
-                for (Resource resource : getPath()) {
-                    final FileProvider provider = resource.as(FileProvider.class);
-                    if (provider != null) {
-                        final File file = provider.getFile();
-                        if (file != null && file.exists()) {
-                            engine.scan(file);
-                        }
+            for (Resource resource : getPath()) {
+                final FileProvider provider = resource.as(FileProvider.class);
+                if (provider != null) {
+                    final File file = provider.getFile();
+                    if (file != null && file.exists()) {
+                        engine.scan(file);
                     }
                 }
+            }
 
-                try {
-                    engine.analyzeDependencies();
-                } catch (ExceptionCollection ex) {
-                    if (this.isFailOnError()) {
-                        throw new BuildException(ex);
-                    }
+            try {
+                engine.analyzeDependencies();
+            } catch (ExceptionCollection ex) {
+                if (this.isFailOnError()) {
+                    throw new BuildException(ex);
                 }
-                engine.writeReports(getProjectName(), new File(reportOutputDirectory), reportFormat);
+            }
+            engine.writeReports(getProjectName(), new File(reportOutputDirectory), reportFormat);
 
-                if (this.failBuildOnCVSS <= 10) {
-                    checkForFailure(engine.getDependencies());
-                }
-                if (this.showSummary) {
-                    showSummary(engine.getDependencies());
-                }
+            if (this.failBuildOnCVSS <= 10) {
+                checkForFailure(engine.getDependencies());
+            }
+            if (this.showSummary) {
+                DependencyCheckScanAgent.showSummary(engine.getDependencies());
             }
         } catch (DatabaseException ex) {
             final String msg = "Unable to connect to the dependency-check database; analysis has stopped";
@@ -1457,7 +1376,7 @@ public class Check extends Update {
         final StringBuilder ids = new StringBuilder();
         for (Dependency d : dependencies) {
             for (Vulnerability v : d.getVulnerabilities()) {
-                if (v.getCvssScore() >= failBuildOnCVSS) {
+                if (v.getCvssV2().getScore() >= failBuildOnCVSS) {
                     if (ids.length() == 0) {
                         ids.append(v.getName());
                     } else {
@@ -1478,47 +1397,6 @@ public class Check extends Update {
                         + "See the dependency-check report for more details.%n%n");
             }
             throw new BuildException(msg);
-        }
-    }
-
-    /**
-     * Generates a warning message listing a summary of dependencies and their
-     * associated CPE and CVE entries.
-     *
-     * @param dependencies a list of dependency objects
-     */
-    private void showSummary(Dependency[] dependencies) {
-        final StringBuilder summary = new StringBuilder();
-        for (Dependency d : dependencies) {
-            boolean firstEntry = true;
-            final StringBuilder ids = new StringBuilder();
-            for (Vulnerability v : d.getVulnerabilities(true)) {
-                if (firstEntry) {
-                    firstEntry = false;
-                } else {
-                    ids.append(", ");
-                }
-                ids.append(v.getName());
-            }
-            if (ids.length() > 0) {
-                summary.append(d.getFileName()).append(" (");
-                firstEntry = true;
-                for (Identifier id : d.getIdentifiers()) {
-                    if (firstEntry) {
-                        firstEntry = false;
-                    } else {
-                        summary.append(", ");
-                    }
-                    summary.append(id.getValue());
-                }
-                summary.append(") : ").append(ids).append(NEW_LINE);
-            }
-        }
-        if (summary.length() > 0) {
-            final String msg = String.format("%n%n"
-                    + "One or more dependencies were identified with known vulnerabilities:%n%n%s"
-                    + "%n%nSee the dependency-check report for more details.%n%n", summary.toString());
-            log(msg, Project.MSG_WARN);
         }
     }
 

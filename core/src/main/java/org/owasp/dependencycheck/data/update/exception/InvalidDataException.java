@@ -29,9 +29,9 @@ import javax.annotation.concurrent.ThreadSafe;
 public class InvalidDataException extends Exception {
 
     /**
-     * The serial version UID.
+     * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2511103356591299027L;
 
     /**
      * Creates an InvalidDataException.

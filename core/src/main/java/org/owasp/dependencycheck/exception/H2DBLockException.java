@@ -28,9 +28,9 @@ import javax.annotation.concurrent.ThreadSafe;
 public class H2DBLockException extends Exception {
 
     /**
-     * The serial version uid.
+     * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 8987298706527142594L;
 
     /**
      * Creates a new H2DBLockException.

@@ -32,6 +32,7 @@ import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.utils.Settings;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 
@@ -60,11 +61,11 @@ public class JarAnalyzerTest extends BaseTest {
         file = BaseTest.getResourceAsFile(this, "dwr.jar");
         result = new Dependency(file);
         instance.analyze(result, null);
-        assertEquals(JarAnalyzer.DEPENDENCY_ECOSYSTEM,result.getEcosystem());
+        assertEquals(JarAnalyzer.DEPENDENCY_ECOSYSTEM, result.getEcosystem());
         boolean found = false;
         for (Evidence e : result.getEvidence(EvidenceType.VENDOR)) {
             if (e.getName().equals("url")) {
-                assertEquals("Project url was not as expected in dwr.jar", e.getValue(), "http://getahead.ltd.uk/dwr");
+                assertEquals("Project url was not as expected in dwr.jar", "http://getahead.ltd.uk/dwr", e.getValue());
                 found = true;
                 break;
             }
@@ -109,7 +110,38 @@ public class JarAnalyzerTest extends BaseTest {
         file = BaseTest.getResourceAsFile(this, "org.mortbay.jmx.jar");
         result = new Dependency(file);
         instance.analyze(result, null);
-        assertEquals("org.mortbar.jmx.jar has version evidence?", result.getEvidence(EvidenceType.VERSION).size(), 0);
+        assertEquals("org.mortbar.jmx.jar has version evidence?", 0, result.getEvidence(EvidenceType.VERSION).size());
+    }
+
+    @Test
+    public void testAddMatchingValues() throws Exception {
+        File file = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
+        Dependency dependency = new Dependency(file);
+        JarAnalyzer instance = new JarAnalyzer();
+        instance.initialize(getSettings());
+        instance.prepareFileTypeAnalyzer(null);
+
+        final List<JarAnalyzer.ClassNameInformation> classNames = instance.collectClassNames(dependency);
+
+        JarAnalyzer.addMatchingValues(classNames, "thevelocity", dependency, EvidenceType.VENDOR);
+        JarAnalyzer.addMatchingValues(classNames, "freemarkercore", dependency, EvidenceType.VENDOR);
+        JarAnalyzer.addMatchingValues(classNames, "the defaultpropertiesprovidertest", dependency, EvidenceType.VENDOR);
+        JarAnalyzer.addMatchingValues(classNames, "thedefaultpropertiesprovider test", dependency, EvidenceType.VENDOR);
+        JarAnalyzer.addMatchingValues(classNames, "thedefaultpropertiesprovidertest", dependency, EvidenceType.VENDOR);
+
+        assertFalse(dependency.getEvidence(EvidenceType.VENDOR).toString().toLowerCase().contains("velocity"));
+        assertFalse(dependency.getEvidence(EvidenceType.VENDOR).toString().toLowerCase().contains("freemarker"));
+        assertFalse(dependency.getEvidence(EvidenceType.VENDOR).toString().toLowerCase().contains("defaultpropertiesprovider"));
+
+        JarAnalyzer.addMatchingValues(classNames, "strutsexception", dependency, EvidenceType.VENDOR);
+        JarAnalyzer.addMatchingValues(classNames, "the velocity", dependency, EvidenceType.VENDOR);
+        JarAnalyzer.addMatchingValues(classNames, "freemarker core", dependency, EvidenceType.VENDOR);
+        JarAnalyzer.addMatchingValues(classNames, "the defaultpropertiesprovider test", dependency, EvidenceType.VENDOR);
+
+        assertTrue(dependency.getEvidence(EvidenceType.VENDOR).toString().toLowerCase().contains("strutsexception"));
+        assertTrue(dependency.getEvidence(EvidenceType.VENDOR).toString().toLowerCase().contains("velocity"));
+        assertTrue(dependency.getEvidence(EvidenceType.VENDOR).toString().toLowerCase().contains("freemarker"));
+        assertTrue(dependency.getEvidence(EvidenceType.VENDOR).toString().toLowerCase().contains("defaultpropertiesprovider"));
     }
 
     /**

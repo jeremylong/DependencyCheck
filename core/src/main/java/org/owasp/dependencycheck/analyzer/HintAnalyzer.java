@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -139,6 +138,7 @@ public class HintAnalyzer extends AbstractAnalyzer {
      * the dependency.
      */
     @Override
+    @SuppressWarnings("StringSplitter")
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         for (HintRule hint : hints) {
             boolean matchFound = false;
@@ -173,41 +173,43 @@ public class HintAnalyzer extends AbstractAnalyzer {
                 }
             }
             if (matchFound) {
-                for (Evidence e : hint.getAddVendor()) {
+                hint.getAddVendor().stream().forEach((e) -> {
                     dependency.addEvidence(EvidenceType.VENDOR, e);
-                }
-                for (Evidence e : hint.getAddProduct()) {
+                    for (String weighting : e.getValue().split(" ")) {
+                        dependency.addVendorWeighting(weighting);
+                    }
+                });
+                hint.getAddProduct().stream().forEach((e) -> {
                     dependency.addEvidence(EvidenceType.PRODUCT, e);
-                }
-                for (Evidence e : hint.getAddVersion()) {
+                    for (String weighting : e.getValue().split(" ")) {
+                        dependency.addProductWeighting(weighting);
+                    }
+                });
+                hint.getAddVersion().forEach((e) -> {
                     dependency.addEvidence(EvidenceType.VERSION, e);
-                }
+                });
 
-                for (EvidenceMatcher e : hint.getRemoveVendor()) {
+                hint.getRemoveVendor().forEach((e) -> {
                     removeMatchingEvidences(dependency, EvidenceType.VENDOR, e);
-                }
-                for (EvidenceMatcher e : hint.getRemoveProduct()) {
+                });
+                hint.getRemoveProduct().forEach((e) -> {
                     removeMatchingEvidences(dependency, EvidenceType.PRODUCT, e);
-                }
-                for (EvidenceMatcher e : hint.getRemoveVersion()) {
+                });
+                hint.getRemoveVersion().forEach((e) -> {
                     removeMatchingEvidences(dependency, EvidenceType.VERSION, e);
-                }
+                });
             }
         }
 
         final Iterator<Evidence> itr = dependency.getEvidence(EvidenceType.VENDOR).iterator();
-        final List<Evidence> newEntries = new ArrayList<>();
         while (itr.hasNext()) {
             final Evidence e = itr.next();
             for (VendorDuplicatingHintRule dhr : vendorHints) {
                 if (dhr.getValue().equalsIgnoreCase(e.getValue())) {
-                    newEntries.add(new Evidence(e.getSource() + " (hint)",
+                    dependency.addEvidence(EvidenceType.VENDOR, new Evidence(e.getSource() + " (hint)",
                             e.getName(), dhr.getDuplicate(), e.getConfidence()));
                 }
             }
-        }
-        for (Evidence e : newEntries) {
-            dependency.addEvidence(EvidenceType.VENDOR, e);
         }
     }
 

@@ -39,7 +39,6 @@ import org.apache.commons.text.WordUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
-import org.apache.velocity.runtime.RuntimeConstants;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -86,10 +85,6 @@ public class ReportGenerator {
          * Generate HTML report.
          */
         HTML,
-        /**
-         * Generate HTML Vulnerability report.
-         */
-        VULN,
         /**
          * Generate JSON report.
          */
@@ -166,8 +161,6 @@ public class ReportGenerator {
      */
     private VelocityEngine createVelocityEngine() {
         final VelocityEngine velocity = new VelocityEngine();
-        // Logging redirection for Velocity - Required by Jenkins and other server applications
-        velocity.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, VelocityLoggerRedirect.class.getName());
         return velocity;
     }
 
@@ -199,6 +192,7 @@ public class ReportGenerator {
         ctxt.put("scanDate", scanDate);
         ctxt.put("scanDateXML", scanDateXML);
         ctxt.put("enc", new EscapeTool());
+        ctxt.put("rpt", new ReportTool());
         ctxt.put("WordUtils", new WordUtils());
         ctxt.put("VENDOR", EvidenceType.VENDOR);
         ctxt.put("PRODUCT", EvidenceType.PRODUCT);
@@ -284,9 +278,6 @@ public class ReportGenerator {
         }
         if (format == Format.HTML && !pathToCheck.endsWith(".html") && !pathToCheck.endsWith(".htm")) {
             return new File(outFile, "dependency-check-report.html");
-        }
-        if (format == Format.VULN && !pathToCheck.endsWith(".html") && !pathToCheck.endsWith(".htm")) {
-            return new File(outFile, "dependency-check-vulnerability.html");
         }
         if (format == Format.JSON && !pathToCheck.endsWith(".json")) {
             return new File(outFile, "dependency-check-report.json");

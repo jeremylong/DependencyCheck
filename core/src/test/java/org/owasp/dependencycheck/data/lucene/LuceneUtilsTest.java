@@ -18,6 +18,8 @@
 package org.owasp.dependencycheck.data.lucene;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
@@ -26,7 +28,7 @@ import org.owasp.dependencycheck.BaseTest;
  *
  * @author Jeremy Long
  */
-public class LuceneUtilsTest  extends BaseTest {
+public class LuceneUtilsTest extends BaseTest {
 
     /**
      * Test of appendEscapedLuceneQuery method, of class LuceneUtils.
@@ -71,5 +73,16 @@ public class LuceneUtilsTest  extends BaseTest {
         String expResult = null;
         String result = LuceneUtils.escapeLuceneQuery(text);
         assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testIsKeyword() {
+        assertTrue("'AND' is a keyword and should return true", LuceneUtils.isKeyword("And"));
+        assertTrue("'OR' is a keyword and should return true", LuceneUtils.isKeyword("OR"));
+        assertTrue("'NOT' is a keyword and should return true", LuceneUtils.isKeyword("nOT"));
+        assertTrue("'TO' is being considered a keyword and should return true", LuceneUtils.isKeyword("TO"));
+        assertTrue("'+' is being considered a keyword and should return true", LuceneUtils.isKeyword("+"));
+        assertTrue("'-' is being considered a keyword and should return true", LuceneUtils.isKeyword("-"));
+        assertFalse("'the' is not a keyword and should return false", LuceneUtils.isKeyword("test"));
     }
 }

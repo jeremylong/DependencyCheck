@@ -136,7 +136,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         }
         args.add(dependency.getActualFilePath());
         final ProcessBuilder pb = new ProcessBuilder(args);
-        Document doc = null;
+        final Document doc;
         try {
             final Process proc = pb.start();
             final DocumentBuilder builder = XmlUtils.buildSecureDocumentBuilder();
@@ -149,7 +149,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.warn("Error from GrokAssembly: {}", errorStream);
             }
 
-            int rc = 0;
+            final int rc;
             try {
                 rc = proc.waitFor();
             } catch (InterruptedException ie) {

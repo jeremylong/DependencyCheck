@@ -39,13 +39,13 @@ public class UpdateableNvdCveTest extends BaseTest {
         String url = new File("target/test-classes/nvdcve-2.0-2012.xml").toURI().toString();
         long timestamp = 42;
         UpdateableNvdCve instance = new UpdateableNvdCve();
-        instance.add(id, url, url, timestamp, false);
+        instance.add(id, url, timestamp, false);
 
         boolean expResult = false;
         boolean result = instance.isUpdateNeeded();
         assertEquals(expResult, result);
 
-        instance.add("nextId", url, url, 23, true);
+        instance.add("nextId", url, 23, true);
 
         expResult = true;
         result = instance.isUpdateNeeded();
@@ -58,21 +58,20 @@ public class UpdateableNvdCveTest extends BaseTest {
     @Test
     public void testAdd() throws Exception {
         String id = "key";
-        String url = new File("target/test-classes/nvdcve-2.0-2012.xml").toURI().toString();
+        String url = new File("target/test-classes/nvdcve-1.0-2012.json.gz").toURI().toString();
         long timestamp = 42;
         UpdateableNvdCve instance = new UpdateableNvdCve();
-        instance.add(id, url, url, timestamp, false);
+        instance.add(id, url, timestamp, false);
 
         boolean expResult = false;
         boolean result = instance.isUpdateNeeded();
         assertEquals(expResult, result);
 
-        instance.add("nextId", url, url, 23, false);
+        instance.add("nextId", url, 23, false);
         NvdCveInfo results = instance.get(id);
 
         assertEquals(id, results.getId());
         assertEquals(url, results.getUrl());
-        assertEquals(url, results.getOldSchemaVersionUrl());
         assertEquals(timestamp, results.getTimestamp());
     }
 
@@ -82,10 +81,10 @@ public class UpdateableNvdCveTest extends BaseTest {
     @Test
     public void testClear() {
         String id = "key";
-        String url = new File("target/test-classes/nvdcve-2.0-2012.xml").toURI().toString();
+        String url = new File("target/test-classes/nvdcve-1.0-2012.json.gz").toURI().toString();
         long timestamp = 42;
         UpdateableNvdCve instance = new UpdateableNvdCve();
-        instance.add(id, url, url, timestamp, false);
+        instance.add(id, url, timestamp, false);
         assertFalse(instance.getCollection().isEmpty());
         instance.clear();
         assertTrue(instance.getCollection().isEmpty());
@@ -96,11 +95,11 @@ public class UpdateableNvdCveTest extends BaseTest {
      */
     @Test
     public void testIterator() {
-        String url = new File("target/test-classes/nvdcve-2.0-2012.xml").toURI().toString();
+        String url = new File("target/test-classes/nvdcve-1.0-2012.json.gz").toURI().toString();
         UpdateableNvdCve instance = new UpdateableNvdCve();
-        instance.add("one", url, url, 42, false);
-        instance.add("two", url, url, 23, false);
-        instance.add("three", url, url, 17, false);
+        instance.add("one", url, 42, false);
+        instance.add("two", url, 23, false);
+        instance.add("three", url, 17, false);
         int itemsProcessed = 0;
         for (NvdCveInfo item : instance) {
             if ("one".equals(item.getId())) {

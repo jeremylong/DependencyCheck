@@ -20,7 +20,7 @@ package org.owasp.dependencycheck.data.update.nvd;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
- * A pojo that contains the Url and timestamp of the current NvdCve XML files.
+ * A pojo that contains the Url and timestamp of the current NvdCve JSON files.
  *
  * @author Jeremy Long
  */
@@ -35,10 +35,6 @@ public class NvdCveInfo {
      * a url.
      */
     private String url;
-    /**
-     * The 1.2 schema URL.
-     */
-    private String oldSchemaVersionUrl;
     /**
      * a timestamp - epoch time.
      */
@@ -82,24 +78,6 @@ public class NvdCveInfo {
      */
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    /**
-     * Get the value of oldSchemaVersionUrl.
-     *
-     * @return the value of oldSchemaVersionUrl
-     */
-    public String getOldSchemaVersionUrl() {
-        return oldSchemaVersionUrl;
-    }
-
-    /**
-     * Set the value of oldSchemaVersionUrl.
-     *
-     * @param oldSchemaVersionUrl new value of oldSchemaVersionUrl
-     */
-    public void setOldSchemaVersionUrl(String oldSchemaVersionUrl) {
-        this.oldSchemaVersionUrl = oldSchemaVersionUrl;
     }
 
     /**

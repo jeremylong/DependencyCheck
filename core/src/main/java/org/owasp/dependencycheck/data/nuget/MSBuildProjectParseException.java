@@ -28,9 +28,9 @@ import javax.annotation.concurrent.ThreadSafe;
 public class MSBuildProjectParseException extends Exception {
 
     /**
-     * The serialVersionUID
+     * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1;
+    private static final long serialVersionUID = 8190311907044058000L;
 
     /**
      * Constructs a new exception with <code>null</code> as its detail message.

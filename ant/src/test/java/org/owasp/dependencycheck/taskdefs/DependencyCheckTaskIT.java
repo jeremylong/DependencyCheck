@@ -88,7 +88,7 @@ public class DependencyCheckTaskIT extends BaseDBTestCase {
      */
     @Test
     public void testAddDirSet() throws Exception {
-        File report = new File("target/dependency-check-vulnerability.html");
+        File report = new File("target/dependency-check-report.csv");
         if (report.exists()) {
             if (!report.delete()) {
                 throw new Exception("Unable to delete 'target/DependencyCheck-Vulnerability.html' prior to test.");
@@ -117,18 +117,13 @@ public class DependencyCheckTaskIT extends BaseDBTestCase {
 
         // WHEN executing the ant task
         buildFileRule.executeTarget(antTaskName);
-        System.out.println("----------------------------------------------------------");
-        System.out.println("----------------------------------------------------------");
-        System.out.println("----------------------------------------------------------");
-        System.out.println("----------------------------------------------------------");
-        System.out.println(buildFileRule.getError());
-        System.out.println("----------------------------------------------------------");
-        System.out.println("----------------------------------------------------------");
-        System.out.println(buildFileRule.getFullLog());
-        System.out.println("----------------------------------------------------------");
-        System.out.println("----------------------------------------------------------");
-        System.out.println("----------------------------------------------------------");
-        System.out.println("----------------------------------------------------------");
+        if (buildFileRule.getError() != null && !buildFileRule.getError().isEmpty()) {
+            System.out.println("----------------------------------------------------------");
+            System.out.println(buildFileRule.getError());
+            System.out.println("----------------------------------------------------------");
+            System.out.println(buildFileRule.getFullLog());
+            System.out.println("----------------------------------------------------------");
+        }
 
         // THEN the ant task executed without error
         final File report = new File("target/suppression-report.html");
@@ -168,7 +163,7 @@ public class DependencyCheckTaskIT extends BaseDBTestCase {
         final File report = new File("target/suppression-multiple-report.html");
         assertTrue("Expected the DependencyCheck report to be generated", report.exists());
     }
-    
+
     /**
      * Test the DependencyCheckTask retireJS configuration.
      */

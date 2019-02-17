@@ -22,7 +22,7 @@ import java.net.URLEncoder;
 import java.util.Set;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.text.StringEscapeUtils;
-import org.owasp.dependencycheck.dependency.Identifier;
+import org.owasp.dependencycheck.dependency.naming.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,8 +109,7 @@ public class EscapeTool {
         if (text == null || text.isEmpty()) {
             return text;
         }
-        //until lang3 has escapeJavaScript we use this...
-        return org.apache.commons.lang.StringEscapeUtils.escapeJavaScript(text);
+        return StringEscapeUtils.escapeEcmaScript(text);
     }
 
     /**
@@ -146,43 +145,12 @@ public class EscapeTool {
         boolean addComma = false;
         final StringBuilder sb = new StringBuilder();
         for (Identifier id : ids) {
-            if (!"cpe".equals(id.getType())) {
-                if (addComma) {
-                    sb.append(", ");
-                } else {
-                    addComma = true;
-                }
-                sb.append(id.getValue());
+            if (addComma) {
+                sb.append(", ");
+            } else {
+                addComma = true;
             }
-        }
-        if (sb.length() == 0) {
-            return "\"\"";
-        }
-        return StringEscapeUtils.escapeCsv(sb.toString());
-    }
-
-    /**
-     * Takes a set of Identifiers, filters them to just CPEs, and formats them
-     * for display in a CSV.
-     *
-     * @param ids the set of identifiers
-     * @return the formatted list of CPE identifiers
-     */
-    public String csvCpe(Set<Identifier> ids) {
-        if (ids == null || ids.isEmpty()) {
-            return "\"\"";
-        }
-        boolean addComma = false;
-        final StringBuilder sb = new StringBuilder();
-        for (Identifier id : ids) {
-            if ("cpe".equals(id.getType())) {
-                if (addComma) {
-                    sb.append(", ");
-                } else {
-                    addComma = true;
-                }
-                sb.append(id.getValue());
-            }
+            sb.append(id.getValue());
         }
         if (sb.length() == 0) {
             return "\"\"";
@@ -204,43 +172,12 @@ public class EscapeTool {
         boolean addComma = false;
         final StringBuilder sb = new StringBuilder();
         for (Identifier id : ids) {
-            if ("cpe".equals(id.getType())) {
-                if (addComma) {
-                    sb.append(", ");
-                } else {
-                    addComma = true;
-                }
-                sb.append(id.getConfidence());
+            if (addComma) {
+                sb.append(", ");
+            } else {
+                addComma = true;
             }
-        }
-        if (sb.length() == 0) {
-            return "\"\"";
-        }
-        return StringEscapeUtils.escapeCsv(sb.toString());
-    }
-
-    /**
-     * Takes a set of Identifiers, filters them to just GAVs, and formats them
-     * for display in a CSV.
-     *
-     * @param ids the set of identifiers
-     * @return the formatted list of GAV identifiers
-     */
-    public String csvGav(Set<Identifier> ids) {
-        if (ids == null || ids.isEmpty()) {
-            return "\"\"";
-        }
-        boolean addComma = false;
-        final StringBuilder sb = new StringBuilder();
-        for (Identifier id : ids) {
-            if ("maven".equals(id.getType()) || "npm".equals(id.getType())) {
-                if (addComma) {
-                    sb.append(", ");
-                } else {
-                    addComma = true;
-                }
-                sb.append(id.getValue());
-            }
+            sb.append(id.getConfidence());
         }
         if (sb.length() == 0) {
             return "\"\"";

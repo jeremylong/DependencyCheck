@@ -27,7 +27,7 @@ import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
- * @author jerem
+ * @author Jeremy Long
  */
 public class VersionFilterAnalyzerTest extends BaseTest {
 
@@ -194,8 +194,10 @@ public class VersionFilterAnalyzerTest extends BaseTest {
         instance.analyzeDependency(dependency, null);
         assertEquals(4,  dependency.getEvidence(EvidenceType.VERSION).size());
 
+        assertNull(dependency.getVersion());
         dependency.addEvidence(EvidenceType.VERSION, "Manifest", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
         instance.analyzeDependency(dependency, null);
+        assertEquals("1.2.3", dependency.getVersion());
         assertEquals(2,  dependency.getEvidence(EvidenceType.VERSION).size());
 
         dependency.addEvidence(EvidenceType.VERSION, "nexus", "version", "1.2.3", Confidence.HIGHEST);

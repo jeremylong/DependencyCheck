@@ -33,6 +33,7 @@ import org.xml.sax.SAXParseException;
  * Collection of XML related code.
  *
  * @author Jeremy Long
+ * @version $Id: $Id
  */
 public final class XmlUtils {
 
@@ -65,13 +66,13 @@ public final class XmlUtils {
      * parser should be able to validate the XML against, one InputStream per
      * schema
      * @return a SAX Parser
-     * @throws ParserConfigurationException is thrown if there is a parser
+     * @throws javax.xml.parsers.ParserConfigurationException is thrown if there is a parser
      * configuration exception
-     * @throws SAXNotRecognizedException thrown if there is an unrecognized
+     * @throws org.xml.sax.SAXNotRecognizedException thrown if there is an unrecognized
      * feature
-     * @throws SAXNotSupportedException thrown if there is a non-supported
+     * @throws org.xml.sax.SAXNotSupportedException thrown if there is a non-supported
      * feature
-     * @throws SAXException is thrown if there is a SAXException
+     * @throws org.xml.sax.SAXException is thrown if there is a org.xml.sax.SAXException
      */
     public static SAXParser buildSecureSaxParser(InputStream... schemaStream) throws ParserConfigurationException,
             SAXNotRecognizedException, SAXNotSupportedException, SAXException {
@@ -95,7 +96,7 @@ public final class XmlUtils {
      *
      * @param lexicalXSDBoolean The string-value of the boolean
      * @return the boolean value represented by {@code lexicalXSDBoolean}
-     * @throws IllegalArgumentException When {@code lexicalXSDBoolean} does fit
+     * @throws java.lang.IllegalArgumentException When {@code lexicalXSDBoolean} does fit
      * the lexical space of the XSD boolean datatype
      */
     public static boolean parseBoolean(String lexicalXSDBoolean) {
@@ -119,13 +120,13 @@ public final class XmlUtils {
      * Constructs a secure SAX Parser.
      *
      * @return a SAX Parser
-     * @throws ParserConfigurationException thrown if there is a parser
+     * @throws javax.xml.parsers.ParserConfigurationException thrown if there is a parser
      * configuration exception
-     * @throws SAXNotRecognizedException thrown if there is an unrecognized
+     * @throws org.xml.sax.SAXNotRecognizedException thrown if there is an unrecognized
      * feature
-     * @throws SAXNotSupportedException thrown if there is a non-supported
+     * @throws org.xml.sax.SAXNotSupportedException thrown if there is a non-supported
      * feature
-     * @throws SAXException is thrown if there is a SAXException
+     * @throws org.xml.sax.SAXException is thrown if there is a org.xml.sax.SAXException
      */
     public static SAXParser buildSecureSaxParser() throws ParserConfigurationException,
             SAXNotRecognizedException, SAXNotSupportedException, SAXException {
@@ -140,7 +141,7 @@ public final class XmlUtils {
      * Constructs a new document builder with security features enabled.
      *
      * @return a new document builder
-     * @throws ParserConfigurationException thrown if there is a parser
+     * @throws javax.xml.parsers.ParserConfigurationException thrown if there is a parser
      * configuration exception
      */
     public static DocumentBuilder buildSecureDocumentBuilder() throws ParserConfigurationException {

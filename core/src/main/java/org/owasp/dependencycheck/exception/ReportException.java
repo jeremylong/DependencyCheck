@@ -28,9 +28,9 @@ import javax.annotation.concurrent.ThreadSafe;
 public class ReportException extends Exception {
 
     /**
-     * The serial version uid.
+     * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -4493406196818346185L;
 
     /**
      * Creates a new ReportException.

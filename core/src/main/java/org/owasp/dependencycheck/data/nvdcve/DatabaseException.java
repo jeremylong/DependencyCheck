@@ -28,9 +28,9 @@ import javax.annotation.concurrent.ThreadSafe;
 public class DatabaseException extends RuntimeException {
 
     /**
-     * the serial version uid.
+     * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -2099842966372554285L;
 
     /**
      * Creates an DatabaseException.

@@ -93,7 +93,7 @@ public class AnalysisTask implements Callable<Void> {
             } catch (Throwable ex) {
                 LOGGER.warn("An unexpected error occurred during analysis of '{}' ({}): {}",
                         dependency.getActualFilePath(), analyzer.getName(), ex.getMessage());
-                LOGGER.debug("", ex);
+                LOGGER.error("", ex);
                 exceptions.add(ex);
             }
         }

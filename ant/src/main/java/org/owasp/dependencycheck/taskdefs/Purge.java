@@ -114,7 +114,7 @@ public class Purge extends Task {
         populateSettings();
         final File db;
         try {
-            db = new File(settings.getDataDirectory(), "dc.h2.db");
+            db = new File(getSettings().getDataDirectory(), getSettings().getString(Settings.KEYS.DB_FILE_NAME, "dc.mv.db"));
             if (db.exists()) {
                 if (db.delete()) {
                     log("Database file purged; local copy of the NVD has been removed", Project.MSG_INFO);

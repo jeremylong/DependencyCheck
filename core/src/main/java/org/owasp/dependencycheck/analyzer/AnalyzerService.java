@@ -90,7 +90,7 @@ public class AnalyzerService {
      * @param phases the phases to obtain analyzers for
      * @return a list of Analyzers
      */
-    private List<Analyzer> getAnalyzers(List<AnalysisPhase> phases) {
+    public List<Analyzer> getAnalyzers(List<AnalysisPhase> phases) {
         final List<Analyzer> analyzers = new ArrayList<>();
         final Iterator<Analyzer> iterator = service.iterator();
         boolean experimentalEnabled = false;

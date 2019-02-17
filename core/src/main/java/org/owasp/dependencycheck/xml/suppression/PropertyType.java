@@ -158,7 +158,7 @@ public class PropertyType {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof PropertyType)) {
             return false;
         }
         final PropertyType other = (PropertyType) obj;

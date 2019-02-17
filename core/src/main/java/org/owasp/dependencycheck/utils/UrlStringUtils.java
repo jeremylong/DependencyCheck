@@ -92,6 +92,7 @@ public final class UrlStringUtils {
      * @return importantParts a list of the important parts of the URL
      * @throws MalformedURLException thrown if the URL is malformed
      */
+    @SuppressWarnings("StringSplitter")
     public static List<String> extractImportantUrlData(String text) throws MalformedURLException {
         final List<String> importantParts = new ArrayList<>();
         final URL url = new URL(text);

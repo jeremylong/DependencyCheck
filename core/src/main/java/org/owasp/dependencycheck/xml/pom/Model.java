@@ -28,7 +28,7 @@ import org.apache.commons.text.lookup.StringLookup;
 /**
  * A simple pojo to hold data related to a Maven POM file.
  *
- * @author jeremy
+ * @author jeremy long
  */
 @NotThreadSafe
 public class Model {

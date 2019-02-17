@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURL;
+import com.github.packageurl.PackageURLBuilder;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nuget.MSBuildProjectParseException;
@@ -40,6 +43,8 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 import static org.owasp.dependencycheck.analyzer.NuspecAnalyzer.DEPENDENCY_ECOSYSTEM;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 
 /**
  * Analyzes MS Project files for dependencies.
@@ -101,6 +106,7 @@ public class MSBuildProjectAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     @Override
+    @SuppressWarnings("StringSplitter")
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         LOGGER.debug("Checking MSBuild project file {}", dependency);
         try {
@@ -126,6 +132,14 @@ public class MSBuildProjectAnalyzer extends AbstractFileTypeAnalyzer {
                 child.setEcosystem(DEPENDENCY_ECOSYSTEM);
                 child.setName(id);
                 child.setVersion(version);
+                try {
+                    final PackageURL purl = PackageURLBuilder.aPackageURL().withType("nuget").withName(id).withVersion(version).build();
+                    child.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));
+                } catch (MalformedPackageURLException ex) {
+                    LOGGER.debug("Unable to build package url for msbuild", ex);
+                    final GenericIdentifier gid = new GenericIdentifier("msbuild:" + id + "@" + version, Confidence.HIGHEST);
+                    child.addSoftwareIdentifier(gid);
+                }
                 child.setPackagePath(String.format("%s:%s", id, version));
                 child.setSha1sum(Checksum.getSHA1Checksum(String.format("%s:%s", id, version)));
                 child.setSha256sum(Checksum.getSHA256Checksum(String.format("%s:%s", id, version)));

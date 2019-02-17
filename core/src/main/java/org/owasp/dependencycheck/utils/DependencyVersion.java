@@ -135,7 +135,7 @@ public class DependencyVersion implements Iterable<String>, Comparable<Dependenc
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof DependencyVersion)) {
             return false;
         }
         final DependencyVersion other = (DependencyVersion) obj;

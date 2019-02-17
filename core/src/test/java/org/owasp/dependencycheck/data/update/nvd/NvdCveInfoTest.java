@@ -53,18 +53,6 @@ public class NvdCveInfoTest extends BaseTest {
     }
 
     /**
-     * Test of getOldSchemaVersionUrl method, of class NvdCveInfo.
-     */
-    @Test
-    public void testSetGetOldSchemaVersionUrl() {
-        NvdCveInfo instance = new NvdCveInfo();
-        String expResult = "http://www.someurl.com/something";
-        instance.setOldSchemaVersionUrl(expResult);
-        String result = instance.getOldSchemaVersionUrl();
-        assertEquals(expResult, result);
-    }
-
-    /**
      * Test of getTimestamp method, of class NvdCveInfo.
      */
     @Test

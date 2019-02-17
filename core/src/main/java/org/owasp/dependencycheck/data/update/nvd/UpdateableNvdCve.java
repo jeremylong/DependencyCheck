@@ -71,17 +71,14 @@ public class UpdateableNvdCve implements Iterable<NvdCveInfo>, Iterator<NvdCveIn
      *
      * @param id the key for the item to be added
      * @param url the URL to download the item
-     * @param oldUrl the URL for the old version of the item (the NVD CVE old
-     * schema still contains useful data we need).
      * @param timestamp the last modified date of the downloaded item
      * @param needsUpdate whether or not the data needs to be updated
      */
-    public void add(String id, String url, String oldUrl, long timestamp, boolean needsUpdate) {
+    public void add(String id, String url, long timestamp, boolean needsUpdate) {
         final NvdCveInfo item = new NvdCveInfo();
         item.setNeedsUpdate(needsUpdate); //the others default to true, to make life easier later this should default to false.
         item.setId(id);
         item.setUrl(url);
-        item.setOldSchemaVersionUrl(oldUrl);
         item.setTimestamp(timestamp);
         collection.put(id, item);
     }

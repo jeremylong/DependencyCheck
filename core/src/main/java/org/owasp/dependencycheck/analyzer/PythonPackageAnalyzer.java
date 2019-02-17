@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURL;
+import com.github.packageurl.PackageURLBuilder;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
@@ -36,7 +39,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.exception.InitializationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Used to analyze a Python package, and collect information that can be used to
@@ -49,10 +56,15 @@ import org.owasp.dependencycheck.exception.InitializationException;
 public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
+     * The logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(PythonPackageAnalyzer.class);
+
+    /**
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
-    public static final String DEPENDENCY_ECOSYSTEM = "Python.Pkg";
+    public static final String DEPENDENCY_ECOSYSTEM = PythonDistributionAnalyzer.DEPENDENCY_ECOSYSTEM;
 
     /**
      * Used when compiling file scanning regex patterns.
@@ -249,6 +261,24 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
                     source, "URL", contents);
             found |= gatherHomePageEvidence(dependency, EvidenceType.VENDOR, HOMEPAGE_PATTERN,
                     source, "HomePage", contents);
+
+            try {
+                final PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType("pypi").withName(dependency.getName());
+                if (dependency.getVersion() != null) {
+                    builder.withVersion(dependency.getVersion());
+                }
+                final PackageURL purl = builder.build();
+                dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));
+            } catch (MalformedPackageURLException ex) {
+                LOGGER.debug("Unable to build package url for python", ex);
+                final GenericIdentifier id;
+                if (dependency.getVersion() != null) {
+                    id = new GenericIdentifier("generic:" + dependency.getName() + "@" + dependency.getVersion(), Confidence.HIGHEST);
+                } else {
+                    id = new GenericIdentifier("generic:" + dependency.getName(), Confidence.HIGHEST);
+                }
+                dependency.addSoftwareIdentifier(id);
+            }
         }
         return found;
     }

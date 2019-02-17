@@ -99,6 +99,12 @@
             23. interact is a php project (#1609)
             24. finder is drupal plugin (#1626)
             25. archiver project is a golang module (#1627)
+            26. r_project is the r programming language
+            27. r_project is the r programming language
+            28. cpe:/a:jwt_project:jwt is a php library (#1697)
+            29. remove FP on git
+            30. remove FP on git
+            31. remove FP on git
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -130,6 +136,11 @@
         <cpe>cpe:/a:interact:interact</cpe>
         <cpe>cpe:/a:finder_project:finder</cpe>
         <cpe>cpe:/a:archiver_project:archiver</cpe>
+        <cpe>cpe:/a:r_project:r</cpe>
+        <cpe>cpe:/a:jwt_project:jwt</cpe>
+        <cpe>cpe:/a:git_project:git</cpe>
+        <cpe>cpe:/a:git:git</cpe>
+        <cpe>cpe:/a:git_for_windows_project:git_for_windows</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -250,14 +261,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        Suppresses false positives per issue #1613
-        ]]></notes>
-        <gav regex="true">^com\.github\.jai-imageio.*$</gav>
-        <cpe>cpe:/a:git:git</cpe>
-        <cpe>cpe:/a:git_project:git</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
         Suppresses false positives per issue 1581
         ]]></notes>
         <gav regex="true">^org\.apache\.activemq:artemis.*$</gav>
@@ -344,7 +347,15 @@
         <cpe>cpe:/a:apache:http_server</cpe>
         <cpe>cpe:/a:apache:apache_http_server</cpe>
         <cpe>cpe:/a:free_java_web_server:free_java_web_server</cpe>
-     </suppress>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP on jetty-proxy
+        ]]></notes>
+        <gav regex="true">^org\.eclipse\.jetty:jetty-proxy:.*$</gav>
+        <cpe>cpe:/a:eclipse:jetty</cpe>
+        <cpe>cpe:/a:jetty:jetty</cpe>
+    </suppress>
     <suppress base="true">
         <notes><![CDATA[
         False positives found while investigating https://github.com/jeremylong/dependency-check-gradle/issues/103
@@ -723,6 +734,116 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        JRK False Positives
+        ]]></notes>
+        <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)</filePath>
+        <cpe>cpe:/a:sun:java</cpe>
+        <cpe>cpe:/a:sun:jdk</cpe>
+        <cpe>cpe:/a:sun:j2se</cpe>
+        <cpe>cpe:/a:sun:j_se</cpe>
+        <cpe>cpe:/a:sun:j_se</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       fontbox is a sub project of pdfbox.  CPE vulns don't apply.
+       ]]></notes>
+        <gav regex="true">^org\.apache\.pdfbox:fontbox:.*$</gav>
+        <cpe>cpe:/a:apache:pdfbox</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        https://tukaani.org/xz/java.html
+        ]]></notes>
+        <gav regex="true">^org\.tukaani:xz:.*$</gav>
+        <cve>CVE-2015-4035</cve>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       https://github.com/processing/processing is not javax
+       ]]></notes>
+       <gav regex="true">^(javax\.json|org\.glassfish):javax\.json(-api)?:.*$</gav>
+       <cpe>cpe:/a:processing:processing</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        https://github.com/ojai/ojai is not mapr
+        ]]></notes>
+        <gav regex="true">^org\.ojai:ojai:.*$</gav>
+        <cpe>cpe:/a:mapr:mapr</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        dependency-track is not track+
+        ]]></notes>
+        <gav regex="true">^org\.jenkins-ci\.plugins:dependency-track:.*$</gav>
+        <cpe>cpe:/a:track%2b:track%2b</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Jenkins plugins are should not be flagged as Jenkins.
+        ]]></notes>
+        <gav regex="true">^org\.jenkins-ci\.plugins:.*$</gav>
+        <cpe>cpe:/a:jenkins:jenkins</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Maven plugin for developing Jenkins plugins.
+        ]]></notes>
+        <gav regex="true">^org\.jenkins-ci\.tools:maven-hpi-plugin:.*$</gav>
+        <cpe>cpe:/a:jenkins:jenkins</cpe>
+        <cpe>cpe:/a:jenkins:maven</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+        FP on dependency-check-gradle
+        ]]></notes>
+        <gav regex="true">^org\.owasp:dependency-check-gradle:.*$</gav>
+        <cpe>cpe:/a:gradle:gradle</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        remove FP on Jenkins.
+        ]]></notes>
+        <gav regex="true">^(?!org\.jenkins-ci\.main:jenkins-war).*$</gav>
+        <cpe>cpe:/a:jenkins:jenkins</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        filter out non-glassfish core
+        ]]></notes>
+        <gav regex="true">^(?!org\.glassfish\.main\.core:glassfish).*$</gav>
+        <cpe>cpe:/a:oracle:glassfish</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Grizzly is not Async Http Client
+        ]]></notes>
+        <gav regex="true">^org\.glassfish\.grizzly:grizzly-http-client:.*$</gav>
+        <cpe>cpe:/a:async-http-client_project:async-http-client</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        don't flag scala modules as scala
+        ]]></notes>
+        <gav regex="true">^org\.scala-lang\.modules:.*$</gav>
+        <cpe>cpe:/a:scala-lang:scala</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        don't flag maven plugin components as the jenkins maven plugin itself
+        ]]></notes>
+        <gav regex="true">^(?!org\.jenkins-ci\.main:maven-plugin):.*$</gav>
+        <cpe>cpe:/a:jenkins:maven</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        don't flag jruby extensions as jruby
+        ]]></notes>
+        <gav regex="true">^org\.jruby\.ext.*$</gav>
+        <cpe>cpe:/a:jruby:jruby</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         elastic search false postivies
         ]]></notes>
         <gav regex="true">org\.elasticsearch:securesm:.*</gav>
@@ -831,9 +952,11 @@
     <suppress base="true">
         <notes><![CDATA[
         Drupal services false positive.
+        Pyro is a python project.
         ]]></notes>
         <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)</filePath>
         <cpe>cpe:/a:services_project:services</cpe>
+        <cpe>cpe:/a:pyro_project:pyro</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -1208,8 +1331,6 @@
         false positive per issue #859
         ]]></notes>
         <gav regex="true">^org\.kohsuke:github-api:.*$</gav>
-        <cpe>cpe:/a:git:git</cpe>
-        <cpe>cpe:/a:git_project:git</cpe>
         <cpe>cpe:/a:hub_project:hub</cpe>
     </suppress>
     <suppress base="true">
@@ -1364,14 +1485,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        False positive per issue #964
-        ]]></notes>
-        <gav regex="true">^org\.mongodb\.morphia:.*$</gav>
-        <cpe>cpe:/a:git:git</cpe>
-        <cpe>cpe:/a:git_project:git</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
         FP per issue #942
         ]]></notes>
         <gav regex="true">^org\.apache\.chemistry\.opencmis:chemistry-opencmis.*$</gav>
@@ -1384,13 +1497,6 @@
         ]]></notes>
         <gav regex="true">^org\.alfresco\.cmis\.client:alfresco-opencmis-extension:.*$</gav>
         <cpe>cpe:/a:alfresco:alfresco</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        FP per issue #949
-        ]]></notes>
-        <gav regex="true">^com\.github\.waffle:waffle-jna:.*$</gav>
-        <cpe>cpe:/a:git_for_windows_project:git_for_windows</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -1450,16 +1556,7 @@
         <cpe>cpe:/a:apache:tomcat</cpe>
         <cpe>cpe:/a:apache_tomcat:apache_tomcat</cpe>
         <cpe>cpe:/a:apache_software_foundation:tomcat</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        FP per issue #1022
-        ]]></notes>
-        <gav regex="true">^org\.eclipse\.persistence:org\.eclipse\.persistence.*$</gav>
-        <cpe>cpe:/a:git:git</cpe>
-        <cpe>cpe:/a:git_project:git</cpe>
-    </suppress>
-    
+    </suppress>    
     <suppress base="true">
         <notes><![CDATA[
         general FP cleanup

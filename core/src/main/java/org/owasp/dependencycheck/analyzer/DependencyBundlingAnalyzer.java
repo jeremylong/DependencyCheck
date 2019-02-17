@@ -26,8 +26,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
+import org.owasp.dependencycheck.dependency.naming.Identifier;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 import org.owasp.dependencycheck.utils.Settings;
@@ -256,30 +256,18 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
      * equal
      */
     private boolean cpeIdentifiersMatch(Dependency dependency1, Dependency dependency2) {
-        if (dependency1 == null || dependency1.getIdentifiers() == null
-                || dependency2 == null || dependency2.getIdentifiers() == null) {
+        if (dependency1 == null || dependency1.getVulnerableSoftwareIdentifiers() == null
+                || dependency2 == null || dependency2.getVulnerableSoftwareIdentifiers() == null) {
             return false;
         }
         boolean matches = false;
-        int cpeCount1 = 0;
-        int cpeCount2 = 0;
-        for (Identifier i : dependency1.getIdentifiers()) {
-            if ("cpe".equals(i.getType())) {
-                cpeCount1 += 1;
-            }
-        }
-        for (Identifier i : dependency2.getIdentifiers()) {
-            if ("cpe".equals(i.getType())) {
-                cpeCount2 += 1;
-            }
-        }
+        final int cpeCount1 = dependency1.getVulnerableSoftwareIdentifiers().size();
+        final int cpeCount2 = dependency2.getVulnerableSoftwareIdentifiers().size();
         if (cpeCount1 > 0 && cpeCount1 == cpeCount2) {
-            for (Identifier i : dependency1.getIdentifiers()) {
-                if ("cpe".equals(i.getType())) {
-                    matches |= dependency2.getIdentifiers().contains(i);
-                    if (!matches) {
-                        break;
-                    }
+            for (Identifier i : dependency1.getVulnerableSoftwareIdentifiers()) {
+                matches |= dependency2.getVulnerableSoftwareIdentifiers().contains(i);
+                if (!matches) {
+                    break;
                 }
             }
         }
@@ -362,17 +350,17 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
             returnVal = true;
         } else if (!left.isVirtual() && right.isVirtual()) {
             returnVal = false;
-        } else if (!rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+") && leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+")
-                || rightName.contains("core") && !leftName.contains("core")
-                || rightName.contains("kernel") && !leftName.contains("kernel")
-                || rightName.contains("akka-stream") && !leftName.contains("akka-stream")
-                || rightName.contains("netty-transport") && !leftName.contains("netty-transport")) {
+        } else if ((!rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+") && leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+"))
+                || (rightName.contains("core") && !leftName.contains("core"))
+                || (rightName.contains("kernel") && !leftName.contains("kernel"))
+                || (rightName.contains("akka-stream") && !leftName.contains("akka-stream"))
+                || (rightName.contains("netty-transport") && !leftName.contains("netty-transport"))) {
             returnVal = false;
-        } else if (rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+") && !leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+")
-                || !rightName.contains("core") && leftName.contains("core")
-                || !rightName.contains("kernel") && leftName.contains("kernel")
-                || !rightName.contains("akka-stream") && leftName.contains("akka-stream")
-                || !rightName.contains("netty-transport") && leftName.contains("netty-transport")) {
+        } else if ((rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+") && !leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+"))
+                || (!rightName.contains("core") && leftName.contains("core"))
+                || (!rightName.contains("kernel") && leftName.contains("kernel"))
+                || (!rightName.contains("akka-stream") && leftName.contains("akka-stream"))
+                || (!rightName.contains("netty-transport") && leftName.contains("netty-transport"))) {
             returnVal = true;
         } else {
             /*
@@ -418,16 +406,16 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
     protected boolean isShadedJar(Dependency dependency, Dependency nextDependency) {
         if (dependency == null || dependency.getFileName() == null
                 || nextDependency == null || nextDependency.getFileName() == null
-                || dependency.getIdentifiers().isEmpty()
-                || nextDependency.getIdentifiers().isEmpty()) {
+                || dependency.getSoftwareIdentifiers().isEmpty()
+                || nextDependency.getSoftwareIdentifiers().isEmpty()) {
             return false;
         }
         final String mainName = dependency.getFileName().toLowerCase();
         final String nextName = nextDependency.getFileName().toLowerCase();
         if (mainName.endsWith(".jar") && nextName.endsWith("pom.xml")) {
-            return dependency.getIdentifiers().containsAll(nextDependency.getIdentifiers());
+            return dependency.getSoftwareIdentifiers().containsAll(nextDependency.getSoftwareIdentifiers());
         } else if (nextName.endsWith(".jar") && mainName.endsWith("pom.xml")) {
-            return nextDependency.getIdentifiers().containsAll(dependency.getIdentifiers());
+            return nextDependency.getSoftwareIdentifiers().containsAll(dependency.getSoftwareIdentifiers());
         }
         return false;
     }

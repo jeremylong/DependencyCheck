@@ -29,6 +29,7 @@ import javax.annotation.concurrent.ThreadSafe;
  */
 @ThreadSafe
 public class Pair<L, R> {
+
     /**
      * The left element of the pair.
      */
@@ -108,14 +109,15 @@ public class Pair<L, R> {
      * Determines the equality of this and the provided object.
      *
      * @param obj the {@link Object} to check for equality to this
-     * @return true if this and the provided {@link Object} are equal; otherwise false
+     * @return true if this and the provided {@link Object} are equal; otherwise
+     * false
      */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Pair)) {
             return false;
         }
         final Pair<?, ?> other = (Pair<?, ?>) obj;

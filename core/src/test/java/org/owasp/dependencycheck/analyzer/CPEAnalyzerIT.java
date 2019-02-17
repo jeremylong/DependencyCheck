@@ -18,12 +18,13 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.BaseDBTestCase;
@@ -31,10 +32,10 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.cpe.IndexEntry;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Identifier;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.dependency.naming.Identifier;
 
 /**
  *
@@ -49,29 +50,24 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
      */
     @Test
     public void testBuildSearch() throws Exception {
-        Set<String> productWeightings = Collections.singleton("struts2");
-
-        Set<String> vendorWeightings = Collections.singleton("apache");
-
-        String vendor = "apache software foundation";
-        String product = "struts 2 core";
+        Set<String> productWeightings = new HashSet<>();//Collections.singleton("struts2");
+        Set<String> vendorWeightings = new HashSet<>();//Collections.singleton("apache");        
+        Map<String, MutableInt> vendor = new HashMap<>();
+        Map<String, MutableInt> product = new HashMap<>();
+        vendor.put("apache software foundation", new MutableInt(1));
+        product.put("struts 2 core", new MutableInt(1));
 
         CPEAnalyzer instance = new CPEAnalyzer();
         instance.initialize(getSettings());
-        String queryText = instance.buildSearch(vendor, product, null, null);
+        String queryText = instance.buildSearch(vendor, product, vendorWeightings, productWeightings);
         String expResult = "product:(struts 2 core) AND vendor:(apache software foundation)";
         assertTrue(expResult.equals(queryText));
 
-        queryText = instance.buildSearch(vendor, product, null, productWeightings);
-        expResult = "product:(struts^5 struts2^5 2 core) AND vendor:(apache software foundation)";
-        assertTrue(expResult.equals(queryText));
-
-        queryText = instance.buildSearch(vendor, product, vendorWeightings, null);
-        expResult = "product:(struts 2 core) AND vendor:(apache^5 software foundation)";
-        assertTrue(expResult.equals(queryText));
+        vendorWeightings.add("apache");
+        productWeightings.add("struts2");
 
         queryText = instance.buildSearch(vendor, product, vendorWeightings, productWeightings);
-        expResult = "product:(struts^5 struts2^5 2 core) AND vendor:(apache^5 software foundation)";
+        expResult = "product:(struts^2 2 core struts2^2) AND vendor:(apache^2 software foundation)";
         assertTrue(expResult.equals(queryText));
         instance.close();
     }
@@ -107,14 +103,17 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
             cpeSuppression.initialize(getSettings());
             cpeSuppression.prepare(e);
 
-            callDetermineCPE_full("hazelcast-2.5.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
-            callDetermineCPE_full("spring-context-support-2.5.5.jar", "cpe:/a:springsource:spring_framework:2.5.5", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
-            callDetermineCPE_full("spring-core-3.0.0.RELEASE.jar", "cpe:/a:vmware:springsource_spring_framework:3.0.0", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
-            callDetermineCPE_full("jaxb-xercesImpl-1.5.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
-            callDetermineCPE_full("ehcache-core-2.2.0.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
-            callDetermineCPE_full("org.mortbay.jetty.jar", "cpe:/a:mortbay_jetty:jetty:4.2.27", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
-            //callDetermineCPE_full("xstream-1.4.8.jar", "cpe:/a:x-stream:xstream:1.4.8", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
-            callDetermineCPE_full("xstream-1.4.8.jar", "cpe:/a:xstream_project:xstream:1.4.8", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
+//            callDetermineCPE_full("hazelcast-2.5.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
+//            callDetermineCPE_full("spring-context-support-2.5.5.jar", "cpe:2.3:a:springsource:spring_framework:2.5.5:*:*:*:*:*:*:*", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
+            callDetermineCPE_full("spring-core-3.0.0.RELEASE.jar", "cpe:2.3:a:pivotal_software:spring_framework:3.0.0:*:*:*:*:*:*:*", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
+//            callDetermineCPE_full("spring-core-3.0.0.RELEASE.jar", "cpe:2.3:a:pivotal:spring_framework:3.0.0:*:*:*:*:*:*:*", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
+//            callDetermineCPE_full("spring-core-3.0.0.RELEASE.jar", "cpe:2.3:a:springsource:spring_framework:3.0.0:*:*:*:*:*:*:*", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
+//            
+//            callDetermineCPE_full("jaxb-xercesImpl-1.5.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
+//            callDetermineCPE_full("ehcache-core-2.2.0.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
+//            //updated test data set using more recent years no longer has mortbay_jetty - although it is still in the full NVD data set
+//            //callDetermineCPE_full("org.mortbay.jetty.jar", "cpe:2.3:a:mortbay_jetty:jetty:4.2.27:*:*:*:*:*:*:*", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
+//            callDetermineCPE_full("xstream-1.4.8.jar", "cpe:2.3:a:xstream_project:xstream:1.4.8:*:*:*:*:*:*:*", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
         } finally {
             cpeAnalyzer.close();
         }
@@ -123,6 +122,14 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
     /**
      * Test of determineCPE method, of class CPEAnalyzer.
      *
+     * @param depName dependency name
+     * @param expResult expected results
+     * @param cpeAnalyzer the CPE analyzer
+     * @param fnAnalyzer the file name analyzer
+     * @param jarAnalyzer the jar analyzer
+     * @param hAnalyzer the hint analyzer
+     * @param fp the false positive analyzer
+     * @param cpeSuppression the CPE suppression analyzer
      * @throws Exception is thrown when an exception occurs
      */
     public void callDetermineCPE_full(String depName, String expResult, CPEAnalyzer cpeAnalyzer, FileNameAnalyzer fnAnalyzer,
@@ -142,17 +149,17 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
 
         if (expResult != null) {
             boolean found = false;
-            for (Identifier i : dep.getIdentifiers()) {
+            for (Identifier i : dep.getVulnerableSoftwareIdentifiers()) {
                 if (expResult.equals(i.getValue())) {
                     found = true;
                     break;
                 }
             }
-            assertTrue("Incorrect match: { dep:'" + dep.getFileName() + "' }", found);
+            assertTrue("Match not found: { dep:'" + dep.getFileName() + "', exp:'" + expResult + "' }", found);
         } else {
-            for (Identifier i : dep.getIdentifiers()) {
-                assertFalse(String.format("%s - found a CPE identifier when should have been none (found '%s')", dep.getFileName(), i.getValue()), "cpe".equals(i.getType()));
-            }
+            dep.getVulnerableSoftwareIdentifiers().forEach((id) -> {
+                fail("Unexpected match found: { dep:'" + dep.getFileName() + "', found:'" + id + "' }");
+            });
         }
     }
 
@@ -167,6 +174,10 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         File file = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
         //File file = new File(this.getClass().getClassLoader().getResource("axis2-adb-1.4.1.jar").getPath());
         Dependency struts = new Dependency(file);
+
+        CpeSuppressionAnalyzer suppressionAnalyzer = new CpeSuppressionAnalyzer();
+        suppressionAnalyzer.initialize(getSettings());
+        suppressionAnalyzer.prepare(null);
 
         FileNameAnalyzer fnAnalyzer = new FileNameAnalyzer();
         fnAnalyzer.analyze(struts, null);
@@ -210,24 +221,25 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
             instance.determineCPE(spring3);
             instance.close();
 
-            String expResult = "cpe:/a:apache:struts:2.1.2";
+            suppressionAnalyzer.analyze(commonValidator, engine);
+            commonValidator.getVulnerableSoftwareIdentifiers().forEach((i) -> {
+                fail("Apache Common Validator found an unexpected CPE identifier - " + i.getValue());
+            });
 
-            for (Identifier i : commonValidator.getIdentifiers()) {
-                assertFalse("Apache Common Validator - found a CPE identifier?", "cpe".equals(i.getType()));
-            }
-
-            assertTrue("Incorrect match size - struts", struts.getIdentifiers().size() >= 1);
+            String expResult = "cpe:2.3:a:apache:struts:2.1.2:*:*:*:*:*:*:*";
+            assertTrue("Incorrect match size - struts", struts.getVulnerableSoftwareIdentifiers().size() >= 1);
             boolean found = false;
-            for (Identifier i : struts.getIdentifiers()) {
+            for (Identifier i : struts.getVulnerableSoftwareIdentifiers()) {
                 if (expResult.equals(i.getValue())) {
                     found = true;
                     break;
                 }
             }
             assertTrue("Incorrect match - struts", found);
-            assertTrue("Incorrect match size - spring3 - " + spring3.getIdentifiers().size(), spring3.getIdentifiers().size() >= 1);
+            assertTrue("Incorrect match size - spring3 - " + spring3.getVulnerableSoftwareIdentifiers().size(), spring3.getVulnerableSoftwareIdentifiers().size() >= 1);
 
             jarAnalyzer.close();
+            suppressionAnalyzer.close();
         }
     }
 
@@ -238,8 +250,8 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
      */
     @Test
     public void testDetermineIdentifiers() throws Exception {
-        callDetermieIdentifiers("eclipse", "jetty", "9.4.8.v20171121", "cpe:/a:eclipse:jetty:9.4.8");
-        callDetermieIdentifiers("openssl", "openssl", "1.0.1c", "cpe:/a:openssl:openssl:1.0.1c");
+        callDetermieIdentifiers("eclipse", "jetty", "9.4.8.v20171121", "cpe:2.3:a:eclipse:jetty:9.4.8:20171121:*:*:*:*:*:*");
+        callDetermieIdentifiers("openssl", "openssl", "1.0.1c", "cpe:2.3:a:openssl:openssl:1.0.1c:*:*:*:*:*:*:*");
     }
 
     /**
@@ -266,13 +278,10 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
             instance.close();
         }
 
-        boolean found = false;
-        for (Identifier i : dep.getIdentifiers()) {
-            if (expectedCpe.equals(i.getValue())) {
-                found = true;
-                break;
-            }
-        }
+        boolean found = dep.getVulnerableSoftwareIdentifiers().stream().anyMatch(id -> {
+            System.out.println(id.getValue());
+            return expectedCpe.equals(id.getValue());
+        });
         assertTrue(String.format("%s:%s%s identifier not found", vendor, product, version), found);
     }
 
@@ -283,8 +292,11 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
      */
     @Test
     public void testSearchCPE() throws Exception {
-        String vendor = "apache software foundation";
-        String product = "struts 2 core";
+        Map<String, MutableInt> vendor = new HashMap<>();
+        Map<String, MutableInt> product = new HashMap<>();
+        vendor.put("apache software foundation", new MutableInt(1));
+        product.put("struts 2 core", new MutableInt(1));
+
         String expVendor = "apache";
         String expProduct = "struts";
 

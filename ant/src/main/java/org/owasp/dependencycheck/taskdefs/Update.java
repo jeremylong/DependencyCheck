@@ -75,25 +75,17 @@ public class Update extends Purge {
      */
     private String databasePassword;
     /**
-     * The url for the modified NVD CVE (1.2 schema).
+     * The URL for the modified NVD CVE JSON file.
      */
-    private String cveUrl12Modified;
+    private String cveUrlModified;
     /**
-     * Base Data Mirror URL for CVE 1.2.
+     * Base Data Mirror URL for CVE JSON files.
      */
-    private String cveUrl12Base;
-    /**
-     * Data Mirror URL for CVE 2.0.
-     */
-    private String cveUrl20Base;
+    private String cveUrlBase;
     /**
      * The number of hours to wait before re-checking for updates.
      */
     private Integer cveValidForHours;
-    /**
-     * The url for the modified NVD CVE (2.0 schema).
-     */
-    private String cveUrl20Modified;
 
     /**
      * Construct a new UpdateTask.
@@ -286,75 +278,40 @@ public class Update extends Purge {
     }
 
     /**
-     * Get the value of cveUrl12Modified.
+     * Set the value of cveUrlModified.
      *
-     * @return the value of cveUrl12Modified
+     * @param cveUrlModified new value of cveUrlModified
      */
-    public String getCveUrl12Modified() {
-        return cveUrl12Modified;
+    public void setCveUrlModified(String cveUrlModified) {
+        this.cveUrlModified = cveUrlModified;
     }
 
     /**
-     * Set the value of cveUrl12Modified.
+     * Get the value of cveUrlModified.
      *
-     * @param cveUrl12Modified new value of cveUrl12Modified
+     * @return the value of cveUrlModified
      */
-    public void setCveUrl12Modified(String cveUrl12Modified) {
-        this.cveUrl12Modified = cveUrl12Modified;
+    public String getCveUrlModified() {
+        return cveUrlModified;
+    }
+
+
+    /**
+     * Get the value of cveUrlBase.
+     *
+     * @return the value of cveUrlBase
+     */
+    public String getCveUrlBase() {
+        return cveUrlBase;
     }
 
     /**
-     * Get the value of cveUrl20Modified.
+     * Set the value of cveUrlBase.
      *
-     * @return the value of cveUrl20Modified
+     * @param cveUrlBase new value of cveUrlBase
      */
-    public String getCveUrl20Modified() {
-        return cveUrl20Modified;
-    }
-
-    /**
-     * Set the value of cveUrl20Modified.
-     *
-     * @param cveUrl20Modified new value of cveUrl20Modified
-     */
-    public void setCveUrl20Modified(String cveUrl20Modified) {
-        this.cveUrl20Modified = cveUrl20Modified;
-    }
-
-    /**
-     * Get the value of cveUrl12Base.
-     *
-     * @return the value of cveUrl12Base
-     */
-    public String getCveUrl12Base() {
-        return cveUrl12Base;
-    }
-
-    /**
-     * Set the value of cveUrl12Base.
-     *
-     * @param cveUrl12Base new value of cveUrl12Base
-     */
-    public void setCveUrl12Base(String cveUrl12Base) {
-        this.cveUrl12Base = cveUrl12Base;
-    }
-
-    /**
-     * Get the value of cveUrl20Base.
-     *
-     * @return the value of cveUrl20Base
-     */
-    public String getCveUrl20Base() {
-        return cveUrl20Base;
-    }
-
-    /**
-     * Set the value of cveUrl20Base.
-     *
-     * @param cveUrl20Base new value of cveUrl20Base
-     */
-    public void setCveUrl20Base(String cveUrl20Base) {
-        this.cveUrl20Base = cveUrl20Base;
+    public void setCveUrlBase(String cveUrlBase) {
+        this.cveUrlBase = cveUrlBase;
     }
 
     /**
@@ -425,10 +382,8 @@ public class Update extends Purge {
         getSettings().setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
         getSettings().setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
         getSettings().setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
-        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_12_URL, cveUrl12Modified);
-        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_20_URL, cveUrl20Modified);
-        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_1_2, cveUrl12Base);
-        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveUrlModified);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON, cveUrlBase);
         if (cveValidForHours != null) {
             if (cveValidForHours >= 0) {
                 getSettings().setInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);

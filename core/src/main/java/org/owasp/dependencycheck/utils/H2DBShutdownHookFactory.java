@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import java.lang.reflect.InvocationTargetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,8 +50,9 @@ public final class H2DBShutdownHookFactory {
         try {
             final String className = settings.getString(Settings.KEYS.H2DB_SHUTDOWN_HOOK, "org.owasp.dependencycheck.utils.H2DBCleanupHook");
             final Class<?> type = Class.forName(className);
-            return (H2DBShutdownHook) type.newInstance();
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+            return (H2DBShutdownHook) type.getDeclaredConstructor().newInstance();
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+                | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException ex) {
             LOGGER.debug("Failed to instantiate {}, using default shutdown hook instead", ex);
             return new H2DBCleanupHook();
         }

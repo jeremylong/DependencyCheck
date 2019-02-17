@@ -26,8 +26,14 @@ import java.util.Set;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.xml.bind.DatatypeConverter;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
+import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
+import org.owasp.dependencycheck.dependency.naming.Identifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import us.springett.parsers.cpe.Cpe;
+import us.springett.parsers.cpe.exceptions.CpeEncodingException;
 
 /**
  *
@@ -35,7 +41,10 @@ import org.owasp.dependencycheck.dependency.Vulnerability;
  */
 @NotThreadSafe
 public class SuppressionRule {
-
+    /**
+     * The Logger for use throughout the class.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(SuppressionRule.class);
     /**
      * The file path for the suppression.
      */
@@ -379,11 +388,11 @@ public class SuppressionRule {
             return;
         }
         if (gav != null) {
-            final Iterator<Identifier> itr = dependency.getIdentifiers().iterator();
+            final Iterator<Identifier> itr = dependency.getSoftwareIdentifiers().iterator();
             boolean gavFound = false;
             while (itr.hasNext()) {
                 final Identifier i = itr.next();
-                if (identifierMatches("maven", this.gav, i)) {
+                if (identifierMatches(this.gav, i)) {
                     gavFound = true;
                     break;
                 }
@@ -395,9 +404,9 @@ public class SuppressionRule {
 
         if (this.hasCpe()) {
             final Set<Identifier> removalList = new HashSet<>();
-            for (Identifier i : dependency.getIdentifiers()) {
+            for (Identifier i : dependency.getVulnerableSoftwareIdentifiers()) {
                 for (PropertyType c : this.cpe) {
-                    if (identifierMatches("cpe", c, i)) {
+                    if (identifierMatches(c, i)) {
                         if (!isBase()) {
                             if (this.notes != null) {
                                 i.setNotes(this.notes);
@@ -409,9 +418,9 @@ public class SuppressionRule {
                     }
                 }
             }
-            for (Identifier i : removalList) {
-                dependency.removeIdentifier(i);
-            }
+            removalList.forEach((i) -> {
+                dependency.removeVulnerableSoftwareIdentifier(i);
+            });
         }
         if (hasCve() || hasCwe() || hasCvssBelow()) {
             final Set<Vulnerability> removeVulns = new HashSet<>();
@@ -426,13 +435,9 @@ public class SuppressionRule {
                 }
                 if (!remove) {
                     for (String entry : this.cwe) {
-                        if (v.getCwe() != null) {
+                        if (v.getCwes() != null) {
                             final String toMatch = String.format("CWE-%s", entry);
-                            String toTest = v.getCwe();
-                            if (toTest.contains(" ")) {
-                                toTest = toTest.substring(0, toTest.indexOf(" ")).toUpperCase();
-                            }
-                            if (toTest.equals(toMatch)) {
+                            if (v.getCwes().stream().anyMatch(toTest -> toMatch.regionMatches(0, toTest, 0, toMatch.length()))) {
                                 remove = true;
                                 removeVulns.add(v);
                                 break;
@@ -442,7 +447,7 @@ public class SuppressionRule {
                 }
                 if (!remove) {
                     for (float cvss : this.cvssBelow) {
-                        if (v.getCvssScore() < cvss) {
+                        if (v.getCvssV2().getScore() < cvss) {
                             remove = true;
                             removeVulns.add(v);
                             break;
@@ -498,26 +503,42 @@ public class SuppressionRule {
      * Determines if the cpeEntry specified as a PropertyType matches the given
      * Identifier.
      *
-     * @param identifierType the type of identifier ("cpe", "maven", etc.)
      * @param suppressionEntry a suppression rule entry
      * @param identifier a CPE identifier to check
      * @return true if the entry matches; otherwise false
      */
-    protected boolean identifierMatches(String identifierType, PropertyType suppressionEntry, Identifier identifier) {
-        if (identifierType.equals(identifier.getType())) {
-            if (suppressionEntry.matches(identifier.getValue())) {
-                return true;
-            } else if ("cpe".equals(identifierType) && cpeHasNoVersion(suppressionEntry)) {
-                if (suppressionEntry.isCaseSensitive()) {
-                    return identifier.getValue().startsWith(suppressionEntry.getValue());
-                } else {
-                    final String id = identifier.getValue().toLowerCase();
-                    final String check = suppressionEntry.getValue().toLowerCase();
-                    return id.startsWith(check);
+    protected boolean identifierMatches(PropertyType suppressionEntry, Identifier identifier) {
+        if (identifier instanceof PurlIdentifier) {
+            final PurlIdentifier purl = (PurlIdentifier) identifier;
+            return suppressionEntry.matches(purl.toGav());
+        } else if (identifier instanceof CpeIdentifier) {
+            //TODO check for regex - not just type
+            final Cpe cpeId = ((CpeIdentifier) identifier).getCpe();
+            if (suppressionEntry.isRegex()) {
+                try {
+                    return suppressionEntry.matches(cpeId.toCpe22Uri());
+                } catch (CpeEncodingException ex) {
+                    LOGGER.debug("Unable to convert CPE to 22 URI?" + cpeId.toString());
                 }
+            } else if (suppressionEntry.isCaseSensitive()) {
+                try {
+                    return cpeId.toCpe22Uri().startsWith(suppressionEntry.getValue());
+                } catch (CpeEncodingException ex) {
+                    LOGGER.debug("Unable to convert CPE to 22 URI?" + cpeId.toString());
+                }
+            } else {
+                final String id;
+                try {
+                    id = cpeId.toCpe22Uri().toLowerCase();
+                } catch (CpeEncodingException ex) {
+                    LOGGER.debug("Unable to convert CPE to 22 URI?" + cpeId.toString());
+                    return false;
+                }
+                final String check = suppressionEntry.getValue().toLowerCase();
+                return id.startsWith(check);
             }
         }
-        return false;
+        return suppressionEntry.matches(identifier.getValue());
     }
 
     /**

@@ -30,7 +30,7 @@ public class SearchException extends AnalysisException {
     /**
      * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -123720951452856878L;
 
     /**
      * Creates a new SearchException.

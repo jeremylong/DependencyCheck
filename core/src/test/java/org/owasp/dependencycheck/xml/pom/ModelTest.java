@@ -27,7 +27,7 @@ import org.owasp.dependencycheck.BaseTest;
 
 /**
  *
- * @author jeremy
+ * @author jeremy long
  */
 public class ModelTest extends BaseTest {
 

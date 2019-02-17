@@ -35,12 +35,11 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     /**
      * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2402386455919067874L;
     /**
      * Used as starting point for generating the value in {@link #hashCode()}.
      */
     private static final int MAGIC_HASH_INIT_VALUE = 3;
-
     /**
      * Used as a multiplier for generating the value in {@link #hashCode()}.
      */

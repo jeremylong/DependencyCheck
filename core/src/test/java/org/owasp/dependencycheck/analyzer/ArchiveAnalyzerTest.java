@@ -31,7 +31,7 @@ import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
- * @author jeremy
+ * @author jeremy long
  */
 public class ArchiveAnalyzerTest extends BaseTest {
 

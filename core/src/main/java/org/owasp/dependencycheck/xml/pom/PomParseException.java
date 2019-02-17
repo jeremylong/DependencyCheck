@@ -31,7 +31,7 @@ public class PomParseException extends IOException {
     /**
      * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -4553996700379765937L;
 
     /**
      * Creates a new SuppressionParseException.

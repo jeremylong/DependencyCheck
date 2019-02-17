@@ -22,6 +22,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Assume;
+import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.utils.FileUtils;
 
@@ -57,7 +58,7 @@ public class EngineModeIT extends BaseTest {
             System.setProperty(Settings.KEYS.DATA_DIRECTORY, originalDataDir);
             System.clearProperty(Settings.KEYS.H2_DATA_DIRECTORY);
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            throw new UnexpectedAnalysisException(ex);
         } finally {
             super.tearDown();
         }
@@ -69,12 +70,12 @@ public class EngineModeIT extends BaseTest {
         try (Engine engine = new Engine(Engine.Mode.EVIDENCE_COLLECTION, getSettings())) {
             engine.openDatabase(); //does nothing in the current mode
             assertDatabase(false);
-            for (AnalysisPhase phase : Engine.Mode.EVIDENCE_COLLECTION.getPhases()) {
+            Engine.Mode.EVIDENCE_COLLECTION.getPhases().forEach((phase) -> {
                 assertThat(engine.getAnalyzers(phase), is(notNullValue()));
-            }
-            for (AnalysisPhase phase : Engine.Mode.EVIDENCE_PROCESSING.getPhases()) {
+            });
+            Engine.Mode.EVIDENCE_PROCESSING.getPhases().forEach((phase) -> {
                 assertThat(engine.getAnalyzers(phase), is(nullValue()));
-            }
+            });
             File file = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
             engine.scan(file);
             engine.analyzeDependencies();
@@ -89,12 +90,12 @@ public class EngineModeIT extends BaseTest {
         try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, getSettings())) {
             engine.openDatabase();
             assertDatabase(true);
-            for (AnalysisPhase phase : Engine.Mode.EVIDENCE_PROCESSING.getPhases()) {
+            Engine.Mode.EVIDENCE_PROCESSING.getPhases().forEach((phase) -> {
                 assertThat(engine.getAnalyzers(phase), is(notNullValue()));
-            }
-            for (AnalysisPhase phase : Engine.Mode.EVIDENCE_COLLECTION.getPhases()) {
+            });
+            Engine.Mode.EVIDENCE_COLLECTION.getPhases().forEach((phase) -> {
                 assertThat(engine.getAnalyzers(phase), is(nullValue()));
-            }
+            });
             engine.addDependency(dependencies[0]);
             engine.analyzeDependencies();
             Dependency dependency = dependencies[0];

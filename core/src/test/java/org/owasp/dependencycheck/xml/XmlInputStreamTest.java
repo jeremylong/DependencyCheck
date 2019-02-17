@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author jerem
+ * @author Jeremy Long
  */
 public class XmlInputStreamTest {
 

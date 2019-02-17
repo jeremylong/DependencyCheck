@@ -5,7 +5,7 @@
 
     <target name="test.fileset">
         <dependency-check
-            applicationName="My Project"
+            projectName="My Project"
             reportOutputDirectory="${project.build.directory}"
             autoupdate="false"
             reportFormat="HTML">
@@ -25,7 +25,7 @@
     </target>
     <target name="test.filelist">
         <dependency-check
-            applicationName="My Project"
+            projectName="My Project"
             reportOutputDirectory="${project.build.directory}"
             autoupdate="false"
             reportFormat="XML">
@@ -37,10 +37,10 @@
     </target>
     <target name="test.dirset">
         <dependency-check
-            applicationName="My Project"
+            projectName="My Project"
             reportOutputDirectory="${project.build.directory}"
             autoupdate="false"
-            reportFormat="VULN">
+            reportFormat="CSV">
 
             <!-- Scan a specific directory -->
             <dirset dir="${project.build.directory}/test-classes">
@@ -52,7 +52,7 @@
 
     <target name="formatBAD">
         <dependency-check
-            applicationName="test formatBAD"
+            projectName="test formatBAD"
             reportOutputDirectory="${project.build.directory}"
             autoupdate="false"
             reportFormat="BAD">
@@ -61,7 +61,7 @@
 
     <target name="failCVSS">
         <dependency-check
-            applicationName="test failCVSS"
+            projectName="test failCVSS"
             reportOutputDirectory="${project.build.directory}"
             reportFormat="XML"
             autoupdate="false"
@@ -74,7 +74,7 @@
 
     <target name="retireJS">
         <dependency-check
-            applicationName="test retireJS configuration"
+            projectName="test retireJS configuration"
             reportOutputDirectory="${project.build.directory}/retirejs-report.html"
             autoupdate="false"
             retirejsFilterNonVulnerable="true">
@@ -91,7 +91,7 @@
 
     <target name="suppression">
         <dependency-check
-            applicationName="test suppression"
+            projectName="test suppression"
             reportOutputDirectory="${project.build.directory}/suppression-report.html"
             autoupdate="false"
             failBuildOnCVSS="3">
@@ -107,7 +107,7 @@
     </target>
     <target name="suppression-single">
         <dependency-check
-            applicationName="test suppression"
+            projectName="test suppression"
             reportOutputDirectory="${project.build.directory}/suppression-single-report.html"
             autoupdate="false"
             failBuildOnCVSS="3"
@@ -119,7 +119,7 @@
     </target>
     <target name="suppression-multiple">
         <dependency-check
-            applicationName="test suppression"
+            projectName="test suppression"
             reportOutputDirectory="${project.build.directory}/suppression-multiple-report.html"
             autoupdate="false"
             failBuildOnCVSS="3"
