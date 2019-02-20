@@ -293,7 +293,8 @@ public class App {
             if (!dep.getVulnerabilities().isEmpty()) {
                 for (Vulnerability vuln : dep.getVulnerabilities()) {
                     LOGGER.debug("VULNERABILITY FOUND {}", dep.getDisplayFileName());
-                    if (vuln.getCvssV2().getScore() > cvssFailScore) {
+                    if ((vuln.getCvssV2() != null && vuln.getCvssV2().getScore() > cvssFailScore) ||
+                            (vuln.getCvssV3() != null && vuln.getCvssV3().getBaseScore() > cvssFailScore)) {
                         retCode = 1;
                     }
                 }

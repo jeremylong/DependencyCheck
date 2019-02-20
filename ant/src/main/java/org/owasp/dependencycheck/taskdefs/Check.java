@@ -1376,7 +1376,8 @@ public class Check extends Update {
         final StringBuilder ids = new StringBuilder();
         for (Dependency d : dependencies) {
             for (Vulnerability v : d.getVulnerabilities()) {
-                if (v.getCvssV2().getScore() >= failBuildOnCVSS) {
+                if ((v.getCvssV2() != null && v.getCvssV2().getScore() >= failBuildOnCVSS) ||
+                        (v.getCvssV3() != null && v.getCvssV3().getBaseScore() >= failBuildOnCVSS)) {
                     if (ids.length() == 0) {
                         ids.append(v.getName());
                     } else {
