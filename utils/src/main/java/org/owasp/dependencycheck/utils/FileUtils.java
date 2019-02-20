@@ -17,14 +17,12 @@
  */
 package org.owasp.dependencycheck.utils;
 
-import java.io.Closeable;
+import java.io.*;
+
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.UUID;
 import org.apache.commons.lang3.SystemUtils;
 
@@ -139,9 +137,19 @@ public final class FileUtils {
      * @param resource path
      * @return the input stream for the given resource
      */
-    public static InputStream getResourceAsStream(String resource) {
-        return FileUtils.class.getClassLoader() != null
-                ? FileUtils.class.getClassLoader().getResourceAsStream(resource)
+    public static InputStream getResourceAsStream(final String resource) {
+        final ClassLoader classLoader = FileUtils.class.getClassLoader();
+        final InputStream inputStream = classLoader != null
+                ? classLoader.getResourceAsStream(resource)
                 : ClassLoader.getSystemResourceAsStream(resource);
+
+        if(inputStream == null) {
+            try {
+                return new FileInputStream(resource);
+            } catch (final FileNotFoundException e) {
+                LOGGER.error("Unable to create an Input Stream for " + resource, e);
+            }
+        }
+        return inputStream;
     }
 }
