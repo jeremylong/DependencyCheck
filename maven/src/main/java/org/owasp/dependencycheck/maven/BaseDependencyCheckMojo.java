@@ -147,13 +147,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private MavenSession session;
 
     /**
-     * Remote repositories which will be searched for artifacts.
-     */
-    @SuppressWarnings("CanBeFinal")
-    @Parameter(defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true)
-    private List<ArtifactRepository> remoteRepositories;
-
-    /**
      * Component within Maven to build the dependency graph.
      */
     @Component
@@ -849,8 +842,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     protected ExceptionCollection scanArtifacts(MavenProject project, Engine engine, boolean aggregate) {
         try {
             final List<String> filterItems = Collections.singletonList(String.format("%s:%s", project.getGroupId(), project.getArtifactId()));
-            final ProjectBuildingRequest buildingRequest = newResolveArtifactProjectBuildingRequest();
-            buildingRequest.setProject(project);
+            final ProjectBuildingRequest buildingRequest = newResolveArtifactProjectBuildingRequest(project);
             //For some reason the filter does not filter out the project being analyzed
             //if we pass in the filter below instead of null to the dependencyGraphBuilder
             final DependencyNode dn = dependencyGraphBuilder.buildDependencyGraph(buildingRequest, null, reactorProjects);
@@ -866,7 +858,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             dn.accept(artifactFilter);
 
             //collect dependencies with the filter - see comment above.
-            final List<DependencyNode> nodes = collectorVisitor.getNodes();
+            final List<DependencyNode> nodes = new ArrayList<>(collectorVisitor.getNodes());
 
             return collectDependencies(engine, project, nodes, buildingRequest, aggregate);
         } catch (DependencyGraphBuilderException ex) {
@@ -1287,13 +1279,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
+     * @param project The target project to create a building request for.
      * @return Returns a new ProjectBuildingRequest populated from the current
-     * session and the current project remote repositories, used to resolve
+     * session and the target project remote repositories, used to resolve
      * artifacts.
      */
-    public ProjectBuildingRequest newResolveArtifactProjectBuildingRequest() {
+    public ProjectBuildingRequest newResolveArtifactProjectBuildingRequest(MavenProject project) {
         final ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
-        buildingRequest.setRemoteRepositories(remoteRepositories);
+        buildingRequest.setRemoteRepositories(new ArrayList<>(project.getRemoteArtifactRepositories()));
+        buildingRequest.setProject(project);
         return buildingRequest;
     }
 
