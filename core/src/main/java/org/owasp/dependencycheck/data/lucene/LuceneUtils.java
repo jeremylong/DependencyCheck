@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.data.lucene;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
@@ -66,9 +65,6 @@ public final class LuceneUtils {
      * @param text the data to be escaped
      */
     @SuppressWarnings("fallthrough")
-    @SuppressFBWarnings(
-            value = "SF_SWITCH_NO_DEFAULT",
-            justification = "The switch below does have a default.")
     public static void appendEscapedLuceneQuery(StringBuilder buf,
             final CharSequence text) {
 

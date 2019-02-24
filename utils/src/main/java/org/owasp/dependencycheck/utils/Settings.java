@@ -21,6 +21,8 @@ import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -568,7 +570,7 @@ public final class Settings {
      *
      * @param propertiesFilePath the path to the base properties file to load
      */
-    public Settings(String propertiesFilePath) {
+    public Settings(@NotNull final String propertiesFilePath) {
         initialize(propertiesFilePath);
     }
 
@@ -577,7 +579,7 @@ public final class Settings {
      *
      * @param propertiesFilePath the path to the settings property file
      */
-    private void initialize(String propertiesFilePath) {
+    private void initialize(@NotNull final String propertiesFilePath) {
         props = new Properties();
         try (InputStream in = FileUtils.getResourceAsStream(propertiesFilePath)) {
             props.load(in);
@@ -619,10 +621,10 @@ public final class Settings {
      * @param header the header to print with the log message
      * @param properties the properties to log
      */
-    private void logProperties(String header, Properties properties) {
+    private void logProperties(@NotNull final String header, @NotNull final Properties properties) {
         if (LOGGER.isDebugEnabled()) {
             final StringWriter sw = new StringWriter();
-            try (PrintWriter pw = new PrintWriter(sw)) {
+            try (final PrintWriter pw = new PrintWriter(sw)) {
                 pw.format("%s:%n%n", header);
                 final Enumeration<?> e = properties.propertyNames();
                 while (e.hasMoreElements()) {
@@ -649,7 +651,7 @@ public final class Settings {
      * @param key the key for the property
      * @param value the value for the property
      */
-    public void setString(String key, String value) {
+    public void setString(@NotNull final String key, @NotNull final String value) {
         props.setProperty(key, value);
         LOGGER.debug("Setting: {}='{}'", key, value);
     }
@@ -660,7 +662,7 @@ public final class Settings {
      * @param key the key for the property
      * @param value the value for the property
      */
-    public void setStringIfNotNull(String key, String value) {
+    public void setStringIfNotNull(@NotNull final String key, @Nullable final String value) {
         if (null != value) {
             setString(key, value);
         }
@@ -672,7 +674,7 @@ public final class Settings {
      * @param key the key for the property
      * @param value the value for the property
      */
-    public void setStringIfNotEmpty(String key, String value) {
+    public void setStringIfNotEmpty(@NotNull final String key, @Nullable final String value) {
         if (null != value && !value.isEmpty()) {
             setString(key, value);
         }
@@ -684,7 +686,7 @@ public final class Settings {
      * @param key the key for the property
      * @param value the value for the property
      */
-    public void setArrayIfNotEmpty(String key, String[] value) {
+    public void setArrayIfNotEmpty(@NotNull final String key, @Nullable final String[] value) {
         if (null != value && value.length > 0) {
             setString(key, new Gson().toJson(value));
         }
@@ -696,7 +698,7 @@ public final class Settings {
      * @param key the key for the property
      * @param value the value for the property
      */
-    public void setArrayIfNotEmpty(String key, List<String> value) {
+    public void setArrayIfNotEmpty(@NotNull final String key, @Nullable final List<String> value) {
         if (null != value && !value.isEmpty()) {
             setString(key, new Gson().toJson(value));
         }
@@ -708,7 +710,7 @@ public final class Settings {
      * @param key the key for the property
      * @param value the value for the property
      */
-    public void setBoolean(String key, boolean value) {
+    public void setBoolean(@NotNull final String key, boolean value) {
         setString(key, Boolean.toString(value));
     }
 
@@ -718,7 +720,7 @@ public final class Settings {
      * @param key the key for the property
      * @param value the value for the property
      */
-    public void setBooleanIfNotNull(String key, Boolean value) {
+    public void setBooleanIfNotNull(@NotNull final String key, @Nullable final Boolean value) {
         if (null != value) {
             setBoolean(key, value);
         }
@@ -730,7 +732,7 @@ public final class Settings {
      * @param key the key for the property
      * @param value the value for the property
      */
-    public void setInt(String key, int value) {
+    public void setInt(@NotNull final String key, @NotNull final int value) {
         props.setProperty(key, String.valueOf(value));
         LOGGER.debug("Setting: {}='{}'", key, value);
     }
@@ -741,7 +743,7 @@ public final class Settings {
      * @param key the key for the property
      * @param value the value for the property
      */
-    public void setIntIfNotNull(String key, Integer value) {
+    public void setIntIfNotNull(@NotNull final String key, @Nullable final Integer value) {
         if (null != value) {
             setInt(key, value);
         }
@@ -759,7 +761,7 @@ public final class Settings {
      * @throws java.io.IOException is thrown when there is an exception loading/merging
      * the properties
      */
-    public void mergeProperties(File filePath) throws FileNotFoundException, IOException {
+    public void mergeProperties(@NotNull final File filePath) throws FileNotFoundException, IOException {
         try (FileInputStream fis = new FileInputStream(filePath)) {
             mergeProperties(fis);
         }
@@ -777,7 +779,7 @@ public final class Settings {
      * @throws java.io.IOException is thrown when there is an exception loading/merging
      * the properties
      */
-    public void mergeProperties(String filePath) throws FileNotFoundException, IOException {
+    public void mergeProperties(@NotNull final String filePath) throws FileNotFoundException, IOException {
         try (FileInputStream fis = new FileInputStream(filePath)) {
             mergeProperties(fis);
         }
@@ -793,7 +795,7 @@ public final class Settings {
      * @throws java.io.IOException is thrown when there is an exception loading/merging
      * the properties
      */
-    public void mergeProperties(InputStream stream) throws IOException {
+    public void mergeProperties(@NotNull final InputStream stream) throws IOException {
         props.load(stream);
         logProperties("Properties updated via merge", props);
     }
@@ -807,7 +809,8 @@ public final class Settings {
      * @param key the key to lookup within the properties file
      * @return the property from the properties file converted to a File object
      */
-    public File getFile(String key) {
+    @Nullable
+    public File getFile(@NotNull final String key) {
         final String file = getString(key);
         if (file == null) {
             return null;
@@ -829,7 +832,7 @@ public final class Settings {
      * @param key the key to lookup within the properties file
      * @return the property from the properties file converted to a File object
      */
-    protected File getDataFile(String key) {
+    protected File getDataFile(@NotNull final String key) {
         final String file = getString(key);
         LOGGER.debug("Settings.getDataFile() - file: '{}'", file);
         if (file == null) {
@@ -883,7 +886,7 @@ public final class Settings {
      * @param defaultValue the default value for the requested property
      * @return the property from the properties file
      */
-    public String getString(String key, String defaultValue) {
+    public String getString(@NotNull final String key, @Nullable final String defaultValue) {
         return System.getProperty(key, props.getProperty(key, defaultValue));
     }
 
@@ -910,7 +913,7 @@ public final class Settings {
      * @param key the key to lookup within the properties file
      * @return the property from the properties file
      */
-    public String getString(String key) {
+    public String getString(@NotNull final String key) {
         return System.getProperty(key, props.getProperty(key));
     }
 
@@ -922,7 +925,7 @@ public final class Settings {
      * @param key the key to get from this {@link org.owasp.dependencycheck.utils.Settings}.
      * @return the list or {@code null} if the key wasn't present.
      */
-    public String[] getArray(final String key) {
+    public String[] getArray(@NotNull final String key) {
         final String string = getString(key);
         if (string != null) {
             if (string.charAt(0) == '{' || string.charAt(0) == '[') {
@@ -940,7 +943,7 @@ public final class Settings {
      *
      * @param key the property key to remove
      */
-    public void removeProperty(String key) {
+    public void removeProperty(@NotNull final String key) {
         props.remove(key);
     }
 
@@ -955,7 +958,7 @@ public final class Settings {
      * @throws org.owasp.dependencycheck.utils.InvalidSettingException is thrown if there is an error retrieving
      * the setting
      */
-    public int getInt(String key) throws InvalidSettingException {
+    public int getInt(@NotNull final String key) throws InvalidSettingException {
         try {
             return Integer.parseInt(getString(key));
         } catch (NumberFormatException ex) {
@@ -974,7 +977,7 @@ public final class Settings {
      * @return the property from the properties file or the defaultValue if the
      * property does not exist or cannot be converted to an integer
      */
-    public int getInt(String key, int defaultValue) {
+    public int getInt(@NotNull final String key, int defaultValue) {
         int value;
         try {
             value = Integer.parseInt(getString(key));
@@ -998,7 +1001,7 @@ public final class Settings {
      * @throws org.owasp.dependencycheck.utils.InvalidSettingException is thrown if there is an error retrieving
      * the setting
      */
-    public long getLong(String key) throws InvalidSettingException {
+    public long getLong(@NotNull final String key) throws InvalidSettingException {
         try {
             return Long.parseLong(getString(key));
         } catch (NumberFormatException ex) {
@@ -1018,7 +1021,7 @@ public final class Settings {
      * @throws org.owasp.dependencycheck.utils.InvalidSettingException is thrown if there is an error retrieving
      * the setting
      */
-    public boolean getBoolean(String key) throws InvalidSettingException {
+    public boolean getBoolean(@NotNull final String key) throws InvalidSettingException {
         return Boolean.parseBoolean(getString(key));
     }
 
@@ -1036,7 +1039,7 @@ public final class Settings {
      * @throws org.owasp.dependencycheck.utils.InvalidSettingException is thrown if there is an error retrieving
      * the setting
      */
-    public boolean getBoolean(String key, boolean defaultValue) throws InvalidSettingException {
+    public boolean getBoolean(@NotNull final String key, boolean defaultValue) throws InvalidSettingException {
         return Boolean.parseBoolean(getString(key, Boolean.toString(defaultValue)));
     }
 
@@ -1052,7 +1055,7 @@ public final class Settings {
      * exist
      * @return the property from the properties file
      */
-    public float getFloat(String key, float defaultValue) {
+    public float getFloat(@NotNull final String key, float defaultValue) {
         float retValue = defaultValue;
         try {
             retValue = Float.parseFloat(getString(key));
@@ -1152,7 +1155,7 @@ public final class Settings {
      * @return a temporary File
      * @throws java.io.IOException if any.
      */
-    public File getTempFile(String prefix, String extension) throws IOException {
+    public File getTempFile(@NotNull final String prefix, @NotNull final String extension) throws IOException {
         final File dir = getTempDirectory();
         final String tempFileName = String.format("%s%s.%s", prefix, UUID.randomUUID().toString(), extension);
         final File tempFile = new File(dir, tempFileName);

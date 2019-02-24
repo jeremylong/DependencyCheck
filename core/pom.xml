@@ -187,7 +187,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <artifactId>joda-time</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.code.findbugs</groupId>
+            <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <optional>true</optional>
         </dependency>
