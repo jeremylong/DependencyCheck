@@ -7,9 +7,11 @@ identifiers, and the associated Common Vulnerability and Exposure (CVE) entries.
 
 Installation
 ====================
-1. Download dependency-check-ant from [bintray here](http://dl.bintray.com/jeremy-long/owasp/dependency-check-ant-${project.version}-release.zip).
-2. Unzip the archive
-3. Add the taskdef to your build.xml:
+1. Import the GPG key used to sign all Dependency Check releases: `gpg --keyserver hkp://keys.gnupg.net --recv-keys F9514E84AE3708288374BBBE097586CFEA37F9A6`. This is the same key published to [bintray here](https://bintray.com/user/downloadSubjectPublicKey?username=jeremy-long).
+2. Download dependency-check-ant from [bintray here](http://dl.bintray.com/jeremy-long/owasp/dependency-check-ant-${project.version}-release.zip) and the associated GPG signature file from [bintray here](http://dl.bintray.com/jeremy-long/owasp/dependency-check-ant-${project.version}-release.zip.asc).
+3. Verify the cryptographic integrity of your download: `gpg --verify dependency-check-ant-${project.version}-release.zip.asc`.
+4. Unzip the archive
+5. Add the taskdef to your build.xml:
 
     ```xml
     <!-- Set the value to the installation directory's path -->
@@ -24,7 +26,7 @@ Installation
        <classpath refid="dependency-check.path" />
     </taskdef>
     ```
-4. Use the defined taskdefs:
+6. Use the defined taskdefs:
     * [dependency-check](configuration.html) - the primary task used to check the project dependencies.
     * [dependency-check-purge](config-purge.html) - deletes the local copy of the NVD; this should rarely be used (if ever).
     * [dependency-check-update](config-update.html) - downloads and updates the local copy of the NVD.
