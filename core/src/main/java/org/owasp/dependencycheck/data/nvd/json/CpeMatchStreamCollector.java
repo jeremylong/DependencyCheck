@@ -31,20 +31,20 @@ import java.util.stream.Stream;
  *
  * @author Jeremy Long
  */
-public class CpeMatchStreamCollector implements Collector<Node, ArrayList<CpeMatch>, Stream<CpeMatch>> {
+public class CpeMatchStreamCollector implements Collector<DefNode, ArrayList<DefCpeMatch>, Stream<DefCpeMatch>> {
 
     @Override
-    public Supplier<ArrayList<CpeMatch>> supplier() {
+    public Supplier<ArrayList<DefCpeMatch>> supplier() {
         return ArrayList::new;
     }
 
     @Override
-    public BiConsumer<ArrayList<CpeMatch>, Node> accumulator() {
+    public BiConsumer<ArrayList<DefCpeMatch>, DefNode> accumulator() {
         return (match, nodes) -> match.addAll(nodes.getCpeMatch());
     }
 
     @Override
-    public BinaryOperator<ArrayList<CpeMatch>> combiner() {
+    public BinaryOperator<ArrayList<DefCpeMatch>> combiner() {
         return (map, other) -> {
             map.addAll(other);
             return map;
@@ -52,7 +52,7 @@ public class CpeMatchStreamCollector implements Collector<Node, ArrayList<CpeMat
     }
 
     @Override
-    public Function<ArrayList<CpeMatch>, Stream<CpeMatch>> finisher() {
+    public Function<ArrayList<DefCpeMatch>, Stream<DefCpeMatch>> finisher() {
         return (m) -> m.stream();
     }
 

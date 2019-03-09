@@ -33,7 +33,7 @@ import java.util.zip.GZIPInputStream;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.owasp.dependencycheck.data.nvd.json.CVEItem;
+import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
 import org.owasp.dependencycheck.data.nvd.json.CpeMatchStreamCollector;
 import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
@@ -92,7 +92,7 @@ public final class NvdCveParser {
             }
             reader.beginArray();
             while (reader.hasNext()) {
-                final CVEItem cve = gson.fromJson(reader, CVEItem.class);
+                final DefCveItem cve = gson.fromJson(reader, DefCveItem.class);
 
                 //cve.getCve().getCVEDataMeta().getSTATE();
                 if (testCveCpeStartWithFilter(cve)) {
@@ -117,7 +117,7 @@ public final class NvdCveParser {
      * @return <code>true</code> if the CVE affects CPEs identified by the
      * configured CPE Starts with filter
      */
-    protected boolean testCveCpeStartWithFilter(final CVEItem cve) {
+    protected boolean testCveCpeStartWithFilter(final DefCveItem cve) {
         //cycle through to see if this is a CPE we care about (use the CPE filters
         return cve.getConfigurations().getNodes().stream()
                 .collect(new NodeFlatteningCollector())

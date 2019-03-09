@@ -52,7 +52,6 @@ import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
  * @author Paul Irwin
  */
 @ThreadSafe
-@Experimental
 public class MSBuildProjectAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**

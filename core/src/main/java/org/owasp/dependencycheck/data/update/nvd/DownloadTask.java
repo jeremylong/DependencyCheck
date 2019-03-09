@@ -24,6 +24,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import javax.annotation.concurrent.ThreadSafe;
+import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
@@ -159,5 +160,16 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
             LOGGER.debug("Failed to delete first temporary file {}", file.toString());
             file.deleteOnExit();
         }
+    }
+
+    /**
+     * Returns true if the process task is for the modified json file from the
+     * NVD.
+     *
+     * @return <code>true</code> if the process task is for the modified data;
+     * otherwise <code>false</code>
+     */
+    public boolean isModified() {
+        return StringUtils.containsIgnoreCase(file.toString(), "modified");
     }
 }

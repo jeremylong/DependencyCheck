@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -40,7 +41,6 @@ import org.slf4j.LoggerFactory;
  * settings.
  *
  * @author Jeremy Long
- * @version $Id: $Id
  */
 public final class URLConnectionFactory {
 
@@ -67,10 +67,13 @@ public final class URLConnectionFactory {
      * configured to use a proxy this method will retrieve the proxy settings
      * and use them when setting up the connection.
      *
-     * @param url the url to connect to
+     * @param url the URL to connect to
      * @return an HttpURLConnection
-     * @throws org.owasp.dependencycheck.utils.URLConnectionFailureException thrown if there is an exception
+     * @throws org.owasp.dependencycheck.utils.URLConnectionFailureException
+     * thrown if there is an exception
      */
+    @SuppressFBWarnings(justification = "yes, there is a redundant null check in the catch - to suppress warnings we are leaving the null check",
+            value = {"RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"})
     public HttpURLConnection createHttpURLConnection(URL url) throws URLConnectionFailureException {
         HttpURLConnection conn = null;
         final String proxyHost = settings.getString(Settings.KEYS.PROXY_SERVER);
@@ -129,11 +132,12 @@ public final class URLConnectionFactory {
     }
 
     /**
-     * Check if hostname matches nonProxy settings
+     * Check if host name matches nonProxy settings
      *
-     * @param url the url to connect to
+     * @param url the URL to connect to
      * @return matching result. true: match nonProxy
      */
+    @SuppressWarnings("StringSplitter")
     private boolean matchNonProxy(final URL url) {
         final String host = url.getHost();
 
@@ -178,7 +182,8 @@ public final class URLConnectionFactory {
      * @param url the URL to connect to
      * @param proxy whether to use the proxy (if configured)
      * @return a newly constructed HttpURLConnection
-     * @throws org.owasp.dependencycheck.utils.URLConnectionFailureException thrown if there is an exception
+     * @throws org.owasp.dependencycheck.utils.URLConnectionFailureException
+     * thrown if there is an exception
      */
     public HttpURLConnection createHttpURLConnection(URL url, boolean proxy) throws URLConnectionFailureException {
         if (proxy) {

@@ -223,11 +223,11 @@ public class VulnerableSoftware extends Cpe implements Serializable {
         if (right instanceof VulnerableSoftware) {
             final VulnerableSoftware vs = (VulnerableSoftware) right;
             result &= vs.vulnerable;
-            result &= compareVersionRange(vs, left.getVersion());
+            result &= compareVersions(vs, left.getVersion());
         } else if (left instanceof VulnerableSoftware) {
             final VulnerableSoftware vs = (VulnerableSoftware) left;
             result &= vs.vulnerable;
-            result &= compareVersionRange(vs, right.getVersion());
+            result &= compareVersions(vs, right.getVersion());
         } else {
             result &= compareAttributes(left.getWellFormedVersion(), right.getWellFormedVersion());
         }
@@ -274,7 +274,7 @@ public class VulnerableSoftware extends Cpe implements Serializable {
      * <code>false</code>
      */
     protected boolean compareVersionRange(String targetVersion) {
-        return compareVersionRange(this, targetVersion);
+        return compareVersions(this, targetVersion);
     }
 
     /**
@@ -287,7 +287,7 @@ public class VulnerableSoftware extends Cpe implements Serializable {
      * @return <code>true</code> if the target version is matched; otherwise
      * <code>false</code>
      */
-    protected static boolean compareVersionRange(VulnerableSoftware vs, String targetVersion) {
+    protected static boolean compareVersions(VulnerableSoftware vs, String targetVersion) {
         if (LogicalValue.NA.getAbbreviation().equals(vs.getVersion())) {
             return false;
         }

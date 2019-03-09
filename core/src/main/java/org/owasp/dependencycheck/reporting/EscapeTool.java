@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Set;
 import javax.annotation.concurrent.ThreadSafe;
+import static org.apache.commons.lang3.CharEncoding.UTF_8;
 import org.apache.commons.text.StringEscapeUtils;
 import org.owasp.dependencycheck.dependency.naming.Identifier;
 import org.slf4j.Logger;
@@ -52,7 +53,7 @@ public class EscapeTool {
             return text;
         }
         try {
-            return URLEncoder.encode(text, "UTF-8");
+            return URLEncoder.encode(text, UTF_8);
         } catch (UnsupportedEncodingException ex) {
             LOGGER.warn("UTF-8 is not supported?");
             LOGGER.info("", ex);

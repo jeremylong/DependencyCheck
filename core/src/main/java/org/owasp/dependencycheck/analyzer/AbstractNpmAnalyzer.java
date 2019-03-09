@@ -103,7 +103,7 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
     protected boolean shouldProcess(File pathname) throws AnalysisException {
         try {
             // Do not scan the node_modules (or bower_components) directory
-            String canonicalPath = pathname.getCanonicalPath();
+            final String canonicalPath = pathname.getCanonicalPath();
             if (canonicalPath.contains(File.separator + "node_modules" + File.separator)
                     || canonicalPath.contains(File.separator + "bower_components" + File.separator)) {
                 LOGGER.debug("Skipping analysis of node/bower module: {}", canonicalPath);

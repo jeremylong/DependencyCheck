@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.document.Document;
@@ -189,7 +190,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         if (tmp == null) {
             skipEcosystems = new ArrayList<>();
         } else {
-            LOGGER.info("Skipping CPE Analysis for {}", StringUtils.join(tmp, ","));
+            LOGGER.debug("Skipping CPE Analysis for {}", StringUtils.join(tmp, ","));
             skipEcosystems = Arrays.asList(tmp);
         }
 
@@ -701,6 +702,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * @throws UnsupportedEncodingException is thrown if UTF-8 is not supported
      * @throws AnalysisException thrown if the suppression rules failed
      */
+    @SuppressWarnings("StringSplitter")
     protected boolean determineIdentifiers(Dependency dependency, String vendor, String product,
             Confidence currentConfidence) throws UnsupportedEncodingException, AnalysisException {
 
@@ -855,7 +857,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         if (!"-".equals(guessCpe.getVersion())) {
             String url = null;
             if (hasBroadMatch) { //if we have a broad match we can add the URL to the best guess.
-                url = String.format(NVD_SEARCH_BROAD_URL, URLEncoder.encode(vendor, "UTF-8"), URLEncoder.encode(product, "UTF-8"));
+                url = String.format(NVD_SEARCH_BROAD_URL, URLEncoder.encode(vendor, UTF8), URLEncoder.encode(product, UTF8));
             }
             if (bestGuessURL != null) {
                 url = bestGuessURL;
@@ -874,7 +876,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             final Confidence bestEvidenceQuality = collected.get(0).getEvidenceConfidence();
             boolean addedNonGuess = false;
             final Confidence prevAddedConfidence = dependency.getVulnerableSoftwareIdentifiers().stream().map(id -> id.getConfidence())
-                    .min(Comparator.comparing(Enum::ordinal))
+                    .min(Comparator.comparing(Confidence::ordinal))
                     .orElse(Confidence.LOW);
 
             for (IdentifierMatch m : collected) {
@@ -941,9 +943,10 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                     case JarAnalyzer.DEPENDENCY_ECOSYSTEM:
                     case "java":
                         return ecosystem.equals(JarAnalyzer.DEPENDENCY_ECOSYSTEM);
+                    case AssemblyAnalyzer.DEPENDENCY_ECOSYSTEM:
                     case NugetconfAnalyzer.DEPENDENCY_ECOSYSTEM:
                     case "asp.net":
-                        return ecosystem.equals(NugetconfAnalyzer.DEPENDENCY_ECOSYSTEM);
+                        return ecosystem.equals(NugetconfAnalyzer.DEPENDENCY_ECOSYSTEM) || ecosystem.equals(AssemblyAnalyzer.DEPENDENCY_ECOSYSTEM);
                     case RetireJsAnalyzer.DEPENDENCY_ECOSYSTEM:
                     case "jquery":
                         return ecosystem.equals(RetireJsAnalyzer.DEPENDENCY_ECOSYSTEM);
@@ -1127,20 +1130,15 @@ public class CPEAnalyzer extends AbstractAnalyzer {
          */
         @Override
         public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (!(obj instanceof IdentifierMatch)) {
+            if (obj == null || !(obj instanceof IdentifierMatch)) {
                 return false;
             }
             final IdentifierMatch other = (IdentifierMatch) obj;
-            if (this.identifier.getConfidence() != other.identifier.getConfidence()) {
-                return false;
-            }
-            if (this.identifierConfidence != other.identifierConfidence) {
-                return false;
-            }
-            return !(this.identifier != other.identifier && (!this.identifier.equals(other.identifier)));
+            return new EqualsBuilder()
+                    .appendSuper(super.equals(obj))
+                    .append(identifierConfidence, other.identifierConfidence)
+                    .append(identifier, other.identifier)
+                    .build();
         }
         //</editor-fold>
 

@@ -254,9 +254,12 @@ public class HintAnalyzer extends AbstractAnalyzer {
         final List<VendorDuplicatingHintRule> localVendorHints;
         final HintParser parser = new HintParser();
         File file = null;
-        try {
-            parser.parseHints(FileUtils.getResourceAsStream(HINT_RULE_FILE_NAME));
-        } catch (SAXException ex) {
+        try (InputStream in = FileUtils.getResourceAsStream(HINT_RULE_FILE_NAME)) {
+            if (in == null) {
+                throw new HintParseException("Hint rules `" + HINT_RULE_FILE_NAME + "` could not be found");
+            }
+            parser.parseHints(in);
+        } catch (SAXException | IOException ex) {
             throw new HintParseException("Error parsing hinits: " + ex.getMessage(), ex);
         }
         localHints = parser.getHintRules();
@@ -294,7 +297,9 @@ public class HintAnalyzer extends AbstractAnalyzer {
                     }
                 }
 
-                if (file != null) {
+                if (file == null) {
+                    throw new HintParseException("Unable to locate hints file:" + filePath);
+                } else {
                     try {
                         parser.parseHints(file);
                         if (parser.getHintRules() != null && !parser.getHintRules().isEmpty()) {

@@ -20,7 +20,6 @@ package org.owasp.dependencycheck.analyzer;
 import java.io.File;
 import java.util.Set;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
@@ -114,6 +113,13 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
                 mergeDependencies(nextDependency, dependency, dependenciesToRemove);
                 return true; //since we merged into the next dependency - skip forward to the next in mainIterator
             }
+        } else if ((main = getMainDotnetDependency(dependency, nextDependency)) != null) {
+            if (main == dependency) {
+                mergeDependencies(dependency, nextDependency, dependenciesToRemove);
+            } else {
+                mergeDependencies(nextDependency, dependency, dependenciesToRemove);
+                return true; //since we merged into the next dependency - skip forward to the next in mainIterator
+            }
         }
         //CSON: InnerAssignment
         return false;
@@ -133,20 +139,22 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
             final Set<Dependency> dependenciesToRemove) {
         LOGGER.debug("Merging '{}' into '{}'", relatedDependency.getFilePath(), dependency.getFilePath());
         dependency.addRelatedDependency(relatedDependency);
-        for (Evidence e : relatedDependency.getEvidence(EvidenceType.VENDOR)) {
+        relatedDependency.getEvidence(EvidenceType.VENDOR).forEach((e) -> {
             dependency.addEvidence(EvidenceType.VENDOR, e);
-        }
-        for (Evidence e : relatedDependency.getEvidence(EvidenceType.PRODUCT)) {
+        });
+        relatedDependency.getEvidence(EvidenceType.PRODUCT).forEach((e) -> {
             dependency.addEvidence(EvidenceType.PRODUCT, e);
-        }
-        for (Evidence e : relatedDependency.getEvidence(EvidenceType.VERSION)) {
+        });
+        relatedDependency.getEvidence(EvidenceType.VERSION).forEach((e) -> {
             dependency.addEvidence(EvidenceType.VERSION, e);
-        }
+        });
 
-        for (Dependency d : relatedDependency.getRelatedDependencies()) {
+        relatedDependency.getRelatedDependencies().stream().map((d) -> {
             dependency.addRelatedDependency(d);
+            return d;
+        }).forEach((d) -> {
             relatedDependency.removeRelatedDependencies(d);
-        }
+        });
         dependency.addAllProjectReferences(relatedDependency.getProjectReferences());
         if (dependenciesToRemove != null) {
             dependenciesToRemove.add(relatedDependency);
@@ -163,7 +171,7 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
      * @return true if the the dependencies being analyzed appear to be the
      * same; otherwise false
      */
-    private boolean isSameRubyGem(Dependency dependency1, Dependency dependency2) {
+    protected boolean isSameRubyGem(Dependency dependency1, Dependency dependency2) {
         if (dependency1 == null || dependency2 == null
                 || !dependency1.getFileName().endsWith(".gemspec")
                 || !dependency2.getFileName().endsWith(".gemspec")
@@ -177,10 +185,10 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
     /**
      * Ruby gems installed by "bundle install" can have zero or more *.gemspec
      * files, all of which have the same packagePath and should be grouped. If
-     * one of these gemspec is from <parent>/specifications/*.gemspec, because
-     * it is a stub with fully resolved gem meta-data created by Ruby bundler,
-     * this dependency should be the main one. Otherwise, use dependency2 as
-     * main.
+     * one of these gemspec is from &lt;parent&gt;/specifications/*.gemspec,
+     * because it is a stub with fully resolved gem meta-data created by Ruby
+     * bundler, this dependency should be the main one. Otherwise, use
+     * dependency2 as main.
      *
      * This method returns null if any dependency is not from *.gemspec, or the
      * two do not have the same packagePath. In this case, they should not be
@@ -191,7 +199,7 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
      * @return the main dependency; or null if a gemspec is not included in the
      * analysis
      */
-    private Dependency getMainGemspecDependency(Dependency dependency1, Dependency dependency2) {
+    protected Dependency getMainGemspecDependency(Dependency dependency1, Dependency dependency2) {
         if (isSameRubyGem(dependency1, dependency2)) {
             final File lFile = dependency1.getActualFile();
             final File left = lFile.getParentFile();
@@ -212,7 +220,7 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
      * @return <code>true</code> if the dependencies appear to be the same;
      * otherwise <code>false</code>
      */
-    private boolean isSameSwiftPackage(Dependency dependency1, Dependency dependency2) {
+    protected boolean isSameSwiftPackage(Dependency dependency1, Dependency dependency2) {
         if (dependency1 == null || dependency2 == null
                 || (!dependency1.getFileName().endsWith(".podspec")
                 && !dependency1.getFileName().equals("Package.swift"))
@@ -233,7 +241,7 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
      * @param dependency2 the second swift dependency to compare
      * @return the primary swift dependency
      */
-    private Dependency getMainSwiftDependency(Dependency dependency1, Dependency dependency2) {
+    protected Dependency getMainSwiftDependency(Dependency dependency1, Dependency dependency2) {
         if (isSameSwiftPackage(dependency1, dependency2)) {
             if (dependency1.getFileName().endsWith(".podspec")) {
                 return dependency1;
@@ -247,23 +255,48 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
      * Determines which of the android dependencies should be considered the
      * primary.
      *
-     * @param dependency1 the first swift dependency to compare
-     * @param dependency2 the second swift dependency to compare
+     * @param dependency1 the first android dependency to compare
+     * @param dependency2 the second android dependency to compare
      * @return the primary swift dependency
      */
-    private Dependency getMainAndroidDependency(Dependency dependency1, Dependency dependency2) {
+    protected Dependency getMainAndroidDependency(Dependency dependency1, Dependency dependency2) {
         if (dependency1.isVirtual() || dependency2.isVirtual()) {
             return null;
         }
         if ("classes.jar".equals(dependency2.getActualFile().getName())
                 && "aar".equals(FileUtils.getFileExtension(dependency1.getActualFile().getName()))
-                && dependency2.getActualFilePath().contains(dependency1.getActualFile().getName())) {
+                && dependency2.getFileName().contains(dependency1.getActualFile().getName())) {
             return dependency1;
         }
         if ("classes.jar".equals(dependency1.getActualFile().getName())
                 && "aar".equals(FileUtils.getFileExtension(dependency2.getActualFile().getName()))
-                && dependency1.getActualFilePath().contains(dependency2.getActualFile().getName())) {
+                && dependency1.getFileName().contains(dependency2.getActualFile().getName())) {
             return dependency2;
+        }
+        return null;
+    }
+
+    /**
+     * Determines which of the dotnet dependencies should be considered the
+     * primary.
+     *
+     * @param dependency1 the first dotnet dependency to compare
+     * @param dependency2 the second dotnet dependency to compare
+     * @return the primary swift dependency
+     */
+    protected Dependency getMainDotnetDependency(Dependency dependency1, Dependency dependency2) {
+        if (dependency1.getName() != null && dependency1.getVersion() != null
+                && dependency2.getName() != null && dependency2.getVersion() != null
+                && (AssemblyAnalyzer.DEPENDENCY_ECOSYSTEM.equals(dependency1.getEcosystem())
+                || NugetconfAnalyzer.DEPENDENCY_ECOSYSTEM.equals(dependency1.getEcosystem()))
+                && (AssemblyAnalyzer.DEPENDENCY_ECOSYSTEM.equals(dependency2.getEcosystem())
+                || NugetconfAnalyzer.DEPENDENCY_ECOSYSTEM.equals(dependency2.getEcosystem()))) {
+            if (dependency1.getName().equals(dependency2.getName()) && dependency1.getVersion().equals(dependency2.getVersion())) {
+                if (dependency2.isVirtual()) {
+                    return dependency2;
+                }
+                return dependency1;
+            }
         }
         return null;
     }

@@ -64,7 +64,7 @@ public final class ConnectionFactory {
     /**
      * The URL that discusses upgrading non-H2 databases.
      */
-    public static final String UPGRADE_HELP_URL = "http://jeremylong.github.io/DependencyCheck/data/upgrade.html";
+    public static final String UPGRADE_HELP_URL = "https://jeremylong.github.io/DependencyCheck/data/upgrade.html";
     /**
      * The database driver used to connect to the database.
      */

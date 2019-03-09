@@ -20,7 +20,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>5.0.0-M1</version>
+        <version>5.0.0-M2</version>
     </parent>
 
     <artifactId>dependency-check-core</artifactId>
@@ -109,7 +109,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <includeGetters>true</includeGetters>
                     <annotationStyle>gson</annotationStyle>
                     <targetPackage>org.owasp.dependencycheck.data.nvd.json</targetPackage>
-                    <useCommonsLang3>true</useCommonsLang3>
                 </configuration>
                 <executions>
                     <execution>
@@ -288,6 +287,14 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         </dependency>
         <!-- The following dependencies are only used during testing 
              and must not be converted to a properties based version number -->
+        <dependency>
+            <groupId>io.github.faob-dev</groupId>
+            <artifactId>aar</artifactId>
+            <version>1.0.0</version>
+            <type>aar</type>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>org.jslipc</groupId>
             <artifactId>jslipc</artifactId>

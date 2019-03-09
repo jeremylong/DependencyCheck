@@ -127,9 +127,9 @@ public class Check extends Update {
      */
     private String zipExtensions;
     /**
-     * The path to Mono for .NET assembly analysis on non-windows systems.
+     * The path to dotnet core for .NET assembly analysis.
      */
-    private String pathToMono;
+    private String pathToCore;
     /**
      * The name of the project being analyzed.
      */
@@ -1079,21 +1079,21 @@ public class Check extends Update {
     }
 
     /**
-     * Get the value of pathToMono.
+     * Get the value of pathToCore.
      *
-     * @return the value of pathToMono
+     * @return the value of pathToCore
      */
-    public String getPathToMono() {
-        return pathToMono;
+    public String getPathToDotnetCore() {
+        return pathToCore;
     }
 
     /**
-     * Set the value of pathToMono.
+     * Set the value of pathToCore.
      *
-     * @param pathToMono new value of pathToMono
+     * @param pathToCore new value of pathToCore
      */
-    public void setPathToMono(String pathToMono) {
-        this.pathToMono = pathToMono;
+    public void setPathToDotnetCore(String pathToCore) {
+        this.pathToCore = pathToCore;
     }
 
     /**
@@ -1361,7 +1361,7 @@ public class Check extends Update {
         getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_PASSWORD, nexusPassword);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
         getSettings().setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
-        getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH, pathToCore);
     }
 
     /**
@@ -1376,8 +1376,8 @@ public class Check extends Update {
         final StringBuilder ids = new StringBuilder();
         for (Dependency d : dependencies) {
             for (Vulnerability v : d.getVulnerabilities()) {
-                if ((v.getCvssV2() != null && v.getCvssV2().getScore() >= failBuildOnCVSS) ||
-                        (v.getCvssV3() != null && v.getCvssV3().getBaseScore() >= failBuildOnCVSS)) {
+                if ((v.getCvssV2() != null && v.getCvssV2().getScore() >= failBuildOnCVSS)
+                        || (v.getCvssV3() != null && v.getCvssV3().getBaseScore() >= failBuildOnCVSS)) {
                     if (ids.length() == 0) {
                         ids.append(v.getName());
                     } else {

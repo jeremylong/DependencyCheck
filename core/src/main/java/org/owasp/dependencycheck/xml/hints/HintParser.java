@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.xml.hints;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -116,8 +117,9 @@ public class HintParser {
      * @param file an XML file containing hints
      * @throws HintParseException thrown if the XML file cannot be parsed
      */
+    @SuppressFBWarnings(justification = "try with resources will clean up the input stream", value = {"OBL_UNSATISFIED_OBLIGATION"})
     public void parseHints(File file) throws HintParseException {
-        try (FileInputStream fis = new FileInputStream(file)) {
+        try (InputStream fis = new FileInputStream(file)) {
             parseHints(fis);
         } catch (SAXException | IOException ex) {
             LOGGER.debug("", ex);

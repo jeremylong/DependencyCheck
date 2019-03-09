@@ -45,7 +45,7 @@ public class RetireJsAnalyzerIT extends BaseDBTestCase {
         engine = new Engine(getSettings());
         engine.openDatabase(true, true);
         RetireJSDataSource ds = new RetireJSDataSource();
-        ds.update(engine);
+        boolean updated = ds.update(engine);
         analyzer = new RetireJsAnalyzer();
         analyzer.setFilesMatched(true);
         analyzer.initialize(getSettings());
@@ -187,5 +187,4 @@ public class RetireJsAnalyzerIT extends BaseDBTestCase {
         assertTrue(dependency.getVulnerabilities().contains(new Vulnerability("CVE-2014-0014")));
         assertTrue(dependency.getVulnerabilities().contains(new Vulnerability("CVE-2014-0046")));
     }
-
 }

@@ -164,8 +164,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Initialize the analyzer. In this case, extract GrokAssembly.exe to a
-     * temporary location.
+     * Initialize the analyzer.
      *
      * @param engine a reference to the dependency-check engine
      * @throws InitializationException if anything goes wrong

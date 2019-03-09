@@ -30,20 +30,20 @@ import static org.junit.Assert.*;
  */
 public class NodeFlatteningCollectorTest {
 
-    private List<Node> nodes;
+    private List<DefNode> nodes;
 
     @Before
     public void setUp() {
         nodes = new ArrayList<>();
-        Node node = new Node();
+        DefNode node = new DefNode();
         node.setOperator("top");
         nodes.add(node);
 
-        Node parent = node;
+        DefNode parent = node;
         for (int x = 0; x < 5; x++) {
-            Node child = new Node();
+            DefNode child = new DefNode();
             child.setOperator("Child " + x);
-            List<Node> l = new ArrayList<>(1);
+            List<DefNode> l = new ArrayList<>(1);
             l.add(child);
             parent.setChildren(l);
             parent = child;

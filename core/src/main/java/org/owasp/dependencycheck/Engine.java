@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck;
 
 import com.google.common.collect.ImmutableList;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.owasp.dependencycheck.analyzer.AnalysisPhase;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.AnalyzerService;
@@ -332,6 +333,7 @@ public class Engine implements FileFilter, AutoCloseable {
      *
      * @return the dependencies identified
      */
+    @SuppressFBWarnings(justification = "This is the intended external view of the dependencies", value = {"EI_EXPOSE_REP"})
     public synchronized Dependency[] getDependencies() {
         if (dependenciesExternalView == null) {
             dependenciesExternalView = dependencies.toArray(new Dependency[dependencies.size()]);
@@ -908,9 +910,13 @@ public class Engine implements FileFilter, AutoCloseable {
                 final long updateStart = System.currentTimeMillis();
                 final UpdateService service = new UpdateService(serviceClassLoader);
                 final Iterator<CachedWebDataSource> iterator = service.getDataSources();
+                boolean dbUpdatesMade = false;
                 while (iterator.hasNext()) {
                     final CachedWebDataSource source = iterator.next();
-                    source.update(this);
+                    dbUpdatesMade |= source.update(this);
+                }
+                if (dbUpdatesMade) {
+                    database.defrag();
                 }
                 database.close();
                 database = null;
@@ -1099,7 +1105,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * @throws ExceptionCollection a collection of exceptions that occurred
      * during analysis
      */
-    private void throwFatalExceptionCollection(String message, @NotNull final Throwable throwable, @NotNull final List<Throwable> exceptions) throws ExceptionCollection {
+    private void throwFatalExceptionCollection(String message, @NotNull final Throwable throwable,
+            @NotNull final List<Throwable> exceptions) throws ExceptionCollection {
         LOGGER.error(message);
         LOGGER.debug("", throwable);
         exceptions.add(throwable);
@@ -1119,8 +1126,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * @throws ReportException thrown if there is an error generating the report
      */
     public synchronized void writeReports(String applicationName, @Nullable final String groupId,
-                                          @Nullable final String artifactId, @Nullable final String version,
-                                          @NotNull final File outputDir, String format) throws ReportException {
+            @Nullable final String artifactId, @Nullable final String version,
+            @NotNull final File outputDir, String format) throws ReportException {
         if (mode == Mode.EVIDENCE_COLLECTION) {
             throw new UnsupportedOperationException("Cannot generate report in evidence collection mode.");
         }
