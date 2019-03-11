@@ -57,9 +57,10 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      * Constructs a new SSLSocketFactory.
      *
      * @param settings reference to the configured settings
-     * @throws java.security.NoSuchAlgorithmException thrown when an algorithm is not
-     * supported
-     * @throws java.security.KeyManagementException thrown if initialization fails
+     * @throws java.security.NoSuchAlgorithmException thrown when an algorithm
+     * is not supported
+     * @throws java.security.KeyManagementException thrown if initialization
+     * fails
      */
     public SSLSocketFactoryEx(Settings settings) throws NoSuchAlgorithmException, KeyManagementException {
         this.settings = settings;
@@ -73,9 +74,10 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      * @param tm the trust manager
      * @param random secure random
      * @param settings reference to the configured settings
-     * @throws java.security.NoSuchAlgorithmException thrown when an algorithm is not
-     * supported
-     * @throws java.security.KeyManagementException thrown if initialization fails
+     * @throws java.security.NoSuchAlgorithmException thrown when an algorithm
+     * is not supported
+     * @throws java.security.KeyManagementException thrown if initialization
+     * fails
      */
     public SSLSocketFactoryEx(KeyManager[] km, TrustManager[] tm, SecureRandom random, Settings settings)
             throws NoSuchAlgorithmException, KeyManagementException {
@@ -88,9 +90,10 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      *
      * @param ctx the SSL context
      * @param settings reference to the configured settings
-     * @throws java.security.NoSuchAlgorithmException thrown when an algorithm is not
-     * supported
-     * @throws java.security.KeyManagementException thrown if initialization fails
+     * @throws java.security.NoSuchAlgorithmException thrown when an algorithm
+     * is not supported
+     * @throws java.security.KeyManagementException thrown if initialization
+     * fails
      */
     public SSLSocketFactoryEx(SSLContext ctx, Settings settings) throws NoSuchAlgorithmException, KeyManagementException {
         this.settings = settings;
@@ -247,6 +250,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      *
      * @return the protocol list
      */
+    @SuppressWarnings("StringSplitter")
     protected String[] getProtocolList() {
         SSLSocket socket = null;
         String[] availableProtocols = null;

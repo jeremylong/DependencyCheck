@@ -17,24 +17,28 @@
  */
 package org.owasp.dependencycheck.utils;
 
-import java.io.*;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
-import org.apache.commons.lang3.SystemUtils;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A collection of utilities for processing information about files.
  *
  * @author Jeremy Long
- * @version $Id: $Id
  */
 public final class FileUtils {
 
@@ -66,8 +70,9 @@ public final class FileUtils {
      */
     @Nullable
     public static String getFileExtension(@NotNull String fileName) {
-        @Nullable final String fileExt = FilenameUtils.getExtension(fileName);
-        return StringUtils.isNoneEmpty(fileExt)? StringUtils.lowerCase(fileExt) : null;
+        @Nullable
+        final String fileExt = FilenameUtils.getExtension(fileName);
+        return StringUtils.isNoneEmpty(fileExt) ? StringUtils.lowerCase(fileExt) : null;
     }
 
     /**
@@ -79,7 +84,7 @@ public final class FileUtils {
      */
     @NotNull
     public static boolean delete(@Nullable File file) {
-        if(file == null) {
+        if (file == null) {
             LOGGER.warn("cannot delete null File");
             return false;
         }
@@ -97,8 +102,8 @@ public final class FileUtils {
      *
      * @param base the base directory to create a temporary directory within
      * @return the temporary directory
-     * @throws java.io.IOException thrown when a directory cannot be created within the
-     * base directory
+     * @throws java.io.IOException thrown when a directory cannot be created
+     * within the base directory
      */
     @NotNull
     public static File createTempDirectory(@Nullable final File base) throws IOException {
@@ -125,8 +130,8 @@ public final class FileUtils {
     }
 
     /**
-     * Close the given {@link java.io.Closeable} instance, ignoring nulls, and logging
-     * any thrown {@link java.io.IOException}.
+     * Close the given {@link java.io.Closeable} instance, ignoring nulls, and
+     * logging any thrown {@link java.io.IOException}.
      *
      * @param closeable to be closed
      */
@@ -153,7 +158,7 @@ public final class FileUtils {
                 ? classLoader.getResourceAsStream(resource)
                 : ClassLoader.getSystemResourceAsStream(resource);
 
-        if(inputStream == null) {
+        if (inputStream == null) {
             try {
                 return new FileInputStream(resource);
             } catch (final FileNotFoundException e) {
@@ -161,5 +166,24 @@ public final class FileUtils {
             }
         }
         return inputStream;
+    }
+
+    /**
+     * Returns a File object for the given resource. The resource is attempted
+     * to be loaded from the class loader.
+     *
+     * @param resource path
+     * @return the file reference for the resource
+     */
+    public static File getResourceAsFile(final String resource) {
+        final ClassLoader classLoader = FileUtils.class.getClassLoader();
+        final String path = classLoader != null
+                ? classLoader.getResource(resource).getFile()
+                : ClassLoader.getSystemResource(resource).getFile();
+
+        if (path == null) {
+            return new File(resource);
+        }
+        return new File(path);
     }
 }

@@ -100,7 +100,7 @@ public class NpmAuditParser {
             for (int j = 0; j < jsonCves.length(); j++) {
                 stringCves.add(jsonCves.getString(j));
             }
-            advisory.setCves(stringCves.toArray(new String[stringCves.size()]));
+            advisory.setCves(stringCves);
         }
         return advisory;
     }

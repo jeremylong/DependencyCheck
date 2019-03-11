@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2019 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.maven;
 
@@ -24,8 +24,9 @@ import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
 /**
  * A dependency node visitor that filters nodes and their children and delegates
  * to another visitor.
- * 
- * @since 4.0.3
+ *
+ * @author Nikolas Falco
+ * @since 5.0.0
  */
 public class FilteringDependencyTransitiveNodeVisitor implements DependencyNodeVisitor {
 
@@ -42,7 +43,7 @@ public class FilteringDependencyTransitiveNodeVisitor implements DependencyNodeV
     /**
      * Creates a dependency node visitor that delegates nodes that are accepted
      * by the specified filter to the specified visitor.
-     * 
+     *
      * @param visitor the dependency node visitor to delegate to
      * @param filter the dependency node filter to apply before delegation
      */
@@ -56,7 +57,7 @@ public class FilteringDependencyTransitiveNodeVisitor implements DependencyNodeV
      */
     @Override
     public boolean visit(DependencyNode node) {
-        boolean visit;
+        final boolean visit;
 
         if (filter.accept(node)) {
             visit = visitor.visit(node);
@@ -72,7 +73,7 @@ public class FilteringDependencyTransitiveNodeVisitor implements DependencyNodeV
      */
     @Override
     public boolean endVisit(DependencyNode node) {
-        boolean visit;
+        final boolean visit;
 
         if (filter.accept(node)) {
             visit = visitor.endVisit(node);
@@ -85,7 +86,7 @@ public class FilteringDependencyTransitiveNodeVisitor implements DependencyNodeV
 
     /**
      * Gets the dependency node visitor that this visitor delegates to.
-     * 
+     *
      * @return the dependency node visitor
      */
     public DependencyNodeVisitor getDependencyNodeVisitor() {
@@ -95,7 +96,7 @@ public class FilteringDependencyTransitiveNodeVisitor implements DependencyNodeV
     /**
      * Gets the dependency node filter that this visitor applies before
      * delegation.
-     * 
+     *
      * @return the dependency node filter
      */
     public DependencyNodeFilter getDependencyNodeFilter() {

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="assembly">
+    <xs:complexType>
+      <xs:all>
+        <xs:element type="xs:string" name="companyName"  minOccurs="0" maxOccurs="1"/>
+        <xs:element type="xs:string" name="productName" minOccurs="0" maxOccurs="1"/>
+        <xs:element type="xs:string" name="productVersion" minOccurs="0" maxOccurs="1"/>
+        <xs:element type="xs:string" name="comments" minOccurs="0" maxOccurs="1"/>
+        <xs:element type="xs:string" name="fileDescription" minOccurs="0" maxOccurs="1"/>
+        <xs:element type="xs:string" name="fileName" minOccurs="0" maxOccurs="1"/>
+        <xs:element type="xs:string" name="fileVersion" minOccurs="0" maxOccurs="1"/>
+        <xs:element type="xs:string" name="internalName" minOccurs="0" maxOccurs="1"/>
+        <xs:element type="xs:string" name="originalFilename" minOccurs="0" maxOccurs="1"/>
+        <xs:element type="xs:string" name="legalCopyright" minOccurs="0" maxOccurs="1"/>
+        <xs:element type="xs:string" name="legalTrademarks" minOccurs="0" maxOccurs="1"/>
+        <xs:element type="xs:string" name="fullName" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="namespaces" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+              <xs:element type="xs:string" name="namespace"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element type="xs:string" name="warning"  minOccurs="0" maxOccurs="1"/>
+        <xs:element type="xs:string" name="error"  minOccurs="0" maxOccurs="1"/>
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -17,9 +17,12 @@
  */
 package org.owasp.dependencycheck.maven;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
+ * Simple POJO for Maven configuration.
  *
- * @author jeremy
+ * @author Jeremy Long
  */
 public class Retirejs {
 
@@ -38,6 +41,8 @@ public class Retirejs {
      *
      * @return the retire JS content filters
      */
+    @SuppressFBWarnings(justification = "use case for configuration object - these warnings are okay",
+            value = {"EI_EXPOSE_REP", "UWF_UNWRITTEN_FIELD"})
     public String[] getFilters() {
         return filters;
     }
@@ -49,6 +54,8 @@ public class Retirejs {
      * @return whether or not retire JS should remove non-vulnerable JS files
      * from the report
      */
+    @SuppressFBWarnings(justification = "use case for configuration object - the warning is okay",
+            value = {"UWF_UNWRITTEN_FIELD"})
     public Boolean getFilterNonVulnerable() {
         return filterNonVulnerable;
     }

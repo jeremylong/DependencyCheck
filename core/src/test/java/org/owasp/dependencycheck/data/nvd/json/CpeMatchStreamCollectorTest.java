@@ -30,16 +30,16 @@ import static org.junit.Assert.*;
  */
 public class CpeMatchStreamCollectorTest {
 
-    private List<Node> nodes;
+    private List<DefNode> nodes;
 
     @Before
     public void setUp() {
         nodes = new ArrayList<>();
         for (int x = 0; x < 5; x++) {
-            Node node = new Node();
-            CpeMatch cpe = new CpeMatch();
+            DefNode node = new DefNode();
+            DefCpeMatch cpe = new DefCpeMatch();
             cpe.setCpe23Uri("cpe:/a:owasp:dependency-check:" + x);
-            List<CpeMatch> cpes = new ArrayList<>();
+            List<DefCpeMatch> cpes = new ArrayList<>();
             cpes.add(cpe);
             node.setCpeMatch(cpes);
             nodes.add(node);

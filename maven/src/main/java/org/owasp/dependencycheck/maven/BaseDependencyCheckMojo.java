@@ -20,7 +20,6 @@ package org.owasp.dependencycheck.maven;
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL.StandardTypes;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.execution.MavenSession;
@@ -599,11 +598,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private Integer cveValidForHours;
 
     /**
-     * The path to mono for .NET Assembly analysis on non-windows systems.
+     * The path to dotnet core.
      */
     @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "pathToMono", defaultValue = "", required = false)
-    private String pathToMono;
+    @Parameter(property = "pathToCore", defaultValue = "", required = false)
+    private String pathToCore;
 
     /**
      * The RetireJS Analyzer configuration:
@@ -625,34 +624,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private Retirejs retirejs;
 
     /**
-<<<<<<< HEAD
-=======
-     * The Proxy URL.
-     *
-     * @deprecated Please use mavenSettings instead
-     */
-    @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "proxyUrl", defaultValue = "", required = false)
-    @Deprecated
-    private String proxyUrl = null;
-    /**
-     * Sets whether or not the external report format should be used.
-     *
-     * @deprecated the internal report is no longer supported
-     */
-    @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "externalReport")
-    @Deprecated
-    private String externalReport = null;
-
-    /**
-     * The list of artifacts (and their transitive dependencies) to exclude from the check.
+     * The list of artifacts (and their transitive dependencies) to exclude from
+     * the check.
      */
     @Parameter
     private List<String> excludes;
 
     /**
->>>>>>> 852171a1e45ac8ab68603958cb75680f8c126f2b
      * The artifact scope filter.
      */
     private Filter<String> artifactScopeExcluded;
@@ -847,13 +825,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             //if we pass in the filter below instead of null to the dependencyGraphBuilder
             final DependencyNode dn = dependencyGraphBuilder.buildDependencyGraph(buildingRequest, null, reactorProjects);
 
-            CollectingDependencyNodeVisitor collectorVisitor = new CollectingDependencyNodeVisitor();
+            final CollectingDependencyNodeVisitor collectorVisitor = new CollectingDependencyNodeVisitor();
             // exclude artifact by pattern and its dependencies
-            DependencyNodeVisitor transitiveFilterVisitor = new FilteringDependencyTransitiveNodeVisitor(collectorVisitor, 
+            final DependencyNodeVisitor transitiveFilterVisitor = new FilteringDependencyTransitiveNodeVisitor(collectorVisitor,
                     new ArtifactDependencyNodeFilter(new PatternExcludesArtifactFilter(getExcludes())));
             // exclude exact artifact but not its dependencies, this filter must be appied on the root for first otherwise
             // in case the exclude has the same groupId of the current bundle its direct dependencies are not visited
-            DependencyNodeVisitor artifactFilter = new FilteringDependencyNodeVisitor(transitiveFilterVisitor,
+            final DependencyNodeVisitor artifactFilter = new FilteringDependencyNodeVisitor(transitiveFilterVisitor,
                     new ArtifactDependencyNodeFilter(new ExcludesArtifactFilter(filterItems)));
             dn.accept(artifactFilter);
 
@@ -1080,10 +1058,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private ExceptionCollection collectDependencies(Engine engine, MavenProject project,
             List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
 
-        ExceptionCollection exCol = null;
+        ExceptionCollection exCol;
         exCol = collectMavenDependencies(engine, project, nodes, buildingRequest, aggregate);
 
-        FileSet[] projectScan = null;
+        final FileSet[] projectScan;
         if (scanSet == null || scanSet.length == 0) {
             // Define the default FileSets
             final FileSet resourcesSet = new FileSet();
@@ -1543,7 +1521,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
         settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
-        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH, pathToCore);
 
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
         if (nexusServerId != null) {
@@ -1769,7 +1747,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * Returns the list of excluded artifacts based on either artifact id or
      * group id and artifact id.
-     * 
+     *
      * @return a list of artifact to exclude
      */
     public List<String> getExcludes() {

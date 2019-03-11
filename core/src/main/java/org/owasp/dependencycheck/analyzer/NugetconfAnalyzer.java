@@ -51,7 +51,6 @@ import org.owasp.dependencycheck.exception.InitializationException;
  *
  * @author doshyt
  */
-@Experimental
 @ThreadSafe
 public class NugetconfAnalyzer extends AbstractFileTypeAnalyzer {
 
@@ -59,7 +58,7 @@ public class NugetconfAnalyzer extends AbstractFileTypeAnalyzer {
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
-    public static final String DEPENDENCY_ECOSYSTEM = "NuGet";
+    public static final String DEPENDENCY_ECOSYSTEM = "nuget";
 
     /**
      * The logger.

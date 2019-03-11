@@ -221,6 +221,7 @@ public class CliParserTest extends BaseTest {
         CliParser instance = new CliParser(getSettings());
         try {
             instance.parse(args);
+            Assert.fail("An exception should have been thrown");
         } catch (FileNotFoundException ex) {
             Assert.assertTrue(ex.getMessage().contains("Invalid 'scan' argument"));
         }

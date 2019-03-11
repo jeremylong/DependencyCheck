@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.nodeaudit;
 
+import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
@@ -82,7 +83,7 @@ public class Advisory {
     /**
      * The optional CVE(s) associated with this advisory.
      */
-    private String[] cves;
+    private List<String> cves;
 
     /**
      * A string representation of the versions containing the vulnerability.
@@ -195,11 +196,11 @@ public class Advisory {
         this.version = version;
     }
 
-    public String[] getCves() {
+    public List<String> getCves() {
         return cves;
     }
 
-    public void setCves(String[] cves) {
+    public void setCves(List<String> cves) {
         this.cves = cves;
     }
 

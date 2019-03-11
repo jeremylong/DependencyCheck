@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.xml.suppression;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -72,6 +73,7 @@ public class SuppressionParser {
      * @return a list of suppression rules
      * @throws SuppressionParseException thrown if the XML file cannot be parsed
      */
+    @SuppressFBWarnings(justification = "try with resource will clenaup the resources", value = {"OBL_UNSATISFIED_OBLIGATION"})
     public List<SuppressionRule> parseSuppressionRules(File file) throws SuppressionParseException {
         try (FileInputStream fis = new FileInputStream(file)) {
             return parseSuppressionRules(fis);
@@ -94,8 +96,7 @@ public class SuppressionParser {
         try (
                 InputStream schemaStream12 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_2);
                 InputStream schemaStream11 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_1);
-                InputStream schemaStream10 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_0);
-            ) {
+                InputStream schemaStream10 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_0);) {
             final SuppressionHandler handler = new SuppressionHandler();
             final SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream12, schemaStream11, schemaStream10);
             final XMLReader xmlReader = saxParser.getXMLReader();

@@ -68,6 +68,7 @@ public class ReportGeneratorIT extends BaseDBTestCase {
             File jetty = BaseTest.getResourceAsFile(this, "org.mortbay.jetty.jar");
 
             getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+            getSettings().setBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, false);
             try (Engine engine = new Engine(getSettings())) {
                 engine.scan(struts);
                 engine.scan(axis);

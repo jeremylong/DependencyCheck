@@ -9,6 +9,7 @@
     <suppress checks=".*" files=".*[\\/]org[\\/]owasp[\\/]dependencycheck[\\/]utils[\\/]Filter.java" />
     <!--suppress checks=".*" files=".*[\\/]org[\\/]owasp[\\/]dependencycheck[\\/]utils[\\/]Checksum.java" /-->
     <suppress checks=".*" files=".*[\\/]generated[\\/].*.java" />
+    <suppress checks=".*" files=".*[\\/]generated-sources[\\/].*.java" />
     <suppress checks=".*" files=".*[\\/]maven-plugin-plugin-sources[\\/].*.properties" />
     <!--suppress checks=".*" files=".*[\\/]org[\\/]owasp[\\/]dependencycheck[\\/]org[\\/]apache[\\/].*.java" /-->
     <suppress checks="RegexpHeader" files=".*[\\/]org[\\/]owasp[\\/]dependencycheck[\\/]utils[\\/]SSLSocketFactoryEx.java" />
