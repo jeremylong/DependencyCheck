@@ -3,11 +3,14 @@
 
     <taskdef name="dependency-check" classname="org.owasp.dependencycheck.taskdefs.Check" />
 
+    <!-- HACK: disabling ossindex analyzer as it may cause failures due to rate-limiting -->
+
     <target name="test.fileset">
         <dependency-check
             projectName="My Project"
             reportOutputDirectory="${project.build.directory}"
             autoupdate="false"
+            ossindexAnalyzerEnabled="false"
             reportFormat="HTML">
 
             <!-- Scan a single file -->
@@ -28,6 +31,7 @@
             projectName="My Project"
             reportOutputDirectory="${project.build.directory}"
             autoupdate="false"
+            ossindexAnalyzerEnabled="false"
             reportFormat="XML">
             <!-- Scan specific files -->
             <filelist
@@ -40,6 +44,7 @@
             projectName="My Project"
             reportOutputDirectory="${project.build.directory}"
             autoupdate="false"
+            ossindexAnalyzerEnabled="false"
             reportFormat="CSV">
 
             <!-- Scan a specific directory -->
@@ -55,6 +60,7 @@
             projectName="test formatBAD"
             reportOutputDirectory="${project.build.directory}"
             autoupdate="false"
+            ossindexAnalyzerEnabled="false"
             reportFormat="BAD">
         </dependency-check>
     </target>
@@ -65,6 +71,7 @@
             reportOutputDirectory="${project.build.directory}"
             reportFormat="XML"
             autoupdate="false"
+            ossindexAnalyzerEnabled="false"
             failBuildOnCVSS="3">
             <fileset dir="${project.build.directory}/test-classes/jars">
                 <include name="axis-1.4.jar"/>
@@ -77,6 +84,7 @@
             projectName="test retireJS configuration"
             reportOutputDirectory="${project.build.directory}/retirejs-report.html"
             autoupdate="false"
+            ossindexAnalyzerEnabled="false"
             retirejsFilterNonVulnerable="true">
             <retirejsFilter regex="copyright.*jeremy long" />
             <retirejsFilter regex="owasp dependency-check" />
@@ -94,6 +102,7 @@
             projectName="test suppression"
             reportOutputDirectory="${project.build.directory}/suppression-report.html"
             autoupdate="false"
+            ossindexAnalyzerEnabled="false"
             failBuildOnCVSS="3">
             <suppressionfile path="${project.build.directory}/test-classes/test-suppression1.xml" />
             <suppressionfile path="${project.build.directory}/test-classes/test-suppression2.xml" />
@@ -110,6 +119,7 @@
             projectName="test suppression"
             reportOutputDirectory="${project.build.directory}/suppression-single-report.html"
             autoupdate="false"
+            ossindexAnalyzerEnabled="false"
             failBuildOnCVSS="3"
             suppressionFile="${project.build.directory}/test-classes/test-suppression.xml">
             <fileset dir="${project.build.directory}/test-classes/jars">
@@ -122,6 +132,7 @@
             projectName="test suppression"
             reportOutputDirectory="${project.build.directory}/suppression-multiple-report.html"
             autoupdate="false"
+            ossindexAnalyzerEnabled="false"
             failBuildOnCVSS="3"
             suppressionFile="${project.build.directory}/test-classes/test-suppression1.xml">
             <suppressionfile path="${project.build.directory}/test-classes/test-suppression2.xml"/>

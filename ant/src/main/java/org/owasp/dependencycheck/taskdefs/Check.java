@@ -227,6 +227,16 @@ public class Check extends Update {
     private Boolean swiftPackageManagerAnalyzerEnabled;
 
     /**
+     * Whether or not the Sonatype OSS Index analyzer is enabled.
+     */
+    private Boolean ossindexAnalyzerEnabled;
+
+    /**
+     * URL of the Sonatype OSS Index service.
+     */
+    private String ossindexAnalyzerUrl;
+
+    /**
      * Whether or not the Artifactory Analyzer is enabled.
      */
     private Boolean artifactoryAnalyzerEnabled;
@@ -1097,6 +1107,34 @@ public class Check extends Update {
     }
 
     /**
+     * Get value of {@link #ossindexAnalyzerEnabled}.
+     */
+    public Boolean isOssindexAnalyzerEnabled() {
+        return ossindexAnalyzerEnabled;
+    }
+
+    /**
+     * Set value of {@link #ossindexAnalyzerEnabled}.
+     */
+    public void setOssindexAnalyzerEnabled(Boolean ossindexAnalyzerEnabled) {
+        this.ossindexAnalyzerEnabled = ossindexAnalyzerEnabled;
+    }
+
+    /**
+     * Get value of {@link #ossindexAnalyzerUrl}.
+     */
+    public String getOssindexAnalyzerUrl() {
+        return ossindexAnalyzerUrl;
+    }
+
+    /**
+     * Set value of {@link #ossindexAnalyzerUrl}.
+     */
+    public void setOssindexAnalyzerUrl(String ossindexAnalyzerUrl) {
+        this.ossindexAnalyzerUrl = ossindexAnalyzerUrl;
+    }
+
+    /**
      * Returns the value of cmakeAnalyzerEnabled.
      *
      * @return the value of cmakeAnalyzerEnabled
@@ -1362,6 +1400,8 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
         getSettings().setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
         getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH, pathToCore);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, ossindexAnalyzerEnabled);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_URL, ossindexAnalyzerUrl);
     }
 
     /**

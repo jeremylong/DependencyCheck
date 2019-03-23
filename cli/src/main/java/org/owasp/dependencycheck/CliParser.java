@@ -428,6 +428,9 @@ public final class CliParser {
                         + "the Nexus Analyzer.").build();
         final Option disableNexusAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_NEXUS)
                 .desc("Disable the Nexus Analyzer.").build();
+        final Option disableOssIndexAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_OSSINDEX)
+                .desc("Disable the Sonatype OSS Index Analyzer.").build();
+
         final Option purge = Option.builder().longOpt(ARGUMENT.PURGE_NVD)
                 .desc("Purges the local NVD data cache").build();
         final Option retireJsFilters = Option.builder().argName("pattern").hasArg().longOpt(ARGUMENT.RETIREJS_FILTERS)
@@ -466,6 +469,7 @@ public final class CliParser {
                 .addOption(disableNugetconfAnalyzer)
                 .addOption(disableCentralAnalyzer)
                 .addOption(disableNexusAnalyzer)
+                .addOption(disableOssIndexAnalyzer)
                 .addOption(cocoapodsAnalyzerEnabled)
                 .addOption(swiftPackageManagerAnalyzerEnabled)
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_NODE_JS)
@@ -721,6 +725,13 @@ public final class CliParser {
      */
     public boolean isNexusDisabled() {
         return hasDisableOption(ARGUMENT.DISABLE_NEXUS, Settings.KEYS.ANALYZER_NEXUS_ENABLED);
+    }
+
+    /**
+     * Returns true if the {@link ARGUMENT#DISABLE_OSSINDEX} command line argument was specified.
+     */
+    public boolean isOssIndexDisabled() {
+        return hasDisableOption(ARGUMENT.DISABLE_OSSINDEX, Settings.KEYS.ANALYZER_OSSINDEX_ENABLED);
     }
 
     /**
@@ -1513,6 +1524,10 @@ public final class CliParser {
          * Disables the Nexus Analyzer.
          */
         public static final String DISABLE_NEXUS = "disableNexus";
+        /**
+         * Disables the Sonatype OSS Index Analyzer.
+         */
+        public static final String DISABLE_OSSINDEX = "disableOssIndex";
         /**
          * Disables the OpenSSL Analyzer.
          */

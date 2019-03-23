@@ -281,11 +281,15 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <artifactId>retirejs-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.sonatype.ossindex</groupId>
+            <artifactId>ossindex-service-client</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- The following dependencies are only used during testing 
+        <!-- The following dependencies are only used during testing
              and must not be converted to a properties based version number -->
         <dependency>
             <groupId>io.github.faob-dev</groupId>
@@ -526,10 +530,10 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 </plugins>
             </build>
         </profile>
-        <!-- 
-            The following profile adds additional dependencies that are only 
+        <!--
+            The following profile adds additional dependencies that are only
             used during testing.
-        
+
             TODO move the following FP tests to a seperate invoker test in the
             maven plugin project. Add checks against the XML to validate that
             these do not report FP.

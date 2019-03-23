@@ -1076,6 +1076,21 @@ Copyright (c) 2012 - Jeremy Long
                 <artifactId>maven-artifact-transfer</artifactId>
                 <version>${maven-artifact-transfer.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.sonatype.ossindex</groupId>
+                <artifactId>ossindex-service-client</artifactId>
+                <version>1.2.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.httpcomponents</groupId>
+                        <artifactId>httpclient</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.httpcomponents</groupId>
+                        <artifactId>httpcore</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
