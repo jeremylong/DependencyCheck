@@ -692,8 +692,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         if (shouldSkip) {
             getLog().info("Skipping " + getName(Locale.US));
         } else {
-            //TODO remove
-            //project.setContextValue(getOutputDirectoryContextKey(), this.outputDirectory);
+            project.setContextValue("dependency-check-output-dir", this.outputDirectory);
             runCheck();
         }
     }
@@ -756,8 +755,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
 
         generatingSite = true;
-        //TODO remove
-        //project.setContextValue(getOutputDirectoryContextKey(), getReportOutputDirectory());
+        project.setContextValue("dependency-check-output-dir", getReportOutputDirectory());
         try {
             runCheck();
         } catch (MojoExecutionException ex) {
@@ -787,6 +785,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @return the directory to write the report(s)
      */
     protected File getCorrectOutputDirectory(MavenProject current) {
+        final Object obj = current.getContextValue("dependency-check-output-dir");
+        if (obj != null && obj instanceof File) {
+            return (File) obj;
+        }//else we guess
         File target = new File(current.getBuild().getDirectory());
         if (target.getParentFile() != null && "target".equals(target.getParentFile().getName())) {
             target = target.getParentFile();
