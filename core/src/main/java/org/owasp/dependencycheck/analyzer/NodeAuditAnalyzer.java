@@ -177,12 +177,12 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
             // Retrieves the contents of package-lock.json from the Dependency
             final JsonObject packageJson = jsonReader.readObject();
 
-            final String projectName = packageJson.getString("name");
-            final String projectVersion = packageJson.getString("version");
-            if (projectName != null) {
+            final String projectName = packageJson.getString("name", "");
+            final String projectVersion = packageJson.getString("version", "");
+            if (!projectName.isEmpty()) {
                 dependency.setName(projectName);
             }
-            if (projectVersion != null) {
+            if (!projectVersion.isEmpty()) {
                 dependency.setVersion(projectVersion);
             }
 
