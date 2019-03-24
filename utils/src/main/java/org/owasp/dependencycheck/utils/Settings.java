@@ -544,7 +544,7 @@ public final class Settings {
          */
         public static final String ANALYZER_OSSINDEX_ENABLED = "analyzer.ossindex.enabled";
         /**
-         * The properties key for whether the Sonatype OSS Index URL.
+         * The properties key for the Sonatype OSS Index URL.
          */
         public static final String ANALYZER_OSSINDEX_URL = "analyzer.ossindex.url";
 
