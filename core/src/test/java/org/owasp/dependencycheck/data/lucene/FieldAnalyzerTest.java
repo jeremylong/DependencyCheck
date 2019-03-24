@@ -84,10 +84,11 @@ public class FieldAnalyzerTest extends BaseTest {
         Query q = parser.parse(querystr);
 
         int hitsPerPage = 10;
+        int hitsThreshold = 100;
 
         IndexReader reader = DirectoryReader.open(index);
         IndexSearcher searcher = new IndexSearcher(reader);
-        TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage);
+        TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, hitsThreshold);
         searcher.search(q, collector);
         ScoreDoc[] hits = collector.topDocs().scoreDocs;
 
@@ -104,7 +105,7 @@ public class FieldAnalyzerTest extends BaseTest {
         querystr = "product:(  x-stream^5 )  AND  vendor:(  thoughtworks.xstream )";
         reset(searchAnalyzerProduct, searchAnalyzerVendor);
         Query q3 = parser.parse(querystr);
-        collector = TopScoreDocCollector.create(hitsPerPage);
+        collector = TopScoreDocCollector.create(hitsPerPage, hitsThreshold);
         searcher.search(q3, collector);
         hits = collector.topDocs().scoreDocs;
         assertEquals("x-stream", searcher.doc(hits[0].doc).get(field1));
