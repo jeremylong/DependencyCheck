@@ -125,7 +125,7 @@ Copyright (c) 2012 - Jeremy Long
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <github.global.server>github</github.global.server>
         
-        <apache.lucene.version>7.5.0</apache.lucene.version>
+        <apache.lucene.version>7.7.1</apache.lucene.version>
         <apache.ant.version>1.9.9</apache.ant.version>
         <!--upgrading to the 1.8 requires Java 8 compatability  - we are maintaining 7 atm-->
         <slf4j.version>1.7.26</slf4j.version>
