@@ -22,7 +22,7 @@ import mockit.Injectable;
 import mockit.Mock;
 import mockit.MockUp;
 import mockit.Tested;
-import mockit.integration.junit4.JMockit;
+
 import org.joda.time.DateTime;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -38,7 +38,6 @@ import org.owasp.dependencycheck.utils.DependencyVersion;
  *
  * @author Jeremy Long
  */
-@RunWith(JMockit.class)
 public class EngineVersionCheckTest extends BaseTest {
 
     @Injectable
