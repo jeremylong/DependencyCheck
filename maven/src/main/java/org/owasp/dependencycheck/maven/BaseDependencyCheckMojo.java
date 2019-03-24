@@ -853,7 +853,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
             //collect dependencies with the filter - see comment above.
             final List<DependencyNode> nodes = new ArrayList<>(collectorVisitor.getNodes());
-
+            
             return collectDependencies(engine, project, nodes, buildingRequest, aggregate);
         } catch (DependencyGraphBuilderException ex) {
             final String msg = String.format("Unable to build dependency graph on project %s", project.getName());
@@ -977,23 +977,31 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                             + dependencyNode.toNodeString()));
                 }
             } else {
-                final ArtifactCoordinate coordinate = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
+                final Artifact dependencyArtifact = dependencyNode.getArtifact();
                 final Artifact result;
-                try {
-                    result = artifactResolver.resolveArtifact(buildingRequest, coordinate).getArtifact();
-                } catch (ArtifactResolverException ex) {
-                    getLog().debug(String.format("Aggregate : %s", aggregate));
-                    boolean addException = true;
-                    if (!aggregate || addReactorDependency(engine, dependencyNode.getArtifact())) {
-                        addException = false;
-                    }
-                    if (addException) {
-                        if (exCol == null) {
-                            exCol = new ExceptionCollection();
+                if (dependencyArtifact.isResolved()) {
+                    //All transitive dependencies, excluding reactor and dependencyManagement artifacts should have been resolved by Maven prior to invoking the plugin
+                    //Resolving the dependencies manually is unnecessary, and does not work in some cases (issue-1751)
+                    getLog().debug(String.format("Skipping artifact %s, already resolved", dependencyArtifact.getArtifactId()));
+                    result = dependencyArtifact;
+                } else {
+                    final ArtifactCoordinate coordinate = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
+                    try {
+                        result = artifactResolver.resolveArtifact(buildingRequest, coordinate).getArtifact();
+                    } catch (ArtifactResolverException ex) {
+                        getLog().debug(String.format("Aggregate : %s", aggregate));
+                        boolean addException = true;
+                        if (!aggregate || addReactorDependency(engine, dependencyNode.getArtifact())) {
+                            addException = false;
                         }
-                        exCol.addException(ex);
+                        if (addException) {
+                            if (exCol == null) {
+                                exCol = new ExceptionCollection();
+                            }
+                            exCol.addException(ex);
+                        }
+                        continue;
                     }
-                    continue;
                 }
                 if (aggregate && virtualSnapshotsFromReactor
                         && dependencyNode.getArtifact().isSnapshot() && aggregate

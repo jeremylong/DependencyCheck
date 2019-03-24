@@ -9,7 +9,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <modules>
-        <module>child</module>
+        <module>1751-child-one</module>
+        <module>1751-child-two</module>
     </modules>
     <build>
         <plugins>
