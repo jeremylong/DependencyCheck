@@ -17,8 +17,10 @@
  */
 package org.owasp.dependencycheck;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -36,6 +38,7 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ch.qos.logback.core.FileAppender;
+import org.apache.tools.ant.types.LogLevel;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
@@ -128,7 +131,7 @@ public class App {
                 }
                 final File db;
                 try {
-                    db = new File(settings.getDataDirectory(), settings.getString(Settings.KEYS.DB_FILE_NAME, "dc.mv.db"));
+                    db = new File(settings.getDataDirectory(), settings.getString(Settings.KEYS.DB_FILE_NAME, "odc.mv.db"));
                     if (db.exists()) {
                         if (db.delete()) {
                             LOGGER.info("Database file purged; local copy of the NVD has been removed");
@@ -293,7 +296,8 @@ public class App {
             if (!dep.getVulnerabilities().isEmpty()) {
                 for (Vulnerability vuln : dep.getVulnerabilities()) {
                     LOGGER.debug("VULNERABILITY FOUND {}", dep.getDisplayFileName());
-                    if (vuln.getCvssV2().getScore() > cvssFailScore) {
+                    if ((vuln.getCvssV2() != null && vuln.getCvssV2().getScore() > cvssFailScore)
+                            || (vuln.getCvssV3() != null && vuln.getCvssV3().getBaseScore() > cvssFailScore)) {
                         retCode = 1;
                     }
                 }
@@ -407,7 +411,7 @@ public class App {
         final String databaseUser = cli.getDatabaseUser();
         final String databasePassword = cli.getDatabasePassword();
         final String additionalZipExtensions = cli.getAdditionalZipExtensions();
-        final String pathToMono = cli.getPathToMono();
+        final String pathToCore = cli.getPathToCore();
         final String cveModified = cli.getModifiedCveUrl();
         final String cveBase = cli.getBaseCveUrl();
         final Integer cveValidForHours = cli.getCveValidForHours();
@@ -475,6 +479,7 @@ public class App {
         settings.setBoolean(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED, !cli.isRubyGemspecDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, !cli.isCentralDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, !cli.isNexusDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, !cli.isOssIndexDisabled());
 
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED,
                 cli.hasArgument(CliParser.ARGUMENT.ARTIFACTORY_ENABLED));
@@ -502,7 +507,7 @@ public class App {
         settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
         settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
         settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, additionalZipExtensions);
-        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH, pathToCore);
         if (cveBase != null && !cveBase.isEmpty()) {
             settings.setString(Settings.KEYS.CVE_BASE_JSON, cveBase);
             settings.setString(Settings.KEYS.CVE_MODIFIED_JSON, cveModified);
@@ -536,6 +541,14 @@ public class App {
         fa.setName(name);
         fa.start();
         final ch.qos.logback.classic.Logger rootLogger = context.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+        rootLogger.setLevel(Level.DEBUG);
+        final ThresholdFilter filter = new ThresholdFilter();
+        filter.setLevel(LogLevel.INFO.getValue());
+        filter.setContext(context);
+        filter.start();
+        rootLogger.iteratorForAppenders().forEachRemaining(action -> {
+            action.addFilter(filter);
+        });
         rootLogger.addAppender(fa);
     }
 

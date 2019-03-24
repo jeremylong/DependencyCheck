@@ -82,10 +82,12 @@ public class RetireJSDataSource implements CachedWebDataSource {
     /**
      * Downloads the current RetireJS data source.
      *
+     * @return returns false as no updates are made to the database that would
+     * require compaction
      * @throws UpdateException thrown if the update failed
      */
     @Override
-    public void update(Engine engine) throws UpdateException {
+    public boolean update(Engine engine) throws UpdateException {
         this.settings = engine.getSettings();
         String url = null;
         try {
@@ -105,6 +107,7 @@ public class RetireJSDataSource implements CachedWebDataSource {
         } catch (IOException ex) {
             throw new UpdateException("Unable to get the data directory", ex);
         }
+        return false;
     }
 
     /**

@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -125,8 +126,8 @@ public final class CliParser {
         if (isRunScan()) {
             validatePathExists(getScanFiles(), ARGUMENT.SCAN);
             validatePathExists(getReportDirectory(), ARGUMENT.OUT);
-            if (getPathToMono() != null) {
-                validatePathExists(getPathToMono(), ARGUMENT.PATH_TO_MONO);
+            if (getPathToCore() != null) {
+                validatePathExists(getPathToCore(), ARGUMENT.PATH_TO_CORE);
             }
             if (line.hasOption(ARGUMENT.OUTPUT_FORMAT)) {
                 final String format = line.getOptionValue(ARGUMENT.OUTPUT_FORMAT);
@@ -369,8 +370,8 @@ public final class CliParser {
                 .longOpt(ARGUMENT.ADDITIONAL_ZIP_EXTENSIONS)
                 .desc("A comma separated list of additional extensions to be scanned as ZIP files "
                         + "(ZIP, EAR, WAR are already treated as zip files)").build();
-        final Option pathToMono = Option.builder().argName("path").hasArg().longOpt(ARGUMENT.PATH_TO_MONO)
-                .desc("The path to Mono for .NET Assembly analysis on non-windows systems.").build();
+        final Option pathToCore = Option.builder().argName("path").hasArg().longOpt(ARGUMENT.PATH_TO_CORE)
+                .desc("The path to dotnet core.").build();
         final Option pathToBundleAudit = Option.builder().argName("path").hasArg()
                 .longOpt(ARGUMENT.PATH_TO_BUNDLE_AUDIT)
                 .desc("The path to bundle-audit for Gem bundle analysis.").build();
@@ -427,6 +428,9 @@ public final class CliParser {
                         + "the Nexus Analyzer.").build();
         final Option disableNexusAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_NEXUS)
                 .desc("Disable the Nexus Analyzer.").build();
+        final Option disableOssIndexAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_OSSINDEX)
+                .desc("Disable the Sonatype OSS Index Analyzer.").build();
+
         final Option purge = Option.builder().longOpt(ARGUMENT.PURGE_NVD)
                 .desc("Purges the local NVD data cache").build();
         final Option retireJsFilters = Option.builder().argName("pattern").hasArg().longOpt(ARGUMENT.RETIREJS_FILTERS)
@@ -465,6 +469,7 @@ public final class CliParser {
                 .addOption(disableNugetconfAnalyzer)
                 .addOption(disableCentralAnalyzer)
                 .addOption(disableNexusAnalyzer)
+                .addOption(disableOssIndexAnalyzer)
                 .addOption(cocoapodsAnalyzerEnabled)
                 .addOption(swiftPackageManagerAnalyzerEnabled)
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_NODE_JS)
@@ -501,7 +506,7 @@ public final class CliParser {
                 .addOption(nexusPassword)
                 .addOption(nexusUsesProxy)
                 .addOption(additionalZipExtensions)
-                .addOption(pathToMono)
+                .addOption(pathToCore)
                 .addOption(pathToBundleAudit)
                 .addOption(purge);
     }
@@ -723,6 +728,13 @@ public final class CliParser {
     }
 
     /**
+     * Returns true if the {@link ARGUMENT#DISABLE_OSSINDEX} command line argument was specified.
+     */
+    public boolean isOssIndexDisabled() {
+        return hasDisableOption(ARGUMENT.DISABLE_OSSINDEX, Settings.KEYS.ANALYZER_OSSINDEX_ENABLED);
+    }
+
+    /**
      * Returns true if the disableOpenSSL command line argument was specified.
      *
      * @return true if the disableOpenSSL command line argument was specified;
@@ -814,20 +826,22 @@ public final class CliParser {
     }
 
     /**
-     * Returns the username to authenticate to the nexus server if one was specified.
+     * Returns the username to authenticate to the nexus server if one was
+     * specified.
      *
-     * @return the username to authenticate to the nexus server; if none was specified this will
-     * return null;
+     * @return the username to authenticate to the nexus server; if none was
+     * specified this will return null;
      */
     public String getNexusUsername() {
         return line.getOptionValue(ARGUMENT.NEXUS_USERNAME);
     }
 
     /**
-     * Returns the password to authenticate to the nexus server if one was specified.
+     * Returns the password to authenticate to the nexus server if one was
+     * specified.
      *
-     * @return the password to authenticate to the nexus server; if none was specified this will
-     * return null;
+     * @return the password to authenticate to the nexus server; if none was
+     * specified this will return null;
      */
     public String getNexusPassword() {
         return line.getOptionValue(ARGUMENT.NEXUS_PASSWORD);
@@ -870,6 +884,8 @@ public final class CliParser {
      * @param argument the argument
      * @return the argument boolean value
      */
+    @SuppressFBWarnings(justification = "Accepting that this is a bad practice - used a Boolean as we needed three states",
+            value = {"NP_BOOLEAN_RETURN_NULL"})
     public Boolean getBooleanArgument(String argument) {
         if (line != null && line.hasOption(argument)) {
             final String value = line.getOptionValue(argument);
@@ -953,6 +969,8 @@ public final class CliParser {
      * @return <code>true</code> if non-vulnerable JS should be filtered in the
      * RetireJS Analyzer; otherwise <code>null</code>
      */
+    @SuppressFBWarnings(justification = "Accepting that this is a bad practice - but made more sense in this use case",
+            value = {"NP_BOOLEAN_RETURN_NULL"})
     public Boolean isRetireJsFilterNonVulnerable() {
         return (line != null && line.hasOption(ARGUMENT.RETIREJS_FILTER_NON_VULNERABLE)) ? true : null;
     }
@@ -968,19 +986,18 @@ public final class CliParser {
     }
 
     /**
-     * Returns the path to Mono for .NET Assembly analysis on non-windows
-     * systems.
+     * Returns the path to dotnet core.
      *
-     * @return the path to Mono
+     * @return the path to dotnet core
      */
-    public String getPathToMono() {
-        return line.getOptionValue(ARGUMENT.PATH_TO_MONO);
+    public String getPathToCore() {
+        return line.getOptionValue(ARGUMENT.PATH_TO_CORE);
     }
 
     /**
      * Returns the path to bundle-audit for Ruby bundle analysis.
      *
-     * @return the path to Mono
+     * @return the path to bundle-audit
      */
     public String getPathToBundleAudit() {
         return line.getOptionValue(ARGUMENT.PATH_TO_BUNDLE_AUDIT);
@@ -1141,6 +1158,8 @@ public final class CliParser {
      * @return <code>true</code> if auto-update is allowed; otherwise
      * <code>null</code>
      */
+    @SuppressFBWarnings(justification = "Accepting that this is a bad practice - but made more sense in this use case",
+            value = {"NP_BOOLEAN_RETURN_NULL"})
     public Boolean isAutoUpdate() {
         return (line != null && line.hasOption(ARGUMENT.DISABLE_AUTO_UPDATE)) ? false : null;
     }
@@ -1246,6 +1265,8 @@ public final class CliParser {
      *
      * @return true if the experimental analyzers are enabled; otherwise null
      */
+    @SuppressFBWarnings(justification = "Accepting that this is a bad practice - but made more sense in this use case",
+            value = {"NP_BOOLEAN_RETURN_NULL"})
     public Boolean isExperimentalEnabled() {
         return (line != null && line.hasOption(ARGUMENT.EXPERIMENTAL)) ? true : null;
     }
@@ -1255,6 +1276,8 @@ public final class CliParser {
      *
      * @return true if the retired analyzers are enabled; otherwise null
      */
+    @SuppressFBWarnings(justification = "Accepting that this is a bad practice - but made more sense in this use case",
+            value = {"NP_BOOLEAN_RETURN_NULL"})
     public Boolean isRetiredEnabled() {
         return (line != null && line.hasOption(ARGUMENT.RETIRED)) ? true : null;
     }
@@ -1502,6 +1525,10 @@ public final class CliParser {
          */
         public static final String DISABLE_NEXUS = "disableNexus";
         /**
+         * Disables the Sonatype OSS Index Analyzer.
+         */
+        public static final String DISABLE_OSSINDEX = "disableOssIndex";
+        /**
          * Disables the OpenSSL Analyzer.
          */
         public static final String DISABLE_OPENSSL = "disableOpenSSL";
@@ -1556,10 +1583,9 @@ public final class CliParser {
          */
         public static final String DB_DRIVER_PATH = "dbDriverPath";
         /**
-         * The CLI argument name for setting the path to mono for .NET Assembly
-         * analysis on non-windows systems.
+         * The CLI argument name for setting the path to dotnet core.
          */
-        public static final String PATH_TO_MONO = "mono";
+        public static final String PATH_TO_CORE = "dotnet";
         /**
          * The CLI argument name for setting extra extensions.
          */

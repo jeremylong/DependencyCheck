@@ -33,7 +33,7 @@ import java.util.stream.Stream;
  *
  * @author Jeremy Long
  */
-public class NodeFlatteningCollector implements Collector<Node, ArrayList<Node>, Stream<Node>> {
+public class NodeFlatteningCollector implements Collector<DefNode, ArrayList<DefNode>, Stream<DefNode>> {
 
     /**
      * Flattens the hierarchical list of nodes.
@@ -41,8 +41,8 @@ public class NodeFlatteningCollector implements Collector<Node, ArrayList<Node>,
      * @param node the node with children to flatten
      * @return the flattened list of nodes
      */
-    private List<Node> flatten(Node node) {
-        final List<Node> result = new ArrayList<>();
+    private List<DefNode> flatten(DefNode node) {
+        final List<DefNode> result = new ArrayList<>();
         result.add(node);
         return flatten(result, node.getChildren());
     }
@@ -54,7 +54,7 @@ public class NodeFlatteningCollector implements Collector<Node, ArrayList<Node>,
      * @param nodes the nodes
      * @return the flattened list of nodes
      */
-    private List<Node> flatten(List<Node> result, List<Node> nodes) {
+    private List<DefNode> flatten(List<DefNode> result, List<DefNode> nodes) {
         nodes.stream().forEach(n -> {
             flatten(result, n.getChildren());
             result.add(n);
@@ -63,17 +63,17 @@ public class NodeFlatteningCollector implements Collector<Node, ArrayList<Node>,
     }
 
     @Override
-    public Supplier<ArrayList<Node>> supplier() {
+    public Supplier<ArrayList<DefNode>> supplier() {
         return ArrayList::new;
     }
 
     @Override
-    public BiConsumer<ArrayList<Node>, Node> accumulator() {
+    public BiConsumer<ArrayList<DefNode>, DefNode> accumulator() {
         return (nodes, n) -> nodes.addAll(flatten(n));
     }
 
     @Override
-    public BinaryOperator<ArrayList<Node>> combiner() {
+    public BinaryOperator<ArrayList<DefNode>> combiner() {
         return (map, other) -> {
             map.addAll(other);
             return map;
@@ -81,7 +81,7 @@ public class NodeFlatteningCollector implements Collector<Node, ArrayList<Node>,
     }
 
     @Override
-    public Function<ArrayList<Node>, Stream<Node>> finisher() {
+    public Function<ArrayList<DefNode>, Stream<DefNode>> finisher() {
         return (m) -> m.stream();
     }
 

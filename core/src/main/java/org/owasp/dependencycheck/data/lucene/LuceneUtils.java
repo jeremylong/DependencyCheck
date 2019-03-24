@@ -66,9 +66,7 @@ public final class LuceneUtils {
      * @param text the data to be escaped
      */
     @SuppressWarnings("fallthrough")
-    @SuppressFBWarnings(
-            value = "SF_SWITCH_NO_DEFAULT",
-            justification = "The switch below does have a default.")
+    @SuppressFBWarnings(justification = "As this is an encoding method the fallthrough is intentional", value = {"SF_SWITCH_NO_DEFAULT"})
     public static void appendEscapedLuceneQuery(StringBuilder buf,
             final CharSequence text) {
 

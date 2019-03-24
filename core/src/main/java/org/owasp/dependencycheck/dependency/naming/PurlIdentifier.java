@@ -86,6 +86,23 @@ public class PurlIdentifier implements Identifier {
      * Constructs a new Package-URL identifier.
      *
      * @param type the type of package-URL
+     * @param name the name
+     * @param version the version
+     * @param confidence the confidence that the identifier is correct for the
+     * given dependency
+     * @throws MalformedPackageURLException thrown if the type, name space,
+     * name, and version cannot be converted into a package-URL
+     */
+    public PurlIdentifier(String type, String name, String version, Confidence confidence) throws MalformedPackageURLException {
+        this.purl = PackageURLBuilder.aPackageURL().withType(type).withName(name)
+                .withVersion(version).build();
+        this.confidence = confidence;
+    }
+
+    /**
+     * Constructs a new Package-URL identifier.
+     *
+     * @param type the type of package-URL
      * @param namespace the name space
      * @param name the name
      * @param version the version

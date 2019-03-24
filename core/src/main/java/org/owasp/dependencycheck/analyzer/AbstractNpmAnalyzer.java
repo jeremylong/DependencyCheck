@@ -91,19 +91,22 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Determines if the path contains "/node_modules/" (i.e. it is a child
-     * module. This analyzer does not scan child modules.
+     * Determines if the path contains "/node_modules/" or "/bower_components/"
+     * (i.e. it is a child module). This analyzer does not scan child modules.
      *
      * @param pathname the path to test
      * @return <code>true</code> if the path does not contain "/node_modules/"
+     * or "/bower_components/"
      * @throws AnalysisException thrown if the canonical path cannot be obtained
      * from the given file
      */
     protected boolean shouldProcess(File pathname) throws AnalysisException {
         try {
-            // Do not scan the node_modules directory
-            if (pathname.getCanonicalPath().contains(File.separator + "node_modules" + File.separator)) {
-                LOGGER.debug("Skipping analysis of node module: " + pathname.getCanonicalPath());
+            // Do not scan the node_modules (or bower_components) directory
+            final String canonicalPath = pathname.getCanonicalPath();
+            if (canonicalPath.contains(File.separator + "node_modules" + File.separator)
+                    || canonicalPath.contains(File.separator + "bower_components" + File.separator)) {
+                LOGGER.debug("Skipping analysis of node/bower module: {}", canonicalPath);
                 return false;
             }
         } catch (IOException ex) {

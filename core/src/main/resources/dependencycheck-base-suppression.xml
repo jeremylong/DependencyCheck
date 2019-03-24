@@ -105,6 +105,9 @@
             29. remove FP on git
             30. remove FP on git
             31. remove FP on git
+            32. Suppresses false positives on .NET mono
+            33. Suppresses false positives on .NET mono
+            34. Suppresses false positives on .NET mono
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -141,6 +144,9 @@
         <cpe>cpe:/a:git_project:git</cpe>
         <cpe>cpe:/a:git:git</cpe>
         <cpe>cpe:/a:git_for_windows_project:git_for_windows</cpe>
+        <cpe>cpe:/a:mono-project:mono</cpe>
+        <cpe>cpe:/a:mono:mono</cpe>
+        <cpe>cpe:/a:mono_project:mono</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[

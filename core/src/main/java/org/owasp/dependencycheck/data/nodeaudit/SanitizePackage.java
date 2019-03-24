@@ -50,8 +50,14 @@ public final class SanitizePackage {
      */
     public static JsonObject sanitize(JsonObject packageJson) {
         final JsonObjectBuilder payloadBuilder = Json.createObjectBuilder();
-        payloadBuilder.add("name", packageJson.getString("name"));
-        payloadBuilder.add("version", packageJson.getString("version"));
+        final String projectName = packageJson.getString("name", "");
+        final String projectVersion = packageJson.getString("version", "");
+        if (!projectName.isEmpty()) {
+            payloadBuilder.add("name", projectName);
+        }
+        if (!projectVersion.isEmpty()) {
+            payloadBuilder.add("version", projectVersion);
+        }
 
         // In most package-lock.json files, 'requires' is a boolean, however, NPM Audit expects
         // 'requires' to be an object containing key/value pairs corresponding to the module

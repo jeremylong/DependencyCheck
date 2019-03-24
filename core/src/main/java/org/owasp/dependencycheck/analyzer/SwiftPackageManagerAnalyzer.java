@@ -175,15 +175,15 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
             }
 
             try {
-                PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType("swift").withName(dependency.getName());
+                final PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType("swift").withName(dependency.getName());
                 if (dependency.getVersion() != null) {
                     builder.withVersion(dependency.getVersion());
                 }
-                PackageURL purl = builder.build();
+                final PackageURL purl = builder.build();
                 dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));
             } catch (MalformedPackageURLException ex) {
                 LOGGER.debug("Unable to build package url for python", ex);
-                GenericIdentifier id;
+                final GenericIdentifier id;
                 if (dependency.getVersion() != null) {
                     id = new GenericIdentifier("swift:" + dependency.getName() + "@" + dependency.getVersion(), Confidence.HIGHEST);
                 } else {

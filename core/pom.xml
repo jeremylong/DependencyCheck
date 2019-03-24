@@ -20,7 +20,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>5.0.0-M1</version>
+        <version>5.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>dependency-check-core</artifactId>
@@ -109,7 +109,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <includeGetters>true</includeGetters>
                     <annotationStyle>gson</annotationStyle>
                     <targetPackage>org.owasp.dependencycheck.data.nvd.json</targetPackage>
-                    <useCommonsLang3>true</useCommonsLang3>
                 </configuration>
                 <executions>
                     <execution>
@@ -187,7 +186,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <artifactId>joda-time</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.code.findbugs</groupId>
+            <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <optional>true</optional>
         </dependency>
@@ -282,12 +281,24 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <artifactId>retirejs-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.sonatype.ossindex</groupId>
+            <artifactId>ossindex-service-client</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- The following dependencies are only used during testing 
+        <!-- The following dependencies are only used during testing
              and must not be converted to a properties based version number -->
+        <dependency>
+            <groupId>io.github.faob-dev</groupId>
+            <artifactId>aar</artifactId>
+            <version>1.0.0</version>
+            <type>aar</type>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>org.jslipc</groupId>
             <artifactId>jslipc</artifactId>
@@ -519,10 +530,10 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 </plugins>
             </build>
         </profile>
-        <!-- 
-            The following profile adds additional dependencies that are only 
+        <!--
+            The following profile adds additional dependencies that are only
             used during testing.
-        
+
             TODO move the following FP tests to a seperate invoker test in the
             maven plugin project. Add checks against the XML to validate that
             these do not report FP.

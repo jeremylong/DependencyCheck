@@ -20,7 +20,7 @@ Copyright (c) 2012 - Jeremy Long
 
     <groupId>org.owasp</groupId>
     <artifactId>dependency-check-parent</artifactId>
-    <version>5.0.0-M1</version>
+    <version>5.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -125,31 +125,31 @@ Copyright (c) 2012 - Jeremy Long
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <github.global.server>github</github.global.server>
         
-        <apache.lucene.version>7.5.0</apache.lucene.version>
+        <apache.lucene.version>8.0.0</apache.lucene.version>
         <apache.ant.version>1.9.9</apache.ant.version>
         <!--upgrading to the 1.8 requires Java 8 compatability  - we are maintaining 7 atm-->
-        <slf4j.version>1.7.25</slf4j.version>
+        <slf4j.version>1.7.26</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <!-- Note that Maven will use classes from the distro, ignoring declared dependencies for Maven core... -->
         <maven.api.version>3.1.0</maven.api.version>
         <reporting.checkstyle-plugin.version>3.0.0</reporting.checkstyle-plugin.version>
-        <reporting.pmd-plugin.version>3.11.0</reporting.pmd-plugin.version>
         <doxia-module-markdown.version>1.8</doxia-module-markdown.version>
         <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
         <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
-        <maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.1.0</maven-javadoc-plugin.version>
         <!-- upgrading beyond 2.5 breaks maven site-->
         <maven-jxr-plugin.version>2.5</maven-jxr-plugin.version>
         <maven-project-info-reports-plugin.version>3.0.0</maven-project-info-reports-plugin.version>
         <maven-surefire-report-plugin.version>2.22.1</maven-surefire-report-plugin.version>
-        <jacoco-maven-plugin.version>0.8.2</jacoco-maven-plugin.version>
-        <findbugs-maven-plugin.version>3.0.5</findbugs-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.3</jacoco-maven-plugin.version>
+        <spotbugs.maven.plugin.version>3.1.11</spotbugs.maven.plugin.version>
         <taglist-maven-plugin.version>2.4</taglist-maven-plugin.version>
         <versions-maven-plugin.version>2.7</versions-maven-plugin.version>
 
+        <jetbrains.annotations.version>17.0.0</jetbrains.annotations.version>
+
         <!-- analysis core (used by Jenkins) uses 1.6-->
         <joda-time.version>1.6</joda-time.version>
-        <com.google.code.findbugs.annotations.version>3.0.1u2</com.google.code.findbugs.annotations.version>
         <com.google.code.gson.version>2.8.5</com.google.code.gson.version>
         <!-- upgrade to 1.4.197 prevents Java 7 compatability -->
         <com.h2database.version>1.4.196</com.h2database.version>
@@ -180,12 +180,12 @@ Copyright (c) 2012 - Jeremy Long
 
         <!-- upgrading beyond 1.0.4 will cause the build to fail on Java 7 --> 
         <org.glassfish.javax.json.version>1.0.4</org.glassfish.javax.json.version>
-        <maven-artifact-transfer.version>0.10.0</maven-artifact-transfer.version>
+        <maven-artifact-transfer.version>0.11.0</maven-artifact-transfer.version>
         <groovy-all.version>2.4.15</groovy-all.version>
         <!-- upgrading beyond 1.5 will cause the build to fail on Java 7 -->
         <gmavenplus-plugin.version>1.5</gmavenplus-plugin.version>
         <com.h3xstream.retirejs.core.version>3.0.1</com.h3xstream.retirejs.core.version>
-        <com.google.guava.version>27.0-jre</com.google.guava.version>
+        <com.google.guava.version>27.1-jre</com.google.guava.version>
         <surefireArgLine/>
     </properties>
     <distributionManagement>
@@ -212,7 +212,7 @@ Copyright (c) 2012 - Jeremy Long
                 <plugin>
                     <groupId>org.jsonschema2pojo</groupId>
                     <artifactId>jsonschema2pojo-maven-plugin</artifactId>
-                    <version>0.5.1</version>
+                    <version>1.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -222,7 +222,7 @@ Copyright (c) 2012 - Jeremy Long
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.2</version>
+                    <version>0.8.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -438,6 +438,8 @@ Copyright (c) 2012 - Jeremy Long
                     <target>1.8</target>
                     <compilerArgs>
                         <arg>-Xlint</arg>
+                        <arg>-XepDisableWarningsInGeneratedCode</arg>
+                        <arg>-XepExcludedPaths:.*/generated-sources/.*</arg>
                     </compilerArgs>
                 </configuration>
                 <dependencies>
@@ -450,7 +452,7 @@ Copyright (c) 2012 - Jeremy Long
                     <dependency>
                         <groupId>com.google.errorprone</groupId>
                         <artifactId>error_prone_core</artifactId>
-                        <version>2.3.2</version>
+                        <version>2.3.3</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -583,6 +585,18 @@ Copyright (c) 2012 - Jeremy Long
                             <name>temp.directory</name>
                             <value>${project.build.directory}/temp</value>
                         </property>
+                        <property>
+                            <name>analyzer.assembly.dotnet.path</name>
+                            <value>${odc.dotnet.path}</value>
+                        </property>
+                        <property>
+                            <name>cve.url.base</name>
+                            <value>${odc.cve.url.base}</value>
+                        </property>
+                        <property>
+                            <name>cve.url.modified</name>
+                            <value>${odc.cve.url.modified}</value>
+                        </property>
                     </systemProperties>
                 </configuration>
             </plugin>
@@ -599,6 +613,18 @@ Copyright (c) 2012 - Jeremy Long
                         <property>
                             <name>temp.directory</name>
                             <value>${project.build.directory}/temp</value>
+                        </property>
+                        <property>
+                            <name>analyzer.assembly.dotnet.path</name>
+                            <value>${odc.dotnet.path}</value>
+                        </property>
+                        <property>
+                            <name>cve.url.base</name>
+                            <value>${odc.cve.url.base}</value>
+                        </property>
+                        <property>
+                            <name>cve.url.modified</name>
+                            <value>${odc.cve.url.modified}</value>
                         </property>
                     </systemProperties>
                     <excludes>
@@ -692,6 +718,7 @@ Copyright (c) 2012 - Jeremy Long
                 <configuration>
                     <failOnError>false</failOnError>
                     <bottom>Copyright© 2012-19 Jeremy Long. All Rights Reserved.</bottom>
+                    <excludes>${project.build.directory}/generated-sources/java/**/*.java</excludes>
                 </configuration>
                 <reportSets>
                     <reportSet>
@@ -719,26 +746,6 @@ Copyright (c) 2012 - Jeremy Long
                     <headerLocation>${odc.config}/checkstyle-header.txt</headerLocation>
                     <suppressionsLocation>${odc.config}/checkstyle-suppressions.xml</suppressionsLocation>
                     <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>${reporting.pmd-plugin.version}</version>
-                <configuration>
-                    <targetJdk>1.8</targetJdk>
-                    <linkXRef>true</linkXRef>
-                    <sourceEncoding>utf-8</sourceEncoding>
-                    <excludes>
-                        <exclude>**/generated/*.java</exclude>
-                        <exclude>**/HelpMojo.java</exclude>
-                    </excludes>
-                    <rulesets>
-                        <ruleset>${odc.config}/dcrules.xml</ruleset>
-                        <ruleset>/rulesets/java/basic.xml</ruleset>
-                        <ruleset>/rulesets/java/imports.xml</ruleset>
-                        <ruleset>/rulesets/java/unusedcode.xml</ruleset>
-                    </rulesets>
                 </configuration>
             </plugin>
             <plugin>
@@ -792,9 +799,12 @@ Copyright (c) 2012 - Jeremy Long
                 </reportSets>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>${findbugs-maven-plugin.version}</version>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs.maven.plugin.version}</version>
+                <configuration>
+                    <excludeFilterFile>${odc.config}/spotbugs_excludes.xml</excludeFilterFile>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -848,6 +858,13 @@ Copyright (c) 2012 - Jeremy Long
                 <version>2.0.0</version>
             </dependency>
             <dependency>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-annotations</artifactId>
+                <version>${spotbugs.maven.plugin.version}</version>
+                <scope>compile</scope>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
                 <groupId>com.vdurmont</groupId>
                 <artifactId>semver4j</artifactId>
                 <version>2.2.0</version>
@@ -859,9 +876,9 @@ Copyright (c) 2012 - Jeremy Long
                 <version>${joda-time.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.google.code.findbugs</groupId>
+                <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
-                <version>${com.google.code.findbugs.annotations.version}</version>
+                <version>${jetbrains.annotations.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.gson</groupId>
@@ -1059,6 +1076,21 @@ Copyright (c) 2012 - Jeremy Long
                 <artifactId>maven-artifact-transfer</artifactId>
                 <version>${maven-artifact-transfer.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.sonatype.ossindex</groupId>
+                <artifactId>ossindex-service-client</artifactId>
+                <version>1.2.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.httpcomponents</groupId>
+                        <artifactId>httpclient</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.httpcomponents</groupId>
+                        <artifactId>httpcore</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
@@ -1073,57 +1105,16 @@ Copyright (c) 2012 - Jeremy Long
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.google.code.findbugs</groupId>
+            <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <scope>provided</scope>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
+            <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
     </dependencies>
-    <profiles>
-        <profile>
-            <id>upgrade-dependencies</id>
-            <activation>
-                <property>
-                    <name>odc.upgrade</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>versions-maven-plugin</artifactId>
-                        <version>2.7</version>
-                        <executions>
-                            <execution>
-                                <phase>pre-clean</phase>
-                                <goals>
-                                    <goal>update-properties</goal>
-                                </goals>
-                                <configuration>
-                                    <allowSnapshots>false</allowSnapshots>
-                                    <rulesUri>${odc.config}/version-rules.xml</rulesUri>
-                                    <excludes>
-                                        <!-- needed to support maven 3.1.0 -->
-                                        <exclude>org.apache.maven:*:*</exclude>
-                                        <exclude>org.apache.maven.shared:maven-dependency-tree:*</exclude>Ï
-                                        <exclude>org.apache.commons:commons-lang3:*</exclude>
-                                        <exclude>org.apache.lucene:*:*</exclude>
-                                        <exclude>commons-collections:commons-collections:*</exclude>
-                                        <exclude>joda-time:joda-time:*</exclude>
-                                        <exclude>org.slf4j:*:*</exclude>
-                                        <exclude>org.apache.ant:*:*</exclude>
-                                        <exclude>com.h2database:h2:*</exclude>
-                                        <!--TODO remove javax.json - use GSON instead-->
-                                        <exclude>org.glassfish:javax.json:*</exclude>
-                                        <!-- can't upgrade due to Java 7 support -->
-                                        <exclude>org.codehaus.gmavenplus:gmavenplus-plugin:*</exclude>
-                                    </excludes>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

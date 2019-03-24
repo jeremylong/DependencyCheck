@@ -63,7 +63,6 @@ import org.owasp.dependencycheck.utils.search.FileContentSearch;
  * @author Steve Springett
  */
 @ThreadSafe
-@Experimental
 public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
@@ -106,6 +105,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
      * Flag indicating whether non-vulnerable JS should be excluded if they are
      * contained in a JAR.
      */
+    //TODO implement this
     private boolean skipNonVulnerableInJAR = true;
 
     /**

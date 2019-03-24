@@ -211,9 +211,9 @@ public class DependencyCheckScanAgent {
      */
     private String cveUrlBase;
     /**
-     * The path to Mono for .NET assembly analysis on non-windows systems.
+     * The path to dotnet core for .NET assembly analysis.
      */
-    private String pathToMono;
+    private String pathToCore;
     /**
      * The configured settings.
      */
@@ -814,21 +814,21 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * Get the value of pathToMono.
+     * Get the value of pathToCore.
      *
-     * @return the value of pathToMono
+     * @return the value of pathToCore
      */
-    public String getPathToMono() {
-        return pathToMono;
+    public String getPathToDotnetCore() {
+        return pathToCore;
     }
 
     /**
-     * Set the value of pathToMono.
+     * Set the value of pathToCore.
      *
-     * @param pathToMono new value of pathToMono
+     * @param pathToCore new value of pathToCore
      */
-    public void setPathToMono(String pathToMono) {
-        this.pathToMono = pathToMono;
+    public void setPathToDotnetCore(String pathToCore) {
+        this.pathToCore = pathToCore;
     }
 
     /**
@@ -946,7 +946,7 @@ public class DependencyCheckScanAgent {
         settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveUrlModified);
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON, cveUrlBase);
-        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH, pathToCore);
     }
 
     /**

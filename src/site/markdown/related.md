@@ -19,6 +19,7 @@ Database (NVD). The other sources listed below contain vulnerability information
 * [vFeed](http://www.toolswatch.org/vfeed)
 * [OSVDB](http://osvdb.org/)
 * [National Vulnerability Database](https://nvd.nist.gov/)
+* [Sonatype OSS Index](https://ossindex.sonatype.org/)
 
 Related Commercial Products
 ------------------------
@@ -26,6 +27,6 @@ The below list is merely informational. It is not a complete list, nor do the au
 of the products listed below.
 
 * [SRC:CLR](https://srcclr.com/)
-* [Sonatype CLM](http://www.sonatype.com/clm/overview)
+* [Sonatype Nexus Intelligence](https://www.sonatype.com/nexus-intelligence) and [Sonatype Nexus Lifecycle](https://www.sonatype.com/nexus-lifecycle)
 * [Palamida](http://www.palamida.com/products/enterpriseedition.html)
 * [Black Duck](https://www.blackducksoftware.com/products/black-duck-suite/code-center)

@@ -56,6 +56,10 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSuppressionAnalyzer.class);
     /**
+     * The file name of the base suppression XML file.
+     */
+    private static final String BASE_SUPPRESSION_FILE = "dependencycheck-base-suppression.xml";
+    /**
      * The list of suppression rules.
      */
     private final List<SuppressionRule> rules = new ArrayList<>();
@@ -152,10 +156,12 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     private void loadSuppressionBaseData() throws SuppressionParseException {
         final SuppressionParser parser = new SuppressionParser();
         final List<SuppressionRule> ruleList;
-        try {
-            final InputStream in = FileUtils.getResourceAsStream("dependencycheck-base-suppression.xml");
+        try (InputStream in = FileUtils.getResourceAsStream(BASE_SUPPRESSION_FILE)) {
+            if (in == null) {
+                throw new SuppressionParseException("Hint rules `" + BASE_SUPPRESSION_FILE + "` could not be found");
+            }
             ruleList = parser.parseSuppressionRules(in);
-        } catch (SAXException ex) {
+        } catch (SAXException | IOException ex) {
             throw new SuppressionParseException("Unable to parse the base suppression data file", ex);
         }
         rules.addAll(ruleList);

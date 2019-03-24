@@ -24,8 +24,10 @@ have a few options:
 3. Use a more robust [centralized database](./database.html) with a single update node
 
 
-Downloading Additional Information
-----------------------------------
+## Downloading Additional Information
+
+### Central Repository
+
 If the machine that is running dependency-check cannot reach the [Central Repository](http://search.maven.org)
 the analysis may result in false negatives. This is because some POM files, that are not
 contained within the JAR file itself, contain evidence that is used to accurately identify
@@ -36,3 +38,10 @@ re-directed to other repositories on the Internet to download the actual POM fil
 happened due to a rare circumstance where the Nexus instance used by dependency-check
 was not the instance of Nexus used to build the application (i.e. the dependencies
 were not actually present in the Nexus used by dependency-check).
+
+### Sonatype OSS Index
+
+OWASP dependency-check includes support to consult the [Sonatype OSS Index](https://ossindex.sonatype.org)
+to enrich the report with supplemental vulnerability information.
+
+For more details on this integration see [Sonatype OSS Index](./ossindex.html).

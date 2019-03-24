@@ -39,7 +39,9 @@ suppressionFile      | The file path to the XML suppression file \- used to supp
 hintsFile            | The file path to the XML hints file \- used to resolve [false negatives](../general/hints.html)                    | &nbsp;
 skip                 | If set to true dependency-check analysis will be skipped.                                                          | false
 skipConfigurations   | A list of configurations that will be skipped. This is mutually exclusive with the scanConfigurations property.    | `[]` which means no configuration is skipped.
-scanConfigurations   | A list of configurations that will be scanned, all other configurations are skipped. This is mutually exclusive with the skipConfigurations property.    | `[]` which implicitly means all configurations get scanned.
+scanConfigurations   | A list of configurations that will be scanned, all other configurations are skipped. This is mutually exclusive with the skipConfigurations property. | `[]` which implicitly means all configurations are scanned.
+scanProjects         | A list of projects that will be scanned, all other projects are skipped. This is mutually exclusive with the skipProjects property. | `[]` which implicitly means all projects get scanned.
+skipProjects         | A list of projects that will be skipped. This is mutually exclusive with the scanProjects property.                | `[]` which means no projects are skipped.
 scanSet              | A list of directories that will be scanned for additional dependencies.                                            | ['src/main/resources','src/main/webapp']
 
 #### Example
@@ -78,8 +80,8 @@ Note, if ANY of the cve configuration group are set - they should all be set to 
 
 Config Group | Property          | Description                                                                                 | Default Value                                                       |
 -------------|-------------------|---------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
-cve          | cveUrlModified    | URL for the modified CVE JSON data feed.                                                    | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-modified.json.gz |
-cve          | cveUrlBase        | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.         | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-%d.json.gz       |
+cve          | urlModified    | URL for the modified CVE JSON data feed.                                                       | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-modified.json.gz |
+cve          | urlBase        | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.            | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-%d.json.gz       |
 data         | directory         | Sets the data directory to hold SQL CVEs contents. This should generally not be changed.    | &nbsp;                                                              |
 data         | driver            | The name of the database driver. Example: org.h2.Driver.                                    | &nbsp;                                                              |
 data         | driverPath        | The path to the database driver JAR file; only used if the driver is not in the class path. | &nbsp;                                                              |
@@ -110,6 +112,7 @@ analyzers    | archiveEnabled        | Sets whether the Archive Analyzer will be
 analyzers    | zipExtensions         | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
 analyzers    | jarEnabled            | Sets whether Jar Analyzer will be used.                                                                           | true
 analyzers    | centralEnabled        | Sets whether Central Analyzer will be used. If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer (see below). | true
+analyzers    | ossindexEnabled       | Sets whether the OSS Index Analyzer will be enabled.                                                              | true
 analyzers    | nexusEnabled          | Sets whether Nexus Analyzer will be used (requires Nexus Pro). This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
 analyzers    | nexusUrl              | Defines the Nexus Server's web service end point (example http://domain.enterprise/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
 analyzers    | nexusUsesProxy        | Whether or not the defined proxy should be used when connecting to Nexus.                                         | true
@@ -118,14 +121,14 @@ analyzers    | pyPackageEnabled      | Sets whether the [experimental](../analyz
 analyzers    | rubygemsEnabled       | Sets whether the [experimental](../analyzers/index.html) Ruby Gemspec Analyzer will be used.                      | true
 analyzers    | opensslEnabled        | Sets whether or not the openssl Analyzer should be used.                                                          | true
 analyzers    | nuspecEnabled         | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.                                                  | true
-analyzers    | nugetconfEnabled      | Sets whether or not the [experimental](../analyzers/index.html) .NET Nuget packages.config Analyzer will be used.                                         | true
+analyzers    | nugetconfEnabled      | Sets whether or not the [experimental](../analyzers/index.html) .NET Nuget packages.config Analyzer will be used. | true
 analyzers    | assemblyEnabled       | Sets whether or not the .NET Assembly Analyzer should be used.                                                    | true
-analyzers    | pathToMono            | The path to Mono for .NET assembly analysis on non-windows systems.                                               | &nbsp;
+analyzers    | pathToDotnet          | The path to dotnet core - needed on some systems to analyze .net assemblies.                                      | &nbsp;
 analyzers    | cmakeEnabled          | Sets whether or not the [experimental](../analyzers/index.html) CMake Analyzer should be used.                    | true
 analyzers    | autoconfEnabled       | Sets whether or not the [experimental](../analyzers/index.html) autoconf Analyzer should be used.                 | true
 analyzers    | composerEnabled       | Sets whether or not the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.   | true
-analyzers    | nodeEnabled           | Sets whether or not the Node.js Analyzer should be used.                  | true
-analyzers    | nodeAuditEnabled      | Sets whether the Node Audit Analyzer should be used.                                                                     | true
+analyzers    | nodeEnabled           | Sets whether or not the Node.js Analyzer should be used.                                                          | true
+analyzers    | nodeAuditEnabled      | Sets whether the Node Audit Analyzer should be used.                                                              | true
 analyzers    | cocoapodsEnabled      | Sets whether or not the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used.                | true
 analyzers    | swiftEnabled          | Sets whether or not the [experimental](../analyzers/index.html) Swift Package Manager Analyzer should be used.    | true
 analyzers    | bundleAuditEnabled    | Sets whether or not the [experimental](../analyzers/index.html) Ruby Bundle Audit Analyzer should be used.        | true

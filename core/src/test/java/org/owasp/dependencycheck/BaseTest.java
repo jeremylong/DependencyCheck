@@ -54,7 +54,7 @@ public class BaseTest {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        File f = new File("./target/data/dc.mv.db");
+        File f = new File("./target/data/odc.mv.db");
         if (f.exists() && f.isFile() && f.length() < 71680) {
             System.err.println("------------------------------------------------");
             System.err.println("------------------------------------------------");

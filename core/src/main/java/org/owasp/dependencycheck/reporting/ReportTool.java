@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.reporting;
 
 import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.Identifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.slf4j.Logger;
@@ -59,6 +60,8 @@ public class ReportTool {
             } catch (CpeEncodingException ex) {
                 LOGGER.debug("Unable to convert to cpe URI", ex);
             }
+        } else if (id instanceof GenericIdentifier) {
+            return id.getValue();
         }
         return null;
     }

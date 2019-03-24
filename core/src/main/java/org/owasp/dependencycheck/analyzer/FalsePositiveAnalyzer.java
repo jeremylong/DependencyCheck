@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -195,6 +196,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      * @param dependency the dependency being analyzed
      */
     @SuppressWarnings("null")
+    @SuppressFBWarnings(justification = "null checks are working correctly to prevent NPE", value = {"NP_NULL_ON_SOME_PATH_MIGHT_BE_INFEASIBLE"})
     private void removeSpuriousCPE(Dependency dependency) {
         final List<Identifier> ids = new ArrayList<>(dependency.getVulnerableSoftwareIdentifiers());
         Collections.sort(ids);

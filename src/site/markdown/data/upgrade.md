@@ -1,8 +1,10 @@
 Database Upgrades
 =================
-If using an external database server, such as MySQL, a DBA must manually perform
-the database upgrades. Currently, a copy of the initialization and upgrade scripts
-for MySQL can be found in the [github repository](https://github.com/jeremylong/DependencyCheck/tree/master/dependency-check-core/src/main/resources/data).
+If using an external database server, such as MySQL, a DBA must manually perform the
+database schema update. In most cases an upgrade requires re-running the initialization script
+which will drop the current tables and re-create them. The initialization can be found in the
+[github repository](https://github.com/jeremylong/DependencyCheck/tree/master/core/src/main/resources/data).
 
-If you want to use an external database other then MySQL please open an issue in our [issue tracker](https://github.com/jeremylong/DependencyCheck/issues)
-as a dialect properties file will need to be created.
+If you want to use an external database other than one listed in the repo please open an issue on the
+[github issue tracker](https://github.com/jeremylong/DependencyCheck/issues) as an initialization and
+dialect properties file will likely need to be created.

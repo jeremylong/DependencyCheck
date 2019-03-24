@@ -20,7 +20,8 @@
         "credits": {
             "NVD": "This report contains data retrieved from the National Vulnerability Database: http://nvd.nist.gov",
             "NPM": "This report may contain data retrieved from the NPM Public Advisories: https://www.npmjs.com/advisories",
-            "RETIREJS": "This report may contain data retrieved from the RetireJS community: https://retirejs.github.io/retire.js/"
+            "RETIREJS": "This report may contain data retrieved from the RetireJS community: https://retirejs.github.io/retire.js/",
+            "OSSINDEX": "This report may contain data retrieved from the Sonatype OSS Index: https://ossindex.sonatype.org"
         }
     },
     "dependencies": [
@@ -145,6 +146,7 @@
             #foreach($vuln in $dependency.getVulnerabilities(true))#if($foreach.count > 1),#end {
                 "source": "$enc.json($vuln.getSource().name())",
                 "name": "$enc.json($vuln.name)",
+                #if($vuln.UnscoredSeverity)"severity" : "$enc.json($vuln.unscoredSeverity)",#end
 #if($vuln.cvssV2)
                     "cvssv2": {
                         "score": $vuln.cvssV2.score,

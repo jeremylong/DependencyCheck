@@ -22,6 +22,7 @@ import java.util.List;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -298,6 +299,7 @@ public class ReportGenerator {
      * @param file the output file to write the report to
      * @throws ReportException is thrown when the report cannot be generated
      */
+    @SuppressFBWarnings(justification = "try with resources will clean up the output stream", value = {"OBL_UNSATISFIED_OBLIGATION"})
     protected void processTemplate(String template, File file) throws ReportException {
         ensureParentDirectoryExists(file);
         try (OutputStream output = new FileOutputStream(file)) {
@@ -403,7 +405,7 @@ public class ReportGenerator {
             try {
                 org.apache.commons.io.FileUtils.moveFile(out, in);
             } catch (IOException ex) {
-                LOGGER.error("Unable to generate pretty report, caused by: ", ex.getMessage());
+                LOGGER.error("Unable to generate pretty report, caused by: {}", ex.getMessage());
             }
         }
     }

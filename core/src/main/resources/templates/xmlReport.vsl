@@ -165,6 +165,9 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
 #foreach($vuln in $dependency.getVulnerabilities(true))
                 <vulnerability source="$enc.xml($vuln.getSource().name())">
                     <name>$enc.xml($vuln.name)</name>
+#if($vuln.unscoredSeverity)
+                    <severity>$enc.xml($vuln.unscoredSeverity)</severity>
+#end
 #if($vuln.cvssV2)
                     <cvssV2>
                         <score>$vuln.cvssV2.score</score>
@@ -275,7 +278,7 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
                     </references>
                     <vulnerableSoftware>
 #foreach($vs in $vuln.getVulnerableSoftware())
-                        <software#if($vs == $vuln.matchedVulnerableSoftware) "matched"="true"#end
+                        <software#if($vs == $vuln.matchedVulnerableSoftware) matched="true"#end
                             #if($vs.versionStartIncluding) versionStartIncluding="$enc.xml($vs.versionStartIncluding)"#end
                             #if($vs.versionStartExcluding) versionStartExcluding="$enc.xml($vs.versionStartExcluding)"#end
                             #if($vs.versionEndIncluding) versionEndIncluding="$enc.xml($vs.versionEndIncluding)"#end

@@ -111,11 +111,13 @@ public class EngineVersionCheck implements CachedWebDataSource {
      * running engine's version number. If the released version number is newer
      * a warning is printed recommending an upgrade.
      *
+     * @return returns false as no updates are made to the database that would
+     * require compaction
      * @throws UpdateException thrown if the local database properties could not
      * be updated
      */
     @Override
-    public void update(Engine engine) throws UpdateException {
+    public boolean update(Engine engine) throws UpdateException {
         this.settings = engine.getSettings();
         try {
             final CveDB db = engine.getDatabase();
@@ -152,6 +154,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
         } catch (InvalidSettingException ex) {
             LOGGER.debug("Unable to determine if autoupdate is enabled", ex);
         }
+        return false;
     }
 
     /**

@@ -693,6 +693,9 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                     #set($cveSeverity=$enc.html($vuln.cvssV2.severity))
                                 #end
                             #end
+                            #if ($vuln.unscoredSeverity)
+                                #set($cveSeverity=$enc.html($vuln.unscoredSeverity))
+                            #end
                         #end
                         #set($sortValue=$cveImpact*10)
                         <td data-sort-value="$sortValue">$cveSeverity</td>
@@ -711,7 +714,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                     <h3 class="subsectionheader standardsubsection#if($dependency.getVulnerabilities().size()==0) notvulnerable#end"><a name="l${lnkcnt}_$enc.html($dependency.Sha1sum)"></a>$enc.html($dependency.DisplayFileName)</h3>
                     <div class="subsectioncontent#if($dependency.getVulnerabilities().size()==0) notvulnerable#end">
                         #if ($dependency.description)
-                            <p><b>Description:</b><pre>&nbsp;$enc.html($dependency.description)</pre></p>
+                            <p><b>Description:</b><pre>$enc.html($dependency.description)</pre></p>
                         #end
                         <p>
                         #if ($dependency.license)
@@ -810,11 +813,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                     &nbsp;&nbsp;(<i>Confidence</i>:$WordUtils.capitalizeFully($id.confidence.toString()))
                                 #end
                                 #if ($id.notes)
-                                    <ul>
-                                    #if ($id.notes)
-                                        <li>Notes: $enc.xml($id.notes)</li>
-                                    #end
-                                    </ul>
+                                    <ul><li>Notes: $enc.html($id.notes)</li></ul>
                                 #end
                                 </li>
                             #end
@@ -829,11 +828,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                 #end
                                 &nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for the identified vulnerability identifier" onclick="copyText('$enc.javascript($dependency.DisplayFileName)', '$enc.javascript($dependency.Sha1sum)', '$enc.javascript($suppressGav)', 'cpe', '$enc.javascript($rpt.identifierToSuppressionId($id))')">suppress</button>
                                 #if ($id.notes)
-                                    <ul>
-                                        #if ($id.notes)
-                                            <li>Notes: $enc.xml($id.notes)</li>
-                                        #end
-                                    </ul>
+                                    <ul><li>Notes: $enc.html($id.notes)</li></ul>
                                 #end
                             </li>
                             #end
@@ -926,7 +921,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                             <h3 class="subsectionheader standardsubsection">$enc.html($dependency.DisplayFileName)</h3>
                             <div class="subsectioncontent">
                                 #if ($dependency.description)
-                                    <p><b>Description:</b><pre>&nbsp;$enc.html($dependency.description)</pre></p>
+                                    <p><b>Description:</b><pre>$enc.html($dependency.description)</pre></p>
                                 #end
                                 <p>
                                 #if ($dependency.license)
@@ -995,15 +990,8 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                         #if ($id.confidence)
                                             &nbsp;&nbsp;(<i>Confidence</i>:$WordUtils.capitalizeFully($id.confidence.toString()))
                                         #end
-                                        #if ($id.description || $id.notes)
-                                            <ul>
-                                            #if ($id.description)
-                                                <li>Description: $enc.html($id.description)</li>
-                                            #end
-                                            #if ($id.notes)
-                                                <li>Notes: $enc.html($id.notes)</li>
-                                            #end
-                                            </ul>
+                                        #if ($id.notes)
+                                            <ul><li>Notes: $enc.html($id.notes)</li></ul>
                                         #end
                                         </li>
                                     #end
@@ -1038,7 +1026,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                         <br/>CWE: $vuln.cwe.toString()
                                     #end
                                     #if ($vuln.notes)
-                                        <br/>Notes: $enc.xml($vuln.notes)
+                                        <br/>Notes: $enc.html($vuln.notes)
                                     #end
                                     #if ($vuln.getReferences().size()>0)
                                         <br/>References: <ul>
@@ -1082,7 +1070,9 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
             <br/>
             This report may contain data retrieved from the <a href="https://www.npmjs.com/advisories">NPM Public Advisories</a>.
             <br/>
-            This report may contain data retrieved from <a href="https://retirejs.github.io/retire.js/">RetireJS</a>
+            This report may contain data retrieved from <a href="https://retirejs.github.io/retire.js/">RetireJS</a>.
+            <br/>
+            This report may contain data retrieved from the <a href="https://ossindex.sonatype.org">Sonatype OSS Index</a>.
         </div>
     </body>
 </html>

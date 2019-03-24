@@ -92,7 +92,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The set of things we can handle with Zip methods
      */
-    private static final Set<String> KNOWN_ZIP_EXT = newHashSet("zip", "ear", "war", "jar", "sar", "apk", "nupkg");
+    private static final Set<String> KNOWN_ZIP_EXT = newHashSet("zip", "ear", "war", "jar", "sar", "apk", "nupkg", "aar");
     /**
      * The set of file extensions supported by this analyzer. Note for
      * developers, any additions to this list will need to be explicitly handled
@@ -273,7 +273,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                         extractAndAnalyze(d, engine, scanDepth + 1);
                     }
                 } else {
-                    dependencySet.stream().filter((sub) -> (sub.getFilePath().startsWith(tmpDir.getAbsolutePath()))).forEach((sub) -> {
+                    dependencySet.stream().filter((sub) -> sub.getFilePath().startsWith(tmpDir.getAbsolutePath())).forEach((sub) -> {
                         final String displayPath = String.format("%s%s",
                                 dependency.getFilePath(),
                                 sub.getActualFilePath().substring(tmpDir.getAbsolutePath().length()));
@@ -325,7 +325,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                             d.setFilePath(dependency.getFilePath());
                             d.setDisplayFileName(dependency.getFileName());
                         } else {
-                            d.getRelatedDependencies().stream().filter((rel) -> (rel.getActualFile().equals(tmpLoc))).forEach((rel) -> {
+                            d.getRelatedDependencies().stream().filter((rel) -> rel.getActualFile().equals(tmpLoc)).forEach((rel) -> {
                                 rel.setFilePath(dependency.getFilePath());
                                 rel.setDisplayFileName(dependency.getFileName());
                             });
