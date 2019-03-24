@@ -12,11 +12,10 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 ## ensure everything is up-to-date
 RUN apt-get update                                                                                   && \
-    apt-get upgrade -y                                                                               && \
-    apt-get dist-upgrade -y                                                                          && \
     apt-get install -y --no-install-recommends ruby wget gpg apt-transport-https ca-certificates     && \
     gem install bundle-audit                                                                         && \
-    gem cleanup 
+    gem cleanup                                                                                      && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg  && \
     mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/                                                     && \
@@ -26,7 +25,8 @@ RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor 
     chown root:root /etc/apt/sources.list.d/microsoft-prod.list                                      && \
     apt-get update                                                                                   && \
     apt-get install -y --no-install-recommends dotnet-sdk-2.2                                        && \
-    apt-get --purge remove -y wget gpg apt-transport-https
+    apt-get --purge remove -y wget gpg apt-transport-https                                           && \
+    rm -rf /var/lib/apt/lists/*
 
 ADD target/dependency-check-${VERSION}-release.zip /
 

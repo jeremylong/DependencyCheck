@@ -165,6 +165,9 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
 #foreach($vuln in $dependency.getVulnerabilities(true))
                 <vulnerability source="$enc.xml($vuln.getSource().name())">
                     <name>$enc.xml($vuln.name)</name>
+#if($vuln.unscoredSeverity)
+                    <severity>$enc.xml($vuln.unscoredSeverity)</severity>
+#end
 #if($vuln.cvssV2)
                     <cvssV2>
                         <score>$vuln.cvssV2.score</score>

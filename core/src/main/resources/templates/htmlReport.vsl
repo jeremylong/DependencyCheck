@@ -693,6 +693,9 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                     #set($cveSeverity=$enc.html($vuln.cvssV2.severity))
                                 #end
                             #end
+                            #if ($vuln.unscoredSeverity)
+                                #set($cveSeverity=$enc.html($vuln.unscoredSeverity))
+                            #end
                         #end
                         #set($sortValue=$cveImpact*10)
                         <td data-sort-value="$sortValue">$cveSeverity</td>
