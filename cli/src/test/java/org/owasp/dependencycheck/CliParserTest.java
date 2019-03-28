@@ -17,14 +17,12 @@
  */
 package org.owasp.dependencycheck;
 
-import com.google.common.base.Splitter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import java.util.List;
 import org.apache.commons.cli.ParseException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -268,8 +266,8 @@ public class CliParserTest extends BaseTest {
         try {
             baos.flush();
             String text = new String(baos.toByteArray(), UTF_8).toLowerCase();
-            List<String> lines = Splitter.onPattern(System.getProperty("line.separator")).splitToList(text);
-            Assert.assertTrue(lines.size() > 1);
+            String[] lines = text.split(System.getProperty("line.separator"));
+            Assert.assertTrue(lines.length >= 1);
             Assert.assertTrue(text.contains("version"));
             Assert.assertTrue(!text.contains("unknown"));
         } catch (IOException ex) {
@@ -302,9 +300,9 @@ public class CliParserTest extends BaseTest {
         try {
             baos.flush();
             String text = (new String(baos.toByteArray(), UTF_8));
-            List<String> lines = Splitter.onPattern(System.getProperty("line.separator")).splitToList(text);
-            Assert.assertTrue(lines.get(0).startsWith("usage: "));
-            Assert.assertTrue((lines.size() > 2));
+            String[] lines = text.split(System.getProperty("line.separator"));
+            Assert.assertTrue(lines[0].startsWith("usage: "));
+            Assert.assertTrue((lines.length > 2));
         } catch (IOException ex) {
             System.setOut(out);
             Assert.fail("CliParser.printVersionInfo did not write anything to system.out.");

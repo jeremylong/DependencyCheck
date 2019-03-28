@@ -46,7 +46,6 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -154,7 +153,9 @@ public class Engine implements FileFilter, AutoCloseable {
          */
         Mode(boolean databaseRequired, AnalysisPhase... phases) {
             this.databaseRequired = databaseRequired;
-            this.phases = Arrays.stream(phases).collect(ImmutableList.toImmutableList());
+            this.phases = new ImmutableList.Builder<AnalysisPhase>()
+                    .add(phases)
+                    .build();
         }
     }
 
