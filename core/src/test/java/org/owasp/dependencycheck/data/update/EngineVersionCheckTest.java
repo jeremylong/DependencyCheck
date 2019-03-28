@@ -27,6 +27,7 @@ import org.joda.time.DateTime;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import mockit.integration.junit4.JMockit;
 import org.junit.runner.RunWith;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
@@ -38,6 +39,7 @@ import org.owasp.dependencycheck.utils.DependencyVersion;
  *
  * @author Jeremy Long
  */
+@RunWith(JMockit.class)
 public class EngineVersionCheckTest extends BaseTest {
 
     @Injectable

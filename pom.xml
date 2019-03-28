@@ -163,7 +163,7 @@ Copyright (c) 2012 - Jeremy Long
         <com.sun.mail.mailapi.version>1.6.2</com.sun.mail.mailapi.version>
         <junit.version>4.12</junit.version>
         <hamcrest-core.version>1.3</hamcrest-core.version>
-        <org.jmockit.version>1.45</org.jmockit.version>
+        <org.jmockit.version>1.41</org.jmockit.version>
         <mockito-core.version>2.23.0</mockito-core.version>
         <jsoup.version>1.11.3</jsoup.version>
         <commons-compress.version>1.18</commons-compress.version>
@@ -575,7 +575,7 @@ Copyright (c) 2012 - Jeremy Long
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>${surefireArgLine} -javaagent:${settings.localRepository}/org/jmockit/jmockit/${org.jmockit.version}/jmockit-${org.jmockit.version}.jar -Dfile.encoding=UTF-8</argLine>
+                    <argLine>${surefireArgLine} -Dfile.encoding=UTF-8</argLine>
                     <systemProperties>
                         <property>
                             <name>data.directory</name>
