@@ -158,8 +158,7 @@ Copyright (c) 2012 - Jeremy Long
 
         <!--upgrading beyond lang3 3.4 may cause issues with the Jenkins plugin-->
         <commons-lang3.version>3.4</commons-lang3.version>
-        <!-- upgrading beyond 1.3 breaks Java 7 compatability -->
-        <commons-text.version>1.3</commons-text.version>
+        <commons-text.version>1.6</commons-text.version>
         <com.sun.mail.mailapi.version>1.6.2</com.sun.mail.mailapi.version>
         <junit.version>4.12</junit.version>
         <hamcrest-core.version>1.3</hamcrest-core.version>
@@ -174,18 +173,15 @@ Copyright (c) 2012 - Jeremy Long
         <commons-collections.version>3.2.2</commons-collections.version>
         <org.apache.velocity.version>2.0</org.apache.velocity.version>
         <plexus-sec-dispatcher.version>1.4</plexus-sec-dispatcher.version>
-
-        <!-- upgrading beyond 2.2 requires reworking the dependency resolution -->
         <maven-dependency-tree.version>3.0.1</maven-dependency-tree.version>
 
         <!-- upgrading beyond 1.0.4 will cause the build to fail on Java 7 --> 
         <org.glassfish.javax.json.version>1.0.4</org.glassfish.javax.json.version>
         <maven-artifact-transfer.version>0.11.0</maven-artifact-transfer.version>
         <groovy-all.version>2.4.15</groovy-all.version>
-        <!-- upgrading beyond 1.5 will cause the build to fail on Java 7 -->
-        <gmavenplus-plugin.version>1.5</gmavenplus-plugin.version>
+        <gmavenplus-plugin.version>1.6.2</gmavenplus-plugin.version>
         <com.h3xstream.retirejs.core.version>3.0.1</com.h3xstream.retirejs.core.version>
-        <com.google.guava.version>11.0.1</com.google.guava.version>
+        <com.google.guava.version>27.1-jre</com.google.guava.version>
         <surefireArgLine/>
     </properties>
     <distributionManagement>
@@ -530,19 +526,19 @@ Copyright (c) 2012 - Jeremy Long
                 <executions>
                     <execution>
                         <id>signature-check</id>
-                        <phase>verify</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
+                        <configuration>
+                            <signature>
+                                <groupId>org.codehaus.mojo.signature</groupId>
+                                <artifactId>java18</artifactId>
+                                <version>1.0</version>
+                            </signature>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <signature>
-                        <groupId>org.codehaus.mojo.signature</groupId>
-                        <artifactId>java18</artifactId>
-                        <version>1.0</version>
-                    </signature>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
