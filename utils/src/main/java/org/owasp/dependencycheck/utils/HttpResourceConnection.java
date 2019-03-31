@@ -196,6 +196,7 @@ public class HttpResourceConnection implements AutoCloseable {
                     conn = null;
                 }
                 final String msg = format("Error retrieving %s; received response code %s.", url.toString(), status);
+                LOGGER.error(msg);
                 throw new DownloadFailedException(msg);
             }
         } catch (IOException ex) {

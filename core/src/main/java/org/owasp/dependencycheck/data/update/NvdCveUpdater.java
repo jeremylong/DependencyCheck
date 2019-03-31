@@ -129,7 +129,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
         } catch (DownloadFailedException ex) {
             LOGGER.warn("Unable to download the NVD CVE data; the results may not include the most recent CPE/CVEs from the NVD.");
             if (settings.getString(Settings.KEYS.PROXY_SERVER) == null) {
-                LOGGER.info("If you are behind a proxy you may need to configure dependency-check to use the proxy.");
+                LOGGER.warn("If you are behind a proxy you may need to configure dependency-check to use the proxy.");
             }
             final String jre = System.getProperty("java.version");
             if (jre == null || jre.startsWith("1.4") || jre.startsWith("1.5") || jre.startsWith("1.6") || jre.startsWith("1.7")) {

@@ -129,7 +129,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
             } catch (DownloadFailedException ex) {
                 LOGGER.warn("Download Failed for NVD CVE - {}\nSome CVEs may not be reported.", nvdCveInfo.getId());
                 if (settings.getString(Settings.KEYS.PROXY_SERVER) == null) {
-                    LOGGER.info("If you are behind a proxy you may need to configure dependency-check to use the proxy.");
+                    LOGGER.warn("If you are behind a proxy you may need to configure dependency-check to use the proxy.");
                 }
                 LOGGER.debug("", ex);
                 return null;
