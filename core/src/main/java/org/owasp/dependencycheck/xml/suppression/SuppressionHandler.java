@@ -22,6 +22,8 @@ import java.util.Calendar;
 import java.util.List;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.xml.bind.DatatypeConverter;
+import org.owasp.dependencycheck.exception.ParseException;
+import org.owasp.dependencycheck.utils.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -128,7 +130,11 @@ public class SuppressionHandler extends DefaultHandler {
             }
             final String until = currentAttributes.getValue("until");
             if (until != null) {
-                rule.setUntil(DatatypeConverter.parseDate(until));
+                try {
+                    rule.setUntil(DateUtil.parseXmlDate(until));
+                } catch (ParseException ex) {
+                    throw new SAXException("Unable to parse until date in suppression file: " + until, ex);
+                }
             }
         }
     }

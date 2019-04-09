@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.exception.ParseException;
 
 /**
  *
@@ -46,6 +47,20 @@ public class DateUtilTest extends BaseTest {
         expResult = false;
         result = DateUtil.withinDateRange(lastRun, current, range);
         assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of parseXmlDate method, of class DateUtil.
+     * @throws ParseException thrown when there is a parse error
+     */
+    @Test
+    public void testParseXmlDate() throws ParseException {
+        String xsDate = "2019-01-02Z";
+        Calendar result = DateUtil.parseXmlDate(xsDate);
+        assertEquals(2019, result.get(Calendar.YEAR));
+        //month is zero based.
+        assertEquals(0, result.get(Calendar.MONTH));
+        assertEquals(2, result.get(Calendar.DATE));
     }
 
 }

@@ -17,7 +17,13 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import org.owasp.dependencycheck.exception.ParseException;
+
+import java.util.Calendar;
 import javax.annotation.concurrent.ThreadSafe;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  *
@@ -30,6 +36,22 @@ public final class DateUtil {
      * Private constructor for utility class.
      */
     private DateUtil() {
+    }
+
+    /**
+     * Parses an XML xs:date into a calendar object.
+     * @param xsDate an xs:date string
+     * @return a calendar object
+     * @throws ParseException thrown if the date cannot be converted to a calendar
+     */
+    public static Calendar parseXmlDate(String xsDate) throws ParseException {
+        try {
+            DatatypeFactory df = DatatypeFactory.newInstance();
+            XMLGregorianCalendar dateTime = df.newXMLGregorianCalendar(xsDate);
+            return dateTime.toGregorianCalendar();
+        } catch (DatatypeConfigurationException ex) {
+            throw new ParseException("Unable to parse " + xsDate, ex);
+        }
     }
 
     /**

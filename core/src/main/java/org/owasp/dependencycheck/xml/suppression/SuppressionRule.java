@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.concurrent.NotThreadSafe;
-import javax.xml.bind.DatatypeConverter;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
@@ -551,7 +550,7 @@ public class SuppressionRule {
         final StringBuilder sb = new StringBuilder(64);
         sb.append("SuppressionRule{");
         if (until != null) {
-            sb.append("until=").append(DatatypeConverter.printDate(until)).append(',');
+            sb.append("until=").append(until).append(',');
         }
         if (filePath != null) {
             sb.append("filePath=").append(filePath).append(',');
