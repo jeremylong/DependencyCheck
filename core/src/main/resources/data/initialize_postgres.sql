@@ -60,4 +60,4 @@ $$ LANGUAGE sql;
 
 GRANT EXECUTE ON FUNCTION public.save_property(varchar(50),varchar(500)) TO dcuser;
 
-UPDATE Properties SET value='4.1' WHERE ID='version';
+INSERT INTO properties(id,value) VALUES ('version','4.1');
