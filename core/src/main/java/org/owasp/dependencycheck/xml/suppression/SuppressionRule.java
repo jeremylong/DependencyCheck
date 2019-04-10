@@ -40,6 +40,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
  */
 @NotThreadSafe
 public class SuppressionRule {
+
     /**
      * The Logger for use throughout the class.
      */
@@ -446,7 +447,12 @@ public class SuppressionRule {
                 }
                 if (!remove) {
                     for (float cvss : this.cvssBelow) {
-                        if (v.getCvssV2().getScore() < cvss) {
+                        if (v.getCvssV2() != null && v.getCvssV2().getScore() < cvss) {
+                            remove = true;
+                            removeVulns.add(v);
+                            break;
+                        }
+                        if (v.getCvssV3() != null && v.getCvssV3().getBaseScore() < cvss) {
                             remove = true;
                             removeVulns.add(v);
                             break;
