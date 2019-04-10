@@ -41,6 +41,7 @@ import org.apache.maven.shared.transfer.artifact.DefaultArtifactCoordinate;
 import org.apache.maven.shared.transfer.artifact.TransferUtils;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolverException;
+import org.eclipse.aether.artifact.ArtifactType;
 import org.apache.maven.shared.artifact.filter.PatternExcludesArtifactFilter;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
@@ -880,8 +881,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         coordinate.setGroupId(dependency.getGroupId());
         coordinate.setArtifactId(dependency.getArtifactId());
         coordinate.setVersion(dependency.getVersion());
-        coordinate.setExtension(dependency.getType());
-        coordinate.setClassifier(dependency.getClassifier());
+
+        final ArtifactType type = session.getRepositorySession().getArtifactTypeRegistry().get(dependency.getType());
+        coordinate.setExtension(type.getExtension());
+        coordinate.setClassifier(type.getClassifier());
 
         final Artifact artifact = artifactResolver.resolveArtifact(buildingRequest, coordinate).getArtifact();
 
