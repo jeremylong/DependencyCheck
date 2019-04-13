@@ -152,7 +152,7 @@
                         "score": $vuln.cvssV2.score,
                         "accessVector": "$enc.json($vuln.cvssV2.accessVector)",
                         "accessComplexity": "$enc.json($vuln.cvssV2.accessComplexity)",
-                        "authenticationr>": "$enc.json($vuln.cvssV2.authentication)",
+                        "authenticationr": "$enc.json($vuln.cvssV2.authentication)",
                         "confidentialImpact": "$enc.json($vuln.cvssV2.confidentialityImpact)",
                         "integrityImpact": "$enc.json($vuln.cvssV2.integrityImpact)",
                         "availabilityImpact": "$enc.json($vuln.cvssV2.availabilityImpact)",
@@ -170,7 +170,7 @@
                         "confidentialityImpact": "$enc.json($vuln.cvssV3.confidentialityImpact)",
                         "integrityImpact": "$enc.json($vuln.cvssV3.integrityImpact)",
                         "availabilityImpact": "$enc.json($vuln.cvssV3.availabilityImpact)",
-                        "baseSeverity>": "$enc.json($vuln.cvssV3.baseSeverity)"
+                        "baseSeverity": "$enc.json($vuln.cvssV3.baseSeverity)"
                     },
 #end
 #if (!$vuln.cwe.cwes.isEmpty())
@@ -217,7 +217,7 @@
                         "score": $vuln.cvssV2.score,
                         "accessVector": "$enc.json($vuln.cvssV2.accessVector)",
                         "accessComplexity": "$enc.json($vuln.cvssV2.accessComplexity)",
-                        "authenticationr>": "$enc.json($vuln.cvssV2.authentication)",
+                        "authenticationr": "$enc.json($vuln.cvssV2.authentication)",
                         "confidentialImpact": "$enc.json($vuln.cvssV2.confidentialityImpact)",
                         "integrityImpact": "$enc.json($vuln.cvssV2.integrityImpact)",
                         "availabilityImpact": "$enc.json($vuln.cvssV2.availabilityImpact)",
@@ -235,7 +235,7 @@
                         "confidentialityImpact": "$enc.json($vuln.cvssV3.confidentialityImpact)",
                         "integrityImpact": "$enc.json($vuln.cvssV3.integrityImpact)",
                         "availabilityImpact": "$enc.json($vuln.cvssV3.availabilityImpact)",
-                        "baseSeverity>": "$enc.json($vuln.cvssV3.baseSeverity)"
+                        "baseSeverity": "$enc.json($vuln.cvssV3.baseSeverity)"
                     },
 #end
 #if (!$vuln.cwe.cwes.isEmpty())
