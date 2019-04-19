@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
@@ -42,16 +44,19 @@ import javax.annotation.Nullable;
  * @since ???
  */
 public class OssIndexAnalyzer extends AbstractAnalyzer {
+
     private static final Logger log = LoggerFactory.getLogger(OssIndexAnalyzer.class);
 
     public static final String REFERENCE_TYPE = "OSSINDEX";
 
     private OssindexClient client;
+    
+    private static final Pattern CVE_PATTERN = Pattern.compile("\\bCVE-\\d{4,4}-\\d{4,10}\\b");
 
     /**
      * Fetched reports.
      */
-    private Map<PackageUrl,ComponentReport> reports;
+    private Map<PackageUrl, ComponentReport> reports;
 
     /**
      * Flag to indicate if fetching reports failed.
@@ -70,7 +75,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
 
     @Override
     public AnalysisPhase getAnalysisPhase() {
-        return AnalysisPhase.FINDING_ANALYSIS;
+        return AnalysisPhase.FINDING_ANALYSIS_PHASE2;
     }
 
     @Override
@@ -114,8 +119,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
             if (!failed && reports == null) {
                 try {
                     reports = requestReports(engine.getDependencies());
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     failed = true;
                     throw new AnalysisException("Failed to request component-reports", e);
                 }
@@ -135,8 +139,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
     private PackageUrl parsePackageUrl(final String value) {
         try {
             return PackageUrl.parse(value);
-        }
-        catch (PackageUrl.InvalidException e) {
+        } catch (PackageUrl.InvalidException e) {
             log.warn("Invalid Package-URL: {}", value, e);
             return null;
         }
@@ -171,7 +174,8 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Attempt to enrich given dependency with vulnerability details from OSS Index component-report.
+     * Attempt to enrich given dependency with vulnerability details from OSS
+     * Index component-report.
      */
     private void enrich(final Dependency dependency) {
         log.debug("Enrich dependency: {}", dependency);
@@ -192,10 +196,16 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
                         id.setUrl(report.getReference().toString());
 
                         for (ComponentReportVulnerability vuln : report.getVulnerabilities()) {
-                            dependency.addVulnerability(transform(report, vuln));
+                            Vulnerability v = transform(report, vuln);
+                            Vulnerability existing = dependency.getVulnerabilities().stream().filter(e->e.getName().equals(v.getName())).findFirst().orElse(null);
+                            if (existing!=null) {
+                                //TODO - can we enhance anything other than the references?
+                                existing.getReferences().addAll(v.getReferences());
+                            } else {
+                                dependency.addVulnerability(v);
+                            }
                         }
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         log.warn("Failed to fetch component-report for: {}", purl, e);
                     }
                 }
@@ -209,45 +219,69 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
     private Vulnerability transform(final ComponentReport report, final ComponentReportVulnerability source) {
         Vulnerability result = new Vulnerability();
         result.setSource(Vulnerability.Source.OSSINDEX);
-        result.setName(source.getCve() != null ? source.getCve() : source.getId());
+        
+        if (source.getCve()!=null) {
+            result.setName(source.getCve());    
+        } else {
+            String cve = null;
+            if (source.getTitle()!=null) {
+                Matcher matcher = CVE_PATTERN.matcher(source.getTitle());
+                if (matcher.find()) {
+                    cve = matcher.group();
+                } else {
+                    cve = source.getTitle();
+                }
+            }
+            if (cve==null && source.getReference()!=null) {
+                Matcher matcher = CVE_PATTERN.matcher(source.getReference().toString());
+                if (matcher.find()) {
+                    cve = matcher.group();
+                }
+            }
+            result.setName(cve != null ? cve : source.getId());
+        }
         result.setDescription(source.getDescription());
         result.addCwe(source.getCwe());
 
-        // convert cvss details
-        CvssVector cvssVector = CvssVectorFactory.create(source.getCvssVector());
         float cvssScore = source.getCvssScore() != null ? source.getCvssScore() : -1;
 
-        Map<String,String> metrics = cvssVector.getMetrics();
-        if (cvssVector instanceof Cvss2Vector) {
-          result.setCvssV2(new CvssV2(
-              cvssScore,
-              metrics.get(Cvss2Vector.ACCESS_VECTOR),
-              metrics.get(Cvss2Vector.ACCESS_COMPLEXITY),
-              metrics.get(Cvss2Vector.AUTHENTICATION),
-              metrics.get(Cvss2Vector.CONFIDENTIALITY_IMPACT),
-              metrics.get(Cvss2Vector.INTEGRITY_IMPACT),
-              metrics.get(Cvss2Vector.AVAILABILITY_IMPACT),
-              Cvss2Severity.of(cvssScore).name()
-          ));
-        }
-        else if (cvssVector instanceof Cvss3Vector) {
-          result.setCvssV3(new CvssV3(
-              metrics.get(Cvss3Vector.ATTACK_VECTOR),
-              metrics.get(Cvss3Vector.ATTACK_COMPLEXITY),
-              metrics.get(Cvss3Vector.PRIVILEGES_REQUIRED),
-              metrics.get(Cvss3Vector.USER_INTERACTION),
-              metrics.get(Cvss3Vector.SCOPE),
-              metrics.get(Cvss3Vector.CONFIDENTIALITY_IMPACT),
-              metrics.get(Cvss3Vector.INTEGRITY_IMPACT),
-              metrics.get(Cvss3Vector.AVAILABILITY_IMPACT),
-              cvssScore,
-              Cvss3Severity.of(cvssScore).name()
-          ));
-        }
-        else {
-          log.warn("Unsupported CVSS vector: {}", cvssVector);
-        }
+        if (source.getCvssVector() != null) {
+            // convert cvss details
+            CvssVector cvssVector = CvssVectorFactory.create(source.getCvssVector());
 
+            Map<String, String> metrics = cvssVector.getMetrics();
+            if (cvssVector instanceof Cvss2Vector) {
+                result.setCvssV2(new CvssV2(
+                        cvssScore,
+                        metrics.get(Cvss2Vector.ACCESS_VECTOR),
+                        metrics.get(Cvss2Vector.ACCESS_COMPLEXITY),
+                        metrics.get(Cvss2Vector.AUTHENTICATION),
+                        metrics.get(Cvss2Vector.CONFIDENTIALITY_IMPACT),
+                        metrics.get(Cvss2Vector.INTEGRITY_IMPACT),
+                        metrics.get(Cvss2Vector.AVAILABILITY_IMPACT),
+                        Cvss2Severity.of(cvssScore).name()
+                ));
+            } else if (cvssVector instanceof Cvss3Vector) {
+                result.setCvssV3(new CvssV3(
+                        metrics.get(Cvss3Vector.ATTACK_VECTOR),
+                        metrics.get(Cvss3Vector.ATTACK_COMPLEXITY),
+                        metrics.get(Cvss3Vector.PRIVILEGES_REQUIRED),
+                        metrics.get(Cvss3Vector.USER_INTERACTION),
+                        metrics.get(Cvss3Vector.SCOPE),
+                        metrics.get(Cvss3Vector.CONFIDENTIALITY_IMPACT),
+                        metrics.get(Cvss3Vector.INTEGRITY_IMPACT),
+                        metrics.get(Cvss3Vector.AVAILABILITY_IMPACT),
+                        cvssScore,
+                        Cvss3Severity.of(cvssScore).name()
+                ));
+            } else {
+                log.warn("Unsupported CVSS vector: {}", cvssVector);
+                result.setUnscoredSeverity(Float.toString(cvssScore));
+            }
+        } else {
+            log.debug("OSS has no vector for {}", result.getName());
+            result.setUnscoredSeverity(Float.toString(cvssScore));
+        }
         // generate a reference to the vulnerability details on OSS Index
         result.addReference(REFERENCE_TYPE, source.getTitle(), source.getReference().toString());
 
@@ -255,18 +289,16 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
         PackageUrl purl = report.getCoordinates();
         try {
             VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder()
-                .part(Part.APPLICATION)
-                .vendor(purl.getNamespaceAsString())
-                .product(purl.getName())
-                .version(purl.getVersion());
+                    .part(Part.APPLICATION)
+                    .vendor(purl.getNamespaceAsString())
+                    .product(purl.getName())
+                    .version(purl.getVersion());
 
             // TODO: consider if we want/need to extract version-ranges to apply to vulnerable-software?
-
             VulnerableSoftware software = builder.build();
             result.addVulnerableSoftware(software);
             result.setMatchedVulnerableSoftware(software);
-        }
-        catch (CpeValidationException e) {
+        } catch (CpeValidationException e) {
             log.warn("Unable to construct vulnerable-software for: {}", purl, e);
         }
 

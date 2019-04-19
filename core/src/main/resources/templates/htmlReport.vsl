@@ -845,8 +845,8 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                 <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CCE for this file" onclick="copyText('$enc.javascript($dependency.DisplayFileName)', '$enc.javascript($dependency.Sha1sum)', '$enc.javascript($suppressGav)', 'cve', '$enc.javascript($vuln.name)')">suppress</button></p>
                             #elseif($vuln.getSource().name().equals("NPM"))
                                 <p><b><a target="_blank" href="https://www.npmjs.com/advisories/$enc.url($vuln.name)">NPM-$enc.html($vuln.name)</a></b></p>
-                            #elseif($vuln.getSource().name().equals("RETIREJS"))
-                                <p><b>$enc.html($vuln.name)</b> (RetireJS)</p>
+                            #else
+                                <p><b>$enc.html($vuln.name)</b> ($vuln.getSource().name())</p>
                             #end
                             <p><pre>$enc.html($vuln.description)</pre>
                             #if($vuln.getCvssV2())

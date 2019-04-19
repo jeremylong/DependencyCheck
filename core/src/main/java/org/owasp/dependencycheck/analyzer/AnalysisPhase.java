@@ -61,6 +61,10 @@ public enum AnalysisPhase {
      */
     FINDING_ANALYSIS,
     /**
+     * Finding analysis phase 2.
+     */
+    FINDING_ANALYSIS_PHASE2,
+    /**
      * Post analysis phase.
      */
     POST_FINDING_ANALYSIS,
