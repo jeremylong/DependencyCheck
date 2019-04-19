@@ -24,10 +24,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Properties;
-import org.owasp.dependencycheck.data.update.NvdCveUpdater;
 import org.owasp.dependencycheck.data.update.exception.InvalidDataException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Meta properties object to hold information about the NVD CVE data.
