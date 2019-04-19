@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.data.nvd.json.MetaProperties;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
@@ -46,6 +47,7 @@ import org.owasp.dependencycheck.data.update.nvd.ProcessTask;
 import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
 import org.owasp.dependencycheck.utils.DateUtil;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
+import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.HttpResourceConnection;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
@@ -116,9 +118,9 @@ public class NvdCveUpdater implements CachedWebDataSource {
         try {
             dbProperties = cveDb.getDatabaseProperties();
             if (checkUpdate()) {
-                initializeExecutorServices();
                 final UpdateableNvdCve updateable = getUpdatesNeeded();
                 if (updateable.isUpdateNeeded()) {
+                    initializeExecutorServices();
                     performUpdate(updateable);
                     updatesMade = true;
                 }
@@ -332,6 +334,29 @@ public class NvdCveUpdater implements CachedWebDataSource {
     }
 
     /**
+     * Downloads the NVD CVE Meta file properties.
+     *
+     * @param url the URL to the NVD CVE JSON file
+     * @return the meta file properties
+     * @throws UpdateException thrown if the meta file could not be downloaded
+     */
+    protected final MetaProperties getMetaFile(String url) throws UpdateException {
+        try {
+            final String metaUrl = url.substring(0, url.length() - 7) + "meta";
+            final URL u = new URL(metaUrl);
+            final Downloader d = new Downloader(settings);
+            final String content = d.fetchContent(u, true);
+            return new MetaProperties(content);
+        } catch (MalformedURLException ex) {
+            throw new UpdateException("Meta file url is invalid: " + url, ex);
+        } catch (InvalidDataException ex) {
+            throw new UpdateException("Meta file content is invalid: " + url, ex);
+        } catch (DownloadFailedException ex) {
+            throw new UpdateException("Unable to download meta file: " + url, ex);
+        }
+    }
+
+    /**
      * Determines if the index needs to be updated. This is done by fetching the
      * NVD CVE meta data and checking the last update date. If the data needs to
      * be refreshed this method will return the NvdCveUrl for the files that
@@ -347,21 +372,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
      */
     protected final UpdateableNvdCve getUpdatesNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
         LOGGER.debug("starting getUpdatesNeeded() ...");
-        final UpdateableNvdCve updates;
-        try {
-            updates = retrieveCurrentTimestampsFromWeb();
-        } catch (InvalidDataException ex) {
-            final String msg = "Unable to retrieve valid timestamp from nvd cve downloads page";
-            LOGGER.debug(msg, ex);
-            throw new DownloadFailedException(msg, ex);
-        } catch (InvalidSettingException ex) {
-            LOGGER.debug("Invalid setting found when retrieving timestamps", ex);
-            throw new DownloadFailedException("Invalid settings", ex);
-        }
-
-        if (updates == null) {
-            throw new DownloadFailedException("Unable to retrieve the timestamps of the currently published NVD CVE data");
-        }
+        final UpdateableNvdCve updates = new UpdateableNvdCve();
         if (dbProperties != null && !dbProperties.isEmpty()) {
             try {
                 final int startYear = settings.getInt(Settings.KEYS.CVE_START_YEAR, 2002);
@@ -371,37 +382,38 @@ public class NvdCveUpdater implements CachedWebDataSource {
                     final long val = Long.parseLong(dbProperties.getProperty(DatabaseProperties.LAST_UPDATED_BASE + y, "0"));
                     if (val == 0) {
                         needsFullUpdate = true;
+                        break;
                     }
                 }
 
                 final long lastUpdated = Long.parseLong(dbProperties.getProperty(DatabaseProperties.LAST_UPDATED, "0"));
                 final long now = System.currentTimeMillis();
                 final int days = settings.getInt(Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS, 7);
-                if (!needsFullUpdate && lastUpdated == updates.getTimeStamp(MODIFIED)) {
-                    updates.clear(); //we don't need to update anything.
-                } else if (!needsFullUpdate && DateUtil.withinDateRange(lastUpdated, now, days)) {
-                    for (NvdCveInfo entry : updates) {
-                        if (MODIFIED.equals(entry.getId())) {
-                            entry.setNeedsUpdate(true);
-                        } else {
-                            entry.setNeedsUpdate(false);
-                        }
-                    }
-                } else { //we figure out which of the several XML files need to be downloaded.
-                    for (NvdCveInfo entry : updates) {
-                        if (MODIFIED.equals(entry.getId())) {
-                            entry.setNeedsUpdate(true);
-                        } else {
+
+                String url = settings.getString(Settings.KEYS.CVE_MODIFIED_JSON);
+                MetaProperties modified = getMetaFile(url);
+
+                if (!needsFullUpdate && lastUpdated == modified.getLastModifiedDate()) {
+                    return updates;
+                } else {
+                    updates.add(MODIFIED, url, modified.getLastModifiedDate(), true);
+                    if (needsFullUpdate || !DateUtil.withinDateRange(lastUpdated, now, days)) {
+                        final int start = settings.getInt(Settings.KEYS.CVE_START_YEAR);
+                        final int end = Calendar.getInstance().get(Calendar.YEAR);
+                        final String baseUrl = settings.getString(Settings.KEYS.CVE_BASE_JSON);
+                        for (int i = start; i <= end; i++) {
+                            url = String.format(baseUrl, i);
+                            MetaProperties meta = getMetaFile(url);
                             long currentTimestamp = 0;
                             try {
                                 currentTimestamp = Long.parseLong(dbProperties.getProperty(DatabaseProperties.LAST_UPDATED_BASE
-                                        + entry.getId(), "0"));
+                                        + i, "0"));
                             } catch (NumberFormatException ex) {
                                 LOGGER.debug("Error parsing '{}' '{}' from nvdcve.lastupdated",
-                                        DatabaseProperties.LAST_UPDATED_BASE, entry.getId(), ex);
+                                        DatabaseProperties.LAST_UPDATED_BASE, i, ex);
                             }
-                            if (currentTimestamp == entry.getTimestamp()) {
-                                entry.setNeedsUpdate(false);
+                            if (currentTimestamp < meta.getLastModifiedDate()) {
+                                updates.add(Integer.toString(i), url, meta.getLastModifiedDate(), true);
                             }
                         }
                     }
@@ -409,44 +421,10 @@ public class NvdCveUpdater implements CachedWebDataSource {
             } catch (NumberFormatException ex) {
                 LOGGER.warn("An invalid schema version or timestamp exists in the data.properties file.");
                 LOGGER.debug("", ex);
+            } catch (InvalidSettingException ex) {
+                throw new UpdateException("The NVD CVE start year property is set to an invalid value", ex);
             }
         }
-        return updates;
-    }
-
-    /**
-     * Retrieves the timestamps from the NVD CVE by checking the last modified
-     * date.
-     *
-     * @return the last modified date from the currently published NVD CVE
-     * downloads page
-     * @throws MalformedURLException thrown if the URL for the NVD CVE data is
-     * incorrect.
-     * @throws DownloadFailedException thrown if there is an error retrieving
-     * the time stamps from the NVD CVE
-     * @throws InvalidDataException thrown if there is an exception parsing the
-     * timestamps
-     * @throws InvalidSettingException thrown if the settings are invalid
-     */
-    private UpdateableNvdCve retrieveCurrentTimestampsFromWeb()
-            throws MalformedURLException, DownloadFailedException, InvalidDataException, InvalidSettingException {
-
-        final int start = settings.getInt(Settings.KEYS.CVE_START_YEAR);
-        final int end = Calendar.getInstance().get(Calendar.YEAR);
-
-        final Map<String, Long> lastModifiedDates = retrieveLastModifiedDates(start, end);
-
-        final UpdateableNvdCve updates = new UpdateableNvdCve();
-
-        final String baseUrl = settings.getString(Settings.KEYS.CVE_BASE_JSON);
-        for (int i = start; i <= end; i++) {
-            final String url = String.format(baseUrl, i);
-            updates.add(Integer.toString(i), url, lastModifiedDates.get(url), true);
-        }
-
-        final String url = settings.getString(Settings.KEYS.CVE_MODIFIED_JSON);
-        updates.add(MODIFIED, url,
-                lastModifiedDates.get(url), false);
         return updates;
     }
 

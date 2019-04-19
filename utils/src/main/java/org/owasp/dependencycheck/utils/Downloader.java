@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -24,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import static java.lang.String.format;
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -34,6 +36,10 @@ import org.apache.commons.io.IOUtils;
  */
 public final class Downloader {
 
+    /**
+     * UTF-8 character set name.
+     */
+    private static final String UTF8 = StandardCharsets.UTF_8.name();
     /**
      * The configured settings.
      */
@@ -77,6 +83,28 @@ public final class Downloader {
             IOUtils.copy(in, out);
         } catch (IOException ex) {
             final String msg = format("Download failed, unable to copy '%s' to '%s'", url.toString(), outputPath.getAbsolutePath());
+            throw new DownloadFailedException(msg, ex);
+        }
+    }
+
+    /**
+     * Retrieves a file from a given URL and returns the contents.
+     *
+     * @param url the URL of the file to download
+     * @param useProxy whether to use the configured proxy when downloading
+     * files
+     * @return the content of the file
+     * @throws DownloadFailedException is thrown if there is an error
+     * downloading the file
+     */
+    public String fetchContent(URL url, boolean useProxy) throws DownloadFailedException {
+        try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy);
+                ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            final InputStream in = conn.fetch(url);
+            IOUtils.copy(in, out);
+            return out.toString(UTF8);
+        } catch (IOException ex) {
+            final String msg = format("Download failed, unable to retrieve '%s'", url.toString());
             throw new DownloadFailedException(msg, ex);
         }
     }
