@@ -2,8 +2,8 @@
 <xs:schema id="analysis"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            elementFormDefault="qualified"
-           targetNamespace="https://jeremylong.github.io/DependencyCheck/dependency-check.2.0.xsd"
-           xmlns:dc="https://jeremylong.github.io/DependencyCheck/dependency-check.2.0.xsd">
+           targetNamespace="https://jeremylong.github.io/DependencyCheck/dependency-check.2.1.xsd"
+           xmlns:dc="https://jeremylong.github.io/DependencyCheck/dependency-check.2.1.xsd">
 
     <xs:complexType name="scanInfo">
         <xs:sequence minOccurs="1" maxOccurs="1">
@@ -138,6 +138,7 @@
     <xs:complexType name="vulnerability">
         <xs:sequence>
             <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="severity" type="xs:string" minOccurs="0" maxOccurs="1"/>
             <xs:element name="cvssV2" type="dc:cvssV2" minOccurs="0" maxOccurs="1"/>
             <xs:element name="cvssV3" type="dc:cvssV3" minOccurs="0" maxOccurs="1"/>
             <xs:element name="cwes" minOccurs="0" maxOccurs="1">
