@@ -67,12 +67,15 @@ public class ReportGeneratorIT extends BaseDBTestCase {
             //File jetty = new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath());
             File jetty = BaseTest.getResourceAsFile(this, "org.mortbay.jetty.jar");
 
+            File nodeTest = BaseTest.getResourceAsFile(this, "nodejs");
+
             getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             getSettings().setBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, false);
             try (Engine engine = new Engine(getSettings())) {
                 engine.scan(struts);
                 engine.scan(axis);
                 engine.scan(jetty);
+                engine.scan(nodeTest);
                 engine.analyzeDependencies();
                 engine.writeReports("Test Report", "org.owasp", "dependency-check-core", "1.4.8", writeTo, "XML");
             }
