@@ -123,7 +123,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
         engine.addDependency(toCombine);
         analyzer.analyze(toScan, engine);
         analyzer.analyze(toCombine, engine);
-        assertEquals("Expected 6 dependency", 6, engine.getDependencies().length);
+        assertEquals("Expected 76 dependency", 76, engine.getDependencies().length);
         Dependency result = null;
         for (Dependency dep : engine.getDependencies()) {
             if ("dns-sync".equals(dep.getName())) {
@@ -161,7 +161,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
         assertEquals(1, engine.getDependencies().length); //package-lock was removed without analysis
         assertTrue(shrinkwrap.equals(engine.getDependencies()[0]));
         analyzer.analyze(shrinkwrap, engine);
-        assertEquals(6, engine.getDependencies().length); //shrinkwrap was removed with analysis adding 6 dependency
+        assertEquals(76, engine.getDependencies().length); //shrinkwrap was removed with analysis adding 76 dependency
         assertFalse(shrinkwrap.equals(engine.getDependencies()[0]));
     }
 }
