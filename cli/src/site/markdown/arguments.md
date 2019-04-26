@@ -35,6 +35,7 @@ Advanced Options
 |       | \-\-disableNodeJS                      |                 | Sets whether the Node.js Package Analyzer will be used.                                   | false |
 |       | \-\-disableNodeAudit                   |                 | Sets whether the Node Audit Analyzer will be used.                                                                           | false |
 |       | \-\-disableRetireJS                    |                 | Sets whether the [experimental](../analyzers/index.html) RetireJS Analyzer will be used.                                     | false |
+|       | \-\-retireJsUrl                        | \<url\>         | The URL to the Retire JS repository.                                                                                         | https://raw.githubusercontent.com/Retirejs/retire.js/master/repository/jsrepository.json |
 |       | \-\-retirejsFitler                     | \<pattern\>     | The RetireJS Analyzers content filter used to exclude JS files when the content contains the given regular expression; this option can be specified multiple times. | &nbsp; |
 |       | \-\-retirejsFilterNonVulnerable        |                 | Specifies that the Retire JS Analyzer should filter out non-vulnerable JS files from the report.                             | &nbsp; |
 |       | \-\-disableRubygems                    |                 | Sets whether the [experimental](../analyzers/index.html) Ruby Gemspec Analyzer will be used.                                 | false |

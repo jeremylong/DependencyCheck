@@ -478,6 +478,9 @@ public final class CliParser {
                         .desc("Disable the Node Audit Analyzer.").build())
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_RETIRE_JS)
                         .desc("Disable the RetireJS Analyzer.").build())
+                .addOption(Option.builder().longOpt(ARGUMENT.RETIREJS_URL)
+                        .desc("The Retire JS Respository URL")
+                        .argName("url").hasArg(true).build())
                 .addOption(Option.builder().longOpt(ARGUMENT.RETIREJS_FILTER_NON_VULNERABLE)
                         .desc("Specifies that the Retire JS Analyzer should filter out non-vulnerable JS files from the report.").build())
                 .addOption(Option.builder().longOpt(ARGUMENT.ARTIFACTORY_ENABLED)
@@ -952,6 +955,13 @@ public final class CliParser {
         return line.getOptionValues(ARGUMENT.EXCLUDE);
     }
 
+   /**
+     * Returns the retire JS repository URL.
+     * @return the retire JS repository URL
+     */
+    String getRetireJSUrl() {
+        return line.getOptionValue(ARGUMENT.RETIREJS_URL);
+    }
     /**
      * Retrieves the list of retire JS content filters used to exclude JS files
      * by content.
@@ -1282,6 +1292,7 @@ public final class CliParser {
         return (line != null && line.hasOption(ARGUMENT.RETIRED)) ? true : null;
     }
 
+
     /**
      * Returns the CVSS value to fail on.
      *
@@ -1300,6 +1311,8 @@ public final class CliParser {
             return 11;
         }
     }
+
+    
 
     /**
      * A collection of static final strings that represent the possible command
@@ -1545,6 +1558,10 @@ public final class CliParser {
          */
         public static final String DISABLE_RETIRE_JS = "disableRetireJS";
         /**
+         * The URL to the retire JS repository.
+         */
+        public static String RETIREJS_URL = "retireJsUrl";
+        /**
          * The URL of the nexus server.
          */
         public static final String NEXUS_URL = "nexus";
@@ -1654,5 +1671,6 @@ public final class CliParser {
          * The CLI argument to enable the experimental analyzers.
          */
         public static final String FAIL_ON_CVSS = "failOnCVSS";
+        
     }
 }

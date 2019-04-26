@@ -66,6 +66,10 @@ public class Check extends Update {
      */
     private Boolean retireJsAnalyzerEnabled;
     /**
+     * The URL to the RetireJS JSON data.
+     */
+    private String retireJsUrl;
+    /**
      * The list of filters (regular expressions) used by the RetireJS Analyzer
      * to exclude files that contain matching content..
      */
@@ -868,6 +872,24 @@ public class Check extends Update {
     }
 
     /**
+     * Get the value of Retire JS repository URL.
+     *
+     * @return the value of retireJsUrl
+     */
+    public String getRetireJsUrl() {
+        return retireJsUrl;
+    }
+
+    /**
+     * Set the value of the Retire JS repository URL.
+     *
+     * @param retireJsUrl new value of retireJsUrl
+     */
+    public void setRetireJsUrl(String retireJsUrl) {
+        this.retireJsUrl = retireJsUrl;
+    }
+    
+    /**
      * Get the value of retirejsFilterNonVulnerable.
      *
      * @return the value of retirejsFilterNonVulnerable
@@ -1385,6 +1407,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, nodeAuditAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
+        getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, retireJsUrl);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, retirejsFilterNonVulnerable);
         getSettings().setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, retirejsFilters);
 
