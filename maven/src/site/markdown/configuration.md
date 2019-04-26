@@ -62,25 +62,26 @@ artifactoryAnalyzerParallelAnalysis | Whether the Artifactory analyzer should be
 artifactoryAnalyzerServerId   | The id of a server defined in the settings.xml to retrieve the credentials (username and API token) to connect to Artifactory instance. It is used in priority to artifactoryAnalyzerUsername and artifactoryAnalyzerApiToken | artifactory
 artifactoryAnalyzerUsername   | The user name (only used with API token) to connect to Artifactory instance | &nbsp;
 artifactoryAnalyzerApiToken   | The API token to connect to Artifactory instance, only used if the username or the API key are not defined by artifactoryAnalyzerServerId,artifactoryAnalyzerUsername or artifactoryAnalyzerApiToken | &nbsp;
-artifactoryAnalyzerBearerToken   | The bearer token to connect to Artifactory instance | &nbsp;
-pyDistributionAnalyzerEnabled | Sets whether the [experimental](../analyzers/index.html) Python Distribution Analyzer will be used.               | true
-pyPackageAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) Python Package Analyzer will be used.                    | true
-rubygemsAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) Ruby Gemspec Analyzer will be used.                      | true
-opensslAnalyzerEnabled        | Sets whether the openssl Analyzer should be used.                  | true
+artifactoryAnalyzerBearerToken   | The bearer token to connect to Artifactory instance                                                     | &nbsp;
+pyDistributionAnalyzerEnabled | Sets whether the [experimental](../analyzers/index.html) Python Distribution Analyzer will be used.        | true
+pyPackageAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) Python Package Analyzer will be used.             | true
+rubygemsAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) Ruby Gemspec Analyzer will be used.               | true
+opensslAnalyzerEnabled        | Sets whether the openssl Analyzer should be used.                                                          | true
 cmakeAnalyzerEnabled          | Sets whether the [experimental](../analyzers/index.html) CMake Analyzer should be used.                    | true
 autoconfAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) autoconf Analyzer should be used.                 | true
 composerAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.   | true
 nodeAnalyzerEnabled           | Sets whether the [retired](../analyzers/index.html) Node.js Analyzer should be used.                       | true
-nodeAuditAnalyzerEnabled      | Sets whether the Node Audit Analyzer should be used.                                                              | true
-retireJsAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) RetireJS Analyzer should be used.                                                         | true
+nodeAuditAnalyzerEnabled      | Sets whether the Node Audit Analyzer should be used.                                                       | true
+retireJsAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) RetireJS Analyzer should be used.                 | true
+retireJsUrl                   | The URL to the Retire JS repository.                                                                       | https://raw.githubusercontent.com/Retirejs/retire.js/master/repository/jsrepository.json
 nuspecAnalyzerEnabled         | Sets whether the .NET Nuget Nuspec Analyzer will be used.                                                  | true
-nugetconfAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) .NET Nuget packages.config Analyzer will be used.                                         | true
+nugetconfAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) .NET Nuget packages.config Analyzer will be used. | true
 cocoapodsAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used.                | true
 bundleAuditAnalyzerEnabled    | Sets whether the [experimental](../analyzers/index.html) Bundle Audit Analyzer should be used.             | true
 bundleAuditPath               | Sets the path to the bundle audit executable; only used if bundle audit analyzer is enabled and experimental analyzers are enabled.  | &nbsp;
-swiftPackageManagerAnalyzerEnabled | Sets whether the [experimental](../analyzers/index.html) Switft Package Analyzer should be used.             | true
-assemblyAnalyzerEnabled       | Sets whether the .NET Assembly Analyzer should be used.            | true
-pathToMono                    | The path to Mono for .NET assembly analysis on non-windows systems.       | &nbsp;
+swiftPackageManagerAnalyzerEnabled | Sets whether the [experimental](../analyzers/index.html) Switft Package Analyzer should be used.      | true
+assemblyAnalyzerEnabled       | Sets whether the .NET Assembly Analyzer should be used.                                                    | true
+pathToMono                    | The path to Mono for .NET assembly analysis on non-windows systems.                                        | &nbsp;
 
 RetireJS Configuration
 ====================

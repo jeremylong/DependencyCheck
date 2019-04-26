@@ -58,7 +58,7 @@ public class EngineIT extends BaseDBTestCase {
                 Set<String> allowedMessages = new HashSet<>();
                 allowedMessages.add("bundle-audit");
                 allowedMessages.add("AssemblyAnalyzer");
-                //allowedMessages.add("Unable to connect to");
+                allowedMessages.add("ailed to read results from the NPM Audit API");
                 for (Throwable t : ex.getExceptions()) {
                     boolean isOk = false;
                     if (t.getMessage() != null) {

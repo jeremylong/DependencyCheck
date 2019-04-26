@@ -175,9 +175,16 @@ public class NvdCveUpdater implements CachedWebDataSource {
      * CVE XML data.
      */
     protected void initializeExecutorServices() {
+        final int downloadPoolSize;
+        final int max = settings.getInt(Settings.KEYS.MAX_DOWNLOAD_THREAD_POOL_SIZE, 3);
+        if (DOWNLOAD_THREAD_POOL_SIZE > max) {
+            downloadPoolSize = max;
+        } else {
+            downloadPoolSize = DOWNLOAD_THREAD_POOL_SIZE;
+        }
+        downloadExecutorService = Executors.newFixedThreadPool(downloadPoolSize);
         processingExecutorService = Executors.newFixedThreadPool(PROCESSING_THREAD_POOL_SIZE);
-        downloadExecutorService = Executors.newFixedThreadPool(DOWNLOAD_THREAD_POOL_SIZE);
-        LOGGER.debug("#download   threads: {}", DOWNLOAD_THREAD_POOL_SIZE);
+        LOGGER.debug("#download   threads: {}", downloadPoolSize);
         LOGGER.debug("#processing threads: {}", PROCESSING_THREAD_POOL_SIZE);
     }
 
