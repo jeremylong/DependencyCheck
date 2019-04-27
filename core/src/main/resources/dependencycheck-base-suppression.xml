@@ -108,6 +108,7 @@
             32. Suppresses false positives on .NET mono
             33. Suppresses false positives on .NET mono
             34. Suppresses false positives on .NET mono
+            35. app_project is an electron project. #1549
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -147,6 +148,7 @@
         <cpe>cpe:/a:mono-project:mono</cpe>
         <cpe>cpe:/a:mono:mono</cpe>
         <cpe>cpe:/a:mono_project:mono</cpe>
+        <cpe>cpe:/a:app_project:app</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -191,21 +193,21 @@
         <gav regex="true">^eu\.bitwalker:UserAgentUtils:.*$</gav>
         <cpe>cpe:/a:useragent_project:useragent</cpe>
     </suppress>
-<suppress base="true">
-   <notes><![CDATA[
-   Supress false positives per issue #1872
-   ]]></notes>
-   <gav regex="true">^org\.springframework\.security\.oauth:spring-security-oauth2:.*$</gav>
-   <cpe>cpe:/a:pivotal_software:spring_security</cpe>
-</suppress>
-<suppress base="true">
-    <notes><![CDATA[
-    Suppresses false positives per issue #1694.
-    ]]></notes>
-    <gav regex="true">^org\.springframework\.security\.extensions:spring-security-saml.*$</gav>
-    <cpe>cpe:/a:pivotal_software:spring_security</cpe>
-    <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
-</suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       Supress false positives per issue #1872
+       ]]></notes>
+       <gav regex="true">^org\.springframework\.security\.oauth:spring-security-oauth2:.*$</gav>
+       <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #1694.
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.security\.extensions:spring-security-saml.*$</gav>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
+    </suppress>
     <suppress base="true">
         <notes><![CDATA[
         Suppresses false positives per issue #1599
