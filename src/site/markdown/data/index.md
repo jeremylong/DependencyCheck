@@ -39,6 +39,11 @@ happened due to a rare circumstance where the Nexus instance used by dependency-
 was not the instance of Nexus used to build the application (i.e. the dependencies
 were not actually present in the Nexus used by dependency-check).
 
+### Retire JS Repository
+
+The RetireJS Analyzes must download the RetireJS Repository. If this is blocked users
+must either mirror the [JS Repository](./mirrornvd.html) or disable the Retire JS Analyzer.
+
 ### Sonatype OSS Index
 
 OWASP dependency-check includes support to consult the [Sonatype OSS Index](https://ossindex.sonatype.org)
