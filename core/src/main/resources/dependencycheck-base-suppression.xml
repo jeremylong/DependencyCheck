@@ -109,6 +109,9 @@
             33. Suppresses false positives on .NET mono
             34. Suppresses false positives on .NET mono
             35. app_project is an electron project. #1549
+            36. <cpe>cpe:/a:json-jwt_project:json-jwt</cpe> is a ruby lib #1791
+            37. <cpe>cpe:/a:zip_project:zip</cpe> is an etherium related project #1788
+            38. <cpe>cpe:/a:echo_project:echo</cpe> is a php media wiki project #1786
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -149,6 +152,9 @@
         <cpe>cpe:/a:mono:mono</cpe>
         <cpe>cpe:/a:mono_project:mono</cpe>
         <cpe>cpe:/a:app_project:app</cpe>
+        <cpe>cpe:/a:json-jwt_project:json-jwt</cpe>
+        <cpe>cpe:/a:zip_project:zip</cpe>
+        <cpe>cpe:/a:echo_project:echo</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -177,6 +183,42 @@
         <cpe>cpe:/a:python_software_foundation:python</cpe>
         <cve>CVE-2017-16046</cve>
         <cpe>cpe:/a:sqlserver_project:sqlserver</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per #1396.
+        ]]></notes>
+        <gav regex="true">^org\.mitre:openid-connect-client:.*$</gav>
+        <cpe>cpe:/a:openid:openid_connect</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per #1563.
+        ]]></notes>
+        <gav regex="true">^de\.siegmar:logback-gelf:.*$</gav>
+        <cpe>cpe:/a:logback:logback</cpe>
+     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per #1566.
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.boot:spring-boot:.*$</gav>
+        <cpe>cpe:/a:springsource:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            Suppresses false positives per #1566.
+            ]]></notes>
+        <gav regex="true">^org\.springframework\.security\.oauth\.boot:spring-security-oauth2-autoconfigure:.*$</gav>
+        <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per #1573.
+        ]]></notes>
+        <gav regex="true">^io\.netty:netty-tcnative-boringssl-static:.*$</gav>
+        <cpe>cpe:/a:netty_project:netty</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[

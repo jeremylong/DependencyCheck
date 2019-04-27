@@ -44,7 +44,7 @@ public final class UrlStringUtils {
      * A listing of domain parts that should not be used as evidence. Yes, this
      * is an incomplete list.
      */
-    private static final String[] IGNORE_LIST = {"www", "com", "org", "gov", "info", "name", "net", "pro", "tel", "mobi", "xxx"};
+    private static final String[] IGNORE_LIST = {"www", "com", "org", "gov", "info", "name", "net", "pro", "tel", "mobi", "xxx", "github"};
 
     static {
         Arrays.sort(IGNORE_LIST);
