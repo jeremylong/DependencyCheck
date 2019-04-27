@@ -145,7 +145,8 @@ Create the dependency-check-report.html and skip artifacts not bundled in distri
 ```
 
 $H$H$H Example 5:
-Create the dependency-check-report.html and use internal mirroring of CVE contents.
+Create the dependency-check-report.html and use internal mirroring of CVE contents. Note, that the NVD JSON files 
+and META files must also be mirrored; see https://nvd.nist.gov/vuln/data-feeds#JSON_FEED.
 
 ```xml
 <project>
@@ -159,10 +160,8 @@ Create the dependency-check-report.html and use internal mirroring of CVE conten
                 <artifactId>dependency-check-maven</artifactId>
                 <version>${project.version}</version>
                 <configuration>
-                    <cveUrl12Modified>http://internal-mirror.mycorp.com/downloads/nist/nvdcve-Modified.xml.gz</cveUrl12Modified>
-                    <cveUrl20Modified>http://internal-mirror.mycorp.com/downloads/nist/nvdcve-2.0-Modified.xml.gz</cveUrl20Modified>
-                    <cveUrl12Base>http://internal-mirror.mycorp.com/downloads/nist/nvdcve-%d.xml</cveUrl12Base>
-                    <cveUrl20Base>http://internal-mirror.mycorp.com/downloads/nist/nvdcve-2.0-%d.xml</cveUrl20Base>
+                    <cveUrlModified>http://internal-mirror.mycorp.com/nvdcve-1.0-modified.json.gz</cveUrlModified>
+                    <cveUrlBase>http://internal-mirror.mycorp.com/nvdcve-1.0-%d.json.gz</cveUrlBase>
                 </configuration>
                 <executions>
                     <execution>

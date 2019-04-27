@@ -26,7 +26,7 @@ Advanced Options
 ================
 | Short | Argument Name                          | Parameter       | Description                                                                                                                  | Default Value |
 |-------|----------------------------------------|-----------------|------------------------------------------------------------------------------------------------------------------------------|---------------|
-|       | \-\-cveUrlModified                     | \<url\>         | URL for the modified CVE JSON data feed.                                                                                     | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-modified.json.gz |
+|       | \-\-cveUrlModified                     | \<url\>         | URL for the modified CVE JSON data feed. When mirroring the NVD you must mirror the *.json.gz and the *.meta files.          | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-modified.json.gz |
 |       | \-\-cveUrlBase                         | \<url\>         | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.                                          | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-%d.json.gz |
 | \-P   | \-\-propertyfile                       | \<file\>        | Specifies a file that contains properties to use instead of applicaion defaults.                                             | &nbsp; |
 |       | \-\-updateonly                         |                 | If set only the update phase of dependency-check will be executed; no scan will be executed and no report will be generated. | &nbsp; |

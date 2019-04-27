@@ -31,13 +31,13 @@ Advanced Configuration
 The following properties can be configured in the plugin. However, they are less frequently changed. One exception
 may be the cvedUrl properties, which can be used to host a mirror of the NVD within an enterprise environment.
 
-Property             | Description                                                                                           | Default Value
----------------------|-------------------------------------------------------------------------------------------------------|------------------
-cveUrlModified       | URL for the modified CVE JSON data feed.                                                              | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-modified.json.gz
-cveUrlBase           | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.                   | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-%d.json.gz
-dataDirectory        | Data directory that is used to store the local copy of the NVD. This should generally not be changed. | data
-databaseDriverName   | The name of the database driver. Example: org.h2.Driver.                                              | &nbsp;
-databaseDriverPath   | The path to the database driver JAR file; only used if the driver is not in the class path.           | &nbsp;
-connectionString     | The connection string used to connect to the database.                                                | &nbsp;
-databaseUser         | The username used when connecting to the database.                                                    | &nbsp;
-databasePassword     | The password used when connecting to the database.                                                    | &nbsp;
+Property             | Description                                                                                                          | Default Value
+---------------------|----------------------------------------------------------------------------------------------------------------------|------------------
+cveUrlModified       | URL for the modified CVE JSON data feed. When mirroring the NVD you must mirror the *.json.gz and the *.meta files.  | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-modified.json.gz
+cveUrlBase           | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.                                  | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-%d.json.gz
+dataDirectory        | Data directory that is used to store the local copy of the NVD. This should generally not be changed.                | data
+databaseDriverName   | The name of the database driver. Example: org.h2.Driver.                                                             | &nbsp;
+databaseDriverPath   | The path to the database driver JAR file; only used if the driver is not in the class path.                          | &nbsp;
+connectionString     | The connection string used to connect to the database.                                                               | &nbsp;
+databaseUser         | The username used when connecting to the database.                                                                   | &nbsp;
+databasePassword     | The password used when connecting to the database.                                                                   | &nbsp;
