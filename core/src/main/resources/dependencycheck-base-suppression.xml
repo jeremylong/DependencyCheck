@@ -191,6 +191,21 @@
         <gav regex="true">^eu\.bitwalker:UserAgentUtils:.*$</gav>
         <cpe>cpe:/a:useragent_project:useragent</cpe>
     </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   Supress false positives per issue #1872
+   ]]></notes>
+   <gav regex="true">^org\.springframework\.security\.oauth:spring-security-oauth2:.*$</gav>
+   <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+</suppress>
+<suppress base="true">
+    <notes><![CDATA[
+    Suppresses false positives per issue #1694.
+    ]]></notes>
+    <gav regex="true">^org\.springframework\.security\.extensions:spring-security-saml.*$</gav>
+    <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+    <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
+</suppress>
     <suppress base="true">
         <notes><![CDATA[
         Suppresses false positives per issue #1599
