@@ -1,0 +1,12 @@
+{
+  "name": "dns-sync-perf",
+  "description": "dns-sync",
+  "version": "0.0.1",
+  "devDependencies": {
+    "benchmark" : "^1.0.0",
+    "microtime": "^1.2.0"
+  },
+  "scripts": {
+    "test": "node perf.js"
+  }
+}
