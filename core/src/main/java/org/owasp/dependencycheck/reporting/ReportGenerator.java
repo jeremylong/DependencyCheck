@@ -93,7 +93,11 @@ public class ReportGenerator {
         /**
          * Generate CSV report.
          */
-        CSV
+        CSV,
+        /**
+         * Generate JUNIT report.
+         */
+        JUNIT
     }
     /**
      * The Velocity Engine.
@@ -285,6 +289,9 @@ public class ReportGenerator {
         }
         if (format == Format.CSV && !pathToCheck.endsWith(".csv")) {
             return new File(outFile, "dependency-check-report.csv");
+        }
+        if (format == Format.JUNIT && !pathToCheck.endsWith(".xml")) {
+            return new File(outFile, "dependency-check-junit.xml");
         }
         return outFile;
     }

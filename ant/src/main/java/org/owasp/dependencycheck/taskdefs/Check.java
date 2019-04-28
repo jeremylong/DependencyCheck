@@ -157,7 +157,7 @@ public class Check extends Update {
      */
     private Boolean autoUpdate;
     /**
-     * The report format to be generated (HTML, XML, VULN, CSV, JSON, ALL).
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, ALL).
      * Default is HTML.
      */
     private String reportFormat = "HTML";
@@ -1466,7 +1466,7 @@ public class Check extends Update {
 
     /**
      * An enumeration of supported report formats: "ALL", "HTML", "XML", "CSV",
-     * "JSON", "VULN", etc..
+     * "JSON", "JUNIT", etc..
      */
     public static class ReportFormats extends EnumeratedAttribute {
 
