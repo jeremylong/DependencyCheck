@@ -112,7 +112,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Maven bound parameters and components">
     /**
-     * Sets whether or not the external report format should be used.
+     * Sets whether or not the mojo should fail if an error occurs.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "failOnError", defaultValue = "true", required = true)
@@ -207,7 +207,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "dependency-check.virtualSnapshotsFromReactor", defaultValue = "true")
     private Boolean virtualSnapshotsFromReactor;
     /**
-     * The report format to be generated (HTML, XML, VULN, ALL). This
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, ALL). This
      * configuration option has no affect if using this within the Site plug-in
      * unless the externalReport is set to true. Default is HTML.
      */
@@ -1458,9 +1458,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         if ("HTML".equalsIgnoreCase(this.format) || "ALL".equalsIgnoreCase(this.format)) {
             return "dependency-check-report";
         } else if ("XML".equalsIgnoreCase(this.format)) {
-            return "dependency-check-report.xml#";
-        } else if ("VULN".equalsIgnoreCase(this.format)) {
-            return "dependency-check-vulnerability";
+            return "dependency-check-report.xml";
+        } else if ("JUNIT".equalsIgnoreCase(this.format)) {
+            return "dependency-check-junit.xml";
         } else if ("JSON".equalsIgnoreCase(this.format)) {
             return "dependency-check-report.json";
         } else if ("CSV".equalsIgnoreCase(this.format)) {

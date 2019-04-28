@@ -32,7 +32,7 @@ analyzedTypes        | The default artifact types that will be analyzed.        
 cveValidForHours     | Sets the number of hours to wait before checking for new updates from the NVD.                                     | 4
 failOnError          | Fails the build if an error occurs during the dependency-check analysis.                                           | true
 failBuildOnCVSS      | Specifies if the build should be failed if a CVSS score equal to or above a specified level is identified. The default is 11; since the CVSS scores are 0-10, by default the build will never fail. | 11
-format               | The report format to be generated (HTML, XML, CSV, JSON, VULN, ALL).                                               | HTML
+format               | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, ALL).                                              | HTML
 outputDirectory      | The location to write the report(s). This directory will be located in the build directory.                        | build/reports
 skipTestGroups       | When set to true (the default) all dependency groups that being with 'test' will be skipped.                       | true
 suppressionFile      | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html)       | &nbsp;

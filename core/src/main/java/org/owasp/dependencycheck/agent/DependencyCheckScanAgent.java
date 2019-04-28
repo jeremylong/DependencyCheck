@@ -115,7 +115,7 @@ public class DependencyCheckScanAgent {
      */
     private boolean generateReport = true;
     /**
-     * The report format to be generated (HTML, XML, VULN, ALL). This
+     * The report format to be generated (HTML, XML, CSV, JSON, JUNIT, ALL). This
      * configuration option has no affect if using this within the Site plugin
      * unless the externalReport is set to true. Default is HTML.
      */
