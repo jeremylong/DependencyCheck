@@ -18,8 +18,7 @@
  @author Jeremy Long <jeremy.long@owasp.org>
  @version 1.0
 
-*#<?xml version="1.0"?>
-<?xml version="1.0" encoding="UTF-8"?>
+*#<?xml version="1.0" encoding="UTF-8"?>
 #set($vulnCount=0)
 #set($testCount=0)
 #foreach($dependency in $dependencies)
