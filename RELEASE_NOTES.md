@@ -2,7 +2,7 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
-## [Version 5.0.0-M2](https://github.com/jeremylong/DependencyCheck/releases/tag/v5.0.0-M2) (2019-02-17)
+## [Version 5.0.0-M2](https://github.com/jeremylong/DependencyCheck/releases/tag/v5.0.0-M2) (2019-03-11)
 
 ### Breaking Changes
 
