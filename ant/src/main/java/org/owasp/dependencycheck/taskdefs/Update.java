@@ -51,6 +51,10 @@ public class Update extends Purge {
      */
     private String proxyPassword;
     /**
+     * Non proxy hosts
+     */
+    private String nonProxyHosts;
+    /**
      * The Connection Timeout.
      */
     private String connectionTimeout;
@@ -168,6 +172,22 @@ public class Update extends Purge {
     public void setProxyPassword(String proxyPassword) {
         this.proxyPassword = proxyPassword;
     }
+
+    /**
+     * Get the value of nonProxyHosts
+     *
+     * @return the value of nonProxyHosts
+     */
+    public String getNonProxyHosts() {
+        return nonProxyHosts;
+    }
+
+    /**
+     * Set the value of nonProxyHosts
+     *
+     * @param nonProxyHosts new value of nonProxyHosts
+     */
+    public void setNonProxyHosts(String nonProxyHosts) { this.nonProxyHosts = nonProxyHosts; }
 
     /**
      * Get the value of connectionTimeout.
@@ -376,6 +396,7 @@ public class Update extends Purge {
         getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);
         getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME, proxyUsername);
         getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPassword);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_NON_PROXY_HOSTS, nonProxyHosts);
         getSettings().setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
         getSettings().setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
         getSettings().setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
