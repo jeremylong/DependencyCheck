@@ -127,7 +127,7 @@ public class CliParserTest extends BaseTest {
 
         CliParser instance = new CliParser(getSettings());
         instance.parse(args);
-        Assert.assertEquals("Default should be 11", 11, instance.getFailOnCVSS());
+        Assert.assertEquals("Default should be 11", 11.0, instance.getFailOnCVSS(),0);
         Assert.assertFalse(instance.isGetVersion());
         Assert.assertFalse(instance.isGetHelp());
         Assert.assertFalse(instance.isRunScan());
@@ -146,7 +146,7 @@ public class CliParserTest extends BaseTest {
 
         CliParser instance = new CliParser(getSettings());
         instance.parse(args);
-        Assert.assertEquals(6, instance.getFailOnCVSS());
+        Assert.assertEquals(6.0, instance.getFailOnCVSS(),0);
         Assert.assertFalse(instance.isGetVersion());
         Assert.assertFalse(instance.isGetHelp());
         Assert.assertFalse(instance.isRunScan());
@@ -237,7 +237,7 @@ public class CliParserTest extends BaseTest {
     @Test
     public void testParse_scan_withFileExists() throws Exception {
         File path = new File(this.getClass().getClassLoader().getResource("checkSumTest.file").toURI().getPath());
-        String[] args = {"-scan", path.getCanonicalPath(), "-out", "./", "--project", "test"};
+        String[] args = {"--scan", path.getCanonicalPath(), "--out", "./", "--project", "test"};
 
         CliParser instance = new CliParser(getSettings());
         instance.parse(args);

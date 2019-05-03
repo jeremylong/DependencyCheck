@@ -75,8 +75,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
 import org.apache.maven.shared.dependency.graph.traversal.CollectingDependencyNodeVisitor;
 
@@ -174,6 +176,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "failBuildOnCVSS", defaultValue = "11", required = true)
     private float failBuildOnCVSS = 11;
     /**
+     * Specifies the CVSS score that is considered a "test" failure when
+     * generating a jUnit style report. The default value is 0 - all
+     * vulnerabilities are considered a failure.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "junitFailOnCVSS", defaultValue = "0", required = true)
+    private float junitFailOnCVSS = 0;
+    /**
      * Fail the build if any dependency has a vulnerability listed.
      */
     @SuppressWarnings("CanBeFinal")
@@ -207,13 +217,20 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "dependency-check.virtualSnapshotsFromReactor", defaultValue = "true")
     private Boolean virtualSnapshotsFromReactor;
     /**
-     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, ALL). This
-     * configuration option has no affect if using this within the Site plug-in
-     * unless the externalReport is set to true. Default is HTML.
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, ALL).
+     * Multiple formats can be selected using a comma delineated list.
+     *
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "format", defaultValue = "HTML", required = true)
     private String format = "HTML";
+    /**
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, ALL).
+     * Multiple formats can be selected using a comma delineated list.
+     *
+     */
+    @Parameter(property = "formats", required = true)
+    private String[] formats;
     /**
      * The Maven settings.
      */
@@ -1328,7 +1345,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 }
                 try {
                     final MavenProject p = this.getProject();
-                    engine.writeReports(p.getName(), p.getGroupId(), p.getArtifactId(), p.getVersion(), outputDir, getFormat());
+                    for (String f : getFormats()) {
+                        engine.writeReports(p.getName(), p.getGroupId(), p.getArtifactId(), p.getVersion(), outputDir, f);
+                    }
                 } catch (ReportException ex) {
                     if (exCol == null) {
                         exCol = new ExceptionCollection(ex);
@@ -1455,15 +1474,16 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     @Override
     public String getOutputName() {
-        if ("HTML".equalsIgnoreCase(this.format) || "ALL".equalsIgnoreCase(this.format)) {
+        Set<String> selectedFormats = getFormats();
+        if (selectedFormats.contains("HTML") || selectedFormats.contains("ALL") || selectedFormats.size() > 1) {
             return "dependency-check-report";
-        } else if ("XML".equalsIgnoreCase(this.format)) {
+        } else if (selectedFormats.contains("XML")) {
             return "dependency-check-report.xml";
-        } else if ("JUNIT".equalsIgnoreCase(this.format)) {
+        } else if (selectedFormats.contains("JUNIT")) {
             return "dependency-check-junit.xml";
-        } else if ("JSON".equalsIgnoreCase(this.format)) {
+        } else if (selectedFormats.contains("JSON")) {
             return "dependency-check-report.json";
-        } else if ("CSV".equalsIgnoreCase(this.format)) {
+        } else if (selectedFormats.contains("CSV")) {
             return "dependency-check-report.csv";
         } else {
             getLog().warn("Unknown report format used during site generation.");
@@ -1543,6 +1563,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.UPDATE_VERSION_CHECK_ENABLED, versionCheckEnabled);
         settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
         settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);
+        settings.setFloat(Settings.KEYS.JUNIT_FAIL_ON_CVSS, junitFailOnCVSS);
 
         //File Type Analyzer Settings
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
@@ -1772,12 +1793,16 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Returns the report format.
+     * Combines the format and formats properties into a single collection.
      *
-     * @return the report format
+     * @return the selected report formats
      */
-    protected String getFormat() {
-        return format;
+    private Set<String> getFormats() {
+        Set<String> selectedFormats = formats == null ? new HashSet<>() : new HashSet<>(Arrays.asList(formats));
+        if (format != null && !selectedFormats.contains(format)) {
+            selectedFormats.add(format);
+        }
+        return selectedFormats;
     }
 
     /**

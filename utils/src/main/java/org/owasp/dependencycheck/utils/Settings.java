@@ -236,6 +236,12 @@ public final class Settings {
          */
         public static final String HINTS_FILE = "hints.file";
         /**
+         * The key for the property that controls what CVSS scores are
+         * considered failing test cases for the JUNIT repor.
+         */
+        public static final String JUNIT_FAIL_ON_CVSS = "junit.fail.on.cvss";
+
+        /**
          * The properties key for whether the Jar Analyzer is enabled.
          */
         public static final String ANALYZER_JAR_ENABLED = "analyzer.jar.enabled";
@@ -540,7 +546,8 @@ public final class Settings {
         public static final String H2DB_SHUTDOWN_HOOK = "data.h2.shutdownhook";
 
         /**
-         * The properties key for whether the Sonatype OSS Index analyzer is enabled.
+         * The properties key for whether the Sonatype OSS Index analyzer is
+         * enabled.
          */
         public static final String ANALYZER_OSSINDEX_ENABLED = "analyzer.ossindex.enabled";
         /**
@@ -735,6 +742,16 @@ public final class Settings {
         if (null != value) {
             setBoolean(key, value);
         }
+    }
+
+    /**
+     * Sets a float property value.
+     *
+     * @param key the key for the property
+     * @param value the value for the property
+     */
+    public void setFloat(@NotNull final String key, final float value) {
+        setString(key, Float.toString(value));
     }
 
     /**

@@ -203,6 +203,7 @@ public class ReportGenerator {
         ctxt.put("PRODUCT", EvidenceType.PRODUCT);
         ctxt.put("VERSION", EvidenceType.VERSION);
         ctxt.put("version", settings.getString(Settings.KEYS.APPLICATION_VERSION, "Unknown"));
+        ctxt.put("settings", settings);
         return ctxt;
     }
 

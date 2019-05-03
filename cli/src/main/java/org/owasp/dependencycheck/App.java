@@ -184,8 +184,11 @@ public class App {
             try {
                 final String[] scanFiles = cli.getScanFiles();
                 if (scanFiles != null) {
-                    exitCode = runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getProjectName(), scanFiles,
-                            cli.getExcludeList(), cli.getSymLinkDepth(), cli.getFailOnCVSS());
+                    String[] formats = cli.getReportFormat();
+                    for (String format : formats) {
+                        exitCode = runScan(cli.getReportDirectory(), format, cli.getProjectName(), scanFiles,
+                                cli.getExcludeList(), cli.getSymLinkDepth(), cli.getFailOnCVSS());
+                    }
                 } else {
                     LOGGER.error("No scan files configured");
                 }
@@ -239,7 +242,7 @@ public class App {
      * collection.
      */
     private int runScan(String reportDirectory, String outputFormat, String applicationName, String[] files,
-            String[] excludes, int symLinkDepth, int cvssFailScore) throws DatabaseException,
+            String[] excludes, int symLinkDepth, float cvssFailScore) throws DatabaseException,
             ExceptionCollection, ReportException {
         Engine engine = null;
         try {
@@ -289,7 +292,7 @@ public class App {
      * @return returns <code>1</code> if a severe enough vulnerability is
      * identified; otherwise <code>0</code>
      */
-    private int determineReturnCode(Engine engine, int cvssFailScore) {
+    private int determineReturnCode(Engine engine, float cvssFailScore) {
         int retCode = 0;
         //Set the exit code based on whether we found a high enough vulnerability
         for (Dependency dep : engine.getDependencies()) {
@@ -481,6 +484,7 @@ public class App {
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, !cli.isCentralDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, !cli.isNexusDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, !cli.isOssIndexDisabled());
+        settings.setFloat(Settings.KEYS.JUNIT_FAIL_ON_CVSS, cli.getJunitFailOnCVSS());
 
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED,
                 cli.hasArgument(CliParser.ARGUMENT.ARTIFACTORY_ENABLED));

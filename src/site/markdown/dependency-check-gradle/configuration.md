@@ -25,22 +25,25 @@ apply plugin: 'org.owasp.dependencycheck'
 check.dependsOn dependencyCheckAnalyze
 ```
 
-Property             | Description                                                                                                        | Default Value
----------------------|--------------------------------------------------------------------------------------------------------------------|------------------
-autoUpdate           | Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false. | true
-analyzedTypes        | The default artifact types that will be analyzed.                                                                  | ['jar', 'aar', 'js', 'war', 'ear', 'zip']
-cveValidForHours     | Sets the number of hours to wait before checking for new updates from the NVD.                                     | 4
-failOnError          | Fails the build if an error occurs during the dependency-check analysis.                                           | true
+Property             | Description                                                                                                          | Default Value
+---------------------|----------------------------------------------------------------------------------------------------------------------|------------------
+autoUpdate           | Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false.   | true
+analyzedTypes        | The default artifact types that will be analyzed.                                                                    | ['jar', 'aar', 'js', 'war', 'ear', 'zip']
+cveValidForHours     | Sets the number of hours to wait before checking for new updates from the NVD.                                       | 4
+format               | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, ALL).                                                | HTML
+formats              | A list of report formats to be generated (HTML, XML, CSV, JSON, JUNIT, ALL).                                         | &nbsp;
+junitFailOnCVSS      | If using the JUNIT report format the junitFailOnCVSS sets the CVSS score threshold that is considered a failure.     | 0
 failBuildOnCVSS      | Specifies if the build should be failed if a CVSS score equal to or above a specified level is identified. The default is 11; since the CVSS scores are 0-10, by default the build will never fail. | 11
-format               | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, ALL).                                              | HTML
-outputDirectory      | The location to write the report(s). This directory will be located in the build directory.                        | build/reports
-skipTestGroups       | When set to true (the default) all dependency groups that being with 'test' will be skipped.                       | true
-suppressionFile      | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html)       | &nbsp;
-hintsFile            | The file path to the XML hints file \- used to resolve [false negatives](../general/hints.html)                    | &nbsp;
-skip                 | If set to true dependency-check analysis will be skipped.                                                          | false
-skipConfigurations   | A list of configurations that will be skipped. This is mutually exclusive with the scanConfigurations property.    | `[]` which means no configuration is skipped.
+failOnError          | Fails the build if an error occurs during the dependency-check analysis.                                             | true
+outputDirectory      | The location to write the report(s). This directory will be located in the build directory.                          | build/reports
+skipTestGroups       | When set to true (the default) all dependency groups that being with 'test' will be skipped.                         | true
+suppressionFile      | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html)         | &nbsp;
+suppressionFiles     | A list of file paths to the XML suppression files \- used to suppress [false positives](../general/suppression.html) | &nbsp;
+hintsFile            | The file path to the XML hints file \- used to resolve [false negatives](../general/hints.html)                      | &nbsp;
+skip                 | If set to true dependency-check analysis will be skipped.                                                            | false
+skipConfigurations   | A list of configurations that will be skipped. This is mutually exclusive with the scanConfigurations property.      | `[]` which means no configuration is skipped.
 scanConfigurations   | A list of configurations that will be scanned, all other configurations are skipped. This is mutually exclusive with the skipConfigurations property. | `[]` which implicitly means all configurations get scanned.
-scanSet              | A list of directories that will be scanned for additional dependencies.                                            | ['src/main/resources','src/main/webapp']
+scanSet              | A list of directories that will be scanned for additional dependencies.                                              | ['src/main/resources','src/main/webapp']
 
 #### Example
 ```groovy

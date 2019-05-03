@@ -144,6 +144,11 @@ public class Check extends Update {
      */
     private String reportOutputDirectory = ".";
     /**
+     * If using the JUNIT report format the junitFailOnCVSS sets the CVSS score
+     * threshold that is considered a failure. The default is 0.
+     */
+    private float junitFailOnCVSS = 0;
+    /**
      * Specifies if the build should be failed if a CVSS score above a specified
      * level is identified. The default is 11 which means since the CVSS scores
      * are 0-10, by default the build will never fail and the CVSS score is set
@@ -161,6 +166,11 @@ public class Check extends Update {
      * Default is HTML.
      */
     private String reportFormat = "HTML";
+    /**
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, ALL).
+     * Default is HTML.
+     */
+    private List<String> reportFormats = new ArrayList<>();
     /**
      * Suppression file path.
      */
@@ -426,6 +436,24 @@ public class Check extends Update {
     }
 
     /**
+     * Get the value of junitFailOnCVSS.
+     *
+     * @return the value of junitFailOnCVSS
+     */
+    public float getJunitFailOnCVSS() {
+        return junitFailOnCVSS;
+    }
+
+    /**
+     * Set the value of junitFailOnCVSS.
+     *
+     * @param junitFailOnCVSS new value of junitFailOnCVSS
+     */
+    public void setJunitFailOnCVSS(float junitFailOnCVSS) {
+        this.junitFailOnCVSS = junitFailOnCVSS;
+    }
+
+    /**
      * Get the value of autoUpdate.
      *
      * @return the value of autoUpdate
@@ -444,21 +472,25 @@ public class Check extends Update {
     }
 
     /**
-     * Get the value of reportFormat.
-     *
-     * @return the value of reportFormat
-     */
-    public String getReportFormat() {
-        return reportFormat;
-    }
-
-    /**
      * Set the value of reportFormat.
      *
      * @param reportFormat new value of reportFormat
      */
     public void setReportFormat(ReportFormats reportFormat) {
         this.reportFormat = reportFormat.getValue();
+        this.reportFormats.add(this.reportFormat);
+    }
+
+    /**
+     * Get the value of reportFormats.
+     *
+     * @return the value of reportFormats
+     */
+    public List<String> getReportFormats() {
+        if (reportFormats.isEmpty()) {
+            this.reportFormats.add(this.reportFormat);
+        }
+        return this.reportFormats;
     }
 
     /**
@@ -888,7 +920,7 @@ public class Check extends Update {
     public void setRetireJsUrl(String retireJsUrl) {
         this.retireJsUrl = retireJsUrl;
     }
-    
+
     /**
      * Get the value of retirejsFilterNonVulnerable.
      *
@@ -1328,7 +1360,9 @@ public class Check extends Update {
                     throw new BuildException(ex);
                 }
             }
-            engine.writeReports(getProjectName(), new File(reportOutputDirectory), reportFormat);
+            for (String format : getReportFormats()) {
+                engine.writeReports(getProjectName(), new File(reportOutputDirectory), format);
+            }
 
             if (this.failBuildOnCVSS <= 10) {
                 checkForFailure(engine.getDependencies());
@@ -1425,6 +1459,7 @@ public class Check extends Update {
         getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH, pathToCore);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, ossindexAnalyzerEnabled);
         getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_URL, ossindexAnalyzerUrl);
+        getSettings().setFloat(Settings.KEYS.JUNIT_FAIL_ON_CVSS, junitFailOnCVSS);
     }
 
     /**

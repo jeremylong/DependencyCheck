@@ -37,7 +37,7 @@ cveValidForHours      | Sets the number of hours to wait before checking for new
 failBuildOnCVSS       | Specifies if the build should be failed if a CVSS score equal to or above a specified level is identified. The default is 11 which means since the CVSS scores are 0-10, by default the build will never fail. | 11
 failOnError           | Whether the build should fail if there is an error executing the dependency-check analysis                                                                                                         | true
 projectName           | The name of the project being scanned.                                                                                                                                                             | Dependency-Check
-reportFormat          | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, ALL). This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true.        | HTML
+reportFormat          | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, ALL).                                                                                                                              | HTML
 reportOutputDirectory | The location to write the report(s). Note, this is not used if generating the report as part of a `mvn site` build                                                                                 | 'target'
 hintsFile             | The file path to the XML hints file \- used to resolve [false negatives](../general/hints.html)                                                                                                    | &nbsp;
 proxyServer           | The Proxy Server; see the [proxy configuration](../data/proxy.html) page for more information.                                                                                                     | &nbsp;
@@ -48,12 +48,15 @@ connectionTimeout     | The URL Connection Timeout.                             
 enableExperimental    | Enable the [experimental analyzers](../analyzers/index.html). If not enabled the experimental analyzers (see below) will not be loaded or used.                                                    | false
 enableRetired         | Enable the [retired analyzers](../analyzers/index.html). If not enabled the retired analyzers (see below) will not be loaded or used.                                                              | false
 suppressionFile       | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html).                                                                                      | &nbsp;
+junitFailOnCVSS       | If using the JUNIT report format the junitFailOnCVSS sets the CVSS score threshold that is considered a failure. The default is 0.
 
 The following nested elements can be set on the dependency-check task.
 
 Element           | Property | Description                                                                                                                                                                                        | Default Value
 ------------------|----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------
 suppressionFile   | path     | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html). Element can be specified multiple times.                                             | &nbsp;
+reportFormat      | format   | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, ALL). Element can be specified multiple times.                                                                                     | &nbsp;
+
 
 Analyzer Configuration
 ====================

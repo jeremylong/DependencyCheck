@@ -16,10 +16,12 @@ Property                    | Description                        | Default Value
 ----------------------------|------------------------------------|------------------
 autoUpdate                  | Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false. | true
 cveValidForHours            | Sets the number of hours to wait before checking for new updates from the NVD.                                     | 4
+format                      | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, ALL). This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | HTML
+formats                     | A list of report formats to be generated (HTML, XML, CSV, JSON, JUNIT, ALL). This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | &nbsp;
+junitFailOnCVSS             | If using the JUNIT report format the junitFailOnCVSS sets the CVSS score threshold that is considered a failure.   | 0
 failBuildOnCVSS             | Specifies if the build should be failed if a CVSS score equal to or above a specified level is identified. The default is 11 which means since the CVSS scores are 0-10, by default the build will never fail. | 11
 failBuildOnAnyVulnerability | Specific that if any vulnerability is identified, the build will fail. | false
 failOnError                 | Whether the build should fail if there is an error executing the dependency-check analysis. | true
-format                      | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, ALL). This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | HTML
 name                        | The name of the report in the site. | dependency-check or dependency-check:aggregate
 outputDirectory             | The location to write the report(s). Note, this is not used if generating the report as part of a `mvn site` build. | 'target'
 scanSet                     | An optional collection of filesets that specify additional files and/or directories to analyze as part of the scan. If not specified, defaults to standard Maven conventions. | src/main/resources, src/main/filters, src/main/webapp
