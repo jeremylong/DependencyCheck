@@ -42,7 +42,6 @@ public class CliParserTest extends BaseTest {
     public void testParse() throws Exception {
 
         String[] args = {};
-        PrintStream out = System.out;
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         System.setOut(new PrintStream(baos));
@@ -64,7 +63,6 @@ public class CliParserTest extends BaseTest {
     public void testParse_help() throws Exception {
 
         String[] args = {"-help"};
-        PrintStream out = System.out;
 
         CliParser instance = new CliParser(getSettings());
         instance.parse(args);
@@ -162,8 +160,6 @@ public class CliParserTest extends BaseTest {
 
         String[] args = {"-unknown"};
 
-        PrintStream out = System.out;
-        PrintStream err = System.err;
         ByteArrayOutputStream baos_out = new ByteArrayOutputStream();
         ByteArrayOutputStream baos_err = new ByteArrayOutputStream();
         System.setOut(new PrintStream(baos_out));
@@ -255,6 +251,7 @@ public class CliParserTest extends BaseTest {
      * @throws Exception thrown when an exception occurs.
      */
     @Test
+    @SuppressWarnings("StringSplitter")
     public void testParse_printVersionInfo() throws Exception {
 
         PrintStream out = System.out;
@@ -284,6 +281,7 @@ public class CliParserTest extends BaseTest {
      * @throws Exception thrown when an exception occurs.
      */
     @Test
+    @SuppressWarnings("StringSplitter")
     public void testParse_printHelp() throws Exception {
 
         PrintStream out = System.out;
@@ -325,7 +323,7 @@ public class CliParserTest extends BaseTest {
         } catch (FileNotFoundException ex) {
             Assert.assertTrue(ex.getMessage().contains("Invalid 'scan' argument"));
         }
-        Boolean expResult = null;
+        Boolean expResult;
         Boolean result = instance.getBooleanArgument("missingArgument");
         Assert.assertNull(result);
 
@@ -352,7 +350,7 @@ public class CliParserTest extends BaseTest {
         } catch (FileNotFoundException ex) {
             Assert.assertTrue(ex.getMessage().contains("Invalid 'scan' argument"));
         }
-        String expResult = null;
+        String expResult;
         String result = instance.getStringArgument("missingArgument");
         Assert.assertNull(result);
 

@@ -68,7 +68,7 @@ public class DependencyVersionUtilTest extends BaseTest {
         //cpe:/a:playframework:play_framework:2.1.1:rc1-2.9.x-backport
         String text = "2.1.1.rc1.2.9.x-backport";
         boolean firstMatchOnly = false;
-        DependencyVersion expResult = null;
+        DependencyVersion expResult;
         DependencyVersion result = DependencyVersionUtil.parseVersion(text, firstMatchOnly);
         assertNull(result);
         firstMatchOnly = true;

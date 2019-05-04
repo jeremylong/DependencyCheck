@@ -305,7 +305,7 @@ public class Check extends Update {
 
     /**
      * Add a suppression file.
-     *
+     * <p>
      * This is called by Ant with the configured {@link SuppressionFile}.
      *
      * @param suppressionFile the suppression file to add.
@@ -741,7 +741,7 @@ public class Check extends Update {
      * Sets if the Bundle Audit Analyzer is enabled.
      *
      * @param bundleAuditAnalyzerEnabled whether or not the analyzer should be
-     * enabled
+     *                                   enabled
      */
     public void setBundleAuditAnalyzerEnabled(Boolean bundleAuditAnalyzerEnabled) {
         this.bundleAuditAnalyzerEnabled = bundleAuditAnalyzerEnabled;
@@ -796,7 +796,7 @@ public class Check extends Update {
      * Sets the enabled state of the swift package manager analyzer.
      *
      * @param swiftPackageManagerAnalyzerEnabled the enabled state of the swift
-     * package manager
+     *                                           package manager
      */
     public void setSwiftPackageManagerAnalyzerEnabled(Boolean swiftPackageManagerAnalyzerEnabled) {
         this.swiftPackageManagerAnalyzerEnabled = swiftPackageManagerAnalyzerEnabled;
@@ -842,7 +842,6 @@ public class Check extends Update {
      * Get the value of nodeAnalyzerEnabled.
      *
      * @return the value of nodeAnalyzerEnabled
-     *
      * @deprecated As of release 3.3.3, replaced by
      * {@link #isNodeAuditAnalyzerEnabled()}
      */
@@ -934,7 +933,7 @@ public class Check extends Update {
      * Set the value of retirejsFilterNonVulnerable.
      *
      * @param retirejsFilterNonVulnerable new value of
-     * retirejsFilterNonVulnerable
+     *                                    retirejsFilterNonVulnerable
      */
     public void setRetirejsFilterNonVulnerable(Boolean retirejsFilterNonVulnerable) {
         this.retirejsFilterNonVulnerable = retirejsFilterNonVulnerable;
@@ -951,11 +950,11 @@ public class Check extends Update {
 
     /**
      * Add a regular expression to the set of retire JS content filters.
-     *
+     * <p>
      * This is called by Ant.
      *
      * @param retirejsFilter the regular expression used to filter based on file
-     * content
+     *                       content
      */
     public void addConfiguredRetirejsFilter(final RetirejsFilter retirejsFilter) {
         retirejsFilters.add(retirejsFilter.getRegex());
@@ -1010,7 +1009,7 @@ public class Check extends Update {
      * Set the value of pyDistributionAnalyzerEnabled.
      *
      * @param pyDistributionAnalyzerEnabled new value of
-     * pyDistributionAnalyzerEnabled
+     *                                      pyDistributionAnalyzerEnabled
      */
     public void setPyDistributionAnalyzerEnabled(Boolean pyDistributionAnalyzerEnabled) {
         this.pyDistributionAnalyzerEnabled = pyDistributionAnalyzerEnabled;
@@ -1162,6 +1161,8 @@ public class Check extends Update {
 
     /**
      * Get value of {@link #ossindexAnalyzerEnabled}.
+     *
+     * @return the value of ossindexAnalyzerEnabled
      */
     public Boolean isOssindexAnalyzerEnabled() {
         return ossindexAnalyzerEnabled;
@@ -1169,6 +1170,8 @@ public class Check extends Update {
 
     /**
      * Set value of {@link #ossindexAnalyzerEnabled}.
+     *
+     * @param ossindexAnalyzerEnabled new value of ossindexAnalyzerEnabled
      */
     public void setOssindexAnalyzerEnabled(Boolean ossindexAnalyzerEnabled) {
         this.ossindexAnalyzerEnabled = ossindexAnalyzerEnabled;
@@ -1176,6 +1179,8 @@ public class Check extends Update {
 
     /**
      * Get value of {@link #ossindexAnalyzerUrl}.
+     *
+     * @return the value of ossindexAnalyzerUrl
      */
     public String getOssindexAnalyzerUrl() {
         return ossindexAnalyzerUrl;
@@ -1183,6 +1188,8 @@ public class Check extends Update {
 
     /**
      * Set value of {@link #ossindexAnalyzerUrl}.
+     *
+     * @param ossindexAnalyzerUrl new value of ossindexAnalyzerUrl
      */
     public void setOssindexAnalyzerUrl(String ossindexAnalyzerUrl) {
         this.ossindexAnalyzerUrl = ossindexAnalyzerUrl;
@@ -1255,7 +1262,7 @@ public class Check extends Update {
      * Set the value of artifactoryAnalyzerUseProxy.
      *
      * @param artifactoryAnalyzerUseProxy new value of
-     * artifactoryAnalyzerUseProxy
+     *                                    artifactoryAnalyzerUseProxy
      */
     public void setArtifactoryAnalyzerUseProxy(Boolean artifactoryAnalyzerUseProxy) {
         this.artifactoryAnalyzerUseProxy = artifactoryAnalyzerUseProxy;
@@ -1274,7 +1281,7 @@ public class Check extends Update {
      * Set the value of artifactoryAnalyzerParallelAnalysis.
      *
      * @param artifactoryAnalyzerParallelAnalysis new value of
-     * artifactoryAnalyzerParallelAnalysis
+     *                                            artifactoryAnalyzerParallelAnalysis
      */
     public void setArtifactoryAnalyzerParallelAnalysis(Boolean artifactoryAnalyzerParallelAnalysis) {
         this.artifactoryAnalyzerParallelAnalysis = artifactoryAnalyzerParallelAnalysis;
@@ -1293,7 +1300,7 @@ public class Check extends Update {
      * Set the value of artifactoryAnalyzerUsername.
      *
      * @param artifactoryAnalyzerUsername new value of
-     * artifactoryAnalyzerUsername
+     *                                    artifactoryAnalyzerUsername
      */
     public void setArtifactoryAnalyzerUsername(String artifactoryAnalyzerUsername) {
         this.artifactoryAnalyzerUsername = artifactoryAnalyzerUsername;
@@ -1312,7 +1319,7 @@ public class Check extends Update {
      * Set the value of artifactoryAnalyzerApiToken.
      *
      * @param artifactoryAnalyzerApiToken new value of
-     * artifactoryAnalyzerApiToken
+     *                                    artifactoryAnalyzerApiToken
      */
     public void setArtifactoryAnalyzerApiToken(String artifactoryAnalyzerApiToken) {
         this.artifactoryAnalyzerApiToken = artifactoryAnalyzerApiToken;
@@ -1331,7 +1338,7 @@ public class Check extends Update {
      * Set the value of artifactoryAnalyzerBearerToken.
      *
      * @param artifactoryAnalyzerBearerToken new value of
-     * artifactoryAnalyzerBearerToken
+     *                                       artifactoryAnalyzerBearerToken
      */
     public void setArtifactoryAnalyzerBearerToken(String artifactoryAnalyzerBearerToken) {
         this.artifactoryAnalyzerBearerToken = artifactoryAnalyzerBearerToken;
@@ -1468,7 +1475,7 @@ public class Check extends Update {
      *
      * @param dependencies the list of dependency objects
      * @throws BuildException thrown if a CVSS score is found that is higher
-     * than the threshold set
+     *                        than the threshold set
      */
     private void checkForFailure(Dependency[] dependencies) throws BuildException {
         final StringBuilder ids = new StringBuilder();

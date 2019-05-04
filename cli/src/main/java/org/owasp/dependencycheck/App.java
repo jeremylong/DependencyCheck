@@ -67,7 +67,7 @@ public class App {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        int exitCode = 0;
+        int exitCode;
         final App app = new App();
         exitCode = app.run(args);
         LOGGER.debug("Exit code: {}", exitCode);
