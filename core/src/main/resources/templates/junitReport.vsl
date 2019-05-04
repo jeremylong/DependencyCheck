@@ -74,7 +74,7 @@
                 #end
             #end
         #end
-    <testsuite failures="$failed" id="$suiteId" name="$enc.xml($dependency.FilePath)" package="$enc.xml($dependency.DisplayFileName)" skipped="$skipped" tests="$testCount">
+    <testsuite failures="$failed" id="$suiteId" name="$enc.xml($dependency.FilePath)" package="$enc.xml($dependency.DisplayFileName)" skipped="$skipped" tests="$testCount" timestamp="$scanDateJunit">
 #        <properties>
 #            <property name="test" value="value"/>
 #        </properties>

@@ -17,14 +17,16 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
 import javax.annotation.concurrent.ThreadSafe;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+
 import org.owasp.dependencycheck.data.update.nvd.NvdCveInfo;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.slf4j.Logger;
@@ -173,12 +175,8 @@ public class DatabaseProperties {
                 if (key.startsWith("NVD CVE ")) {
                     try {
                         final long epoch = Long.parseLong((String) entry.getValue());
-                        final DateTime date = new DateTime(epoch);
-                        final DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
-                        final String formatted = format.print(date);
-//                        final Date date = new Date(epoch);
-//                        final DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-//                        final String formatted = format.format(date);
+                        ZonedDateTime dateTime = Instant.ofEpochMilli(epoch).atZone(ZoneId.systemDefault());
+                        final String formatted = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(dateTime);
                         map.put(key, formatted);
                     } catch (Throwable ex) { //deliberately being broad in this catch clause
                         LOGGER.debug("Unable to parse timestamp from DB", ex);

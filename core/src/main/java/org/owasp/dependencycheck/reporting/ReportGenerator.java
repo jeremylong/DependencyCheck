@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.reporting;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import com.google.gson.stream.JsonReader;
@@ -35,14 +36,14 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.apache.commons.text.WordUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -182,13 +183,12 @@ public class ReportGenerator {
      */
     private VelocityContext createContext(String applicationName, List<Dependency> dependencies,
             List<Analyzer> analyzers, DatabaseProperties properties) {
-        final DateTime dt = new DateTime();
-        final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("MMM d, yyyy 'at' HH:mm:ss z");
-        final DateTimeFormatter dateFormatXML = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-        final String scanDate = dateFormat.print(dt);
-        final String scanDateXML = dateFormatXML.print(dt);
-
+        ZonedDateTime dt = ZonedDateTime.now();
+        String scanDate = DateTimeFormatter.RFC_1123_DATE_TIME.format(dt);
+        String scanDateXML = DateTimeFormatter.ISO_INSTANT.format(dt);
+        String scanDateJunit = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(dt);
+        
         final VelocityContext ctxt = new VelocityContext();
         ctxt.put("applicationName", applicationName);
         ctxt.put("dependencies", dependencies);
@@ -196,6 +196,7 @@ public class ReportGenerator {
         ctxt.put("properties", properties);
         ctxt.put("scanDate", scanDate);
         ctxt.put("scanDateXML", scanDateXML);
+        ctxt.put("scanDateJunit", scanDateJunit);
         ctxt.put("enc", new EscapeTool());
         ctxt.put("rpt", new ReportTool());
         ctxt.put("WordUtils", new WordUtils());

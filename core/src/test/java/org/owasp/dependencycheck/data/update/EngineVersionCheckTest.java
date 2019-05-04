@@ -15,15 +15,19 @@
  */
 package org.owasp.dependencycheck.data.update;
 
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Properties;
+
 import mockit.Injectable;
 import mockit.Mock;
 import mockit.MockUp;
 import mockit.Tested;
 
-import org.joda.time.DateTime;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import mockit.integration.junit4.JMockit;
 import org.junit.runner.RunWith;
@@ -34,7 +38,6 @@ import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 
 /**
- *
  * @author Jeremy Long
  */
 @RunWith(JMockit.class)
@@ -156,15 +159,8 @@ public class EngineVersionCheckTest extends BaseTest {
      * @return milliseconds
      */
     private long dateToMilliseconds(String date) {
-        //removed for compatibility with joda-time 1.6
-        //DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
-        //return DateTime.parse(date, dtf).toInstant().getMillis();
-        String[] dp = date.split("-");
-        int y = Integer.parseInt(dp[0]);
-        int m = Integer.parseInt(dp[1]);
-        int d = Integer.parseInt(dp[2]);
-        DateTime dt = new DateTime(y, m, d, 0, 0, 0, 0);
-        return dt.toInstant().getMillis();
+        TemporalAccessor ta = DateTimeFormatter.ISO_LOCAL_DATE.parse(date);
+        return 1000 * LocalDate.from(ta).atStartOfDay(ZoneId.systemDefault()).toEpochSecond();
     }
 
 }
