@@ -17,13 +17,14 @@ Configuration: dependency-check-update Task
 --------------------
 The following properties can be set on the dependency-check task.
 
-Property              | Description                        | Default Value
-----------------------|------------------------------------|------------------
-proxyServer           | The Proxy Server.                  | &nbsp;
-proxyPort             | The Proxy Port.                    | &nbsp;
-proxyUsername         | Defines the proxy user name.       | &nbsp;
-proxyPassword         | Defines the proxy password.        | &nbsp;
-connectionTimeout     | The URL Connection Timeout.        | &nbsp;
+Property              | Description                                                             | Default Value
+----------------------|-------------------------------------------------------------------------|------------------
+proxyServer           | The Proxy Server.                                                       | &nbsp;
+proxyPort             | The Proxy Port.                                                         | &nbsp;
+proxyUsername         | Defines the proxy user name.                                            | &nbsp;
+proxyPassword         | Defines the proxy password.                                             | &nbsp;
+nonProxyHosts         | Defines the hosts that will not be proxied.                             | &nbsp;
+connectionTimeout     | The URL Connection Timeout.                                             | &nbsp;
 failOnError           | Whether the build should fail if there is an error executing the update | true
 
 Advanced Configuration
