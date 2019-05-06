@@ -81,7 +81,7 @@ nugetconfAnalyzerEnabled      | Sets whether the [experimental](../analyzers/ind
 cocoapodsAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used.                | true
 bundleAuditAnalyzerEnabled    | Sets whether the [experimental](../analyzers/index.html) Bundle Audit Analyzer should be used.             | true
 bundleAuditPath               | Sets the path to the bundle audit executable; only used if bundle audit analyzer is enabled and experimental analyzers are enabled.  | &nbsp;
-swiftPackageManagerAnalyzerEnabled | Sets whether the [experimental](../analyzers/index.html) Switft Package Analyzer should be used.      | true
+swiftPackageManagerAnalyzerEnabled | Sets whether the [experimental](../analyzers/index.html) Swift Package Analyzer should be used.      | true
 assemblyAnalyzerEnabled       | Sets whether the .NET Assembly Analyzer should be used.                                                    | true
 pathToMono                    | The path to Mono for .NET assembly analysis on non-windows systems.                                        | &nbsp;
 

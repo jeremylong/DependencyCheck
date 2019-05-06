@@ -14,6 +14,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,7 @@ import org.slf4j.LoggerFactory;
  * This class is used to enable additional ciphers used by the SSL Socket. This
  * is specifically because the NVD stopped supporting TLS 1.0 and Java 6 and 7
  * clients by default were unable to connect to download the NVD data feeds.
- *
+ * <p>
  * The following code was copied from
  * http://stackoverflow.com/questions/1037590/which-cipher-suites-to-enable-for-ssl-socket/23365536#23365536
  *
@@ -58,9 +59,9 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      *
      * @param settings reference to the configured settings
      * @throws java.security.NoSuchAlgorithmException thrown when an algorithm
-     * is not supported
-     * @throws java.security.KeyManagementException thrown if initialization
-     * fails
+     *                                                is not supported
+     * @throws java.security.KeyManagementException   thrown if initialization
+     *                                                fails
      */
     public SSLSocketFactoryEx(Settings settings) throws NoSuchAlgorithmException, KeyManagementException {
         this.settings = settings;
@@ -70,14 +71,14 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
     /**
      * Constructs a new SSLSocketFactory.
      *
-     * @param km the key manager
-     * @param tm the trust manager
-     * @param random secure random
+     * @param km       the key manager
+     * @param tm       the trust manager
+     * @param random   secure random
      * @param settings reference to the configured settings
      * @throws java.security.NoSuchAlgorithmException thrown when an algorithm
-     * is not supported
-     * @throws java.security.KeyManagementException thrown if initialization
-     * fails
+     *                                                is not supported
+     * @throws java.security.KeyManagementException   thrown if initialization
+     *                                                fails
      */
     public SSLSocketFactoryEx(KeyManager[] km, TrustManager[] tm, SecureRandom random, Settings settings)
             throws NoSuchAlgorithmException, KeyManagementException {
@@ -88,12 +89,12 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
     /**
      * Constructs a new SSLSocketFactory.
      *
-     * @param ctx the SSL context
+     * @param ctx      the SSL context
      * @param settings reference to the configured settings
      * @throws java.security.NoSuchAlgorithmException thrown when an algorithm
-     * is not supported
-     * @throws java.security.KeyManagementException thrown if initialization
-     * fails
+     *                                                is not supported
+     * @throws java.security.KeyManagementException   thrown if initialization
+     *                                                fails
      */
     public SSLSocketFactoryEx(SSLContext ctx, Settings settings) throws NoSuchAlgorithmException, KeyManagementException {
         this.settings = settings;
@@ -102,7 +103,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Returns the default cipher suites.
      */
     @Override
@@ -112,7 +113,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Returns the supported cipher suites.
      */
     @Override
@@ -140,7 +141,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Creates an SSL Socket.
      */
     @Override
@@ -155,7 +156,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Creates a new SSL Socket.
      */
     @Override
@@ -170,7 +171,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Creates a new SSL Socket.
      */
     @Override
@@ -185,7 +186,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Creates a new SSL Socket.
      */
     @Override
@@ -200,7 +201,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Creates a new SSL Socket.
      */
     @Override
@@ -216,12 +217,12 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
     /**
      * Initializes the SSL Socket Factory Extension.
      *
-     * @param km the key managers
-     * @param tm the trust managers
+     * @param km     the key managers
+     * @param tm     the trust managers
      * @param random the secure random number generator
      * @throws NoSuchAlgorithmException thrown when an algorithm is not
-     * supported
-     * @throws KeyManagementException thrown if initialization fails
+     *                                  supported
+     * @throws KeyManagementException   thrown if initialization fails
      */
     private void initSSLSocketFactoryEx(KeyManager[] km, TrustManager[] tm, SecureRandom random)
             throws NoSuchAlgorithmException, KeyManagementException {
@@ -236,8 +237,8 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      *
      * @param ctx the SSL context
      * @throws NoSuchAlgorithmException thrown when an algorithm is not
-     * supported
-     * @throws KeyManagementException thrown if initialization fails
+     *                                  supported
+     * @throws KeyManagementException   thrown if initialization fails
      */
     private void initSSLSocketFactoryEx(SSLContext ctx)
             throws NoSuchAlgorithmException, KeyManagementException {
@@ -253,7 +254,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
     @SuppressWarnings("StringSplitter")
     protected String[] getProtocolList() {
         SSLSocket socket = null;
-        String[] availableProtocols = null;
+        final String[] availableProtocols;
         final String[] preferredProtocols = settings.getString(
                 Settings.KEYS.DOWNLOADER_TLS_PROTOCOL_LIST,
                 "TLSv1.1,TLSv1.2,TLSv1.3")

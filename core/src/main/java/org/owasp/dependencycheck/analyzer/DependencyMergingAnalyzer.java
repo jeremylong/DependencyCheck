@@ -139,22 +139,13 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
             final Set<Dependency> dependenciesToRemove) {
         LOGGER.debug("Merging '{}' into '{}'", relatedDependency.getFilePath(), dependency.getFilePath());
         dependency.addRelatedDependency(relatedDependency);
-        relatedDependency.getEvidence(EvidenceType.VENDOR).forEach((e) -> {
-            dependency.addEvidence(EvidenceType.VENDOR, e);
-        });
-        relatedDependency.getEvidence(EvidenceType.PRODUCT).forEach((e) -> {
-            dependency.addEvidence(EvidenceType.PRODUCT, e);
-        });
-        relatedDependency.getEvidence(EvidenceType.VERSION).forEach((e) -> {
-            dependency.addEvidence(EvidenceType.VERSION, e);
-        });
+        relatedDependency.getEvidence(EvidenceType.VENDOR).forEach((e) -> dependency.addEvidence(EvidenceType.VENDOR, e));
+        relatedDependency.getEvidence(EvidenceType.PRODUCT).forEach((e) -> dependency.addEvidence(EvidenceType.PRODUCT, e));
+        relatedDependency.getEvidence(EvidenceType.VERSION).forEach((e) -> dependency.addEvidence(EvidenceType.VERSION, e));
 
-        relatedDependency.getRelatedDependencies().stream().map((d) -> {
-            dependency.addRelatedDependency(d);
-            return d;
-        }).forEach((d) -> {
-            relatedDependency.removeRelatedDependencies(d);
-        });
+        relatedDependency.getRelatedDependencies().stream()
+                .peek(dependency::addRelatedDependency)
+                .forEach((d) -> relatedDependency.removeRelatedDependencies(d));
         dependency.addAllProjectReferences(relatedDependency.getProjectReferences());
         if (dependenciesToRemove != null) {
             dependenciesToRemove.add(relatedDependency);

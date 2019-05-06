@@ -150,7 +150,7 @@ public class NugetconfAnalyzer extends AbstractFileTypeAnalyzer {
         LOGGER.debug("Checking packages.config file {}", dependency);
         try {
             final NugetconfParser parser = new XPathNugetconfParser();
-            List<NugetPackageReference> packages = null;
+            final List<NugetPackageReference> packages;
             try (FileInputStream fis = new FileInputStream(dependency.getActualFilePath())) {
                 packages = parser.parse(fis);
             } catch (NugetconfParseException | FileNotFoundException ex) {

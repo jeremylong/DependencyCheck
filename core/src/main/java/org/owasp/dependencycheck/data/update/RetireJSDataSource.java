@@ -156,7 +156,7 @@ public class RetireJSDataSource implements CachedWebDataSource {
             LOGGER.debug("RetireJS Repo URL: {}", repoUrl.toExternalForm());
             final URLConnectionFactory factory = new URLConnectionFactory(settings);
             final HttpURLConnection conn = factory.createHttpURLConnection(repoUrl, useProxy);
-            final String filename = repoUrl.getFile().substring(repoUrl.getFile().lastIndexOf("/") + 1, repoUrl.getFile().length());
+            final String filename = repoUrl.getFile().substring(repoUrl.getFile().lastIndexOf("/") + 1);
             if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 final File tmpFile = new File(tmpDir, filename);
                 final File repoFile = new File(dataDir, filename);

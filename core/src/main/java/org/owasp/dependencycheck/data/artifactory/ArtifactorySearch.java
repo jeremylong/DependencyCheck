@@ -221,7 +221,7 @@ public class ArtifactorySearch {
 
             final Matcher pathMatcher = PATH_PATTERN.matcher(path);
             if (!pathMatcher.matches()) {
-                throw new IllegalStateException("Cannot extract the Maven information from the apth retrieved in Artifactory " + path);
+                throw new IllegalStateException("Cannot extract the Maven information from the path retrieved in Artifactory " + path);
             }
             final String groupId = pathMatcher.group("groupId").replace('/', '.');
             final String artifactId = pathMatcher.group("artifactId");

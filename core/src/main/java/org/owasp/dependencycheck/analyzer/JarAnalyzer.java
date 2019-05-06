@@ -733,23 +733,23 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
         final int classCount = classNames.size();
 
-        vendorIdentifiers.entrySet().forEach((entry) -> {
-            final float ratio = entry.getValue() / (float) classCount;
+        vendorIdentifiers.forEach((key, value) -> {
+            final float ratio = value / (float) classCount;
             if (ratio > 0.5) {
                 //TODO remove weighting?
-                dependency.addVendorWeighting(entry.getKey());
-                if (addPackagesAsEvidence && entry.getKey().length() > 1) {
-                    dependency.addEvidence(EvidenceType.VENDOR, "jar", "package name", entry.getKey(), Confidence.LOW);
+                dependency.addVendorWeighting(key);
+                if (addPackagesAsEvidence && key.length() > 1) {
+                    dependency.addEvidence(EvidenceType.VENDOR, "jar", "package name", key, Confidence.LOW);
                 }
             }
         });
-        productIdentifiers.entrySet().forEach((entry) -> {
-            final float ratio = entry.getValue() / (float) classCount;
+        productIdentifiers.forEach((key, value) -> {
+            final float ratio = value / (float) classCount;
             if (ratio > 0.5) {
                 //todo remove weighting
-                dependency.addProductWeighting(entry.getKey());
-                if (addPackagesAsEvidence && entry.getKey().length() > 1) {
-                    dependency.addEvidence(EvidenceType.PRODUCT, "jar", "package name", entry.getKey(), Confidence.LOW);
+                dependency.addProductWeighting(key);
+                if (addPackagesAsEvidence && key.length() > 1) {
+                    dependency.addEvidence(EvidenceType.PRODUCT, "jar", "package name", key, Confidence.LOW);
                 }
             }
         });
@@ -1222,7 +1222,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     public static void extractLicense(Model pom, Dependency dependency) {
         //license
         if (pom.getLicenses() != null) {
-            String license = null;
+            StringBuilder license = null;
             for (License lic : pom.getLicenses()) {
                 String tmp = null;
                 if (lic.getName() != null) {
@@ -1242,13 +1242,13 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     tmp = Jsoup.parse(tmp).text();
                 }
                 if (license == null) {
-                    license = tmp;
+                    license = new StringBuilder(tmp);
                 } else {
-                    license += "\n" + tmp;
+                    license.append("\n").append(tmp);
                 }
             }
             if (license != null) {
-                dependency.setLicense(license);
+                dependency.setLicense(license.toString());
 
             }
         }

@@ -46,6 +46,7 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.jetbrains.annotations.NotNull;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.cpe.CpeMemoryIndex;
@@ -507,7 +508,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 //The weighting is on a full phrase rather then at a term level for vendor or products
                 //TODO - should the weighting be at a "word" level as opposed to phrase level? Or combined word and phrase?
                 //remember the reason we are counting the frequency of "phrases" as opposed to terms is that
-                //we need to keep the correct sequence of terms from the evidence so the term concatonating analyzer
+                //we need to keep the correct sequence of terms from the evidence so the term concatenating analyzer
                 //works correctly and will causes searches to take spring framework and produce: spring springframework framework
                 if (boostTerm != null) {
                     sb.append("^").append(weighting + WEIGHTING_BOOST);
@@ -1150,7 +1151,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
          * @return the natural ordering of IdentifierMatch
          */
         @Override
-        public int compareTo(IdentifierMatch o) {
+        public int compareTo(@NotNull IdentifierMatch o) {
             return new CompareToBuilder()
                     .append(identifierConfidence, o.identifierConfidence)
                     .append(identifier, o.identifier)
@@ -1201,9 +1202,8 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                     if (list == null || list.isEmpty()) {
                         System.out.println("No results found");
                     } else {
-                        list.forEach((e) -> {
-                            System.out.println(String.format("%s:%s (%f)", e.getVendor(), e.getProduct(), e.getSearchScore()));
-                        });
+                        list.forEach((e) -> System.out.println(String.format("%s:%s (%f)", e.getVendor(), e.getProduct(),
+                                e.getSearchScore())));
                     }
                     System.out.println();
                     System.out.println();

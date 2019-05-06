@@ -174,7 +174,7 @@ public class Update extends Purge {
     }
 
     /**
-     * Get the value of nonProxyHosts
+     * Get the value of nonProxyHosts.
      *
      * @return the value of nonProxyHosts
      */
@@ -183,11 +183,13 @@ public class Update extends Purge {
     }
 
     /**
-     * Set the value of nonProxyHosts
+     * Set the value of nonProxyHosts.
      *
      * @param nonProxyHosts new value of nonProxyHosts
      */
-    public void setNonProxyHosts(String nonProxyHosts) { this.nonProxyHosts = nonProxyHosts; }
+    public void setNonProxyHosts(String nonProxyHosts) {
+        this.nonProxyHosts = nonProxyHosts;
+    }
 
     /**
      * Get the value of connectionTimeout.
@@ -357,7 +359,7 @@ public class Update extends Purge {
      * data, and then processes the data storing it in the local database.
      *
      * @throws BuildException thrown if a connection to the local database
-     * cannot be made.
+     *                        cannot be made.
      */
     @Override
     public void execute() throws BuildException {

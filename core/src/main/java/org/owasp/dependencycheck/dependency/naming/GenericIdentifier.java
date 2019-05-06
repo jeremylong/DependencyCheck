@@ -21,6 +21,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.owasp.dependencycheck.dependency.Confidence;
 
 /**
@@ -186,7 +187,7 @@ public class GenericIdentifier implements Identifier {
      * @return an integer indicating the ordering
      */
     @Override
-    public int compareTo(Identifier o) {
+    public int compareTo(@NotNull Identifier o) {
         if (o == null) {
             throw new IllegalArgumentException("Unable to compare a null identifier");
         }

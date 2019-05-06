@@ -24,6 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * <p>
@@ -109,6 +110,7 @@ public class DependencyVersion implements Iterable<String>, Comparable<Dependenc
      *
      * @return an iterator for the version parts
      */
+    @NotNull
     @Override
     public Iterator<String> iterator() {
         return versionParts.iterator();
@@ -230,7 +232,7 @@ public class DependencyVersion implements Iterable<String>, Comparable<Dependenc
     }
 
     @Override
-    public int compareTo(DependencyVersion version) {
+    public int compareTo(@NotNull DependencyVersion version) {
         if (version == null) {
             return 1;
         }
@@ -261,12 +263,6 @@ public class DependencyVersion implements Iterable<String>, Comparable<Dependenc
                 }
             }
         }
-        if (left.size() < right.size()) {
-            return -1;
-        } else if (left.size() > right.size()) {
-            return 1;
-        } else {
-            return 0;
-        }
+        return Integer.compare(left.size(), right.size());
     }
 }

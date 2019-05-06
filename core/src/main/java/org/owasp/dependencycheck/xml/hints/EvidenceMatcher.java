@@ -107,7 +107,7 @@ public class EvidenceMatcher {
     }
 
     /**
-     * package-private getter to allow testability of the parser without mocking
+     * package-private getter to allow testability of the parser without mocking.
      *
      * @return The name property
      */
@@ -116,7 +116,7 @@ public class EvidenceMatcher {
     }
 
     /**
-     * package-private getter to allow testability of the parser without mocking
+     * package-private getter to allow testability of the parser without mocking.
      *
      * @return The source property
      */
@@ -125,7 +125,7 @@ public class EvidenceMatcher {
     }
 
     /**
-     * package-private getter to allow testability of the parser without mocking
+     * package-private getter to allow testability of the parser without mocking.
      *
      * @return The value property
      */
@@ -134,7 +134,7 @@ public class EvidenceMatcher {
     }
 
     /**
-     * package-private getter to allow testability of the parser without mocking
+     * package-private getter to allow testability of the parser without mocking.
      *
      * @return The regex property
      */
@@ -143,7 +143,7 @@ public class EvidenceMatcher {
     }
 
     /**
-     * package-private getter to allow testability of the parser without mocking
+     * package-private getter to allow testability of the parser without mocking.
      *
      * @return The confidence property
      */
@@ -153,12 +153,9 @@ public class EvidenceMatcher {
 
     /**
      * Checks whether the value of the evidence matches this matcher. When
-     * {@link #isRegEx()} is {@code true} value is used as a
+     * {@link #isRegex()} is {@code true} value is used as a
      * {@link java.util.regex.Pattern} that it should match. Otherwise the value
      * must be case-insensitive equal to the evidence's value.
-     *
-     * Uses {@link Evidence#getValue(java.lang.Boolean) to avoid setting
-     * evidences to used while just checking for a match.
      *
      * @param evidence the evidence to match
      * @return <code>true</code> if the evidence matches; otherwise

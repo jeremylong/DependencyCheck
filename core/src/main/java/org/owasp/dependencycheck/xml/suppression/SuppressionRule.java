@@ -418,9 +418,7 @@ public class SuppressionRule {
                     }
                 }
             }
-            removalList.forEach((i) -> {
-                dependency.removeVulnerableSoftwareIdentifier(i);
-            });
+            removalList.forEach((i) -> dependency.removeVulnerableSoftwareIdentifier(i));
         }
         if (hasCve() || hasCwe() || hasCvssBelow()) {
             final Set<Vulnerability> removeVulns = new HashSet<>();

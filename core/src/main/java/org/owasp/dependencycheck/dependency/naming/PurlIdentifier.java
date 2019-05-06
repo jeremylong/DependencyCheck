@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.dependency.naming;
 
 import com.github.packageurl.MalformedPackageURLException;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.owasp.dependencycheck.dependency.Confidence;
 import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
@@ -211,7 +212,7 @@ public class PurlIdentifier implements Identifier {
     }
 
     @Override
-    public int compareTo(Identifier o) {
+    public int compareTo(@NotNull Identifier o) {
         if (o instanceof PurlIdentifier) {
             final PurlIdentifier other = (PurlIdentifier) o;
             return new CompareToBuilder()

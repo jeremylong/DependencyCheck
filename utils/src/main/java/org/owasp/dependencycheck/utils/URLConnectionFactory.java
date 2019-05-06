@@ -32,6 +32,7 @@ import java.net.URLConnection;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import javax.net.ssl.HttpsURLConnection;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,8 +70,7 @@ public final class URLConnectionFactory {
      *
      * @param url the URL to connect to
      * @return an HttpURLConnection
-     * @throws org.owasp.dependencycheck.utils.URLConnectionFailureException
-     * thrown if there is an exception
+     * @throws org.owasp.dependencycheck.utils.URLConnectionFailureException thrown if there is an exception
      */
     @SuppressFBWarnings(justification = "yes, there is a redundant null check in the catch - to suppress warnings we are leaving the null check",
             value = {"RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"})
@@ -179,17 +179,16 @@ public final class URLConnectionFactory {
      * want to use it (for example, if there's an internal repository
      * configured)
      *
-     * @param url the URL to connect to
+     * @param url   the URL to connect to
      * @param proxy whether to use the proxy (if configured)
      * @return a newly constructed HttpURLConnection
-     * @throws org.owasp.dependencycheck.utils.URLConnectionFailureException
-     * thrown if there is an exception
+     * @throws org.owasp.dependencycheck.utils.URLConnectionFailureException thrown if there is an exception
      */
     public HttpURLConnection createHttpURLConnection(URL url, boolean proxy) throws URLConnectionFailureException {
         if (proxy) {
             return createHttpURLConnection(url);
         }
-        HttpURLConnection conn = null;
+        final HttpURLConnection conn;
         try {
             conn = (HttpURLConnection) url.openConnection();
             final int timeout = settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT, 10000);
@@ -207,7 +206,7 @@ public final class URLConnectionFactory {
      * connections can be made to the NVD, and others, using older versions of
      * Java.
      *
-     * @param url the URL
+     * @param url  the URL
      * @param conn the connection
      */
     private void configureTLS(URL url, URLConnection conn) {

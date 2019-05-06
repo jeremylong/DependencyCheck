@@ -46,7 +46,6 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -279,12 +278,10 @@ public class Engine implements FileFilter, AutoCloseable {
         if (!analyzers.isEmpty()) {
             return;
         }
-        mode.getPhases().forEach((phase) -> {
-            analyzers.put(phase, new ArrayList<>());
-        });
+        mode.getPhases().forEach((phase) -> analyzers.put(phase, new ArrayList<>()));
         final AnalyzerService service = new AnalyzerService(serviceClassLoader, settings);
         final List<Analyzer> iterator = service.getAnalyzers(mode.getPhases());
-        iterator.stream().forEach((a) -> {
+        iterator.forEach((a) -> {
             a.initialize(this.settings);
             analyzers.get(a.getAnalysisPhase()).add(a);
             if (a instanceof FileTypeAnalyzer) {
@@ -340,7 +337,7 @@ public class Engine implements FileFilter, AutoCloseable {
     @SuppressFBWarnings(justification = "This is the intended external view of the dependencies", value = {"EI_EXPOSE_REP"})
     public synchronized Dependency[] getDependencies() {
         if (dependenciesExternalView == null) {
-            dependenciesExternalView = dependencies.toArray(new Dependency[dependencies.size()]);
+            dependenciesExternalView = dependencies.toArray(new Dependency[0]);
         }
         return dependenciesExternalView;
     }
@@ -480,9 +477,9 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     public List<Dependency> scan(Collection<File> files, String projectReference) {
         final List<Dependency> deps = new ArrayList<>();
-        files.stream().map((file) -> scan(file, projectReference)).filter((d) -> (d != null)).forEach((d) -> {
-            deps.addAll(d);
-        });
+        files.stream().map((file) -> scan(file, projectReference))
+                .filter((d) -> (d != null))
+                .forEach((d) -> deps.addAll(d));
         return deps;
     }
 
@@ -686,11 +683,9 @@ public class Engine implements FileFilter, AutoCloseable {
                 }
             }
         }
-        mode.getPhases().stream().map((phase) -> analyzers.get(phase)).forEach((analyzerList) -> {
-            analyzerList.forEach((a) -> {
-                closeAnalyzer(a);
-            });
-        });
+        mode.getPhases().stream()
+                .map((phase) -> analyzers.get(phase))
+                .forEach((analyzerList) -> analyzerList.forEach((a) -> closeAnalyzer(a)));
 
         LOGGER.debug("\n----------------------------------------------------\nEND ANALYSIS\n----------------------------------------------------");
         final long analysisDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - analysisStart);
@@ -807,9 +802,7 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     protected synchronized List<AnalysisTask> getAnalysisTasks(Analyzer analyzer, List<Throwable> exceptions) {
         final List<AnalysisTask> result = new ArrayList<>();
-        dependencies.stream().map((dependency) -> new AnalysisTask(analyzer, dependency, this, exceptions)).forEach((task) -> {
-            result.add(task);
-        });
+        dependencies.stream().map((dependency) -> new AnalysisTask(analyzer, dependency, this, exceptions)).forEach((task) -> result.add(task));
         return result;
     }
 

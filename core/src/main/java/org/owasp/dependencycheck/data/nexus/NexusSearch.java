@@ -217,7 +217,7 @@ public class NexusSearch {
         } else {
             final String auth = user + ':' + pass;
             final String base64Auth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
-            result = new StringBuilder("Basic ").append(base64Auth).toString();
+            result = "Basic " + base64Auth;
         }
         return result;
     }

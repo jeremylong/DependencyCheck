@@ -4,6 +4,8 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.annotation.concurrent.NotThreadSafe;
+
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -210,7 +212,7 @@ public class XmlInputStream extends FilterInputStream {
      * stream
      */
     @Override
-    public int read(byte[] data, int offset, int length) throws IOException {
+    public int read(@NotNull byte[] data, int offset, int length) throws IOException {
         final StringBuilder s = read(length);
         int n = 0;
         for (int i = 0; i < Math.min(length, s.length()); i++) {

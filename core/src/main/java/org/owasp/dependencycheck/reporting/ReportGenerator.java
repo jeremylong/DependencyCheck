@@ -36,7 +36,6 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.apache.commons.text.WordUtils;
@@ -166,8 +165,7 @@ public class ReportGenerator {
      * @return a velocity engine
      */
     private VelocityEngine createVelocityEngine() {
-        final VelocityEngine velocity = new VelocityEngine();
-        return velocity;
+        return new VelocityEngine();
     }
 
     /**
@@ -184,11 +182,11 @@ public class ReportGenerator {
     private VelocityContext createContext(String applicationName, List<Dependency> dependencies,
             List<Analyzer> analyzers, DatabaseProperties properties) {
 
-        ZonedDateTime dt = ZonedDateTime.now();
-        String scanDate = DateTimeFormatter.RFC_1123_DATE_TIME.format(dt);
-        String scanDateXML = DateTimeFormatter.ISO_INSTANT.format(dt);
-        String scanDateJunit = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(dt);
-        
+        final ZonedDateTime dt = ZonedDateTime.now();
+        final String scanDate = DateTimeFormatter.RFC_1123_DATE_TIME.format(dt);
+        final String scanDateXML = DateTimeFormatter.ISO_INSTANT.format(dt);
+        final String scanDateJunit = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(dt);
+
         final VelocityContext ctxt = new VelocityContext();
         ctxt.put("applicationName", applicationName);
         ctxt.put("dependencies", dependencies);
@@ -330,7 +328,7 @@ public class ReportGenerator {
      */
     protected void processTemplate(String templateName, OutputStream outputStream) throws ReportException {
         InputStream input = null;
-        String logTag = null;
+        String logTag;
         final File f = new File(templateName);
         try {
             if (f.isFile()) {

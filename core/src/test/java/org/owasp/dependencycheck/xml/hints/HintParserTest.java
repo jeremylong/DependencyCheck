@@ -51,18 +51,18 @@ public class HintParserTest extends BaseTest {
 
         assertEquals("One add product should have been read", 1, hintRules.get(0).getAddProduct().size());
         assertEquals("One add vendor should have been read", 1, hintRules.get(0).getAddVendor().size());
-        assertEquals("Two file name should have been read", 2, hintRules.get(1).getFilenames().size());
+        assertEquals("Two file name should have been read", 2, hintRules.get(1).getFileNames().size());
 
         assertEquals("add product name not found", "add product name", hintRules.get(0).getAddProduct().get(0).getName());
         assertEquals("add vendor name not found", "add vendor name", hintRules.get(0).getAddVendor().get(0).getName());
         assertEquals("given product name not found", "given product name", hintRules.get(0).getGivenProduct().get(0).getName());
         assertEquals("given vendor name not found", "given vendor name", hintRules.get(0).getGivenVendor().get(0).getName());
 
-        assertEquals("spring file name not found", "spring", hintRules.get(1).getFilenames().get(0).getValue());
-        assertEquals("file name 1 should not be case sensitive", false, hintRules.get(1).getFilenames().get(0).isCaseSensitive());
-        assertEquals("file name 1 should not be a regex", false, hintRules.get(1).getFilenames().get(0).isRegex());
-        assertEquals("file name 2 should be case sensitive", true, hintRules.get(1).getFilenames().get(1).isCaseSensitive());
-        assertEquals("file name 2 should be a regex", true, hintRules.get(1).getFilenames().get(1).isRegex());
+        assertEquals("spring file name not found", "spring", hintRules.get(1).getFileNames().get(0).getValue());
+        assertEquals("file name 1 should not be case sensitive", false, hintRules.get(1).getFileNames().get(0).isCaseSensitive());
+        assertEquals("file name 1 should not be a regex", false, hintRules.get(1).getFileNames().get(0).isRegex());
+        assertEquals("file name 2 should be case sensitive", true, hintRules.get(1).getFileNames().get(1).isCaseSensitive());
+        assertEquals("file name 2 should be a regex", true, hintRules.get(1).getFileNames().get(1).isRegex());
 
         assertEquals("sun duplicating vendor", "sun", vendorRules.get(0).getValue());
         assertEquals("sun duplicates vendor oracle", "oracle", vendorRules.get(0).getDuplicate());

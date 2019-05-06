@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.dependency;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import javax.annotation.concurrent.ThreadSafe;
@@ -206,7 +207,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
      */
     @SuppressWarnings("deprecation")
     @Override
-    public int compareTo(Evidence o) {
+    public int compareTo(@NotNull Evidence o) {
         if (o == null) {
             throw new IllegalArgumentException("Unable to compare null evidence");
         }

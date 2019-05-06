@@ -175,7 +175,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         if (engine != null) {
             this.cvedb = engine.getDatabase();
         }
-        Process process = null;
+        final Process process;
         try {
             process = launchBundleAudit(getSettings().getTempDirectory());
         } catch (AnalysisException ae) {

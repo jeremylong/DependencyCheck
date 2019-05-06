@@ -44,7 +44,7 @@ public final class AlphaNumericFilter extends AbstractTokenizingFilter {
     /**
      * The position increment attribute.
      */
-    private final PositionIncrementAttribute posIncrAttribute = addAttribute(PositionIncrementAttribute.class);
+    private final PositionIncrementAttribute posIncrementAttribute = addAttribute(PositionIncrementAttribute.class);
     /**
      * Used to count the number of terms skipped as they were only made up of
      * special characters.
@@ -77,10 +77,10 @@ public final class AlphaNumericFilter extends AbstractTokenizingFilter {
                 }
                 parts = text.split("[^a-zA-Z0-9]");
                 if (parts.length == 0) {
-                    skipCounter += posIncrAttribute.getPositionIncrement();
+                    skipCounter += posIncrementAttribute.getPositionIncrement();
                 } else {
                     if (skipCounter != 0) {
-                        posIncrAttribute.setPositionIncrement(posIncrAttribute.getPositionIncrement() + skipCounter);
+                        posIncrementAttribute.setPositionIncrement(posIncrementAttribute.getPositionIncrement() + skipCounter);
                     }
                     for (String part : parts) {
                         if (!part.isEmpty()) {
@@ -109,7 +109,7 @@ public final class AlphaNumericFilter extends AbstractTokenizingFilter {
     @Override
     public void end() throws IOException {
         super.end();
-        posIncrAttribute.setPositionIncrement(posIncrAttribute.getPositionIncrement() + skipCounter);
+        posIncrementAttribute.setPositionIncrement(posIncrementAttribute.getPositionIncrement() + skipCounter);
     }
 
     /**
@@ -119,7 +119,7 @@ public final class AlphaNumericFilter extends AbstractTokenizingFilter {
     public int hashCode() {
         return new HashCodeBuilder(13, 27)
                 .appendSuper(super.hashCode())
-                .append(posIncrAttribute)
+                .append(posIncrementAttribute)
                 .append(skipCounter)
                 .build();
     }
@@ -136,7 +136,7 @@ public final class AlphaNumericFilter extends AbstractTokenizingFilter {
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .append(skipCounter, rhs.skipCounter)
-                .append(posIncrAttribute, rhs.posIncrAttribute)
+                .append(posIncrementAttribute, rhs.posIncrementAttribute)
                 .isEquals();
     }
 }

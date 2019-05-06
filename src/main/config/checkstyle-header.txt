@@ -13,6 +13,6 @@
 ^ \* See the License for the specific language governing permissions and\s*$
 ^ \* limitations under the License\.\s*$
 ^ \*\s*$
-^ \* Copyright \(c\) 201[0-9] (Jeremy Long|Steve Springett|Stefan Neuhaus|Bianca Jiang|Nicolas Henneaux|Josh Cain|Paul Irwin|IBM Corporation|The OWASP Foundation|Institute for Defense Analyses|Hans Aikema)\. All Rights Reserved\.\s*$
+^ \* Copyright \(c\) 201[0-9] (Jeremy Long|Steve Springett|Stefan Neuhaus|Jason Dillon|Bianca Jiang|Nicolas Henneaux|Josh Cain|Paul Irwin|IBM Corporation|The OWASP Foundation|Institute for Defense Analyses|Hans Aikema)\. All Rights Reserved\.\s*$
 ^ \*/\s*$
 ^package

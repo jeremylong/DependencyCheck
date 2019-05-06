@@ -181,11 +181,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <artifactId>semver4j</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>

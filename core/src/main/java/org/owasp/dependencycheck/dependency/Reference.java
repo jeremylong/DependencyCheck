@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.dependency;
 import java.io.Serializable;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An external reference for a vulnerability. This contains a name, URL, and a
@@ -140,7 +141,7 @@ public class Reference implements Serializable, Comparable<Reference> {
      * @return an integer indicating the ordering of the two objects
      */
     @Override
-    public int compareTo(Reference o) {
+    public int compareTo(@NotNull Reference o) {
         return new CompareToBuilder()
                 .append(source, o.source)
                 .append(name, o.name)

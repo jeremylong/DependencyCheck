@@ -55,7 +55,7 @@ public final class DBUtils {
      */
     public static int getGeneratedKey(PreparedStatement statement) throws DatabaseException {
         ResultSet rs = null;
-        int id = 0;
+        final int id;
         try {
             rs = statement.getGeneratedKeys();
             if (!rs.next()) {

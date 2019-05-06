@@ -1,5 +1,7 @@
 package org.owasp.dependencycheck.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -45,6 +47,7 @@ public abstract class Filter<T> {
     public Iterable<T> filter(final Iterable<T> iterable) {
         return new Iterable<T>() {
 
+            @NotNull
             @Override
             public Iterator<T> iterator() {
                 return filter(iterable.iterator());

@@ -139,7 +139,7 @@ public class HintParser {
         try (
                 InputStream schemaStream13 = FileUtils.getResourceAsStream(HINT_SCHEMA_1_3);
                 InputStream schemaStream12 = FileUtils.getResourceAsStream(HINT_SCHEMA_1_2);
-                InputStream schemaStream11 = FileUtils.getResourceAsStream(HINT_SCHEMA_1_1);) {
+                InputStream schemaStream11 = FileUtils.getResourceAsStream(HINT_SCHEMA_1_1)) {
             final HintHandler handler = new HintHandler();
             final SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream13, schemaStream12, schemaStream11);
             final XMLReader xmlReader = saxParser.getXMLReader();

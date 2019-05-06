@@ -170,7 +170,7 @@ public class Check extends Update {
      * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, ALL).
      * Default is HTML.
      */
-    private List<String> reportFormats = new ArrayList<>();
+    private final List<String> reportFormats = new ArrayList<>();
     /**
      * Suppression file path.
      */

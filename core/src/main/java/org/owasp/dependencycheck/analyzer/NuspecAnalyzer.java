@@ -144,7 +144,7 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
         LOGGER.debug("Checking Nuspec file {}", dependency);
         try {
             final NuspecParser parser = new XPathNuspecParser();
-            NugetPackage np = null;
+            final NugetPackage np;
             try (FileInputStream fis = new FileInputStream(dependency.getActualFilePath())) {
                 np = parser.parse(fis);
             } catch (NuspecParseException | FileNotFoundException ex) {

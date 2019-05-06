@@ -503,9 +503,7 @@ public final class CveDB implements AutoCloseable {
      * Closes all prepared statements.
      */
     private synchronized void closeStatements() {
-        preparedStatements.values().forEach((preparedStatement) -> {
-            DBUtils.closeStatement(preparedStatement);
-        });
+        preparedStatements.values().forEach((preparedStatement) -> DBUtils.closeStatement(preparedStatement));
     }
 
     /**
@@ -980,7 +978,7 @@ public final class CveDB implements AutoCloseable {
      * @return the vulnerability ID
      */
     private synchronized int updateVulnerabilityInsertVulnerability(DefCveItem cve, String description) {
-        int vulnerabilityId = 0;
+        final int vulnerabilityId;
         try (PreparedStatement insertVulnerability = prepareStatement(INSERT_VULNERABILITY)) {
             //cve, description, cvssV2Score, cvssV2AccessVector, cvssV2AccessComplexity, cvssV2Authentication,
             //cvssV2ConfidentialityImpact, cvssV2IntegrityImpact, cvssV2AvailabilityImpact, cvssV2Severity,
@@ -1326,8 +1324,7 @@ public final class CveDB implements AutoCloseable {
         final VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder();
 
         try {
-            cpeEntries.stream()
-                    .forEach(entry -> {
+            cpeEntries.forEach(entry -> {
                         builder.cpe(parseCpe(entry, cve.getCve().getCVEDataMeta().getId()))
                                 .versionEndExcluding(entry.getVersionEndExcluding())
                                 .versionStartExcluding(entry.getVersionStartExcluding())
@@ -1399,7 +1396,7 @@ public final class CveDB implements AutoCloseable {
      * <code>false</code>
      */
     private boolean isBatchInsertEnabled() {
-        boolean batch = false;
+        boolean batch;
         try {
             batch = settings.getBoolean(Settings.KEYS.ENABLE_BATCH_UPDATES);
         } catch (InvalidSettingException pE) {
@@ -1485,7 +1482,7 @@ public final class CveDB implements AutoCloseable {
         final long start = System.currentTimeMillis();
         clearCache();
         try (PreparedStatement psOrphans = getPreparedStatement(CLEANUP_ORPHANS);
-                PreparedStatement psEcosystem = getPreparedStatement(UPDATE_ECOSYSTEM);) {
+                PreparedStatement psEcosystem = getPreparedStatement(UPDATE_ECOSYSTEM)) {
             if (psEcosystem != null) {
                 psEcosystem.executeUpdate();
             }

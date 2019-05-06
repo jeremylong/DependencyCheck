@@ -17,6 +17,8 @@
  */
 package org.owasp.dependencycheck.data.update.nvd;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -108,6 +110,7 @@ public class UpdateableNvdCve implements Iterable<NvdCveInfo>, Iterator<NvdCveIn
      *
      * @return an NvdCveInfo Iterator
      */
+    @NotNull
     @Override
     public Iterator<NvdCveInfo> iterator() {
         iterableContent = collection.entrySet().iterator();

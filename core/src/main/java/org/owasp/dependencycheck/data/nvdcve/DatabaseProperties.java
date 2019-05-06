@@ -175,7 +175,7 @@ public class DatabaseProperties {
                 if (key.startsWith("NVD CVE ")) {
                     try {
                         final long epoch = Long.parseLong((String) entry.getValue());
-                        ZonedDateTime dateTime = Instant.ofEpochMilli(epoch).atZone(ZoneId.systemDefault());
+                        final ZonedDateTime dateTime = Instant.ofEpochMilli(epoch).atZone(ZoneId.systemDefault());
                         final String formatted = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(dateTime);
                         map.put(key, formatted);
                     } catch (Throwable ex) { //deliberately being broad in this catch clause

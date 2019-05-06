@@ -105,7 +105,7 @@ public final class UrlStringUtils {
             }
         }
         final String document = url.getPath();
-        final String[] pathParts = document.split("[\\//]");
+        final String[] pathParts = document.split("[\\\\//]");
         for (int i = 0; i < pathParts.length - 1; i++) {
             if (!pathParts[i].isEmpty()) {
                 importantParts.add(pathParts[i]);

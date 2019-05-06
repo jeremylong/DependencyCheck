@@ -398,7 +398,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
                 final int days = settings.getInt(Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS, 7);
 
                 String url = settings.getString(Settings.KEYS.CVE_MODIFIED_JSON);
-                MetaProperties modified = getMetaFile(url);
+                final MetaProperties modified = getMetaFile(url);
 
                 if (!needsFullUpdate && lastUpdated == modified.getLastModifiedDate()) {
                     return updates;
@@ -410,7 +410,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
                         final String baseUrl = settings.getString(Settings.KEYS.CVE_BASE_JSON);
                         for (int i = start; i <= end; i++) {
                             url = String.format(baseUrl, i);
-                            MetaProperties meta = getMetaFile(url);
+                            final MetaProperties meta = getMetaFile(url);
                             long currentTimestamp = 0;
                             try {
                                 currentTimestamp = Long.parseLong(dbProperties.getProperty(DatabaseProperties.LAST_UPDATED_BASE

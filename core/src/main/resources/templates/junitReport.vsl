@@ -38,10 +38,6 @@
             #if($vuln.cvssV2.score < $junitFailOnCvss)
                 #set($vulnCount=$vulnCount - 1)
             #end
-        #elseif($vuln.unscoredSeverity)
-            #if($vuln.unscoredSeverity < $junitFailOnCvss)
-                #set($vulnCount=$vulnCount - 1)
-            #end
         #end
     #end
 #end
@@ -62,12 +58,7 @@
                         #set($failed=$failed - 1)
                     #end
                 #elseif($vuln.cvssV2)
-                    #if($cvssV2.score < $junitFailOnCvss)
-                        #set($skipped=$skipped + 1)
-                        #set($failed=$failed - 1)
-                    #end
-                #elseif($vuln.unscoredSeverity)
-                    #if($vuln.unscoredSeverity < $junitFailOnCvss)
+                    #if($vuln.cvssV2.score < $junitFailOnCvss)
                         #set($skipped=$skipped + 1)
                         #set($failed=$failed - 1)
                     #end
@@ -99,10 +90,6 @@
             #end
         #elseif($vuln.cvssV2)
             #if($vuln.cvssV2.score < $junitFailOnCvss)
-                <skipped message="score below $junitFailOnCvss"/>
-            #end
-        #elseif($vuln.unscoredSeverity)
-            #if($vuln.unscoredSeverity < $junitFailOnCvss)
                 <skipped message="score below $junitFailOnCvss"/>
             #end
         #end

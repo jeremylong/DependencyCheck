@@ -96,7 +96,7 @@ public class SuppressionParser {
         try (
                 InputStream schemaStream12 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_2);
                 InputStream schemaStream11 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_1);
-                InputStream schemaStream10 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_0);) {
+                InputStream schemaStream10 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_0)) {
             final SuppressionHandler handler = new SuppressionHandler();
             final SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream12, schemaStream11, schemaStream10);
             final XMLReader xmlReader = saxParser.getXMLReader();

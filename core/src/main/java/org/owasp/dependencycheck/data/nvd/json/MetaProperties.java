@@ -44,15 +44,15 @@ public class MetaProperties {
     /**
      * The size of the NVD file.
      */
-    private long size = 0;
+    private long size;
     /**
      * The size of the zipped NVD file.
      */
-    private long zipSize = 0;
+    private long zipSize;
     /**
      * The size of the gzipped NVD file.
      */
-    private long gzSize = 0;
+    private long gzSize;
 
     /**
      * Get the value of gzSize.
@@ -91,7 +91,7 @@ public class MetaProperties {
     }
 
     /**
-     * Get the value of SHA256
+     * Get the value of SHA256.
      *
      * @return the value of SHA256
      */
@@ -108,7 +108,7 @@ public class MetaProperties {
      * parsed
      */
     public MetaProperties(String contents) throws InvalidDataException {
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         try (Reader r = new StringReader(contents)) {
             properties.load(r);
         } catch (IOException ex) {
@@ -116,7 +116,7 @@ public class MetaProperties {
         }
         this.sha256 = properties.getProperty("sha256");
         try {
-            String date = properties.getProperty("lastModifiedDate");
+            final String date = properties.getProperty("lastModifiedDate");
             if (date == null) {
                 throw new InvalidDataException("lastModifiedDate not found in meta file");
             }

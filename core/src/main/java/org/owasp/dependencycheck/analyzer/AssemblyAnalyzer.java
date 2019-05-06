@@ -18,12 +18,15 @@
 package org.owasp.dependencycheck.analyzer;
 
 import com.github.packageurl.MalformedPackageURLException;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+
 import static java.nio.charset.StandardCharsets.UTF_8;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.owasp.dependencycheck.Engine;
@@ -35,9 +38,11 @@ import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
+
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.dependency.EvidenceType;
@@ -56,7 +61,6 @@ import org.owasp.dependencycheck.xml.assembly.GrokParser;
  * assembly.
  *
  * @author colezlaw
- *
  */
 @ThreadSafe
 public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
@@ -120,7 +124,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      * Performs the analysis on a single Dependency.
      *
      * @param dependency the dependency to analyze
-     * @param engine the engine to perform the analysis under
+     * @param engine     the engine to perform the analysis under
      * @throws AnalysisException if anything goes sideways
      */
     @Override
@@ -473,9 +477,9 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      * then one source corroborating the value.
      *
      * @param packages a collection of class name information
-     * @param value the value to check to see if it contains a package name
-     * @param dep the dependency to add new entries too
-     * @param type the type of evidence (vendor, product, or version)
+     * @param value    the value to check to see if it contains a package name
+     * @param dep      the dependency to add new entries too
+     * @param type     the type of evidence (vendor, product, or version)
      */
     protected static void addMatchingValues(List<String> packages, String value, Dependency dep, EvidenceType type) {
         if (value == null || value.isEmpty() || packages == null || packages.isEmpty()) {

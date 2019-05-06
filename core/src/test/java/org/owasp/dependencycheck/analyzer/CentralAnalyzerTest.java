@@ -25,6 +25,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.central.CentralSearch;
+import org.owasp.dependencycheck.data.central.TooManyRequestsException;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.dependency.Dependency;
 
@@ -51,7 +52,7 @@ public class CentralAnalyzerTest {
     @SuppressWarnings("PMD.NonStaticInitializer")
     public void testFetchMavenArtifactsWithoutException(@Mocked final CentralSearch centralSearch,
             @Mocked final Dependency dependency)
-            throws IOException {
+            throws IOException, TooManyRequestsException {
 
         CentralAnalyzer instance = new CentralAnalyzer();
         instance.setCentralSearch(centralSearch);
@@ -74,7 +75,7 @@ public class CentralAnalyzerTest {
     @SuppressWarnings("PMD.NonStaticInitializer")
     public void testFetchMavenArtifactsWithSporadicIOException(@Mocked final CentralSearch centralSearch,
             @Mocked final Dependency dependency)
-            throws IOException {
+            throws IOException, TooManyRequestsException {
 
         CentralAnalyzer instance = new CentralAnalyzer();
         instance.setCentralSearch(centralSearch);
@@ -98,7 +99,7 @@ public class CentralAnalyzerTest {
     @SuppressWarnings("PMD.NonStaticInitializer")
     public void testFetchMavenArtifactsRethrowsFileNotFoundException(@Mocked final CentralSearch centralSearch,
             @Mocked final Dependency dependency)
-            throws IOException {
+            throws IOException, TooManyRequestsException {
 
         CentralAnalyzer instance = new CentralAnalyzer();
         instance.setCentralSearch(centralSearch);
@@ -118,7 +119,7 @@ public class CentralAnalyzerTest {
     @SuppressWarnings("PMD.NonStaticInitializer")
     public void testFetchMavenArtifactsAlwaysThrowsIOException(@Mocked final CentralSearch centralSearch,
             @Mocked final Dependency dependency)
-            throws IOException {
+            throws IOException, TooManyRequestsException {
 
         CentralAnalyzer instance = new CentralAnalyzer();
         instance.setCentralSearch(centralSearch);

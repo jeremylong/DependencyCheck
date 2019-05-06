@@ -24,7 +24,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import static java.lang.String.format;
+
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -73,7 +75,7 @@ public class HttpResourceConnection implements AutoCloseable {
     /**
      * Whether or not the conn will use the defined proxy.
      */
-    private boolean usesProxy = true;
+    private boolean usesProxy;
 
     /**
      * Constructs a new HttpResourceConnection object.
@@ -87,7 +89,7 @@ public class HttpResourceConnection implements AutoCloseable {
     /**
      * Constructs a new HttpResourceConnection object.
      *
-     * @param settings the configured settings
+     * @param settings  the configured settings
      * @param usesProxy control whether this conn will use the defined proxy.
      */
     public HttpResourceConnection(Settings settings, boolean usesProxy) {
@@ -103,7 +105,7 @@ public class HttpResourceConnection implements AutoCloseable {
      * @param url the URL of the resource to download
      * @return the stream to read the retrieved content from
      * @throws org.owasp.dependencycheck.utils.DownloadFailedException is thrown
-     * if there is an error downloading the resource
+     *                                                                 if there is an error downloading the resource
      */
     public InputStream fetch(URL url) throws DownloadFailedException {
         if ("file".equalsIgnoreCase(url.getProtocol())) {
@@ -161,7 +163,7 @@ public class HttpResourceConnection implements AutoCloseable {
      * @param url the URL
      * @return the HTTP URL Connection
      * @throws DownloadFailedException thrown if there is an error creating the
-     * HTTP URL Connection
+     *                                 HTTP URL Connection
      */
     private HttpURLConnection obtainConnection(URL url) throws DownloadFailedException {
         HttpURLConnection conn = null;
@@ -228,7 +230,7 @@ public class HttpResourceConnection implements AutoCloseable {
      * @param url the URL to retrieve the timestamp from
      * @return an epoch timestamp
      * @throws org.owasp.dependencycheck.utils.DownloadFailedException is thrown
-     * if an exception occurs making the HTTP request
+     *                                                                 if an exception occurs making the HTTP request
      */
     public long getLastModified(URL url) throws DownloadFailedException {
         return getLastModified(url, false);
@@ -239,15 +241,15 @@ public class HttpResourceConnection implements AutoCloseable {
      * given URL. If the file:// protocol is specified, then the lastTimestamp
      * of the file is returned.
      *
-     * @param url the URL to retrieve the timestamp from
+     * @param url     the URL to retrieve the timestamp from
      * @param isRetry indicates if this is a retry - to prevent endless loop and
-     * stack overflow
+     *                stack overflow
      * @return an epoch timestamp
      * @throws DownloadFailedException is thrown if an exception occurs making
-     * the HTTP request
+     *                                 the HTTP request
      */
     private long getLastModified(URL url, boolean isRetry) throws DownloadFailedException {
-        long timestamp = 0;
+        final long timestamp;
         //TODO use the obtain connection instead of this mostly duplicated code
         if ("file".equalsIgnoreCase(url.getProtocol())) {
             final File lastModifiedFile;
@@ -305,7 +307,7 @@ public class HttpResourceConnection implements AutoCloseable {
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Releases the underlying HTTP URL Connection.
      */
     @Override
@@ -365,7 +367,7 @@ public class HttpResourceConnection implements AutoCloseable {
      *
      * @param ex the original exception
      * @throws org.owasp.dependencycheck.utils.DownloadFailedException a wrapper
-     * exception that contains the original exception as the cause
+     *                                                                 exception that contains the original exception as the cause
      */
     public void checkForCommonExceptionTypes(IOException ex) throws DownloadFailedException {
         Throwable cause = ex;

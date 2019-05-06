@@ -52,7 +52,7 @@ public class ArtifactorySearchTest extends BaseTest {
             httpsProxyHostOrig = System.getenv("https.proxyHost");
         }
         httpsPortOrig = System.getProperty("https.proxyPort");
-        if(httpsPortOrig == null) {
+        if (httpsPortOrig == null) {
             httpsPortOrig = System.getenv("https.proxyPort");
         }
         System.setProperty("https.proxyHost", "");
@@ -98,9 +98,9 @@ public class ArtifactorySearchTest extends BaseTest {
         } catch (SocketTimeoutException exception) {
             // Then
             assertEquals("connect timed out", exception.getMessage());
+        } catch (IOException ex) {
+            assertEquals("Connection refused (Connection refused)", ex.getMessage());
         }
-        
-
     }
 
 
@@ -391,7 +391,7 @@ public class ArtifactorySearchTest extends BaseTest {
             fail("SHA256 mismatching should throw an exception!");
         } catch (IllegalStateException e) {
             // Then
-            assertEquals("Cannot extract the Maven information from the apth retrieved in Artifactory /2.8.5/gson-2.8.5-sources.jar", e.getMessage());
+            assertEquals("Cannot extract the Maven information from the path retrieved in Artifactory /2.8.5/gson-2.8.5-sources.jar", e.getMessage());
         }
     }
 }

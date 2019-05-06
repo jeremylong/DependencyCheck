@@ -165,7 +165,7 @@ public class HintAnalyzer extends AbstractAnalyzer {
                 }
             }
             if (!matchFound) {
-                for (PropertyType pt : hint.getFilenames()) {
+                for (PropertyType pt : hint.getFileNames()) {
                     if (pt.matches(dependency.getFileName())) {
                         matchFound = true;
                         break;
@@ -173,31 +173,23 @@ public class HintAnalyzer extends AbstractAnalyzer {
                 }
             }
             if (matchFound) {
-                hint.getAddVendor().stream().forEach((e) -> {
+                hint.getAddVendor().forEach((e) -> {
                     dependency.addEvidence(EvidenceType.VENDOR, e);
                     for (String weighting : e.getValue().split(" ")) {
                         dependency.addVendorWeighting(weighting);
                     }
                 });
-                hint.getAddProduct().stream().forEach((e) -> {
+                hint.getAddProduct().forEach((e) -> {
                     dependency.addEvidence(EvidenceType.PRODUCT, e);
                     for (String weighting : e.getValue().split(" ")) {
                         dependency.addProductWeighting(weighting);
                     }
                 });
-                hint.getAddVersion().forEach((e) -> {
-                    dependency.addEvidence(EvidenceType.VERSION, e);
-                });
+                hint.getAddVersion().forEach((e) -> dependency.addEvidence(EvidenceType.VERSION, e));
 
-                hint.getRemoveVendor().forEach((e) -> {
-                    removeMatchingEvidences(dependency, EvidenceType.VENDOR, e);
-                });
-                hint.getRemoveProduct().forEach((e) -> {
-                    removeMatchingEvidences(dependency, EvidenceType.PRODUCT, e);
-                });
-                hint.getRemoveVersion().forEach((e) -> {
-                    removeMatchingEvidences(dependency, EvidenceType.VERSION, e);
-                });
+                hint.getRemoveVendor().forEach((e) -> removeMatchingEvidences(dependency, EvidenceType.VENDOR, e));
+                hint.getRemoveProduct().forEach((e) -> removeMatchingEvidences(dependency, EvidenceType.PRODUCT, e));
+                hint.getRemoveVersion().forEach((e) -> removeMatchingEvidences(dependency, EvidenceType.VERSION, e));
             }
         }
 
@@ -260,7 +252,7 @@ public class HintAnalyzer extends AbstractAnalyzer {
             }
             parser.parseHints(in);
         } catch (SAXException | IOException ex) {
-            throw new HintParseException("Error parsing hinits: " + ex.getMessage(), ex);
+            throw new HintParseException("Error parsing hints: " + ex.getMessage(), ex);
         }
         localHints = parser.getHintRules();
         localVendorHints = parser.getVendorDuplicatingHintRules();
@@ -269,7 +261,7 @@ public class HintAnalyzer extends AbstractAnalyzer {
         if (filePath != null) {
             boolean deleteTempFile = false;
             try {
-                final Pattern uriRx = Pattern.compile("^(https?|file)\\:.*", Pattern.CASE_INSENSITIVE);
+                final Pattern uriRx = Pattern.compile("^(https?|file):.*", Pattern.CASE_INSENSITIVE);
                 if (uriRx.matcher(filePath).matches()) {
                     deleteTempFile = true;
                     file = getSettings().getTempFile("hint", "xml");
@@ -327,8 +319,8 @@ public class HintAnalyzer extends AbstractAnalyzer {
                 }
             }
         }
-        hints = localHints.toArray(new HintRule[localHints.size()]);
-        vendorHints = localVendorHints.toArray(new VendorDuplicatingHintRule[localVendorHints.size()]);
+        hints = localHints.toArray(new HintRule[0]);
+        vendorHints = localVendorHints.toArray(new VendorDuplicatingHintRule[0]);
         LOGGER.debug("{} hint rules were loaded.", hints.length);
         LOGGER.debug("{} duplicating hint rules were loaded.", vendorHints.length);
     }

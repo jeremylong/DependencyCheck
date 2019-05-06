@@ -760,7 +760,7 @@ public final class Settings {
      * @param key the key for the property
      * @param value the value for the property
      */
-    public void setInt(@NotNull final String key, @NotNull final int value) {
+    public void setInt(@NotNull final String key, final int value) {
         props.setProperty(key, String.valueOf(value));
         LOGGER.debug("Setting: {}='{}'", key, value);
     }
@@ -1090,8 +1090,8 @@ public final class Settings {
         float retValue = defaultValue;
         try {
             retValue = Float.parseFloat(getString(key));
-        } catch (Throwable ignore) {
-            LOGGER.trace("ignore", ignore);
+        } catch (Throwable ex) {
+            LOGGER.trace("ignore", ex);
         }
         return retValue;
     }

@@ -46,8 +46,8 @@ public final class DateUtil {
      */
     public static Calendar parseXmlDate(String xsDate) throws ParseException {
         try {
-            DatatypeFactory df = DatatypeFactory.newInstance();
-            XMLGregorianCalendar dateTime = df.newXMLGregorianCalendar(xsDate);
+            final DatatypeFactory df = DatatypeFactory.newInstance();
+            final XMLGregorianCalendar dateTime = df.newXMLGregorianCalendar(xsDate);
             return dateTime.toGregorianCalendar();
         } catch (DatatypeConfigurationException ex) {
             throw new ParseException("Unable to parse " + xsDate, ex);

@@ -206,9 +206,7 @@ public class ExceptionCollection extends Exception {
     public String getMessage() {
         final StringBuilder sb = new StringBuilder(MSG);
 
-        this.exceptions.forEach((t) -> {
-            sb.append("\n\t").append(t.getMessage());
-        });
+        this.exceptions.forEach((t) -> sb.append("\n\t").append(t.getMessage()));
         return sb.toString();
     }
 }

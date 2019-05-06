@@ -229,7 +229,7 @@ public final class ConnectionFactory {
      */
     public synchronized Connection getConnection() throws DatabaseException {
         initialize();
-        Connection conn = null;
+        final Connection conn;
         try {
             conn = DriverManager.getConnection(connectionString, userName, password);
         } catch (SQLException ex) {
@@ -275,8 +275,7 @@ public final class ConnectionFactory {
     public static File getH2DataFile(Settings configuration) throws IOException {
         final File dir = configuration.getH2DataDirectory();
         final String fileName = configuration.getString(Settings.KEYS.DB_FILE_NAME);
-        final File file = new File(dir, fileName);
-        return file;
+        return new File(dir, fileName);
     }
 
     /**

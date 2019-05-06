@@ -82,7 +82,7 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
         boolean accept = super.accept(pathname);
         if (accept) {
             try {
-                accept &= shouldProcess(pathname);
+                accept = shouldProcess(pathname);
             } catch (AnalysisException ex) {
                 throw new UnexpectedAnalysisException(ex.getMessage(), ex.getCause());
             }
@@ -170,9 +170,7 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
      */
     protected void processPackage(Engine engine, Dependency dependency, JsonArray jsonArray, String depType) {
         final JsonObjectBuilder builder = Json.createObjectBuilder();
-        jsonArray.getValuesAs(JsonString.class).forEach((str) -> {
-            builder.add(str.toString(), "");
-        });
+        jsonArray.getValuesAs(JsonString.class).forEach((str) -> builder.add(str.toString(), ""));
         final JsonObject jsonObject = builder.build();
         processPackage(engine, dependency, jsonObject, depType);
     }
@@ -188,11 +186,10 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
      */
     protected void processPackage(Engine engine, Dependency dependency, JsonObject jsonObject, String depType) {
         for (int i = 0; i < jsonObject.size(); i++) {
-            jsonObject.entrySet().forEach((entry) -> {
-                final String name = entry.getKey();
+            jsonObject.forEach((name, value) -> {
                 String version = "";
-                if (entry.getValue() != null && entry.getValue().getValueType() == JsonValue.ValueType.STRING) {
-                    version = ((JsonString) entry.getValue()).getString();
+                if (value != null && value.getValueType() == ValueType.STRING) {
+                    version = ((JsonString) value).getString();
                 }
                 final Dependency existing = findDependency(engine, name, version);
                 if (existing == null) {

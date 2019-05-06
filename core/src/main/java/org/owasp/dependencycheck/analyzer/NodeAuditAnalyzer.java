@@ -34,8 +34,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.json.Json;
@@ -215,7 +214,7 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
                 builder.part(Part.APPLICATION).product(advisory.getModuleName().replace(" ", "_"))
                         .version(advisory.getVulnerableVersions().replace(" ", ""));
                 final VulnerableSoftware vs = builder.build();
-                vuln.setVulnerableSoftware(new HashSet<>(Arrays.asList(vs)));
+                vuln.setVulnerableSoftware(Collections.singleton(vs));
 
                 final Dependency existing = findDependency(engine, advisory.getModuleName(), advisory.getVersion());
                 if (existing == null) {

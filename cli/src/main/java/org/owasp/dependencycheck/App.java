@@ -22,6 +22,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.apache.commons.cli.ParseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -59,7 +61,7 @@ public class App {
     /**
      * The configured settings.
      */
-    private Settings settings = null;
+    private Settings settings;
 
     /**
      * The main method for the application.
@@ -67,7 +69,7 @@ public class App {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        int exitCode;
+        final int exitCode;
         final App app = new App();
         exitCode = app.run(args);
         LOGGER.debug("Exit code: {}", exitCode);
@@ -184,7 +186,7 @@ public class App {
             try {
                 final String[] scanFiles = cli.getScanFiles();
                 if (scanFiles != null) {
-                    String[] formats = cli.getReportFormat();
+                    final String[] formats = cli.getReportFormat();
                     for (String format : formats) {
                         exitCode = runScan(cli.getReportDirectory(), format, cli.getProjectName(), scanFiles,
                                 cli.getExcludeList(), cli.getSymLinkDepth(), cli.getFailOnCVSS());
@@ -225,24 +227,23 @@ public class App {
      * reportDirectory.
      *
      * @param reportDirectory the path to the directory where the reports will
-     * be written
-     * @param outputFormat the output format of the report
+     *                        be written
+     * @param outputFormat    the output format of the report
      * @param applicationName the application name for the report
-     * @param files the files/directories to scan
-     * @param excludes the patterns for files/directories to exclude
-     * @param symLinkDepth the depth that symbolic links will be followed
-     * @param cvssFailScore the score to fail on if a vulnerability is found
+     * @param files           the files/directories to scan
+     * @param excludes        the patterns for files/directories to exclude
+     * @param symLinkDepth    the depth that symbolic links will be followed
+     * @param cvssFailScore   the score to fail on if a vulnerability is found
      * @return the exit code if there was an error
-     *
-     * @throws ReportException thrown when the report cannot be generated
-     * @throws DatabaseException thrown when there is an error connecting to the
-     * database
+     * @throws ReportException     thrown when the report cannot be generated
+     * @throws DatabaseException   thrown when there is an error connecting to the
+     *                             database
      * @throws ExceptionCollection thrown when an exception occurs during
-     * analysis; there may be multiple exceptions contained within the
-     * collection.
+     *                             analysis; there may be multiple exceptions contained within the
+     *                             collection.
      */
     private int runScan(String reportDirectory, String outputFormat, String applicationName, String[] files,
-            String[] excludes, int symLinkDepth, float cvssFailScore) throws DatabaseException,
+                        String[] excludes, int symLinkDepth, float cvssFailScore) throws DatabaseException,
             ExceptionCollection, ReportException {
         Engine engine = null;
         try {
@@ -287,7 +288,7 @@ public class App {
      * Determines the return code based on if one of the dependencies scanned
      * has a vulnerability with a CVSS score above the cvssFailScore.
      *
-     * @param engine the engine used during analysis
+     * @param engine        the engine used during analysis
      * @param cvssFailScore the max allowed CVSS score
      * @return returns <code>1</code> if a severe enough vulnerability is
      * identified; otherwise <code>0</code>
@@ -313,8 +314,8 @@ public class App {
      * Scans the give Ant Style paths and collects the actual files.
      *
      * @param antStylePaths a list of ant style paths to scan for actual files
-     * @param symLinkDepth the depth to traverse symbolic links
-     * @param excludes an array of ant style excludes
+     * @param symLinkDepth  the depth to traverse symbolic links
+     * @param excludes      an array of ant style excludes
      * @return returns the set of identified files
      */
     private Set<File> scanAntStylePaths(List<String> antStylePaths, int symLinkDepth, String[] excludes) {
@@ -376,9 +377,9 @@ public class App {
     /**
      * Only executes the update phase of dependency-check.
      *
-     * @throws UpdateException thrown if there is an error updating
+     * @throws UpdateException   thrown if there is an error updating
      * @throws DatabaseException thrown if a fatal error occurred and a
-     * connection to the database could not be established
+     *                           connection to the database could not be established
      */
     private void runUpdateOnly() throws UpdateException, DatabaseException {
         try (Engine engine = new Engine(settings)) {
@@ -390,10 +391,9 @@ public class App {
      * Updates the global Settings.
      *
      * @param cli a reference to the CLI Parser that contains the command line
-     * arguments used to set the corresponding settings in the core engine.
-     *
+     *            arguments used to set the corresponding settings in the core engine.
      * @throws InvalidSettingException thrown when a user defined properties
-     * file is unable to be loaded.
+     *                                 file is unable to be loaded.
      */
     protected void populateSettings(CliParser cli) throws InvalidSettingException {
         final String connectionTimeout = cli.getConnectionTimeout();
@@ -551,9 +551,7 @@ public class App {
         filter.setLevel(LogLevel.INFO.getValue());
         filter.setContext(context);
         filter.start();
-        rootLogger.iteratorForAppenders().forEachRemaining(action -> {
-            action.addFilter(filter);
-        });
+        rootLogger.iteratorForAppenders().forEachRemaining(action -> action.addFilter(filter));
         rootLogger.addAppender(fa);
     }
 

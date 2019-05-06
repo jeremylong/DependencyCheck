@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -77,8 +78,8 @@ public final class CliParser {
      *
      * @param args the command line arguments
      * @throws FileNotFoundException is thrown when a 'file' argument does not
-     * point to a file that exists.
-     * @throws ParseException is thrown when a Parse Exception occurs.
+     *                               point to a file that exists.
+     * @throws ParseException        is thrown when a Parse Exception occurs.
      */
     public void parse(String[] args) throws FileNotFoundException, ParseException {
         line = parseArgs(args);
@@ -105,9 +106,9 @@ public final class CliParser {
      * Validates that the command line arguments are valid.
      *
      * @throws FileNotFoundException if there is a file specified by either the
-     * SCAN or CPE command line arguments that does not exist.
-     * @throws ParseException is thrown if there is an exception parsing the
-     * command line.
+     *                               SCAN or CPE command line arguments that does not exist.
+     * @throws ParseException        is thrown if there is an exception parsing the
+     *                               command line.
      */
     private void validateArgs() throws FileNotFoundException, ParseException {
         if (isUpdateOnly() || isRunScan()) {
@@ -164,10 +165,10 @@ public final class CliParser {
      * path(s) does not point to an existing file a FileNotFoundException is
      * thrown.
      *
-     * @param paths the paths to validate if they exists
+     * @param paths   the paths to validate if they exists
      * @param optType the option being validated (e.g. scan, out, etc.)
      * @throws FileNotFoundException is thrown if one of the paths being
-     * validated does not exist.
+     *                               validated does not exist.
      */
     private void validatePathExists(String[] paths, String optType) throws FileNotFoundException {
         for (String path : paths) {
@@ -180,10 +181,10 @@ public final class CliParser {
      * path does not point to an existing file a FileNotFoundException is
      * thrown.
      *
-     * @param path the paths to validate if they exists
+     * @param path         the paths to validate if they exists
      * @param argumentName the argument being validated (e.g. scan, out, etc.)
      * @throws FileNotFoundException is thrown if the path being validated does
-     * not exist.
+     *                               not exist.
      */
     private void validatePathExists(String path, String argumentName) throws FileNotFoundException {
         if (path == null) {
@@ -192,7 +193,7 @@ public final class CliParser {
             throw new FileNotFoundException(msg);
         } else if (!path.contains("*") && !path.contains("?")) {
             File f = new File(path);
-            String[] formats = this.getReportFormat();
+            final String[] formats = this.getReportFormat();
             if ("o".equalsIgnoreCase(argumentName.substring(0, 1)) && formats.length == 1 && !"ALL".equalsIgnoreCase(formats[0])) {
                 final String checkPath = path.toLowerCase();
                 if (checkPath.endsWith(".html") || checkPath.endsWith(".xml") || checkPath.endsWith(".htm")
@@ -324,11 +325,11 @@ public final class CliParser {
         final OptionGroup og = new OptionGroup();
         og.addOption(path);
 
-        final OptionGroup exog = new OptionGroup();
-        exog.addOption(excludes);
+        final OptionGroup excludeOptionGroup = new OptionGroup();
+        excludeOptionGroup.addOption(excludes);
 
         options.addOptionGroup(og)
-                .addOptionGroup(exog)
+                .addOptionGroup(excludeOptionGroup)
                 .addOption(projectName)
                 .addOption(out)
                 .addOption(outputFormat)
@@ -346,7 +347,7 @@ public final class CliParser {
                 .addOption(retiredEnabled)
                 .addOption(failOnCVSS)
                 .addOption(Option.builder().argName("score").longOpt(ARGUMENT.FAIL_JUNIT_ON_CVSS)
-                        .desc("Sepcifies the CVSS score that is considered a failure when generating the junit report. "
+                        .desc("Specifies the CVSS score that is considered a failure when generating the junit report. "
                                 + "The default is 0.").build());
     }
 
@@ -589,12 +590,12 @@ public final class CliParser {
      * Utility method to determine if one of the disable options has been set.
      * If not set, this method will check the currently configured settings for
      * the current value to return.
-     *
+     * <p>
      * Example given `--disableArchive` on the command line would cause this
      * method to return true for the disable archive setting.
      *
      * @param argument the command line argument
-     * @param setting the corresponding settings key
+     * @param setting  the corresponding settings key
      * @return true if the disable option was set, if not set the currently
      * configured value will be returned
      */
@@ -745,6 +746,8 @@ public final class CliParser {
     /**
      * Returns true if the {@link ARGUMENT#DISABLE_OSSINDEX} command line
      * argument was specified.
+     *
+     * @return true if the Oss Index analyzer is disabled; otherwise false
      */
     public boolean isOssIndexDisabled() {
         return hasDisableOption(ARGUMENT.DISABLE_OSSINDEX, Settings.KEYS.ANALYZER_OSSINDEX_ENABLED);
@@ -936,8 +939,8 @@ public final class CliParser {
             addAdvancedOptions(options);
         }
         final String helpMsg = String.format("%n%s"
-                + " can be used to identify if there are any known CVE vulnerabilities in libraries utilized by an application. "
-                + "%s will automatically update required data from the Internet, such as the CVE and CPE data files from nvd.nist.gov.%n%n",
+                        + " can be used to identify if there are any known CVE vulnerabilities in libraries utilized by an application. "
+                        + "%s will automatically update required data from the Internet, such as the CVE and CPE data files from nvd.nist.gov.%n%n",
                 settings.getString("application.name", "DependencyCheck"),
                 settings.getString("application.name", "DependencyCheck"));
 
@@ -1329,6 +1332,11 @@ public final class CliParser {
         }
     }
 
+    /**
+     * Returns the junit fail on CVSS score.
+     *
+     * @return the junit fail on CVSS score
+     */
     public float getJunitFailOnCVSS() {
         if (line.hasOption(ARGUMENT.FAIL_JUNIT_ON_CVSS)) {
             final String value = line.getOptionValue(ARGUMENT.FAIL_JUNIT_ON_CVSS);
@@ -1588,7 +1596,7 @@ public final class CliParser {
         /**
          * The URL to the retire JS repository.
          */
-        public static String RETIREJS_URL = "retireJsUrl";
+        public static final String RETIREJS_URL = "retireJsUrl";
         /**
          * The URL of the nexus server.
          */
@@ -1704,7 +1712,7 @@ public final class CliParser {
          * The CLI argument to set the threshold that is considered a failure
          * when generating the JUNIT report format.
          */
-        private static String FAIL_JUNIT_ON_CVSS = "junitFailOnCVSS";
+        private static final String FAIL_JUNIT_ON_CVSS = "junitFailOnCVSS";
 
     }
 }

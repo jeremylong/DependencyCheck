@@ -282,14 +282,12 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
                                 }
                             } else if ("osvdb".equals(key)) {
                                 //todo - convert to map/collect
-                                value.stream().forEach((osvdb) -> {
+                                value.forEach((osvdb) -> {
                                     final Vulnerability vuln = new Vulnerability();
                                     vuln.setName(osvdb);
                                     vuln.setSource(Vulnerability.Source.RETIREJS);
                                     vuln.setUnscoredSeverity(jsVuln.getSeverity());
-                                    jsVuln.getInfo().forEach((info) -> {
-                                        vuln.addReference("info", "info", info);
-                                    });
+                                    jsVuln.getInfo().forEach((info) -> vuln.addReference("info", "info", info));
                                     vulns.add(vuln);
                                 });
                             }

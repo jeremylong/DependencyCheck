@@ -1,3 +1,20 @@
+/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2019 Jason Dillon. All Rights Reserved.
+ */
 package org.owasp.dependencycheck.analyzer;
 
 import org.sonatype.ossindex.service.api.componentreport.ComponentReport;
@@ -41,17 +58,30 @@ import javax.annotation.Nullable;
 /**
  * Enrich dependency information from Sonatype OSS index.
  *
- * @since ???
+ * @author Jason Dillon
+ * @since 5.0.0
  */
 public class OssIndexAnalyzer extends AbstractAnalyzer {
+    /**
+     * A reference to the logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(OssIndexAnalyzer.class);
 
-    private static final Logger log = LoggerFactory.getLogger(OssIndexAnalyzer.class);
+    /**
+     * A pattern to match CVE identifiers.
+     */
+    private static final Pattern CVE_PATTERN = Pattern.compile("\\bCVE-\\d{4}-\\d{4,10}\\b");
 
+    /**
+     * The reference type.
+     */
     public static final String REFERENCE_TYPE = "OSSINDEX";
 
+    /**
+     * A reference to the OSS Index Client.
+     */
     private OssindexClient client;
-    
-    private static final Pattern CVE_PATTERN = Pattern.compile("\\bCVE-\\d{4,4}-\\d{4,10}\\b");
+
 
     /**
      * Fetched reports.
@@ -85,7 +115,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
 
     /**
      * Run with parallel support.
-     *
+     * <p>
      * Fetch logic will however block all threads when state is established.
      */
     @Override
@@ -134,29 +164,36 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
 
     /**
      * Helper to complain if unable to parse Package-URL.
+     *
+     * @param value the url to parse
+     * @return the package url
      */
     @Nullable
     private PackageUrl parsePackageUrl(final String value) {
         try {
             return PackageUrl.parse(value);
         } catch (PackageUrl.InvalidException e) {
-            log.warn("Invalid Package-URL: {}", value, e);
+            LOG.warn("Invalid Package-URL: {}", value, e);
             return null;
         }
     }
 
     /**
      * Batch request component-reports for all dependencies.
+     *
+     * @param dependencies the collection of dependencies
+     * @return the map of dependency to OSS Index's component-report
+     * @throws Exception thrown if there is an exception requesting the report
      */
     private Map<PackageUrl, ComponentReport> requestReports(final Dependency[] dependencies) throws Exception {
-        log.debug("Requesting component-reports for {} dependencies", dependencies.length);
+        LOG.debug("Requesting component-reports for {} dependencies", dependencies.length);
 
         // create requests for each dependency which has a PURL identifier
-        List<PackageUrl> packages = new ArrayList<>();
+        final List<PackageUrl> packages = new ArrayList<>();
         for (Dependency dependency : dependencies) {
             for (Identifier id : dependency.getSoftwareIdentifiers()) {
                 if (id instanceof PurlIdentifier) {
-                    PackageUrl purl = parsePackageUrl(id.getValue());
+                    final PackageUrl purl = parsePackageUrl(id.getValue());
                     if (purl != null) {
                         packages.add(purl);
                     }
@@ -169,25 +206,27 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
             return client.requestComponentReports(packages);
         }
 
-        log.warn("Unable to determine Package-URL identifiers for {} dependencies", dependencies.length);
+        LOG.warn("Unable to determine Package-URL identifiers for {} dependencies", dependencies.length);
         return Collections.emptyMap();
     }
 
     /**
      * Attempt to enrich given dependency with vulnerability details from OSS
      * Index component-report.
+     *
+     * @param dependency the dependency to enrich
      */
     private void enrich(final Dependency dependency) {
-        log.debug("Enrich dependency: {}", dependency);
+        LOG.debug("Enrich dependency: {}", dependency);
 
         for (Identifier id : dependency.getSoftwareIdentifiers()) {
             if (id instanceof PurlIdentifier) {
-                log.debug("  Package: {} -> {}", id, id.getConfidence());
+                LOG.debug("  Package: {} -> {}", id, id.getConfidence());
 
-                PackageUrl purl = parsePackageUrl(id.getValue());
+                final PackageUrl purl = parsePackageUrl(id.getValue());
                 if (purl != null) {
                     try {
-                        ComponentReport report = reports.get(purl);
+                        final ComponentReport report = reports.get(purl);
                         if (report == null) {
                             throw new IllegalStateException("Missing component-report for: " + purl);
                         }
@@ -196,9 +235,11 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
                         id.setUrl(report.getReference().toString());
 
                         for (ComponentReportVulnerability vuln : report.getVulnerabilities()) {
-                            Vulnerability v = transform(report, vuln);
-                            Vulnerability existing = dependency.getVulnerabilities().stream().filter(e->e.getName().equals(v.getName())).findFirst().orElse(null);
-                            if (existing!=null) {
+                            final Vulnerability v = transform(report, vuln);
+                            final Vulnerability existing = dependency.getVulnerabilities().stream()
+                                    .filter(e -> e.getName().equals(v.getName())).findFirst()
+                                    .orElse(null);
+                            if (existing != null) {
                                 //TODO - can we enhance anything other than the references?
                                 existing.getReferences().addAll(v.getReferences());
                             } else {
@@ -206,7 +247,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
                             }
                         }
                     } catch (Exception e) {
-                        log.warn("Failed to fetch component-report for: {}", purl, e);
+                        LOG.warn("Failed to fetch component-report for: {}", purl, e);
                     }
                 }
             }
@@ -215,25 +256,29 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
 
     /**
      * Transform OSS Index component-report to ODC vulnerability.
+     *
+     * @param report the component report
+     * @param source the vulnerability from the report to transform
+     * @return the transformed vulnerability
      */
     private Vulnerability transform(final ComponentReport report, final ComponentReportVulnerability source) {
-        Vulnerability result = new Vulnerability();
+        final Vulnerability result = new Vulnerability();
         result.setSource(Vulnerability.Source.OSSINDEX);
-        
-        if (source.getCve()!=null) {
-            result.setName(source.getCve());    
+
+        if (source.getCve() != null) {
+            result.setName(source.getCve());
         } else {
             String cve = null;
-            if (source.getTitle()!=null) {
-                Matcher matcher = CVE_PATTERN.matcher(source.getTitle());
+            if (source.getTitle() != null) {
+                final Matcher matcher = CVE_PATTERN.matcher(source.getTitle());
                 if (matcher.find()) {
                     cve = matcher.group();
                 } else {
                     cve = source.getTitle();
                 }
             }
-            if (cve==null && source.getReference()!=null) {
-                Matcher matcher = CVE_PATTERN.matcher(source.getReference().toString());
+            if (cve == null && source.getReference() != null) {
+                final Matcher matcher = CVE_PATTERN.matcher(source.getReference().toString());
                 if (matcher.find()) {
                     cve = matcher.group();
                 }
@@ -243,13 +288,13 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
         result.setDescription(source.getDescription());
         result.addCwe(source.getCwe());
 
-        float cvssScore = source.getCvssScore() != null ? source.getCvssScore() : -1;
+        final float cvssScore = source.getCvssScore() != null ? source.getCvssScore() : -1;
 
         if (source.getCvssVector() != null) {
             // convert cvss details
-            CvssVector cvssVector = CvssVectorFactory.create(source.getCvssVector());
+            final CvssVector cvssVector = CvssVectorFactory.create(source.getCvssVector());
 
-            Map<String, String> metrics = cvssVector.getMetrics();
+            final Map<String, String> metrics = cvssVector.getMetrics();
             if (cvssVector instanceof Cvss2Vector) {
                 result.setCvssV2(new CvssV2(
                         cvssScore,
@@ -275,31 +320,31 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
                         Cvss3Severity.of(cvssScore).name()
                 ));
             } else {
-                log.warn("Unsupported CVSS vector: {}", cvssVector);
+                LOG.warn("Unsupported CVSS vector: {}", cvssVector);
                 result.setUnscoredSeverity(Float.toString(cvssScore));
             }
         } else {
-            log.debug("OSS has no vector for {}", result.getName());
+            LOG.debug("OSS has no vector for {}", result.getName());
             result.setUnscoredSeverity(Float.toString(cvssScore));
         }
         // generate a reference to the vulnerability details on OSS Index
         result.addReference(REFERENCE_TYPE, source.getTitle(), source.getReference().toString());
 
         // attach vulnerable software details as best we can
-        PackageUrl purl = report.getCoordinates();
+        final PackageUrl purl = report.getCoordinates();
         try {
-            VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder()
+            final VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder()
                     .part(Part.APPLICATION)
                     .vendor(purl.getNamespaceAsString())
                     .product(purl.getName())
                     .version(purl.getVersion());
 
             // TODO: consider if we want/need to extract version-ranges to apply to vulnerable-software?
-            VulnerableSoftware software = builder.build();
+            final VulnerableSoftware software = builder.build();
             result.addVulnerableSoftware(software);
             result.setMatchedVulnerableSoftware(software);
         } catch (CpeValidationException e) {
-            log.warn("Unable to construct vulnerable-software for: {}", purl, e);
+            LOG.warn("Unable to construct vulnerable-software for: {}", purl, e);
         }
 
         return result;

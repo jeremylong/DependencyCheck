@@ -55,7 +55,7 @@ public class NodeFlatteningCollector implements Collector<DefNode, ArrayList<Def
      * @return the flattened list of nodes
      */
     private List<DefNode> flatten(List<DefNode> result, List<DefNode> nodes) {
-        nodes.stream().forEach(n -> {
+        nodes.forEach(n -> {
             flatten(result, n.getChildren());
             result.add(n);
         });

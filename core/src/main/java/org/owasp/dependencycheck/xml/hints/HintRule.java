@@ -37,7 +37,7 @@ public class HintRule {
     /**
      * The list of file names to match.
      */
-    private final List<PropertyType> filenames = new ArrayList<>();
+    private final List<PropertyType> fileNames = new ArrayList<>();
     /**
      * The list of vendor evidence that is being matched.
      */
@@ -82,16 +82,16 @@ public class HintRule {
      * @param filename the filename to add
      */
     public void addFilename(PropertyType filename) {
-        this.filenames.add(filename);
+        this.fileNames.add(filename);
     }
 
     /**
-     * Returns the list of filename evidence to match against.
+     * Returns the list of fileName evidence to match against.
      *
-     * @return the list of filename evidence to match against
+     * @return the list of fileName evidence to match against
      */
-    public List<PropertyType> getFilenames() {
-        return filenames;
+    public List<PropertyType> getFileNames() {
+        return fileNames;
     }
 
     /**

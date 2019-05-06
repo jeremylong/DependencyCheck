@@ -110,9 +110,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         if (rules.isEmpty()) {
             return;
         }
-        rules.forEach((rule) -> {
-            rule.process(dependency);
-        });
+        rules.forEach((rule) -> rule.process(dependency));
     }
 
     /**
@@ -141,9 +139,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         if (!failedLoadingFiles.isEmpty()) {
             LOGGER.debug("{} suppression files failed to load.", failedLoadingFiles.size());
             final StringBuilder sb = new StringBuilder();
-            failedLoadingFiles.forEach((item) -> {
-                sb.append(item);
-            });
+            failedLoadingFiles.forEach((item) -> sb.append(item));
             throw new SuppressionParseException(sb.toString());
         }
     }
@@ -184,7 +180,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         File file = null;
         boolean deleteTempFile = false;
         try {
-            final Pattern uriRx = Pattern.compile("^(https?|file)\\:.*", Pattern.CASE_INSENSITIVE);
+            final Pattern uriRx = Pattern.compile("^(https?|file):.*", Pattern.CASE_INSENSITIVE);
             if (uriRx.matcher(suppressionFilePath).matches()) {
                 deleteTempFile = true;
                 file = getSettings().getTempFile("suppression", "xml");
@@ -200,14 +196,14 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                 file = new File(suppressionFilePath);
 
                 if (!file.exists()) {
-                    try (InputStream suppressionsFromClasspath = FileUtils.getResourceAsStream(suppressionFilePath)) {
-                        if (suppressionsFromClasspath != null) {
+                    try (InputStream suppressionFromClasspath = FileUtils.getResourceAsStream(suppressionFilePath)) {
+                        if (suppressionFromClasspath != null) {
                             deleteTempFile = true;
                             file = getSettings().getTempFile("suppression", "xml");
                             try {
-                                org.apache.commons.io.FileUtils.copyInputStreamToFile(suppressionsFromClasspath, file);
+                                org.apache.commons.io.FileUtils.copyInputStreamToFile(suppressionFromClasspath, file);
                             } catch (IOException ex) {
-                                throwSuppressionParseException("Unable to locate suppressions file in classpath", ex, suppressionFilePath);
+                                throwSuppressionParseException("Unable to locate suppression file in classpath", ex, suppressionFilePath);
                             }
                         }
                     }
@@ -234,7 +230,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         } catch (SuppressionParseException ex) {
             throw ex;
         } catch (IOException ex) {
-            throwSuppressionParseException("Unable to create temp file for suppressions", ex, suppressionFilePath);
+            throwSuppressionParseException("Unable to create temp file for suppression file", ex, suppressionFilePath);
         } finally {
             if (deleteTempFile && file != null) {
                 FileUtils.delete(file);

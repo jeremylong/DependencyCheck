@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import javax.annotation.concurrent.NotThreadSafe;
-import javax.xml.bind.DatatypeConverter;
 import org.owasp.dependencycheck.exception.ParseException;
 import org.owasp.dependencycheck.utils.DateUtil;
 import org.slf4j.Logger;

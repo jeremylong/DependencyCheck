@@ -100,7 +100,7 @@ public final class App {
      */
     private static void serializeCweData(Map<String, String> cwe, File out) {
         try (FileOutputStream fout = new FileOutputStream(out);
-                ObjectOutputStream objOut = new ObjectOutputStream(fout);) {
+                ObjectOutputStream objOut = new ObjectOutputStream(fout)) {
             System.out.println("Writing " + cwe.size() + " cwe entries.");
             objOut.writeObject(cwe);
             System.out.println(String.format("Serialized CWE data written to %s", out.getCanonicalPath()));

@@ -175,9 +175,7 @@ public class VersionFilterAnalyzer extends AbstractAnalyzer {
                 }
             }
         }
-        remove.forEach((e) -> {
-            dependency.removeEvidence(EvidenceType.VERSION, e);
-        });
+        remove.forEach((e) -> dependency.removeEvidence(EvidenceType.VERSION, e));
 
         if (dependency.getVersion() == null) {
             final Set<Evidence> evidence = dependency.getEvidence(EvidenceType.VERSION);

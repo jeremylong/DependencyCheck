@@ -82,7 +82,6 @@ public final class FileUtils {
      * @param file the File to delete
      * @return true if the file was deleted successfully, otherwise false
      */
-    @NotNull
     public static boolean delete(@Nullable File file) {
         if (file == null) {
             LOGGER.warn("cannot delete null File");

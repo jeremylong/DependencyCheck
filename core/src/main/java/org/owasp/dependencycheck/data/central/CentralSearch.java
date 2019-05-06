@@ -115,8 +115,9 @@ public class CentralSearch {
      * @return the populated Maven GAV.
      * @throws FileNotFoundException if the specified artifact is not found
      * @throws IOException if it's unable to connect to the specified repository
+     * @throws TooManyRequestsException if Central has received too many requests.
      */
-    public List<MavenArtifact> searchSha1(String sha1) throws IOException {
+    public List<MavenArtifact> searchSha1(String sha1) throws IOException, TooManyRequestsException {
         if (null == sha1 || !sha1.matches("^[0-9A-Fa-f]{40}$")) {
             throw new IllegalArgumentException("Invalid SHA1 format");
         }
@@ -189,6 +190,9 @@ public class CentralSearch {
             if (missing) {
                 throw new FileNotFoundException("Artifact not found in Central");
             }
+        } else if (conn.getResponseCode() == 429) {
+            final String errorMessage = "Too many requests sent to MavenCentral; additional requests are being rejected.";
+            throw new TooManyRequestsException(errorMessage);
         } else {
             final String errorMessage = "Could not connect to MavenCentral (" + conn.getResponseCode() + "): " + conn.getResponseMessage();
             throw new IOException(errorMessage);

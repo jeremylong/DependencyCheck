@@ -170,9 +170,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                     removalSet.add(i);
                 }
             }
-            removalSet.forEach((i) -> {
-                dependency.removeVulnerableSoftwareIdentifier(i);
-            });
+            removalSet.forEach((i) -> dependency.removeVulnerableSoftwareIdentifier(i));
         }
     }
 
@@ -248,7 +246,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      */
     private void removeJreEntries(Dependency dependency) {
         final Set<Identifier> removalSet = new HashSet<>();
-        dependency.getVulnerableSoftwareIdentifiers().stream().forEach(i -> {
+        dependency.getVulnerableSoftwareIdentifiers().forEach(i -> {
             final Matcher coreCPE = CORE_JAVA.matcher(i.getValue());
             final Matcher coreFiles = CORE_FILES.matcher(dependency.getFileName());
             final Matcher coreJsfCPE = CORE_JAVA_JSF.matcher(i.getValue());
@@ -259,9 +257,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
             }
 
         });
-        removalSet.forEach((i) -> {
-            dependency.removeVulnerableSoftwareIdentifier(i);
-        });
+        removalSet.forEach((i) -> dependency.removeVulnerableSoftwareIdentifier(i));
     }
 
     /**
@@ -327,7 +323,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         || dependency.getFileName().toLowerCase().endsWith("pom.xml"))) {
                     dependency.removeVulnerableSoftwareIdentifier(i);
                 } else if (("apache".equals(cpe.getVendor()) && "maven".equals(cpe.getProduct()))
-                        && !dependency.getFileName().toLowerCase().matches("maven-core-[\\d\\.]+\\.jar")) {
+                        && !dependency.getFileName().toLowerCase().matches("maven-core-[\\d.]+\\.jar")) {
                     dependency.removeVulnerableSoftwareIdentifier(i);
                 } else if (("m-core".equals(cpe.getVendor()) && "m-core".equals(cpe.getProduct()))) {
                     boolean found = false;
@@ -349,7 +345,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         dependency.removeVulnerableSoftwareIdentifier(i);
                     }
                 } else if (("jboss".equals(cpe.getVendor()) && "jboss".equals(cpe.getProduct()))
-                        && !dependency.getFileName().toLowerCase().matches("jboss-?[\\d\\.-]+(GA)?\\.jar")) {
+                        && !dependency.getFileName().toLowerCase().matches("jboss-?[\\d.-]+(GA)?\\.jar")) {
                     dependency.removeVulnerableSoftwareIdentifier(i);
                 }
             }
@@ -386,9 +382,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         }
                     });
         }
-        identifiersToRemove.forEach((i) -> {
-            dependency.removeVulnerableSoftwareIdentifier(i);
-        });
+        identifiersToRemove.forEach((i) -> dependency.removeVulnerableSoftwareIdentifier(i));
     }
 
     /**
@@ -468,15 +462,13 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                     final boolean remove = dependency.getVulnerableSoftwareIdentifiers().stream()
                             .filter((i) -> (i instanceof CpeIdentifier))
                             .map(i -> (CpeIdentifier) i)
-                            .anyMatch(i -> {
-                                return parent.getVulnerableSoftwareIdentifiers().stream()
-                                        .filter((p) -> (p instanceof CpeIdentifier))
-                                        .map(p -> (CpeIdentifier) p)
-                                        .anyMatch(p -> !p.equals(i)
-                                        && p.getCpe().getPart().equals(i.getCpe().getPart())
-                                        && p.getCpe().getVendor().equals(i.getCpe().getVendor())
-                                        && p.getCpe().getProduct().equals(i.getCpe().getProduct()));
-                            });
+                            .anyMatch(i -> parent.getVulnerableSoftwareIdentifiers().stream()
+                                    .filter((p) -> (p instanceof CpeIdentifier))
+                                    .map(p -> (CpeIdentifier) p)
+                                    .anyMatch(p -> !p.equals(i)
+                                    && p.getCpe().getPart().equals(i.getCpe().getPart())
+                                    && p.getCpe().getVendor().equals(i.getCpe().getVendor())
+                                    && p.getCpe().getProduct().equals(i.getCpe().getProduct())));
                     if (remove) {
                         engine.removeDependency(dependency);
                     }

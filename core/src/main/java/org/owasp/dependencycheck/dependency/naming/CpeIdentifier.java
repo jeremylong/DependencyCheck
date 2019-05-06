@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.dependency.naming;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.owasp.dependencycheck.dependency.Confidence;
 import us.springett.parsers.cpe.Cpe;
 import us.springett.parsers.cpe.CpeBuilder;
@@ -189,7 +190,7 @@ public class CpeIdentifier implements Identifier {
     }
 
     @Override
-    public int compareTo(Identifier o) {
+    public int compareTo(@NotNull Identifier o) {
         if (o instanceof CpeIdentifier) {
             final CpeIdentifier other = (CpeIdentifier) o;
             return new CompareToBuilder()
