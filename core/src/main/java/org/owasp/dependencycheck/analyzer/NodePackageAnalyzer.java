@@ -251,8 +251,14 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                 final JsonObject jo = (JsonObject) entry.getValue();
                 final String name = entry.getKey();
                 final String version = jo.getString("version");
+                final boolean optional = jo.getBoolean("optional", false);
                 final File base = Paths.get(baseDir.getPath(), "node_modules", name).toFile();
                 final File f = new File(base, PACKAGE_JSON);
+
+                if(optional && !f.exists()){
+                    LOGGER.warn("node module {} seems optional and not installed, skip it", name);
+                    continue;
+                }
 
                 if (jo.containsKey("dependencies")) {
                     final String subPackageName = String.format("%s/%s:%s", parentPackage, name, version);

@@ -123,7 +123,10 @@ public class NodePackageAnalyzerTest extends BaseTest {
         engine.addDependency(toCombine);
         analyzer.analyze(toScan, engine);
         analyzer.analyze(toCombine, engine);
-        assertEquals("Expected 90 dependency", 90, engine.getDependencies().length);
+
+        //with npm install run on a "non-macOs" system, 90 else
+        assertEquals("Expected 24 dependencies", 24, engine.getDependencies().length);
+
         Dependency result = null;
         for (Dependency dep : engine.getDependencies()) {
             if ("dns-sync".equals(dep.getName())) {
@@ -161,7 +164,9 @@ public class NodePackageAnalyzerTest extends BaseTest {
         assertEquals(1, engine.getDependencies().length); //package-lock was removed without analysis
         assertTrue(shrinkwrap.equals(engine.getDependencies()[0]));
         analyzer.analyze(shrinkwrap, engine);
-        assertEquals(90, engine.getDependencies().length); //shrinkwrap was removed with analysis adding 90 dependency
+
+        //with npm install run on a "non-macOs" system, 90 else
+        assertEquals("Expected 24 dependencies", 24, engine.getDependencies().length);
         assertFalse(shrinkwrap.equals(engine.getDependencies()[0]));
     }
 }
