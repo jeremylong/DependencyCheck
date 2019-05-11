@@ -119,12 +119,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public boolean supportsParallelProcessing() {
-        try {
-            return getSettings().getBoolean(Settings.KEYS.ANALYZER_CENTRAL_PARALLEL_ANALYSIS, true);
-        } catch (InvalidSettingException ex) {
-            LOGGER.debug("Invalid setting for analyzer.central.parallel.analysis; using true.");
-        }
-        return true;
+        return getSettings().getBoolean(Settings.KEYS.ANALYZER_CENTRAL_PARALLEL_ANALYSIS, true);
     }
 
     /**

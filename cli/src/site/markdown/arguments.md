@@ -12,6 +12,7 @@ The following table lists the command line arguments:
 | \-o   | \-\-out                | \<path\>        | The folder to write reports to. This defaults to the current directory. If the format is not set to ALL one could specify a specific file name. | Optional |
 | \-f   | \-\-format             | \<format\>      | The output format to write to (XML, HTML, CSV, JSON, JUNIT, ALL). Multiple formats can be specified by specifying the parameter multiple times. The default is HTML. | Required |
 |       | \-\-junitFailOnCVSS    | \<score\>       | If using the JUNIT report format the junitFailOnCVSS sets the CVSS score threshold that is considered a failure. The default is 0. | Optional |
+|       | \-\-prettyPrint        |                 | When specified the JSON and XML report formats will be pretty printed. | Optional |
 |       | \-\-failOnCVSS         | \<score\>       | If the score set between 0 and 10 the exit code from dependency-check will indicate if a vulnerability with a CVSS score equal to or higher was identified. | Optional |
 | \-l   | \-\-log                | \<file\>        | The file path to write verbose logging information. | Optional |
 | \-n   | \-\-noupdate           |                 | Disables the automatic updating of the CPE data. | Optional |

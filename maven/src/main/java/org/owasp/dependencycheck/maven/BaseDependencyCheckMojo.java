@@ -223,6 +223,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "format", defaultValue = "HTML", required = true)
     private String format = "HTML";
+
+    /**
+     * Whether or not the XML and JSON report formats should be pretty printed. The default is false.
+     */
+    @Parameter(property = "prettyPrint")
+    private Boolean prettyPrint;
     /**
      * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, ALL).
      * Multiple formats can be selected using a comma delineated list.
@@ -1691,7 +1697,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveUrlModified);
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON, cveUrlBase);
         settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
-
+        settings.setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT, prettyPrint);
         artifactScopeExcluded = new ArtifactScopeExcluded(skipTestScope, skipProvidedScope, skipSystemScope, skipRuntimeScope);
         artifactTypeExcluded = new ArtifactTypeExcluded(skipArtifactType);
     }

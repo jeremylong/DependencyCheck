@@ -88,13 +88,7 @@ public abstract class AbstractAnalyzer implements Analyzer {
     public void initialize(Settings settings) {
         this.settings = settings;
         final String key = getAnalyzerEnabledSettingKey();
-        try {
-            this.setEnabled(settings.getBoolean(key, true));
-        } catch (InvalidSettingException ex) {
-            final String msg = String.format("Invalid setting for property '%s'", key);
-            LOGGER.warn(msg);
-            LOGGER.debug(msg, ex);
-        }
+        this.setEnabled(settings.getBoolean(key, true));
     }
 
     /**

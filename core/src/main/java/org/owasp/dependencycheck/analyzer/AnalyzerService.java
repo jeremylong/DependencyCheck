@@ -18,13 +18,16 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.util.ArrayList;
+
 import org.slf4j.LoggerFactory;
 
 import static java.util.Arrays.asList;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
 import javax.annotation.concurrent.ThreadSafe;
+
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -55,8 +58,8 @@ public class AnalyzerService {
      * Creates a new instance of AnalyzerService.
      *
      * @param classLoader the ClassLoader to use when dynamically loading
-     * Analyzer and Update services
-     * @param settings the configured settings
+     *                    Analyzer and Update services
+     * @param settings    the configured settings
      */
     public AnalyzerService(ClassLoader classLoader, Settings settings) {
         service = ServiceLoader.load(Analyzer.class, classLoader);
@@ -95,12 +98,8 @@ public class AnalyzerService {
         final Iterator<Analyzer> iterator = service.iterator();
         boolean experimentalEnabled = false;
         boolean retiredEnabled = false;
-        try {
-            experimentalEnabled = settings.getBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, false);
-            retiredEnabled = settings.getBoolean(Settings.KEYS.ANALYZER_RETIRED_ENABLED, false);
-        } catch (InvalidSettingException ex) {
-            LOGGER.error("invalid experimental or retired setting", ex);
-        }
+        experimentalEnabled = settings.getBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, false);
+        retiredEnabled = settings.getBoolean(Settings.KEYS.ANALYZER_RETIRED_ENABLED, false);
         while (iterator.hasNext()) {
             final Analyzer a = iterator.next();
             if (!phases.contains(a.getAnalysisPhase())) {

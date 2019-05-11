@@ -346,17 +346,7 @@ public class HttpResourceConnection implements AutoCloseable {
      * @return true if configured to use HEAD requests
      */
     private boolean isQuickQuery() {
-        boolean quickQuery;
-
-        try {
-            quickQuery = settings.getBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP, true);
-        } catch (InvalidSettingException e) {
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("Invalid settings : {}", e.getMessage(), e);
-            }
-            quickQuery = true;
-        }
-        return quickQuery;
+        return settings.getBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP, true);
     }
 
     /**

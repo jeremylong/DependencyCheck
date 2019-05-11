@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -72,6 +73,7 @@ public final class Settings {
     private File tempDirectory = null;
 
     //<editor-fold defaultstate="collapsed" desc="KEYS used to access settings">
+
     /**
      * The collection of keys used within the properties file.
      */
@@ -531,7 +533,6 @@ public final class Settings {
          */
         public static final String LUCENE_MIN_SCORE_FILTER = "dependency.check.lucene.min.score";
         /**
-         *
          * Adds capabilities to batch insert. Tested on PostgreSQL and H2.
          */
         public static final String ENABLE_BATCH_UPDATES = "database.batchinsert.enabled";
@@ -554,6 +555,10 @@ public final class Settings {
          * The properties key for the Sonatype OSS Index URL.
          */
         public static final String ANALYZER_OSSINDEX_URL = "analyzer.ossindex.url";
+        /**
+         * The properties key setting whether or not the JSON and XML reports will be pretty printed.
+         */
+        public static final String PRETTY_PRINT = "odc.reports.pretty.print";
 
         /**
          * private constructor because this is a "utility" class containing
@@ -622,7 +627,7 @@ public final class Settings {
      * Cleans up resources to prevent memory leaks.
      *
      * @param deleteTemporary flag indicating whether any temporary directories
-     * generated should be removed
+     *                        generated should be removed
      */
     public synchronized void cleanup(boolean deleteTemporary) {
         if (deleteTemporary && tempDirectory != null && tempDirectory.exists()) {
@@ -636,7 +641,7 @@ public final class Settings {
      * Logs the properties. This will not log any properties that contain
      * 'password' in the key.
      *
-     * @param header the header to print with the log message
+     * @param header     the header to print with the log message
      * @param properties the properties to log
      */
     private void logProperties(@NotNull final String header, @NotNull final Properties properties) {
@@ -666,7 +671,7 @@ public final class Settings {
     /**
      * Sets a property value.
      *
-     * @param key the key for the property
+     * @param key   the key for the property
      * @param value the value for the property
      */
     public void setString(@NotNull final String key, @NotNull final String value) {
@@ -677,7 +682,7 @@ public final class Settings {
     /**
      * Sets a property value only if the value is not null.
      *
-     * @param key the key for the property
+     * @param key   the key for the property
      * @param value the value for the property
      */
     public void setStringIfNotNull(@NotNull final String key, @Nullable final String value) {
@@ -689,7 +694,7 @@ public final class Settings {
     /**
      * Sets a property value only if the value is not null and not empty.
      *
-     * @param key the key for the property
+     * @param key   the key for the property
      * @param value the value for the property
      */
     public void setStringIfNotEmpty(@NotNull final String key, @Nullable final String value) {
@@ -701,7 +706,7 @@ public final class Settings {
     /**
      * Sets a property value only if the array value is not null and not empty.
      *
-     * @param key the key for the property
+     * @param key   the key for the property
      * @param value the value for the property
      */
     public void setArrayIfNotEmpty(@NotNull final String key, @Nullable final String[] value) {
@@ -713,7 +718,7 @@ public final class Settings {
     /**
      * Sets a property value only if the array value is not null and not empty.
      *
-     * @param key the key for the property
+     * @param key   the key for the property
      * @param value the value for the property
      */
     public void setArrayIfNotEmpty(@NotNull final String key, @Nullable final List<String> value) {
@@ -725,7 +730,7 @@ public final class Settings {
     /**
      * Sets a property value.
      *
-     * @param key the key for the property
+     * @param key   the key for the property
      * @param value the value for the property
      */
     public void setBoolean(@NotNull final String key, boolean value) {
@@ -735,7 +740,7 @@ public final class Settings {
     /**
      * Sets a property value only if the value is not null.
      *
-     * @param key the key for the property
+     * @param key   the key for the property
      * @param value the value for the property
      */
     public void setBooleanIfNotNull(@NotNull final String key, @Nullable final Boolean value) {
@@ -747,7 +752,7 @@ public final class Settings {
     /**
      * Sets a float property value.
      *
-     * @param key the key for the property
+     * @param key   the key for the property
      * @param value the value for the property
      */
     public void setFloat(@NotNull final String key, final float value) {
@@ -757,7 +762,7 @@ public final class Settings {
     /**
      * Sets a property value.
      *
-     * @param key the key for the property
+     * @param key   the key for the property
      * @param value the value for the property
      */
     public void setInt(@NotNull final String key, final int value) {
@@ -768,7 +773,7 @@ public final class Settings {
     /**
      * Sets a property value only if the value is not null.
      *
-     * @param key the key for the property
+     * @param key   the key for the property
      * @param value the value for the property
      */
     public void setIntIfNotNull(@NotNull final String key, @Nullable final Integer value) {
@@ -785,9 +790,9 @@ public final class Settings {
      *
      * @param filePath the path to the properties file to merge.
      * @throws java.io.FileNotFoundException is thrown when the filePath points
-     * to a non-existent file
-     * @throws java.io.IOException is thrown when there is an exception
-     * loading/merging the properties
+     *                                       to a non-existent file
+     * @throws java.io.IOException           is thrown when there is an exception
+     *                                       loading/merging the properties
      */
     @SuppressFBWarnings(justification = "try with resource will clenaup the resources", value = {"OBL_UNSATISFIED_OBLIGATION"})
     public void mergeProperties(@NotNull final File filePath) throws FileNotFoundException, IOException {
@@ -804,9 +809,9 @@ public final class Settings {
      *
      * @param filePath the path to the properties file to merge.
      * @throws java.io.FileNotFoundException is thrown when the filePath points
-     * to a non-existent file
-     * @throws java.io.IOException is thrown when there is an exception
-     * loading/merging the properties
+     *                                       to a non-existent file
+     * @throws java.io.IOException           is thrown when there is an exception
+     *                                       loading/merging the properties
      */
     @SuppressFBWarnings(justification = "try with resource will clenaup the resources", value = {"OBL_UNSATISFIED_OBLIGATION"})
     public void mergeProperties(@NotNull final String filePath) throws FileNotFoundException, IOException {
@@ -823,7 +828,7 @@ public final class Settings {
      *
      * @param stream an Input Stream pointing at a properties file to merge
      * @throws java.io.IOException is thrown when there is an exception
-     * loading/merging the properties
+     *                             loading/merging the properties
      */
     public void mergeProperties(@NotNull final InputStream stream) throws IOException {
         props.load(stream);
@@ -853,7 +858,7 @@ public final class Settings {
      * was specified as a system property or passed in via the -Dprop=value
      * argument - this method will return the value from the system properties
      * before the values in the contained configuration file.
-     *
+     * <p>
      * This method will check the configured base directory and will use this as
      * the base of the file path. Additionally, if the base directory begins
      * with a leading "[JAR]\" sequence with the path to the folder containing
@@ -912,7 +917,7 @@ public final class Settings {
      * will return the value from the system properties before the values in the
      * contained configuration file.
      *
-     * @param key the key to lookup within the properties file
+     * @param key          the key to lookup within the properties file
      * @param defaultValue the default value for the requested property
      * @return the property from the properties file
      */
@@ -949,11 +954,11 @@ public final class Settings {
 
     /**
      * Returns a list with the given key.
-     *
+     * <p>
      * If the property is not set then {@code null} will be returned.
      *
      * @param key the key to get from this
-     * {@link org.owasp.dependencycheck.utils.Settings}.
+     *            {@link org.owasp.dependencycheck.utils.Settings}.
      * @return the list or {@code null} if the key wasn't present.
      */
     public String[] getArray(@NotNull final String key) {
@@ -987,7 +992,7 @@ public final class Settings {
      * @param key the key to lookup within the properties file
      * @return the property from the properties file
      * @throws org.owasp.dependencycheck.utils.InvalidSettingException is thrown
-     * if there is an error retrieving the setting
+     *                                                                 if there is an error retrieving the setting
      */
     public int getInt(@NotNull final String key) throws InvalidSettingException {
         try {
@@ -1003,7 +1008,7 @@ public final class Settings {
      * method will return the value from the system properties before the values
      * in the contained configuration file.
      *
-     * @param key the key to lookup within the properties file
+     * @param key          the key to lookup within the properties file
      * @param defaultValue the default value to return
      * @return the property from the properties file or the defaultValue if the
      * property does not exist or cannot be converted to an integer
@@ -1030,7 +1035,7 @@ public final class Settings {
      * @param key the key to lookup within the properties file
      * @return the property from the properties file
      * @throws org.owasp.dependencycheck.utils.InvalidSettingException is thrown
-     * if there is an error retrieving the setting
+     *                                                                 if there is an error retrieving the setting
      */
     public long getLong(@NotNull final String key) throws InvalidSettingException {
         try {
@@ -1050,7 +1055,7 @@ public final class Settings {
      * @param key the key to lookup within the properties file
      * @return the property from the properties file
      * @throws org.owasp.dependencycheck.utils.InvalidSettingException is thrown
-     * if there is an error retrieving the setting
+     *                                                                 if there is an error retrieving the setting
      */
     public boolean getBoolean(@NotNull final String key) throws InvalidSettingException {
         return Boolean.parseBoolean(getString(key));
@@ -1063,14 +1068,12 @@ public final class Settings {
      * the system properties before the values in the contained configuration
      * file.
      *
-     * @param key the key to lookup within the properties file
+     * @param key          the key to lookup within the properties file
      * @param defaultValue the default value to return if the setting does not
-     * exist
+     *                     exist
      * @return the property from the properties file
-     * @throws org.owasp.dependencycheck.utils.InvalidSettingException is thrown
-     * if there is an error retrieving the setting
      */
-    public boolean getBoolean(@NotNull final String key, boolean defaultValue) throws InvalidSettingException {
+    public boolean getBoolean(@NotNull final String key, boolean defaultValue) {
         return Boolean.parseBoolean(getString(key, Boolean.toString(defaultValue)));
     }
 
@@ -1081,9 +1084,9 @@ public final class Settings {
      * the system properties before the values in the contained configuration
      * file.
      *
-     * @param key the key to lookup within the properties file
+     * @param key          the key to lookup within the properties file
      * @param defaultValue the default value to return if the setting does not
-     * exist
+     *                     exist
      * @return the property from the properties file
      */
     public float getFloat(@NotNull final String key, float defaultValue) {
@@ -1103,10 +1106,10 @@ public final class Settings {
      * data directory does not exist it will be created.
      *
      * @param connectionStringKey the property file key for the connection
-     * string
-     * @param dbFileNameKey the settings key for the db filename
+     *                            string
+     * @param dbFileNameKey       the settings key for the db filename
      * @return the connection string
-     * @throws IOException thrown the data directory cannot be created
+     * @throws IOException             thrown the data directory cannot be created
      * @throws InvalidSettingException thrown if there is an invalid setting
      */
     public String getConnectionString(String connectionStringKey, String dbFileNameKey)
@@ -1146,7 +1149,7 @@ public final class Settings {
      *
      * @return the data directory to store data files
      * @throws java.io.IOException is thrown if an java.io.IOException occurs of
-     * course...
+     *                             course...
      */
     public File getDataDirectory() throws IOException {
         final File path = getDataFile(Settings.KEYS.DATA_DIRECTORY);
@@ -1163,7 +1166,7 @@ public final class Settings {
      *
      * @return the data directory to store data files
      * @throws java.io.IOException is thrown if an java.io.IOException occurs of
-     * course...
+     *                             course...
      */
     public File getH2DataDirectory() throws IOException {
         final String h2Test = getString(Settings.KEYS.H2_DATA_DIRECTORY);
@@ -1183,7 +1186,7 @@ public final class Settings {
     /**
      * Generates a new temporary file name that is guaranteed to be unique.
      *
-     * @param prefix the prefix for the file name to generate
+     * @param prefix    the prefix for the file name to generate
      * @param extension the extension of the generated file name
      * @return a temporary File
      * @throws java.io.IOException if any.

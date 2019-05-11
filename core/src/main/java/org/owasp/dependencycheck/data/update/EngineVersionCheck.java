@@ -151,8 +151,6 @@ public class EngineVersionCheck implements CachedWebDataSource {
         } catch (DatabaseException ex) {
             LOGGER.debug("Database Exception opening databases to retrieve properties", ex);
             throw new UpdateException("Error occurred updating database properties.");
-        } catch (InvalidSettingException ex) {
-            LOGGER.debug("Unable to determine if autoupdate is enabled", ex);
         }
         return false;
     }

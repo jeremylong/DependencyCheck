@@ -60,9 +60,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import javax.annotation.concurrent.NotThreadSafe;
+
 import org.owasp.dependencycheck.exception.H2DBLockException;
 import org.owasp.dependencycheck.utils.H2DBLock;
 
@@ -149,7 +152,7 @@ public class Engine implements FileFilter, AutoCloseable {
          * Constructs a new mode.
          *
          * @param databaseRequired if the database is required for the mode
-         * @param phases the analysis phases to include in the mode
+         * @param phases           the analysis phases to include in the mode
          */
         Mode(boolean databaseRequired, AnalysisPhase... phases) {
             this.databaseRequired = databaseRequired;
@@ -215,7 +218,7 @@ public class Engine implements FileFilter, AutoCloseable {
     /**
      * Creates a new Engine.
      *
-     * @param mode the mode of operation
+     * @param mode     the mode of operation
      * @param settings reference to the configured settings
      */
     public Engine(@NotNull final Mode mode, @NotNull final Settings settings) {
@@ -226,7 +229,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * Creates a new {@link Mode#STANDALONE} Engine.
      *
      * @param serviceClassLoader a reference the class loader being used
-     * @param settings reference to the configured settings
+     * @param settings           reference to the configured settings
      */
     public Engine(@NotNull final ClassLoader serviceClassLoader, @NotNull final Settings settings) {
         this(serviceClassLoader, Mode.STANDALONE, settings);
@@ -236,8 +239,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * Creates a new Engine.
      *
      * @param serviceClassLoader a reference the class loader being used
-     * @param mode the mode of the engine
-     * @param settings reference to the configured settings
+     * @param mode               the mode of the engine
+     * @param settings           reference to the configured settings
      */
     public Engine(@NotNull final ClassLoader serviceClassLoader, @NotNull final Mode mode, @NotNull final Settings settings) {
         this.settings = settings;
@@ -251,7 +254,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * Analyzer and Update services.
      *
      * @throws DatabaseException thrown if there is an error connecting to the
-     * database
+     *                           database
      */
     protected final void initializeEngine() {
         loadAnalyzers();
@@ -371,9 +374,9 @@ public class Engine implements FileFilter, AutoCloseable {
      * will be scanned recursively. Any dependencies identified are added to the
      * dependency collection.
      *
-     * @param paths an array of paths to files or directories to be analyzed
+     * @param paths            an array of paths to files or directories to be analyzed
      * @param projectReference the name of the project or scope in which the
-     * dependency was identified
+     *                         dependency was identified
      * @return the list of dependencies scanned
      * @since v1.4.4
      */
@@ -405,9 +408,9 @@ public class Engine implements FileFilter, AutoCloseable {
      * scanned recursively. Any dependencies identified are added to the
      * dependency collection.
      *
-     * @param path the path to a file or directory to be analyzed
+     * @param path             the path to a file or directory to be analyzed
      * @param projectReference the name of the project or scope in which the
-     * dependency was identified
+     *                         dependency was identified
      * @return the list of dependencies scanned
      * @since v1.4.4
      */
@@ -434,9 +437,9 @@ public class Engine implements FileFilter, AutoCloseable {
      * will be scanned recursively. Any dependencies identified are added to the
      * dependency collection.
      *
-     * @param files an array of paths to files or directories to be analyzed.
+     * @param files            an array of paths to files or directories to be analyzed.
      * @param projectReference the name of the project or scope in which the
-     * dependency was identified
+     *                         dependency was identified
      * @return the list of dependencies
      * @since v1.4.4
      */
@@ -469,9 +472,9 @@ public class Engine implements FileFilter, AutoCloseable {
      * it will be scanned recursively. Any dependencies identified are added to
      * the dependency collection.
      *
-     * @param files a set of paths to files or directories to be analyzed
+     * @param files            a set of paths to files or directories to be analyzed
      * @param projectReference the name of the project or scope in which the
-     * dependency was identified
+     *                         dependency was identified
      * @return the list of dependencies scanned
      * @since v1.4.4
      */
@@ -501,9 +504,9 @@ public class Engine implements FileFilter, AutoCloseable {
      * scanned recursively. Any dependencies identified are added to the
      * dependency collection.
      *
-     * @param file the path to a file or directory to be analyzed
+     * @param file             the path to a file or directory to be analyzed
      * @param projectReference the name of the project or scope in which the
-     * dependency was identified
+     *                         dependency was identified
      * @return the list of dependencies scanned
      * @since v1.4.4
      */
@@ -539,9 +542,9 @@ public class Engine implements FileFilter, AutoCloseable {
      * Recursively scans files and directories. Any dependencies identified are
      * added to the dependency collection.
      *
-     * @param dir the directory to scan
+     * @param dir              the directory to scan
      * @param projectReference the name of the project or scope in which the
-     * dependency was identified
+     *                         dependency was identified
      * @return the list of Dependency objects scanned
      * @since v1.4.4
      */
@@ -581,9 +584,9 @@ public class Engine implements FileFilter, AutoCloseable {
      * Scans a specified file. If a dependency is identified it is added to the
      * dependency collection.
      *
-     * @param file The file to scan
+     * @param file             The file to scan
      * @param projectReference the name of the project or scope in which the
-     * dependency was identified
+     *                         dependency was identified
      * @return the scanned dependency
      * @since v1.4.4
      */
@@ -639,7 +642,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * be included in the thrown exception collection.
      *
      * @throws ExceptionCollection a collections of any exceptions that occurred
-     * during analysis
+     *                             during analysis
      */
     public void analyzeDependencies() throws ExceptionCollection {
         final List<Throwable> exceptions = Collections.synchronizedList(new ArrayList<>());
@@ -705,13 +708,8 @@ public class Engine implements FileFilter, AutoCloseable {
         if (!mode.isDatabaseRequired()) {
             return;
         }
-        boolean autoUpdate = true;
-        try {
-            autoUpdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
-        } catch (InvalidSettingException ex) {
-            LOGGER.debug("Invalid setting for auto-update; using true.");
-            exceptions.add(ex);
-        }
+        final boolean autoUpdate;
+        autoUpdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);
         if (autoUpdate) {
             try {
                 doUpdates(true);
@@ -741,10 +739,10 @@ public class Engine implements FileFilter, AutoCloseable {
     /**
      * Utility method to throw a fatal database exception.
      *
-     * @param ex the exception that was caught
+     * @param ex         the exception that was caught
      * @param exceptions the exception collection
      * @throws ExceptionCollection the collection of exceptions is always thrown
-     * as a fatal exception
+     *                             as a fatal exception
      */
     private void throwFatalDatabaseException(DatabaseException ex, final List<Throwable> exceptions) throws ExceptionCollection {
         final String msg;
@@ -762,8 +760,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * Executes executes the analyzer using multiple threads.
      *
      * @param exceptions a collection of exceptions that occurred during
-     * analysis
-     * @param analyzer the analyzer to execute
+     *                   analysis
+     * @param analyzer   the analyzer to execute
      * @throws ExceptionCollection thrown if exceptions occurred during analysis
      */
     protected void executeAnalysisTasks(@NotNull final Analyzer analyzer, List<Throwable> exceptions) throws ExceptionCollection {
@@ -796,7 +794,7 @@ public class Engine implements FileFilter, AutoCloseable {
     /**
      * Returns the analysis tasks for the dependencies.
      *
-     * @param analyzer the analyzer to create tasks for
+     * @param analyzer   the analyzer to create tasks for
      * @param exceptions the collection of exceptions to collect
      * @return a collection of analysis tasks
      */
@@ -828,7 +826,7 @@ public class Engine implements FileFilter, AutoCloseable {
      *
      * @param analyzer the analyzer to prepare
      * @throws InitializationException thrown when there is a problem
-     * initializing the analyzer
+     *                                 initializing the analyzer
      */
     protected void initializeAnalyzer(@NotNull final Analyzer analyzer) throws InitializationException {
         try {
@@ -875,9 +873,9 @@ public class Engine implements FileFilter, AutoCloseable {
      * Cycles through the cached web data sources and calls update on all of
      * them.
      *
-     * @throws UpdateException thrown if the operation fails
+     * @throws UpdateException   thrown if the operation fails
      * @throws DatabaseException if the operation fails due to a local database
-     * failure
+     *                           failure
      */
     public void doUpdates() throws UpdateException, DatabaseException {
         doUpdates(false);
@@ -888,10 +886,10 @@ public class Engine implements FileFilter, AutoCloseable {
      * them.
      *
      * @param remainOpen whether or not the database connection should remain
-     * open
-     * @throws UpdateException thrown if the operation fails
+     *                   open
+     * @throws UpdateException   thrown if the operation fails
      * @throws DatabaseException if the operation fails due to a local database
-     * failure
+     *                           failure
      */
     public void doUpdates(boolean remainOpen) throws UpdateException, DatabaseException {
         if (mode.isDatabaseRequired()) {
@@ -956,9 +954,9 @@ public class Engine implements FileFilter, AutoCloseable {
      * Opens the database connection; if readOnly is true a copy of the database
      * will be made.</p>
      *
-     * @param readOnly whether or not the database connection should be readonly
+     * @param readOnly     whether or not the database connection should be readonly
      * @param lockRequired whether or not a lock needs to be acquired when
-     * opening the database
+     *                     opening the database
      * @throws DatabaseException if the database connection could not be created
      */
     public void openDatabase(boolean readOnly, boolean lockRequired) throws DatabaseException {
@@ -1096,14 +1094,14 @@ public class Engine implements FileFilter, AutoCloseable {
     /**
      * Constructs and throws a fatal exception collection.
      *
-     * @param message the exception message
-     * @param throwable the cause
+     * @param message    the exception message
+     * @param throwable  the cause
      * @param exceptions a collection of exception to include
      * @throws ExceptionCollection a collection of exceptions that occurred
-     * during analysis
+     *                             during analysis
      */
     private void throwFatalExceptionCollection(String message, @NotNull final Throwable throwable,
-            @NotNull final List<Throwable> exceptions) throws ExceptionCollection {
+                                               @NotNull final List<Throwable> exceptions) throws ExceptionCollection {
         LOGGER.error(message);
         LOGGER.debug("", throwable);
         exceptions.add(throwable);
@@ -1114,17 +1112,17 @@ public class Engine implements FileFilter, AutoCloseable {
      * Writes the report to the given output directory.
      *
      * @param applicationName the name of the application/project
-     * @param groupId the Maven groupId
-     * @param artifactId the Maven artifactId
-     * @param version the Maven version
-     * @param outputDir the path to the output directory (can include the full
-     * file name if the format is not ALL)
-     * @param format the report format (ALL, HTML, CSV, JSON, etc.)
+     * @param groupId         the Maven groupId
+     * @param artifactId      the Maven artifactId
+     * @param version         the Maven version
+     * @param outputDir       the path to the output directory (can include the full
+     *                        file name if the format is not ALL)
+     * @param format          the report format (ALL, HTML, CSV, JSON, etc.)
      * @throws ReportException thrown if there is an error generating the report
      */
     public synchronized void writeReports(String applicationName, @Nullable final String groupId,
-            @Nullable final String artifactId, @Nullable final String version,
-            @NotNull final File outputDir, String format) throws ReportException {
+                                          @Nullable final String artifactId, @Nullable final String version,
+                                          @NotNull final File outputDir, String format) throws ReportException {
         if (mode == Mode.EVIDENCE_COLLECTION) {
             throw new UnsupportedOperationException("Cannot generate report in evidence collection mode.");
         }
@@ -1142,9 +1140,9 @@ public class Engine implements FileFilter, AutoCloseable {
      * Writes the report to the given output directory.
      *
      * @param applicationName the name of the application/project
-     * @param outputDir the path to the output directory (can include the full
-     * file name if the format is not ALL)
-     * @param format the report format (ALL, HTML, CSV, JSON, etc.)
+     * @param outputDir       the path to the output directory (can include the full
+     *                        file name if the format is not ALL)
+     * @param format          the report format (ALL, HTML, CSV, JSON, etc.)
      * @throws ReportException thrown if there is an error generating the report
      */
     public void writeReports(String applicationName, File outputDir, String format) throws ReportException {

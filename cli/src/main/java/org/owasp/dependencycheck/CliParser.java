@@ -321,6 +321,11 @@ public final class CliParser {
                         + "The default is 11; since the CVSS scores are 0-10, by default the build will never fail.")
                 .build();
 
+        final Option prettyPrint = Option.builder().longOpt(ARGUMENT.PRETTY_PRINT)
+                .desc("Specifies if the build should be failed if a CVSS score above a specified level is identified. "
+                        + "The default is 11; since the CVSS scores are 0-10, by default the build will never fail.")
+                .build();
+
         //This is an option group because it can be specified more then once.
         final OptionGroup og = new OptionGroup();
         og.addOption(path);
@@ -333,6 +338,7 @@ public final class CliParser {
                 .addOption(projectName)
                 .addOption(out)
                 .addOption(outputFormat)
+                .addOption(prettyPrint)
                 .addOption(version)
                 .addOption(help)
                 .addOption(advancedHelp)
@@ -1314,6 +1320,17 @@ public final class CliParser {
     }
 
     /**
+     * Returns true if the prettyPrint argument is specified.
+     *
+     * @return true if the prettyPrint is specified; otherwise null
+     */
+    @SuppressFBWarnings(justification = "Accepting that this is a bad practice - but made more sense in this use case",
+            value = {"NP_BOOLEAN_RETURN_NULL"})
+    public Boolean isPrettyPrint() {
+        return (line != null && line.hasOption(ARGUMENT.PRETTY_PRINT)) ? true : null;
+    }
+
+    /**
      * Returns the CVSS value to fail on.
      *
      * @return 11 if nothing is set. Otherwise it returns the int passed from
@@ -1708,6 +1725,12 @@ public final class CliParser {
          * a failure.
          */
         public static final String FAIL_ON_CVSS = "failOnCVSS";
+
+        /**
+         * The CLI argument to configure if the XML and JSON reports should be pretty printed.
+         */
+        public static final String PRETTY_PRINT = "prettyPrint";
+
         /**
          * The CLI argument to set the threshold that is considered a failure
          * when generating the JUNIT report format.

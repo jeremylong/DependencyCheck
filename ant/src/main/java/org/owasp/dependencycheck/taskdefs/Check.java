@@ -172,6 +172,11 @@ public class Check extends Update {
      */
     private final List<String> reportFormats = new ArrayList<>();
     /**
+     * Whether the JSON and XML reports should be pretty printed; the default is false.
+     */
+    private Boolean prettyPrint = null;
+
+    /**
      * Suppression file path.
      */
     private String suppressionFile = null;
@@ -469,6 +474,24 @@ public class Check extends Update {
      */
     public void setAutoUpdate(Boolean autoUpdate) {
         this.autoUpdate = autoUpdate;
+    }
+
+    /**
+     * Get the value of prettyPrint.
+     *
+     * @return the value of prettyPrint
+     */
+    public Boolean isPrettyPrint() {
+        return prettyPrint;
+    }
+
+    /**
+     * Set the value of prettyPrint.
+     *
+     * @param prettyPrint new value of prettyPrint
+     */
+    public void setPrettyPrint(boolean prettyPrint) {
+        this.prettyPrint = prettyPrint;
     }
 
     /**
@@ -1423,6 +1446,7 @@ public class Check extends Update {
         getSettings().setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFiles);
         getSettings().setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, enableExperimental);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT, prettyPrint);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIRED_ENABLED, enableRetired);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, pyDistributionAnalyzerEnabled);

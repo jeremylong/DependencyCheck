@@ -27,6 +27,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import javax.annotation.concurrent.ThreadSafe;
+
 import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
@@ -100,8 +101,6 @@ public class RetireJSDataSource implements CachedWebDataSource {
                 url = settings.getString(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, DEFAULT_JS_URL);
                 initializeRetireJsRepo(settings, new URL(url));
             }
-        } catch (InvalidSettingException ex) {
-            throw new UpdateException("Unable to determine if autoupdate is enabled", ex);
         } catch (MalformedURLException ex) {
             throw new UpdateException(String.format("Inavlid URL for RetireJS repository (%s)", url), ex);
         } catch (IOException ex) {
@@ -117,7 +116,7 @@ public class RetireJSDataSource implements CachedWebDataSource {
      * @return <code>true</code> if an updated to the RetireJS database should
      * be performed; otherwise <code>false</code>
      * @throws NumberFormatException thrown if an invalid value is contained in
-     * the database properties
+     *                               the database properties
      */
     protected boolean shouldUpdagte(File repo) throws NumberFormatException {
         boolean proceed = true;
@@ -140,9 +139,9 @@ public class RetireJSDataSource implements CachedWebDataSource {
      * Initializes the local RetireJS repository
      *
      * @param settings a reference to the dependency-check settings
-     * @param repoUrl the URL to the RetireJS repo to use
+     * @param repoUrl  the URL to the RetireJS repo to use
      * @throws UpdateException thrown if there is an exception during
-     * initialization
+     *                         initialization
      */
     private void initializeRetireJsRepo(Settings settings, URL repoUrl) throws UpdateException {
         try {
@@ -161,7 +160,7 @@ public class RetireJSDataSource implements CachedWebDataSource {
                 final File tmpFile = new File(tmpDir, filename);
                 final File repoFile = new File(dataDir, filename);
                 try (InputStream inputStream = conn.getInputStream();
-                        FileOutputStream outputStream = new FileOutputStream(tmpFile)) {
+                     FileOutputStream outputStream = new FileOutputStream(tmpFile)) {
                     IOUtils.copy(inputStream, outputStream);
                 }
                 //using move fails if target and destination are on different disks which does happen (see #1394 and #1404)

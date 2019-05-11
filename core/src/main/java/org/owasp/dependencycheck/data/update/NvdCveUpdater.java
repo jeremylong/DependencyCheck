@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.data.update;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.net.MalformedURLException;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -33,12 +34,15 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import javax.annotation.concurrent.ThreadSafe;
+
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvd.json.MetaProperties;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
+
 import static org.owasp.dependencycheck.data.nvdcve.DatabaseProperties.MODIFIED;
+
 import org.owasp.dependencycheck.data.update.exception.InvalidDataException;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.data.update.nvd.DownloadTask;
@@ -105,7 +109,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
      * @param engine a reference to the dependency-check engine
      * @return whether or not an update was made to the CveDB
      * @throws UpdateException is thrown if there is an error updating the
-     * database
+     *                         database
      */
     @Override
     public synchronized boolean update(Engine engine) throws UpdateException {
@@ -154,12 +158,8 @@ public class NvdCveUpdater implements CachedWebDataSource {
      * true
      */
     private boolean isUpdateConfiguredFalse() {
-        try {
-            if (!settings.getBoolean(Settings.KEYS.UPDATE_NVDCVE_ENABLED, true)) {
-                return true;
-            }
-        } catch (InvalidSettingException ex) {
-            LOGGER.trace("invalid setting UPDATE_NVDCVE_ENABLED", ex);
+        if (!settings.getBoolean(Settings.KEYS.UPDATE_NVDCVE_ENABLED, true)) {
+            return true;
         }
         boolean autoUpdate = true;
         try {
@@ -209,7 +209,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
      *
      * @return true to proceed with the check, or false to skip
      * @throws UpdateException thrown when there is an issue checking for
-     * updates
+     *                         updates
      */
     private boolean checkUpdate() throws UpdateException {
         boolean proceed = true;
@@ -243,9 +243,9 @@ public class NvdCveUpdater implements CachedWebDataSource {
      * the current CVE Database.
      *
      * @param updateable a collection of NVD CVE data file references that need
-     * to be downloaded and processed to update the database
+     *                   to be downloaded and processed to update the database
      * @throws UpdateException is thrown if there is an error updating the
-     * database
+     *                         database
      */
     @SuppressWarnings("FutureReturnValueIgnored")
     private void performUpdate(UpdateableNvdCve updateable) throws UpdateException {
@@ -370,12 +370,12 @@ public class NvdCveUpdater implements CachedWebDataSource {
      * need to be updated.
      *
      * @return the collection of files that need to be updated
-     * @throws MalformedURLException is thrown if the URL for the NVD CVE Meta
-     * data is incorrect
+     * @throws MalformedURLException   is thrown if the URL for the NVD CVE Meta
+     *                                 data is incorrect
      * @throws DownloadFailedException is thrown if there is an error.
-     * downloading the NVD CVE download data file
-     * @throws UpdateException Is thrown if there is an issue with the last
-     * updated properties file
+     *                                 downloading the NVD CVE download data file
+     * @throws UpdateException         Is thrown if there is an issue with the last
+     *                                 updated properties file
      */
     protected final UpdateableNvdCve getUpdatesNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
         LOGGER.debug("starting getUpdatesNeeded() ...");
@@ -440,13 +440,13 @@ public class NvdCveUpdater implements CachedWebDataSource {
      * date.
      *
      * @param startYear the first year whose item to check for the timestamp
-     * @param endYear the last year whose item to check for the timestamp
+     * @param endYear   the last year whose item to check for the timestamp
      * @return the timestamps from the currently published NVD CVE downloads
      * page
-     * @throws MalformedURLException thrown if the URL for the NVD CVE data is
-     * incorrect.
+     * @throws MalformedURLException   thrown if the URL for the NVD CVE data is
+     *                                 incorrect.
      * @throws DownloadFailedException thrown if there is an error retrieving
-     * the time stamps from the NVD CVE
+     *                                 the time stamps from the NVD CVE
      */
     @SuppressFBWarnings(justification = "This is only called from within a synchronized method", value = {"IS2_INCONSISTENT_SYNC"})
     private Map<String, Long> retrieveLastModifiedDates(int startYear, int endYear)
@@ -511,7 +511,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
         /**
          * Instantiates a new timestamp retriever object.
          *
-         * @param url the URL to hit
+         * @param url      the URL to hit
          * @param settings the global settings
          */
         TimestampRetriever(String url, Settings settings) {

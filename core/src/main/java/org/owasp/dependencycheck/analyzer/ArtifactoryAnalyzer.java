@@ -103,12 +103,7 @@ public class ArtifactoryAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public boolean supportsParallelProcessing() {
-        try {
-            return getSettings().getBoolean(Settings.KEYS.ANALYZER_ARTIFACTORY_PARALLEL_ANALYSIS, true);
-        } catch (InvalidSettingException ex) {
-            LOGGER.debug("Invalid setting for analyzer.artifactory.parallel.analysis; using true.");
-        }
-        return true;
+        return getSettings().getBoolean(Settings.KEYS.ANALYZER_ARTIFACTORY_PARALLEL_ANALYSIS, true);
     }
 
     /**
@@ -131,7 +126,7 @@ public class ArtifactoryAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @param engine a reference to the dependency-check engine
      * @throws InitializationException thrown when the analyzer is unable to
-     * connect to Artifactory
+     *                                 connect to Artifactory
      */
     @Override
     public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
@@ -188,7 +183,7 @@ public class ArtifactoryAnalyzer extends AbstractFileTypeAnalyzer {
      * Performs the analysis.
      *
      * @param dependency the dependency to analyze
-     * @param engine the engine
+     * @param engine     the engine
      * @throws AnalysisException when there's an exception during analysis
      */
     @Override
@@ -225,8 +220,8 @@ public class ArtifactoryAnalyzer extends AbstractFileTypeAnalyzer {
      * the dependency.
      *
      * @param dependency the dependency to download and process the pom.xml
-     * @param ma the Maven artifact coordinates
-     * @throws IOException thrown if there is an I/O error
+     * @param ma         the Maven artifact coordinates
+     * @throws IOException       thrown if there is an I/O error
      * @throws AnalysisException thrown if there is an error analyzing the pom
      */
     private void processPom(Dependency dependency, MavenArtifact ma) throws IOException, AnalysisException {
