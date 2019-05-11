@@ -137,14 +137,11 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (obj == null || !(obj instanceof TokenPairConcatenatingFilter)) {
             return false;
         }
-        if (obj == this) {
+        if (this == obj) {
             return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
         }
         final TokenPairConcatenatingFilter rhs = (TokenPairConcatenatingFilter) obj;
         return new EqualsBuilder()

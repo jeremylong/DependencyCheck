@@ -24,6 +24,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import us.springett.parsers.cpe.Cpe;
@@ -118,7 +119,7 @@ public class VulnerableSoftware extends Cpe implements Serializable {
     }
 
     @Override
-    public int compareTo(Object o) {
+    public int compareTo(@NotNull Object o) {
         if (o instanceof VulnerableSoftware) {
             final VulnerableSoftware other = (VulnerableSoftware) o;
             return new CompareToBuilder()
@@ -150,14 +151,11 @@ public class VulnerableSoftware extends Cpe implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (obj == null || !(obj instanceof VulnerableSoftware)) {
             return false;
         }
-        if (obj == this) {
+        if (this == obj) {
             return true;
-        }
-        if (!(obj instanceof VulnerableSoftware)) {
-            return false;
         }
         final VulnerableSoftware rhs = (VulnerableSoftware) obj;
         return new EqualsBuilder()

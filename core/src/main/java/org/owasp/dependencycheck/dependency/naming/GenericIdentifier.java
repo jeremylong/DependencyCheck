@@ -147,8 +147,10 @@ public class GenericIdentifier implements Identifier {
         if (obj == null || !(obj instanceof GenericIdentifier)) {
             return false;
         }
+        if (this == obj) {
+            return true;
+        }
         final GenericIdentifier other = (GenericIdentifier) obj;
-
         return new EqualsBuilder()
                 .append(this.value, other.value)
                 .append(this.url, other.url)

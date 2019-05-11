@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.data.composer;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
@@ -83,31 +86,27 @@ public final class ComposerDependency {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (obj == null || !(obj instanceof ComposerDependency)) {
+            return false;
+        }
+        if (this == obj) {
             return true;
         }
-        if (!(o instanceof ComposerDependency)) {
-            return false;
-        }
-
-        final ComposerDependency that = (ComposerDependency) o;
-
-        if (group != null ? !group.equals(that.group) : that.group != null) {
-            return false;
-        }
-        if (project != null ? !project.equals(that.project) : that.project != null) {
-            return false;
-        }
-        return !(version != null ? !version.equals(that.version) : that.version != null);
-
+        final ComposerDependency other = (ComposerDependency) obj;
+        return new EqualsBuilder()
+                .append(group, other.group)
+                .append(project, other.project)
+                .append(version, other.version)
+                .build();
     }
 
     @Override
     public int hashCode() {
-        int result = group != null ? group.hashCode() : 0;
-        result = 31 * result + (project != null ? project.hashCode() : 0);
-        result = 31 * result + (version != null ? version.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder(103, 199)
+                .append(group)
+                .append(project)
+                .append(version)
+                .toHashCode();
     }
 }

@@ -24,6 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -134,11 +135,11 @@ public class DependencyVersion implements Iterable<String>, Comparable<Dependenc
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (obj == null || !(obj instanceof DependencyVersion)) {
             return false;
         }
-        if (!(obj instanceof DependencyVersion)) {
-            return false;
+        if (this == obj) {
+            return true;
         }
         final DependencyVersion other = (DependencyVersion) obj;
         final int minVersionMatchLength = (this.versionParts.size() < other.versionParts.size())
@@ -189,9 +190,9 @@ public class DependencyVersion implements Iterable<String>, Comparable<Dependenc
      */
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 71 * hash + (this.versionParts != null ? this.versionParts.hashCode() : 0);
-        return hash;
+        return new HashCodeBuilder(5, 71)
+                .append(versionParts)
+                .toHashCode();
     }
 
     /**

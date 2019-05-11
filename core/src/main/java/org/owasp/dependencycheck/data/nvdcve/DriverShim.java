@@ -17,6 +17,8 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -173,9 +175,9 @@ class DriverShim implements Driver {
      */
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 97 * hash + (this.driver != null ? this.driver.hashCode() : 0);
-        return hash;
+        return new HashCodeBuilder(7, 97)
+                .append(driver)
+                .toHashCode();
     }
 
     /**
@@ -186,14 +188,16 @@ class DriverShim implements Driver {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (obj == null || !(obj instanceof DriverShim)) {
             return false;
         }
-        if (!(obj instanceof DriverShim)) {
-            return false;
+        if (this == obj) {
+            return true;
         }
-        final DriverShim other = (DriverShim) obj;
-        return this.driver == other.driver || (this.driver != null && this.driver.equals(other.driver));
+        final DriverShim rhs = (DriverShim) obj;
+        return new EqualsBuilder()
+                .append(driver, rhs.driver)
+                .isEquals();
     }
 
     /**

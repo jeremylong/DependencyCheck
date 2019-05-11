@@ -38,6 +38,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.document.Document;
@@ -1117,10 +1118,10 @@ public class CPEAnalyzer extends AbstractAnalyzer {
          */
         @Override
         public int hashCode() {
-            int hash = 5;
-            hash = 97 * hash + (this.identifierConfidence != null ? this.identifierConfidence.hashCode() : 0);
-            hash = 97 * hash + (this.identifier != null ? this.identifier.hashCode() : 0);
-            return hash;
+            return new HashCodeBuilder(115, 303)
+                    .append(identifierConfidence)
+                    .append(identifier)
+                    .toHashCode();
         }
 
         /**
@@ -1134,9 +1135,11 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             if (obj == null || !(obj instanceof IdentifierMatch)) {
                 return false;
             }
+            if (this == obj) {
+                return true;
+            }
             final IdentifierMatch other = (IdentifierMatch) obj;
             return new EqualsBuilder()
-                    .appendSuper(super.equals(obj))
                     .append(identifierConfidence, other.identifierConfidence)
                     .append(identifier, other.identifier)
                     .build();

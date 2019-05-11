@@ -232,7 +232,7 @@ public class PurlIdentifier implements Identifier {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
+        return new HashCodeBuilder(93,187)
                 .append(this.purl)
                 .append(this.confidence)
                 .append(this.url)
@@ -242,19 +242,17 @@ public class PurlIdentifier implements Identifier {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (obj == null || !(obj instanceof PurlIdentifier)) {
             return false;
         }
-        if (obj == this) {
+        if (this == obj) {
             return true;
-        }
-        if (!(obj instanceof PurlIdentifier)) {
-            return false;
         }
         final PurlIdentifier other = (PurlIdentifier) obj;
         return new EqualsBuilder().append(purl, other.purl)
                 .append(this.confidence, other.confidence)
                 .append(this.url, other.url)
-                .append(this.notes, other.notes).isEquals();
+                .append(this.notes, other.notes)
+                .isEquals();
     }
 }

@@ -23,6 +23,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
@@ -160,7 +161,6 @@ public class IndexEntry implements Serializable {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(5, 27)
-                .appendSuper(super.hashCode())
                 .append(documentId)
                 .append(vendor)
                 .append(product)
@@ -170,17 +170,17 @@ public class IndexEntry implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (obj == null || !(obj instanceof IndexEntry)) {
             return false;
         }
-        if (!(obj instanceof IndexEntry)) {
-            return false;
+        if (this == obj) {
+            return true;
         }
-        final IndexEntry other = (IndexEntry) obj;
-        if ((this.vendor == null) ? (other.vendor != null) : !this.vendor.equals(other.vendor)) {
-            return false;
-        }
-        return !((this.product == null) ? (other.product != null) : !this.product.equals(other.product));
+        final IndexEntry rhs = (IndexEntry) obj;
+        return new EqualsBuilder()
+                .append(vendor, rhs.vendor)
+                .append(product, rhs.product)
+                .isEquals();
     }
 
     /**

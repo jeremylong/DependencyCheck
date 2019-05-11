@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.data.nuget;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Represents a reference to a NuGet package and version.
  *
@@ -74,16 +77,18 @@ public class NugetPackageReference {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-        if (other == null || !(other instanceof NugetPackageReference)) {
+    public boolean equals(Object obj) {
+        if (obj == null || !(obj instanceof NugetPackageReference)) {
             return false;
         }
-        final NugetPackageReference o = (NugetPackageReference) other;
-        return o.getId().equals(id)
-                && o.getVersion().equals(version);
+        if (this == obj) {
+            return true;
+        }
+        final NugetPackageReference rhs = (NugetPackageReference) obj;
+        return new EqualsBuilder()
+                .append(id, rhs.id)
+                .append(version, rhs.version)
+                .isEquals();
     }
 
     /**
@@ -91,9 +96,9 @@ public class NugetPackageReference {
      */
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 31 * hash + (null == id ? 0 : id.hashCode());
-        hash = 31 * hash + (null == version ? 0 : version.hashCode());
-        return hash;
+        return new HashCodeBuilder(7, 89)
+                .append(id)
+                .append(version)
+                .toHashCode();
     }
 }

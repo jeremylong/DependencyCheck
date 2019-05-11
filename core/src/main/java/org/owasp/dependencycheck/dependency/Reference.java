@@ -20,6 +20,8 @@ package org.owasp.dependencycheck.dependency;
 import java.io.Serializable;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -109,29 +111,27 @@ public class Reference implements Serializable, Comparable<Reference> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (obj == null || !(obj instanceof Reference)) {
             return false;
         }
-        if (!(obj instanceof Reference)) {
-            return false;
+        if (this == obj) {
+            return true;
         }
-        final Reference other = (Reference) obj;
-        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
-            return false;
-        }
-        if ((this.url == null) ? (other.url != null) : !this.url.equals(other.url)) {
-            return false;
-        }
-        return !((this.source == null) ? (other.source != null) : !this.source.equals(other.source));
+        final Reference rhs = (Reference) obj;
+        return new EqualsBuilder()
+                .append(source, rhs.source)
+                .append(name, rhs.name)
+                .append(url, rhs.url)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 67 * hash + (this.name != null ? this.name.hashCode() : 0);
-        hash = 67 * hash + (this.url != null ? this.url.hashCode() : 0);
-        hash = 67 * hash + (this.source != null ? this.source.hashCode() : 0);
-        return hash;
+        return new HashCodeBuilder(5, 67)
+                .append(source)
+                .append(name)
+                .append(url)
+                .toHashCode();
     }
 
     /**

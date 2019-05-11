@@ -390,9 +390,11 @@ class EvidenceCollection implements Serializable {
         if (obj == null || !(obj instanceof EvidenceCollection)) {
             return false;
         }
+        if (this == obj) {
+            return true;
+        }
         final EvidenceCollection other = (EvidenceCollection) obj;
         return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
                 .append(this.vendors, other.vendors)
                 .append(this.vendorWeightings, other.vendorWeightings)
                 .append(this.products, other.products)

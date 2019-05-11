@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+
 import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
 import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
 import org.owasp.dependencycheck.dependency.naming.Identifier;
@@ -186,9 +187,9 @@ public class Dependency extends EvidenceCollection implements Serializable {
     /**
      * Constructs a new Dependency object.
      *
-     * @param file the File to create the dependency object from.
+     * @param file      the File to create the dependency object from.
      * @param isVirtual specifies if the dependency is virtual indicating the
-     * file doesn't actually exist.
+     *                  file doesn't actually exist.
      */
     public Dependency(File file, boolean isVirtual) {
         this();
@@ -221,7 +222,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * Constructs a new Dependency object.
      *
      * @param isVirtual specifies if the dependency is virtual indicating the
-     * file doesn't actually exist.
+     *                  file doesn't actually exist.
      */
     public Dependency(boolean isVirtual) {
         this();
@@ -506,9 +507,9 @@ public class Dependency extends EvidenceCollection implements Serializable {
     /**
      * Adds the Maven artifact as evidence.
      *
-     * @param source The source of the evidence
+     * @param source        The source of the evidence
      * @param mavenArtifact The Maven artifact
-     * @param confidence The confidence level of this evidence
+     * @param confidence    The confidence level of this evidence
      */
     public void addAsEvidence(String source, MavenArtifact mavenArtifact, Confidence confidence) {
         if (mavenArtifact.getGroupId() != null && !mavenArtifact.getGroupId().isEmpty()) {
@@ -835,6 +836,9 @@ public class Dependency extends EvidenceCollection implements Serializable {
         if (obj == null || !(obj instanceof Dependency)) {
             return false;
         }
+        if (this == obj) {
+            return true;
+        }
         final Dependency other = (Dependency) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
@@ -946,10 +950,9 @@ public class Dependency extends EvidenceCollection implements Serializable {
          *
          * @param file the source for the checksum
          * @return the string representation of the checksum
-         * @throws IOException thrown if there is an I/O error
+         * @throws IOException              thrown if there is an I/O error
          * @throws NoSuchAlgorithmException thrown if the algorithm is not found
          */
         String hash(File file) throws IOException, NoSuchAlgorithmException;
     }
-
 }

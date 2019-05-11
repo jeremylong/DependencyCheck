@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.xml.suppression;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.regex.Pattern;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -48,7 +51,6 @@ public class PropertyType {
      * Gets the value of the value property.
      *
      * @return the value of the value property
-     *
      */
     public String getValue() {
         return value;
@@ -67,7 +69,6 @@ public class PropertyType {
      * Returns whether or not the value is a regex.
      *
      * @return true if the value is a regex, otherwise false
-     *
      */
     public boolean isRegex() {
         return regex;
@@ -77,7 +78,6 @@ public class PropertyType {
      * Sets whether the value property is a regex.
      *
      * @param value true if the value is a regex, otherwise false
-     *
      */
     public void setRegex(boolean value) {
         this.regex = value;
@@ -87,7 +87,6 @@ public class PropertyType {
      * Gets the value of the caseSensitive property.
      *
      * @return true if the value is case sensitive
-     *
      */
     public boolean isCaseSensitive() {
         return caseSensitive;
@@ -97,7 +96,6 @@ public class PropertyType {
      * Sets the value of the caseSensitive property.
      *
      * @param value whether the value is case sensitive
-     *
      */
     public void setCaseSensitive(boolean value) {
         this.caseSensitive = value;
@@ -133,6 +131,7 @@ public class PropertyType {
     }
 
     //<editor-fold defaultstate="collapsed" desc="standard implementations of hashCode, equals, and toString">
+
     /**
      * Default implementation of hashCode.
      *
@@ -140,11 +139,11 @@ public class PropertyType {
      */
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 59 * hash + (this.value != null ? this.value.hashCode() : 0);
-        hash = 59 * hash + (this.regex ? 1 : 0);
-        hash = 59 * hash + (this.caseSensitive ? 1 : 0);
-        return hash;
+        return new HashCodeBuilder(3, 59)
+                .append(value)
+                .append(regex)
+                .append(caseSensitive)
+                .toHashCode();
     }
 
     /**
@@ -155,20 +154,18 @@ public class PropertyType {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (obj == null || !(obj instanceof PropertyType)) {
             return false;
         }
-        if (!(obj instanceof PropertyType)) {
-            return false;
+        if (this == obj) {
+            return true;
         }
-        final PropertyType other = (PropertyType) obj;
-        if ((this.value == null) ? (other.value != null) : !this.value.equals(other.value)) {
-            return false;
-        }
-        if (this.regex != other.regex) {
-            return false;
-        }
-        return this.caseSensitive == other.caseSensitive;
+        final PropertyType rhs = (PropertyType) obj;
+        return new EqualsBuilder()
+                .append(value, rhs.value)
+                .append(regex, rhs.regex)
+                .append(caseSensitive, rhs.caseSensitive)
+                .isEquals();
     }
 
     /**

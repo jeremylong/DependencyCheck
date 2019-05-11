@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.xml.pom;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
@@ -96,10 +99,10 @@ public class License {
      */
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 89 * hash + (this.url != null ? this.url.hashCode() : 0);
-        hash = 89 * hash + (this.name != null ? this.name.hashCode() : 0);
-        return hash;
+        return new HashCodeBuilder(13, 49)
+                .append(name)
+                .append(url)
+                .toHashCode();
     }
 
     /**
@@ -110,17 +113,17 @@ public class License {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (obj == null || !(obj instanceof License)) {
             return false;
         }
-        if (!(obj instanceof License)) {
-            return false;
+        if (this == obj) {
+            return true;
         }
-        final License other = (License) obj;
-        if ((this.url == null) ? (other.url != null) : !this.url.equals(other.url)) {
-            return false;
-        }
-        return !((this.name == null) ? (other.name != null) : !this.name.equals(other.name));
+        final License rhs = (License) obj;
+        return new EqualsBuilder()
+                .append(name, rhs.name)
+                .append(url, rhs.url)
+                .isEquals();
     }
 
     /**

@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.data.nuget;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
@@ -120,29 +123,30 @@ public class NugetPackage extends NugetPackageReference {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-        if (other == null || !(other instanceof NugetPackage)) {
+    public boolean equals(Object obj) {
+        if (obj == null || !(obj instanceof NugetPackage)) {
             return false;
         }
-        final NugetPackage o = (NugetPackage) other;
-        return super.equals(this)
-                && o.getTitle().equals(title)
-                && o.getAuthors().equals(authors)
-                && o.getOwners().equals(owners)
-                && o.getLicenseUrl().equals(licenseUrl);
+        if (this == obj) {
+            return true;
+        }
+        final NugetPackage rhs = (NugetPackage) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(title, rhs.title)
+                .append(authors, rhs.authors)
+                .append(owners, rhs.owners)
+                .append(licenseUrl, rhs.licenseUrl)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 31 * hash + super.hashCode();
-        hash = 31 * hash + (null == title ? 0 : title.hashCode());
-        hash = 31 * hash + (null == authors ? 0 : authors.hashCode());
-        hash = 31 * hash + (null == owners ? 0 : owners.hashCode());
-        hash = 31 * hash + (null == licenseUrl ? 0 : licenseUrl.hashCode());
-        return hash;
+        return new HashCodeBuilder(33, 87)
+                .append(title)
+                .append(authors)
+                .append(owners)
+                .append(licenseUrl)
+                .toHashCode();
     }
 }

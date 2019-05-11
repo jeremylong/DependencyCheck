@@ -117,7 +117,7 @@ public final class AlphaNumericFilter extends AbstractTokenizingFilter {
      */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(13, 27)
+        return new HashCodeBuilder(13, 103)
                 .appendSuper(super.hashCode())
                 .append(posIncrementAttribute)
                 .append(skipCounter)
@@ -131,6 +131,9 @@ public final class AlphaNumericFilter extends AbstractTokenizingFilter {
     public boolean equals(Object obj) {
         if (obj == null || !(obj instanceof AlphaNumericFilter)) {
             return false;
+        }
+        if (this == obj) {
+            return true;
         }
         final AlphaNumericFilter rhs = (AlphaNumericFilter) obj;
         return new EqualsBuilder()

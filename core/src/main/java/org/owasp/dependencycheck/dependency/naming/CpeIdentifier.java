@@ -61,7 +61,7 @@ public class CpeIdentifier implements Identifier {
      * Constructs a new CPE Identifier from a CPE object with the given
      * confidence.
      *
-     * @param cpe the CPE value
+     * @param cpe        the CPE value
      * @param confidence the confidence in the identifiers match
      */
     public CpeIdentifier(Cpe cpe, Confidence confidence) {
@@ -74,8 +74,8 @@ public class CpeIdentifier implements Identifier {
      * Constructs a new CPE Identifier from a CPE object with the given
      * confidence.
      *
-     * @param cpe the CPE value
-     * @param url the URL for the identifier
+     * @param cpe        the CPE value
+     * @param url        the URL for the identifier
      * @param confidence the confidence in the identifiers match
      */
     public CpeIdentifier(Cpe cpe, String url, Confidence confidence) {
@@ -88,12 +88,12 @@ public class CpeIdentifier implements Identifier {
      * Constructs a new CPE Identifier from a CPE object with the given
      * confidence.
      *
-     * @param vendor the vendor
-     * @param product the product name
-     * @param version the version
+     * @param vendor     the vendor
+     * @param product    the product name
+     * @param version    the version
      * @param confidence the confidence in the identifiers match
      * @throws CpeValidationException thrown if there is an error converting the
-     * vendor, product, and version into a CPE object
+     *                                vendor, product, and version into a CPE object
      */
     public CpeIdentifier(String vendor, String product, String version, Confidence confidence) throws CpeValidationException {
         final CpeBuilder builder = new CpeBuilder();
@@ -163,7 +163,7 @@ public class CpeIdentifier implements Identifier {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
+        return new HashCodeBuilder(95,183)
                 .append(this.cpe)
                 .append(this.confidence)
                 .append(this.url)
@@ -173,14 +173,11 @@ public class CpeIdentifier implements Identifier {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (obj == null || !(obj instanceof CpeIdentifier)) {
             return false;
         }
-        if (obj == this) {
+        if (this == obj) {
             return true;
-        }
-        if (!(obj instanceof CpeIdentifier)) {
-            return false;
         }
         final CpeIdentifier other = (CpeIdentifier) obj;
         return new EqualsBuilder().append(cpe, other.cpe)
