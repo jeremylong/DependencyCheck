@@ -41,9 +41,17 @@ import java.net.URL;
  * @since 5.0.0
  */
 public class OssindexClientFactory {
+
     static {
         // prefer pkg scheme vs scheme-less variant
         PackageUrl.RenderFlavor.setDefault(RenderFlavor.SCHEME);
+    }
+
+    /**
+     * Private constructor for utility class.
+     */
+    private OssindexClientFactory() {
+        //private constructor for utility class
     }
 
     /**
@@ -56,7 +64,6 @@ public class OssindexClientFactory {
         final OssindexClientConfiguration config = new OssindexClientConfiguration();
 
         // TODO: optionally expose more settings for things like cache, etc.
-
         final String baseUrl = settings.getString(Settings.KEYS.ANALYZER_OSSINDEX_URL, null);
         if (baseUrl != null) {
             config.setBaseUrl(baseUrl);
@@ -77,7 +84,6 @@ public class OssindexClientFactory {
                 connection.setRequestProperty("User-Agent", userAgent.get());
 
                 // TODO: optionally configure authentication
-
                 return connection;
             }
         };

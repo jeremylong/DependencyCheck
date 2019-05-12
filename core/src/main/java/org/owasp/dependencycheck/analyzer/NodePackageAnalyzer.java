@@ -255,7 +255,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                 final File base = Paths.get(baseDir.getPath(), "node_modules", name).toFile();
                 final File f = new File(base, PACKAGE_JSON);
 
-                if(optional && !f.exists()){
+                if (optional && !f.exists()) {
                     LOGGER.warn("node module {} seems optional and not installed, skip it", name);
                     continue;
                 }

@@ -63,7 +63,6 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * The ReportGenerator is used to, as the name implies, generate reports.
@@ -420,14 +419,14 @@ public class ReportGenerator {
         final File in = new File(path);
         final File out = new File(outputPath);
         try {
-            TransformerFactory transformerFactory = SAXTransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
+            final TransformerFactory transformerFactory = SAXTransformerFactory.newInstance();
+            final Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
-            SAXSource saxs = new SAXSource(new InputSource(path));
-            XMLReader saxReader = XmlUtils.buildSecureSaxParser().getXMLReader();
+            final SAXSource saxs = new SAXSource(new InputSource(path));
+            final XMLReader saxReader = XmlUtils.buildSecureSaxParser().getXMLReader();
 
             saxs.setXMLReader(saxReader);
             transformer.transform(saxs, new StreamResult(new OutputStreamWriter(new FileOutputStream(out), "utf-8")));

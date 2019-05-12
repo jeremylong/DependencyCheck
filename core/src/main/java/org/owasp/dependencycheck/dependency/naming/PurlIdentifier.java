@@ -232,7 +232,7 @@ public class PurlIdentifier implements Identifier {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(93,187)
+        return new HashCodeBuilder(93, 187)
                 .append(this.purl)
                 .append(this.confidence)
                 .append(this.url)

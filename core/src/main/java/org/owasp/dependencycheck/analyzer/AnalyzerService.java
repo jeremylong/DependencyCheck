@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.ServiceLoader;
 import javax.annotation.concurrent.ThreadSafe;
 
-import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
