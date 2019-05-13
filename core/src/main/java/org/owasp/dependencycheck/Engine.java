@@ -36,7 +36,6 @@ import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.exception.NoDataException;
 import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
-import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
