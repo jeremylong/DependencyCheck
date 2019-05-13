@@ -747,7 +747,7 @@ public class Engine implements FileFilter, AutoCloseable {
     private void throwFatalDatabaseException(DatabaseException ex, final List<Throwable> exceptions) throws ExceptionCollection {
         final String msg;
         if (ex.getMessage().contains("Unable to connect") && ConnectionFactory.isH2Connection(settings)) {
-            msg = "Unable to update connect to the database - if this error persists it may be "
+            msg = "Unable to connect to the database - if this error persists it may be "
                     + "due to a corrupt database. Consider running `purge` to delete the existing database";
         } else {
             msg = "Unable to connect to the dependency-check database";

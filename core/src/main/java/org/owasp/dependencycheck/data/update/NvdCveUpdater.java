@@ -128,7 +128,8 @@ public class NvdCveUpdater implements CachedWebDataSource {
                     performUpdate(updateable);
                     updatesMade = true;
                 }
-                dbProperties.save(DatabaseProperties.LAST_CHECKED, Long.toString(System.currentTimeMillis()));
+                //all dates in the db are now stored in seconds as opposed to previously milliseconds.
+                dbProperties.save(DatabaseProperties.LAST_CHECKED, Long.toString(System.currentTimeMillis() / 1000));
             }
         } catch (MalformedURLException ex) {
             throw new UpdateException("NVD CVE properties files contain an invalid URL, unable to update the data to use the most current data.", ex);
@@ -217,13 +218,13 @@ public class NvdCveUpdater implements CachedWebDataSource {
         final int validForHours = settings.getInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, 0);
         if (dataExists() && 0 < validForHours) {
             // ms Valid = valid (hours) x 60 min/hour x 60 sec/min x 1000 ms/sec
-            final long msValid = validForHours * 60L * 60L * 1000L;
-            final long lastChecked = Long.parseLong(dbProperties.getProperty(DatabaseProperties.LAST_CHECKED, "0"));
-            final long now = System.currentTimeMillis();
-            proceed = (now - lastChecked) > msValid;
+            final long validForSeconds = validForHours * 60L * 60L;
+            final long lastChecked = getPropertyInSeconds(DatabaseProperties.LAST_CHECKED);
+            final long now = System.currentTimeMillis() / 1000;
+            proceed = (now - lastChecked) > validForSeconds;
             if (!proceed) {
                 LOGGER.info("Skipping NVD check since last check was within {} hours.", validForHours);
-                LOGGER.debug("Last NVD was at {}, and now {} is within {} ms.", lastChecked, now, msValid);
+                LOGGER.debug("Last NVD was at {}, and now {} is within {} s.", lastChecked, now, validForSeconds);
             }
         }
         return proceed;
@@ -392,9 +393,8 @@ public class NvdCveUpdater implements CachedWebDataSource {
                         break;
                     }
                 }
-
-                final long lastUpdated = Long.parseLong(dbProperties.getProperty(DatabaseProperties.LAST_UPDATED, "0"));
-                final long now = System.currentTimeMillis();
+                long lastUpdated = getPropertyInSeconds(DatabaseProperties.LAST_UPDATED);
+                final long now = System.currentTimeMillis() / 1000;
                 final int days = settings.getInt(Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS, 7);
 
                 String url = settings.getString(Settings.KEYS.CVE_MODIFIED_JSON);
@@ -411,14 +411,8 @@ public class NvdCveUpdater implements CachedWebDataSource {
                         for (int i = start; i <= end; i++) {
                             url = String.format(baseUrl, i);
                             final MetaProperties meta = getMetaFile(url);
-                            long currentTimestamp = 0;
-                            try {
-                                currentTimestamp = Long.parseLong(dbProperties.getProperty(DatabaseProperties.LAST_UPDATED_BASE
-                                        + i, "0"));
-                            } catch (NumberFormatException ex) {
-                                LOGGER.debug("Error parsing '{}' '{}' from nvdcve.lastupdated",
-                                        DatabaseProperties.LAST_UPDATED_BASE, i, ex);
-                            }
+                            final long currentTimestamp = getPropertyInSeconds(DatabaseProperties.LAST_UPDATED_BASE + i);
+
                             if (currentTimestamp < meta.getLastModifiedDate()) {
                                 updates.add(Integer.toString(i), url, meta.getLastModifiedDate(), true);
                             }
@@ -434,6 +428,19 @@ public class NvdCveUpdater implements CachedWebDataSource {
         }
         return updates;
     }
+
+    /**
+     * Returns the database property value in seconds.
+     *
+     * @param key the key to the property
+     * @return the property value in seconds
+     */
+    private long getPropertyInSeconds(String key) {
+        String value = dbProperties.getProperty(key, "0");
+        return DateUtil.getEpochValueInSeconds(value);
+    }
+
+
 
     /**
      * Retrieves the timestamps from the NVD CVE by checking the last modified

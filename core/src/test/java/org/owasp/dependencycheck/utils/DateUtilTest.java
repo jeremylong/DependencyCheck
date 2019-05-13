@@ -36,14 +36,14 @@ public class DateUtilTest extends BaseTest {
     public void testWithinDateRange() {
         Calendar c = Calendar.getInstance();
 
-        long current = c.getTimeInMillis();
-        long lastRun = c.getTimeInMillis() - (3 * (1000 * 60 * 60 * 24));
+        long current = c.getTimeInMillis() / 1000;
+        long lastRun = current - (3 * (60 * 60 * 24));
         int range = 7; // 7 days
         boolean expResult = true;
         boolean result = DateUtil.withinDateRange(lastRun, current, range);
         assertEquals(expResult, result);
 
-        lastRun = c.getTimeInMillis() - (8 * (1000 * 60 * 60 * 24));
+        lastRun = c.getTimeInMillis() / 1000 - (8 * (60 * 60 * 24));
         expResult = false;
         result = DateUtil.withinDateRange(lastRun, current, range);
         assertEquals(expResult, result);
@@ -51,6 +51,7 @@ public class DateUtilTest extends BaseTest {
 
     /**
      * Test of parseXmlDate method, of class DateUtil.
+     *
      * @throws ParseException thrown when there is a parse error
      */
     @Test
@@ -61,6 +62,24 @@ public class DateUtilTest extends BaseTest {
         //month is zero based.
         assertEquals(0, result.get(Calendar.MONTH));
         assertEquals(2, result.get(Calendar.DATE));
+    }
+
+    @Test
+    public void testGetEpochValueInSeconds() throws ParseException {
+        String milliseconds = "1550538553466";
+        long expected = 1550538553;
+        long result = DateUtil.getEpochValueInSeconds(milliseconds);
+        assertEquals(expected, result);
+
+        milliseconds = "blahblahblah";
+        expected = 0;
+        result = DateUtil.getEpochValueInSeconds(milliseconds);
+        assertEquals(expected, result);
+
+        milliseconds = "1550538553";
+        expected = 1550538553;
+        result = DateUtil.getEpochValueInSeconds(milliseconds);
+        assertEquals(expected, result);
     }
 
 }
