@@ -75,8 +75,8 @@ public class EngineVersionCheckTest extends BaseTest {
         String updateToVersion = "1.2.6";
         String currentVersion = "1.2.6";
 
-        long lastChecked = dateToMilliseconds("2014-12-01");
-        long now = dateToMilliseconds("2014-12-01");
+        long lastChecked = dateToSeconds("2014-12-01");
+        long now = dateToSeconds("2014-12-01");
 
         EngineVersionCheck instance = new EngineVersionCheck(getSettings());
         boolean expResult = false;
@@ -86,8 +86,8 @@ public class EngineVersionCheckTest extends BaseTest {
 
         updateToVersion = "1.2.5";
         currentVersion = "1.2.5";
-        lastChecked = dateToMilliseconds("2014-10-01");
-        now = dateToMilliseconds("2014-12-01");
+        lastChecked = dateToSeconds("2014-10-01");
+        now = dateToSeconds("2014-12-01");
         expResult = true;
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, dbProperties, currentVersion);
@@ -96,8 +96,8 @@ public class EngineVersionCheckTest extends BaseTest {
 
         updateToVersion = "1.2.5";
         currentVersion = "1.2.5";
-        lastChecked = dateToMilliseconds("2014-12-01");
-        now = dateToMilliseconds("2014-12-03");
+        lastChecked = dateToSeconds("2014-12-01");
+        now = dateToSeconds("2014-12-03");
         expResult = false;
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, dbProperties, currentVersion);
@@ -105,8 +105,8 @@ public class EngineVersionCheckTest extends BaseTest {
 
         updateToVersion = "1.2.6";
         currentVersion = "1.2.5";
-        lastChecked = dateToMilliseconds("2014-12-01");
-        now = dateToMilliseconds("2014-12-03");
+        lastChecked = dateToSeconds("2014-12-01");
+        now = dateToSeconds("2014-12-03");
         expResult = true;
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, dbProperties, currentVersion);
@@ -114,8 +114,8 @@ public class EngineVersionCheckTest extends BaseTest {
 
         updateToVersion = "1.2.5";
         currentVersion = "1.2.6";
-        lastChecked = dateToMilliseconds("2014-12-01");
-        now = dateToMilliseconds("2014-12-08");
+        lastChecked = dateToSeconds("2014-12-01");
+        now = dateToSeconds("2014-12-08");
         expResult = false;
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, dbProperties, currentVersion);
@@ -123,8 +123,8 @@ public class EngineVersionCheckTest extends BaseTest {
 
         updateToVersion = "";
         currentVersion = "1.2.5";
-        lastChecked = dateToMilliseconds("2014-12-01");
-        now = dateToMilliseconds("2014-12-03");
+        lastChecked = dateToSeconds("2014-12-01");
+        now = dateToSeconds("2014-12-03");
         expResult = false;
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, dbProperties, currentVersion);
@@ -132,8 +132,8 @@ public class EngineVersionCheckTest extends BaseTest {
 
         updateToVersion = "";
         currentVersion = "1.2.5";
-        lastChecked = dateToMilliseconds("2014-12-01");
-        now = dateToMilliseconds("2015-12-08");
+        lastChecked = dateToSeconds("2014-12-01");
+        now = dateToSeconds("2015-12-08");
         expResult = true;
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, dbProperties, currentVersion);
@@ -156,11 +156,11 @@ public class EngineVersionCheckTest extends BaseTest {
      * Converts a date in the form of yyyy-MM-dd into the epoch milliseconds.
      *
      * @param date a date in the format of yyyy-MM-dd
-     * @return milliseconds
+     * @return seconds
      */
-    private long dateToMilliseconds(String date) {
+    private long dateToSeconds(String date) {
         TemporalAccessor ta = DateTimeFormatter.ISO_LOCAL_DATE.parse(date);
-        return 1000 * LocalDate.from(ta).atStartOfDay(ZoneId.systemDefault()).toEpochSecond();
+        return LocalDate.from(ta).atStartOfDay(ZoneId.systemDefault()).toEpochSecond();
     }
 
 }
