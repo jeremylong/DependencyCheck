@@ -70,12 +70,14 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * Used when compiling file scanning regex patterns.
      */
     private static final int REGEX_OPTIONS = Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE;
-
+    /**
+     * Regex to obtain the project version.
+     */
+    private static final Pattern PROJECT_VERSION = Pattern.compile("^\\s*set\\s*\\(\\s*VERSION\\s*\"([^\"]*)\"\\)", REGEX_OPTIONS);
     /**
      * Regex to extract the product information.
      */
-    private static final Pattern PROJECT = Pattern.compile(
-            "^ *project *\\([ \\n]*(\\w+)[ \\n]*.*?\\)", REGEX_OPTIONS);
+    private static final Pattern PROJECT = Pattern.compile("^ *project *\\([ \\n]*(\\w+)[ \\n]*.*?\\)", REGEX_OPTIONS);
 
     /**
      * Regex to extract product and version information.
@@ -84,8 +86,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * Group 2: Version
      */
-    private static final Pattern SET_VERSION = Pattern.compile(
-            "^ *set\\s*\\(\\s*(\\w+)_version\\s+\"?(\\d+(?:\\.\\d+)+)[\\s\"]?\\)", REGEX_OPTIONS);
+    private static final Pattern SET_VERSION = Pattern.compile("^ *set\\s*\\(\\s*(\\w+)_version\\s+\"?(\\d+(?:\\.\\d+)+)[\\s\"]?\\)", REGEX_OPTIONS);
 
     /**
      * Detects files that can be analyzed.
@@ -169,7 +170,23 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 dependency.addEvidence(EvidenceType.VENDOR, name, "Project", group, Confidence.HIGH);
                 dependency.setName(group);
             }
+            if (count > 0) {
+                dependency.addEvidence(EvidenceType.VENDOR, "CmakeAnalyzer", "hint", "gnu", Confidence.MEDIUM);
+            }
             LOGGER.debug("Found {} matches.", count);
+            final Matcher mVersion = PROJECT_VERSION.matcher(contents);
+            count = 0;
+            while (mVersion.find()) {
+                count++;
+                LOGGER.debug(String.format(
+                        "Found set version command match with %d groups: %s",
+                        mVersion.groupCount(), mVersion.group(0)));
+                final String group = mVersion.group(1);
+                LOGGER.debug("Group 1: {}", group);
+                dependency.addEvidence(EvidenceType.VERSION, name, "VERSION", group, Confidence.HIGH);
+                dependency.setVersion(group);
+            }
+
             analyzeSetVersionCommand(dependency, engine, contents);
         }
     }
@@ -201,7 +218,6 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 product = product.replaceFirst(aliasPrefix, "");
             }
             if (count > 1) {
-                //TODO - refactor so we do not assign to the parameter (checkstyle)
                 currentDep = new Dependency(dependency.getActualFile());
                 currentDep.setEcosystem(DEPENDENCY_ECOSYSTEM);
                 final String filePath = String.format("%s:%s", dependency.getFilePath(), product);
@@ -216,8 +232,12 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
             currentDep.addEvidence(EvidenceType.PRODUCT, source, "Product", product, Confidence.MEDIUM);
             currentDep.addEvidence(EvidenceType.VENDOR, source, "Vendor", product, Confidence.MEDIUM);
             currentDep.addEvidence(EvidenceType.VERSION, source, "Version", version, Confidence.MEDIUM);
-            currentDep.setName(product);
-            currentDep.setVersion(version);
+            if (StringUtils.isEmpty(currentDep.getName())) {
+                currentDep.setName(product);
+            }
+            if (StringUtils.isEmpty(currentDep.getVersion())) {
+                currentDep.setVersion(version);
+            }
         }
         LOGGER.debug("Found {} matches.", count);
     }

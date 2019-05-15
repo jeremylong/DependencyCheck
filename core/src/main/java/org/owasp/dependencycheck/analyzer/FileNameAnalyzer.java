@@ -58,7 +58,8 @@ public class FileNameAnalyzer extends AbstractAnalyzer {
         "packages.config",
         "Package.swift",
         "classes.jar",
-        "build.gradle"}, IOCase.INSENSITIVE);
+        "build.gradle",
+        "CMakeLists.txt"}, IOCase.INSENSITIVE);
     //CSON: WhitespaceAfter
 
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
