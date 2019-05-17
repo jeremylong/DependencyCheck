@@ -23,17 +23,14 @@ import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Evidence;
-import org.owasp.dependencycheck.dependency.EvidenceType;
-import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.utils.Settings;
 import java.io.File;
-import static org.hamcrest.CoreMatchers.is;
+import java.util.List;
 import static org.junit.Assert.*;
 import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.data.update.RetireJSDataSource;
 
-public class RetireJsAnalyzerFilters extends BaseDBTestCase {
+public class RetireJsAnalyzerFiltersTest extends BaseDBTestCase {
 
     private RetireJsAnalyzer analyzer;
     private Engine engine;
@@ -42,16 +39,17 @@ public class RetireJsAnalyzerFilters extends BaseDBTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
+        String[] filter = {"jQuery JavaScript Library"};
+        getSettings().setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, filter);
+        getSettings().setBoolean(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, true);
+
         engine = new Engine(getSettings());
         engine.openDatabase(true, true);
         RetireJSDataSource ds = new RetireJSDataSource();
         ds.update(engine);
         analyzer = new RetireJsAnalyzer();
         analyzer.setFilesMatched(true);
-        String[] filter = {"jQuery JavaScript Library v"};
-        getSettings().setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, filter);
-        getSettings().setBoolean(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, true);
-        
+
         analyzer.initialize(getSettings());
         analyzer.prepare(engine);
     }
@@ -73,26 +71,23 @@ public class RetireJsAnalyzerFilters extends BaseDBTestCase {
     public void testFilters() throws Exception {
         //removed by filter (see setup above)
         File file = BaseTest.getResourceAsFile(this, "javascript/jquery-1.6.2.js");
-        Dependency dependency = new Dependency(file);
-        engine.addDependency(dependency);
-        assertEquals(1, engine.getDependencies().length);
-        analyzer.analyze(dependency, engine);
-        assertEquals(0, engine.getDependencies().length);
-        
+        List<Dependency> scanned = engine.scan(file);
+        assertTrue(scanned == null || scanned.isEmpty());
+
         //remove non-vulnerable
         file = BaseTest.getResourceAsFile(this, "javascript/custom.js");
-        dependency = new Dependency(file);
-        engine.addDependency(dependency);
+        scanned = engine.scan(file);
+        assertTrue(scanned.size()==1);
         assertEquals(1, engine.getDependencies().length);
-        analyzer.analyze(dependency, engine);
+        analyzer.analyze(scanned.get(0), engine);
         assertEquals(0, engine.getDependencies().length);
-        
+
         //kept because it is does not match the filter and is vulnerable
         file = BaseTest.getResourceAsFile(this, "javascript/ember.js");
-        dependency = new Dependency(file);
-        engine.addDependency(dependency);
+        scanned = engine.scan(file);
+        assertTrue(scanned.size()==1);
         assertEquals(1, engine.getDependencies().length);
-        analyzer.analyze(dependency, engine);
-        assertEquals(0, engine.getDependencies().length);
+        analyzer.analyze(scanned.get(0), engine);
+        assertEquals(1, engine.getDependencies().length);
     }
 }
