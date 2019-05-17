@@ -47,6 +47,8 @@
         #set($suiteId=$suiteId+1)
         #if($dependency.getVulnerabilities().size()==0 && $dependency.getSuppressedVulnerabilities().size()==0)
             #set($testCount=1)
+            #set($skipped=0)
+            #set($failed=0)
         #else
             #set($testCount=$dependency.getVulnerabilities().size() + $dependency.getSuppressedVulnerabilities().size())
             #set($skipped=$dependency.getSuppressedVulnerabilities().size())
@@ -66,9 +68,6 @@
             #end
         #end
     <testsuite failures="$failed" id="$suiteId" name="$enc.xml($dependency.FilePath)" package="$enc.xml($dependency.DisplayFileName)" skipped="$skipped" tests="$testCount" timestamp="$scanDateJunit">
-#        <properties>
-#            <property name="test" value="value"/>
-#        </properties>
         #if($dependency.getVulnerabilities().size()==0 && $dependency.getSuppressedVulnerabilities().size()==0)
             <testcase classname="dependency-check" name="$enc.xml($dependency.DisplayFileName)"/>
         #end
@@ -105,8 +104,6 @@
         </testcase>
         #end
         #foreach($vuln in $dependency.getSuppressedVulnerabilities())
-        <testcase classname="$enc.xml($vuln.name)" name="$enc.xml($vulnerableName)">
-            <skipped message="$enc.xml($id.notes)"/>
             #if($dependency.getSoftwareIdentifiers().size()>0)
                 #set($vulnerableName=$dependency.getSoftwareIdentifiers().toArray()[0])
             #elseif ($vuln.getSource().name().equals("NVD"))
@@ -117,14 +114,23 @@
             #if(! $vulnerableName)
                 #set($vulnerableName="")
             #end
-            <testcase classname="$enc.xml($vuln.name)" name="$enc.xml($vulnerableName)">
-            #if($vuln.unscoredSeverity)
-                <failure message="$enc.xml($vuln.unscoredSeverity)"/>
-            #elseif($vuln.cvssV3 && $vuln.cvssV3.baseSeverity)
-                <failure message="cvssV3: $enc.xml($vuln.cvssV3.baseSeverity), score: $enc.xml($vuln.cvssV3.baseScore) ($enc.xml($vuln.cvssV3.toString()))"/>
-            #elseif($vuln.cvssV2 && $vuln.cvssV2.severity)
-                <failure message="cvssV2: $enc.xml($vuln.cvssV2.severity), score: $enc.xml($vuln.cvssV2.score) ($enc.xml($vuln.cvssV2.toString()))"/>
+            #set($notes="")
+            #foreach($id in $dependency.getSuppressedIdentifiers())
+                #if ($id.notes)
+                    #if($notes)
+                        #set($notes=$notes + ". ")
+                    #end
+                     #set($notes=$notes + $id.notes.trim())
+                #end
             #end
+            #if ($vuln.notes)
+                #if($notes)
+                    #set($notes=$notes + ". ")
+                #end
+                #set($notes=$notes + $vuln.notes.trim())
+            #end
+        <testcase classname="$enc.xml($vuln.name)" name="$enc.xml($vulnerableName)">
+            <skipped#if($notes) message="$enc.xml($notes)"#end />
             <system-out>$enc.xml($vuln.description)</system-out>
             <system-err>location: $enc.xml($dependency.FilePath)</system-err>
         </testcase>
