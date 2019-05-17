@@ -16,7 +16,7 @@ The following table lists the command line arguments:
 |       | \-\-failOnCVSS         | \<score\>       | If the score set between 0 and 10 the exit code from dependency-check will indicate if a vulnerability with a CVSS score equal to or higher was identified. | Optional |
 | \-l   | \-\-log                | \<file\>        | The file path to write verbose logging information. | Optional |
 | \-n   | \-\-noupdate           |                 | Disables the automatic updating of the CPE data. | Optional |
-|       | \-\-suppression        | \<files\>       | The file paths to the suppression XML files; used to suppress [false positives](../general/suppression.html). This can be specified more than once to utilize multiple suppression files. | Optional |
+|       | \-\-suppression        | \<files\>       | The file paths to the suppression XML files; used to suppress [false positives](../general/suppression.html). This can be specified more than once to utilize multiple suppression files. The argument can be a local file path, a URL to a suppression file, or even a reference to a file on the class path (see https://github.com/jeremylong/DependencyCheck/issues/1878#issuecomment-487533799) | Optional |
 | \-h   | \-\-help               |                 | Print the help message. | Optional |
 |       | \-\-advancedHelp       |                 | Print the advanced help message. | Optional |
 | \-v   | \-\-version            |                 | Print the version information. | Optional |

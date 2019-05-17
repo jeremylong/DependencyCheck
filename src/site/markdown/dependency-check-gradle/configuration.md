@@ -37,8 +37,8 @@ failBuildOnCVSS      | Specifies if the build should be failed if a CVSS score e
 failOnError          | Fails the build if an error occurs during the dependency-check analysis.                                             | true
 outputDirectory      | The location to write the report(s). This directory will be located in the build directory.                          | build/reports
 skipTestGroups       | When set to true (the default) all dependency groups that being with 'test' will be skipped.                         | true
-suppressionFile      | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html)         | &nbsp;
-suppressionFiles     | A list of file paths to the XML suppression files \- used to suppress [false positives](../general/suppression.html) | &nbsp;
+suppressionFile      | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html). The configured value can be a local file path, a URL to a suppression file, or even a reference to a file on the class path (see https://github.com/jeremylong/DependencyCheck/issues/1878#issuecomment-487533799) | &nbsp;
+suppressionFiles     | A list of file paths to the XML suppression files \- used to suppress [false positives](../general/suppression.html). The configured values can be a local file path, a URL to a suppression file, or even a reference to a file on the class path (see https://github.com/jeremylong/DependencyCheck/issues/1878#issuecomment-487533799) | &nbsp;
 hintsFile            | The file path to the XML hints file \- used to resolve [false negatives](../general/hints.html)                      | &nbsp;
 skip                 | If set to true dependency-check analysis will be skipped.                                                            | false
 skipConfigurations   | A list of configurations that will be skipped. This is mutually exclusive with the scanConfigurations property.      | `[]` which means no configuration is skipped.
