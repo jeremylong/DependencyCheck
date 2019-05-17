@@ -440,58 +440,6 @@ public class NvdCveUpdater implements CachedWebDataSource {
         return DateUtil.getEpochValueInSeconds(value);
     }
 
-
-
-    /**
-     * Retrieves the timestamps from the NVD CVE by checking the last modified
-     * date.
-     *
-     * @param startYear the first year whose item to check for the timestamp
-     * @param endYear   the last year whose item to check for the timestamp
-     * @return the timestamps from the currently published NVD CVE downloads
-     * page
-     * @throws MalformedURLException   thrown if the URL for the NVD CVE data is
-     *                                 incorrect.
-     * @throws DownloadFailedException thrown if there is an error retrieving
-     *                                 the time stamps from the NVD CVE
-     */
-    @SuppressFBWarnings(justification = "This is only called from within a synchronized method", value = {"IS2_INCONSISTENT_SYNC"})
-    private Map<String, Long> retrieveLastModifiedDates(int startYear, int endYear)
-            throws MalformedURLException, DownloadFailedException {
-
-        final Set<String> urls = new HashSet<>();
-        final String baseUrl = settings.getString(Settings.KEYS.CVE_BASE_JSON);
-        for (int i = startYear; i <= endYear; i++) {
-            final String url = String.format(baseUrl, i);
-            urls.add(url);
-        }
-        urls.add(settings.getString(Settings.KEYS.CVE_MODIFIED_JSON));
-
-        final Map<String, Future<Long>> timestampFutures = new HashMap<>();
-        urls.forEach((url) -> {
-            final TimestampRetriever timestampRetriever = new TimestampRetriever(url, settings);
-            final Future<Long> future = downloadExecutorService.submit(timestampRetriever);
-            timestampFutures.put(url, future);
-        });
-
-        final Map<String, Long> lastModifiedDates = new HashMap<>();
-        for (String url : urls) {
-            final Future<Long> timestampFuture = timestampFutures.get(url);
-            final long timestamp;
-            try {
-                timestamp = timestampFuture.get(60, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new DownloadFailedException(e);
-            } catch (ExecutionException | TimeoutException e) {
-                throw new DownloadFailedException(e);
-            }
-            lastModifiedDates.put(url, timestamp);
-        }
-
-        return lastModifiedDates;
-    }
-
     /**
      * Sets the settings object; this is used during testing.
      *
@@ -499,42 +447,5 @@ public class NvdCveUpdater implements CachedWebDataSource {
      */
     protected synchronized void setSettings(Settings settings) {
         this.settings = settings;
-    }
-
-    /**
-     * Retrieves the last modified timestamp from a NVD CVE meta data file.
-     */
-    private static class TimestampRetriever implements Callable<Long> {
-
-        /**
-         * A reference to the global settings object.
-         */
-        private final Settings settings;
-        /**
-         * The URL to obtain the timestamp from.
-         */
-        private final String url;
-
-        /**
-         * Instantiates a new timestamp retriever object.
-         *
-         * @param url      the URL to hit
-         * @param settings the global settings
-         */
-        TimestampRetriever(String url, Settings settings) {
-            this.url = url;
-            this.settings = settings;
-        }
-
-        @Override
-        public Long call() throws Exception {
-            LOGGER.debug("Checking for updates from: {}", url);
-            try {
-                final HttpResourceConnection resource = new HttpResourceConnection(settings);
-                return resource.getLastModified(new URL(url));
-            } finally {
-                settings.cleanup(false);
-            }
-        }
     }
 }

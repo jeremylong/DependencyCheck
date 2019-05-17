@@ -529,10 +529,6 @@ public final class Settings {
          */
         public static final String ECOSYSTEM_SKIP_CPEANALYZER = "ecosystem.skip.cpeanalyzer";
         /**
-         * The key to determine minimum score for Lucene search matches.
-         */
-        public static final String LUCENE_MIN_SCORE_FILTER = "dependency.check.lucene.min.score";
-        /**
          * Adds capabilities to batch insert. Tested on PostgreSQL and H2.
          */
         public static final String ENABLE_BATCH_UPDATES = "database.batchinsert.enabled";

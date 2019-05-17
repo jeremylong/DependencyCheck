@@ -232,6 +232,7 @@ public class HttpResourceConnection implements AutoCloseable {
      * @throws org.owasp.dependencycheck.utils.DownloadFailedException is thrown
      *                                                                 if an exception occurs making the HTTP request
      */
+    @Deprecated
     public long getLastModified(URL url) throws DownloadFailedException {
         return getLastModified(url, false);
     }
@@ -248,6 +249,7 @@ public class HttpResourceConnection implements AutoCloseable {
      * @throws DownloadFailedException is thrown if an exception occurs making
      *                                 the HTTP request
      */
+    @Deprecated
     private long getLastModified(URL url, boolean isRetry) throws DownloadFailedException {
         final long timestamp;
         //TODO use the obtain connection instead of this mostly duplicated code
