@@ -228,7 +228,8 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
                     try {
                         final ComponentReport report = reports.get(purl);
                         if (report == null) {
-                            throw new IllegalStateException("Missing component-report for: " + purl);
+                            LOG.debug("Missing component-report for: " + purl);
+                            continue;
                         }
 
                         // expose the URL to the package details for report generation
