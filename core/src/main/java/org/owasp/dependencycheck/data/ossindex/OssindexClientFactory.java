@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.ossindex;
 
+import java.io.File;
 import org.sonatype.goodies.packageurl.PackageUrl;
 import org.sonatype.goodies.packageurl.PackageUrl.RenderFlavor;
 import org.sonatype.ossindex.service.client.OssindexClient;
@@ -33,6 +34,10 @@ import org.owasp.dependencycheck.utils.URLConnectionFactory;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import org.joda.time.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.sonatype.ossindex.service.client.cache.DirectoryCache;
 
 /**
  * Produces {@link OssindexClient} instances.
@@ -41,6 +46,11 @@ import java.net.URL;
  * @since 5.0.0
  */
 public class OssindexClientFactory {
+
+    /**
+     * Static logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(OssindexClientFactory.class);
 
     static {
         // prefer pkg scheme vs scheme-less variant
@@ -67,6 +77,23 @@ public class OssindexClientFactory {
         final String baseUrl = settings.getString(Settings.KEYS.ANALYZER_OSSINDEX_URL, null);
         if (baseUrl != null) {
             config.setBaseUrl(baseUrl);
+        }
+
+        DirectoryCache.Configuration cache = new DirectoryCache.Configuration();
+        File data;
+        try {
+            data = settings.getDataDirectory();
+            File cacheDir = new File(data, "oss_cache");
+            if (cacheDir.isDirectory() || cacheDir.mkdirs()) {
+                cache.setBaseDir(cacheDir.toPath());
+                cache.setExpireAfter(Duration.standardHours(24));
+                config.setCacheConfiguration(cache);
+                LOGGER.debug("OSS Index Cache: " + cache.toString());
+            } else {
+                LOGGER.warn("Unable to use a cache for the OSS Index");
+            }
+        } catch (IOException ex) {
+            LOGGER.warn("Unable to use a cache for the OSS Index", ex);
         }
 
         // customize User-Agent for use with dependency-check
