@@ -154,7 +154,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         final List<SuppressionRule> ruleList;
         try (InputStream in = FileUtils.getResourceAsStream(BASE_SUPPRESSION_FILE)) {
             if (in == null) {
-                throw new SuppressionParseException("Hint rules `" + BASE_SUPPRESSION_FILE + "` could not be found");
+                throw new SuppressionParseException("Suppression rules `" + BASE_SUPPRESSION_FILE + "` could not be found");
             }
             ruleList = parser.parseSuppressionRules(in);
         } catch (SAXException | IOException ex) {
