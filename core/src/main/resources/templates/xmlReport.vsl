@@ -205,7 +205,7 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
 #end
                     </cwes>
 #end
-                    <description>$enc.xml($vuln.description)</description>
+                    <description>#if ($vuln.description)$enc.xml($vuln.description)#end</description>
 #if ($vuln.notes)
                     <notes>$enc.xml($vuln.notes)</notes>
 #end

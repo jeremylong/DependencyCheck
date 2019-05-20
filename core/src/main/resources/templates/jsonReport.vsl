@@ -186,7 +186,7 @@
 #end
                     ],
 #end
-                "description": "$enc.json($vuln.description)",
+                "description": "#if($vuln.description)$enc.json($vuln.description)#end",
                 "notes": "#if ($vuln.notes)$enc.json($vuln.notes)#end",
                 "references": [
                     #foreach($ref in $vuln.getReferences())

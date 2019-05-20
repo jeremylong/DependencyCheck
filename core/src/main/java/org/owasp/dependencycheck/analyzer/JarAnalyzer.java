@@ -677,8 +677,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         }
         //pom name
         final String pomName = pom.getName();
-        if (pomName
-                != null && !pomName.isEmpty()) {
+        if (pomName != null && !pomName.isEmpty() && !"${project.groupId}:${project.artifactId}".equals(pomName)) {
             foundSomething = true;
             dependency.addEvidence(EvidenceType.PRODUCT, "pom", "name", pomName, Confidence.HIGH);
             dependency.addEvidence(EvidenceType.VENDOR, "pom", "name", pomName, Confidence.HIGH);

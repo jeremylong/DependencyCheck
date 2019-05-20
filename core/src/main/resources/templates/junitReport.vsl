@@ -99,7 +99,10 @@
             #elseif($vuln.cvssV2 && $vuln.cvssV2.severity)
                 <failure message="cvssV2: $enc.xml($vuln.cvssV2.severity), score: $enc.xml($vuln.cvssV2.score) ($enc.xml($vuln.cvssV2.toString()))"/>
             #end
-            <system-out>$enc.xml($vuln.description)</system-out>
+            <system-out>#if($vuln.description)$enc.xml($vuln.description)#else<![CDATA[ 
+                #foreach($ref in $vuln.getReferences())
+                    #if($ref.url)$enc.xml($ref.name): $enc.xml($ref.url)#end
+                #end]]>#end</system-out>
             <system-err>location: $enc.xml($dependency.FilePath)</system-err>
         </testcase>
         #end
