@@ -278,6 +278,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
         } catch (TooManyRequestsException tre) {
+            this.setEnabled(false);
             final String message = "Connections to Central search refused. Analysis failed.";
             LOGGER.error(message, tre);
             throw new AnalysisException(message, tre);
