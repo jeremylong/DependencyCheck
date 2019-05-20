@@ -1803,7 +1803,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     private Set<String> getFormats() {
         final Set<String> selectedFormats = formats == null ? new HashSet<>() : new HashSet<>(Arrays.asList(formats));
-        if (format != null) {
+        if (format != null && selectedFormats.isEmpty()) {
             selectedFormats.add(format);
         }
         return selectedFormats;
