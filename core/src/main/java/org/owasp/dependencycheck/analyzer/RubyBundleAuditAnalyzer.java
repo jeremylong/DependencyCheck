@@ -481,6 +481,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             }
 
             vulnerability = new Vulnerability(); // don't add to dependency until we have name set later
+            vulnerability.setSource(Vulnerability.Source.BUNDLEAUDIT);
             final VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder();
             final VulnerableSoftware vs = builder.part(Part.APPLICATION)
                     .vendor(gem)

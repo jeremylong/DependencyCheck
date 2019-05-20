@@ -249,6 +249,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
 
                     dependency.addEvidence(EvidenceType.VERSION, "file", "version", libraryResult.getDetectedVersion(), Confidence.HIGH);
                     dependency.addEvidence(EvidenceType.PRODUCT, "file", "name", libraryResult.getLibrary().getName(), Confidence.HIGH);
+                    dependency.addEvidence(EvidenceType.VENDOR, "file", "name", libraryResult.getLibrary().getName(), Confidence.HIGH);
 
                     final List<Vulnerability> vulns = new ArrayList<>();
                     final JsVulnerability jsVuln = libraryResult.getVuln();
@@ -312,6 +313,10 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
                                         individualVuln.setName(libraryResult.getLibrary().getName() + " bug: " + value.get(0));
                                         individualVuln.addReference(key, key, value.get(0));
                                         break;
+                                    case "pr":
+                                        individualVuln.setName(libraryResult.getLibrary().getName() + " pr: " + value.get(0));
+                                        individualVuln.addReference(key, key, value.get(0));
+                                        break;
                                     case "summary":
                                         if (null == individualVuln.getName()) {
                                             individualVuln.setName(value.get(0));
@@ -322,15 +327,19 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
                                         individualVuln.addReference(key, key, value.get(0));
                                         break;
                                     default:
+                                        individualVuln.addReference(key, key, value.get(0));
                                         break;
                                 }
                             }
                             // CSON: NeedBraces
-                            individualVuln.setSource(Vulnerability.Source.RETIREJS);
-                            individualVuln.setUnscoredSeverity(jsVuln.getSeverity());
-                            for (String info : jsVuln.getInfo()) {
-                                individualVuln.addReference("info", "info", info);
-                            }
+                        }
+                        if (StringUtils.isEmpty(individualVuln.getName())) {
+                            individualVuln.setName("Vulnerability in " + libraryResult.getLibrary().getName());
+                        }
+                        individualVuln.setSource(Vulnerability.Source.RETIREJS);
+                        individualVuln.setUnscoredSeverity(jsVuln.getSeverity());
+                        for (String info : jsVuln.getInfo()) {
+                            individualVuln.addReference("info", "info", info);
                         }
                         dependency.addVulnerability(individualVuln);
                     }

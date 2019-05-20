@@ -834,7 +834,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                 #if ($id.confidence)
                                     &nbsp;&nbsp;(<i>Confidence</i>:$WordUtils.capitalizeFully($id.confidence.toString()))
                                 #end
-                                &nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for the identified vulnerability identifier" onclick="copyText('$enc.javascript($dependency.DisplayFileName)', '$enc.javascript($dependency.Sha1sum)', '$enc.javascript($suppressGav)', 'cpe', '$enc.javascript($rpt.identifierToSuppressionId($id))')">suppress</button>
+                                &nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for the identified vulnerability identifier" onclick="copyText('$enc.javascript($dependency.DisplayFileName)', '$enc.javascript($dependency.Sha1sum)', '#if($suppressGav)$enc.javascript($suppressGav)#end', 'cpe', '$enc.javascript($rpt.identifierToSuppressionId($id))')">suppress</button>
                                 #if ($id.notes)
                                     <ul><li>Notes: $enc.html($id.notes)</li></ul>
                                 #end
@@ -850,13 +850,15 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                         #foreach($vuln in $dependency.getVulnerabilities(true))
                             #set($vsctr=$vsctr+1)
                             #if($vuln.getSource().name().equals("NVD"))
-                                <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CCE for this file" onclick="copyText('$enc.javascript($dependency.DisplayFileName)', '$enc.javascript($dependency.Sha1sum)', '$enc.javascript($suppressGav)', 'cve', '$enc.javascript($vuln.name)')">suppress</button></p>
+                                <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CCE for this file" onclick="copyText('$enc.javascript($dependency.DisplayFileName)', '$enc.javascript($dependency.Sha1sum)', '#if($suppressGav)$enc.javascript($suppressGav)#end', 'cve', '$enc.javascript($vuln.name)')">suppress</button></p>
                             #elseif($vuln.getSource().name().equals("NPM"))
                                 <p><b><a target="_blank" href="https://www.npmjs.com/advisories/$enc.url($vuln.name)">NPM-$enc.html($vuln.name)</a></b></p>
                             #else
                                 <p><b>$enc.html($vuln.name)</b> ($vuln.getSource().name())</p>
                             #end
-                            <p><pre>$enc.html($vuln.description)</pre>
+                            <p>#if($vuln.description)
+                            <pre>$enc.html($vuln.description)</pre>
+                            #end
                             #if($vuln.getCvssV2())
                             CVSSv2:
                             <ul><li>Base Score: $enc.html($vuln.getCvssV2().getSeverity()) ($vuln.getCvssV2().getScore())</li>
@@ -866,6 +868,9 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                             CVSSv3:
                             <ul><li>Base Score: $enc.html($vuln.getCvssV3().getBaseSeverity()) ($vuln.getCvssV3().getBaseScore())</li>
                             <li>Vector: $enc.html($vuln.getCvssV3().toString())</li></ul>
+                            #end
+                            #if ($vuln.unscoredSeverity)
+                                <ul><li>Severity: $enc.html($vuln.unscoredSeverity)</li></ul>
                             #end
                             #if ($vuln.cwe)
                                 <br/>CWE: $vuln.cwe.toString()
@@ -885,8 +890,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                 </ul>
                             #end
                             </p>
-
-                            #if ($vuln.getSource().name().equals("NVD"))
+                            #if ($vuln.getSource().name().equals("NVD") && $vuln.matchedVulnerableSoftware)
                                 #if ($vuln.getVulnerableSoftware().size()<2)
                                     <p>Vulnerable Software &amp; Versions:<ul>
                                         <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedVulnerableSoftware.toCpe22Uri())">$enc.html($vuln.matchedVulnerableSoftware.toString())</a></li>
@@ -900,8 +904,8 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                     #end
                                     </ul></p>
                                 #end
-                            #elseif ($vuln.getSource().name().equals("NPM"))
-                                <p>Vulnerable Software &amp; Versions:
+                            #elseif ($vuln.getVulnerableSoftware().size()!=0)
+                                <p>Vulnerable Software &amp; Versions ($vuln.getSource().name()):
                                     <ul>
                                     #foreach($vs in $vuln.getVulnerableSoftware())
                                         <li class="vs$vsctr">$enc.html($vs.toString())</li>
@@ -1016,10 +1020,12 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                         <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span></p>
                                     #elseif($vuln.getSource().name().equals("NPM"))
                                         <p><b><a target="_blank" href="https://www.npmjs.com/advisories/$enc.url($vuln.name)">NPM-$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span></p>
-                                    #elseif($vuln.getSource().name().equals("RETIREJS"))
-                                        <p><b>$enc.html($vuln.name)</b> (RetireJS)&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span></p>
+                                    #else
+                                        <p><b>$enc.html($vuln.name)</b> ($vuln.getSource().name())&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span></p>
                                     #end
-                                    <p><pre>$enc.html($vuln.description)</pre>
+                                    <p>#if($vuln.description)
+                                    <pre>$enc.html($vuln.description)</pre>
+                                    #end
                                     #if($vuln.getCvssV2())
                                     CVSSv2:
                                     <ul><li>Base Score: $enc.html($vuln.getCvssV2().getSeverity()) ($vuln.getCvssV2().getScore())</li>
@@ -1029,6 +1035,9 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                     CVSSv3:
                                     <ul><li>$enc.html($vuln.getCvssV3().getBaseSeverity()) ($vuln.getCvssV3().getBaseScore())</li>
                                     <li>$enc.html($vuln.getCvssV3().toString())</li></ul>
+                                    #end
+                                    #if ($vuln.unscoredSeverity)
+                                        <ul><li>Severity: $enc.html($vuln.unscoredSeverity)</li></ul>
                                     #end
                                     #if ($vuln.cwe)
                                         <br/>CWE: $vuln.cwe.toString()
@@ -1048,18 +1057,28 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                         </ul>
                                     #end
                                     </p>
-                                    #if ($vuln.getVulnerableSoftware().size()<2)
-                                        <p>Vulnerable Software &amp; Versions:<ul>
-                                            <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedVulnerableSoftware.toCpe22Uri())">$enc.html($vuln.matchedVulnerableSoftware.toString())</a></li>
-                                        </ul></p>
-                                    #else
-                                        <p>Vulnerable Software &amp; Versions:&nbsp;(<a href="#" onclick="return toggleDisplay(this,'.vs$vsctr', 'show all', 'show less');">show all</a>)<ul>
-                                            <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedVulnerableSoftware.toCpe22Uri())">$enc.html($vuln.matchedVulnerableSoftware.toString())</a></li>
-                                            <li class="vs$vsctr">...</li>
-                                        #foreach($vs in $vuln.getVulnerableSoftware(true))
-                                            <li class="vs$vsctr hidden"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vs.toCpe22Uri())">$enc.html($vs.toString())</a></li>
+                                     #if ($vuln.getSource().name().equals("NVD") && $vuln.matchedVulnerableSoftware)
+                                        #if ($vuln.getVulnerableSoftware().size()<2)
+                                            <p>Vulnerable Software &amp; Versions:<ul>
+                                                <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedVulnerableSoftware.toCpe22Uri())">$enc.html($vuln.matchedVulnerableSoftware.toString())</a></li>
+                                            </ul></p>
+                                        #else
+                                            <p>Vulnerable Software &amp; Versions:&nbsp;(<a href="#" onclick="return toggleDisplay(this,'.vs$vsctr', 'show all', 'show less');">show all</a>)<ul>
+                                                <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedVulnerableSoftware.toCpe22Uri())">$enc.html($vuln.matchedVulnerableSoftware.toString())</a></li>
+                                                <li class="vs$vsctr">...</li>
+                                            #foreach($vs in $vuln.getVulnerableSoftware(true))
+                                                <li class="vs$vsctr hidden"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vs.toCpe22Uri())">$enc.html($vs.toString())</a></li>
+                                            #end
+                                            </ul></p>
                                         #end
-                                        </ul></p>
+                                    #else
+                                        <p>Vulnerable Software &amp; Versions ($vuln.getSource().name()):
+                                            <ul>
+                                            #foreach($vs in $vuln.getVulnerableSoftware())
+                                                <li class="vs$vsctr">$enc.html($vs.toString())</li>
+                                            #end
+                                            </ul>
+                                        </p>
                                     #end
                                 #end
                                 </div>

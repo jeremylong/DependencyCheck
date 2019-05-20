@@ -745,6 +745,7 @@ public final class CveDB implements AutoCloseable {
                         final Vulnerability v = getVulnerability(currentCVE);
                         if (v != null) {
                             v.setMatchedVulnerableSoftware(matchedCPE);
+                            v.setSource(Vulnerability.Source.NVD);
                             vulnerabilities.add(v);
                         }
                     }
@@ -774,6 +775,7 @@ public final class CveDB implements AutoCloseable {
                 final Vulnerability v = getVulnerability(currentCVE);
                 if (v != null) {
                     v.setMatchedVulnerableSoftware(matchedCPE);
+                    v.setSource(Vulnerability.Source.NVD);
                     vulnerabilities.add(v);
                 }
             }
@@ -808,7 +810,7 @@ public final class CveDB implements AutoCloseable {
                 vuln = new Vulnerability();
                 vuln.setName(cve);
                 vuln.setDescription(rsV.getString(2));
-
+                vuln.setSource(Vulnerability.Source.NVD);
                 final int cveId = rsV.getInt(1);
                 //id, 2.description, 3. cvssV22Score, 4 cvssV2AccessVector, 5 cvssV2AccessComplexity,
                 //6 cvssV2Authentication, 7 cvssV2ConfidentialityImpact, 8 cvssV2IntegrityImpact,
