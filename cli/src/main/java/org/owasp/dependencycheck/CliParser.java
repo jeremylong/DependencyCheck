@@ -78,8 +78,8 @@ public final class CliParser {
      *
      * @param args the command line arguments
      * @throws FileNotFoundException is thrown when a 'file' argument does not
-     *                               point to a file that exists.
-     * @throws ParseException        is thrown when a Parse Exception occurs.
+     * point to a file that exists.
+     * @throws ParseException is thrown when a Parse Exception occurs.
      */
     public void parse(String[] args) throws FileNotFoundException, ParseException {
         line = parseArgs(args);
@@ -106,9 +106,9 @@ public final class CliParser {
      * Validates that the command line arguments are valid.
      *
      * @throws FileNotFoundException if there is a file specified by either the
-     *                               SCAN or CPE command line arguments that does not exist.
-     * @throws ParseException        is thrown if there is an exception parsing the
-     *                               command line.
+     * SCAN or CPE command line arguments that does not exist.
+     * @throws ParseException is thrown if there is an exception parsing the
+     * command line.
      */
     private void validateArgs() throws FileNotFoundException, ParseException {
         if (isUpdateOnly() || isRunScan()) {
@@ -165,10 +165,10 @@ public final class CliParser {
      * path(s) does not point to an existing file a FileNotFoundException is
      * thrown.
      *
-     * @param paths   the paths to validate if they exists
+     * @param paths the paths to validate if they exists
      * @param optType the option being validated (e.g. scan, out, etc.)
      * @throws FileNotFoundException is thrown if one of the paths being
-     *                               validated does not exist.
+     * validated does not exist.
      */
     private void validatePathExists(String[] paths, String optType) throws FileNotFoundException {
         for (String path : paths) {
@@ -181,10 +181,10 @@ public final class CliParser {
      * path does not point to an existing file a FileNotFoundException is
      * thrown.
      *
-     * @param path         the paths to validate if they exists
+     * @param path the paths to validate if they exists
      * @param argumentName the argument being validated (e.g. scan, out, etc.)
      * @throws FileNotFoundException is thrown if the path being validated does
-     *                               not exist.
+     * not exist.
      */
     private void validatePathExists(String path, String argumentName) throws FileNotFoundException {
         if (path == null) {
@@ -203,17 +203,24 @@ public final class CliParser {
                     }
                     if (!f.getParentFile().isDirectory()) {
                         isValid = false;
-                        final String msg = String.format("Invalid '%s' argument: '%s'", argumentName, path);
+                        final String msg = String.format("Invalid '%s' argument: '%s' - directory path does not exist", argumentName, path);
                         throw new FileNotFoundException(msg);
                     }
                 }
             } else if ("o".equalsIgnoreCase(argumentName.substring(0, 1)) && !f.isDirectory()) {
-                isValid = false;
-                final String msg = String.format("Invalid '%s' argument: '%s'", argumentName, path);
-                throw new FileNotFoundException(msg);
+                if (f.getParentFile().isDirectory() && !f.mkdir()) {
+                    isValid = false;
+                    final String msg = String.format("Invalid '%s' argument: '%s' - unable to create the output directory", argumentName, path);
+                    throw new FileNotFoundException(msg);
+                }
+                if (!f.isDirectory()) {
+                    isValid = false;
+                    final String msg = String.format("Invalid '%s' argument: '%s' - path does not exist", argumentName, path);
+                    throw new FileNotFoundException(msg);
+                }
             } else if (!f.exists()) {
                 isValid = false;
-                final String msg = String.format("Invalid '%s' argument: '%s'", argumentName, path);
+                final String msg = String.format("Invalid '%s' argument: '%s' - path does not exist", argumentName, path);
                 throw new FileNotFoundException(msg);
             }
 //        } else if (path.startsWith("//") || path.startsWith("\\\\")) {
@@ -601,7 +608,7 @@ public final class CliParser {
      * method to return true for the disable archive setting.
      *
      * @param argument the command line argument
-     * @param setting  the corresponding settings key
+     * @param setting the corresponding settings key
      * @return true if the disable option was set, if not set the currently
      * configured value will be returned
      */
@@ -945,8 +952,8 @@ public final class CliParser {
             addAdvancedOptions(options);
         }
         final String helpMsg = String.format("%n%s"
-                        + " can be used to identify if there are any known CVE vulnerabilities in libraries utilized by an application. "
-                        + "%s will automatically update required data from the Internet, such as the CVE and CPE data files from nvd.nist.gov.%n%n",
+                + " can be used to identify if there are any known CVE vulnerabilities in libraries utilized by an application. "
+                + "%s will automatically update required data from the Internet, such as the CVE and CPE data files from nvd.nist.gov.%n%n",
                 settings.getString("application.name", "DependencyCheck"),
                 settings.getString("application.name", "DependencyCheck"));
 
@@ -1727,7 +1734,8 @@ public final class CliParser {
         public static final String FAIL_ON_CVSS = "failOnCVSS";
 
         /**
-         * The CLI argument to configure if the XML and JSON reports should be pretty printed.
+         * The CLI argument to configure if the XML and JSON reports should be
+         * pretty printed.
          */
         public static final String PRETTY_PRINT = "prettyPrint";
 
