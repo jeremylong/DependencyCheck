@@ -246,8 +246,20 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
      */
     @Test
     public void testDetermineIdentifiers() throws Exception {
-        callDetermieIdentifiers("eclipse", "jetty", "20.4.8.v20171121", "cpe:2.3:a:eclipse:jetty:20.4.8:20171121:*:*:*:*:*:*");
-        callDetermieIdentifiers("openssl", "openssl", "1.0.1c", "cpe:2.3:a:openssl:openssl:1.0.1c:*:*:*:*:*:*:*");
+
+        CPEAnalyzer instance = new CPEAnalyzer();
+        try (Engine engine = new Engine(getSettings())) {
+            // Opening the database in read-only mode always copies the whole database -> open it only once
+            engine.openDatabase(true, true);
+            instance.initialize(getSettings());
+            instance.prepare(engine);
+
+            callDetermieIdentifiers("eclipse", "jetty", "20.4.8.v20171121", "cpe:2.3:a:eclipse:jetty:20.4.8:20171121:*:*:*:*:*:*", instance);
+            callDetermieIdentifiers("openssl", "openssl", "1.0.1c", "cpe:2.3:a:openssl:openssl:1.0.1c:*:*:*:*:*:*:*", instance);
+            callDetermieIdentifiers("zeroturnaround", "zt-zip", "1.0", "cpe:2.3:a:zeroturnaround:zt-zip:1.0:*:*:*:*:*:*:*", instance);
+
+            instance.close();
+        }
     }
 
     /**
@@ -257,28 +269,80 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
      * @param product
      * @param version
      * @param expectedCpe
+     * @param cpeAnalyzer
      * @throws Exception
      */
-    private void callDetermieIdentifiers(String vendor, String product, String version, String expectedCpe) throws Exception {
+    private void callDetermieIdentifiers(String vendor, String product, String version, String expectedCpe, CPEAnalyzer cpeAnalyzer) throws Exception {
         Dependency dep = new Dependency();
         dep.addEvidence(EvidenceType.VENDOR, "test", "vendor", vendor, Confidence.HIGHEST);
         dep.addEvidence(EvidenceType.PRODUCT, "test", "product", product, Confidence.HIGHEST);
         dep.addEvidence(EvidenceType.VERSION, "test", "version", version, Confidence.HIGHEST);
 
-        CPEAnalyzer instance = new CPEAnalyzer();
-        try (Engine engine = new Engine(getSettings())) {
-            engine.openDatabase(true, true);
-            instance.initialize(getSettings());
-            instance.prepare(engine);
-            instance.determineIdentifiers(dep, vendor, product, Confidence.HIGHEST);
-            instance.close();
-        }
+        cpeAnalyzer.determineIdentifiers(dep, vendor, product, Confidence.HIGHEST);
 
         boolean found = dep.getVulnerableSoftwareIdentifiers().stream().anyMatch(id -> {
             System.out.println(id.getValue());
             return expectedCpe.equals(id.getValue());
         });
-        assertTrue(String.format("%s:%s%s identifier not found", vendor, product, version), found);
+        assertTrue(String.format("%s:%s:%s identifier not found", vendor, product, version), found);
+    }
+
+    /**
+     * Test of analyzeDependency method, of class CPEAnalyzer.
+     *
+     * @throws Exception is thrown when an exception occurs
+     */
+    @Test
+    public void testAnalyzeDependency() throws Exception {
+
+        CPEAnalyzer instance = new CPEAnalyzer();
+        try (Engine engine = new Engine(getSettings())) {
+            // Opening the database in read-only mode always copies the whole database -> open it only once
+            engine.openDatabase(true, true);
+            instance.initialize(getSettings());
+            instance.prepare(engine);
+
+            callAnalyzeDependency("eclipse", "jetty", "20.4.8.v20171121", "cpe:2.3:a:eclipse:jetty:20.4.8:20171121:*:*:*:*:*:*", instance, engine);
+            callAnalyzeDependency("openssl", "openssl", "1.0.1c", "cpe:2.3:a:openssl:openssl:1.0.1c:*:*:*:*:*:*:*", instance, engine);
+            callAnalyzeDependency("apache", "commons-httpclient", "3.0", "cpe:2.3:a:apache:httpclient:3.0:*:*:*:*:*:*:*", instance, engine);
+            callAnalyzeDependency("zeroturnaround", "zt-zip", "1.0", "cpe:2.3:a:zeroturnaround:zt-zip:1.0:*:*:*:*:*:*:*", instance, engine);
+
+            // Non-exact matches
+            callAnalyzeDependency("org.apache", "commons-httpclient", "3.0", "cpe:2.3:a:apache:httpclient:3.0:*:*:*:*:*:*:*", instance, engine);
+            callAnalyzeDependency("org.apache", "httpclient", "3.0", "cpe:2.3:a:apache:httpclient:3.0:*:*:*:*:*:*:*", instance, engine);
+            callAnalyzeDependency("org.zeroturnaround", "zt-zip", "1.0", "cpe:2.3:a:zeroturnaround:zt-zip:1.0:*:*:*:*:*:*:*", instance, engine);
+
+            instance.close();
+        }
+    }
+
+    /**
+     * Executes the test call against AnalyzeDependency.
+     *
+     * @param vendor
+     * @param product
+     * @param version
+     * @param expectedCpe
+     * @param cpeAnalyzer
+     * @param engine
+     * @throws Exception
+     */
+    private void callAnalyzeDependency(String vendor, String product, String version, String expectedCpe, CPEAnalyzer cpeAnalyzer, Engine engine) throws Exception {
+        Dependency dep = new Dependency(true);
+        dep.addEvidence(EvidenceType.VENDOR, "test", "vendor", vendor, Confidence.HIGHEST);
+        dep.addEvidence(EvidenceType.PRODUCT, "test", "product", product, Confidence.HIGHEST);
+        dep.addEvidence(EvidenceType.VERSION, "test", "version", version, Confidence.HIGHEST);
+        dep.setMd5sum("");
+        dep.setSha1sum("");
+        dep.setSha256sum("");
+
+        cpeAnalyzer.analyzeDependency(dep, engine);
+
+        boolean found = dep.getVulnerableSoftwareIdentifiers().stream().anyMatch(id -> {
+            System.out.println(id.getValue());
+            return expectedCpe.equals(id.getValue());
+        });
+        assertTrue(String.format("%s:%s:%s identifier not found", vendor, product, version), found);
     }
 
     /**

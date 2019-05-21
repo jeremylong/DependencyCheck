@@ -610,7 +610,15 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         if (text == null) {
             return false;
         }
-        final String[] words = text.split("[\\s_-]");
+        // Check if we have an exact match
+        final String textLC = text.toLowerCase();
+        for (Evidence e : evidence) {
+            if (e.getValue().toLowerCase().equals(textLC)) {
+                return true;
+            }
+        }
+
+        final String[] words = text.split("[\\s_-]+");
         final List<String> list = new ArrayList<>();
         String tempWord = null;
         final CharArraySet stopWords = SearchFieldAnalyzer.getStopWords();
@@ -643,11 +651,19 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             return false;
         }
         boolean isValid = true;
+
+        // Prepare the evidence values, e.g. remove the characters we used for splitting
+        List<String> evidenceValues = new ArrayList<>(evidence.size());
+        for (Evidence e : evidence) {
+            evidenceValues.add(e.getValue().toLowerCase().replaceAll("[\\s_-]+", ""));
+        }
+
         for (String word : list) {
+            word = word.toLowerCase();
             boolean found = false;
-            for (Evidence e : evidence) {
-                if (e.getValue().toLowerCase().contains(word.toLowerCase())) {
-                    if ("http".equals(word) && e.getValue().contains("http:")) {
+            for (String e : evidenceValues) {
+                if (e.contains(word)) {
+                    if ("http".equals(word) && e.contains("http:")) {
                         continue;
                     }
                     found = true;
