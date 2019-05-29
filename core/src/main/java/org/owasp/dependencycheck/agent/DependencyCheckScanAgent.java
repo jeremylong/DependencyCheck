@@ -978,10 +978,10 @@ public class DependencyCheckScanAgent {
             }
             throw new ScanAgentException("One or more exceptions occurred during analysis; please see the debug log for more details.", ex);
         } finally {
-            settings.cleanup(true);
             if (engine != null) {
                 engine.close();
             }
+            settings.cleanup(true);
         }
         return engine;
     }
