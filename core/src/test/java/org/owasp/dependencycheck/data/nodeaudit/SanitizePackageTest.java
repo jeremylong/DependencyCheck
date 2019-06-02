@@ -17,11 +17,14 @@
  */
 package org.owasp.dependencycheck.data.nodeaudit;
 
+import java.io.InputStream;
 import org.junit.Assert;
 import org.junit.Test;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonReader;
+import org.owasp.dependencycheck.BaseTest;
 
 public class SanitizePackageTest {
 
@@ -41,7 +44,6 @@ public class SanitizePackageTest {
                                         .add("integrity", "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==")
                                         .add("dev", true)
                         )
-
                 );
 
         JsonObject packageJson = builder.build();
@@ -58,5 +60,26 @@ public class SanitizePackageTest {
 
         Assert.assertFalse(sanitized.containsKey("lockfileVersion"));
         Assert.assertFalse(sanitized.containsKey("random"));
+    }
+
+    @Test
+    public void testSanitizePackage() {
+        InputStream in = BaseTest.getResourceAsStream(this, "nodeaudit/package.json");
+        try (JsonReader jsonReader = Json.createReader(in)) {
+            JsonObject packageJson = jsonReader.readObject();
+            JsonObject sanitized = SanitizePackage.sanitize(packageJson);
+
+            Assert.assertTrue(sanitized.containsKey("name"));
+            Assert.assertTrue(sanitized.containsKey("version"));
+            Assert.assertTrue(sanitized.containsKey("dependencies"));
+            Assert.assertTrue(sanitized.containsKey("requires"));
+
+            JsonObject requires = sanitized.getJsonObject("requires");
+            Assert.assertTrue(requires.containsKey("bcrypt-nodejs"));
+            Assert.assertEquals("0.0.3", requires.getString("bcrypt-nodejs"));
+
+            Assert.assertFalse(sanitized.containsKey("lockfileVersion"));
+            Assert.assertFalse(sanitized.containsKey("random"));
+        }
     }
 }

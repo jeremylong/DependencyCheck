@@ -73,29 +73,28 @@ public class OssindexClientFactory {
     public static OssindexClient create(final Settings settings) {
         final OssindexClientConfiguration config = new OssindexClientConfiguration();
 
-        // TODO: optionally expose more settings for things like cache, etc.
         final String baseUrl = settings.getString(Settings.KEYS.ANALYZER_OSSINDEX_URL, null);
         if (baseUrl != null) {
             config.setBaseUrl(baseUrl);
         }
-
-        DirectoryCache.Configuration cache = new DirectoryCache.Configuration();
-        File data;
-        try {
-            data = settings.getDataDirectory();
-            File cacheDir = new File(data, "oss_cache");
-            if (cacheDir.isDirectory() || cacheDir.mkdirs()) {
-                cache.setBaseDir(cacheDir.toPath());
-                cache.setExpireAfter(Duration.standardHours(24));
-                config.setCacheConfiguration(cache);
-                LOGGER.debug("OSS Index Cache: " + cache.toString());
-            } else {
-                LOGGER.warn("Unable to use a cache for the OSS Index");
+        if (settings.getBoolean(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE, true)) {
+            DirectoryCache.Configuration cache = new DirectoryCache.Configuration();
+            File data;
+            try {
+                data = settings.getDataDirectory();
+                File cacheDir = new File(data, "oss_cache");
+                if (cacheDir.isDirectory() || cacheDir.mkdirs()) {
+                    cache.setBaseDir(cacheDir.toPath());
+                    cache.setExpireAfter(Duration.standardHours(24));
+                    config.setCacheConfiguration(cache);
+                    LOGGER.debug("OSS Index Cache: " + cache.toString());
+                } else {
+                    LOGGER.warn("Unable to use a cache for the OSS Index");
+                }
+            } catch (IOException ex) {
+                LOGGER.warn("Unable to use a cache for the OSS Index", ex);
             }
-        } catch (IOException ex) {
-            LOGGER.warn("Unable to use a cache for the OSS Index", ex);
         }
-
         // customize User-Agent for use with dependency-check
         final UserAgentSupplier userAgent = new UserAgentSupplier(
                 "dependency-check",

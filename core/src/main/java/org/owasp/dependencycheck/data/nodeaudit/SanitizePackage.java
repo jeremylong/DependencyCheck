@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.nodeaudit;
 
+import java.util.Map.Entry;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -63,13 +64,23 @@ public final class SanitizePackage {
         // 'requires' to be an object containing key/value pairs corresponding to the module
         // name (key) and version (value).
         final JsonValue jsonValue = packageJson.get("requires");
-        if (jsonValue.getValueType() != JsonValue.ValueType.OBJECT) {
+        if (jsonValue==null || jsonValue.getValueType() != JsonValue.ValueType.OBJECT) {
             final JsonObjectBuilder requiresBuilder = Json.createObjectBuilder();
             final JsonObject dependencies = packageJson.getJsonObject("dependencies");
-            for (String moduleName: dependencies.keySet()) {
-                final JsonObject module = dependencies.getJsonObject(moduleName);
-                final String version = module.getString("version");
-                requiresBuilder.add(moduleName, version);
+            for (Entry<String,JsonValue> entry: dependencies.entrySet()) {
+                //final JsonObject module = dependencies.getJsonObject(moduleName);
+                final String version;
+                if (entry.getValue().getValueType() == JsonValue.ValueType.OBJECT) {
+                    version = ((JsonObject) entry.getValue()).getString("version");
+                } else  {
+                    final String tmp = entry.getValue().toString();
+                    if (tmp.startsWith("\"")) {
+                        version = tmp.substring(1, tmp.length()-1);
+                    } else {
+                        version = tmp;
+                    }
+                }
+                requiresBuilder.add(entry.getKey(), version);
             }
             payloadBuilder.add("requires", requiresBuilder.build());
         }

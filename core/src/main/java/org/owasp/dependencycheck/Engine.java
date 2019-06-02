@@ -64,6 +64,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.concurrent.NotThreadSafe;
+import org.apache.commons.jcs.JCS;
 
 import org.owasp.dependencycheck.exception.H2DBLockException;
 import org.owasp.dependencycheck.utils.H2DBLock;
@@ -270,6 +271,7 @@ public class Engine implements FileFilter, AutoCloseable {
                 database = null;
             }
         }
+        JCS.shutdown();
     }
 
     /**

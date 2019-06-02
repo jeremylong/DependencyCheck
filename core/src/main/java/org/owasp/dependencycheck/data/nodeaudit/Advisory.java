@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.nodeaudit;
 
+import java.io.Serializable;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -27,7 +28,12 @@ import javax.annotation.concurrent.ThreadSafe;
  * @author Steve Springett
  */
 @ThreadSafe
-public class Advisory {
+public class Advisory implements Serializable {
+
+    /**
+     * Serial version UID.
+     */
+    private static final long serialVersionUID = -6157232800626565476L;
 
     /**
      * The unique ID of the advisory as issued by NPM.
@@ -96,7 +102,8 @@ public class Advisory {
     private String patchedVersions;
 
     /**
-     * The references names in the advisory. This field contains MarkDown (including \n, *, and other characters)
+     * The references names in the advisory. This field contains MarkDown
+     * (including \n, *, and other characters)
      */
     private String references;
 
@@ -114,7 +121,6 @@ public class Advisory {
      * The CWE of the advisory.
      */
     private String cwe;
-
 
     public int getId() {
         return id;

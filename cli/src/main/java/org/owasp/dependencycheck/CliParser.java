@@ -456,7 +456,6 @@ public final class CliParser {
                 .desc("Disable the Nexus Analyzer.").build();
         final Option disableOssIndexAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_OSSINDEX)
                 .desc("Disable the Sonatype OSS Index Analyzer.").build();
-
         final Option purge = Option.builder().longOpt(ARGUMENT.PURGE_NVD)
                 .desc("Purges the local NVD data cache").build();
         final Option retireJsFilters = Option.builder().argName("pattern").hasArg().longOpt(ARGUMENT.RETIREJS_FILTERS)
@@ -494,14 +493,20 @@ public final class CliParser {
                 .addOption(disableNuspecAnalyzer)
                 .addOption(disableNugetconfAnalyzer)
                 .addOption(disableCentralAnalyzer)
+                .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_CENTRAL_CACHE)
+                        .desc("Disallow the Central Analyzer from caching results").build())
                 .addOption(disableNexusAnalyzer)
                 .addOption(disableOssIndexAnalyzer)
+                .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_OSSINDEX_CACHE)
+                        .desc("Disallow the OSS Index Analyzer from caching results").build())
                 .addOption(cocoapodsAnalyzerEnabled)
                 .addOption(swiftPackageManagerAnalyzerEnabled)
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_NODE_JS)
                         .desc("Disable the Node.js Package Analyzer.").build())
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_NODE_AUDIT)
                         .desc("Disable the Node Audit Analyzer.").build())
+                .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_NODE_AUDIT_CACHE)
+                        .desc("Disallow the Node Audit Analyzer from caching results").build())
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_RETIRE_JS)
                         .desc("Disable the RetireJS Analyzer.").build())
                 .addOption(Option.builder().longOpt(ARGUMENT.RETIREJS_URL)
@@ -767,6 +772,17 @@ public final class CliParser {
     }
 
     /**
+     * Returns true if the {@link ARGUMENT#DISABLE_OSSINDEX_CACHE} command line
+     * argument was specified.
+     *
+     * @return true if the Oss Index analyzer caching is disabled; otherwise
+     * false
+     */
+    public boolean isOssIndexCacheDisabled() {
+        return hasDisableOption(ARGUMENT.DISABLE_OSSINDEX_CACHE, Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE);
+    }
+
+    /**
      * Returns true if the disableOpenSSL command line argument was specified.
      *
      * @return true if the disableOpenSSL command line argument was specified;
@@ -799,6 +815,17 @@ public final class CliParser {
             return true;
         }
         return hasDisableOption(ARGUMENT.DISABLE_NODE_AUDIT, Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED);
+    }
+
+    /**
+     * Returns true if the disableNodeAuditCache command line argument was
+     * specified.
+     *
+     * @return true if the disableNodeAuditCache command line argument was
+     * specified; otherwise false
+     */
+    public boolean isNodeAuditCacheDisabled() {
+        return hasDisableOption(ARGUMENT.DISABLE_NODE_AUDIT_CACHE, Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE);
     }
 
     /**
@@ -841,6 +868,17 @@ public final class CliParser {
      */
     public boolean isCentralDisabled() {
         return hasDisableOption(ARGUMENT.DISABLE_CENTRAL, Settings.KEYS.ANALYZER_CENTRAL_ENABLED);
+    }
+
+    /**
+     * Returns true if the disableCentralCache command line argument was
+     * specified.
+     *
+     * @return true if the disableCentralCache command line argument was
+     * specified; otherwise false
+     */
+    public boolean isCentralCacheDisabled() {
+        return hasDisableOption(ARGUMENT.DISABLE_CENTRAL_CACHE, Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE);
     }
 
     /**
@@ -1594,6 +1632,10 @@ public final class CliParser {
          */
         public static final String DISABLE_CENTRAL = "disableCentral";
         /**
+         * Disables the Central Analyzer's ability to cache results locally.
+         */
+        public static final String DISABLE_CENTRAL_CACHE = "disableCentralCache";
+        /**
          * Disables the Nexus Analyzer.
          */
         public static final String DISABLE_NEXUS = "disableNexus";
@@ -1601,6 +1643,11 @@ public final class CliParser {
          * Disables the Sonatype OSS Index Analyzer.
          */
         public static final String DISABLE_OSSINDEX = "disableOssIndex";
+        /**
+         * Disables the Sonatype OSS Index Analyzer's ability to cache results
+         * locally.
+         */
+        public static final String DISABLE_OSSINDEX_CACHE = "disableOssIndexCache";
         /**
          * Disables the OpenSSL Analyzer.
          */
@@ -1613,6 +1660,10 @@ public final class CliParser {
          * Disables the Node Audit Analyzer.
          */
         public static final String DISABLE_NODE_AUDIT = "disableNodeAudit";
+        /**
+         * Disables the Node Audit Analyzer's ability to cache results locally.
+         */
+        public static final String DISABLE_NODE_AUDIT_CACHE = "disableNodeAuditCache";
         /**
          * Disables the RetireJS Analyzer.
          */

@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.nexus;
 
+import java.io.Serializable;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
@@ -26,8 +27,12 @@ import javax.annotation.concurrent.ThreadSafe;
  * @author nhenneaux
  */
 @ThreadSafe
-public class MavenArtifact {
+public class MavenArtifact implements Serializable {
 
+    /**
+     * Generated UID.
+     */
+    private static final long serialVersionUID = -9112154330099159722L;
     /**
      * The base URL for download artifacts from Central.
      */
