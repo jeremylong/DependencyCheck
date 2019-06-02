@@ -714,7 +714,7 @@ public class Engine implements FileFilter, AutoCloseable {
                 doUpdates(true);
             } catch (UpdateException ex) {
                 exceptions.add(ex);
-                LOGGER.warn("Unable to update Cached Web DataSource, using local "
+                LOGGER.warn("Unable to update 1 or more Cached Web DataSource, using local "
                         + "data instead. Results may not include recent vulnerabilities.");
                 LOGGER.debug("Update Error", ex);
             } catch (DatabaseException ex) {
@@ -905,15 +905,24 @@ public class Engine implements FileFilter, AutoCloseable {
                 final UpdateService service = new UpdateService(serviceClassLoader);
                 final Iterator<CachedWebDataSource> iterator = service.getDataSources();
                 boolean dbUpdatesMade = false;
+                UpdateException updateException = null;
                 while (iterator.hasNext()) {
+                    try {
                     final CachedWebDataSource source = iterator.next();
-                    dbUpdatesMade |= source.update(this);
+                        dbUpdatesMade |= source.update(this);
+                    } catch (UpdateException ex) {
+                        updateException = ex;
+                        LOGGER.error(ex.getMessage());
+                    }
                 }
                 if (dbUpdatesMade) {
                     database.defrag();
                 }
                 database.close();
                 database = null;
+                if (updateException!=null) {
+                    throw updateException;
+                }
                 LOGGER.info("Check for updates complete ({} ms)", System.currentTimeMillis() - updateStart);
                 if (remainOpen) {
                     openDatabase(true, false);
