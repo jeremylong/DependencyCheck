@@ -24,6 +24,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.stream.XMLInputFactory;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
@@ -66,13 +67,14 @@ public final class XmlUtils {
      * parser should be able to validate the XML against, one InputStream per
      * schema
      * @return a SAX Parser
-     * @throws javax.xml.parsers.ParserConfigurationException is thrown if there is a parser
-     * configuration exception
-     * @throws org.xml.sax.SAXNotRecognizedException thrown if there is an unrecognized
-     * feature
-     * @throws org.xml.sax.SAXNotSupportedException thrown if there is a non-supported
-     * feature
-     * @throws org.xml.sax.SAXException is thrown if there is a org.xml.sax.SAXException
+     * @throws javax.xml.parsers.ParserConfigurationException is thrown if there
+     * is a parser configuration exception
+     * @throws org.xml.sax.SAXNotRecognizedException thrown if there is an
+     * unrecognized feature
+     * @throws org.xml.sax.SAXNotSupportedException thrown if there is a
+     * non-supported feature
+     * @throws org.xml.sax.SAXException is thrown if there is a
+     * org.xml.sax.SAXException
      */
     public static SAXParser buildSecureSaxParser(InputStream... schemaStream) throws ParserConfigurationException,
             SAXNotRecognizedException, SAXNotSupportedException, SAXException {
@@ -81,8 +83,11 @@ public final class XmlUtils {
         factory.setValidating(true);
         factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-        //setting the following unfortunately breaks reading the old suppression files (version 1).
-        //factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        factory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+        factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
         final SAXParser saxParser = factory.newSAXParser();
         saxParser.setProperty(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
@@ -96,8 +101,8 @@ public final class XmlUtils {
      *
      * @param lexicalXSDBoolean The string-value of the boolean
      * @return the boolean value represented by {@code lexicalXSDBoolean}
-     * @throws java.lang.IllegalArgumentException When {@code lexicalXSDBoolean} does fit
-     * the lexical space of the XSD boolean datatype
+     * @throws java.lang.IllegalArgumentException When {@code lexicalXSDBoolean}
+     * does fit the lexical space of the XSD boolean datatype
      */
     public static boolean parseBoolean(String lexicalXSDBoolean) {
         final boolean result;
@@ -120,13 +125,14 @@ public final class XmlUtils {
      * Constructs a secure SAX Parser.
      *
      * @return a SAX Parser
-     * @throws javax.xml.parsers.ParserConfigurationException thrown if there is a parser
-     * configuration exception
-     * @throws org.xml.sax.SAXNotRecognizedException thrown if there is an unrecognized
-     * feature
-     * @throws org.xml.sax.SAXNotSupportedException thrown if there is a non-supported
-     * feature
-     * @throws org.xml.sax.SAXException is thrown if there is a org.xml.sax.SAXException
+     * @throws javax.xml.parsers.ParserConfigurationException thrown if there is
+     * a parser configuration exception
+     * @throws org.xml.sax.SAXNotRecognizedException thrown if there is an
+     * unrecognized feature
+     * @throws org.xml.sax.SAXNotSupportedException thrown if there is a
+     * non-supported feature
+     * @throws org.xml.sax.SAXException is thrown if there is a
+     * org.xml.sax.SAXException
      */
     public static SAXParser buildSecureSaxParser() throws ParserConfigurationException,
             SAXNotRecognizedException, SAXNotSupportedException, SAXException {
@@ -141,8 +147,8 @@ public final class XmlUtils {
      * Constructs a new document builder with security features enabled.
      *
      * @return a new document builder
-     * @throws javax.xml.parsers.ParserConfigurationException thrown if there is a parser
-     * configuration exception
+     * @throws javax.xml.parsers.ParserConfigurationException thrown if there is
+     * a parser configuration exception
      */
     public static DocumentBuilder buildSecureDocumentBuilder() throws ParserConfigurationException {
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

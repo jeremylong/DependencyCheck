@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import org.owasp.dependencycheck.utils.XmlUtils;
 import org.xml.sax.SAXException;
 
 /**
@@ -74,8 +75,7 @@ public final class App {
      */
     private static Map<String, String> readCweData(String[] files) {
         try {
-            final SAXParserFactory factory = SAXParserFactory.newInstance();
-            final SAXParser saxParser = factory.newSAXParser();
+            final SAXParser saxParser = XmlUtils.buildSecureSaxParser();
             final CweHandler handler = new CweHandler();
             for (String f : files) {
                 final File in = new File(f);
