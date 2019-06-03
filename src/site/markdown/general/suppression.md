@@ -70,6 +70,28 @@ HTML version of the report. The other common scenario would be to ignore all CVE
         <cpe>cpe:/a:springsource:spring_framework</cpe>
         <cpe>cpe:/a:mod_security:mod_security</cpe>
     </suppress>
+    <suppress until="2020-01-01Z">
+        <notes><![CDATA[
+        This suppresses a specific cve for any dependency in any directory that has the specified sha1 checksum. If current date is not yet on or beyond 1 Jan 2020.
+        ]]></notes>
+        <sha1>384FAA82E193D4E4B0546059CA09572654BC3970</sha1>
+        <cve>CVE-2013-1337</cve>
+    </suppress>
+</suppressions>
+```
+
+It is also possible to set an expiration date for a suppression rule:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.2.xsd">
+    <suppress until="2020-01-01Z">
+        <notes><![CDATA[
+        Suppresses a given CVE for a dependency with the given sha1 until the current date is 1 Jan 2020 or beyond.
+        ]]></notes>
+        <sha1>384FAA82E193D4E4B0546059CA09572654BC3970</sha1>
+        <cve>CVE-2013-1337</cve>
+    </suppress>
 </suppressions>
 ```
 
