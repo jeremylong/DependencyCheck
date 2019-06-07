@@ -18,12 +18,6 @@
         <property name="file" value="${checkstyle.suppressions.file}"/>
     </module>
 
-    <module name="SuppressionCommentFilter">
-        <property name="offCommentFormat" value="CSOFF\: ([\w\|]+)"/>
-        <property name="onCommentFormat" value="CSON\: ([\w\|]+)"/>
-        <property name="checkFormat" value="$1"/>
-    </module>
-
     <module name="JavadocPackage">
         <property name="allowLegacy" value="false"/>
     </module>
@@ -60,7 +54,12 @@
 
     <module name="TreeWalker">
         <property name="tabWidth" value="4"/>
-        <module name="FileContentsHolder"/>
+        
+        <module name="SuppressionCommentFilter">
+            <property name="offCommentFormat" value="CSOFF\: ([\w\|]+)"/>
+            <property name="onCommentFormat" value="CSON\: ([\w\|]+)"/>
+            <property name="checkFormat" value="$1"/>
+        </module>
         <module name="AvoidStarImport"/>
         <module name="ConstantName"/>
         <module name="EmptyBlock"/>
