@@ -147,7 +147,7 @@ public class MSBuildProjectAnalyzer extends AbstractFileTypeAnalyzer {
                 child.addEvidence(EvidenceType.PRODUCT, "msbuild", "id", id, Confidence.HIGHEST);
                 child.addEvidence(EvidenceType.VERSION, "msbuild", "version", version, Confidence.HIGHEST);
 
-                if (id.indexOf(".") > 0) {
+                if (id.indexOf('.') > 0) {
                     final String[] parts = id.split("\\.");
 
                     // example: Microsoft.EntityFrameworkCore
@@ -155,7 +155,7 @@ public class MSBuildProjectAnalyzer extends AbstractFileTypeAnalyzer {
                     child.addEvidence(EvidenceType.PRODUCT, "msbuild", "id", parts[1], Confidence.MEDIUM);
 
                     if (parts.length > 2) {
-                        final String rest = id.substring(id.indexOf(".") + 1);
+                        final String rest = id.substring(id.indexOf('.') + 1);
                         child.addEvidence(EvidenceType.PRODUCT, "msbuild", "id", rest, Confidence.MEDIUM);
                     }
                 } else {
