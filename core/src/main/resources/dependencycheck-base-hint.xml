@@ -38,6 +38,14 @@
     </hint>
     <hint>
         <given>
+            <evidence regex="true" type="vendor" source="pom" name="groupid" value="org\.hibernate.*" confidence="HIGHEST"/>
+        </given>
+        <add>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="redhat" confidence="HIGH"/>
+        </add>
+    </hint>
+    <hint>
+        <given>
             <evidence type="product" source="jar" name="package name" value="springframework" confidence="LOW"/>
         </given>
         <add>
