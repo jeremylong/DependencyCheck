@@ -184,7 +184,7 @@ public class NugetconfAnalyzer extends AbstractFileTypeAnalyzer {
                 child.addEvidence(EvidenceType.PRODUCT, "packages.config", "id", np.getId(), Confidence.HIGHEST);
 
                 // handle package names the same way as the MSBuild analyzer
-                if (id.indexOf(".") > 0) {
+                if (id.indexOf('.') > 0) {
                     final String[] parts = id.split("\\.");
 
                     // example: Microsoft.EntityFrameworkCore
@@ -192,7 +192,7 @@ public class NugetconfAnalyzer extends AbstractFileTypeAnalyzer {
                     child.addEvidence(EvidenceType.PRODUCT, "packages.config", "id", parts[1], Confidence.MEDIUM);
 
                     if (parts.length > 2) {
-                        final String rest = id.substring(id.indexOf(".") + 1);
+                        final String rest = id.substring(id.indexOf('.') + 1);
                         child.addEvidence(EvidenceType.PRODUCT, "packages.config", "id", rest, Confidence.MEDIUM);
                     }
                 } else {
