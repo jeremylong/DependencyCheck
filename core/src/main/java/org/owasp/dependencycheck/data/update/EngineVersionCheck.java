@@ -135,7 +135,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
                 final DatabaseProperties properties = db.getDatabaseProperties();
 
                 final long lastChecked = DateUtil.getEpochValueInSeconds(properties.getProperty(ENGINE_VERSION_CHECKED_ON, "0"));
-                final long now = System.currentTimeMillis()/1000;
+                final long now = System.currentTimeMillis() / 1000;
                 updateToVersion = properties.getProperty(CURRENT_ENGINE_RELEASE, "");
                 final String currentVersion = settings.getString(Settings.KEYS.APPLICATION_VERSION, "0.0.0");
                 LOGGER.debug("Last checked: {}", lastChecked);
@@ -233,5 +233,10 @@ public class EngineVersionCheck implements CachedWebDataSource {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean purge(Engine engine) {
+        return true;
     }
 }

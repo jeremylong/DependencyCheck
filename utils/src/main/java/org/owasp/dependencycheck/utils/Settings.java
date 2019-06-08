@@ -655,7 +655,7 @@ public final class Settings {
     private void logProperties(@NotNull final String header, @NotNull final Properties properties) {
         if (LOGGER.isDebugEnabled()) {
             final StringWriter sw = new StringWriter();
-            try (final PrintWriter pw = new PrintWriter(sw)) {
+            try (PrintWriter pw = new PrintWriter(sw)) {
                 pw.format("%s:%n%n", header);
                 final Enumeration<?> e = properties.propertyNames();
                 while (e.hasMoreElements()) {

@@ -359,7 +359,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     @SuppressFBWarnings(justification = "try with resources will clean up the output stream", value = {"OBL_UNSATISFIED_OBLIGATION"})
     private boolean isZipFile(final Dependency dependency) {
         final byte[] buffer = new byte[4];
-        try (final FileInputStream fileInputStream = new FileInputStream(dependency.getActualFilePath())) {
+        try (FileInputStream fileInputStream = new FileInputStream(dependency.getActualFilePath())) {
             if (fileInputStream.read(buffer) > 0
                     && (Arrays.equals(buffer, ZIP_FIRST_BYTES)
                     || Arrays.equals(buffer, ZIP_EMPTY_FIRST_BYTES)

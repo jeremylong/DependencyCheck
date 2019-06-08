@@ -28,8 +28,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.LockSupport;
 import javax.annotation.concurrent.ThreadSafe;
 
 import org.json.JSONObject;
@@ -101,7 +99,7 @@ public class NodeAuditSearch {
             LOGGER.debug("Not using proxy");
         }
         if (settings.getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, true)) {
-            DataCacheFactory factory = new DataCacheFactory(settings);
+            final DataCacheFactory factory = new DataCacheFactory(settings);
             cache = factory.getCache(DataCacheFactory.CacheType.NODEAUDIT);
         }
     }
@@ -120,7 +118,7 @@ public class NodeAuditSearch {
         String key = null;
         if (cache != null) {
             key = Checksum.getSHA256Checksum(packageJson.toString());
-            List<Advisory> cached = cache.get(key);
+            final List<Advisory> cached = cache.get(key);
             if (cached != null) {
                 LOGGER.debug("cache hit for node audit: " + key);
                 return cached;
@@ -134,7 +132,7 @@ public class NodeAuditSearch {
      * zero or more Advisories.
      *
      * @param packageJson the package.json file retrieved from the Dependency
-     * @param the key for the cache entry
+     * @param key the key for the cache entry
      * @param count the current retry count
      * @return a List of zero or more Advisory object
      * @throws SearchException if Node Audit API is unable to analyze the
@@ -168,7 +166,7 @@ public class NodeAuditSearch {
                             JsonReader jsonReader = Json.createReader(in)) {
                         final JSONObject jsonResponse = new JSONObject(jsonReader.readObject().toString());
                         final NpmAuditParser parser = new NpmAuditParser();
-                        List<Advisory> advisories = parser.parse(jsonResponse);
+                        final List<Advisory> advisories = parser.parse(jsonResponse);
                         if (cache != null) {
                             cache.put(key, advisories);
                         }
@@ -182,13 +180,13 @@ public class NodeAuditSearch {
                     LOGGER.debug("Node Audit API returned `{} {}` - retrying request.",
                             conn.getResponseCode(), conn.getResponseMessage());
                     if (count < 5) {
-                        count += 1;
+                        final int next = count + 1;
                         try {
-                            Thread.sleep(1500 * count);
+                            Thread.sleep(1500 * next);
                         } catch (InterruptedException ex) {
                             throw new UnexpectedAnalysisException(ex);
                         }
-                        return submitPackage(packageJson, key, count);
+                        return submitPackage(packageJson, key, next);
                     }
                     throw new SearchException("Could not perform Node Audit analysis - service returned a 503.");
                 case 400:

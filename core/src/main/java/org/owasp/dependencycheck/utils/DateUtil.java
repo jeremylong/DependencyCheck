@@ -88,7 +88,7 @@ public final class DateUtil {
      * @return the value in seconds
      */
     public static long getEpochValueInSeconds(String epoch) {
-        String seconds;
+        final String seconds;
         if (epoch.length() >= 13) {
             //this is in milliseconds - reduce to seconds
             seconds = epoch.substring(0, 10);

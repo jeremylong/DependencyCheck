@@ -74,32 +74,8 @@ public class PurgeMojo extends BaseDependencyCheckMojo {
             getLog().error(msg);
         } else {
             populateSettings();
-            final File db;
-            try {
-                db = new File(getSettings().getDataDirectory(), getSettings().getString(Settings.KEYS.DB_FILE_NAME, "odc.mv.db"));
-                if (db.exists()) {
-                    if (db.delete()) {
-                        getLog().info("Database file purged; local copy of the NVD has been removed");
-                    } else {
-                        final String msg = String.format("Unable to delete '%s'; please delete the file manually", db.getAbsolutePath());
-                        if (this.isFailOnError()) {
-                            throw new MojoFailureException(msg);
-                        }
-                        getLog().error(msg);
-                    }
-                } else {
-                    final String msg = String.format("Unable to purge database; the database file does not exist: %s", db.getAbsolutePath());
-                    if (this.isFailOnError()) {
-                        throw new MojoFailureException(msg);
-                    }
-                    getLog().error(msg);
-                }
-            } catch (IOException ex) {
-                final String msg = "Unable to delete the database";
-                if (this.isFailOnError()) {
-                    throw new MojoExecutionException(msg, ex);
-                }
-                getLog().error(msg);
+            try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, getSettings())) {
+                engine.purge();
             }
             getSettings().cleanup();
         }

@@ -45,7 +45,7 @@ import org.sonatype.ossindex.service.client.cache.DirectoryCache;
  * @author Jason Dillon
  * @since 5.0.0
  */
-public class OssindexClientFactory {
+public final class OssindexClientFactory {
 
     /**
      * Static logger.
@@ -78,11 +78,11 @@ public class OssindexClientFactory {
             config.setBaseUrl(baseUrl);
         }
         if (settings.getBoolean(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE, true)) {
-            DirectoryCache.Configuration cache = new DirectoryCache.Configuration();
-            File data;
+            final DirectoryCache.Configuration cache = new DirectoryCache.Configuration();
+            final File data;
             try {
                 data = settings.getDataDirectory();
-                File cacheDir = new File(data, "oss_cache");
+                final File cacheDir = new File(data, "oss_cache");
                 if (cacheDir.isDirectory() || cacheDir.mkdirs()) {
                     cache.setBaseDir(cacheDir.toPath());
                     cache.setExpireAfter(Duration.standardHours(24));
@@ -101,7 +101,7 @@ public class OssindexClientFactory {
                 settings.getString(Settings.KEYS.APPLICATION_VERSION, "unknown")
         );
 
-        Transport transport = new HttpUrlConnectionTransport(userAgent) {
+        final Transport transport = new HttpUrlConnectionTransport(userAgent) {
             private final URLConnectionFactory connectionFactory = new URLConnectionFactory(settings);
 
             @Override

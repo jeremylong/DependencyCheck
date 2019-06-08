@@ -115,7 +115,7 @@ public class RetireJSDataSource implements CachedWebDataSource {
      * @return <code>true</code> if an updated to the RetireJS database should
      * be performed; otherwise <code>false</code>
      * @throws NumberFormatException thrown if an invalid value is contained in
-     *                               the database properties
+     * the database properties
      */
     protected boolean shouldUpdagte(File repo) throws NumberFormatException {
         boolean proceed = true;
@@ -138,9 +138,9 @@ public class RetireJSDataSource implements CachedWebDataSource {
      * Initializes the local RetireJS repository
      *
      * @param settings a reference to the dependency-check settings
-     * @param repoUrl  the URL to the RetireJS repo to use
+     * @param repoUrl the URL to the RetireJS repo to use
      * @throws UpdateException thrown if there is an exception during
-     *                         initialization
+     * initialization
      */
     private void initializeRetireJsRepo(Settings settings, URL repoUrl) throws UpdateException {
         try {
@@ -159,7 +159,7 @@ public class RetireJSDataSource implements CachedWebDataSource {
                 final File tmpFile = new File(tmpDir, filename);
                 final File repoFile = new File(dataDir, filename);
                 try (InputStream inputStream = conn.getInputStream();
-                     FileOutputStream outputStream = new FileOutputStream(tmpFile)) {
+                        FileOutputStream outputStream = new FileOutputStream(tmpFile)) {
                     IOUtils.copy(inputStream, outputStream);
                 }
                 //using move fails if target and destination are on different disks which does happen (see #1394 and #1404)
@@ -171,5 +171,28 @@ public class RetireJSDataSource implements CachedWebDataSource {
         } catch (IOException e) {
             throw new UpdateException("Failed to initialize the RetireJS repo", e);
         }
+    }
+
+    @Override
+    public boolean purge(Engine engine) {
+        boolean result = true;
+        try {
+            final File dataDir = engine.getSettings().getDataDirectory();
+            final URL repoUrl = new URL(engine.getSettings().getString(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, DEFAULT_JS_URL));
+            final String filename = repoUrl.getFile().substring(repoUrl.getFile().lastIndexOf("/") + 1);
+            final File repo = new File(dataDir, filename);
+            if (repo.exists()) {
+                if (repo.delete()) {
+                    LOGGER.info("RetireJS repo removed successfully");
+                } else {
+                    LOGGER.error("Unable to delete '{}'; please delete the file manually", repo.getAbsolutePath());
+                    result = false;
+                }
+            }
+        } catch (IOException ex) {
+            LOGGER.error("Unable to delete the RetireJS repo - invalid configuration");
+            result = false;
+        }
+        return result;
     }
 }

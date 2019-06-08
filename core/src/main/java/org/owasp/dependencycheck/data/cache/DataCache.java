@@ -22,6 +22,8 @@ import org.apache.commons.jcs.access.CacheAccess;
 /**
  * A generic wrapper for the Java Caching System (JCS).
  *
+ * @param <T> the object type that will be cached
+ *
  * @author Jeremy Long
  */
 public class DataCache<T> {
@@ -29,12 +31,12 @@ public class DataCache<T> {
     /**
      * A reference to the JCS cache.
      */
-    CacheAccess<String, T> cache;
+    private CacheAccess<String, T> cache;
 
     /**
      * Creates a new generic JCS wrapper.
      *
-     * @param cache
+     * @param cache a reference to the underlying cache implementation.
      */
     public DataCache(CacheAccess<String, T> cache) {
         this.cache = cache;

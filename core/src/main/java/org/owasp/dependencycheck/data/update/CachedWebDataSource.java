@@ -39,4 +39,13 @@ public interface CachedWebDataSource {
      * the data or updating the data store.
      */
     boolean update(Engine engine) throws UpdateException;
+
+    /**
+     * Deletes any locally cached data.
+     *
+     * @param engine a reference to the dependency-check engine
+     * @return <code>true</code> if the purge was successful; otherwise
+     * <code>false</code>
+     */
+    boolean purge(Engine engine);
 }

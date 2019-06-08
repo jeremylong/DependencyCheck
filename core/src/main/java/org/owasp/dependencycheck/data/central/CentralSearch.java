@@ -111,7 +111,7 @@ public class CentralSearch {
             LOGGER.debug("Not using proxy");
         }
         if (settings.getBoolean(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE, true)) {
-            DataCacheFactory factory = new DataCacheFactory(settings);
+            final DataCacheFactory factory = new DataCacheFactory(settings);
             cache = factory.getCache(DataCacheFactory.CacheType.CENTRAL);
         }
     }
@@ -133,7 +133,7 @@ public class CentralSearch {
             throw new IllegalArgumentException("Invalid SHA1 format");
         }
         if (cache != null) {
-            List<MavenArtifact> cached = cache.get(sha1);
+            final List<MavenArtifact> cached = cache.get(sha1);
             if (cached != null) {
                 LOGGER.debug("cache hit for Central: " + sha1);
                 if (cached.isEmpty()) {
@@ -142,7 +142,7 @@ public class CentralSearch {
                 return cached;
             }
         }
-        List<MavenArtifact> result = new ArrayList<>();
+        final List<MavenArtifact> result = new ArrayList<>();
         final URL url = new URL(String.format(query, rootURL, sha1));
 
         LOGGER.debug("Searching Central url {}", url);

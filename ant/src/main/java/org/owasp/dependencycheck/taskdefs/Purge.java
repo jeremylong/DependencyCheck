@@ -23,6 +23,7 @@ import java.io.InputStream;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
+import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.impl.StaticLoggerBinder;
 
@@ -112,32 +113,8 @@ public class Purge extends Task {
     @Override
     public void execute() throws BuildException {
         populateSettings();
-        final File db;
-        try {
-            db = new File(getSettings().getDataDirectory(), getSettings().getString(Settings.KEYS.DB_FILE_NAME, "odc.mv.db"));
-            if (db.exists()) {
-                if (db.delete()) {
-                    log("Database file purged; local copy of the NVD has been removed", Project.MSG_INFO);
-                } else {
-                    final String msg = String.format("Unable to delete '%s'; please delete the file manually", db.getAbsolutePath());
-                    if (this.failOnError) {
-                        throw new BuildException(msg);
-                    }
-                    log(msg, Project.MSG_ERR);
-                }
-            } else {
-                final String msg = String.format("Unable to purge database; the database file does not exist: %s", db.getAbsolutePath());
-                if (this.failOnError) {
-                    throw new BuildException(msg);
-                }
-                log(msg, Project.MSG_ERR);
-            }
-        } catch (IOException ex) {
-            final String msg = "Unable to delete the database";
-            if (this.failOnError) {
-                throw new BuildException(msg);
-            }
-            log(msg, Project.MSG_ERR);
+        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, getSettings())) {
+            engine.purge();
         } finally {
             settings.cleanup(true);
         }

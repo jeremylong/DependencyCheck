@@ -653,10 +653,10 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         boolean isValid = true;
 
         // Prepare the evidence values, e.g. remove the characters we used for splitting
-        List<String> evidenceValues = new ArrayList<>(evidence.size());
-        for (Evidence e : evidence) {
+        final List<String> evidenceValues = new ArrayList<>(evidence.size());
+        evidence.forEach((e) -> {
             evidenceValues.add(e.getValue().toLowerCase().replaceAll("[\\s_-]+", ""));
-        }
+        });
 
         for (String word : list) {
             word = word.toLowerCase();

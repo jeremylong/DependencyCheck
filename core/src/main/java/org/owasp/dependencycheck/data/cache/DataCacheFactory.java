@@ -42,73 +42,89 @@ public class DataCacheFactory {
     /**
      * The cache directory.
      */
-    private String CACHE_DIRECTORY = "cache";
+    private final static String CACHE_DIRECTORY = "cache";
     /**
      * The cache properties.
      */
-    private String CACHE_PROPERTIES = "dependencycheck-cache.properties";
-    /**
-     * A reference to the settings.
-     */
-    private Settings settings;
+    private final static String CACHE_PROPERTIES = "dependencycheck-cache.properties";
     /**
      * Whether or not JCS has been initialized.
      */
-    private static boolean initialized = false;
+    private static Boolean initialized = false;
 
+    /**
+     * The types of caches that can be instantiated.
+     */
     public enum CacheType {
+        /**
+         * Used to store node audit analysis.
+         */
         NODEAUDIT,
+        /**
+         * Used to store the results of searching Maven Central.
+         */
         CENTRAL
     }
 
+    /**
+     * Creates the data cache factory.
+     *
+     * @param settings the configuration settings
+     */
     public DataCacheFactory(Settings settings) {
-        if (!initialized) {
-            this.settings = settings;
-
-            File cacheDirectory;
-            try {
-                cacheDirectory = new File(settings.getDataDirectory(), CACHE_DIRECTORY);
-            } catch (IOException ex) {
-                throw new CacheException("Unable to obtain disk cache directory path");
-            }
-            if (!cacheDirectory.isDirectory() && !cacheDirectory.mkdirs()) {
-                throw new CacheException("Unable to create disk cache: " + cacheDirectory.toString());
-            }
-            try (InputStream in = FileUtils.getResourceAsStream(CACHE_PROPERTIES)) {
-                if (in == null) {
-                    throw new RuntimeException("Cache properties `" + CACHE_PROPERTIES + "` could not be found");
+        synchronized (this) {
+            if (!initialized) {
+                final File cacheDirectory;
+                try {
+                    cacheDirectory = new File(settings.getDataDirectory(), CACHE_DIRECTORY);
+                } catch (IOException ex) {
+                    throw new CacheException("Unable to obtain disk cache directory path");
                 }
-
-                Properties properties = new Properties();
-                properties.load(in);
-                properties.put("jcs.auxiliary.ODC.attributes.DiskPath", cacheDirectory.getCanonicalPath());
-                for (CacheType t : CacheType.values()) {
-                    File fp = new File(cacheDirectory, t.toString());
-                    properties.put("jcs.auxiliary." + t.toString() + ".attributes.DiskPath", fp.getCanonicalPath());
+                if (!cacheDirectory.isDirectory() && !cacheDirectory.mkdirs()) {
+                    throw new CacheException("Unable to create disk cache: " + cacheDirectory.toString());
                 }
+                try (InputStream in = FileUtils.getResourceAsStream(CACHE_PROPERTIES)) {
+                    if (in == null) {
+                        throw new RuntimeException("Cache properties `" + CACHE_PROPERTIES + "` could not be found");
+                    }
 
-                JCS.setConfigProperties(properties);
-                initialized = true;
-            } catch (IOException ex) {
-                throw new CacheException("Error creating disk cache", ex);
+                    final Properties properties = new Properties();
+                    properties.load(in);
+                    properties.put("jcs.auxiliary.ODC.attributes.DiskPath", cacheDirectory.getCanonicalPath());
+                    for (CacheType t : CacheType.values()) {
+                        final File fp = new File(cacheDirectory, t.toString());
+                        properties.put("jcs.auxiliary." + t.toString() + ".attributes.DiskPath", fp.getCanonicalPath());
+                    }
+
+                    JCS.setConfigProperties(properties);
+                    initialized = true;
+                } catch (IOException ex) {
+                    throw new CacheException("Error creating disk cache", ex);
+                }
             }
         }
     }
 
+    /**
+     * Returns the data cache for the given type.
+     *
+     * @param type the cache type
+     * @return a references to the data cache for the given type
+     */
     public DataCache getCache(CacheType type) {
-        ICompositeCacheAttributes attr = new CompositeCacheAttributes();
+        final ICompositeCacheAttributes attr = new CompositeCacheAttributes();
         attr.setUseDisk(true);
-
+        attr.setUseLateral(false);
+        attr.setUseRemote(false);
         if (type == CacheType.NODEAUDIT) {
-            CacheAccess<String, List<Advisory>> ca = JCS.getInstance(type.toString(), attr);
-            DataCache<List<Advisory>> dc = new DataCache<>(ca);
+            final CacheAccess<String, List<Advisory>> ca = JCS.getInstance(type.toString(), attr);
+            final DataCache<List<Advisory>> dc = new DataCache<>(ca);
             return dc;
         } else if (type == CacheType.CENTRAL) {
-            CacheAccess<String, List<MavenArtifact>> ca = JCS.getInstance(type.toString(), attr);
-            DataCache<List<MavenArtifact>> dc = new DataCache<>(ca);
+            final CacheAccess<String, List<MavenArtifact>> ca = JCS.getInstance(type.toString(), attr);
+            final DataCache<List<MavenArtifact>> dc = new DataCache<>(ca);
             return dc;
         }
         return null;
     }
-
 }

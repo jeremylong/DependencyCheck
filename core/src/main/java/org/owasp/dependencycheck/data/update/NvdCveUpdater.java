@@ -17,22 +17,17 @@
  */
 package org.owasp.dependencycheck.data.update;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.net.URL;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import javax.annotation.concurrent.ThreadSafe;
 
 import org.owasp.dependencycheck.Engine;
@@ -52,7 +47,6 @@ import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
 import org.owasp.dependencycheck.utils.DateUtil;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
-import org.owasp.dependencycheck.utils.HttpResourceConnection;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -109,7 +103,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
      * @param engine a reference to the dependency-check engine
      * @return whether or not an update was made to the CveDB
      * @throws UpdateException is thrown if there is an error updating the
-     *                         database
+     * database
      */
     @Override
     public synchronized boolean update(Engine engine) throws UpdateException {
@@ -210,7 +204,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
      *
      * @return true to proceed with the check, or false to skip
      * @throws UpdateException thrown when there is an issue checking for
-     *                         updates
+     * updates
      */
     private boolean checkUpdate() throws UpdateException {
         boolean proceed = true;
@@ -244,9 +238,9 @@ public class NvdCveUpdater implements CachedWebDataSource {
      * the current CVE Database.
      *
      * @param updateable a collection of NVD CVE data file references that need
-     *                   to be downloaded and processed to update the database
+     * to be downloaded and processed to update the database
      * @throws UpdateException is thrown if there is an error updating the
-     *                         database
+     * database
      */
     @SuppressWarnings("FutureReturnValueIgnored")
     private void performUpdate(UpdateableNvdCve updateable) throws UpdateException {
@@ -371,12 +365,12 @@ public class NvdCveUpdater implements CachedWebDataSource {
      * need to be updated.
      *
      * @return the collection of files that need to be updated
-     * @throws MalformedURLException   is thrown if the URL for the NVD CVE Meta
-     *                                 data is incorrect
+     * @throws MalformedURLException is thrown if the URL for the NVD CVE Meta
+     * data is incorrect
      * @throws DownloadFailedException is thrown if there is an error.
-     *                                 downloading the NVD CVE download data file
-     * @throws UpdateException         Is thrown if there is an issue with the last
-     *                                 updated properties file
+     * downloading the NVD CVE download data file
+     * @throws UpdateException Is thrown if there is an issue with the last
+     * updated properties file
      */
     protected final UpdateableNvdCve getUpdatesNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
         LOGGER.debug("starting getUpdatesNeeded() ...");
@@ -393,7 +387,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
                         break;
                     }
                 }
-                long lastUpdated = getPropertyInSeconds(DatabaseProperties.LAST_UPDATED);
+                final long lastUpdated = getPropertyInSeconds(DatabaseProperties.LAST_UPDATED);
                 final long now = System.currentTimeMillis() / 1000;
                 final int days = settings.getInt(Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS, 7);
 
@@ -436,7 +430,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
      * @return the property value in seconds
      */
     private long getPropertyInSeconds(String key) {
-        String value = dbProperties.getProperty(key, "0");
+        final String value = dbProperties.getProperty(key, "0");
         return DateUtil.getEpochValueInSeconds(value);
     }
 
@@ -447,5 +441,40 @@ public class NvdCveUpdater implements CachedWebDataSource {
      */
     protected synchronized void setSettings(Settings settings) {
         this.settings = settings;
+    }
+
+    @Override
+    public boolean purge(Engine engine) {
+        boolean result = true;
+        try {
+            final File dataDir = engine.getSettings().getDataDirectory();
+            final File db = new File(dataDir, engine.getSettings().getString(Settings.KEYS.DB_FILE_NAME, "odc.mv.db"));
+            if (db.exists()) {
+                if (db.delete()) {
+                    LOGGER.info("Database file purged; local copy of the NVD has been removed");
+                } else {
+                    LOGGER.error("Unable to delete '{}'; please delete the file manually", db.getAbsolutePath());
+                    result = false;
+                }
+            } else {
+                LOGGER.info("Unable to purge database; the database file does not exist: {}", db.getAbsolutePath());
+                result = false;
+            }
+            final File traceFile = new File(dataDir, "odc.trace.db");
+            if (traceFile.exists() && !traceFile.delete()) {
+                LOGGER.error("Unable to delete '{}'; please delete the file manually", traceFile.getAbsolutePath());
+                result = false;
+            }
+            final File lockFile = new File(dataDir, "odc.update.lock");
+            if (lockFile.exists() && !lockFile.delete()) {
+                LOGGER.error("Unable to delete '{}'; please delete the file manually", lockFile.getAbsolutePath());
+                result = false;
+            }
+        } catch (IOException ex) {
+            final String msg = "Unable to delete the database";
+            LOGGER.error(msg, ex);
+            result = false;
+        }
+        return result;
     }
 }
