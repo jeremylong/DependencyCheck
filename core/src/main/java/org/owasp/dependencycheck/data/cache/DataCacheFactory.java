@@ -42,11 +42,11 @@ public class DataCacheFactory {
     /**
      * The cache directory.
      */
-    private final static String CACHE_DIRECTORY = "cache";
+    private static final String CACHE_DIRECTORY = "cache";
     /**
      * The cache properties.
      */
-    private final static String CACHE_PROPERTIES = "dependencycheck-cache.properties";
+    private static final String CACHE_PROPERTIES = "dependencycheck-cache.properties";
     /**
      * Whether or not JCS has been initialized.
      */

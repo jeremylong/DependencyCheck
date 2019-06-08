@@ -17,8 +17,6 @@
  */
 package org.owasp.dependencycheck.maven;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Locale;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -27,7 +25,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
-import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * Maven Plugin that purges the local copy of the NVD data.

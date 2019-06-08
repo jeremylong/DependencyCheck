@@ -193,6 +193,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      *
      * @param dependency the dependency being analyzed
      */
+    //CSOFF: NestedIfDepth
     @SuppressWarnings("null")
     @SuppressFBWarnings(justification = "null checks are working correctly to prevent NPE", value = {"NP_NULL_ON_SOME_PATH_MIGHT_BE_INFEASIBLE"})
     private void removeSpuriousCPE(Dependency dependency) {
@@ -237,6 +238,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
             }
         }
     }
+    //CSON: NestedIfDepth
 
     /**
      * Removes any CPE entries for the JDK/JRE unless the filename ends with

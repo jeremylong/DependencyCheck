@@ -86,6 +86,7 @@ public class CvssV3 implements Serializable {
      * @param baseScore the base score
      * @param baseSeverity the base severity
      */
+    //CSOFF: ParameterNumber
     public CvssV3(String attackVector, String attackComplexity, String privilegesRequired,
             String userInteraction, String scope, String confidentialityImpact, String integrityImpact,
             String availabilityImpact, float baseScore, String baseSeverity) {
@@ -100,6 +101,7 @@ public class CvssV3 implements Serializable {
         this.baseScore = baseScore;
         this.baseSeverity = baseSeverity;
     }
+    //CSON: ParameterNumber
 
     /**
      * Get the value of attackVector.

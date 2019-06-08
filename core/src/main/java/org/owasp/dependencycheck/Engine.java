@@ -956,7 +956,7 @@ public class Engine implements FileFilter, AutoCloseable {
             result &= iterator.next().purge(this);
         }
         try {
-            File cache = new File(settings.getDataDirectory(), "cache");
+            final File cache = new File(settings.getDataDirectory(), "cache");
             if (cache.exists()) {
                 if (FileUtils.deleteQuietly(cache)) {
                     LOGGER.info("Cache directory purged");
@@ -966,7 +966,7 @@ public class Engine implements FileFilter, AutoCloseable {
             throw new RuntimeException(ex);
         }
         try {
-            File cache = new File(settings.getDataDirectory(), "oss_cache");
+            final File cache = new File(settings.getDataDirectory(), "oss_cache");
             if (cache.exists()) {
                 if (FileUtils.deleteQuietly(cache)) {
                     LOGGER.info("OSS Cache directory purged");

@@ -76,6 +76,7 @@ public class CvssV2 implements Serializable {
      * @param availabilityImpact the availability impact
      * @param severity the severity
      */
+    //CSOFF: ParameterNumber
     public CvssV2(float score, String accessVector, String accessComplexity, String authentication,
             String confidentialityImpact, String integrityImpact, String availabilityImpact, String severity) {
         this.score = score;
@@ -87,6 +88,7 @@ public class CvssV2 implements Serializable {
         this.availabilityImpact = availabilityImpact;
         this.severity = severity;
     }
+    //CSON: ParameterNumber
 
     /**
      * Get the value of score.

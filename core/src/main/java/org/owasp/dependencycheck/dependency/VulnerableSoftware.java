@@ -105,6 +105,7 @@ public class VulnerableSoftware extends Cpe implements Serializable {
      * @throws CpeValidationException thrown if one of the CPE entries is
      * invalid
      */
+    //CSOFF: ParameterNumber
     public VulnerableSoftware(Part part, String vendor, String product, String version,
             String update, String edition, String language, String swEdition,
             String targetSw, String targetHw, String other,
@@ -117,6 +118,7 @@ public class VulnerableSoftware extends Cpe implements Serializable {
         this.versionStartIncluding = versionStartIncluding;
         this.vulnerable = vulnerable;
     }
+    //CSON: ParameterNumber
 
     @Override
     public int compareTo(@NotNull Object o) {

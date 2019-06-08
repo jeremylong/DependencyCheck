@@ -132,8 +132,10 @@ public class App {
                     return exitCode;
                 }
                 try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, settings)) {
-                    //TODO - refactor so if purge fails we return an error code.
-                    engine.purge();
+                    if (!engine.purge()) {
+                        exitCode = -7;
+                        return exitCode;
+                    }
                 } finally {
                     settings.cleanup();
                 }
