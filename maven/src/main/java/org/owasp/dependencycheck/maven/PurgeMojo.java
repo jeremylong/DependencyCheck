@@ -62,18 +62,10 @@ public class PurgeMojo extends BaseDependencyCheckMojo {
      */
     @Override
     protected void runCheck() throws MojoExecutionException, MojoFailureException {
-
-        if (getConnectionString() != null && !getConnectionString().isEmpty()) {
-            final String msg = "Unable to purge the local NVD when using a non-default connection string";
-            if (this.isFailOnError()) {
-                throw new MojoFailureException(msg);
-            }
-            getLog().error(msg);
-        } else {
-            populateSettings();
-            try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, getSettings())) {
-                engine.purge();
-            }
+        populateSettings();
+        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, getSettings())) {
+            engine.purge();
+        } finally {
             getSettings().cleanup();
         }
     }

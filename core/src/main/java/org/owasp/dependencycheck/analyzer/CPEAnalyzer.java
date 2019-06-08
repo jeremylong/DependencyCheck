@@ -755,7 +755,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             final CharArraySet stopWords = SearchFieldAnalyzer.getStopWords();
             if (dependency.getName() != null && !dependency.getName().isEmpty()) {
                 final String name = dependency.getName();
-                for (String word : product.split("\b")) {
+                for (String word : product.split("[^a-zA-Z0-9]")) {
                     useDependencyVersion &= name.contains(word) || stopWords.contains(word);
                 }
             }

@@ -170,6 +170,7 @@
             7. python (#1055)
             8. CVE-2017-16046 is for the node.js npm mariadb client (#1364)
             9. sqlserver_project is a node js module (#1388)
+            10. auth0 is a javascript library (#1925)
         ]]></notes>
         <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)$</filePath>
         <cpe>cpe:/a:dash:dash</cpe>
@@ -183,6 +184,7 @@
         <cpe>cpe:/a:python_software_foundation:python</cpe>
         <cve>CVE-2017-16046</cve>
         <cpe>cpe:/a:sqlserver_project:sqlserver</cpe>
+        <cpe>cpe:/a:auth0:auth0</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -858,12 +860,40 @@
         <cpe>cpe:/a:jenkins:jenkins</cpe>
         <cpe>cpe:/a:jenkins:maven</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         FP on dependency-check-gradle
         ]]></notes>
         <gav regex="true">^org\.owasp:dependency-check-gradle:.*$</gav>
         <cpe>cpe:/a:gradle:gradle</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive: see https://github.com/jeremylong/DependencyCheck/issues/1949
+        ]]></notes>
+        <gav regex="true">^io\.springfox:springfox-.+:.*$</gav>
+        <cpe>cpe:/a:gradle:gradle</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        see https://github.com/jeremylong/DependencyCheck/issues/1927
+        ]]></notes>
+        <gav regex="true">^io\.micrometer:micrometer-registry-prometheus:.*$</gav>
+        <cve>CVE-2019-3826</cve>
+     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        see https://github.com/jeremylong/DependencyCheck/issues/1927
+        ]]></notes>
+        <gav regex="true">^io\.prometheus:simpleclient_common:.*$</gav>
+        <cve>CVE-2019-3826</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+        see https://github.com/jeremylong/DependencyCheck/issues/1927
+        ]]></notes>
+        <gav regex="true">^io\.prometheus:simpleclient:.*$</gav>
+        <cve>CVE-2019-3826</cve>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -969,6 +999,16 @@
         ]]></notes>
         <gav regex="true">org\.springframework\.data:spring-data-mongodb.*</gav>
         <cpe>cpe:/a:mongodb:mongodb</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Spring false positives; see https://github.com/jeremylong/DependencyCheck/issues/1921.
+        ]]></notes>
+        <gav regex="true">org\.springframework\.[^:]+:.*</gav>
+        <cpe>cpe:/a:springsource:spring_framework</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
