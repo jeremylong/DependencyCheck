@@ -264,13 +264,19 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "versionCheckEnabled", defaultValue = "true")
     private boolean versionCheckEnabled;
     /**
-     * The paths to the suppression files.
+     * The paths to the suppression files. The parameter value can be a local
+     * file path, a URL to a suppression file, or even a reference to a file on
+     * the class path (see
+     * https://github.com/jeremylong/DependencyCheck/issues/1878#issuecomment-487533799)
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "suppressionFiles")
     private String[] suppressionFiles;
     /**
-     * The paths to the suppression file.
+     * The paths to the suppression file. The parameter value can be a local
+     * file path, a URL to a suppression file, or even a reference to a file on
+     * the class path (see
+     * https://github.com/jeremylong/DependencyCheck/issues/1878#issuecomment-487533799)
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "suppressionFile")
