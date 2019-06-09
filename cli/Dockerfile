@@ -12,7 +12,7 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 ## ensure everything is up-to-date
 RUN apt-get update                                                                                   && \
-    apt-get install -y --no-install-recommends ruby wget gpg apt-transport-https ca-certificates     && \
+    apt-get install -y --no-install-recommends ruby wget gpg apt-transport-https ca-certificates unzip && \
     gem install bundle-audit                                                                         && \
     gem cleanup                                                                                      && \
     rm -rf /var/lib/apt/lists/*
