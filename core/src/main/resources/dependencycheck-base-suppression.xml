@@ -1391,6 +1391,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        spring-boot-starter-security is not the same as spring-security, See #1975
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.boot:spring-boot-starter-security:.*$</gav>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Suppresses false positives per #1880.
         ]]></notes>
         <gav regex="true">^com\.hazelcast:hazelcast-kubernetes:.*$</gav>
