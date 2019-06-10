@@ -915,7 +915,7 @@ public class Engine implements FileFilter, AutoCloseable {
                         dbUpdatesMade |= source.update(this);
                     } catch (UpdateException ex) {
                         updateException = ex;
-                        LOGGER.error(ex.getMessage());
+                        LOGGER.error(ex.getMessage(), ex);
                     }
                 }
                 if (dbUpdatesMade) {

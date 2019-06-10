@@ -230,7 +230,7 @@ public final class Checksum {
         try {
             return MessageDigest.getInstance(algorithm);
         } catch (NoSuchAlgorithmException e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
             final String msg = String.format("Failed to obtain the %s message digest.", algorithm);
             throw new IllegalStateException(msg, e);
         }

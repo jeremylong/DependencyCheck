@@ -166,7 +166,7 @@ public class App {
             try {
                 populateSettings(cli);
             } catch (InvalidSettingException ex) {
-                LOGGER.error(ex.getMessage());
+                LOGGER.error(ex.getMessage(), ex);
                 LOGGER.debug("Error loading properties file", ex);
                 exitCode = -4;
                 return exitCode;
@@ -184,9 +184,11 @@ public class App {
                 }
             } catch (DatabaseException ex) {
                 LOGGER.error(ex.getMessage());
+                LOGGER.debug("database exception", ex);
                 exitCode = -11;
             } catch (ReportException ex) {
                 LOGGER.error(ex.getMessage());
+                LOGGER.debug("report exception", ex);
                 exitCode = -12;
             } catch (ExceptionCollection ex) {
                 if (ex.isFatal()) {
