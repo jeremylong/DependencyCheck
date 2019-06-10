@@ -30,8 +30,8 @@ target_sw VARCHAR(255), target_hw VARCHAR(255), other VARCHAR(255), ecosystem VA
 CREATE TABLE software (cveid INT, cpeEntryId INT, versionEndExcluding VARCHAR(50), versionEndIncluding VARCHAR(50), 
                        versionStartExcluding VARCHAR(50), versionStartIncluding VARCHAR(50), vulnerable BIT
     , CONSTRAINT FK_SoftwareCve FOREIGN KEY (cveid) REFERENCES vulnerability(id) ON DELETE CASCADE
-    , CONSTRAINT FK_SoftwareCpeProduct FOREIGN KEY (cpeEntryId) REFERENCES cpeEntry(id)
-    , PRIMARY KEY (cveid, cpeEntryId));
+    , CONSTRAINT FK_SoftwareCpeProduct FOREIGN KEY (cpeEntryId) REFERENCES cpeEntry(id));
+
 CREATE TABLE cweEntry (cveid INT, cwe VARCHAR(20)
     , CONSTRAINT FK_CweEntry FOREIGN KEY (cveid) REFERENCES vulnerability(id) ON DELETE CASCADE
     , PRIMARY KEY (cveid, cwe));
