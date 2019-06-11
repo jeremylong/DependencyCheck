@@ -327,12 +327,12 @@ public class NvdCveUpdater implements CachedWebDataSource {
             }
         }
 
-        //always true because <=0 exits early above
-        //if (maxUpdates >= 1) {
-        //ensure the modified file date gets written (we may not have actually updated it)
-        dbProperties.save(updateable.get(MODIFIED));
-        cveDb.cleanupDatabase();
-        //}
+        try {
+            dbProperties.save(updateable.get(MODIFIED));
+            cveDb.cleanupDatabase();
+        } catch (DatabaseException ex) {
+            throw new UpdateException(ex.getMessage(), ex.getCause());
+        }
     }
 
     /**

@@ -1497,6 +1497,7 @@ public final class CveDB implements AutoCloseable {
         } catch (SQLException ex) {
             LOGGER.error("An unexpected SQL Exception occurred; please see the verbose log for more details.");
             LOGGER.debug("", ex);
+            throw new DatabaseException("Unexpected SQL Exception", ex);
         }
     }
 
