@@ -28,7 +28,7 @@ Copyright (c) 2017 Jeremy Long. All Rights Reserved.
     <packaging>jar</packaging>
     <scm>
         <connection>scm:git:https://github.com/jeremylong/DependencyCheck.git</connection>
-        <url>https://github.com/jeremylong/DependencyCheck/archetype</url>
+        <url>https://github.com/jeremylong/DependencyCheck/tree/master/archetype</url>
         <developerConnection>scm:git:git@github.com:jeremylong/DependencyCheck.git</developerConnection>
         <tag>HEAD</tag>
     </scm>

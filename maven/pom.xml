@@ -32,7 +32,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
     </properties>
     <scm>
         <connection>scm:git:https://github.com/jeremylong/DependencyCheck.git</connection>
-        <url>https://github.com/jeremylong/DependencyCheck/maven</url>
+        <url>https://github.com/jeremylong/DependencyCheck/tree/master/maven</url>
         <developerConnection>scm:git:git@github.com:jeremylong/DependencyCheck.git</developerConnection>
         <tag>HEAD</tag>
     </scm>

@@ -27,7 +27,7 @@ Copyright (c) 2017 - Jeremy Long. All Rights Reserved.
     <packaging>pom</packaging>
     <scm>
         <connection>scm:git:https://github.com/jeremylong/DependencyCheck.git</connection>
-        <url>https://github.com/jeremylong/DependencyCheck/build-reporting</url>
+        <url>https://github.com/jeremylong/DependencyCheck/tree/master/build-reporting</url>
         <developerConnection>scm:git:git@github.com:jeremylong/DependencyCheck.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
