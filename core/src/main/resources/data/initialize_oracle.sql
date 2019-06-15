@@ -1,3 +1,4 @@
+
 -- Drop
 BEGIN
   EXECUTE IMMEDIATE 'DROP SEQUENCE vulnerability_seq';
@@ -7,6 +8,7 @@ EXCEPTION
       RAISE;
     END IF;
 END;
+/
 
 BEGIN
   EXECUTE IMMEDIATE 'DROP SEQUENCE cpeEntry_seq';
@@ -16,6 +18,7 @@ EXCEPTION
       RAISE;
     END IF;
 END;
+/
 
 BEGIN
     EXECUTE IMMEDIATE 'DROP TABLE software CASCADE CONSTRAINTS';
@@ -25,6 +28,7 @@ EXCEPTION
             RAISE;
         END IF;
 END;
+/
 
 BEGIN
     EXECUTE IMMEDIATE 'DROP TABLE cpeEntry CASCADE CONSTRAINTS';
@@ -34,6 +38,7 @@ EXCEPTION
             RAISE;
         END IF;
 END;
+/
 
 BEGIN
     EXECUTE IMMEDIATE 'DROP TABLE reference CASCADE CONSTRAINTS';
@@ -43,6 +48,7 @@ EXCEPTION
             RAISE;
         END IF;
 END;
+/
 
 BEGIN
     EXECUTE IMMEDIATE 'DROP TABLE vulnerability CASCADE CONSTRAINTS';
@@ -52,6 +58,7 @@ EXCEPTION
             RAISE;
         END IF;
 END;
+/
 
 BEGIN
     EXECUTE IMMEDIATE 'DROP TABLE properties CASCADE CONSTRAINTS';
@@ -61,6 +68,7 @@ EXCEPTION
             RAISE;
         END IF;
 END;
+/
 
 BEGIN
     EXECUTE IMMEDIATE 'DROP TABLE cweEntry CASCADE CONSTRAINTS';
@@ -70,6 +78,7 @@ EXCEPTION
             RAISE;
         END IF;
 END;
+/
 
 CREATE TABLE vulnerability (id INT NOT NULL PRIMARY KEY, cve VARCHAR(20) UNIQUE,
     description CLOB, cvssV2Score DECIMAL(3,1), cvssV2AccessVector VARCHAR(20),
@@ -88,7 +97,7 @@ version VARCHAR(255), update_version VARCHAR(255), edition VARCHAR(255), lang VA
 target_sw VARCHAR(255), target_hw VARCHAR(255), other VARCHAR(255), ecosystem VARCHAR(255));
 
 CREATE TABLE software (cveid INT, cpeEntryId INT, versionEndExcluding VARCHAR(50), versionEndIncluding VARCHAR(50), 
-                       versionStartExcluding VARCHAR(50), versionStartIncluding VARCHAR(50), vulnerable BOOLEAN
+                       versionStartExcluding VARCHAR(50), versionStartIncluding VARCHAR(50), vulnerable number(1)
     , CONSTRAINT fkSoftwareCve FOREIGN KEY (cveid) REFERENCES vulnerability(id) ON DELETE CASCADE
     , CONSTRAINT fkSoftwareCpeProduct FOREIGN KEY (cpeEntryId) REFERENCES cpeEntry(id));
 
@@ -96,7 +105,7 @@ CREATE TABLE cweEntry (cveid INT, cwe VARCHAR(20),
     CONSTRAINT fkCweEntry FOREIGN KEY (cveid) REFERENCES vulnerability(id) ON DELETE CASCADE);
 
 CREATE INDEX idxCwe ON cweEntry(cveid);
-CREATE INDEX idxVulnerability ON vulnerability(cve);
+--CREATE INDEX idxVulnerability ON vulnerability(cve);
 CREATE INDEX idxReference ON reference(cveid);
 CREATE INDEX idxCpe ON cpeEntry(vendor, product);
 CREATE INDEX idxSoftwareCve ON software(cveid);
