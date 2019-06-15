@@ -42,7 +42,9 @@ import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.ResourceNotFoundException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.TooManyRequestsException;
 
 /**
  * Analyzer which will attempt to locate a dependency on a Nexus service by
@@ -259,6 +261,13 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
                     PomUtils.analyzePOM(dependency, pomFile);
                 } catch (DownloadFailedException ex) {
                     LOGGER.warn("Unable to download pom.xml for {} from Nexus repository; "
+                            + "this could result in undetected CPE/CVEs.", dependency.getFileName());
+                } catch (TooManyRequestsException ex) {
+                    this.setEnabled(false);
+                    throw new AnalysisException("Received a 429 - too many requests from nexus; "
+                            + "the nexus analyzer is being disabled.", ex);
+                } catch (ResourceNotFoundException ex) {
+                    LOGGER.warn("pom.xml not found for {} from nexus; "
                             + "this could result in undetected CPE/CVEs.", dependency.getFileName());
                 } finally {
                     if (pomFile != null && pomFile.exists() && !FileUtils.deleteQuietly(pomFile)) {

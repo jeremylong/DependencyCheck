@@ -37,7 +37,9 @@ import org.owasp.dependencycheck.xml.suppression.SuppressionRule;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.FileUtils;
+import org.owasp.dependencycheck.utils.ResourceNotFoundException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.TooManyRequestsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -189,8 +191,22 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                 try {
                     downloader.fetchFile(url, file, false);
                 } catch (DownloadFailedException ex) {
-                    LOGGER.trace("Failed download - first attempt", ex);
-                    downloader.fetchFile(url, file, true);
+                    LOGGER.trace("Failed download suppression file - first attempt", ex);
+                    try {
+                        Thread.sleep(500);
+                        downloader.fetchFile(url, file, true);
+                    } catch (TooManyRequestsException ex1) {
+                        throw new SuppressionParseException("Unable to download supression file `" + file + "`; received 429 - too many requests", ex1);
+                    } catch (ResourceNotFoundException ex1) {
+                        throw new SuppressionParseException("Unable to download supression file `" + file + "`; received 404 - resource not found", ex1);
+                    } catch (InterruptedException ex1) {
+                        Thread.currentThread().interrupt();
+                        throw new SuppressionParseException("Unable to download supression file `" + file + "`", ex1);
+                    }
+                } catch (TooManyRequestsException ex) {
+                    throw new SuppressionParseException("Unable to download supression file `" + file + "`; received 429 - too many requests", ex);
+                } catch (ResourceNotFoundException ex) {
+                    throw new SuppressionParseException("Unable to download supression file `" + file + "`; received 404 - resource not found", ex);
                 }
             } else {
                 file = new File(suppressionFilePath);

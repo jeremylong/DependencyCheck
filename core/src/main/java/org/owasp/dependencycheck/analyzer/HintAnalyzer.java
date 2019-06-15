@@ -37,7 +37,9 @@ import org.owasp.dependencycheck.xml.suppression.PropertyType;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.FileUtils;
+import org.owasp.dependencycheck.utils.ResourceNotFoundException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.TooManyRequestsException;
 import org.owasp.dependencycheck.xml.hints.EvidenceMatcher;
 import org.owasp.dependencycheck.xml.hints.VendorDuplicatingHintRule;
 import org.owasp.dependencycheck.xml.hints.HintParseException;
@@ -270,7 +272,21 @@ public class HintAnalyzer extends AbstractAnalyzer {
                     try {
                         downloader.fetchFile(url, file, false);
                     } catch (DownloadFailedException ex) {
-                        downloader.fetchFile(url, file, true);
+                        try {
+                            Thread.sleep(500);
+                            downloader.fetchFile(url, file, true);
+                        } catch (TooManyRequestsException ex1) {
+                            throw new HintParseException("Unable to download hint file `" + file + "`; received 429 - too many requests", ex1);
+                        } catch (ResourceNotFoundException ex1) {
+                            throw new HintParseException("Unable to download hint file `" + file + "`; received 404 - resource not found", ex1);
+                        } catch (InterruptedException ex1) {
+                            Thread.currentThread().interrupt();
+                            throw new HintParseException("Unable to download hint file `" + file + "`", ex1);
+                        }
+                    } catch (TooManyRequestsException ex) {
+                        throw new HintParseException("Unable to download hint file `" + file + "`; received 429 - too many requests", ex);
+                    } catch (ResourceNotFoundException ex) {
+                        throw new HintParseException("Unable to download hint file `" + file + "`; received 404 - resource not found", ex);
                     }
                 } else {
                     file = new File(filePath);

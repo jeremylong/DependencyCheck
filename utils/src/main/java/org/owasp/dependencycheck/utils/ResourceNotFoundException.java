@@ -13,57 +13,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2019 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.utils;
 
-import java.io.IOException;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
- * An exception used when the creation of an URLConnection fails.
+ * An exception used when the resource could not be retrieved because a 404 was
+ * received.
  *
  * @author Jeremy Long
- * @version $Id: $Id
  */
-public class URLConnectionFailureException extends IOException {
+@ThreadSafe
+public class ResourceNotFoundException extends Exception {
 
     /**
      * The serial version UID for serialization.
      */
-    private static final long serialVersionUID = -5899631979662570824L;
+    private static final long serialVersionUID = 4205588006979138520L;
 
     /**
-     * Creates a new URLConnectionFailureException.
+     * Creates a new ResourceNotFoundException.
      */
-    public URLConnectionFailureException() {
+    public ResourceNotFoundException() {
         super();
     }
 
     /**
-     * Creates a new URLConnectionFailureException.
+     * Creates a new ResourceNotFoundException.
      *
      * @param msg a message for the exception.
      */
-    public URLConnectionFailureException(String msg) {
+    public ResourceNotFoundException(String msg) {
         super(msg);
     }
 
     /**
-     * Creates a new URLConnectionFailureException.
+     * Creates a new ResourceNotFoundException.
      *
-     * @param ex the cause of the download failure.
+     * @param ex the cause of the exception.
      */
-    public URLConnectionFailureException(Throwable ex) {
+    public ResourceNotFoundException(Throwable ex) {
         super(ex);
     }
 
     /**
-     * Creates a new URLConnectionFailureException.
+     * Creates a new ResourceNotFoundException.
      *
      * @param msg a message for the exception.
-     * @param ex the cause of the download failure.
+     * @param ex the cause of the exception.
      */
-    public URLConnectionFailureException(String msg, Throwable ex) {
+    public ResourceNotFoundException(String msg, Throwable ex) {
         super(msg, ex);
     }
 }

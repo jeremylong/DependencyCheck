@@ -1,5 +1,5 @@
 /*
- * This file is part of dependency-check-core.
+ * This file is part of dependency-check-utils.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.central;
+package org.owasp.dependencycheck.utils;
 
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
- * An exception used when Central has blocked the requests due to too many requests.
+ * An exception used when the server has blocked the requests due to too many requests.
  *
  * @author Jeremy Long
  */

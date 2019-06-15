@@ -31,6 +31,7 @@ import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.data.nodeaudit.Advisory;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.xml.pom.Model;
 
 /**
  * Factory to instantiate cache repositories.
@@ -63,7 +64,11 @@ public class DataCacheFactory {
         /**
          * Used to store the results of searching Maven Central.
          */
-        CENTRAL
+        CENTRAL,
+        /**
+         * Used to store POM files retrieved from central.
+         */
+        POM
     }
 
     /**
@@ -116,14 +121,26 @@ public class DataCacheFactory {
         attr.setUseDisk(true);
         attr.setUseLateral(false);
         attr.setUseRemote(false);
-        if (type == CacheType.NODEAUDIT) {
-            final CacheAccess<String, List<Advisory>> ca = JCS.getInstance(type.toString(), attr);
-            final DataCache<List<Advisory>> dc = new DataCache<>(ca);
-            return dc;
-        } else if (type == CacheType.CENTRAL) {
-            final CacheAccess<String, List<MavenArtifact>> ca = JCS.getInstance(type.toString(), attr);
-            final DataCache<List<MavenArtifact>> dc = new DataCache<>(ca);
-            return dc;
+        if (null != type) {
+            switch (type) {
+                case NODEAUDIT: {
+                    final CacheAccess<String, List<Advisory>> ca = JCS.getInstance(type.toString(), attr);
+                    final DataCache<List<Advisory>> dc = new DataCache<>(ca);
+                    return dc;
+                }
+                case CENTRAL: {
+                    final CacheAccess<String, List<MavenArtifact>> ca = JCS.getInstance(type.toString(), attr);
+                    final DataCache<List<MavenArtifact>> dc = new DataCache<>(ca);
+                    return dc;
+                }
+                case POM: {
+                    final CacheAccess<String, Model> ca = JCS.getInstance(type.toString(), attr);
+                    final DataCache<Model> dc = new DataCache<>(ca);
+                    return dc;
+                }
+                default:
+                    break;
+            }
         }
         return null;
     }

@@ -130,7 +130,10 @@ public class H2DBLock {
                             LOGGER.debug("Lock file created ({}) {} @ {}", Thread.currentThread().getName(), magic, timestamp.toString());
                         }
                     }
-                } catch (IOException | InterruptedException ex) {
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    LOGGER.trace("Expected error as another thread has likely locked the file", ex);
+                } catch (IOException ex) {
                     LOGGER.trace("Expected error as another thread has likely locked the file", ex);
                 } finally {
                     if (lock == null && file != null) {

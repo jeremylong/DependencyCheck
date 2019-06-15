@@ -48,7 +48,9 @@ import org.owasp.dependencycheck.utils.DateUtil;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.ResourceNotFoundException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.TooManyRequestsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,7 +130,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
         } catch (MalformedURLException ex) {
             throw new UpdateException("NVD CVE properties files contain an invalid URL, unable to update the data to use the most current data.", ex);
         } catch (DownloadFailedException ex) {
-            LOGGER.warn("Unable to download the NVD CVE data; the results may not include the most recent CPE/CVEs from the NVD.");
+            LOGGER.warn("Unable to download the NVD CVE data; the results may not include the most recent CPE/CVEs from the NVD. " + ex.getMessage());
             if (settings.getString(Settings.KEYS.PROXY_SERVER) == null) {
                 LOGGER.warn("If you are behind a proxy you may need to configure dependency-check to use the proxy.");
             }
@@ -355,6 +357,10 @@ public class NvdCveUpdater implements CachedWebDataSource {
             throw new UpdateException("Meta file content is invalid: " + url, ex);
         } catch (DownloadFailedException ex) {
             throw new UpdateException("Unable to download meta file: " + url, ex);
+        } catch (TooManyRequestsException ex) {
+            throw new UpdateException("Unable to download meta file: " + url + "; received 429 -- too many requests", ex);
+        } catch (ResourceNotFoundException ex) {
+            throw new UpdateException("Unable to download meta file: " + url + "; received 404 -- resource not found", ex);
         }
     }
 

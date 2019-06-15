@@ -44,6 +44,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.List;
+import org.owasp.dependencycheck.utils.ResourceNotFoundException;
+import org.owasp.dependencycheck.utils.TooManyRequestsException;
 
 /**
  * Analyzer which will attempt to locate a dependency, and the GAV information,
@@ -126,7 +128,7 @@ public class ArtifactoryAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @param engine a reference to the dependency-check engine
      * @throws InitializationException thrown when the analyzer is unable to
-     *                                 connect to Artifactory
+     * connect to Artifactory
      */
     @Override
     public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
@@ -183,7 +185,7 @@ public class ArtifactoryAnalyzer extends AbstractFileTypeAnalyzer {
      * Performs the analysis.
      *
      * @param dependency the dependency to analyze
-     * @param engine     the engine
+     * @param engine the engine
      * @throws AnalysisException when there's an exception during analysis
      */
     @Override
@@ -220,8 +222,8 @@ public class ArtifactoryAnalyzer extends AbstractFileTypeAnalyzer {
      * the dependency.
      *
      * @param dependency the dependency to download and process the pom.xml
-     * @param ma         the Maven artifact coordinates
-     * @throws IOException       thrown if there is an I/O error
+     * @param ma the Maven artifact coordinates
+     * @throws IOException thrown if there is an I/O error
      * @throws AnalysisException thrown if there is an error analyzing the pom
      */
     private void processPom(Dependency dependency, MavenArtifact ma) throws IOException, AnalysisException {
@@ -231,12 +233,20 @@ public class ArtifactoryAnalyzer extends AbstractFileTypeAnalyzer {
             pomFile = File.createTempFile("pom", ".xml", baseDir);
             Files.delete(pomFile.toPath());
             LOGGER.debug("Downloading {}", ma.getPomUrl());
+            //TODO add caching
             final Downloader downloader = new Downloader(getSettings());
             downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);
             PomUtils.analyzePOM(dependency, pomFile);
 
         } catch (DownloadFailedException ex) {
             LOGGER.warn("Unable to download pom.xml for {} from Artifactory; "
+                    + "this could result in undetected CPE/CVEs.", dependency.getFileName());
+        } catch (TooManyRequestsException ex) {
+            this.setEnabled(false);
+            throw new AnalysisException("Received a 429 - too many requests from Artifactory; "
+                    + "the artifactory analyzer is being disabled.", ex);
+        } catch (ResourceNotFoundException ex) {
+            LOGGER.warn("pom.xml not found for {} from Artifactory; "
                     + "this could result in undetected CPE/CVEs.", dependency.getFileName());
         } finally {
             if (pomFile != null && pomFile.exists() && !FileUtils.deleteQuietly(pomFile)) {

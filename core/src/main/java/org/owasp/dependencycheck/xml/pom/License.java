@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.xml.pom;
 
+import java.io.Serializable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -27,7 +28,12 @@ import javax.annotation.concurrent.ThreadSafe;
  * @author jeremy long
  */
 @ThreadSafe
-public class License {
+public class License implements Serializable {
+
+    /**
+     * Generated UUID.
+     */
+    private static final long serialVersionUID = 7009115254312746992L;
 
     /**
      * The url to the license.

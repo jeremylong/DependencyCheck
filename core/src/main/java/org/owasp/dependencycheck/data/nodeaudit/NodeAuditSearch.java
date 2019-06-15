@@ -184,6 +184,7 @@ public class NodeAuditSearch {
                         try {
                             Thread.sleep(1500 * next);
                         } catch (InterruptedException ex) {
+                            Thread.currentThread().interrupt();
                             throw new UnexpectedAnalysisException(ex);
                         }
                         return submitPackage(packageJson, key, next);

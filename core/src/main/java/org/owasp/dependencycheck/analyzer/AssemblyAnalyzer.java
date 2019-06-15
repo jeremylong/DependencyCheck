@@ -124,7 +124,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      * Performs the analysis on a single Dependency.
      *
      * @param dependency the dependency to analyze
-     * @param engine     the engine to perform the analysis under
+     * @param engine the engine to perform the analysis under
      * @throws AnalysisException if anything goes sideways
      */
     @Override
@@ -384,7 +384,14 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (InitializationException e) {
             setEnabled(false);
             throw e;
-        } catch (IOException | InterruptedException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOGGER.warn("An error occurred with the .NET AssemblyAnalyzer;\n"
+                    + "this can be ignored unless you are scanning .NET DLLs. Please see the log for more details.");
+            LOGGER.debug("Could not execute GrokAssembly {}", e.getMessage());
+            setEnabled(false);
+            throw new InitializationException("An error occurred with the .NET AssemblyAnalyzer", e);
+        } catch (IOException e) {
             LOGGER.warn("An error occurred with the .NET AssemblyAnalyzer;\n"
                     + "this can be ignored unless you are scanning .NET DLLs. Please see the log for more details.");
             LOGGER.debug("Could not execute GrokAssembly {}", e.getMessage());
@@ -464,7 +471,10 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                     return true;
                 }
             }
-        } catch (IOException | InterruptedException ex) {
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            LOGGER.debug("Path search failed for dotnet", ex);
+        } catch (IOException ex) {
             LOGGER.debug("Path search failed for dotnet", ex);
         }
         return false;
@@ -477,9 +487,9 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      * then one source corroborating the value.
      *
      * @param packages a collection of class name information
-     * @param value    the value to check to see if it contains a package name
-     * @param dep      the dependency to add new entries too
-     * @param type     the type of evidence (vendor, product, or version)
+     * @param value the value to check to see if it contains a package name
+     * @param dep the dependency to add new entries too
+     * @param type the type of evidence (vendor, product, or version)
      */
     protected static void addMatchingValues(List<String> packages, String value, Dependency dep, EvidenceType type) {
         if (value == null || value.isEmpty() || packages == null || packages.isEmpty()) {

@@ -17,10 +17,11 @@
  */
 package org.owasp.dependencycheck.xml.pom;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import javax.annotation.concurrent.NotThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
 
 import org.apache.commons.text.StringSubstitutor;
 import org.apache.commons.text.lookup.StringLookup;
@@ -30,8 +31,13 @@ import org.apache.commons.text.lookup.StringLookup;
  *
  * @author jeremy long
  */
-@NotThreadSafe
-public class Model {
+@ThreadSafe
+public class Model implements Serializable {
+
+    /**
+     * Generated UUID.
+     */
+    private static final long serialVersionUID = -7648711671774349441L;
 
     /**
      * The name of the project.

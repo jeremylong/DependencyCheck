@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.central;
 
+import org.owasp.dependencycheck.utils.TooManyRequestsException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.HttpURLConnection;

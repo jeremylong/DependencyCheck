@@ -1,5 +1,5 @@
 /*
- * This file is part of dependency-check-core.
+ * This file is part of dependency-check-utils.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,8 +61,10 @@ public final class Downloader {
      * @param outputPath the path to the save the file to
      * @throws org.owasp.dependencycheck.utils.DownloadFailedException is thrown
      * if there is an error downloading the file
+     * @throws TooManyRequestsException thrown when a 429 is received
+     * @throws ResourceNotFoundException thrown when a 404 is received
      */
-    public void fetchFile(URL url, File outputPath) throws DownloadFailedException {
+    public void fetchFile(URL url, File outputPath) throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
         fetchFile(url, outputPath, true);
     }
 
@@ -75,8 +77,11 @@ public final class Downloader {
      * files
      * @throws org.owasp.dependencycheck.utils.DownloadFailedException is thrown
      * if there is an error downloading the file
+     * @throws TooManyRequestsException thrown when a 429 is received
+     * @throws ResourceNotFoundException thrown when a 404 is received
      */
-    public void fetchFile(URL url, File outputPath, boolean useProxy) throws DownloadFailedException {
+    public void fetchFile(URL url, File outputPath, boolean useProxy) throws DownloadFailedException,
+            TooManyRequestsException, ResourceNotFoundException {
         try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy);
                 OutputStream out = new FileOutputStream(outputPath)) {
             final InputStream in = conn.fetch(url);
@@ -96,8 +101,10 @@ public final class Downloader {
      * @return the content of the file
      * @throws DownloadFailedException is thrown if there is an error
      * downloading the file
+     * @throws TooManyRequestsException thrown when a 429 is received
+     * @throws ResourceNotFoundException thrown when a 404 is received
      */
-    public String fetchContent(URL url, boolean useProxy) throws DownloadFailedException {
+    public String fetchContent(URL url, boolean useProxy) throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
         try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy);
                 ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             final InputStream in = conn.fetch(url);
