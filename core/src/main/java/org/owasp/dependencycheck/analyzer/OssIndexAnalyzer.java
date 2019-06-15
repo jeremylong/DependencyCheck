@@ -62,6 +62,7 @@ import javax.annotation.Nullable;
  * @since 5.0.0
  */
 public class OssIndexAnalyzer extends AbstractAnalyzer {
+
     /**
      * A reference to the logger.
      */
@@ -81,7 +82,6 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
      * A reference to the OSS Index Client.
      */
     private OssindexClient client;
-
 
     /**
      * Fetched reports.
@@ -194,7 +194,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
             for (Identifier id : dependency.getSoftwareIdentifiers()) {
                 if (id instanceof PurlIdentifier) {
                     final PackageUrl purl = parsePackageUrl(id.getValue());
-                    if (purl != null) {
+                    if (purl != null && !"-".equals(purl.getVersion()) && !"*".equals(purl.getVersion())) {
                         packages.add(purl);
                     }
                 }
@@ -224,7 +224,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
                 LOG.debug("  Package: {} -> {}", id, id.getConfidence());
 
                 final PackageUrl purl = parsePackageUrl(id.getValue());
-                if (purl != null) {
+                if (purl != null && !"-".equals(purl.getVersion()) && !"*".equals(purl.getVersion())) {
                     try {
                         final ComponentReport report = reports.get(purl);
                         if (report == null) {
