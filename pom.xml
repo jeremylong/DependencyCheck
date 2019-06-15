@@ -180,7 +180,7 @@ Copyright (c) 2012 - Jeremy Long
         <groovy-all.version>2.4.17</groovy-all.version>
         <gmavenplus-plugin.version>1.7.1</gmavenplus-plugin.version>
         <com.h3xstream.retirejs.core.version>3.0.1</com.h3xstream.retirejs.core.version>
-        <com.google.guava.version>27.1-jre</com.google.guava.version>
+        <com.google.guava.version>28.0-jre</com.google.guava.version>
         <surefireArgLine/>
     </properties>
     <distributionManagement>
