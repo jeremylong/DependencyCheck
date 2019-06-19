@@ -62,4 +62,34 @@ DELIMITER ;
 
 GRANT EXECUTE ON PROCEDURE dependencycheck.save_property TO 'dcuser';
 
+DELIMITER //
+CREATE PROCEDURE update_ecosystems()
+BEGIN
+SET SQL_SAFE_UPDATES = 0;
+UPDATE cpeEntry n INNER JOIN
+    (SELECT DISTINCT vendor, product, MIN(ecosystem) eco
+    FROM cpeEntry
+    WHERE ecosystem IS NOT NULL
+    GROUP BY vendor , product) e 
+  ON e.vendor = n.vendor
+  AND e.product = n.product 
+SET n.ecosystem = e.eco
+WHERE n.ecosystem IS NULL;
+SET SQL_SAFE_UPDATES = 1;
+END //
+DELIMITER ;
+
+GRANT EXECUTE ON PROCEDURE dependencycheck.update_ecosystems TO 'dcuser';
+
+DELIMITER //
+CREATE PROCEDURE cleanup_orphans()
+BEGIN
+SET SQL_SAFE_UPDATES = 0;
+DELETE FROM cpeEntry WHERE id not in (SELECT CPEEntryId FROM software);
+SET SQL_SAFE_UPDATES = 1;
+END //
+DELIMITER ;
+
+GRANT EXECUTE ON PROCEDURE dependencycheck.cleanup_orphans TO 'dcuser';
+
 INSERT INTO properties(id, value) VALUES ('version', '4.1');
