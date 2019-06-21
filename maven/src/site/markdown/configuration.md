@@ -54,7 +54,7 @@ zipExtensions                 | A comma-separated list of additional file extens
 jarAnalyzerEnabled            | Sets whether Jar Analyzer will be used.                                   | true
 centralAnalyzerEnabled        | Sets whether Central Analyzer will be used. If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer (see below). | true
 centralAnalyzerUseCache       | Sets whether the Central Analyer will cache results. Cached results expire after 30 days.                  | true
-ossIndexAnalyzerEnabled       | Sets whether the OSS Index Analyzer will be enabled.                      | true
+ossindexAnalyzerEnabled       | Sets whether the OSS Index Analyzer will be enabled.                      | true
 ossindexAnalyzerUseCache      | Sets whether the OSS Index Analyzer will cache results. Cached results expire after 24 hours.              | true
 nexusAnalyzerEnabled          | Sets whether Nexus Analyzer will be used (requires Nexus Pro). This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
 nexusUrl                      | Defines the Nexus Server's web service end point (example http://domain.enterprise/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
