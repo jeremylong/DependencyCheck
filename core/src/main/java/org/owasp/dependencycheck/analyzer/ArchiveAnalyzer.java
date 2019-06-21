@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -92,13 +93,13 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The set of things we can handle with Zip methods
      */
-    private static final Set<String> KNOWN_ZIP_EXT = newHashSet("zip", "ear", "war", "jar", "sar", "apk", "nupkg", "aar");
+    private static final Set<String> KNOWN_ZIP_EXT = Collections.unmodifiableSet(newHashSet("zip", "ear", "war", "jar", "sar", "apk", "nupkg", "aar"));
     /**
      * The set of file extensions supported by this analyzer. Note for
      * developers, any additions to this list will need to be explicitly handled
      * in {@link #extractFiles(File, File, Engine)}.
      */
-    private static final Set<String> EXTENSIONS = newHashSet("tar", "gz", "tgz", "bz2", "tbz2");
+    private static final Set<String> EXTENSIONS = Collections.unmodifiableSet(newHashSet("tar", "gz", "tgz", "bz2", "tbz2"));
 
     /**
      * Detects files with extensions to remove from the engine's collection of
@@ -641,12 +642,13 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private void initializeSettings() {
         maxScanDepth = getSettings().getInt("archive.scan.depth", 3);
+        final Set<String> extensions = new HashSet<>(EXTENSIONS);
+        extensions.addAll(KNOWN_ZIP_EXT);
         final String additionalZipExt = getSettings().getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
         if (additionalZipExt != null) {
             final String[] ext = additionalZipExt.split("\\s*,\\s*");
-            Collections.addAll(KNOWN_ZIP_EXT, ext);
+            Collections.addAll(extensions, ext);
         }
-        EXTENSIONS.addAll(KNOWN_ZIP_EXT);
-        fileFilter = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
+        fileFilter = FileFilterBuilder.newInstance().addExtensions(extensions).build();
     }
 }
