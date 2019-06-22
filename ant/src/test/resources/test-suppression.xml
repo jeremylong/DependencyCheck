@@ -16,12 +16,12 @@ limitations under the License.
 
 Copyright (c) 2017 The OWASP Foundation. All Rights Reserved.
 -->
-<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.2.xsd">
     <suppress>
         <notes><![CDATA[
             file name: axis-1.4.jar
         ]]></notes>
-        <gav regex="true">^org\.apache\.axis:axis:.*$</gav>
+        <filePath regex="true">.*axis-1\.4\.jar</filePath>
         <cpe>cpe:/a:apache:axis</cpe>
     </suppress>
     <suppress>

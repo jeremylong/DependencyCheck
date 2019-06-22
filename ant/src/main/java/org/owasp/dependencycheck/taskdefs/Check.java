@@ -266,7 +266,14 @@ public class Check extends Update {
      * URL of the Sonatype OSS Index service.
      */
     private String ossindexAnalyzerUrl;
-
+    /**
+     * The username to use for the Sonatype OSS Index service.
+     */
+    private String ossindexAnalyzerUsername;
+    /**
+     * The password to use for the Sonatype OSS Index service.
+     */
+    private String ossindexAnalyzerPassword;
     /**
      * Whether or not the Artifactory Analyzer is enabled.
      */
@@ -1285,6 +1292,42 @@ public class Check extends Update {
     }
 
     /**
+     * Get value of {@link #ossindexAnalyzerUsername}.
+     *
+     * @return the value of ossindexAnalyzerUsername
+     */
+    public String getOssindexAnalyzerUsername() {
+        return ossindexAnalyzerUsername;
+    }
+
+    /**
+     * Set value of {@link #ossindexAnalyzerUsername}.
+     *
+     * @param ossindexAnalyzerUsername new value of ossindexAnalyzerUsername
+     */
+    public void setOssindexAnalyzerUsername(String ossindexAnalyzerUsername) {
+        this.ossindexAnalyzerUsername = ossindexAnalyzerUsername;
+    }
+
+    /**
+     * Get value of {@link #ossindexAnalyzerPassword}.
+     *
+     * @return the value of ossindexAnalyzerPassword
+     */
+    public String getOssindexAnalyzerPassword() {
+        return ossindexAnalyzerPassword;
+    }
+
+    /**
+     * Set value of {@link #ossindexAnalyzerPassword}.
+     *
+     * @param ossindexAnalyzerPassword new value of ossindexAnalyzerPassword
+     */
+    public void setOssindexAnalyzerPassword(String ossindexAnalyzerPassword) {
+        this.ossindexAnalyzerPassword = ossindexAnalyzerPassword;
+    }
+
+    /**
      * Returns the value of cmakeAnalyzerEnabled.
      *
      * @return the value of cmakeAnalyzerEnabled
@@ -1558,6 +1601,8 @@ public class Check extends Update {
         getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH, pathToCore);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, ossindexAnalyzerEnabled);
         getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_URL, ossindexAnalyzerUrl);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_USER, ossindexAnalyzerUsername);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD, ossindexAnalyzerPassword);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE, ossindexAnalyzerUseCache);
         getSettings().setFloat(Settings.KEYS.JUNIT_FAIL_ON_CVSS, junitFailOnCVSS);
     }

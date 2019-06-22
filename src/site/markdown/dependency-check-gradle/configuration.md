@@ -150,7 +150,9 @@ artifactory  | bearerToken           | The bearer token to connect to Artifactor
 retirejs     | enabled               | Sets whether the [experimental](../analyzers/index.html) RetireJS Analyzer should be used.                        | true
 retirejs     | filterNonVulnerable   | Configures the RetireJS Analyzer to remove non-vulnerable JS dependencies from the report.                        | false
 retirejs     | filters               | Configures the list of regular expessions used to filter JS files based on content.                               | &nbsp;
-
+ossIndex     | enabled               | Sets whether Sonatype's OSS Index will be used.                                                                   | true
+ossIndex     | username              | The optional user name to connect to Sonatype's OSS Index.                                                        | &nbsp;
+ossIndex     | password              | The optional passwod or API token to connect to Sonatype's OSS Index,                                             | &nbsp;
 
 #### Example
 ```groovy
@@ -164,6 +166,9 @@ dependencyCheck {
         retirejs {
             filters = ['(i)copyright Jeremy Long']
         }
+        ossIndex {
+            username = 'example@gmail.com'
+            password = '42cc601cd7ff12a531a0b1eada8dcf56d777b336'
     }
 }
 ```

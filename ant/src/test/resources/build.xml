@@ -11,6 +11,7 @@
             reportOutputDirectory="${project.build.directory}"
             autoupdate="false"
             ossindexAnalyzerEnabled="false"
+            centralAnalyzerEnabled="false"
             reportFormat="HTML">
 
             <!-- Scan a single file -->
@@ -32,6 +33,7 @@
             reportOutputDirectory="${project.build.directory}"
             autoupdate="false"
             ossindexAnalyzerEnabled="false"
+            centralAnalyzerEnabled="false"
             reportFormat="XML">
             <!-- Scan specific files -->
             <filelist
@@ -45,6 +47,7 @@
             reportOutputDirectory="${project.build.directory}"
             autoupdate="false"
             ossindexAnalyzerEnabled="false"
+            centralAnalyzerEnabled="false"
             reportFormat="CSV">
 
             <!-- Scan a specific directory -->
@@ -61,6 +64,7 @@
             reportOutputDirectory="${project.build.directory}"
             autoupdate="false"
             ossindexAnalyzerEnabled="false"
+            centralAnalyzerEnabled="false"
             reportFormat="BAD">
         </dependency-check>
     </target>
@@ -72,6 +76,7 @@
             reportFormat="XML"
             autoupdate="false"
             ossindexAnalyzerEnabled="false"
+            centralAnalyzerEnabled="false"
             failBuildOnCVSS="3">
             <fileset dir="${project.build.directory}/test-classes/jars">
                 <include name="axis-1.4.jar"/>
@@ -85,6 +90,7 @@
             reportOutputDirectory="${project.build.directory}/retirejs-report.html"
             autoupdate="false"
             ossindexAnalyzerEnabled="false"
+            centralAnalyzerEnabled="false"
             retirejsFilterNonVulnerable="true">
             <retirejsFilter regex="copyright.*jeremy long" />
             <retirejsFilter regex="owasp dependency-check" />
@@ -103,6 +109,7 @@
             reportOutputDirectory="${project.build.directory}/suppression-report.html"
             autoupdate="false"
             ossindexAnalyzerEnabled="false"
+            centralAnalyzerEnabled="false"
             failBuildOnCVSS="3">
             <suppressionfile path="${project.build.directory}/test-classes/test-suppression1.xml" />
             <suppressionfile path="${project.build.directory}/test-classes/test-suppression2.xml" />
@@ -120,6 +127,7 @@
             reportOutputDirectory="${project.build.directory}/suppression-single-report.html"
             autoupdate="false"
             ossindexAnalyzerEnabled="false"
+            centralAnalyzerEnabled="false"
             failBuildOnCVSS="3"
             suppressionFile="${project.build.directory}/test-classes/test-suppression.xml">
             <fileset dir="${project.build.directory}/test-classes/jars">
@@ -133,6 +141,7 @@
             reportOutputDirectory="${project.build.directory}/suppression-multiple-report.html"
             autoupdate="false"
             ossindexAnalyzerEnabled="false"
+            centralAnalyzerEnabled="false"
             failBuildOnCVSS="3"
             suppressionFile="${project.build.directory}/test-classes/test-suppression1.xml">
             <suppressionfile path="${project.build.directory}/test-classes/test-suppression2.xml"/>

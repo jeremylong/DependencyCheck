@@ -57,9 +57,14 @@ public class ReportGeneratorIT extends BaseDBTestCase {
             }
             File writeTo = new File("target/test-reports/Report.xml");
             File suppressionFile = BaseTest.getResourceAsFile(this, "incorrectSuppressions.xml");
-
-            getSettings().setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile.getAbsolutePath());
-
+            Settings settings = getSettings();
+            settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile.getAbsolutePath());
+            settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+            settings.setBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, false);
+            settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, false);
+            settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, false);
+            settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
+            
             //File struts = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
             File struts = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
             //File axis = new File(this.getClass().getClassLoader().getResource("axis2-adb-1.4.1.jar").getPath());
@@ -69,11 +74,8 @@ public class ReportGeneratorIT extends BaseDBTestCase {
 
             File nodeTest = BaseTest.getResourceAsFile(this, "nodejs");
 
-            getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
-            getSettings().setBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, false);
-            getSettings().setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, false);
-            getSettings().setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, false);
-            try (Engine engine = new Engine(getSettings())) {
+            
+            try (Engine engine = new Engine(settings)) {
                 engine.scan(struts);
                 engine.scan(axis);
                 engine.scan(jetty);

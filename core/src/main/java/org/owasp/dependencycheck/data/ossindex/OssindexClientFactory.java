@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.ossindex;
 
+import static com.google.common.net.HttpHeaders.AUTHORIZATION;
 import java.io.File;
 import org.sonatype.goodies.packageurl.PackageUrl;
 import org.sonatype.goodies.packageurl.PackageUrl.RenderFlavor;
@@ -38,6 +39,9 @@ import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.ossindex.service.client.cache.DirectoryCache;
+import org.sonatype.ossindex.service.client.transport.AuthConfiguration;
+import org.sonatype.ossindex.service.client.transport.BasicAuthHelper;
+import org.sonatype.ossindex.service.client.transport.ProxyConfiguration;
 
 /**
  * Produces {@link OssindexClient} instances.
@@ -77,6 +81,21 @@ public final class OssindexClientFactory {
         if (baseUrl != null) {
             config.setBaseUrl(baseUrl);
         }
+
+        final String username = settings.getString(Settings.KEYS.ANALYZER_OSSINDEX_USER);
+        final String password = settings.getString(Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD);
+
+        if (username != null && password != null) {
+            AuthConfiguration auth = new AuthConfiguration(username, password);
+            config.setAuthConfiguration(auth);
+        }
+
+        // proxy likely does not need to be configured here as we are using the 
+        // URLConnectionFactory#createHttpURLConnection() which automatically configures
+        // the proxy on the connection.
+//        ProxyConfiguration proxy = new ProxyConfiguration();
+//        settings.getString(Settings.KEYS.PROXY_PASSWORD);
+//        config.setProxyConfiguration(proxy);
         if (settings.getBoolean(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE, true)) {
             final DirectoryCache.Configuration cache = new DirectoryCache.Configuration();
             final File data;
@@ -101,18 +120,7 @@ public final class OssindexClientFactory {
                 settings.getString(Settings.KEYS.APPLICATION_VERSION, "unknown")
         );
 
-        final Transport transport = new HttpUrlConnectionTransport(userAgent) {
-            private final URLConnectionFactory connectionFactory = new URLConnectionFactory(settings);
-
-            @Override
-            protected HttpURLConnection connect(final URL url) throws IOException {
-                final HttpURLConnection connection = connectionFactory.createHttpURLConnection(url);
-                connection.setRequestProperty("User-Agent", userAgent.get());
-
-                // TODO: optionally configure authentication
-                return connection;
-            }
-        };
+        final Transport transport = new ODCConnectionTransport(settings, config, userAgent);
 
         final Marshaller marshaller = new GsonMarshaller();
 

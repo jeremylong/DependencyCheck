@@ -489,6 +489,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private String ossindexAnalyzerUrl;
 
     /**
+     * The id of a server defined in the settings.xml that configures the
+     * credentials (username and password) for a OSS Index service.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "ossIndexServerId")
+    private String ossIndexServerId;
+
+    /**
      * Whether or not the Ruby Bundle Audit Analyzer is enabled.
      */
     @Parameter(property = "bundleAuditAnalyzerEnabled")
@@ -1601,48 +1609,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH, pathToCore);
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
-        if (nexusServerId != null) {
-            final Server server = settingsXml.getServer(nexusServerId);
-            if (server != null) {
-                final String nexusUser = server.getUsername();
-                String nexusPassword = null;
-                try {
-                    nexusPassword = decryptServerPassword(server);
-                } catch (SecDispatcherException ex) {
-                    if (ex.getCause() instanceof FileNotFoundException
-                            || (ex.getCause() != null && ex.getCause().getCause() instanceof FileNotFoundException)) {
-                        //maybe its not encrypted?
-                        final String tmp = server.getPassword();
-                        if (tmp.startsWith("{") && tmp.endsWith("}")) {
-                            getLog().error(String.format(
-                                    "Unable to decrypt the server password for server id '%s' in settings.xml%n\tCause: %s",
-                                    serverId, ex.getMessage()));
-                        } else {
-                            nexusPassword = tmp;
-                        }
-                    } else {
-                        getLog().error(String.format(
-                                "Unable to decrypt the server password for server id '%s' in settings.xml%n\tCause: %s",
-                                serverId, ex.getMessage()));
-                    }
-                }
-                settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_USER, nexusUser);
-                settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_PASSWORD, nexusPassword);
-            } else {
-                getLog().error(String.format("Server '%s' not found in the settings.xml file", serverId));
-            }
-        }
+        configureServerCredentials(nexusServerId, Settings.KEYS.ANALYZER_NEXUS_USER, Settings.KEYS.ANALYZER_NEXUS_PASSWORD);
+
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_URL, artifactoryAnalyzerUrl);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_USES_PROXY, artifactoryAnalyzerUseProxy);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_PARALLEL_ANALYSIS, artifactoryAnalyzerParallelAnalysis);
         if (Boolean.TRUE.equals(artifactoryAnalyzerEnabled)) {
             if (artifactoryAnalyzerServerId != null) {
-                final Server server = settingsXml.getServer(artifactoryAnalyzerServerId);
-                if (server != null) {
-                    settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME, server.getUsername());
-                    settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN, server.getPassword());
-                }
+                configureServerCredentials(artifactoryAnalyzerServerId, Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME, Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN);
             } else {
                 settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME, artifactoryAnalyzerUsername);
                 settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN, artifactoryAnalyzerApiToken);
@@ -1667,6 +1642,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, swiftPackageManagerAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, ossindexAnalyzerEnabled);
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_URL, ossindexAnalyzerUrl);
+        configureServerCredentials(ossIndexServerId, Settings.KEYS.ANALYZER_OSSINDEX_USER, Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE, ossindexAnalyzerUseCache);
 
         if (retirejs != null) {
@@ -1680,11 +1656,37 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
 
         if (databaseUser == null && databasePassword == null && serverId != null) {
+            configureServerCredentials(serverId, Settings.KEYS.DB_USER, Settings.KEYS.DB_PASSWORD);
+        } else {
+            settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
+            settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
+        }
+        settings.setStringIfNotEmpty(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
+        settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveUrlModified);
+        settings.setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON, cveUrlBase);
+        settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
+        settings.setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT, prettyPrint);
+        artifactScopeExcluded = new ArtifactScopeExcluded(skipTestScope, skipProvidedScope, skipSystemScope, skipRuntimeScope);
+        artifactTypeExcluded = new ArtifactTypeExcluded(skipArtifactType);
+    }
+
+    /**
+     * Retrieves the server credentials from the settings.xml, decrypts the
+     * password, and places the values into the settings under the given key
+     * names.
+     *
+     * @param serverId the server id
+     * @param userSettingKey the property name for the username
+     * @param passwordSettingKey the property name for the password
+     */
+    private void configureServerCredentials(String serverId, String userSettingKey, String passwordSettingKey) {
+        if (serverId != null) {
             final Server server = settingsXml.getServer(serverId);
             if (server != null) {
-                databaseUser = server.getUsername();
+                final String username = server.getUsername();
+                String password = null;
                 try {
-                    databasePassword = decryptServerPassword(server);
+                    password = decryptServerPassword(server);
                 } catch (SecDispatcherException ex) {
                     if (ex.getCause() instanceof FileNotFoundException
                             || (ex.getCause() != null && ex.getCause().getCause() instanceof FileNotFoundException)) {
@@ -1695,7 +1697,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                                     "Unable to decrypt the server password for server id '%s' in settings.xml%n\tCause: %s",
                                     serverId, ex.getMessage()));
                         } else {
-                            databasePassword = tmp;
+                            password = tmp;
                         }
                     } else {
                         getLog().error(String.format(
@@ -1703,19 +1705,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                                 serverId, ex.getMessage()));
                     }
                 }
+                settings.setStringIfNotEmpty(userSettingKey, username);
+                settings.setStringIfNotEmpty(passwordSettingKey, password);
             } else {
                 getLog().error(String.format("Server '%s' not found in the settings.xml file", serverId));
             }
         }
-        settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
-        settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
-        settings.setStringIfNotEmpty(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
-        settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveUrlModified);
-        settings.setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON, cveUrlBase);
-        settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
-        settings.setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT, prettyPrint);
-        artifactScopeExcluded = new ArtifactScopeExcluded(skipTestScope, skipProvidedScope, skipSystemScope, skipRuntimeScope);
-        artifactTypeExcluded = new ArtifactTypeExcluded(skipArtifactType);
     }
 
     /**

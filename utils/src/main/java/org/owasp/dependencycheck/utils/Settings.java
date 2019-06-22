@@ -563,6 +563,14 @@ public final class Settings {
          */
         public static final String ANALYZER_OSSINDEX_URL = "analyzer.ossindex.url";
         /**
+         * The properties key for the Sonatype OSS Index user.
+         */
+        public static final String ANALYZER_OSSINDEX_USER = "analyzer.ossindex.user";
+        /**
+         * The properties key for the Sonatype OSS Index password.
+         */
+        public static final String ANALYZER_OSSINDEX_PASSWORD = "analyzer.ossindex.password";
+        /**
          * The properties key setting whether or not the JSON and XML reports
          * will be pretty printed.
          */

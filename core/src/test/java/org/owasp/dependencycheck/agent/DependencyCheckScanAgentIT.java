@@ -62,6 +62,7 @@ public class DependencyCheckScanAgentIT extends BaseDBTestCase {
         //the following does not work because it will be over-ridden by the system
         //  properties configured during surefire/failsafe
         //scanAgent.setDataDirectory(DATA_DIR.getAbsolutePath());
+        scanAgent.setCentralAnalyzerEnabled(false);
         scanAgent.setReportOutputDirectory(REPORT_DIR.getAbsolutePath());
         scanAgent.setReportFormat(ReportGenerator.Format.XML);
         scanAgent.setAutoUpdate(true);

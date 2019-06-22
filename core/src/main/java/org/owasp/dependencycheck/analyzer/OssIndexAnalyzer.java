@@ -55,6 +55,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.sonatype.ossindex.service.client.transport.Transport.TransportException;
 
 /**
  * Enrich dependency information from Sonatype OSS index.
@@ -150,6 +151,12 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
             if (!failed && reports == null) {
                 try {
                     reports = requestReports(engine.getDependencies());
+                } catch (TransportException ex) {
+                    failed = true;
+                    if (ex.getMessage() != null && ex.getMessage().endsWith("401")) {
+                        throw new AnalysisException("Invalid credentails provided for OSS Index", ex);
+                    }
+                    throw new AnalysisException("Failed to request component-reports", ex);
                 } catch (Exception e) {
                     failed = true;
                     throw new AnalysisException("Failed to request component-reports", e);
@@ -195,7 +202,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
             for (Identifier id : dependency.getSoftwareIdentifiers()) {
                 if (id instanceof PurlIdentifier) {
                     final PackageUrl purl = parsePackageUrl(id.getValue());
-                    if (purl != null && StringUtils.isNotBlank(purl.getVersion()) ) {
+                    if (purl != null && StringUtils.isNotBlank(purl.getVersion())) {
                         packages.add(purl);
                     }
                 }
@@ -225,7 +232,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
                 LOG.debug("  Package: {} -> {}", id, id.getConfidence());
 
                 final PackageUrl purl = parsePackageUrl(id.getValue());
-                if (purl != null && StringUtils.isNotBlank(purl.getVersion()) ) {
+                if (purl != null && StringUtils.isNotBlank(purl.getVersion())) {
                     try {
                         final ComponentReport report = reports.get(purl);
                         if (report == null) {
