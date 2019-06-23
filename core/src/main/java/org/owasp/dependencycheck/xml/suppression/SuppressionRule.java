@@ -71,9 +71,17 @@ public class SuppressionRule {
      */
     private List<String> cve = new ArrayList<>();
     /**
+     * The list of vulnerability name entries to suppress.
+     */
+    private List<PropertyType> vulnerabilityNames = new ArrayList<>();
+    /**
      * A Maven GAV to suppression.
      */
     private PropertyType gav = null;
+    /**
+     * The list of vulnerability name entries to suppress.
+     */
+    private PropertyType packageUrl = null;
     /**
      * The notes added in suppression file
      */
@@ -173,6 +181,15 @@ public class SuppressionRule {
      */
     public void addCpe(PropertyType cpe) {
         this.cpe.add(cpe);
+    }
+
+    /**
+     * Adds the CPE to the CPE list.
+     *
+     * @param name the vulnerability name to add
+     */
+    public void addVulnerabilityName(PropertyType name) {
+        this.vulnerabilityNames.add(name);
     }
 
     /**
@@ -329,6 +346,15 @@ public class SuppressionRule {
     }
 
     /**
+     * Returns whether this suppression rule has vulnerabilityName entries.
+     *
+     * @return whether this suppression rule has vulnerabilityName entries
+     */
+    public boolean hasVulnerabilityName() {
+        return !vulnerabilityNames.isEmpty();
+    }
+
+    /**
      * Get the value of Maven GAV.
      *
      * @return the value of GAV
@@ -353,6 +379,24 @@ public class SuppressionRule {
      */
     public boolean hasGav() {
         return gav != null;
+    }
+
+    /**
+     * Set the value of Package URL.
+     *
+     * @param purl new value of package URL
+     */
+    public void setPackageUrl(PropertyType purl) {
+        this.packageUrl = purl;
+    }
+
+    /**
+     * Returns whether or not this suppression rule as packageUrl entries.
+     *
+     * @return whether or not this suppression rule as packageUrl entries
+     */
+    public boolean hasPackageUrl() {
+        return packageUrl != null;
     }
 
     /**
@@ -387,17 +431,31 @@ public class SuppressionRule {
         if (sha1 != null && !sha1.equalsIgnoreCase(dependency.getSha1sum())) {
             return;
         }
-        if (gav != null) {
+        if (hasGav()) {
             final Iterator<Identifier> itr = dependency.getSoftwareIdentifiers().iterator();
-            boolean gavFound = false;
+            boolean found = false;
             while (itr.hasNext()) {
                 final Identifier i = itr.next();
                 if (identifierMatches(this.gav, i)) {
-                    gavFound = true;
+                    found = true;
                     break;
                 }
             }
-            if (!gavFound) {
+            if (!found) {
+                return;
+            }
+        }
+        if (hasPackageUrl()) {
+            final Iterator<Identifier> itr = dependency.getSoftwareIdentifiers().iterator();
+            boolean found = false;
+            while (itr.hasNext()) {
+                final Identifier i = itr.next();
+                if (purlMatches(this.packageUrl, i)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
                 return;
             }
         }
@@ -420,7 +478,7 @@ public class SuppressionRule {
             }
             removalList.forEach((i) -> dependency.removeVulnerableSoftwareIdentifier(i));
         }
-        if (hasCve() || hasCwe() || hasCvssBelow()) {
+        if (hasCve() || hasVulnerabilityName() || hasCwe() || hasCvssBelow()) {
             final Set<Vulnerability> removeVulns = new HashSet<>();
             for (Vulnerability v : dependency.getVulnerabilities()) {
                 boolean remove = false;
@@ -431,16 +489,24 @@ public class SuppressionRule {
                         break;
                     }
                 }
-                if (!remove) {
+                if (!remove && v.getCwes() != null) {
                     for (String entry : this.cwe) {
-                        if (v.getCwes() != null) {
-                            final String toMatch = String.format("CWE-%s", entry);
-                            if (v.getCwes().stream().anyMatch(toTest -> toMatch.regionMatches(0, toTest, 0, toMatch.length()))) {
-                                remove = true;
-                                removeVulns.add(v);
-                                break;
-                            }
+                        final String toMatch = String.format("CWE-%s", entry);
+                        if (v.getCwes().stream().anyMatch(toTest -> toMatch.regionMatches(0, toTest, 0, toMatch.length()))) {
+                            remove = true;
+                            removeVulns.add(v);
+                            break;
                         }
+                    }
+                }
+                if (!remove && v.getName() != null) {
+                    for (PropertyType entry : this.vulnerabilityNames) {
+                        if (entry.matches(v.getName())) {
+                            remove = true;
+                            removeVulns.add(v);
+                            break;
+                        }
+
                     }
                 }
                 if (!remove) {
@@ -466,9 +532,9 @@ public class SuppressionRule {
                     }
                 }
             }
-            for (Vulnerability v : removeVulns) {
+            removeVulns.forEach((v) -> {
                 dependency.removeVulnerability(v);
-            }
+            });
         }
     }
 
@@ -500,6 +566,22 @@ public class SuppressionRule {
             pos = str.indexOf(c, pos) + 1;
         }
         return count;
+    }
+
+    /**
+     * Determines if the cpeEntry specified as a PropertyType matches the given
+     * Identifier.
+     *
+     * @param suppressionEntry a suppression rule entry
+     * @param identifier a CPE identifier to check
+     * @return true if the entry matches; otherwise false
+     */
+    protected boolean purlMatches(PropertyType suppressionEntry, Identifier identifier) {
+        if (identifier instanceof PurlIdentifier) {
+            final PurlIdentifier purl = (PurlIdentifier) identifier;
+            return suppressionEntry.matches(purl.toString());
+        }
+        return false;
     }
 
     /**
@@ -567,30 +649,37 @@ public class SuppressionRule {
         }
         if (cpe != null && !cpe.isEmpty()) {
             sb.append("cpe={");
-            for (PropertyType pt : cpe) {
+            cpe.forEach((pt) -> {
                 sb.append(pt).append(',');
-            }
+            });
             sb.append('}');
         }
         if (cwe != null && !cwe.isEmpty()) {
             sb.append("cwe={");
-            for (String s : cwe) {
+            cwe.forEach((s) -> {
                 sb.append(s).append(',');
-            }
+            });
             sb.append('}');
         }
         if (cve != null && !cve.isEmpty()) {
             sb.append("cve={");
-            for (String s : cve) {
+            cve.forEach((s) -> {
                 sb.append(s).append(',');
-            }
+            });
+            sb.append('}');
+        }
+        if (vulnerabilityNames != null && !vulnerabilityNames.isEmpty()) {
+            sb.append("vulnerabilityName={");
+            vulnerabilityNames.forEach((pt) -> {
+                sb.append(pt).append(',');
+            });
             sb.append('}');
         }
         if (cvssBelow != null && !cvssBelow.isEmpty()) {
             sb.append("cvssBelow={");
-            for (Float s : cvssBelow) {
+            cvssBelow.forEach((s) -> {
                 sb.append(s).append(',');
-            }
+            });
             sb.append('}');
         }
         sb.append('}');

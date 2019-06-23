@@ -6,7 +6,7 @@ A sample suppression file would look like:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.2.xsd">
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
    <suppress>
       <notes><![CDATA[
       file name: some.jar
@@ -26,7 +26,14 @@ HTML version of the report. The other common scenario would be to ignore all CVE
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.2.xsd">
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <suppress>
+        <notes><![CDATA[
+        This suppresses a CVE identified by OSS Index using the vulnerability name and packageUrl.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty/jetty-server@.*$</packageUrl>
+        <vulnerabilityName>CVE-2017-7656</vulnerabilityName>
+    </suppress>
     <suppress>
         <notes><![CDATA[
         This suppresses cpe:/a:csv:csv:1.0 for some.jar in the "c:\path\to" directory.
@@ -70,6 +77,13 @@ HTML version of the report. The other common scenario would be to ignore all CVE
         <cpe>cpe:/a:springsource:spring_framework</cpe>
         <cpe>cpe:/a:mod_security:mod_security</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+        This suppresses false positives identified on spring security.
+        ]]></notes>
+        <gav regex="true">org\.springframework\.security:spring.*</gav>
+        <vulnerabilityName regex="true"></vulnerabilityName>
+    </suppress>
     <suppress until="2020-01-01Z">
         <notes><![CDATA[
         This suppresses a specific cve for any dependency in any directory that has the specified sha1 checksum. If current date is not yet on or beyond 1 Jan 2020.
@@ -84,7 +98,7 @@ It is also possible to set an expiration date for a suppression rule:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.2.xsd">
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress until="2020-01-01Z">
         <notes><![CDATA[
         Suppresses a given CVE for a dependency with the given sha1 until the current date is 1 Jan 2020 or beyond.
@@ -95,7 +109,7 @@ It is also possible to set an expiration date for a suppression rule:
 </suppressions>
 ```
 
-The full schema for suppression files can be found here: [suppression.xsd](https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.2.xsd "Suppression Schema")
+The full schema for suppression files can be found here: [suppression.xsd](https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd "Suppression Schema")
 
 Please see the appropriate configuration option in each interfaces configuration guide:
 

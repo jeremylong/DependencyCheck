@@ -49,7 +49,7 @@ public class ReportTool {
     public String identifierToSuppressionId(Identifier id) {
         if (id instanceof PurlIdentifier) {
             final PurlIdentifier purl = (PurlIdentifier) id;
-            return purl.toGav();
+            return purl.toString();
         } else if (id instanceof CpeIdentifier) {
             try {
                 final CpeIdentifier cpeId = (CpeIdentifier) id;

@@ -58,6 +58,10 @@ public class SuppressionHandler extends DefaultHandler {
      * The CVE element name.
      */
     public static final String CVE = "cve";
+    /**
+     * The vulnerabilityName element name.
+     */
+    public static final String VULNERABILITY_NAME = "vulnerabilityName";
 
     /**
      * The CVE element name.
@@ -76,6 +80,10 @@ public class SuppressionHandler extends DefaultHandler {
      * The GAV element name.
      */
     public static final String GAV = "gav";
+        /**
+     * The Package URL element name.
+     */
+    public static final String PACKAGE_URL = "packageUrl";
     /**
      * The cvssBelow element name.
      */
@@ -167,6 +175,9 @@ public class SuppressionHandler extends DefaultHandler {
                 case GAV:
                     rule.setGav(processPropertyType());
                     break;
+                case PACKAGE_URL:
+                    rule.setPackageUrl(processPropertyType());
+                    break;
                 case CPE:
                     rule.addCpe(processPropertyType());
                     break;
@@ -175,6 +186,9 @@ public class SuppressionHandler extends DefaultHandler {
                     break;
                 case CVE:
                     rule.addCve(currentText.toString());
+                    break;
+                case VULNERABILITY_NAME:
+                    rule.addVulnerabilityName(processPropertyType());
                     break;
                 case NOTES:
                     rule.addNotes(currentText.toString());

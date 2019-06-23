@@ -507,6 +507,40 @@ public class SuppressionRuleTest extends BaseTest {
 
     }
 
+    @Test
+    public void testProcessVulnerabilityNames() throws CpeValidationException, MalformedPackageURLException {
+        File spring = BaseTest.getResourceAsFile(this, "spring-security-web-3.0.0.RELEASE.jar");
+        Dependency dependency = new Dependency(spring);
+        dependency.addVulnerableSoftwareIdentifier(new CpeIdentifier("vmware", "springsource_spring_security", "3.0.0", Confidence.HIGH));
+        dependency.addSoftwareIdentifier(new PurlIdentifier("maven", "org.springframework.security", "spring-security-web", "3.0.0.RELEASE", Confidence.HIGH));
+
+        dependency.addVulnerability(createVulnerability());
+        SuppressionRule instance = new SuppressionRule();
+        //gav
+        PropertyType pt = new PropertyType();
+        pt.setValue("pkg:maven/org.springframework.security/spring-security-web@3.0.0.RELEASE");
+        pt.setRegex(false);
+        pt.setCaseSensitive(false);
+        instance.setPackageUrl(pt);
+
+        pt = new PropertyType();
+        pt.setValue("CVE-2013-1338");
+        instance.addVulnerabilityName(pt);
+
+        instance.process(dependency);
+        assertEquals(1, dependency.getVulnerabilities().size());
+        assertEquals(0, dependency.getSuppressedVulnerabilities().size());
+
+        
+        pt = new PropertyType();
+        pt.setValue("CVE-2013-1337");
+        instance.addVulnerabilityName(pt);
+        
+        instance.process(dependency);
+        assertEquals(0, dependency.getVulnerabilities().size());
+        assertEquals(1, dependency.getSuppressedVulnerabilities().size());
+    }
+
     private Vulnerability createVulnerability() {
         Vulnerability v = new Vulnerability();
         v.addCwe("CWE-287 Improper Authentication");

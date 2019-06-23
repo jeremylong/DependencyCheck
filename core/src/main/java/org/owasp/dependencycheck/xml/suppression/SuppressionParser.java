@@ -53,6 +53,10 @@ public class SuppressionParser {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(SuppressionParser.class);
     /**
+     * The suppression schema file location for v 1.3.
+     */
+    public static final String SUPPRESSION_SCHEMA_1_3 = "schema/dependency-suppression.1.3.xsd";
+    /**
      * The suppression schema file location for v 1.2.
      */
     public static final String SUPPRESSION_SCHEMA_1_2 = "schema/dependency-suppression.1.2.xsd";
@@ -94,11 +98,12 @@ public class SuppressionParser {
      */
     public List<SuppressionRule> parseSuppressionRules(InputStream inputStream) throws SuppressionParseException, SAXException {
         try (
+                InputStream schemaStream13 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_3);
                 InputStream schemaStream12 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_2);
                 InputStream schemaStream11 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_1);
                 InputStream schemaStream10 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_0)) {
             final SuppressionHandler handler = new SuppressionHandler();
-            final SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream12, schemaStream11, schemaStream10);
+            final SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream13, schemaStream12, schemaStream11, schemaStream10);
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setErrorHandler(new SuppressionErrorHandler());
             xmlReader.setContentHandler(handler);
