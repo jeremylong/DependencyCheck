@@ -31,7 +31,11 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.utils.DownloadFailedException;
+import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.ResourceNotFoundException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.TooManyRequestsException;
 import org.owasp.dependencycheck.utils.URLConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,31 +149,14 @@ public class RetireJSDataSource implements CachedWebDataSource {
     private void initializeRetireJsRepo(Settings settings, URL repoUrl) throws UpdateException {
         try {
             final File dataDir = settings.getDataDirectory();
-            final File tmpDir = settings.getTempDirectory();
-            boolean useProxy = false;
-            if (null != settings.getString(Settings.KEYS.PROXY_SERVER)) {
-                useProxy = true;
-                LOGGER.debug("Using proxy");
-            }
+
             LOGGER.debug("RetireJS Repo URL: {}", repoUrl.toExternalForm());
-            final URLConnectionFactory factory = new URLConnectionFactory(settings);
-            final HttpURLConnection conn = factory.createHttpURLConnection(repoUrl, useProxy);
+            Downloader downloader = new Downloader(settings);
             final String filename = repoUrl.getFile().substring(repoUrl.getFile().lastIndexOf("/") + 1);
-            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                final File tmpFile = new File(tmpDir, filename);
-                final File repoFile = new File(dataDir, filename);
-                try (InputStream inputStream = conn.getInputStream();
-                        FileOutputStream outputStream = new FileOutputStream(tmpFile)) {
-                    IOUtils.copy(inputStream, outputStream);
-                }
-                //using move fails if target and destination are on different disks which does happen (see #1394 and #1404)
-                Files.copy(tmpFile.toPath(), repoFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                if (!tmpFile.delete()) {
-                    tmpFile.deleteOnExit();
-                }
-            }
-        } catch (IOException e) {
-            throw new UpdateException("Failed to initialize the RetireJS repo", e);
+            final File repoFile = new File(dataDir, filename);
+            downloader.fetchFile(repoUrl, repoFile);
+        } catch (IOException | TooManyRequestsException | ResourceNotFoundException ex) {
+            throw new UpdateException("Failed to initialize the RetireJS repo", ex);
         }
     }
 
