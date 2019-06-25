@@ -345,22 +345,22 @@ public class NvdCveUpdater implements CachedWebDataSource {
      * @throws UpdateException thrown if the meta file could not be downloaded
      */
     protected final MetaProperties getMetaFile(String url) throws UpdateException {
+        final String metaUrl = url.substring(0, url.length() - 7) + "meta";
         try {
-            final String metaUrl = url.substring(0, url.length() - 7) + "meta";
             final URL u = new URL(metaUrl);
             final Downloader d = new Downloader(settings);
             final String content = d.fetchContent(u, true);
             return new MetaProperties(content);
         } catch (MalformedURLException ex) {
-            throw new UpdateException("Meta file url is invalid: " + url, ex);
+            throw new UpdateException("Meta file url is invalid: " + metaUrl, ex);
         } catch (InvalidDataException ex) {
-            throw new UpdateException("Meta file content is invalid: " + url, ex);
+            throw new UpdateException("Meta file content is invalid: " + metaUrl, ex);
         } catch (DownloadFailedException ex) {
-            throw new UpdateException("Unable to download meta file: " + url, ex);
+            throw new UpdateException("Unable to download meta file: " + metaUrl, ex);
         } catch (TooManyRequestsException ex) {
-            throw new UpdateException("Unable to download meta file: " + url + "; received 429 -- too many requests", ex);
+            throw new UpdateException("Unable to download meta file: " + metaUrl + "; received 429 -- too many requests", ex);
         } catch (ResourceNotFoundException ex) {
-            throw new UpdateException("Unable to download meta file: " + url + "; received 404 -- resource not found", ex);
+            throw new UpdateException("Unable to download meta file: " + metaUrl + "; received 404 -- resource not found", ex);
         }
     }
 
