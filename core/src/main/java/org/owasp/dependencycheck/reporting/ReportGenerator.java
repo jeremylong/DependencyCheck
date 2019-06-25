@@ -196,6 +196,7 @@ public class ReportGenerator {
      * NVD CVE data)
      * @return the velocity context
      */
+    @SuppressWarnings("JavaTimeDefaultTimeZone")
     private VelocityContext createContext(String applicationName, List<Dependency> dependencies,
             List<Analyzer> analyzers, DatabaseProperties properties) {
 

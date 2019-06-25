@@ -56,7 +56,7 @@ public class DataCacheFactory {
     /**
      * The types of caches that can be instantiated.
      */
-    public enum CacheType {
+    private enum CacheType {
         /**
          * Used to store node audit analysis.
          */
@@ -77,7 +77,7 @@ public class DataCacheFactory {
      * @param settings the configuration settings
      */
     public DataCacheFactory(Settings settings) {
-        synchronized (this) {
+        synchronized (DataCacheFactory.class) {
             if (!initialized) {
                 final File cacheDirectory;
                 try {
@@ -111,37 +111,48 @@ public class DataCacheFactory {
     }
 
     /**
-     * Returns the data cache for the given type.
+     * Returns the data cache for Node Audit.
      *
-     * @param type the cache type
-     * @return a references to the data cache for the given type
+     * @return a references to the data cache for Node Audit
      */
-    public DataCache getCache(CacheType type) {
+    public DataCache<List<Advisory>> getNodeAuditCache() {
         final ICompositeCacheAttributes attr = new CompositeCacheAttributes();
         attr.setUseDisk(true);
         attr.setUseLateral(false);
         attr.setUseRemote(false);
-        if (null != type) {
-            switch (type) {
-                case NODEAUDIT: {
-                    final CacheAccess<String, List<Advisory>> ca = JCS.getInstance(type.toString(), attr);
-                    final DataCache<List<Advisory>> dc = new DataCache<>(ca);
-                    return dc;
-                }
-                case CENTRAL: {
-                    final CacheAccess<String, List<MavenArtifact>> ca = JCS.getInstance(type.toString(), attr);
-                    final DataCache<List<MavenArtifact>> dc = new DataCache<>(ca);
-                    return dc;
-                }
-                case POM: {
-                    final CacheAccess<String, Model> ca = JCS.getInstance(type.toString(), attr);
-                    final DataCache<Model> dc = new DataCache<>(ca);
-                    return dc;
-                }
-                default:
-                    break;
-            }
-        }
-        return null;
+        final CacheAccess<String, List<Advisory>> ca = JCS.getInstance("NODEAUDIT", attr);
+        final DataCache<List<Advisory>> dc = new DataCache<>(ca);
+        return dc;
+
+    }
+
+    /**
+     * Returns the data cache for POM files.
+     *
+     * @return a references to the data cache for POM files
+     */
+    public DataCache<Model> getPomCache() {
+        final ICompositeCacheAttributes attr = new CompositeCacheAttributes();
+        attr.setUseDisk(true);
+        attr.setUseLateral(false);
+        attr.setUseRemote(false);
+        final CacheAccess<String, Model> ca = JCS.getInstance("POM", attr);
+        final DataCache<Model> dc = new DataCache<>(ca);
+        return dc;
+    }
+
+    /**
+     * Returns the data cache for Central search.
+     *
+     * @return a references to the data cache for Central search
+     */
+    public DataCache<List<MavenArtifact>> getCentralCache() {
+        final ICompositeCacheAttributes attr = new CompositeCacheAttributes();
+        attr.setUseDisk(true);
+        attr.setUseLateral(false);
+        attr.setUseRemote(false);
+        final CacheAccess<String, List<MavenArtifact>> ca = JCS.getInstance("CENTRAL", attr);
+        final DataCache<List<MavenArtifact>> dc = new DataCache<>(ca);
+        return dc;
     }
 }

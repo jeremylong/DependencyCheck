@@ -175,9 +175,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
             }
             LOGGER.debug("Found {} matches.", count);
             final Matcher mVersion = PROJECT_VERSION.matcher(contents);
-            count = 0;
             while (mVersion.find()) {
-                count++;
                 LOGGER.debug(String.format(
                         "Found set version command match with %d groups: %s",
                         mVersion.groupCount(), mVersion.group(0)));

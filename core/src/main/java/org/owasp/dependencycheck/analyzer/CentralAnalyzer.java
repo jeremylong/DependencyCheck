@@ -119,7 +119,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
         numberOfRetries = getSettings().getInt(Settings.KEYS.ANALYZER_CENTRAL_RETRY_COUNT, numberOfRetries);
         if (settings.getBoolean(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE, true)) {
             final DataCacheFactory factory = new DataCacheFactory(settings);
-            cache = factory.getCache(DataCacheFactory.CacheType.POM);
+            cache = factory.getPomCache();
         }
     }
 

@@ -100,7 +100,7 @@ public class NodeAuditSearch {
         }
         if (settings.getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, true)) {
             final DataCacheFactory factory = new DataCacheFactory(settings);
-            cache = factory.getCache(DataCacheFactory.CacheType.NODEAUDIT);
+            cache = factory.getNodeAuditCache();
         }
     }
 

@@ -96,7 +96,7 @@ public class GolangModAnalyzerTest extends BaseTest {
             if ("gitea".equals(d.getName())) {
                 found = true;
                 assertEquals("1.5.0", d.getVersion());
-                assertEquals(d.getDisplayFileName(), "github.com/go-gitea/gitea:1.5.0");
+                assertEquals("github.com/go-gitea/gitea:1.5.0", d.getDisplayFileName());
                 assertEquals(GolangModAnalyzer.DEPENDENCY_ECOSYSTEM, d.getEcosystem());
                 assertTrue(d.getEvidence(EvidenceType.VENDOR).toString().toLowerCase().contains("go-gitea"));
                 assertTrue(d.getEvidence(EvidenceType.PRODUCT).toString().toLowerCase().contains("gitea"));

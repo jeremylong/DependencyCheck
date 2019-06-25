@@ -20,9 +20,11 @@ package org.owasp.dependencycheck.data.cache;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 
 /**
  *
@@ -35,9 +37,8 @@ public class DataCacheFactoryTest extends BaseTest {
      */
     @Test
     public void testGetCache() throws IOException {
-        DataCacheFactory.CacheType type = DataCacheFactory.CacheType.CENTRAL;
         DataCacheFactory instance = new DataCacheFactory(getSettings());
-        DataCache result = instance.getCache(type);
+        DataCache<List<MavenArtifact>> result = instance.getCentralCache();
         assertNotNull(result);
 
         File f = new File(getSettings().getDataDirectory(), "cache");

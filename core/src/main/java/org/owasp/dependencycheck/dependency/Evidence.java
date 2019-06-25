@@ -208,26 +208,6 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     }
 
     /**
-     * Wrapper around
-     * {@link java.lang.String#compareToIgnoreCase(java.lang.String) String.compareToIgnoreCase}
-     * with an exhaustive, possibly duplicative, check against nulls.
-     *
-     * @param me    the value to be compared
-     * @param other the other value to be compared
-     * @return true if the values are equal; otherwise false
-     */
-    private int compareToIgnoreCaseWithNullCheck(String me, String other) {
-        if (me == null && other == null) {
-            return 0;
-        } else if (me == null) {
-            return -1; //the other string is greater than me
-        } else if (other == null) {
-            return 1; //me is greater than the other string
-        }
-        return me.compareToIgnoreCase(other);
-    }
-
-    /**
      * Standard toString() implementation.
      *
      * @return the string representation of the object

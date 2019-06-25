@@ -93,15 +93,6 @@ public class AssemblyAnalyzerTest extends BaseTest {
         assertTrue("The GrokAssembly executable was not created.", grokAssemblyExeFile.isFile());
     }
 
-    private void assertFileContent(String message, String expectedResourceName, File actualFile) throws IOException {
-        try (InputStream expectedStream = FileUtils.getResourceAsStream(expectedResourceName);
-                InputStream actualStream = new FileInputStream(actualFile)) {
-            byte[] expectedBytes = IOUtils.toByteArray(expectedStream);
-            byte[] actualBytes = IOUtils.toByteArray(actualStream);
-            assertArrayEquals(message, expectedBytes, actualBytes);
-        }
-    }
-
     /**
      * Tests to make sure the name is correct.
      */

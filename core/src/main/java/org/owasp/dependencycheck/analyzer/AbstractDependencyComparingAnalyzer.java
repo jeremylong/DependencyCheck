@@ -43,11 +43,6 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractDependencyComparingAnalyzer extends AbstractAnalyzer {
 
     /**
-     * The Logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDependencyComparingAnalyzer.class);
-
-    /**
      * a flag indicating if this analyzer has run. This analyzer only runs once.
      */
     private boolean analyzed = false;

@@ -104,13 +104,11 @@ public class AnalyzerServiceTest extends BaseDBTestCase {
         instance = new AnalyzerService(Thread.currentThread().getContextClassLoader(), getSettings());
         result = instance.getAnalyzers();
         found = false;
-        retiredFound = false;
         for (Analyzer a : result) {
             if (experimental.equals(a.getName())) {
                 found = true;
             }
         }
         assertFalse("Experimental analyzer loaded when set to false", found);
-        //assertTrue("Retired analyzer not loaded when set to true", retiredFound);
     }
 }

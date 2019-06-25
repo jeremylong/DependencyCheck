@@ -237,10 +237,9 @@ public class GolangDepAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         Identifier id;
-        PackageURL purl = null;
         try {
-            purl = packageBuilder.build();
-            id = new PurlIdentifier(packageBuilder.build(), Confidence.HIGHEST);
+            PackageURL purl = packageBuilder.build();
+            id = new PurlIdentifier(purl, Confidence.HIGHEST);
         } catch (MalformedPackageURLException ex) {
             LOGGER.warn("Unable to create package-url identifier for `{}` in `{}` - reason: {}",
                     name, parentDependency.getFilePath(), ex.getMessage());

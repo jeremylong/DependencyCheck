@@ -95,8 +95,8 @@ public class AnalyzerService {
     public List<Analyzer> getAnalyzers(List<AnalysisPhase> phases) {
         final List<Analyzer> analyzers = new ArrayList<>();
         final Iterator<Analyzer> iterator = service.iterator();
-        boolean experimentalEnabled = false;
-        boolean retiredEnabled = false;
+        boolean experimentalEnabled;
+        boolean retiredEnabled;
         experimentalEnabled = settings.getBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, false);
         retiredEnabled = settings.getBoolean(Settings.KEYS.ANALYZER_RETIRED_ENABLED, false);
         while (iterator.hasNext()) {

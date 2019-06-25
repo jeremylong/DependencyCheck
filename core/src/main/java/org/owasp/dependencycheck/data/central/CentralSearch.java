@@ -113,7 +113,7 @@ public class CentralSearch {
         }
         if (settings.getBoolean(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE, true)) {
             final DataCacheFactory factory = new DataCacheFactory(settings);
-            cache = factory.getCache(DataCacheFactory.CacheType.CENTRAL);
+            cache = factory.getCentralCache();
         }
     }
 
