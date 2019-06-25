@@ -156,10 +156,10 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
                     if (ex.getMessage() != null && ex.getMessage().endsWith("401")) {
                         throw new AnalysisException("Invalid credentails provided for OSS Index", ex);
                     }
-                    throw new AnalysisException("Failed to request component-reports", ex);
+                    throw new AnalysisException("Failed to request component-reports: " + ex.getMessage(), ex);
                 } catch (Exception e) {
                     failed = true;
-                    throw new AnalysisException("Failed to request component-reports", e);
+                    throw new AnalysisException("Failed to request component-reports: " + e.getMessage(), e);
                 }
             }
         }
