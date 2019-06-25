@@ -22,6 +22,7 @@ org.owasp.dependencycheck.analyzer.OpenSSLAnalyzer
 org.owasp.dependencycheck.analyzer.CMakeAnalyzer
 org.owasp.dependencycheck.analyzer.NodePackageAnalyzer
 org.owasp.dependencycheck.analyzer.NodeAuditAnalyzer
+org.owasp.dependencycheck.analyzer.GolangDepAnalyzer
 org.owasp.dependencycheck.analyzer.RetireJsAnalyzer
 org.owasp.dependencycheck.analyzer.RubyGemspecAnalyzer
 org.owasp.dependencycheck.analyzer.RubyBundlerAnalyzer

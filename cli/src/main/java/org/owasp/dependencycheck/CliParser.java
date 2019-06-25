@@ -456,6 +456,9 @@ public final class CliParser {
                 .desc("Disable the Nexus Analyzer.").build();
         final Option disableOssIndexAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_OSSINDEX)
                 .desc("Disable the Sonatype OSS Index Analyzer.").build();
+        final Option disableGolangPackageAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_GO_PKG)
+            .desc("Disable the Golang Package Analyzer.")
+            .build();
         final Option purge = Option.builder().longOpt(ARGUMENT.PURGE_NVD)
                 .desc("Purges the local NVD data cache").build();
         final Option retireJsFilters = Option.builder().argName("pattern").hasArg().longOpt(ARGUMENT.RETIREJS_FILTERS)
@@ -507,6 +510,7 @@ public final class CliParser {
                         .argName("password").hasArg(true).build())
                 .addOption(cocoapodsAnalyzerEnabled)
                 .addOption(swiftPackageManagerAnalyzerEnabled)
+                .addOption(disableGolangPackageAnalyzer)
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_NODE_JS)
                         .desc("Disable the Node.js Package Analyzer.").build())
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_NODE_AUDIT)
@@ -886,6 +890,17 @@ public final class CliParser {
      */
     public boolean isSwiftPackageAnalyzerDisabled() {
         return hasDisableOption(ARGUMENT.DISABLE_SWIFT, Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED);
+    }
+
+    /**
+     * Returns true if the disableSwiftPackageManagerAnalyzer command line
+     * argument was specified.
+     *
+     * @return true if the disableSwiftPackageManagerAnalyzer command line
+     * argument was specified; otherwise false
+     */
+    public boolean isGolangPackageAnalyzerDisabled() {
+        return hasDisableOption(ARGUMENT.DISABLE_GO_PKG, Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED);
     }
 
     /**
@@ -1615,6 +1630,10 @@ public final class CliParser {
          * Disables the Python Package Analyzer.
          */
         public static final String DISABLE_PY_PKG = "disablePyPkg";
+        /**
+         * Disables the Golang Package Analyzer.
+         */
+        public static final String DISABLE_GO_PKG = "disableGoPkg";
         /**
          * Disables the Python Package Analyzer.
          */

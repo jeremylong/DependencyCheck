@@ -732,7 +732,12 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             return false;
         }
 
-        DependencyVersion bestGuess = new DependencyVersion("-");
+        DependencyVersion bestGuess;
+        if ("Golang".equals(dependency.getEcosystem()) && dependency.getVersion()==null) {
+            bestGuess = new DependencyVersion("*");
+        } else {
+            bestGuess = new DependencyVersion("-");
+        }
         Confidence bestGuessConf = null;
         String bestGuessURL = null;
         boolean hasBroadMatch = false;

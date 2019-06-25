@@ -314,6 +314,11 @@ public final class Settings {
          */
         public static final String ANALYZER_PYTHON_PACKAGE_ENABLED = "analyzer.python.package.enabled";
         /**
+         * The properties key for whether the Golang Dep analyzer is
+         * enabled.
+         */
+        public static final String ANALYZER_GOLANG_DEP_ENABLED = "analyzer.golang.dep.enabled";
+        /**
          * The properties key for whether the Ruby Gemspec Analyzer is enabled.
          */
         public static final String ANALYZER_RUBY_GEMSPEC_ENABLED = "analyzer.ruby.gemspec.enabled";
