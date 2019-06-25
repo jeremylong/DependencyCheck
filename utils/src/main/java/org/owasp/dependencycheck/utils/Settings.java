@@ -314,6 +314,14 @@ public final class Settings {
          */
         public static final String ANALYZER_PYTHON_PACKAGE_ENABLED = "analyzer.python.package.enabled";
         /**
+         * The properties key for whether the Golang Mod analyzer is enabled.
+         */
+        public static final String ANALYZER_GOLANG_MOD_ENABLED = "analyzer.golang.mod.enabled";
+        /**
+         * The path to go, if available.
+         */
+        public static final String ANALYZER_GOLANG_PATH = "analyzer.golang.path";
+        /*
          * The properties key for whether the Golang Dep analyzer is
          * enabled.
          */

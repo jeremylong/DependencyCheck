@@ -439,6 +439,8 @@ public final class CliParser {
                 .desc("Disable the Python Package Analyzer.").build();
         final Option disableComposerAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_COMPOSER)
                 .desc("Disable the PHP Composer Analyzer.").build();
+        final Option disableGolangModAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_GOLANG_MOD)
+                .desc("Disable the Golang Mod Analyzer.").build();
         final Option disableAutoconfAnalyzer = Option.builder()
                 .longOpt(ARGUMENT.DISABLE_AUTOCONF).desc("Disable the Autoconf Analyzer.").build();
         final Option disableOpenSSLAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_OPENSSL)
@@ -492,6 +494,7 @@ public final class CliParser {
                         .desc("Disable the Ruby Bundler-Audit Analyzer.").build())
                 .addOption(disableAutoconfAnalyzer)
                 .addOption(disableComposerAnalyzer)
+                .addOption(disableGolangModAnalyzer)
                 .addOption(disableOpenSSLAnalyzer)
                 .addOption(disableNuspecAnalyzer)
                 .addOption(disableNugetconfAnalyzer)
@@ -502,12 +505,6 @@ public final class CliParser {
                 .addOption(disableOssIndexAnalyzer)
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_OSSINDEX_CACHE)
                         .desc("Disallow the OSS Index Analyzer from caching results").build())
-                .addOption(Option.builder().longOpt(ARGUMENT.OSSINDEX_USERNAME)
-                        .desc("The optional username to connect to OSS Index.")
-                        .argName("username").hasArg(true).build())
-                .addOption(Option.builder().longOpt(ARGUMENT.OSSINDEX_PASSWORD)
-                        .desc("The optional password to connect to OSS Index.")
-                        .argName("password").hasArg(true).build())
                 .addOption(cocoapodsAnalyzerEnabled)
                 .addOption(swiftPackageManagerAnalyzerEnabled)
                 .addOption(disableGolangPackageAnalyzer)
@@ -752,6 +749,16 @@ public final class CliParser {
     }
 
     /**
+     * Returns true if the disableGolangMod command line argument was specified.
+     *
+     * @return true if the disableGolangMod command line argument was specified;
+     * otherwise false
+     */
+    public boolean isGolangModDisabled() {
+        return hasDisableOption(ARGUMENT.DISABLE_GOLANG_MOD, Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED);
+    }
+
+    /**
      * Returns true if the disableComposer command line argument was specified.
      *
      * @return true if the disableComposer command line argument was specified;
@@ -790,28 +797,6 @@ public final class CliParser {
      */
     public boolean isOssIndexCacheDisabled() {
         return hasDisableOption(ARGUMENT.DISABLE_OSSINDEX_CACHE, Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE);
-    }
-
-    /**
-     * Returns the username to authenticate to the OSS Index if one was
-     * specified.
-     *
-     * @return the username to authenticate to the OSS Index; if none was
-     * specified this will return null;
-     */
-    public String getOssIndexUsername() {
-        return line.getOptionValue(ARGUMENT.OSSINDEX_USERNAME);
-    }
-
-    /**
-     * Returns the password to authenticate to the OSS Index if one was
-     * specified.
-     *
-     * @return the password to authenticate to the OSS Index; if none was
-     * specified this will return null;
-     */
-    public String getOssIndexPassword() {
-        return line.getOptionValue(ARGUMENT.OSSINDEX_PASSWORD);
     }
 
     /**
@@ -1639,6 +1624,10 @@ public final class CliParser {
          */
         public static final String DISABLE_COMPOSER = "disableComposer";
         /**
+         * Disables the Golang Mod Analyzer.
+         */
+        public static final String DISABLE_GOLANG_MOD = "disableGolangMod";
+        /**
          * Disables the Ruby Gemspec Analyzer.
          */
         public static final String DISABLE_RUBYGEMS = "disableRubygems";
@@ -1695,14 +1684,6 @@ public final class CliParser {
          * locally.
          */
         public static final String DISABLE_OSSINDEX_CACHE = "disableOssIndexCache";
-        /**
-         * The optional username to connect to Sonatype's OSS Index.
-         */
-        public static final String OSSINDEX_USERNAME = "ossIndexUsername";
-        /**
-         * The optional password to connect to Sonatype's OSS Index.
-         */
-        public static final String OSSINDEX_PASSWORD = "ossIndexPassword";
         /**
          * Disables the OpenSSL Analyzer.
          */

@@ -27,6 +27,10 @@ cache:
 #before_install:
 #  - wget -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r .assets[0].browser_download_url)
 
+# Install binary for golang
+install:
+  - eval "$(curl -sL https://raw.githubusercontent.com/travis-ci/gimme/master/gimme | GIMME_GO_VERSION=1.12 bash)"
+
 matrix:
   include:
     - jdk: oraclejdk8

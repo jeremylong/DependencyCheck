@@ -464,6 +464,7 @@ public class App {
         settings.setBoolean(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, !cli.isBundleAuditDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_OPENSSL_ENABLED, !cli.isOpenSSLDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, !cli.isComposerDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED, !cli.isGolangModDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, !cli.isNodeJsDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, !cli.isNodeAuditDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, !cli.isNodeAuditCacheDisabled());
@@ -478,8 +479,6 @@ public class App {
         settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, !cli.isNexusDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, !cli.isOssIndexDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE, !cli.isOssIndexCacheDisabled());
-        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_USER, cli.getOssIndexUsername());
-        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD, cli.getOssIndexPassword());
         settings.setFloat(Settings.KEYS.JUNIT_FAIL_ON_CVSS, cli.getJunitFailOnCVSS());
         settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED, !cli.isGolangPackageAnalyzerDisabled());
 
