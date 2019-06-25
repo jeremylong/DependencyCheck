@@ -37,10 +37,26 @@ import org.sonatype.ossindex.service.client.transport.UserAgentSupplier;
  */
 public class ODCConnectionTransport extends HttpUrlConnectionTransport {
 
+    /**
+     * The OSS Index client configuration.
+     */
     private final OssindexClientConfiguration configuration;
+    /**
+     * The URL Connection factory.
+     */
     private final URLConnectionFactory connectionFactory;
+    /**
+     * The user agent to send in the HTTP connection.
+     */
     private final UserAgentSupplier userAgent;
 
+    /**
+     * Constructs a new transport object to connect to the OSS Index.
+     *
+     * @param settings the ODC settings
+     * @param config the OSS client configuration
+     * @param userAgent the user agent to send to OSS Index
+     */
     public ODCConnectionTransport(Settings settings, OssindexClientConfiguration config, UserAgentSupplier userAgent) {
         super(userAgent);
         this.userAgent = checkNotNull(userAgent);
@@ -53,7 +69,7 @@ public class ODCConnectionTransport extends HttpUrlConnectionTransport {
         final HttpURLConnection connection = connectionFactory.createHttpURLConnection(url);
         connection.setRequestProperty("User-Agent", userAgent.get());
 
-        String authorization = BasicAuthHelper.authorizationHeader(configuration.getAuthConfiguration());
+        final String authorization = BasicAuthHelper.authorizationHeader(configuration.getAuthConfiguration());
         if (authorization != null) {
             connection.setRequestProperty(AUTHORIZATION, authorization);
         }

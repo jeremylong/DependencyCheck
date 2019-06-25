@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Parses json output from `go mod edit -json`
+ * Parses json output from `go mod edit -json`.
  *
  * @author Matthijs van den Bos
  */
@@ -37,12 +37,12 @@ import java.util.List;
 public class GoModJsonParser {
 
     /**
-     * The JsonReader for parsing JSON
+     * The JsonReader for parsing JSON.
      */
     private final JsonReader jsonReader;
 
     /**
-     * The List of ComposerDependencies found
+     * The List of ComposerDependencies found.
      */
     private final List<GoModDependency> goModDependencies;
 
@@ -64,6 +64,9 @@ public class GoModJsonParser {
 
     /**
      * Process the input stream to create the list of dependencies.
+     *
+     * @throws AnalysisException thrown when there is an error parsing the
+     * results of `go mod`
      */
     public void process() throws AnalysisException {
         LOGGER.debug("Beginning go.mod processing");

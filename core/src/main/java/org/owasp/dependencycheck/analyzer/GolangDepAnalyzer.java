@@ -182,7 +182,7 @@ public class GolangDepAnalyzer extends AbstractFileTypeAnalyzer {
             dep.setDisplayFileName(name);
             dep.setName(name);
         }
-        PackageURLBuilder packageBuilder = PackageURLBuilder.aPackageURL().withType("golang");
+        final PackageURLBuilder packageBuilder = PackageURLBuilder.aPackageURL().withType("golang");
 
         String baseNamespace = null;
         String depNamespace = null;
@@ -242,8 +242,9 @@ public class GolangDepAnalyzer extends AbstractFileTypeAnalyzer {
             purl = packageBuilder.build();
             id = new PurlIdentifier(packageBuilder.build(), Confidence.HIGHEST);
         } catch (MalformedPackageURLException ex) {
-            LOGGER.warn("Unable to create package-url identifier for `{}` in `{}` - reason: {}", name, parentDependency.getFilePath(), ex.getMessage());
-            StringBuilder value = new StringBuilder(name);
+            LOGGER.warn("Unable to create package-url identifier for `{}` in `{}` - reason: {}",
+                    name, parentDependency.getFilePath(), ex.getMessage());
+            final StringBuilder value = new StringBuilder(name);
             if (StringUtils.isNotBlank(subPath)) {
                 value.append("/").append(subPath);
             }

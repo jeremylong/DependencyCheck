@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.data.ossindex;
 
-import static com.google.common.net.HttpHeaders.AUTHORIZATION;
 import java.io.File;
 import org.sonatype.goodies.packageurl.PackageUrl;
 import org.sonatype.goodies.packageurl.PackageUrl.RenderFlavor;
@@ -26,22 +25,16 @@ import org.sonatype.ossindex.service.client.OssindexClientConfiguration;
 import org.sonatype.ossindex.service.client.marshal.Marshaller;
 import org.sonatype.ossindex.service.client.marshal.GsonMarshaller;
 import org.sonatype.ossindex.service.client.internal.OssindexClientImpl;
-import org.sonatype.ossindex.service.client.transport.HttpUrlConnectionTransport;
 import org.sonatype.ossindex.service.client.transport.Transport;
 import org.sonatype.ossindex.service.client.transport.UserAgentSupplier;
 import org.owasp.dependencycheck.utils.Settings;
-import org.owasp.dependencycheck.utils.URLConnectionFactory;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.ossindex.service.client.cache.DirectoryCache;
 import org.sonatype.ossindex.service.client.transport.AuthConfiguration;
-import org.sonatype.ossindex.service.client.transport.BasicAuthHelper;
-import org.sonatype.ossindex.service.client.transport.ProxyConfiguration;
 
 /**
  * Produces {@link OssindexClient} instances.
@@ -86,11 +79,11 @@ public final class OssindexClientFactory {
         final String password = settings.getString(Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD);
 
         if (username != null && password != null) {
-            AuthConfiguration auth = new AuthConfiguration(username, password);
+            final AuthConfiguration auth = new AuthConfiguration(username, password);
             config.setAuthConfiguration(auth);
         }
 
-        // proxy likely does not need to be configured here as we are using the 
+        // proxy likely does not need to be configured here as we are using the
         // URLConnectionFactory#createHttpURLConnection() which automatically configures
         // the proxy on the connection.
 //        ProxyConfiguration proxy = new ProxyConfiguration();

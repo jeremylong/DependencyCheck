@@ -733,7 +733,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         }
 
         DependencyVersion bestGuess;
-        if ("Golang".equals(dependency.getEcosystem()) && dependency.getVersion()==null) {
+        if ("Golang".equals(dependency.getEcosystem()) && dependency.getVersion() == null) {
             bestGuess = new DependencyVersion("*");
         } else {
             bestGuess = new DependencyVersion("-");

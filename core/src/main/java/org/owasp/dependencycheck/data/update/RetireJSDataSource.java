@@ -18,25 +18,17 @@
 package org.owasp.dependencycheck.data.update;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import javax.annotation.concurrent.ThreadSafe;
 
-import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
-import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.ResourceNotFoundException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.TooManyRequestsException;
-import org.owasp.dependencycheck.utils.URLConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -151,7 +143,7 @@ public class RetireJSDataSource implements CachedWebDataSource {
             final File dataDir = settings.getDataDirectory();
 
             LOGGER.debug("RetireJS Repo URL: {}", repoUrl.toExternalForm());
-            Downloader downloader = new Downloader(settings);
+            final Downloader downloader = new Downloader(settings);
             final String filename = repoUrl.getFile().substring(repoUrl.getFile().lastIndexOf("/") + 1);
             final File repoFile = new File(dataDir, filename);
             downloader.fetchFile(repoUrl, repoFile);

@@ -17,6 +17,12 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.golang.GoModJsonParser;
@@ -27,7 +33,6 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +44,7 @@ import java.util.List;
  */
 @Experimental
 public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
+
     /**
      * The logger.
      */
@@ -56,10 +62,10 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
     private static final String ANALYZER_NAME = "Golang Mod Analyzer";
 
     /**
-     * Lock file name.
-     * Please note that go.sum is NOT considered a lock file and may contain
-     * dependencies that are no longer used and dependencies of dependencies.
-     * According to here, go.mod should be used for reproducible builds:
+     * Lock file name. Please note that go.sum is NOT considered a lock file and
+     * may contain dependencies that are no longer used and dependencies of
+     * dependencies. According to here, go.mod should be used for reproducible
+     * builds:
      * https://github.com/golang/go/wiki/Modules#is-gosum-a-lock-file-why-does-gosum-include-information-for-module-versions-i-am-no-longer-using
      */
     public static final String GO_MOD = "go.mod";
@@ -111,6 +117,11 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
         return GO_MOD_FILTER;
     }
 
+    /**
+     * Attempts to determine the path to `go`.
+     *
+     * @return the path to `go`
+     */
     private String getGo() {
         final String goPath = getSettings().getString(Settings.KEYS.ANALYZER_GOLANG_PATH);
 
@@ -121,7 +132,7 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
             );
             return "go";
         } else {
-            File goFile = new File(goPath);
+            final File goFile = new File(goPath);
             if (goFile.isFile()) {
                 return goFile.getAbsolutePath();
             }
@@ -131,6 +142,13 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
         return "go";
     }
 
+    /**
+     * Launches `go mod` in the given folder.
+     *
+     * @param folder the working folder
+     * @return a reference to the launched process
+     * @throws AnalysisException thrown if there is an issue launching `go mod`
+     */
     private Process launchGoMod(File folder) throws AnalysisException {
         if (!folder.isDirectory()) {
             throw new AnalysisException(String.format("%s should have been a directory.", folder.getAbsolutePath()));
@@ -209,7 +227,7 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
                 } catch (IOException ex) {
                     throw new InitializationException("Unable to read go output.", ex);
                 }
-                // fall through
+            // fall through
             default:
                 final String msg = String.format("Unexpected exit code from go process. Disabling %s: %s", ANALYZER_NAME, exitValue);
                 throw new InitializationException(msg);
@@ -220,9 +238,9 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
      * Analyzes go packages and adds evidence to the dependency.
      *
      * @param dependency the dependency being analyzed
-     * @param engine     the engine being used to perform the scan
+     * @param engine the engine being used to perform the scan
      * @throws AnalysisException thrown if there is an unrecoverable error
-     *                           analyzing the dependency
+     * analyzing the dependency
      */
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
@@ -241,7 +259,7 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
             throw new AnalysisException(msg);
         }
         try {
-            StringBuilder error = new StringBuilder();
+            final StringBuilder error = new StringBuilder();
             try (BufferedReader errReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))) {
                 while (errReader.ready()) {
                     error.append(errReader.readLine());
@@ -253,8 +271,8 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
             }
             final GoModJsonParser parser = new GoModJsonParser(process.getInputStream());
             parser.process();
-            parser.getDependencies().forEach(goDep ->
-                    engine.addDependency(goDep.toDependency(dependency))
+            parser.getDependencies().forEach(goDep
+                    -> engine.addDependency(goDep.toDependency(dependency))
             );
         } catch (IOException ioe) {
             LOGGER.warn("go mod failure", ioe);

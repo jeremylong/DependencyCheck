@@ -40,12 +40,30 @@ import static org.owasp.dependencycheck.analyzer.GolangModAnalyzer.GO_MOD;
  */
 public class GoModDependency {
 
+    /**
+     * A reference to the logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(GoModDependency.class);
+    /**
+     * The module path.
+     */
     private final String modulePath;
+    /**
+     * The version.
+     */
     private final String version;
-    private final String revision = null;
+
+    /**
+     * A Package-URL builder.
+     */
     private final PackageURLBuilder packageURLBuilder;
 
+    /**
+     * Constructs a new GoModDependency.
+     *
+     * @param modulePath the module path
+     * @param version the dependency version
+     */
     GoModDependency(String modulePath, String version) {
         this.modulePath = modulePath;
         this.version = version;
@@ -53,6 +71,12 @@ public class GoModDependency {
         packageURLBuilder = PackageURLBuilder.aPackageURL().withType("golang");
     }
 
+    /**
+     * Converts the GoModDependency into a Dependency object.
+     *
+     * @param parentDependency the parent dependency
+     * @return the resulting Dependency object
+     */
     public Dependency toDependency(Dependency parentDependency) {
         return createDependency(parentDependency, modulePath, version);
     }
@@ -103,16 +127,11 @@ public class GoModDependency {
         dep.setSha256sum(Checksum.getSHA256Checksum(filePath));
         dep.setMd5sum(Checksum.getMD5Checksum(filePath));
 
-        final int slashPos = name.indexOf("/");
-        if (slashPos > 0) {
-
-        }
-
         if (vendor != null) {
             dep.addEvidence(EvidenceType.VENDOR, GO_MOD, "vendor", vendor, Confidence.HIGHEST);
             dep.addEvidence(EvidenceType.VENDOR, GO_MOD, "vendor", vendor, Confidence.MEDIUM);
         }
-        if (namespace != null) {
+        if (namespace != null && !"golang.org".equals(namespace)) {
             dep.addEvidence(EvidenceType.VENDOR, GO_MOD, "namespace", namespace, Confidence.LOW);
         }
         dep.addEvidence(EvidenceType.PRODUCT, GO_MOD, "name", moduleName, Confidence.HIGHEST);
@@ -123,8 +142,9 @@ public class GoModDependency {
         try {
             id = new PurlIdentifier(packageURLBuilder.build(), Confidence.HIGHEST);
         } catch (MalformedPackageURLException ex) {
-            LOGGER.warn("Unable to create package-url identifier for `{}` in `{}` - reason: {}", name, parentDependency.getFilePath(), ex.getMessage());
-            StringBuilder value = new StringBuilder(name);
+            LOGGER.warn("Unable to create package-url identifier for `{}` in `{}` - reason: {}",
+                    name, parentDependency.getFilePath(), ex.getMessage());
+            final StringBuilder value = new StringBuilder(name);
             if (StringUtils.isNotBlank(version)) {
                 value.append("@").append(version);
             }
