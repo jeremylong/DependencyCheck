@@ -485,7 +485,8 @@ public final class CveDB implements AutoCloseable {
         try {
             final String statementString = statementBundle.getString(key.name());
             if (key == INSERT_VULNERABILITY || key == INSERT_CPE) {
-                preparedStatement = connection.prepareStatement(statementString, Statement.RETURN_GENERATED_KEYS);
+                String[] returnedColumns = {"id"};
+                preparedStatement = connection.prepareStatement(statementString, returnedColumns);
             } else {
                 preparedStatement = connection.prepareStatement(statementString);
             }
