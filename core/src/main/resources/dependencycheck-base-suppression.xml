@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
        This suppresses false positives for Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll.
@@ -200,6 +200,13 @@
         <gav regex="true">^de\.siegmar:logback-gelf:.*$</gav>
         <cpe>cpe:/a:logback:logback</cpe>
      </suppress>
+     <suppress base="true">
+        <notes><![CDATA[
+        False positive per #2001
+        ]]></notes>
+        <gav regex="true">^io\.prometheus:simpleclient_hotspot:.*$</gav>
+        <cve>CVE-2019-3826</cve>
+    </suppress>
     <suppress base="true">
         <notes><![CDATA[
         Suppresses false positives per #1566.
