@@ -225,7 +225,7 @@ public class GolangDepAnalyzer extends AbstractFileTypeAnalyzer {
                 //this is used to help determine the actual version in the NVD - a commit hash doesn't work
                 // instead we need to make it an asterik for the CPE...
                 //dep.setVersion(revision);
-                packageBuilder.withVersion(version);
+                packageBuilder.withVersion(revision);
             }
             //Revision (which appears to be a commit hash) won't be of any value in the analysis.
             //dep.addEvidence(EvidenceType.PRODUCT, GOPKG_LOCK, "revision", revision, Confidence.HIGHEST);
@@ -238,7 +238,7 @@ public class GolangDepAnalyzer extends AbstractFileTypeAnalyzer {
 
         Identifier id;
         try {
-            PackageURL purl = packageBuilder.build();
+            final PackageURL purl = packageBuilder.build();
             id = new PurlIdentifier(purl, Confidence.HIGHEST);
         } catch (MalformedPackageURLException ex) {
             LOGGER.warn("Unable to create package-url identifier for `{}` in `{}` - reason: {}",

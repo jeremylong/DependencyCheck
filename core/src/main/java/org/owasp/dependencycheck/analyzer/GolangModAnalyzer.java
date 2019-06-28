@@ -217,6 +217,10 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
                         throw new InitializationException("Go mod error stream unexpectedly not ready.");
                     } else {
                         final String line = reader.readLine();
+                        if (line == null) {
+                            LOGGER.warn("An error occurred calling `go` - no output could be read. Disabling {}. Error: `{}`", ANALYZER_NAME, line);
+                            throw new InitializationException("Error calling `go` - no output could be read.");
+                        }
                         if (line.contains("unknown subcommand \"mod\"")) {
                             LOGGER.warn("Your version of `go` does not support modules. Disabling {}. Error: `{}`", ANALYZER_NAME, line);
                             throw new InitializationException("Go version does not support modules.");

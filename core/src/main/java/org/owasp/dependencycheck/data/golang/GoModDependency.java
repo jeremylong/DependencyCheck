@@ -34,7 +34,7 @@ import static org.owasp.dependencycheck.analyzer.GolangModAnalyzer.DEPENDENCY_EC
 import static org.owasp.dependencycheck.analyzer.GolangModAnalyzer.GO_MOD;
 
 /**
- * Represents a Go module dependency
+ * Represents a Go module dependency.
  *
  * @author Matthijs van den Bos
  */

@@ -22,8 +22,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.concurrent.NotThreadSafe;
-import javax.json.*;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.json.stream.JsonParsingException;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;

@@ -133,8 +133,8 @@ public class Check extends Update {
      * Whether or not the defined proxy should be used when connecting to Nexus.
      */
     private Boolean nexusUsesProxy;
-    
-        /**
+
+    /**
      * Sets whether the Golang Dependency analyzer is enabled. Default is true.
      */
     private Boolean golangDepEnabled;
@@ -147,7 +147,7 @@ public class Check extends Update {
      * Sets the path to `go`.
      */
     private String pathToGo;
-    
+
     /**
      * Additional ZIP File extensions to add analyze. This should be a
      * comma-separated list of file extensions to treat like ZIP files.
@@ -1143,8 +1143,8 @@ public class Check extends Update {
     public void setNexusAnalyzerEnabled(Boolean nexusAnalyzerEnabled) {
         this.nexusAnalyzerEnabled = nexusAnalyzerEnabled;
     }
-    
-        /**
+
+    /**
      * Get the value of golangDepEnabled.
      *
      * @return the value of golangDepEnabled
@@ -1161,7 +1161,8 @@ public class Check extends Update {
     public void setGolangDepEnabled(Boolean golangDepEnabled) {
         this.golangDepEnabled = golangDepEnabled;
     }
-        /**
+
+    /**
      * Get the value of golangModEnabled.
      *
      * @return the value of golangModEnabled
@@ -1178,7 +1179,6 @@ public class Check extends Update {
     public void setGolangModEnabled(Boolean golangModEnabled) {
         this.golangModEnabled = golangModEnabled;
     }
-    
 
     /**
      * Get the value of pathToCore.
@@ -1197,7 +1197,7 @@ public class Check extends Update {
     public void setPathToGo(String pathToGo) {
         this.pathToGo = pathToGo;
     }
-    
+
     /**
      * Get the value of nexusUrl.
      *
