@@ -209,7 +209,25 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "enableRetired")
     private Boolean enableRetired;
-
+    /**
+     * Sets whether the Golang Dependency analyzer is enabled. Default is true.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "golangDepEnabled")
+    private Boolean golangDepEnabled;
+    /**
+     * Sets whether Golang Module Analyzer is enabled; this requires `go` to be
+     * installed. Default is true.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "golangModEnabled")
+    private Boolean golangModEnabled;
+    /**
+     * Sets the path to `go`.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "pathToGo")
+    private String pathToGo;
     /**
      * Use pom dependency information for snapshot dependencies that are part of
      * the Maven reactor while aggregate scanning a multi-module project.
@@ -1581,6 +1599,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, enableExperimental);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIRED_ENABLED, enableRetired);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED, golangDepEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED, golangModEnabled);
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH, pathToGo);
+
         final Proxy proxy = getMavenProxy();
         if (proxy != null) {
             settings.setString(Settings.KEYS.PROXY_SERVER, proxy.getHost());

@@ -133,6 +133,21 @@ public class Check extends Update {
      * Whether or not the defined proxy should be used when connecting to Nexus.
      */
     private Boolean nexusUsesProxy;
+    
+        /**
+     * Sets whether the Golang Dependency analyzer is enabled. Default is true.
+     */
+    private Boolean golangDepEnabled;
+    /**
+     * Sets whether Golang Module Analyzer is enabled; this requires `go` to be
+     * installed. Default is true.
+     */
+    private Boolean golangModEnabled;
+    /**
+     * Sets the path to `go`.
+     */
+    private String pathToGo;
+    
     /**
      * Additional ZIP File extensions to add analyze. This should be a
      * comma-separated list of file extensions to treat like ZIP files.
@@ -1128,7 +1143,61 @@ public class Check extends Update {
     public void setNexusAnalyzerEnabled(Boolean nexusAnalyzerEnabled) {
         this.nexusAnalyzerEnabled = nexusAnalyzerEnabled;
     }
+    
+        /**
+     * Get the value of golangDepEnabled.
+     *
+     * @return the value of golangDepEnabled
+     */
+    public Boolean isGolangDepEnabled() {
+        return nexusAnalyzerEnabled;
+    }
 
+    /**
+     * Set the value of golangDepEnabled.
+     *
+     * @param golangDepEnabled new value of golangDepEnabled
+     */
+    public void setGolangDepEnabled(Boolean golangDepEnabled) {
+        this.golangDepEnabled = golangDepEnabled;
+    }
+        /**
+     * Get the value of golangModEnabled.
+     *
+     * @return the value of golangModEnabled
+     */
+    public Boolean isGoModDepEnabled() {
+        return golangModEnabled;
+    }
+
+    /**
+     * Set the value of golangModEnabled.
+     *
+     * @param golangModEnabled new value of golangModEnabled
+     */
+    public void setGolangModEnabled(Boolean golangModEnabled) {
+        this.golangModEnabled = golangModEnabled;
+    }
+    
+
+    /**
+     * Get the value of pathToCore.
+     *
+     * @return the value of pathToCore
+     */
+    public String getPathToGo() {
+        return pathToGo;
+    }
+
+    /**
+     * Set the value of pathToGo.
+     *
+     * @param pathToGo new value of pathToGo
+     */
+    public void setPathToGo(String pathToGo) {
+        this.pathToGo = pathToGo;
+    }
+    
     /**
      * Get the value of nexusUrl.
      *
@@ -1585,6 +1654,9 @@ public class Check extends Update {
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, retireJsUrl);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, retirejsFilterNonVulnerable);
         getSettings().setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, retirejsFilters);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED, golangDepEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED, golangModEnabled);
+        getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH, pathToGo);
 
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUGETCONF_ENABLED, nugetconfAnalyzerEnabled);
