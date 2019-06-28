@@ -10,7 +10,6 @@ if [[ $VERSION = *"SNAPSHOT"* ]]; then
   echo "Do not publish a snapshot version of dependency-check"
 else
     cd cli
-    mvn package
     mvn -Ddocker dockerfile:build
     mvn -Ddocker dockerfile:tag@tag-version
     mvn -Ddocker dockerfile:push@push-latest
