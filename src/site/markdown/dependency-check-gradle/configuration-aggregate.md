@@ -136,22 +136,28 @@ analyzers    | cocoapodsEnabled      | Sets whether or not the [experimental](..
 analyzers    | swiftEnabled          | Sets whether or not the [experimental](../analyzers/index.html) Swift Package Manager Analyzer should be used.    | true
 analyzers    | bundleAuditEnabled    | Sets whether or not the [experimental](../analyzers/index.html) Ruby Bundle Audit Analyzer should be used.        | true
 analyzers    | pathToBundleAudit     | The path to bundle audit.                                                                                         | &nbsp;
+analyzers    | golangDepEnabled      | Sets whether or not the [experimental](../analyzers/index.html) Golang Dependency Analyzer should be used.        | true
+analyzers    | golangModEnabled      | Sets whether or not the [experimental](../analyzers/index.html) Goland Module Analyzer should be used; requies `go` to be installed. | true
+analyzers    | pathToGo              | The path to `go`.                                                                                                 | &nbsp;
 
 #### Additional Analyzer Configuration
 
 Config Group | Property              | Description                                                                                                       | Default Value
 -------------|-----------------------|-------------------------------------------------------------------------------------------------------------------|------------------
-artifactory  | enabled               | Sets whether Artifactory analyzer will be used                                                                    | false
+artifactory  | enabled               | Sets whether Artifactory analyzer will be used.                                                                   | false
 artifactory  | url                   | The Artifactory server URL.                                                                                       | &nbsp;
 artifactory  | usesProxy             | Whether Artifactory should be accessed through a proxy or not.                                                    | false
 artifactory  | parallelAnalysis      | Whether the Artifactory analyzer should be run in parallel or not.                                                | true
 artifactory  | username              | The user name (only used with API token) to connect to Artifactory instance.                                      | &nbsp;
 artifactory  | apiToken              | The API token to connect to Artifactory instance, only used if the username or the API key are not defined by artifactoryAnalyzerServerId,artifactoryAnalyzerUsername or artifactoryAnalyzerApiToken | &nbsp;
-artifactory  | bearerToken           | The bearer token to connect to Artifactory instance                                                               | &nbsp;
+artifactory  | bearerToken           | The bearer token to connect to Artifactory instance.                                                              | &nbsp;
 retirejs     | enabled               | Sets whether the [experimental](../analyzers/index.html) RetireJS Analyzer should be used.                        | true
 retirejs     | retireJsUrl           | The URL to the Retire JS repository.                                                                              | https://raw.githubusercontent.com/Retirejs/retire.js/master/repository/jsrepository.json
 retirejs     | filterNonVulnerable   | Configures the RetireJS Analyzer to remove non-vulnerable JS dependencies from the report.                        | false
 retirejs     | filters               | Configures the list of regular expessions used to filter JS files based on content.                               | &nbsp;
+ossIndex     | enabled               | Sets whether OSS Index analyzer will be used.                                                                     | true
+ossIndex     | username              | The optional user name to connect to Sonatype's OSS Index.                                                        | &nbsp;
+ossIndex     | password              | The password or API token to connect to Sonatype's OSS Index.                                                     | &nbsp;
 
 
 #### Example
