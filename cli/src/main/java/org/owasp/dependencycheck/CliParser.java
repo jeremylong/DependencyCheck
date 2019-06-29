@@ -273,7 +273,8 @@ public final class CliParser {
 
         final Option path = Option.builder(ARGUMENT.SCAN_SHORT).argName("path").hasArg().longOpt(ARGUMENT.SCAN)
                 .desc("The path to scan - this option can be specified multiple times. Ant style"
-                        + " paths are supported (e.g. path/**/*.jar).")
+                        + " paths are supported (e.g. 'path/**/*.jar'); if using Ant style paths it is highly recommended"
+                        + " to quote the argument value.")
                 .build();
 
         final Option excludes = Option.builder().argName("pattern").hasArg().longOpt(ARGUMENT.EXCLUDE)
