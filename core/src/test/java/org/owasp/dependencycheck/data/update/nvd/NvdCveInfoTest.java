@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 
 /**
- * Rigorous test of setters/getters.
+ * Rigorous test of getters.
  *
  * @author Jeremy Long
  */
@@ -33,9 +33,8 @@ public class NvdCveInfoTest extends BaseTest {
      */
     @Test
     public void testSetGetId() {
-        NvdCveInfo instance = new NvdCveInfo();
+        NvdCveInfo instance = new NvdCveInfo("id","http://www.someurl.com/something", 1337L);
         String expResult = "id";
-        instance.setId(expResult);
         String result = instance.getId();
         assertEquals(expResult, result);
     }
@@ -45,9 +44,8 @@ public class NvdCveInfoTest extends BaseTest {
      */
     @Test
     public void testSetGetUrl() {
-        NvdCveInfo instance = new NvdCveInfo();
+        NvdCveInfo instance = new NvdCveInfo("id","http://www.someurl.com/something", 1337L);
         String expResult = "http://www.someurl.com/something";
-        instance.setUrl(expResult);
         String result = instance.getUrl();
         assertEquals(expResult, result);
     }
@@ -57,22 +55,9 @@ public class NvdCveInfoTest extends BaseTest {
      */
     @Test
     public void testSetGetTimestamp() {
-        NvdCveInfo instance = new NvdCveInfo();
+        NvdCveInfo instance = new NvdCveInfo("id","http://www.someurl.com/something", 1337L);
         long expResult = 1337L;
-        instance.setTimestamp(expResult);
         long result = instance.getTimestamp();
-        assertEquals(expResult, result);
-    }
-
-    /**
-     * Test of getNeedsUpdate method, of class NvdCveInfo.
-     */
-    @Test
-    public void testSetGetNeedsUpdate() {
-        NvdCveInfo instance = new NvdCveInfo();
-        boolean expResult = true;
-        instance.setNeedsUpdate(expResult);
-        boolean result = instance.getNeedsUpdate();
         assertEquals(expResult, result);
     }
 }

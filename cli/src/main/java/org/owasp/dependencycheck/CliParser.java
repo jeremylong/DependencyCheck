@@ -41,6 +41,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
+//suppress hard-coded password rule
+@SuppressWarnings("squid:S2068")
 public final class CliParser {
 
     /**

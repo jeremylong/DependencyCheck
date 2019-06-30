@@ -127,7 +127,8 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
                 final Downloader downloader = new Downloader(settings);
                 downloader.fetchFile(url1, file);
             } catch (DownloadFailedException ex) {
-                LOGGER.error("Download Failed for NVD CVE - {}\nSome CVEs may not be reported.", nvdCveInfo.getId());
+                LOGGER.error("Download Failed for NVD CVE - {}\nSome CVEs may not be reported. Reason: {}",
+                        nvdCveInfo.getId(), ex.getMessage());
                 if (settings.getString(Settings.KEYS.PROXY_SERVER) == null) {
                     LOGGER.error("If you are behind a proxy you may need to configure dependency-check to use the proxy.");
                 }
@@ -144,7 +145,8 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
             return this.processorService.submit(task);
 
         } catch (Throwable ex) {
-            LOGGER.error("An exception occurred downloading NVD CVE - {}\nSome CVEs may not be reported.", nvdCveInfo.getId());
+            LOGGER.error("An exception occurred downloading NVD CVE - {}\nSome CVEs may not be reported. Reason: ",
+                    nvdCveInfo.getId(), ex.getMessage());
             LOGGER.debug("Download Task Failed", ex);
         } finally {
             settings.cleanup(false);

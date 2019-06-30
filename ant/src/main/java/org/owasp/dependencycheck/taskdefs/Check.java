@@ -1150,7 +1150,7 @@ public class Check extends Update {
      * @return the value of golangDepEnabled
      */
     public Boolean isGolangDepEnabled() {
-        return nexusAnalyzerEnabled;
+        return golangDepEnabled;
     }
 
     /**

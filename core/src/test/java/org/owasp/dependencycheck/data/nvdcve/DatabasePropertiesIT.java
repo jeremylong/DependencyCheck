@@ -65,11 +65,9 @@ public class DatabasePropertiesIT extends BaseDBTestCase {
      */
     @Test
     public void testSave() throws Exception {
-        NvdCveInfo updatedValue = new NvdCveInfo();
+        NvdCveInfo updatedValue = new NvdCveInfo("test","url",1337L);
         String key = "test";
-        long expected = 1337;
-        updatedValue.setId(key);
-        updatedValue.setTimestamp(expected);
+        long expected = 1337L;
         DatabaseProperties instance = cveDb.getDatabaseProperties();
         instance.save(updatedValue);
         instance = cveDb.reloadProperties();

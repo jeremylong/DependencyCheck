@@ -182,7 +182,7 @@ public class NodeAuditSearch {
                     if (count < 5) {
                         final int next = count + 1;
                         try {
-                            Thread.sleep(1500 * next);
+                            Thread.sleep(1500L * next);
                         } catch (InterruptedException ex) {
                             Thread.currentThread().interrupt();
                             throw new UnexpectedAnalysisException(ex);

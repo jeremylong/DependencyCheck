@@ -17,13 +17,11 @@
  */
 package org.owasp.dependencycheck.data.update;
 
+import java.util.List;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseDBTestCase;
-import org.owasp.dependencycheck.data.update.exception.UpdateException;
-import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.data.update.nvd.NvdCveInfo;
 
 /**
  *
@@ -39,7 +37,7 @@ public class NvdCveUpdaterIT extends BaseDBTestCase {
         NvdCveUpdater instance = new NvdCveUpdater();
         instance.setSettings(getSettings());
         instance.initializeExecutorServices();
-        UpdateableNvdCve result = instance.getUpdatesNeeded();
+        List<NvdCveInfo> result = instance.getUpdatesNeeded();
         assertNotNull(result);
     }
 }

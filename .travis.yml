@@ -23,10 +23,6 @@ cache:
     - "$HOME/.m2/repository"
     - "$HOME/.sonar/cache"
 
-#removed as the codacy integration keeps breaking the build
-#before_install:
-#  - wget -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r .assets[0].browser_download_url)
-
 # Install binary for golang
 install:
   - eval "$(curl -sL https://raw.githubusercontent.com/travis-ci/gimme/master/gimme | GIMME_GO_VERSION=1.12 bash)"
@@ -39,11 +35,9 @@ matrix:
       script:
         - if [ ! -z "$TRAVIS_TAG" ]; then travis_wait 60 mvn -s settings.xml install site site:stage -DreleaseTesting -Danalyzer.node.package.enabled=false -Danalyzer.node.audit.enabled=false; else travis_wait 60 mvn -s settings.xml install -DreleaseTesting -Danalyzer.node.package.enabled=false -Danalyzer.node.audit.enabled=false; fi
 
-#removed from after_success as the codacy integration keeps breaking the build
-#java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Java -r build-reporting/target/coverage-reports/jacoco.xml;
 after_success:
   - if [ "$JDK" == "JDK8" ]; then 
-      mvn sonar:sonar -Dsonar.java.coveragePlugin=jacoco -Dsonar.jacoco.reportPath=build-reporting/target/jacoco.xml;
+      mvn sonar:sonar;
       ./coverity_scan.sh; 
     fi;
 

@@ -859,6 +859,7 @@ public class DependencyCheckScanAgent {
      * @throws ExceptionCollection a collection of one or more exceptions that
      * occurred during analysis.
      */
+    @SuppressWarnings("squid:S2095")
     private Engine executeDependencyCheck() throws ExceptionCollection {
         populateSettings();
         final Engine engine;

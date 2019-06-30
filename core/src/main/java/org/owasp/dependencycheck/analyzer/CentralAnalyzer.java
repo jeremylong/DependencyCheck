@@ -285,7 +285,9 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                         if (success) {
                             if (model == null) {
                                 model = PomUtils.readPom(pomFile);
-                                cache.put(ma.getPomUrl(), model);
+                                if (cache != null) {
+                                    cache.put(ma.getPomUrl(), model);
+                                }
                             }
                             JarAnalyzer.setPomEvidence(dependency, model, null, true);
                         } else {

@@ -36,10 +36,7 @@ public class DownloadTaskTest extends BaseTest {
      */
     @Test
     public void testCall() throws Exception {
-        NvdCveInfo cve = new NvdCveInfo();
-        cve.setId("modified");
-        cve.setNeedsUpdate(true);
-        cve.setUrl(getSettings().getString(Settings.KEYS.CVE_MODIFIED_JSON));
+        NvdCveInfo cve = new NvdCveInfo("modified",getSettings().getString(Settings.KEYS.CVE_MODIFIED_JSON),1337L);
         ExecutorService processExecutor = null;
         CveDB cveDB = null;
         DownloadTask instance = new DownloadTask(cve, processExecutor, cveDB, getSettings());

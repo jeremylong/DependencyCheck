@@ -68,13 +68,20 @@ public class PomProjectInputStream extends FilterInputStream {
             final int pos = findSequence(PROJECT, buffer);
             if (pos >= 0) {
                 super.reset();
-                super.skip(pos);
+                long skipped = super.skip((long) pos);
+                if (skipped != pos) {
+                    throw new IOException("Error skipping pom header information");
+                }
                 return;
             } else if (count - PROJECT.length == 0) {
                 return;
             }
             super.reset();
-            super.skip(count - PROJECT.length);
+            long skipTo = (long) count-PROJECT.length;
+            long skipped = super.skip(skipTo);
+            if (skipped != skipTo) {
+                throw new IOException("Error skipping pom header information");
+            }
             super.mark(BUFFER_SIZE);
             count = super.read(buffer, 0, BUFFER_SIZE);
         }

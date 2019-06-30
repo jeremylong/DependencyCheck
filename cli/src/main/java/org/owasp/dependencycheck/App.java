@@ -68,6 +68,7 @@ public class App {
      *
      * @param args the command line arguments
      */
+    @SuppressWarnings("squid:S4823")
     public static void main(String[] args) {
         final int exitCode;
         final App app = new App();

@@ -28,21 +28,23 @@ import javax.annotation.concurrent.ThreadSafe;
 public class NvdCveInfo {
 
     /**
-     * an id.
+     * The identifier for the CVE data file.
      */
-    private String id;
+    private final String id;
     /**
-     * a url.
+     * The URL to download the file.
      */
-    private String url;
+    private final String url;
     /**
-     * a timestamp - epoch time.
+     * The timestamp of the file - epoch time.
      */
-    private long timestamp;
-    /**
-     * indicates whether or not this item should be updated.
-     */
-    private boolean needsUpdate = true;
+    private final long timestamp;
+
+    public NvdCveInfo(String id, String url, long timestamp) {
+        this.id = id;
+        this.url = url;
+        this.timestamp = timestamp;
+    }
 
     /**
      * Get the value of id.
@@ -54,30 +56,12 @@ public class NvdCveInfo {
     }
 
     /**
-     * Set the value of id.
+     * Get the value of URL.
      *
-     * @param id new value of id
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    /**
-     * Get the value of url.
-     *
-     * @return the value of url
+     * @return the value of URL
      */
     public String getUrl() {
         return url;
-    }
-
-    /**
-     * Set the value of url.
-     *
-     * @param url new value of url
-     */
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     /**
@@ -87,32 +71,5 @@ public class NvdCveInfo {
      */
     public long getTimestamp() {
         return timestamp;
-    }
-
-    /**
-     * Set the value of timestamp - epoch time.
-     *
-     * @param timestamp new value of timestamp - epoch time
-     */
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    /**
-     * Get the value of needsUpdate.
-     *
-     * @return the value of needsUpdate
-     */
-    public boolean getNeedsUpdate() {
-        return needsUpdate;
-    }
-
-    /**
-     * Set the value of needsUpdate.
-     *
-     * @param needsUpdate new value of needsUpdate
-     */
-    public void setNeedsUpdate(boolean needsUpdate) {
-        this.needsUpdate = needsUpdate;
     }
 }

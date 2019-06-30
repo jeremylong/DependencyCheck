@@ -76,6 +76,8 @@ public final class Settings {
     /**
      * The collection of keys used within the properties file.
      */
+    //suppress hard-coded password rule
+    @SuppressWarnings("squid:S2068")
     public static final class KEYS {
 
         /**
@@ -322,8 +324,7 @@ public final class Settings {
          */
         public static final String ANALYZER_GOLANG_PATH = "analyzer.golang.path";
         /**
-         * The properties key for whether the Golang Dep analyzer is
-         * enabled.
+         * The properties key for whether the Golang Dep analyzer is enabled.
          */
         public static final String ANALYZER_GOLANG_DEP_ENABLED = "analyzer.golang.dep.enabled";
         /**

@@ -583,6 +583,9 @@ public final class CveDB implements AutoCloseable {
         ResultSet rs = null;
         try {
             final PreparedStatement ps = getPreparedStatement(SELECT_CPE_ENTRIES);
+            if (ps == null) {
+                throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_CPE_ENTRIES);
+            }
             //part, vendor, product, version, update_version, edition,
             //lang, sw_edition, target_sw, target_hw, other, ecosystem
             ps.setString(1, vendor);
@@ -626,6 +629,9 @@ public final class CveDB implements AutoCloseable {
         ResultSet rs = null;
         try {
             final PreparedStatement ps = getPreparedStatement(SELECT_VENDOR_PRODUCT_LIST);
+            if (ps == null) {
+                throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_VENDOR_PRODUCT_LIST);
+            }
             rs = ps.executeQuery();
             while (rs.next()) {
                 data.add(new Pair<>(rs.getString(1), rs.getString(2)));
@@ -649,6 +655,9 @@ public final class CveDB implements AutoCloseable {
         ResultSet rs = null;
         try {
             final PreparedStatement ps = getPreparedStatement(SELECT_PROPERTIES);
+            if (ps == null) {
+                throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_PROPERTIES);
+            }
             rs = ps.executeQuery();
             while (rs.next()) {
                 prop.setProperty(rs.getString(1), rs.getString(2));
@@ -679,10 +688,16 @@ public final class CveDB implements AutoCloseable {
             } else {
                 // No Merge statement, so doing an Update/Insert...
                 final PreparedStatement updateProperty = getPreparedStatement(UPDATE_PROPERTY);
+                if (updateProperty == null) {
+                    throw new SQLException("Database query does not exist in the resource bundle: " + UPDATE_PROPERTY);
+                }
                 updateProperty.setString(1, value);
                 updateProperty.setString(2, key);
                 if (updateProperty.executeUpdate() == 0) {
                     final PreparedStatement insertProperty = getPreparedStatement(INSERT_PROPERTY);
+                    if (insertProperty == null) {
+                        throw new SQLException("Database query does not exist in the resource bundle: " + INSERT_PROPERTY);
+                    }
                     insertProperty.setString(1, key);
                     insertProperty.setString(2, value);
                     insertProperty.executeUpdate();
@@ -804,6 +819,9 @@ public final class CveDB implements AutoCloseable {
 
         try {
             final PreparedStatement psV = getPreparedStatement(SELECT_VULNERABILITY);
+            if (psV == null) {
+                throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_VULNERABILITY);
+            }
             psV.setString(1, cve);
             rsV = psV.executeQuery();
             if (rsV.next()) {
@@ -833,6 +851,9 @@ public final class CveDB implements AutoCloseable {
                     vuln.setCvssV3(cvss);
                 }
                 final PreparedStatement psCWE = getPreparedStatement(SELECT_VULNERABILITY_CWE);
+                if (psCWE == null) {
+                    throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_VULNERABILITY_CWE);
+                }
                 psCWE.setInt(1, cveId);
                 rsC = psCWE.executeQuery();
                 while (rsC.next()) {
@@ -840,6 +861,9 @@ public final class CveDB implements AutoCloseable {
                 }
 
                 final PreparedStatement psR = getPreparedStatement(SELECT_REFERENCES);
+                if (psR == null) {
+                    throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_REFERENCES);
+                }
                 psR.setInt(1, cveId);
                 rsR = psR.executeQuery();
                 while (rsR.next()) {
@@ -847,6 +871,9 @@ public final class CveDB implements AutoCloseable {
                 }
 
                 final PreparedStatement psS = getPreparedStatement(SELECT_SOFTWARE);
+                if (psS == null) {
+                    throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_SOFTWARE);
+                }
                 //1 part, 2 vendor, 3 product, 4 version, 5 update_version, 6 edition, 7 lang,
                 //8 sw_edition, 9 target_sw, 10 target_hw, 11 other, 12 versionEndExcluding,
                 //13 versionEndIncluding, 14 versionStartExcluding, 15 versionStartIncluding, 16 vulnerable
@@ -950,6 +977,18 @@ public final class CveDB implements AutoCloseable {
                 PreparedStatement deleteReference = prepareStatement(DELETE_REFERENCE);
                 PreparedStatement deleteSoftware = prepareStatement(DELETE_SOFTWARE);
                 PreparedStatement deleteCwe = prepareStatement(DELETE_CWE)) {
+            if (selectVulnerabilityId == null) {
+                throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_VULNERABILITY_ID);
+            }
+            if (deleteReference == null) {
+                throw new SQLException("Database query does not exist in the resource bundle: " + DELETE_REFERENCE);
+            }
+            if (deleteSoftware == null) {
+                throw new SQLException("Database query does not exist in the resource bundle: " + DELETE_SOFTWARE);
+            }
+            if (deleteCwe == null) {
+                throw new SQLException("Database query does not exist in the resource bundle: " + DELETE_CWE);
+            }
             selectVulnerabilityId.setString(1, cveId);
             try (ResultSet rs = selectVulnerabilityId.executeQuery()) {
                 if (rs.next()) {
@@ -982,6 +1021,9 @@ public final class CveDB implements AutoCloseable {
     private synchronized int updateVulnerabilityInsertVulnerability(DefCveItem cve, String description) {
         final int vulnerabilityId;
         try (PreparedStatement insertVulnerability = prepareStatement(INSERT_VULNERABILITY)) {
+            if (insertVulnerability == null) {
+                throw new SQLException("Database query does not exist in the resource bundle: " + INSERT_VULNERABILITY);
+            }
             //cve, description, cvssV2Score, cvssV2AccessVector, cvssV2AccessComplexity, cvssV2Authentication,
             //cvssV2ConfidentialityImpact, cvssV2IntegrityImpact, cvssV2AvailabilityImpact, cvssV2Severity,
             //cvssV3AttackVector, cvssV3AttackComplexity, cvssV3PrivilegesRequired, cvssV3UserInteraction,
@@ -1057,6 +1099,9 @@ public final class CveDB implements AutoCloseable {
      */
     private synchronized void updateVulnerabilityUpdateVulnerability(int vulnerabilityId, DefCveItem cve, String description) {
         try (PreparedStatement updateVulnerability = prepareStatement(UPDATE_VULNERABILITY)) {
+            if (updateVulnerability == null) {
+                throw new SQLException("Database query does not exist in the resource bundle: " + UPDATE_VULNERABILITY);
+            }
             //description=?, cvssV2Score=?, cvssV2AccessVector=?, cvssV2AccessComplexity=?, cvssV2Authentication=?, cvssV2ConfidentialityImpact=?,
             //cvssV2IntegrityImpact=?, cvssV2AvailabilityImpact=?, cvssV2Severity=?, cvssV3AttackVector=?, cvssV3AttackComplexity=?,
             //cvssV3PrivilegesRequired=?, cvssV3UserInteraction=?, cvssV3Scope=?, cvssV3ConfidentialityImpact=?, cvssV3IntegrityImpact=?,
@@ -1127,6 +1172,9 @@ public final class CveDB implements AutoCloseable {
      */
     private synchronized void updateVulnerabilityInsertCwe(int vulnerabilityId, DefCveItem cve) throws SQLException {
         try (PreparedStatement insertCWE = prepareStatement(INSERT_CWE)) {
+            if (insertCWE == null) {
+                throw new SQLException("Database query does not exist in the resource bundle: " + INSERT_CWE);
+            }
             insertCWE.setInt(1, vulnerabilityId);
 
             for (ProblemtypeDatum datum : cve.getCve().getProblemtype().getProblemtypeData()) {
@@ -1172,6 +1220,16 @@ public final class CveDB implements AutoCloseable {
         try (PreparedStatement insertCpe = prepareStatement(INSERT_CPE);
                 PreparedStatement selectCpeId = prepareStatement(SELECT_CPE_ID);
                 PreparedStatement insertSoftware = prepareStatement(INSERT_SOFTWARE)) {
+
+            if (insertCpe == null) {
+                throw new SQLException("Database query does not exist in the resource bundle: " + INSERT_CPE);
+            }
+            if (selectCpeId == null) {
+                throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_CPE_ID);
+            }
+            if (insertSoftware == null) {
+                throw new SQLException("Database query does not exist in the resource bundle: " + INSERT_SOFTWARE);
+            }
             for (VulnerableSoftware parsedCpe : software) {
                 int cpeProductId = 0;
                 selectCpeId.setString(1, parsedCpe.getPart().getAbbreviation());
@@ -1259,6 +1317,9 @@ public final class CveDB implements AutoCloseable {
     private synchronized String updateVulnerabilityInsertReferences(int vulnerabilityId, DefCveItem cve, String baseEcosystem) throws SQLException {
         String ecosystem = baseEcosystem;
         try (PreparedStatement insertReference = prepareStatement(INSERT_REFERENCE)) {
+            if (insertReference == null) {
+                throw new SQLException("Database query does not exist in the resource bundle: " + INSERT_REFERENCE);
+            }
             int countReferences = 0;
             for (Reference r : cve.getCve().getReferences().getReferenceData()) {
                 if (ecosystem == null) {
@@ -1450,6 +1511,10 @@ public final class CveDB implements AutoCloseable {
         ResultSet rs = null;
         try {
             final PreparedStatement cs = getPreparedStatement(COUNT_CPE);
+            if (cs == null) {
+                LOGGER.error("Unable to validate if data exists in the database");
+                return false;
+            }
             rs = cs.executeQuery();
             if (rs.next() && rs.getInt(1) > 0) {
                 return true;

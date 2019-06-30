@@ -23,6 +23,7 @@ package org.owasp.dependencycheck.utils;
  *
  * @author Jeremy Long
  */
+@SuppressWarnings("squid:S2134")
 public abstract class H2DBShutdownHook extends Thread {
 
     /**

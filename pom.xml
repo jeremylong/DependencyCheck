@@ -30,7 +30,6 @@ Copyright (c) 2012 - Jeremy Long
         <module>ant</module>
         <module>maven</module>
         <module>archetype</module>
-        <module>build-reporting</module>
     </modules>
     <name>Dependency-Check</name>
     <url>https://github.com/jeremylong/DependencyCheck.git</url>
@@ -181,7 +180,11 @@ Copyright (c) 2012 - Jeremy Long
         <gmavenplus-plugin.version>1.7.1</gmavenplus-plugin.version>
         <com.h3xstream.retirejs.core.version>3.0.1</com.h3xstream.retirejs.core.version>
         <com.google.guava.version>28.0-jre</com.google.guava.version>
-        <surefireArgLine/>
+        
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/jacoco-results/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.language>java</sonar.language>
     </properties>
     <distributionManagement>
         <snapshotRepository>
@@ -217,7 +220,7 @@ Copyright (c) 2012 - Jeremy Long
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.4</version>
+                    <version>${jacoco-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -549,8 +552,9 @@ Copyright (c) 2012 - Jeremy Long
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
-                            <destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
+                            <destFile>${project.basedir}/target/jacoco.exec</destFile>
                             <propertyName>surefireArgLine</propertyName>
+                            <append>true</append>
                         </configuration>
                     </execution>
                     <execution>
@@ -560,8 +564,31 @@ Copyright (c) 2012 - Jeremy Long
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
-                            <destFile>${project.build.directory}/coverage-reports/jacoco-it.exec</destFile>
+                            <destFile>${project.basedir}/target/jacoco.exec</destFile>
                             <propertyName>failsafeArgLine</propertyName>
+                            <append>true</append>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>pre-invoker-test</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${project.basedir}/target/jacoco.exec</destFile>
+                            <propertyName>invoker.mavenOpts</propertyName>
+                            <append>true</append>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>default-report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${project.basedir}/target/jacoco.exec</dataFile>
+                            <outputDirectory>${project.basedir}/target/jacoco-results/</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -634,6 +661,11 @@ Copyright (c) 2012 - Jeremy Long
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.6.0.1398</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -781,8 +813,7 @@ Copyright (c) 2012 - Jeremy Long
                 <version>${jacoco-maven-plugin.version}</version>
                 <configuration>
                     <dataFileIncludes>
-                        <dataFileInclude>target/coverage-reports/jacoco-ut.exec</dataFileInclude>
-                        <dataFileInclude>target/coverage-reports/jacoco-it.exec</dataFileInclude>
+                        <dataFileInclude>${sonar.jacoco.reportPath}</dataFileInclude>
                     </dataFileIncludes>
                 </configuration>
                 <reportSets>
