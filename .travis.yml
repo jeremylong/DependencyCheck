@@ -61,7 +61,7 @@ after_failure:
 
 deploy:
   - provider: script
-    script: mvn --settings .travis.settings.xml source:jar javadoc:jar package deploy -DskipTests=true
+    script: mvn --settings .travis.settings.xml package source:jar javadoc:jar deploy -DskipTests=true
     skip_cleanup: true
     on:
       branch: master
