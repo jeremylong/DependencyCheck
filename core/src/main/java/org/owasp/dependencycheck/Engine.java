@@ -1164,7 +1164,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * file name if the format is not ALL)
      * @param format the report format (ALL, HTML, CSV, JSON, etc.)
      * @throws ReportException thrown if there is an error generating the report
-     * @deprecated use {@link #writeReports(java.lang.String, java.io.File, java.lang.String, org.owasp.dependencycheck.exception.ExceptionCollection)
+     * @deprecated use {@link #writeReports(java.lang.String, java.io.File, java.lang.String, org.owasp.dependencycheck.exception.ExceptionCollection)}
      */
     @Deprecated
     public void writeReports(String applicationName, File outputDir, String format) throws ReportException {
@@ -1197,7 +1197,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * file name if the format is not ALL)
      * @param format the report format (ALL, HTML, CSV, JSON, etc.)
      * @throws ReportException thrown if there is an error generating the report
-     * @deprecated use {@link #writeReports(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.io.File, java.lang.String, org.owasp.dependencycheck.exception.ExceptionCollection)
+     * @deprecated use {@link #writeReports(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.io.File, java.lang.String, org.owasp.dependencycheck.exception.ExceptionCollection)}
      */
     @Deprecated
     public synchronized void writeReports(String applicationName, @Nullable final String groupId,

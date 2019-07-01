@@ -745,7 +745,7 @@ Copyright (c) 2012 - Jeremy Long
                 <configuration>
                     <failOnError>false</failOnError>
                     <bottom>Copyright© 2012-19 Jeremy Long. All Rights Reserved.</bottom>
-                    <excludes>${project.build.directory}/generated-sources/java/**/*.java</excludes>
+                    <excludes>**/generated-sources/java/**/*.java</excludes>
                 </configuration>
                 <reportSets>
                     <reportSet>
