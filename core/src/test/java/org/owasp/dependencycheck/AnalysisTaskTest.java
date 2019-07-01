@@ -12,7 +12,6 @@ import java.io.File;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import org.owasp.dependencycheck.utils.Settings;
 
 public class AnalysisTaskTest extends BaseTest {
 

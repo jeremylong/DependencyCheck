@@ -45,11 +45,6 @@ public class CentralAnalyzerTest {
 
     private static final String SHA1_SUM = "my-sha1-sum";
 
-    @BeforeClass
-    public static void beforeClass() {
-        doNotSleepBetweenRetries();
-    }
-
     @Test
     @SuppressWarnings("PMD.NonStaticInitializer")
     public void testFetchMavenArtifactsWithoutException(@Mocked final CentralSearch centralSearch,
@@ -156,18 +151,6 @@ public class CentralAnalyzerTest {
             Assume.assumeFalse(StringUtils.contains(ex.getMessage(), "Could not connect to MavenCentral"));
             throw ex;
         }
-    }
-
-    /**
-     * We do not want to waste time in unit tests.
-     */
-    private static void doNotSleepBetweenRetries() {
-        new MockUp<Thread>() {
-            @Mock
-            void sleep(long millis) {
-                // do not sleep
-            }
-        };
     }
 
     /**

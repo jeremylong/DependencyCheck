@@ -32,36 +32,6 @@ import org.owasp.dependencycheck.data.update.RetireJSDataSource;
 
 public class RetireJsAnalyzerFiltersTest extends BaseDBTestCase {
 
-    private RetireJsAnalyzer analyzer;
-    private Engine engine;
-
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        String[] filter = {"jQuery JavaScript Library"};
-        getSettings().setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, filter);
-        getSettings().setBoolean(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, true);
-
-        engine = new Engine(getSettings());
-        engine.openDatabase(true, true);
-        RetireJSDataSource ds = new RetireJSDataSource();
-        ds.update(engine);
-        analyzer = new RetireJsAnalyzer();
-        analyzer.setFilesMatched(true);
-
-        analyzer.initialize(getSettings());
-        analyzer.prepare(engine);
-    }
-
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        analyzer.close();
-        engine.close();
-        super.tearDown();
-    }
-
     /**
      * Test of filters method.
      *
@@ -69,25 +39,46 @@ public class RetireJsAnalyzerFiltersTest extends BaseDBTestCase {
      */
     @Test
     public void testFilters() throws Exception {
-        //removed by filter (see setup above)
-        File file = BaseTest.getResourceAsFile(this, "javascript/jquery-1.6.2.js");
-        List<Dependency> scanned = engine.scan(file);
-        assertTrue(scanned == null || scanned.isEmpty());
 
-        //remove non-vulnerable
-        file = BaseTest.getResourceAsFile(this, "javascript/custom.js");
-        scanned = engine.scan(file);
-        assertTrue(scanned.size()==1);
-        assertEquals(1, engine.getDependencies().length);
-        analyzer.analyze(scanned.get(0), engine);
-        assertEquals(0, engine.getDependencies().length);
+        String[] filter = {"jQuery JavaScript Library"};
+        getSettings().setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, filter);
+        getSettings().setBoolean(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, true);
 
-        //kept because it is does not match the filter and is vulnerable
-        file = BaseTest.getResourceAsFile(this, "javascript/ember.js");
-        scanned = engine.scan(file);
-        assertTrue(scanned.size()==1);
-        assertEquals(1, engine.getDependencies().length);
-        analyzer.analyze(scanned.get(0), engine);
-        assertEquals(1, engine.getDependencies().length);
+        RetireJsAnalyzer analyzer = null;
+        try (Engine engine = new Engine(getSettings())) {
+            engine.openDatabase(true, true);
+            RetireJSDataSource ds = new RetireJSDataSource();
+            ds.update(engine);
+            analyzer = new RetireJsAnalyzer();
+            analyzer.setFilesMatched(true);
+
+            analyzer.initialize(getSettings());
+            analyzer.prepare(engine);
+
+            //removed by filter (see setup above)
+            File file = BaseTest.getResourceAsFile(this, "javascript/jquery-1.6.2.js");
+            List<Dependency> scanned = engine.scan(file);
+            assertTrue(scanned == null || scanned.isEmpty());
+
+            //remove non-vulnerable
+            file = BaseTest.getResourceAsFile(this, "javascript/custom.js");
+            scanned = engine.scan(file);
+            assertTrue(scanned.size() == 1);
+            assertEquals(1, engine.getDependencies().length);
+            analyzer.analyze(scanned.get(0), engine);
+            assertEquals(0, engine.getDependencies().length);
+
+            //kept because it is does not match the filter and is vulnerable
+            file = BaseTest.getResourceAsFile(this, "javascript/ember.js");
+            scanned = engine.scan(file);
+            assertTrue(scanned.size() == 1);
+            assertEquals(1, engine.getDependencies().length);
+            analyzer.analyze(scanned.get(0), engine);
+            assertEquals(1, engine.getDependencies().length);
+        } finally {
+            if (analyzer != null) {
+                analyzer.close();
+            }
+        }
     }
 }
