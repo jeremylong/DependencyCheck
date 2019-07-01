@@ -134,6 +134,9 @@ public class ExceptionCollection extends Exception {
      * @param ex the exception to add
      */
     public void addException(Throwable ex) {
+        if (ex instanceof ExceptionCollection) {
+            this.exceptions.addAll(((ExceptionCollection) ex).getExceptions());
+        }
         this.exceptions.add(ex);
     }
 

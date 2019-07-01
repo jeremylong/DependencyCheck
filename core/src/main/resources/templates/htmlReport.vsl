@@ -624,6 +624,36 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                         <li class="scaninfo hidden"><i>$enc.html($prop.key)</i>: $enc.html($prop.value)</li>
                         #end
                     </ul><br/>
+                #set($cnt=0)
+#if($exceptions)
+    #macro( writeException $type $ex $depth)
+        #set($cnt=$cnt+1)
+        <h4 id="header$cnt" class="subsectionheader expandable expandablesubsection white">$enc.html($ex.getMessage())</h4>
+        <div id="content$cnt" class="subsectioncontent standardsubsection hidden">
+        <b>$type</b>: $enc.html($ex.toString())
+        #if($ex.getStackTrace())
+            <pre>
+            #foreach($t in $ex.getStackTrace())
+                $enc.html($t.toString())<br/>
+            #end
+            </pre>
+        #end
+        #if($ex.getCause() && $depth<20)
+            #set($cause="cause")
+            #set($currentDepth=$depth+1)
+            #writeException($cause $ex.getCause() $currentDepth)
+        #end
+        </div>
+    #end
+        <h2>Analysis Exceptions</h2>
+            #foreach($ex in $exceptions)
+                #set($type="exception")
+                #set($d=0)
+                #writeException($type $ex $d)
+            #end
+        <br/>
+#end
+<h2>Summary</h2>
                 Display:&nbsp;<a href="#" title="Click to toggle display" onclick="return toggleDisplay(this, '.notvulnerable', 'Showing Vulnerable Dependencies (click to show all)', 'Showing All Dependencies (click to show less)'); return false;">Showing Vulnerable Dependencies (click to show all)</a><br/><br/>
                 #set($lnkcnt=0)
                 <table id="summaryTable" class="lined">
@@ -715,7 +745,6 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                 </table>
                 <h2>Dependencies</h2>
                 #set($lnkcnt=0)
-                #set($cnt=0)
                 #set($vsctr=0) ##counter to create unique groups for vulnerable software
                 #foreach($dependency in $dependencies)
                     #set($lnkcnt=$lnkcnt+1)

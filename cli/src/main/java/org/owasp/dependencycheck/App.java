@@ -255,7 +255,7 @@ public class App {
             }
 
             try {
-                engine.writeReports(applicationName, new File(reportDirectory), outputFormat);
+                engine.writeReports(applicationName, new File(reportDirectory), outputFormat, exCol);
             } catch (ReportException ex) {
                 if (exCol != null) {
                     exCol.addException(ex);

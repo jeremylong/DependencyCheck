@@ -1160,28 +1160,15 @@ public class Engine implements FileFilter, AutoCloseable {
      * Writes the report to the given output directory.
      *
      * @param applicationName the name of the application/project
-     * @param groupId the Maven groupId
-     * @param artifactId the Maven artifactId
-     * @param version the Maven version
      * @param outputDir the path to the output directory (can include the full
      * file name if the format is not ALL)
      * @param format the report format (ALL, HTML, CSV, JSON, etc.)
      * @throws ReportException thrown if there is an error generating the report
+     * @deprecated use {@link #writeReports(java.lang.String, java.io.File, java.lang.String, org.owasp.dependencycheck.exception.ExceptionCollection)
      */
-    public synchronized void writeReports(String applicationName, @Nullable final String groupId,
-            @Nullable final String artifactId, @Nullable final String version,
-            @NotNull final File outputDir, String format) throws ReportException {
-        if (mode == Mode.EVIDENCE_COLLECTION) {
-            throw new UnsupportedOperationException("Cannot generate report in evidence collection mode.");
-        }
-        final DatabaseProperties prop = database.getDatabaseProperties();
-        final ReportGenerator r = new ReportGenerator(applicationName, groupId, artifactId, version, dependencies, getAnalyzers(), prop, settings);
-        try {
-            r.write(outputDir.getAbsolutePath(), format);
-        } catch (ReportException ex) {
-            final String msg = String.format("Error generating the report for %s", applicationName);
-            throw new ReportException(msg, ex);
-        }
+    @Deprecated
+    public void writeReports(String applicationName, File outputDir, String format) throws ReportException {
+        writeReports(applicationName, null, null, null, outputDir, format, null);
     }
 
     /**
@@ -1191,9 +1178,61 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param outputDir the path to the output directory (can include the full
      * file name if the format is not ALL)
      * @param format the report format (ALL, HTML, CSV, JSON, etc.)
+     * @param exceptions a collection of exceptions that may have occurred
+     * during the analysis
      * @throws ReportException thrown if there is an error generating the report
      */
-    public void writeReports(String applicationName, File outputDir, String format) throws ReportException {
-        writeReports(applicationName, null, null, null, outputDir, format);
+    public void writeReports(String applicationName, File outputDir, String format, ExceptionCollection exceptions) throws ReportException {
+        writeReports(applicationName, null, null, null, outputDir, format, exceptions);
+    }
+
+    /**
+     * Writes the report to the given output directory.
+     *
+     * @param applicationName the name of the application/project
+     * @param groupId the Maven groupId
+     * @param artifactId the Maven artifactId
+     * @param version the Maven version
+     * @param outputDir the path to the output directory (can include the full
+     * file name if the format is not ALL)
+     * @param format the report format (ALL, HTML, CSV, JSON, etc.)
+     * @throws ReportException thrown if there is an error generating the report
+     * @deprecated use {@link #writeReports(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.io.File, java.lang.String, org.owasp.dependencycheck.exception.ExceptionCollection)
+     */
+    @Deprecated
+    public synchronized void writeReports(String applicationName, @Nullable final String groupId,
+            @Nullable final String artifactId, @Nullable final String version,
+            @NotNull final File outputDir, String format) throws ReportException {
+        writeReports(applicationName, groupId, artifactId, version, outputDir, format, null);
+    }
+
+    /**
+     * Writes the report to the given output directory.
+     *
+     * @param applicationName the name of the application/project
+     * @param groupId the Maven groupId
+     * @param artifactId the Maven artifactId
+     * @param version the Maven version
+     * @param outputDir the path to the output directory (can include the full
+     * file name if the format is not ALL)
+     * @param format the report format (ALL, HTML, CSV, JSON, etc.)
+     * @param exceptions a collection of exceptions that may have occurred
+     * during the analysis
+     * @throws ReportException thrown if there is an error generating the report
+     */
+    public synchronized void writeReports(String applicationName, @Nullable final String groupId,
+            @Nullable final String artifactId, @Nullable final String version,
+            @NotNull final File outputDir, String format, ExceptionCollection exceptions) throws ReportException {
+        if (mode == Mode.EVIDENCE_COLLECTION) {
+            throw new UnsupportedOperationException("Cannot generate report in evidence collection mode.");
+        }
+        final DatabaseProperties prop = database.getDatabaseProperties();
+        final ReportGenerator r = new ReportGenerator(applicationName, groupId, artifactId, version, dependencies, getAnalyzers(), prop, settings, exceptions);
+        try {
+            r.write(outputDir.getAbsolutePath(), format);
+        } catch (ReportException ex) {
+            final String msg = String.format("Error generating the report for %s", applicationName);
+            throw new ReportException(msg, ex);
+        }
     }
 }

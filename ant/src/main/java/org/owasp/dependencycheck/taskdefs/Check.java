@@ -1560,16 +1560,17 @@ public class Check extends Update {
                     }
                 }
             }
-
+            ExceptionCollection exceptions = null;
             try {
                 engine.analyzeDependencies();
             } catch (ExceptionCollection ex) {
                 if (this.isFailOnError()) {
                     throw new BuildException(ex);
                 }
+                exceptions = ex;
             }
             for (String format : getReportFormats()) {
-                engine.writeReports(getProjectName(), new File(reportOutputDirectory), format);
+                engine.writeReports(getProjectName(), new File(reportOutputDirectory), format, exceptions);
             }
 
             if (this.failBuildOnCVSS <= 10) {

@@ -37,6 +37,8 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.fail;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.utils.DownloadFailedException;
 
 /**
  *
@@ -56,6 +58,8 @@ public class ReportGeneratorIT extends BaseDBTestCase {
                 f.mkdir();
             }
             File writeTo = new File("target/test-reports/Report.xml");
+            File writeJsonTo = new File("target/test-reports/Report.json");
+            File writeHtmlTo = new File("target/test-reports/Report.html");
             File suppressionFile = BaseTest.getResourceAsFile(this, "incorrectSuppressions.xml");
             Settings settings = getSettings();
             settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile.getAbsolutePath());
@@ -64,7 +68,7 @@ public class ReportGeneratorIT extends BaseDBTestCase {
             settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, false);
             settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, false);
             settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
-            
+
             //File struts = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
             File struts = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
             //File axis = new File(this.getClass().getClassLoader().getResource("axis2-adb-1.4.1.jar").getPath());
@@ -74,16 +78,23 @@ public class ReportGeneratorIT extends BaseDBTestCase {
 
             File nodeTest = BaseTest.getResourceAsFile(this, "nodejs");
 
-            
             try (Engine engine = new Engine(settings)) {
                 engine.scan(struts);
                 engine.scan(axis);
                 engine.scan(jetty);
                 engine.scan(nodeTest);
                 engine.analyzeDependencies();
-                engine.writeReports("Test Report", "org.owasp", "dependency-check-core", "1.4.8", writeTo, "XML");
+                ExceptionCollection exceptions = new ExceptionCollection();
+                exceptions.addException(new DownloadFailedException("test exception 1"));
+                DownloadFailedException sub = new DownloadFailedException("test cause exception - nested");
+                DownloadFailedException inner = new DownloadFailedException("Unable to download test file", sub.fillInStackTrace());
+                UpdateException ex = new UpdateException("Test Exception 2", inner.fillInStackTrace());
+                exceptions.addException(ex);
+                engine.writeReports("Test Report", "org.owasp", "dependency-check-core", "1.4.8", writeTo, "XML", exceptions);
+                engine.writeReports("Test Report", "org.owasp", "dependency-check-core", "1.4.8", writeJsonTo, "JSON", exceptions);
+                engine.writeReports("Test Report", "org.owasp", "dependency-check-core", "1.4.8", writeHtmlTo, "HTML", exceptions);
             }
-            InputStream xsdStream = ReportGenerator.class.getClassLoader().getResourceAsStream("schema/dependency-check.2.1.xsd");
+            InputStream xsdStream = ReportGenerator.class.getClassLoader().getResourceAsStream("schema/dependency-check.2.2.xsd");
             StreamSource xsdSource = new StreamSource(xsdStream);
             StreamSource xmlSource = new StreamSource(writeTo);
             SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);

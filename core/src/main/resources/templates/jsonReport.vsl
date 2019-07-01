@@ -10,6 +10,33 @@
             }
         #end
         ]
+
+    #if($exceptions)
+        #macro( writeException $type $ex $depth)
+            "$type":{"message":"$enc.json($ex.toString())"
+            #if($ex.getStackTrace())
+                ,"stackTrace":[
+                #foreach($t in $ex.getStackTrace())
+                    #if($foreach.count > 1),#end"$enc.json($t.toString())"
+                #end
+                ]
+            #end
+            #if($ex.getCause() && $depth<20)
+                #set($cause="cause")
+                #set($currentDepth=$depth+1)
+                ,#writeException($cause $ex.getCause() $currentDepth)
+            #end
+            }
+        #end
+            ,"analysisExceptions":[
+                #foreach($ex in $exceptions)
+                    #set($type="exception")
+                    #set($d=0)
+                    #if($foreach.count > 1),#end{#writeException($type $ex $d)}
+                #end
+            ]
+    #end
+
     },
     "projectInfo": {
         "name": "$enc.json($applicationName)",

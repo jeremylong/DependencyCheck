@@ -53,6 +53,7 @@ public class EngineIT extends BaseDBTestCase {
         getSettings().setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, false);
         getSettings().setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, false);
         getSettings().setBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, true);
+        ExceptionCollection exceptions = null;
         try (Engine instance = new Engine(getSettings())) {
             instance.scan(testClasses);
             assertTrue(instance.getDependencies().length > 0);
@@ -62,6 +63,7 @@ public class EngineIT extends BaseDBTestCase {
                 Set<String> allowedMessages = new HashSet<>();
                 allowedMessages.add("bundle-audit");
                 allowedMessages.add("AssemblyAnalyzer");
+                allowedMessages.add("Failed to request component-reports");
                 allowedMessages.add("ailed to read results from the NPM Audit API");
                 for (Throwable t : ex.getExceptions()) {
                     boolean isOk = false;
@@ -76,9 +78,10 @@ public class EngineIT extends BaseDBTestCase {
                     if (!isOk) {
                         throw ex;
                     }
+                    exceptions = ex;
                 }
             }
-            instance.writeReports("dependency-check sample", new File("./target/"), "ALL");
+            instance.writeReports("dependency-check sample", new File("./target/"), "ALL", exceptions);
         }
     }
 }

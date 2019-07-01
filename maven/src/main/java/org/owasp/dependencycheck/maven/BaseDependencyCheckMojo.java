@@ -1400,7 +1400,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 try {
                     final MavenProject p = this.getProject();
                     for (String f : getFormats()) {
-                        engine.writeReports(p.getName(), p.getGroupId(), p.getArtifactId(), p.getVersion(), outputDir, f);
+                        engine.writeReports(p.getName(), p.getGroupId(), p.getArtifactId(), p.getVersion(), outputDir, f, exCol);
                     }
                 } catch (ReportException ex) {
                     if (exCol == null) {
