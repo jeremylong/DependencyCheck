@@ -71,7 +71,7 @@ public class PomHandler extends DefaultHandler {
     /**
      * The license element.
      */
-    public static final String LICENSE = "license";
+    public static final String LICENSE_NODE = "license";
     /**
      * The url element.
      */
@@ -115,7 +115,7 @@ public class PomHandler extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         currentText = new StringBuilder();
         stack.push(qName);
-        if (LICENSE.equals(qName)) {
+        if (LICENSE_NODE.equals(qName)) {
             license = new License();
         }
     }
@@ -184,7 +184,7 @@ public class PomHandler extends DefaultHandler {
                         }
                     }
                     break;
-                case LICENSE:
+                case LICENSE_NODE:
                     if (license != null) {
                         if (NAME.equals(qName)) {
                             license.setName(currentText.toString());
@@ -194,7 +194,7 @@ public class PomHandler extends DefaultHandler {
                     }
                     break;
                 case LICENSES:
-                    if (LICENSE.equals(qName) && license != null) {
+                    if (LICENSE_NODE.equals(qName) && license != null) {
                         model.addLicense(license);
                     }
                     break;

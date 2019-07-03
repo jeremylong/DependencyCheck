@@ -25,7 +25,7 @@ import org.junit.Before;
  *
  * @author Jeremy Long
  */
-public class BaseTest {
+public abstract class BaseTest {
 
     /**
      * The configured settings.

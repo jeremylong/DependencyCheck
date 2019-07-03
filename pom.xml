@@ -181,6 +181,9 @@ Copyright (c) 2012 - Jeremy Long
         <com.h3xstream.retirejs.core.version>3.0.1</com.h3xstream.retirejs.core.version>
         <com.google.guava.version>28.0-jre</com.google.guava.version>
         
+        <!--necassary for some IDEs to be able to execute test cases (Netbeans)-->
+        <surefireArgLine/>
+        
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/jacoco-results/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
@@ -597,7 +600,7 @@ Copyright (c) 2012 - Jeremy Long
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>${surefireArgLine} -Dfile.encoding=UTF-8 -javaagent:${settings.localRepository}/org/jmockit/jmockit/${jmockit.version}/jmockit-${jmockit.version}.jar</argLine>
+                    <argLine>@{surefireArgLine} -Dfile.encoding=UTF-8 -javaagent:${settings.localRepository}/org/jmockit/jmockit/${jmockit.version}/jmockit-${jmockit.version}.jar</argLine>
                     <systemProperties>
                         <property>
                             <name>data.directory</name>
@@ -626,7 +629,7 @@ Copyright (c) 2012 - Jeremy Long
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
-                    <argLine>${failsafeArgLine}</argLine>
+                    <argLine>@{failsafeArgLine}</argLine>
                     <systemProperties>
                         <property>
                             <name>data.directory</name>

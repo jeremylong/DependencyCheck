@@ -201,14 +201,10 @@ public class Check extends Update {
     private Boolean prettyPrint = null;
 
     /**
-     * Suppression file path.
-     */
-    private String suppressionFile = null;
-    /**
      * Suppression file paths.
      */
     @SuppressWarnings("CanBeFinal")
-    private List<String> suppressionFiles = new ArrayList<>();
+    private final List<String> suppressionFiles = new ArrayList<>();
 
     /**
      * The path to the suppression file.
@@ -395,6 +391,10 @@ public class Check extends Update {
      *
      * @throws BuildException if the reference is not to a resource collection
      */
+    //declaring a throw that extends runtime exception may be a bad practice
+    //but seems to be an ingrained practice within Ant as even the base `Task`
+    //contains an `execute() throws BuildExecption`.
+    @SuppressWarnings("squid:RedundantThrowsDeclarationCheck")
     private void dealWithReferences() throws BuildException {
         if (isReference()) {
             final Object o = refId.getReferencedObject(getProject());
@@ -565,7 +565,6 @@ public class Check extends Update {
      * @param suppressionFile new value of suppressionFile
      */
     public void setSuppressionFile(String suppressionFile) {
-        this.suppressionFile = suppressionFile;
         suppressionFiles.add(suppressionFile);
     }
 
@@ -768,24 +767,6 @@ public class Check extends Update {
     }
 
     /**
-     * Get the value of cmakeAnalyzerEnabled.
-     *
-     * @return the value of cmakeAnalyzerEnabled
-     */
-    public Boolean isCMakeAnalyzerEnabled() {
-        return cmakeAnalyzerEnabled;
-    }
-
-    /**
-     * Set the value of cmakeAnalyzerEnabled.
-     *
-     * @param cmakeAnalyzerEnabled new value of cmakeAnalyzerEnabled
-     */
-    public void setCMakeAnalyzerEnabled(Boolean cmakeAnalyzerEnabled) {
-        this.cmakeAnalyzerEnabled = cmakeAnalyzerEnabled;
-    }
-
-    /**
      * Returns if the Bundle Audit Analyzer is enabled.
      *
      * @return if the Bundle Audit Analyzer is enabled.
@@ -892,34 +873,6 @@ public class Check extends Update {
      * @param nodeAnalyzerEnabled new value of nodeAnalyzerEnabled
      */
     public void setNodeAnalyzerEnabled(Boolean nodeAnalyzerEnabled) {
-        this.nodeAnalyzerEnabled = nodeAnalyzerEnabled;
-    }
-
-    /**
-     * Get the value of nodeAnalyzerEnabled.
-     *
-     * @return the value of nodeAnalyzerEnabled
-     * @deprecated As of release 3.3.3, replaced by
-     * {@link #isNodeAuditAnalyzerEnabled()}
-     */
-    @Deprecated
-    public Boolean isNspAnalyzerEnabled() {
-        log("The NspAnalyzerEnabled configuration has been deprecated and replaced by NodeAuditAnalyzerEnabled", Project.MSG_ERR);
-        log("The NspAnalyzerEnabled configuration will be removed in the next major release");
-        return nodeAnalyzerEnabled;
-    }
-
-    /**
-     * Set the value of nodeAnalyzerEnabled.
-     *
-     * @param nodeAnalyzerEnabled new value of nodeAnalyzerEnabled
-     * @deprecated As of release 3.3.3, replaced by
-     * {@link #setNodeAuditAnalyzerEnabled(java.lang.Boolean)}
-     */
-    @Deprecated
-    public void setNspAnalyzerEnabled(Boolean nodeAnalyzerEnabled) {
-        log("The NspAnalyzerEnabled configuration has been deprecated and replaced by NodeAuditAnalyzerEnabled", Project.MSG_ERR);
-        log("The NspAnalyzerEnabled configuration will be removed in the next major release");
         this.nodeAnalyzerEnabled = nodeAnalyzerEnabled;
     }
 
@@ -1397,11 +1350,11 @@ public class Check extends Update {
     }
 
     /**
-     * Returns the value of cmakeAnalyzerEnabled.
+     * Get the value of cmakeAnalyzerEnabled.
      *
      * @return the value of cmakeAnalyzerEnabled
      */
-    public Boolean getCmakeAnalyzerEnabled() {
+    public Boolean isCmakeAnalyzerEnabled() {
         return cmakeAnalyzerEnabled;
     }
 
@@ -1545,6 +1498,8 @@ public class Check extends Update {
         this.artifactoryAnalyzerBearerToken = artifactoryAnalyzerBearerToken;
     }
 
+    //see note on `dealWithReferences()` for information on this suppression
+    @SuppressWarnings("squid:RedundantThrowsDeclarationCheck")
     @Override
     public void execute() throws BuildException {
         dealWithReferences();
@@ -1560,15 +1515,8 @@ public class Check extends Update {
                     }
                 }
             }
-            ExceptionCollection exceptions = null;
-            try {
-                engine.analyzeDependencies();
-            } catch (ExceptionCollection ex) {
-                if (this.isFailOnError()) {
-                    throw new BuildException(ex);
-                }
-                exceptions = ex;
-            }
+            ExceptionCollection exceptions = callExecuteAnalysis(engine);
+
             for (String format : getReportFormats()) {
                 engine.writeReports(getProjectName(), new File(reportOutputDirectory), format, exceptions);
             }
@@ -1597,11 +1545,35 @@ public class Check extends Update {
     }
 
     /**
+     * Wraps the call to `engine.analyzeDependencies()` and correctly handles any
+     * exceptions
+     * @param engine a reference to the engine
+     * @return the collection of any exceptions that occurred; otherwise <code>null</code>
+     * @throws BuildException thrown if configured to fail the build on errors
+     */
+    //see note on `dealWithReferences()` for information on this suppression
+    @SuppressWarnings("squid:RedundantThrowsDeclarationCheck")
+    private ExceptionCollection callExecuteAnalysis(final Engine engine) throws BuildException {
+        ExceptionCollection exceptions = null;
+        try {
+            engine.analyzeDependencies();
+        } catch (ExceptionCollection ex) {
+            if (this.isFailOnError()) {
+                throw new BuildException(ex);
+            }
+            exceptions = ex;
+        }
+        return exceptions;
+    }
+
+    /**
      * Validate the configuration to ensure the parameters have been properly
      * configured/initialized.
      *
      * @throws BuildException if the task was not configured correctly.
      */
+    //see note on `dealWithReferences()` for information on this suppression
+    @SuppressWarnings("squid:RedundantThrowsDeclarationCheck")
     private synchronized void validateConfiguration() throws BuildException {
         if (path == null) {
             throw new BuildException("No project dependencies have been defined to analyze.");
@@ -1618,6 +1590,8 @@ public class Check extends Update {
      *
      * @throws BuildException thrown when an invalid setting is configured.
      */
+    //see note on `dealWithReferences()` for information on this suppression
+    @SuppressWarnings("squid:RedundantThrowsDeclarationCheck")
     @Override
     protected void populateSettings() throws BuildException {
         super.populateSettings();
@@ -1688,6 +1662,8 @@ public class Check extends Update {
      * @throws BuildException thrown if a CVSS score is found that is higher
      * than the threshold set
      */
+    //see note on `dealWithReferences()` for information on this suppression
+    @SuppressWarnings("squid:RedundantThrowsDeclarationCheck")
     private void checkForFailure(Dependency[] dependencies) throws BuildException {
         final StringBuilder ids = new StringBuilder();
         for (Dependency d : dependencies) {

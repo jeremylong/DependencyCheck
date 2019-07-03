@@ -20,16 +20,14 @@ package org.owasp.dependencycheck.maven;
 import java.io.IOException;
 import java.io.InputStream;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
  * @author Jeremy Long
  */
-public class BaseTest {
+public abstract class BaseTest {
 
     /**
      * The properties file location.

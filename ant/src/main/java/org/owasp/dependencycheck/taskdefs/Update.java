@@ -32,6 +32,9 @@ import org.slf4j.impl.StaticLoggerBinder;
  *
  * @author Jeremy Long
  */
+//While duplicate code is general bad - this is calling out getters/setters
+//on unrelated ODC clients (the DependencyCheckScanAgent).
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class Update extends Purge {
 
     /**
@@ -317,7 +320,6 @@ public class Update extends Purge {
         return cveUrlModified;
     }
 
-
     /**
      * Get the value of cveUrlBase.
      *
@@ -359,20 +361,20 @@ public class Update extends Purge {
      * data, and then processes the data storing it in the local database.
      *
      * @throws BuildException thrown if a connection to the local database
-     *                        cannot be made.
+     * cannot be made.
      */
+    //see note on `Check.dealWithReferences()` for information on this suppression
+    @SuppressWarnings("squid:RedundantThrowsDeclarationCheck")
     @Override
     public void execute() throws BuildException {
         populateSettings();
         try (Engine engine = new Engine(Update.class.getClassLoader(), getSettings())) {
-            try {
-                engine.doUpdates();
-            } catch (UpdateException ex) {
-                if (this.isFailOnError()) {
-                    throw new BuildException(ex);
-                }
-                log(ex.getMessage(), Project.MSG_ERR);
+            engine.doUpdates();
+        } catch (UpdateException ex) {
+            if (this.isFailOnError()) {
+                throw new BuildException(ex);
             }
+            log(ex.getMessage(), Project.MSG_ERR);
         } catch (DatabaseException ex) {
             final String msg = "Unable to connect to the dependency-check database; unable to update the NVD data";
             if (this.isFailOnError()) {
@@ -391,6 +393,8 @@ public class Update extends Purge {
      *
      * @throws BuildException thrown when an invalid setting is configured.
      */
+    //see note on `Check.dealWithReferences()` for information on this suppression
+    @SuppressWarnings("squid:RedundantThrowsDeclarationCheck")
     @Override
     protected void populateSettings() throws BuildException {
         super.populateSettings();

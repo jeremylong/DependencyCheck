@@ -29,7 +29,7 @@ import org.slf4j.spi.LoggerFactoryBinder;
  *
  * @author colezlaw
  */
-//CSOFF: FinalClass
+//CSOFF: FinalClass 
 @SuppressWarnings({"squid:S1444", "squid:ClassVariableVisibilityCheck"})
 public class StaticLoggerBinder implements LoggerFactoryBinder {
 //CSON: FinalClass
@@ -51,6 +51,7 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
     // to avoid constant folding by the compiler, this field must *not* be final
     //CSOFF: StaticVariableName
     //CSOFF: VisibilityModifier
+    @SuppressWarnings("squid:S3008")
     public static String REQUESTED_API_VERSION = "1.7.12"; // final
     //CSON: VisibilityModifier
     //CSON: StaticVariableName

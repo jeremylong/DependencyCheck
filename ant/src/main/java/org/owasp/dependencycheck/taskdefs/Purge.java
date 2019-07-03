@@ -110,6 +110,8 @@ public class Purge extends Task {
      *
      * @throws BuildException thrown if there is a problem deleting the file(s)
      */
+    //see note on `Check.dealWithReferences()` for information on this suppression
+    @SuppressWarnings("squid:RedundantThrowsDeclarationCheck")
     @Override
     public void execute() throws BuildException {
         populateSettings();
@@ -127,6 +129,8 @@ public class Purge extends Task {
      *
      * @throws BuildException thrown if the properties file cannot be read.
      */
+    //see note on `Check.dealWithReferences()` for information on this suppression
+    @SuppressWarnings("squid:RedundantThrowsDeclarationCheck")
     protected void populateSettings() throws BuildException {
         settings = new Settings();
         try (InputStream taskProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {

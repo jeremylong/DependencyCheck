@@ -52,6 +52,7 @@ import ch.qos.logback.classic.LoggerContext;
  *
  * @author Jeremy Long
  */
+@SuppressWarnings("squid:S106")
 public class App {
 
     /**
@@ -128,7 +129,7 @@ public class App {
                     populateSettings(cli);
                 } catch (InvalidSettingException ex) {
                     LOGGER.error(ex.getMessage());
-                    LOGGER.debug("Error loading properties file", ex);
+                    LOGGER.debug(ERROR_LOADING_PROPERTIES_FILE, ex);
                     exitCode = -4;
                     return exitCode;
                 }
@@ -148,7 +149,7 @@ public class App {
                 populateSettings(cli);
             } catch (InvalidSettingException ex) {
                 LOGGER.error(ex.getMessage());
-                LOGGER.debug("Error loading properties file", ex);
+                LOGGER.debug(ERROR_LOADING_PROPERTIES_FILE, ex);
                 exitCode = -4;
                 return exitCode;
             }
@@ -168,7 +169,7 @@ public class App {
                 populateSettings(cli);
             } catch (InvalidSettingException ex) {
                 LOGGER.error(ex.getMessage(), ex);
-                LOGGER.debug("Error loading properties file", ex);
+                LOGGER.debug(ERROR_LOADING_PROPERTIES_FILE, ex);
                 exitCode = -4;
                 return exitCode;
             }
@@ -212,6 +213,7 @@ public class App {
         }
         return exitCode;
     }
+    private static final String ERROR_LOADING_PROPERTIES_FILE = "Error loading properties file";
 
     /**
      * Scans the specified directories and writes the dependency reports to the

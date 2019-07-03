@@ -34,6 +34,7 @@ import org.xml.sax.SAXException;
  *
  * @author Jeremy Long
  */
+@SuppressWarnings("squid:S106")
 public final class App {
 
     /**

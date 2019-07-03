@@ -163,7 +163,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             </activation>
             <build>
                 <plugins>
-                    <plugin>
+                    <!--plugin>
                         <groupId>org.codehaus.gmavenplus</groupId>
                         <artifactId>gmavenplus-plugin</artifactId>
                         <executions>
@@ -184,16 +184,14 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>
+                    </plugin-->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
                         <configuration>
                             <!--streamLogs>true</streamLogs-->
                             <parallelThreads>4</parallelThreads>
-                            <!--setupIncludes>
-                                <setupInclude>690-threadsafety/pom.xml</setupInclude>
-                            </setupIncludes-->
+                            <mavenOpts>${failsafeArgLine}</mavenOpts>
                             <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                             <localRepositoryPath>target/local-repo</localRepositoryPath>
                             <properties>

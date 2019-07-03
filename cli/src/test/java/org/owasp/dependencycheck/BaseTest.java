@@ -23,7 +23,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long
  */
-public class BaseTest {
+public abstract class BaseTest {
 
     /**
      * The configured settings.

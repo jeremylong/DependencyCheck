@@ -147,6 +147,7 @@ public class SuppressionRuleTest extends BaseTest {
      * Test of getFilePath method, of class SuppressionRule.
      */
     @Test
+    @SuppressWarnings("squid:S2699")
     public void testGetFilePath() {
         //already tested, this is just left so the IDE doesn't recreate it.
     }
@@ -155,6 +156,7 @@ public class SuppressionRuleTest extends BaseTest {
      * Test of setFilePath method, of class SuppressionRule.
      */
     @Test
+    @SuppressWarnings("squid:S2699")
     public void testSetFilePath() {
         //already tested, this is just left so the IDE doesn't recreate it.
     }
@@ -163,6 +165,7 @@ public class SuppressionRuleTest extends BaseTest {
      * Test of getSha1 method, of class SuppressionRule.
      */
     @Test
+    @SuppressWarnings("squid:S2699")
     public void testGetSha1() {
         //already tested, this is just left so the IDE doesn't recreate it.
     }
@@ -171,6 +174,7 @@ public class SuppressionRuleTest extends BaseTest {
      * Test of setSha1 method, of class SuppressionRule.
      */
     @Test
+    @SuppressWarnings("squid:S2699")
     public void testSetSha1() {
         //already tested, this is just left so the IDE doesn't recreate it.
     }
@@ -179,6 +183,7 @@ public class SuppressionRuleTest extends BaseTest {
      * Test of getCpe method, of class SuppressionRule.
      */
     @Test
+    @SuppressWarnings("squid:S2699")
     public void testGetCpe() {
         //already tested, this is just left so the IDE doesn't recreate it.
     }
@@ -187,6 +192,7 @@ public class SuppressionRuleTest extends BaseTest {
      * Test of setCpe method, of class SuppressionRule.
      */
     @Test
+    @SuppressWarnings("squid:S2699")
     public void testSetCpe() {
         //already tested, this is just left so the IDE doesn't recreate it.
     }
@@ -195,6 +201,7 @@ public class SuppressionRuleTest extends BaseTest {
      * Test of addCpe method, of class SuppressionRule.
      */
     @Test
+    @SuppressWarnings("squid:S2699")
     public void testAddCpe() {
         //already tested, this is just left so the IDE doesn't recreate it.
     }
@@ -203,6 +210,7 @@ public class SuppressionRuleTest extends BaseTest {
      * Test of hasCpe method, of class SuppressionRule.
      */
     @Test
+    @SuppressWarnings("squid:S2699")
     public void testHasCpe() {
         //already tested, this is just left so the IDE doesn't recreate it.
     }
@@ -211,6 +219,7 @@ public class SuppressionRuleTest extends BaseTest {
      * Test of setCvssBelow method, of class SuppressionRule.
      */
     @Test
+    @SuppressWarnings("squid:S2699")
     public void testSetCvssBelow() {
         //already tested, this is just left so the IDE doesn't recreate it.
     }
@@ -219,6 +228,7 @@ public class SuppressionRuleTest extends BaseTest {
      * Test of addCvssBelow method, of class SuppressionRule.
      */
     @Test
+    @SuppressWarnings("squid:S2699")
     public void testAddCvssBelow() {
         //already tested, this is just left so the IDE doesn't recreate it.
     }
@@ -227,6 +237,7 @@ public class SuppressionRuleTest extends BaseTest {
      * Test of hasCvssBelow method, of class SuppressionRule.
      */
     @Test
+    @SuppressWarnings("squid:S2699")
     public void testHasCvssBelow() {
         //already tested, this is just left so the IDE doesn't recreate it.
     }
@@ -235,6 +246,7 @@ public class SuppressionRuleTest extends BaseTest {
      * Test of getCwe method, of class SuppressionRule.
      */
     @Test
+    @SuppressWarnings("squid:S2699")
     public void testGetCwe() {
         //already tested, this is just left so the IDE doesn't recreate it.
     }
@@ -243,6 +255,7 @@ public class SuppressionRuleTest extends BaseTest {
      * Test of setCwe method, of class SuppressionRule.
      */
     @Test
+    @SuppressWarnings("squid:S2699")
     public void testSetCwe() {
         //already tested, this is just left so the IDE doesn't recreate it.
     }
@@ -251,6 +264,7 @@ public class SuppressionRuleTest extends BaseTest {
      * Test of addCwe method, of class SuppressionRule.
      */
     @Test
+    @SuppressWarnings("squid:S2699")
     public void testAddCwe() {
         //already tested, this is just left so the IDE doesn't recreate it.
     }
@@ -259,6 +273,7 @@ public class SuppressionRuleTest extends BaseTest {
      * Test of hasCwe method, of class SuppressionRule.
      */
     @Test
+    @SuppressWarnings("squid:S2699")
     public void testHasCwe() {
         //already tested, this is just left so the IDE doesn't recreate it.
     }
@@ -267,6 +282,7 @@ public class SuppressionRuleTest extends BaseTest {
      * Test of getCve method, of class SuppressionRule.
      */
     @Test
+    @SuppressWarnings("squid:S2699")
     public void testGetCve() {
         //already tested, this is just left so the IDE doesn't recreate it.
     }
@@ -275,6 +291,7 @@ public class SuppressionRuleTest extends BaseTest {
      * Test of setCve method, of class SuppressionRule.
      */
     @Test
+    @SuppressWarnings("squid:S2699")
     public void testSetCve() {
         //already tested, this is just left so the IDE doesn't recreate it.
     }
@@ -283,6 +300,7 @@ public class SuppressionRuleTest extends BaseTest {
      * Test of addCve method, of class SuppressionRule.
      */
     @Test
+    @SuppressWarnings("squid:S2699")
     public void testAddCve() {
         //already tested, this is just left so the IDE doesn't recreate it.
     }
@@ -291,6 +309,7 @@ public class SuppressionRuleTest extends BaseTest {
      * Test of hasCve method, of class SuppressionRule.
      */
     @Test
+    @SuppressWarnings("squid:S2699")
     public void testHasCve() {
         //already tested, this is just left so the IDE doesn't recreate it.
     }
