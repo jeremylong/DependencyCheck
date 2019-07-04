@@ -240,16 +240,17 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                     }
                 }
                 if (dependency.getVersion() == null) {
-                    if (data.getFileVersion().length() >= data.getProductVersion().length()) {
-                        if (fileVersion.toString().length() == data.getFileVersion().length()) {
+                    if (data.getFileVersion() != null && data.getProductVersion() != null
+                            && data.getFileVersion().length() >= data.getProductVersion().length()) {
+                        if (fileVersion != null && fileVersion.toString().length() == data.getFileVersion().length()) {
                             dependency.setVersion(fileVersion.toString());
-                        } else if (productVersion.toString().length() == data.getProductVersion().length()) {
+                        } else if (productVersion != null && productVersion.toString().length() == data.getProductVersion().length()) {
                             dependency.setVersion(productVersion.toString());
                         }
                     } else {
-                        if (productVersion.toString().length() == data.getProductVersion().length()) {
+                        if (productVersion != null && productVersion.toString().length() == data.getProductVersion().length()) {
                             dependency.setVersion(productVersion.toString());
-                        } else if (fileVersion.toString().length() == data.getFileVersion().length()) {
+                        } else if (fileVersion != null && fileVersion.toString().length() == data.getFileVersion().length()) {
                             dependency.setVersion(fileVersion.toString());
                         }
                     }
@@ -259,7 +260,9 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 dependency.setVersion(version.toString());
             } else if (data.getProductVersion() != null) {
                 final DependencyVersion version = DependencyVersionUtil.parseVersion(data.getProductVersion(), true);
-                dependency.setVersion(version.toString());
+                if (version != null) {
+                    dependency.setVersion(version.toString());
+                }
             }
 
             if (!StringUtils.isEmpty(data.getCompanyName())) {
