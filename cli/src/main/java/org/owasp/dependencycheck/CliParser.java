@@ -461,9 +461,9 @@ public final class CliParser {
                 .desc("Disable the Nexus Analyzer.").build();
         final Option disableOssIndexAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_OSSINDEX)
                 .desc("Disable the Sonatype OSS Index Analyzer.").build();
-        final Option disableGolangPackageAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_GO_PKG)
-            .desc("Disable the Golang Package Analyzer.")
-            .build();
+        final Option disableGolangPackageAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_GO_DEP)
+                .desc("Disable the Golang Package Analyzer.")
+                .build();
         final Option purge = Option.builder().longOpt(ARGUMENT.PURGE_NVD)
                 .desc("Purges the local NVD data cache").build();
         final Option retireJsFilters = Option.builder().argName("pattern").hasArg().longOpt(ARGUMENT.RETIREJS_FILTERS)
@@ -544,6 +544,9 @@ public final class CliParser {
                 .addOption(Option.builder().longOpt(ARGUMENT.ARTIFACTORY_URL)
                         .desc("The Artifactory URL.")
                         .argName("url").hasArg(true).build())
+                .addOption(Option.builder().longOpt(ARGUMENT.PATH_TO_GO)
+                        .desc("The path to the `go` executable.")
+                        .argName("path").hasArg(true).build())
                 .addOption(retireJsFilters)
                 .addOption(nexusUrl)
                 .addOption(nexusUsername)
@@ -762,6 +765,19 @@ public final class CliParser {
     }
 
     /**
+     * Returns the path to `go` if configured.
+     *
+     * @return the path to `go` if configured
+     */
+    public String getPathToGo() {
+        if (line == null || !line.hasOption(ARGUMENT.PATH_TO_GO)) {
+            return null;
+        } else {
+            return line.getOptionValue(ARGUMENT.PATH_TO_GO);
+        }
+    }
+
+    /**
      * Returns true if the disableComposer command line argument was specified.
      *
      * @return true if the disableComposer command line argument was specified;
@@ -881,14 +897,13 @@ public final class CliParser {
     }
 
     /**
-     * Returns true if the disableSwiftPackageManagerAnalyzer command line
-     * argument was specified.
+     * Returns true if the disableGolangDep command line argument was specified.
      *
-     * @return true if the disableSwiftPackageManagerAnalyzer command line
-     * argument was specified; otherwise false
+     * @return true if the disableGolangDep command line argument was specified;
+     * otherwise false
      */
-    public boolean isGolangPackageAnalyzerDisabled() {
-        return hasDisableOption(ARGUMENT.DISABLE_GO_PKG, Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED);
+    public boolean isGolangDepAnalyzerDisabled() {
+        return hasDisableOption(ARGUMENT.DISABLE_GO_DEP, Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED);
     }
 
     /**
@@ -1619,9 +1634,9 @@ public final class CliParser {
          */
         public static final String DISABLE_PY_PKG = "disablePyPkg";
         /**
-         * Disables the Golang Package Analyzer.
+         * Disables the Golang Dependency Analyzer.
          */
-        public static final String DISABLE_GO_PKG = "disableGoPkg";
+        public static final String DISABLE_GO_DEP = "disableGolangDep";
         /**
          * Disables the Python Package Analyzer.
          */
@@ -1630,6 +1645,10 @@ public final class CliParser {
          * Disables the Golang Mod Analyzer.
          */
         public static final String DISABLE_GOLANG_MOD = "disableGolangMod";
+        /**
+         * The CLI argument name for setting the path to `go`.
+         */
+        public static final String PATH_TO_GO = "go";
         /**
          * Disables the Ruby Gemspec Analyzer.
          */
