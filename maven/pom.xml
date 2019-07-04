@@ -163,28 +163,6 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             </activation>
             <build>
                 <plugins>
-                    <!--plugin>
-                        <groupId>org.codehaus.gmavenplus</groupId>
-                        <artifactId>gmavenplus-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>add-dynamic-properties-integ</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>execute</goal>
-                                </goals>
-                                <configuration>
-                                    <scripts>
-                                        <script><![CDATA[
-                                        if (project.properties!=null && project.properties.failsafeArgLine!=null) {
-                                            project.properties['invoker.mavenOpts']=project.properties.failsafeArgLine
-                                        }
-                                        ]]></script>
-                                    </scripts>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin-->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
