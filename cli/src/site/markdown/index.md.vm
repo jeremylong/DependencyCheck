@@ -36,3 +36,19 @@ $H$H$H Windows
 
 $H$H$H *nix
     dependency-check.sh --help
+
+Extensions and Centralized Databases
+====================================
+If you have built a custom [dependency-check-plugin](../dependency-check-plugin/index.html)
+or you are using an [centralized database](../data/database.html) you will likely need
+to add the custom plugin or database driver to the classpath of dependency-check. This can
+be done by creating a plugins directory at the root of dependency-check and placing
+the JAR files the directory.
+
+```
+- dependency-check
+  - bin
+  - repos
+  - data
+  - plugins
+```
