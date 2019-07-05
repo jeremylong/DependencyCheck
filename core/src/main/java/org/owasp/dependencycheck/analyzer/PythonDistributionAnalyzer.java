@@ -291,12 +291,10 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static void collectWheelMetadata(Dependency dependency, File file) {
         final InternetHeaders headers = getManifestProperties(file);
-        addPropertyToEvidence(dependency, EvidenceType.VERSION, Confidence.HIGHEST, headers, "Version");
+        final String version = addPropertyToEvidence(dependency, EvidenceType.VERSION, Confidence.HIGHEST, headers, "Version");
+        final String name = addPropertyToEvidence(dependency, EvidenceType.VENDOR, Confidence.HIGHEST, headers, "Name");
         addPropertyToEvidence(dependency, EvidenceType.PRODUCT, Confidence.HIGHEST, headers, "Name");
-        addPropertyToEvidence(dependency, EvidenceType.PRODUCT, Confidence.MEDIUM, headers, "Name");
 
-        final String name = headers.getHeader("Name", null);
-        final String version = headers.getHeader("Version", null);
         final String packagePath = String.format("%s:%s", name, version);
         dependency.setName(name);
         dependency.setVersion(version);
@@ -333,14 +331,17 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
      * @param confidence the confidence in the evidence being added
      * @param headers the properties collection
      * @param property the property name
+     * @return returns the value of the property if found; otherwise
+     * <code>null</code>
      */
-    private static void addPropertyToEvidence(Dependency dependency, EvidenceType type, Confidence confidence,
+    private static String addPropertyToEvidence(Dependency dependency, EvidenceType type, Confidence confidence,
             InternetHeaders headers, String property) {
         final String value = headers.getHeader(property, null);
         LOGGER.debug("Property: {}, Value: {}", property, value);
         if (StringUtils.isNotBlank(value)) {
             dependency.addEvidence(type, METADATA, property, value, confidence);
         }
+        return value;
     }
 
     /**
