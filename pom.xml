@@ -816,13 +816,13 @@ Copyright (c) 2012 - Jeremy Long
                 <version>${jacoco-maven-plugin.version}</version>
                 <configuration>
                     <dataFileIncludes>
-                        <dataFileInclude>${sonar.jacoco.reportPath}</dataFileInclude>
+                        <dataFileInclude>${project.basedir}/target/jacoco.exec</dataFileInclude>
                     </dataFileIncludes>
                 </configuration>
                 <reportSets>
                     <reportSet>
                         <reports>
-                            <report>report-aggregate</report>
+                            <report>report</report>
                         </reports>
                     </reportSet>
                 </reportSets>

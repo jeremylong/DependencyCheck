@@ -1515,7 +1515,7 @@ public class Check extends Update {
                     }
                 }
             }
-            ExceptionCollection exceptions = callExecuteAnalysis(engine);
+            final ExceptionCollection exceptions = callExecuteAnalysis(engine);
 
             for (String format : getReportFormats()) {
                 engine.writeReports(getProjectName(), new File(reportOutputDirectory), format, exceptions);

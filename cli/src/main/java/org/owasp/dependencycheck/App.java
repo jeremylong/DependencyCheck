@@ -60,6 +60,10 @@ public class App {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
     /**
+     * Properties file error message.
+     */
+    private static final String ERROR_LOADING_PROPERTIES_FILE = "Error loading properties file";
+    /**
      * The configured settings.
      */
     private Settings settings;
@@ -213,7 +217,6 @@ public class App {
         }
         return exitCode;
     }
-    private static final String ERROR_LOADING_PROPERTIES_FILE = "Error loading properties file";
 
     /**
      * Scans the specified directories and writes the dependency reports to the

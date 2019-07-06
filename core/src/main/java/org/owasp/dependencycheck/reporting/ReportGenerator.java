@@ -219,10 +219,15 @@ public class ReportGenerator {
      * reports.
      *
      * @param applicationName the application name being analyzed
+     * @param groupID the group id of the project being analyzed
+     * @param artifactID the application id of the project being analyzed
+     * @param version the application version of the project being analyzed
      * @param dependencies the list of dependencies
      * @param analyzers the list of analyzers used
      * @param properties the database properties (containing timestamps of the
      * NVD CVE data)
+     * @param exceptions a collection of exceptions that may have occurred
+     * during the analysis
      * @return the velocity context
      */
     @SuppressWarnings("JavaTimeDefaultTimeZone")
@@ -345,7 +350,7 @@ public class ReportGenerator {
      * @param format the report format
      * @return the report File
      */
-    protected File getReportFile(String outputLocation, Format format) {
+    public static File getReportFile(String outputLocation, Format format) {
         File outFile = new File(outputLocation);
         if (outFile.getParentFile() == null) {
             outFile = new File(".", outputLocation);

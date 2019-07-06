@@ -40,6 +40,13 @@ public class NvdCveInfo {
      */
     private final long timestamp;
 
+    /**
+     * Construct a new NVD CVE Info object.
+     *
+     * @param id the id
+     * @param url the url
+     * @param timestamp the timestamp
+     */
     public NvdCveInfo(String id, String url, long timestamp) {
         this.id = id;
         this.url = url;

@@ -68,7 +68,7 @@ public class PomProjectInputStream extends FilterInputStream {
             final int pos = findSequence(PROJECT, buffer);
             if (pos >= 0) {
                 super.reset();
-                long skipped = super.skip((long) pos);
+                final long skipped = super.skip((long) pos);
                 if (skipped != pos) {
                     throw new IOException("Error skipping pom header information");
                 }
@@ -77,8 +77,8 @@ public class PomProjectInputStream extends FilterInputStream {
                 return;
             }
             super.reset();
-            long skipTo = (long) count-PROJECT.length;
-            long skipped = super.skip(skipTo);
+            final long skipTo = (long) count - PROJECT.length;
+            final long skipped = super.skip(skipTo);
             if (skipped != skipTo) {
                 throw new IOException("Error skipping pom header information");
             }

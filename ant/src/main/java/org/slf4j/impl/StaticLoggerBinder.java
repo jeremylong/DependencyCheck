@@ -29,7 +29,7 @@ import org.slf4j.spi.LoggerFactoryBinder;
  *
  * @author colezlaw
  */
-//CSOFF: FinalClass 
+//CSOFF: FinalClass
 @SuppressWarnings({"squid:S1444", "squid:ClassVariableVisibilityCheck"})
 public class StaticLoggerBinder implements LoggerFactoryBinder {
 //CSON: FinalClass
