@@ -6,7 +6,7 @@ The following table lists the command line arguments:
 | Short | Argument Name | Parameter | Description | Requirement |
 |-------|---------------|-----------|-------------|-------------|
 |       | \-\-project            | \<name\>        | The name of the project being scanned. | Optional |
-| \-s   | \-\-scan               | \<path\>        | The path to scan \- this option can be specified multiple times. It is also possible to specify Ant style paths (e.g. 'directory/**/*.jar'); if using an Ant style path it is highly recommended that you quote the path so that the shell itself does not automatically perform replacements (see [issue #1812](https://github.com/jeremylong/DependencyCheck/issues/1812). | Required |
+| \-s   | \-\-scan               | \<path\>        | The path to scan \- this option can be specified multiple times. It is also possible to specify Ant style paths (e.g. 'directory/**/*.jar'); if using an Ant style path it is highly recommended that you use single quotes around the path so that the shell itself does not automatically perform replacements (see [issue #1812](https://github.com/jeremylong/DependencyCheck/issues/1812). | Required |
 |       | \-\-exclude            | \<pattern\>     | The path patterns to exclude from the scan \- this option can be specified multiple times. This accepts Ant style path patterns (e.g. **/exclude/**). | Optional |
 |       | \-\-symLink            | \<depth\>       | The depth that symbolic links will be followed; the default is 0 meaning symbolic links will not be followed. | Optional |
 | \-o   | \-\-out                | \<path\>        | The folder to write reports to. This defaults to the current directory. If the format is not set to ALL one could specify a specific file name. | Optional |
