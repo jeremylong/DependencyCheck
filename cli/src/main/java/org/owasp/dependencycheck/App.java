@@ -180,11 +180,8 @@ public class App {
             try {
                 final String[] scanFiles = cli.getScanFiles();
                 if (scanFiles != null) {
-                    final String[] formats = cli.getReportFormat();
-                    for (String format : formats) {
-                        exitCode = runScan(cli.getReportDirectory(), format, cli.getProjectName(), scanFiles,
-                                cli.getExcludeList(), cli.getSymLinkDepth(), cli.getFailOnCVSS());
-                    }
+                    exitCode = runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getProjectName(), scanFiles,
+                    cli.getExcludeList(), cli.getSymLinkDepth(), cli.getFailOnCVSS());
                 } else {
                     LOGGER.error("No scan files configured");
                 }
@@ -224,7 +221,7 @@ public class App {
      *
      * @param reportDirectory the path to the directory where the reports will
      * be written
-     * @param outputFormat the output format of the report
+     * @param outputFormats String[] of output formats of the report
      * @param applicationName the application name for the report
      * @param files the files/directories to scan
      * @param excludes the patterns for files/directories to exclude
@@ -238,7 +235,7 @@ public class App {
      * analysis; there may be multiple exceptions contained within the
      * collection.
      */
-    private int runScan(String reportDirectory, String outputFormat, String applicationName, String[] files,
+    private int runScan(String reportDirectory, String[] outputFormats, String applicationName, String[] files,
             String[] excludes, int symLinkDepth, float cvssFailScore) throws DatabaseException,
             ExceptionCollection, ReportException {
         Engine engine = null;
@@ -260,7 +257,9 @@ public class App {
             }
 
             try {
-                engine.writeReports(applicationName, new File(reportDirectory), outputFormat, exCol);
+                for (String outputFormat : outputFormats) {
+                    engine.writeReports(applicationName, new File(reportDirectory), outputFormat, exCol);
+                }
             } catch (ReportException ex) {
                 if (exCol != null) {
                     exCol.addException(ex);
