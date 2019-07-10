@@ -114,6 +114,7 @@ public class Engine implements FileFilter, AutoCloseable {
                 PRE_FINDING_ANALYSIS,
                 FINDING_ANALYSIS,
                 POST_FINDING_ANALYSIS,
+                FINDING_ANALYSIS_PHASE2,
                 FINAL
         ),
         /**
