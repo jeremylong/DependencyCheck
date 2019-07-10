@@ -278,7 +278,8 @@ public final class CpeMemoryIndex implements AutoCloseable {
      * analyzers
      */
     public synchronized Query parseQuery(String searchString) throws ParseException, IndexException {
-        if (searchString == null || searchString.trim().isEmpty()) {
+        if (searchString == null || searchString.trim().isEmpty() 
+                || "product:() AND vendor:()".equals(searchString)) {
             throw new ParseException("Query is null or empty");
         }
         LOGGER.debug(searchString);

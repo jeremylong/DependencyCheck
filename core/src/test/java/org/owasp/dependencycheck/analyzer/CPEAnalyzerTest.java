@@ -190,6 +190,16 @@ public class CPEAnalyzerTest {
         assertEquals(expValue, terms.get(expResult).intValue());
     }
 
+    @Test
+    public void testCollectTerms() {
+        Map<String, MutableInt> terms = new HashMap<>();
+        List<Evidence> evidence = new ArrayList<>();
+        evidence.add(new Evidence("\\@", "\\*", "\\+", Confidence.HIGHEST));
+        CPEAnalyzer instance = new CPEAnalyzer();
+        instance.collectTerms(terms, evidence);
+        assertTrue(terms.isEmpty());
+    }
+
     /**
      * Test of buildSearch method, of class CPEAnalyzer.
      */
@@ -266,5 +276,19 @@ public class CPEAnalyzerTest {
         expResult = "product:(lucene^3 lucene2^3 lucene^2 index lucene2^2) AND vendor:(apache^2 apache software foundation)";
         result = instance.buildSearch(vendor, product, vendorWeighting, productWeightings);
         assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testBuildSearchBlank() {
+        Map<String, MutableInt> vendor = new HashMap<>();
+        Map<String, MutableInt> product = new HashMap<>();
+        vendor.put("   ", new MutableInt(1));
+        product.put("   ", new MutableInt(1));
+        Set<String> vendorWeighting = new HashSet<>();
+        Set<String> productWeightings = new HashSet<>();
+
+        CPEAnalyzer instance = new CPEAnalyzer();
+        String result = instance.buildSearch(vendor, product, vendorWeighting, productWeightings);
+        assertNull(result);
     }
 }
