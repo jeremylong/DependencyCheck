@@ -18,7 +18,7 @@ see the note about Central [here](./index.html).
 To setup a centralized database the following generalized steps can be used:
 
 <ol><li>Create the database and tables using either <a href="https://github.com/jeremylong/DependencyCheck/blob/master/core/src/main/resources/data/initialize.sql">initialize.sql</a>
-   or one of the other initialization scripts <a href="https://github.com/jeremylong/DependencyCheck/tree/master/dependency-check-core/src/main/resources/data">found here</a>.</li>
+   or one of the other initialization scripts <a href="https://github.com/jeremylong/DependencyCheck/tree/master/core/src/main/resources/data">found here</a>.</li>
 <li>The account that the clients will connect using must have select granted on the tables.
      <ul><li>Note, the clients performing the scans should run with the noupdate setting. A single
        instance of the dependency-check client should be setup with updates enabled and the account
