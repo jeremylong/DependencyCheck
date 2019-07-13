@@ -223,10 +223,10 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
                         <baseSeverity>#if($vuln.cvssV3.baseSeverity)$enc.xml($vuln.cvssV3.baseSeverity)#end</baseSeverity>
                     </cvssV3>
 #end
-#if (!$vuln.cwe.cwes.isEmpty())
+#if (!$vuln.cwes.isEmpty())
                     <cwes>
 #foreach($cweEntry in $vuln.cwes.entries)
-                    <cwe>$enc.xml($cweEntry)</cwe>
+                    #if($cweEntry)<cwe>$enc.xml($cweEntry)</cwe>#end
 #end
                     </cwes>
 #end
@@ -285,10 +285,10 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
                         <baseSeverity>#if($vuln.cvssV3.baseSeverity)$enc.xml($vuln.cvssV3.baseSeverity)#end</baseSeverity>
                     </cvssV3>
 #end
-#if (!$vuln.cwe.cwes.isEmpty())
+#if (!$vuln.cwes.isEmpty())
                     <cwes>
 #foreach($cweEntry in $vuln.cwes.entries)
-                    <cwe>$enc.xml($cweEntry)</cwe>
+                    #if($cweEntry)<cwe>$enc.xml($cweEntry)</cwe>#end
 #end
                     </cwes>
 #end

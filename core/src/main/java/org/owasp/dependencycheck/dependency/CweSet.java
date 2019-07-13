@@ -18,7 +18,9 @@
 package org.owasp.dependencycheck.dependency;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -61,7 +63,7 @@ public class CweSet implements Serializable {
 
     @Override
     public String toString() {
-        return cwes.stream().map(cwe -> CweDB.getName(cwe)).collect(Collectors.joining(" "));
+        return cwes.stream().map(cwe -> CweDB.getFullName(cwe)).collect(Collectors.joining(", "));
     }
 
     /**
@@ -71,5 +73,18 @@ public class CweSet implements Serializable {
      */
     public Stream<String> stream() {
         return cwes.stream();
+    }
+
+    /**
+     * Returns a map of CWE-ID and title.
+     *
+     * @return a map of CWE-ID and title.
+     */
+    public Map<String, String> getFullCwes() {
+        final Map<String, String> map = new HashMap<>();
+        cwes.forEach((cwe) -> {
+            map.put(cwe, CweDB.getName(cwe));
+        });
+        return map;
     }
 }

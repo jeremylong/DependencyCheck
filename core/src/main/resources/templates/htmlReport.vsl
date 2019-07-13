@@ -888,6 +888,12 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                             <p>#if($vuln.description)
                             <pre>$enc.html($vuln.description)</pre>
                             #end
+                            #if ($vuln.cwes)
+                                $vuln.cwes.toString()<br/><br/>
+                            #end
+                            #if ($vuln.notes)
+                                Notes: $enc.html($vuln.notes)<br/><br/>
+                            #end
                             #if($vuln.getCvssV2())
                             CVSSv2:
                             <ul><li>Base Score: $enc.html($vuln.getCvssV2().getSeverity()) ($vuln.getCvssV2().getScore())</li>
@@ -900,12 +906,6 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                             #end
                             #if ($vuln.unscoredSeverity)
                                 <ul><li>Severity: $enc.html($vuln.unscoredSeverity)</li></ul>
-                            #end
-                            #if ($vuln.cwe)
-                                <br/>CWE: $vuln.cwe.toString()
-                            #end
-                            #if ($vuln.notes)
-                                <br/>Notes: $enc.html($vuln.notes)
                             #end
                             #if ($vuln.getReferences().size()>0)
                                 <br/>References:<ul>
@@ -1055,6 +1055,12 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                     <p>#if($vuln.description)
                                     <pre>$enc.html($vuln.description)</pre>
                                     #end
+                                    #if ($vuln.cwes)
+                                        $vuln.cwes.toString()<br/><br/>
+                                    #end
+                                    #if ($vuln.notes)
+                                        Notes: $enc.html($vuln.notes)<br/><br/>
+                                    #end
                                     #if($vuln.getCvssV2())
                                     CVSSv2:
                                     <ul><li>Base Score: $enc.html($vuln.getCvssV2().getSeverity()) ($vuln.getCvssV2().getScore())</li>
@@ -1067,12 +1073,6 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                     #end
                                     #if ($vuln.unscoredSeverity)
                                         <ul><li>Severity: $enc.html($vuln.unscoredSeverity)</li></ul>
-                                    #end
-                                    #if ($vuln.cwe)
-                                        <br/>CWE: $vuln.cwe.toString()
-                                    #end
-                                    #if ($vuln.notes)
-                                        <br/>Notes: $enc.html($vuln.notes)
                                     #end
                                     #if ($vuln.getReferences().size()>0)
                                         <br/>References: <ul>

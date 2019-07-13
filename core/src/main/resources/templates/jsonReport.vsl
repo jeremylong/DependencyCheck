@@ -207,9 +207,10 @@
 #end
 #if (!$vuln.cwe.cwes.isEmpty())
                     "cwes": [
+#set($addComma=0)
 #foreach($cweEntry in $vuln.cwes.entries)
-                        #if($foreach.count > 1),#end
-                        "$enc.json($cweEntry)"
+                        #if($cweEntry) #if($addComma==1),#else#set($addComma=1)#end
+                        "$enc.json($cweEntry)"#end
 #end
                     ],
 #end
@@ -270,11 +271,12 @@
                         "baseSeverity": "$enc.json($vuln.cvssV3.baseSeverity)"
                     },
 #end
-#if (!$vuln.cwe.cwes.isEmpty())
+#if (!$vuln.cwes.isEmpty())
                     "cwes": [
+#set($addComma=0)
 #foreach($cweEntry in $vuln.cwes.entries)
-                        #if($foreach.count > 1),#end
-                        "$enc.json($cweEntry)"
+                        #if($cweEntry) #if($addComma==1),#else#set($addComma=1)#end
+                        "$enc.json($cweEntry)"#end
 #end
                     ],
 #end
