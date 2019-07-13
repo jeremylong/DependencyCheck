@@ -122,13 +122,16 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     setCopyText(name, 'packageUrl', packageUrl, type, val);
                 }
             }
+            function escapeRegExp(text) {
+              return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+            }
             function setCopyText(name, matchType, matchValue, suppressType, suppressVal) {
                 xml =  '<suppress>\n';
                 xml += '   <notes><!'+'[CDATA[\n   file name: ' + name + '\n   ]]'+'></notes>\n';
                 if (matchType=='packageUrl') {
                     v = matchValue.match(/^[^@]+/);
                     if (v && v[0]) {
-                        xml += '   <'+matchType+' regex="true">^' + v[0].replace(/\./g,'\\.') + '@.*$</'+matchType+'>\n';
+                        xml += '   <'+matchType+' regex="true">^' + escapeRegExp(v[0]) + '@.*$</'+matchType+'>\n';
                     } else {
                         xml += '   <'+matchType+'>' + matchValue + '</'+matchType+'>\n';
                     }
