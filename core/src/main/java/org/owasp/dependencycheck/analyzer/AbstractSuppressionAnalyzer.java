@@ -196,15 +196,18 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                         Thread.sleep(500);
                         downloader.fetchFile(url, file, true);
                     } catch (TooManyRequestsException ex1) {
-                        throw new SuppressionParseException("Unable to download supression file `" + file + "`; received 429 - too many requests", ex1);
+                        throw new SuppressionParseException("Unable to download supression file `" + file
+                                + "`; received 429 - too many requests", ex1);
                     } catch (ResourceNotFoundException ex1) {
-                        throw new SuppressionParseException("Unable to download supression file `" + file + "`; received 404 - resource not found", ex1);
+                        throw new SuppressionParseException("Unable to download supression file `" + file
+                                + "`; received 404 - resource not found", ex1);
                     } catch (InterruptedException ex1) {
                         Thread.currentThread().interrupt();
                         throw new SuppressionParseException("Unable to download supression file `" + file + "`", ex1);
                     }
                 } catch (TooManyRequestsException ex) {
-                    throw new SuppressionParseException("Unable to download supression file `" + file + "`; received 429 - too many requests", ex);
+                    throw new SuppressionParseException("Unable to download supression file `" + file
+                            + "`; received 429 - too many requests", ex);
                 } catch (ResourceNotFoundException ex) {
                     throw new SuppressionParseException("Unable to download supression file `" + file + "`; received 404 - resource not found", ex);
                 }

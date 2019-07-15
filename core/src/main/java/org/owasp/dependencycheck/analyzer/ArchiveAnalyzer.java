@@ -93,13 +93,15 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The set of things we can handle with Zip methods
      */
-    private static final Set<String> KNOWN_ZIP_EXT = Collections.unmodifiableSet(newHashSet("zip", "ear", "war", "jar", "sar", "apk", "nupkg", "aar"));
+    private static final Set<String> KNOWN_ZIP_EXT = Collections.unmodifiableSet(
+            newHashSet("zip", "ear", "war", "jar", "sar", "apk", "nupkg", "aar"));
     /**
      * The set of file extensions supported by this analyzer. Note for
      * developers, any additions to this list will need to be explicitly handled
      * in {@link #extractFiles(File, File, Engine)}.
      */
-    private static final Set<String> EXTENSIONS = Collections.unmodifiableSet(newHashSet("tar", "gz", "tgz", "bz2", "tbz2"));
+    private static final Set<String> EXTENSIONS = Collections.unmodifiableSet(
+            newHashSet("tar", "gz", "tgz", "bz2", "tbz2"));
 
     /**
      * Detects files with extensions to remove from the engine's collection of

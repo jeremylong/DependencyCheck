@@ -1060,8 +1060,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 final Artifact dependencyArtifact = dependencyNode.getArtifact();
                 final Artifact result;
                 if (dependencyArtifact.isResolved()) {
-                    //All transitive dependencies, excluding reactor and dependencyManagement artifacts should have been resolved by Maven prior to invoking the plugin
-                    //Resolving the dependencies manually is unnecessary, and does not work in some cases (issue-1751)
+                    //All transitive dependencies, excluding reactor and dependencyManagement artifacts should
+                    //have been resolved by Maven prior to invoking the plugin - resolving the dependencies
+                    //manually is unnecessary, and does not work in some cases (issue-1751)
                     getLog().debug(String.format("Skipping artifact %s, already resolved", dependencyArtifact.getArtifactId()));
                     result = dependencyArtifact;
                 } else {
@@ -1639,7 +1640,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_PARALLEL_ANALYSIS, artifactoryAnalyzerParallelAnalysis);
         if (Boolean.TRUE.equals(artifactoryAnalyzerEnabled)) {
             if (artifactoryAnalyzerServerId != null) {
-                configureServerCredentials(artifactoryAnalyzerServerId, Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME, Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN);
+                configureServerCredentials(artifactoryAnalyzerServerId, Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME,
+                        Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN);
             } else {
                 settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME, artifactoryAnalyzerUsername);
                 settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN, artifactoryAnalyzerApiToken);

@@ -131,6 +131,7 @@ public class ReportGenerator {
     private final Settings settings;
 
     //CSOFF: ParameterNumber
+    //CSOFF: LineLength
     /**
      * Constructs a new ReportGenerator.
      *
@@ -184,7 +185,8 @@ public class ReportGenerator {
      */
     @Deprecated
     public ReportGenerator(String applicationName, String groupID, String artifactID, String version,
-            List<Dependency> dependencies, List<Analyzer> analyzers, DatabaseProperties properties, Settings settings) {
+            List<Dependency> dependencies, List<Analyzer> analyzers, DatabaseProperties properties,
+            Settings settings) {
         this(applicationName, groupID, artifactID, version, dependencies, analyzers, properties, settings, null);
     }
 
@@ -232,7 +234,8 @@ public class ReportGenerator {
      */
     @SuppressWarnings("JavaTimeDefaultTimeZone")
     private VelocityContext createContext(String applicationName, List<Dependency> dependencies,
-            List<Analyzer> analyzers, DatabaseProperties properties, String groupID, String artifactID, String version, ExceptionCollection exceptions) {
+            List<Analyzer> analyzers, DatabaseProperties properties, String groupID,
+            String artifactID, String version, ExceptionCollection exceptions) {
 
         final ZonedDateTime dt = ZonedDateTime.now();
         final String scanDate = DateTimeFormatter.RFC_1123_DATE_TIME.format(dt);
@@ -270,6 +273,7 @@ public class ReportGenerator {
         return ctxt;
     }
     //CSON: ParameterNumber
+    //CSON: LineLength
 
     /**
      * Creates a new Velocity Engine.

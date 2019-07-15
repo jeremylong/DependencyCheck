@@ -485,7 +485,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         sb.append(field).append(":(");
         boolean addSpace = false;
         boolean addedTerm = false;
-        
+
         for (Map.Entry<String, MutableInt> entry : terms.entrySet()) {
             final StringBuilder boostedTerms = new StringBuilder();
             final int weighting = entry.getValue().intValue();
@@ -499,7 +499,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 } else {
                     addSpace = true;
                 }
-                addedTerm=true;
+                addedTerm = true;
                 if (LuceneUtils.isKeyword(word)) {
                     sb.append("\"");
                     LuceneUtils.appendEscapedLuceneQuery(sb, word);

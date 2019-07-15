@@ -1157,6 +1157,7 @@ public class Engine implements FileFilter, AutoCloseable {
         throw new ExceptionCollection(exceptions, true);
     }
 
+    //CSOFF: LineLength
     /**
      * Writes the report to the given output directory.
      *
@@ -1165,12 +1166,14 @@ public class Engine implements FileFilter, AutoCloseable {
      * file name if the format is not ALL)
      * @param format the report format (ALL, HTML, CSV, JSON, etc.)
      * @throws ReportException thrown if there is an error generating the report
-     * @deprecated use {@link #writeReports(java.lang.String, java.io.File, java.lang.String, org.owasp.dependencycheck.exception.ExceptionCollection)}
+     * @deprecated use
+     * {@link #writeReports(java.lang.String, java.io.File, java.lang.String, org.owasp.dependencycheck.exception.ExceptionCollection)}
      */
     @Deprecated
     public void writeReports(String applicationName, File outputDir, String format) throws ReportException {
         writeReports(applicationName, null, null, null, outputDir, format, null);
     }
+    //CSON: LineLength
 
     /**
      * Writes the report to the given output directory.
@@ -1187,6 +1190,7 @@ public class Engine implements FileFilter, AutoCloseable {
         writeReports(applicationName, null, null, null, outputDir, format, exceptions);
     }
 
+    //CSOFF: LineLength
     /**
      * Writes the report to the given output directory.
      *
@@ -1198,7 +1202,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * file name if the format is not ALL)
      * @param format the report format (ALL, HTML, CSV, JSON, etc.)
      * @throws ReportException thrown if there is an error generating the report
-     * @deprecated use {@link #writeReports(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.io.File, java.lang.String, org.owasp.dependencycheck.exception.ExceptionCollection)}
+     * @deprecated use
+     * {@link #writeReports(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.io.File, java.lang.String, org.owasp.dependencycheck.exception.ExceptionCollection)}
      */
     @Deprecated
     public synchronized void writeReports(String applicationName, @Nullable final String groupId,
@@ -1206,6 +1211,7 @@ public class Engine implements FileFilter, AutoCloseable {
             @NotNull final File outputDir, String format) throws ReportException {
         writeReports(applicationName, groupId, artifactId, version, outputDir, format, null);
     }
+    //CSON: LineLength
 
     /**
      * Writes the report to the given output directory.
@@ -1228,7 +1234,8 @@ public class Engine implements FileFilter, AutoCloseable {
             throw new UnsupportedOperationException("Cannot generate report in evidence collection mode.");
         }
         final DatabaseProperties prop = database.getDatabaseProperties();
-        final ReportGenerator r = new ReportGenerator(applicationName, groupId, artifactId, version, dependencies, getAnalyzers(), prop, settings, exceptions);
+        final ReportGenerator r = new ReportGenerator(applicationName, groupId, artifactId, version,
+                dependencies, getAnalyzers(), prop, settings, exceptions);
         try {
             r.write(outputDir.getAbsolutePath(), format);
         } catch (ReportException ex) {
