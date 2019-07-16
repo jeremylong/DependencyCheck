@@ -347,11 +347,6 @@ Copyright (c) 2012 - Jeremy Long
                         </dependency>
                     </dependencies>
                 </plugin>
-                <plugin>
-                    <groupId>com.spotify</groupId>
-                    <artifactId>dockerfile-maven-plugin</artifactId>
-                    <version>1.4.9</version>
-                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>

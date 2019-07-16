@@ -9,10 +9,18 @@ VERSION=$(mvn -q \
 if [[ $VERSION = *"SNAPSHOT"* ]]; then
   echo "Do not publish a snapshot version of dependency-check"
 else
+  FILE=./cli/target/dependency-check-$VERSION-release.zip
+  if [ -f "$FILE" ]; then
     cd cli
-    mvn -Ddocker dockerfile:build
-    mvn -Ddocker dockerfile:tag@tag-version
-    mvn -Ddocker dockerfile:push@push-latest
-    mvn -Ddocker dockerfile:push@push-version
+    docker build . --build-arg VERSION=$VERSION -t owasp/dependency-check:$VERSION
+    docker tag owasp/dependency-check:$VERSION owasp/dependency-check:latest
+    docker push owasp/dependency-check:$VERSION 
+    docker push owasp/dependency-check:latest
     cd ..
+  else 
+      echo "$FILE does not exist - run 'mvn package' first"
+  fi
+
+
+  
 fi
