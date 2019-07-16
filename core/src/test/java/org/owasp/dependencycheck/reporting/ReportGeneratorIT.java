@@ -17,14 +17,18 @@
  */
 package org.owasp.dependencycheck.reporting;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
+import org.junit.Assert;
 
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseDBTestCase;
@@ -38,6 +42,7 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.fail;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 
 /**
@@ -60,6 +65,8 @@ public class ReportGeneratorIT extends BaseDBTestCase {
             File writeTo = new File("target/test-reports/Report.xml");
             File writeJsonTo = new File("target/test-reports/Report.json");
             File writeHtmlTo = new File("target/test-reports/Report.html");
+            File writeJunitTo = new File("target/test-reports/Report.junit");
+            File writeCsvTo = new File("target/test-reports/Report.csv");
             File suppressionFile = BaseTest.getResourceAsFile(this, "incorrectSuppressions.xml");
             Settings settings = getSettings();
             settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile.getAbsolutePath());
@@ -77,13 +84,15 @@ public class ReportGeneratorIT extends BaseDBTestCase {
             File jetty = BaseTest.getResourceAsFile(this, "org.mortbay.jetty.jar");
 
             File nodeTest = BaseTest.getResourceAsFile(this, "nodejs");
-
+            int vulnCount;
             try (Engine engine = new Engine(settings)) {
                 engine.scan(struts);
                 engine.scan(axis);
                 engine.scan(jetty);
                 engine.scan(nodeTest);
                 engine.analyzeDependencies();
+
+                vulnCount = countVulns(engine.getDependencies());
                 ExceptionCollection exceptions = new ExceptionCollection();
                 exceptions.addException(new DownloadFailedException("test exception 1"));
                 DownloadFailedException sub = new DownloadFailedException("test cause exception - nested");
@@ -93,7 +102,10 @@ public class ReportGeneratorIT extends BaseDBTestCase {
                 engine.writeReports("Test Report", "org.owasp", "dependency-check-core", "1.4.8", writeTo, "XML", exceptions);
                 engine.writeReports("Test Report", "org.owasp", "dependency-check-core", "1.4.8", writeJsonTo, "JSON", exceptions);
                 engine.writeReports("Test Report", "org.owasp", "dependency-check-core", "1.4.8", writeHtmlTo, "HTML", exceptions);
+                engine.writeReports("Test Report", "org.owasp", "dependency-check-core", "1.4.8", writeCsvTo, "CSV", exceptions);
+                engine.writeReports("Test Report", "org.owasp", "dependency-check-core", "1.4.8", writeJunitTo, "JUNIT", exceptions);
             }
+            //Test XML
             InputStream xsdStream = ReportGenerator.class.getClassLoader().getResourceAsStream("schema/dependency-check.2.2.xsd");
             StreamSource xsdSource = new StreamSource(xsdStream);
             StreamSource xmlSource = new StreamSource(writeTo);
@@ -101,10 +113,50 @@ public class ReportGeneratorIT extends BaseDBTestCase {
             Schema schema = sf.newSchema(xsdSource);
             Validator validator = schema.newValidator();
             validator.validate(xmlSource);
+
+            //Test CSV
+            int linesWritten = countLines(writeCsvTo);
+            Assert.assertEquals(vulnCount + 1, linesWritten);
         } catch (InvalidSettingException ex) {
             fail(ex.getMessage());
         } catch (DatabaseException | ExceptionCollection | ReportException | SAXException | IOException ex) {
             fail(ex.getMessage());
         }
     }
+
+    /**
+     * Counts the lines in a file. Copied from
+     * https://stackoverflow.com/a/14411695.
+     *
+     * @param file the file path
+     * @return the count of the lines in the file
+     * @throws IOException thrown if the file can't be read
+     */
+    private int countLines(File file) throws IOException {
+        try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
+            byte[] c = new byte[1024];
+            int count = 0;
+            int readChars = 0;
+            boolean endsWithoutNewLine = false;
+            while ((readChars = is.read(c)) != -1) {
+                for (int i = 0; i < readChars; ++i) {
+                    if (c[i] == '\n') {
+                        ++count;
+                    }
+                }
+                endsWithoutNewLine = (c[readChars - 1] != '\n');
+            }
+            if (endsWithoutNewLine) {
+                ++count;
+            }
+            return count;
+        }
+    }
+
+    private int countVulns(Dependency[] dependencies) {
+        return Arrays.stream(dependencies)
+                .mapToInt(d -> d.getVulnerabilities().size())
+                .sum();
+    }
+
 }
