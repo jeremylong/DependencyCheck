@@ -528,6 +528,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private String bundleAuditPath;
 
     /**
+     * Sets the path for the working directory that the bundle-audit binary should be executed from.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "bundleAuditWorkingDirectory")
+    private String bundleAuditWorkingDirectory;
+
+    /**
      * Whether or not the CocoaPods Analyzer is enabled.
      */
     @SuppressWarnings("CanBeFinal")
@@ -1662,6 +1669,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, retireJsUrl);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, bundleAuditAnalyzerEnabled);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, bundleAuditPath);
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_WORKING_DIRECTORY, bundleAuditWorkingDirectory);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, cocoapodsAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, swiftPackageManagerAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, ossindexAnalyzerEnabled);

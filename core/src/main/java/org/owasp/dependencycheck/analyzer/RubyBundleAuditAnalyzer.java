@@ -135,7 +135,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws AnalysisException thrown when there is an issue launching bundle
      * audit
      */
-    private Process launchBundleAudit(File folder) throws AnalysisException {
+    private Process launchBundleAudit(File folder, List<String> bundleAuditArgs) throws AnalysisException {
         if (!folder.isDirectory()) {
             throw new AnalysisException(String.format("%s should have been a directory.", folder.getAbsolutePath()));
         }
@@ -149,13 +149,23 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                 bundleAudit = null;
             }
         }
-        args.add(bundleAudit != null && bundleAudit.isFile() ? bundleAudit.getAbsolutePath() : "bundle-audit");
-        args.add("check");
-        args.add("--verbose");
+        args.add(bundleAudit != null ? bundleAudit.getAbsolutePath() : "bundle-audit");
+        args.addAll(bundleAuditArgs);
         final ProcessBuilder builder = new ProcessBuilder(args);
-        builder.directory(folder);
+
+        final String bundleAuditWorkingDirectoryPath = getSettings().getString(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_WORKING_DIRECTORY);
+        File bundleAuditWorkingDirectory = null;
+        if (bundleAuditWorkingDirectoryPath != null) {
+            bundleAuditWorkingDirectory = new File(bundleAuditWorkingDirectoryPath);
+            if (!bundleAuditWorkingDirectory.isDirectory()) {
+                LOGGER.warn("Supplied `bundleAuditWorkingDirectory` path is incorrect: {}", bundleAuditWorkingDirectoryPath);
+                bundleAuditWorkingDirectory = null;
+            }
+        }
+        File launchBundleAuditFromDirectory = bundleAuditWorkingDirectory != null ? bundleAuditWorkingDirectory : folder;
+        builder.directory(launchBundleAuditFromDirectory);
         try {
-            LOGGER.info("Launching: {} from {}", args, folder);
+            LOGGER.info("Launching: {} from {}", args, launchBundleAuditFromDirectory);
             return builder.start();
         } catch (IOException ioe) {
             throw new AnalysisException("bundle-audit initialization failure; this error can be ignored if you are not analyzing Ruby. "
@@ -171,15 +181,17 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
-        // Now, need to see if bundle-audit actually runs from this location.
         if (engine != null) {
             this.cvedb = engine.getDatabase();
         }
+
+        // Here we check if bundle-audit actually runs from this location. We do this by running the
+        // `bundle-audit version` command and seeing whether or not it succeeds (if it returns with an exit value of 0)
         final Process process;
         try {
-            process = launchBundleAudit(getSettings().getTempDirectory());
+            List<String> bundleAuditArgs = new ArrayList<String>() {{ add("version"); }};
+            process = launchBundleAudit(getSettings().getTempDirectory(), bundleAuditArgs);
         } catch (AnalysisException ae) {
-
             setEnabled(false);
             final String msg = String.format("Exception from bundle-audit process: %s. Disabling %s", ae.getCause(), ANALYZER_NAME);
             throw new InitializationException(msg, ae);
@@ -197,36 +209,48 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             Thread.currentThread().interrupt();
             throw new InitializationException(msg);
         }
-        if (0 == exitValue) {
-            setEnabled(false);
-            final String msg = String.format("Unexpected exit code from bundle-audit process. Disabling %s: %s", ANALYZER_NAME, exitValue);
-            throw new InitializationException(msg);
-        } else {
+
+        String bundleAuditVersionDetails;
+        if (exitValue != 0) {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))) {
                 if (!reader.ready()) {
-                    LOGGER.warn("Bundle-audit error stream unexpectedly not ready. Disabling {}", ANALYZER_NAME);
+                    LOGGER.warn("Unexpected exit value from bundle-audit process and error stream unexpectedly not ready to capture error details. Disabling {}. Exit value was: {}", ANALYZER_NAME, exitValue);
                     setEnabled(false);
                     throw new InitializationException("Bundle-audit error stream unexpectedly not ready.");
                 } else {
                     final String line = reader.readLine();
-                    if (line == null || !line.contains("Errno::ENOENT")) {
-                        LOGGER.warn("Unexpected bundle-audit output. Disabling {}: {}", ANALYZER_NAME, line);
-                        setEnabled(false);
-                        throw new InitializationException("Unexpected bundle-audit output.");
-                    }
+                    setEnabled(false);
+                    LOGGER.warn("Unexpected exit value from bundle-audit process. Disabling {}. Exit value was: {}. error stream output from bundle-audit process was: {}", ANALYZER_NAME, exitValue, line);
+                    throw new InitializationException("Unexpected exit value from bundle-audit process.");
                 }
             } catch (UnsupportedEncodingException ex) {
                 setEnabled(false);
-                throw new InitializationException("Unexpected bundle-audit encoding.", ex);
+                throw new InitializationException("Unexpected bundle-audit encoding when reading error stream.", ex);
             } catch (IOException ex) {
                 setEnabled(false);
-                throw new InitializationException("Unable to read bundle-audit output.", ex);
+                throw new InitializationException("Unable to read bundle-audit output from error stream.", ex);
+            }
+        } else {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+                if (!reader.ready()) {
+                    LOGGER.warn("Bundle-audit input stream unexpectedly not ready to capture version details. Disabling {}", ANALYZER_NAME);
+                    setEnabled(false);
+                    throw new InitializationException("Bundle-audit input stream unexpectedly not ready to capture version details.");
+                } else {
+                    bundleAuditVersionDetails = reader.readLine();
+                }
+            } catch (UnsupportedEncodingException ex) {
+                setEnabled(false);
+                throw new InitializationException("Unexpected bundle-audit encoding when reading input stream.", ex);
+            } catch (IOException ex) {
+                setEnabled(false);
+                throw new InitializationException("Unable to read bundle-audit output from input stream.", ex);
             }
         }
 
         if (isEnabled()) {
-            LOGGER.info("{} is enabled. It is necessary to manually run \"bundle-audit update\" "
-                    + "occasionally to keep its database up to date.", ANALYZER_NAME);
+            LOGGER.info("{} is enabled and is using bundle-audit with version details: {}. Note: It is necessary to manually run \"bundle-audit update\" "
+                    + "occasionally to keep its database up to date.", ANALYZER_NAME, bundleAuditVersionDetails);
         }
     }
 
@@ -290,7 +314,8 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             needToDisableGemspecAnalyzer = false;
         }
         final File parentFile = dependency.getActualFile().getParentFile();
-        final Process process = launchBundleAudit(parentFile);
+        List<String> bundleAuditArgs = new ArrayList<String>() {{ add("check"); add("--verbose"); }};
+        final Process process = launchBundleAudit(parentFile, bundleAuditArgs);
         final int exitValue;
         try {
             exitValue = process.waitFor();

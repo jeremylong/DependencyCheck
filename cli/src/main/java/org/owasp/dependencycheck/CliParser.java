@@ -404,6 +404,9 @@ public final class CliParser {
         final Option pathToBundleAudit = Option.builder().argName("path").hasArg()
                 .longOpt(ARGUMENT.PATH_TO_BUNDLE_AUDIT)
                 .desc("The path to bundle-audit for Gem bundle analysis.").build();
+        final Option pathToBundleAuditWorkingDirectory = Option.builder().argName("path").hasArg()
+                .longOpt(ARGUMENT.PATH_TO_BUNDLE_AUDIT_WORKING_DIRECTORY)
+                .desc("The path to working directory that the bundle-audit command should be executed from when doing Gem bundle analysis.").build();
         final Option connectionTimeout = Option.builder(ARGUMENT.CONNECTION_TIMEOUT_SHORT).argName("timeout").hasArg()
                 .longOpt(ARGUMENT.CONNECTION_TIMEOUT).desc("The connection timeout (in milliseconds) to use when downloading resources.")
                 .build();
@@ -488,6 +491,7 @@ public final class CliParser {
                 .addOption(disableArchiveAnalyzer)
                 .addOption(disableAssemblyAnalyzer)
                 .addOption(pathToBundleAudit)
+                .addOption(pathToBundleAuditWorkingDirectory)
                 .addOption(disablePythonDistributionAnalyzer)
                 .addOption(disableCmakeAnalyzer)
                 .addOption(disablePythonPackageAnalyzer)
@@ -554,7 +558,6 @@ public final class CliParser {
                 .addOption(nexusUsesProxy)
                 .addOption(additionalZipExtensions)
                 .addOption(pathToCore)
-                .addOption(pathToBundleAudit)
                 .addOption(purge);
     }
 
@@ -1126,6 +1129,15 @@ public final class CliParser {
      */
     public String getPathToBundleAudit() {
         return line.getOptionValue(ARGUMENT.PATH_TO_BUNDLE_AUDIT);
+    }
+
+    /**
+     * Returns the path to the working directory that should be used when the bundle-audit command is used for Ruby bundle analysis.
+     *
+     * @return the path to the working directory that should be used when the bundle-audit command is used for Ruby bundle analysis.
+     */
+    public String getPathToBundleAuditWorkingDirectory() {
+        return line.getOptionValue(ARGUMENT.PATH_TO_BUNDLE_AUDIT_WORKING_DIRECTORY);
     }
 
     /**
@@ -1785,6 +1797,11 @@ public final class CliParser {
          * bundle analysis.
          */
         public static final String PATH_TO_BUNDLE_AUDIT = "bundleAudit";
+        /**
+         * The CLI argument name for setting the path that should be used as the working directory that the bundle-audit
+         * command used for Ruby bundle analysis should be executed from. This will allow for the usage of rbenv
+         */
+        public static final String PATH_TO_BUNDLE_AUDIT_WORKING_DIRECTORY = "bundleAuditWorkingDirectory";
         /**
          * The CLI argument to enable the experimental analyzers.
          */
