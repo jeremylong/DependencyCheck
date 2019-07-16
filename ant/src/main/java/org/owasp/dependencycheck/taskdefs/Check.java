@@ -256,6 +256,10 @@ public class Check extends Update {
      */
     private String bundleAuditPath;
     /**
+     * Sets the path for the working directory that the bundle-audit binary should be executed from.
+     */
+    private String bundleAuditWorkingDirectory;
+    /**
      * Whether or not the CocoaPods Analyzer is enabled.
      */
     private Boolean cocoapodsAnalyzerEnabled;
@@ -801,6 +805,24 @@ public class Check extends Update {
      */
     public void setBundleAuditPath(String bundleAuditPath) {
         this.bundleAuditPath = bundleAuditPath;
+    }
+
+    /**
+     * Sets the path to the working directory that the bundle audit executable should be executed from.
+     *
+     * @param bundleAuditWorkingDirectory the path to the working directory that the bundle audit executable should be executed from.
+     */
+    public void setBundleAuditWorkingDirectory(String bundleAuditWorkingDirectory) {
+        this.bundleAuditWorkingDirectory = bundleAuditWorkingDirectory;
+    }
+
+    /**
+     * Returns the path to the working directory that the bundle audit executable should be executed from.
+     *
+     * @return the path to the working directory that the bundle audit executable should be executed from.
+     */
+    public String getBundleAuditWorkingDirectory() {
+        return bundleAuditWorkingDirectory;
     }
 
     /**
@@ -1620,6 +1642,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, cocoapodsAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, bundleAuditAnalyzerEnabled);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, bundleAuditPath);
+        getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_WORKING_DIRECTORY, bundleAuditWorkingDirectory);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, autoconfAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);

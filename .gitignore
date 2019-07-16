@@ -32,3 +32,6 @@ _site/**
 cov-scan.bat
 
 /core/data/
+
+# Apple macOS operating system Desktop Services Store files
+.DS_Store

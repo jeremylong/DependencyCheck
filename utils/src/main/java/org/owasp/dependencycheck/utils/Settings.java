@@ -464,6 +464,10 @@ public final class Settings {
          */
         public static final String ANALYZER_BUNDLE_AUDIT_PATH = "analyzer.bundle.audit.path";
         /**
+         * The path to bundle-audit, if available.
+         */
+        public static final String ANALYZER_BUNDLE_AUDIT_WORKING_DIRECTORY = "analyzer.bundle.audit.working.directory";
+        /**
          * The additional configured zip file extensions, if available.
          */
         public static final String ADDITIONAL_ZIP_EXTENSIONS = "extensions.zip";
