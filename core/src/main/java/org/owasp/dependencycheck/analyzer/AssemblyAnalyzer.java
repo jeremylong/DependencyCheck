@@ -231,7 +231,8 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 final DependencyVersion productVersion = DependencyVersionUtil.parseVersion(data.getProductVersion(), true);
                 if (pos > 0) {
                     final DependencyVersion matchingVersion = DependencyVersionUtil.parseVersion(data.getFileVersion().substring(0, pos), true);
-                    if (fileVersion.toString().length() == data.getFileVersion().length()) {
+                    if (fileVersion != null && data.getFileVersion() != null
+                            && fileVersion.toString().length() == data.getFileVersion().length()) {
                         if (matchingVersion != null && matchingVersion.getVersionParts().size() > 2) {
                             dependency.addEvidence(EvidenceType.VERSION, "AssemblyAnalyzer", "FilteredVersion",
                                     matchingVersion.toString(), Confidence.HIGHEST);
