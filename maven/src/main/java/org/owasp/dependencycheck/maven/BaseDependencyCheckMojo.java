@@ -72,6 +72,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -89,6 +90,9 @@ import org.owasp.dependencycheck.dependency.naming.Identifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
 import org.apache.maven.shared.dependency.graph.traversal.FilteringDependencyNodeVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.spi.LocationAwareLogger;
 
 /**
  * @author Jeremy Long
@@ -528,7 +532,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private String bundleAuditPath;
 
     /**
-     * Sets the path for the working directory that the bundle-audit binary should be executed from.
+     * Sets the path for the working directory that the bundle-audit binary
+     * should be executed from.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "bundleAuditWorkingDirectory")
@@ -1390,6 +1395,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * fail the build
      */
     protected void runCheck() throws MojoExecutionException, MojoFailureException {
+        muteJCS();
         try (Engine engine = initializeEngine()) {
             ExceptionCollection exCol = scanDependencies(engine);
             try {
@@ -1787,6 +1793,37 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
         }
         return suppressions;
+    }
+
+    /**
+     * Hacky method of muting the noisy logging from JCS. Implemented using a
+     * solution from SO: https://stackoverflow.com/a/50723801
+     */
+    private void muteJCS() {
+        final String[] noisyLoggers = {
+            "org.apache.commons.jcs.auxiliary.disk.AbstractDiskCache",
+            "org.apache.commons.jcs.engine.memory.AbstractMemoryCache",
+            "org.apache.commons.jcs.engine.control.CompositeCache",
+            "org.apache.commons.jcs.auxiliary.disk.indexed.IndexedDiskCache",
+            "org.apache.commons.jcs.engine.control.CompositeCache",
+            "org.apache.commons.jcs.engine.memory.AbstractMemoryCache",
+            "org.apache.commons.jcs.engine.control.event.ElementEventQueue",
+            "org.apache.commons.jcs.engine.memory.AbstractDoubleLinkedListMemoryCache",
+            "org.apache.commons.jcs.auxiliary.AuxiliaryCacheConfigurator",
+            "org.apache.commons.jcs.engine.control.CompositeCacheManager",
+            "org.apache.commons.jcs.utils.threadpool.ThreadPoolManager",
+            "org.apache.commons.jcs.engine.control.CompositeCacheConfigurator"};
+        for (String loggerName : noisyLoggers) {
+            try {
+                //This is actually a MavenSimpleLogger, but due to various classloader issues, can't work with the directly.
+                Logger l = LoggerFactory.getLogger(loggerName);
+                Field f = l.getClass().getSuperclass().getDeclaredField("currentLogLevel");
+                f.setAccessible(true);
+                f.set(l, LocationAwareLogger.ERROR_INT);
+            } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {
+                getLog().warn("Failed to reset the log level of " + loggerName + ", it will continue being noisy.", e);
+            }
+        }
     }
 
     /**
