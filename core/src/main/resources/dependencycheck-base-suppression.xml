@@ -173,6 +173,7 @@
             8. CVE-2017-16046 is for the node.js npm mariadb client (#1364)
             9. sqlserver_project is a node js module (#1388)
             10. auth0 is a javascript library (#1925)
+            11. JAR files should not be identified as github
         ]]></notes>
         <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)$</filePath>
         <cpe>cpe:/a:dash:dash</cpe>
@@ -187,6 +188,7 @@
         <cve>CVE-2017-16046</cve>
         <cpe>cpe:/a:sqlserver_project:sqlserver</cpe>
         <cpe>cpe:/a:auth0:auth0</cpe>
+        <cpe>cpe:/a:github:github</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -386,12 +388,20 @@
         <packageUrl regex="true">^pkg:maven/org\.apache\.sling/org\.apache\.sling.*$</packageUrl>
         <cve>CVE-2016-0956</cve>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         FP per #2026
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.undertow/undertow\-core@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/io\.undertow/.*$</packageUrl>
         <cve>CVE-2018-1067</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2026 & #2077
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.undertow\..*$</packageUrl>
+        <cpe>cpe:/a:redhat:undertow</cpe>
+        <cpe>cpe:/a:oracle:jsp</cpe>
     </suppress>
     <!--suppress base="true">
         <notes><![CDATA[
@@ -963,7 +973,7 @@
         <gav regex="true">^io\.prometheus:simpleclient_common:.*$</gav>
         <cve>CVE-2019-3826</cve>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         see https://github.com/jeremylong/DependencyCheck/issues/1927
         ]]></notes>
