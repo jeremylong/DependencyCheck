@@ -65,7 +65,7 @@ public class ReportGeneratorIT extends BaseDBTestCase {
             File writeTo = new File("target/test-reports/Report.xml");
             File writeJsonTo = new File("target/test-reports/Report.json");
             File writeHtmlTo = new File("target/test-reports/Report.html");
-            File writeJunitTo = new File("target/test-reports/Report.junit");
+            File writeJunitTo = new File("target/test-reports/junit.xml");
             File writeCsvTo = new File("target/test-reports/Report.csv");
             File suppressionFile = BaseTest.getResourceAsFile(this, "incorrectSuppressions.xml");
             Settings settings = getSettings();
