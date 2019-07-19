@@ -29,6 +29,7 @@ import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXParseException;
 
 /**
  *
@@ -57,35 +58,34 @@ public final class PomUtils {
      * or parsing the POM {@link Model} object
      */
     public static Model readPom(File file) throws AnalysisException {
-        //noinspection CaughtExceptionImmediatelyRethrown
+        Model model = null;
+        final PomParser parser = new PomParser();
         try {
-            final PomParser parser = new PomParser();
-            final Model model = parser.parse(file);
-            if (model == null) {
-                throw new AnalysisException(String.format("Unable to parse pom '%s'", file.getPath()));
-            }
-            return model;
-        } catch (AnalysisException ex) {
-            throw ex;
+            model = parser.parse(file);
         } catch (PomParseException ex) {
-            LOGGER.warn("Unable to parse pom '{}'", file.getPath());
-            //todo remove test code for intermittent error.
-            try {
-                final File target = new File("~/Projects/DependencyCheck/core/target/");
-                if (target.isDirectory()) {
-                    FileUtils.copyFile(file, target);
-                    LOGGER.info("Unparsable pom was copied to {}", target.toString());
+            if (ex.getCause() instanceof SAXParseException) {
+                try {
+                    model = parser.parseWithoutDocTypeCleanup(file);
+                } catch (PomParseException ex1) {
+                    LOGGER.warn("Unable to parse pom '{}'", file.getPath());
+                    LOGGER.debug("", ex1);
+                    throw new AnalysisException(ex1);
                 }
-            } catch (IOException ex1) {
-                throw new UnexpectedAnalysisException(ex1);
             }
-            LOGGER.debug("", ex);
-            throw new AnalysisException(ex);
+            if (model == null) {
+                LOGGER.warn("Unable to parse pom '{}'", file.getPath());
+                LOGGER.debug("", ex);
+                throw new AnalysisException(ex);
+            }
         } catch (Throwable ex) {
             LOGGER.warn("Unexpected error during parsing of the pom '{}'", file.getPath());
             LOGGER.debug("", ex);
             throw new AnalysisException(ex);
         }
+        if (model == null) {
+            throw new AnalysisException(String.format("Unable to parse pom '%s'", file.getPath()));
+        }
+        return model;
     }
 
     /**
@@ -99,17 +99,31 @@ public final class PomUtils {
      */
     public static Model readPom(String path, JarFile jar) throws AnalysisException {
         final ZipEntry entry = jar.getEntry(path);
+        final PomParser parser = new PomParser();
         Model model = null;
         if (entry != null) { //should never be null
             //noinspection CaughtExceptionImmediatelyRethrown
             try {
-                final PomParser parser = new PomParser();
                 model = parser.parse(jar.getInputStream(entry));
-                if (model == null) {
-                    throw new AnalysisException(String.format("Unable to parse pom '%s/%s'", jar.getName(), path));
+            } catch (PomParseException ex) {
+                if (ex.getCause() instanceof SAXParseException) {
+                    try {
+                        model = parser.parseWithoutDocTypeCleanup(jar.getInputStream(entry));
+                    } catch (PomParseException ex1) {
+                        LOGGER.warn("Unable to parse pom '{}' in jar '{}'", path, jar.getName());
+                        LOGGER.debug("", ex1);
+                        throw new AnalysisException(ex1);
+                    } catch (IOException ex1) {
+                        LOGGER.warn("Unable to parse pom '{}' in jar '{}' (IO Exception)", path, jar.getName());
+                        LOGGER.debug("", ex);
+                        throw new AnalysisException(ex);
+                    }
                 }
-            } catch (AnalysisException ex) {
-                throw ex;
+                if (model != null) {
+                    LOGGER.warn("Unable to parse pom '{}' in jar '{}'", path, jar.getName());
+                    LOGGER.debug("", ex);
+                    throw new AnalysisException(ex);
+                }
             } catch (SecurityException ex) {
                 LOGGER.warn("Unable to parse pom '{}' in jar '{}'; invalid signature", path, jar.getName());
                 LOGGER.debug("", ex);
@@ -122,6 +136,9 @@ public final class PomUtils {
                 LOGGER.warn("Unexpected error during parsing of the pom '{}' in jar '{}'", path, jar.getName());
                 LOGGER.debug("", ex);
                 throw new AnalysisException(ex);
+            }
+            if (model == null) {
+                throw new AnalysisException(String.format("Unable to parse pom '%s/%s'", jar.getName(), path));
             }
         }
         return model;

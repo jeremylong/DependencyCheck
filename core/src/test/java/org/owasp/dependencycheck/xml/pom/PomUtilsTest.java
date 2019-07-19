@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.xml.pom;
 
 import java.io.File;
+import java.util.jar.JarFile;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -51,6 +52,20 @@ public class PomUtilsTest extends BaseTest {
         file = BaseTest.getResourceAsFile(this, "jmockit-1.26.pom");
         expResult = "Main ø modified to test issue #710 and #801 (&amps;)";
         result = PomUtils.readPom(file);
+        assertEquals(expResult, result.getName());
+
+        file = BaseTest.getResourceAsFile(this, "pom/mailapi-1.4.3_projectcomment.pom");
+        expResult = "JavaMail API jar";
+        result = PomUtils.readPom(file);
+        assertEquals(expResult, result.getName());
+    }
+    
+    @Test
+    public void testReadPom_String_File() throws Exception {  
+        File fileCommonValidator = BaseTest.getResourceAsFile(this, "commons-validator-1.4.0.jar");
+        JarFile jar = new JarFile(fileCommonValidator);
+        String expResult = "Commons Validator";
+        Model result = PomUtils.readPom("META-INF/maven/commons-validator/commons-validator/pom.xml", jar);
         assertEquals(expResult, result.getName());
     }
 
