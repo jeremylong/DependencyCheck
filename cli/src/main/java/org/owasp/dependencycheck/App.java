@@ -483,7 +483,7 @@ public class App {
         settings.setBoolean(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED, !cli.isRubyGemspecDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, !cli.isCentralDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE, !cli.isCentralCacheDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, !cli.isNexusDisabled());
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, cli.isNexusEnabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, !cli.isOssIndexDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE, !cli.isOssIndexCacheDisabled());
         settings.setFloat(Settings.KEYS.JUNIT_FAIL_ON_CVSS, cli.getJunitFailOnCVSS());

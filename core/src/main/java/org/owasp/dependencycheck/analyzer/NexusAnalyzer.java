@@ -127,16 +127,17 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
     private boolean checkEnabled() {
         /* Enable this analyzer ONLY if the Nexus URL has been set to something
          other than the default one (if it's the default one, we'll use the
-         central one) and it's enabled by the user.
+         central analyzer) and it's enabled by the user.
          */
         boolean retval = false;
         try {
-            if (!DEFAULT_URL.equals(getSettings().getString(Settings.KEYS.ANALYZER_NEXUS_URL))
-                    && getSettings().getBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED)) {
-                LOGGER.info("Enabling Nexus analyzer");
-                retval = true;
-            } else {
-                LOGGER.debug("Nexus analyzer disabled, using Central instead");
+            if (getSettings().getBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED)) {
+                if (getSettings().getString(Settings.KEYS.ANALYZER_NEXUS_URL) != null
+                        && !DEFAULT_URL.equals(getSettings().getString(Settings.KEYS.ANALYZER_NEXUS_URL))) {
+                    retval = true;
+                } else {
+                    LOGGER.warn("Disabling Nexus analyzer - please specify the URL to a Nexus Server");
+                }
             }
         } catch (InvalidSettingException ise) {
             LOGGER.warn("Invalid setting. Disabling Nexus analyzer");

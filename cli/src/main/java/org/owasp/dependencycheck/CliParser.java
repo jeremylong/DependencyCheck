@@ -460,7 +460,7 @@ public final class CliParser {
         final Option disableCentralAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_CENTRAL)
                 .desc("Disable the Central Analyzer. If this analyzer is disabled it is likely you also want to disable "
                         + "the Nexus Analyzer.").build();
-        final Option disableNexusAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_NEXUS)
+        final Option enableNexusAnalyzer = Option.builder().longOpt(ARGUMENT.ENABLE_NEXUS)
                 .desc("Disable the Nexus Analyzer.").build();
         final Option disableOssIndexAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_OSSINDEX)
                 .desc("Disable the Sonatype OSS Index Analyzer.").build();
@@ -508,7 +508,7 @@ public final class CliParser {
                 .addOption(disableCentralAnalyzer)
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_CENTRAL_CACHE)
                         .desc("Disallow the Central Analyzer from caching results").build())
-                .addOption(disableNexusAnalyzer)
+                .addOption(enableNexusAnalyzer)
                 .addOption(disableOssIndexAnalyzer)
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_OSSINDEX_CACHE)
                         .desc("Disallow the OSS Index Analyzer from caching results").build())
@@ -796,8 +796,8 @@ public final class CliParser {
      * @return true if the disableNexus command line argument was specified;
      * otherwise false
      */
-    public boolean isNexusDisabled() {
-        return hasDisableOption(ARGUMENT.DISABLE_NEXUS, Settings.KEYS.ANALYZER_NEXUS_ENABLED);
+    public Boolean isNexusEnabled() {
+        return (line != null && line.hasOption(ARGUMENT.ENABLE_NEXUS)) ? true : null;
     }
 
     /**
@@ -1132,9 +1132,11 @@ public final class CliParser {
     }
 
     /**
-     * Returns the path to the working directory that should be used when the bundle-audit command is used for Ruby bundle analysis.
+     * Returns the path to the working directory that should be used when the
+     * bundle-audit command is used for Ruby bundle analysis.
      *
-     * @return the path to the working directory that should be used when the bundle-audit command is used for Ruby bundle analysis.
+     * @return the path to the working directory that should be used when the
+     * bundle-audit command is used for Ruby bundle analysis.
      */
     public String getPathToBundleAuditWorkingDirectory() {
         return line.getOptionValue(ARGUMENT.PATH_TO_BUNDLE_AUDIT_WORKING_DIRECTORY);
@@ -1708,7 +1710,7 @@ public final class CliParser {
         /**
          * Disables the Nexus Analyzer.
          */
-        public static final String DISABLE_NEXUS = "disableNexus";
+        public static final String ENABLE_NEXUS = "enableNexus";
         /**
          * Disables the Sonatype OSS Index Analyzer.
          */
@@ -1798,8 +1800,10 @@ public final class CliParser {
          */
         public static final String PATH_TO_BUNDLE_AUDIT = "bundleAudit";
         /**
-         * The CLI argument name for setting the path that should be used as the working directory that the bundle-audit
-         * command used for Ruby bundle analysis should be executed from. This will allow for the usage of rbenv
+         * The CLI argument name for setting the path that should be used as the
+         * working directory that the bundle-audit command used for Ruby bundle
+         * analysis should be executed from. This will allow for the usage of
+         * rbenv
          */
         public static final String PATH_TO_BUNDLE_AUDIT_WORKING_DIRECTORY = "bundleAuditWorkingDirectory";
         /**
