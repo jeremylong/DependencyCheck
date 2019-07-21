@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import com.sun.org.apache.xerces.internal.impl.dtd.XMLContentSpec;
 import java.io.InputStream;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -80,13 +81,13 @@ public final class XmlUtils {
         final SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setValidating(true);
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
         factory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
         factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-
-        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        System.setProperty("javax.xml.accessExternalSchema", "file, https");
 
         final SAXParser saxParser = factory.newSAXParser();
         saxParser.setProperty(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);

@@ -36,6 +36,7 @@ import org.owasp.dependencycheck.utils.XmlUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -107,6 +108,7 @@ public class SuppressionParser {
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setErrorHandler(new SuppressionErrorHandler());
             xmlReader.setContentHandler(handler);
+            xmlReader.setEntityResolver(new ClassloaderResolver());
             try (Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
                 final InputSource in = new InputSource(reader);
                 xmlReader.parse(in);
@@ -125,6 +127,24 @@ public class SuppressionParser {
         } catch (IOException ex) {
             LOGGER.debug("", ex);
             throw new SuppressionParseException(ex);
+        }
+    }
+
+    private static class ClassloaderResolver implements EntityResolver {
+
+        @Override
+        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+
+            if (systemId != null && systemId.startsWith("https://jeremylong.github.io/DependencyCheck/")) {
+                final String resource = "schema/" + systemId.substring(45);
+                final InputStream in = SuppressionParser.class.getClassLoader().getResourceAsStream(resource);
+                if (in != null) {
+                    final InputSource source = new InputSource(in);
+                    source.setSystemId(systemId);
+                    return source;
+                }
+            }
+            return null;
         }
     }
 }
