@@ -450,6 +450,13 @@
         <packageUrl regex="true">^pkg:(generic|nuget)/Microsoft\.AspNetCore\.JsonPatch@.*$</packageUrl>
         <cpe>cpe:/a:json-patch_project:json-patch</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #1968
+        ]]></notes>
+        <packageUrl regex="true">^pkg:(generic|nuget)/Microsoft\.Win32\.Registry\.AccessControl@.*$</packageUrl>
+        <cpe>cpe:/a:microsoft:access</cpe>
+    </suppress>
     <!--suppress base="true">
         <notes><![CDATA[
         This was added to a broader suppression ruleg
