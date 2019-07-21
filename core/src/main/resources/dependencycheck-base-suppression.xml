@@ -403,6 +403,53 @@
         <cpe>cpe:/a:redhat:undertow</cpe>
         <cpe>cpe:/a:oracle:jsp</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #872 - really not a fan of this as it appears several pieces of AspNetCore are
+            packaged under different names so you can grab a specific new bit of code. As
+            such, one may miss that the fix is in one of the sub components that is repackaged.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:(generic|nuget)/Microsoft\.AspNetCore\..*$</packageUrl>
+        <cpe>cpe:/a:microsoft:aspnetcore</cpe>
+        <cpe>cpe:/a:microsoft:asp.net_core</cpe>
+        <cpe>cpe:/a:microsoft:asp.net</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #872 - really not a fan of this as it appears several pieces of AspNetCore are
+            packaged under different names so you can grab a specific new bit of code. As
+            such, one may miss that the fix is in one of the sub components that is repackaged.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:(generic|nuget)/Microsoft\.Net\..*$</packageUrl>
+        <cpe>cpe:/a:microsoft:aspnetcore</cpe>
+        <cpe>cpe:/a:microsoft:asp.net_core</cpe>
+        <cpe>cpe:/a:microsoft:asp.net</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #872 - really not a fan of this as it appears several pieces of AspNetCore are
+                 packaged under different names so you can grab a specific new bit of code. As
+                 such, one may miss that the fix is in one of the sub components that is repackaged.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:(generic|nuget)/Microsoft\.Extensions\..*$</packageUrl>
+        <cpe>cpe:/a:microsoft:aspnetcore</cpe>
+        <cpe>cpe:/a:microsoft:asp.net_core</cpe>
+        <cpe>cpe:/a:microsoft:asp.net</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #872
+        ]]></notes>
+        <packageUrl regex="true">^pkg:(generic|nuget)/Swashbuckle\..*$</packageUrl>
+        <cpe>cpe:/a:asp-project:asp-project</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #872
+        ]]></notes>
+        <packageUrl regex="true">^pkg:(generic|nuget)/Microsoft\.AspNetCore\.JsonPatch@.*$</packageUrl>
+        <cpe>cpe:/a:json-patch_project:json-patch</cpe>
+    </suppress>
     <!--suppress base="true">
         <notes><![CDATA[
         This was added to a broader suppression ruleg
