@@ -658,7 +658,12 @@ public class Engine implements FileFilter, AutoCloseable {
         } catch (NoDataException ex) {
             throwFatalExceptionCollection("Unable to continue dependency-check analysis.", ex, exceptions);
         }
-
+        LOGGER.info("\n\nDependency-Check is an open source tool performing a best effort analysis of 3rd party dependencies; false positives and "
+                + "false negatives may exist in the analysis performed by the tool. Use of the tool and the reporting provided constitutes "
+                + "acceptance for use in an AS IS condition, and there are NO warranties, implied or otherwise, with regard to the analysis "
+                + "or its use. Any use of the tool and the reporting provided is at the user’s risk. In no event shall the copyright holder "
+                + "or OWASP be held liable for any damages whatsoever arising out of or in connection with the use of this tool, the analysis "
+                + "performed, or the resulting report.\n\n");
         LOGGER.debug("\n----------------------------------------------------\nBEGIN ANALYSIS\n----------------------------------------------------");
         LOGGER.info("Analysis Started");
         final long analysisStart = System.currentTimeMillis();
