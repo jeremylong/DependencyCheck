@@ -79,6 +79,9 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
                     <binFileExtensions>
                         <unix>.sh</unix>
                     </binFileExtensions>
+                    <repositoryLayout>flat</repositoryLayout>
+                    <repositoryName>lib</repositoryName>
+                    <useWildcardClassPath>true</useWildcardClassPath>
                     <configurationDirectory>plugins/*</configurationDirectory>
                     <includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
                 </configuration>
