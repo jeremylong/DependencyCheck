@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.analyzer;
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
+import com.google.common.collect.ImmutableList;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
@@ -29,6 +30,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -131,6 +133,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      * Launch bundle-audit.
      *
      * @param folder directory that contains bundle audit
+     * @param bundleAuditArgs the arguments to pass to bundle audit
      * @return a handle to the process
      * @throws AnalysisException thrown when there is an issue launching bundle
      * audit
@@ -162,7 +165,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                 bundleAuditWorkingDirectory = null;
             }
         }
-        File launchBundleAuditFromDirectory = bundleAuditWorkingDirectory != null ? bundleAuditWorkingDirectory : folder;
+        final File launchBundleAuditFromDirectory = bundleAuditWorkingDirectory != null ? bundleAuditWorkingDirectory : folder;
         builder.directory(launchBundleAuditFromDirectory);
         try {
             LOGGER.info("Launching: {} from {}", args, launchBundleAuditFromDirectory);
@@ -189,7 +192,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         // `bundle-audit version` command and seeing whether or not it succeeds (if it returns with an exit value of 0)
         final Process process;
         try {
-            List<String> bundleAuditArgs = new ArrayList<String>() {{ add("version"); }};
+            List<String> bundleAuditArgs = ImmutableList.of("version");
             process = launchBundleAudit(getSettings().getTempDirectory(), bundleAuditArgs);
         } catch (AnalysisException ae) {
             setEnabled(false);
@@ -210,17 +213,19 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             throw new InitializationException(msg);
         }
 
-        String bundleAuditVersionDetails;
+        final String bundleAuditVersionDetails;
         if (exitValue != 0) {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))) {
                 if (!reader.ready()) {
-                    LOGGER.warn("Unexpected exit value from bundle-audit process and error stream unexpectedly not ready to capture error details. Disabling {}. Exit value was: {}", ANALYZER_NAME, exitValue);
+                    LOGGER.warn("Unexpected exit value from bundle-audit process and error stream unexpectedly not ready to capture error details. "
+                            + "Disabling {}. Exit value was: {}", ANALYZER_NAME, exitValue);
                     setEnabled(false);
                     throw new InitializationException("Bundle-audit error stream unexpectedly not ready.");
                 } else {
                     final String line = reader.readLine();
                     setEnabled(false);
-                    LOGGER.warn("Unexpected exit value from bundle-audit process. Disabling {}. Exit value was: {}. error stream output from bundle-audit process was: {}", ANALYZER_NAME, exitValue, line);
+                    LOGGER.warn("Unexpected exit value from bundle-audit process. Disabling {}. Exit value was: {}. error stream output from bundle-audit "
+                            + "process was: {}", ANALYZER_NAME, exitValue, line);
                     throw new InitializationException("Unexpected exit value from bundle-audit process.");
                 }
             } catch (UnsupportedEncodingException ex) {
@@ -249,8 +254,8 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         if (isEnabled()) {
-            LOGGER.info("{} is enabled and is using bundle-audit with version details: {}. Note: It is necessary to manually run \"bundle-audit update\" "
-                    + "occasionally to keep its database up to date.", ANALYZER_NAME, bundleAuditVersionDetails);
+            LOGGER.info("{} is enabled and is using bundle-audit with version details: {}. Note: It is necessary to manually run "
+                    + "\"bundle-audit update\" occasionally to keep its database up to date.", ANALYZER_NAME, bundleAuditVersionDetails);
         }
     }
 
@@ -314,7 +319,8 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             needToDisableGemspecAnalyzer = false;
         }
         final File parentFile = dependency.getActualFile().getParentFile();
-        List<String> bundleAuditArgs = new ArrayList<String>() {{ add("check"); add("--verbose"); }};
+        final List<String> bundleAuditArgs = ImmutableList.of("check", "--verbose");
+
         final Process process = launchBundleAudit(parentFile, bundleAuditArgs);
         final int exitValue;
         try {

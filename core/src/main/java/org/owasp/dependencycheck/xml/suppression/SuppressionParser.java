@@ -130,6 +130,9 @@ public class SuppressionParser {
         }
     }
 
+    /**
+     * Load HTTPS schema resources locally from the JAR files resources.
+     */
     private static class ClassloaderResolver implements EntityResolver {
 
         @Override

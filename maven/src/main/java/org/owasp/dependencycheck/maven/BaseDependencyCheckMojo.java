@@ -1816,8 +1816,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         for (String loggerName : noisyLoggers) {
             try {
                 //This is actually a MavenSimpleLogger, but due to various classloader issues, can't work with the directly.
-                Logger l = LoggerFactory.getLogger(loggerName);
-                Field f = l.getClass().getSuperclass().getDeclaredField("currentLogLevel");
+                final Logger l = LoggerFactory.getLogger(loggerName);
+                final Field f = l.getClass().getSuperclass().getDeclaredField("currentLogLevel");
                 f.setAccessible(true);
                 f.set(l, LocationAwareLogger.ERROR_INT);
             } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {

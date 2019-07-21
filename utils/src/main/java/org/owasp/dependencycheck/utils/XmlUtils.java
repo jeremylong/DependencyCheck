@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.utils;
 
-import com.sun.org.apache.xerces.internal.impl.dtd.XMLContentSpec;
 import java.io.InputStream;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
