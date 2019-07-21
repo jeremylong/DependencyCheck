@@ -1041,10 +1041,10 @@ public final class CliParser {
         final String helpMsg = String.format("%n%s"
                 + " can be used to identify if there are any known CVE vulnerabilities in libraries utilized by an application. "
                 + "%s will automatically update required data from the Internet, such as the CVE and CPE data files from nvd.nist.gov.%n%n",
-                settings.getString("application.name", "DependencyCheck"),
-                settings.getString("application.name", "DependencyCheck"));
+                settings.getString(Settings.KEYS.APPLICATION_NAME, "DependencyCheck"),
+                settings.getString(Settings.KEYS.APPLICATION_NAME, "DependencyCheck"));
 
-        formatter.printHelp(settings.getString("application.name", "DependencyCheck"),
+        formatter.printHelp(settings.getString(Settings.KEYS.APPLICATION_NAME, "DependencyCheck"),
                 helpMsg,
                 options,
                 "",

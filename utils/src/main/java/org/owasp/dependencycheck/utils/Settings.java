@@ -83,11 +83,11 @@ public final class Settings {
         /**
          * The key to obtain the application name.
          */
-        public static final String APPLICATION_NAME = "application.name";
+        public static final String APPLICATION_NAME = "odc.application.name";
         /**
          * The key to obtain the application version.
          */
-        public static final String APPLICATION_VERSION = "application.version";
+        public static final String APPLICATION_VERSION = "odc.application.version";
         /**
          * The key to obtain the URL to retrieve the current release version
          * from.
@@ -97,7 +97,7 @@ public final class Settings {
          * The properties key indicating whether or not the cached data sources
          * should be updated.
          */
-        public static final String AUTO_UPDATE = "autoupdate";
+        public static final String AUTO_UPDATE = "odc.autoupdate";
         /**
          * The database driver class name. If this is not in the properties file
          * the embedded database is used.
