@@ -26,8 +26,8 @@
             </includes>
         </fileSet>
         <fileSet>
-            <outputDirectory>dependency-check/repo</outputDirectory>
-            <directory>${project.build.directory}/release/repo</directory>
+            <outputDirectory>dependency-check/lib</outputDirectory>
+            <directory>${project.build.directory}/release/lib</directory>
         </fileSet>
         <fileSet>
             <directory>.</directory>
