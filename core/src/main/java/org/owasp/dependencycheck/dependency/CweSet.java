@@ -63,6 +63,9 @@ public class CweSet implements Serializable {
 
     @Override
     public String toString() {
+        if (cwes.isEmpty()) {
+            return null;
+        }
         return cwes.stream().map(cwe -> CweDB.getFullName(cwe)).collect(Collectors.joining(", "));
     }
 
