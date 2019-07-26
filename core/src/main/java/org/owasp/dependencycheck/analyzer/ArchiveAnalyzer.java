@@ -96,6 +96,10 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     private static final Set<String> KNOWN_ZIP_EXT = Collections.unmodifiableSet(
             newHashSet("zip", "ear", "war", "jar", "sar", "apk", "nupkg", "aar"));
     /**
+     * The set of additional extensions we can handle with Zip methods
+     */
+    private final Set<String> ADDITIONAL_ZIP_EXT = new HashSet<>();
+    /**
      * The set of file extensions supported by this analyzer. Note for
      * developers, any additions to this list will need to be explicitly handled
      * in {@link #extractFiles(File, File, Engine)}.
@@ -134,7 +138,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         super.initialize(settings);
         initializeSettings();
     }
-
+    
     @Override
     protected FileFilter getFileFilter() {
         return fileFilter;
@@ -255,7 +259,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
 
         //make a copy
         final List<Dependency> dependencySet = findMoreDependencies(engine, tmpDir);
-
+        
         if (dependencySet != null && !dependencySet.isEmpty()) {
             for (Dependency d : dependencySet) {
                 if (d.getFilePath().startsWith(tmpDir.getAbsolutePath())) {
@@ -307,7 +311,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         if (ZIP_FILTER.accept(dependency.getActualFile()) && isZipFileActuallyJarFile(dependency)) {
             final File tempDir = getNextTempDirectory();
             final String fileName = dependency.getFileName();
-
+            
             LOGGER.info("The zip file '{}' appears to be a JAR file, making a copy and analyzing it as a JAR.", fileName);
             final File tmpLoc = new File(tempDir, fileName.substring(0, fileName.length() - 3) + "jar");
             //store the archives sha1 and change it so that the engine doesn't think the zip and jar file are the same
@@ -390,7 +394,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 return;
             }
             archiveExt = archiveExt.toLowerCase();
-
+            
             final FileInputStream fis;
             try {
                 fis = new FileInputStream(archive);
@@ -405,7 +409,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             GzipCompressorInputStream gin = null;
             BZip2CompressorInputStream bzin = null;
             try {
-                if (KNOWN_ZIP_EXT.contains(archiveExt)) {
+                if (KNOWN_ZIP_EXT.contains(archiveExt) || ADDITIONAL_ZIP_EXT.contains(archiveExt)) {
                     in = new BufferedInputStream(fis);
                     ensureReadableJar(archiveExt, in);
                     zin = new ZipArchiveInputStream(in);
@@ -650,6 +654,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         if (additionalZipExt != null) {
             final String[] ext = additionalZipExt.split("\\s*,\\s*");
             Collections.addAll(extensions, ext);
+            Collections.addAll(ADDITIONAL_ZIP_EXT, ext);
         }
         fileFilter = FileFilterBuilder.newInstance().addExtensions(extensions).build();
     }
