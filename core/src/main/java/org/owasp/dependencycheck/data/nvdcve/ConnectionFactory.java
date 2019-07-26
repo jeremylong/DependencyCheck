@@ -112,6 +112,7 @@ public final class ConnectionFactory {
         if (connectionString != null) {
             return;
         }
+        final boolean autoUpdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);
         Connection conn = null;
         try {
             //load the driver if necessary
@@ -140,10 +141,9 @@ public final class ConnectionFactory {
                 LOGGER.debug("Unable to retrieve the database connection string", ex);
                 throw new DatabaseException("Unable to retrieve the database connection string", ex);
             }
-
             boolean shouldCreateSchema = false;
             try {
-                if (connectionString.startsWith("jdbc:h2:file:")) { //H2
+                if (autoUpdate && connectionString.startsWith("jdbc:h2:file:")) { //H2
                     shouldCreateSchema = !h2DataFileExists();
                     LOGGER.debug("Need to create DB Structure: {}", shouldCreateSchema);
                 }
@@ -421,9 +421,14 @@ public final class ConnectionFactory {
                 LOGGER.debug("DC Schema: {}", appDbVersion.toString());
                 LOGGER.debug("DB Schema: {}", db.toString());
                 if (appDbVersion.compareTo(db) > 0) {
-                    updateSchema(conn, appDbVersion, db);
-                    if (++callDepth < 10) {
-                        ensureSchemaVersion(conn);
+                    final boolean autoUpdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);
+                    if (autoUpdate) {
+                        updateSchema(conn, appDbVersion, db);
+                        if (++callDepth < 10) {
+                            ensureSchemaVersion(conn);
+                        }
+                    } else {
+                        throw new DatabaseException("Old database schema identified - please execute dependency-check without the no-update configuration to continue");
                     }
                 }
             } else {

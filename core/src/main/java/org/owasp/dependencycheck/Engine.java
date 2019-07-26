@@ -1015,20 +1015,17 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     public void openDatabase(boolean readOnly, boolean lockRequired) throws DatabaseException {
         if (mode.isDatabaseRequired() && database == null) {
-            //needed to update schema any required schema changes
-            database = new CveDB(settings);
-            if (readOnly
-                    && ConnectionFactory.isH2Connection(settings)
-                    && settings.getString(Settings.KEYS.DB_CONNECTION_STRING).contains("file:%s")) {
-                H2DBLock lock = null;
-                try {
+            H2DBLock lock = null;
+            try {
+                if (lockRequired && ConnectionFactory.isH2Connection(settings)) {
+                    lock = new H2DBLock(settings);
+                    lock.lock();
+                }
+                if (readOnly
+                        && ConnectionFactory.isH2Connection(settings)
+                        && settings.getString(Settings.KEYS.DB_CONNECTION_STRING).contains("file:%s")) {
                     final File db = ConnectionFactory.getH2DataFile(settings);
                     if (db.isFile()) {
-                        database.close();
-                        if (lockRequired) {
-                            lock = new H2DBLock(settings);
-                            lock.lock();
-                        }
                         LOGGER.debug("copying database");
                         final File temp = settings.getTempDirectory();
                         final File tempDB = new File(temp, db.getName());
@@ -1040,15 +1037,23 @@ public class Engine implements FileFilter, AutoCloseable {
                             settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connStr + "ACCESS_MODE_DATA=r");
                         }
                         database = new CveDB(settings);
+                    } else {
+                        throw new DatabaseException("Unable to open database - configured database file does not exist: " + db.toString());
                     }
-                } catch (IOException ex) {
-                    throw new DatabaseException("Unable to open db in read only mode", ex);
-                } catch (H2DBLockException ex) {
-                    throw new DatabaseException("Failed to obtain lock - unable to open db in read only mode", ex);
-                } finally {
-                    if (lock != null) {
-                        lock.release();
-                    }
+                } else {
+                    database = new CveDB(settings);
+                }
+            } catch (IOException ex) {
+                if (readOnly) {
+                    throw new DatabaseException("Unable to open database in read only mode", ex);
+                } else {
+                    throw new DatabaseException("Unable to open database", ex);
+                }
+            } catch (H2DBLockException ex) {
+                throw new DatabaseException("Failed to obtain lock - unable to open database", ex);
+            } finally {
+                if (lock != null) {
+                    lock.release();
                 }
             }
         }
