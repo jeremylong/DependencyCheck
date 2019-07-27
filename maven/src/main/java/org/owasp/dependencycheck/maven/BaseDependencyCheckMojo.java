@@ -670,7 +670,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
     /**
      * Skip analysis for dependencies which type matches this regular
-     * expression.
+     * expression. This filters on the `type` of dependency as defined
+     * in the dependency section: jar, pom, test-jar, etc.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "skipArtifactType")
