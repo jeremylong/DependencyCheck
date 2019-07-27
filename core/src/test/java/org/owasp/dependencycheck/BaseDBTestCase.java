@@ -26,6 +26,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.junit.Before;
+import org.owasp.dependencycheck.data.nvdcve.ConnectionFactory;
+import org.owasp.dependencycheck.utils.H2DBLock;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +82,21 @@ public abstract class BaseDBTestCase extends BaseTest {
                         IOUtils.copy(zin, dest);
                     } catch (Throwable ex) {
                         LOGGER.error("", ex);
+                    }
+                    //update the schema
+                    H2DBLock dblock = null;
+                    try {
+                        if (ConnectionFactory.isH2Connection(getSettings())) {
+                            dblock = new H2DBLock(getSettings());
+                            LOGGER.debug("locking for update");
+                            dblock.lock();
+                        }
+                        ConnectionFactory factory = new ConnectionFactory(getSettings());
+                        factory.initialize();
+                    } finally {
+                        if (dblock != null) {
+                            dblock.release();
+                        }
                     }
                 }
             }
