@@ -908,6 +908,7 @@ public class Engine implements FileFilter, AutoCloseable {
                     LOGGER.debug("locking for update");
                     dblock.lock();
                 }
+                //lock is not needed as we already have the lock held
                 openDatabase(false, false);
                 LOGGER.info("Checking for updates");
                 final long updateStart = System.currentTimeMillis();
@@ -934,6 +935,7 @@ public class Engine implements FileFilter, AutoCloseable {
                 }
                 LOGGER.info("Check for updates complete ({} ms)", System.currentTimeMillis() - updateStart);
                 if (remainOpen) {
+                    //lock is not needed as we already have the lock held
                     openDatabase(true, false);
                 }
             } catch (H2DBLockException ex) {
@@ -1026,11 +1028,10 @@ public class Engine implements FileFilter, AutoCloseable {
                         && settings.getString(Settings.KEYS.DB_CONNECTION_STRING).contains("file:%s")) {
                     final File db = ConnectionFactory.getH2DataFile(settings);
                     if (db.isFile()) {
-                        LOGGER.debug("copying database");
                         final File temp = settings.getTempDirectory();
                         final File tempDB = new File(temp, db.getName());
+                        LOGGER.error("copying database {} to {}", db.toPath(), temp.toPath());
                         Files.copy(db.toPath(), tempDB.toPath());
-                        LOGGER.debug("copying complete '{}'", temp.toPath());
                         settings.setString(Settings.KEYS.H2_DATA_DIRECTORY, temp.getPath());
                         final String connStr = settings.getString(Settings.KEYS.DB_CONNECTION_STRING);
                         if (!connStr.contains("ACCESS_MODE_DATA")) {
