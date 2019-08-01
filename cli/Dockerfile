@@ -1,44 +1,40 @@
-FROM openjdk:8-jre-slim
+FROM azul/zulu-openjdk-alpine:11 AS jlink
+RUN jlink --compress=2 --module-path /opt/java/openjdk/jmods --add-modules java.base,java.compiler,java.datatransfer,jdk.crypto.ec,java.desktop,java.instrument,java.logging,java.management,java.naming,java.rmi,java.scripting,java.security.sasl,java.sql,java.transaction.xa,java.xml,jdk.unsupported --output /jlinked
+
+FROM mcr.microsoft.com/dotnet/core/runtime:2.2-alpine3.9
 
 MAINTAINER Jeremy Long <jeremy.long@owasp.org>
 
-## For dotnet core installation see
-## https://dotnet.microsoft.com/download/linux-package-manager/debian9/sdk-current
-## https://stackoverflow.com/a/47545040
-
 ARG VERSION
+ARG POSTGRES_DRIVER_VERSION=42.2.6
+ARG MYSQL_DRIVER_VERSION=8.0.17
+
 ENV user=dependencycheck
-ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
+ENV JAVA_HOME=/opt/jdk
+ENV JAVA_OPTS=-Danalyzer.assembly.dotnet.path=/usr/bin/dotnet -Danalyzer.bundle.audit.path=/usr/bin/bundle-audit
 
-## ensure everything is up-to-date
-RUN apt-get update                                                                                   && \
-    apt-get install -y --no-install-recommends ruby wget gpg apt-transport-https ca-certificates unzip && \
-    gem install bundle-audit                                                                         && \
-    gem cleanup                                                                                      && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg  && \
-    mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/                                                     && \
-    wget -q https://packages.microsoft.com/config/debian/9/prod.list                                 && \
-    mv prod.list /etc/apt/sources.list.d/microsoft-prod.list                                         && \
-    chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg                                         && \
-    chown root:root /etc/apt/sources.list.d/microsoft-prod.list                                      && \
-    apt-get update                                                                                   && \
-    apt-get install -y --no-install-recommends dotnet-sdk-2.2                                        && \
-    apt-get --purge remove -y wget gpg apt-transport-https                                           && \
-    rm -rf /var/lib/apt/lists/*
+COPY --from=jlink /jlinked /opt/jdk/
 
 ADD target/dependency-check-${VERSION}-release.zip /
 
-RUN unzip dependency-check-${VERSION}-release.zip -d /usr/share/                                     && \
+RUN apk update                                                                                       && \
+    apk add --no-cache --virtual .build-deps curl tar                                                && \
+    apk add --no-cache ruby ruby-rdoc                                                                && \
+    gem install bundle-audit                                                                         && \
+    bundle audit update                                                                              && \
+    unzip dependency-check-${VERSION}-release.zip -d /usr/share/                                     && \
     rm dependency-check-${VERSION}-release.zip                                                       && \
-    useradd -ms /bin/bash ${user}                                                                    && \
+    cd /usr/share/dependency-check/plugins                                                           && \
+    curl -Os "https://jdbc.postgresql.org/download/postgresql-${POSTGRES_DRIVER_VERSION}.jar"        && \
+    curl -Ls "https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-${MYSQL_DRIVER_VERSION}.tar.gz" \
+        | tar -xz --directory "/usr/share/dependency-check/plugins" --strip-components=1 --no-same-owner \
+            "mysql-connector-java-${MYSQL_DRIVER_VERSION}/mysql-connector-java-${MYSQL_DRIVER_VERSION}.jar" && \
+    addgroup -S ${user} && adduser -S -G ${user} ${user}                                             && \
     chown -R ${user}:${user} /usr/share/dependency-check                                             && \
     mkdir /report                                                                                    && \
     chown -R ${user}:${user} /report                                                                 && \
-    apt-get autoremove -y                                                                            && \
-    rm -rf /var/lib/apt/lists/* /tmp/*
- 
+    apk del .build-deps
+    
 USER ${user}
 
 VOLUME ["/src" "/usr/share/dependency-check/data" "/report"]
