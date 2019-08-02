@@ -228,8 +228,18 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
         try {
             final byte[] fileContent = IOUtils.toByteArray(new FileInputStream(dependency.getActualFile()));
             final ScannerFacade scanner = new ScannerFacade(jsRepository);
-            final List<JsLibraryResult> results = scanner.scanScript(dependency.getActualFile().getAbsolutePath(), fileContent, 0);
-
+            final List<JsLibraryResult> results;
+            try {
+                results = scanner.scanScript(dependency.getActualFile().getAbsolutePath(), fileContent, 0);
+            } catch (StackOverflowError ex) {
+                final String msg = String.format("An error occured trying to analyze %s. "
+                        + "To resolve this error please try increasing the Java stack size to "
+                        + "8mb and re-run dependency-check:%n%n"
+                        + "(win) : set JAVA_OPTS=\"-Xss8192m -Xms4096m -Xmx12288m\"%n"
+                        + "(*nix): export JAVA_OPTS=\"-Xss8192m -Xms4096m -Xmx12288m\"%n%n",
+                        dependency.getDisplayFileName());
+                throw new AnalysisException(msg, ex);
+            }
             if (results.size() > 0) {
                 for (JsLibraryResult libraryResult : results) {
 
