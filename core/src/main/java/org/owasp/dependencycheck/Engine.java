@@ -1030,7 +1030,7 @@ public class Engine implements FileFilter, AutoCloseable {
                     if (db.isFile()) {
                         final File temp = settings.getTempDirectory();
                         final File tempDB = new File(temp, db.getName());
-                        LOGGER.error("copying database {} to {}", db.toPath(), temp.toPath());
+                        LOGGER.debug("copying database {} to {}", db.toPath(), temp.toPath());
                         Files.copy(db.toPath(), tempDB.toPath());
                         settings.setString(Settings.KEYS.H2_DATA_DIRECTORY, temp.getPath());
                         final String connStr = settings.getString(Settings.KEYS.DB_CONNECTION_STRING);
