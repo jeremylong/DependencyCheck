@@ -157,11 +157,11 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
                         throw new AnalysisException("Invalid credentails provided for OSS Index", ex);
                     }
                     LOG.debug("Error requesting component reports", ex);
-                    throw new AnalysisException("Failed to request component-reports: " + ex.getMessage(), ex);
+                    throw new AnalysisException("Failed to request component-reports", ex);
                 } catch (Exception e) {
                     LOG.debug("Error requesting component reports", e);
                     failed = true;
-                    throw new AnalysisException("Failed to request component-reports: " + e.getMessage(), e);
+                    throw new AnalysisException("Failed to request component-reports", e);
                 }
             }
         }
