@@ -210,10 +210,17 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        False positive per #2001
+        False positive per #2001 & #2109
         ]]></notes>
-        <gav regex="true">^io\.prometheus:simpleclient_hotspot:.*$</gav>
+        <gav regex="true">^io\.prometheus:simple.*$</gav>
         <cve>CVE-2019-3826</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per  #2109
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.prometheus/simpleclient_logback@.*$</packageUrl>
+        <cpe>cpe:/a:logback:logback</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
