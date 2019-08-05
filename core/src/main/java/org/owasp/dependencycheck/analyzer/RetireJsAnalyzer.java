@@ -235,8 +235,8 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
                 final String msg = String.format("An error occured trying to analyze %s. "
                         + "To resolve this error please try increasing the Java stack size to "
                         + "8mb and re-run dependency-check:%n%n"
-                        + "(win) : set JAVA_OPTS=\"-Xss8192m -Xms4096m -Xmx12288m\"%n"
-                        + "(*nix): export JAVA_OPTS=\"-Xss8192m -Xms4096m -Xmx12288m\"%n%n",
+                        + "(win) : set JAVA_OPTS=\"-Xss8192k\"%n"
+                        + "(*nix): export JAVA_OPTS=\"-Xss8192k\"%n%n",
                         dependency.getDisplayFileName());
                 throw new AnalysisException(msg, ex);
             }
