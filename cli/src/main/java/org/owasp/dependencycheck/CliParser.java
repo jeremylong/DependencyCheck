@@ -210,7 +210,7 @@ public final class CliParser {
                     }
                 }
             } else if ("o".equalsIgnoreCase(argumentName.substring(0, 1)) && !f.isDirectory()) {
-                if (f.getParentFile().isDirectory() && !f.mkdir()) {
+                if (f.getParentFile() != null && f.getParentFile().isDirectory() && !f.mkdir()) {
                     isValid = false;
                     final String msg = String.format("Invalid '%s' argument: '%s' - unable to create the output directory", argumentName, path);
                     throw new FileNotFoundException(msg);
