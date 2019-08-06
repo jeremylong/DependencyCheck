@@ -161,7 +161,8 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
 #foreach($id in $dependency.getSoftwareIdentifiers())
                 <vulnerabilityIds #if($id.confidence)confidence="$id.confidence"#end>
                     <id>$enc.xml($id.value)</id>
-#if( $id.url )      <url>$enc.xml($id.url)</url>
+#if( $id.url )
+                    <url>$enc.xml($id.url)</url>
 #end
 #if($id.description)<description>$enc.xml($id.description)</description>
 #end
