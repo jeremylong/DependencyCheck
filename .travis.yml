@@ -20,7 +20,8 @@ addons:
 
 cache:
   directories:
-    - "$HOME/.m2/repository"
+    - "core/target/data"
+    - "maven/target/local-repo/org/owasp/dependency-check-data"
     - "$HOME/.sonar/cache"
 
 # Install binary for golang
