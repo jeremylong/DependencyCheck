@@ -43,7 +43,9 @@ CREATE INDEX idxCpe ON cpeEntry(vendor, product);
 CREATE INDEX idxSoftwareCve ON software(cveid);
 CREATE INDEX idxSoftwareCpe ON software(cpeEntryId);
 
-CREATE INDEX idxCpeEntry ON cpeEntry(part, vendor, product, version, update_version, edition, lang, sw_edition, target_sw, target_hw, other);
+#on mssql we cannot index all columns due to key length issues
+CREATE INDEX idxCpeEntry ON cpeEntry(part, vendor, product, version);
+#, update_version, edition, lang, sw_edition, target_sw, target_hw, other);
 
 CREATE TABLE properties (id varchar(50) PRIMARY KEY, value varchar(500));
 INSERT INTO properties(id,value) VALUES ('version','4.1');
