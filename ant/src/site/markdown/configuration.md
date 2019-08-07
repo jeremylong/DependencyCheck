@@ -132,6 +132,6 @@ cveUrl20Base         | Base URL for each year's CVE 2.0, the %d will be replaced
 dataDirectory        | Data directory that is used to store the local copy of the NVD. This should generally not be changed. | data
 databaseDriverName   | The name of the database driver. Example: org.h2.Driver.                 | &nbsp;
 databaseDriverPath   | The path to the database driver JAR file; only used if the driver is not in the class path. | &nbsp;
-connectionString     | The connection string used to connect to the database.                   | &nbsp;
+connectionString     | The connection string used to connect to the database. See using a [database server](../data/database.html). | &nbsp;
 databaseUser         | The username used when connecting to the database.                       | &nbsp;
 databasePassword     | The password used when connecting to the database.                       | &nbsp;

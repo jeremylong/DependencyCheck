@@ -86,7 +86,7 @@ cve          | urlBase           | Base URL for each year's CVE JSON data feed, 
 data         | directory         | Sets the data directory to hold SQL CVEs contents. This should generally not be changed.                             | &nbsp;                                                              |
 data         | driver            | The name of the database driver. Example: org.h2.Driver.                                                             | &nbsp;                                                              |
 data         | driverPath        | The path to the database driver JAR file; only used if the driver is not in the class path.                          | &nbsp;                                                              |
-data         | connectionString  | The connection string used to connect to the database.                                                               | &nbsp;                                                              |
+data         | connectionString  | The connection string used to connect to the database. See using a [database server](../data/database.html).         | &nbsp;                                                              |
 data         | username          | The username used when connecting to the database.                                                                   | &nbsp;                                                              |
 data         | password          | The password used when connecting to the database.                                                                   | &nbsp;                                                              |
 

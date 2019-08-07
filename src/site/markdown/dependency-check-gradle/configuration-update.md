@@ -62,16 +62,16 @@ The following properties can be configured in the dependencyCheck task. However,
 may be the cvedUrl properties, which can be used to host a mirror of the NVD within an enterprise environment.
 Note, if ANY of the cve configuration group are set - they should all be set to ensure things work as expected.
 
-Config Group | Property          | Description                                                                                 | Default Value                                                       |
--------------|-------------------|---------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
-cve          | urlModified       | URL for the modified CVE JSON data feed.                                                    | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-modified.json.gz |
-cve          | urlBase           | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.         | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-%d.json.gz       |
-data         | directory         | Sets the data directory to hold SQL CVEs contents. This should generally not be changed.    | &nbsp;                                                              |
-data         | driver            | The name of the database driver. Example: org.h2.Driver.                                    | &nbsp;                                                              |
-data         | driverPath        | The path to the database driver JAR file; only used if the driver is not in the class path. | &nbsp;                                                              |
-data         | connectionString  | The connection string used to connect to the database.                                      | &nbsp;                                                              |
-data         | username          | The username used when connecting to the database.                                          | &nbsp;                                                              |
-data         | password          | The password used when connecting to the database.                                          | &nbsp;                                                              |
+Config Group | Property          | Description                                                                                                  | Default Value                                                       |
+-------------|-------------------|--------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
+cve          | urlModified       | URL for the modified CVE JSON data feed.                                                                     | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-modified.json.gz |
+cve          | urlBase           | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.                          | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-%d.json.gz       |
+data         | directory         | Sets the data directory to hold SQL CVEs contents. This should generally not be changed.                     | &nbsp;                                                              |
+data         | driver            | The name of the database driver. Example: org.h2.Driver.                                                     | &nbsp;                                                              |
+data         | driverPath        | The path to the database driver JAR file; only used if the driver is not in the class path.                  | &nbsp;                                                              |
+data         | connectionString  | The connection string used to connect to the database. See using a [database server](../data/database.html). | &nbsp;                                                              |
+data         | username          | The username used when connecting to the database.                                                           | &nbsp;                                                              |
+data         | password          | The password used when connecting to the database.                                                           | &nbsp;                                                              |
 
 #### Example
 ```groovy
