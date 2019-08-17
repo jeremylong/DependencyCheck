@@ -1822,7 +1822,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 f.setAccessible(true);
                 f.set(l, LocationAwareLogger.ERROR_INT);
             } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {
-                getLog().warn("Failed to reset the log level of " + loggerName + ", it will continue being noisy.", e);
+                getLog().debug("Failed to reset the log level of " + loggerName + ", it will continue being noisy.", e);
             }
         }
     }
