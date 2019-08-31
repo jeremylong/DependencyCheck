@@ -144,7 +144,7 @@ public class CveDBIT extends BaseDBTestCase {
         }
         assertTrue("Expected " + expected + ", but was not identified", found);
 
-        cpe = builder.part(Part.APPLICATION).vendor("fasterxml").product("jackson-databind").version("2.6.3").build();
+        cpe = builder.part(Part.APPLICATION).vendor("fasterxml").product("jackson-databind").version("2.8.1").build();
         results = instance.getVulnerabilities(cpe);
         assertTrue(results.size() >= 1);
 
