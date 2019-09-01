@@ -40,8 +40,8 @@ if (!references.find { node -> node.text() == '1751-child-two:compile' }) {
 	System.out.println("Should find reference from 1751-child-two to jackson-databind");
 	return false
 }
-if (!databindDep.vulnerabilities.vulnerability.name.find { node -> node.text() == 'CVE-2017-15095' }) {
-	System.out.println("Failed to identify vulnerability CVE-2017-15095 in Jackson through kafka-avro-serializer");
+if (!databindDep.vulnerabilities.vulnerability.name.find { node -> node.text() == 'CVE-2018-7489' }) {
+	System.out.println("Failed to identify vulnerability CVE-2018-7489 in Jackson");
     return false;
 }
 
