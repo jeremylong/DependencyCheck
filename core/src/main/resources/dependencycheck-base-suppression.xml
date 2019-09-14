@@ -889,7 +889,7 @@
         <packageUrl regex="true">^pkg:maven/org\.apache\.parquet/parquet\-hadoop@.*$</packageUrl>
         <cpe>cpe:/a:apache:hadoop</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         Jetbrains annotations is not the IDE
         ]]></notes>
