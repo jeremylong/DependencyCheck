@@ -83,7 +83,7 @@ public class DataCacheFactory {
                 try {
                     cacheDirectory = new File(settings.getDataDirectory(), CACHE_DIRECTORY);
                 } catch (IOException ex) {
-                    throw new CacheException("Unable to obtain disk cache directory path");
+                    throw new CacheException("Unable to obtain disk cache directory path", ex);
                 }
                 if (!cacheDirectory.isDirectory() && !cacheDirectory.mkdirs()) {
                     throw new CacheException("Unable to create disk cache: " + cacheDirectory.toString());
