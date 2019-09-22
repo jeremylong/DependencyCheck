@@ -36,10 +36,14 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.ProtectionDomain;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * A simple settings container that wraps the dependencycheck.properties file.
@@ -65,7 +69,10 @@ public final class Settings {
      * The properties.
      */
     private Properties props = null;
-
+    /**
+     * The collection of properties that should be masked when logged.
+     */
+    private List<Predicate<String>> maskedKeys;
     /**
      * A reference to the temporary directory; used in case it needs to be
      * deleted during cleanup.
@@ -593,6 +600,11 @@ public final class Settings {
          * will be pretty printed.
          */
         public static final String PRETTY_PRINT = "odc.reports.pretty.print";
+        /**
+         * The properties key setting which other keys should be considered
+         * sensitive and subsequently masked when logged.
+         */
+        private static String MASKED_PROPERTIES = "odc.settings.mask";
 
         /**
          * private constructor because this is a "utility" class containing
@@ -671,6 +683,46 @@ public final class Settings {
         }
     }
 
+    private List<Predicate<String>> getMaskedKeys() {
+        return Arrays.asList(getArray(Settings.KEYS.MASKED_PROPERTIES))
+                .stream()
+                .map(v -> Pattern.compile(v).asPredicate())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Check if a given key is considered to have a value with sensitive data.
+     */
+    private boolean isKeyMasked(@NotNull String key) {
+        return getMaskedKeys().stream().anyMatch(maskExp -> maskExp.test(key));
+    }
+
+    /**
+     * Obtains the printable/loggable value for a given key/value pair. This
+     * will mask some values so as to not leak sensitive information.
+     *
+     * @param key the property key
+     * @param value the property value
+     * @return the printable value
+     */
+    protected String getPrintableValue(@NotNull String key, String value) {
+        String printableValue = null;
+        if (value != null) {
+            printableValue = isKeyMasked(key) ? "********" : value;
+        }
+        return printableValue;
+    }
+
+    /**
+     * Initializes the masked keys collection. This is done outside of the
+     * {@link #initialize(java.lang.String)} method because a caller may use the
+     * {@link #mergeProperties(java.io.File)} to add additional properties after
+     * the call to initialize.
+     */
+    protected void initMaskedKeys() {
+        maskedKeys = getMaskedKeys();
+    }
+
     /**
      * Logs the properties. This will not log any properties that contain
      * 'password' in the key.
@@ -680,25 +732,21 @@ public final class Settings {
      */
     private void logProperties(@NotNull final String header, @NotNull final Properties properties) {
         if (LOGGER.isDebugEnabled()) {
+            initMaskedKeys();
             final StringWriter sw = new StringWriter();
             try (PrintWriter pw = new PrintWriter(sw)) {
                 pw.format("%s:%n%n", header);
                 final Enumeration<?> e = properties.propertyNames();
                 while (e.hasMoreElements()) {
                     final String key = (String) e.nextElement();
-                    if (key.contains("password")) {
-                        pw.format("%s='*****'%n", key);
-                    } else {
-                        final String value = properties.getProperty(key);
-                        if (value != null) {
-                            pw.format("%s='%s'%n", key, value);
-                        }
+                    final String value = getPrintableValue(key, properties.getProperty(key));
+                    if (value != null) {
+                        pw.format("%s='%s'%n", key, value);
                     }
                 }
                 pw.flush();
                 LOGGER.debug(sw.toString());
             }
-
         }
     }
 

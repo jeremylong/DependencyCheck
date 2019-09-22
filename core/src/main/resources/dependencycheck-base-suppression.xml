@@ -177,6 +177,7 @@
             10. auth0 is a javascript library (#1925)
             11. JAR files should not be identified as github
             12. <cpe>cpe:/a:data-tools_project:data_tools</cpe> is a python project #1961
+            13. flow_project reports an Ethereum token issue
         ]]></notes>
         <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)$</filePath>
         <cpe>cpe:/a:dash:dash</cpe>
@@ -193,6 +194,7 @@
         <cpe>cpe:/a:auth0:auth0</cpe>
         <cpe>cpe:/a:github:github</cpe>
         <cpe>cpe:/a:data-tools_project:data_tools</cpe>
+        <cpe>cpe:/a:flow_project:flow</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -584,6 +586,13 @@
         FP per #2031
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.wildfly/wildfly\-microprofile\-config\-implementation@.*$</packageUrl>
+        <cpe regex="true">cpe:/a:(wildfly|redhat):wildfly.*</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2202
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.wildfly.*(common|config|cli|naming|security|elytron|arquillian|ejb|weld|naming|manager|swarm|transaction|undertow).*$</packageUrl>
         <cpe regex="true">cpe:/a:(wildfly|redhat):wildfly.*</cpe>
     </suppress>
     <suppress base="true">
@@ -1076,6 +1085,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2178 - the gradle api is versioned differently than gradle itself. This causes FP.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.android\.tools\.build/gradle\-api@.*$</packageUrl>
+        <cpe>cpe:/a:gradle:gradle</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         False positive: see https://github.com/jeremylong/DependencyCheck/issues/1949
         ]]></notes>
         <gav regex="true">^io\.springfox:springfox-.+:.*$</gav>
@@ -1405,6 +1421,13 @@
         False positive suppression per issue #664 for JJWT - A Java and Android JSON Web Token library
         ]]></notes>
         <gav regex="true">^io\.jsonwebtoken:jjwt:.*$</gav>
+        <cpe>cpe:/a:sonatype:nexus</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2151
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.vertx/vertx\-auth\-common@.*$</packageUrl>
         <cpe>cpe:/a:sonatype:nexus</cpe>
     </suppress>
     <suppress base="true">
@@ -1772,6 +1795,41 @@
         ]]></notes>
         <sha1>73a51faadb407dccdbd77234e0d5a0a648665692</sha1>
         <cpe>cpe:/a:apache:xerces2_java</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2186
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.lightbend\.akka/akka\-stream\-alpakka\-xml_2\.12@.*$</packageUrl>
+        <cpe>cpe:/a:akka:akka</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2191
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.vaadin\.(addon|external).*$</packageUrl>
+        <cpe>cpe:/a:vaadin:vaadin</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2191
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.vaadin/.*(flow|theme|mixin|style|widget).*$</packageUrl>
+        <cpe>cpe:/a:vaadin:vaadin</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2191
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.webjars\.(bower|bowergithub|npm).*$</packageUrl>
+        <cpe>cpe:/a:vaadin:vaadin</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2186
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.lightbend\.akka/akka\-stream\-alpakka\-xml_2\.12@.*$</packageUrl>
+        <cpe>cpe:/a:lightbend:akka</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
