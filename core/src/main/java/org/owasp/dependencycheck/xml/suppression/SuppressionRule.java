@@ -491,11 +491,13 @@ public class SuppressionRule {
                 }
                 if (!remove && v.getCwes() != null) {
                     for (String entry : this.cwe) {
-                        final String toMatch = String.format("CWE-%s", entry);
-                        if (v.getCwes().stream().anyMatch(toTest -> toMatch.regionMatches(0, toTest, 0, toMatch.length()))) {
-                            remove = true;
-                            removeVulns.add(v);
-                            break;
+                        if (this.cwe != null) {
+                            final String toMatch = String.format("CWE-%s", entry);
+                            if (v.getCwes().stream().anyMatch(toTest -> toMatch.regionMatches(0, toTest, 0, toMatch.length()))) {
+                                remove = true;
+                                removeVulns.add(v);
+                                break;
+                            }
                         }
                     }
                 }
