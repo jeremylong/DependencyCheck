@@ -445,20 +445,20 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * access artifactory
      */
     @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "artifactoryAnalyzerServerId", defaultValue = "artifactory")
+    @Parameter(property = "artifactoryAnalyzerServerId")
     private String artifactoryAnalyzerServerId;
     /**
      * The username (only used with API token) to connect to Artifactory
      * instance
      */
     @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "artifactoryAnalyzerUsername", defaultValue = "artifactory")
+    @Parameter(property = "artifactoryAnalyzerUsername")
     private String artifactoryAnalyzerUsername;
     /**
      * The API token to connect to Artifactory instance
      */
     @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "artifactoryAnalyzerApiToken", defaultValue = "artifactory")
+    @Parameter(property = "artifactoryAnalyzerApiToken")
     private String artifactoryAnalyzerApiToken;
     /**
      * The bearer token to connect to Artifactory instance
@@ -476,7 +476,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Whether Artifactory should be accessed through a proxy or not
      */
     @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "artifactoryAnalyzerUseProxy", defaultValue = "artifactory")
+    @Parameter(property = "artifactoryAnalyzerUseProxy")
     private Boolean artifactoryAnalyzerUseProxy;
     /**
      * Whether the Artifactory analyzer should be run in parallel or not.
