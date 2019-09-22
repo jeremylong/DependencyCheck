@@ -604,7 +604,7 @@ public final class Settings {
          * The properties key setting which other keys should be considered
          * sensitive and subsequently masked when logged.
          */
-        private static String MASKED_PROPERTIES = "odc.settings.mask";
+        private static final String MASKED_PROPERTIES = "odc.settings.mask";
 
         /**
          * private constructor because this is a "utility" class containing
@@ -683,6 +683,11 @@ public final class Settings {
         }
     }
 
+    /**
+     * Returns the list of keys to mask.
+     *
+     * @return the list of keys to mask
+     */
     private List<Predicate<String>> getMaskedKeys() {
         return Arrays.asList(getArray(Settings.KEYS.MASKED_PROPERTIES))
                 .stream()
@@ -692,6 +697,10 @@ public final class Settings {
 
     /**
      * Check if a given key is considered to have a value with sensitive data.
+     *
+     * @param key the key to determine if the property should be masked
+     * @return <code>true</code> if the key is for a sensitive property value;
+     * otherwise <code>false</code>
      */
     private boolean isKeyMasked(@NotNull String key) {
         return getMaskedKeys().stream().anyMatch(maskExp -> maskExp.test(key));

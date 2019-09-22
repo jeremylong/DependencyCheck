@@ -30,7 +30,6 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -192,7 +191,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         // `bundle-audit version` command and seeing whether or not it succeeds (if it returns with an exit value of 0)
         final Process process;
         try {
-            List<String> bundleAuditArgs = ImmutableList.of("version");
+            final List<String> bundleAuditArgs = ImmutableList.of("version");
             process = launchBundleAudit(getSettings().getTempDirectory(), bundleAuditArgs);
         } catch (AnalysisException ae) {
             setEnabled(false);
@@ -224,8 +223,8 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                 } else {
                     final String line = reader.readLine();
                     setEnabled(false);
-                    LOGGER.warn("Unexpected exit value from bundle-audit process. Disabling {}. Exit value was: {}. error stream output from bundle-audit "
-                            + "process was: {}", ANALYZER_NAME, exitValue, line);
+                    LOGGER.warn("Unexpected exit value from bundle-audit process. Disabling {}. Exit value was: {}. "
+                            + "error stream output from bundle-audit process was: {}", ANALYZER_NAME, exitValue, line);
                     throw new InitializationException("Unexpected exit value from bundle-audit process.");
                 }
             } catch (UnsupportedEncodingException ex) {

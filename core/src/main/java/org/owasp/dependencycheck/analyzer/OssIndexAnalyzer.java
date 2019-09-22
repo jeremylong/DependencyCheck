@@ -99,17 +99,17 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
      * Lock to protect fetching state.
      */
     private final Object fetchMutex = new Object();
-    
+
     @Override
     public String getName() {
         return "Sonatype OSS Index Analyzer";
     }
-    
+
     @Override
     public AnalysisPhase getAnalysisPhase() {
         return AnalysisPhase.FINDING_ANALYSIS_PHASE2;
     }
-    
+
     @Override
     protected String getAnalyzerEnabledSettingKey() {
         return Settings.KEYS.ANALYZER_OSSINDEX_ENABLED;
@@ -124,12 +124,12 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
     public boolean supportsParallelProcessing() {
         return true;
     }
-    
+
     @Override
     protected void prepareAnalyzer(final Engine engine) throws InitializationException {
         client = OssindexClientFactory.create(getSettings());
     }
-    
+
     @Override
     protected void closeAnalyzer() throws Exception {
         if (client != null) {
@@ -139,7 +139,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
         reports = null;
         failed = false;
     }
-    
+
     @Override
     protected void analyzeDependency(final Dependency dependency, final Engine engine) throws AnalysisException {
         if (client == null) {
@@ -216,7 +216,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
         if (!packages.isEmpty()) {
             return client.requestComponentReports(packages);
         }
-        
+
         LOG.warn("Unable to determine Package-URL identifiers for {} dependencies", dependencies.length);
         return Collections.emptyMap();
     }
@@ -229,11 +229,11 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
      */
     private void enrich(final Dependency dependency) {
         LOG.debug("Enrich dependency: {}", dependency);
-        
+
         for (Identifier id : dependency.getSoftwareIdentifiers()) {
             if (id instanceof PurlIdentifier) {
                 LOG.debug("  Package: {} -> {}", id, id.getConfidence());
-                
+
                 final PackageUrl purl = parsePackageUrl(id.getValue());
                 if (purl != null && StringUtils.isNotBlank(purl.getVersion())) {
                     try {
@@ -245,7 +245,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
 
                         // expose the URL to the package details for report generation
                         id.setUrl(report.getReference().toString());
-                        
+
                         for (ComponentReportVulnerability vuln : report.getVulnerabilities()) {
                             final Vulnerability v = transform(report, vuln);
                             final Vulnerability existing = dependency.getVulnerabilities().stream()
@@ -276,7 +276,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
     private Vulnerability transform(final ComponentReport report, final ComponentReportVulnerability source) {
         final Vulnerability result = new Vulnerability();
         result.setSource(Vulnerability.Source.OSSINDEX);
-        
+
         if (source.getCve() != null) {
             result.setName(source.getCve());
         } else {
@@ -299,13 +299,13 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
         }
         result.setDescription(source.getDescription());
         result.addCwe(source.getCwe());
-        
+
         final float cvssScore = source.getCvssScore() != null ? source.getCvssScore() : -1;
-        
+
         if (source.getCvssVector() != null) {
             // convert cvss details
             final CvssVector cvssVector = CvssVectorFactory.create(source.getCvssVector());
-            
+
             final Map<String, String> metrics = cvssVector.getMetrics();
             if (cvssVector instanceof Cvss2Vector) {
                 result.setCvssV2(new CvssV2(
@@ -358,7 +358,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
         } catch (CpeValidationException e) {
             LOG.warn("Unable to construct vulnerable-software for: {}", purl, e);
         }
-        
+
         return result;
     }
 }

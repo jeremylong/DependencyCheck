@@ -428,7 +428,8 @@ public final class ConnectionFactory {
                             ensureSchemaVersion(conn);
                         }
                     } else {
-                        throw new DatabaseException("Old database schema identified - please execute dependency-check without the no-update configuration to continue");
+                        throw new DatabaseException("Old database schema identified - please execute "
+                                + "dependency-check without the no-update configuration to continue");
                     }
                 }
             } else {
