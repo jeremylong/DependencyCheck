@@ -150,7 +150,7 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     protected String getAnalyzerEnabledSettingKey() {
-        return Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED;
+        return Settings.KEYS.ANALYZER_AUTOCONF_ENABLED;
     }
 
     @Override
