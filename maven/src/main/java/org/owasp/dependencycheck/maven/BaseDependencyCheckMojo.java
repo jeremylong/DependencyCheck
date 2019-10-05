@@ -976,7 +976,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
         final ArtifactType type = session.getRepositorySession().getArtifactTypeRegistry().get(dependency.getType());
         coordinate.setExtension(type.getExtension());
-        coordinate.setClassifier(type.getClassifier());
+        coordinate.setClassifier((null == dependency.getClassifier() || dependency.getClassifier().isEmpty()) ? type.getClassifier() : dependency.getClassifier());
 
         final Artifact artifact = artifactResolver.resolveArtifact(buildingRequest, coordinate).getArtifact();
 
