@@ -52,7 +52,7 @@ Property                      | Description                                     
 archiveAnalyzerEnabled        | Sets whether the Archive Analyzer will be used.                           | true
 zipExtensions                 | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
 jarAnalyzerEnabled            | Sets whether Jar Analyzer will be used.                                   | true
-centralAnalyzerEnabled        | Sets whether Central Analyzer will be used. If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer (see below). | true
+centralAnalyzerEnabled        | Sets whether Central Analyzer will be used; by default in the Maven plugin this analyzer is disabled as all information gained from Central is already available in the build. | false
 centralAnalyzerUseCache       | Sets whether the Central Analyer will cache results. Cached results expire after 30 days.                  | true
 ossindexAnalyzerEnabled       | Sets whether the OSS Index Analyzer will be enabled.                      | true
 ossindexAnalyzerUseCache      | Sets whether the OSS Index Analyzer will cache results. Cached results expire after 24 hours.              | true
