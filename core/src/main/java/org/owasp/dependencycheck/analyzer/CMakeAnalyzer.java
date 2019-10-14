@@ -213,8 +213,8 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
             final Matcher mVersion = PROJECT_VERSION.matcher(contents_replaced);
             while (mVersion.find()) {
                 LOGGER.debug(String.format(
-                        "Found set version command match with %d groups: %s", mVersion.groupCount(),
-                        mVersion.group(0)));
+                        "Found set version command match with %d groups: %s",
+                        mVersion.groupCount(), mVersion.group(0)));
                 final String group = mVersion.group(1);
                 LOGGER.debug("Group 1: {}", group);
                 dependency.addEvidence(EvidenceType.VERSION, name, "VERSION", group, Confidence.HIGH);
