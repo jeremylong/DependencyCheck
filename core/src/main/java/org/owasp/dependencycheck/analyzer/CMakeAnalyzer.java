@@ -48,7 +48,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
  * command, plus some other observed patterns of version inclusion in real CMake
  * projects. Many projects make use of older versions of CMake and/or use custom
  * "homebrew" ways to insert version information. Hopefully as the newer CMake
- * call pattern grows in usage, this analyzer allow more CPEs to be 
+ * call pattern grows in usage, this analyzer allow more CPEs to be
  * identified.</p>
  *
  * @author Dale Visser
@@ -152,9 +152,9 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * Analyzes python packages and adds evidence to the dependency.
      *
      * @param dependency the dependency being analyzed
-     * @param engine     the engine being used to perform the scan
-     * @throws AnalysisException thrown if there is an unrecoverable error analyzing
-     *                           the dependency
+     * @param engine the engine being used to perform the scan
+     * @throws AnalysisException thrown if there is an unrecoverable error
+     * analyzing the dependency
      */
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
@@ -165,7 +165,8 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
         try {
             contents = FileUtils.readFileToString(file, Charset.defaultCharset()).trim();
         } catch (IOException e) {
-            throw new AnalysisException("Problem occurred while reading dependency file.", e);
+            throw new AnalysisException(
+                    "Problem occurred while reading dependency file.", e);
         }
         if (StringUtils.isNotBlank(contents)) {
             HashMap<String, String> vars = new HashMap<String, String>();
@@ -196,8 +197,9 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
             int count = 0;
             while (m.find()) {
                 count++;
-                LOGGER.debug(
-                        String.format("Found project command match with %d groups: %s", m.groupCount(), m.group(0)));
+                LOGGER.debug(String.format(
+                        "Found project command match with %d groups: %s",
+                        m.groupCount(), m.group(0)));
                 final String group = m.group(1);
                 LOGGER.debug("Group 1: {}", group);
                 dependency.addEvidence(EvidenceType.PRODUCT, name, "Project", group, Confidence.HIGH);
@@ -210,7 +212,8 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.debug("Found {} matches.", count);
             final Matcher mVersion = PROJECT_VERSION.matcher(contents_replaced);
             while (mVersion.find()) {
-                LOGGER.debug(String.format("Found set version command match with %d groups: %s", mVersion.groupCount(),
+                LOGGER.debug(String.format(
+                        "Found set version command match with %d groups: %s", mVersion.groupCount(),
                         mVersion.group(0)));
                 final String group = mVersion.group(1);
                 LOGGER.debug("Group 1: {}", group);
@@ -226,8 +229,8 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * Collect defined CMake variables
      *
      * @param dependency the dependency being analyzed
-     * @param engine     the dependency-check engine
-     * @param contents   the version information
+     * @param engine the dependency-check engine
+     * @param contents the version information
      */
     private void collectDefinedVariables(Dependency dependency, Engine engine, String contents,
             HashMap<String, String> vars) {
