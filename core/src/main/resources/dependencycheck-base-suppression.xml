@@ -30,40 +30,6 @@
         <notes><![CDATA[
             FP per #2242
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework/spring\-aop@.*$</packageUrl>
-        <cpe>cpe:/a:springsource:spring_framework</cpe>
-        <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
-        <cpe>cpe:/a:pivotal:spring_framework</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-            FP per #2242
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework/spring\-oxm@.*$</packageUrl>
-        <cpe>cpe:/a:springsource:spring_framework</cpe>
-        <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
-        <cpe>cpe:/a:pivotal:spring_framework</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-            FP per #2242
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.webflow/spring\-js@.*$</packageUrl>
-        <cpe>cpe:/a:pivotal:spring_web_flow</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-            FP per #2242
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.webflow/spring\-faces@.*$</packageUrl>
-        <cpe>cpe:/a:pivotal:spring_web_flow</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-            FP per #2242
-        ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.bouncycastle.*$</packageUrl>
         <cpe>cpe:/a:oracle:jdk</cpe>
     </suppress>
