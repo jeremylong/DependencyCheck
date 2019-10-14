@@ -28,6 +28,47 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+            FP per #2242
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework/spring\-aop@.*$</packageUrl>
+        <cpe>cpe:/a:springsource:spring_framework</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            FP per #2242
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework/spring\-oxm@.*$</packageUrl>
+        <cpe>cpe:/a:springsource:spring_framework</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            FP per #2242
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.webflow/spring\-js@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal:spring_web_flow</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            FP per #2242
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.webflow/spring\-faces@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal:spring_web_flow</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            FP per #2242
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.bouncycastle.*$</packageUrl>
+        <cpe>cpe:/a:oracle:jdk</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         This suppresses false positives identified on spring security.
         ]]></notes>
         <filePath regex="true">.*spring-security-[^\\/]*\.jar$</filePath>
@@ -114,6 +155,7 @@
             38. <cpe>cpe:/a:echo_project:echo</cpe> is a php media wiki project #1786
             39. <cpe>cpe:/a:util-linux_project:util-linux</cpe> c util on linux #2069
             40. <cpe>cpe:/a:bitmap_project:bitmap</cpe> is a C library #1961
+            41. <cpe>cpe:/a:security-framework_project:security-framework</cpe> is a rust library
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -159,6 +201,7 @@
         <cpe>cpe:/a:echo_project:echo</cpe>
         <cpe>cpe:/a:util-linux_project:util-linux</cpe>
         <cpe>cpe:/a:bitmap_project:bitmap</cpe>
+        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
