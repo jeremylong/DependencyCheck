@@ -16,6 +16,7 @@
  * Copyright (c) 2015 Institute for Defense Analyses. All Rights Reserved.
  */
 package org.owasp.dependencycheck.analyzer;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.Engine;
@@ -27,6 +28,7 @@ import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -40,15 +42,14 @@ import org.owasp.dependencycheck.exception.InitializationException;
 /**
  * <p>
  * Used to analyze CMake build files, and collect information that can be used
- * to determine the associated CPE.
- * </p>
+ * to determine the associated CPE.</p>
  * <p>
  * Note: This analyzer catches straightforward invocations of the project
  * command, plus some other observed patterns of version inclusion in real CMake
  * projects. Many projects make use of older versions of CMake and/or use custom
  * "homebrew" ways to insert version information. Hopefully as the newer CMake
- * call pattern grows in usage, this analyzer allow more CPEs to be identified.
- * </p>
+ * call pattern grows in usage, this analyzer allow more CPEs to be 
+ * identified.</p>
  *
  * @author Dale Visser
  */
@@ -140,11 +141,11 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @param engine a reference to the dependency-check engine
      * @throws InitializationException thrown if an exception occurs getting an
-     *                                 instance of SHA1
+     * instance of SHA1
      */
     @Override
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
-        // do nothing
+        //do nothing
     }
 
     /**
