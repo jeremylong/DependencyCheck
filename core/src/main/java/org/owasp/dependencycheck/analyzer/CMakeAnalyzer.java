@@ -16,7 +16,6 @@
  * Copyright (c) 2015 Institute for Defense Analyses. All Rights Reserved.
  */
 package org.owasp.dependencycheck.analyzer;
-​
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.Engine;
@@ -28,7 +27,6 @@ import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-​
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -38,7 +36,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
-​
+
 /**
  * <p>
  * Used to analyze CMake build files, and collect information that can be used
@@ -56,18 +54,18 @@ import org.owasp.dependencycheck.exception.InitializationException;
  */
 @Experimental
 public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
-​
+
     /**
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
     public static final String DEPENDENCY_ECOSYSTEM = "CMAKE";
-​
+
     /**
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(CMakeAnalyzer.class);
-​
+
     /**
      * Used when compiling file scanning regex patterns.
      */
@@ -90,7 +88,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * Regex to extract the product information.
      */
     private static final Pattern PROJECT = Pattern.compile("^ *project *\\([ \\n]*(\\w+)[ \\n]*.*?\\)", REGEX_OPTIONS);
-​
+
     /**
      * Regex to extract product and version information.
      *
@@ -100,13 +98,13 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final Pattern SET_VERSION = Pattern
             .compile("^\\s*set\\s*\\(\\s*(\\w+)_version\\s+\"?([^\"\\)]*)\\s*\"?\\)", REGEX_OPTIONS);
-​
+
     /**
      * Detects files that can be analyzed.
      */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(".cmake")
             .addFilenames("CMakeLists.txt").build();
-​
+
     /**
      * Returns the name of the CMake analyzer.
      *
@@ -116,7 +114,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
     public String getName() {
         return "CMake Analyzer";
     }
-​
+
     /**
      * Tell that we are used for information collection.
      *
@@ -126,7 +124,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
     public AnalysisPhase getAnalysisPhase() {
         return AnalysisPhase.INFORMATION_COLLECTION;
     }
-​
+
     /**
      * Returns the set of supported file extensions.
      *
@@ -136,7 +134,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
     protected FileFilter getFileFilter() {
         return FILTER;
     }
-​
+
     /**
      * Initializes the analyzer.
      *
@@ -148,7 +146,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         // do nothing
     }
-​
+
     /**
      * Analyzes python packages and adds evidence to the dependency.
      *
@@ -171,7 +169,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
         if (StringUtils.isNotBlank(contents)) {
             HashMap<String, String> vars = new HashMap<String, String>();
             collectDefinedVariables(dependency, engine, contents, vars);
-​
+
             String contents_replacer = new String(contents);
             Matcher r = INL_VAR_REGEX.matcher(contents);
             while (r.find()) {
@@ -218,11 +216,11 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 dependency.addEvidence(EvidenceType.VERSION, name, "VERSION", group, Confidence.HIGH);
                 dependency.setVersion(group);
             }
-​
+
             analyzeSetVersionCommand(dependency, engine, contents_replaced, vars);
         }
     }
-​
+
     /**
      * Collect defined CMake variables
      *
@@ -245,7 +243,6 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
         }
         LOGGER.debug("Found {} matches.", count);
     }
-​
     /**
      * Extracts the version information from the contents. If more then one version
      * is found additional dependencies are added to the dependency list.
@@ -257,7 +254,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
     private void analyzeSetVersionCommand(Dependency dependency, Engine engine, String contents,
             HashMap<String, String> vars) {
         Dependency currentDep = dependency;
-​
+
         final Matcher m = SET_VERSION.matcher(contents);
         int count = 0;
         while (m.find()) {
@@ -276,7 +273,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 currentDep.setEcosystem(DEPENDENCY_ECOSYSTEM);
                 final String filePath = String.format("%s:%s", dependency.getFilePath(), product);
                 currentDep.setFilePath(filePath);
-​
+
                 currentDep.setSha1sum(Checksum.getSHA1Checksum(filePath));
                 currentDep.setSha256sum(Checksum.getSHA256Checksum(filePath));
                 currentDep.setMd5sum(Checksum.getMD5Checksum(filePath));
@@ -291,7 +288,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 currentDep.setEcosystem(DEPENDENCY_ECOSYSTEM);
                 final String filePath = String.format("%s:%s", dependency.getFilePath(), product);
                 currentDep.setFilePath(filePath);
-​
+
                 currentDep.setSha1sum(Checksum.getSHA1Checksum(filePath));
                 currentDep.setSha256sum(Checksum.getSHA256Checksum(filePath));
                 currentDep.setMd5sum(Checksum.getMD5Checksum(filePath));
@@ -310,7 +307,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
         }
         LOGGER.debug("Found {} matches.", count);
     }
-​
+
     @Override
     protected String getAnalyzerEnabledSettingKey() {
         return Settings.KEYS.ANALYZER_CMAKE_ENABLED;
