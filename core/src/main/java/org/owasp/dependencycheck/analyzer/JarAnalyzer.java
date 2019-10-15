@@ -297,7 +297,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
 
         if (exception != null) {
-            throw new AnalysisException(String.format("A error occurred extracing evidence from "
+            throw new AnalysisException(String.format("An error occurred extracting evidence from "
                     + "%s, analysis may be incomplete; please see the log for more details.",
                     dependency.getDisplayFileName()), exception);
         }
