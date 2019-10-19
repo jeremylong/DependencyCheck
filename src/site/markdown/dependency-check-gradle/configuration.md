@@ -81,8 +81,8 @@ NVD you must mirror the *.json.gz and the *.meta files. Note, if ANY of the cve 
 
 Config Group | Property          | Description                                                                                                          | Default Value
 -------------|-------------------|----------------------------------------------------------------------------------------------------------------------|------------------
-cve          | urlModified       | URL for the modified CVE JSON data feed. When mirroring the NVD you must mirror the *.json.gz and the *.meta files.  | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-modified.json.gz |
-cve          | urlBase           | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.                                  | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-%d.json.gz       |
+cve          | urlModified       | URL for the modified CVE JSON data feed. When mirroring the NVD you must mirror the *.json.gz and the *.meta files.  | https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz |
+cve          | urlBase           | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.                                  | https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-%d.json.gz       |
 data         | directory         | Sets the data directory to hold SQL CVEs contents. This should generally not be changed.                             | &nbsp;                                                              |
 data         | driver            | The name of the database driver. Example: org.h2.Driver.                                                             | &nbsp;                                                              |
 data         | driverPath        | The path to the database driver JAR file; only used if the driver is not in the class path.                          | &nbsp;                                                              |
