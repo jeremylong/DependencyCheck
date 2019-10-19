@@ -418,6 +418,9 @@ public final class CliParser {
                 .desc("The proxy username to use when downloading resources.").build();
         final Option proxyPassword = Option.builder().argName("pass").hasArg().longOpt(ARGUMENT.PROXY_PASSWORD)
                 .desc("The proxy password to use when downloading resources.").build();
+        final Option nonProxyHosts = Option.builder().argName("list").hasArg().longOpt(ARGUMENT.NON_PROXY_HOSTS)
+                .desc("The proxy exclusion list: hostnames (or patterns) for which proxy should not be used. "
+                        + "Use pipe, comma or colon as list separator.").build();
         final Option connectionString = Option.builder().argName("connStr").hasArg().longOpt(ARGUMENT.CONNECTION_STRING)
                 .desc("The connection string to the database.").build();
         final Option dbUser = Option.builder().argName("user").hasArg().longOpt(ARGUMENT.DB_NAME)
@@ -480,6 +483,7 @@ public final class CliParser {
                 .addOption(proxyServer)
                 .addOption(proxyUsername)
                 .addOption(proxyPassword)
+                .addOption(nonProxyHosts)
                 .addOption(connectionTimeout)
                 .addOption(connectionString)
                 .addOption(dbUser)
@@ -1232,6 +1236,15 @@ public final class CliParser {
     }
 
     /**
+     * Returns the proxy exclusion list.
+     *
+     * @return the proxy proxy exclusion list
+     */
+    public String getNonProxyHosts() {
+        return line.getOptionValue(ARGUMENT.NON_PROXY_HOSTS);
+    }
+
+    /**
      * Get the value of dataDirectory.
      *
      * @return the value of dataDirectory
@@ -1567,6 +1580,10 @@ public final class CliParser {
          * The CLI argument name indicating the proxy password.
          */
         public static final String PROXY_PASSWORD = "proxypass";
+        /**
+         * The CLI argument name indicating the proxy proxy exclusion list.
+         */
+        public static final String NON_PROXY_HOSTS = "nonProxyHosts";
         /**
          * The short CLI argument name indicating the connection timeout.
          */
