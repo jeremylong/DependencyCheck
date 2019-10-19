@@ -931,14 +931,17 @@ public final class CveDB implements AutoCloseable {
                     -> d.getValue()).collect(Collectors.joining(" "));
 
             if (vulnerabilityId != 0) {
-                //TODO what about cve.getCve().getCVEDataMeta().getSTATE()
-//                if (description.contains("** REJECT **")) {
-//                    updateVulnerabilityDeleteVulnerability(vulnerabilityId);
-//                } else {
-                updateVulnerabilityUpdateVulnerability(vulnerabilityId, cve, description);
-//                }
+                if (description.trim().startsWith("** REJECT **")) {
+                    updateVulnerabilityDeleteVulnerability(vulnerabilityId);
+                } else {
+                    updateVulnerabilityUpdateVulnerability(vulnerabilityId, cve, description);
+                }
             } else {
-                vulnerabilityId = updateVulnerabilityInsertVulnerability(cve, description);
+                if (description.trim().startsWith("** REJECT **")) {
+                    return;
+                } else {
+                    vulnerabilityId = updateVulnerabilityInsertVulnerability(cve, description);
+                }
             }
 
             updateVulnerabilityInsertCwe(vulnerabilityId, cve);
@@ -1188,20 +1191,21 @@ public final class CveDB implements AutoCloseable {
         }
     }
 
-//    /**
-//     * Used when updating a vulnerability - in some cases a CVE needs to be
-//     * removed.
-//     *
-//     * @param vulnerabilityId the vulnerability ID
-//     * @throws SQLException thrown if there is an error deleting the
-//     * vulnerability
-//     */
-//    private synchronized void updateVulnerabilityDeleteVulnerability(int vulnerabilityId) throws SQLException {
-//        try (PreparedStatement deleteVulnerability = prepareStatement(DELETE_VULNERABILITY)) {
-//            deleteVulnerability.setInt(1, vulnerabilityId);
-//            deleteVulnerability.executeUpdate();
-//        }
-//    }
+    /**
+     * Used when updating a vulnerability - in some cases a CVE needs to be
+     * removed.
+     *
+     * @param vulnerabilityId the vulnerability ID
+     * @throws SQLException thrown if there is an error deleting the
+     * vulnerability
+     */
+    private synchronized void updateVulnerabilityDeleteVulnerability(int vulnerabilityId) throws SQLException {
+        try (PreparedStatement deleteVulnerability = prepareStatement(DELETE_VULNERABILITY)) {
+            deleteVulnerability.setInt(1, vulnerabilityId);
+            deleteVulnerability.executeUpdate();
+        }
+    }
+
     /**
      * Used when updating a vulnerability - this method inserts the list of
      * vulnerable software.
