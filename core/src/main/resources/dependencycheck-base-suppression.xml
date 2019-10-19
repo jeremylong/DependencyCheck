@@ -35,6 +35,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+            FP per #2247 CVE candidate was withdrawn by the CNA
+        ]]></notes>
+            <packageUrl regex="true">^pkg:maven/org\.owasp\.antisamy/antisamy@.*$</packageUrl>
+            <vulnerabilityName>CVE-2018-1000643</vulnerabilityName>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         This suppresses false positives identified on spring security.
         ]]></notes>
         <filePath regex="true">.*spring-security-[^\\/]*\.jar$</filePath>
