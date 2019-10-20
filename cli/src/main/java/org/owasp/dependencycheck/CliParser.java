@@ -284,10 +284,6 @@ public final class CliParser {
                         + " and it accepts Ant style exclusions.")
                 .build();
 
-        final Option props = Option.builder(ARGUMENT.PROP_SHORT).argName("file").hasArg().longOpt(ARGUMENT.PROP)
-                .desc("A property file to load.")
-                .build();
-
         final Option out = Option.builder(ARGUMENT.OUT_SHORT).argName("path").hasArg().longOpt(ARGUMENT.OUT)
                 .desc("The folder to write reports to. This defaults to the current directory. "
                         + "It is possible to set this to a specific file name if the format argument is not set to ALL.")
@@ -308,10 +304,6 @@ public final class CliParser {
         final Option suppressionFile = Option.builder().argName("file").hasArgs().longOpt(ARGUMENT.SUPPRESSION_FILES)
                 .desc("The file path to the suppression XML file. This can be specified more then once to utilize multiple "
                         + "suppression files")
-                .build();
-
-        final Option hintsFile = Option.builder().argName("file").hasArg().longOpt(ARGUMENT.HINTS_FILE)
-                .desc("The file path to the hints XML file.")
                 .build();
 
         final Option cveValidForHours = Option.builder().argName("hours").hasArg().longOpt(ARGUMENT.CVE_VALID_FOR_HOURS)
@@ -354,10 +346,8 @@ public final class CliParser {
                 .addOption(advancedHelp)
                 .addOption(noUpdate)
                 .addOption(symLinkDepth)
-                .addOption(props)
                 .addOption(verboseLog)
                 .addOption(suppressionFile)
-                .addOption(hintsFile)
                 .addOption(cveValidForHours)
                 .addOption(experimentalEnabled)
                 .addOption(retiredEnabled)
@@ -476,6 +466,14 @@ public final class CliParser {
                 .desc("Specify Retire JS content filter used to exclude files from analysis based on their content; most commonly used "
                         + "to exclude based on your applications own copyright line. This option can be specified multiple times.")
                 .build();
+
+        final Option hintsFile = Option.builder().argName("file").hasArg().longOpt(ARGUMENT.HINTS_FILE)
+                .desc("The file path to the hints XML file.")
+                .build();
+        final Option props = Option.builder(ARGUMENT.PROP_SHORT).argName("file").hasArg().longOpt(ARGUMENT.PROP)
+                .desc("A property file to load.")
+                .build();
+
         options.addOption(updateOnly)
                 .addOption(cveBase)
                 .addOption(cveModified)
@@ -562,7 +560,9 @@ public final class CliParser {
                 .addOption(nexusUsesProxy)
                 .addOption(additionalZipExtensions)
                 .addOption(pathToCore)
-                .addOption(purge);
+                .addOption(purge)
+                .addOption(props)
+                .addOption(hintsFile);
     }
 
     /**
