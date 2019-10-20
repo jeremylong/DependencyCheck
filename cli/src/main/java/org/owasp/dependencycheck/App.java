@@ -404,6 +404,8 @@ public class App {
         final String nexusUrl = cli.getNexusUrl();
         final String nexusUser = cli.getNexusUsername();
         final String nexusPass = cli.getNexusPassword();
+        final String ossIndexUser = cli.getOssIndexUsername();
+        final String ossIndexPass = cli.getOssIndexPassword();
         final String databaseDriverName = cli.getDatabaseDriverName();
         final String databaseDriverPath = cli.getDatabaseDriverPath();
         final String connectionString = cli.getConnectionString();
@@ -488,6 +490,8 @@ public class App {
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, cli.isNexusEnabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, !cli.isOssIndexDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE, !cli.isOssIndexCacheDisabled());
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_USER, ossIndexUser);
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD, ossIndexPass);
         settings.setFloat(Settings.KEYS.JUNIT_FAIL_ON_CVSS, cli.getJunitFailOnCVSS());
 
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED,
