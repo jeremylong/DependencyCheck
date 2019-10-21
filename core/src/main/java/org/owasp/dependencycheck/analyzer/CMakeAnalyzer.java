@@ -23,8 +23,6 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.EvidenceType;
-import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
@@ -38,6 +36,8 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
  * <p>
