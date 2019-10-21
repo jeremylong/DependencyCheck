@@ -17,18 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.dependency.Confidence;
-import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.utils.Checksum;
-import org.owasp.dependencycheck.utils.FileFilterBuilder;
-import org.owasp.dependencycheck.utils.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -36,8 +24,20 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.Checksum;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -177,15 +177,19 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
             while (r.find()) {
                 boolean leastOne = false;
                 if (vars.containsKey(r.group(2))) {
-                    contents_replacer = contents_replacer.replace(r.group(1), vars.get(r.group(2)));
-                    r = INL_VAR_REGEX.matcher(contents_replacer);
-                    leastOne = true;
-                }
-                while (r.find()) {
-                    if (vars.containsKey(r.group(2))) {
+                    if (!vars.get(r.group(2)).contains(r.group(2))) {
                         contents_replacer = contents_replacer.replace(r.group(1), vars.get(r.group(2)));
                         r = INL_VAR_REGEX.matcher(contents_replacer);
                         leastOne = true;
+                    }
+                }
+                while (r.find()) {
+                    if (vars.containsKey(r.group(2))) {
+                        if (!vars.get(r.group(2)).contains(r.group(2))) {
+                            contents_replacer = contents_replacer.replace(r.group(1), vars.get(r.group(2)));
+                            r = INL_VAR_REGEX.matcher(contents_replacer);
+                            leastOne = true;
+                        }
                     }
                 }
                 if (!leastOne)
@@ -197,8 +201,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
             int count = 0;
             while (m.find()) {
                 count++;
-                LOGGER.debug(String.format(
-                        "Found project command match with %d groups: %s",
+                LOGGER.debug(String.format("Found project command match with %d groups: %s",
                         m.groupCount(), m.group(0)));
                 final String group = m.group(1);
                 LOGGER.debug("Group 1: {}", group);
