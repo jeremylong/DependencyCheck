@@ -17,14 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.Engine;
@@ -38,6 +30,14 @@ import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <p>
@@ -268,7 +268,8 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
         int count = 0;
         while (m.find()) {
             count++;
-            LOGGER.debug("Found project command match with {} groups: {}", m.groupCount(), m.group(0));
+            LOGGER.debug("Found project command match with {} groups: {}",
+                    m.groupCount(), m.group(0));
             String product = m.group(1);
             final String version = m.group(2);
             LOGGER.debug("Group 1: {}", product);
