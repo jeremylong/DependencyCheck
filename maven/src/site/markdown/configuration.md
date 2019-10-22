@@ -54,7 +54,7 @@ zipExtensions                 | A comma-separated list of additional file extens
 jarAnalyzerEnabled            | Sets whether Jar Analyzer will be used.                                   | true
 centralAnalyzerEnabled        | Sets whether Central Analyzer will be used; by default in the Maven plugin this analyzer is disabled as all information gained from Central is already available in the build. | false
 centralAnalyzerUseCache       | Sets whether the Central Analyer will cache results. Cached results expire after 30 days.                  | true
-ossindexAnalyzerEnabled       | Sets whether the OSS Index Analyzer will be enabled.                      | true
+ossindexAnalyzerEnabled       | Sets whether the [OSS Index Analyzer](../analyzers/oss-index-analyzer.html) will be enabled. This analyzer requires an internet connection. | true
 ossindexAnalyzerUseCache      | Sets whether the OSS Index Analyzer will cache results. Cached results expire after 24 hours.              | true
 ossindexServerId              | The id of a server defined in the settings.xml to retrieve the credentials (username and password) to connect to OSS Index instance; not it is not required to have a registered account and use this configuration. | &nbsp;
 nexusAnalyzerEnabled          | Sets whether Nexus Analyzer will be used (requires Nexus Pro). This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
@@ -68,7 +68,7 @@ artifactoryAnalyzerParallelAnalysis | Whether the Artifactory analyzer should be
 artifactoryAnalyzerServerId   | The id of a server defined in the settings.xml to retrieve the credentials (username and API token) to connect to Artifactory instance. It is used in priority to artifactoryAnalyzerUsername and artifactoryAnalyzerApiToken | artifactory
 artifactoryAnalyzerUsername   | The user name (only used with API token) to connect to Artifactory instance | &nbsp;
 artifactoryAnalyzerApiToken   | The API token to connect to Artifactory instance, only used if the username or the API key are not defined by artifactoryAnalyzerServerId,artifactoryAnalyzerUsername or artifactoryAnalyzerApiToken | &nbsp;
-artifactoryAnalyzerBearerToken   | The bearer token to connect to Artifactory instance                                                     | &nbsp;
+artifactoryAnalyzerBearerToken| The bearer token to connect to Artifactory instance                                                        | &nbsp;
 pyDistributionAnalyzerEnabled | Sets whether the [experimental](../analyzers/index.html) Python Distribution Analyzer will be used.        | true
 pyPackageAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) Python Package Analyzer will be used.             | true
 rubygemsAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) Ruby Gemspec Analyzer will be used.               | true
@@ -77,7 +77,7 @@ cmakeAnalyzerEnabled          | Sets whether the [experimental](../analyzers/ind
 autoconfAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) autoconf Analyzer should be used.                 | true
 composerAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.   | true
 nodeAnalyzerEnabled           | Sets whether the [retired](../analyzers/index.html) Node.js Analyzer should be used.                       | true
-nodeAuditAnalyzerEnabled      | Sets whether the Node Audit Analyzer should be used.                                                       | true
+nodeAuditAnalyzerEnabled      | Sets whether the Node Audit Analyzer should be used. This analyzer requires an internet connection.        | true
 nodeAuditAnalyzerUseCache     | Sets whether the Node Audit Analyzer will cache results. Cached results expire after 24 hours.             | true
 retireJsAnalyzerEnabled       | Sets whether the RetireJS Analyzer should be used.                                                         | true
 retireJsUrl                   | The URL to the Retire JS repository. **Note** the file name must be `jsrepository.json`.                   | https://raw.githubusercontent.com/Retirejs/retire.js/master/repository/jsrepository.json
