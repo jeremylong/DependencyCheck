@@ -115,7 +115,7 @@ analyzers    | archiveEnabled        | Sets whether the Archive Analyzer will be
 analyzers    | zipExtensions         | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
 analyzers    | jarEnabled            | Sets whether Jar Analyzer will be used.                                                                           | true
 analyzers    | centralEnabled        | Sets whether Central Analyzer will be used; by default in the Maven plugin this analyzer is disabled as all information gained from Central is already available in the build. | false
-analyzers    | ossIndexEnabled       | Sets whether the OSS Index Analyzer will be enabled.                                                              | true
+analyzers    | ossIndexEnabled       | This configuration has been deprecated; please use `ossIndex` instead. Sets whether the [OSS Index Analyzer](../analyzers/oss-index-analyzer.html) will be enabled. This analyzer requires an internet connection. | true
 analyzers    | nexusEnabled          | Sets whether Nexus Analyzer will be used (requires Nexus Pro). This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
 analyzers    | nexusUrl              | Defines the Nexus Server's web service end point (example http://domain.enterprise/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
 analyzers    | nexusUsesProxy        | Whether or not the defined proxy should be used when connecting to Nexus.                                         | true
@@ -131,7 +131,7 @@ analyzers    | cmakeEnabled          | Sets whether or not the [experimental](..
 analyzers    | autoconfEnabled       | Sets whether or not the [experimental](../analyzers/index.html) autoconf Analyzer should be used.                 | true
 analyzers    | composerEnabled       | Sets whether or not the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.   | true
 analyzers    | nodeEnabled           | Sets whether or not the Node.js Analyzer should be used.                                                          | true
-analyzers    | nodeAuditEnabled      | Sets whether the Node Audit Analyzer should be used.                                                              | true
+analyzers    | nodeAuditEnabled      | Sets whether the Node Audit Analyzer should be used. This analyzer requires an internet connection.               | true
 analyzers    | cocoapodsEnabled      | Sets whether or not the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used.                | true
 analyzers    | swiftEnabled          | Sets whether or not the [experimental](../analyzers/index.html) Swift Package Manager Analyzer should be used.    | true
 analyzers    | bundleAuditEnabled    | Sets whether or not the [experimental](../analyzers/index.html) Ruby Bundle Audit Analyzer should be used.        | true
@@ -155,7 +155,7 @@ retirejs     | enabled               | Sets whether the RetireJS Analyzer should
 retirejs     | retireJsUrl           | The URL to the Retire JS repository. **Note** the file name must be `jsrepository.json`.                          | https://raw.githubusercontent.com/Retirejs/retire.js/master/repository/jsrepository.json
 retirejs     | filterNonVulnerable   | Configures the RetireJS Analyzer to remove non-vulnerable JS dependencies from the report.                        | false
 retirejs     | filters               | Configures the list of regular expessions used to filter JS files based on content.                               | &nbsp;
-ossIndex     | enabled               | Sets whether OSS Index analyzer will be used.                                                                     | true
+ossIndex     | enabled               | Sets whether [OSS Index Analyzer](../analyzers/oss-index-analyzer.html) will be used. This analyzer requires an internet connection. | true
 ossIndex     | username              | The optional user name to connect to Sonatype's OSS Index.                                                        | &nbsp;
 ossIndex     | password              | The password or API token to connect to Sonatype's OSS Index.                                                     | &nbsp;
 
