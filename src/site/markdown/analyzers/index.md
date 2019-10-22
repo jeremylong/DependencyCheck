@@ -11,10 +11,11 @@ to extract identification information from the files analyzed.
 | [Jar](./jar-analyzer.html) | Java archive files (\*.jar); Web application archive (\*.war) | Examines archive manifest metadata, and Maven Project Object Model files (pom.xml). |
 | [RetireJS](./retirejs-analyzer.html) | JavaScript files | Analyzes JavaScript files using the [RetireJS](https://github.com/RetireJS/retire.js) database. |
 | [Node.js](./nodejs.html) | NPM package specification files (package.json) | Parses the package.json to gather a bill-of-materials for a Node JS project. |
-| [NPM](./node-audit-analyzer.html) | [NPM Public Advisories](https://www.npmjs.com/advisories) is used to analyze Node.js' `package-lock.json` files for known vulnerable packages.|
+| [Node Audit](./node-audit-analyzer.html) | Uses the `npm audit` APIs to report on known vulnerable node.js libraries. This analyzer requires an Internet connection. |
 | [Nugetconf](./nugetconf-analyzer.html) | Nuget packages.config file | Uses XPath to parse specification XML. |
 | [Nuspec](./nuspec-analyzer.html) | Nuget package specification file (\*.nuspec) | Uses XPath to parse specification XML. |
 | [OpenSSL](./openssl.html) | OpenSSL Version Source Header File (opensslv.h) | Regex parse of the OPENSSL_VERSION_NUMBER macro definition. |
+| [OSS Index](./oss-index-analyzer.html) | Uses the [OSS Index](https://ossindex.sonatype.org/) APIs to report on vulnerabilities not found in the NVD. This analyzer requires an Internet connection. |
 | [Ruby bundler&#8209;audit](./bundle-audit.html) | Ruby `Gemfile.lock` files | Executes bundle-audit and incorporates the results into the dependency-check report. |
 
 Experimental Analyzers
