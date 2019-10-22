@@ -176,24 +176,10 @@ public class HttpResourceConnection implements AutoCloseable {
             LOGGER.debug("Attempting retrieval of {}", url.toString());
             conn = connFactory.createHttpURLConnection(url, this.usesProxy);
             conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
+            addAuthenticationIfPresent(conn, url);
             conn.connect();
             int status = conn.getResponseCode();
             int redirectCount = 0;
-            if (status == HttpURLConnection.HTTP_UNAUTHORIZED && url.getUserInfo() != null) {
-                String userInfo = url.getUserInfo();
-                try {
-                    conn.disconnect();
-                } finally {
-                    conn = null;
-                }
-                String basicAuth = "Basic " + Base64.getEncoder().encodeToString(userInfo.getBytes());
-                LOGGER.debug("Download using userinfo");
-                conn = connFactory.createHttpURLConnection(url, this.usesProxy);
-                conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
-                conn.setRequestProperty("Authorization", basicAuth);
-                conn.connect();
-                status = conn.getResponseCode();
-            }
             // TODO - should this get replaced by using the conn.setInstanceFollowRedirects(true);
             while ((status == HttpURLConnection.HTTP_MOVED_TEMP
                     || status == HttpURLConnection.HTTP_MOVED_PERM
@@ -208,6 +194,7 @@ public class HttpResourceConnection implements AutoCloseable {
                 LOGGER.debug("Download is being redirected from {} to {}", url.toString(), location);
                 conn = connFactory.createHttpURLConnection(new URL(location), this.usesProxy);
                 conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
+                addAuthenticationIfPresent(conn, url);
                 conn.connect();
                 status = conn.getResponseCode();
             }
@@ -254,6 +241,17 @@ public class HttpResourceConnection implements AutoCloseable {
             throw new DownloadFailedException(msg, ex);
         }
         return conn;
+    }
+
+    private void addAuthenticationIfPresent(HttpURLConnection conn, URL url) {
+        if (url.getUserInfo() != null) {
+            String userInfo = url.getUserInfo();
+            String basicAuth = "Basic " + Base64.getEncoder().encodeToString(userInfo.getBytes());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Adding user info as basic authorization");
+            }
+            conn.setRequestProperty("Authorization", basicAuth);
+        }
     }
 
     /**
