@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "copyright": "Copyright (c) 2017, Forum of Incident Response and Security Teams, Inc. All rights reserved.",
+  "id": "https://scap.nist.gov/schema/nvd/feed/1.1/CVE_JSON_4.0_min_1.1.schema",
 
   "definitions": {
     "cve_id": {
@@ -69,7 +69,7 @@
   },
 
   "type": "object",
-  "required": [ "data_type", "data_format", "data_version", "CVE_data_meta", "affects", "problemtype", "references", "description" ],
+  "required": [ "data_type", "data_format", "data_version", "CVE_data_meta", "problemtype", "references", "description" ],
   "properties": {
     "data_type": { "enum": [ "CVE" ] },
     "data_format": { "enum": [ "MITRE" ] },

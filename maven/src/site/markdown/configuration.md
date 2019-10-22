@@ -120,8 +120,8 @@ may be the cveUrl properties, which can be used to host a mirror of the NVD with
 
 Property             | Description                                                                                                          | Default Value                                                       |
 ---------------------|----------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
-cveUrlModified       | URL for the modified CVE JSON data feed.  When mirroring the NVD you must mirror the *.json.gz and the *.meta files. | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-modified.json.gz |
-cveUrlBase           | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.                                  | https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-%d.json.gz       |
+cveUrlModified       | URL for the modified CVE JSON data feed.  When mirroring the NVD you must mirror the *.json.gz and the *.meta files. | https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz |
+cveUrlBase           | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.                                  | https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-%d.json.gz       |
 connectionTimeout    | Sets the URL Connection Timeout used when downloading external data.                                                 | &nbsp;                                                              |
 dataDirectory        | Sets the data directory to hold SQL CVEs contents. This should generally not be changed.                             | ~/.m2/repository/org/owasp/dependency-check-data/                   |
 databaseDriverName   | The name of the database driver. Example: org.h2.Driver.                                                             | &nbsp;                                                              |

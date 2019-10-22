@@ -1,7 +1,7 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "title": "JSON Schema for NVD Vulnerability Data Feed version 1.0",
-    "id": "https://scap.nist.gov/schema/nvd/feed/1.0/nvd_cve_feed_json_1.0.schema",
+    "title": "JSON Schema for NVD Vulnerability Data Feed version 1.1",
+    "id": "https://scap.nist.gov/schema/nvd/feed/1.1/nvd_cve_feed_json_1.1.schema",
     "definitions": {
     "def_cpe_name": {
       "description": "CPE name",
@@ -12,6 +12,9 @@
         },
         "cpe23Uri": {
           "type": "string"
+        },
+        "lastModifiedDate": {
+        "type": "string"
         }
       },
       "required": [
@@ -94,10 +97,10 @@
             "type": "object",
             "properties": {
                 "baseMetricV3": {
-                    "description": "CVSS V3.0 score.",
+                    "description": "CVSS V3.x score.",
                     "type": "object",
                     "properties": {
-                        "cvssV3": {"$ref": "cvss-v3.0.json"},
+                        "cvssV3": {"$ref": "cvss-v3.x.json"},
                         "exploitabilityScore": {"$ref": "#/definitions/def_subscore"},
                         "impactScore": {"$ref": "#/definitions/def_subscore"}
                     }
@@ -122,7 +125,7 @@
         "def_cve_item": {
             "description": "Defines a vulnerability in the NVD data feed.",
             "properties": {
-                "cve": {"$ref": "CVE_JSON_4.0_min.schema"},
+                "cve": {"$ref": "CVE_JSON_4.0_min_1.1.schema"},
                 "configurations": {"$ref": "#/definitions/def_configurations"},
                 "impact": {"$ref": "#/definitions/def_impact"},
                 "publishedDate": {"type": "string"},
