@@ -31,6 +31,7 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.InvalidAlgorithmParameterException;
+import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -178,6 +179,21 @@ public class HttpResourceConnection implements AutoCloseable {
             conn.connect();
             int status = conn.getResponseCode();
             int redirectCount = 0;
+            if (status == HttpURLConnection.HTTP_UNAUTHORIZED && url.getUserInfo() != null) {
+                String userInfo = url.getUserInfo();
+                try {
+                    conn.disconnect();
+                } finally {
+                    conn = null;
+                }
+                String basicAuth = "Basic " + Base64.getEncoder().encodeToString(userInfo.getBytes());
+                LOGGER.debug("Download using userinfo");
+                conn = connFactory.createHttpURLConnection(url, this.usesProxy);
+                conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
+                conn.setRequestProperty("Authorization", basicAuth);
+                conn.connect();
+                status = conn.getResponseCode();
+            }
             // TODO - should this get replaced by using the conn.setInstanceFollowRedirects(true);
             while ((status == HttpURLConnection.HTTP_MOVED_TEMP
                     || status == HttpURLConnection.HTTP_MOVED_PERM
