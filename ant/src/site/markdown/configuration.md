@@ -76,7 +76,7 @@ zipExtensions                       | A comma-separated list of additional file 
 jarAnalyzer                         | Sets whether the Jar Analyzer will be used.                                                                | true
 centralAnalyzerEnabled              | Sets whether the Central Analyzer will be used. **Disabling this analyzer for Ant builds is not recommended as it could lead to false negatives (e.g. libraries that have vulnerabilities may not be reported correctly).** If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer (see below).                                  | true
 centralAnalyzerUseCache             | Sets whether the Central Analyer will cache results. Cached results expire after 30 days.                  | true
-ossIndexAnalyzerEnabled             | Sets whether the OSS Index Analyzer will be enabled.                                                       | true
+ossIndexAnalyzerEnabled             | Sets whether the [OSS Index Analyzer](../analyzers/oss-index-analyzer.html) will be enabled. This analyzer requires an internet connection. | true
 ossindexAnalyzerUseCache            | Sets whether the OSS Index Analyzer will cache results. Cached results expire after 24 hours.              | true
 ossindexAnalyzerUsername            | Sets the username for OSS Index - note an account with OSS Index is not required.                          | &nbsp;
 ossindexAnalyzerPassword            | Sets the password for OSS Index.                                                                           | &nbsp;
@@ -100,7 +100,7 @@ cmakeAnalyzerEnabled                | Sets whether the [experimental](../analyze
 autoconfAnalyzerEnabled             | Sets whether the [experimental](../analyzers/index.html) autoconf Analyzer should be used.                 | true
 composerAnalyzerEnabled             | Sets whether the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.   | true
 nodeAnalyzerEnabled                 | Sets whether the [retired](../analyzers/index.html) Node.js Analyzer should be used.                       | true
-nodeAuditAnalyzerEnabled            | Sets whether the Node Audit Analyzer should be used.                                                       | true
+nodeAuditAnalyzerEnabled            | Sets whether the Node Audit Analyzer should be used. This analyzer requires an internet connection.        | true
 nodeAuditAnalyzerUseCache           | Sets whether the Node Audit Analyzer will cache results. Cached results expire after 24 hours.             | true
 retireJsAnalyzerEnabled             | Sets whether the RetireJS Analyzer should be used.                 | true
 retirejsFilterNonVulnerable         | Configures the RetireJS Analyzer to remove non-vulnerable JS dependencies from the report.                 | false
