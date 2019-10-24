@@ -31,7 +31,6 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.InvalidAlgorithmParameterException;
-import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -176,7 +175,6 @@ public class HttpResourceConnection implements AutoCloseable {
             LOGGER.debug("Attempting retrieval of {}", url.toString());
             conn = connFactory.createHttpURLConnection(url, this.usesProxy);
             conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
-            addAuthenticationIfPresent(conn, url);
             conn.connect();
             int status = conn.getResponseCode();
             int redirectCount = 0;
@@ -194,7 +192,6 @@ public class HttpResourceConnection implements AutoCloseable {
                 LOGGER.debug("Download is being redirected from {} to {}", url.toString(), location);
                 conn = connFactory.createHttpURLConnection(new URL(location), this.usesProxy);
                 conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
-                addAuthenticationIfPresent(conn, url);
                 conn.connect();
                 status = conn.getResponseCode();
             }
@@ -241,17 +238,6 @@ public class HttpResourceConnection implements AutoCloseable {
             throw new DownloadFailedException(msg, ex);
         }
         return conn;
-    }
-
-    private void addAuthenticationIfPresent(HttpURLConnection conn, URL url) {
-        if (url.getUserInfo() != null) {
-            String userInfo = url.getUserInfo();
-            String basicAuth = "Basic " + Base64.getEncoder().encodeToString(userInfo.getBytes());
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Adding user info as basic authorization");
-            }
-            conn.setRequestProperty("Authorization", basicAuth);
-        }
     }
 
     /**
