@@ -63,5 +63,11 @@ Copyright (c) 2014 - Jeremy Long. All Rights Reserved.
             <artifactId>logback-classic</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mock-server</groupId>
+            <artifactId>mockserver-netty</artifactId>
+            <version>5.6.1</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

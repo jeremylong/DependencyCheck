@@ -872,6 +872,12 @@ Copyright (c) 2012 - Jeremy Long
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.mock-server</groupId>
+                <artifactId>mockserver-netty</artifactId>
+                <version>5.6.1</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.jmockit</groupId>
                 <artifactId>jmockit</artifactId>
                 <version>${jmockit.version}</version>

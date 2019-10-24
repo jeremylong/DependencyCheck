@@ -31,6 +31,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import javax.net.ssl.HttpsURLConnection;
 
 import org.slf4j.Logger;
@@ -126,7 +127,27 @@ public final class URLConnectionFactory {
         //conn.setRequestProperty("user-agent",
         //  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36");
         configureTLS(url, conn);
+        addAuthenticationIfPresent(conn);
         return conn;
+    }
+
+    /**
+     * Adds the basic authorization header if the URL contains a username and
+     * password. Example URL that will have the basic authorization header
+     * added:
+     * <code>http://username:password@passwordprotectednvdsite.internal/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz</code>
+     *
+     * @param conn the connection
+     */
+    private void addAuthenticationIfPresent(HttpURLConnection conn) {
+        String userInfo = conn.getURL().getUserInfo();
+        if (userInfo != null) {
+            String basicAuth = "Basic " + Base64.getEncoder().encodeToString(userInfo.getBytes());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Adding user info as basic authorization");
+            }
+            conn.addRequestProperty("Authorization", basicAuth);
+        }
     }
 
     /**
@@ -197,6 +218,7 @@ public final class URLConnectionFactory {
             throw new URLConnectionFailureException("Error getting connection.", ioe);
         }
         configureTLS(url, conn);
+        addAuthenticationIfPresent(conn);
         return conn;
     }
 
