@@ -140,9 +140,9 @@ public final class URLConnectionFactory {
      * @param conn the connection
      */
     private void addAuthenticationIfPresent(HttpURLConnection conn) {
-        String userInfo = conn.getURL().getUserInfo();
+        final String userInfo = conn.getURL().getUserInfo();
         if (userInfo != null) {
-            String basicAuth = "Basic " + Base64.getEncoder().encodeToString(userInfo.getBytes());
+            final String basicAuth = "Basic " + Base64.getEncoder().encodeToString(userInfo.getBytes());
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Adding user info as basic authorization");
             }
