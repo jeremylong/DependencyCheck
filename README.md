@@ -118,6 +118,8 @@ if [ ! -d "$DATA_DIRECTORY" ]; then
     echo "Initially creating persistent directory: $DATA_DIRECTORY"
     mkdir -p "$DATA_DIRECTORY"
     chmod -R 664 "$DATA_DIRECTORY"
+fi
+
 if [ ! -d "$REPORT_DIRECTORY" ]; then
     echo "Initially creating persistent directory: $REPORT_DIRECTORY"
     mkdir -p "$REPORT_DIRECTORY"
