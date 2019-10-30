@@ -58,13 +58,15 @@ public class CweSet implements Serializable {
      * @param cwe new CWE to add
      */
     public void addCwe(String cwe) {
-        this.cwes.add(cwe);
+        if (cwe != null) {
+            this.cwes.add(cwe);
+        }
     }
 
     @Override
     public String toString() {
         if (cwes.isEmpty()) {
-            return null;
+            return "";
         }
         return cwes.stream().map(cwe -> CweDB.getFullName(cwe)).collect(Collectors.joining(", "));
     }

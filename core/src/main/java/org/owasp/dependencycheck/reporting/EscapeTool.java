@@ -126,7 +126,7 @@ public class EscapeTool {
             return "\"\"";
         }
         final String str = text.trim().replace("\n", " ");
-        if (str.length() == 0) {
+        if (str.trim().length() == 0) {
             return "\"\"";
         }
         return StringEscapeUtils.escapeCsv(str);

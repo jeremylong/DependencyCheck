@@ -569,6 +569,9 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 white-space: pre-wrap;
                 font: 13px "Droid Sans",Arial,"Helvetica Neue","Lucida Grande",sans-serif
             }
+            .underline {
+                text-decoration: underline;
+            }
         </style>
     </head>
     <body>
@@ -891,12 +894,12 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                             #elseif($vuln.getSource().name().equals("NPM"))
                                 <p><b><a target="_blank" href="https://www.npmjs.com/advisories/$enc.url($vuln.name)">NPM-$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CCE for this file" onclick="copyText('$enc.javascript($dependency.DisplayFileName)', '$enc.javascript($dependency.Sha1sum)', '#if($supressPkgUrl)$enc.javascript($supressPkgUrl)#end', 'vulnerabilityName', '$enc.javascript($vuln.name)')">suppress</button></p>
                             #else
-                                <p><b>$enc.html($vuln.name)</b>&nbsp;($vuln.getSource().name())</b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CCE for this file" onclick="copyText('$enc.javascript($dependency.DisplayFileName)', '$enc.javascript($dependency.Sha1sum)', '#if($supressPkgUrl)$enc.javascript($supressPkgUrl)#end', 'vulnerabilityName', '$enc.javascript($vuln.name)')">suppress</button></p>
+                                <p><span class="underline"><b>$enc.html($vuln.name)</b>&nbsp;($vuln.getSource().name())</span>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CCE for this file" onclick="copyText('$enc.javascript($dependency.DisplayFileName)', '$enc.javascript($dependency.Sha1sum)', '#if($supressPkgUrl)$enc.javascript($supressPkgUrl)#end', 'vulnerabilityName', '$enc.javascript($vuln.name)')">suppress</button></p>
                             #end
                             <p>#if($vuln.description)
                             <pre>$enc.html($vuln.description)</pre>
                             #end
-                            #if ($vuln.cwes)
+                            #if ($vuln.cwes.toString())
                                 $vuln.cwes.toString()<br/><br/>
                             #end
                             #if ($vuln.notes)
@@ -1063,7 +1066,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                     <p>#if($vuln.description)
                                     <pre>$enc.html($vuln.description)</pre>
                                     #end
-                                    #if ($vuln.cwes)
+                                    #if ($vuln.cwes.toString())
                                         $vuln.cwes.toString()<br/><br/>
                                     #end
                                     #if ($vuln.notes)
