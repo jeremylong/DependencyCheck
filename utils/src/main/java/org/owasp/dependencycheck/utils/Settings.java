@@ -281,7 +281,8 @@ public final class Settings {
          */
         public static final String ANALYZER_NODE_AUDIT_URL = "analyzer.node.audit.url";
         /**
-         * The properties key for whether Central search results will be cached.
+         * The properties key for whether node audit analyzer results will be
+         * cached.
          */
         public static final String ANALYZER_NODE_AUDIT_USE_CACHE = "analyzer.node.audit.use.cache";
         /**
@@ -427,6 +428,10 @@ public final class Settings {
          * The properties key for whether the Central analyzer is enabled.
          */
         public static final String ANALYZER_CENTRAL_ENABLED = "analyzer.central.enabled";
+        /**
+         * Key for the URL to obtain content from Maven Central.
+         */
+        public static final String CENTRAL_CONTENT_URL = "central.content.url";
         /**
          * The properties key for whether the Central analyzer should use
          * parallel processing.

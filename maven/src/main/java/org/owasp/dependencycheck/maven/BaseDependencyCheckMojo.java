@@ -1125,7 +1125,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         }
                     }
                     if (d != null) {
-                        final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);
+                        final MavenArtifact ma = new MavenArtifact(settings, groupId, artifactId, version);
                         d.addAsEvidence("pom", ma, Confidence.HIGHEST);
                         if (availableVersions != null) {
                             for (ArtifactVersion av : availableVersions) {

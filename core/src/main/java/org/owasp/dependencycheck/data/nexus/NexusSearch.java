@@ -146,7 +146,7 @@ public class NexusSearch {
                             .evaluate(
                                     "/org.sonatype.nexus.rest.model.NexusArtifact/pomLink",
                                     doc);
-                    final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);
+                    final MavenArtifact ma = new MavenArtifact(settings, groupId, artifactId, version);
                     if (link != null && !link.isEmpty()) {
                         ma.setArtifactUrl(link);
                     }

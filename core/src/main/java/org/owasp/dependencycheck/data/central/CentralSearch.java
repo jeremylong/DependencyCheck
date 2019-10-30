@@ -200,7 +200,7 @@ public class CentralSearch {
 //                            }
 //                        }
                         LOGGER.trace("Version: {}", v);
-                        result.add(new MavenArtifact(g, a, v, jarAvailable, pomAvailable));
+                        result.add(new MavenArtifact(settings, g, a, v, jarAvailable, pomAvailable));
                     }
                 }
             } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
