@@ -141,6 +141,13 @@ public class NodeAuditSearch {
      */
     private List<Advisory> submitPackage(JsonObject packageJson, String key, int count) throws SearchException, IOException {
         try {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("----------------------------------------");
+                LOGGER.debug("----------------------------------------");
+                LOGGER.debug(packageJson.toString());
+                LOGGER.debug("----------------------------------------");
+                LOGGER.debug("----------------------------------------");
+            }
             final byte[] packageDatabytes = packageJson.toString().getBytes(StandardCharsets.UTF_8);
             final URLConnectionFactory factory = new URLConnectionFactory(settings);
             final HttpURLConnection conn = factory.createHttpURLConnection(nodeAuditUrl, useProxy);

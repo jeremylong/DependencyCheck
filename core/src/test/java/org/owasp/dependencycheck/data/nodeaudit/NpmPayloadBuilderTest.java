@@ -18,6 +18,8 @@
 package org.owasp.dependencycheck.data.nodeaudit;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 import javax.json.Json;
@@ -26,7 +28,7 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
 import org.owasp.dependencycheck.BaseTest;
 
-public class SanitizePackageTest {
+public class NpmPayloadBuilderTest {
 
     @Test
     public void testSanitizer() {
@@ -47,7 +49,8 @@ public class SanitizePackageTest {
                 );
 
         JsonObject packageJson = builder.build();
-        JsonObject sanitized = SanitizePackage.sanitize(packageJson);
+        Map<String, String> dependencyMap = new HashMap<>();
+        JsonObject sanitized = NpmPayloadBuilder.build(packageJson, dependencyMap);
 
         Assert.assertTrue(sanitized.containsKey("name"));
         Assert.assertTrue(sanitized.containsKey("version"));
@@ -56,7 +59,7 @@ public class SanitizePackageTest {
 
         JsonObject requires = sanitized.getJsonObject("requires");
         Assert.assertTrue(requires.containsKey("abbrev"));
-        Assert.assertEquals("1.1.1", requires.getString("abbrev"));
+        Assert.assertEquals("^1.1.1", requires.getString("abbrev"));
 
         Assert.assertFalse(sanitized.containsKey("lockfileVersion"));
         Assert.assertFalse(sanitized.containsKey("random"));
@@ -64,10 +67,11 @@ public class SanitizePackageTest {
 
     @Test
     public void testSanitizePackage() {
-        InputStream in = BaseTest.getResourceAsStream(this, "nodeaudit/package.json");
+        InputStream in = BaseTest.getResourceAsStream(this, "nodeaudit/package-lock.json");
+        Map<String, String> dependencyMap = new HashMap<>();
         try (JsonReader jsonReader = Json.createReader(in)) {
             JsonObject packageJson = jsonReader.readObject();
-            JsonObject sanitized = SanitizePackage.sanitize(packageJson);
+            JsonObject sanitized = NpmPayloadBuilder.build(packageJson, dependencyMap);
 
             Assert.assertTrue(sanitized.containsKey("name"));
             Assert.assertTrue(sanitized.containsKey("version"));
@@ -76,7 +80,7 @@ public class SanitizePackageTest {
 
             JsonObject requires = sanitized.getJsonObject("requires");
             Assert.assertTrue(requires.containsKey("bcrypt-nodejs"));
-            Assert.assertEquals("0.0.3", requires.getString("bcrypt-nodejs"));
+            Assert.assertEquals("^0.0.3", requires.getString("bcrypt-nodejs"));
 
             Assert.assertFalse(sanitized.containsKey("lockfileVersion"));
             Assert.assertFalse(sanitized.containsKey("random"));
