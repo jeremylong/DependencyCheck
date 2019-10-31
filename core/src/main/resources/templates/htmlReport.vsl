@@ -916,6 +916,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                             <li>Vector: $enc.html($vuln.getCvssV3().toString())</li></ul>
                             #end
                             #if ($vuln.unscoredSeverity)
+                            Unscored:
                                 <ul><li>Severity: $enc.html($vuln.unscoredSeverity)</li></ul>
                             #end
                             #if ($vuln.getReferences().size()>0)
@@ -1083,6 +1084,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                     <li>$enc.html($vuln.getCvssV3().toString())</li></ul>
                                     #end
                                     #if ($vuln.unscoredSeverity)
+                                    Unscored:
                                         <ul><li>Severity: $enc.html($vuln.unscoredSeverity)</li></ul>
                                     #end
                                     #if ($vuln.getReferences().size()>0)
