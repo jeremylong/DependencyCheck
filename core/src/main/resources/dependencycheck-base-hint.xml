@@ -291,7 +291,7 @@
             <evidence type="product" source="hint analyzer" name="product" value="web services" confidence="MEDIUM"/>
         </add>
     </hint>
-        <hint>
+    <hint>
         <given>
             <evidence regex="true" type="product" source="pom" name="artifactid" value="^.*[\.-]ws([\.-].*)?$"/>
         </given>
@@ -300,4 +300,12 @@
             <evidence type="product" source="hint analyzer" name="product" value="web services" confidence="MEDIUM"/>
         </add>
     </hint>
+    <hint>
+        <given>
+            <evidence type="vendor" source="pom" name="groupid" value="zeroturnaround"/>
+        </given>
+        <add>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="jrebel" confidence="HIGHEST"/>
+        </add>
+    </hint>   
 </hints>
