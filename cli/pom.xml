@@ -84,6 +84,7 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
                     <useWildcardClassPath>true</useWildcardClassPath>
                     <configurationDirectory>plugins/*</configurationDirectory>
                     <includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
+                    <unixScriptTemplate>${project.basedir}/src/main/conf/unixBinTemplate</unixScriptTemplate>
                 </configuration>
                 <executions>
                     <execution>
