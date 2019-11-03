@@ -353,12 +353,18 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
         } else if ((!rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+") && leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+"))
                 || (rightName.contains("core") && !leftName.contains("core"))
                 || (rightName.contains("kernel") && !leftName.contains("kernel"))
+                || (rightName.contains("server") && !leftName.contains("server"))
+                || (rightName.contains("project") && !leftName.contains("project"))
+                || (rightName.contains("engine") && !leftName.contains("engine"))
                 || (rightName.contains("akka-stream") && !leftName.contains("akka-stream"))
                 || (rightName.contains("netty-transport") && !leftName.contains("netty-transport"))) {
             returnVal = false;
         } else if ((rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+") && !leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+"))
                 || (!rightName.contains("core") && leftName.contains("core"))
                 || (!rightName.contains("kernel") && leftName.contains("kernel"))
+                || (!rightName.contains("server") && leftName.contains("server"))
+                || (!rightName.contains("project") && leftName.contains("project"))
+                || (!rightName.contains("engine") && leftName.contains("engine"))
                 || (!rightName.contains("akka-stream") && leftName.contains("akka-stream"))
                 || (!rightName.contains("netty-transport") && leftName.contains("netty-transport"))) {
             returnVal = true;
