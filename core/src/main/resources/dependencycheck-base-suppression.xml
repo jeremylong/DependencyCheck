@@ -37,8 +37,8 @@
         <notes><![CDATA[
             FP per #2247 CVE candidate was withdrawn by the CNA
         ]]></notes>
-            <packageUrl regex="true">^pkg:maven/org\.owasp\.antisamy/antisamy@.*$</packageUrl>
-            <vulnerabilityName>CVE-2018-1000643</vulnerabilityName>
+        <packageUrl regex="true">^pkg:maven/org\.owasp\.antisamy/antisamy@.*$</packageUrl>
+        <vulnerabilityName>CVE-2018-1000643</vulnerabilityName>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -129,6 +129,7 @@
             39. <cpe>cpe:/a:util-linux_project:util-linux</cpe> c util on linux #2069
             40. <cpe>cpe:/a:bitmap_project:bitmap</cpe> is a C library #1961
             41. <cpe>cpe:/a:security-framework_project:security-framework</cpe> is a rust library
+            42. <cpe>cpe:/a:next:next</cpe> is NeXT system.
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -175,6 +176,7 @@
         <cpe>cpe:/a:util-linux_project:util-linux</cpe>
         <cpe>cpe:/a:bitmap_project:bitmap</cpe>
         <cpe>cpe:/a:security-framework_project:security-framework</cpe>
+        <cpe>cpe:/a:next:next</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -260,7 +262,7 @@
         Suppresses false positives per #1573.
         ]]></notes>
         <gav regex="true">^io\.netty:netty-tcnative-boringssl-static:.*$</gav>
-        <cpe>cpe:/a:netty_project:netty</cpe>
+        <cpe regex="true">^cpe:/a:netty(_project)?:netty.*$</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -291,6 +293,23 @@
         <gav regex="true">^org\.springframework\.security\.extensions:spring-security-saml.*$</gav>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
         <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
+        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #2235.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.kerberos/spring-security-kerberos.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
+        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue 2246
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.ehcache/ehcache@.*$</packageUrl>
+        <cpe>cpe:/a:gradle:gradle</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -373,6 +392,7 @@
         <gav regex="true">^org\.apache\.activemq:artemis.*$</gav>
         <cpe>cpe:/a:apache:apache_http_server</cpe>
         <cpe>cpe:/a:apache:http_server</cpe>
+        <cpe>cpe:/a:apache:activemq</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -834,7 +854,7 @@
             Note, there will be more false positives for Netty. Trying to figure out a better suppression.
         ]]></notes>
         <gav regex="true">com.typesafe.netty:netty-http-pipelining:.*</gav>
-        <cpe>cpe:/a:netty_project:netty</cpe>
+        <cpe regex="true">^cpe:/a:netty(_project)?:netty.*$</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -1220,17 +1240,24 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        ACtiveMQ false positives.
+        ActiveMQ false positives.
         ]]></notes>
         <gav regex="true">org\.apache\.activemq:activemq-pool.*</gav>
         <cpe>cpe:/a:apache:activemq</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        ACtiveMQ false positives.
+        ActiveMQ false positives.
         ]]></notes>
-        <gav regex="true">org\.apache\.activemq:artemis.*</gav>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.activemq\.protobuf/activemq\-protobuf@.*$</packageUrl>
         <cpe>cpe:/a:apache:activemq</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2210
+        ]]></notes>
+        <packageUrl regex="true">.*(?!gradle).*</packageUrl>
+        <cpe>cpe:/a:gradle:gradle</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -1278,6 +1305,7 @@
         ]]></notes>
         <gav regex="true">org\.springframework\.security:spring-security-jwt.*</gav>
         <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
+        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -1290,8 +1318,15 @@
         <notes><![CDATA[
         FP per #1673
         ]]></notes>
-        <gav regex="true">^org\.glassfish\.jersey\.media:jersey-media-moxy:.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.glassfish.*$</packageUrl>
         <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: keycloak-dropwizard-1.1.1.jar
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/de\.ahus1\.keycloak\.dropwizard/keycloak\-dropwizard@.*$</packageUrl>
+        <cpe>cpe:/a:keycloak:keycloak</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -1703,7 +1738,7 @@
         file name: hystrix-rx-netty-metrics-stream-1.5.12.jar
         ]]></notes>
         <gav regex="true">^com\.netflix\.hystrix:hystrix-rx-netty-metrics-stream:.*$</gav>
-        <cpe>cpe:/a:netty_project:netty</cpe>
+        <cpe regex="true">^cpe:/a:netty(_project)?:netty.*$</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -1731,7 +1766,7 @@
         False positive per issue #1068
         ]]></notes>
         <gav regex="true">^(?!(io\.netty|org\.jboss\.netty)).*:.*netty.*$</gav>
-        <cpe>cpe:/a:netty_project:netty</cpe>
+        <cpe regex="true">^cpe:/a:netty(_project)?:netty.*$</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -1854,6 +1889,13 @@
         <gav regex="true">^com\.typesafe\.play:play-akka-http-server_2\.\d+:.*$</gav>
         <cpe>cpe:/a:akka:akka</cpe>
         <cpe>cpe:/a:akka:http_server</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP on sttp for http-client
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.softwaremill\.sttp.*$</packageUrl>
+        <cpe>cpe:/a:async-http-client_project:async-http-client</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
