@@ -307,5 +307,13 @@
         <add>
             <evidence type="vendor" source="hint analyzer" name="vendor" value="jrebel" confidence="HIGHEST"/>
         </add>
-    </hint>   
+    </hint>
+    <hint>
+        <given>
+            <evidence type="vendor" source="Manifest" name="Implementation-Vendor" value="JBoss by Red Hat"/>
+        </given>
+        <add>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="redhat" confidence="HIGHEST"/>
+        </add>
+    </hint>    
 </hints>
