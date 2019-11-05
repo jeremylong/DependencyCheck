@@ -1330,6 +1330,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        file name: keycloak-jetty-core-4.8.3.Final.jar
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.keycloak/keycloak\-jetty\-core@.*$</packageUrl>
+        <cpe>cpe:/a:jetty:jetty</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Drupal services false positive.
         Pyro is a python project.
         ]]></notes>
@@ -2050,6 +2057,20 @@
         ]]></notes>
         <gav regex="true">^org\.apache\.curator:curator-recipes:.*$</gav>
         <cpe>cpe:/a:apache:zookeeper</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2248
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.zookeeper/zookeeper@.*$</packageUrl>
+        <cpe>cpe:/a:apache:hadoop</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2256
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.vertx.*$</packageUrl>
+        <cpe>cpe:/a:sonatype:nexus</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
