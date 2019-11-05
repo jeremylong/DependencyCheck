@@ -637,7 +637,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                     </ul><br/>
                 #set($cnt=0)
 #if($exceptions)
-    #macro( writeException $type $ex $depth)
+    #macro( writeHtmlException $type $ex $depth)
         #set($cnt=$cnt+1)
         <h4 id="header$cnt" class="subsectionheader expandable expandablesubsection white">$enc.html($ex.getMessage())</h4>
         <div id="content$cnt" class="subsectioncontent standardsubsection hidden">
@@ -652,7 +652,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
         #if($ex.getCause() && $depth<20)
             #set($cause="cause")
             #set($currentDepth=$depth+1)
-            #writeException($cause $ex.getCause() $currentDepth)
+            #writeHtmlException($cause $ex.getCause() $currentDepth)
         #end
         </div>
     #end
@@ -660,7 +660,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
             #foreach($ex in $exceptions)
                 #set($type="exception")
                 #set($d=0)
-                #writeException($type $ex $d)
+                #writeHtmlException($type $ex $d)
             #end
         <br/>
 #end

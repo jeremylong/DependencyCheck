@@ -29,7 +29,7 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
         </dataSource>
 #end
 #if($exceptions)
-    #macro( writeException $type $ex $depth)
+    #macro( writeXmlException $type $ex $depth)
         <$type><message>$enc.xml($ex.toString())</message>
         #if($ex.getStackTrace())
             <stackTrace>
@@ -41,7 +41,7 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
         #if($ex.getCause() && $depth<20)
             #set($cause="cause")
             #set($currentDepth=$depth+1)
-            #writeException($cause $ex.getCause() $currentDepth)
+            #writeXmlException($cause $ex.getCause() $currentDepth)
         #end
         </$type>
     #end
@@ -49,7 +49,7 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
             #foreach($ex in $exceptions)
                 #set($type="exception")
                 #set($d=0)
-                #writeException($type $ex $d)
+                #writeXmlException($type $ex $d)
             #end
         </analysisExceptions>
 #end
