@@ -86,7 +86,19 @@ public final class XmlUtils {
         factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
         factory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
         factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-        System.setProperty("javax.xml.accessExternalSchema", "file, https");
+
+        String accessExternalSchema = System.getProperty("javax.xml.accessExternalSchema");
+        if (accessExternalSchema==null) {
+            accessExternalSchema = "file, https";
+        } else if (!"ALL".equalsIgnoreCase(accessExternalSchema)) {
+            if (!accessExternalSchema.contains("file")) {
+                accessExternalSchema += ", file";
+            }
+            if (!accessExternalSchema.contains("https")) {
+                accessExternalSchema += ", https";
+            }
+        }
+        System.setProperty("javax.xml.accessExternalSchema", accessExternalSchema);
 
         final SAXParser saxParser = factory.newSAXParser();
         saxParser.setProperty(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
