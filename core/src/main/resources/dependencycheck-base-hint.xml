@@ -315,5 +315,13 @@
         <add>
             <evidence type="vendor" source="hint analyzer" name="vendor" value="redhat" confidence="HIGHEST"/>
         </add>
-    </hint>    
+    </hint>
+    <hint>
+        <given>
+            <evidence type="vendor" source="pom" name="groupid" value="datomic"/>
+        </given>
+        <add>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="cognitect" confidence="HIGHEST"/>
+        </add>
+    </hint>   
 </hints>

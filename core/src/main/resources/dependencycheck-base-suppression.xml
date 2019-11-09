@@ -351,6 +351,27 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        Suppresses false positives per issue #2298
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.github\.docker\-java/docker\-java@.*$</packageUrl>
+        <cpe>cpe:/a:docker:docker</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #2310
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.itextpdf/itext\-licensekey@.*$</packageUrl>
+        <cpe>cpe:/a:itextpdf:itext</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #2261
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.datomic/(?!datomic-free).*$</packageUrl>
+        <cpe>cpe:/a:cognitect:datomic</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Suppresses false positives per issue #1587
         ]]></notes>
         <gav regex="true">^com\.liferay:org\.apache\.felix\.configadmin:.*$</gav>
@@ -2959,6 +2980,7 @@
         <cve>CVE-2002-0729</cve>
         <cve>CVE-2007-5348</cve>
         <cve>CVE-2008-4110</cve>
+        <cve>CVE-2019-1068</cve>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
