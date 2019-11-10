@@ -88,7 +88,7 @@ public final class XmlUtils {
         factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 
         String accessExternalSchema = System.getProperty("javax.xml.accessExternalSchema");
-        if (accessExternalSchema==null) {
+        if (accessExternalSchema == null) {
             accessExternalSchema = "file, https";
         } else if (!"ALL".equalsIgnoreCase(accessExternalSchema)) {
             if (!accessExternalSchema.contains("file")) {
