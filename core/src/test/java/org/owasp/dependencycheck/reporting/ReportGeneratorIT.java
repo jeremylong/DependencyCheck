@@ -57,24 +57,102 @@ public class ReportGeneratorIT extends BaseDBTestCase {
      */
     @Test
     public void testGenerateReport() {
+        File writeTo = new File("target/test-reports/Report.xml");
+        File writeJsonTo = new File("target/test-reports/Report.json");
+        File writeHtmlTo = new File("target/test-reports/Report.html");
+        File writeJunitTo = new File("target/test-reports/junit.xml");
+        File writeCsvTo = new File("target/test-reports/Report.csv");
+        File suppressionFile = BaseTest.getResourceAsFile(this, "incorrectSuppressions.xml");
+        Settings settings = getSettings();
+        settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile.getAbsolutePath());
+        settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+        settings.setBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, false);
+        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, false);
+        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, false);
+        settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
+
+        generateReport(settings, writeTo, writeJsonTo, writeHtmlTo, writeJunitTo, writeCsvTo, suppressionFile);
+    }
+
+    /**
+     * Generates an XML report containing known vulnerabilities and realistic
+     * data and validates the generated XML document against the XSD.
+     */
+    @Test
+    public void testGenerateNodeAuditReport() {
+        File writeTo = new File("target/test-reports/nodeAudit/Report.xml");
+        File writeJsonTo = new File("target/test-reports/nodeAudit/Report.json");
+        File writeHtmlTo = new File("target/test-reports/nodeAudit/Report.html");
+        File writeJunitTo = new File("target/test-reports/nodeAudit/junit.xml");
+        File writeCsvTo = new File("target/test-reports/nodeAudit/Report.csv");
+        File suppressionFile = BaseTest.getResourceAsFile(this, "incorrectSuppressions.xml");
+        Settings settings = getSettings();
+        settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile.getAbsolutePath());
+        settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+        settings.setBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, false);
+        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, true);
+        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, false);
+        settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
+
+        generateReport(settings, writeTo, writeJsonTo, writeHtmlTo, writeJunitTo, writeCsvTo, suppressionFile);
+    }
+
+
+    /**
+     * Generates an XML report containing known vulnerabilities and realistic
+     * data and validates the generated XML document against the XSD.
+     */
+    @Test
+    public void testGenerateRetireJsReport() {
+        File writeTo = new File("target/test-reports/retireJS/Report.xml");
+        File writeJsonTo = new File("target/test-reports/retireJS/Report.json");
+        File writeHtmlTo = new File("target/test-reports/retireJS/Report.html");
+        File writeJunitTo = new File("target/test-reports/retireJS/junit.xml");
+        File writeCsvTo = new File("target/test-reports/retireJS/Report.csv");
+        File suppressionFile = BaseTest.getResourceAsFile(this, "incorrectSuppressions.xml");
+        Settings settings = getSettings();
+        settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile.getAbsolutePath());
+        settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+        settings.setBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, true);
+        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, false);
+        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, false);
+        settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
+
+        generateReport(settings, writeTo, writeJsonTo, writeHtmlTo, writeJunitTo, writeCsvTo, suppressionFile);
+    }
+    /**
+     * Generates an XML report containing known vulnerabilities and realistic
+     * data and validates the generated XML document against the XSD.
+     */
+    @Test
+    public void testGenerateNodePackageReport() {
+        File writeTo = new File("target/test-reports/NodePackage/Report.xml");
+        File writeJsonTo = new File("target/test-reports/NodePackage/Report.json");
+        File writeHtmlTo = new File("target/test-reports/NodePackage/Report.html");
+        File writeJunitTo = new File("target/test-reports/NodePackage/junit.xml");
+        File writeCsvTo = new File("target/test-reports/NodePackage/Report.csv");
+        File suppressionFile = BaseTest.getResourceAsFile(this, "incorrectSuppressions.xml");
+        Settings settings = getSettings();
+        settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile.getAbsolutePath());
+        settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+        settings.setBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, false);
+        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, true);
+        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, true);
+        settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
+
+        generateReport(settings, writeTo, writeJsonTo, writeHtmlTo, writeJunitTo, writeCsvTo, suppressionFile);
+    }
+
+
+    public void generateReport(Settings settings, File writeTo, File writeJsonTo, File writeHtmlTo, File writeJunitTo, File writeCsvTo, File suppressionFile){
         try {
-            File f = new File("target/test-reports");
-            if (!f.exists()) {
-                f.mkdir();
-            }
-            File writeTo = new File("target/test-reports/Report.xml");
-            File writeJsonTo = new File("target/test-reports/Report.json");
-            File writeHtmlTo = new File("target/test-reports/Report.html");
-            File writeJunitTo = new File("target/test-reports/junit.xml");
-            File writeCsvTo = new File("target/test-reports/Report.csv");
-            File suppressionFile = BaseTest.getResourceAsFile(this, "incorrectSuppressions.xml");
-            Settings settings = getSettings();
-            settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile.getAbsolutePath());
-            settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
-            settings.setBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, false);
-            settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, false);
-            settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, false);
-            settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
+            //first check parent folder
+            createParentFolder(writeTo);
+            createParentFolder(writeJsonTo);
+            createParentFolder(writeHtmlTo);
+            createParentFolder(writeJunitTo);
+            createParentFolder(writeCsvTo);
+
 
             //File struts = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
             File struts = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
@@ -123,6 +201,20 @@ public class ReportGeneratorIT extends BaseDBTestCase {
             fail(ex.getMessage());
         }
     }
+
+    /**
+     * create the parent folder if doesn't exist
+     * @param file the file
+     * @return boolean is all fine ?
+     */
+    private boolean createParentFolder(File file){
+        if (!file.getParentFile().exists()) {
+            return file.getParentFile().mkdir();
+        }
+        return true;
+    }
+
+
 
     /**
      * Counts the lines in a file. Copied from
