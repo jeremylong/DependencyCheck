@@ -190,17 +190,20 @@ public class CentralSearch {
                                 jarAvailable = true;
                             }
                         }
-
-//                        attributes = (NodeList) xpath.evaluate("./arr[@name='tags']/str", docs.item(i), XPathConstants.NODESET);
-//                        boolean useHTTPS = true;//false;
-//                        for (int x = 0; x < attributes.getLength(); x++) {
-//                            final String tmp = xpath.evaluate(".", attributes.item(x));
-//                            if ("https".equals(tmp)) {
-//                                useHTTPS = true;
-//                            }
-//                        }
-                        LOGGER.trace("Version: {}", v);
-                        result.add(new MavenArtifact(settings, g, a, v, jarAvailable, pomAvailable));
+                        final String centralContentUrl = settings.getString(Settings.KEYS.CENTRAL_CONTENT_URL);
+                        String artifactUrl = null;
+                        String pomUrl = null;
+                        if (jarAvailable) {
+                            //org/springframework/spring-core/3.2.0.RELEASE/spring-core-3.2.0.RELEASE.pom
+                            artifactUrl = centralContentUrl + g.replace('.', '/') + '/' + a + '/'
+                                    + v + '/' + a + '-' + v + ".jar";
+                        }
+                        if (pomAvailable) {
+                            //org/springframework/spring-core/3.2.0.RELEASE/spring-core-3.2.0.RELEASE.pom
+                            pomUrl = centralContentUrl + g.replace('.', '/') + '/' + a + '/'
+                                    + v + '/' + a + '-' + v + ".pom";
+                        }
+                        result.add(new MavenArtifact(g, a, v, artifactUrl, pomUrl));
                     }
                 }
             } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {

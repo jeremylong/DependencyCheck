@@ -176,9 +176,9 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
         final List<Advisory> advisories;
         final Map<String, String> dependencyMap = new HashMap<>();
         if (packageJson.isFile()) {
-            advisories = analyzePackage(packageLock, packageJson, dependency, engine, dependencyMap);
+            advisories = analyzePackage(packageLock, packageJson, dependency, dependencyMap);
         } else {
-            advisories = legacyAnalysis(packageLock, dependency, engine, dependencyMap);
+            advisories = legacyAnalysis(packageLock, dependency, dependencyMap);
         }
         try {
             processResults(advisories, engine, dependency, dependencyMap);
@@ -247,7 +247,6 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
      * @param packageFile a reference to the package.json
      * @param dependency a reference to the dependency-object for the
      * package-lock.json
-     * @param engine a reference to the analysis engine.
      * @param dependencyMap a collection of module/version pairs; during
      * creation of the payload the dependency map is populated with the
      * module/version information.
@@ -256,7 +255,7 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
      * submitting the npm audit API payload
      */
     private List<Advisory> analyzePackage(final File lockFile, final File packageFile,
-            Dependency dependency, Engine engine, Map<String, String> dependencyMap)
+            Dependency dependency, Map<String, String> dependencyMap)
             throws AnalysisException {
         try (JsonReader lockReader = Json.createReader(FileUtils.openInputStream(lockFile));
                 JsonReader packageReader = Json.createReader(FileUtils.openInputStream(packageFile))) {
@@ -298,7 +297,6 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
      * @param file a reference to the package-lock.json
      * @param dependency a reference to the dependency-object for the
      * package-lock.json
-     * @param engine a reference to the analysis engine.
      * @param dependencyMap a collection of module/version pairs; during
      * creation of the payload the dependency map is populated with the
      * module/version information.
@@ -306,7 +304,7 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
      * @throws AnalysisException thrown when there is an error creating or
      * submitting the npm audit API payload
      */
-    private List<Advisory> legacyAnalysis(final File file, Dependency dependency, Engine engine, Map<String, String> dependencyMap)
+    private List<Advisory> legacyAnalysis(final File file, Dependency dependency, Map<String, String> dependencyMap)
             throws AnalysisException {
 
         try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {

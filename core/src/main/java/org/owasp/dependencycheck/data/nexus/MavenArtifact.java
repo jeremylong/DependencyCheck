@@ -19,7 +19,6 @@ package org.owasp.dependencycheck.data.nexus;
 
 import java.io.Serializable;
 import javax.annotation.concurrent.ThreadSafe;
-import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * Simple bean representing a Maven Artifact.
@@ -34,10 +33,6 @@ public class MavenArtifact implements Serializable {
      * Generated UID.
      */
     private static final long serialVersionUID = -9112154330099159722L;
-    /**
-     * The base URL for download artifacts from Central.
-     */
-    private final String centralContentUrl;
 
     /**
      * The groupId
@@ -55,77 +50,43 @@ public class MavenArtifact implements Serializable {
     private String version;
 
     /**
-     * The artifact url. This may change depending on which Nexus server the
+     * The artifact URL. This may change depending on which Nexus server the
      * search took place.
      */
     private String artifactUrl;
     /**
-     * The url to download the POM from.
+     * The URL to download the POM from.
      */
     private String pomUrl;
 
     /**
      * Creates an empty MavenArtifact.
-     *
-     * @param settings a reference to the global dependency-check settings
      */
-    public MavenArtifact(Settings settings) {
-        this.centralContentUrl = settings.getString(Settings.KEYS.CENTRAL_CONTENT_URL);
+    public MavenArtifact() {
     }
 
     /**
      * Creates a MavenArtifact with the given attributes.
      *
-     * @param settings a reference to the global dependency-check settings
      * @param groupId the groupId
      * @param artifactId the artifactId
      * @param version the version
      */
-    public MavenArtifact(Settings settings, String groupId, String artifactId, String version) {
+    public MavenArtifact(String groupId, String artifactId, String version) {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
-        this.centralContentUrl = settings.getString(Settings.KEYS.CENTRAL_CONTENT_URL);
     }
 
     /**
      * Creates a MavenArtifact with the given attributes.
      *
-     * @param settings a reference to the global dependency-check settings
      * @param groupId the groupId
      * @param artifactId the artifactId
      * @param version the version
-     * @param jarAvailable if the jar file is available from central
-     * @param pomAvailable if the pom file is available from central
+     * @param url the artifactLink URL
      */
-    public MavenArtifact(Settings settings, String groupId, String artifactId, String version, boolean jarAvailable, boolean pomAvailable) {
-        this.groupId = groupId;
-        this.artifactId = artifactId;
-        this.version = version;
-        this.centralContentUrl = settings.getString(Settings.KEYS.CENTRAL_CONTENT_URL);
-        if (jarAvailable) {
-            //org/springframework/spring-core/3.2.0.RELEASE/spring-core-3.2.0.RELEASE.pom
-            this.artifactUrl = centralContentUrl + groupId.replace('.', '/') + '/' + artifactId + '/'
-                    + version + '/' + artifactId + '-' + version + ".jar";
-        }
-        if (pomAvailable) {
-            //org/springframework/spring-core/3.2.0.RELEASE/spring-core-3.2.0.RELEASE.pom
-            this.pomUrl = centralContentUrl + groupId.replace('.', '/') + '/' + artifactId + '/'
-                    + version + '/' + artifactId + '-' + version + ".pom";
-        }
-    }
-
-    /**
-     * Creates a MavenArtifact with the given attributes.
-     *
-     * @param settings a reference to the global dependency-check settings
-     * @param groupId the groupId
-     * @param artifactId the artifactId
-     * @param version the version
-     * @param url the artifactLink url
-     */
-    public MavenArtifact(Settings settings, String groupId, String artifactId, String version, String url) {
-        this.centralContentUrl = settings.getString(Settings.KEYS.CENTRAL_CONTENT_URL);
+    public MavenArtifact(String groupId, String artifactId, String version, String url) {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
@@ -135,15 +96,13 @@ public class MavenArtifact implements Serializable {
     /**
      * Creates a MavenArtifact with the given attributes.
      *
-     * @param settings a reference to the global dependency-check settings
      * @param groupId the groupId
      * @param artifactId the artifactId
      * @param version the version
-     * @param artifactUrl the artifactLink url
+     * @param artifactUrl the artifactLink URL
      * @param pomUrl the pomUrl
      */
-    public MavenArtifact(Settings settings, String groupId, String artifactId, String version, String artifactUrl, String pomUrl) {
-        this.centralContentUrl = settings.getString(Settings.KEYS.CENTRAL_CONTENT_URL);
+    public MavenArtifact(String groupId, String artifactId, String version, String artifactUrl, String pomUrl) {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;

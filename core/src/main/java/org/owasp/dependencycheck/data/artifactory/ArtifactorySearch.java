@@ -228,7 +228,7 @@ public class ArtifactorySearch {
             final String artifactId = pathMatcher.group("artifactId");
             final String version = pathMatcher.group("version");
 
-            result.add(new MavenArtifact(settings, groupId, artifactId, version, downloadUri, MavenArtifact.derivePomUrl(artifactId, version, downloadUri)));
+            result.add(new MavenArtifact(groupId, artifactId, version, downloadUri, MavenArtifact.derivePomUrl(artifactId, version, downloadUri)));
         }
 
         return result;
