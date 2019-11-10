@@ -58,12 +58,13 @@ dependencyCheck {
 
 ### Proxy Configuration
 
-Config Group | Property          | Description                        | Default Value
+Config Group | Property          | Description                                | Default Value
 -------------|-------------------|------------------------------------|------------------
 proxy        | server            | The proxy server; see the [proxy configuration](../data/proxy.html) page for more information. | &nbsp;
-proxy        | port              | The proxy port.                    | &nbsp;
-proxy        | username          | Defines the proxy user name.       | &nbsp;
-proxy        | password          | Defines the proxy password.        | &nbsp;
+proxy        | port              | The proxy port.                            | &nbsp;
+proxy        | username          | Defines the proxy user name.               | &nbsp;
+proxy        | password          | Defines the proxy password.                | &nbsp;
+proxy        | nonProxyHosts     | The list of hosts that do not use a proxy. | &nbsp;
 
 #### Example
 ```groovy
