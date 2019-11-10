@@ -151,6 +151,7 @@ public class App {
         } else if (cli.isUpdateOnly()) {
             try {
                 populateSettings(cli);
+                settings.setBoolean(Settings.KEYS.AUTO_UPDATE, true);
             } catch (InvalidSettingException ex) {
                 LOGGER.error(ex.getMessage());
                 LOGGER.debug(ERROR_LOADING_PROPERTIES_FILE, ex);
