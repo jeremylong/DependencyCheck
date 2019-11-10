@@ -58,29 +58,34 @@ public final class NpmPayloadBuilder {
         // NPM Audit expects 'requires' to be an object containing key/value
         // pairs corresponding to the module name (key) and version (value).
         final JsonObjectBuilder requiresBuilder = Json.createObjectBuilder();
-        packageJson.getJsonObject("dependencies").entrySet()
-                .stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (oldValue, newValue) -> newValue, TreeMap::new))
-                .entrySet()
-                .forEach((entry) -> {
-                    requiresBuilder.add(entry.getKey(), entry.getValue());
-                    dependencyMap.put(entry.getKey(), entry.getValue().toString());
-                });
 
-        packageJson.getJsonObject("devDependencies").entrySet()
-                .stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (oldValue, newValue) -> newValue, TreeMap::new))
-                .entrySet()
-                .forEach((entry) -> {
-                    requiresBuilder.add(entry.getKey(), entry.getValue());
-                    dependencyMap.put(entry.getKey(), entry.getValue().toString());
-                });
+        if(packageJson.containsKey("dependencies")){
+            packageJson.getJsonObject("dependencies").entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (oldValue, newValue) -> newValue, TreeMap::new))
+                    .entrySet()
+                    .forEach((entry) -> {
+                        requiresBuilder.add(entry.getKey(), entry.getValue());
+                        dependencyMap.put(entry.getKey(), entry.getValue().toString());
+                    });
+        }
+
+        if(packageJson.containsKey("devDependencies")){
+            packageJson.getJsonObject("devDependencies").entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (oldValue, newValue) -> newValue, TreeMap::new))
+                    .entrySet()
+                    .forEach((entry) -> {
+                        requiresBuilder.add(entry.getKey(), entry.getValue());
+                        dependencyMap.put(entry.getKey(), entry.getValue().toString());
+                    });
+        }
 
         payloadBuilder.add("requires", requiresBuilder.build());
 
@@ -187,7 +192,11 @@ public final class NpmPayloadBuilder {
     private static JsonObject buildDependencies(JsonObject dep, Map<String, String> dependencyMap) {
         final JsonObjectBuilder depBuilder = Json.createObjectBuilder();
         depBuilder.add("version", dep.getString("version"));
-        depBuilder.add("integrity", dep.getString("integrity"));
+
+        //not installed package (like, dependency of an optional dependency) doesn't contains integrity
+        if(dep.containsKey("integrity")){
+            depBuilder.add("integrity", dep.getString("integrity"));
+        }
         if (dep.containsKey("requires")) {
             depBuilder.add("requires", dep.getJsonObject("requires"));
         }
