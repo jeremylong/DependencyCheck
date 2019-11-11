@@ -92,4 +92,15 @@ public class CweSet implements Serializable {
         });
         return map;
     }
+
+    /**
+     * Returns <code>true</code> if there are no CWEs; otherwise
+     * <code>false</code>.
+     *
+     * @return  <code>true</code> if there are no CWEs; otherwise
+     * <code>false</code>
+     */
+    public boolean isEmpty() {
+        return cwes.isEmpty();
+    }
 }
