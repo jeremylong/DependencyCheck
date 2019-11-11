@@ -37,6 +37,7 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
                 <configuration>
                     <format>ALL</format>
                     <centralAnalyzerEnabled>false</centralAnalyzerEnabled>
+                    <prettyPrint>true</prettyPrint>
                     <enableExperimental>true</enableExperimental>
                     <scanSet>
                         <fileSet>
