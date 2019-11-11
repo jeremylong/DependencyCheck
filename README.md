@@ -113,17 +113,19 @@ For Linux:
 OWASPDC_DIRECTORY=$HOME/OWASP-Dependency-Check
 DATA_DIRECTORY="$OWASPDC_DIRECTORY/data"
 REPORT_DIRECTORY="$OWASPDC_DIRECTORY/reports"
+CACHE_DIRECTORY="$OWASPDC_DIRECTORY/data/cache"
 
 if [ ! -d "$DATA_DIRECTORY" ]; then
     echo "Initially creating persistent directory: $DATA_DIRECTORY"
     mkdir -p "$DATA_DIRECTORY"
-    chmod -R 664 "$DATA_DIRECTORY"
 fi
-
 if [ ! -d "$REPORT_DIRECTORY" ]; then
     echo "Initially creating persistent directory: $REPORT_DIRECTORY"
     mkdir -p "$REPORT_DIRECTORY"
-    chmod -R 664 "$REPORT_DIRECTORY"
+fi
+if [ ! -d "$CACHE_DIRECTORY" ]; then
+    echo "Initially creating persistent directory: $CACHE_DIRECTORY"
+    mkdir -p "$CACHE_DIRECTORY"
 fi
 
 # Make sure we are using the latest version
