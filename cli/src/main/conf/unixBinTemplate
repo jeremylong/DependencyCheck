@@ -99,26 +99,12 @@ if $cygwin; then
   [ -n "$REPO" ] && REPO=`cygpath --path --windows "$REPO"`
 fi
 
-#exec "$JAVACMD" $JAVA_OPTS @EXTRA_JVM_ARGUMENTS@ \
-#  -classpath "$CLASSPATH" \
-#  -Dapp.name="@APP_NAME@" \
-#  -Dapp.pid="$$" \
-#  -Dapp.repo="$REPO" \
-#  -Dapp.home="$BASEDIR" \
-#  -Dbasedir="$BASEDIR" \
-#  @MAINCLASS@ \
-#  @APP_ARGUMENTS@"$@"@UNIX_BACKGROUND@
-
-CMDS=("$JAVACMD" \
+exec "$JAVACMD" $JAVA_OPTS @EXTRA_JVM_ARGUMENTS@ \
   -classpath "$CLASSPATH" \
   -Dapp.name="@APP_NAME@" \
   -Dapp.pid="$$" \
   -Dapp.repo="$REPO" \
   -Dapp.home="$BASEDIR" \
   -Dbasedir="$BASEDIR" \
-  @MAINCLASS@)
-
-for arg; do
-CMDS+=("$arg")
-done
-exec "${CMDS[@]@UNIX_BACKGROUND@}"
+  @MAINCLASS@ \
+  @APP_ARGUMENTS@"$@"@UNIX_BACKGROUND@
