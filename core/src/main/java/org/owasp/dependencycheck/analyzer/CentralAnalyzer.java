@@ -40,6 +40,7 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
+import org.apache.commons.jcs.access.exception.CacheException;
 import org.owasp.dependencycheck.data.cache.DataCache;
 import org.owasp.dependencycheck.data.cache.DataCacheFactory;
 
@@ -118,8 +119,13 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
         setEnabled(checkEnabled());
         numberOfRetries = getSettings().getInt(Settings.KEYS.ANALYZER_CENTRAL_RETRY_COUNT, numberOfRetries);
         if (settings.getBoolean(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE, true)) {
-            final DataCacheFactory factory = new DataCacheFactory(settings);
-            cache = factory.getPomCache();
+            try {
+                final DataCacheFactory factory = new DataCacheFactory(settings);
+                cache = factory.getPomCache();
+            } catch (CacheException ex) {
+                settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE, false);
+                LOGGER.debug("Error creating cache, disabling caching", ex);
+            }
         }
     }
 

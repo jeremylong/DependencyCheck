@@ -33,6 +33,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import org.apache.commons.jcs.access.exception.CacheException;
 import org.owasp.dependencycheck.data.cache.DataCache;
 import org.owasp.dependencycheck.data.cache.DataCacheFactory;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
@@ -112,8 +113,13 @@ public class CentralSearch {
             LOGGER.debug("Not using proxy");
         }
         if (settings.getBoolean(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE, true)) {
-            final DataCacheFactory factory = new DataCacheFactory(settings);
-            cache = factory.getCentralCache();
+            try {
+                final DataCacheFactory factory = new DataCacheFactory(settings);
+                cache = factory.getCentralCache();
+            } catch (CacheException ex) {
+                settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE, false);
+                LOGGER.debug("Error creating cache, disabling caching", ex);
+            }
         }
     }
 

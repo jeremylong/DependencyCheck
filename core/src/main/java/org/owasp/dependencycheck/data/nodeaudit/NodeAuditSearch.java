@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import org.apache.commons.jcs.access.exception.CacheException;
 
 import static org.owasp.dependencycheck.analyzer.NodeAuditAnalyzer.DEFAULT_URL;
 
@@ -99,8 +100,13 @@ public class NodeAuditSearch {
             LOGGER.debug("Not using proxy");
         }
         if (settings.getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, true)) {
-            final DataCacheFactory factory = new DataCacheFactory(settings);
-            cache = factory.getNodeAuditCache();
+            try {
+                final DataCacheFactory factory = new DataCacheFactory(settings);
+                cache = factory.getNodeAuditCache();
+            } catch (CacheException ex) {
+                settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, false);
+                LOGGER.debug("Error creating cache, disabling caching", ex);
+            }
         }
     }
 
