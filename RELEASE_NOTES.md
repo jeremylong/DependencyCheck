@@ -2,6 +2,17 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 5.2.3](https://github.com/jeremylong/DependencyCheck/releases/tag/v5.2.3) (2019-11-11)
+
+### Changes
+
+- Updated to use the NVD JSON 1.1 schema (see [#2273](https://github.com/jeremylong/DependencyCheck/issues/2273)).
+    - This update is 100% backward compatible with the 1.0 schema if you are mirroring the 1.0 JSON files.
+- Added `nonProxyHosts` to the CLI and gradle plugin.
+- False positive corrections.
+- General code cleanup/bug fix.
+- Full listing of [resolved issues](https://github.com/jeremylong/DependencyCheck/issues?utf8=%E2%9C%93&q=is%3Aissue++is%3Aclosed+milestone%3A5.2.3) and [pull requests](https://github.com/jeremylong/DependencyCheck/pulls?utf8=%E2%9C%93&q=is%3Apr+milestone%3A5.2.3+is%3Aclosed+).
+
 ## [Version 5.2.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v5.2.2) (2019-09-22)
 
 ### Changes
