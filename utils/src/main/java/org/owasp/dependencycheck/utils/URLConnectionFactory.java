@@ -33,9 +33,9 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import javax.net.ssl.HttpsURLConnection;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * A URLConnection Factory to create new connections. This encapsulates several
@@ -142,7 +142,7 @@ public final class URLConnectionFactory {
     private void addAuthenticationIfPresent(HttpURLConnection conn) {
         final String userInfo = conn.getURL().getUserInfo();
         if (userInfo != null) {
-            final String basicAuth = "Basic " + Base64.getEncoder().encodeToString(userInfo.getBytes());
+            final String basicAuth = "Basic " + Base64.getEncoder().encodeToString(userInfo.getBytes(UTF_8));
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Adding user info as basic authorization");
             }

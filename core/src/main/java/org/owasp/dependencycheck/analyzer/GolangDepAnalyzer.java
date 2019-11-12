@@ -143,8 +143,10 @@ public class GolangDepAnalyzer extends AbstractFileTypeAnalyzer {
 
         final Toml result = new Toml().read(dependency.getActualFile());
         final List<Toml> projectsLocks = result.getTables("projects");
-
-        for (Toml project : projectsLocks) {
+        if (projectsLocks == null) {
+            return;
+        }
+        projectsLocks.forEach((project) -> {
             final String name = project.getString("name");
             final String version = project.getString("version");
             final String revision = project.getString("revision");
@@ -158,8 +160,7 @@ public class GolangDepAnalyzer extends AbstractFileTypeAnalyzer {
                     engine.addDependency(dep);
                 }
             }
-
-        }
+        });
     }
 
     /**

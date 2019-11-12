@@ -36,6 +36,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.ProtectionDomain;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
@@ -694,7 +695,11 @@ public final class Settings {
      * @return the list of keys to mask
      */
     private List<Predicate<String>> getMaskedKeys() {
-        return Arrays.asList(getArray(Settings.KEYS.MASKED_PROPERTIES))
+        String[] masked = getArray(Settings.KEYS.MASKED_PROPERTIES);
+        if (masked == null) {
+            return new ArrayList<>();
+        }
+        return Arrays.asList(masked)
                 .stream()
                 .map(v -> Pattern.compile(v).asPredicate())
                 .collect(Collectors.toList());

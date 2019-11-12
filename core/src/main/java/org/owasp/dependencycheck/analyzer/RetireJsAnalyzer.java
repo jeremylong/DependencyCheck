@@ -43,6 +43,7 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -225,8 +226,8 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        try {
-            final byte[] fileContent = IOUtils.toByteArray(new FileInputStream(dependency.getActualFile()));
+        try (InputStream fis = new FileInputStream(dependency.getActualFile())) {
+            final byte[] fileContent = IOUtils.toByteArray(fis);
             final ScannerFacade scanner = new ScannerFacade(jsRepository);
             final List<JsLibraryResult> results;
             try {

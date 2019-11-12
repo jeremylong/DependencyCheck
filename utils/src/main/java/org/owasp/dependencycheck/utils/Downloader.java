@@ -27,6 +27,8 @@ import java.net.URL;
 import static java.lang.String.format;
 import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A utility to download files from the Internet.
@@ -40,6 +42,10 @@ public final class Downloader {
      * UTF-8 character set name.
      */
     private static final String UTF8 = StandardCharsets.UTF_8.name();
+    /**
+     * The Logger for use throughout the class.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(Downloader.class);
     /**
      * The configured settings.
      */
@@ -82,13 +88,22 @@ public final class Downloader {
      */
     public void fetchFile(URL url, File outputPath, boolean useProxy) throws DownloadFailedException,
             TooManyRequestsException, ResourceNotFoundException {
+        InputStream in = null;
         try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy);
                 OutputStream out = new FileOutputStream(outputPath)) {
-            final InputStream in = conn.fetch(url);
+            in = conn.fetch(url);
             IOUtils.copy(in, out);
         } catch (IOException ex) {
             final String msg = format("Download failed, unable to copy '%s' to '%s'", url.toString(), outputPath.getAbsolutePath());
             throw new DownloadFailedException(msg, ex);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ex) {
+                    LOGGER.trace("Ignorable error", ex);
+                }
+            }
         }
     }
 
@@ -105,14 +120,23 @@ public final class Downloader {
      * @throws ResourceNotFoundException thrown when a 404 is received
      */
     public String fetchContent(URL url, boolean useProxy) throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
+        InputStream in = null;
         try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy);
                 ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            final InputStream in = conn.fetch(url);
+            in = conn.fetch(url);
             IOUtils.copy(in, out);
             return out.toString(UTF8);
         } catch (IOException ex) {
             final String msg = format("Download failed, unable to retrieve '%s'", url.toString());
             throw new DownloadFailedException(msg, ex);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ex) {
+                    LOGGER.trace("Ignorable error", ex);
+                }
+            }
         }
     }
 }
