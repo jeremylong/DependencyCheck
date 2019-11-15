@@ -51,6 +51,25 @@ public class Reference implements Serializable, Comparable<Reference> {
     private String source;
 
     /**
+     * Creates a new reference.
+     */
+    public Reference() {
+    }
+
+    /**
+     * Creates a new reference.
+     *
+     * @param name the reference name
+     * @param source the reference source
+     * @param url the reference url
+     */
+    public Reference(String name, String source, String url) {
+        this.name = name;
+        this.source = source;
+        this.url = url;
+    }
+
+    /**
      * Get the value of name.
      *
      * @return the value of name

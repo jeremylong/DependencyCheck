@@ -895,6 +895,11 @@ Copyright (c) 2012 - Jeremy Long
                 <version>${commons-jcs-core.version}</version>
             </dependency>
             <dependency>
+                <groupId>commons-validator</groupId>
+                <artifactId>commons-validator</artifactId>
+                <version>1.6</version>
+            </dependency>
+            <dependency>
                 <groupId>com.github.package-url</groupId>
                 <artifactId>packageurl-java</artifactId>
                 <version>1.1.1</version>
