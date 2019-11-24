@@ -21,6 +21,7 @@ import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.Identifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.owasp.dependencycheck.utils.SeverityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import us.springett.parsers.cpe.Cpe;
@@ -64,5 +65,15 @@ public class ReportTool {
             return id.getValue();
         }
         return null;
+    }
+
+    /**
+     * Estimates the CVSS V2 score for the given severity.
+     *
+     * @param severity the text representation of a score
+     * @return the estimated score
+     */
+    public float estimateSeverity(String severity) {
+        return SeverityUtil.estimateCvssV2(severity);
     }
 }

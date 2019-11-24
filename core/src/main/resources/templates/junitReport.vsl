@@ -30,14 +30,12 @@
         #set($vulnCount=$vulnCount+$dependency.getVulnerabilities().size())
     #end
     #foreach($vuln in $dependency.getVulnerabilities())
-        #if($vuln.cvssV3)
-            #if($vuln.cvssV3.baseScore < $junitFailOnCvss)
-                #set($vulnCount=$vulnCount - 1)
-            #end
-        #elseif($vuln.cvssV2)
-            #if($vuln.cvssV2.score < $junitFailOnCvss)
-                #set($vulnCount=$vulnCount - 1)
-            #end
+        #if($vuln.cvssV3 && $vuln.cvssV3.baseScore < $junitFailOnCvss)
+            #set($vulnCount=$vulnCount - 1)
+        #elseif($vuln.cvssV2 && $vuln.cvssV2.score < $junitFailOnCvss)
+            #set($vulnCount=$vulnCount - 1)
+        #elseif($vuln.unscoredSeverity && $rpt.estimateSeverity($vuln.unscoredSeverity) < $junitFailOnCvss)
+            #set($vulnCount=$vulnCount - 1)
         #end
     #end
 #end
@@ -54,16 +52,15 @@
             #set($skipped=$dependency.getSuppressedVulnerabilities().size())
             #set($failed=$dependency.getVulnerabilities().size())
             #foreach($vuln in $dependency.getVulnerabilities())
-                #if($vuln.cvssV3)
-                    #if($vuln.cvssV3.baseScore < $junitFailOnCvss)
-                        #set($skipped=$skipped + 1)
-                        #set($failed=$failed - 1)
-                    #end
-                #elseif($vuln.cvssV2)
-                    #if($vuln.cvssV2.score < $junitFailOnCvss)
-                        #set($skipped=$skipped + 1)
-                        #set($failed=$failed - 1)
-                    #end
+                #if($vuln.cvssV3 && $vuln.cvssV3.baseScore < $junitFailOnCvss)
+                    #set($skipped=$skipped + 1)
+                    #set($failed=$failed - 1)
+                #elseif($vuln.cvssV2 && $vuln.cvssV2.score < $junitFailOnCvss)
+                    #set($skipped=$skipped + 1)
+                    #set($failed=$failed - 1)
+                #elseif($vuln.unscoredSeverity && $rpt.estimateSeverity($vuln.unscoredSeverity) < $junitFailOnCvss)
+                    #set($skipped=$skipped + 1)
+                    #set($failed=$failed - 1)
                 #end
             #end
         #end
@@ -83,20 +80,17 @@
                 #set($vulnerableName="")
             #end
             <testcase classname="$enc.xml($vuln.name)" name="$enc.xml($vulnerableName)">
-        #if($vuln.cvssV3)
-            #if($vuln.cvssV3.baseScore < $junitFailOnCvss)
+            #if($vuln.cvssV3 && $vuln.cvssV3.baseScore < $junitFailOnCvss)
                 <skipped message="score below $junitFailOnCvss"/>
-            #end
-        #elseif($vuln.cvssV2)
-            #if($vuln.cvssV2.score < $junitFailOnCvss)
+            #elseif($vuln.cvssV2 && $vuln.cvssV2.score < $junitFailOnCvss)
                 <skipped message="score below $junitFailOnCvss"/>
-            #end
-        #end
-            #if($vuln.unscoredSeverity)
-                <failure message="$enc.xml($vuln.unscoredSeverity)"/>
-            #elseif($vuln.cvssV3 && $vuln.cvssV3.baseSeverity)
+            #elseif($vuln.unscoredSeverity && $rpt.estimateSeverity($vuln.unscoredSeverity) < $junitFailOnCvss)
+                <skipped message="score below $junitFailOnCvss"/>
+            #elseif($vuln.unscoredSeverity  && $rpt.estimateSeverity($vuln.unscoredSeverity) >= $junitFailOnCvss)
+                <failure message="unscored severity: $enc.xml($vuln.unscoredSeverity)"/>
+            #elseif($vuln.cvssV3 && $vuln.cvssV3.baseScore >= $junitFailOnCvss)
                 <failure message="cvssV3: $enc.xml($vuln.cvssV3.baseSeverity), score: $enc.xml($vuln.cvssV3.baseScore) ($enc.xml($vuln.cvssV3.toString()))"/>
-            #elseif($vuln.cvssV2 && $vuln.cvssV2.severity)
+            #elseif($vuln.cvssV2 && $vuln.cvssV2.score >= $junitFailOnCvss)
                 <failure message="cvssV2: $enc.xml($vuln.cvssV2.severity), score: $enc.xml($vuln.cvssV2.score) ($enc.xml($vuln.cvssV2.toString()))"/>
             #end
             <system-out>#if($vuln.description)$enc.xml($vuln.description)#else<![CDATA[ 

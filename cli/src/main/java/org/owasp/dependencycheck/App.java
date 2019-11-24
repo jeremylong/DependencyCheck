@@ -46,6 +46,7 @@ import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
+import org.owasp.dependencycheck.utils.SeverityUtil;
 
 /**
  * The command line interface for the DependencyCheck application.
@@ -182,7 +183,7 @@ public class App {
                 final String[] scanFiles = cli.getScanFiles();
                 if (scanFiles != null) {
                     exitCode = runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getProjectName(), scanFiles,
-                    cli.getExcludeList(), cli.getSymLinkDepth(), cli.getFailOnCVSS());
+                            cli.getExcludeList(), cli.getSymLinkDepth(), cli.getFailOnCVSS());
                 } else {
                     LOGGER.error("No scan files configured");
                 }
@@ -296,8 +297,9 @@ public class App {
             if (!dep.getVulnerabilities().isEmpty()) {
                 for (Vulnerability vuln : dep.getVulnerabilities()) {
                     LOGGER.debug("VULNERABILITY FOUND {}", dep.getDisplayFileName());
-                    if ((vuln.getCvssV2() != null && vuln.getCvssV2().getScore() > cvssFailScore)
-                            || (vuln.getCvssV3() != null && vuln.getCvssV3().getBaseScore() > cvssFailScore)) {
+                    if ((vuln.getCvssV2() != null && vuln.getCvssV2().getScore() >= cvssFailScore)
+                            || (vuln.getCvssV3() != null && vuln.getCvssV3().getBaseScore() >= cvssFailScore)
+                            || (vuln.getUnscoredSeverity() != null && SeverityUtil.estimateCvssV2(vuln.getUnscoredSeverity()) >= cvssFailScore)) {
                         retCode = 1;
                     }
                 }
