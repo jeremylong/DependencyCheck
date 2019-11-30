@@ -473,7 +473,7 @@ Copyright (c) 2012 - Jeremy Long
                     <dependency>
                         <groupId>org.owasp.maven.enforcer</groupId>
                         <artifactId>class-file-format-rule</artifactId>
-                        <version>1.0.0</version>
+                        <version>1.0.1</version>
                     </dependency>
                 </dependencies>
                 <inherited>true</inherited>
