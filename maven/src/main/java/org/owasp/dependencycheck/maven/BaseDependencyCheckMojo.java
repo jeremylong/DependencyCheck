@@ -1112,7 +1112,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
             if (isResolved && artifactFile != null) {
                 final List<Dependency> deps = engine.scan(artifactFile.getAbsoluteFile(),
-                        project.getName() + ":" + dependencyNode.getArtifact().getScope());
+                        createProjectReferenceName(project, dependencyNode));
                 if (deps != null) {
                     Dependency d = null;
                     if (deps.size() == 1) {
@@ -1159,6 +1159,17 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
         }
         return exCol;
+    }
+    
+    /**
+     * @param project the {@link MavenProject}
+     * @param dependencyNode the {@link DependencyNode}
+     * @return the name to be used when creating a {@link Dependency#getProjectReferences() project reference} in a {@link Dependency}.
+     * The behavior of this method returns {@link MavenProject#getName() project.getName()}<code> + ":" + </code> 
+     * {@link DependencyNode#getArtifact() dependencyNode.getArtifact()}{@link Artifact#getScope() .getScope()}.
+     */
+    protected String createProjectReferenceName(MavenProject project, DependencyNode dependencyNode) {
+        return project.getName() + ":" + dependencyNode.getArtifact().getScope();
     }
 
     /**
