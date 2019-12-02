@@ -158,7 +158,7 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
 #end
                 </package>
 #end
-#foreach($id in $dependency.getSoftwareIdentifiers())
+#foreach($id in $dependency.getVulnerableSoftwareIdentifiers())
                 <vulnerabilityIds #if($id.confidence)confidence="$id.confidence"#end>
                     <id>$enc.xml($id.value)</id>
 #if( $id.url )
