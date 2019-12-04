@@ -44,12 +44,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.data.update.RetireJSDataSource;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.dependency.Reference;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
@@ -168,9 +171,23 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
+        final boolean autoupdate = getSettings().getBoolean(Settings.KEYS.AUTO_UPDATE, true);
+        final boolean forceupdate = getSettings().getBoolean(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, false);
+        if (!autoupdate && forceupdate) {
+            RetireJSDataSource ds = new RetireJSDataSource();
+            try {
+                ds.update(engine);
+            } catch (UpdateException ex) {
+                throw new InitializationException("Unable to initialize the Retire JS respository", ex);
+            }
+        }
+
         File repoFile = null;
         try {
-            repoFile = new File(getSettings().getDataDirectory(), "jsrepository.json");
+            final String configuredUrl = getSettings().getString(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, RetireJSDataSource.DEFAULT_JS_URL);
+            final URL url = new URL(configuredUrl);
+            final File filepath = new File(url.getPath());
+            repoFile = new File(getSettings().getDataDirectory(), filepath.getName());
         } catch (FileNotFoundException ex) {
             this.setEnabled(false);
             throw new InitializationException(String.format("RetireJS repo does not exist locally (%s)", repoFile), ex);

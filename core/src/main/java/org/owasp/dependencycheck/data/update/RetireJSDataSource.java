@@ -33,10 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Checks the gh-pages dependency-check site to determine the current released
- * version number. If the released version number is greater than the running
- * version number a warning is printed recommending that an upgrade be
- * performed.
+ * Downloads a local copy of the RetireJS repository.
  *
  * @author Jeremy Long
  */
@@ -58,16 +55,7 @@ public class RetireJSDataSource implements CachedWebDataSource {
     /**
      * The default URL to the RetireJS JavaScript repository.
      */
-    private static final String DEFAULT_JS_URL = "https://raw.githubusercontent.com/Retirejs/retire.js/master/repository/jsrepository.json";
-
-    /**
-     * Constructs a new engine version check utility for testing.
-     *
-     * @param settings the configured settings
-     */
-    protected RetireJSDataSource(Settings settings) {
-        this.settings = settings;
-    }
+    public static final String DEFAULT_JS_URL = "https://raw.githubusercontent.com/Retirejs/retire.js/master/repository/jsrepository.json";
 
     /**
      * Constructs a new engine version check utility.
@@ -78,6 +66,7 @@ public class RetireJSDataSource implements CachedWebDataSource {
     /**
      * Downloads the current RetireJS data source.
      *
+     * @param engine a reference to the ODC Engine
      * @return returns false as no updates are made to the database that would
      * require compaction
      * @throws UpdateException thrown if the update failed
@@ -85,19 +74,21 @@ public class RetireJSDataSource implements CachedWebDataSource {
     @Override
     public boolean update(Engine engine) throws UpdateException {
         this.settings = engine.getSettings();
-        String url = null;
+        final String configuredUrl = settings.getString(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, DEFAULT_JS_URL);
+        final boolean autoupdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);
+        final boolean forceupdate = settings.getBoolean(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, false);
+        final boolean enabled = settings.getBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, true);
         try {
-            final boolean autoupdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);
-            final boolean enabled = settings.getBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, true);
-            final File repoFile = new File(settings.getDataDirectory(), "jsrepository.json");
-            final boolean proceed = enabled && autoupdate && shouldUpdagte(repoFile);
+            final URL url = new URL(configuredUrl);
+            final File filepath = new File(url.getPath());
+            final File repoFile = new File(settings.getDataDirectory(), filepath.getName());
+            final boolean proceed = enabled && (autoupdate || forceupdate) && shouldUpdate(repoFile);
             if (proceed) {
                 LOGGER.debug("Begin RetireJS Update");
-                url = settings.getString(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, DEFAULT_JS_URL);
-                initializeRetireJsRepo(settings, new URL(url));
+                initializeRetireJsRepo(settings, url, repoFile);
             }
         } catch (MalformedURLException ex) {
-            throw new UpdateException(String.format("Inavlid URL for RetireJS repository (%s)", url), ex);
+            throw new UpdateException(String.format("Inavlid URL for RetireJS repository (%s)", configuredUrl), ex);
         } catch (IOException ex) {
             throw new UpdateException("Unable to get the data directory", ex);
         }
@@ -113,7 +104,7 @@ public class RetireJSDataSource implements CachedWebDataSource {
      * @throws NumberFormatException thrown if an invalid value is contained in
      * the database properties
      */
-    protected boolean shouldUpdagte(File repo) throws NumberFormatException {
+    protected boolean shouldUpdate(File repo) throws NumberFormatException {
         boolean proceed = true;
         if (repo != null && repo.isFile()) {
             final int validForHours = settings.getInt(Settings.KEYS.ANALYZER_RETIREJS_REPO_VALID_FOR_HOURS, 0);
@@ -134,18 +125,15 @@ public class RetireJSDataSource implements CachedWebDataSource {
      * Initializes the local RetireJS repository
      *
      * @param settings a reference to the dependency-check settings
-     * @param repoUrl the URL to the RetireJS repo to use
+     * @param repoUrl the URL to the RetireJS repository to use
+     * @param repoFile the filename to use for the RetireJS repository
      * @throws UpdateException thrown if there is an exception during
      * initialization
      */
-    private void initializeRetireJsRepo(Settings settings, URL repoUrl) throws UpdateException {
+    private void initializeRetireJsRepo(Settings settings, URL repoUrl, File repoFile) throws UpdateException {
         try {
-            final File dataDir = settings.getDataDirectory();
-
             LOGGER.debug("RetireJS Repo URL: {}", repoUrl.toExternalForm());
             final Downloader downloader = new Downloader(settings);
-            final String filename = repoUrl.getFile().substring(repoUrl.getFile().lastIndexOf("/") + 1);
-            final File repoFile = new File(dataDir, filename);
             downloader.fetchFile(repoUrl, repoFile);
         } catch (IOException | TooManyRequestsException | ResourceNotFoundException ex) {
             throw new UpdateException("Failed to initialize the RetireJS repo", ex);

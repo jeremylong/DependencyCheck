@@ -152,8 +152,9 @@ artifactory  | parallelAnalysis      | Whether the Artifactory analyzer should b
 artifactory  | username              | The user name (only used with API token) to connect to Artifactory instance.                                      | &nbsp;
 artifactory  | apiToken              | The API token to connect to Artifactory instance, only used if the username or the API key are not defined by artifactoryAnalyzerServerId,artifactoryAnalyzerUsername or artifactoryAnalyzerApiToken | &nbsp;
 artifactory  | bearerToken           | The bearer token to connect to Artifactory instance.                                                              | &nbsp;
-retirejs     | enabled               | Sets whether the RetireJS Analyzer should be used.                        | true
-retirejs     | retireJsUrl           | The URL to the Retire JS repository. **Note** the file name must be `jsrepository.json`.                          | https://raw.githubusercontent.com/Retirejs/retire.js/master/repository/jsrepository.json
+retirejs     | enabled               | Sets whether the RetireJS Analyzer should be used.                                                                | true
+retirejs     | forceupdate           | Sets whether the RetireJS Analyzer should update regardless of the `autoupdate` setting.                          | false
+retirejs     | retireJsUrl           | The URL to the Retire JS repository.                                                                              | https://raw.githubusercontent.com/Retirejs/retire.js/master/repository/jsrepository.json
 retirejs     | filterNonVulnerable   | Configures the RetireJS Analyzer to remove non-vulnerable JS dependencies from the report.                        | false
 retirejs     | filters               | Configures the list of regular expessions used to filter JS files based on content.                               | &nbsp;
 ossIndex     | enabled               | Sets whether [OSS Index Analyzer](../analyzers/oss-index-analyzer.html) will be used. This analyzer requires an internet connection. | true

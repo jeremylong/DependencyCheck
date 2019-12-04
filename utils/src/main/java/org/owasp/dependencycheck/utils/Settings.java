@@ -305,6 +305,11 @@ public final class Settings {
          */
         public static final String ANALYZER_RETIREJS_REPO_JS_URL = "analyzer.retirejs.repo.js.url";
         /**
+         * The properties key for defining whether the RetireJS repository will
+         * be updated regardless of the autoupdate settings.
+         */
+        public static final String ANALYZER_RETIREJS_FORCEUPDATE = "analyzer.retirejs.forceupdate";
+        /**
          * The properties key to control the skipping of the check for CVE
          * updates.
          */

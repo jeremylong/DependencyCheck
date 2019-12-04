@@ -75,6 +75,11 @@ public class Check extends Update {
      */
     private String retireJsUrl;
     /**
+     * Whether or not the RetireJS Analyzer will be updated regardless of the
+     * `autoupdate` settings. Defaults to false.
+     */
+    private Boolean retireJsAnalyzerForceUpdate;
+    /**
      * The list of filters (regular expressions) used by the RetireJS Analyzer
      * to exclude files that contain matching content..
      */
@@ -257,7 +262,8 @@ public class Check extends Update {
      */
     private String bundleAuditPath;
     /**
-     * Sets the path for the working directory that the bundle-audit binary should be executed from.
+     * Sets the path for the working directory that the bundle-audit binary
+     * should be executed from.
      */
     private String bundleAuditWorkingDirectory;
     /**
@@ -809,18 +815,22 @@ public class Check extends Update {
     }
 
     /**
-     * Sets the path to the working directory that the bundle audit executable should be executed from.
+     * Sets the path to the working directory that the bundle audit executable
+     * should be executed from.
      *
-     * @param bundleAuditWorkingDirectory the path to the working directory that the bundle audit executable should be executed from.
+     * @param bundleAuditWorkingDirectory the path to the working directory that
+     * the bundle audit executable should be executed from.
      */
     public void setBundleAuditWorkingDirectory(String bundleAuditWorkingDirectory) {
         this.bundleAuditWorkingDirectory = bundleAuditWorkingDirectory;
     }
 
     /**
-     * Returns the path to the working directory that the bundle audit executable should be executed from.
+     * Returns the path to the working directory that the bundle audit
+     * executable should be executed from.
      *
-     * @return the path to the working directory that the bundle audit executable should be executed from.
+     * @return the path to the working directory that the bundle audit
+     * executable should be executed from.
      */
     public String getBundleAuditWorkingDirectory() {
         return bundleAuditWorkingDirectory;
@@ -969,6 +979,25 @@ public class Check extends Update {
      */
     public void setRetireJsUrl(String retireJsUrl) {
         this.retireJsUrl = retireJsUrl;
+    }
+
+    /**
+     * Get the value of retireJsAnalyzerEnabled.
+     *
+     * @return the value of retireJsAnalyzerEnabled
+     */
+    public Boolean isRetireJsAnalyzerForceUpdate() {
+        return retireJsAnalyzerForceUpdate;
+    }
+
+    /**
+     * Set the value of retireJsAnalyzerForceUpdate.
+     *
+     * @param retireJsAnalyzerForceUpdate new value of
+     * retireJsAnalyzerForceUpdate
+     */
+    public void setRetireJsAnalyzerForceUpdate(Boolean retireJsAnalyzerForceUpdate) {
+        this.retireJsAnalyzerForceUpdate = retireJsAnalyzerForceUpdate;
     }
 
     /**
@@ -1568,10 +1597,12 @@ public class Check extends Update {
     }
 
     /**
-     * Wraps the call to `engine.analyzeDependencies()` and correctly handles any
-     * exceptions
+     * Wraps the call to `engine.analyzeDependencies()` and correctly handles
+     * any exceptions
+     *
      * @param engine a reference to the engine
-     * @return the collection of any exceptions that occurred; otherwise <code>null</code>
+     * @return the collection of any exceptions that occurred; otherwise
+     * <code>null</code>
      * @throws BuildException thrown if configured to fail the build on errors
      */
     //see note on `dealWithReferences()` for information on this suppression
@@ -1651,6 +1682,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, nodeAuditAnalyzerUseCache);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, retireJsUrl);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, retireJsAnalyzerForceUpdate);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, retirejsFilterNonVulnerable);
         getSettings().setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, retirejsFilters);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED, golangDepEnabled);

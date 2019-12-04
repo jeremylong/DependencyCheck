@@ -485,6 +485,7 @@ public class App {
         settings.setBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, !cli.isRetireJSDisabled());
         settings.setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT, cli.isPrettyPrint());
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, cli.getRetireJSUrl());
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, cli.isRetireJSForceUpdate());
         settings.setBoolean(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, !cli.isSwiftPackageAnalyzerDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, !cli.isCocoapodsAnalyzerDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED, !cli.isRubyGemspecDisabled());
