@@ -79,9 +79,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.versioning.Restriction;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.shared.dependency.graph.traversal.CollectingDependencyNodeVisitor;
 
 import org.owasp.dependencycheck.agent.DependencyCheckScanAgent;
@@ -671,8 +675,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
     /**
      * Skip analysis for dependencies which type matches this regular
-     * expression. This filters on the `type` of dependency as defined
-     * in the dependency section: jar, pom, test-jar, etc.
+     * expression. This filters on the `type` of dependency as defined in the
+     * dependency section: jar, pom, test-jar, etc.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "skipArtifactType")
@@ -959,6 +963,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * Converts the dependency to a dependency node object.
      *
+     * @param nodes the list of dependency nodes
      * @param buildingRequest the Maven project building request
      * @param parent the parent node
      * @param dependency the dependency to convert
@@ -966,14 +971,48 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @throws ArtifactResolverException thrown if the artifact could not be
      * retrieved
      */
-    private DependencyNode toDependencyNode(ProjectBuildingRequest buildingRequest, DependencyNode parent,
-            org.apache.maven.model.Dependency dependency) throws ArtifactResolverException {
+    private DependencyNode toDependencyNode(List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest,
+            DependencyNode parent, org.apache.maven.model.Dependency dependency) throws ArtifactResolverException {
 
         final DefaultArtifactCoordinate coordinate = new DefaultArtifactCoordinate();
 
         coordinate.setGroupId(dependency.getGroupId());
         coordinate.setArtifactId(dependency.getArtifactId());
-        coordinate.setVersion(dependency.getVersion());
+        String version = null;
+        final VersionRange vr;
+        try {
+            vr = VersionRange.createFromVersionSpec(dependency.getVersion());
+        } catch (InvalidVersionSpecificationException ex) {
+            throw new ArtifactResolverException("Invalid version specification: "
+                    + dependency.getGroupId() + ":"
+                    + dependency.getArtifactId() + ":"
+                    + dependency.getVersion(), ex);
+        }
+        if (vr.hasRestrictions()) {
+            version = findVersion(nodes, dependency.getGroupId(), dependency.getArtifactId());
+            if (version == null) {
+                //TODO - this still may fail if the restriction is not a valid version number (i.e. only 2.9 instead of 2.9.1)
+                //need to get available versions and filter on the restrictions.
+                if (vr.getRecommendedVersion() != null) {
+                    version = vr.getRecommendedVersion().toString();
+                } else if (vr.hasRestrictions()) {
+                    for (Restriction restriction : vr.getRestrictions()) {
+                        if (restriction.getLowerBound() != null) {
+                            version = restriction.getLowerBound().toString();
+                        }
+                        if (restriction.getUpperBound() != null) {
+                            version = restriction.getUpperBound().toString();
+                        }
+                    }
+                } else {
+                    version = vr.toString();
+                }
+            }
+        }
+        if (version == null) {
+            version = dependency.getVersion();
+        }
+        coordinate.setVersion(version);
 
         final ArtifactType type = session.getRepositorySession().getArtifactTypeRegistry().get(dependency.getType());
         coordinate.setExtension(type.getExtension());
@@ -985,6 +1024,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
         return new DefaultDependencyNode(parent, artifact, dependency.getVersion(), dependency.getScope(), null);
 
+    }
+
+    private String findVersion(List<DependencyNode> nodes, String groupId, String artifactId) {
+        Optional<DependencyNode> f = nodes.stream().filter(p -> groupId.equals(p.getArtifact().getGroupId()) && artifactId.equals(p.getArtifact().getArtifactId())).findFirst();
+        if (f.isPresent()) {
+            return f.get().getArtifact().getVersion();
+        }
+        return null;
     }
 
     /**
@@ -1006,7 +1053,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         ExceptionCollection exCol = null;
         for (org.apache.maven.model.Dependency dependency : project.getDependencyManagement().getDependencies()) {
             try {
-                nodes.add(toDependencyNode(buildingRequest, null, dependency));
+                nodes.add(toDependencyNode(nodes, buildingRequest, null, dependency));
             } catch (ArtifactResolverException ex) {
                 getLog().debug(String.format("Aggregate : %s", aggregate));
                 if (exCol == null) {
@@ -1160,12 +1207,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         return exCol;
     }
-    
+
     /**
      * @param project the {@link MavenProject}
      * @param dependencyNode the {@link DependencyNode}
-     * @return the name to be used when creating a {@link Dependency#getProjectReferences() project reference} in a {@link Dependency}.
-     * The behavior of this method returns {@link MavenProject#getName() project.getName()}<code> + ":" + </code> 
+     * @return the name to be used when creating a
+     * {@link Dependency#getProjectReferences() project reference} in a
+     * {@link Dependency}. The behavior of this method returns {@link MavenProject#getName() project.getName()}<code> + ":" +
+     * </code>
      * {@link DependencyNode#getArtifact() dependencyNode.getArtifact()}{@link Artifact#getScope() .getScope()}.
      */
     protected String createProjectReferenceName(MavenProject project, DependencyNode dependencyNode) {
