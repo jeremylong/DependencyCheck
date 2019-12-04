@@ -777,7 +777,7 @@ public final class Settings {
      */
     public void setString(@NotNull final String key, @NotNull final String value) {
         props.setProperty(key, value);
-        LOGGER.debug("Setting: {}='{}'", key, value);
+        LOGGER.debug("Setting: {}='{}'", key, getPrintableValue(key, value));
     }
 
     /**
@@ -1120,7 +1120,7 @@ public final class Settings {
             value = Integer.parseInt(getString(key));
         } catch (NumberFormatException ex) {
             if (!getString(key, "").isEmpty()) {
-                LOGGER.debug("Could not convert property '{}={}' to an int; using {} instead.", key, getString(key), defaultValue);
+                LOGGER.debug("Could not convert property '{}={}' to an int; using {} instead.", key, getPrintableValue(key, getString(key)), defaultValue);
             }
             value = defaultValue;
         }
