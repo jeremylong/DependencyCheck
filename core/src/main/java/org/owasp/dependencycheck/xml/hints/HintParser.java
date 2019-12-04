@@ -82,6 +82,11 @@ public class HintParser {
      * The schema for the hint XML files.
      */
     private static final String HINT_SCHEMA_1_3 = "schema/dependency-hint.1.3.xsd";
+    
+        /**
+     * The schema for the hint XML files.
+     */
+    private static final String HINT_SCHEMA_1_4 = "schema/dependency-hint.1.4.xsd";
 
     /**
      * The hint rules.
@@ -137,6 +142,7 @@ public class HintParser {
      */
     public void parseHints(InputStream inputStream) throws HintParseException, SAXException {
         try (
+                InputStream schemaStream14 = FileUtils.getResourceAsStream(HINT_SCHEMA_1_4);
                 InputStream schemaStream13 = FileUtils.getResourceAsStream(HINT_SCHEMA_1_3);
                 InputStream schemaStream12 = FileUtils.getResourceAsStream(HINT_SCHEMA_1_2);
                 InputStream schemaStream11 = FileUtils.getResourceAsStream(HINT_SCHEMA_1_1)) {
