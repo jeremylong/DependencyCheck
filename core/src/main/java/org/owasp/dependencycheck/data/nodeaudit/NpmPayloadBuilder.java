@@ -59,7 +59,7 @@ public final class NpmPayloadBuilder {
         // pairs corresponding to the module name (key) and version (value).
         final JsonObjectBuilder requiresBuilder = Json.createObjectBuilder();
 
-        if(packageJson.containsKey("dependencies")){
+        if (packageJson.containsKey("dependencies")) {
             packageJson.getJsonObject("dependencies").entrySet()
                     .stream()
                     .collect(Collectors.toMap(
@@ -73,7 +73,7 @@ public final class NpmPayloadBuilder {
                     });
         }
 
-        if(packageJson.containsKey("devDependencies")){
+        if (packageJson.containsKey("devDependencies")) {
             packageJson.getJsonObject("devDependencies").entrySet()
                     .stream()
                     .collect(Collectors.toMap(
@@ -91,12 +91,14 @@ public final class NpmPayloadBuilder {
 
         final JsonObjectBuilder dependenciesBuilder = Json.createObjectBuilder();
         final JsonObject dependencies = lockJson.getJsonObject("dependencies");
-        dependencies.entrySet().forEach((entry) -> {
-            final JsonObject dep = ((JsonObject) entry.getValue());
-            final String version = dep.getString("version");
-            dependencyMap.put(entry.getKey(), version);
-            dependenciesBuilder.add(entry.getKey(), buildDependencies(dep, dependencyMap));
-        });
+        if (dependencies != null) {
+            dependencies.entrySet().forEach((entry) -> {
+                final JsonObject dep = ((JsonObject) entry.getValue());
+                final String version = dep.getString("version");
+                dependencyMap.put(entry.getKey(), version);
+                dependenciesBuilder.add(entry.getKey(), buildDependencies(dep, dependencyMap));
+            });
+        }
         payloadBuilder.add("dependencies", dependenciesBuilder.build());
 
         addConstantElements(payloadBuilder);
@@ -194,7 +196,7 @@ public final class NpmPayloadBuilder {
         depBuilder.add("version", dep.getString("version"));
 
         //not installed package (like, dependency of an optional dependency) doesn't contains integrity
-        if(dep.containsKey("integrity")){
+        if (dep.containsKey("integrity")) {
             depBuilder.add("integrity", dep.getString("integrity"));
         }
         if (dep.containsKey("requires")) {
