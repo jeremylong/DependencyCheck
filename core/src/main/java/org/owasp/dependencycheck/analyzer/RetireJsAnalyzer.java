@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.json.JSONException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.update.RetireJSDataSource;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
@@ -197,7 +198,11 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
         }
         try (FileInputStream in = new FileInputStream(repoFile)) {
             this.jsRepository = new VulnerabilitiesRepositoryLoader().loadFromInputStream(in);
-
+        } catch (JSONException ex) {
+            this.setEnabled(false);
+            throw new InitializationException("Failed to initialize the RetireJS repo: `" + repoFile.toString()
+                    + "` appears to be malformed. Please delete the file or run the dependency-check purge "
+                    + "command and re-try running dependency-check.", ex);
         } catch (IOException ex) {
             this.setEnabled(false);
             throw new InitializationException("Failed to initialize the RetireJS repo", ex);
