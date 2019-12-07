@@ -617,6 +617,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        Supression to remove incorrect match from the OSS Index per #2281.
+        ]]></notes>
+        <packageUrl>pkg:maven/org.jsoup/jsoup@1.8.3</packageUrl>
+        <vulnerabilityName>CVE-2015-6748</vulnerabilityName>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         False positives found while investigating https://github.com/jeremylong/dependency-check-gradle/issues/103
         ]]></notes>
         <gav regex="true">^org\.jetbrains:annotations:.*$</gav>
