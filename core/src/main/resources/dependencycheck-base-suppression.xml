@@ -624,6 +624,69 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        Hazelcast-AWS is not Hazelcast (see #2330)
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.hazelcast/hazelcast\-aws@.*$</packageUrl>
+        <cpe>cpe:/a:hazelcast:hazelcast</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Hazelcast-Kubernetes is not Hazelcast (see #2330)
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.hazelcast/hazelcast\-kubernetes@.*$</packageUrl>
+        <cpe>cpe:/a:hazelcast:hazelcast</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Client library reported as the server (#2334)
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.activemq/activemq\-client@.*$</packageUrl>
+        <cpe>cpe:/a:apache:activemq</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Client library reported as the server (#2334)
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.rabbitmq/amqp\-client@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:rabbitmq</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Client library reported as the server (#2354)
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.zipkin\.reporter2/zipkin\-sender\-activemq\-client@.*$</packageUrl>
+        <cpe>cpe:/a:apache:activemq</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Library related to akka is being flagged as akka itself (#2339)
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.lightbend\.akka\.management/akka\-management_2\.12@.*$</packageUrl>
+        <cpe>cpe:/a:akka:akka</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Library related to akka is being flagged as akka itself (#2340)
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.github\.romix\.akka/akka\-kryo\-serialization_2\.12@.*$</packageUrl>
+        <cpe>cpe:/a:akka:akka</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Library related to prometheus is being flagged as prometheus itself (#2341)
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.kamon/kamon\-prometheus_2\.12@.*$</packageUrl>
+        <cpe>cpe:/a:prometheus:prometheus</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        kotlinx-html-jvm is a kotlin DSL for generating HTML and should not be identified as core kotlin (#2346)
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlinx/kotlinx\-html\-jvm@.*$</packageUrl>
+        <cpe>cpe:/a:jetbrains:kotlin</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         False positives found while investigating https://github.com/jeremylong/dependency-check-gradle/issues/103
         ]]></notes>
         <gav regex="true">^org\.jetbrains:annotations:.*$</gav>
