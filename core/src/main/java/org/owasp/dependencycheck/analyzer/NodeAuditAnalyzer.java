@@ -266,7 +266,8 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
             final JsonObject packageJson = packageReader.readObject();
 
             // Modify the payload to meet the NPM Audit API requirements
-            final JsonObject payload = NpmPayloadBuilder.build(lockJson, packageJson, dependencyMap);
+            final JsonObject payload = NpmPayloadBuilder.build(lockJson, packageJson, dependencyMap,
+                    getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false));
 
             // Submits the package payload to the nsp check service
             return searcher.submitPackage(payload);

@@ -102,6 +102,7 @@ composerAnalyzerEnabled             | Sets whether the [experimental](../analyze
 nodeAnalyzerEnabled                 | Sets whether the [retired](../analyzers/index.html) Node.js Analyzer should be used.                       | true
 nodeAuditAnalyzerEnabled            | Sets whether the Node Audit Analyzer should be used. This analyzer requires an internet connection.        | true
 nodeAuditAnalyzerUseCache           | Sets whether the Node Audit Analyzer will cache results. Cached results expire after 24 hours.             | true
+nodeAuditSkipDevDependencies        | Sets whether the Node Audit Analyzer will skip devDependencies.                                            | false
 retireJsAnalyzerEnabled             | Sets whether the RetireJS Analyzer should be used.                                                         | true
 retirejsForceupdate                 | Sets whether the RetireJS Analyzer should update regardless of the `autoupdate` setting.                   | false
 retirejsFilterNonVulnerable         | Configures the RetireJS Analyzer to remove non-vulnerable JS dependencies from the report.                 | false

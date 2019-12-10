@@ -49,9 +49,11 @@ public final class NpmPayloadBuilder {
      * @param packageJson the package.json
      * @param dependencyMap a collection of module/version pairs that is
      * populated while building the payload
+     * @param skipDevDependencies whether devDependencies should be skipped
      * @return the npm audit API payload
      */
-    public static JsonObject build(JsonObject lockJson, JsonObject packageJson, Map<String, String> dependencyMap) {
+    public static JsonObject build(JsonObject lockJson, JsonObject packageJson, 
+            Map<String, String> dependencyMap, boolean skipDevDependencies) {
         final JsonObjectBuilder payloadBuilder = Json.createObjectBuilder();
         addProjectInfo(packageJson, payloadBuilder);
 
@@ -73,7 +75,7 @@ public final class NpmPayloadBuilder {
                     });
         }
 
-        if (packageJson.containsKey("devDependencies")) {
+        if (!skipDevDependencies && packageJson.containsKey("devDependencies")) {
             packageJson.getJsonObject("devDependencies").entrySet()
                     .stream()
                     .collect(Collectors.toMap(

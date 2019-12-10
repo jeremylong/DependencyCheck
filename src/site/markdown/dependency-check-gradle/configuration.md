@@ -114,7 +114,6 @@ analyzers    | archiveEnabled        | Sets whether the Archive Analyzer will be
 analyzers    | zipExtensions         | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
 analyzers    | jarEnabled            | Sets whether Jar Analyzer will be used.                                                                           | true
 analyzers    | centralEnabled        | Sets whether Central Analyzer will be used. If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer (see below). | true
-analyzers    | ossIndexEnabled       | This configuration has been deprecated; please use `ossIndex` instead. Sets whether the [OSS Index Analyzer](../analyzers/oss-index-analyzer.html) will be enabled.                                                              | true
 analyzers    | nexusEnabled          | Sets whether Nexus Analyzer will be used (requires Nexus Pro). This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
 analyzers    | nexusUrl              | Defines the Nexus Server's web service end point (example http://domain.enterprise/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
 analyzers    | nexusUsesProxy        | Whether or not the defined proxy should be used when connecting to Nexus.                                         | true
@@ -151,6 +150,9 @@ artifactory  | parallelAnalysis      | Whether the Artifactory analyzer should b
 artifactory  | username              | The user name (only used with API token) to connect to Artifactory instance.                                      | &nbsp;
 artifactory  | apiToken              | The API token to connect to Artifactory instance, only used if the username or the API key are not defined by artifactoryAnalyzerServerId,artifactoryAnalyzerUsername or artifactoryAnalyzerApiToken | &nbsp;
 artifactory  | bearerToken           | The bearer token to connect to Artifactory instance                                                               | &nbsp;
+nodeAudit    | enabled               | Sets whether the Node Audit Analyzer should be used. This analyzer requires an internet connection.               | true
+nodeAudit    | useCache              | Sets whether the Node Audit Analyzer should cache results locally.                                                | true
+nodeAudit    | skipDevDependencies   | Sets whether the Node Audit Analyzer should skip devDependencies.                                                 | false
 retirejs     | enabled               | Sets whether the RetireJS Analyzer should be used.                                                                | true
 retirejs     | forceupdate           | Sets whether the RetireJS Analyzer should update regardless of the `autoupdate` setting.                          | false
 retirejs     | retireJsUrl           | The URL to the Retire JS repository.                                                                              | https://raw.githubusercontent.com/Retirejs/retire.js/master/repository/jsrepository.json

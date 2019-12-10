@@ -67,6 +67,10 @@ public class Check extends Update {
      */
     private Boolean nodeAuditAnalyzerUseCache;
     /**
+     * Sets whether or not the Node Audit Analyzer should use a local cache.
+     */
+    private Boolean nodeAuditSkipDevDependencies;
+    /**
      * Whether or not the RetireJS Analyzer is enabled.
      */
     private Boolean retireJsAnalyzerEnabled;
@@ -946,6 +950,25 @@ public class Check extends Update {
     }
 
     /**
+     * Get the value of nodeAuditSkipDevDependencies.
+     *
+     * @return the value of nodeAuditSkipDevDependencies
+     */
+    public Boolean isNodeAuditAnalyzerSkipDevDependencies() {
+        return nodeAuditSkipDevDependencies;
+    }
+
+    /**
+     * Set the value of nodeAuditSkipDevDependencies.
+     *
+     * @param nodeAuditSkipDevDependencies new value of
+ nodeAuditSkipDevDependencies
+     */
+    public void setNodeAuditSkipDevDependencies(Boolean nodeAuditSkipDevDependencies) {
+        this.nodeAuditSkipDevDependencies = nodeAuditSkipDevDependencies;
+    }
+
+    /**
      * Get the value of retireJsAnalyzerEnabled.
      *
      * @return the value of retireJsAnalyzerEnabled
@@ -1680,6 +1703,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, nodeAuditAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, nodeAuditAnalyzerUseCache);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, nodeAuditSkipDevDependencies);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, retireJsUrl);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, retireJsAnalyzerForceUpdate);
