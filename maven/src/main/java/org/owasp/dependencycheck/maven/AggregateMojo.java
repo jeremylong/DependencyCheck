@@ -66,6 +66,8 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
     protected ExceptionCollection scanDependencies(final Engine engine) throws MojoExecutionException {
         ExceptionCollection exCol = scanArtifacts(getProject(), engine, true);
         for (MavenProject childProject : getDescendants(this.getProject())) {
+            //TODO consider the following as to whether a child should be skipped per #2152
+            //childProject.getBuildPlugins().get(0).getExecutions().get(0).getConfiguration()
             final ExceptionCollection ex = scanArtifacts(childProject, engine, true);
             if (ex != null) {
                 if (exCol == null) {

@@ -531,6 +531,8 @@ public final class CliParser {
                         .desc("Disable the Node Audit Analyzer.").build())
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_NODE_AUDIT_CACHE)
                         .desc("Disallow the Node Audit Analyzer from caching results").build())
+                .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_NODE_AUDIT_SKIPDEV)
+                    .desc("Configures the Node Audit Analyzer to skip devDependencies").build())
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_RETIRE_JS)
                         .desc("Disable the RetireJS Analyzer.").build())
                 .addOption(Option.builder().longOpt(ARGUMENT.RETIRE_JS_FORCEUPDATE)
@@ -901,6 +903,15 @@ public final class CliParser {
      */
     public boolean isNodeAuditCacheDisabled() {
         return hasDisableOption(ARGUMENT.DISABLE_NODE_AUDIT_CACHE, Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE);
+    }
+
+    /**
+     * Returns whether or not the nodeAuditSkipDevDependencies was specified.
+     *
+     * @return whether or not the nodeAuditSkipDevDependencies was specified
+     */
+    public boolean isNodeAuditSkipDevDependencies() {
+        return hasArgument(ARGUMENT.DISABLE_NODE_AUDIT_SKIPDEV);
     }
 
     /**
@@ -1804,6 +1815,10 @@ public final class CliParser {
          * Disables the Node Audit Analyzer's ability to cache results locally.
          */
         public static final String DISABLE_NODE_AUDIT_CACHE = "disableNodeAuditCache";
+        /**
+         * Configures the Node Audit Analyzer to skip the dev dependencies.
+         */
+        public static final String DISABLE_NODE_AUDIT_SKIPDEV = "nodeAuditSkipDevDependencies";
         /**
          * Disables the RetireJS Analyzer.
          */

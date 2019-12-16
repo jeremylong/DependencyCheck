@@ -282,6 +282,10 @@ public final class Settings {
          */
         public static final String ANALYZER_NODE_AUDIT_URL = "analyzer.node.audit.url";
         /**
+         * The properties key for configure whether the Node Audit analyzer should skip devDependencies.
+         */
+        public static final String ANALYZER_NODE_AUDIT_SKIPDEV = "analyzer.node.audit.skipdev";
+        /**
          * The properties key for whether node audit analyzer results will be
          * cached.
          */
