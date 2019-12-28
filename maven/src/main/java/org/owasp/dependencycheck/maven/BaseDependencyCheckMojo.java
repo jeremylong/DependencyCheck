@@ -114,6 +114,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     private static final String NEW_LINE = System.getProperty("line.separator", "\n").intern();
     /**
+     * Pattern to include all files in a FileSet.
+     */
+    private static final String INCLUDE_ALL = "**/*";
+    /**
      * A flag indicating whether or not the Maven site is being generated.
      */
     private boolean generatingSite = false;
@@ -1259,17 +1263,27 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             final FileSet resourcesSet = new FileSet();
             final FileSet filtersSet = new FileSet();
             final FileSet webappSet = new FileSet();
+            final FileSet mixedLangSet = new FileSet();
             try {
                 resourcesSet.setDirectory(new File(project.getBasedir(), "src/main/resources").getCanonicalPath());
+                resourcesSet.addInclude(INCLUDE_ALL);
                 filtersSet.setDirectory(new File(project.getBasedir(), "src/main/filters").getCanonicalPath());
+                filtersSet.addInclude(INCLUDE_ALL);
                 webappSet.setDirectory(new File(project.getBasedir(), "src/main/webapp").getCanonicalPath());
+                webappSet.addInclude(INCLUDE_ALL);
+                mixedLangSet.setDirectory(project.getBasedir().getCanonicalPath());
+                mixedLangSet.addInclude("package.json");
+                mixedLangSet.addInclude("package-lock.json");
+                mixedLangSet.addInclude("npm-shrinkwrap.json");
+                mixedLangSet.addInclude("Gopkg.lock");
+                mixedLangSet.addInclude("go.mod");
             } catch (IOException ex) {
                 if (exCol == null) {
                     exCol = new ExceptionCollection();
                 }
                 exCol.addException(ex);
             }
-            projectScan = new FileSet[]{resourcesSet, filtersSet, webappSet};
+            projectScan = new FileSet[]{resourcesSet, filtersSet, webappSet, mixedLangSet};
 
         } else if (aggregate) {
             projectScan = new FileSet[scanSet.length];
