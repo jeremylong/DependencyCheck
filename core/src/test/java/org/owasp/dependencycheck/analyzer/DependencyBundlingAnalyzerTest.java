@@ -214,4 +214,66 @@ public class DependencyBundlingAnalyzerTest extends BaseTest {
         result = instance.isShadedJar(left, right);
         assertEquals(expResult, result);
     }
+
+    @Test
+    public void testIsWebJar() throws MalformedPackageURLException {
+        DependencyBundlingAnalyzer instance = new DependencyBundlingAnalyzer();
+
+        Dependency left = null;
+        Dependency right = null;
+
+        boolean expResult = false;
+        boolean result = instance.isWebJar(left, right);
+        assertEquals(expResult, result);
+
+        left = new Dependency();
+        expResult = false;
+        result = instance.isWebJar(left, right);
+        assertEquals(expResult, result);
+
+        left = new Dependency(new File("/path/jquery.jar"), true);
+        expResult = false;
+        result = instance.isWebJar(left, right);
+        assertEquals(expResult, result);
+
+        right = new Dependency();
+        expResult = false;
+        result = instance.isWebJar(left, right);
+        assertEquals(expResult, result);
+
+        right = new Dependency(new File("/path/jquery.js"), true);
+        expResult = false;
+        result = instance.isWebJar(left, right);
+        assertEquals(expResult, result);
+
+        right = new Dependency(new File("/path/jquery.js"), true);
+        right.setFileName("jquery.jar: jquery.js");
+        expResult = false;
+        result = instance.isWebJar(left, right);
+        assertEquals(expResult, result);
+
+        left.addSoftwareIdentifier(new PurlIdentifier("maven", "org.webjars", "jquery", "1.0", Confidence.HIGHEST));
+        expResult = false;
+        result = instance.isWebJar(left, right);
+        assertEquals(expResult, result);
+
+        right.addSoftwareIdentifier(new PurlIdentifier("javascript", "bootstrap", "1.0", Confidence.HIGHEST));
+        expResult = false;
+        result = instance.isWebJar(left, right);
+        assertEquals(expResult, result);
+
+        right = new Dependency(new File("/path/jquery.js"), true);
+        right.setFileName("jquery.jar: jquery.js");
+        right.addSoftwareIdentifier(new PurlIdentifier("javascript", "jquery", "1.0", Confidence.HIGHEST));
+        expResult = true;
+        result = instance.isWebJar(left, right);
+        assertEquals(expResult, result);
+        
+        
+        left = new Dependency(new File("/path/spring-core.jar"), true);
+        left.addSoftwareIdentifier(new PurlIdentifier("maven", "org.springframework", "spring-core", "3.0.0", Confidence.HIGHEST));
+        expResult = false;
+        result = instance.isWebJar(left, right);
+        assertEquals(expResult, result);
+    }
 }

@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import com.github.packageurl.MalformedPackageURLException;
 import com.vdurmont.semver4j.Semver;
 import com.vdurmont.semver4j.Semver.SemverType;
 import com.vdurmont.semver4j.SemverException;
@@ -24,10 +25,12 @@ import java.io.File;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import static java.util.stream.Collectors.toSet;
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.naming.Identifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 import org.owasp.dependencycheck.utils.Settings;
@@ -129,6 +132,15 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
                 mergeDependencies(dependency, nextDependency, dependenciesToRemove);
                 dependency.removeRelatedDependencies(nextDependency);
             }
+        } else if (isWebJar(dependency, nextDependency)) {
+            if (dependency.getFileName().toLowerCase().endsWith(".js")) {
+                mergeDependencies(nextDependency, dependency, dependenciesToRemove, true);
+                nextDependency.removeRelatedDependencies(dependency);
+                return true;
+            } else {
+                mergeDependencies(dependency, nextDependency, dependenciesToRemove, true);
+                dependency.removeRelatedDependencies(nextDependency);
+            }
         } else if (cpeIdentifiersMatch(dependency, nextDependency)
                 && hasSameBasePath(dependency, nextDependency)
                 && vulnerabilitiesMatch(dependency, nextDependency)
@@ -165,10 +177,39 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
      */
     public static void mergeDependencies(final Dependency dependency,
             final Dependency relatedDependency, final Set<Dependency> dependenciesToRemove) {
+        mergeDependencies(dependency, relatedDependency, dependenciesToRemove, false);
+    }
+
+    /**
+     * Adds the relatedDependency to the dependency's related dependencies.
+     *
+     * @param dependency the main dependency
+     * @param relatedDependency a collection of dependencies to be removed from
+     * the main analysis loop, this is the source of dependencies to remove
+     * @param dependenciesToRemove a collection of dependencies that will be
+     * removed from the main analysis loop, this function adds to this
+     * collection
+     * @param copyVulnsAndIds whether or not identifiers and vulnerabilities are
+     * copied
+     */
+    public static void mergeDependencies(final Dependency dependency,
+            final Dependency relatedDependency, final Set<Dependency> dependenciesToRemove,
+            final boolean copyVulnsAndIds) {
         dependency.addRelatedDependency(relatedDependency);
-        for (Dependency d : relatedDependency.getRelatedDependencies()) {
+        relatedDependency.getRelatedDependencies().stream().forEach(d -> {
             dependency.addRelatedDependency(d);
             relatedDependency.removeRelatedDependencies(d);
+        });
+        if (copyVulnsAndIds) {
+            relatedDependency.getSoftwareIdentifiers().forEach((id) -> {
+                dependency.addSoftwareIdentifier(id);
+            });
+            relatedDependency.getVulnerableSoftwareIdentifiers().forEach((id) -> {
+                dependency.addVulnerableSoftwareIdentifier(id);
+            });
+            relatedDependency.getVulnerabilities().forEach((v) -> {
+                dependency.addVulnerability(v);
+            });
         }
         //TODO this null check was added for #1296 - but I believe this to be related to virtual dependencies
         //  we may want to merge project references on virtual dependencies...
@@ -398,6 +439,61 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
             return false;
         }
         return dependency1.getSha1sum().equals(dependency2.getSha1sum());
+    }
+
+    /**
+     * Determines if a JS file is from a webjar dependency.
+     *
+     * @param dependency the first dependency to compare
+     * @param nextDependency the second dependency to compare
+     * @return <code>true</code> if the dependency is a web jar and the next
+     * dependency is a JS file from the web jar; otherwise <code>false</code>
+     */
+    protected boolean isWebJar(Dependency dependency, Dependency nextDependency) {
+        if (dependency == null || dependency.getFileName() == null
+                || nextDependency == null || nextDependency.getFileName() == null
+                || dependency.getSoftwareIdentifiers().isEmpty()
+                || nextDependency.getSoftwareIdentifiers().isEmpty()) {
+            return false;
+        }
+        final String mainName = dependency.getFileName().toLowerCase();
+        final String nextName = nextDependency.getFileName().toLowerCase();
+        if (mainName.endsWith(".jar") && nextName.endsWith(".js") && nextName.startsWith(mainName)) {
+            return dependency.getSoftwareIdentifiers()
+                    .stream().map(id -> id.getValue()).collect(toSet())
+                    .containsAll(nextDependency.getSoftwareIdentifiers().stream().map(id -> {
+                        if (id instanceof PurlIdentifier) {
+                            PurlIdentifier pid = (PurlIdentifier) id;
+                            try {
+                                Identifier nid = new PurlIdentifier("maven", "org.webjars", pid.getName(), pid.getVersion(), pid.getConfidence());
+                                return nid.getValue();
+                            } catch (MalformedPackageURLException ex) {
+                                LOGGER.debug("Unable to build webjar purl id", ex);
+                                return id.getValue();
+                            }
+                        } else {
+                            return id == null ? "" : id.getValue();
+                        }
+                    }).collect(toSet()));
+        } else if (nextName.endsWith(".jar") && mainName.endsWith("js") && mainName.startsWith(nextName)) {
+            return nextDependency.getSoftwareIdentifiers()
+                    .stream().map(id -> id.getValue()).collect(toSet())
+                    .containsAll(dependency.getSoftwareIdentifiers().stream().map(id -> {
+                        if (id instanceof PurlIdentifier) {
+                            PurlIdentifier pid = (PurlIdentifier) id;
+                            try {
+                                Identifier nid = new PurlIdentifier("maven", "org.webjars", pid.getName(), pid.getVersion(), pid.getConfidence());
+                                return nid.getValue();
+                            } catch (MalformedPackageURLException ex) {
+                                LOGGER.debug("Unable to build webjar purl id", ex);
+                                return id.getValue();
+                            }
+                        } else {
+                            return id == null ? "" : id.getValue();
+                        }
+                    }).collect(toSet()));
+        }
+        return false;
     }
 
     /**
