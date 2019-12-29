@@ -173,7 +173,7 @@
             #foreach($vuln in $dependency.getVulnerabilities(true))#if($foreach.count > 1),#end {
                 "source": "$enc.json($vuln.getSource().name())",
                 "name": "$enc.json($vuln.name)",
-                #if($vuln.UnscoredSeverity)"severity" : "$enc.json($vuln.unscoredSeverity)",
+                #if($vuln.UnscoredSeverity)"unscored": "true", "severity" : "#if($vuln.unscoredSeverity.equals("0.0"))Unknown#else$enc.json($vuln.unscoredSeverity)#end",
 #elseif($vuln.cvssV3 && $vuln.cvssV3.baseSeverity)
                     "severity" : "$enc.json($vuln.cvssV3.baseSeverity)",
 #elseif($vuln.cvssV2 && $vuln.cvssV2.severity)

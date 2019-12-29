@@ -87,7 +87,7 @@
             #elseif($vuln.unscoredSeverity && $rpt.estimateSeverity($vuln.unscoredSeverity) < $junitFailOnCvss)
                 <skipped message="score below $junitFailOnCvss"/>
             #elseif($vuln.unscoredSeverity  && $rpt.estimateSeverity($vuln.unscoredSeverity) >= $junitFailOnCvss)
-                <failure message="unscored severity: $enc.xml($vuln.unscoredSeverity)"/>
+                <failure message="unscored severity: #if($vuln.unscoredSeverity.equals("0.0"))Unknown#else$enc.xml($vuln.unscoredSeverity)#end"/>
             #elseif($vuln.cvssV3 && $vuln.cvssV3.baseScore >= $junitFailOnCvss)
                 <failure message="cvssV3: $enc.xml($vuln.cvssV3.baseSeverity), score: $enc.xml($vuln.cvssV3.baseScore) ($enc.xml($vuln.cvssV3.toString()))"/>
             #elseif($vuln.cvssV2 && $vuln.cvssV2.score >= $junitFailOnCvss)

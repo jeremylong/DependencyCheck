@@ -743,7 +743,11 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                 #end
                             #end
                             #if ($vuln.unscoredSeverity)
-                                #set($cveSeverity=$enc.html($vuln.unscoredSeverity))
+                                #if($vuln.unscoredSeverity.equals("0.0"))
+                                    #set($cveSeverity="Unknown")
+                                #else
+                                    #set($cveSeverity=$enc.json($vuln.unscoredSeverity))
+                                #end
                             #end
                         #end
                         #set($sortValue=$cveImpact*10)
@@ -917,7 +921,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                             #end
                             #if ($vuln.unscoredSeverity)
                             Unscored:
-                                <ul><li>Severity: $enc.html($vuln.unscoredSeverity)</li></ul>
+                                <ul><li>Severity: #if($vuln.unscoredSeverity.equals("0.0"))Unknown#else$enc.html($vuln.unscoredSeverity)#end</li></ul>
                             #end
                             #if ($vuln.getReferences().size()>0)
                                 <br/>References:<ul>
@@ -1085,7 +1089,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                     #end
                                     #if ($vuln.unscoredSeverity)
                                     Unscored:
-                                        <ul><li>Severity: $enc.html($vuln.unscoredSeverity)</li></ul>
+                                        <ul><li>Severity: #if($vuln.unscoredSeverity.equals("0.0"))Unknown#else$enc.html($vuln.unscoredSeverity)#end</li></ul>
                                     #end
                                     #if ($vuln.getReferences().size()>0)
                                         <br/>References: <ul>
