@@ -135,12 +135,13 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public boolean accept(File pathname) {
         try {
-            final boolean filesMatched = super.getFilesMatched();
             final boolean accepted = super.accept(pathname);
+            if (accepted && !pathname.exists()) {
+                //file may not yet have been extracted from an archive
+                super.setFilesMatched(true);
+                return true;
+            }
             if (accepted && filters != null && FileContentSearch.contains(pathname, filters)) {
-                if (!filesMatched) {
-                    super.setFilesMatched(filesMatched);
-                }
                 return false;
             }
             return accepted;
