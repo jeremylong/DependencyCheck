@@ -55,6 +55,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.sonatype.goodies.packageurl.InvalidException;
 import org.sonatype.ossindex.service.client.transport.Transport.TransportException;
 
 /**
@@ -182,7 +183,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
     private PackageUrl parsePackageUrl(final String value) {
         try {
             return PackageUrl.parse(value);
-        } catch (PackageUrl.InvalidException e) {
+        } catch (InvalidException e) {
             LOG.warn("Invalid Package-URL: {}", value, e);
             return null;
         }

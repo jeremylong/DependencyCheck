@@ -19,7 +19,7 @@ package org.owasp.dependencycheck.data.ossindex;
 
 import java.io.File;
 import org.sonatype.goodies.packageurl.PackageUrl;
-import org.sonatype.goodies.packageurl.PackageUrl.RenderFlavor;
+import org.sonatype.goodies.packageurl.RenderFlavor;
 import org.sonatype.ossindex.service.client.OssindexClient;
 import org.sonatype.ossindex.service.client.OssindexClientConfiguration;
 import org.sonatype.ossindex.service.client.marshal.Marshaller;
@@ -51,7 +51,7 @@ public final class OssindexClientFactory {
 
     static {
         // prefer pkg scheme vs scheme-less variant
-        PackageUrl.RenderFlavor.setDefault(RenderFlavor.SCHEME);
+        RenderFlavor.setDefault(RenderFlavor.SCHEME);
     }
 
     /**
