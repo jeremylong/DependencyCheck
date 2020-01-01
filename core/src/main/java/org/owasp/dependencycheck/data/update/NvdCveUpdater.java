@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -394,13 +395,26 @@ public class NvdCveUpdater implements CachedWebDataSource {
                         final int end = Calendar.getInstance().get(Calendar.YEAR);
                         final String baseUrl = settings.getString(Settings.KEYS.CVE_BASE_JSON);
                         for (int i = start; i <= end; i++) {
-                            url = String.format(baseUrl, i);
-                            final MetaProperties meta = getMetaFile(url);
-                            final long currentTimestamp = getPropertyInSeconds(DatabaseProperties.LAST_UPDATED_BASE + i);
+                            try {
+                                url = String.format(baseUrl, i);
+                                final MetaProperties meta = getMetaFile(url);
+                                final long currentTimestamp = getPropertyInSeconds(DatabaseProperties.LAST_UPDATED_BASE + i);
 
-                            if (currentTimestamp < meta.getLastModifiedDate()) {
-                                final NvdCveInfo entry = new NvdCveInfo(Integer.toString(i), url, meta.getLastModifiedDate());
-                                updates.add(entry);
+                                if (currentTimestamp < meta.getLastModifiedDate()) {
+                                    final NvdCveInfo entry = new NvdCveInfo(Integer.toString(i), url, meta.getLastModifiedDate());
+                                    updates.add(entry);
+                                }
+                            } catch (UpdateException ex) {
+                                Calendar date = Calendar.getInstance();
+                                final int year = date.get(Calendar.YEAR);
+                                final int month = date.get(Calendar.MONTH);
+                                final int day = date.get(Calendar.DATE);
+                                if (ex.getMessage().contains("Unable to download meta file")
+                                        && i == year && month == 0 && day < 10) {
+                                    LOGGER.warn("NVD Data for {} has not been published yet.", year);
+                                } else {
+                                    throw ex;
+                                }
                             }
                         }
                     }
