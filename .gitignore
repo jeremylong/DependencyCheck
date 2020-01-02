@@ -30,7 +30,7 @@ _site/**
 /cov-int/
 /dependency-check-core/nbproject/
 cov-scan.bat
-
+velocity.log
 /core/data/
 
 # Apple macOS operating system Desktop Services Store files
