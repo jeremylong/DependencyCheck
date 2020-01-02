@@ -154,7 +154,7 @@ Copyright (c) 2012 - Jeremy Long
         <commons-text.version>1.8</commons-text.version>
         <commons-jcs-core.version>2.2.1</commons-jcs-core.version>
         <com.sun.mail.mailapi.version>1.6.4</com.sun.mail.mailapi.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13</junit.version>
         <hamcrest-core.version>2.2</hamcrest-core.version>
         <jmockit.version>1.49</jmockit.version>
         <mockito-core.version>3.2.4</mockito-core.version>
