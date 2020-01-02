@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -405,12 +404,13 @@ public class NvdCveUpdater implements CachedWebDataSource {
                                     updates.add(entry);
                                 }
                             } catch (UpdateException ex) {
-                                Calendar date = Calendar.getInstance();
+                                final Calendar date = Calendar.getInstance();
                                 final int year = date.get(Calendar.YEAR);
                                 final int month = date.get(Calendar.MONTH);
                                 final int day = date.get(Calendar.DATE);
+                                final int grace = settings.getInt(Settings.KEYS.NVD_NEW_YEAR_GRACE_PERIOD, 10);
                                 if (ex.getMessage().contains("Unable to download meta file")
-                                        && i == year && month == 0 && day < 10) {
+                                        && i == year && month == 0 && day < grace) {
                                     LOGGER.warn("NVD Data for {} has not been published yet.", year);
                                 } else {
                                     throw ex;

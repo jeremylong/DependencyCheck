@@ -24,6 +24,9 @@ package org.owasp.dependencycheck.utils;
  */
 public final class SeverityUtil {
 
+    /**
+     * Private constructor for a utility class.
+     */
     private SeverityUtil() {
         //noop
     }

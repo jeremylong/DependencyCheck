@@ -462,38 +462,36 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
             return dependency.getSoftwareIdentifiers()
                     .stream().map(id -> id.getValue()).collect(toSet())
                     .containsAll(nextDependency.getSoftwareIdentifiers().stream().map(id -> {
-                        if (id instanceof PurlIdentifier) {
-                            PurlIdentifier pid = (PurlIdentifier) id;
-                            try {
-                                Identifier nid = new PurlIdentifier("maven", "org.webjars", pid.getName(), pid.getVersion(), pid.getConfidence());
-                                return nid.getValue();
-                            } catch (MalformedPackageURLException ex) {
-                                LOGGER.debug("Unable to build webjar purl id", ex);
-                                return id.getValue();
-                            }
-                        } else {
-                            return id == null ? "" : id.getValue();
-                        }
+                        return identifierToWebJarForCompairson(id);
                     }).collect(toSet()));
         } else if (nextName.endsWith(".jar") && mainName.endsWith("js") && mainName.startsWith(nextName)) {
             return nextDependency.getSoftwareIdentifiers()
                     .stream().map(id -> id.getValue()).collect(toSet())
                     .containsAll(dependency.getSoftwareIdentifiers().stream().map(id -> {
-                        if (id instanceof PurlIdentifier) {
-                            PurlIdentifier pid = (PurlIdentifier) id;
-                            try {
-                                Identifier nid = new PurlIdentifier("maven", "org.webjars", pid.getName(), pid.getVersion(), pid.getConfidence());
-                                return nid.getValue();
-                            } catch (MalformedPackageURLException ex) {
-                                LOGGER.debug("Unable to build webjar purl id", ex);
-                                return id.getValue();
-                            }
-                        } else {
-                            return id == null ? "" : id.getValue();
-                        }
+                        return identifierToWebJarForCompairson(id);
                     }).collect(toSet()));
         }
         return false;
+    }
+
+    /**
+     * Attempts to convert a given JavaScript identifier to a web jar CPE.
+     * @param id a JavaScript CPE
+     * @return a Maven CPE for a web jar if conversion is possible; otherwise the original CPE is returned
+     */
+    private String identifierToWebJarForCompairson(Identifier id) {
+        if (id instanceof PurlIdentifier) {
+            final PurlIdentifier pid = (PurlIdentifier) id;
+            try {
+                final Identifier nid = new PurlIdentifier("maven", "org.webjars", pid.getName(), pid.getVersion(), pid.getConfidence());
+                return nid.getValue();
+            } catch (MalformedPackageURLException ex) {
+                LOGGER.debug("Unable to build webjar purl id", ex);
+                return id.getValue();
+            }
+        } else {
+            return id == null ? "" : id.getValue();
+        }
     }
 
     /**

@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.data.ossindex;
 
 import java.io.File;
-import org.sonatype.goodies.packageurl.PackageUrl;
 import org.sonatype.goodies.packageurl.RenderFlavor;
 import org.sonatype.ossindex.service.client.OssindexClient;
 import org.sonatype.ossindex.service.client.OssindexClientConfiguration;

@@ -52,7 +52,7 @@ public final class NpmPayloadBuilder {
      * @param skipDevDependencies whether devDependencies should be skipped
      * @return the npm audit API payload
      */
-    public static JsonObject build(JsonObject lockJson, JsonObject packageJson, 
+    public static JsonObject build(JsonObject lockJson, JsonObject packageJson,
             Map<String, String> dependencyMap, boolean skipDevDependencies) {
         final JsonObjectBuilder payloadBuilder = Json.createObjectBuilder();
         addProjectInfo(packageJson, payloadBuilder);

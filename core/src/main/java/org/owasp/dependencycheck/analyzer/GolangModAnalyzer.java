@@ -218,7 +218,7 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
                     } else {
                         final String line = reader.readLine();
                         if (line == null) {
-                            LOGGER.warn("An error occurred calling `go` - no output could be read. Disabling {}. Error: `{}`", ANALYZER_NAME, line);
+                            LOGGER.warn("An error occurred calling `go` - no output could be read. Disabling {}.", ANALYZER_NAME);
                             throw new InitializationException("Error calling `go` - no output could be read.");
                         }
                         if (line.contains("unknown subcommand \"mod\"")) {

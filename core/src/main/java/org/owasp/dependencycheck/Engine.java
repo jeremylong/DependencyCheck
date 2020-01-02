@@ -213,7 +213,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * value of this system property at runtime. We store the value to reset the
      * property to its original value.
      */
-    String accessExternalSchema;
+    private String accessExternalSchema;
 
     /**
      * Creates a new {@link Mode#STANDALONE} Engine.
@@ -616,7 +616,7 @@ public class Engine implements FileFilter, AutoCloseable {
                 }
                 final String sha1 = dependency.getSha1sum();
                 boolean found = false;
-                
+
                 if (sha1 != null) {
                     for (Dependency existing : dependencies) {
                         if (sha1.equals(existing.getSha1sum())) {
@@ -662,7 +662,7 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     public void analyzeDependencies() throws ExceptionCollection {
         final List<Throwable> exceptions = Collections.synchronizedList(new ArrayList<>());
-        
+
         initializeAndUpdateDatabase(exceptions);
 
         //need to ensure that data exists
@@ -684,7 +684,7 @@ public class Engine implements FileFilter, AutoCloseable {
         // analysis phases
         for (AnalysisPhase phase : mode.getPhases()) {
             final List<Analyzer> analyzerList = analyzers.get(phase);
-            
+
             for (final Analyzer analyzer : analyzerList) {
                 final long analyzerStart = System.currentTimeMillis();
                 try {
@@ -695,10 +695,10 @@ public class Engine implements FileFilter, AutoCloseable {
                         continue;
                     }
                 }
-                
+
                 if (analyzer.isEnabled()) {
                     executeAnalysisTasks(analyzer, exceptions);
-                    
+
                     final long analyzerDurationMillis = System.currentTimeMillis() - analyzerStart;
                     final long analyzerDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(analyzerDurationMillis);
                     LOGGER.info("Finished {} ({} seconds)", analyzer.getName(), analyzerDurationSeconds);
@@ -710,7 +710,7 @@ public class Engine implements FileFilter, AutoCloseable {
         mode.getPhases().stream()
                 .map((phase) -> analyzers.get(phase))
                 .forEach((analyzerList) -> analyzerList.forEach((a) -> closeAnalyzer(a)));
-        
+
         LOGGER.debug("\n----------------------------------------------------\nEND ANALYSIS\n----------------------------------------------------");
         final long analysisDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - analysisStart);
         LOGGER.info("Analysis Complete ({} seconds)", analysisDurationSeconds);
@@ -789,7 +789,7 @@ public class Engine implements FileFilter, AutoCloseable {
         LOGGER.debug("Starting {}", analyzer.getName());
         final List<AnalysisTask> analysisTasks = getAnalysisTasks(analyzer, exceptions);
         final ExecutorService executorService = getExecutorService(analyzer);
-        
+
         try {
             final int timeout = settings.getInt(Settings.KEYS.ANALYSIS_TIMEOUT, 20);
             final List<Future<Void>> results = executorService.invokeAll(analysisTasks, timeout, TimeUnit.MINUTES);
@@ -996,7 +996,7 @@ public class Engine implements FileFilter, AutoCloseable {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-        
+
         return result;
     }
 

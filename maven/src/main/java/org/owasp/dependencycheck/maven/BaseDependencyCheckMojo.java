@@ -1043,8 +1043,20 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
     }
 
+    /**
+     * Returns the version from the list of nodes that match the given groupId
+     * and artifactID.
+     *
+     * @param nodes the nodes to search
+     * @param groupId the group id to find
+     * @param artifactId the artifact id to find
+     * @return the version from the list of nodes that match the given groupId
+     * and artifactID; otherwise <code>null</code> is returned
+     */
     private String findVersion(List<DependencyNode> nodes, String groupId, String artifactId) {
-        Optional<DependencyNode> f = nodes.stream().filter(p -> groupId.equals(p.getArtifact().getGroupId()) && artifactId.equals(p.getArtifact().getArtifactId())).findFirst();
+        final Optional<DependencyNode> f = nodes.stream().filter(p
+                -> groupId.equals(p.getArtifact().getGroupId())
+                && artifactId.equals(p.getArtifact().getArtifactId())).findFirst();
         if (f.isPresent()) {
             return f.get().getArtifact().getVersion();
         }

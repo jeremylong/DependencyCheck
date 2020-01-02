@@ -257,13 +257,13 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                     }
                 }
             }
-            if (dependency.getVersion()==null && data.getFileVersion() != null) {
+            if (dependency.getVersion() == null && data.getFileVersion() != null) {
                 final DependencyVersion version = DependencyVersionUtil.parseVersion(data.getFileVersion(), true);
                 if (version != null) {
                     dependency.setVersion(version.toString());
                 }
             }
-            if (dependency.getVersion()==null && data.getProductVersion() != null) {
+            if (dependency.getVersion() == null && data.getProductVersion() != null) {
                 final DependencyVersion version = DependencyVersionUtil.parseVersion(data.getProductVersion(), true);
                 if (version != null) {
                     dependency.setVersion(version.toString());

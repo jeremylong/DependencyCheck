@@ -282,7 +282,8 @@ public final class Settings {
          */
         public static final String ANALYZER_NODE_AUDIT_URL = "analyzer.node.audit.url";
         /**
-         * The properties key for configure whether the Node Audit analyzer should skip devDependencies.
+         * The properties key for configure whether the Node Audit analyzer
+         * should skip devDependencies.
          */
         public static final String ANALYZER_NODE_AUDIT_SKIPDEV = "analyzer.node.audit.skipdev";
         /**
@@ -619,7 +620,12 @@ public final class Settings {
          * The properties key setting which other keys should be considered
          * sensitive and subsequently masked when logged.
          */
-        private static final String MASKED_PROPERTIES = "odc.settings.mask";
+        public static final String MASKED_PROPERTIES = "odc.settings.mask";
+        /**
+         * The properties key setting indicating how many days past the new year
+         * that ODC will "skip" updating that years data feed if not present.
+         */
+        public static final String NVD_NEW_YEAR_GRACE_PERIOD = "nvd.newyear.grace.period";
 
         /**
          * private constructor because this is a "utility" class containing
@@ -704,7 +710,7 @@ public final class Settings {
      * @return the list of keys to mask
      */
     private List<Predicate<String>> getMaskedKeys() {
-        String[] masked = getArray(Settings.KEYS.MASKED_PROPERTIES);
+        final String[] masked = getArray(Settings.KEYS.MASKED_PROPERTIES);
         if (masked == null) {
             return new ArrayList<>();
         }

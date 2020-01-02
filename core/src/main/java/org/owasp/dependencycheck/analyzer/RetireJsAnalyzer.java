@@ -176,7 +176,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
         final boolean autoupdate = getSettings().getBoolean(Settings.KEYS.AUTO_UPDATE, true);
         final boolean forceupdate = getSettings().getBoolean(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, false);
         if (!autoupdate && forceupdate) {
-            RetireJSDataSource ds = new RetireJSDataSource();
+            final RetireJSDataSource ds = new RetireJSDataSource();
             try {
                 ds.update(engine);
             } catch (UpdateException ex) {
