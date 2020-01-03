@@ -104,24 +104,21 @@ Then load the resulting 'dependency-check-report.html' into your favorite browse
 
 ### Docker
 
-In the following example it is assumed that the source to be checked is in the current working directory. Persistent data and report directories are used, allowing you to destroy the container after running.
+In the following example it is assumed that the source to be checked is in the current working directory and the reports will be written to `$(pwd)/odc-reports`. Persistent data and cache directories are used, allowing you to destroy the container after running.
 
 For Linux:
 ```sh
 #!/bin/sh
 
-OWASPDC_DIRECTORY=$HOME/OWASP-Dependency-Check
-DATA_DIRECTORY="$OWASPDC_DIRECTORY/data"
-REPORT_DIRECTORY="$OWASPDC_DIRECTORY/reports"
-CACHE_DIRECTORY="$OWASPDC_DIRECTORY/data/cache"
+DC_VERSION="latest"
+DC_DIRECTORY=$HOME/OWASP-Dependency-Check
+DC_PROJECT="dependency-check scan: $(pwd)"
+DATA_DIRECTORY="$DC_DIRECTORY/data"
+CACHE_DIRECTORY="$DC_DIRECTORY/data/cache"
 
 if [ ! -d "$DATA_DIRECTORY" ]; then
     echo "Initially creating persistent directory: $DATA_DIRECTORY"
     mkdir -p "$DATA_DIRECTORY"
-fi
-if [ ! -d "$REPORT_DIRECTORY" ]; then
-    echo "Initially creating persistent directory: $REPORT_DIRECTORY"
-    mkdir -p "$REPORT_DIRECTORY"
 fi
 if [ ! -d "$CACHE_DIRECTORY" ]; then
     echo "Initially creating persistent directory: $CACHE_DIRECTORY"
@@ -129,18 +126,20 @@ if [ ! -d "$CACHE_DIRECTORY" ]; then
 fi
 
 # Make sure we are using the latest version
-docker pull owasp/dependency-check
+docker pull owasp/dependency-check:$DC_VERSION
 
 docker run --rm \
-    --volume $(pwd):/src \
-    --volume "$DATA_DIRECTORY":/usr/share/dependency-check/data \
-    --volume "$REPORT_DIRECTORY":/report \
-    owasp/dependency-check \
+    -e user=$USER \
+    -u $(id -u ${USER}):$(id -g ${USER}) \
+    --volume $(pwd):/z \
+    --volume "$DATA_DIRECTORY":/usr/share/dependency-check/data:z \
+    --volume $(pwd)/odc-reports:/report:z \
+    owasp/dependency-check:$DC_VERSION \
     --scan /src \
     --format "ALL" \
-    --project "My OWASP Dependency Check Project" \
+    --project "$DC_PROJECT" \
     --out /report
-    # Use suppression like this: (/src == $pwd)
+    # Use suppression like this: (where /src == $pwd)
     # --suppression "/src/security/dependency-check-suppression.xml"
 ```
 
@@ -148,32 +147,34 @@ For Windows:
 ```bat
 @echo off
 
-set OWASPDC_DIRECTORY=%USERPROFILE%\OWASP-Dependency-Check
-set DATA_DIRECTORY="%OWASPDC_DIRECTORY%\data"
-set REPORT_DIRECTORY="%OWASPDC_DIRECTORY%\reports"
+set DC_VERSION="latest"
+set DC_DIRECTORY=%USERPROFILE%\OWASP-Dependency-Check
+SET DC_PROJECT="dependency-check scan: %CD%"
+set DATA_DIRECTORY="%DC_DIRECTORY%\data"
+set CACHE_DIRECTORY="%DC_DIRECTORY%\data\cache"
 
 IF NOT EXIST %DATA_DIRECTORY% (
     echo Initially creating persistent directory: %DATA_DIRECTORY%
     mkdir %DATA_DIRECTORY%
 )
-IF NOT EXIST %REPORT_DIRECTORY% (
-    echo Initially creating persistent directory: %REPORT_DIRECTORY%
-    mkdir %REPORT_DIRECTORY%
+IF NOT EXIST %CACHE_DIRECTORY% (
+    echo Initially creating persistent directory: %CACHE_DIRECTORY%
+    mkdir %CACHE_DIRECTORY%
 )
 
 rem Make sure we are using the latest version
-docker pull owasp/dependency-check
+docker pull owasp/dependency-check:%DC_VERSION%
 
 docker run --rm ^
-    --volume %cd%:/src ^
+    --volume %CD%:/src ^
     --volume %DATA_DIRECTORY%:/usr/share/dependency-check/data ^
-    --volume %REPORT_DIRECTORY%:/report ^
-    owasp/dependency-check ^
+    --volume %CD%:/odc-reports ^
+    owasp/dependency-check:%DC_VERSION% ^
     --scan /src ^
     --format "ALL" ^
-    --project "My OWASP Dependency Check Project" ^
+    --project "%DC_PROJECT%" ^
     --out /report
-    rem Use suppression like this: (/src == $pwd)
+    rem Use suppression like this: (where /src == %CD%)
     rem --suppression "/src/security/dependency-check-suppression.xml"
 ```
 
@@ -197,7 +198,7 @@ Archive: [google group](https://groups.google.com/forum/#!forum/dependency-check
 Copyright & License
 -
 
-Dependency-Check is Copyright (c) 2012-2017 Jeremy Long. All Rights Reserved.
+Dependency-Check is Copyright (c) 2012-2020 Jeremy Long. All Rights Reserved.
 
 Permission to modify and redistribute is granted under the terms of the Apache 2.0 license. See the [LICENSE.txt](https://raw.githubusercontent.com/jeremylong/DependencyCheck/master/LICENSE.txt) file for the full license.
 
