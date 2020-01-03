@@ -13,6 +13,11 @@ if [ ! -d "$SCAN_TARGET" ]; then
   exit 1
 fi
 
+if [ -f "$HOME/OWASP-Dependency-Check/reports/dependency-check-report.json" ]; then
+    echo "Deleting previous report"
+    rm "$HOME/OWASP-Dependency-Check/reports/dependency-check-report.json"
+fi
+
 cd $SCAN_TARGET
 OWASPDC_DIRECTORY=$HOME/OWASP-Dependency-Check
 DATA_DIRECTORY="$OWASPDC_DIRECTORY/data"
