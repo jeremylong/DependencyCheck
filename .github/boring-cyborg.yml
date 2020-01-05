@@ -1,0 +1,25 @@
+labelPRBasedOnFilePath:
+  core:
+    - core/**/*
+  utils:
+    - utils/**/*
+  ant:
+    - ant/**/*
+  cli:
+    - cli/**/*
+  maven:
+    - maven/**/*
+  tests:
+    - core/src/test/**/*
+    - utils/src/test/**/*
+    - ant/src/test/**/*
+    - cli/src/test/**/*
+    - maven/src/it/**/*
+    - maven/src/test/**/*
+  documentation:
+    - core/src/site/**/*
+    - utils/src/site/**/*
+    - ant/src/site/**/*
+    - cli/src/site/**/*
+    - maven/src/site/**/*
+    - src/site/**/*
