@@ -28,10 +28,15 @@ import java.io.File;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Assume;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -52,6 +57,36 @@ public class NodePackageAnalyzerTest extends BaseTest {
     private Engine engine;
 
     /**
+     * Retrieves the node audit analyzer from the engine.
+     *
+     * @param engine the ODC engine
+     * @return returns the node audit analyzer from the engine
+     */
+    private NodeAuditAnalyzer getNodeAuditAnalyzer(Engine engine) {
+        for (Analyzer a : engine.getAnalyzers()) {
+            if (a instanceof NodeAuditAnalyzer) {
+                return (NodeAuditAnalyzer) a;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Retrieves the node package analyzer from the engine.
+     *
+     * @param engine the ODC engine
+     * @return returns the node package analyzer from the engine
+     */
+    private NodePackageAnalyzer getNodePackageAnalyzer(Engine engine) {
+        for (Analyzer a : engine.getAnalyzers()) {
+            if (a instanceof NodePackageAnalyzer) {
+                return (NodePackageAnalyzer) a;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Correctly setup the analyzer for testing.
      *
      * @throws Exception thrown if there is a problem
@@ -62,10 +97,18 @@ public class NodePackageAnalyzerTest extends BaseTest {
         super.setUp();
         if (getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED)) {
             engine = new Engine(this.getSettings());
-            analyzer = new NodePackageAnalyzer();
+            NodeAuditAnalyzer auditAnalyzer = getNodeAuditAnalyzer(engine);
+            auditAnalyzer.setFilesMatched(true);
+            analyzer = getNodePackageAnalyzer(engine);
             analyzer.setFilesMatched(true);
             analyzer.initialize(getSettings());
-            analyzer.prepare(engine);
+            try {
+                analyzer.prepare(engine);
+            } catch (InitializationException ex) {
+                if (!ex.getMessage().startsWith("Missing package.lock or npm-shrinkwrap.lock file")) {
+                    throw ex;
+                }
+            }
         }
     }
 
@@ -82,7 +125,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
             engine.close();
         }
         super.tearDown();
-        
+
     }
 
     /**
@@ -105,7 +148,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
         assertThat(analyzer.accept(new File("package-lock.json")), is(true));
         assertThat(analyzer.accept(new File("npm-shrinkwrap.json")), is(true));
     }
-    
+
     /**
      * Test of inspect method, of class PythonDistributionAnalyzer.
      *
