@@ -10,10 +10,10 @@ assignees: ''
 **Describe the bug**
 A clear and concise description of what the bug is.
 
-** Version of dependency-check used **
-The problem occurs using version X.X.X of the the ____ (cli, gradle plugin, maven plugin, etc.)
+**Version of dependency-check used**
+The problem occurs using version X.X.X of the ____ (cli, gradle plugin, maven plugin, etc.)
 
-** Log file **
+**Log file**
 When reporting errors, 99% of the time log file output is required. Please post the log file as a [gist](https://gist.github.com/) and provide a link in the new issue.
 
 **To Reproduce**
