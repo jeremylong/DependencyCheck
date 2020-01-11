@@ -47,11 +47,13 @@ import us.springett.parsers.cpe.values.Part;
 import org.sonatype.goodies.packageurl.PackageUrl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -82,24 +84,19 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
     public static final String REFERENCE_TYPE = "OSSINDEX";
 
     /**
-     * A reference to the OSS Index Client.
-     */
-    private OssindexClient client;
-
-    /**
      * Fetched reports.
      */
-    private Map<PackageUrl, ComponentReport> reports;
+    private static Map<PackageUrl, ComponentReport> reports;
 
     /**
      * Flag to indicate if fetching reports failed.
      */
-    private boolean failed = false;
+    private static boolean failed = false;
 
     /**
      * Lock to protect fetching state.
      */
-    private final Object fetchMutex = new Object();
+    private static final Object FETCH_MUTIX = new Object();
 
     @Override
     public String getName() {
@@ -117,9 +114,9 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Run with parallel support.
-     * <p>
-     * Fetch logic will however block all threads when state is established.
+     * Run without parallel support.
+     *
+     * @return false
      */
     @Override
     public boolean supportsParallelProcessing() {
@@ -127,28 +124,17 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
     }
 
     @Override
-    protected void prepareAnalyzer(final Engine engine) throws InitializationException {
-        client = OssindexClientFactory.create(getSettings());
-    }
-
-    @Override
     protected void closeAnalyzer() throws Exception {
-        if (client != null) {
-            client.close();
+        synchronized (FETCH_MUTIX) {
+            reports = null;
+            failed = false;
         }
-        client = null;
-        reports = null;
-        failed = false;
     }
 
     @Override
     protected void analyzeDependency(final Dependency dependency, final Engine engine) throws AnalysisException {
-        if (client == null) {
-            throw new IllegalStateException();
-        }
-
         // batch request component-reports for all dependencies
-        synchronized (fetchMutex) {
+        synchronized (FETCH_MUTIX) {
             if (!failed && reports == null) {
                 try {
                     reports = requestReports(engine.getDependencies());
@@ -198,26 +184,21 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
      */
     private Map<PackageUrl, ComponentReport> requestReports(final Dependency[] dependencies) throws Exception {
         LOG.debug("Requesting component-reports for {} dependencies", dependencies.length);
-
         // create requests for each dependency which has a PURL identifier
         final List<PackageUrl> packages = new ArrayList<>();
-        for (Dependency dependency : dependencies) {
-            for (Identifier id : dependency.getSoftwareIdentifiers()) {
-                if (id instanceof PurlIdentifier) {
-                    final PackageUrl purl = parsePackageUrl(id.getValue());
-                    if (purl != null && StringUtils.isNotBlank(purl.getVersion())) {
-                        LOG.debug("oss index adding package: {}", purl);
-                        packages.add(purl);
-                    }
-                }
-            }
-        }
-
+        Arrays.stream(dependencies).forEach(dependency -> {
+            dependency.getSoftwareIdentifiers().stream()
+                    .filter(id -> id instanceof PurlIdentifier)
+                    .map(id -> parsePackageUrl(id.getValue()))
+                    .filter(id -> id != null && StringUtils.isNotBlank(id.getVersion()))
+                    .forEach(id -> packages.add(id));
+        });
         // only attempt if we have been able to collect some packages
         if (!packages.isEmpty()) {
-            return client.requestComponentReports(packages);
+            try (OssindexClient client = OssindexClientFactory.create(getSettings())) {
+                return client.requestComponentReports(packages);
+            }
         }
-
         LOG.warn("Unable to determine Package-URL identifiers for {} dependencies", dependencies.length);
         return Collections.emptyMap();
     }
@@ -247,18 +228,19 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
                         // expose the URL to the package details for report generation
                         id.setUrl(report.getReference().toString());
 
-                        for (ComponentReportVulnerability vuln : report.getVulnerabilities()) {
-                            final Vulnerability v = transform(report, vuln);
-                            final Vulnerability existing = dependency.getVulnerabilities().stream()
-                                    .filter(e -> e.getName().equals(v.getName())).findFirst()
-                                    .orElse(null);
-                            if (existing != null) {
-                                //TODO - can we enhance anything other than the references?
-                                existing.getReferences().addAll(v.getReferences());
-                            } else {
-                                dependency.addVulnerability(v);
-                            }
-                        }
+                        report.getVulnerabilities().stream()
+                                .map((vuln) -> transform(report, vuln))
+                                .forEachOrdered((v) -> {
+                                    final Vulnerability existing = dependency.getVulnerabilities().stream()
+                                            .filter(e -> e.getName().equals(v.getName())).findFirst()
+                                            .orElse(null);
+                                    if (existing != null) {
+                                        //TODO - can we enhance anything other than the references?
+                                        existing.getReferences().addAll(v.getReferences());
+                                    } else {
+                                        dependency.addVulnerability(v);
+                                    }
+                                });
                     } catch (Exception e) {
                         LOG.warn("Failed to fetch component-report for: {}", purl, e);
                     }
