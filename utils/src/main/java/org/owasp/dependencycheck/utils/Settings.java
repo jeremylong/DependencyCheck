@@ -527,6 +527,10 @@ public final class Settings {
          */
         public static final String ANALYZER_CPE_ENABLED = "analyzer.cpe.enabled";
         /**
+         * The key to determine if the NPM CPE analyzer is enabled.
+         */
+        public static final String ANALYZER_NPM_CPE_ENABLED = "analyzer.npm.cpe.enabled";
+        /**
          * The key to determine if the CPE Suppression analyzer is enabled.
          */
         public static final String ANALYZER_CPE_SUPPRESSION_ENABLED = "analyzer.cpesuppression.enabled";

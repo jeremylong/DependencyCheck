@@ -327,6 +327,10 @@ public final class CveDB implements AutoCloseable {
         /**
          * Key for SQL Statement.
          */
+        SELECT_VENDOR_PRODUCT_LIST_FOR_NODE,
+        /**
+         * Key for SQL Statement.
+         */
         SELECT_VULNERABILITY,
         /**
          * Key for SQL Statement.
@@ -631,6 +635,36 @@ public final class CveDB implements AutoCloseable {
             final PreparedStatement ps = getPreparedStatement(SELECT_VENDOR_PRODUCT_LIST);
             if (ps == null) {
                 throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_VENDOR_PRODUCT_LIST);
+            }
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                data.add(new Pair<>(rs.getString(1), rs.getString(2)));
+            }
+        } catch (SQLException ex) {
+            final String msg = "An unexpected SQL Exception occurred; please see the verbose log for more details.";
+            throw new DatabaseException(msg, ex);
+        } finally {
+            DBUtils.closeResultSet(rs);
+        }
+        return data;
+    }
+
+    /**
+     * Returns the entire list of vendor/product combinations filtered for just
+     * Node JS related products.
+     *
+     * @return the list of vendor/product combinations that are known to be
+     * related to Node JS
+     * @throws DatabaseException thrown when there is an error retrieving the
+     * data from the DB
+     */
+    public synchronized Set<Pair<String, String>> getVendorProductListForNode() throws DatabaseException {
+        final Set<Pair<String, String>> data = new HashSet<>();
+        ResultSet rs = null;
+        try {
+            final PreparedStatement ps = getPreparedStatement(SELECT_VENDOR_PRODUCT_LIST_FOR_NODE);
+            if (ps == null) {
+                throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_VENDOR_PRODUCT_LIST_FOR_NODE);
             }
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -1341,6 +1375,8 @@ public final class CveDB implements AutoCloseable {
                         ecosystem = NodeAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
                     } else if (r.getUrl().contains("nodesecurity.io")) {
                         ecosystem = NodeAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
+                    } else if (r.getUrl().contains("rustsec.org")) {
+                        ecosystem = "rust";
                     }
                 }
                 insertReference.setInt(1, vulnerabilityId);
@@ -1554,10 +1590,16 @@ public final class CveDB implements AutoCloseable {
         try (PreparedStatement psOrphans = getPreparedStatement(CLEANUP_ORPHANS);
                 PreparedStatement psEcosystem = getPreparedStatement(UPDATE_ECOSYSTEM)) {
             if (psEcosystem != null) {
-                psEcosystem.executeUpdate();
+                final int count = psEcosystem.executeUpdate();
+                if (count > 0) {
+                    LOGGER.info("Updated the CPE ecosystem on {} NVD records", count);
+                }
             }
             if (psOrphans != null) {
-                psOrphans.executeUpdate();
+                final int count = psOrphans.executeUpdate();
+                if (count > 0) {
+                    LOGGER.info("Cleaned up {} orphaned NVD records", count);
+                }
             }
             final long millis = System.currentTimeMillis() - start;
             //final long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);

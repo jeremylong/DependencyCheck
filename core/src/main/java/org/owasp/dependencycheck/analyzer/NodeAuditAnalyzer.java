@@ -45,6 +45,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import org.owasp.dependencycheck.analyzer.exception.SearchException;
 import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
+import org.owasp.dependencycheck.dependency.Reference;
 import org.owasp.dependencycheck.dependency.VulnerableSoftwareBuilder;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
@@ -241,8 +242,31 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
                 nodeModule.addVulnerability(vuln);
                 engine.addDependency(nodeModule);
             } else {
-                existing.addVulnerability(vuln);
+                replaceOrAddVulnerability(existing, vuln);
             }
+        }
+    }
+
+    /**
+     * Evaluates if the vulnerability is already present; if it is the
+     * vulnerability is not added.
+     *
+     * @param dependency a reference to the dependency being analyzed
+     * @param vuln the vulnerability to add
+     */
+    private void replaceOrAddVulnerability(Dependency dependency, Vulnerability vuln) {
+        boolean found = false;
+        for (Vulnerability existing : dependency.getVulnerabilities()) {
+            for (Reference ref : existing.getReferences()) {
+                if (ref.getName() != null
+                        && vuln.getSource().toString().equals("NPM")
+                        && ref.getName().equals("https://nodesecurity.io/advisories/" + vuln.getName())) {
+                    found = true;
+                }
+            }
+        }
+        if (!found) {
+            dependency.addVulnerability(vuln);
         }
     }
 

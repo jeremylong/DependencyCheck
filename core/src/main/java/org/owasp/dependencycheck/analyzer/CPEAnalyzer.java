@@ -54,6 +54,7 @@ import org.owasp.dependencycheck.data.cpe.CpeMemoryIndex;
 import org.owasp.dependencycheck.data.cpe.Fields;
 import org.owasp.dependencycheck.data.cpe.IndexEntry;
 import org.owasp.dependencycheck.data.cpe.IndexException;
+import org.owasp.dependencycheck.data.cpe.MemoryIndex;
 import org.owasp.dependencycheck.data.lucene.LuceneUtils;
 import org.owasp.dependencycheck.data.lucene.SearchFieldAnalyzer;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
@@ -130,7 +131,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     /**
      * The CPE in memory index.
      */
-    private CpeMemoryIndex cpe;
+    private MemoryIndex cpe;
     /**
      * The CVE Database.
      */
@@ -215,7 +216,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         this.cpe = CpeMemoryIndex.getInstance();
         try {
             final long creationStart = System.currentTimeMillis();
-            cpe.open(cve, this.getSettings());
+            cpe.open(cve.getVendorProductList(), this.getSettings());
             final long creationSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - creationStart);
             LOGGER.info("Created CPE Index ({} seconds)", creationSeconds);
         } catch (IndexException ex) {
@@ -264,27 +265,11 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 }
 
                 boolean identifierAdded = false;
-                //filtering on score seems to create additional FN - but maybe we should continue to investigate this option
-//                StandardDeviation stdev = new StandardDeviation();
-//                float maxScore = 0;
-//                for (IndexEntry e : entries) {
-//                    if (previouslyFound.contains(e.getDocumentId())) {
-//                        continue;
-//                    }
-//                    stdev.increment((double) e.getSearchScore());
-//                    if (maxScore < e.getSearchScore()) {
-//                        maxScore = e.getSearchScore();
-//                    }
-//                }
-//                double filter = maxScore - (stdev.getResult() * 5);
-
                 for (IndexEntry e : entries) {
                     if (previouslyFound.contains(e.getDocumentId()) /*|| (filter > 0 && e.getSearchScore() < filter)*/) {
                         continue;
                     }
                     previouslyFound.add(e.getDocumentId());
-                    //LOGGER.error("\"Verifying entry\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\"", dependency.getFileName(),
-                    //e.getVendor(), e.getProduct(), confidence.toString(), e.getSearchScore(), filter);
                     if (verifyEntry(e, dependency)) {
                         final String vendor = e.getVendor();
                         final String product = e.getProduct();
@@ -945,7 +930,6 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     @Override
     protected String getAnalyzerEnabledSettingKey() {
         return Settings.KEYS.ANALYZER_CPE_ENABLED;
-
     }
 
     /**
@@ -1240,5 +1224,42 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             System.err.println("Lucene ODC search tool failed:");
             System.err.println(ex.getMessage());
         }
+    }
+
+    /**
+     * Sets the reference to the CveDB.
+     * @param cveDb the CveDB
+     */
+    protected void setCveDB(CveDB cveDb) {
+        this.cve = cveDb;
+    }
+    /**
+     * returns a reference to the CveDB.
+     * @return a reference to the CveDB
+     */
+    protected CveDB getCveDB() {
+        return this.cve;
+    }
+
+    /**
+     * Sets the MemoryIndex.
+     * @param idx the memory index
+     */
+    protected void setMemoryIndex(MemoryIndex idx) {
+        cpe = idx;
+    }
+    /**
+     * Returns the memory index.
+     * @return the memory index
+     */
+    protected MemoryIndex getMemoryIndex() {
+        return cpe;
+    }
+    /**
+     * Sets the CPE Suppression Analyzer.
+     * @param suppression the CPE Suppression Analyzer
+     */
+    protected void setCpeSuppressionAnalyzer(CpeSuppressionAnalyzer suppression) {
+        this.suppression = suppression;
     }
 }

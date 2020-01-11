@@ -3,6 +3,7 @@ org.owasp.dependencycheck.analyzer.FileNameAnalyzer
 org.owasp.dependencycheck.analyzer.JarAnalyzer
 org.owasp.dependencycheck.analyzer.HintAnalyzer
 org.owasp.dependencycheck.analyzer.CPEAnalyzer
+org.owasp.dependencycheck.analyzer.NpmCPEAnalyzer
 org.owasp.dependencycheck.analyzer.FalsePositiveAnalyzer
 org.owasp.dependencycheck.analyzer.DependencyBundlingAnalyzer
 org.owasp.dependencycheck.analyzer.DependencyMergingAnalyzer

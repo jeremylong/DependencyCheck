@@ -53,7 +53,7 @@ public class CpeMemoryIndexTest extends BaseDBTestCase {
         if (!instance.isOpen()) {
             engine = new Engine(getSettings());
             engine.openDatabase();
-            instance.open(engine.getDatabase(), this.getSettings());
+            instance.open(engine.getDatabase().getVendorProductList(), this.getSettings());
         }
     }
 

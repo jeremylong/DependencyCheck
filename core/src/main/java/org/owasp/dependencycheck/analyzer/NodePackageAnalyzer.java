@@ -120,7 +120,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                 final String[] tmp = settings.getArray(Settings.KEYS.ECOSYSTEM_SKIP_CPEANALYZER);
                 if (tmp != null) {
                     final List<String> skipEcosystems = Arrays.asList(tmp);
-                    if (skipEcosystems.contains(DEPENDENCY_ECOSYSTEM)  
+                    if (skipEcosystems.contains(DEPENDENCY_ECOSYSTEM)
                             && !settings.getBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED)) {
                         if (!settings.getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED)) {
                             final String msg = "Invalid Configuration: enabling the Node Package Analyzer without "
@@ -130,7 +130,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                             final String msg = "Missing package.lock or npm-shrinkwrap.lock file: Unable to scan a node project without a package-lock.json or npm-shrinkwrap.json.";
                             throw new InitializationException(msg);
                         }
-                    } else if (skipEcosystems.contains(DEPENDENCY_ECOSYSTEM) 
+                    } else if (skipEcosystems.contains(DEPENDENCY_ECOSYSTEM)
                             && !settings.getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED)) {
                         LOGGER.warn("Using only the OSS Index Analyzer with Node.js can result in many false positives - please enable the Node Audit Analyzer.");
                     }
@@ -211,7 +211,8 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
 
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        if (isNodeAuditEnabled(engine) && !PACKAGE_LOCK_JSON.equals(dependency.getFileName())) {
+        if (isNodeAuditEnabled(engine) 
+                && !(PACKAGE_LOCK_JSON.equals(dependency.getFileName()) || SHRINKWRAP_JSON.equals(dependency.getFileName()))) {
             engine.removeDependency(dependency);
         }
         final File dependencyFile = dependency.getActualFile();

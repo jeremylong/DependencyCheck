@@ -22,7 +22,8 @@ import javax.annotation.concurrent.ThreadSafe;
 /**
  * <p>
  * An in memory Lucene index that contains the vendor/product combinations from
- * the CPE (application) identifiers within the NVD CVE data.</p>
+ * the CPE (application) identifiers within the NVD CVE data. The intent of the
+ * index is to hold only products in the NVD associated with NPM/node.js.</p>
  *
  * This is the last remaining singleton in dependency-check-core; The use of
  * this singleton - while it may not technically be thread-safe (one database
@@ -33,35 +34,34 @@ import javax.annotation.concurrent.ThreadSafe;
  * @author Jeremy Long
  */
 @ThreadSafe
-public final class CpeMemoryIndex extends AbstractMemoryIndex {
+public final class NpmCpeMemoryIndex  extends AbstractMemoryIndex {
 
     /**
      * Singleton instance.
      */
-    private static final CpeMemoryIndex INSTANCE = new CpeMemoryIndex();
-
+    private static final NpmCpeMemoryIndex INSTANCE = new NpmCpeMemoryIndex();
+    
     /**
      * private constructor for singleton.
      */
-    private CpeMemoryIndex() {
+    private NpmCpeMemoryIndex() {
     }
 
     /**
-     * Gets the singleton instance of the CpeMemoryIndex.
+     * Gets the singleton instance of the NpmCpeMemoryIndex.
      *
-     * @return the instance of the CpeMemoryIndex
-     */
-    public static CpeMemoryIndex getInstance() {
-        return INSTANCE;
-    }
-
-    /**
-     * Gets the singleton instance of the CpeMemoryIndex.
-     *
-     * @return the instance of the CpeMemoryIndex
+     * @return the instance of the NpmCpeMemoryIndex
      */
     @Override
     protected AbstractMemoryIndex instance() {
-        return (AbstractMemoryIndex) INSTANCE;
+        return INSTANCE;
+    }
+    /**
+     * Gets the singleton instance of the CpeMemoryIndex.
+     *
+     * @return the instance of the CpeMemoryIndex
+     */
+    public static NpmCpeMemoryIndex getInstance() {
+        return INSTANCE;
     }
 }

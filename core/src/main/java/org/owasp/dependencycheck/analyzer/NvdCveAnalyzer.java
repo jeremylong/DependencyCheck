@@ -27,6 +27,7 @@ import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Vulnerability;
+import org.owasp.dependencycheck.dependency.Vulnerability.Source;
 import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -45,9 +46,9 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
      * identifiers for this dependency.
      *
      * @param dependency The Dependency to analyze
-     * @param engine     The analysis engine
+     * @param engine The analysis engine
      * @throws AnalysisException thrown if there is an issue analyzing the
-     *                           dependency
+     * dependency
      */
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
@@ -59,7 +60,11 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
                     .forEach(i -> {
                         try {
                             final List<Vulnerability> vulns = cveDB.getVulnerabilities(i.getCpe());
-                            dependency.addVulnerabilities(vulns);
+                            if ("npm".equals(dependency.getEcosystem())) {
+                                replaceOrAddVulnerability(dependency, vulns);
+                            } else {
+                                dependency.addVulnerabilities(vulns);
+                            }
                         } catch (DatabaseException ex) {
                             throw new LambdaExceptionWrapper(new AnalysisException(ex));
                         }
@@ -109,5 +114,27 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
     @Override
     protected String getAnalyzerEnabledSettingKey() {
         return Settings.KEYS.ANALYZER_NVD_CVE_ENABLED;
+    }
+
+    /**
+     * Evaluates if the vulnerability is already present; if it is the
+     * vulnerability is not added.
+     *
+     * @param dependency a reference to the dependency being analyzed
+     * @param vuln the vulnerability to add
+     */
+    private void replaceOrAddVulnerability(Dependency dependency, List<Vulnerability> vulns) {
+        vulns.stream().forEach(v -> {
+            v.getReferences().stream().forEach(ref -> {
+                dependency.getVulnerabilities().stream().forEach(existing -> {
+                    if (existing.getSource() == Source.NPM
+                            && ref.getName() != null
+                            && ref.getName().equals("https://nodesecurity.io/advisories/" + existing.getName())) {
+                        dependency.removeVulnerability(existing);
+                    }
+                });
+            });
+        });
+        dependency.addVulnerabilities(vulns);
     }
 }
