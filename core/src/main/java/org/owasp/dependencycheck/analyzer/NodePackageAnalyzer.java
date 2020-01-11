@@ -127,12 +127,14 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                                     + "using the Node Audit Analyzer or OSS Index Analyzer is not supported.";
                             throw new InitializationException(msg);
                         } else if (!isNodeAuditEnabled(engine)) {
-                            final String msg = "Missing package.lock or npm-shrinkwrap.lock file: Unable to scan a node project without a package-lock.json or npm-shrinkwrap.json.";
+                            final String msg = "Missing package.lock or npm-shrinkwrap.lock file: Unable to scan a node "
+                                    + "project without a package-lock.json or npm-shrinkwrap.json.";
                             throw new InitializationException(msg);
                         }
                     } else if (skipEcosystems.contains(DEPENDENCY_ECOSYSTEM)
                             && !settings.getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED)) {
-                        LOGGER.warn("Using only the OSS Index Analyzer with Node.js can result in many false positives - please enable the Node Audit Analyzer.");
+                        LOGGER.warn("Using only the OSS Index Analyzer with Node.js can result in many false positives "
+                                + "- please enable the Node Audit Analyzer.");
                     }
                 }
             } catch (InvalidSettingException ex) {
@@ -211,7 +213,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
 
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        if (isNodeAuditEnabled(engine) 
+        if (isNodeAuditEnabled(engine)
                 && !(PACKAGE_LOCK_JSON.equals(dependency.getFileName()) || SHRINKWRAP_JSON.equals(dependency.getFileName()))) {
             engine.removeDependency(dependency);
         }
@@ -331,8 +333,8 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                     child.setDisplayFileName(packagePath);
                     child.setPackagePath(packagePath);
                     try {
-                        PackageURL purl = PackageURLBuilder.aPackageURL().withType("npm").withName(name).withVersion(version).build();
-                        PurlIdentifier id = new PurlIdentifier(purl, Confidence.HIGHEST);
+                        final PackageURL purl = PackageURLBuilder.aPackageURL().withType("npm").withName(name).withVersion(version).build();
+                        final PurlIdentifier id = new PurlIdentifier(purl, Confidence.HIGHEST);
                         child.addSoftwareIdentifier(id);
                     } catch (MalformedPackageURLException ex) {
                         LOGGER.debug("Unable to build package url for `" + packagePath + "`", ex);

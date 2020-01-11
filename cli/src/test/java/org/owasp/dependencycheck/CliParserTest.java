@@ -125,7 +125,7 @@ public class CliParserTest extends BaseTest {
 
         CliParser instance = new CliParser(getSettings());
         instance.parse(args);
-        Assert.assertEquals("Default should be 11", 11.0, instance.getFailOnCVSS(),0);
+        Assert.assertEquals("Default should be 11", 11.0, instance.getFailOnCVSS(), 0);
         Assert.assertFalse(instance.isGetVersion());
         Assert.assertFalse(instance.isGetHelp());
         Assert.assertFalse(instance.isRunScan());
@@ -144,7 +144,7 @@ public class CliParserTest extends BaseTest {
 
         CliParser instance = new CliParser(getSettings());
         instance.parse(args);
-        Assert.assertEquals(6.0, instance.getFailOnCVSS(),0);
+        Assert.assertEquals(6.0, instance.getFailOnCVSS(), 0);
         Assert.assertFalse(instance.isGetVersion());
         Assert.assertFalse(instance.isGetHelp());
         Assert.assertFalse(instance.isRunScan());
@@ -359,11 +359,8 @@ public class CliParserTest extends BaseTest {
         Assert.assertEquals(expResult, result);
     }
 
-    /**
-     * Test of getStringArgument method, of class CliParser.
-     */
     @Test
-    public void testHasArgument() throws ParseException {
+    public void testHasOption() throws ParseException {
 
         String[] args = {"--scan", "missing.file", "--artifactoryUsername", "blue42", "--project", "test"};
 
@@ -374,12 +371,12 @@ public class CliParserTest extends BaseTest {
         } catch (FileNotFoundException ex) {
             Assert.assertTrue(ex.getMessage().contains("Invalid 'scan' argument"));
         }
-        boolean expResult = false;
-        boolean result = instance.hasArgument("missingArgument");
-        Assert.assertEquals(expResult, result);
 
-        expResult = true;
-        result = instance.hasArgument(CliParser.ARGUMENT.PROJECT);
+        Boolean result = instance.hasOption("missingOption");
+        Assert.assertNull(result);
+
+        Boolean expResult = true;
+        result = instance.hasOption(CliParser.ARGUMENT.PROJECT);
         Assert.assertEquals(expResult, result);
     }
 }

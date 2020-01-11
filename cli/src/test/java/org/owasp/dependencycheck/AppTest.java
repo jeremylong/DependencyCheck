@@ -19,7 +19,6 @@ package org.owasp.dependencycheck;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -30,6 +29,7 @@ import java.util.Map;
 
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.UnrecognizedOptionException;
+import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -66,7 +66,7 @@ public class AppTest extends BaseTest {
     }
 
     /**
-     * Assert that boolean properties can be set on the CLI and parsed into the
+     * Assert that properties can be set on the CLI and parsed into the
      * {@link Settings}.
      *
      * @throws Exception the unexpected {@link Exception}.
@@ -168,7 +168,7 @@ public class AppTest extends BaseTest {
         File prop = new File(this.getClass().getClassLoader().getResource("sample.properties").toURI().getPath());
 
         // AND a single suppression file
-        String[] args = {"-P", prop.getAbsolutePath(), "--suppression", "first-file.xml", "another-file.xml"};
+        String[] args = {"-P", prop.getAbsolutePath(), "--suppression", "first-file.xml", "--suppression", "another-file.xml"};
 
         // WHEN parsing the CLI arguments
         final CliParser cli = new CliParser(getSettings());

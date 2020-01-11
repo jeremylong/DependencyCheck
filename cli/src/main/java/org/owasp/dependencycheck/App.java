@@ -120,13 +120,14 @@ public class App {
             cli.printHelp();
             return -2;
         }
-
-        if (cli.getVerboseLog() != null) {
-            prepareLogger(cli.getVerboseLog());
+        final String verboseLog = cli.getStringArgument(CliParser.ARGUMENT.VERBOSE_LOG);
+        if (verboseLog != null) {
+            prepareLogger(verboseLog);
         }
 
         if (cli.isPurge()) {
-            if (cli.getConnectionString() != null) {
+            final String connStr = cli.getStringArgument(CliParser.ARGUMENT.CONNECTION_STRING);
+            if (connStr != null) {
                 LOGGER.error("Unable to purge the database when using a non-default connection string");
                 exitCode = -3;
             } else {
@@ -394,35 +395,7 @@ public class App {
      * file is unable to be loaded.
      */
     protected void populateSettings(CliParser cli) throws InvalidSettingException {
-        final String connectionTimeout = cli.getConnectionTimeout();
-        final String proxyServer = cli.getProxyServer();
-        final String proxyPort = cli.getProxyPort();
-        final String proxyUser = cli.getProxyUsername();
-        final String proxyPass = cli.getProxyPassword();
-        final String nonProxyHosts = cli.getNonProxyHosts();
-        final String dataDirectory = cli.getDataDirectory();
-        final File propertiesFile = cli.getPropertiesFile();
-        final String[] suppressionFiles = cli.getSuppressionFiles();
-        final String hintsFile = cli.getHintsFile();
-        final String nexusUrl = cli.getNexusUrl();
-        final String nexusUser = cli.getNexusUsername();
-        final String nexusPass = cli.getNexusPassword();
-        final String ossIndexUser = cli.getOssIndexUsername();
-        final String ossIndexPass = cli.getOssIndexPassword();
-        final String databaseDriverName = cli.getDatabaseDriverName();
-        final String databaseDriverPath = cli.getDatabaseDriverPath();
-        final String connectionString = cli.getConnectionString();
-        final String databaseUser = cli.getDatabaseUser();
-        final String databasePassword = cli.getDatabasePassword();
-        final String additionalZipExtensions = cli.getAdditionalZipExtensions();
-        final String pathToCore = cli.getPathToCore();
-        final String cveModified = cli.getModifiedCveUrl();
-        final String cveBase = cli.getBaseCveUrl();
-        final Integer cveValidForHours = cli.getCveValidForHours();
-        final Boolean autoUpdate = cli.isAutoUpdate();
-        final Boolean experimentalEnabled = cli.isExperimentalEnabled();
-        final Boolean retiredEnabled = cli.isRetiredEnabled();
-
+        final File propertiesFile = cli.getFileArgument(CliParser.ARGUMENT.PROP);
         if (propertiesFile != null) {
             try {
                 settings.mergeProperties(propertiesFile);
@@ -432,10 +405,7 @@ public class App {
                 throw new InvalidSettingException("Error reading properties file '" + propertiesFile.getPath() + "'", ex);
             }
         }
-        // We have to wait until we've merged the properties before attempting to set whether we use
-        // the proxy for Nexus since it could be disabled in the properties, but not explicitly stated
-        // on the command line.  This is true of other boolean values set below not using the setBooleanIfNotNull.
-        final boolean nexusUsesProxy = cli.isNexusUsesProxy();
+        final String dataDirectory = cli.getStringArgument(CliParser.ARGUMENT.DATA_DIRECTORY);
         if (dataDirectory != null) {
             settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
         } else if (System.getProperty("basedir") != null) {
@@ -448,59 +418,106 @@ public class App {
             final File dataDir = new File(base, sub);
             settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());
         }
+        final Boolean autoUpdate = cli.hasOption(CliParser.ARGUMENT.DISABLE_AUTO_UPDATE) != null ? false : null;
         settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);
-        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER, proxyServer);
-        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);
-        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME, proxyUser);
-        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPass);
-        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_NON_PROXY_HOSTS, nonProxyHosts);
-        settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
-        settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);
-        settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
-
-        settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFiles);
+        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER,
+                cli.getStringArgument(CliParser.ARGUMENT.PROXY_SERVER));
+        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PORT,
+                cli.getStringArgument(CliParser.ARGUMENT.PROXY_PORT));
+        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME,
+                cli.getStringArgument(CliParser.ARGUMENT.PROXY_USERNAME));
+        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD,
+                cli.getStringArgument(CliParser.ARGUMENT.PROXY_PASSWORD));
+        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_NON_PROXY_HOSTS,
+                cli.getStringArgument(CliParser.ARGUMENT.NON_PROXY_HOSTS));
+        settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT,
+                cli.getStringArgument(CliParser.ARGUMENT.CONNECTION_TIMEOUT));
+        settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE,
+                cli.getStringArgument(CliParser.ARGUMENT.HINTS_FILE));
+        settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS,
+                cli.getIntegerValue(CliParser.ARGUMENT.CVE_VALID_FOR_HOURS));
+        settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE,
+                cli.getStringArguments(CliParser.ARGUMENT.SUPPRESSION_FILES));
 
         //File Type Analyzer Settings
-        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, experimentalEnabled);
-        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIRED_ENABLED, retiredEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED,
+                cli.hasOption(CliParser.ARGUMENT.EXPERIMENTAL));
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIRED_ENABLED,
+                cli.hasOption(CliParser.ARGUMENT.RETIRED));
 
-        settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, !cli.isJarDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, !cli.isArchiveDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, !cli.isPythonDistributionDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED, !cli.isPythonPackageDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, !cli.isAutoconfDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_CMAKE_ENABLED, !cli.isCmakeDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, !cli.isNuspecDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_NUGETCONF_ENABLED, !cli.isNugetconfDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, !cli.isAssemblyDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, !cli.isBundleAuditDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_OPENSSL_ENABLED, !cli.isOpenSSLDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, !cli.isComposerDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED, !cli.isGolangDepAnalyzerDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED, !cli.isGolangModDisabled());
-        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH, cli.getPathToGo());
-        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, !cli.isNodeJsDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, !cli.isNodeAuditDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, !cli.isNodeAuditCacheDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, cli.isNodeAuditSkipDevDependencies());
-        settings.setBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, !cli.isRetireJSDisabled());
-        settings.setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT, cli.isPrettyPrint());
-        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, cli.getRetireJSUrl());
-        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, cli.isRetireJSForceUpdate());
-        settings.setBoolean(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, !cli.isSwiftPackageAnalyzerDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, !cli.isCocoapodsAnalyzerDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED, !cli.isRubyGemspecDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, !cli.isCentralDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE, !cli.isCentralCacheDisabled());
-        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, cli.isNexusEnabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, !cli.isOssIndexDisabled());
-        settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE, !cli.isOssIndexCacheDisabled());
-        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_USER, ossIndexUser);
-        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD, ossIndexPass);
-        settings.setFloat(Settings.KEYS.JUNIT_FAIL_ON_CVSS, cli.getJunitFailOnCVSS());
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH,
+                cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_GO));
+        settings.setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT,
+                cli.hasOption(CliParser.ARGUMENT.PRETTY_PRINT));
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL,
+                cli.getStringArgument(CliParser.ARGUMENT.RETIREJS_URL));
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE,
+                cli.hasOption(CliParser.ARGUMENT.RETIRE_JS_FORCEUPDATE));
 
+        settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_JAR, Settings.KEYS.ANALYZER_JAR_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_ARCHIVE, Settings.KEYS.ANALYZER_ARCHIVE_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PY_DIST, Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PY_PKG, Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_AUTOCONF, Settings.KEYS.ANALYZER_AUTOCONF_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_CMAKE_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CMAKE, Settings.KEYS.ANALYZER_CMAKE_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NUSPEC, Settings.KEYS.ANALYZER_NUSPEC_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_NUGETCONF_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NUGETCONF, Settings.KEYS.ANALYZER_NUGETCONF_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_ASSEMBLY, Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_BUNDLE_AUDIT, Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_OPENSSL_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_OPENSSL, Settings.KEYS.ANALYZER_OPENSSL_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_COMPOSER, Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_GO_DEP, Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_GOLANG_MOD, Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NODE_JS, Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED));
+        //TODO next major - remove the deprecated check in isNodeAuditDisabled
+        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED,
+                !cli.isNodeAuditDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NODE_AUDIT_CACHE, Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE));
+        settings.setBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_RETIRE_JS, Settings.KEYS.ANALYZER_RETIREJS_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_SWIFT, Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_COCOAPODS, Settings.KEYS.ANALYZER_COCOAPODS_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_RUBYGEMS, Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CENTRAL, Settings.KEYS.ANALYZER_CENTRAL_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CENTRAL_CACHE, Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE));
+        settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_OSSINDEX, Settings.KEYS.ANALYZER_OSSINDEX_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_OSSINDEX_CACHE, Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE));
+
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV,
+                cli.hasOption(CliParser.ARGUMENT.DISABLE_NODE_AUDIT_SKIPDEV));
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED,
+                cli.hasOption(CliParser.ARGUMENT.ENABLE_NEXUS));
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_USER,
+                cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_USERNAME));
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD,
+                cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_PASSWORD));
+        settings.setFloat(Settings.KEYS.JUNIT_FAIL_ON_CVSS,
+                cli.getFloatArgument(CliParser.ARGUMENT.FAIL_JUNIT_ON_CVSS, 0));
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED,
-                cli.hasArgument(CliParser.ARGUMENT.ARTIFACTORY_ENABLED));
+                cli.hasOption(CliParser.ARGUMENT.ARTIFACTORY_ENABLED));
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_PARALLEL_ANALYSIS,
                 cli.getBooleanArgument(CliParser.ARGUMENT.ARTIFACTORY_PARALLEL_ANALYSIS));
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_USES_PROXY,
@@ -513,24 +530,37 @@ public class App {
                 cli.getStringArgument(CliParser.ARGUMENT.ARTIFACTORY_API_TOKEN));
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_BEARER_TOKEN,
                 cli.getStringArgument(CliParser.ARGUMENT.ARTIFACTORY_BEARER_TOKEN));
-
-        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, cli.getPathToBundleAudit());
-        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_WORKING_DIRECTORY, cli.getPathToBundleAuditWorkingDirectory());
-        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
-        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_USER, nexusUser);
-        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_PASSWORD, nexusPass);
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH,
+                cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_BUNDLE_AUDIT));
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_WORKING_DIRECTORY,
+                cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_BUNDLE_AUDIT_WORKING_DIRECTORY));
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL,
+                cli.getStringArgument(CliParser.ARGUMENT.NEXUS_URL));
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_USER,
+                cli.getStringArgument(CliParser.ARGUMENT.NEXUS_USERNAME));
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_PASSWORD,
+                cli.getStringArgument(CliParser.ARGUMENT.NEXUS_PASSWORD));
+        //TODO deprecate this in favor of non-proxy host
+        final boolean nexusUsesProxy = cli.isNexusUsesProxy();
         settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
-        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
-        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
-        settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
-        settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
-        settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
-        settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, additionalZipExtensions);
-        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH, pathToCore);
-        if (cveBase != null && !cveBase.isEmpty()) {
-            settings.setString(Settings.KEYS.CVE_BASE_JSON, cveBase);
-            settings.setString(Settings.KEYS.CVE_MODIFIED_JSON, cveModified);
-        }
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME,
+                cli.getStringArgument(CliParser.ARGUMENT.DB_DRIVER));
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH,
+                cli.getStringArgument(CliParser.ARGUMENT.DB_DRIVER_PATH));
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING,
+                cli.getStringArgument(CliParser.ARGUMENT.CONNECTION_STRING));
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_USER,
+                cli.getStringArgument(CliParser.ARGUMENT.DB_NAME));
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD,
+                cli.getStringArgument(CliParser.ARGUMENT.DB_PASSWORD));
+        settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS,
+                cli.getStringArgument(CliParser.ARGUMENT.ADDITIONAL_ZIP_EXTENSIONS));
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH,
+                cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_CORE));
+        settings.setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON,
+                cli.getStringArgument(CliParser.ARGUMENT.CVE_BASE_URL));
+        settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON,
+                cli.getStringArgument(CliParser.ARGUMENT.CVE_MODIFIED_URL));
     }
 
     /**

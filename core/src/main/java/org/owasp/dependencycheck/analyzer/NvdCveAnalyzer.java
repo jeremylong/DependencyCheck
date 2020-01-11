@@ -121,7 +121,7 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
      * vulnerability is not added.
      *
      * @param dependency a reference to the dependency being analyzed
-     * @param vuln the vulnerability to add
+     * @param vulns the vulnerability to add
      */
     private void replaceOrAddVulnerability(Dependency dependency, List<Vulnerability> vulns) {
         vulns.stream().forEach(v -> {

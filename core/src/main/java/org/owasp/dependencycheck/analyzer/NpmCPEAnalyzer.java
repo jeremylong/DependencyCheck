@@ -24,7 +24,6 @@ import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.data.cpe.CpeMemoryIndex;
 import org.owasp.dependencycheck.data.cpe.IndexException;
 import org.owasp.dependencycheck.data.cpe.NpmCpeMemoryIndex;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;

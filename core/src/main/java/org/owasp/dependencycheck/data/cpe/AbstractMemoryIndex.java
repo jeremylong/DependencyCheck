@@ -105,8 +105,13 @@ public abstract class AbstractMemoryIndex implements MemoryIndex {
      */
     private final AtomicInteger usageCount = new AtomicInteger(0);
 
+    /**
+     * Returns a reference to the instance.
+     *
+     * @return a reference to the instance
+     */
     protected abstract AbstractMemoryIndex instance();
-    
+
     /**
      * Creates and loads data into an in memory index.
      *

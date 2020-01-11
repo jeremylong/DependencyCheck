@@ -49,6 +49,7 @@ import org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer;
 import org.owasp.dependencycheck.analyzer.RubyGemspecAnalyzer;
 import org.owasp.dependencycheck.analyzer.exception.LambdaExceptionWrapper;
 import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
+import org.owasp.dependencycheck.data.nodeaudit.NpmAuditParser;
 import org.owasp.dependencycheck.data.nvd.json.BaseMetricV2;
 import org.owasp.dependencycheck.data.nvd.json.BaseMetricV3;
 import org.owasp.dependencycheck.data.nvd.json.CpeMatchStreamCollector;
@@ -148,6 +149,7 @@ public final class CveDB implements AutoCloseable {
             return ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM;
         }
         if (StringUtils.containsIgnoreCase(description, " npm ")
+                || (StringUtils.containsIgnoreCase(description, "node module") && StringUtils.containsIgnoreCase(description, ".js"))
                 || StringUtils.containsIgnoreCase(description, " node.js")) {
             return AbstractNpmAnalyzer.NPM_DEPENDENCY_ECOSYSTEM;
         }
@@ -186,7 +188,7 @@ public final class CveDB implements AutoCloseable {
                 || StringUtils.containsIgnoreCase(description, "django")) {
             return PythonPackageAnalyzer.DEPENDENCY_ECOSYSTEM;
         }
-
+        
         if (StringUtils.containsIgnoreCase(description, "buffer overflow")
                 && !StringUtils.containsIgnoreCase(description, "android")) {
             return CMakeAnalyzer.DEPENDENCY_ECOSYSTEM;

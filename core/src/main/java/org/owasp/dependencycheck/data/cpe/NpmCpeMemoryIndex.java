@@ -34,13 +34,13 @@ import javax.annotation.concurrent.ThreadSafe;
  * @author Jeremy Long
  */
 @ThreadSafe
-public final class NpmCpeMemoryIndex  extends AbstractMemoryIndex {
+public final class NpmCpeMemoryIndex extends AbstractMemoryIndex {
 
     /**
      * Singleton instance.
      */
     private static final NpmCpeMemoryIndex INSTANCE = new NpmCpeMemoryIndex();
-    
+
     /**
      * private constructor for singleton.
      */
@@ -56,6 +56,7 @@ public final class NpmCpeMemoryIndex  extends AbstractMemoryIndex {
     protected AbstractMemoryIndex instance() {
         return INSTANCE;
     }
+
     /**
      * Gets the singleton instance of the CpeMemoryIndex.
      *

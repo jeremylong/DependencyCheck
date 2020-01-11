@@ -41,15 +41,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
 import org.owasp.dependencycheck.dependency.EvidenceType;
-import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.Identifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.utils.Checksum;
-import us.springett.parsers.cpe.Cpe;
-import us.springett.parsers.cpe.CpeBuilder;
-import us.springett.parsers.cpe.exceptions.CpeValidationException;
-import us.springett.parsers.cpe.values.Part;
 
 /**
  * An abstract NPM analyzer that contains common methods for concrete
@@ -244,9 +239,9 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
                 jsonArray.forEach(entry -> {
                     if (entry instanceof JsonObject) {
                         ((JsonObject) entry).keySet().forEach(item -> {
-                            JsonValue v = ((JsonObject) entry).get(item);
+                            final JsonValue v = ((JsonObject) entry).get(item);
                             if (v instanceof JsonString) {
-                                String eStr = ((JsonString) v).getString();
+                                final String eStr = ((JsonString) v).getString();
                                 dep.addEvidence(t, PACKAGE_JSON,
                                         String.format("%s.%s", key, item),
                                         eStr,

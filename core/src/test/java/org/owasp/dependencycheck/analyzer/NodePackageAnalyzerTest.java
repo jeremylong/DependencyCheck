@@ -168,7 +168,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
         analyzer.analyze(toCombine, engine);
 
         //with npm install run on a "non-macOs" system, 90 else
-        assertEquals("Expected 24 dependencies", 24, engine.getDependencies().length);
+        assertEquals("Expected 25 dependencies", 25, engine.getDependencies().length);
 
         Dependency result = null;
         for (Dependency dep : engine.getDependencies()) {
@@ -209,7 +209,8 @@ public class NodePackageAnalyzerTest extends BaseTest {
         analyzer.analyze(shrinkwrap, engine);
 
         //with npm install run on a "non-macOs" system, 90 else
-        assertEquals("Expected 24 dependencies", 24, engine.getDependencies().length);
-        assertFalse(shrinkwrap.equals(engine.getDependencies()[0]));
+        assertEquals("Expected 25 dependencies", 25, engine.getDependencies().length);
+        // shrinkWrap is not removed because the NodeAudit analyzer is enabled
+        //assertFalse(shrinkwrap.equals(engine.getDependencies()[0]));
     }
 }

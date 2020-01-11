@@ -910,7 +910,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         }
         boolean identifierAdded = false;
         if (!collected.isEmpty()) {
-            List<IdentifierMatch> items = new ArrayList<>(collected);
+            final List<IdentifierMatch> items = new ArrayList<>(collected);
 
             Collections.sort(items);
             final IdentifierConfidence bestIdentifierQuality = items.get(0).getIdentifierConfidence();
@@ -1258,13 +1258,16 @@ public class CPEAnalyzer extends AbstractAnalyzer {
 
     /**
      * Sets the reference to the CveDB.
+     *
      * @param cveDb the CveDB
      */
     protected void setCveDB(CveDB cveDb) {
         this.cve = cveDb;
     }
+
     /**
      * returns a reference to the CveDB.
+     *
      * @return a reference to the CveDB
      */
     protected CveDB getCveDB() {
@@ -1273,20 +1276,25 @@ public class CPEAnalyzer extends AbstractAnalyzer {
 
     /**
      * Sets the MemoryIndex.
+     *
      * @param idx the memory index
      */
     protected void setMemoryIndex(MemoryIndex idx) {
         cpe = idx;
     }
+
     /**
      * Returns the memory index.
+     *
      * @return the memory index
      */
     protected MemoryIndex getMemoryIndex() {
         return cpe;
     }
+
     /**
      * Sets the CPE Suppression Analyzer.
+     *
      * @param suppression the CPE Suppression Analyzer
      */
     protected void setCpeSuppressionAnalyzer(CpeSuppressionAnalyzer suppression) {
