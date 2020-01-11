@@ -105,8 +105,8 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
 
             //callDetermineCPE_full("hazelcast-2.5.jar", "cpe:2.3:a:hazelcast:hazelcast:2.5:*:*:*:*:*:*:*", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
             callDetermineCPE_full("spring-context-support-2.5.5.jar", "cpe:2.3:a:springsource:spring_framework:2.5.5:*:*:*:*:*:*:*", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
-            callDetermineCPE_full("spring-core-3.0.0.RELEASE.jar", "cpe:2.3:a:pivotal_software:spring_framework:3.0.0:*:*:*:*:*:*:*", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
-            callDetermineCPE_full("spring-core-3.0.0.RELEASE.jar", "cpe:2.3:a:springsource:spring_framework:3.0.0:*:*:*:*:*:*:*", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
+            callDetermineCPE_full("spring-core-3.0.0.RELEASE.jar", "cpe:2.3:a:pivotal_software:spring_framework:3.0.0:release:*:*:*:*:*:*", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
+            callDetermineCPE_full("spring-core-3.0.0.RELEASE.jar", "cpe:2.3:a:springsource:spring_framework:3.0.0:release:*:*:*:*:*:*", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
             callDetermineCPE_full("jaxb-xercesImpl-1.5.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
             callDetermineCPE_full("ehcache-core-2.2.0.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
             callDetermineCPE_full("xstream-1.4.8.jar", "cpe:2.3:a:xstream_project:xstream:1.4.8:*:*:*:*:*:*:*", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp, cpeSuppression);
@@ -254,6 +254,7 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
             instance.initialize(getSettings());
             instance.prepare(engine);
 
+            callDetermieIdentifiers("pivotal_software", "spring_framework", "4.3.4.release", "cpe:2.3:a:pivotal_software:spring_framework:4.3.4:release:*:*:*:*:*:*", instance);
             callDetermieIdentifiers("eclipse", "jetty", "20.4.8.v20171121", "cpe:2.3:a:eclipse:jetty:20.4.8:20171121:*:*:*:*:*:*", instance);
             callDetermieIdentifiers("openssl", "openssl", "1.0.1c", "cpe:2.3:a:openssl:openssl:1.0.1c:*:*:*:*:*:*:*", instance);
             callDetermieIdentifiers("jrebel", "zt-zip", "1.0", "cpe:2.3:a:jrebel:zt-zip:1.0:*:*:*:*:*:*:*", instance);

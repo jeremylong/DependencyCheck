@@ -221,7 +221,10 @@ public class CveDBIT extends BaseDBTestCase {
 
         software.clear();
         software.add(vsBuilder.part(Part.APPLICATION).vendor("eclipse").product("jetty").update("20170531").versionEndIncluding("9.5.6").build());
-        identified = cpeBuilder.part(Part.APPLICATION).vendor("eclipse").product("jetty").version("9.0.0").build();
+        identified = cpeBuilder.part(Part.APPLICATION).vendor("eclipse").product("jetty").version("9.0.0").update("20170532").build();
+        results = instance.getMatchingSoftware(identified, software);
+        assertNull(results);
+        identified = cpeBuilder.part(Part.APPLICATION).vendor("eclipse").product("jetty").version("9.0.0").update("20170531").build();
         results = instance.getMatchingSoftware(identified, software);
         assertEquals("cpe:/a:eclipse:jetty::20170531", results.toCpe22Uri());
 

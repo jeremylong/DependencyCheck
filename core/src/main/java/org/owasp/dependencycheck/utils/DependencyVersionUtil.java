@@ -36,13 +36,14 @@ public final class DependencyVersionUtil {
     /**
      * Regular expression to extract version numbers from file names.
      */
-    private static final Pattern RX_VERSION = Pattern.compile("\\d+(\\.\\d{1,6})+(\\.?([_-](release|beta|alpha|\\d+)|[a-zA-Z_-]{1,3}\\d{0,8}))?");
+    //private static final Pattern RX_VERSION = Pattern.compile("\\d+(\\.\\d{1,6})+(\\.?([_-]?(release|beta|alpha|snapshot|\\d+)|[a-z_-]{1,3}\\d{0,8}))?",Pattern.CASE_INSENSITIVE);
+    private static final Pattern RX_VERSION = Pattern.compile("\\d+(\\.\\d+){1,6}([._-]?(snapshot|release|alpha|beta|[a-zA-Z]{1,3}[_-]?\\d{1,8}|[a-z]\\b|\\d{1,8}\\b))?",Pattern.CASE_INSENSITIVE);
     /**
      * Regular expression to extract a single version number without periods.
      * This is a last ditch effort just to check in case we are missing a
      * version number using the previous regex.
      */
-    private static final Pattern RX_SINGLE_VERSION = Pattern.compile("\\d+(\\.?([_-](release|beta|alpha)|[a-zA-Z_-]{1,3}\\d{1,8}))?");
+    private static final Pattern RX_SINGLE_VERSION = Pattern.compile("\\d+(\\.\\d+){0,6}([._-]?(snapshot|release|alpha|beta|[a-zA-Z]{1,3}[_-]?\\d{1,8}))?");
 
     /**
      * Regular expression to extract the part before the version numbers if
@@ -83,9 +84,9 @@ public final class DependencyVersionUtil {
      * This function would return: 1.4.1.r2</pre>
      *
      * @param text the text being analyzed
-     * @param firstMatchOnly if <code>false</code> and more then one
-     * version string is found in the given text, null will be returned.
-     * Otherwise, the first version found will be returned.
+     * @param firstMatchOnly if <code>false</code> and more then one version
+     * string is found in the given text, null will be returned. Otherwise, the
+     * first version found will be returned.
      * @return a DependencyVersion containing the version
      */
     public static DependencyVersion parseVersion(String text, boolean firstMatchOnly) {

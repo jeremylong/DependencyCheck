@@ -77,7 +77,7 @@ public class DependencyVersion implements Iterable<String>, Comparable<Dependenc
     public final void parseVersion(String version) {
         versionParts = new ArrayList<>();
         if (version != null) {
-            final Pattern rx = Pattern.compile("(\\d+[a-z]{1,3}$|[a-z]+\\d+|\\d+|(release|beta|alpha)$)");
+            final Pattern rx = Pattern.compile("(\\d+[a-z]{1,3}$|[a-z]{1,3}[_-]?\\d+|\\d+|(release|snapshot|beta|alpha)$)", Pattern.CASE_INSENSITIVE);
             final Matcher matcher = rx.matcher(version.toLowerCase());
             while (matcher.find()) {
                 versionParts.add(matcher.group());

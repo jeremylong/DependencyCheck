@@ -34,13 +34,13 @@ public class DependencyVersionUtilTest extends BaseTest {
      */
     @Test
     public void testParseVersion_String() {
-        final String[] fileName = {"something-0.9.5.jar", "lib2-1.1.jar", "lib1.5r4-someflag-R26.jar",
+        final String[] fileName = {"openssl1.0.1c", "something-0.9.5.jar", "lib2-1.1.jar", "lib1.5r4-someflag-R26.jar",
             "lib-1.2.5-dev-20050313.jar", "testlib_V4.4.0.jar", "lib-core-2.0.0-RC1-SNAPSHOT.jar",
             "lib-jsp-2.0.1_R114940.jar", "dev-api-2.3.11_R121413.jar", "lib-api-3.7-SNAPSHOT.jar",
-            "-", "", "1.3-beta", "6", "openssl1.0.1c", "jsf-impl-2.2.8-02.jar",
+            "-", "", "1.3-beta", "6", "jsf-impl-2.2.8-02.jar",
             "plone.rfc822-1.1.1-py2-none-any.whl"};
-        final String[] expResult = {"0.9.5", "1.1", "1.5.r4", "1.2.5", "4.4.0", "2.0.0.rc1",
-            "2.0.1.r114940", "2.3.11.r121413", "3.7", "-", null, "1.3.beta", "6", "1.0.1c",
+        final String[] expResult = {"1.0.1c", "0.9.5", "1.1", "1.5.r4", "1.2.5.dev-20050313", "4.4.0", "2.0.0.rc1",
+            "2.0.1.r114940", "2.3.11.r121413", "3.7.snapshot", "-", null, "1.3.beta", "6",
             "2.2.8.02", "1.1.1"};
 
         for (int i = 0; i < fileName.length; i++) {

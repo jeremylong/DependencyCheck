@@ -1646,7 +1646,7 @@ public final class CveDB implements AutoCloseable {
     protected VulnerableSoftware getMatchingSoftware(Cpe cpe, Set<VulnerableSoftware> vulnerableSoftware) {
         VulnerableSoftware matched = null;
         for (VulnerableSoftware vs : vulnerableSoftware) {
-            if (vs.matchedBy(cpe)) {
+            if (vs.matches(cpe)) {
                 if (matched == null) {
                     matched = vs;
                 } else {

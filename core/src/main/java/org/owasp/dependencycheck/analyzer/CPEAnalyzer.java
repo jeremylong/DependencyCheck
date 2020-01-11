@@ -726,22 +726,23 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         } else {
             bestGuess = new DependencyVersion("-");
         }
+        String bestGuessUpdate = null;
         Confidence bestGuessConf = null;
         String bestGuessURL = null;
-        boolean hasBroadMatch = false;
-        final List<IdentifierMatch> collected = new ArrayList<>();
+        final Set<IdentifierMatch> collected = new HashSet<>();
 
-        int maxDepth = 0;
-        for (Cpe cpe : cpes) {
-            final DependencyVersion dbVer = DependencyVersionUtil.parseVersion(cpe.getVersion(), true);
-            if (dbVer != null) {
-                final int count = dbVer.getVersionParts().size();
-                if (count > maxDepth) {
-                    maxDepth = count;
-                }
-            }
-        }
-
+//        int maxDepth = 0;
+//        boolean maxDepthHasUpdate = false;
+//        for (Cpe cpe : cpes) {
+//            final DependencyVersion dbVer = DependencyVersionUtil.parseVersion(cpe.getVersion(), true);
+//            if (dbVer != null) {
+//                final int count = dbVer.getVersionParts().size();
+//                if (count > maxDepth) {
+//                    maxDepthHasUpdate = "*".equals(cpe.getUpdate()) ? false : true;
+//                    maxDepth = count;
+//                }
+//            }
+//        }
         if (dependency.getVersion() != null && !dependency.getVersion().isEmpty()) {
             //we shouldn't always use the dependency version - in some cases this causes FP
             boolean useDependencyVersion = true;
@@ -759,15 +760,17 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 final DependencyVersion depVersion = new DependencyVersion(dependency.getVersion());
                 if (depVersion.getVersionParts().size() > 0) {
                     cpeBuilder.part(Part.APPLICATION).vendor(vendor).product(product);
-                    //Only semantic versions used in NVD and evidence may contain an update version
-                    if (maxDepth == 3 && depVersion.getVersionParts().size() == 4
-                            && depVersion.getVersionParts().get(3).matches("^(v|beta|alpha|u|rc|m|20\\d\\d).*$")) {
-                        cpeBuilder.version(StringUtils.join(depVersion.getVersionParts().subList(0, 3), "."));
+                    //removed these conditions from the below if
+                    //(maxDepth == 3 || (maxDepthHasUpdate && maxDepth==4)) && depVersion.getVersionParts().size() == 4 &&
+                    final int idx = depVersion.getVersionParts().size() - 1;
+                    if (depVersion.getVersionParts().get(idx)
+                            .matches("^(v|release|snapshot|beta|alpha|u|rc|m|20\\d\\d).*$")) {
+                        cpeBuilder.version(StringUtils.join(depVersion.getVersionParts().subList(0, idx), "."));
                         //when written - no update versions in the NVD start with v### - they all strip the v off
-                        if (depVersion.getVersionParts().get(3).matches("^v\\d.*$")) {
-                            cpeBuilder.update(depVersion.getVersionParts().get(3).substring(1));
+                        if (depVersion.getVersionParts().get(idx).matches("^v\\d.*$")) {
+                            cpeBuilder.update(depVersion.getVersionParts().get(idx).substring(1));
                         } else {
-                            cpeBuilder.update(depVersion.getVersionParts().get(3));
+                            cpeBuilder.update(depVersion.getVersionParts().get(idx));
                         }
                     } else {
                         cpeBuilder.version(depVersion.toString());
@@ -784,6 +787,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 }
             }
         }
+
         //TODO the following algorithm incorrectly identifies things as a lower version
         // if there lower confidence evidence when the current (highest) version number
         // is newer then anything in the NVD.
@@ -794,12 +798,17 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                     continue;
                 }
                 DependencyVersion evBaseVer = null;
-                //Only semantic versions used in NVD and evidence may contain an update version
-                if (maxDepth == 3 && evVer.getVersionParts().size() == 4) {
-                    final String update = evVer.getVersionParts().get(3);
-                    if (update.matches("^(v|beta|alpha|u|rc|m|20\\d\\d).*$")) {
+                String evBaseVerUpdate = null;
+                //if (maxDepth == 3 && evVer.getVersionParts().size() == 4) {
+                final int idx = evVer.getVersionParts().size() - 1;
+                if (evVer.getVersionParts().get(idx)
+                        .matches("^(v|release|snapshot|beta|alpha|u|rc|m|20\\d\\d).*$")) {
+                    //store the update version
+                    final String checkUpdate = evVer.getVersionParts().get(idx);
+                    if (checkUpdate.matches("^(v|release|snapshot|beta|alpha|u|rc|m|20\\d\\d).*$")) {
+                        evBaseVerUpdate = checkUpdate;
                         evBaseVer = new DependencyVersion();
-                        evBaseVer.setVersionParts(evVer.getVersionParts().subList(0, 3));
+                        evBaseVer.setVersionParts(evVer.getVersionParts().subList(0, idx));
                     }
                 }
                 //TODO - review and update for new JSON data
@@ -810,7 +819,6 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                         dbVerUpdate = DependencyVersionUtil.parseVersion(vs.getVersion() + '.' + vs.getUpdate(), true);
                     }
                     if (dbVer == null) { //special case, no version specified - everything is vulnerable
-                        hasBroadMatch = true;
                         final String url = String.format(NVD_SEARCH_BROAD_URL, URLEncoder.encode(vs.getVendor(), UTF8),
                                 URLEncoder.encode(vs.getProduct(), UTF8));
                         final IdentifierMatch match = new IdentifierMatch(vs, url, IdentifierConfidence.BROAD_MATCH, conf);
@@ -818,12 +826,28 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                     } else if (evVer.equals(dbVer)) { //yeah! exact match
                         final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(vs.getVendor(), UTF8),
                                 URLEncoder.encode(vs.getProduct(), UTF8), URLEncoder.encode(vs.getVersion(), UTF8));
-                        final IdentifierMatch match = new IdentifierMatch(vs, url, IdentifierConfidence.EXACT_MATCH, conf);
+                        Cpe useCpe;
+                        if (evBaseVerUpdate != null && "*".equals(vs.getUpdate())) {
+                            try {
+                                useCpe = cpeBuilder.part(vs.getPart()).wfVendor(vs.getWellFormedVendor())
+                                        .wfProduct(vs.getWellFormedProduct()).wfVersion(vs.getWellFormedVersion())
+                                        .wfEdition(vs.getWellFormedEdition()).wfLanguage(vs.getWellFormedLanguage())
+                                        .wfOther(vs.getWellFormedOther()).wfSwEdition(vs.getWellFormedSwEdition())
+                                        .update(evBaseVerUpdate).build();
+                            } catch (CpeValidationException ex) {
+                                LOGGER.debug("Error building cpe with update:" + evBaseVerUpdate, ex);
+                                useCpe = vs;
+                            }
+                        } else {
+                            useCpe = vs;
+                        }
+                        final IdentifierMatch match = new IdentifierMatch(useCpe, url, IdentifierConfidence.EXACT_MATCH, conf);
                         collected.add(match);
                     } else if (evBaseVer != null && evBaseVer.equals(dbVer)
                             && (bestGuessConf == null || bestGuessConf.compareTo(conf) > 0)) {
                         bestGuessConf = conf;
                         bestGuess = dbVer;
+                        bestGuessUpdate = evBaseVerUpdate;
                         bestGuessURL = String.format(NVD_SEARCH_URL, URLEncoder.encode(vs.getVendor(), UTF8),
                                 URLEncoder.encode(vs.getProduct(), UTF8), URLEncoder.encode(vs.getVersion(), UTF8));
                     } else if (dbVerUpdate != null && evVer.getVersionParts().size() <= dbVerUpdate.getVersionParts().size()
@@ -831,6 +855,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                         if (bestGuessConf == null || bestGuessConf.compareTo(conf) > 0) {
                             if (bestGuess.getVersionParts().size() < dbVer.getVersionParts().size()) {
                                 bestGuess = dbVer;
+                                bestGuessUpdate = evBaseVerUpdate;
                                 bestGuessConf = conf;
                             }
                         }
@@ -839,24 +864,30 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 if ((bestGuessConf == null || bestGuessConf.compareTo(conf) > 0)
                         && bestGuess.getVersionParts().size() < evVer.getVersionParts().size()) {
                     bestGuess = evVer;
+                    bestGuessUpdate = evBaseVerUpdate;
                     bestGuessConf = conf;
                 }
             }
         }
 
         cpeBuilder.part(Part.APPLICATION).vendor(vendor).product(product);
-        if (maxDepth == 3 && bestGuess.getVersionParts().size() == 4
-                && bestGuess.getVersionParts().get(3).matches("^(v|beta|alpha|u|rc|m|20\\d\\d).*$")) {
-
-            cpeBuilder.version(StringUtils.join(bestGuess.getVersionParts().subList(0, 3), "."));
+//        if (maxDepth == 3 && bestGuess.getVersionParts().size() == 4
+//                && bestGuess.getVersionParts().get(3).matches("^(v|release|snapshot|beta|alpha|u|rc|m|20\\d\\d).*$")) {
+        final int idx = bestGuess.getVersionParts().size() - 1;
+        if (bestGuess.getVersionParts().get(idx)
+                .matches("^(v|release|snapshot|beta|alpha|u|rc|m|20\\d\\d).*$")) {
+            cpeBuilder.version(StringUtils.join(bestGuess.getVersionParts().subList(0, idx), "."));
             //when written - no update versions in the NVD start with v### - they all strip the v off
-            if (bestGuess.getVersionParts().get(3).matches("^v\\d.*$")) {
-                cpeBuilder.update(bestGuess.getVersionParts().get(3).substring(1));
+            if (bestGuess.getVersionParts().get(idx).matches("^v\\d.*$")) {
+                cpeBuilder.update(bestGuess.getVersionParts().get(idx).substring(1));
             } else {
-                cpeBuilder.update(bestGuess.getVersionParts().get(3));
+                cpeBuilder.update(bestGuess.getVersionParts().get(idx));
             }
         } else {
             cpeBuilder.version(bestGuess.toString());
+            if (bestGuessUpdate != null) {
+                cpeBuilder.update(bestGuessUpdate);
+            }
         }
         final Cpe guessCpe;
 
@@ -867,9 +898,6 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         }
         if (!"-".equals(guessCpe.getVersion())) {
             String url = null;
-            if (hasBroadMatch) { //if we have a broad match we can add the URL to the best guess.
-                url = String.format(NVD_SEARCH_BROAD_URL, URLEncoder.encode(vendor, UTF8), URLEncoder.encode(product, UTF8));
-            }
             if (bestGuessURL != null) {
                 url = bestGuessURL;
             }
@@ -882,15 +910,17 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         }
         boolean identifierAdded = false;
         if (!collected.isEmpty()) {
-            Collections.sort(collected);
-            final IdentifierConfidence bestIdentifierQuality = collected.get(0).getIdentifierConfidence();
-            final Confidence bestEvidenceQuality = collected.get(0).getEvidenceConfidence();
+            List<IdentifierMatch> items = new ArrayList<>(collected);
+
+            Collections.sort(items);
+            final IdentifierConfidence bestIdentifierQuality = items.get(0).getIdentifierConfidence();
+            final Confidence bestEvidenceQuality = items.get(0).getEvidenceConfidence();
             boolean addedNonGuess = false;
             final Confidence prevAddedConfidence = dependency.getVulnerableSoftwareIdentifiers().stream().map(id -> id.getConfidence())
                     .min(Comparator.comparing(Confidence::ordinal))
                     .orElse(Confidence.LOW);
 
-            for (IdentifierMatch m : collected) {
+            for (IdentifierMatch m : items) {
                 if (bestIdentifierQuality.equals(m.getIdentifierConfidence())
                         && bestEvidenceQuality.equals(m.getEvidenceConfidence())) {
                     final CpeIdentifier i = m.getIdentifier();
