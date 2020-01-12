@@ -1058,11 +1058,7 @@ public class Engine implements FileFilter, AutoCloseable {
                     database = new CveDB(settings);
                 }
             } catch (IOException ex) {
-                if (readOnly) {
-                    throw new DatabaseException("Unable to open database in read only mode", ex);
-                } else {
-                    throw new DatabaseException("Unable to open database", ex);
-                }
+                throw new DatabaseException("Unable to open database in read only mode", ex);
             } catch (H2DBLockException ex) {
                 throw new DatabaseException("Failed to obtain lock - unable to open database", ex);
             } finally {
