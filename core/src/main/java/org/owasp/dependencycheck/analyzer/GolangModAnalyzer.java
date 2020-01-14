@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
@@ -177,6 +178,8 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
      * @param engine a reference to the dependency-check engine
      * @throws InitializationException never thrown
      */
+    @SuppressWarnings("fallthrough")
+    @SuppressFBWarnings(justification = "The fallthrough is intentional to avoid code duplication", value = {"SF_SWITCH_NO_DEFAULT"})
     @Override
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         setEnabled(false);

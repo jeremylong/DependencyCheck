@@ -709,22 +709,6 @@ public final class Settings {
     }
 
     /**
-     * Returns the list of keys to mask.
-     *
-     * @return the list of keys to mask
-     */
-    private List<Predicate<String>> getMaskedKeys() {
-        final String[] masked = getArray(Settings.KEYS.MASKED_PROPERTIES);
-        if (masked == null) {
-            return new ArrayList<>();
-        }
-        return Arrays.asList(masked)
-                .stream()
-                .map(v -> Pattern.compile(v).asPredicate())
-                .collect(Collectors.toList());
-    }
-
-    /**
      * Check if a given key is considered to have a value with sensitive data.
      *
      * @param key the key to determine if the property should be masked
@@ -732,7 +716,10 @@ public final class Settings {
      * otherwise <code>false</code>
      */
     private boolean isKeyMasked(@NotNull String key) {
-        return getMaskedKeys().stream().anyMatch(maskExp -> maskExp.test(key));
+        if (maskedKeys == null || maskedKeys.isEmpty()) {
+            initMaskedKeys();
+        }
+        return maskedKeys.stream().anyMatch(maskExp -> maskExp.test(key));
     }
 
     /**
@@ -758,7 +745,14 @@ public final class Settings {
      * the call to initialize.
      */
     protected void initMaskedKeys() {
-        maskedKeys = getMaskedKeys();
+        final String[] masked = getArray(Settings.KEYS.MASKED_PROPERTIES);
+        if (masked == null) {
+            maskedKeys = new ArrayList<>();
+        }
+        maskedKeys = Arrays.asList(masked)
+                .stream()
+                .map(v -> Pattern.compile(v).asPredicate())
+                .collect(Collectors.toList());
     }
 
     /**

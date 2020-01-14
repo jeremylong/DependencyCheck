@@ -31,7 +31,9 @@ import org.owasp.dependencycheck.utils.Settings;
 import java.io.File;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.data.update.RetireJSDataSource;
@@ -48,7 +50,7 @@ public class RetireJsAnalyzerIT extends BaseDBTestCase {
         engine = new Engine(getSettings());
         engine.openDatabase(true, true);
         RetireJSDataSource ds = new RetireJSDataSource();
-        boolean updated = ds.update(engine);
+        ds.update(engine);
         analyzer = new RetireJsAnalyzer();
         analyzer.setFilesMatched(true);
         analyzer.initialize(getSettings());

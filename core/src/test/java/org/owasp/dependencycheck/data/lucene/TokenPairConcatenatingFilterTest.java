@@ -34,21 +34,21 @@ import org.junit.Test;
  */
 public class TokenPairConcatenatingFilterTest extends BaseTokenStreamTestCase {
 
-    private Analyzer analyzer;
-
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        analyzer = new Analyzer() {
-            @Override
-            protected Analyzer.TokenStreamComponents createComponents(String fieldName) {
-                Tokenizer source = new MockTokenizer(MockTokenizer.WHITESPACE, false);
-                return new Analyzer.TokenStreamComponents(source, new TokenPairConcatenatingFilter(source));
-            }
-        };
-    }
-
+//    private Analyzer analyzer;
+//
+//    @Before
+//    @Override
+//    public void setUp() throws Exception {
+//        super.setUp();
+//        analyzer = new Analyzer() {
+//            @Override
+//            protected Analyzer.TokenStreamComponents createComponents(String fieldName) {
+//                Tokenizer source = new MockTokenizer(MockTokenizer.WHITESPACE, false);
+//                return new Analyzer.TokenStreamComponents(source, new TokenPairConcatenatingFilter(source));
+//            }
+//        };
+//    }
+//
 //    /**
 //     * Test of incrementToken method, of class TokenPairConcatenatingFilter.
 //     */

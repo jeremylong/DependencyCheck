@@ -28,7 +28,8 @@ import java.io.File;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**

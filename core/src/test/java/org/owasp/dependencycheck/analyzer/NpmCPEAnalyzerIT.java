@@ -84,8 +84,7 @@ public class NpmCPEAnalyzerIT extends BaseDBTestCase {
         });
         assertTrue(String.format("%s:%s:%s identifier not found", vendor, product, version), found);
     }
-    
-    
+
     @Test
     public void testAnalyzeDependencyNoMatch() throws Exception {
 
@@ -96,7 +95,7 @@ public class NpmCPEAnalyzerIT extends BaseDBTestCase {
             instance.initialize(getSettings());
             instance.prepare(engine);
 
-            callAnalyzeDependencyNoMatch("npm","not_going_to_find", "minot_going_to_find_me", "1.2.11", instance, engine);
+            callAnalyzeDependencyNoMatch("npm", "not_going_to_find", "minot_going_to_find_me", "1.2.11", instance, engine);
             callAnalyzeDependencyNoMatch("java", "apache", "commons-httpclient", "3.0", instance, engine);
             instance.close();
         }
@@ -125,6 +124,6 @@ public class NpmCPEAnalyzerIT extends BaseDBTestCase {
         dep.setSha256sum("");
 
         cpeAnalyzer.analyzeDependency(dep, engine);
-        assertEquals(dep.getVulnerableSoftwareIdentifiers().size(),0);
+        assertEquals(0, dep.getVulnerableSoftwareIdentifiers().size());
     }
 }

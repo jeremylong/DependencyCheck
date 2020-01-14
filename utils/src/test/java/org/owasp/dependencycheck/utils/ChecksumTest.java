@@ -20,27 +20,19 @@ package org.owasp.dependencycheck.utils;
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import org.junit.After;
-import org.junit.AfterClass;
+import org.junit.Assert;
 import static org.junit.Assert.assertArrayEquals;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 /**
  *
  * @author Jeremy Long
  */
 public class ChecksumTest {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     /**
      * Test of getChecksum method, of class Checksum.
@@ -57,7 +49,8 @@ public class ChecksumTest {
     }
 
     /**
-     * Test of getChecksum method, of class Checksum. This checks that an exception is thrown when an invalid path is specified.
+     * Test of getChecksum method, of class Checksum. This checks that an
+     * exception is thrown when an invalid path is specified.
      *
      * @throws Exception is thrown when an exception occurs.
      */
@@ -65,15 +58,15 @@ public class ChecksumTest {
     public void testGetChecksum_FileNotFound() throws Exception {
         String algorithm = "MD5";
         File file = new File("not a valid file");
-
-        expectedException.expect(IOException.class);
-        Checksum.getChecksum(algorithm, file);
-        fail("exception should be thrown");
+        Exception exception = Assert.assertThrows(IOException.class, () -> {
+            Checksum.getChecksum(algorithm, file);
+        });
+        assertTrue(exception.getMessage().contains("not a valid file"));
     }
 
     /**
-     * Test of getChecksum method, of class Checksum. This checks that an exception is thrown when an invalid algorithm is
-     * specified.
+     * Test of getChecksum method, of class Checksum. This checks that an
+     * exception is thrown when an invalid algorithm is specified.
      *
      * @throws Exception is thrown when an exception occurs.
      */
@@ -81,9 +74,10 @@ public class ChecksumTest {
     public void testGetChecksum_NoSuchAlgorithm() throws Exception {
         String algorithm = "some unknown algorithm";
         File file = new File(this.getClass().getClassLoader().getResource("checkSumTest.file").getPath());
-
-        expectedException.expect(NoSuchAlgorithmException.class);
-        Checksum.getChecksum(algorithm, file);
+        Exception exception = Assert.assertThrows(NoSuchAlgorithmException.class, () -> {
+            Checksum.getChecksum(algorithm, file);
+        });
+        assertTrue(exception.getMessage().contains("some unknown algorithm"));
     }
 
     /**
@@ -166,7 +160,7 @@ public class ChecksumTest {
     @Test
     public void testGetChecksum_String_byteArr() {
         String algorithm = "SHA1";
-        byte[] bytes =  {-16, -111, 92, 95, 70, -72, -49, -94, -125, -27, -83, 103, -96, -101, 55, -109};
+        byte[] bytes = {-16, -111, 92, 95, 70, -72, -49, -94, -125, -27, -83, 103, -96, -101, 55, -109};
         String expResult = "89268a389a97f0bfba13d3ff2370d8ad436e36f6";
         String result = Checksum.getChecksum(algorithm, bytes);
         assertEquals(expResult, result);

@@ -30,7 +30,10 @@ import java.io.File;
 import org.apache.commons.lang3.ArrayUtils;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit tests for NodePackageAnalyzer.

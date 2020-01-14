@@ -22,10 +22,10 @@ import java.io.File;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildFileRule;
 import org.apache.tools.ant.types.LogLevel;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.owasp.dependencycheck.BaseDBTestCase;
 
 import static org.junit.Assert.assertTrue;
@@ -38,9 +38,6 @@ public class DependencyCheckTaskIT extends BaseDBTestCase {
 
     @Rule
     public BuildFileRule buildFileRule = new BuildFileRule();
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     @Override
@@ -103,8 +100,10 @@ public class DependencyCheckTaskIT extends BaseDBTestCase {
      */
     @Test
     public void testGetFailBuildOnCVSS() {
-        expectedException.expect(BuildException.class);
-        buildFileRule.executeTarget("failCVSS");
+        Exception exception = Assert.assertThrows(BuildException.class, () -> {
+            buildFileRule.executeTarget("failCVSS");
+        });
+        Assert.assertTrue(exception.getMessage().contains("One or more dependencies were identified with vulnerabilities that have a CVSS score greater than or equal to '3.0':"));
     }
 
     /**

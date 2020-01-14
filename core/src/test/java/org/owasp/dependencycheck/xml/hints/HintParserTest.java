@@ -23,8 +23,6 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
 import org.owasp.dependencycheck.BaseTest;
 
 /**
@@ -32,9 +30,6 @@ import org.owasp.dependencycheck.BaseTest;
  * @author Jeremy Long
  */
 public class HintParserTest extends BaseTest {
-
-    @Rule
-    public ExpectedException thrown= ExpectedException.none();
 
     /**
      * Test of parseHints method, of class HintParser.
@@ -81,12 +76,13 @@ public class HintParserTest extends BaseTest {
      */
     @Test
     public void testParseHintsXSDSelection() throws Exception {
-        thrown.expect(org.owasp.dependencycheck.xml.hints.HintParseException.class);
-        thrown.expectMessage("Line=7, Column=133: cvc-enumeration-valid: Value 'version' is not facet-valid with respect to enumeration '[vendor, product]'. It must be a value from the enumeration.");
         File file = BaseTest.getResourceAsFile(this, "hints_invalid.xml");
         HintParser instance = new HintParser();
-        instance.parseHints(file);
-        Assert.fail("A parser exception for an XML-schema violation should have been thrown");
+        Exception exception = Assert.assertThrows(org.owasp.dependencycheck.xml.hints.HintParseException.class, () -> {
+            instance.parseHints(file);
+        });
+        Assert.assertTrue(exception.getMessage().contains("Line=7, Column=133: cvc-enumeration-valid: Value 'version' is not facet-valid with respect to enumeration '[vendor, product]'. It must be a value from the enumeration."));
+
     }
 
     /**
@@ -148,9 +144,9 @@ public class HintParserTest extends BaseTest {
         InputStream ins = BaseTest.getResourceAsStream(this, "hints_13.xml");
         HintParser instance = new HintParser();
         instance.parseHints(ins);
-        List<VendorDuplicatingHintRule> vendor =  instance.getVendorDuplicatingHintRules();
+        List<VendorDuplicatingHintRule> vendor = instance.getVendorDuplicatingHintRules();
         List<HintRule> rules = instance.getHintRules();
-        
+
         assertEquals("Zero duplicating hints should have been read", 0, vendor.size());
         assertEquals("Two hint rules should have been read", 2, rules.size());
 

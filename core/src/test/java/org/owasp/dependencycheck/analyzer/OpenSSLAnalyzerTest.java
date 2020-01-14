@@ -27,7 +27,9 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import java.io.File;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
