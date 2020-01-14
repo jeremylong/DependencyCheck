@@ -748,11 +748,12 @@ public final class Settings {
         final String[] masked = getArray(Settings.KEYS.MASKED_PROPERTIES);
         if (masked == null) {
             maskedKeys = new ArrayList<>();
+        } else {
+            maskedKeys = Arrays.asList(masked)
+                    .stream()
+                    .map(v -> Pattern.compile(v).asPredicate())
+                    .collect(Collectors.toList());
         }
-        maskedKeys = Arrays.asList(masked)
-                .stream()
-                .map(v -> Pattern.compile(v).asPredicate())
-                .collect(Collectors.toList());
     }
 
     /**

@@ -794,7 +794,7 @@ public final class CliParser {
     }
 
     /**
-     * Returns the float argument for the given option
+     * Returns the float argument for the given option.
      *
      * @param option the option
      * @param defaultValue the value if the option is not present

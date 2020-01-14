@@ -438,13 +438,11 @@ public class App {
                 cli.getIntegerValue(CliParser.ARGUMENT.CVE_VALID_FOR_HOURS));
         settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE,
                 cli.getStringArguments(CliParser.ARGUMENT.SUPPRESSION_FILES));
-
         //File Type Analyzer Settings
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED,
                 cli.hasOption(CliParser.ARGUMENT.EXPERIMENTAL));
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIRED_ENABLED,
                 cli.hasOption(CliParser.ARGUMENT.RETIRED));
-
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH,
                 cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_GO));
         settings.setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT,
@@ -453,7 +451,6 @@ public class App {
                 cli.getStringArgument(CliParser.ARGUMENT.RETIREJS_URL));
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE,
                 cli.hasOption(CliParser.ARGUMENT.RETIRE_JS_FORCEUPDATE));
-
         settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_JAR, Settings.KEYS.ANALYZER_JAR_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED,

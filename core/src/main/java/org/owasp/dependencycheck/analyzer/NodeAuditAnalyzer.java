@@ -114,29 +114,27 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
      */
     @Override
     public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
-        synchronized (this) {
-            if (!isEnabled() || !getFilesMatched()) {
-                this.setEnabled(false);
-                return;
+        if (!isEnabled() || !getFilesMatched()) {
+            this.setEnabled(false);
+            return;
+        }
+        if (searcher == null) {
+            LOGGER.debug("Initializing {}", getName());
+            try {
+                searcher = new NodeAuditSearch(getSettings());
+            } catch (MalformedURLException ex) {
+                setEnabled(false);
+                throw new InitializationException("The configured URL to NPM Audit API is malformed", ex);
             }
-            if (searcher == null) {
-                LOGGER.debug("Initializing {}", getName());
-                try {
-                    searcher = new NodeAuditSearch(getSettings());
-                } catch (MalformedURLException ex) {
-                    setEnabled(false);
-                    throw new InitializationException("The configured URL to NPM Audit API is malformed", ex);
+            try {
+                final Settings settings = engine.getSettings();
+                final boolean nodeEnabled = settings.getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED);
+                if (!nodeEnabled) {
+                    LOGGER.warn("The Node Package Analyzer has been disabled; the resulting report will only "
+                            + "contain the known vulnerable dependency - not a bill of materials for the node project.");
                 }
-                try {
-                    final Settings settings = engine.getSettings();
-                    final boolean nodeEnabled = settings.getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED);
-                    if (!nodeEnabled) {
-                        LOGGER.warn("The Node Package Analyzer has been disabled; the resulting report will only "
-                                + "contain the known vulnerable dependency - not a bill of materials for the node project.");
-                    }
-                } catch (InvalidSettingException ex) {
-                    throw new InitializationException("Unable to read configuration settings", ex);
-                }
+            } catch (InvalidSettingException ex) {
+                throw new InitializationException("Unable to read configuration settings", ex);
             }
         }
     }
