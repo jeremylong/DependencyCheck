@@ -763,7 +763,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                     //removed these conditions from the below if
                     //(maxDepth == 3 || (maxDepthHasUpdate && maxDepth==4)) && depVersion.getVersionParts().size() == 4 &&
                     final int idx = depVersion.getVersionParts().size() - 1;
-                    if (depVersion.getVersionParts().get(idx)
+                    if (idx > 0 && depVersion.getVersionParts().get(idx)
                             .matches("^(v|release|snapshot|beta|alpha|u|rc|m|20\\d\\d).*$")) {
                         cpeBuilder.version(StringUtils.join(depVersion.getVersionParts().subList(0, idx), "."));
                         //when written - no update versions in the NVD start with v### - they all strip the v off
