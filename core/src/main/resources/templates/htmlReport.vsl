@@ -992,7 +992,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                     #if(!$dependency.isVirtual())
                                     <b>MD5:</b>&nbsp;$enc.html($dependency.Md5sum)<br/>
                                     <b>SHA1:</b>&nbsp;$enc.html($dependency.Sha1sum)<br/>
-                                    <b>SHA256:</b>&nbsp;$enc.html($dependency.Sha255sum)
+                                    <b>SHA256:</b>&nbsp;$enc.html($dependency.Sha256sum)
                                     #end
                                 </p>
                                 #set($cnt=$cnt+1)
