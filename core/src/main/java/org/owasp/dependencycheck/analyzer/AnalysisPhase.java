@@ -37,6 +37,10 @@ public enum AnalysisPhase {
      */
     INFORMATION_COLLECTION,
     /**
+     * Information collection phase 2.
+     */
+    INFORMATION_COLLECTION2,
+    /**
      * Post information collection phase.
      */
     POST_INFORMATION_COLLECTION,

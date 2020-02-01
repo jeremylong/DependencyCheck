@@ -98,6 +98,7 @@ public class Engine implements FileFilter, AutoCloseable {
                 INITIAL,
                 PRE_INFORMATION_COLLECTION,
                 INFORMATION_COLLECTION,
+                INFORMATION_COLLECTION2,
                 POST_INFORMATION_COLLECTION
         ),
         /**

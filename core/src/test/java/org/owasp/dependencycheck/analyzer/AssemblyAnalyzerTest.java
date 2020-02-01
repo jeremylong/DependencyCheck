@@ -18,14 +18,9 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.commons.io.IOUtils;
 import org.junit.After;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -42,7 +37,6 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
-import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,7 +112,7 @@ public class AssemblyAnalyzerTest extends BaseTest {
 
         Dependency d = new Dependency(f);
         analyzer.analyze(d, null);
-        assertTrue(d.contains(EvidenceType.VERSION, new Evidence("grokassembly", "FileVersion", "1.2.13.0", Confidence.HIGHEST)));
+        assertTrue(d.contains(EvidenceType.VERSION, new Evidence("grokassembly", "FileVersion", "1.2.13.0", Confidence.HIGH)));
         assertEquals("1.2.13.0", d.getVersion());
         assertTrue(d.contains(EvidenceType.VENDOR, new Evidence("grokassembly", "CompanyName", "The Apache Software Foundation", Confidence.HIGHEST)));
         assertTrue(d.contains(EvidenceType.PRODUCT, new Evidence("grokassembly", "ProductName", "log4net", Confidence.HIGHEST)));

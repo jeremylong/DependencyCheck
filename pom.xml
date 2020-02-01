@@ -913,6 +913,11 @@ Copyright (c) 2012 - Jeremy Long
                 <optional>true</optional>
             </dependency>
             <dependency>
+                <groupId>org.whitesource</groupId>
+                <artifactId>pecoff4j</artifactId>
+                <version>0.0.2.1</version>
+            </dependency>
+            <dependency>
                 <groupId>com.vdurmont</groupId>
                 <artifactId>semver4j</artifactId>
                 <version>3.1.0</version>

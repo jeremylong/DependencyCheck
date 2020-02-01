@@ -1,5 +1,6 @@
 org.owasp.dependencycheck.analyzer.ArchiveAnalyzer
 org.owasp.dependencycheck.analyzer.FileNameAnalyzer
+org.owasp.dependencycheck.analyzer.PEAnalyzer
 org.owasp.dependencycheck.analyzer.JarAnalyzer
 org.owasp.dependencycheck.analyzer.HintAnalyzer
 org.owasp.dependencycheck.analyzer.CPEAnalyzer

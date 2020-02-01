@@ -285,6 +285,18 @@ class EvidenceCollection implements Serializable {
     }
 
     /**
+     * Returns the unmodifiable set of evidence.
+     *
+     * @return the unmodifiable set of evidence
+     */
+    public synchronized Set<Evidence> getEvidence() {
+        Set e = new HashSet<>(vendors);
+        e.addAll(products);
+        e.addAll(versions);
+        return Collections.unmodifiableSet(e);
+    }
+
+    /**
      * Tests if the evidence collection contains the given evidence.
      *
      * @param type the type of evidence (vendor, product, version)

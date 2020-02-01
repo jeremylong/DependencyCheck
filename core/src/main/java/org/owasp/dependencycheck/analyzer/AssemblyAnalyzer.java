@@ -215,7 +215,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 dependency.addEvidence(EvidenceType.VERSION, "grokassembly", "ProductVersion", data.getProductVersion(), Confidence.HIGHEST);
             }
             if (!StringUtils.isEmpty(data.getFileVersion())) {
-                dependency.addEvidence(EvidenceType.VERSION, "grokassembly", "FileVersion", data.getFileVersion(), Confidence.HIGHEST);
+                dependency.addEvidence(EvidenceType.VERSION, "grokassembly", "FileVersion", data.getFileVersion(), Confidence.HIGH);
             }
 
             if (data.getFileVersion() != null && data.getProductVersion() != null) {

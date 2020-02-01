@@ -551,6 +551,10 @@ public final class Settings {
          */
         public static final String ANALYZER_FILE_NAME_ENABLED = "analyzer.filename.enabled";
         /**
+         * The key to determine if the File Version analyzer is enabled.
+         */
+        public static final String ANALYZER_PE_ENABLED = "analyzer.pe.enabled";
+        /**
          * The key to determine if the Hint analyzer is enabled.
          */
         public static final String ANALYZER_HINT_ENABLED = "analyzer.hint.enabled";
