@@ -126,6 +126,10 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>file-management</artifactId>
         </dependency>
+        <dependency><!--upgrade transitive dependency due to reported vulns-->
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-utils</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
