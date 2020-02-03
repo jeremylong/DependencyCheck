@@ -472,7 +472,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private Properties retrievePomProperties(String path, final JarFile jar) {
         Properties pomProperties = null;
-        final String propPath = path.substring(0, path.length() - 7) + "pom.properies";
+        final String propPath = path.substring(0, path.length() - 7) + "pom.properties";
         final ZipEntry propEntry = jar.getEntry(propPath);
         if (propEntry != null) {
             try (Reader reader = new InputStreamReader(jar.getInputStream(propEntry), StandardCharsets.UTF_8)) {
@@ -603,12 +603,17 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         if (groupid != null && !groupid.isEmpty()) {
             foundSomething = true;
             dependency.addEvidence(EvidenceType.VENDOR, "pom", "groupid", groupid, Confidence.HIGHEST);
-            dependency.addEvidence(EvidenceType.PRODUCT, "pom", "groupid", groupid, Confidence.LOW);
+            //In several cases we are seeing the product name at the end of the group identifier.
+            // This may cause several FP on products that have a collection of dependencies (e.g. jetty).
+            //dependency.addEvidence(EvidenceType.PRODUCT, "pom", "groupid", groupid, Confidence.LOW);
+            dependency.addEvidence(EvidenceType.PRODUCT, "pom", "groupid", groupid, Confidence.HIGHEST);
             addMatchingValues(classes, groupid, dependency, EvidenceType.VENDOR);
             addMatchingValues(classes, groupid, dependency, EvidenceType.PRODUCT);
             if (parentGroupId != null && !parentGroupId.isEmpty() && !parentGroupId.equals(groupid)) {
                 dependency.addEvidence(EvidenceType.VENDOR, "pom", "parent-groupid", parentGroupId, Confidence.MEDIUM);
-                dependency.addEvidence(EvidenceType.PRODUCT, "pom", "parent-groupid", parentGroupId, Confidence.LOW);
+                //see note above for groupid
+                //dependency.addEvidence(EvidenceType.PRODUCT, "pom", "parent-groupid", parentGroupId, Confidence.LOW);
+                dependency.addEvidence(EvidenceType.PRODUCT, "pom", "parent-groupid", parentGroupId, Confidence.MEDIUM);
                 addMatchingValues(classes, parentGroupId, dependency, EvidenceType.VENDOR);
                 addMatchingValues(classes, parentGroupId, dependency, EvidenceType.PRODUCT);
             }

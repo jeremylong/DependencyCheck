@@ -453,30 +453,32 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      * @param engine the engine used to scan all dependencies
      */
     private synchronized void removeDuplicativeEntriesFromJar(Dependency dependency, Engine engine) {
-        if (dependency.getFileName().toLowerCase().endsWith("pom.xml")
-                || DLL_EXE_FILTER.accept(dependency.getActualFile())) {
-            String parentPath = dependency.getFilePath().toLowerCase();
-            if (parentPath.contains(".jar")) {
-                parentPath = parentPath.substring(0, parentPath.indexOf(".jar") + 4);
-                final Dependency[] dependencies = engine.getDependencies();
-                final Dependency parent = findDependency(parentPath, dependencies);
-                if (parent != null) {
-                    final boolean remove = dependency.getVulnerableSoftwareIdentifiers().stream()
-                            .filter((i) -> (i instanceof CpeIdentifier))
-                            .map(i -> (CpeIdentifier) i)
-                            .anyMatch(i -> parent.getVulnerableSoftwareIdentifiers().stream()
-                                    .filter((p) -> (p instanceof CpeIdentifier))
-                                    .map(p -> (CpeIdentifier) p)
-                                    .anyMatch(p -> !p.equals(i)
-                                    && p.getCpe().getPart().equals(i.getCpe().getPart())
-                                    && p.getCpe().getVendor().equals(i.getCpe().getVendor())
-                                    && p.getCpe().getProduct().equals(i.getCpe().getProduct())));
-                    if (remove) {
-                        engine.removeDependency(dependency);
-                    }
-                }
-            }
-        }
+        //Believed to be code that should have been removed several versions ago. This logic
+        // incorreclty removes dependencies such as more than half the pom entries in pax-web-jetty-bundle-6.0.7.jar
+//        if (dependency.getFileName().toLowerCase().endsWith("pom.xml")
+//                || DLL_EXE_FILTER.accept(dependency.getActualFile())) {
+//            String parentPath = dependency.getFilePath().toLowerCase();
+//            if (parentPath.contains(".jar")) {
+//                parentPath = parentPath.substring(0, parentPath.indexOf(".jar") + 4);
+//                final Dependency[] dependencies = engine.getDependencies();
+//                final Dependency parent = findDependency(parentPath, dependencies);
+//                if (parent != null) {
+//                    final boolean remove = dependency.getVulnerableSoftwareIdentifiers().stream()
+//                            .filter((i) -> (i instanceof CpeIdentifier))
+//                            .map(i -> (CpeIdentifier) i)
+//                            .anyMatch(i -> parent.getVulnerableSoftwareIdentifiers().stream()
+//                                    .filter((p) -> (p instanceof CpeIdentifier))
+//                                    .map(p -> (CpeIdentifier) p)
+//                                    .anyMatch(p -> !p.equals(i)
+//                                    && p.getCpe().getPart().equals(i.getCpe().getPart())
+//                                    && p.getCpe().getVendor().equals(i.getCpe().getVendor())
+//                                    && p.getCpe().getProduct().equals(i.getCpe().getProduct())));
+//                    if (remove) {
+//                        engine.removeDependency(dependency);
+//                    }
+//                }
+//            }
+//        }
     }
 
     /**
