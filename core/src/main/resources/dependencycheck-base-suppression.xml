@@ -130,6 +130,7 @@
             40. <cpe>cpe:/a:bitmap_project:bitmap</cpe> is a C library #1961
             41. <cpe>cpe:/a:security-framework_project:security-framework</cpe> is a rust library
             42. <cpe>cpe:/a:next:next</cpe> is NeXT system.
+            43. <cpe>cpe:/a:property_pro:property_pro</cpe> is classic ASP
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -177,6 +178,7 @@
         <cpe>cpe:/a:bitmap_project:bitmap</cpe>
         <cpe>cpe:/a:security-framework_project:security-framework</cpe>
         <cpe>cpe:/a:next:next</cpe>
+        <cpe>cpe:/a:property_pro:property_pro</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -1052,14 +1054,15 @@
         <notes><![CDATA[
         drop wizard false positives
         ]]></notes>
-        <gav regex="true">org\.eclipse\.jetty:jetty-io:.*</gav>
+        <gav regex="true">org\.eclipse\.jetty\.http2:http2-hpack:.*</gav>
         <cpe>cpe:/a:jetty:jetty</cpe>
+        <cpe>cpe:/a:eclipse:jetty</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        drop wizard false positives
+        FP on osgi bundle - the embedded jetty server is flagged instead of the bundle itself.
         ]]></notes>
-        <gav regex="true">org\.eclipse\.jetty\.http2:http2-hpack:.*</gav>
+        <packageUrl regex="true">^pkg:maven/org\.ops4j\.pax\.web/pax\-web\-jetty\-bundle@.*$</packageUrl>
         <cpe>cpe:/a:jetty:jetty</cpe>
     </suppress>
     <suppress base="true">

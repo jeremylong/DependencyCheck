@@ -311,8 +311,17 @@ public class Model implements Serializable {
      */
     public void processProperties(Properties properties) {
         this.groupId = interpolateString(this.groupId, properties);
+        if (groupId == null && properties.containsKey("groupId")) {
+            this.groupId = properties.getProperty("groupId");
+        }
         this.artifactId = interpolateString(this.artifactId, properties);
+        if (artifactId == null && properties.containsKey("artifactId")) {
+            this.artifactId = properties.getProperty("artifactId");
+        }
         this.version = interpolateString(this.version, properties);
+        if (version == null && properties.containsKey("version")) {
+            this.version = properties.getProperty("version");
+        }
         this.description = interpolateString(this.description, properties);
         for (License l : this.getLicenses()) {
             l.setName(interpolateString(l.getName(), properties));

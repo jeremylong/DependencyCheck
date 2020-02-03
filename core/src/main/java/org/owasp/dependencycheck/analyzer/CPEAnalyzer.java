@@ -93,7 +93,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     /**
      * The maximum number of query results to return.
      */
-    private static final int MAX_QUERY_RESULTS = 25;
+    private static final int MAX_QUERY_RESULTS = 100;
     /**
      * The weighting boost to give terms when constructing the Lucene query.
      */
