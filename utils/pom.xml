@@ -66,7 +66,11 @@ Copyright (c) 2014 - Jeremy Long. All Rights Reserved.
         <dependency>
             <groupId>org.mock-server</groupId>
             <artifactId>mockserver-netty</artifactId>
-            <version>5.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mock-server</groupId>
+            <artifactId>mockserver-junit-rule</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
