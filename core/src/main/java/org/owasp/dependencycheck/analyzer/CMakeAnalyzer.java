@@ -24,6 +24,7 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.Checksum;
+import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -222,7 +223,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 final String group = mVersion.group(1);
                 LOGGER.debug("Group 1: {}", group);
                 dependency.addEvidence(EvidenceType.VERSION, name, "VERSION", group, Confidence.HIGH);
-                dependency.setVersion(group);
+                dependency.setVersion(DependencyVersionUtil.parseVersion(group, true).toString());
             }
 
             analyzeSetVersionCommand(dependency, engine, contents_replaced, vars);
@@ -312,7 +313,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 currentDep.setName(product);
             }
             if (StringUtils.isEmpty(currentDep.getVersion())) {
-                currentDep.setVersion(version);
+                currentDep.setVersion(DependencyVersionUtil.parseVersion(version, true).toString());
             }
         }
         LOGGER.debug("Found {} matches.", count);
