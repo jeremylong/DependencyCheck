@@ -190,8 +190,9 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                         }
                     }
                 }
-                if (!leastOne)
+                if (!leastOne) {
                     break;
+                }
                 r = INL_VAR_REGEX.matcher(contents_replacer);
             }
             String contents_replaced = contents_replacer.toString();
@@ -207,6 +208,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 dependency.addEvidence(EvidenceType.PRODUCT, name, "Project", group, Confidence.HIGH);
                 dependency.addEvidence(EvidenceType.VENDOR, name, "Project", group, Confidence.HIGH);
                 dependency.setName(group);
+                dependency.setDisplayFileName(group);
             }
             if (count > 0) {
                 dependency.addEvidence(EvidenceType.VENDOR, "CmakeAnalyzer", "hint", "gnu", Confidence.MEDIUM);
@@ -221,9 +223,9 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.debug("Group 1: {}", group);
                 dependency.addEvidence(EvidenceType.VERSION, name, "VERSION", group, Confidence.HIGH);
                 DependencyVersion vers = DependencyVersionUtil.parseVersion(group, true);
-                if (vers == null)
-                    vers = new DependencyVersion("");
-                dependency.setVersion(vers.toString());
+                if (vers != null) {
+                    dependency.setVersion(vers.toString());
+                }
             }
 
             analyzeSetVersionCommand(dependency, engine, contents_replaced, vars);
@@ -253,13 +255,15 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
         }
         LOGGER.debug("Found {} matches.", count);
     }
+
     /**
-     * Extracts the version information from the contents. If more then one version
-     * is found additional dependencies are added to the dependency list.
+     * Extracts the version information from the contents. If more then one
+     * version is found additional dependencies are added to the dependency
+     * list.
      *
      * @param dependency the dependency being analyzed
-     * @param engine     the dependency-check engine
-     * @param contents   the version information
+     * @param engine the dependency-check engine
+     * @param contents the version information
      */
     private void analyzeSetVersionCommand(Dependency dependency, Engine engine, String contents,
             HashMap<String, String> vars) {
@@ -279,8 +283,11 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
             if (product.startsWith(aliasPrefix)) {
                 product = product.replaceFirst(aliasPrefix, "");
             }
+            if (product.startsWith("_")) {
+                product = product.substring(1);
+            }
             if (count > 1) {
-                currentDep = new Dependency(dependency.getActualFile());
+                currentDep = new Dependency(dependency.getActualFile(), true);
                 currentDep.setEcosystem(DEPENDENCY_ECOSYSTEM);
                 final String filePath = String.format("%s:%s", dependency.getFilePath(), product);
                 currentDep.setFilePath(filePath);
@@ -295,7 +302,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
             currentDep.addEvidence(EvidenceType.VENDOR, source, "Vendor", product, Confidence.MEDIUM);
             currentDep.addEvidence(EvidenceType.VERSION, source, "Version", version, Confidence.MEDIUM);
             if (product.toLowerCase().endsWith("lib")) {
-                currentDep = new Dependency(dependency.getActualFile());
+                currentDep = new Dependency(dependency.getActualFile(), true);
                 currentDep.setEcosystem(DEPENDENCY_ECOSYSTEM);
                 final String filePath = String.format("%s:%s", dependency.getFilePath(), product);
                 currentDep.setFilePath(filePath);
@@ -311,12 +318,13 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
             }
             if (StringUtils.isEmpty(currentDep.getName())) {
                 currentDep.setName(product);
+                currentDep.setDisplayFileName(product);
             }
             if (StringUtils.isEmpty(currentDep.getVersion())) {
                 DependencyVersion vers = DependencyVersionUtil.parseVersion(version, true);
-                if (vers == null)
-                    vers = new DependencyVersion("");
-                currentDep.setVersion(vers.toString());
+                if (vers != null) {
+                    currentDep.setVersion(vers.toString());
+                }
             }
         }
         LOGGER.debug("Found {} matches.", count);
