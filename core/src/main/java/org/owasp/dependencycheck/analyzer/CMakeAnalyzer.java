@@ -23,10 +23,7 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.utils.Checksum;
-import org.owasp.dependencycheck.utils.DependencyVersionUtil;
-import org.owasp.dependencycheck.utils.FileFilterBuilder;
-import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -223,7 +220,10 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 final String group = mVersion.group(1);
                 LOGGER.debug("Group 1: {}", group);
                 dependency.addEvidence(EvidenceType.VERSION, name, "VERSION", group, Confidence.HIGH);
-                dependency.setVersion(DependencyVersionUtil.parseVersion(group, true).toString());
+                DependencyVersion vers = DependencyVersionUtil.parseVersion(group, true);
+                if (vers == null)
+                    vers = new DependencyVersion("");
+                dependency.setVersion(vers.toString());
             }
 
             analyzeSetVersionCommand(dependency, engine, contents_replaced, vars);
@@ -313,7 +313,10 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 currentDep.setName(product);
             }
             if (StringUtils.isEmpty(currentDep.getVersion())) {
-                currentDep.setVersion(DependencyVersionUtil.parseVersion(version, true).toString());
+                DependencyVersion vers = DependencyVersionUtil.parseVersion(version, true);
+                if (vers == null)
+                    vers = new DependencyVersion("");
+                currentDep.setVersion(vers.toString());
             }
         }
         LOGGER.debug("Found {} matches.", count);
