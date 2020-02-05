@@ -286,7 +286,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
             for (Map.Entry<String, JsonValue> entry : deps.entrySet()) {
                 final JsonObject jo = (JsonObject) entry.getValue();
                 final String name = entry.getKey();
-                final String version = jo.getString("version");
+                final String version = jo.get("version").toString();
                 final boolean optional = jo.getBoolean("optional", false);
                 final File base = Paths.get(baseDir.getPath(), "node_modules", name).toFile();
                 final File f = new File(base, PACKAGE_JSON);
