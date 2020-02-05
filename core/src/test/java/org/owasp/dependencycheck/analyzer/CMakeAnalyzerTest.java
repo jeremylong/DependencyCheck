@@ -140,7 +140,7 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
         analyzer.analyze(result, null);
 
         //this one finds nothing so it falls through to the filename. Can we do better?
-        assertEquals("OpenCVDetectPython.cmake", result.getDisplayFileName());
+        assertEquals("numpy", result.getDisplayFileName());
     }
 
     private void assertProductEvidence(Dependency result, String product) {
