@@ -246,6 +246,10 @@ public final class CveDB implements AutoCloseable {
          */
         UPDATE_ECOSYSTEM,
         /**
+         * Key for update ecosystem.
+         */
+        UPDATE_ECOSYSTEM2,
+        /**
          * Key for SQL Statement.
          */
         COUNT_CPE,
@@ -1589,11 +1593,18 @@ public final class CveDB implements AutoCloseable {
         final long start = System.currentTimeMillis();
         clearCache();
         try (PreparedStatement psOrphans = getPreparedStatement(CLEANUP_ORPHANS);
-                PreparedStatement psEcosystem = getPreparedStatement(UPDATE_ECOSYSTEM)) {
+                PreparedStatement psEcosystem = getPreparedStatement(UPDATE_ECOSYSTEM);
+                PreparedStatement psEcosystem2 = getPreparedStatement(UPDATE_ECOSYSTEM2)) {
             if (psEcosystem != null) {
                 final int count = psEcosystem.executeUpdate();
                 if (count > 0) {
                     LOGGER.info("Updated the CPE ecosystem on {} NVD records", count);
+                }
+            }
+            if (psEcosystem2 != null) {
+                final int count = psEcosystem2.executeUpdate();
+                if (count > 0) {
+                    LOGGER.info("Removed the CPE ecosystem on {} NVD records", count);
                 }
             }
             if (psOrphans != null) {

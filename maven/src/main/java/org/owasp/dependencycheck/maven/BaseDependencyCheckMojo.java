@@ -94,7 +94,10 @@ import org.owasp.dependencycheck.dependency.naming.Identifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
 import org.apache.maven.shared.dependency.graph.traversal.FilteringDependencyNodeVisitor;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.utils.SeverityUtil;
+import org.owasp.dependencycheck.xml.pom.Model;
+import org.owasp.dependencycheck.xml.pom.PomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.spi.LocationAwareLogger;
@@ -1217,6 +1220,20 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     final String msg = String.format("Skipping '%s:%s' in project %s as it uses an `import` scope",
                             dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
                     getLog().debug(msg);
+                } else if ("pom".equals(dependencyNode.getArtifact().getType())) {
+
+                    try {
+                        Dependency d = new Dependency(artifactFile.getAbsoluteFile());
+                        Model pom = PomUtils.readPom(artifactFile.getAbsoluteFile());
+                        JarAnalyzer.setPomEvidence(d, pom, null, true);
+                        engine.addDependency(d);
+                    } catch (AnalysisException ex) {
+                        if (exCol == null) {
+                            exCol = new ExceptionCollection();
+                        }
+                        exCol.addException(ex);
+                        getLog().debug("Error reading pom " + artifactFile.getAbsoluteFile(), ex);
+                    }
                 } else {
                     final String msg = String.format("No analyzer could be found for '%s:%s' in project %s",
                             dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
