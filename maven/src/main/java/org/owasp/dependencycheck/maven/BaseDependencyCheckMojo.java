@@ -20,6 +20,8 @@ package org.owasp.dependencycheck.maven;
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL.StandardTypes;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.execution.MavenSession;
@@ -1073,8 +1075,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @return a collection of exceptions if any occurred; otherwise
      * <code>null</code>
      */
-    private ExceptionCollection collectDependencyManagementDependencies(ProjectBuildingRequest buildingRequest, MavenProject project,
-            List<DependencyNode> nodes, boolean aggregate) {
+    private ExceptionCollection collectDependencyManagementDependencies(Engine engine, ProjectBuildingRequest buildingRequest,
+            MavenProject project, List<DependencyNode> nodes, boolean aggregate) {
         if (skipDependencyManagement || project.getDependencyManagement() == null) {
             return null;
         }
@@ -1085,10 +1087,21 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 nodes.add(toDependencyNode(nodes, buildingRequest, null, dependency));
             } catch (ArtifactResolverException ex) {
                 getLog().debug(String.format("Aggregate : %s", aggregate));
-                if (exCol == null) {
-                    exCol = new ExceptionCollection();
+                boolean addException = true;
+                if (!aggregate) {
+                    // do nothing, exception is to be reported
+                } else if (addReactorDependency(engine,
+                        new DefaultArtifact(dependency.getGroupId(), dependency.getArtifactId(),
+                            dependency.getVersion(), dependency.getScope(), dependency.getType(), dependency.getClassifier(),
+                            new DefaultArtifactHandler()))) {
+                    addException = false;
                 }
-                exCol.addException(ex);
+                if (addException) {
+                    if (exCol == null) {
+                        exCol = new ExceptionCollection();
+                    }
+                    exCol.addException(ex);
+                }
             }
         }
         return exCol;
@@ -1110,7 +1123,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private ExceptionCollection collectMavenDependencies(Engine engine, MavenProject project,
             List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
 
-        ExceptionCollection exCol = collectDependencyManagementDependencies(buildingRequest, project, nodes, aggregate);
+        ExceptionCollection exCol = collectDependencyManagementDependencies(engine, buildingRequest, project, nodes, aggregate);
 
         for (DependencyNode dependencyNode : nodes) {
             if (artifactScopeExcluded.passes(dependencyNode.getArtifact().getScope())
@@ -1162,7 +1175,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     } catch (ArtifactResolverException ex) {
                         getLog().debug(String.format("Aggregate : %s", aggregate));
                         boolean addException = true;
-                        if (!aggregate || addReactorDependency(engine, dependencyNode.getArtifact())) {
+                        if (!aggregate) {
+                            // do nothing - the exception is to be reported
+                        } else if (addReactorDependency(engine, dependencyNode.getArtifact())) {
+                            // successfully resolved as a reactor dependency - swallow the exception
                             addException = false;
                         }
                         if (addException) {
