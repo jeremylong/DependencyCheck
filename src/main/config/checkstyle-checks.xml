@@ -52,9 +52,15 @@
         <property name="maximum" value="0"/>
     </module>
 
+    <module name="LineLength">
+        <property name="ignorePattern" value="^ *\* *[^ ]+$"/>
+        <property name="max" value="150"/>
+        <property name="fileExtensions" value="java" />
+    </module>
+
     <module name="TreeWalker">
         <property name="tabWidth" value="4"/>
-        
+
         <module name="SuppressionCommentFilter">
             <property name="offCommentFormat" value="CSOFF\: ([\w\|]+)"/>
             <property name="onCommentFormat" value="CSON\: ([\w\|]+)"/>
@@ -78,9 +84,8 @@
         <module name="JavadocType">
             <property name="authorFormat" value="\S"/>
         </module>
-        <module name="JavadocMethod">
-            <property name="allowUndeclaredRTE" value="true"/>
-            <property name="allowThrowsTagsForSubclasses" value="true"/>
+        <module name="JavadocMethod"/>
+        <module name="MissingJavadocMethod">
             <property name="allowMissingPropertyJavadoc" value="true"/>
         </module>
         <module name="JavadocVariable"/>
@@ -107,10 +112,6 @@
         </module>
 
         <module name="OuterTypeNumber"/>
-        <module name="LineLength">
-            <property name="ignorePattern" value="^ *\* *[^ ]+$"/>
-            <property name="max" value="150"/>
-        </module>
 
         <module name="MethodCount">
             <property name="maxTotal" value="80"/>
