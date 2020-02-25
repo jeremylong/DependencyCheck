@@ -18,10 +18,7 @@
 package org.owasp.dependencycheck.utils;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
@@ -29,6 +26,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.hash.HashCode;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
+import com.google.common.io.Files;
 
 /**
  * Includes methods to generate the MD5 and SHA1 checksum.
@@ -79,21 +81,25 @@ public final class Checksum {
      * not exist
      */
     public static byte[] getChecksum(String algorithm, File file) throws NoSuchAlgorithmException, IOException {
-        final MessageDigest md = MessageDigest.getInstance(algorithm);
-        try (FileInputStream fis = new FileInputStream(file);
-                FileChannel ch = fis.getChannel()) {
-            final ByteBuffer buf = ByteBuffer.allocateDirect(8192);
-            int b = ch.read(buf);
-            while (b != -1 && b != 0) {
-                buf.flip();
-                final byte[] bytes = new byte[b];
-                buf.get(bytes);
-                md.update(bytes, 0, b);
-                buf.clear();
-                b = ch.read(buf);
-            }
-            return md.digest();
+        HashFunction hashFunction = null;
+
+        switch (algorithm.toUpperCase()) {
+            case MD5:
+                hashFunction = Hashing.md5();
+                break;
+            case SHA1:
+                hashFunction = Hashing.sha1();
+                break;
+            case SHA256:
+                hashFunction = Hashing.sha256();
+                break;
+            default:
+                throw new NoSuchAlgorithmException(algorithm);
         }
+
+        HashCode hash = Files.asByteSource(file).hash(hashFunction);
+
+        return hash.asBytes();
     }
 
     /**
