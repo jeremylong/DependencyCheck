@@ -24,6 +24,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +65,16 @@ public final class Checksum {
      * SHA256 constant.
      */
     private static final String SHA256 = "SHA-256";
+    /**
+     * Cached file checksums for each supported algorithm.
+     */
+    private static final Map<String, Map<File, byte[]>> checksumCaches = new HashMap<>(3);
+
+    static {
+        checksumCaches.put(MD5, new ConcurrentHashMap<>());
+        checksumCaches.put(SHA256, new ConcurrentHashMap<>());
+        checksumCaches.put(SHA1, new ConcurrentHashMap<>());
+    }
 
     /**
      * Private constructor for a utility class.
@@ -81,25 +95,31 @@ public final class Checksum {
      * not exist
      */
     public static byte[] getChecksum(String algorithm, File file) throws NoSuchAlgorithmException, IOException {
-        HashFunction hashFunction = null;
-
-        switch (algorithm.toUpperCase()) {
-            case MD5:
-                hashFunction = Hashing.md5();
-                break;
-            case SHA1:
-                hashFunction = Hashing.sha1();
-                break;
-            case SHA256:
-                hashFunction = Hashing.sha256();
-                break;
-            default:
-                throw new NoSuchAlgorithmException(algorithm);
+        Map<File, byte[]> checksumCache = checksumCaches.get(algorithm.toUpperCase());
+        if (checksumCache == null) {
+            throw new NoSuchAlgorithmException(algorithm);
         }
-
-        HashCode hash = Files.asByteSource(file).hash(hashFunction);
-
-        return hash.asBytes();
+        byte[] checksum = checksumCache.get(file);
+        if (checksum == null) {
+            HashFunction hashFunction = null;
+            switch (algorithm.toUpperCase()) {
+                case MD5:
+                    hashFunction = Hashing.md5();
+                    break;
+                case SHA1:
+                    hashFunction = Hashing.sha1();
+                    break;
+                case SHA256:
+                    hashFunction = Hashing.sha256();
+                    break;
+                default:
+                    throw new NoSuchAlgorithmException(algorithm);
+            }
+            HashCode hash = Files.asByteSource(file).hash(hashFunction);
+            checksum = hash.asBytes();
+            checksumCache.put(file, checksum);
+        }
+        return checksum;
     }
 
     /**
