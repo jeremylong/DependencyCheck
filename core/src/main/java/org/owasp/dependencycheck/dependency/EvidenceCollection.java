@@ -290,7 +290,7 @@ class EvidenceCollection implements Serializable {
      * @return the unmodifiable set of evidence
      */
     public synchronized Set<Evidence> getEvidence() {
-        Set e = new HashSet<>(vendors);
+        final Set e = new HashSet<>(vendors);
         e.addAll(products);
         e.addAll(versions);
         return Collections.unmodifiableSet(e);

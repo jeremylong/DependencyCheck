@@ -1068,6 +1068,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * Collect dependencies from the dependency management section.
      *
+     * @param engine reference to the ODC engine
      * @param buildingRequest the Maven project building request
      * @param project the project being analyzed
      * @param nodes the list of dependency nodes
@@ -1239,8 +1240,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 } else if ("pom".equals(dependencyNode.getArtifact().getType())) {
 
                     try {
-                        Dependency d = new Dependency(artifactFile.getAbsoluteFile());
-                        Model pom = PomUtils.readPom(artifactFile.getAbsoluteFile());
+final                        Dependency d = new Dependency(artifactFile.getAbsoluteFile());
+     final                   Model pom = PomUtils.readPom(artifactFile.getAbsoluteFile());
                         JarAnalyzer.setPomEvidence(d, pom, null, true);
                         engine.addDependency(d);
                     } catch (AnalysisException ex) {

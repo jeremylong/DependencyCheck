@@ -23,7 +23,14 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.utils.*;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.Checksum;
+import org.owasp.dependencycheck.utils.DependencyVersion;
+import org.owasp.dependencycheck.utils.DependencyVersionUtil;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.Settings;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +41,6 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.owasp.dependencycheck.dependency.EvidenceType;
-import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
  * <p>
@@ -167,25 +172,25 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                     "Problem occurred while reading dependency file.", e);
         }
         if (StringUtils.isNotBlank(contents)) {
-            HashMap<String, String> vars = new HashMap<String, String>();
+            final HashMap<String, String> vars = new HashMap<>();
             collectDefinedVariables(dependency, engine, contents, vars);
 
-            String contents_replacer = new String(contents);
+            String contentsReplacer = contents;
             Matcher r = INL_VAR_REGEX.matcher(contents);
             while (r.find()) {
                 boolean leastOne = false;
                 if (vars.containsKey(r.group(2))) {
                     if (!vars.get(r.group(2)).contains(r.group(2))) {
-                        contents_replacer = contents_replacer.replace(r.group(1), vars.get(r.group(2)));
-                        r = INL_VAR_REGEX.matcher(contents_replacer);
+                        contentsReplacer = contentsReplacer.replace(r.group(1), vars.get(r.group(2)));
+                        r = INL_VAR_REGEX.matcher(contentsReplacer);
                         leastOne = true;
                     }
                 }
                 while (r.find()) {
                     if (vars.containsKey(r.group(2))) {
                         if (!vars.get(r.group(2)).contains(r.group(2))) {
-                            contents_replacer = contents_replacer.replace(r.group(1), vars.get(r.group(2)));
-                            r = INL_VAR_REGEX.matcher(contents_replacer);
+                            contentsReplacer = contentsReplacer.replace(r.group(1), vars.get(r.group(2)));
+                            r = INL_VAR_REGEX.matcher(contentsReplacer);
                             leastOne = true;
                         }
                     }
@@ -193,10 +198,10 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 if (!leastOne) {
                     break;
                 }
-                r = INL_VAR_REGEX.matcher(contents_replacer);
+                r = INL_VAR_REGEX.matcher(contentsReplacer);
             }
-            String contents_replaced = contents_replacer.toString();
-            final Matcher m = PROJECT.matcher(contents_replaced);
+            final String contentsReplaced = contentsReplacer;
+            final Matcher m = PROJECT.matcher(contentsReplaced);
             int count = 0;
             while (m.find()) {
                 count++;
@@ -214,7 +219,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 dependency.addEvidence(EvidenceType.VENDOR, "CmakeAnalyzer", "hint", "gnu", Confidence.MEDIUM);
             }
             LOGGER.debug("Found {} matches.", count);
-            final Matcher mVersion = PROJECT_VERSION.matcher(contents_replaced);
+            final Matcher mVersion = PROJECT_VERSION.matcher(contentsReplaced);
             while (mVersion.find()) {
                 LOGGER.debug(String.format(
                         "Found set version command match with %d groups: %s",
@@ -222,13 +227,13 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 final String group = mVersion.group(1);
                 LOGGER.debug("Group 1: {}", group);
                 dependency.addEvidence(EvidenceType.VERSION, name, "VERSION", group, Confidence.HIGH);
-                DependencyVersion vers = DependencyVersionUtil.parseVersion(group, true);
+                final DependencyVersion vers = DependencyVersionUtil.parseVersion(group, true);
                 if (vers != null) {
                     dependency.setVersion(vers.toString());
                 }
             }
 
-            analyzeSetVersionCommand(dependency, engine, contents_replaced, vars);
+            analyzeSetVersionCommand(dependency, engine, contentsReplaced);
         }
     }
 
@@ -238,6 +243,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * @param dependency the dependency being analyzed
      * @param engine the dependency-check engine
      * @param contents the version information
+     * @param vars map of variable replacement tokens
      */
     private void collectDefinedVariables(Dependency dependency, Engine engine, String contents,
             HashMap<String, String> vars) {
@@ -247,7 +253,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
             count++;
             LOGGER.debug("Found set variable command match with {} groups: {}",
                     m.groupCount(), m.group(0));
-            String name = m.group(1);
+            final String name = m.group(1);
             final String value = m.group(2);
             LOGGER.debug("Group 1: {}", name);
             LOGGER.debug("Group 2: {}", value);
@@ -265,8 +271,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * @param engine the dependency-check engine
      * @param contents the version information
      */
-    private void analyzeSetVersionCommand(Dependency dependency, Engine engine, String contents,
-            HashMap<String, String> vars) {
+    private void analyzeSetVersionCommand(Dependency dependency, Engine engine, String contents) {
         Dependency currentDep = dependency;
 
         final Matcher m = SET_VERSION.matcher(contents);
@@ -321,7 +326,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 currentDep.setDisplayFileName(product);
             }
             if (StringUtils.isEmpty(currentDep.getVersion())) {
-                DependencyVersion vers = DependencyVersionUtil.parseVersion(version, true);
+                final DependencyVersion vers = DependencyVersionUtil.parseVersion(version, true);
                 if (vers != null) {
                     currentDep.setVersion(vers.toString());
                 }

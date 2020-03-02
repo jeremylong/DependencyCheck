@@ -202,6 +202,8 @@ public class PEAnalyzer extends AbstractFileTypeAnalyzer {
                             dependency.addEvidence(EvidenceType.PRODUCT, "PE Header", "ProductName", value, Confidence.HIGHEST);
                             determineDependencyName(dependency, value);
                             break;
+                        default:
+                            LOGGER.debug("PE Analyzer found `" + key + "` with a value:" + value);
                     }
                     if (fVersion != null && pVersion != null) {
                         final int max = fVersion.length() > pVersion.length() ? pVersion.length() : fVersion.length();
@@ -251,7 +253,8 @@ public class PEAnalyzer extends AbstractFileTypeAnalyzer {
                     }
                     if (dependency.getName() != null && dependency.getVersion() != null) {
                         try {
-                            dependency.addSoftwareIdentifier(new PurlIdentifier("generic", dependency.getName(), dependency.getVersion(), Confidence.MEDIUM));
+                            dependency.addSoftwareIdentifier(new PurlIdentifier("generic", dependency.getName(),
+                                    dependency.getVersion(), Confidence.MEDIUM));
                         } catch (MalformedPackageURLException ex) {
                             LOGGER.debug("Unable to create Package URL Identifier for " + dependency.getName(), ex);
                             dependency.addSoftwareIdentifier(new GenericIdentifier(
@@ -259,7 +262,8 @@ public class PEAnalyzer extends AbstractFileTypeAnalyzer {
                                     Confidence.MEDIUM));
                         }
                     }
-                    if (dependency.getEcosystem() == null) {//this could be an assembly
+                    if (dependency.getEcosystem() == null) {
+                        //this could be an assembly
                         dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
                     }
                 }
