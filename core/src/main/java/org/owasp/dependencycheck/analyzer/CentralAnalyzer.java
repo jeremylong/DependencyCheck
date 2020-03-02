@@ -283,7 +283,8 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                                     cache.put(ma.getPomUrl(), model);
                                 }
                             }
-                            JarAnalyzer.setPomEvidence(dependency, model, null, true);
+                            boolean isMainPom = mas.size() == 1 || dependency.getActualFilePath().contains(ma.getVersion());
+                            JarAnalyzer.setPomEvidence(dependency, model, null, isMainPom);
                         } else {
                             LOGGER.warn("Unable to download pom.xml for {} from Central; "
                                     + "this could result in undetected CPE/CVEs.", dependency.getFileName());
