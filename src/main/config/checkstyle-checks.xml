@@ -4,7 +4,7 @@
           "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
 
 <module name="Checker">
-  <!--
+    <!--
       If you set the basedir property below, then all reported file
       names will be relative to the specified directory. See
       http://checkstyle.sourceforge.net/5.x/config.html#Checker
@@ -217,7 +217,9 @@
             <property name="max" value="2"/>
         </module>
         <!--module name="ExplicitInitialization"/-->
-        <module name="AnnotationUseStyle"/>
+        <module name="AnnotationUseStyle">
+            <property name="elementStyle" value="ignore"/>
+        </module>
         <module name="MissingDeprecated"/>
         <module name="MissingOverride">
             <property name="javaFiveCompatibility" value="true"/>

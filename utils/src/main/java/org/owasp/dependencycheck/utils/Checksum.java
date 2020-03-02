@@ -68,12 +68,12 @@ public final class Checksum {
     /**
      * Cached file checksums for each supported algorithm.
      */
-    private static final Map<String, Map<File, byte[]>> checksumCaches = new HashMap<>(3);
+    private static final Map<String, Map<File, byte[]>> CHECKSUM_CACHES = new HashMap<>(3);
 
     static {
-        checksumCaches.put(MD5, new ConcurrentHashMap<>());
-        checksumCaches.put(SHA256, new ConcurrentHashMap<>());
-        checksumCaches.put(SHA1, new ConcurrentHashMap<>());
+        CHECKSUM_CACHES.put(MD5, new ConcurrentHashMap<>());
+        CHECKSUM_CACHES.put(SHA256, new ConcurrentHashMap<>());
+        CHECKSUM_CACHES.put(SHA1, new ConcurrentHashMap<>());
     }
 
     /**
@@ -91,11 +91,11 @@ public final class Checksum {
      * @param file the file to calculate the checksum for
      * @return the checksum
      * @throws java.io.IOException when the file does not exist
-     * @throws java.security.NoSuchAlgorithmException when an algorithm is specified that does
-     * not exist
+     * @throws java.security.NoSuchAlgorithmException when an algorithm is
+     * specified that does not exist
      */
     public static byte[] getChecksum(String algorithm, File file) throws NoSuchAlgorithmException, IOException {
-        Map<File, byte[]> checksumCache = checksumCaches.get(algorithm.toUpperCase());
+        final Map<File, byte[]> checksumCache = CHECKSUM_CACHES.get(algorithm.toUpperCase());
         if (checksumCache == null) {
             throw new NoSuchAlgorithmException(algorithm);
         }
@@ -115,7 +115,7 @@ public final class Checksum {
                 default:
                     throw new NoSuchAlgorithmException(algorithm);
             }
-            HashCode hash = Files.asByteSource(file).hash(hashFunction);
+            final HashCode hash = Files.asByteSource(file).hash(hashFunction);
             checksum = hash.asBytes();
             checksumCache.put(file, checksum);
         }
@@ -128,7 +128,8 @@ public final class Checksum {
      * @param file the file to generate the MD5 checksum
      * @return the hex representation of the MD5 hash
      * @throws java.io.IOException when the file passed in does not exist
-     * @throws java.security.NoSuchAlgorithmException when the MD5 algorithm is not available
+     * @throws java.security.NoSuchAlgorithmException when the MD5 algorithm is
+     * not available
      */
     public static String getMD5Checksum(File file) throws IOException, NoSuchAlgorithmException {
         final byte[] b = getChecksum(MD5, file);
@@ -141,7 +142,8 @@ public final class Checksum {
      * @param file the file to generate the MD5 checksum
      * @return the hex representation of the SHA1 hash
      * @throws java.io.IOException when the file passed in does not exist
-     * @throws java.security.NoSuchAlgorithmException when the SHA1 algorithm is not available
+     * @throws java.security.NoSuchAlgorithmException when the SHA1 algorithm is
+     * not available
      */
     public static String getSHA1Checksum(File file) throws IOException, NoSuchAlgorithmException {
         final byte[] b = getChecksum(SHA1, file);
@@ -154,7 +156,8 @@ public final class Checksum {
      * @param file the file to generate the MD5 checksum
      * @return the hex representation of the SHA1 hash
      * @throws java.io.IOException when the file passed in does not exist
-     * @throws java.security.NoSuchAlgorithmException when the SHA1 algorithm is not available
+     * @throws java.security.NoSuchAlgorithmException when the SHA1 algorithm is
+     * not available
      */
     public static String getSHA256Checksum(File file) throws IOException, NoSuchAlgorithmException {
         final byte[] b = getChecksum(SHA256, file);
