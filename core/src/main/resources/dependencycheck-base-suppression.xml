@@ -2,15 +2,72 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
-       This suppresses false positives for Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll.
-       ]]></notes>
+        FP per #2395
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/be\.sysa\.log\-sanitizer/log\-sanitizer\-logback@.*$</packageUrl>
+        <cpe>cpe:/a:logback:logback</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2433
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.itextpdf/typography@.*$</packageUrl>
+        <cpe>cpe:/a:itextpdf:itext</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2433
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.itextpdf/itext\-licensekey\-volume@.*$</packageUrl>
+        <cpe>cpe:/a:itextpdf:itext</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2453
+        TODO - there are likely several other testcontainer suppressions that should be added
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.testcontainers/postgresql@.*$</packageUrl>
+        <cpe>cpe:/a:postgresql:postgresql</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2464  Java implementation of a C# lib - CPE is for the C# version
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.msgpack/msgpack@.*$</packageUrl>
+        <cpe>cpe:/a:messagepack:messagepack</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2489
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.dropwizard\.logback/logback\-throttling\-appender@.*$</packageUrl>
+        <cpe>cpe:/a:logback:logback</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2498
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring\-boot\-loader\-tools@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:tools</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2499
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlinx/kotlinx\-coroutines\-core@.*$</packageUrl>
+        <cpe>cpe:/a:jetbrains:kotlin</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        This suppresses false positives for Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll.
+        ]]></notes>
         <filePath regex="true">.*Microsoft\.VisualStudio\.QualityTools\.UnitTestFramework*\.dll</filePath>
         <cve>CVE-2014-3802</cve>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-       This suppresses false positives for EntityFramework.SqlServer.dll.
-       ]]></notes>
+        This suppresses false positives for EntityFramework.SqlServer.dll.
+        ]]></notes>
         <filePath regex="true">.*EntityFramework\.SqlServer*\.dll</filePath>
         <cpe>cpe:/a:microsoft:server:6.0.0.0</cpe>
         <cpe>cpe:/a:microsoft:sql_server:6.0</cpe>
@@ -638,13 +695,14 @@
         <packageUrl regex="true">^pkg:maven/com\.hazelcast/hazelcast\-kubernetes@.*$</packageUrl>
         <cpe>cpe:/a:hazelcast:hazelcast</cpe>
     </suppress>
-    <suppress base="true">
+    <!--suppress base="true">
         <notes><![CDATA[
+        Removed as this is too generic and is masking vulnerabilities for the activemq-client
         Client library reported as the server (#2334)
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.activemq/activemq\-client@.*$</packageUrl>
         <cpe>cpe:/a:apache:activemq</cpe>
-    </suppress>
+    </suppress-->
     <suppress base="true">
         <notes><![CDATA[
         Client library reported as the server (#2334)
