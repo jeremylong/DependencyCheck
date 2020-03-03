@@ -141,7 +141,7 @@ analyzers    | golangDepEnabled      | Sets whether or not the [experimental](..
 analyzers    | golangModEnabled      | Sets whether or not the [experimental](../analyzers/index.html) Goland Module Analyzer should be used; requires `go` to be installed. | true
 analyzers    | pathToGo              | The path to `go`.                                                                                                 | &nbsp;
 
-#### Additional Analyzer Configuration
+#### Additional Configuration
 
 Config Group | Property              | Description                                                                                                       | Default Value
 -------------|-----------------------|-------------------------------------------------------------------------------------------------------------------|------------------
@@ -163,6 +163,8 @@ retirejs     | filters               | Configures the list of regular expessions
 ossIndex     | enabled               | Sets whether Sonatype's [OSS Index Analyzer](../analyzers/oss-index-analyzer.html) will be used. This analyzer requires an internet connection.                                                                  | true
 ossIndex     | username              | The optional user name to connect to Sonatype's OSS Index.                                                        | &nbsp;
 ossIndex     | password              | The optional passwod or API token to connect to Sonatype's OSS Index,                                             | &nbsp;
+slack        | enabled               | Whether or not slack notifications are enabled.                                                                   | false
+slack        | webhookUrl            | The custom incoming webhook URL to receive notifications.                                                         | &nbsp;
 
 #### Example
 ```groovy
