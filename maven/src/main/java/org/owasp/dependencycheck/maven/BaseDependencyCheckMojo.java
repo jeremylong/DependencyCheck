@@ -1089,6 +1089,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             } catch (ArtifactResolverException ex) {
                 getLog().debug(String.format("Aggregate : %s", aggregate));
                 boolean addException = true;
+                //CSOFF: EmptyBlock
                 if (!aggregate) {
                     // do nothing, exception is to be reported
                 } else if (addReactorDependency(engine,
@@ -1097,6 +1098,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                             new DefaultArtifactHandler()))) {
                     addException = false;
                 }
+                //CSON: EmptyBlock
                 if (addException) {
                     if (exCol == null) {
                         exCol = new ExceptionCollection();
@@ -1176,12 +1178,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     } catch (ArtifactResolverException ex) {
                         getLog().debug(String.format("Aggregate : %s", aggregate));
                         boolean addException = true;
+                        //CSOFF: EmptyBlock
                         if (!aggregate) {
                             // do nothing - the exception is to be reported
                         } else if (addReactorDependency(engine, dependencyNode.getArtifact())) {
                             // successfully resolved as a reactor dependency - swallow the exception
                             addException = false;
                         }
+                        //CSON: //CSOFF: EmptyBlock
                         if (addException) {
                             if (exCol == null) {
                                 exCol = new ExceptionCollection();
