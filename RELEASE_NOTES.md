@@ -2,6 +2,14 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 5.3.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v5.2.4) (2020-03-10)
+
+### Changes
+
+- Added an experimental PE Analyzer that reads the PE headersof DLL and EXE files; see [#2448](https://github.com/jeremylong/DependencyCheck/pull/2448) and [#2446](https://github.com/jeremylong/DependencyCheck/pull/2446).
+- Lots of bug fixes and updates to false positives and false negatives
+- Full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/12?closed=1).
+
 ## [Version 5.3.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v5.2.4) (2020-01-15)
 
 ### Changes
