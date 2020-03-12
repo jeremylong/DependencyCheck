@@ -133,7 +133,7 @@ Copyright (c) 2012 - Jeremy Long
         <reporting.checkstyle-plugin.version>3.1.1</reporting.checkstyle-plugin.version>
         <doxia-module-markdown.version>1.9.1</doxia-module-markdown.version>
         <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
-        <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
+        <maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
         <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
         <!-- upgrading beyond 2.5 breaks maven site-->
         <maven-jxr-plugin.version>2.5</maven-jxr-plugin.version>
@@ -153,7 +153,7 @@ Copyright (c) 2012 - Jeremy Long
         <commons-lang3.version>3.9</commons-lang3.version>
         <commons-text.version>1.8</commons-text.version>
         <commons-jcs-core.version>2.2.1</commons-jcs-core.version>
-        <com.sun.mail.mailapi.version>1.6.4</com.sun.mail.mailapi.version>
+        <com.sun.mail.mailapi.version>1.6.5</com.sun.mail.mailapi.version>
         <junit.version>4.13</junit.version>
         <hamcrest-core.version>2.2</hamcrest-core.version>
         <jmockit.version>1.49</jmockit.version>
@@ -296,7 +296,7 @@ Copyright (c) 2012 - Jeremy Long
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.8.2</version>
+                    <version>3.9.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
