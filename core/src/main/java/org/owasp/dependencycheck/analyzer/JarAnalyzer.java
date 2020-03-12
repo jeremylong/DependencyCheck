@@ -181,10 +181,13 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
     /**
+     * The set of jar files to exclude from analysis.
+     */
+    private static final List<String> EXCLUDE_JARS = Arrays.asList("-doc.jar", "-src.jar", "-javadoc.jar", "-sources.jar");
+    /**
      * The set of file extensions supported by this analyzer.
      */
     private static final String[] EXTENSIONS = {"jar", "war", "aar"};
-
     /**
      * The file filter used to determine which files this analyzer supports.
      */
@@ -240,6 +243,25 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
+    }
+
+    @Override
+    public boolean accept(File pathname) {
+        boolean accepted = super.accept(pathname);
+        return accepted && !isExcludedJar(pathname);
+    }
+
+    /**
+     * Returns true if the JAR is a `*-sources.jar` or `*-javadoc.jar`;
+     * otherwise false.
+     *
+     * @param path the path to the dependency
+     * @return true if the JAR is a `*-sources.jar` or `*-javadoc.jar`;
+     * otherwise false.
+     */
+    private boolean isExcludedJar(File path) {
+        final String fileName = path.getName().toLowerCase();
+        return EXCLUDE_JARS.stream().anyMatch(exclude -> fileName.endsWith(exclude));
     }
     //</editor-fold>
 
