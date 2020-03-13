@@ -77,7 +77,7 @@ public class GoModJsonParser {
         LOGGER.debug("Beginning go.mod processing");
         try {
             final JsonObject composer = jsonReader.readObject();
-            if (composer.containsKey("Require")) {
+            if (composer.containsKey("Require") && !composer.isNull("Require")) {
                 LOGGER.debug("Found modules");
                 final JsonArray modules = composer.getJsonArray("Require");
                 for (JsonObject module : modules.getValuesAs(JsonObject.class)) {
