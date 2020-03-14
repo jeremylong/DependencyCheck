@@ -847,9 +847,10 @@ public final class CveDB implements AutoCloseable {
      *
      * @param cve the vulnerability from the NVD CVE Data Feed to add to the
      * database
+     * @param the ecosystem the CVE belongs to
      * @throws DatabaseException is thrown if the database
      */
-    public void updateVulnerability(DefCveItem cve) {
+    public void updateVulnerability(DefCveItem cve, String ecosystem) {
         clearCache();
         final String cveId = cve.getCve().getCVEDataMeta().getId();
         try {
@@ -873,13 +874,12 @@ public final class CveDB implements AutoCloseable {
 
             updateVulnerabilityInsertCwe(vulnerabilityId, cve);
 
-            final String baseEcosystem = cveItemConverter.extractBaseEcosystem(cve, description);
             updateVulnerabilityInsertReferences(vulnerabilityId, cve);
 
             //parse the CPEs outside of a synchronized method
             final List<VulnerableSoftware> software = parseCpes(cve);
 
-            updateVulnerabilityInsertSoftware(vulnerabilityId, cveId, software, baseEcosystem);
+            updateVulnerabilityInsertSoftware(vulnerabilityId, cveId, software, ecosystem);
 
         } catch (SQLException ex) {
             final String msg = String.format("Error updating '%s'", cveId);

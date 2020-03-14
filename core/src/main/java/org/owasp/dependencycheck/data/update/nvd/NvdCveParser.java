@@ -34,6 +34,7 @@ import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
+import org.owasp.dependencycheck.data.nvd.ecosystem.CveEcosystemMapper;
 import org.owasp.dependencycheck.data.nvd.json.CpeMatchStreamCollector;
 import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
@@ -85,6 +86,8 @@ public final class NvdCveParser {
                 JsonReader reader = new JsonReader(isr)) {
             final Gson gson = new GsonBuilder().create();
 
+            CveEcosystemMapper mapper = new CveEcosystemMapper();
+            
             reader.beginObject();
 
             while (reader.hasNext() && !JsonToken.BEGIN_ARRAY.equals(reader.peek())) {
@@ -96,7 +99,7 @@ public final class NvdCveParser {
 
                 //cve.getCve().getCVEDataMeta().getSTATE();
                 if (testCveCpeStartWithFilter(cve)) {
-                    cveDB.updateVulnerability(cve);
+                    cveDB.updateVulnerability(cve, mapper.getEcosystem(cve));
                 }
             }
         } catch (FileNotFoundException ex) {
