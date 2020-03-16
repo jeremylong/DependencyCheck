@@ -262,6 +262,10 @@ public class Check extends Update {
      */
     private Boolean autoconfAnalyzerEnabled;
     /**
+     * Whether the pip analyzer should be enabled.
+     */
+    private Boolean pipAnalyzerEnabled;
+    /**
      * Sets the path for the bundle-audit binary.
      */
     private String bundleAuditPath;
@@ -779,6 +783,24 @@ public class Check extends Update {
      */
     public void setAutoconfAnalyzerEnabled(Boolean autoconfAnalyzerEnabled) {
         this.autoconfAnalyzerEnabled = autoconfAnalyzerEnabled;
+    }
+
+    /**
+     * Get the value of pipAnalyzerEnabled.
+     *
+     * @return the value of pipAnalyzerEnabled
+     */
+    public Boolean isPipAnalyzerEnabled() {
+        return pipAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of pipAnalyzerEnabled.
+     *
+     * @param pipAnalyzerEnabled new value of pipAnalyzerEnabled
+     */
+    public void setPipAnalyzerEnabled(Boolean pipAnalyzerEnabled) {
+        this.pipAnalyzerEnabled = pipAnalyzerEnabled;
     }
 
     /**
@@ -1699,6 +1721,7 @@ public class Check extends Update {
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, bundleAuditPath);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_WORKING_DIRECTORY, bundleAuditWorkingDirectory);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, autoconfAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_PIP_ENABLED, pipAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, nodeAuditAnalyzerEnabled);
