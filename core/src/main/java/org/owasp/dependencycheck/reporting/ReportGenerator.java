@@ -38,6 +38,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
@@ -244,6 +245,9 @@ public class ReportGenerator {
 
         final VelocityContext ctxt = new VelocityContext();
         ctxt.put("applicationName", applicationName);
+        Collections.sort(dependencies, (d1, d2) -> {
+            return d1.getDisplayFileName().compareTo(d2.getDisplayFileName());
+        });
         ctxt.put("dependencies", dependencies);
         ctxt.put("analyzers", analyzers);
         ctxt.put("properties", properties);
