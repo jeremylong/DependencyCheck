@@ -400,6 +400,7 @@ public final class CliParser {
                 .addOption(newOption(ARGUMENT.DISABLE_RUBYGEMS, "Disable the Ruby Gemspec Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_BUNDLE_AUDIT, "Disable the Ruby Bundler-Audit Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_AUTOCONF, "Disable the Autoconf Analyzer."))
+                .addOption(newOption(ARGUMENT.DISABLE_PIP, "Disable the pip Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_COMPOSER, "Disable the PHP Composer Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_GOLANG_MOD, "Disable the Golang Mod Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_OPENSSL, "Disable the OpenSSL Analyzer."))
@@ -1077,6 +1078,10 @@ public final class CliParser {
          * Disables the Autoconf Analyzer.
          */
         public static final String DISABLE_AUTOCONF = "disableAutoconf";
+        /**
+         * Disables the pip Analyzer.
+         */
+        public static final String DISABLE_PIP = "disablePip";
         /**
          * Disables the Cmake Analyzer.
          */
