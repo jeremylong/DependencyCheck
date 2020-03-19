@@ -168,6 +168,36 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 }
                 return false;
             }
+
+        $( document ).ready(function() {
+          $( "#modal-suppress-change-to-packageUrl" ).bind( "click", function( event ) {
+            suppressSwitchTo('packageUrl')
+          });
+          $( "#modal-suppress-change-to-sha1" ).bind( "click", function( event ) {
+            suppressSwitchTo('sha1')
+          });
+          $( "#scanInformationToggle" ).bind( "click", function( event ) {
+            return toggleDisplay(event.target, '.scaninfo', 'show all', 'show less');
+          });
+          $( "#vulnerabilityDisplayToggle" ).bind( "click", function( event ) {
+            return toggleDisplay(event.target, '.notvulnerable', 'Showing Vulnerable Dependencies (click to show all)', 'Showing All Dependencies (click to show less)');
+          });
+          $( ".versionToggle" ).bind( "click", function( event ) {
+            var lnk = event.target;
+            return toggleDisplay(this,lnk.getAttribute('data-toggle'), 'show all', 'show less');
+          });          
+
+          $( ".copybutton" ).bind( "click", function( event ) {
+            var btn = event.target;
+            copyText(btn.getAttribute('data-display-name'),
+                     btn.getAttribute('data-sha1'),
+                     btn.getAttribute('data-pkgurl'),
+                     btn.getAttribute('data-type-to-suppress'),
+                     btn.getAttribute('data-id-to-suppress'));
+          });
+        });
+
+
         </script>
         <style type="text/css">
             #modal-background {
@@ -578,8 +608,8 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         <div id="modal-background"></div>
         <div id="modal-content">
             <div>Press CTR-C to copy XML&nbsp;<a href="http://jeremylong.github.io/DependencyCheck/general/suppression.html" class="infolink" target="_blank" title="Help with suppressing false positives">[help]</a></div>
-                <button onclick="suppressSwitchTo('packageUrl')" id="modal-suppress-change-to-packageUrl" class="modal-button suppresstype" title="Supress by Maven Group Artifact Version">Suppress By GAV</button>
-                <button onclick="suppressSwitchTo('sha1')" id="modal-suppress-change-to-sha1" class="modal-button suppresstype" title="Supress by SHA1 hash">Suppress By SHA1</button><br/>
+                <button id="modal-suppress-change-to-packageUrl" class="modal-button suppresstype" title="Supress by Maven Group Artifact Version">Suppress By GAV</button>
+                <button id="modal-suppress-change-to-sha1" class="modal-button suppresstype" title="Supress by SHA1 hash">Suppress By SHA1</button><br/>
                 <input type="hidden" id="suppress-name"/>
                 <input type="hidden" id="suppress-type"/><input type="hidden" id="suppress-val"/>
                 <input type="hidden" id="suppress-sha1"/><input type="hidden" id="suppress-packageUrl"/>
@@ -622,7 +652,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                         #set($vulnSuppressedCount=$vulnSuppressedCount+$dependency.getSuppressedVulnerabilities().size())
                     #end
                 #end
-                Scan Information (<a href="#" title="Click to toggle display" onclick="return toggleDisplay(this, '.scaninfo', 'show all', 'show less');  return false;">show all</a>):<br/>
+                Scan Information (<a href="#" title="Click to toggle display" id="scanInformationToggle">show all</a>):<br/>
                     <ul class="indent">
                         <li><i>dependency-check version</i>: $version</li>
                         <li><i>Report Generated On</i>: $scanDate</li>
@@ -665,7 +695,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
         <br/>
 #end
 <h2>Summary</h2>
-                Display:&nbsp;<a href="#" title="Click to toggle display" onclick="return toggleDisplay(this, '.notvulnerable', 'Showing Vulnerable Dependencies (click to show all)', 'Showing All Dependencies (click to show less)'); return false;">Showing Vulnerable Dependencies (click to show all)</a><br/><br/>
+                Display:&nbsp;<a href="#" title="Click to toggle display" id="vulnerabilityDisplayToggle">Showing Vulnerable Dependencies (click to show all)</a><br/><br/>
                 #set($lnkcnt=0)
                 <table id="summaryTable" class="lined">
                     <thead><tr style="text-align:left">
@@ -746,7 +776,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                 #if($vuln.unscoredSeverity.equals("0.0"))
                                     #set($cveSeverity="Unknown")
                                 #else
-                                    #set($cveSeverity=$enc.json($vuln.unscoredSeverity))
+                                    #set($cveSeverity=$enc.html($vuln.unscoredSeverity))
                                 #end
                             #end
                         #end
@@ -878,7 +908,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                 #if ($id.confidence)
                                     &nbsp;&nbsp;(<i>Confidence</i>:$WordUtils.capitalizeFully($id.confidence.toString()))
                                 #end
-                                &nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for the identified vulnerability identifier" onclick="copyText('$enc.javascript($dependency.DisplayFileName)', '$enc.javascript($dependency.Sha1sum)', '#if($supressPkgUrl)$enc.javascript($supressPkgUrl)#end', 'cpe', '$enc.javascript($rpt.identifierToSuppressionId($id))')">suppress</button>
+                                &nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for the identified vulnerability identifier" data-display-name="$enc.html($dependency.DisplayFileName)" data-sha1="$enc.html($dependency.Sha1sum)" data-pkgurl="#if($supressPkgUrl)$enc.html($supressPkgUrl)#end" data-type-to-suppress="cpe" data-id-to-suppress="$enc.html($rpt.identifierToSuppressionId($id))">suppress</button>
                                 #if ($id.notes)
                                     <ul><li>Notes: $enc.html($id.notes)</li></ul>
                                 #end
@@ -894,11 +924,11 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                         #foreach($vuln in $dependency.getVulnerabilities(true))
                             #set($vsctr=$vsctr+1)
                             #if($vuln.getSource().name().equals("NVD"))
-                                <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CCE for this file" onclick="copyText('$enc.javascript($dependency.DisplayFileName)', '$enc.javascript($dependency.Sha1sum)', '#if($supressPkgUrl)$enc.javascript($supressPkgUrl)#end', 'cve', '$enc.javascript($vuln.name)')">suppress</button></p>
+                                <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CVE for this file" data-display-name="$enc.html($dependency.DisplayFileName)" data-sha1="$enc.html($dependency.Sha1sum)" data-pkgurl="#if($supressPkgUrl)$enc.html($supressPkgUrl)#end" data-type-to-suppress="cve" data-id-to-suppress="$enc.html($vuln.name)">suppress</button></p>
                             #elseif($vuln.getSource().name().equals("NPM"))
-                                <p><b><a target="_blank" href="https://www.npmjs.com/advisories/$enc.url($vuln.name)">NPM-$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CCE for this file" onclick="copyText('$enc.javascript($dependency.DisplayFileName)', '$enc.javascript($dependency.Sha1sum)', '#if($supressPkgUrl)$enc.javascript($supressPkgUrl)#end', 'vulnerabilityName', '$enc.javascript($vuln.name)')">suppress</button></p>
+                                <p><b><a target="_blank" href="https://www.npmjs.com/advisories/$enc.url($vuln.name)">NPM-$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this vulnerability for this file" data-display-name="$enc.html($dependency.DisplayFileName)" data-sha1="$enc.html($dependency.Sha1sum)" data-pkgurl="#if($supressPkgUrl)$enc.html($supressPkgUrl)#end" data-type-to-suppress="vulnerabilityName" data-id-to-suppress="$enc.html($vuln.name)">suppress</button></p>
                             #else
-                                <p><span class="underline"><b>$enc.html($vuln.name)</b>&nbsp;($vuln.getSource().name())</span>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CCE for this file" onclick="copyText('$enc.javascript($dependency.DisplayFileName)', '$enc.javascript($dependency.Sha1sum)', '#if($supressPkgUrl)$enc.javascript($supressPkgUrl)#end', 'vulnerabilityName', '$enc.javascript($vuln.name)')">suppress</button></p>
+                                <p><span class="underline"><b>$enc.html($vuln.name)</b>&nbsp;($vuln.getSource().name())</span>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this vulnerability for this file" data-display-name="$enc.html($dependency.DisplayFileName)" data-sha1="$enc.html($dependency.Sha1sum)" data-pkgurl="#if($supressPkgUrl)$enc.html($supressPkgUrl)#end" data-type-to-suppress="vulnerabilityName" data-id-to-suppress="$enc.html($vuln.name)">suppress</button></p>
                             #end
                             <p>#if($vuln.description)
                             <pre>$enc.html($vuln.description)</pre>
@@ -941,7 +971,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                         <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedVulnerableSoftware.toCpe22Uri())">$enc.html($vuln.matchedVulnerableSoftware.toString())</a></li>
                                     </ul></p>
                                 #else
-                                    <p>Vulnerable Software &amp; Versions:&nbsp;(<a href="#" onclick="return toggleDisplay(this,'.vs$vsctr', 'show all', 'show less');">show all</a>)<ul>
+                                    <p>Vulnerable Software &amp; Versions:&nbsp;(<a href="#" class="versionToggle" data-toggle=".vs$vsctr">show all</a>)<ul>
                                         <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedVulnerableSoftware.toCpe22Uri())">$enc.html($vuln.matchedVulnerableSoftware.toString())</a></li>
                                         <li class="vs$vsctr">...</li>
                                     #foreach($vs in $vuln.getVulnerableSoftware(true))
@@ -1109,7 +1139,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                                 <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedVulnerableSoftware.toCpe22Uri())">$enc.html($vuln.matchedVulnerableSoftware.toString())</a></li>
                                             </ul></p>
                                         #else
-                                            <p>Vulnerable Software &amp; Versions:&nbsp;(<a href="#" onclick="return toggleDisplay(this,'.vs$vsctr', 'show all', 'show less');">show all</a>)<ul>
+                                            <p>Vulnerable Software &amp; Versions:&nbsp;(<a href="#" class="versionToggle" data-toggle=".vs$vsctr">show all</a>)<ul>
                                                 <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedVulnerableSoftware.toCpe22Uri())">$enc.html($vuln.matchedVulnerableSoftware.toString())</a></li>
                                                 <li class="vs$vsctr">...</li>
                                             #foreach($vs in $vuln.getVulnerableSoftware(true))
