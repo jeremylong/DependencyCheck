@@ -397,6 +397,7 @@ public final class CliParser {
                 .addOption(newOption(ARGUMENT.DISABLE_PY_DIST, "Disable the Python Distribution Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_CMAKE, "Disable the Cmake Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_PY_PKG, "Disable the Python Package Analyzer."))
+                .addOption(newOption(ARGUMENT.DISABLE_MIX_AUDIT, "Disable the Elixir mix_audit Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_RUBYGEMS, "Disable the Ruby Gemspec Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_BUNDLE_AUDIT, "Disable the Ruby Bundler-Audit Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_AUTOCONF, "Disable the Autoconf Analyzer."))
@@ -1055,6 +1056,10 @@ public final class CliParser {
          */
         public static final String DISABLE_PY_PKG = "disablePyPkg";
         /**
+         * Disables the Elixir mix audit Analyzer.
+         */
+        public static final String DISABLE_MIX_AUDIT = "disableMixAudit";
+        /**
          * Disables the Golang Dependency Analyzer.
          */
         public static final String DISABLE_GO_DEP = "disableGolangDep";
@@ -1234,6 +1239,11 @@ public final class CliParser {
          * rbenv
          */
         public static final String PATH_TO_BUNDLE_AUDIT_WORKING_DIRECTORY = "bundleAuditWorkingDirectory";
+        /**
+         * The CLI argument name for setting the path to mix_audit for Elixir
+         * analysis.
+         */
+        public static final String PATH_TO_MIX_AUDIT = "mixAudit";
         /**
          * The CLI argument to enable the experimental analyzers.
          */

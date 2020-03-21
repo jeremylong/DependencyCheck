@@ -54,6 +54,7 @@ public class EngineIT extends BaseDBTestCase {
         getSettings().setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, false);
         getSettings().setBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, true);
         getSettings().setBoolean(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, false);
+        getSettings().setBoolean(Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED, false);
         ExceptionCollection exceptions = null;
         try (Engine instance = new Engine(getSettings())) {
             instance.scan(testClasses);
@@ -63,6 +64,7 @@ public class EngineIT extends BaseDBTestCase {
             } catch (ExceptionCollection ex) {
                 Set<String> allowedMessages = new HashSet<>();
                 allowedMessages.add("bundle-audit");
+                allowedMessages.add("mix_audit");
                 allowedMessages.add("AssemblyAnalyzer");
                 allowedMessages.add("Failed to request component-reports");
                 allowedMessages.add("ailed to read results from the NPM Audit API");

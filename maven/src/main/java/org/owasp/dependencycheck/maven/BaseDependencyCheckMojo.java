@@ -552,6 +552,19 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private String ossIndexServerId;
 
     /**
+     * Whether or not the Elixir Mix Audit Analyzer is enabled.
+     */
+    @Parameter(property = "mixAuditAnalyzerEnabled")
+    private Boolean mixAuditAnalyzerEnabled;
+
+    /**
+     * Sets the path for the mix_audit binary.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "mixAuditPath")
+    private String mixAuditPath;
+
+    /**
      * Whether or not the Ruby Bundle Audit Analyzer is enabled.
      */
     @Parameter(property = "bundleAuditAnalyzerEnabled")
@@ -1818,6 +1831,8 @@ final                        Dependency d = new Dependency(artifactFile.getAbsol
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, retireJsUrl);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, retireJsForceUpdate);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED, mixAuditAnalyzerEnabled);
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_MIX_AUDIT_PATH, mixAuditPath);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, bundleAuditAnalyzerEnabled);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, bundleAuditPath);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_WORKING_DIRECTORY, bundleAuditWorkingDirectory);

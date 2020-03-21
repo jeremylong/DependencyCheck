@@ -31,6 +31,7 @@ org.owasp.dependencycheck.analyzer.RetireJsAnalyzer
 org.owasp.dependencycheck.analyzer.RubyGemspecAnalyzer
 org.owasp.dependencycheck.analyzer.RubyBundlerAnalyzer
 org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer
+org.owasp.dependencycheck.analyzer.ElixirMixAuditAnalyzer
 org.owasp.dependencycheck.analyzer.ComposerLockAnalyzer
 org.owasp.dependencycheck.analyzer.CocoaPodsAnalyzer
 org.owasp.dependencycheck.analyzer.SwiftPackageManagerAnalyzer

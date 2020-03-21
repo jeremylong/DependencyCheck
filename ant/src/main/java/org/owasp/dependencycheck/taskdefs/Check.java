@@ -115,6 +115,10 @@ public class Check extends Update {
      */
     private Boolean pyDistributionAnalyzerEnabled;
     /**
+     * Whether or not the mix audit analyzer is enabled.
+     */
+    private Boolean mixAuditAnalyzerEnabled;
+    /**
      * Whether or not the central analyzer is enabled.
      */
     private Boolean centralAnalyzerEnabled;
@@ -265,6 +269,10 @@ public class Check extends Update {
      * Whether the pip analyzer should be enabled.
      */
     private Boolean pipAnalyzerEnabled;
+    /**
+     * Sets the path for the mix_audit binary.
+     */
+    private String mixAuditPath;
     /**
      * Sets the path for the bundle-audit binary.
      */
@@ -1141,6 +1149,25 @@ public class Check extends Update {
     }
 
     /**
+     * Get the value of mixAuditAnalyzerEnabled.
+     *
+     * @return the value of mixAuditAnalyzerEnabled
+     */
+    public Boolean getMixAuditAnalyzerEnabled() {
+        return mixAuditAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of mixAuditAnalyzerEnabled.
+     *
+     * @param mixAuditAnalyzerEnabled new value of
+     * mixAuditAnalyzerEnabled
+     */
+    public void setMixAuditAnalyzerEnabled(Boolean mixAuditAnalyzerEnabled) {
+        this.mixAuditAnalyzerEnabled = mixAuditAnalyzerEnabled;
+    }
+
+    /**
      * Get the value of centralAnalyzerEnabled.
      *
      * @return the value of centralAnalyzerEnabled
@@ -1735,7 +1762,8 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED, golangDepEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED, golangModEnabled);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH, pathToGo);
-
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED, mixAuditAnalyzerEnabled);
+        getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_MIX_AUDIT_PATH, mixAuditPath);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUGETCONF_ENABLED, nugetconfAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
