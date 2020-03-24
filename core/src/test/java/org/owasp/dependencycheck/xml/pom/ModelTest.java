@@ -270,15 +270,21 @@ public class ModelTest extends BaseTest {
      */
     @Test
     public void testProcessProperties() {
+
+        String text = "This is a test of '${key}' '${nested}'";
+        Model instance = new Model();
+        instance.setName(text);
+        instance.processProperties(null);
+        String expResults = "This is a test of '${key}' '${nested}'";
+        assertEquals(expResults, instance.getName());
+
         Properties prop = new Properties();
         prop.setProperty("key", "value");
         prop.setProperty("nested", "nested ${key}");
-        String text = "This is a test of '${key}' '${nested}'";
 
-        Model instance = new Model();
         instance.setName(text);
         instance.processProperties(prop);
-        String expResults = "This is a test of 'value' 'nested value'";
+        expResults = "This is a test of 'value' 'nested value'";
         assertEquals(expResults, instance.getName());
     }
 

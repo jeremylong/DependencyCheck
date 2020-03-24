@@ -310,6 +310,9 @@ public class Model implements Serializable {
      * @param properties new value of properties
      */
     public void processProperties(Properties properties) {
+        if (properties==null) {
+            return;
+        }
         this.groupId = interpolateString(this.groupId, properties);
         if (groupId == null && properties.containsKey("groupId")) {
             this.groupId = properties.getProperty("groupId");
