@@ -36,6 +36,7 @@ import org.owasp.dependencycheck.utils.Settings;
 
 import com.moandjiezana.toml.Toml;
 import org.apache.commons.lang3.StringUtils;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.Identifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
@@ -61,7 +62,7 @@ public class GolangDepAnalyzer extends AbstractFileTypeAnalyzer {
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
-    public static final String DEPENDENCY_ECOSYSTEM = "Golang";
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.GOLANG;
 
     /**
      * Lock file name.

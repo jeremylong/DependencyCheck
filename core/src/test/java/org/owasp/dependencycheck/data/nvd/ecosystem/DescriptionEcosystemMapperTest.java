@@ -6,8 +6,6 @@ import static org.junit.Assert.assertNull;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -27,22 +25,22 @@ public class DescriptionEcosystemMapperTest {
     private static final String POSTFIX = ".ecosystem.txt";
 
     protected static File directory = new File("./src/test/resources/ecosystem");
-    
+
     protected static Map<String, File> getEcosystemFiles() throws IOException {
-        if(!directory.exists()) {
+        if (!directory.exists()) {
             throw new RuntimeException(directory.getCanonicalPath());
         }
-        
-        File[] listFiles = directory.listFiles( (d, name) -> name.endsWith(POSTFIX));
-        
+
+        File[] listFiles = directory.listFiles((d, name) -> name.endsWith(POSTFIX));
+
         Map<String, File> map = new HashMap<>();
-        for(File file : listFiles) {
+        for (File file : listFiles) {
             String name = file.getName();
             map.put(name.substring(0, name.length() - POSTFIX.length()), file);
         }
         return map;
     }
-    
+
     @Test
     public void testDescriptionEcosystemMapper() throws IOException {
         DescriptionEcosystemMapper mapper = new DescriptionEcosystemMapper();
@@ -51,10 +49,10 @@ public class DescriptionEcosystemMapperTest {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(entry.getValue()), StandardCharsets.UTF_8));
             try {
                 String description;
-                while( (description = bufferedReader.readLine()) != null) {
-                    if(description.length() > 0 && !description.startsWith("#")) {
+                while ((description = bufferedReader.readLine()) != null) {
+                    if (description.length() > 0 && !description.startsWith("#")) {
                         String ecosystem = mapper.getEcosystem(asCve(description));
-                        if(entry.getKey().equals("null")) {
+                        if (entry.getKey().equals("null")) {
                             assertNull(description, ecosystem);
                         } else {
                             assertEquals(description, entry.getKey(), ecosystem);
@@ -73,14 +71,14 @@ public class DescriptionEcosystemMapperTest {
         String value = "a.cpp b.java c.java";
         assertEquals(JarAnalyzer.DEPENDENCY_ECOSYSTEM, mapper.getEcosystem(asCve(value)));
     }
-    
+
     @Test
     public void testJspLinksDoNotCountScoring() throws IOException {
         DescriptionEcosystemMapper mapper = new DescriptionEcosystemMapper();
         String value = "Read more at https://domain/help.jsp.";
         assertNull(mapper.getEcosystem(asCve(value)));
     }
-    
+
     @Test
     public void testSubsetFileExtensionsDoNotMatch() throws IOException {
         DescriptionEcosystemMapper mapper = new DescriptionEcosystemMapper();
@@ -100,24 +98,24 @@ public class DescriptionEcosystemMapperTest {
         DescriptionEcosystemMapper mapper = new DescriptionEcosystemMapper();
         String value = "Read more at https://domain/help.php.";
         assertNull(mapper.getEcosystem(asCve(value)));
-    }    
+    }
 
-    private DefCveItem asCve(String description) {
+    private DefCveItem asCve(String description, String... cpe) {
         DefCveItem defCveItem = new DefCveItem();
-        
+
         Description d = new Description();
-        
+
         LangString string = new LangString();
         string.setLang("en");
         string.setValue(description);
-        
+
         d.getDescriptionData().add(string);
-        
+
         CVEJSON40Min11 cve = new CVEJSON40Min11();
         cve.setDescription(d);
-        
+
         defCveItem.setCve(cve);
-        
+
         return defCveItem;
     }
 }

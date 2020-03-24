@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
@@ -52,7 +53,7 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
-    public static final String DEPENDENCY_ECOSYSTEM = "Composer";
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.PYTHON;
 
     /**
      * The logger.

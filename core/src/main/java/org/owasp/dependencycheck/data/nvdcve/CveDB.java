@@ -847,7 +847,7 @@ public final class CveDB implements AutoCloseable {
      *
      * @param cve the vulnerability from the NVD CVE Data Feed to add to the
      * database
-     * @param the ecosystem the CVE belongs to
+     * @param ecosystem the ecosystem the CVE belongs to
      * @throws DatabaseException is thrown if the database
      */
     public void updateVulnerability(DefCveItem cve, String ecosystem) {

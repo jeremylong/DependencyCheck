@@ -1,25 +1,36 @@
+/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2020 The OWASP Foundation. All Rights Reserved.
+ */
 package org.owasp.dependencycheck.data.nvd.ecosystem;
-
-import org.owasp.dependencycheck.analyzer.CMakeAnalyzer;
-import org.owasp.dependencycheck.analyzer.ComposerLockAnalyzer;
-import org.owasp.dependencycheck.analyzer.JarAnalyzer;
-import org.owasp.dependencycheck.analyzer.PythonPackageAnalyzer;
-import org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer;
 
 public enum FileExtensionHint implements EcosystemHint {
 
     // note: all must be lowercase
-    PHP(".php", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM),
-    PERL_PM(".pm", "perl"),
-    PERL_PL(".pl", "perl"),
-    JAR_JAVA(".java", JarAnalyzer.DEPENDENCY_ECOSYSTEM),
-    JAR_JSP(".jsp", JarAnalyzer.DEPENDENCY_ECOSYSTEM),
-    JAR_RUBY(".rb", RubyBundleAuditAnalyzer.DEPENDENCY_ECOSYSTEM),
-    PYTON(".py", PythonPackageAnalyzer.DEPENDENCY_ECOSYSTEM),
-    CMAKE_CPP(".cpp", CMakeAnalyzer.DEPENDENCY_ECOSYSTEM),
-    CMAKE_C(".c", CMakeAnalyzer.DEPENDENCY_ECOSYSTEM),
-    CMAKE_H(".h", CMakeAnalyzer.DEPENDENCY_ECOSYSTEM);
-    
+    PHP(".php", Ecosystem.PHP),
+    PERL_PM(".pm", Ecosystem.PERL),
+    PERL_PL(".pl", Ecosystem.PERL),
+    JAR_JAVA(".java", Ecosystem.JAVA),
+    JAR_JSP(".jsp", Ecosystem.JAVA),
+    JAR_RUBY(".rb", Ecosystem.RUBY),
+    PYTON(".py", Ecosystem.PYTHON),
+    CMAKE_CPP(".cpp", Ecosystem.CMAKE),
+    CMAKE_C(".c", Ecosystem.CMAKE),
+    CMAKE_H(".h", Ecosystem.CMAKE);
+
     private final String extension;
 
     private final String ecosystem;

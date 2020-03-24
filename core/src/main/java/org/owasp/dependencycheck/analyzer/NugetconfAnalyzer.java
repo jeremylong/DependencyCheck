@@ -40,6 +40,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
@@ -58,7 +59,7 @@ public class NugetconfAnalyzer extends AbstractFileTypeAnalyzer {
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
-    public static final String DEPENDENCY_ECOSYSTEM = "nuget";
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.DOTNET;
 
     /**
      * The logger.

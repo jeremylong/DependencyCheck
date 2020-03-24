@@ -45,6 +45,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import org.owasp.dependencycheck.analyzer.exception.SearchException;
 import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.dependency.Reference;
 import org.owasp.dependencycheck.dependency.VulnerableSoftwareBuilder;
 import org.owasp.dependencycheck.exception.InitializationException;
@@ -74,7 +75,7 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
-    public static final String DEPENDENCY_ECOSYSTEM = NPM_DEPENDENCY_ECOSYSTEM;
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.NODEJS;
     /**
      * The file name to scan.
      */

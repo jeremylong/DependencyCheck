@@ -43,6 +43,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 import org.owasp.dependencycheck.Engine.Mode;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
@@ -67,7 +68,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
-    public static final String DEPENDENCY_ECOSYSTEM = NPM_DEPENDENCY_ECOSYSTEM;
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.NODEJS;
     /**
      * The name of the analyzer.
      */

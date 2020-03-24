@@ -51,6 +51,7 @@ import java.util.Map;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.json.JSONException;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.update.RetireJSDataSource;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
@@ -80,7 +81,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
-    public static final String DEPENDENCY_ECOSYSTEM = "js";
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.JAVASCRIPT;
     /**
      * The name of the analyzer.
      */

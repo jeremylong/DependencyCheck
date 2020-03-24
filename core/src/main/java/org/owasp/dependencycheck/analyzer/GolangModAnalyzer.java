@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 
 /**
  * Go mod dependency analyzer.
@@ -55,7 +56,7 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
-    public static final String DEPENDENCY_ECOSYSTEM = "Golang";
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.GOLANG;
 
     /**
      * The name of the analyzer.

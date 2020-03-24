@@ -975,55 +975,8 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             return null;
         }
         if (ecosystem != null) {
-            return entries.stream().filter((c) -> {
-                if (c.getEcosystem() == null) {
-                    return true;
-                }
-                switch (c.getEcosystem()) {
-                    case JarAnalyzer.DEPENDENCY_ECOSYSTEM:
-                    case "java":
-                        return ecosystem.equals(JarAnalyzer.DEPENDENCY_ECOSYSTEM);
-                    case AssemblyAnalyzer.DEPENDENCY_ECOSYSTEM:
-                    case NugetconfAnalyzer.DEPENDENCY_ECOSYSTEM:
-                    case "asp.net":
-                        return ecosystem.equals(NugetconfAnalyzer.DEPENDENCY_ECOSYSTEM) || ecosystem.equals(AssemblyAnalyzer.DEPENDENCY_ECOSYSTEM);
-                    case RetireJsAnalyzer.DEPENDENCY_ECOSYSTEM:
-                    case "jquery":
-                        return ecosystem.equals(RetireJsAnalyzer.DEPENDENCY_ECOSYSTEM);
-                    case PythonDistributionAnalyzer.DEPENDENCY_ECOSYSTEM:
-                        return ecosystem.equals(PythonDistributionAnalyzer.DEPENDENCY_ECOSYSTEM);
-                    case CMakeAnalyzer.DEPENDENCY_ECOSYSTEM:
-                    case "borland_c++":
-                    case "c/c++":
-                    case "gnu_c++":
-                        return ecosystem.equals(CMakeAnalyzer.DEPENDENCY_ECOSYSTEM);
-                    case ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM:
-                    case "drupal":
-                    case "joomla":
-                    case "joomla!":
-                    case "moodle":
-                    case "phpcms":
-                    case "piwigo":
-                    case "simplesamlphp":
-                    case "symfony":
-                    case "typo3":
-                        return ecosystem.equals(ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM);
-                    case AbstractNpmAnalyzer.NPM_DEPENDENCY_ECOSYSTEM:
-                    case "node.js":
-                    case "nodejs":
-                        return ecosystem.equals(AbstractNpmAnalyzer.NPM_DEPENDENCY_ECOSYSTEM);
-                    case RubyBundleAuditAnalyzer.DEPENDENCY_ECOSYSTEM:
-                    case "rails":
-                        return ecosystem.equals(RubyBundleAuditAnalyzer.DEPENDENCY_ECOSYSTEM);
-                    case "perl":
-                    //TODO - if we add the elixir analyzer this needs to be removed
-                    case "elixir":
-                    case "delphi":
-                        return false;
-                    default:
-                        return true;
-                }
-            }).map(c -> c.getCpe())
+            return entries.stream().filter(c -> c.getEcosystem() == null || c.getEcosystem().equals(ecosystem))
+                    .map(c -> c.getCpe())
                     .collect(Collectors.toSet());
         }
         return entries.stream()

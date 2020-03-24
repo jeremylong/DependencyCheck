@@ -38,6 +38,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Confidence;
@@ -76,7 +77,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
-    public static final String DEPENDENCY_ECOSYSTEM = "ruby";
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.RUBY;
 
     /**
      * The name of the analyzer.

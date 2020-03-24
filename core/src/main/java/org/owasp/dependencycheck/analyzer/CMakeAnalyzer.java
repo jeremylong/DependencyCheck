@@ -41,6 +41,7 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 
 /**
  * <p>
@@ -63,7 +64,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
-    public static final String DEPENDENCY_ECOSYSTEM = "CMAKE";
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.CMAKE;
 
     /**
      * The logger.
