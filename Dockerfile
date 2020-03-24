@@ -16,7 +16,7 @@ ENV JAVA_OPTS=-Danalyzer.assembly.dotnet.path=/usr/bin/dotnet -Danalyzer.bundle.
 
 COPY --from=jlink /jlinked /opt/jdk/
 
-ADD target/dependency-check-${VERSION}-release.zip /
+ADD cli/target/dependency-check-${VERSION}-release.zip /
 
 RUN apk update                                                                                       && \
     apk add --no-cache --virtual .build-deps curl tar                                                && \

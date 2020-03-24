@@ -8,12 +8,10 @@ VERSION=$(mvn -q \
 
 FILE=./cli/target/dependency-check-$VERSION-release.zip
 if [ -f "$FILE" ]; then
-    cd cli
     docker build . --build-arg VERSION=$VERSION -t owasp/dependency-check:$VERSION
     if [[ ! $VERSION = *"SNAPSHOT"* ]]; then
         docker tag owasp/dependency-check:$VERSION owasp/dependency-check:latest
     fi
-    cd ..
 else 
     echo "$FILE does not exist - run 'mvn package' first"
     exit 1
