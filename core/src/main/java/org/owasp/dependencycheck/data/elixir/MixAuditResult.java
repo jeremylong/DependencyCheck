@@ -20,9 +20,12 @@ package org.owasp.dependencycheck.data.elixir;
 import java.util.List;
 
 /**
- * Represents a single vulnerability result from `mix_audit --format json`
+ * Represents a single vulnerability result from `mix_audit --format json`.
+ *
+ * @author defsprite
  */
 public class MixAuditResult {
+
     private final String id;
     private final String cve;
     private final String title;
@@ -35,7 +38,9 @@ public class MixAuditResult {
     private final String dependencyPackage;
     private final String dependencyVersion;
 
-    public MixAuditResult(String id, String cve, String title, String description, String disclosureDate, String url, List<String> patchedVersions, String dependencyLockfile, String dependencyPackage, String dependencyVersion) {
+    public MixAuditResult(String id, String cve, String title, String description, String disclosureDate,
+            String url, List<String> patchedVersions, String dependencyLockfile, String dependencyPackage,
+            String dependencyVersion) {
         this.id = id;
         this.cve = cve;
         this.title = title;

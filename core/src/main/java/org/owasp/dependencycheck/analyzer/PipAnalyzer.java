@@ -27,12 +27,8 @@ import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
-import org.owasp.dependencycheck.utils.UrlStringUtils;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
-import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
-import org.owasp.dependencycheck.data.composer.ComposerException;
-import org.owasp.dependencycheck.data.composer.ComposerLockParser;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.utils.Checksum;
@@ -44,21 +40,25 @@ import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.concurrent.ThreadSafe;
-import org.apache.commons.io.filefilter.NameFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Used to analyze pip dependency files named requirements.txt.
+ *
+ * @author igibanez
  */
 @Experimental
 @ThreadSafe
 public class PipAnalyzer extends AbstractFileTypeAnalyzer {
+
     /**
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(PythonPackageAnalyzer.class);
-    
+    /**
+     * "requirements.txt".
+     */
     private static final String REQUIREMENTS = "requirements.txt";
 
     /**
@@ -72,7 +72,7 @@ public class PipAnalyzer extends AbstractFileTypeAnalyzer {
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
 
     /**
-o     * Matches AC_INIT variables in the output configure script.
+     * o * Matches AC_INIT variables in the output configure script.
      */
     private static final Pattern PACKAGE_VERSION = Pattern.compile("^([^#].*?)(?:[=>]=([\\.\\*0-9]+?))?$", Pattern.MULTILINE);
 
@@ -80,7 +80,7 @@ o     * Matches AC_INIT variables in the output configure script.
      * The file filter used to determine which files this analyzer supports.
      */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addFilenames(REQUIREMENTS).build();
-    
+
     /**
      * Returns the FileFilter
      *
@@ -125,9 +125,9 @@ o     * Matches AC_INIT variables in the output configure script.
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         LOGGER.debug("Checking file {}", dependency.getActualFilePath());
-        
+
         if (REQUIREMENTS.equals(dependency.getFileName())) {
-            engine.removeDependency(dependency);        	
+            engine.removeDependency(dependency);
         }
         final File dependencyFile = dependency.getActualFile();
         if (!dependencyFile.isFile() || dependencyFile.length() == 0) {
@@ -140,28 +140,28 @@ o     * Matches AC_INIT variables in the output configure script.
             if (!contents.isEmpty()) {
                 final Matcher matcher = PACKAGE_VERSION.matcher(contents);
                 while (matcher.find()) {
-                    final String package_ = matcher.group(1);
-                    final String version = matcher.group(2);
-                    LOGGER.debug(String.format("package, version: %s %s", package_, version));
+                    final String identifiedPackage = matcher.group(1);
+                    final String identifiedVersion = matcher.group(2);
+                    LOGGER.debug(String.format("package, version: %s %s", identifiedPackage, identifiedVersion));
                     final Dependency d = new Dependency(dependency.getActualFile(), true);
-                    d.setName(package_);
-                    d.setVersion(version);
+                    d.setName(identifiedPackage);
+                    d.setVersion(identifiedVersion);
                     try {
-                        final PackageURL purl = PackageURLBuilder.aPackageURL().withType("pypi").withName(package_).withVersion(version).build();
+                        final PackageURL purl = PackageURLBuilder.aPackageURL().withType("pypi").withName(identifiedPackage).withVersion(identifiedVersion).build();
                         d.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));
                     } catch (MalformedPackageURLException ex) {
                         LOGGER.debug("Unable to build package url for pypi", ex);
-                        d.addSoftwareIdentifier(new GenericIdentifier("pypi:" + package_ + "@" + version, Confidence.HIGH));
+                        d.addSoftwareIdentifier(new GenericIdentifier("pypi:" + identifiedPackage + "@" + identifiedVersion, Confidence.HIGH));
                     }
-                    d.setPackagePath(String.format("%s:%s", package_, version));
+                    d.setPackagePath(String.format("%s:%s", identifiedPackage, identifiedVersion));
                     d.setEcosystem(PythonDistributionAnalyzer.DEPENDENCY_ECOSYSTEM);
-                    final String filePath = String.format("%s:%s/%s", dependency.getFilePath(), package_, version);
+                    final String filePath = String.format("%s:%s/%s", dependency.getFilePath(), identifiedPackage, identifiedVersion);
                     d.setFilePath(filePath);
                     d.setSha1sum(Checksum.getSHA1Checksum(filePath));
                     d.setSha256sum(Checksum.getSHA256Checksum(filePath));
                     d.setMd5sum(Checksum.getMD5Checksum(filePath));
-                    d.addEvidence(EvidenceType.PRODUCT, REQUIREMENTS, "product", package_, Confidence.HIGHEST);
-                    d.addEvidence(EvidenceType.VERSION, REQUIREMENTS, "version", version, Confidence.HIGHEST);                     
+                    d.addEvidence(EvidenceType.PRODUCT, REQUIREMENTS, "product", identifiedPackage, Confidence.HIGHEST);
+                    d.addEvidence(EvidenceType.VERSION, REQUIREMENTS, "version", identifiedVersion, Confidence.HIGHEST);
                     engine.addDependency(d);
                 }
             }

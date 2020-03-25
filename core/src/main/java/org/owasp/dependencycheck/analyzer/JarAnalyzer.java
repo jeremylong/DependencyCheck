@@ -247,7 +247,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
     @Override
     public boolean accept(File pathname) {
-        boolean accepted = super.accept(pathname);
+        final boolean accepted = super.accept(pathname);
         return accepted && !isExcludedJar(pathname);
     }
 

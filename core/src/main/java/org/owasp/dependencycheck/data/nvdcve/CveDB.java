@@ -116,8 +116,11 @@ public final class CveDB implements AutoCloseable {
      */
     private final Settings settings;
 
+    /**
+     * Utility to extract information from {@linkplain org.owasp.dependencycheck.data.nvd.json.DefCveItem}.
+     */
     private final CveItemOperator cveItemConverter = new CveItemOperator();
-    
+
     /**
      * The enum value names must match the keys of the statements in the
      * statement bundles "dbStatements*.properties".
@@ -1235,9 +1238,6 @@ public final class CveDB implements AutoCloseable {
      *
      * @param vulnerabilityId the vulnerability id
      * @param cve the CVE entry that contains the list of references
-     * @param baseEcosystem the base ecosystem previously identified
-     * @return an updated ecosystem string if an ecosystem was identified;
-     * otherwise <code>null</code>
      * @throws SQLException thrown if there is an error inserting the data
      */
     private synchronized void updateVulnerabilityInsertReferences(int vulnerabilityId, DefCveItem cve) throws SQLException {

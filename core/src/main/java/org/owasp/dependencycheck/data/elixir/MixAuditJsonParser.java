@@ -15,23 +15,24 @@
  *
  * Copyright (c) 2020 The OWASP Foundation. All Rights Reserved.
  */
-
 package org.owasp.dependencycheck.data.elixir;
 
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.data.golang.GoModDependency;
-import org.owasp.dependencycheck.data.golang.GoModJsonParser;
-import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.concurrent.NotThreadSafe;
-import javax.json.*;
+
 import javax.json.stream.JsonParsingException;
-import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonString;
 
 /**
  * Parses json output from `mix_audit --format json`.
@@ -41,9 +42,21 @@ import java.util.List;
 @NotThreadSafe
 public class MixAuditJsonParser {
 
+    /**
+     * A key in the mix json file.
+     */
     static final String PASS_FAIL_KEY = "pass";
+    /**
+     * A key in the mix json file.
+     */
     static final String RESULTS_KEY = "vulnerabilities";
+    /**
+     * A key in the mix json file.
+     */
     static final String ADVISORY_KEY = "advisory";
+    /**
+     * A key in the mix json file.
+     */
     static final String DEPENDENCY_KEY = "dependency";
 
     /**
@@ -74,7 +87,7 @@ public class MixAuditJsonParser {
     public MixAuditJsonParser(Reader reader) {
         LOGGER.debug("Creating a MixAuditJsonParser");
         this.jsonReader = Json.createReader(reader);
-        this.mixAuditResults = new ArrayList<MixAuditResult>();
+        this.mixAuditResults = new ArrayList<>();
         this.mixAuditPass = false;
     }
 
@@ -82,7 +95,7 @@ public class MixAuditJsonParser {
      * Process the input stream to create the list of dependencies.
      *
      * @throws AnalysisException thrown when there is an error parsing the
-     *                           results of `mix_audit --format json`
+     * results of `mix_audit --format json`
      */
     public void process() throws AnalysisException {
         LOGGER.debug("Beginning mix_audit json output processing");
@@ -92,19 +105,20 @@ public class MixAuditJsonParser {
                 this.mixAuditPass = output.getBoolean(PASS_FAIL_KEY);
             }
 
-            if (output.containsKey(RESULTS_KEY) && output.isNull(RESULTS_KEY))
+            if (output.containsKey(RESULTS_KEY) && output.isNull(RESULTS_KEY)) {
                 LOGGER.debug("Found vulnerabilities");
+            }
             final JsonArray results = output.getJsonArray(RESULTS_KEY);
             for (JsonObject result : results.getValuesAs(JsonObject.class)) {
                 final JsonObject advisory = result.getJsonObject(ADVISORY_KEY);
                 final JsonObject dependency = result.getJsonObject(DEPENDENCY_KEY);
-                ArrayList<String> patchedVersions = new ArrayList<String>();
+                final ArrayList<String> patchedVersions = new ArrayList<>();
 
-                for(JsonString patchedVersion : advisory.getJsonArray("patched_versions").getValuesAs(JsonString.class)) {
+                for (JsonString patchedVersion : advisory.getJsonArray("patched_versions").getValuesAs(JsonString.class)) {
                     patchedVersions.add(patchedVersion.getString());
                 }
 
-                MixAuditResult r = new MixAuditResult(
+                final MixAuditResult r = new MixAuditResult(
                         advisory.getString("id"),
                         advisory.getString("cve"),
                         advisory.getString("title"),
