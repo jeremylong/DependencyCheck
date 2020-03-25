@@ -32,6 +32,8 @@ import org.owasp.dependencycheck.data.nodeaudit.Advisory;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.xml.pom.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Factory to instantiate cache repositories.
@@ -40,6 +42,10 @@ import org.owasp.dependencycheck.xml.pom.Model;
  */
 public class DataCacheFactory {
 
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataCacheFactory.class);
     /**
      * The cache directory.
      */
@@ -116,14 +122,23 @@ public class DataCacheFactory {
      * @return a references to the data cache for Node Audit
      */
     public DataCache<List<Advisory>> getNodeAuditCache() {
-        final ICompositeCacheAttributes attr = new CompositeCacheAttributes();
-        attr.setUseDisk(true);
-        attr.setUseLateral(false);
-        attr.setUseRemote(false);
-        final CacheAccess<String, List<Advisory>> ca = JCS.getInstance("NODEAUDIT", attr);
-        final DataCache<List<Advisory>> dc = new DataCache<>(ca);
-        return dc;
-
+        try {
+            final ICompositeCacheAttributes attr = new CompositeCacheAttributes();
+            attr.setUseDisk(true);
+            attr.setUseLateral(false);
+            attr.setUseRemote(false);
+            final CacheAccess<String, List<Advisory>> ca = JCS.getInstance("NODEAUDIT", attr);
+            final DataCache<List<Advisory>> dc = new DataCache<>(ca);
+            return dc;
+        } catch (Throwable ex) {
+            //some reports of class not found exception, log and disable the cache.
+            if (ex instanceof CacheException) {
+                throw ex;
+            }
+            //TODO we may want to instrument w/ jdiagnostics per #2509
+            LOGGER.debug("Error constructing cache for node audit files", ex);
+            throw new CacheException(ex);
+        }
     }
 
     /**
@@ -132,13 +147,23 @@ public class DataCacheFactory {
      * @return a references to the data cache for POM files
      */
     public DataCache<Model> getPomCache() {
-        final ICompositeCacheAttributes attr = new CompositeCacheAttributes();
-        attr.setUseDisk(true);
-        attr.setUseLateral(false);
-        attr.setUseRemote(false);
-        final CacheAccess<String, Model> ca = JCS.getInstance("POM", attr);
-        final DataCache<Model> dc = new DataCache<>(ca);
-        return dc;
+        try {
+            final ICompositeCacheAttributes attr = new CompositeCacheAttributes();
+            attr.setUseDisk(true);
+            attr.setUseLateral(false);
+            attr.setUseRemote(false);
+            final CacheAccess<String, Model> ca = JCS.getInstance("POM", attr);
+            final DataCache<Model> dc = new DataCache<>(ca);
+            return dc;
+        } catch (Throwable ex) {
+            //some reports of class not found exception, log and disable the cache.
+            if (ex instanceof CacheException) {
+                throw ex;
+            }
+            //TODO we may want to instrument w/ jdiagnostics per #2509
+            LOGGER.debug("Error constructing cache for POM files", ex);
+            throw new CacheException(ex);
+        }
     }
 
     /**
@@ -147,12 +172,22 @@ public class DataCacheFactory {
      * @return a references to the data cache for Central search
      */
     public DataCache<List<MavenArtifact>> getCentralCache() {
-        final ICompositeCacheAttributes attr = new CompositeCacheAttributes();
-        attr.setUseDisk(true);
-        attr.setUseLateral(false);
-        attr.setUseRemote(false);
-        final CacheAccess<String, List<MavenArtifact>> ca = JCS.getInstance("CENTRAL", attr);
-        final DataCache<List<MavenArtifact>> dc = new DataCache<>(ca);
-        return dc;
+        try {
+            final ICompositeCacheAttributes attr = new CompositeCacheAttributes();
+            attr.setUseDisk(true);
+            attr.setUseLateral(false);
+            attr.setUseRemote(false);
+            final CacheAccess<String, List<MavenArtifact>> ca = JCS.getInstance("CENTRAL", attr);
+            final DataCache<List<MavenArtifact>> dc = new DataCache<>(ca);
+            return dc;
+        } catch (Throwable ex) {
+            //some reports of class not found exception, log and disable the cache.
+            if (ex instanceof CacheException) {
+                throw ex;
+            }
+            //TODO we may want to instrument w/ jdiagnostics per #2509
+            LOGGER.debug("Error constructing cache for Central files", ex);
+            throw new CacheException(ex);
+        }
     }
 }
