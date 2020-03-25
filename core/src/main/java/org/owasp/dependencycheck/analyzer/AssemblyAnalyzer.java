@@ -370,7 +370,8 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.error("----------------------------------------------------");
             LOGGER.error(".NET Assembly Analyzer could not be initialized and at least one "
                     + "'exe' or 'dll' was scanned. The 'dotnet' executable could not be found on "
-                    + "the path; either disable the Assembly Analyzer or configure the path dotnet core.");
+                    + "the path; either disable the Assembly Analyzer or add the path to dotnet "
+                    + "core in the configuration.");
             LOGGER.error("----------------------------------------------------");
             return;
         }
