@@ -167,9 +167,7 @@ public abstract class AbstractMemoryIndex implements MemoryIndex {
      */
     @Override
     public synchronized void close() {
-        final int count = instance().usageCount.get() - 1;
-        if (count <= 0) {
-            instance().usageCount.set(0);
+        if (instance().usageCount.addAndGet(-1) == 0) {
             if (searchingAnalyzer != null) {
                 searchingAnalyzer.close();
                 searchingAnalyzer = null;
