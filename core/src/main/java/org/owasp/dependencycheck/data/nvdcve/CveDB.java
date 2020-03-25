@@ -117,7 +117,8 @@ public final class CveDB implements AutoCloseable {
     private final Settings settings;
 
     /**
-     * Utility to extract information from {@linkplain org.owasp.dependencycheck.data.nvd.json.DefCveItem}.
+     * Utility to extract information from
+     * {@linkplain org.owasp.dependencycheck.data.nvd.json.DefCveItem}.
      */
     private final CveItemOperator cveItemConverter = new CveItemOperator();
 
@@ -872,7 +873,7 @@ public final class CveDB implements AutoCloseable {
 
             updateVulnerabilityInsertCwe(vulnerabilityId, cve);
 
-            String baseEcosystem = cveItemConverter.extractBaseEcosystem(cve, description);
+            final String baseEcosystem = cveItemConverter.extractBaseEcosystem(cve, description);
             updateVulnerabilityInsertReferences(vulnerabilityId, cve);
 
             //parse the CPEs outside of a synchronized method
