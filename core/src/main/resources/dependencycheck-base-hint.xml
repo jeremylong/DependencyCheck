@@ -324,4 +324,12 @@
             <evidence type="vendor" source="hint analyzer" name="vendor" value="cognitect" confidence="HIGHEST"/>
         </add>
     </hint>   
+    <hint>
+        <given>
+            <evidence type="vendor" source="pom" name="groupid" value="io.projectreactor.netty"/>
+        </given>
+        <add>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="pivotal" confidence="HIGHEST"/>
+        </add>
+    </hint>   
 </hints>
