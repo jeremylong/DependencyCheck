@@ -11,12 +11,12 @@ if [[ $VERSION = *"SNAPSHOT"* ]]; then
   exit 1
 fi
 docker inspect --type=image owasp/dependency-check:$VERSION  > /dev/null 2>&1
-if [[ "$?" -ne 0 ]] ; then echo woot; fi
+if [[ "$?" -ne 0 ]] ; then
   echo "docker image owasp/dependency-check:$VERSION does not exist - run build_docker.sh first"
   exit 1
 fi
 docker inspect --type=image owasp/dependency-check:latest  > /dev/null 2>&1
-if [[ "$?" -ne 0 ]] ; then echo woot; fi
+if [[ "$?" -ne 0 ]] ; then
   echo "docker image owasp/dependency-check:latest does not exist - run build_docker.sh first"
   exit 1
 fi
