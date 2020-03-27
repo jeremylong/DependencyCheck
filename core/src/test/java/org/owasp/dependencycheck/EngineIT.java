@@ -19,8 +19,15 @@ package org.owasp.dependencycheck;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import mockit.Expectations;
+import mockit.Mocked;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -28,13 +35,49 @@ import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
-import static org.junit.Assert.assertTrue;
+import org.owasp.dependencycheck.analyzer.Analyzer;
 
 /**
  *
  * @author Jeremy Long
  */
 public class EngineIT extends BaseDBTestCase {
+
+    @Mocked
+    private Analyzer analyzer;
+
+    @Mocked
+    private AnalysisTask analysisTask;
+    
+        @Test(expected = ExceptionCollection.class)
+    public void exceptionDuringAnalysisTaskExecutionIsFatal() throws DatabaseException, ExceptionCollection {
+
+        try (Engine instance = new Engine(getSettings())) {
+            final ExecutorService executorService = Executors.newFixedThreadPool(3);
+            final List<Throwable> exceptions = new ArrayList<>();
+
+            new Expectations() {
+                {
+                    analysisTask.call();
+                    result = new IllegalStateException("Analysis task execution threw an exception");
+                }
+            };
+
+            final List<AnalysisTask> failingAnalysisTask = new ArrayList<>();
+            failingAnalysisTask.add(analysisTask);
+
+            new Expectations(instance) {
+                {
+                    instance.getExecutorService(analyzer);
+                    result = executorService;
+                    instance.getAnalysisTasks(analyzer, exceptions);
+                    result = failingAnalysisTask;
+                }
+            };
+            instance.executeAnalysisTasks(analyzer, exceptions);
+            assertTrue(executorService.isShutdown());
+        }
+    }
 
     /**
      * Test running the entire engine.

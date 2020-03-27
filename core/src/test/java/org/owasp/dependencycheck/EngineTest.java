@@ -17,34 +17,21 @@
  */
 package org.owasp.dependencycheck;
 
-import mockit.Expectations;
-import mockit.Mocked;
 import org.junit.Test;
-import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.JarAnalyzer;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.exception.ExceptionCollection;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Jeremy Long
  */
 public class EngineTest extends BaseDBTestCase {
 
-    @Mocked
-    private Analyzer analyzer;
 
-    @Mocked
-    private AnalysisTask analysisTask;
 
     /**
      * Test of scanFile method, of class Engine.
@@ -67,36 +54,6 @@ public class EngineTest extends BaseDBTestCase {
 
             assertEquals(2, instance.getDependencies().length);
             assertEquals(dwr, secondDwr);
-        }
-    }
-
-    @Test(expected = ExceptionCollection.class)
-    public void exceptionDuringAnalysisTaskExecutionIsFatal() throws DatabaseException, ExceptionCollection {
-
-        try (Engine instance = new Engine(getSettings())) {
-            final ExecutorService executorService = Executors.newFixedThreadPool(3);
-            final List<Throwable> exceptions = new ArrayList<>();
-
-            new Expectations() {
-                {
-                    analysisTask.call();
-                    result = new IllegalStateException("Analysis task execution threw an exception");
-                }
-            };
-
-            final List<AnalysisTask> failingAnalysisTask = new ArrayList<>();
-            failingAnalysisTask.add(analysisTask);
-
-            new Expectations(instance) {
-                {
-                    instance.getExecutorService(analyzer);
-                    result = executorService;
-                    instance.getAnalysisTasks(analyzer, exceptions);
-                    result = failingAnalysisTask;
-                }
-            };
-            instance.executeAnalysisTasks(analyzer, exceptions);
-            assertTrue(executorService.isShutdown());
         }
     }
 }

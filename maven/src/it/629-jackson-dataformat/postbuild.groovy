@@ -22,14 +22,14 @@ import java.nio.charset.Charset;
 
 
 // Check to see if jackson-dataformat-xml-2.4.5.jar was identified.
-//TODO change this to xpath and check for CVE-2016-3720
+//TODO change this to xpath and check for CVE-2018-1000873 and CVE-2018-11307
 String log = FileUtils.readFileToString(new File(basedir, "target/dependency-check-report.xml"), Charset.defaultCharset().name());
-int count = StringUtils.countMatches(log, "<name>CVE-2016-7051</name>");
+int count = StringUtils.countMatches(log, "<name>CVE-2018-1000873</name>");
 if (count == 0){
     System.out.println(String.format("jackson-dataformat-xml was identified %s times, expected 1", count));
     return false;
 }
-count = StringUtils.countMatches(log, "<name>CVE-2016-3720</name>");
+count = StringUtils.countMatches(log, "<name>CVE-2018-11307</name>");
 if (count == 0){
     System.out.println(String.format("jackson-dataformat-xml was identified %s times, expected 1", count));
     return false;
