@@ -65,7 +65,7 @@ public class DependencyCheckScanAgentIT extends BaseDBTestCase {
         scanAgent.setCentralAnalyzerEnabled(false);
         scanAgent.setReportOutputDirectory(REPORT_DIR.getAbsolutePath());
         scanAgent.setReportFormat(ReportGenerator.Format.XML);
-        scanAgent.setAutoUpdate(true);
+        scanAgent.setAutoUpdate(false);
         scanAgent.setUpdateOnly(false);
         return scanAgent;
     }

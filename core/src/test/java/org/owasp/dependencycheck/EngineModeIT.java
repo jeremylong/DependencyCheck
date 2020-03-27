@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Calendar;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -46,6 +47,11 @@ public class EngineModeIT extends BaseTest {
         // system properties before configured properties
         originalDataDir = getSettings().getString(Settings.KEYS.DATA_DIRECTORY);
         System.setProperty(Settings.KEYS.DATA_DIRECTORY, tempDir.newFolder().getAbsolutePath());
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        if (Calendar.getInstance().get(Calendar.MONTH) == 0) {
+            year -= 1;
+        }
+        System.setProperty(Settings.KEYS.CVE_START_YEAR, Integer.toString(year));
     }
 
     @After
@@ -57,6 +63,7 @@ public class EngineModeIT extends BaseTest {
             //Reset system property to original value just to be safe for other tests.
             System.setProperty(Settings.KEYS.DATA_DIRECTORY, originalDataDir);
             System.clearProperty(Settings.KEYS.H2_DATA_DIRECTORY);
+            System.clearProperty(Settings.KEYS.CVE_START_YEAR);
         } catch (IOException ex) {
             throw new UnexpectedAnalysisException(ex);
         } finally {
@@ -88,8 +95,9 @@ public class EngineModeIT extends BaseTest {
         }
 
         try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, getSettings())) {
+            assertDatabase(false);
             engine.openDatabase();
-            assertDatabase(true);
+            
             Engine.Mode.EVIDENCE_PROCESSING.getPhases().forEach((phase) -> {
                 assertThat(engine.getAnalyzers(phase), is(notNullValue()));
             });
@@ -99,15 +107,18 @@ public class EngineModeIT extends BaseTest {
             engine.addDependency(dependencies[0]);
             engine.analyzeDependencies();
             Dependency dependency = dependencies[0];
-            assertFalse(dependency.getVulnerabilities().isEmpty());
+            assertTrue(dependency.getEvidence(EvidenceType.VENDOR).toString().toLowerCase().contains("apache"));
+            assertTrue(dependency.getVendorWeightings().contains("apache"));
+            assertDatabase(true);
         }
     }
 
     @Test
     public void testStandaloneMode() throws Exception {
         try (Engine engine = new Engine(Engine.Mode.STANDALONE, getSettings())) {
+            assertDatabase(false);
             engine.openDatabase();
-            assertDatabase(true);
+            
             for (AnalysisPhase phase : Engine.Mode.STANDALONE.getPhases()) {
                 assertThat(engine.getAnalyzers(phase), is(notNullValue()));
             }
@@ -120,7 +131,7 @@ public class EngineModeIT extends BaseTest {
             Dependency dependency = dependencies[0];
             assertTrue(dependency.getEvidence(EvidenceType.VENDOR).toString().toLowerCase().contains("apache"));
             assertTrue(dependency.getVendorWeightings().contains("apache"));
-            assertFalse(dependency.getVulnerabilities().isEmpty());
+            assertDatabase(true);
         }
     }
 
