@@ -28,13 +28,13 @@ import java.io.FileNotFoundException;
 File file = new File(basedir, "target/dependency-check-report.xml");
 if ( !file.isFile() )
 {
-    throw new FileNotFoundException( "Could not find XML Report: " + file );
+    System.err.println( "Could not find XML Report: " + file );
 }
 String log = FileUtils.readFileToString(file, Charset.defaultCharset().name());
 int count = StringUtils.countMatches(log, "<name>CVE-2018-11307</name>");
 if (count == 0) {
-    throw new RuntimeException( log );
-    System.out.println(String.format("jackson-dataformat-xml (CVE-2018-11307) was not identified", count));
+    System.err.println( log );
+    System.err.println(String.format("jackson-dataformat-xml (CVE-2018-11307) was not identified", count));
     return false;
 }
 return true;
