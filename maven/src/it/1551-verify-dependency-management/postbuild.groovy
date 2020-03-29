@@ -25,7 +25,7 @@ import java.nio.charset.Charset;
 //TODO change this to xpath and check for CVE-2018-11307
 String log = FileUtils.readFileToString(new File(basedir, "target/dependency-check-report.xml"), Charset.defaultCharset().name());
 int count = StringUtils.countMatches(log, "<name>CVE-2018-11307</name>");
-if (count == 0){
+if (count == 0) {
     System.out.println(String.format("jackson-dataformat-xml (CVE-2018-11307) was not identified", count));
     return false;
 }
