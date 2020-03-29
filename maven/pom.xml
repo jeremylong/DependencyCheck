@@ -171,7 +171,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
                         <configuration>
-                            <!--streamLogs>true</streamLogs-->
+                            <streamLogs>true</streamLogs>
                             <parallelThreads>4</parallelThreads>
                             <mavenOpts>${failsafeArgLine}</mavenOpts>
                             <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
