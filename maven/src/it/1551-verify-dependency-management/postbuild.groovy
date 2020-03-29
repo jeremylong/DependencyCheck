@@ -20,6 +20,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import java.nio.charset.Charset;
 import java.io.File;
+import java.io.FileNotFoundException;
 
 
 // Check to see if jackson-dataformat-xml-2.4.5.jar was identified.
@@ -32,6 +33,7 @@ if ( !file.isFile() )
 String log = FileUtils.readFileToString(file, Charset.defaultCharset().name());
 int count = StringUtils.countMatches(log, "<name>CVE-2018-11307</name>");
 if (count == 0) {
+    throw new RuntimeException( log );
     System.out.println(String.format("jackson-dataformat-xml (CVE-2018-11307) was not identified", count));
     return false;
 }
