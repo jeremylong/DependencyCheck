@@ -32,9 +32,11 @@ if ( !file.isFile() )
 }
 String log = FileUtils.readFileToString(file, Charset.defaultCharset().name());
 int count = StringUtils.countMatches(log, "<name>CVE-2018-11307</name>");
+count += StringUtils.countMatches(log, "<name>CVE-2016-7051</name>");
+
 if (count == 0) {
     System.err.println( log );
-    System.err.println(String.format("jackson-dataformat-xml (CVE-2018-11307) was not identified", count));
+    System.err.println(String.format("jackson-dataformat-xml CVEs (neither CVE-2016-7051 or CVE-2018-11307) were identified", count));
     return false;
 }
 return true;

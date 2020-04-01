@@ -20,7 +20,7 @@
                 <version>${odc.version}</version>
                 <inherited>false</inherited>
                 <configuration>
-                    <format>ALL</format>
+                    <format>XML</format>
                 </configuration>
                 <executions>
                     <execution>
