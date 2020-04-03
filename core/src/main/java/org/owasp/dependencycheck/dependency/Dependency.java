@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.dependency;
 
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL;
+import com.google.common.base.Strings;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
@@ -541,7 +542,9 @@ public class Dependency extends EvidenceCollection implements Serializable {
                 }
             }
         }
-        if (!found && mavenArtifact.getGroupId() != null && mavenArtifact.getArtifactId() != null && mavenArtifact.getVersion() != null) {
+        if (!found && !Strings.isNullOrEmpty(mavenArtifact.getGroupId()) 
+                && !Strings.isNullOrEmpty(mavenArtifact.getArtifactId()) 
+                && !Strings.isNullOrEmpty(mavenArtifact.getVersion())) {
             try {
                 LOGGER.debug("Adding new maven identifier {}", mavenArtifact);
                 final PackageURL p = new PackageURL("maven", mavenArtifact.getGroupId(),

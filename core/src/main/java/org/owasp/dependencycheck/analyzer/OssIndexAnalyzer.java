@@ -168,7 +168,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
         try {
             return PackageUrl.parse(value);
         } catch (InvalidException e) {
-            LOG.warn("Invalid Package-URL: {}", value, e);
+            LOG.debug("Invalid Package-URL: {}", value, e);
             return null;
         }
     }
