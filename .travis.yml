@@ -18,7 +18,7 @@ addons:
     organization: "odc"
     token:
       secure: "YVDnYmonPug885Hmr2pLWBko+rQ+oKyTUA95ry0PGGyfgs0z6kPCjmWBDVm7K4GM7NOluldWb5gLMf0QXoHGstdp9L6fQCQElt8hZMOwJf+IR3bWjiG3VfVyyB3gJWBWlcJFM9NVyfICidwBH5ZiJ0+LXhKUgnNqarTh/YmNj9w="
-
+  
 cache:
   directories:
     - "core/target/data"
