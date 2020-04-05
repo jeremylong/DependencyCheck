@@ -1,24 +1,34 @@
 package org.owasp.dependencycheck.utils;
 
+import com.google.common.base.Strings;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * TODO - is this class needed anymore as we do not support Java 6 and 7.
+ *
  * This class is used to enable additional ciphers used by the SSL Socket. This
  * is specifically because the NVD stopped supporting TLS 1.0 and Java 6 and 7
  * clients by default were unable to connect to download the NVD data feeds.
@@ -59,26 +69,29 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      *
      * @param settings reference to the configured settings
      * @throws java.security.NoSuchAlgorithmException thrown when an algorithm
-     *                                                is not supported
-     * @throws java.security.KeyManagementException   thrown if initialization
-     *                                                fails
+     * is not supported
+     * @throws java.security.KeyManagementException thrown if initialization
+     * fails
      */
     public SSLSocketFactoryEx(Settings settings) throws NoSuchAlgorithmException, KeyManagementException {
         this.settings = settings;
-        initSSLSocketFactoryEx(null, null, null);
+        KeyManager[] km = getKeyManagers();
+        TrustManager[] tm = getTrustManagers();
+
+        initSSLSocketFactoryEx(km, tm, null);
     }
 
     /**
      * Constructs a new SSLSocketFactory.
      *
-     * @param km       the key manager
-     * @param tm       the trust manager
-     * @param random   secure random
+     * @param km the key manager
+     * @param tm the trust manager
+     * @param random secure random
      * @param settings reference to the configured settings
      * @throws java.security.NoSuchAlgorithmException thrown when an algorithm
-     *                                                is not supported
-     * @throws java.security.KeyManagementException   thrown if initialization
-     *                                                fails
+     * is not supported
+     * @throws java.security.KeyManagementException thrown if initialization
+     * fails
      */
     public SSLSocketFactoryEx(KeyManager[] km, TrustManager[] tm, SecureRandom random, Settings settings)
             throws NoSuchAlgorithmException, KeyManagementException {
@@ -89,12 +102,12 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
     /**
      * Constructs a new SSLSocketFactory.
      *
-     * @param ctx      the SSL context
+     * @param ctx the SSL context
      * @param settings reference to the configured settings
      * @throws java.security.NoSuchAlgorithmException thrown when an algorithm
-     *                                                is not supported
-     * @throws java.security.KeyManagementException   thrown if initialization
-     *                                                fails
+     * is not supported
+     * @throws java.security.KeyManagementException thrown if initialization
+     * fails
      */
     public SSLSocketFactoryEx(SSLContext ctx, Settings settings) throws NoSuchAlgorithmException, KeyManagementException {
         this.settings = settings;
@@ -217,12 +230,12 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
     /**
      * Initializes the SSL Socket Factory Extension.
      *
-     * @param km     the key managers
-     * @param tm     the trust managers
+     * @param km the key managers
+     * @param tm the trust managers
      * @param random the secure random number generator
      * @throws NoSuchAlgorithmException thrown when an algorithm is not
-     *                                  supported
-     * @throws KeyManagementException   thrown if initialization fails
+     * supported
+     * @throws KeyManagementException thrown if initialization fails
      */
     private void initSSLSocketFactoryEx(KeyManager[] km, TrustManager[] tm, SecureRandom random)
             throws NoSuchAlgorithmException, KeyManagementException {
@@ -237,8 +250,8 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      *
      * @param ctx the SSL context
      * @throws NoSuchAlgorithmException thrown when an algorithm is not
-     *                                  supported
-     * @throws KeyManagementException   thrown if initialization fails
+     * supported
+     * @throws KeyManagementException thrown if initialization fails
      */
     private void initSSLSocketFactoryEx(SSLContext ctx)
             throws NoSuchAlgorithmException, KeyManagementException {
@@ -294,5 +307,45 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
         }
 
         return aa.toArray(new String[0]);
+    }
+
+    private KeyManager[] getKeyManagers() {
+        KeyManager[] km = null;
+        final String ksPath = System.getProperty("javax.net.ssl.keyStore");
+        final String ksType = System.getProperty("javax.net.ssl.keyStoreType");
+        final String ksPass = System.getProperty("javax.net.ssl.keyStorePassword");
+
+        if (!Strings.isNullOrEmpty(ksPath) && !Strings.isNullOrEmpty(ksType) && !Strings.isNullOrEmpty(ksPass)) {
+            try (FileInputStream fis = new FileInputStream(ksPath)) {
+                KeyStore ks = KeyStore.getInstance(ksType);
+                ks.load(fis, ksPass.toCharArray());
+                KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+                kmf.init(ks, ksPass.toCharArray());
+                km = kmf.getKeyManagers();
+            } catch (KeyStoreException | IOException | CertificateException | UnrecoverableKeyException | NoSuchAlgorithmException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        return km;
+    }
+
+    private TrustManager[] getTrustManagers() {
+        TrustManager[] tm = null;
+        final String ksType = System.getProperty("javax.net.ssl.keyStoreType");
+        final String tsPath = System.getProperty("javax.net.ssl.trustStore");
+        final String tsPass = System.getProperty("javax.net.ssl.trustStorePassword");
+
+        if (!Strings.isNullOrEmpty(tsPath) && !Strings.isNullOrEmpty(ksType) && !Strings.isNullOrEmpty(tsPass)) {
+            try (FileInputStream fis = new FileInputStream(tsPath)) {
+                KeyStore ts = KeyStore.getInstance(ksType);
+                ts.load(fis, tsPass.toCharArray());
+                TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+                tmf.init(ts);
+                tm = tmf.getTrustManagers();
+            } catch (KeyStoreException | IOException | CertificateException | NoSuchAlgorithmException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        return tm;
     }
 }
