@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import com.google.common.io.ByteStreams;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,7 +27,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import static java.lang.String.format;
 import java.nio.charset.StandardCharsets;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +92,7 @@ public final class Downloader {
         try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy);
                 OutputStream out = new FileOutputStream(outputPath)) {
             in = conn.fetch(url);
-            IOUtils.copy(in, out);
+            ByteStreams.copy(in, out);
         } catch (IOException ex) {
             final String msg = format("Download failed, unable to copy '%s' to '%s'", url.toString(), outputPath.getAbsolutePath());
             throw new DownloadFailedException(msg, ex);
@@ -124,7 +124,7 @@ public final class Downloader {
         try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy);
                 ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             in = conn.fetch(url);
-            IOUtils.copy(in, out);
+            ByteStreams.copy(in, out);
             return out.toString(UTF8);
         } catch (IOException ex) {
             final String msg = format("Download failed, unable to retrieve '%s'", url.toString());

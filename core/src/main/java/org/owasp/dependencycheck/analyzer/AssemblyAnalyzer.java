@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.analyzer;
 
 import com.github.packageurl.MalformedPackageURLException;
 
+import com.google.common.io.ByteStreams;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -27,7 +28,6 @@ import java.nio.charset.StandardCharsets;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -151,7 +151,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             final AssemblyData data = parser.parse(proc.getInputStream());
 
             // Try evacuating the error stream
-            final String errorStream = IOUtils.toString(proc.getErrorStream(), StandardCharsets.UTF_8);
+            final String errorStream = new String(ByteStreams.toByteArray(proc.getErrorStream()), StandardCharsets.UTF_8);
             if (null != errorStream && !errorStream.isEmpty()) {
                 LOGGER.warn("Error from GrokAssembly: {}", errorStream);
             }
@@ -379,7 +379,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             final ProcessBuilder pb = new ProcessBuilder(baseArgumentList);
             final Process p = pb.start();
             // Try evacuating the error stream
-            IOUtils.copy(p.getErrorStream(), NullOutputStream.NULL_OUTPUT_STREAM);
+            ByteStreams.copy(p.getErrorStream(), NullOutputStream.NULL_OUTPUT_STREAM);
 
             final GrokParser grok = new GrokParser();
             final AssemblyData data = grok.parse(p.getInputStream());

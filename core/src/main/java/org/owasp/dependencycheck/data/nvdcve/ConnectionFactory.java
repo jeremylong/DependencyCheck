@@ -17,9 +17,9 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import com.google.common.io.Resources;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
@@ -29,11 +29,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.concurrent.ThreadSafe;
-import org.apache.commons.io.IOUtils;
+import org.anarres.jdiagnostics.DefaultQuery;
 import org.owasp.dependencycheck.utils.DBUtils;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
-import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -316,8 +315,8 @@ public final class ConnectionFactory {
     private void createTables(Connection conn) throws DatabaseException {
         LOGGER.debug("Creating database structure");
 
-        try (InputStream is = FileUtils.getResourceAsStream(DB_STRUCTURE_RESOURCE)) {
-            final String dbStructure = IOUtils.toString(is, StandardCharsets.UTF_8);
+        try {
+            final String dbStructure = Resources.toString(Resources.getResource(DB_STRUCTURE_RESOURCE), StandardCharsets.UTF_8);
 
             Statement statement = null;
             try {
@@ -329,8 +328,10 @@ public final class ConnectionFactory {
             } finally {
                 DBUtils.closeStatement(statement);
             }
-        } catch (IOException ex) {
+        } catch (IllegalArgumentException | IOException ex) {
             throw new DatabaseException("Unable to create database schema", ex);
+        } catch (LinkageError ex) {
+            LOGGER.debug(new DefaultQuery(ex).call().toString());
         }
     }
 
@@ -353,11 +354,8 @@ public final class ConnectionFactory {
         if (connectionString.startsWith("jdbc:h2:file:")) {
             LOGGER.debug("Updating database structure");
             final String updateFile = String.format(DB_STRUCTURE_UPDATE_RESOURCE, currentDbVersion.toString());
-            try (InputStream is = FileUtils.getResourceAsStream(updateFile)) {
-                if (is == null) {
-                    throw new DatabaseException(String.format("Unable to load update file '%s'", updateFile));
-                }
-                final String dbStructureUpdate = IOUtils.toString(is, StandardCharsets.UTF_8);
+            try {
+                final String dbStructureUpdate = Resources.toString(Resources.getResource(updateFile), StandardCharsets.UTF_8);
 
                 Statement statement = null;
                 try {
@@ -369,7 +367,7 @@ public final class ConnectionFactory {
                 } finally {
                     DBUtils.closeStatement(statement);
                 }
-            } catch (IOException ex) {
+            } catch (IllegalArgumentException | IOException ex) {
                 final String msg = String.format("Upgrade SQL file does not exist: %s", updateFile);
                 throw new DatabaseException(msg, ex);
             }

@@ -868,6 +868,11 @@ Copyright (c) 2012 - Jeremy Long
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.anarres.jdiagnostics</groupId>
+                <artifactId>jdiagnostics</artifactId>
+                <version>1.0.6</version>
+            </dependency>
+            <dependency>
                 <groupId>org.mock-server</groupId>
                 <artifactId>mockserver-netty</artifactId>
                 <version>5.10</version>

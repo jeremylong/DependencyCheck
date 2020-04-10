@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import com.google.common.io.ByteStreams;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,7 +34,6 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
-import org.apache.commons.compress.utils.IOUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
@@ -120,7 +120,7 @@ public final class ExtractionUtil {
                             throw new ExtractionException(msg);
                         }
                         try (FileOutputStream fos = new FileOutputStream(file)) {
-                            IOUtils.copy(zis, fos);
+                            ByteStreams.copy(zis, fos);
                         } catch (FileNotFoundException ex) {
                             LOGGER.debug("", ex);
                             final String msg = String.format("Unable to find file '%s'.", file.getName());
@@ -180,7 +180,7 @@ public final class ExtractionUtil {
                         throw new ExtractionException("Archive contains a file that would be extracted outside of the target directory.");
                     }
                     try (FileOutputStream fos = new FileOutputStream(file)) {
-                        IOUtils.copy(zis, fos);
+                        ByteStreams.copy(zis, fos);
                     } catch (FileNotFoundException ex) {
                         LOGGER.debug("", ex);
                         final String msg = String.format("Unable to find file '%s'.", file.getName());
@@ -292,7 +292,7 @@ public final class ExtractionUtil {
                 createParentFile(file);
 
                 try (FileOutputStream fos = new FileOutputStream(file)) {
-                    IOUtils.copy(input, fos);
+                    ByteStreams.copy(input, fos);
                 } catch (FileNotFoundException ex) {
                     LOGGER.debug("", ex);
                     final String msg = String.format("Unable to find file '%s'.", file.getName());
@@ -346,7 +346,7 @@ public final class ExtractionUtil {
         try (FileInputStream fis = new FileInputStream(gzip);
                 GZIPInputStream cin = new GZIPInputStream(fis);
                 FileOutputStream out = new FileOutputStream(newFile)) {
-            IOUtils.copy(cin, out);
+            ByteStreams.copy(cin, out);
         } finally {
             if (gzip.isFile() && !org.apache.commons.io.FileUtils.deleteQuietly(gzip)) {
                 LOGGER.debug("Failed to delete temporary file when extracting 'gz' {}", gzip.toString());
@@ -378,7 +378,7 @@ public final class ExtractionUtil {
                 ZipInputStream cin = new ZipInputStream(fis);
                 FileOutputStream out = new FileOutputStream(newFile)) {
             cin.getNextEntry();
-            IOUtils.copy(cin, out);
+            ByteStreams.copy(cin, out);
         } finally {
             if (zip.isFile() && !org.apache.commons.io.FileUtils.deleteQuietly(zip)) {
                 LOGGER.debug("Failed to delete temporary file when extracting 'zip' {}", zip.toString());

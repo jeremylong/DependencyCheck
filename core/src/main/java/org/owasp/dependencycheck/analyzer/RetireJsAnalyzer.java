@@ -20,13 +20,13 @@ package org.owasp.dependencycheck.analyzer;
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
+import com.google.common.io.ByteStreams;
 import com.h3xstream.retirejs.repo.JsLibrary;
 import com.h3xstream.retirejs.repo.JsLibraryResult;
 import com.h3xstream.retirejs.repo.JsVulnerability;
 import com.h3xstream.retirejs.repo.ScannerFacade;
 import com.h3xstream.retirejs.repo.VulnerabilitiesRepository;
 import com.h3xstream.retirejs.repo.VulnerabilitiesRepositoryLoader;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -252,7 +252,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         try (InputStream fis = new FileInputStream(dependency.getActualFile())) {
-            final byte[] fileContent = IOUtils.toByteArray(fis);
+            final byte[] fileContent = ByteStreams.toByteArray(fis);
             final ScannerFacade scanner = new ScannerFacade(jsRepository);
             final List<JsLibraryResult> results;
             try {
