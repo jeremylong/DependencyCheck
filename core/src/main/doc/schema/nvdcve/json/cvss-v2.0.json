@@ -52,13 +52,32 @@
         }
     },
     "properties": {
+        "version": {
+            "description": "CVSS Version",
+            "type": "string",
+            "enum": [ "2.0" ]
+        },
+        "vectorString": {
+            "type": "string",
+            "pattern": "^((AV:[NAL]|AC:[LMH]|Au:[MSN]|[CIA]:[NPC]|E:(U|POC|F|H|ND)|RL:(OF|TF|W|U|ND)|RC:(UC|UR|C|ND)|CDP:(N|L|LM|MH|H|ND)|TD:(N|L|M|H|ND)|[CIA]R:(L|M|H|ND))/)*(AV:[NAL]|AC:[LMH]|Au:[MSN]|[CIA]:[NPC]|E:(U|POC|F|H|ND)|RL:(OF|TF|W|U|ND)|RC:(UC|UR|C|ND)|CDP:(N|L|LM|MH|H|ND)|TD:(N|L|M|H|ND)|[CIA]R:(L|M|H|ND))$"
+        },
         "accessVector":                   { "$ref": "#/definitions/accessVectorType" },
         "accessComplexity":               { "$ref": "#/definitions/accessComplexityType" },
         "authentication":                 { "$ref": "#/definitions/authenticationType" },
         "confidentialityImpact":          { "$ref": "#/definitions/ciaType" },
         "integrityImpact":                { "$ref": "#/definitions/ciaType" },
         "availabilityImpact":             { "$ref": "#/definitions/ciaType" },
-        "baseScore":                      { "$ref": "#/definitions/scoreType" }
+        "baseScore":                      { "$ref": "#/definitions/scoreType" },
+        "exploitability":                 { "$ref": "#/definitions/exploitabilityType" },
+        "remediationLevel":               { "$ref": "#/definitions/remediationLevelType" },
+        "reportConfidence":               { "$ref": "#/definitions/reportConfidenceType" },
+        "temporalScore":                  { "$ref": "#/definitions/scoreType" },
+        "collateralDamagePotential":      { "$ref": "#/definitions/collateralDamagePotentialType" },
+        "targetDistribution":             { "$ref": "#/definitions/targetDistributionType" },
+        "confidentialityRequirement":     { "$ref": "#/definitions/ciaRequirementType" },
+        "integrityRequirement":           { "$ref": "#/definitions/ciaRequirementType" },
+        "availabilityRequirement":        { "$ref": "#/definitions/ciaRequirementType" },
+        "environmentalScore":             { "$ref": "#/definitions/scoreType" }
     },
     "required": [ "version", "vectorString", "baseScore" ]
 }

@@ -20,9 +20,6 @@ package org.owasp.dependencycheck.reporting;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.File;
@@ -70,6 +67,10 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 
 /**
  * The ReportGenerator is used to, as the name implies, generate reports.
@@ -526,9 +527,18 @@ public class ReportGenerator {
         final String outputPath = pathToJson + ".pretty";
         final File in = new File(pathToJson);
         final File out = new File(outputPath);
-        try (JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(in), StandardCharsets.UTF_8));
-                JsonWriter writer = new JsonWriter(new OutputStreamWriter(new FileOutputStream(out), StandardCharsets.UTF_8))) {
-            prettyPrint(reader, writer);
+        
+        final JsonFactory factory = new JsonFactory();
+        
+        try ( 
+            JsonParser parser = factory.createParser(new FileInputStream(in));
+            JsonGenerator generator = factory.createGenerator(new FileOutputStream(out))) {
+            
+            generator.useDefaultPrettyPrinter();
+            
+            while (parser.nextToken() != null) {
+                generator.copyCurrentEvent(parser);
+            }
         } catch (IOException ex) {
             LOGGER.debug("Malformed JSON?", ex);
             throw new ReportException("Unable to generate json report", ex);
@@ -542,62 +552,4 @@ public class ReportGenerator {
         }
     }
 
-    /**
-     * Streams from a json reader to a json writer and performs pretty printing.
-     * <p>
-     * This function is copied from https://sites.google.com/site/gson/streaming
-     *
-     * @param reader json reader
-     * @param writer json writer
-     * @throws IOException thrown if the json is malformed
-     */
-    private static void prettyPrint(JsonReader reader, JsonWriter writer) throws IOException {
-        writer.setIndent("  ");
-        while (true) {
-            final JsonToken token = reader.peek();
-            switch (token) {
-                case BEGIN_ARRAY:
-                    reader.beginArray();
-                    writer.beginArray();
-                    break;
-                case END_ARRAY:
-                    reader.endArray();
-                    writer.endArray();
-                    break;
-                case BEGIN_OBJECT:
-                    reader.beginObject();
-                    writer.beginObject();
-                    break;
-                case END_OBJECT:
-                    reader.endObject();
-                    writer.endObject();
-                    break;
-                case NAME:
-                    final String name = reader.nextName();
-                    writer.name(name);
-                    break;
-                case STRING:
-                    final String s = reader.nextString();
-                    writer.value(s);
-                    break;
-                case NUMBER:
-                    final String n = reader.nextString();
-                    writer.value(new BigDecimal(n));
-                    break;
-                case BOOLEAN:
-                    final boolean b = reader.nextBoolean();
-                    writer.value(b);
-                    break;
-                case NULL:
-                    reader.nextNull();
-                    writer.nullValue();
-                    break;
-                case END_DOCUMENT:
-                    return;
-                default:
-                    LOGGER.debug("Unexpected JSON toekn {}", token.toString());
-                    break;
-            }
-        }
-    }
 }
