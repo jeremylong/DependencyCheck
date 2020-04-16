@@ -132,7 +132,7 @@ Copyright (c) 2012 - Jeremy Long
         <maven.api.version>3.1.0</maven.api.version>
         <reporting.checkstyle-plugin.version>3.1.1</reporting.checkstyle-plugin.version>
         <doxia-module-markdown.version>1.9.1</doxia-module-markdown.version>
-        <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
+        <maven-antrun-plugin.version>3.0.0</maven-antrun-plugin.version>
         <maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
         <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
         <!-- upgrading beyond 2.5 breaks maven site-->
@@ -306,7 +306,7 @@ Copyright (c) 2012 - Jeremy Long
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
-                    <version>1.8</version>
+                    <version>3.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
