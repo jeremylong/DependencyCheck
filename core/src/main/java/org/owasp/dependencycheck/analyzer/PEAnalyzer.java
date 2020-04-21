@@ -26,7 +26,7 @@ import org.boris.pecoff4j.PE;
 import org.boris.pecoff4j.ResourceDirectory;
 import org.boris.pecoff4j.ResourceEntry;
 import org.boris.pecoff4j.constant.ResourceType;
-import org.boris.pecoff4j.io.PEParser;
+import org.owasp.dependencycheck.utils.PEParser;
 import org.boris.pecoff4j.io.ResourceParser;
 import org.boris.pecoff4j.resources.StringFileInfo;
 import org.boris.pecoff4j.resources.StringTable;
