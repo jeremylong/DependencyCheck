@@ -97,6 +97,7 @@ import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
 import org.apache.maven.shared.dependency.graph.traversal.FilteringDependencyNodeVisitor;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.SeverityUtil;
 import org.owasp.dependencycheck.xml.pom.Model;
 import org.owasp.dependencycheck.xml.pom.PomUtils;
@@ -1113,8 +1114,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     // do nothing, exception is to be reported
                 } else if (addReactorDependency(engine,
                         new DefaultArtifact(dependency.getGroupId(), dependency.getArtifactId(),
-                            dependency.getVersion(), dependency.getScope(), dependency.getType(), dependency.getClassifier(),
-                            new DefaultArtifactHandler()))) {
+                                dependency.getVersion(), dependency.getScope(), dependency.getType(), dependency.getClassifier(),
+                                new DefaultArtifactHandler()))) {
                     addException = false;
                 }
                 //CSON: EmptyBlock
@@ -1263,8 +1264,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 } else if ("pom".equals(dependencyNode.getArtifact().getType())) {
 
                     try {
-final                        Dependency d = new Dependency(artifactFile.getAbsoluteFile());
-     final                   Model pom = PomUtils.readPom(artifactFile.getAbsoluteFile());
+                        final Dependency d = new Dependency(artifactFile.getAbsoluteFile());
+                        final Model pom = PomUtils.readPom(artifactFile.getAbsoluteFile());
                         JarAnalyzer.setPomEvidence(d, pom, null, true);
                         engine.addDependency(d);
                     } catch (AnalysisException ex) {
@@ -2042,7 +2043,21 @@ final                        Dependency d = new Dependency(artifactFile.getAbsol
      * @return the selected report formats
      */
     private Set<String> getFormats() {
-        final Set<String> selectedFormats = formats == null ? new HashSet<>() : new HashSet<>(Arrays.asList(formats));
+        final Set<String> invalid = new HashSet<>();
+        final Set<String> selectedFormats = formats == null || formats.length == 0 ? new HashSet<>() : new HashSet<>(Arrays.asList(formats));
+        selectedFormats.forEach((s) -> {
+            try {
+                ReportGenerator.Format.valueOf(s.toUpperCase());
+            } catch (IllegalArgumentException ex) {
+                invalid.add(s);
+            }
+        });
+        invalid.forEach((s) -> {
+            getLog().warn("Invalid format specified: " + s);
+        });
+        if (selectedFormats.contains("true")) {
+            selectedFormats.remove("true");
+        }
         if (format != null && selectedFormats.isEmpty()) {
             selectedFormats.add(format);
         }
