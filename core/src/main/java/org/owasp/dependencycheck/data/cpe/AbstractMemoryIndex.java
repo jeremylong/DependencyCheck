@@ -278,6 +278,14 @@ public abstract class AbstractMemoryIndex implements MemoryIndex {
         } catch (BooleanQuery.TooManyClauses ex) {
             BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
             query = queryParser.parse(searchString);
+        } catch (ParseException ex) {
+            if (ex.getMessage() != null && ex.getMessage().contains("too many boolean clauses")) {
+                BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
+                query = queryParser.parse(searchString);
+            } else {
+                LOGGER.debug("Parse Excepction", ex);
+                throw ex;
+            }
         }
         try {
             resetAnalyzers();
