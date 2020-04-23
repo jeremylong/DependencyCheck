@@ -65,6 +65,7 @@ GRANT EXECUTE ON PROCEDURE dependencycheck.save_property TO 'dcuser';
 DELIMITER //
 CREATE PROCEDURE update_ecosystems()
 BEGIN
+SET @OLD_SQL_SAFE_UPDATES = (SELECT @@SQL_SAFE_UPDATES);
 SET SQL_SAFE_UPDATES = 0;
 UPDATE cpeEntry n INNER JOIN
     (SELECT DISTINCT vendor, product, MIN(ecosystem) eco
@@ -75,7 +76,7 @@ UPDATE cpeEntry n INNER JOIN
   AND e.product = n.product 
 SET n.ecosystem = e.eco
 WHERE n.ecosystem IS NULL;
-SET SQL_SAFE_UPDATES = 1;
+SET SQL_SAFE_UPDATES = @OLD_SQL_SAFE_UPDATES;
 END //
 DELIMITER ;
 
@@ -84,9 +85,10 @@ GRANT EXECUTE ON PROCEDURE dependencycheck.update_ecosystems TO 'dcuser';
 DELIMITER //
 CREATE PROCEDURE cleanup_orphans()
 BEGIN
+SET @OLD_SQL_SAFE_UPDATES = (SELECT @@SQL_SAFE_UPDATES);
 SET SQL_SAFE_UPDATES = 0;
 DELETE FROM cpeEntry WHERE id not in (SELECT CPEEntryId FROM software);
-SET SQL_SAFE_UPDATES = 1;
+SET SQL_SAFE_UPDATES = @OLD_SQL_SAFE_UPDATES;
 END //
 DELIMITER ;
 
