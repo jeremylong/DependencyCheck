@@ -509,8 +509,12 @@ public class ReportGenerator {
         }
         if (out.isFile() && in.isFile() && in.delete()) {
             try {
+                Thread.sleep(1000);
                 org.apache.commons.io.FileUtils.moveFile(out, in);
             } catch (IOException ex) {
+                LOGGER.error("Unable to generate pretty report, caused by: {}", ex.getMessage());
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
                 LOGGER.error("Unable to generate pretty report, caused by: {}", ex.getMessage());
             }
         }
@@ -535,8 +539,12 @@ public class ReportGenerator {
         }
         if (out.isFile() && in.isFile() && in.delete()) {
             try {
+                Thread.sleep(1000);
                 org.apache.commons.io.FileUtils.moveFile(out, in);
             } catch (IOException ex) {
+                LOGGER.error("Unable to generate pretty report, caused by: {}", ex.getMessage());
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
                 LOGGER.error("Unable to generate pretty report, caused by: {}", ex.getMessage());
             }
         }
