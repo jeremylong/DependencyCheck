@@ -53,41 +53,49 @@ public class CveItemOperator {
      */
     private String extractEcosystem(String baseEcosystem, String vendor, String product, String targetSw) {
         if ("ibm".equals(vendor) && "java".equals(product)) {
-            return Ecosystem.NATIVE.toString();
+            return Ecosystem.NATIVE;
         }
         if ("oracle".equals(vendor) && "vm".equals(product)) {
-            return Ecosystem.NATIVE.toString();
+            return Ecosystem.NATIVE;
         }
         switch (targetSw) {
             case "asp.net"://.net
             case "c#"://.net
             case ".net"://.net
             case "dotnetnuke"://.net
-                return Ecosystem.DOTNET.toString();
+                return Ecosystem.DOTNET;
             case "android"://android
-                return Ecosystem.JAVA.toString();
+            case "java"://java
+                return Ecosystem.JAVA;
             case "c/c++"://c++
             case "borland_c++"://c++
+            case "visual_c++"://c++
             case "gnu_c++"://c++
-                return Ecosystem.NATIVE.toString();
+            case "linux_kernel"://native
+            case "linux"://native
+            case "unix"://native
+            case "suse_linux"://native
+            case "redhat_enterprise_linux"://native
+            case "debian"://native
+                return Ecosystem.NATIVE;
             case "coldfusion"://coldfusion
-                return Ecosystem.COLDFUSION.toString();
+                return Ecosystem.COLDFUSION;
             case "ios"://ios
             case "iphone"://ios
             case "ipad"://ios
             case "iphone_os"://ios
-                return Ecosystem.IOS.toString();
-            case "java"://java
-                return Ecosystem.JAVA.toString();
+                return Ecosystem.IOS;
             case "jquery"://javascript
-                return Ecosystem.JAVASCRIPT.toString();
+                return Ecosystem.JAVASCRIPT;
             case "node.js"://node.js
             case "nodejs"://node.js
-                return Ecosystem.NODEJS.toString();
+                return Ecosystem.NODEJS;
             case "perl"://perl
-                return Ecosystem.PERL.toString();
+                return Ecosystem.PERL;
             case "joomla!"://php
             case "joomla"://php
+            case "mybb"://php
+            case "simplesamlphp"://php
             case "craft_cms"://php
             case "moodle"://php
             case "phpcms"://php
@@ -101,11 +109,11 @@ public class CveItemOperator {
             case "openpne"://php
             case "vbulletin3"://php
             case "vbulletin4"://php
-                return Ecosystem.PHP.toString();
+                return Ecosystem.PHP;
             case "python"://python
-                return Ecosystem.PYTHON.toString();
+                return Ecosystem.PYTHON;
             case "ruby"://ruby
-                return Ecosystem.RUBY.toString();
+                return Ecosystem.RUBY;
         }
         return baseEcosystem;
     }

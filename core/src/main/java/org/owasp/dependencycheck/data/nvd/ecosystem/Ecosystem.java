@@ -25,7 +25,6 @@ public final class Ecosystem {
 
     public final static String RUBY = "ruby";
     public final static String DOTNET = "dotnet";
-    public final static String CMAKE = "cmake";
     public final static String IOS = "ios";
     public final static String PHP = "php";
     public final static String GOLANG = "golang";

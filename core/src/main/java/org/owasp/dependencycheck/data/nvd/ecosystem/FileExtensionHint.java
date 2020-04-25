@@ -27,9 +27,9 @@ public enum FileExtensionHint implements EcosystemHint {
     JAR_JSP(".jsp", Ecosystem.JAVA),
     JAR_RUBY(".rb", Ecosystem.RUBY),
     PYTON(".py", Ecosystem.PYTHON),
-    CMAKE_CPP(".cpp", Ecosystem.CMAKE),
-    CMAKE_C(".c", Ecosystem.CMAKE),
-    CMAKE_H(".h", Ecosystem.CMAKE);
+    CMAKE_CPP(".cpp", Ecosystem.NATIVE),
+    CMAKE_C(".c", Ecosystem.NATIVE),
+    CMAKE_H(".h", Ecosystem.NATIVE);
 
     private final String extension;
 

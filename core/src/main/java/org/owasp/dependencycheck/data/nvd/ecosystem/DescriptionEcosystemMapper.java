@@ -169,7 +169,7 @@ public class DescriptionEcosystemMapper {
                 }
 
                 String ecosystem = value.getEcosystem();
-                if (Ecosystem.CMAKE.equals(ecosystem)) { // TODO could be checked afterwards
+                if (Ecosystem.NATIVE.equals(ecosystem)) { // TODO could be checked afterwards
                     if (StringUtils.contains(c, "android")) {
                         return;
                     }
