@@ -28,9 +28,6 @@ import org.owasp.dependencycheck.dependency.VulnerableSoftware;
  * Utility for processing {@linkplain DefCveItem} in order to extract key values
  * like textual description and ecosystem type.
  *
- * Utility for processing {@linkplain DefCveItem} in order to extract key values
- * like textual description and ecosystem type.
- *
  * @author skjolber
  */
 public class CveItemOperator {
@@ -130,8 +127,14 @@ public class CveItemOperator {
         return extractEcosystem(baseEcosystem, parsedCpe.getVendor(), parsedCpe.getProduct(), parsedCpe.getTargetSw());
     }
 
+    /**
+     * Determines if the CVE entry is rejected.
+     *
+     * @param description the CVE description
+     * @return <code>true</code> if the CVE was rejected; otherwise
+     * <code>false</code>
+     */
     public boolean isRejected(String description) {
         return description.startsWith("** REJECT **");
     }
-
 }
