@@ -17,10 +17,12 @@
  */
 package org.owasp.dependencycheck.utils;
 
-import com.google.gson.Gson;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -80,6 +82,8 @@ public final class Settings {
      */
     private File tempDirectory = null;
 
+    private ObjectMapper objectMapper = new ObjectMapper();
+    
     //<editor-fold defaultstate="collapsed" desc="KEYS used to access settings">
     /**
      * The collection of keys used within the properties file.
@@ -843,7 +847,11 @@ public final class Settings {
      */
     public void setArrayIfNotEmpty(@NotNull final String key, @Nullable final String[] value) {
         if (null != value && value.length > 0) {
-            setString(key, new Gson().toJson(value));
+            try {
+                setString(key, objectMapper.writeValueAsString(value));
+            } catch (JsonProcessingException e) {
+                throw new IllegalArgumentException();
+            }
         }
     }
 
@@ -855,7 +863,11 @@ public final class Settings {
      */
     public void setArrayIfNotEmpty(@NotNull final String key, @Nullable final List<String> value) {
         if (null != value && !value.isEmpty()) {
-            setString(key, new Gson().toJson(value));
+            try {
+                setString(key, objectMapper.writeValueAsString(value));
+            } catch (JsonProcessingException e) {
+                throw new IllegalArgumentException();
+            }
         }
     }
 
@@ -1097,7 +1109,11 @@ public final class Settings {
         final String string = getString(key);
         if (string != null) {
             if (string.charAt(0) == '{' || string.charAt(0) == '[') {
-                return new Gson().fromJson(string, String[].class);
+                try {
+                    return objectMapper.readValue(string, String[].class);
+                } catch (JsonProcessingException e) {
+                    throw new IllegalStateException("Unable to read value '" + string + "' as an array");
+                }
             } else {
                 return string.split(ARRAY_SEP);
             }
