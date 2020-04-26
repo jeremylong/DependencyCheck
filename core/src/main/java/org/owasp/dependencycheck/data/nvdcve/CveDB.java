@@ -1284,8 +1284,8 @@ public final class CveDB implements AutoCloseable {
     private List<VulnerableSoftware> parseCpes(DefCveItem cve) throws CpeValidationException {
         final List<VulnerableSoftware> software = new ArrayList<>();
         final List<DefCpeMatch> cpeEntries = cve.getConfigurations().getNodes().stream()
-                .collect(new NodeFlatteningCollector())
-                .collect(new CpeMatchStreamCollector())
+                .collect(NodeFlatteningCollector.getINSTANCE())
+                .collect(CpeMatchStreamCollector.getINSTANCE())
                 .filter(predicate -> predicate.getCpe23Uri().startsWith(cpeStartsWithFilter))
                 //this single CPE entry causes nearly 100% FP - so filtering it at the source.
                 .filter(entry -> !("CVE-2009-0754".equals(cve.getCve().getCVEDataMeta().getId())

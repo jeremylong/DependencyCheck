@@ -188,9 +188,9 @@ public class Dependency extends EvidenceCollection implements Serializable {
     /**
      * Constructs a new Dependency object.
      *
-     * @param file      the File to create the dependency object from.
+     * @param file the File to create the dependency object from.
      * @param isVirtual specifies if the dependency is virtual indicating the
-     *                  file doesn't actually exist.
+     * file doesn't actually exist.
      */
     public Dependency(File file, boolean isVirtual) {
         this();
@@ -223,7 +223,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * Constructs a new Dependency object.
      *
      * @param isVirtual specifies if the dependency is virtual indicating the
-     *                  file doesn't actually exist.
+     * file doesn't actually exist.
      */
     public Dependency(boolean isVirtual) {
         this();
@@ -508,9 +508,9 @@ public class Dependency extends EvidenceCollection implements Serializable {
     /**
      * Adds the Maven artifact as evidence.
      *
-     * @param source        The source of the evidence
+     * @param source The source of the evidence
      * @param mavenArtifact The Maven artifact
-     * @param confidence    The confidence level of this evidence
+     * @param confidence The confidence level of this evidence
      */
     public void addAsEvidence(String source, MavenArtifact mavenArtifact, Confidence confidence) {
         if (mavenArtifact.getGroupId() != null && !mavenArtifact.getGroupId().isEmpty()) {
@@ -542,8 +542,8 @@ public class Dependency extends EvidenceCollection implements Serializable {
                 }
             }
         }
-        if (!found && !Strings.isNullOrEmpty(mavenArtifact.getGroupId()) 
-                && !Strings.isNullOrEmpty(mavenArtifact.getArtifactId()) 
+        if (!found && !Strings.isNullOrEmpty(mavenArtifact.getGroupId())
+                && !Strings.isNullOrEmpty(mavenArtifact.getArtifactId())
                 && !Strings.isNullOrEmpty(mavenArtifact.getVersion())) {
             try {
                 LOGGER.debug("Adding new maven identifier {}", mavenArtifact);
@@ -953,7 +953,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
          *
          * @param file the source for the checksum
          * @return the string representation of the checksum
-         * @throws IOException              thrown if there is an I/O error
+         * @throws IOException thrown if there is an I/O error
          * @throws NoSuchAlgorithmException thrown if the algorithm is not found
          */
         String hash(File file) throws IOException, NoSuchAlgorithmException;

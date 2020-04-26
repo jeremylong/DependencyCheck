@@ -17,21 +17,6 @@
  */
 package org.owasp.dependencycheck.data.artifactory;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
-import org.owasp.dependencycheck.data.nexus.MavenArtifact;
-import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.utils.Checksum;
-import org.owasp.dependencycheck.utils.InvalidSettingException;
-import org.owasp.dependencycheck.utils.Settings;
-import org.owasp.dependencycheck.utils.URLConnectionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.concurrent.ThreadSafe;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -46,9 +31,28 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.concurrent.ThreadSafe;
+
+import org.owasp.dependencycheck.data.nexus.MavenArtifact;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.Checksum;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.URLConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.google.common.base.Objects;
+
 /**
  * Class of methods to search Artifactory for hashes and determine Maven GAV
  * from there.
+ *
+ * Data classes copied from JFrog's artifactory-client-java project.
  *
  * @author nhenneaux
  */
@@ -85,6 +89,11 @@ public class ArtifactorySearch {
     private final Settings settings;
 
     /**
+     * Search result reader
+     */
+    private final ObjectReader objectReader;
+
+    /**
      * Creates a NexusSearch for the given repository URL.
      *
      * @param settings the configured settings
@@ -110,6 +119,8 @@ public class ArtifactorySearch {
             useProxy = false;
             LOGGER.debug("Not using proxy");
         }
+
+        objectReader = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).readerFor(FileImpl.class);
     }
 
     /**
@@ -195,70 +206,85 @@ public class ArtifactorySearch {
      * @throws IOException thrown if there is an I/O error
      */
     protected List<MavenArtifact> processResponse(Dependency dependency, HttpURLConnection conn) throws IOException {
-        final JsonObject asJsonObject;
-        try (InputStreamReader streamReader = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)) {
-            asJsonObject = JsonParser.parseReader(streamReader).getAsJsonObject();
-        }
-        final JsonArray results = asJsonObject.getAsJsonArray("results");
-        final int numFound = results.size();
-        if (numFound == 0) {
-            throw new FileNotFoundException("Artifact " + dependency + " not found in Artifactory");
-        }
+        final List<MavenArtifact> result = new ArrayList<>();
 
-        final List<MavenArtifact> result = new ArrayList<>(numFound);
-        for (JsonElement jsonElement : results) {
+        try (InputStreamReader streamReader = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
+                JsonParser parser = objectReader.getFactory().createParser(streamReader)) {
 
-            final JsonObject checksumList = jsonElement.getAsJsonObject().getAsJsonObject("checksums");
-            final JsonPrimitive sha256Primitive = checksumList.getAsJsonPrimitive("sha256");
-            final String sha1 = checksumList.getAsJsonPrimitive("sha1").getAsString();
-            final String sha256 = sha256Primitive == null ? null : sha256Primitive.getAsString();
-            final String md5 = checksumList.getAsJsonPrimitive("md5").getAsString();
+            if (init(parser) && parser.nextToken() == com.fasterxml.jackson.core.JsonToken.START_OBJECT) {
+                // at least one result
+                do {
+                    final FileImpl file = objectReader.readValue(parser);
 
-            checkHashes(dependency, sha1, sha256, md5);
+                    checkHashes(dependency, file.getChecksums());
 
-            final String downloadUri = jsonElement.getAsJsonObject().getAsJsonPrimitive("downloadUri").getAsString();
+                    final Matcher pathMatcher = PATH_PATTERN.matcher(file.getPath());
+                    if (!pathMatcher.matches()) {
+                        throw new IllegalStateException("Cannot extract the Maven information from the path retrieved in Artifactory " + file.getPath());
+                    }
 
-            final String path = jsonElement.getAsJsonObject().getAsJsonPrimitive("path").getAsString();
+                    final String groupId = pathMatcher.group("groupId").replace('/', '.');
+                    final String artifactId = pathMatcher.group("artifactId");
+                    final String version = pathMatcher.group("version");
 
-            final Matcher pathMatcher = PATH_PATTERN.matcher(path);
-            if (!pathMatcher.matches()) {
-                throw new IllegalStateException("Cannot extract the Maven information from the path retrieved in Artifactory " + path);
+                    result.add(new MavenArtifact(groupId, artifactId, version, file.getDownloadUri(), MavenArtifact.derivePomUrl(artifactId, version, file.getDownloadUri())));
+
+                } while (parser.nextToken() == com.fasterxml.jackson.core.JsonToken.START_OBJECT);
+            } else {
+                throw new FileNotFoundException("Artifact " + dependency + " not found in Artifactory");
             }
-            final String groupId = pathMatcher.group("groupId").replace('/', '.');
-            final String artifactId = pathMatcher.group("artifactId");
-            final String version = pathMatcher.group("version");
-
-            result.add(new MavenArtifact(groupId, artifactId, version, downloadUri, MavenArtifact.derivePomUrl(artifactId, version, downloadUri)));
         }
 
         return result;
+    }
+
+    protected boolean init(JsonParser parser) throws IOException {
+        com.fasterxml.jackson.core.JsonToken nextToken = parser.nextToken();
+        if (nextToken != com.fasterxml.jackson.core.JsonToken.START_OBJECT) {
+            throw new IOException("Expected " + com.fasterxml.jackson.core.JsonToken.START_OBJECT + ", got " + nextToken);
+        }
+
+        do {
+            nextToken = parser.nextToken();
+            if (nextToken == null) {
+                break;
+            }
+
+            if (nextToken.isStructStart()) {
+                if (nextToken == com.fasterxml.jackson.core.JsonToken.START_ARRAY && Objects.equal("results", parser.currentName())) {
+                    return true;
+                } else {
+                    parser.skipChildren();
+                }
+            }
+        } while (true);
+
+        return false;
     }
 
     /**
      * Validates the hashes of the dependency.
      *
      * @param dependency the dependency
-     * @param sha1 the SHA1 checksum
-     * @param sha256 the SHA256 checksum
-     * @param md5 the MD5 checksum
+     * @param checksums the collection of checksums (md5, sha1, sha256)
      * @throws FileNotFoundException thrown if one of the checksums does not
      * match
      */
-    private void checkHashes(Dependency dependency, String sha1, String sha256, String md5) throws FileNotFoundException {
+    private void checkHashes(Dependency dependency, ChecksumsImpl checksums) throws FileNotFoundException {
         final String md5sum = dependency.getMd5sum();
-        if (!md5.equals(md5sum)) {
+        if (!checksums.getMd5().equals(md5sum)) {
             throw new FileNotFoundException("Artifact found by API is not matching the md5 "
-                    + "of the artifact (repository hash is " + md5 + WHILE_ACTUAL_IS + md5sum + ") !");
+                    + "of the artifact (repository hash is " + checksums.getMd5() + WHILE_ACTUAL_IS + md5sum + ") !");
         }
         final String sha1sum = dependency.getSha1sum();
-        if (!sha1.equals(sha1sum)) {
+        if (!checksums.getSha1().equals(sha1sum)) {
             throw new FileNotFoundException("Artifact found by API is not matching the SHA1 "
-                    + "of the artifact (repository hash is " + sha1 + WHILE_ACTUAL_IS + sha1sum + ") !");
+                    + "of the artifact (repository hash is " + checksums.getSha1() + WHILE_ACTUAL_IS + sha1sum + ") !");
         }
         final String sha256sum = dependency.getSha256sum();
-        if (sha256 != null && !sha256.equals(sha256sum)) {
+        if (checksums.getSha256() != null && !checksums.getSha256().equals(sha256sum)) {
             throw new FileNotFoundException("Artifact found by API is not matching the SHA-256 "
-                    + "of the artifact (repository hash is " + sha256 + WHILE_ACTUAL_IS + sha256sum + ") !");
+                    + "of the artifact (repository hash is " + checksums.getSha256() + WHILE_ACTUAL_IS + sha256sum + ") !");
         }
     }
 
