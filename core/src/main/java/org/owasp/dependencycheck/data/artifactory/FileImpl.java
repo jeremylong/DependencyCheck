@@ -3,10 +3,14 @@ package org.owasp.dependencycheck.data.artifactory;
 import java.util.Date;
 
 /**
+ * Copied from JFrog's artifactory client.
+ *
+ * @see
+ * <a href="https://github.com/jfrog/artifactory-client-java">artifactory-client-java</a>
+ *
  * @author jbaruch
  * @since 29/07/12
  */
-
 public class FileImpl extends ItemImpl {
 
     private String downloadUri;
@@ -17,7 +21,7 @@ public class FileImpl extends ItemImpl {
     private ChecksumsImpl checksums;
     private ChecksumsImpl originalChecksums;
     private String remoteUrl;
-    
+
     public boolean isFolder() {
         return false;
     }

@@ -51,9 +51,9 @@ import com.google.common.base.Objects;
 /**
  * Class of methods to search Artifactory for hashes and determine Maven GAV
  * from there.
- * 
+ *
  * Data classes copied from JFrog's artifactory-client-java project.
- * 
+ *
  * @author nhenneaux
  */
 @ThreadSafe
@@ -87,11 +87,10 @@ public class ArtifactorySearch {
      * The configured settings.
      */
     private final Settings settings;
-    
+
     /**
      * Search result reader
      */
-    
     private final ObjectReader objectReader;
 
     /**
@@ -120,8 +119,8 @@ public class ArtifactorySearch {
             useProxy = false;
             LOGGER.debug("Not using proxy");
         }
-        
-        objectReader = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).readerFor(FileImpl.class);        
+
+        objectReader = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).readerFor(FileImpl.class);
     }
 
     /**
@@ -210,68 +209,64 @@ public class ArtifactorySearch {
         final List<MavenArtifact> result = new ArrayList<>();
 
         try (InputStreamReader streamReader = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
-                JsonParser parser = objectReader.getFactory().createParser(streamReader)                
-                ) {
-            
-            if(init(parser) && parser.nextToken() == com.fasterxml.jackson.core.JsonToken.START_OBJECT) {
+                JsonParser parser = objectReader.getFactory().createParser(streamReader)) {
+
+            if (init(parser) && parser.nextToken() == com.fasterxml.jackson.core.JsonToken.START_OBJECT) {
                 // at least one result
                 do {
                     final FileImpl file = objectReader.readValue(parser);
-                    
+
                     checkHashes(dependency, file.getChecksums());
-                    
+
                     final Matcher pathMatcher = PATH_PATTERN.matcher(file.getPath());
                     if (!pathMatcher.matches()) {
                         throw new IllegalStateException("Cannot extract the Maven information from the path retrieved in Artifactory " + file.getPath());
                     }
-                    
+
                     final String groupId = pathMatcher.group("groupId").replace('/', '.');
                     final String artifactId = pathMatcher.group("artifactId");
                     final String version = pathMatcher.group("version");
-                    
+
                     result.add(new MavenArtifact(groupId, artifactId, version, file.getDownloadUri(), MavenArtifact.derivePomUrl(artifactId, version, file.getDownloadUri())));
 
-                } while(parser.nextToken() == com.fasterxml.jackson.core.JsonToken.START_OBJECT);
+                } while (parser.nextToken() == com.fasterxml.jackson.core.JsonToken.START_OBJECT);
             } else {
-                throw new FileNotFoundException("Artifact " + dependency + " not found in Artifactory");                
+                throw new FileNotFoundException("Artifact " + dependency + " not found in Artifactory");
             }
         }
-        
+
         return result;
     }
-    
+
     protected boolean init(JsonParser parser) throws IOException {
         com.fasterxml.jackson.core.JsonToken nextToken = parser.nextToken();
-        if(nextToken != com.fasterxml.jackson.core.JsonToken.START_OBJECT) {
-            throw new IOException("Expected " + com.fasterxml.jackson.core.JsonToken.START_OBJECT +", got " + nextToken);
+        if (nextToken != com.fasterxml.jackson.core.JsonToken.START_OBJECT) {
+            throw new IOException("Expected " + com.fasterxml.jackson.core.JsonToken.START_OBJECT + ", got " + nextToken);
         }
 
         do {
             nextToken = parser.nextToken();
-            if(nextToken == null) {
+            if (nextToken == null) {
                 break;
             }
 
-            if(nextToken.isStructStart()) {
-                if(nextToken == com.fasterxml.jackson.core.JsonToken.START_ARRAY && Objects.equal("results", parser.currentName())) {
+            if (nextToken.isStructStart()) {
+                if (nextToken == com.fasterxml.jackson.core.JsonToken.START_ARRAY && Objects.equal("results", parser.currentName())) {
                     return true;
                 } else {
                     parser.skipChildren();
                 }
             }
-        } while(true);
-        
+        } while (true);
+
         return false;
     }
-    
 
     /**
      * Validates the hashes of the dependency.
      *
      * @param dependency the dependency
-     * @param sha1 the SHA1 checksum
-     * @param sha256 the SHA256 checksum
-     * @param md5 the MD5 checksum
+     * @param checksums the collection of checksums (md5, sha1, sha256)
      * @throws FileNotFoundException thrown if one of the checksums does not
      * match
      */

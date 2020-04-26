@@ -36,21 +36,24 @@ import javax.annotation.concurrent.ThreadSafe;
  * @author Jeremy Long
  */
 @ThreadSafe
-public class NodeFlatteningCollector implements Collector<DefNode, ArrayList<DefNode>, Stream<DefNode>> {
+public final class NodeFlatteningCollector implements Collector<DefNode, ArrayList<DefNode>, Stream<DefNode>> {
 
-    private static final NodeFlatteningCollector instance;
-    
+    /**
+     * Singleton instance variable.
+     */
+    private static final NodeFlatteningCollector INSTANCE;
+
     static {
-        instance = new NodeFlatteningCollector();
+        INSTANCE = new NodeFlatteningCollector();
     }
-    
-    public static NodeFlatteningCollector getInstance() {
-        return instance;
+
+    public static NodeFlatteningCollector getINSTANCE() {
+        return INSTANCE;
     }
-    
+
     private NodeFlatteningCollector() {
     }
-    
+
     /**
      * Flattens the hierarchical list of nodes.
      *

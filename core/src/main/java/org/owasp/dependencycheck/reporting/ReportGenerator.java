@@ -32,7 +32,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -531,15 +530,15 @@ public class ReportGenerator {
         final String outputPath = pathToJson + ".pretty";
         final File in = new File(pathToJson);
         final File out = new File(outputPath);
-        
+
         final JsonFactory factory = new JsonFactory();
-        
-        try ( 
-            JsonParser parser = factory.createParser(new FileInputStream(in));
-            JsonGenerator generator = factory.createGenerator(new FileOutputStream(out))) {
-            
+
+        try (
+                JsonParser parser = factory.createParser(new FileInputStream(in));
+                JsonGenerator generator = factory.createGenerator(new FileOutputStream(out))) {
+
             generator.useDefaultPrettyPrinter();
-            
+
             while (parser.nextToken() != null) {
                 generator.copyCurrentEvent(parser);
             }

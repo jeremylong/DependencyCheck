@@ -22,7 +22,6 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 
 import java.io.File;
@@ -83,24 +82,24 @@ public final class NvdCveParser {
     public void parse(File file) throws UpdateException {
         LOGGER.debug("Parsing " + file.getName());
 
-        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.registerModule(new AfterburnerModule());
-        
-        ObjectReader objectReader = objectMapper.readerFor(DefCveItem.class);
+
+        final ObjectReader objectReader = objectMapper.readerFor(DefCveItem.class);
 
         try (InputStream fin = new FileInputStream(file);
                 InputStream in = new GZIPInputStream(fin);
                 InputStreamReader isr = new InputStreamReader(in, UTF_8);
                 JsonParser parser = objectReader.getFactory().createParser(in)) {
-                
-                init(parser);
-                
-                while (parser.nextToken() == JsonToken.START_OBJECT) {
-                    final DefCveItem cve = objectReader.readValue(parser);
-                    if (testCveCpeStartWithFilter(cve)) {
-                        cveDB.updateVulnerability(cve);
-                    }
+
+            init(parser);
+
+            while (parser.nextToken() == JsonToken.START_OBJECT) {
+                final DefCveItem cve = objectReader.readValue(parser);
+                if (testCveCpeStartWithFilter(cve)) {
+                    cveDB.updateVulnerability(cve);
                 }
+            }
         } catch (FileNotFoundException ex) {
             LOGGER.error(ex.getMessage());
             throw new UpdateException("Unable to find the NVD CPE file, `" + file + "`, to parse", ex);
@@ -113,26 +112,26 @@ public final class NvdCveParser {
 
     protected void init(JsonParser parser) throws IOException {
         JsonToken nextToken = parser.nextToken();
-        if(nextToken != JsonToken.START_OBJECT) {
-            throw new IOException("Expected " + JsonToken.START_OBJECT +", got " + nextToken);
+        if (nextToken != JsonToken.START_OBJECT) {
+            throw new IOException("Expected " + JsonToken.START_OBJECT + ", got " + nextToken);
         }
 
         do {
             nextToken = parser.nextToken();
-            if(nextToken == null) {
+            if (nextToken == null) {
                 break;
             }
 
-            if(nextToken.isStructStart()) {
-                if(nextToken == JsonToken.START_ARRAY) {
+            if (nextToken.isStructStart()) {
+                if (nextToken == JsonToken.START_ARRAY) {
                     break;
                 } else {
                     parser.skipChildren();
                 }
             }
-        } while(true);
+        } while (true);
     }
-    
+
     /**
      * Tests the CVE's CPE entries against the starts with filter. In general
      * this limits the CVEs imported to just application level vulnerabilities.
@@ -144,8 +143,8 @@ public final class NvdCveParser {
     protected boolean testCveCpeStartWithFilter(final DefCveItem cve) {
         //cycle through to see if this is a CPE we care about (use the CPE filters
         return cve.getConfigurations().getNodes().stream()
-                .collect(NodeFlatteningCollector.getInstance())
-                .collect(CpeMatchStreamCollector.getInstance())
+                .collect(NodeFlatteningCollector.getINSTANCE())
+                .collect(CpeMatchStreamCollector.getINSTANCE())
                 .anyMatch(cpe -> cpe.getCpe23Uri().startsWith(cpeStartsWithFilter));
     }
 }

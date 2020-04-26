@@ -82,8 +82,11 @@ public final class Settings {
      */
     private File tempDirectory = null;
 
+    /**
+     * Reference to a utility class used to convert objects to json.
+     */
     private ObjectMapper objectMapper = new ObjectMapper();
-    
+
     //<editor-fold defaultstate="collapsed" desc="KEYS used to access settings">
     /**
      * The collection of keys used within the properties file.

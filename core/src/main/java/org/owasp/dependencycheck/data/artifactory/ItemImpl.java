@@ -4,11 +4,16 @@ import java.io.File;
 import java.util.Date;
 
 /**
+ * Copied from JFrog's artifactory client.
+ *
+ * @see
+ * <a href="https://github.com/jfrog/artifactory-client-java">artifactory-client-java</a>
+ *
  * @author jbaruch
  * @since 29/07/12
  */
-
 public class ItemImpl {
+
     private String uri;
     private String repo;
     private String path;
@@ -17,7 +22,6 @@ public class ItemImpl {
     private Date lastModified;
     private String modifiedBy;
     private Date lastUpdated;
-
 
     protected ItemImpl(boolean folder, String uri, String metadataUri, Date lastModified, String modifiedBy, Date lastUpdated) {
         this.folder = folder;
@@ -31,7 +35,7 @@ public class ItemImpl {
     protected ItemImpl() {
     }
 
-    protected ItemImpl(boolean folder, String uri){
+    protected ItemImpl(boolean folder, String uri) {
         this.folder = folder;
         this.uri = uri;
     }

@@ -32,24 +32,24 @@ import javax.annotation.concurrent.ThreadSafe;
 /**
  *
  * @author Jeremy Long
- * 
+ *
  */
 @ThreadSafe
-public class CpeMatchStreamCollector implements Collector<DefNode, ArrayList<DefCpeMatch>, Stream<DefCpeMatch>> {
+public final class CpeMatchStreamCollector implements Collector<DefNode, ArrayList<DefCpeMatch>, Stream<DefCpeMatch>> {
 
-    private static final CpeMatchStreamCollector instance;
-    
+    private static final CpeMatchStreamCollector INSTANCE;
+
     static {
-        instance = new CpeMatchStreamCollector();
+        INSTANCE = new CpeMatchStreamCollector();
     }
-    
-    public static CpeMatchStreamCollector getInstance() {
-        return instance;
+
+    public static CpeMatchStreamCollector getINSTANCE() {
+        return INSTANCE;
     }
-    
+
     private CpeMatchStreamCollector() {
     }
-    
+
     @Override
     public Supplier<ArrayList<DefCpeMatch>> supplier() {
         return ArrayList::new;
