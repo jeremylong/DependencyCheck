@@ -67,8 +67,7 @@ public class RetireJSDataSource implements CachedWebDataSource {
      * Downloads the current RetireJS data source.
      *
      * @param engine a reference to the ODC Engine
-     * @return returns false as no updates are made to the database that would
-     * require compaction
+     * @return returns false as no updates are made to the database
      * @throws UpdateException thrown if the update failed
      */
     @Override
