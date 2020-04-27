@@ -73,6 +73,7 @@
             ,"relatedDependencies": [
                 #foreach($related in $dependency.getRelatedDependencies()) #if($foreach.count > 1),#end {
                     "isVirtual": #if($related.isVirtual())true#{else}false#end,
+                    "fileName": "$enc.json($related.DisplayFileName)",
                     "filePath": "$enc.json($related.FilePath)"
                     #if(!$related.isVirtual()),"sha256": "$enc.json($related.Sha256sum)",
                     "sha1": "$enc.json($related.Sha1sum)",
