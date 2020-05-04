@@ -29,8 +29,7 @@ import java.io.File;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Assume;
 import org.owasp.dependencycheck.Engine;
@@ -166,16 +165,51 @@ public class NodePackageAnalyzerTest extends BaseTest {
         analyzer.analyze(toScan, engine);
         analyzer.analyze(toCombine, engine);
 
-        //with npm install run on a "non-macOs" system, 90 else
-        assertEquals("Expected 25 dependencies", 25, engine.getDependencies().length);
+        testLock();
+    }
+
+    private void testLock() {
+        final boolean isMac = System.getProperty("os.name").toLowerCase().contains("mac");
+
+        // test some dependencies
+        boolean bracesFound = false;
+        boolean expandRangeFound = false;
 
         Dependency result = null;
         for (Dependency dep : engine.getDependencies()) {
+            if (!isMac && "fsevents".equals(dep.getName())) {
+                fail("fsevents need to be skipped on non mac");
+            }
+
+            if ("react-dom".equals(dep.getName())) {
+                fail("react-dom need to be skipped because it's an alias");
+            }
+
+            if ("braces".equals(dep.getName())) {
+                bracesFound = true;
+            }
+
+            if ("expand-range".equals(dep.getName())) {
+                expandRangeFound = true;
+            }
+
+            if ("fake_submodule".equals(dep.getName())) {
+                fail("start with file: need to be skipped because it's a local package");
+            }
+
+            if ("react-dom".equals(dep.getName())) {
+                fail("start with file: need to be skipped because it's a local package");
+            }
+
             if ("dns-sync".equals(dep.getName())) {
                 result = dep;
-                break;
             }
         }
+
+        assertTrue("need to contain braces", bracesFound);
+        //check if dependencies of dependencies are imported
+        assertTrue("need to contain expand-range (dependency of braces)", expandRangeFound);
+
         final String vendorString = result.getEvidence(EvidenceType.VENDOR).toString();
         assertThat(vendorString, containsString("Sanjeev Koranga"));
         assertThat(vendorString, containsString("dns-sync"));
@@ -184,6 +218,12 @@ public class NodePackageAnalyzerTest extends BaseTest {
         assertEquals(NodePackageAnalyzer.DEPENDENCY_ECOSYSTEM, result.getEcosystem());
         assertEquals("dns-sync", result.getName());
         assertEquals("0.1.3", result.getVersion());
+
+        // with npm install run on a "non-macOs" system, 90 else
+        // dependencies length change often, maybe not a good idea to test the length, check some dependencies instead
+        //  assertEquals("Expected 40 dependencies", 40, engine.getDependencies().length);
+        // shrinkWrap is not removed because the NodeAudit analyzer is enabled
+        //assertFalse(shrinkwrap.equals(engine.getDependencies()[0]));
     }
 
     /**
@@ -204,12 +244,28 @@ public class NodePackageAnalyzerTest extends BaseTest {
         assertEquals(2, engine.getDependencies().length);
         analyzer.analyze(packageJson, engine);
         assertEquals(1, engine.getDependencies().length); //package-lock was removed without analysis
-        assertTrue(shrinkwrap.equals(engine.getDependencies()[0]));
+        assertEquals(shrinkwrap, engine.getDependencies()[0]);
         analyzer.analyze(shrinkwrap, engine);
 
-        //with npm install run on a "non-macOs" system, 90 else
-        assertEquals("Expected 25 dependencies", 25, engine.getDependencies().length);
-        // shrinkWrap is not removed because the NodeAudit analyzer is enabled
-        //assertFalse(shrinkwrap.equals(engine.getDependencies()[0]));
+        testLock();
+    }
+
+    /**
+     * Test of inspect method, of class PythonDistributionAnalyzer.
+     *
+     * @throws AnalysisException is thrown when an exception occurs.
+     */
+    @Test
+    public void testWithoutLock() throws AnalysisException, InvalidSettingException {
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED), is(true));
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED), is(true));
+        final Dependency packageJson = new Dependency(BaseTest.getResourceAsFile(this,
+                "nodejs/no_lock/package.json"));
+        engine.addDependency(packageJson);
+        analyzer.analyze(packageJson, engine);
+
+        final boolean isMac = System.getProperty("os.name").toLowerCase().indexOf("mac") < 0;
+
+        assertEquals("Expected 1 dependencies", 1, engine.getDependencies().length);
     }
 }

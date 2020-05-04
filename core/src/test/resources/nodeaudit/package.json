@@ -12,10 +12,12 @@
     "dont-sniff-mimetype": "^1.0.0",
     "express": "^4.13.4",
     "express-session": "^1.13.0",
+    "fake_submodule": "file:fake_submodule",
     "forever": "^0.15.1",
     "helmet": "^2.0.0",
     "marked": "0.3.5",
     "mongodb": "^2.1.18",
+    "react-dom": "npm:@hot-loader/react-dom",
     "serve-favicon": "^2.3.0",
     "swig": "^1.4.2",
     "underscore": "^1.8.3"
@@ -37,6 +39,7 @@
   },
   "devDependencies": {
     "async": "^2.0.0-rc.4",
+    "fake_submodule": "file:fake_submodule",
     "grunt": "^1.0.1",
     "grunt-cli": "^1.2.0",
     "grunt-concurrent": "^2.3.0",
@@ -50,6 +53,7 @@
     "grunt-npm-install": "^0.3.0",
     "grunt-retire": "^0.3.12",
     "mocha": "^2.4.5",
+    "react-dom": "npm:@hot-loader/react-dom",
     "selenium-webdriver": "^2.53.2",
     "should": "^8.3.1",
     "zaproxy": "^0.2.0"

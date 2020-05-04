@@ -156,7 +156,7 @@ public class ReportGeneratorIT extends BaseDBTestCase {
 
             File struts = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
             File war = BaseTest.getResourceAsFile(this, "war-4.0.war");
-            File cfu = BaseTest.getResourceAsFile(this, "commons-fileupload-1.1.1.jar");
+            File cfu = BaseTest.getResourceAsFile(this, "commons-fileupload-1.2.1.jar");
             
             //File axis = new File(this.getClass().getClassLoader().getResource("axis2-adb-1.4.1.jar").getPath());
             File axis = BaseTest.getResourceAsFile(this, "axis2-adb-1.4.1.jar");
@@ -190,7 +190,7 @@ public class ReportGeneratorIT extends BaseDBTestCase {
             //Test XML
             InputStream xsdStream = ReportGenerator.class.getClassLoader().getResourceAsStream("schema/dependency-check.2.4.xsd");
             StreamSource xsdSource = new StreamSource(xsdStream);
-            StreamSource xmlSource = new StreamSource(writeTo + (settings.getBoolean(Settings.KEYS.PRETTY_PRINT)?".pretty":""));
+            StreamSource xmlSource = new StreamSource(writeTo);
             SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             Schema schema = sf.newSchema(xsdSource);
             Validator validator = schema.newValidator();
