@@ -43,7 +43,7 @@ public final class CpeMatchStreamCollector implements Collector<DefNode, ArrayLi
         INSTANCE = new CpeMatchStreamCollector();
     }
 
-    public static CpeMatchStreamCollector getINSTANCE() {
+    public static CpeMatchStreamCollector getInstance() {
         return INSTANCE;
     }
 

@@ -93,9 +93,8 @@ public final class NvdCveParser {
                 InputStreamReader isr = new InputStreamReader(in, UTF_8);
                 JsonParser parser = objectReader.getFactory().createParser(in)) {
 
-
+            CveEcosystemMapper mapper = new CveEcosystemMapper();
             init(parser);
-
             while (parser.nextToken() == JsonToken.START_OBJECT) {
                 final DefCveItem cve = objectReader.readValue(parser);
                 if (testCveCpeStartWithFilter(cve)) {
@@ -145,8 +144,8 @@ public final class NvdCveParser {
     protected boolean testCveCpeStartWithFilter(final DefCveItem cve) {
         //cycle through to see if this is a CPE we care about (use the CPE filters
         return cve.getConfigurations().getNodes().stream()
-                .collect(NodeFlatteningCollector.getINSTANCE())
-                .collect(CpeMatchStreamCollector.getINSTANCE())
+                .collect(NodeFlatteningCollector.getInstance())
+                .collect(CpeMatchStreamCollector.getInstance())
                 .anyMatch(cpe -> cpe.getCpe23Uri().startsWith(cpeStartsWithFilter));
     }
 }

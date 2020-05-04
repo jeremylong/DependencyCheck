@@ -79,8 +79,8 @@ public class CveEcosystemMapper {
      */
     private boolean hasMultipleVendorProductConfigurations(DefCveItem cve) {
         final List<DefCpeMatch> cpeEntries = cve.getConfigurations().getNodes().stream()
-                .collect(new NodeFlatteningCollector())
-                .collect(new CpeMatchStreamCollector())
+                .collect(NodeFlatteningCollector.getInstance())
+                .collect(CpeMatchStreamCollector.getInstance())
                 .collect(Collectors.toList());
         if (!cpeEntries.isEmpty() && cpeEntries.size() > 1) {
             final DefCpeMatch firstMatch = cpeEntries.get(0);
