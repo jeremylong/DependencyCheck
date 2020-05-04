@@ -28,12 +28,31 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * Used to flatten a hierarchical list of nodes with children.
  *
  * @author Jeremy Long
  */
-public class NodeFlatteningCollector implements Collector<DefNode, ArrayList<DefNode>, Stream<DefNode>> {
+@ThreadSafe
+public final class NodeFlatteningCollector implements Collector<DefNode, ArrayList<DefNode>, Stream<DefNode>> {
+
+    /**
+     * Singleton instance variable.
+     */
+    private static final NodeFlatteningCollector INSTANCE;
+
+    static {
+        INSTANCE = new NodeFlatteningCollector();
+    }
+
+    public static NodeFlatteningCollector getINSTANCE() {
+        return INSTANCE;
+    }
+
+    private NodeFlatteningCollector() {
+    }
 
     /**
      * Flattens the hierarchical list of nodes.

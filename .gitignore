@@ -37,3 +37,13 @@ velocity.log
 .DS_Store
 /.vscode
 /maven/.factorypath
+
+# nodejs installed resources that are not needed
+core/src/test/resources/nodejs/**/Makefile
+core/src/test/resources/nodejs/**/*.js
+core/src/test/resources/nodejs/**/*.md
+core/src/test/resources/nodejs/**/*.markdown
+core/src/test/resources/nodejs/**/.gitattributes
+core/src/test/resources/nodejs/**/*.cmd
+core/src/test/resources/nodejs/**/*.jshintrc
+core/src/test/resources/nodejs/**/.travis.yml

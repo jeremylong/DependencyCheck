@@ -3,24 +3,6 @@
     "title": "JSON Schema for NVD Vulnerability Data Feed version 1.1",
     "id": "https://scap.nist.gov/schema/nvd/feed/1.1/nvd_cve_feed_json_1.1.schema",
     "definitions": {
-    "def_cpe_name": {
-      "description": "CPE name",
-      "type": "object",
-      "properties": {
-        "cpe22Uri": {
-          "type": "string"
-        },
-        "cpe23Uri": {
-          "type": "string"
-        },
-        "lastModifiedDate": {
-        "type": "string"
-        }
-      },
-      "required": [
-        "cpe23Uri"
-      ]
-    },
     "def_cpe_match": {
       "description": "CPE match string or range",
       "type": "object",
@@ -45,12 +27,6 @@
         },
         "versionEndIncluding": {
           "type": "string"
-        },
-        "cpe_name": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/def_cpe_name"
-          }
         }
       },
       "required": [
@@ -62,7 +38,6 @@
             "description": "Defines a node or sub-node in an NVD applicability statement.",
             "properties": {
                 "operator": {"type": "string"},
-                "negate": {"type": "boolean"},
                 "children": {
                     "type": "array",
                     "items": {"$ref": "#/definitions/def_node"}
@@ -76,7 +51,6 @@
         "def_configurations": {
             "description": "Defines the set of product configurations for a NVD applicability statement.",
             "properties": {
-                "CVE_data_version": {"type": "string"},
                 "nodes": {
                     "type": "array",
                     "items": {"$ref": "#/definitions/def_node"}
@@ -100,9 +74,7 @@
                     "description": "CVSS V3.x score.",
                     "type": "object",
                     "properties": {
-                        "cvssV3": {"$ref": "cvss-v3.x.json"},
-                        "exploitabilityScore": {"$ref": "#/definitions/def_subscore"},
-                        "impactScore": {"$ref": "#/definitions/def_subscore"}
+                        "cvssV3": {"$ref": "cvss-v3.x.json"}
                     }
                 },
                 "baseMetricV2": {
@@ -110,14 +82,7 @@
                     "type": "object",
                     "properties": {
                         "cvssV2": {"$ref": "cvss-v2.0.json"},
-                        "severity": {"type": "string"},
-                        "exploitabilityScore": {"$ref": "#/definitions/def_subscore"},
-                        "impactScore": {"$ref": "#/definitions/def_subscore"},
-                        "acInsufInfo": {"type": "boolean"},
-                        "obtainAllPrivilege": {"type": "boolean"},
-                        "obtainUserPrivilege": {"type": "boolean"},
-                        "obtainOtherPrivilege": {"type": "boolean"},
-                        "userInteractionRequired": {"type": "boolean"}
+                        "severity": {"type": "string"}
                     }
                 }
             }
@@ -127,9 +92,7 @@
             "properties": {
                 "cve": {"$ref": "CVE_JSON_4.0_min_1.1.schema"},
                 "configurations": {"$ref": "#/definitions/def_configurations"},
-                "impact": {"$ref": "#/definitions/def_impact"},
-                "publishedDate": {"type": "string"},
-                "lastModifiedDate": {"type": "string"}
+                "impact": {"$ref": "#/definitions/def_impact"}
             },
             "required": ["cve"]
         }

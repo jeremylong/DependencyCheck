@@ -40,6 +40,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import javax.json.Json;
 import javax.json.JsonException;
 import javax.json.JsonObject;
+import javax.json.JsonString;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 import org.owasp.dependencycheck.Engine.Mode;
@@ -268,6 +269,49 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
         }
     }
 
+
+    /**
+     * should process the dependency ?
+     * Will return true if you need to skip it . (e.g. dependency can't be read, or if npm audit doesn't handle it)
+     * @param name the name of the dependency
+     * @param version the version of the dependency
+     * @param optional is the dependency optional ?
+     * @param fileExist is the package.json available for this file ?
+     * @return should you skip this dependency ?
+     */
+    public static boolean shouldSkipDependency(String name, String version, boolean optional, boolean fileExist){
+        // some package manager can handle alias, yarn for example, but npm doesn't support it
+        if(version.startsWith("npm:")){
+            //TODO make this an error that gets logged
+            LOGGER.warn("dependency skipped: package.json contain an alias for {} => {} npm audit doesn't support aliases", name, version.replace("npm:", ""));
+            return true;
+        }
+
+        if (optional && !fileExist) {
+            LOGGER.warn("dependency skipped: node module {} seems optional and not installed", name);
+            return true;
+        }
+
+        // this seems to produce crash sometimes, I need to tests
+        // using a local node_module is not supported by npm audit, it crash
+        if(version.startsWith("file:")){
+            LOGGER.warn("dependency skipped: package.json contain an local node_module for {} seems to be located {} npm audit doesn't support locally referenced modules", name, version.replace("file:", ""));
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @see NodePackageAnalyzer#shouldSkipDependency(java.lang.String, java.lang.String, boolean, boolean)
+     * @param name
+     * @param version
+     * @return
+     */
+    public static boolean shouldSkipDependency(String name, String version) {
+        return shouldSkipDependency(name, version, false, true);
+    }
+
+
     /**
      * Process the dependencies in the lock file by first parsing its
      * dependencies and then finding the package.json for the module and adding
@@ -285,19 +329,28 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
         if (json.containsKey("dependencies")) {
             final JsonObject deps = json.getJsonObject("dependencies");
             for (Map.Entry<String, JsonValue> entry : deps.entrySet()) {
-                final JsonObject jo = (JsonObject) entry.getValue();
                 final String name = entry.getKey();
-                final String version = jo.get("version").toString();
-                final boolean optional = jo.getBoolean("optional", false);
+                String version;
+                boolean optional = false;
+
                 final File base = Paths.get(baseDir.getPath(), "node_modules", name).toFile();
                 final File f = new File(base, PACKAGE_JSON);
+                Dependency[] dependencies = null;
+                JsonObject jo = null;
 
-                if (optional && !f.exists()) {
-                    LOGGER.warn("node module {} seems optional and not installed, skip it", name);
+                if(entry.getValue() instanceof JsonObject){
+                    jo = (JsonObject) entry.getValue();
+                    version = jo.getString("version");
+                    optional = jo.getBoolean("optional", false);
+                } else {
+                    version = ((JsonString) entry.getValue()).getString();
+                }
+
+                if(shouldSkipDependency(name, version, optional, f.exists())){
                     continue;
                 }
 
-                if (jo.containsKey("dependencies")) {
+                if (null != jo && jo.containsKey("dependencies")) {
                     final String subPackageName = String.format("%s/%s:%s", parentPackage, name, version);
                     processDependencies(jo, base, rootFile, subPackageName, engine);
                 }

@@ -1,5 +1,5 @@
 #**
-This file is part of Dependency-Check.
+This file is part of Dependency-Check. 
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
 @version 2.0
 
 *#<?xml version="1.0"?>
-<analysis xmlns="https://jeremylong.github.io/DependencyCheck/dependency-check.2.3.xsd">
+<analysis xmlns="https://jeremylong.github.io/DependencyCheck/dependency-check.2.4.xsd">
     <scanInfo>
         <engineVersion>$version</engineVersion>
 #foreach($prop in $properties.getMetaData().entrySet())
@@ -93,6 +93,7 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
             <relatedDependencies>
 #foreach($related in $dependency.getRelatedDependencies())
                 <relatedDependency#if($related.isVirtual()) isVirtual="true"#end>
+                    <fileName>$enc.xml($related.FileName)</fileName>
                     <filePath>$enc.xml($related.FilePath)</filePath>
                     <sha256>#if(!$dependency.isVirtual())$enc.xml($dependency.Sha256sum)#end</sha256>
                     <sha1>#if(!$related.isVirtual())$enc.xml($related.Sha1sum)#end</sha1>

@@ -27,11 +27,28 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  *
  * @author Jeremy Long
+ *
  */
-public class CpeMatchStreamCollector implements Collector<DefNode, ArrayList<DefCpeMatch>, Stream<DefCpeMatch>> {
+@ThreadSafe
+public final class CpeMatchStreamCollector implements Collector<DefNode, ArrayList<DefCpeMatch>, Stream<DefCpeMatch>> {
+
+    private static final CpeMatchStreamCollector INSTANCE;
+
+    static {
+        INSTANCE = new CpeMatchStreamCollector();
+    }
+
+    public static CpeMatchStreamCollector getINSTANCE() {
+        return INSTANCE;
+    }
+
+    private CpeMatchStreamCollector() {
+    }
 
     @Override
     public Supplier<ArrayList<DefCpeMatch>> supplier() {

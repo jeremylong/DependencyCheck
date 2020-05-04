@@ -107,7 +107,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <sourceDirectory>${basedir}/src/main/resources/schema/nvdcve/json</sourceDirectory>
                     <outputDirectory>${project.build.directory}/generated-sources/java</outputDirectory>
                     <includeGetters>true</includeGetters>
-                    <annotationStyle>gson</annotationStyle>
+                    <annotationStyle>jackson</annotationStyle>
                     <targetPackage>org.owasp.dependencycheck.data.nvd.json</targetPackage>
                 </configuration>
                 <executions>
@@ -266,8 +266,12 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <artifactId>mailapi</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-afterburner</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -438,6 +442,13 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
             <version>1.4.8</version>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.2.1</version>
             <scope>test</scope>
             <optional>true</optional>
         </dependency>

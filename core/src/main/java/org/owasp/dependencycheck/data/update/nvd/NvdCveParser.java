@@ -17,10 +17,12 @@
  */
 package org.owasp.dependencycheck.data.update.nvd;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -80,24 +82,22 @@ public final class NvdCveParser {
      */
     public void parse(File file) throws UpdateException {
         LOGGER.debug("Parsing " + file.getName());
+
+        final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.registerModule(new AfterburnerModule());
+
+        final ObjectReader objectReader = objectMapper.readerFor(DefCveItem.class);
+
         try (InputStream fin = new FileInputStream(file);
                 InputStream in = new GZIPInputStream(fin);
                 InputStreamReader isr = new InputStreamReader(in, UTF_8);
-                JsonReader reader = new JsonReader(isr)) {
-            final Gson gson = new GsonBuilder().create();
+                JsonParser parser = objectReader.getFactory().createParser(in)) {
 
-            CveEcosystemMapper mapper = new CveEcosystemMapper();
-            
-            reader.beginObject();
 
-            while (reader.hasNext() && !JsonToken.BEGIN_ARRAY.equals(reader.peek())) {
-                reader.skipValue();
-            }
-            reader.beginArray();
-            while (reader.hasNext()) {
-                final DefCveItem cve = gson.fromJson(reader, DefCveItem.class);
+            init(parser);
 
-                //cve.getCve().getCVEDataMeta().getSTATE();
+            while (parser.nextToken() == JsonToken.START_OBJECT) {
+                final DefCveItem cve = objectReader.readValue(parser);
                 if (testCveCpeStartWithFilter(cve)) {
                     cveDB.updateVulnerability(cve, mapper.getEcosystem(cve));
                 }
@@ -112,6 +112,28 @@ public final class NvdCveParser {
         }
     }
 
+    protected void init(JsonParser parser) throws IOException {
+        JsonToken nextToken = parser.nextToken();
+        if (nextToken != JsonToken.START_OBJECT) {
+            throw new IOException("Expected " + JsonToken.START_OBJECT + ", got " + nextToken);
+        }
+
+        do {
+            nextToken = parser.nextToken();
+            if (nextToken == null) {
+                break;
+            }
+
+            if (nextToken.isStructStart()) {
+                if (nextToken == JsonToken.START_ARRAY) {
+                    break;
+                } else {
+                    parser.skipChildren();
+                }
+            }
+        } while (true);
+    }
+
     /**
      * Tests the CVE's CPE entries against the starts with filter. In general
      * this limits the CVEs imported to just application level vulnerabilities.
@@ -123,8 +145,8 @@ public final class NvdCveParser {
     protected boolean testCveCpeStartWithFilter(final DefCveItem cve) {
         //cycle through to see if this is a CPE we care about (use the CPE filters
         return cve.getConfigurations().getNodes().stream()
-                .collect(new NodeFlatteningCollector())
-                .collect(new CpeMatchStreamCollector())
+                .collect(NodeFlatteningCollector.getINSTANCE())
+                .collect(CpeMatchStreamCollector.getINSTANCE())
                 .anyMatch(cpe -> cpe.getCpe23Uri().startsWith(cpeStartsWithFilter));
     }
 }

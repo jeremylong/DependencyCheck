@@ -79,15 +79,6 @@
         }
     },
     "properties": {
-        "version": {
-            "description": "CVSS Version",
-            "type": "string",
-            "enum": [ "3.0", "3.1" ]
-        },
-        "vectorString": {
-            "type": "string",
-            "pattern": "^CVSS:3.[01]/((AV:[NALP]|AC:[LH]|PR:[UNLH]|UI:[NR]|S:[UC]|[CIA]:[NLH]|E:[XUPFH]|RL:[XOTWU]|RC:[XURC]|[CIA]R:[XLMH]|MAV:[XNALP]|MAC:[XLH]|MPR:[XUNLH]|MUI:[XNR]|MS:[XUC]|M[CIA]:[XNLH])/)*(AV:[NALP]|AC:[LH]|PR:[UNLH]|UI:[NR]|S:[UC]|[CIA]:[NLH]|E:[XUPFH]|RL:[XOTWU]|RC:[XURC]|[CIA]R:[XLMH]|MAV:[XNALP]|MAC:[XLH]|MPR:[XUNLH]|MUI:[XNR]|MS:[XUC]|M[CIA]:[XNLH])$"
-        },
         "attackVector":                   { "$ref": "#/definitions/attackVectorType" },
         "attackComplexity":               { "$ref": "#/definitions/attackComplexityType" },
         "privilegesRequired":             { "$ref": "#/definitions/privilegesRequiredType" },
@@ -97,25 +88,7 @@
         "integrityImpact":                { "$ref": "#/definitions/ciaType" },
         "availabilityImpact":             { "$ref": "#/definitions/ciaType" },
         "baseScore":                      { "$ref": "#/definitions/scoreType" },
-        "baseSeverity":                   { "$ref": "#/definitions/severityType" },
-        "exploitCodeMaturity":            { "$ref": "#/definitions/exploitCodeMaturityType" },
-        "remediationLevel":               { "$ref": "#/definitions/remediationLevelType" },
-        "reportConfidence":               { "$ref": "#/definitions/confidenceType" },
-        "temporalScore":                  { "$ref": "#/definitions/scoreType" },
-        "temporalSeverity":               { "$ref": "#/definitions/severityType" },
-        "confidentialityRequirement":     { "$ref": "#/definitions/ciaRequirementType" },
-        "integrityRequirement":           { "$ref": "#/definitions/ciaRequirementType" },
-        "availabilityRequirement":        { "$ref": "#/definitions/ciaRequirementType" },
-        "modifiedAttackVector":           { "$ref": "#/definitions/modifiedAttackVectorType" },
-        "modifiedAttackComplexity":       { "$ref": "#/definitions/modifiedAttackComplexityType" },
-        "modifiedPrivilegesRequired":     { "$ref": "#/definitions/modifiedPrivilegesRequiredType" },
-        "modifiedUserInteraction":        { "$ref": "#/definitions/modifiedUserInteractionType" },
-        "modifiedScope":                  { "$ref": "#/definitions/modifiedScopeType" },
-        "modifiedConfidentialityImpact":  { "$ref": "#/definitions/modifiedCiaType" },
-        "modifiedIntegrityImpact":        { "$ref": "#/definitions/modifiedCiaType" },
-        "modifiedAvailabilityImpact":     { "$ref": "#/definitions/modifiedCiaType" },
-        "environmentalScore":             { "$ref": "#/definitions/scoreType" },
-        "environmentalSeverity":          { "$ref": "#/definitions/severityType" }
+        "baseSeverity":                   { "$ref": "#/definitions/severityType" }
     },
     "required": [ "version", "vectorString", "baseScore", "baseSeverity" ]
 }

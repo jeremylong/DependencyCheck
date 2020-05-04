@@ -31,9 +31,11 @@ have a few options:
 If the machine that is running dependency-check cannot reach the [Central Repository](http://search.maven.org)
 the analysis may result in false negatives. This is because some POM files, that are not
 contained within the JAR file itself, contain evidence that is used to accurately identify
-a library. If Central cannot be reached, it is highly recommended to setup a
+a library. If using the Ant plugin or CLI and Central cannot be reached, it is highly recommended to setup a
 Nexus server within your organization and to configure dependency-check to use the local
-Nexus server. **Note**, even with a Nexus server setup I have seen dependency-check be
+Nexus server. **Notes:**
+1. If using any build plugin except Ant - there is no benefit to setting up a Nexus server for use by dependency-check.
+2. Even with a Nexus server setup we have seen dependency-check CLI be
 re-directed to other repositories on the Internet to download the actual POM file; this
 happened due to a rare circumstance where the Nexus instance used by dependency-check
 was not the instance of Nexus used to build the application (i.e. the dependencies
