@@ -153,6 +153,7 @@ Copyright (c) 2012 - Jeremy Long
         <commons-text.version>1.8</commons-text.version>
         <commons-jcs-core.version>2.2.1</commons-jcs-core.version>
         <com.sun.mail.mailapi.version>1.6.5</com.sun.mail.mailapi.version>
+        <aho-corasick-double-array-trie.version>1.2.2</aho-corasick-double-array-trie.version>
         <junit.version>4.13</junit.version>
         <hamcrest-core.version>2.2</hamcrest-core.version>
         <jackson.version>2.11.0</jackson.version>
@@ -1150,6 +1151,11 @@ Copyright (c) 2012 - Jeremy Long
                         <artifactId>httpcore</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.hankcs</groupId>
+                <artifactId>aho-corasick-double-array-trie</artifactId>
+                <version>${aho-corasick-double-array-trie.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -18,18 +18,9 @@
 package org.owasp.dependencycheck.data.nvdcve;
 
 import java.util.stream.Collectors;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 
-import org.apache.commons.lang3.StringUtils;
-import org.owasp.dependencycheck.analyzer.AbstractNpmAnalyzer;
-import org.owasp.dependencycheck.analyzer.CMakeAnalyzer;
-import org.owasp.dependencycheck.analyzer.ComposerLockAnalyzer;
-import org.owasp.dependencycheck.analyzer.JarAnalyzer;
-import org.owasp.dependencycheck.analyzer.NodeAuditAnalyzer;
-import org.owasp.dependencycheck.analyzer.PythonPackageAnalyzer;
-import org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer;
-import org.owasp.dependencycheck.analyzer.RubyGemspecAnalyzer;
 import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
-import org.owasp.dependencycheck.data.nvd.json.Reference;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 
 /**
@@ -41,125 +32,10 @@ import org.owasp.dependencycheck.dependency.VulnerableSoftware;
  */
 public class CveItemOperator {
 
-    /**
-     * Utility method to extract the "english" description from a given CVE
-     * entry.
-     *
-     * @param cve a reference to a CVE object
-     * @return the english description of the CVE entry
-     */
     public String extractDescription(DefCveItem cve) {
         return cve.getCve().getDescription().getDescriptionData().stream().filter((desc)
                 -> "en".equals(desc.getLang())).map(d
                 -> d.getValue()).collect(Collectors.joining(" "));
-    }
-
-    /**
-     * Analyzes the description to determine if the vulnerability/software is
-     * for a specific known ecosystem.The ecosystem can be used later for
-     * filtering CPE matches.
-     *
-     * @param cve a reference to the CVE
-     * @param description the description to analyze
-     * @return the ecosystem if one could be identified; otherwise
-     * <code>null</code>
-     */
-    public String extractBaseEcosystem(DefCveItem cve, String description) {
-        if (description == null) {
-            return extractBaseEcosystemFromReferences(cve);
-        }
-        int idx = StringUtils.indexOfIgnoreCase(description, ".php");
-        if ((idx > 0 && (idx + 4 == description.length() || !Character.isLetterOrDigit(description.charAt(idx + 4))))
-                || StringUtils.containsIgnoreCase(description, "wordpress")
-                || StringUtils.containsIgnoreCase(description, "drupal")
-                || StringUtils.containsIgnoreCase(description, "joomla")
-                || StringUtils.containsIgnoreCase(description, "moodle")
-                || StringUtils.containsIgnoreCase(description, "typo3")) {
-            return ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM;
-        }
-        if (StringUtils.containsIgnoreCase(description, " npm ")
-                || (StringUtils.containsIgnoreCase(description, "node module") && StringUtils.containsIgnoreCase(description, ".js"))
-                || StringUtils.containsIgnoreCase(description, " node.js")) {
-            return AbstractNpmAnalyzer.NPM_DEPENDENCY_ECOSYSTEM;
-        }
-        idx = StringUtils.indexOfIgnoreCase(description, ".pm");
-        if (idx > 0 && (idx + 3 == description.length() || !Character.isLetterOrDigit(description.charAt(idx + 3)))) {
-            return "perl";
-        } else {
-            idx = StringUtils.indexOfIgnoreCase(description, ".pl");
-            if (idx > 0 && (idx + 3 == description.length() || !Character.isLetterOrDigit(description.charAt(idx + 3)))) {
-                return "perl";
-            }
-        }
-        idx = StringUtils.indexOfIgnoreCase(description, ".java");
-        if (idx > 0 && (idx + 5 == description.length() || !Character.isLetterOrDigit(description.charAt(idx + 5)))) {
-            return JarAnalyzer.DEPENDENCY_ECOSYSTEM;
-        } else {
-            idx = StringUtils.indexOfIgnoreCase(description, ".jsp");
-            if (idx > 0 && (idx + 4 == description.length() || !Character.isLetterOrDigit(description.charAt(idx + 4)))) {
-                return JarAnalyzer.DEPENDENCY_ECOSYSTEM;
-            }
-        }
-        if (StringUtils.containsIgnoreCase(description, " grails ")) {
-            return JarAnalyzer.DEPENDENCY_ECOSYSTEM;
-        }
-
-        idx = StringUtils.indexOfIgnoreCase(description, ".rb");
-        if (idx > 0 && (idx + 3 == description.length() || !Character.isLetterOrDigit(description.charAt(idx + 3)))) {
-            return RubyBundleAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
-        }
-        if (StringUtils.containsIgnoreCase(description, "ruby gem")) {
-            return RubyBundleAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
-        }
-
-        idx = StringUtils.indexOfIgnoreCase(description, ".py");
-        if ((idx > 0 && (idx + 3 == description.length() || !Character.isLetterOrDigit(description.charAt(idx + 3))))
-                || StringUtils.containsIgnoreCase(description, "django")) {
-            return PythonPackageAnalyzer.DEPENDENCY_ECOSYSTEM;
-        }
-
-        if (StringUtils.containsIgnoreCase(description, "buffer overflow")
-                && !StringUtils.containsIgnoreCase(description, "android")) {
-            return CMakeAnalyzer.DEPENDENCY_ECOSYSTEM;
-        }
-        idx = StringUtils.indexOfIgnoreCase(description, ".c");
-        if (idx > 0 && (idx + 2 == description.length() || !Character.isLetterOrDigit(description.charAt(idx + 2)))) {
-            return CMakeAnalyzer.DEPENDENCY_ECOSYSTEM;
-        } else {
-            idx = StringUtils.indexOfIgnoreCase(description, ".cpp");
-            if (idx > 0 && (idx + 4 == description.length() || !Character.isLetterOrDigit(description.charAt(idx + 4)))) {
-                return CMakeAnalyzer.DEPENDENCY_ECOSYSTEM;
-            } else {
-                idx = StringUtils.indexOfIgnoreCase(description, ".h");
-                if (idx > 0 && (idx + 2 == description.length() || !Character.isLetterOrDigit(description.charAt(idx + 2)))) {
-                    return CMakeAnalyzer.DEPENDENCY_ECOSYSTEM;
-                }
-            }
-        }
-        return extractBaseEcosystemFromReferences(cve);
-    }
-
-    protected String extractBaseEcosystemFromReferences(DefCveItem cve) {
-        for (Reference r : cve.getCve().getReferences().getReferenceData()) {
-            if (r.getUrl().contains("elixir-security-advisories")) {
-                return "elixir";
-            } else if (r.getUrl().contains("ruby-lang.org")) {
-                return RubyGemspecAnalyzer.DEPENDENCY_ECOSYSTEM;
-            } else if (r.getUrl().contains("python.org")) {
-                return PythonPackageAnalyzer.DEPENDENCY_ECOSYSTEM;
-            } else if (r.getUrl().contains("drupal.org")) {
-                return PythonPackageAnalyzer.DEPENDENCY_ECOSYSTEM;
-            } else if (r.getUrl().contains("npm")) {
-                return NodeAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
-            } else if (r.getUrl().contains("nodejs.org")) {
-                return NodeAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
-            } else if (r.getUrl().contains("nodesecurity.io")) {
-                return NodeAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
-            } else if (r.getUrl().contains("rustsec.org")) {
-                return "rust";
-            }
-        }
-        return null;
     }
 
     /**
@@ -174,15 +50,69 @@ public class CveItemOperator {
      */
     private String extractEcosystem(String baseEcosystem, String vendor, String product, String targetSw) {
         if ("ibm".equals(vendor) && "java".equals(product)) {
-            return "c/c++";
+            return Ecosystem.NATIVE;
         }
         if ("oracle".equals(vendor) && "vm".equals(product)) {
-            return "c/c++";
+            return Ecosystem.NATIVE;
         }
-        if ("*".equals(targetSw) || baseEcosystem != null) {
-            return baseEcosystem;
+        switch (targetSw) {
+            case "asp.net"://.net
+            case "c#"://.net
+            case ".net"://.net
+            case "dotnetnuke"://.net
+                return Ecosystem.DOTNET;
+            case "android"://android
+            case "java"://java
+                return Ecosystem.JAVA;
+            case "c/c++"://c++
+            case "borland_c++"://c++
+            case "visual_c++"://c++
+            case "gnu_c++"://c++
+            case "linux_kernel"://native
+            case "linux"://native
+            case "unix"://native
+            case "suse_linux"://native
+            case "redhat_enterprise_linux"://native
+            case "debian"://native
+                return Ecosystem.NATIVE;
+            case "coldfusion"://coldfusion
+                return Ecosystem.COLDFUSION;
+            case "ios"://ios
+            case "iphone"://ios
+            case "ipad"://ios
+            case "iphone_os"://ios
+                return Ecosystem.IOS;
+            case "jquery"://javascript
+                return Ecosystem.JAVASCRIPT;
+            case "node.js"://node.js
+            case "nodejs"://node.js
+                return Ecosystem.NODEJS;
+            case "perl"://perl
+                return Ecosystem.PERL;
+            case "joomla!"://php
+            case "joomla"://php
+            case "mybb"://php
+            case "simplesamlphp"://php
+            case "craft_cms"://php
+            case "moodle"://php
+            case "phpcms"://php
+            case "buddypress"://php
+            case "typo3"://php
+            case "php"://php
+            case "wordpress"://php
+            case "drupal"://php
+            case "mediawiki"://php
+            case "symfony"://php
+            case "openpne"://php
+            case "vbulletin3"://php
+            case "vbulletin4"://php
+                return Ecosystem.PHP;
+            case "python"://python
+                return Ecosystem.PYTHON;
+            case "ruby"://ruby
+                return Ecosystem.RUBY;
         }
-        return targetSw;
+        return baseEcosystem;
     }
 
     /**
@@ -198,15 +128,13 @@ public class CveItemOperator {
     }
 
     /**
-     * Determines if the CVE description includes the ** REJECT ** text
-     * indicating that the CVE was requested but ultimately rejected.
+     * Determines if the CVE entry is rejected.
      *
-     * @param description the CVE text
-     * @return <code>true</code> if the CVE text includes `** REFECT **`;
-     * otherwise <code>false</code>
+     * @param description the CVE description
+     * @return <code>true</code> if the CVE was rejected; otherwise
+     * <code>false</code>
      */
     public boolean isRejected(String description) {
         return description.startsWith("** REJECT **");
     }
-
 }

@@ -1,0 +1,2 @@
+The Update method in src/node_http_parser.cc in Node.js before 0.6.17 and 0.7 before 0.7.8 does not properly check the length of a string, which allows remote attackers to obtain sensitive information (request header contents) and possibly spoof HTTP headers via a zero length string.
+sinopia, as used in SAP HANA XS 1.00 and 2.00, allows remote attackers to hijack npm packages or host arbitrary files by leveraging an insecure user creation policy, aka SAP Security Note 2407694.

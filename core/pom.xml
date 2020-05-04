@@ -291,6 +291,10 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <version>0.7.2</version>
         </dependency>
         <dependency>
+            <groupId>com.hankcs</groupId>
+            <artifactId>aho-corasick-double-array-trie</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>

@@ -47,7 +47,7 @@ public final class NodeFlatteningCollector implements Collector<DefNode, ArrayLi
         INSTANCE = new NodeFlatteningCollector();
     }
 
-    public static NodeFlatteningCollector getINSTANCE() {
+    public static NodeFlatteningCollector getInstance() {
         return INSTANCE;
     }
 

@@ -38,6 +38,7 @@ import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
@@ -64,7 +65,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
-    public static final String DEPENDENCY_ECOSYSTEM = PythonDistributionAnalyzer.DEPENDENCY_ECOSYSTEM;
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.PYTHON;
 
     /**
      * Used when compiling file scanning regex patterns.

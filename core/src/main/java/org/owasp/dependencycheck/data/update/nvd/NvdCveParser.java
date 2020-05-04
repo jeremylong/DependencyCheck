@@ -36,6 +36,7 @@ import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
+import org.owasp.dependencycheck.data.nvd.ecosystem.CveEcosystemMapper;
 import org.owasp.dependencycheck.data.nvd.json.CpeMatchStreamCollector;
 import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
@@ -92,12 +93,12 @@ public final class NvdCveParser {
                 InputStreamReader isr = new InputStreamReader(in, UTF_8);
                 JsonParser parser = objectReader.getFactory().createParser(in)) {
 
+            CveEcosystemMapper mapper = new CveEcosystemMapper();
             init(parser);
-
             while (parser.nextToken() == JsonToken.START_OBJECT) {
                 final DefCveItem cve = objectReader.readValue(parser);
                 if (testCveCpeStartWithFilter(cve)) {
-                    cveDB.updateVulnerability(cve);
+                    cveDB.updateVulnerability(cve, mapper.getEcosystem(cve));
                 }
             }
         } catch (FileNotFoundException ex) {
@@ -143,8 +144,8 @@ public final class NvdCveParser {
     protected boolean testCveCpeStartWithFilter(final DefCveItem cve) {
         //cycle through to see if this is a CPE we care about (use the CPE filters
         return cve.getConfigurations().getNodes().stream()
-                .collect(NodeFlatteningCollector.getINSTANCE())
-                .collect(CpeMatchStreamCollector.getINSTANCE())
+                .collect(NodeFlatteningCollector.getInstance())
+                .collect(CpeMatchStreamCollector.getInstance())
                 .anyMatch(cpe -> cpe.getCpe23Uri().startsWith(cpeStartsWithFilter));
     }
 }

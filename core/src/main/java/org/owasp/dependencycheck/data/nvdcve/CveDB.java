@@ -847,9 +847,10 @@ public final class CveDB implements AutoCloseable {
      *
      * @param cve the vulnerability from the NVD CVE Data Feed to add to the
      * database
+     * @param ecosystem the ecosystem the CVE belongs to
      * @throws DatabaseException is thrown if the database
      */
-    public void updateVulnerability(DefCveItem cve) {
+    public void updateVulnerability(DefCveItem cve, String ecosystem) {
         clearCache();
         final String cveId = cve.getCve().getCVEDataMeta().getId();
         try {
@@ -873,13 +874,12 @@ public final class CveDB implements AutoCloseable {
 
             updateVulnerabilityInsertCwe(vulnerabilityId, cve);
 
-            final String baseEcosystem = cveItemConverter.extractBaseEcosystem(cve, description);
             updateVulnerabilityInsertReferences(vulnerabilityId, cve);
 
             //parse the CPEs outside of a synchronized method
             final List<VulnerableSoftware> software = parseCpes(cve);
 
-            updateVulnerabilityInsertSoftware(vulnerabilityId, cveId, software, baseEcosystem);
+            updateVulnerabilityInsertSoftware(vulnerabilityId, cveId, software, ecosystem);
 
         } catch (SQLException ex) {
             final String msg = String.format("Error updating '%s'", cveId);
@@ -1284,8 +1284,8 @@ public final class CveDB implements AutoCloseable {
     private List<VulnerableSoftware> parseCpes(DefCveItem cve) throws CpeValidationException {
         final List<VulnerableSoftware> software = new ArrayList<>();
         final List<DefCpeMatch> cpeEntries = cve.getConfigurations().getNodes().stream()
-                .collect(NodeFlatteningCollector.getINSTANCE())
-                .collect(CpeMatchStreamCollector.getINSTANCE())
+                .collect(NodeFlatteningCollector.getInstance())
+                .collect(CpeMatchStreamCollector.getInstance())
                 .filter(predicate -> predicate.getCpe23Uri().startsWith(cpeStartsWithFilter))
                 //this single CPE entry causes nearly 100% FP - so filtering it at the source.
                 .filter(entry -> !("CVE-2009-0754".equals(cve.getCve().getCVEDataMeta().getId())
