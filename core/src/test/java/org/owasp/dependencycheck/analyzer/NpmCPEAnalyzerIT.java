@@ -47,7 +47,7 @@ public class NpmCPEAnalyzerIT extends BaseDBTestCase {
             instance.initialize(getSettings());
             instance.prepare(engine);
 
-            callAnalyzeDependency("negotiator", "negotiator", "0.3.0", "cpe:2.3:a:negotiator_project:negotiator:0.3.0:*:*:*:*:*:*:*", instance, engine);
+            //callAnalyzeDependency("negotiator", "negotiator", "0.3.0", "cpe:2.3:a:negotiator_project:negotiator:0.3.0:*:*:*:*:*:*:*", instance, engine);
             callAnalyzeDependency("mime", "mime", "1.2.11", "cpe:2.3:a:mime_project:mime:1.2.11:*:*:*:*:*:*:*", instance, engine);
 
             instance.close();
