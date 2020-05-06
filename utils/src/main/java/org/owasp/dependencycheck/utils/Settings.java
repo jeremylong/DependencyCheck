@@ -654,6 +654,16 @@ public final class Settings {
          * that ODC will "skip" updating that years data feed if not present.
          */
         public static final String NVD_NEW_YEAR_GRACE_PERIOD = "nvd.newyear.grace.period";
+        /**
+         * The properties key for the default max query size for Lucene query
+         * results.
+         */
+        public static final String MAX_QUERY_SIZE_DEFAULT = "odc.ecosystem.maxquerylimit.default";
+        /**
+         * The properties key prefix for the default max query size for Lucene
+         * query results; append the ecosystem to obtain the default query size.
+         */
+        public static final String MAX_QUERY_SIZE_PREFIX = "odc.ecosystem.maxquerylimit.";
 
         /**
          * private constructor because this is a "utility" class containing

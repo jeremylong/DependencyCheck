@@ -57,6 +57,7 @@ import org.owasp.dependencycheck.data.cpe.IndexException;
 import org.owasp.dependencycheck.data.cpe.MemoryIndex;
 import org.owasp.dependencycheck.data.lucene.LuceneUtils;
 import org.owasp.dependencycheck.data.lucene.SearchFieldAnalyzer;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.update.cpe.CpePlus;
@@ -90,10 +91,6 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * The Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(CPEAnalyzer.class);
-    /**
-     * The maximum number of query results to return.
-     */
-    private static final int MAX_QUERY_RESULTS = 100;
     /**
      * The weighting boost to give terms when constructing the Lucene query.
      */
@@ -142,6 +139,11 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * pipeline.
      */
     private List<String> skipEcosystems;
+    /**
+     * A reference to the ecosystem object; used to obtain the max query results
+     * for each ecosystem.
+     */
+    private Ecosystem ecosystemTools;
     /**
      * A reference to the suppression analyzer; for timing reasons we need to
      * test for suppressions immediately after identifying the match because a
@@ -196,7 +198,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             LOGGER.debug("Skipping CPE Analysis for {}", StringUtils.join(tmp, ","));
             skipEcosystems = Arrays.asList(tmp);
         }
-
+        ecosystemTools = new Ecosystem(engine.getSettings());
         suppression = new CpeSuppressionAnalyzer();
         suppression.initialize(engine.getSettings());
         suppression.prepareAnalyzer(engine);
@@ -259,7 +261,8 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             LOGGER.debug("product search: {}", products);
             if (!vendors.isEmpty() && !products.isEmpty()) {
                 final List<IndexEntry> entries = searchCPE(vendors, products,
-                        dependency.getVendorWeightings(), dependency.getProductWeightings());
+                        dependency.getVendorWeightings(), dependency.getProductWeightings(),
+                        dependency.getEcosystem());
                 if (entries == null) {
                     continue;
                 }
@@ -368,12 +371,14 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * to the vendor field
      * @param productWeightings Adds a list of strings that will be used to add
      * weighting factors to the product search
+     * @param ecosystem the dependency's ecosystem
      * @return a list of possible CPE values
      */
     protected List<IndexEntry> searchCPE(Map<String, MutableInt> vendor, Map<String, MutableInt> product,
-            Set<String> vendorWeightings, Set<String> productWeightings) {
+            Set<String> vendorWeightings, Set<String> productWeightings, String ecosystem) {
 
-        final List<IndexEntry> ret = new ArrayList<>(MAX_QUERY_RESULTS);
+        int maxQueryResults = ecosystemTools.getLuceneMaxQueryLimitFor(ecosystem);
+        final List<IndexEntry> ret = new ArrayList<>(maxQueryResults);
 
         final String searchString = buildSearch(vendor, product, vendorWeightings, productWeightings);
         if (searchString == null) {
@@ -381,7 +386,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         }
         try {
             final Query query = cpe.parseQuery(searchString);
-            final TopDocs docs = cpe.search(query, MAX_QUERY_RESULTS);
+            final TopDocs docs = cpe.search(query, maxQueryResults);
 
             for (ScoreDoc d : docs.scoreDocs) {
                 //if (d.score >= minLuceneScore) {
@@ -1192,7 +1197,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                             count.add(1);
                         }
                     }
-                    final List<IndexEntry> list = analyzer.searchCPE(vendor, product, new HashSet<>(), new HashSet<>());
+                    final List<IndexEntry> list = analyzer.searchCPE(vendor, product, new HashSet<>(), new HashSet<>(), "default");
                     if (list == null || list.isEmpty()) {
                         System.out.println("No results found");
                     } else {

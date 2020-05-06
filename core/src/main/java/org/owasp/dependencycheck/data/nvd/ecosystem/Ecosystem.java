@@ -17,7 +17,10 @@
  */
 package org.owasp.dependencycheck.data.nvd.ecosystem;
 
+import org.owasp.dependencycheck.utils.Settings;
+
 /**
+ * Collection of the standard ecosystems for dependency-check.
  *
  * @author Jeremy Long
  */
@@ -38,4 +41,27 @@ public final class Ecosystem {
     public final static String PERL = "perl";
     public final static String ELIXIR = "exlixir";
 
+    private final Settings settings;
+    private final int defaultQuerySize;
+
+    /**
+     * Instantiates the ecosystem utility class.
+     *
+     * @param settings the ODC configuration
+     */
+    public Ecosystem(Settings settings) {
+        this.settings = settings;
+        this.defaultQuerySize = settings.getInt(Settings.KEYS.MAX_QUERY_SIZE_DEFAULT, 100);
+    }
+
+    /**
+     * Returns the max query result size for the Lucene search for each
+     * ecosystem.
+     *
+     * @param ecosystem the ecosystem
+     * @return the max query result size
+     */
+    public int getLuceneMaxQueryLimitFor(String ecosystem) {
+        return settings.getInt(Settings.KEYS.MAX_QUERY_SIZE_PREFIX + ecosystem, defaultQuerySize);
+    }
 }

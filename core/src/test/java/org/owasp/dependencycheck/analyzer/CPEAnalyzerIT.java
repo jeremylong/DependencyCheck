@@ -34,6 +34,7 @@ import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.naming.Identifier;
 
@@ -373,7 +374,7 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
 
             Set<String> productWeightings = Collections.singleton("struts2");
             Set<String> vendorWeightings = Collections.singleton("apache");
-            List<IndexEntry> result = instance.searchCPE(vendor, product, vendorWeightings, productWeightings);
+            List<IndexEntry> result = instance.searchCPE(vendor, product, vendorWeightings, productWeightings, Ecosystem.JAVA);
 
             boolean found = false;
             for (IndexEntry entry : result) {
