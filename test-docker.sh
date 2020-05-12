@@ -18,6 +18,11 @@ if [ -f "$HOME/OWASP-Dependency-Check/reports/dependency-check-report.json" ]; t
     rm "$HOME/OWASP-Dependency-Check/reports/dependency-check-report.json"
 fi
 
+if [ -f "$HOME/OWASP-Dependency-Check/reports/odc.log" ]; then
+    echo "Deleting previous log"
+    rm "$HOME/OWASP-Dependency-Check/reports/odc.log"
+fi
+
 cd $SCAN_TARGET
 OWASPDC_DIRECTORY=$HOME/OWASP-Dependency-Check
 DATA_DIRECTORY="$OWASPDC_DIRECTORY/data"
