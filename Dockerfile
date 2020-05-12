@@ -1,7 +1,9 @@
-FROM azul/zulu-openjdk-alpine:11 AS jlink
+FROM golang:1.14-alpine AS go
+
+FROM azul/zulu-openjdk-alpine:14 AS jlink
 
 RUN $JAVA_HOME/bin/jlink --compress=2 --module-path /opt/java/openjdk/jmods --add-modules java.base,java.compiler,java.datatransfer,jdk.crypto.ec,java.desktop,java.instrument,java.logging,java.management,java.naming,java.rmi,java.scripting,java.security.sasl,java.sql,java.transaction.xa,java.xml,jdk.unsupported --output /jlinked
-     
+
 FROM mcr.microsoft.com/dotnet/core/runtime:3.1-alpine
 
 MAINTAINER Jeremy Long <jeremy.long@owasp.org>
@@ -12,9 +14,10 @@ ARG MYSQL_DRIVER_VERSION=8.0.17
 
 ENV user=dependencycheck
 ENV JAVA_HOME=/opt/jdk
-ENV JAVA_OPTS=-Danalyzer.assembly.dotnet.path=/usr/bin/dotnet -Danalyzer.bundle.audit.path=/usr/bin/bundle-audit
+ENV JAVA_OPTS="-Danalyzer.assembly.dotnet.path=/usr/bin/dotnet -Danalyzer.bundle.audit.path=/usr/bin/bundle-audit -Danalyzer.golang.path=/usr/local/go/bin/go"
 
 COPY --from=jlink /jlinked /opt/jdk/
+COPY --from=go /usr/local/go/ /usr/local/go/
 
 ADD cli/target/dependency-check-${VERSION}-release.zip /
 
