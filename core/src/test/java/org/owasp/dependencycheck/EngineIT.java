@@ -48,8 +48,8 @@ public class EngineIT extends BaseDBTestCase {
 
     @Mocked
     private AnalysisTask analysisTask;
-    
-        @Test(expected = ExceptionCollection.class)
+
+    @Test(expected = ExceptionCollection.class)
     public void exceptionDuringAnalysisTaskExecutionIsFatal() throws DatabaseException, ExceptionCollection {
 
         try (Engine instance = new Engine(getSettings())) {
