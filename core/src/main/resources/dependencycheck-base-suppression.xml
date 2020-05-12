@@ -866,6 +866,27 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        Suppresses false positives for components within guava.
+        ]]></notes>   
+        <packageUrl regex="true">^pkg:maven/com\.google\.guava/failureaccess@.*$</packageUrl>
+        <cpe>cpe:/a:google:guava</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives for components within guava.
+        ]]></notes>     
+        <packageUrl regex="true">^pkg:maven/com\.google\.guava/listenablefuture@.*$</packageUrl>
+        <cpe>cpe:/a:google:guava</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives for components within guava.
+        ]]></notes>        
+        <packageUrl regex="true">^pkg:maven/com\.h3xstream\.retirejs/retirejs\-core@.*$</packageUrl>
+        <cpe>cpe:/a:xstream_project:xstream</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Suppresses incorrect identification for bing ads.
         ]]></notes>
         <gav regex="true">com.microsoft.bingads:microsoft.bingads:.*</gav>
