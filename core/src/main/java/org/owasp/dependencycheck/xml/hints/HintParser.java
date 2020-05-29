@@ -30,6 +30,8 @@ import java.util.List;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
+import org.apache.commons.io.ByteOrderMark;
+import org.apache.commons.io.input.BOMInputStream;
 
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.XmlUtils;
@@ -146,12 +148,18 @@ public class HintParser {
                 InputStream schemaStream13 = FileUtils.getResourceAsStream(HINT_SCHEMA_1_3);
                 InputStream schemaStream12 = FileUtils.getResourceAsStream(HINT_SCHEMA_1_2);
                 InputStream schemaStream11 = FileUtils.getResourceAsStream(HINT_SCHEMA_1_1)) {
+            
+            final BOMInputStream bomStream = new BOMInputStream(inputStream);
+            final ByteOrderMark bom = bomStream.getBOM();
+            final String defaultEncoding = StandardCharsets.UTF_8.name();
+            final String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();
+            
             final HintHandler handler = new HintHandler();
             final SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream14, schemaStream13, schemaStream12, schemaStream11);
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setErrorHandler(new HintErrorHandler());
             xmlReader.setContentHandler(handler);
-            try (Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+            try (Reader reader = new InputStreamReader(bomStream, charsetName)) {
                 final InputSource in = new InputSource(reader);
                 xmlReader.parse(in);
                 this.hintRules = handler.getHintRules();

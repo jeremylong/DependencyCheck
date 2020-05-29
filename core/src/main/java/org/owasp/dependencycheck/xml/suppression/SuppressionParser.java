@@ -30,9 +30,13 @@ import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
+import org.apache.commons.io.ByteOrderMark;
+import org.apache.commons.io.input.BOMInputStream;
 
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.XmlUtils;
+import org.owasp.dependencycheck.xml.XmlInputStream;
+import org.owasp.dependencycheck.xml.pom.PomProjectInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,14 +106,20 @@ public class SuppressionParser {
                 InputStream schemaStream13 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_3);
                 InputStream schemaStream12 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_2);
                 InputStream schemaStream11 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_1);
-                InputStream schemaStream10 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_0)) {
+                InputStream schemaStream10 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_0);) {
+            
+            final BOMInputStream bomStream = new BOMInputStream(inputStream);
+            final ByteOrderMark bom = bomStream.getBOM();
+            final String defaultEncoding = StandardCharsets.UTF_8.name();
+            final String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();
+
             final SuppressionHandler handler = new SuppressionHandler();
             final SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream13, schemaStream12, schemaStream11, schemaStream10);
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setErrorHandler(new SuppressionErrorHandler());
             xmlReader.setContentHandler(handler);
             xmlReader.setEntityResolver(new ClassloaderResolver());
-            try (Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+            try (Reader reader = new InputStreamReader(bomStream, charsetName)) {
                 final InputSource in = new InputSource(reader);
                 xmlReader.parse(in);
                 return handler.getSuppressionRules();
