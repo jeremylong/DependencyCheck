@@ -33,8 +33,7 @@ CREATE TABLE software (cveid INT, cpeEntryId INT, versionEndExcluding VARCHAR(50
     , CONSTRAINT FK_SoftwareCpeProduct FOREIGN KEY (cpeEntryId) REFERENCES cpeEntry(id));
 
 CREATE TABLE cweEntry (cveid INT, cwe VARCHAR(20)
-    , CONSTRAINT FK_CweEntry FOREIGN KEY (cveid) REFERENCES vulnerability(id) ON DELETE CASCADE
-    , PRIMARY KEY (cveid, cwe));
+    , CONSTRAINT FK_CweEntry FOREIGN KEY (cveid) REFERENCES vulnerability(id) ON DELETE CASCADE);
 
 CREATE INDEX idxCwe ON cweEntry(cveid);
 CREATE INDEX idxVulnerability ON vulnerability(cve);
