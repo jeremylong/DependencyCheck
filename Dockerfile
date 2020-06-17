@@ -23,7 +23,7 @@ ADD cli/target/dependency-check-${VERSION}-release.zip /
 
 RUN apk update                                                                                       && \
     apk add --no-cache --virtual .build-deps curl tar                                                && \
-    apk add --no-cache ruby ruby-rdoc                                                                && \
+    apk add --no-cache git ruby ruby-rdoc                                                            && \
     gem install bundle-audit                                                                         && \
     bundle audit update                                                                              && \
     unzip dependency-check-${VERSION}-release.zip -d /usr/share/                                     && \
@@ -39,7 +39,9 @@ RUN apk update                                                                  
     mkdir /report                                                                                    && \
     chown -R ${user}:${user} /report                                                                 && \
     apk del .build-deps
-    
+
+### remove any suid sgid - we don't need them
+RUN for i in `find / -perm +6000 -type f`; do chmod a-s $i; done
 USER ${user}
 
 VOLUME ["/src", "/report"]
