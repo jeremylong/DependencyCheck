@@ -802,14 +802,21 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private Filter<String> artifactTypeExcluded;
 
     /**
-     * An array of <code>fileSet</code>s that specify additional files and/or
+     * An collection of <code>fileSet</code>s that specify additional files and/or
      * directories (from the basedir) to analyze as part of the scan. If not
      * specified, defaults to Maven conventions of: src/main/resources,
-     * src/main/filters, and src/main/webapp
+     * src/main/filters, and src/main/webapp. Note, this cannot be set via the
+     * command line - use `scanDirectory` instead.
      */
-    @Parameter(property = "scanSet")
-    private FileSet[] scanSet;
-
+    @Parameter()
+    private List<FileSet> scanSet;
+    /**
+     * A list of directories to scan. Note, this should only be used
+     * via the command line - if configuring the directories to scan
+     * consider using the `scanSet` instead.
+     */
+    @Parameter(property = "scanDirectory")
+    private List<String> scanDirectory;
     // </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Base Maven implementation">
     /**
@@ -1332,8 +1339,21 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         ExceptionCollection exCol;
         exCol = collectMavenDependencies(engine, project, nodes, buildingRequest, aggregate);
 
-        final FileSet[] projectScan;
-        if (scanSet == null || scanSet.length == 0) {
+        final List<FileSet> projectScan;
+        
+        if (scanDirectory!=null && !scanDirectory.isEmpty()) {
+            if (scanSet==null) {
+                scanSet = new ArrayList<>();
+            }
+            scanDirectory.stream().forEach(d -> {
+                FileSet fs = new FileSet();
+                fs.setDirectory(d);
+                fs.addInclude(INCLUDE_ALL);
+                scanSet.add(fs);
+            });
+        }
+        
+        if (scanSet == null || scanSet.isEmpty()) {
             // Define the default FileSets
             final FileSet resourcesSet = new FileSet();
             final FileSet filtersSet = new FileSet();
@@ -1358,15 +1378,17 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 }
                 exCol.addException(ex);
             }
-            projectScan = new FileSet[]{resourcesSet, filtersSet, webappSet, mixedLangSet};
+            projectScan = new ArrayList<>();
+            projectScan.add(resourcesSet);
+            projectScan.add(filtersSet);
+            projectScan.add(webappSet);
+            projectScan.add(mixedLangSet);
 
         } else if (aggregate) {
-            projectScan = new FileSet[scanSet.length];
-            for (int x = 0; x < scanSet.length; x++) {
+            projectScan = new ArrayList<>();
+            for (FileSet copyFrom : scanSet) {
                 //deep copy of the FileSet - modifying the directory if it is not absolute.
-                final FileSet copyFrom = scanSet[x];
                 final FileSet fsCopy = new FileSet();
-
                 final File f = new File(copyFrom.getDirectory());
                 if (f.isAbsolute()) {
                     fsCopy.setDirectory(copyFrom.getDirectory());
@@ -1391,7 +1413,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 fsCopy.setModelEncoding(copyFrom.getModelEncoding());
                 fsCopy.setOutputDirectory(copyFrom.getOutputDirectory());
                 fsCopy.setUseDefaultExcludes(copyFrom.isUseDefaultExcludes());
-                projectScan[x] = fsCopy;
+                projectScan.add(fsCopy);
             }
         } else {
             projectScan = scanSet;
@@ -1400,16 +1422,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         // Iterate through FileSets and scan included files
         final FileSetManager fileSetManager = new FileSetManager();
         for (FileSet fileSet : projectScan) {
+            getLog().debug("Scanning fileSet: " + fileSet.getDirectory());
             final String[] includedFiles = fileSetManager.getIncludedFiles(fileSet);
             for (String include : includedFiles) {
                 final File includeFile = new File(fileSet.getDirectory(), include).getAbsoluteFile();
                 if (includeFile.exists()) {
                     engine.scan(includeFile, project.getName());
                 }
-                //TODO - should we add an exception/error reporting for files that do not exist?
             }
         }
-
         return exCol;
     }
 
