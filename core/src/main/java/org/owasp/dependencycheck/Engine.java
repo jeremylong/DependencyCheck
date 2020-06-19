@@ -1261,6 +1261,7 @@ public class Engine implements FileFilter, AutoCloseable {
             r.write(outputDir.getAbsolutePath(), format);
         } catch (ReportException ex) {
             final String msg = String.format("Error generating the report for %s", applicationName);
+            LOGGER.debug(msg, ex);
             throw new ReportException(msg, ex);
         }
     }
