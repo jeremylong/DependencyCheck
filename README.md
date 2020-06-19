@@ -168,7 +168,7 @@ docker pull owasp/dependency-check:%DC_VERSION%
 docker run --rm ^
     --volume %CD%:/src ^
     --volume %DATA_DIRECTORY%:/usr/share/dependency-check/data ^
-    --volume %CD%:/odc-reports ^
+    --volume %CD%/odc-reports:/report ^
     owasp/dependency-check:%DC_VERSION% ^
     --scan /src ^
     --format "ALL" ^
