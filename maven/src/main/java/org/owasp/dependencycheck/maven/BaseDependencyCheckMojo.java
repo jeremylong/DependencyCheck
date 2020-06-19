@@ -730,6 +730,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "dataDirectory")
     private String dataDirectory;
+
+    /**
+     * The name of the DC DB.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "dbFilename")
+    private String dbFilename;
+
     /**
      * Data Mirror URL for CVE 1.2.
      */
@@ -1861,6 +1869,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
         }
         settings.setStringIfNotEmpty(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_FILE_NAME, dbFilename);
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveUrlModified);
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON, cveUrlBase);
         settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
