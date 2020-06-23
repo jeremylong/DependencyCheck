@@ -178,6 +178,14 @@ public final class Settings {
          */
         public static final String CVE_BASE_JSON = "cve.url.base";
         /**
+         * The username to use when connecting to the CVE-URL.
+         */
+        public static final String CVE_USER = "cve.user";
+        /**
+         * The password to authenticate to the CVE-URL.
+         */
+        public static final String CVE_PASSWORD = "cve.password";
+        /**
          * The properties key for the URL to retrieve the recently modified and
          * added CVE entries (last 8 days).
          */

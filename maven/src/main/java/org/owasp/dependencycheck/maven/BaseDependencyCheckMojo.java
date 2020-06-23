@@ -751,6 +751,24 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "cveUrlBase")
     private String cveUrlBase;
     /**
+     * The username to use when connecting to the CVE-URL.
+     */
+    @Parameter(property = "cveUser")
+    private String cveUser;
+    /**
+     * The password to authenticate to the CVE-URL.
+     */
+    @Parameter(property = "cvePassword")
+    private String cvePassword;
+    /**
+     * The server id in the settings.xml; used to retrieve encrypted passwords
+     * from the settings.xml for cve-URLs.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "cveServerId")
+    private String cveServerId;
+    /**
+    /**
      * Optionally skip excessive CVE update checks for a designated duration in
      * hours.
      */
@@ -1897,6 +1915,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT, prettyPrint);
         artifactScopeExcluded = new ArtifactScopeExcluded(skipTestScope, skipProvidedScope, skipSystemScope, skipRuntimeScope);
         artifactTypeExcluded = new ArtifactTypeExcluded(skipArtifactType);
+        if (cveUser == null && cvePassword == null && cveServerId != null) {
+            configureServerCredentials(cveServerId, Settings.KEYS.CVE_USER, Settings.KEYS.CVE_PASSWORD);
+        } else {
+            settings.setStringIfNotEmpty(Settings.KEYS.CVE_USER, cveUser);
+            settings.setStringIfNotEmpty(Settings.KEYS.CVE_PASSWORD, cvePassword);
+        }
     }
 
     /**
