@@ -140,7 +140,7 @@ Copyright (c) 2012 - Jeremy Long
         <maven-project-info-reports-plugin.version>3.1.0</maven-project-info-reports-plugin.version>
         <maven-surefire-report-plugin.version>2.22.2</maven-surefire-report-plugin.version>
         <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
-        <spotbugs.maven.plugin.version>4.0.4</spotbugs.maven.plugin.version>
+        <spotbugs.maven.plugin.version>4.0.6</spotbugs.maven.plugin.version>
         <taglist-maven-plugin.version>2.4</taglist-maven-plugin.version>
         <versions-maven-plugin.version>2.7</versions-maven-plugin.version>
 
@@ -160,7 +160,7 @@ Copyright (c) 2012 - Jeremy Long
         <jmockit.version>1.49</jmockit.version>
         <mockito-core.version>3.3.3</mockito-core.version>
         <jsoup.version>1.13.1</jsoup.version>
-        <commons-compress.version>1.19</commons-compress.version>
+        <commons-compress.version>1.20</commons-compress.version>
         <org.apache.maven.shared.file-management.version>3.0.0</org.apache.maven.shared.file-management.version>
         <maven-plugin-testing-harness.version>3.3.0</maven-plugin-testing-harness.version>
         <maven-plugin-annotations.version>3.6.0</maven-plugin-annotations.version>
@@ -169,9 +169,7 @@ Copyright (c) 2012 - Jeremy Long
         <org.apache.velocity.version>2.2</org.apache.velocity.version>
         <plexus-sec-dispatcher.version>1.4</plexus-sec-dispatcher.version>
         <maven-dependency-tree.version>3.0.1</maven-dependency-tree.version>
-
-        <!-- upgrading beyond 1.0.4 will cause the build to fail on Java 7 --> 
-        <org.glassfish.javax.json.version>1.0.4</org.glassfish.javax.json.version>
+        <org.glassfish.javax.json.version>1.1.4</org.glassfish.javax.json.version>
         <maven-artifact-transfer.version>0.12.0</maven-artifact-transfer.version>
         <groovy-all.version>2.4.19</groovy-all.version>
         <gmavenplus-plugin.version>1.9.0</gmavenplus-plugin.version>
