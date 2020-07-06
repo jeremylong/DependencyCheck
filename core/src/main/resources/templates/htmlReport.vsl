@@ -543,7 +543,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 margin:0px;
             }
             th {
-                text-align:left
+                text-align:left;
                 vertical-align:text-top;
                 padding:6px;
                 margin:0px;
