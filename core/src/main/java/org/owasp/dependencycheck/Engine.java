@@ -621,6 +621,9 @@ public class Engine implements FileFilter, AutoCloseable {
                 if (sha1 != null) {
                     for (Dependency existing : dependencies) {
                         if (sha1.equals(existing.getSha1sum())) {
+                            if (existing.getFileName().contains(": ") || dependency.getFileName().contains(": ")) {
+                                continue;//this won't be quite right 100% of the time. Its possible that the ": " would get added later
+                            }
                             found = true;
                             if (projectReference != null) {
                                 existing.addProjectReference(projectReference);
