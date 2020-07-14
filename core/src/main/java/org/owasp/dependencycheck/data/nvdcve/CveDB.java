@@ -40,6 +40,7 @@ import static org.apache.commons.collections.map.AbstractReferenceMap.HARD;
 import static org.apache.commons.collections.map.AbstractReferenceMap.SOFT;
 import org.owasp.dependencycheck.analyzer.exception.LambdaExceptionWrapper;
 import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
+import org.owasp.dependencycheck.models.VulnerabilityDTO;
 import org.owasp.dependencycheck.data.nvd.json.BaseMetricV2;
 import org.owasp.dependencycheck.data.nvd.json.BaseMetricV3;
 import org.owasp.dependencycheck.data.nvd.json.CpeMatchStreamCollector;
@@ -238,7 +239,11 @@ public final class CveDB implements AutoCloseable {
         /**
          * Key for SQL Statement.
          */
-        UPDATE_VULNERABILITY
+        UPDATE_VULNERABILITY,
+        /**
+         * Key for SQL Statement to select all Perl products
+         */
+        SELECT_ALL_PERL_REFERENCES
     }
 
     /**
@@ -465,6 +470,36 @@ public final class CveDB implements AutoCloseable {
     protected synchronized DatabaseProperties reloadProperties() {
         databaseProperties = new DatabaseProperties(this);
         return databaseProperties;
+    }
+
+    /**
+     * Searches the CPE entries in the database and retrieves all entries for
+     * perl accross any vendor and product combination.
+     * The returned list will include all versions of the product that are
+     * registered in the NVD CVE data.
+     * This dataset needs to be filtered in memory.
+     *
+     * @return a set of vulnerable software
+     */
+    public synchronized List<VulnerabilityDTO> getPerlVulnerabilities() {
+        final List<VulnerabilityDTO> cpe = new ArrayList<>();
+        ResultSet rs = null;
+        try {
+            final PreparedStatement ps = getPreparedStatement(SELECT_ALL_PERL_REFERENCES);
+            if (ps == null) {
+                throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_ALL_PERL_REFERENCES);
+            }
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                cpe.add(new VulnerabilityDTO(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6)));
+            }
+        } catch (SQLException ex) {
+            LOGGER.error("An unexpected SQL Exception occurred; please see the verbose log for more details.");
+            LOGGER.debug("", ex);
+        } finally {
+            DBUtils.closeResultSet(rs);
+        }
+        return cpe;
     }
 
     /**
