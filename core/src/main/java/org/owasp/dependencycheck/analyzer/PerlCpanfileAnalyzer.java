@@ -55,6 +55,8 @@ import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.owasp.dependencycheck.data.nvdcve.ICveDBWrapper;
+import org.owasp.dependencycheck.data.nvdcve.CveDBWrapper;
 import org.owasp.dependencycheck.models.VulnerabilityDTO;
 
 import java.sql.ResultSet;
@@ -79,7 +81,15 @@ public class PerlCpanfileAnalyzer extends AbstractFileTypeAnalyzer {
     private static final int REGEX_OPTIONS = Pattern.DOTALL | Pattern.CASE_INSENSITIVE;
     private static final Pattern DEPEND_PERL_CPAN_PATTERN = Pattern.compile("requires '(.*?)'.*?([0-9\\.]+).*", REGEX_OPTIONS);
     private static List<VulnerabilityDTO> vulnerabileProductList;
-    private static CveDB cveDatabase;
+    private static ICveDBWrapper cveDatabase;
+
+    public PerlCpanfileAnalyzer(){
+    }
+
+    public PerlCpanfileAnalyzer(List<VulnerabilityDTO> _vulnerabileProductList, ICveDBWrapper _cveDatabase){
+        vulnerabileProductList = _vulnerabileProductList;
+        cveDatabase = _cveDatabase;
+    }
 
     @Override
     protected FileFilter getFileFilter() {
@@ -89,7 +99,7 @@ public class PerlCpanfileAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         engine.openDatabase();
-        cveDatabase = engine.getDatabase();
+        cveDatabase = new CveDBWrapper(engine.getDatabase());
         vulnerabileProductList = cveDatabase.getPerlVulnerabilities();
     }
 
@@ -135,10 +145,14 @@ public class PerlCpanfileAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
-    private void processFileContents(String[] fileLines, Dependency dependency) throws AnalysisException{
+    protected void processFileContents(String[] fileLines, Dependency dependency) throws AnalysisException{
         final List<Vulnerability> vulns = new ArrayList<>();
         for(String fileLine:fileLines){  
             Matcher matcher = DEPEND_PERL_CPAN_PATTERN.matcher(fileLine);
+            if (matcher == null){
+                System.out.println("Perl regex match was null:" + fileLine);
+                LOGGER.debug("Perl regex match was null:" + fileLine);
+            }
             LOGGER.debug("perl scanning file:" + fileLine);
             while(matcher.find()) {
                 int matcherGroupCount = matcher.groupCount();
