@@ -3393,4 +3393,23 @@
         <gav regex="true">^io\.gitlab\.arturbosch\.detekt:detekt-.+:.*$</gav>
         <cpe>cpe:/a:gitlab:gitlab</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+        false positive per #2721 on org.bouncycastle:bcpg-jdk15on
+        caused by cpe:/a:openpgp:openpgp, cpe:/a:pgp:openpgp and cpe:/a:pgp:pgp
+          ]]></notes>
+        <gav regex="true">^org\.bouncycastle:bcpg-jdk15on:.*$</gav>
+        <cpe>cpe:/a:openpgp:openpgp</cpe>
+        <cpe>cpe:/a:pgp:openpgp</cpe>
+        <cpe>cpe:/a:pgp:pgp</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+          false positive per #2721 on name.neuhalfen.projects.crypto.bouncycastle.openpgp:bouncy-gpg
+          caused by cpe:/a:gpg-pgp_project::gpg-pgp and cpe:/a:openpgp:openpgp
+          ]]></notes>
+        <gav regex="true">^name\.neuhalfen\.projects\.crypto\.bouncycastle\.openpgp:bouncy-gpg:.*$</gav>
+        <cpe>cpe:/a:gpg-pgp_project::gpg-pgp</cpe>
+        <cpe>cpe:/a:openpgp:openpgp</cpe>
+    </suppress>
 </suppressions>

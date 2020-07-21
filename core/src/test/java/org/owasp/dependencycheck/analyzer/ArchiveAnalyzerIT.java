@@ -128,7 +128,8 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
         settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
         settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
-        
+        settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, false);
+
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
         instance.initialize(settings);
         //trick the analyzer into thinking it is active.
@@ -157,7 +158,8 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
         settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
         settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
-        
+        settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, false);
+
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
         instance.initialize(settings);
         //trick the analyzer into thinking it is active.
@@ -177,6 +179,39 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
         }
     }
 
+    @Test
+    public void testAnalyzeJarStaticResources() throws Exception {
+        Settings settings = getSettings();
+        settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+        settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
+        settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
+        settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, false);
+
+        ArchiveAnalyzer instance = new ArchiveAnalyzer();
+        instance.initialize(settings);
+        //trick the analyzer into thinking it is active.
+        instance.accept(new File("test.ear"));
+        try (Engine engine = new Engine(settings)) {
+            instance.prepare(null);
+            File filea = BaseTest.getResourceAsFile(this, "archive/handle-a.jar");
+            Dependency dependencya = new Dependency(filea);
+
+            File fileb = BaseTest.getResourceAsFile(this, "archive/handle-b.jar");
+            Dependency dependencyb = new Dependency(fileb);
+
+            instance.analyze(dependencya, engine);
+            int initial_size = engine.getDependencies().length;
+
+            instance.analyze(dependencyb, engine);
+
+            int ending_size = engine.getDependencies().length;
+            assertNotEquals(initial_size, ending_size);
+
+        } finally {
+            instance.close();
+        }
+    }
+
     /**
      * Test of analyze method, of class ArchiveAnalyzer.
      */
@@ -186,7 +221,8 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
         settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
         settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
-        
+        settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, false);
+
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
         instance.initialize(settings);
         //trick the analyzer into thinking it is active so that it will prepare
@@ -217,7 +253,8 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
         settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
         settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
-        
+        settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, false);
+
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
         instance.initialize(settings);
         instance.accept(new File("zip")); //ensure analyzer is "enabled"
@@ -249,7 +286,8 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
         settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
         settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
-        
+        settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, false);
+
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
         instance.initialize(settings);
         instance.accept(new File("zip")); //ensure analyzer is "enabled"
@@ -276,7 +314,8 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
         settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
         settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
-        
+        settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, false);
+
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
         instance.initialize(settings);
         instance.accept(new File("zip")); //ensure analyzer is "enabled"
@@ -305,7 +344,8 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
         settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
         settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
-        
+        settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, false);
+
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
         instance.initialize(settings);
         instance.accept(new File("zip")); //ensure analyzer is "enabled"
@@ -331,7 +371,8 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
         settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
         settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
-        
+        settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, false);
+
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
         instance.initialize(settings);
         try (Engine engine = new Engine(settings)) {
