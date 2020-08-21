@@ -88,12 +88,16 @@ public final class FileUtils {
             return false;
         }
 
-        final boolean success = org.apache.commons.io.FileUtils.deleteQuietly(file);
-        if (!success) {
-            LOGGER.debug("Failed to delete file: {}; attempting to delete on exit.", file.getPath());
+        try {
+            org.apache.commons.io.FileUtils.forceDelete(file);
+        } catch (IOException ex) {
+            LOGGER.trace(ex.getMessage(), ex);
+            LOGGER.debug("Failed to delete file: {} (error message: {}); attempting to delete on exit.", file.getPath(), ex.getMessage());
             file.deleteOnExit();
+            return false;
         }
-        return success;
+
+        return true;
     }
 
     /**
