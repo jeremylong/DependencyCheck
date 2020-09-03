@@ -194,6 +194,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
         // only attempt if we have been able to collect some packages
         if (!packages.isEmpty()) {
             try (OssindexClient client = OssindexClientFactory.create(getSettings())) {
+                LOG.debug("OSS Index Analyzer submitting: " + packages.toString());
                 return client.requestComponentReports(packages);
             }
         }

@@ -149,7 +149,7 @@ public class NodeAuditSearch {
         try {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("----------------------------------------");
-                LOGGER.debug("----------------------------------------");
+                LOGGER.debug("Node Audit Payload:");
                 LOGGER.debug(packageJson.toString());
                 LOGGER.debug("----------------------------------------");
                 LOGGER.debug("----------------------------------------");
