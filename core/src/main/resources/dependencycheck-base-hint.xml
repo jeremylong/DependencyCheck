@@ -323,7 +323,7 @@
         <add>
             <evidence type="vendor" source="hint analyzer" name="vendor" value="cognitect" confidence="HIGHEST"/>
         </add>
-    </hint>   
+    </hint>
     <hint>
         <given>
             <evidence type="vendor" source="pom" name="groupid" value="io.projectreactor.netty"/>
@@ -331,7 +331,7 @@
         <add>
             <evidence type="vendor" source="hint analyzer" name="vendor" value="pivotal" confidence="HIGHEST"/>
         </add>
-    </hint>   
+    </hint>
     <hint>
         <given>
             <evidence type="product" source="grokassembly" name="FileDescription" value="Telerik.Web.UI"/>
@@ -340,5 +340,13 @@
             <evidence type="vendor" source="hint analyzer" name="vendor" value="Progress" confidence="HIGHEST"/>
             <evidence type="product" source="hint analyzer" name="vendor" value="ASP.NET AJAX" confidence="HIGHEST"/>
         </add>
-    </hint>   
+    </hint>
+    <hint>
+        <given>
+            <evidence type="vendor" source="pom" name="groupid" value="quartz-scheduler"/>
+        </given>
+        <add>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="softwareag" confidence="HIGHEST"/>
+        </add>
+    </hint>  
 </hints>
