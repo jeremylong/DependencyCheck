@@ -39,9 +39,6 @@ matrix:
         - if [ ! -z "$TRAVIS_TAG" ]; then 
             travis_wait 60 mvn -s settings.xml install site site:stage -DreleaseTesting -Danalyzer.node.package.enabled=false -Danalyzer.node.audit.enabled=false; 
           else 
-            rm -rf core/target/data;
-            rm -rf maven/target/local-repo/org/owasp/dependency-check-data;
-            rm -rf $HOME/.m2/repository/org/owasp/dependency-check-data;
             travis_wait 60 mvn -s settings.xml install -DreleaseTesting -Danalyzer.node.package.enabled=false -Danalyzer.node.audit.enabled=false; 
           fi
 
