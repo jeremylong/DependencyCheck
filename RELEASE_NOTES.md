@@ -2,6 +2,20 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 6.0.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.0.0) (2020-09-07)
+
+### Changes
+
+- Updated database schema; this is a *breaking change* and anyone using an external database or those whom
+  specify the data directory will need recreate the database. The schema changes were made to:
+  - Improve the CVSS data, when available, per #2547
+  - Improve the way that ecosystems are determined
+  - Improve the update performance of external databases
+    - *Oracle users* will not be able to upgrade as https://github.com/jeremylong/DependencyCheck/issues/2755 has 
+      not been resolved - as such, version 6.0.0 does not support Oracle.
+  
+- Full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/14?closed=1).
+
 ## [Version 5.3.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v5.3.2) (2020-03-26)
 
 ### Changes
