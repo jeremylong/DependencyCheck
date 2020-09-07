@@ -198,6 +198,7 @@ public class NexusSearch {
                 return false;
             }
         } catch (IOException | ParserConfigurationException | SAXException e) {
+            LOGGER.warn("Pre-flight request to Nexus failed: ", e);
             return false;
         }
         return true;
