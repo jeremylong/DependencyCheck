@@ -94,7 +94,7 @@ public final class Downloader {
             in = conn.fetch(url);
             ByteStreams.copy(in, out);
         } catch (IOException ex) {
-            final String msg = format("Download failed, unable to copy '%s' to '%s'", url.toString(), outputPath.getAbsolutePath());
+            final String msg = format("Download failed, unable to copy '%s' to '%s'; %s", url.toString(), outputPath.getAbsolutePath(), ex.getMessage());
             throw new DownloadFailedException(msg, ex);
         } finally {
             if (in != null) {
@@ -127,7 +127,7 @@ public final class Downloader {
             ByteStreams.copy(in, out);
             return out.toString(UTF8);
         } catch (IOException ex) {
-            final String msg = format("Download failed, unable to retrieve '%s'", url.toString());
+            final String msg = format("Download failed, unable to retrieve '%s'; %s", url.toString(), ex.getMessage());
             throw new DownloadFailedException(msg, ex);
         } finally {
             if (in != null) {
