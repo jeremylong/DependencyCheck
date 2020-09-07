@@ -7,12 +7,15 @@ Please see the [dependency-check google group](https://groups.google.com/forum/#
 ### Changes
 
 - Updated database schema; this is a *breaking change* and anyone using an external database or those whom
-  specify the data directory will need recreate the database. The schema changes were made to:
+  specify the data directory will need recreate the database (including users of the docker image). The schema 
+  changes were made to:
   - Improve the CVSS data, when available, per #2547
   - Improve the way that ecosystems are determined
   - Improve the update performance of external databases
-    - *Oracle users* will not be able to upgrade as https://github.com/jeremylong/DependencyCheck/issues/2755 has 
-      not been resolved - as such, version 6.0.0 does not support Oracle.
+- Users with an **external Oracle** database will not be able to upgrade as https://github.com/jeremylong/DependencyCheck/issues/2755 
+  has not been resolved - as such, version 6.0.0 does not support Oracle.
+- Users mirroring the NVD - ODC 6.0.0 requires the use of the version 1.1 data feeds - 
+  please ensure you are using 1.1 not the 1.0 data feed.
   
 - Full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/14?closed=1).
 
