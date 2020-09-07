@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * @author Jeremy Long
  */
 @NotThreadSafe
-public class H2DBLock {
+public class H2DBLock implements AutoCloseable {
 
     /**
      * The logger.
@@ -70,6 +70,10 @@ public class H2DBLock {
      * A random string used to validate the lock.
      */
     private final String magic;
+    /**
+     * A flag indicating whether or not an H2 database is being used.
+     */
+    private final boolean isLockable;
 
     /**
      * The shutdown hook used to remove the lock file in case of an unexpected
@@ -81,22 +85,28 @@ public class H2DBLock {
      * Constructs a new H2DB Lock object with the configured settings.
      *
      * @param settings the configured settings
+     * @throws H2DBLockException thrown if a lock could not be obtained
      */
-    public H2DBLock(Settings settings) {
+    public H2DBLock(Settings settings) throws H2DBLockException {
+        this(settings, true);
+    }
+
+    /**
+     * Constructs a new H2DB Lock object with the configured settings.
+     *
+     * @param settings the configured settings
+     * @param isH2Connection a flag indicating if the lock is for an H2 database
+     * - if false the H2DBLock does nothing
+     * @throws H2DBLockException thrown if a lock could not be obtained
+     */
+    public H2DBLock(Settings settings, boolean isH2Connection) throws H2DBLockException {
         this.settings = settings;
         final byte[] random = new byte[16];
         final SecureRandom gen = new SecureRandom();
         gen.nextBytes(random);
         magic = Checksum.getHex(random);
-    }
-
-    /**
-     * Determine if the lock is currently held.
-     *
-     * @return true if the lock is currently held
-     */
-    public boolean isLocked() {
-        return lock != null && lock.isValid();
+        this.isLockable = isH2Connection;
+        lock();
     }
 
     /**
@@ -104,7 +114,10 @@ public class H2DBLock {
      *
      * @throws H2DBLockException thrown if a lock could not be obtained
      */
-    public void lock() throws H2DBLockException {
+    public final void lock() throws H2DBLockException {
+        if (!isLockable) {
+            return;
+        }
         try {
             final File dir = settings.getDataDirectory();
             lockFile = new File(dir, "odc.update.lock");
@@ -166,35 +179,13 @@ public class H2DBLock {
     }
 
     /**
-     * Checks the state of the custom h2 lock file and under some conditions
-     * will attempt to remove the lock file.
-     *
-     * @throws H2DBLockException thrown if the lock directory does not exist and
-     * cannot be created
-     */
-    private void checkState() throws H2DBLockException {
-        if (!lockFile.getParentFile().isDirectory() && !lockFile.mkdir()) {
-            throw new H2DBLockException("Unable to create path to data directory.");
-        }
-        if (lockFile.isFile()) {
-            //TODO - this 30 minute check needs to be configurable.
-            if (getFileAge(lockFile) > 30) {
-                LOGGER.debug("An old db update lock file was found: {}", lockFile.getAbsolutePath());
-                if (!lockFile.delete()) {
-                    LOGGER.warn("An old db update lock file was found but the system was unable to delete "
-                            + "the file. Consider manually deleting {}", lockFile.getAbsolutePath());
-                }
-            } else {
-                LOGGER.info("Lock file found `{}`", lockFile);
-                LOGGER.info("Existing update in progress; waiting for update to complete");
-            }
-        }
-    }
-
-    /**
      * Releases the lock on the H2 database.
      */
-    public void release() {
+    @Override
+    public void close() {
+        if (!isLockable) {
+            return;
+        }
         if (lock != null) {
             try {
                 lock.release();
@@ -222,6 +213,32 @@ public class H2DBLock {
         removeShutdownHook();
         final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         LOGGER.debug("Lock released ({}) {} @ {}", Thread.currentThread().getName(), magic, timestamp.toString());
+    }
+
+    /**
+     * Checks the state of the custom h2 lock file and under some conditions
+     * will attempt to remove the lock file.
+     *
+     * @throws H2DBLockException thrown if the lock directory does not exist and
+     * cannot be created
+     */
+    private void checkState() throws H2DBLockException {
+        if (!lockFile.getParentFile().isDirectory() && !lockFile.mkdir()) {
+            throw new H2DBLockException("Unable to create path to data directory.");
+        }
+        if (lockFile.isFile()) {
+            //TODO - this 30 minute check needs to be configurable.
+            if (getFileAge(lockFile) > 30) {
+                LOGGER.debug("An old db update lock file was found: {}", lockFile.getAbsolutePath());
+                if (!lockFile.delete()) {
+                    LOGGER.warn("An old db update lock file was found but the system was unable to delete "
+                            + "the file. Consider manually deleting {}", lockFile.getAbsolutePath());
+                }
+            } else {
+                LOGGER.info("Lock file found `{}`", lockFile);
+                LOGGER.info("Existing update in progress; waiting for update to complete");
+            }
+        }
     }
 
     /**

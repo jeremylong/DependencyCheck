@@ -60,9 +60,42 @@ public class CvssV2 implements Serializable {
      */
     private final String availabilityImpact;
     /**
-     * CVSS severity.
+     * CVSS version.
      */
-    private final String severity;
+    private final String version;
+
+    /**
+     * CVSSv2 Base Metric severity.
+     */
+    private String severity;
+    /**
+     * CVSSv2 Base Metric exploitability score.
+     */
+    private Float exploitabilityScore;
+    /**
+     * CVSSv2 Base Metric impact score.
+     */
+    private Float impactScore;
+    /**
+     * CVSSv2 Base Metric acInsufInfo.
+     */
+    private Boolean acInsufInfo;
+    /**
+     * CVSSv2 Base Metric obtain all privilege.
+     */
+    private Boolean obtainAllPrivilege;
+    /**
+     * CVSSv2 Base Metric obtain user privilege.
+     */
+    private Boolean obtainUserPrivilege;
+    /**
+     * CVSSv2 Base Metric obtain other privilege.
+     */
+    private Boolean obtainOtherPrivilege;
+    /**
+     * CVSSv2 Base Metric user interaction required.
+     */
+    private Boolean userInteractionRequired;
 
     /**
      * Constructs a new CVSS V2 object.
@@ -79,6 +112,35 @@ public class CvssV2 implements Serializable {
     //CSOFF: ParameterNumber
     public CvssV2(float score, String accessVector, String accessComplexity, String authentication,
             String confidentialityImpact, String integrityImpact, String availabilityImpact, String severity) {
+        this(score, accessVector, accessComplexity, authentication, confidentialityImpact,
+                integrityImpact, availabilityImpact, severity, null, null, null, null, null, null, null, null);
+    }
+
+    /**
+     * Constructs a new CVSS V2 object.
+     *
+     * @param score the score
+     * @param accessVector the access vector
+     * @param accessComplexity the access complexity
+     * @param authentication the authentication
+     * @param confidentialityImpact the confidentiality impact
+     * @param integrityImpact the integrity impact
+     * @param availabilityImpact the availability impact
+     * @param severity the severity
+     * @param exploitabilityScore the exploitability score
+     * @param impactScore the impact score
+     * @param acInsufInfo the acInsufInfo
+     * @param obtainAllPrivilege whether or not the vulnerability allows one to obtain all privileges
+     * @param obtainUserPrivilege whether or not the vulnerability allows one to obtain user privileges
+     * @param obtainOtherPrivilege whether or not the vulnerability allows one to obtain other privileges
+     * @param userInteractionRequired whether or not user interaction is required
+     * @param version the CVSS version
+     */
+    //CSOFF: ParameterNumber
+    public CvssV2(float score, String accessVector, String accessComplexity, String authentication,
+            String confidentialityImpact, String integrityImpact, String availabilityImpact, String severity,
+            Float exploitabilityScore, Float impactScore, Boolean acInsufInfo, Boolean obtainAllPrivilege,
+            Boolean obtainUserPrivilege, Boolean obtainOtherPrivilege, Boolean userInteractionRequired, String version) {
         this.score = score;
         this.accessVector = accessVector;
         this.accessComplexity = accessComplexity;
@@ -86,7 +148,16 @@ public class CvssV2 implements Serializable {
         this.confidentialityImpact = confidentialityImpact;
         this.integrityImpact = integrityImpact;
         this.availabilityImpact = availabilityImpact;
+
         this.severity = severity;
+        this.exploitabilityScore = exploitabilityScore;
+        this.impactScore = impactScore;
+        this.acInsufInfo = acInsufInfo;
+        this.obtainAllPrivilege = obtainAllPrivilege;
+        this.obtainUserPrivilege = obtainUserPrivilege;
+        this.obtainOtherPrivilege = obtainOtherPrivilege;
+        this.userInteractionRequired = userInteractionRequired;
+        this.version = version;
     }
     //CSON: ParameterNumber
 
@@ -154,12 +225,84 @@ public class CvssV2 implements Serializable {
     }
 
     /**
-     * Get the value of severity.
+     * Get the value of version.
      *
-     * @return the value of severity
+     * @return the value of version
+     */
+    public String getVersion() {
+        return version;
+    }
+
+    /**
+     * Returns the severity for the vulnerability.
+     *
+     * @return the severity
      */
     public String getSeverity() {
         return severity;
+    }
+
+    /**
+     * Returns the exploitabilityScore for the vulnerability.
+     *
+     * @return the exploitabilityScore
+     */
+    public Float getExploitabilityScore() {
+        return exploitabilityScore;
+    }
+
+    /**
+     * Returns the impactScore for the vulnerability.
+     *
+     * @return the impactScore
+     */
+    public Float getImpactScore() {
+        return impactScore;
+    }
+
+    /**
+     * Returns the acInsufInfo for the vulnerability.
+     *
+     * @return the acInsufInfo
+     */
+    public Boolean isAcInsufInfo() {
+        return acInsufInfo;
+    }
+
+    /**
+     * Returns the obtainAllPrivilege for the vulnerability.
+     *
+     * @return the obtainAllPrivilege
+     */
+    public Boolean isObtainAllPrivilege() {
+        return obtainAllPrivilege;
+    }
+
+    /**
+     * Returns the obtainUserPrivilege for the vulnerability.
+     *
+     * @return the obtainUserPrivilege
+     */
+    public Boolean isObtainUserPrivilege() {
+        return obtainUserPrivilege;
+    }
+
+    /**
+     * Returns the obtainOtherPrivilege for the vulnerability.
+     *
+     * @return the obtainOtherPrivilege
+     */
+    public Boolean isObtainOtherPrivilege() {
+        return obtainOtherPrivilege;
+    }
+
+    /**
+     * Returns the userInteractionRequired for the vulnerability.
+     *
+     * @return the userInteractionRequired
+     */
+    public Boolean isUserInteractionRequired() {
+        return userInteractionRequired;
     }
 
     @Override

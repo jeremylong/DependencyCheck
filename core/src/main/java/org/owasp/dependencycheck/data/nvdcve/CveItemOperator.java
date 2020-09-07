@@ -49,10 +49,54 @@ public class CveItemOperator {
      * @return the ecosystem if one is identified
      */
     private String extractEcosystem(String baseEcosystem, String vendor, String product, String targetSw) {
-        if ("ibm".equals(vendor) && "java".equals(product)) {
+        //TODO the following was added to reduce the need for the slow UPDATE_ECOSYSTEM2 query
+        // the following should be analyzed to determine if an ecosystem should be returned.
+        // Note that these all have 'bindings' in the description of a vulnerability in more than
+        // one case these were related to language bindings; as such the list need to be reviewed and refined.
+        if (("mysql".equals(vendor) && "mysql".equals(product))
+                || ("postgresql".equals(vendor) && "postgresql".equals(product))
+                || ("picketlink".equals(vendor) && "picketlink".equals(product))
+                || ("libxl_project".equals(vendor) && "libxl".equals(product))
+                || ("ocaml".equals(vendor) && "postgresql-ocaml".equals(product))
+                || ("curses_project".equals(vendor) && "curses".equals(product))
+                || ("dalekjs".equals(vendor) && "dalekjs".equals(product))
+                || ("microsoft".equals(vendor) && "internet_explorer".equals(product))
+                || ("jenkins".equals(vendor) && "ssh_credentials".equals(product))
+                || ("kubernetes".equals(vendor) && "kubernetes".equals(product))
+                || ("gnome".equals(vendor) && "nautilus-python".equals(product))
+                || ("apache".equals(vendor) && "qpid_proton".equals(product))
+                || ("mysql-ocaml".equals(vendor) && "mysql-ocaml".equals(product))
+                || ("google".equals(vendor) && "chrome".equals(product))
+                || ("canonical".equals(vendor) && "ltsp_display_manager".equals(product))
+                || ("gnome".equals(vendor) && "vala".equals(product))
+                || ("apple".equals(vendor) && "safari".equals(product))
+                || ("mapbox".equals(vendor) && "npm-test-sqlite3-trunk".equals(product))
+                || ("apple".equals(vendor) && "webkit".equals(product))
+                || ("mozilla".equals(vendor) && "firefox".equals(product))
+                || ("apache".equals(vendor) && "thrift".equals(product))
+                || ("apache".equals(vendor) && "qpid".equals(product))
+                || ("mozilla".equals(vendor) && "thunderbird".equals(product))
+                || ("mozilla".equals(vendor) && "firefox_esr".equals(product))
+                || ("redhat".equals(vendor) && "jboss_amq_clients_2".equals(product))
+                || ("node-opencv_project".equals(vendor) && "node-opencv".equals(product))
+                || ("mozilla".equals(vendor) && "seamonkey".equals(product))
+                || ("mozilla".equals(vendor) && "thunderbird_esr".equals(product))
+                || ("mnet_soft_factory".equals(vendor) && "nodemanager_professional".equals(product))
+                || ("mozilla".equals(vendor) && "mozilla_suite".equals(product))
+                || ("theforeman".equals(vendor) && "hammer_cli".equals(product))
+                || ("ibm".equals(vendor) && "websphere_application_server".equals(product))
+                || ("sap".equals(vendor) && "hana_extend_application_services".equals(product))
+                || ("apache".equals(vendor) && "zookeeper".equals(product))) {
+            return null;
+        }
+
+        if ("ibm".equals(vendor)
+                && "java".equals(product)) {
             return Ecosystem.NATIVE;
         }
-        if ("oracle".equals(vendor) && "vm".equals(product)) {
+
+        if ("oracle".equals(vendor)
+                && "vm".equals(product)) {
             return Ecosystem.NATIVE;
         }
         switch (targetSw) {

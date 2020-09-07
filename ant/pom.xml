@@ -20,7 +20,7 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>5.3.3-SNAPSHOT</version>
+        <version>6.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>dependency-check-ant</artifactId>
@@ -84,6 +84,25 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
                                     <filtering>false</filtering>
                                     <includes>
                                         <include>data.zip</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-test-upgrade-script</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/test-classes/data</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/../core/src/test/resources/data</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>upgrade_4.2.sql</include>
                                     </includes>
                                 </resource>
                             </resources>

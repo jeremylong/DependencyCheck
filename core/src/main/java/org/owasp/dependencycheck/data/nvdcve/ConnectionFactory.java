@@ -356,7 +356,6 @@ public final class ConnectionFactory {
             final String updateFile = String.format(DB_STRUCTURE_UPDATE_RESOURCE, currentDbVersion.toString());
             try {
                 final String dbStructureUpdate = Resources.toString(Resources.getResource(updateFile), StandardCharsets.UTF_8);
-
                 Statement statement = null;
                 try {
                     statement = conn.createStatement();

@@ -1,0 +1,135 @@
+/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2020 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.update.cpe;
+
+import java.util.HashMap;
+import java.util.Map;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import org.owasp.dependencycheck.utils.Pair;
+
+/**
+ *
+ * @author Jeremy Long
+ */
+public class CpeEcosystemCacheTest {
+
+    /**
+     * Test of getEcosystem method, of class CpeEcosystemCache.
+     */
+    @Test
+    public void testGetEcosystem() {
+        Pair<String, String> key = new Pair<>("apache", "zookeeper");
+        Map<Pair<String, String>, String> map = new HashMap<>();
+        map.put(key, "java");
+        CpeEcosystemCache.setCache(map);
+
+        String expected = "java";
+        String result = CpeEcosystemCache.getEcosystem("apache", "zookeeper", null);
+        assertEquals(expected, result);
+        
+        //changes to MULTIPLE = which is returned as null
+        result = CpeEcosystemCache.getEcosystem("apache", "zookeeper", "c++");
+        assertNull(result);
+        
+        result = CpeEcosystemCache.getEcosystem("pivotal", "spring-framework", null);
+        assertNull(result);
+        
+        expected = "java";
+        result = CpeEcosystemCache.getEcosystem("pivotal", "spring-framework", "java");
+        assertEquals(expected, result);
+        
+        expected = "java";
+        result = CpeEcosystemCache.getEcosystem("pivotal", "spring-framework", "java");
+        assertEquals(expected, result);
+        
+        result = CpeEcosystemCache.getEcosystem("microsoft", "word", null );
+        assertNull(result);
+        
+        result = CpeEcosystemCache.getEcosystem("microsoft", "word", null );
+        assertNull(result);
+        
+        result = CpeEcosystemCache.getEcosystem("microsoft", "word", "" );
+        assertNull(result);
+    }
+
+    /**
+     * Test of setCache method, of class CpeEcosystemCache.
+     */
+    @Test
+    public void testSetCache() {
+        Map<Pair<String, String>, String> map = new HashMap<>();
+        CpeEcosystemCache.setCache(map);
+        assertTrue(CpeEcosystemCache.isEmpty());
+
+        map = new HashMap<>();
+        Pair<String, String> key = new Pair<>("apache", "zookeeper");
+        map.put(key, "java");
+        CpeEcosystemCache.setCache(map);
+
+        assertFalse(CpeEcosystemCache.isEmpty());
+    }
+
+    /**
+     * Test of getChanged method, of class CpeEcosystemCache.
+     */
+    @Test
+    public void testGetChanged() {
+        Pair<String, String> key = new Pair<>("apache", "zookeeper");
+        Map<Pair<String, String>, String> map = new HashMap<>();
+        map.put(key, "java");
+        CpeEcosystemCache.setCache(map);
+
+        Map<Pair<String, String>, String> result = CpeEcosystemCache.getChanged();
+        assertTrue(result.isEmpty());
+
+        CpeEcosystemCache.getEcosystem("apache", "zookeeper", "java");
+        result = CpeEcosystemCache.getChanged();
+        assertTrue(result.isEmpty());
+
+        CpeEcosystemCache.getEcosystem("apache", "zookeeper", null);
+        result = CpeEcosystemCache.getChanged();
+        assertTrue(result.isEmpty());
+
+        //zookeeper is already at multiple- no change
+        CpeEcosystemCache.getEcosystem("apache", "zookeeper", "c++");
+        result = CpeEcosystemCache.getChanged();
+        assertFalse(result.isEmpty());
+    }
+
+    /**
+     * Test of isEmpty method, of class CpeEcosystemCache.
+     */
+    @Test
+    public void testIsEmpty() {
+        Map<Pair<String, String>, String> map = new HashMap<>();
+        CpeEcosystemCache.setCache(map);
+        boolean expResult = true;
+        boolean result = CpeEcosystemCache.isEmpty();
+        assertEquals(expResult, result);
+        map.put(new Pair<String, String>("apache", "zookeeper"), "MULTPILE");
+        expResult = false;
+        result = CpeEcosystemCache.isEmpty();
+        assertEquals(expResult, result);
+    }
+
+}
