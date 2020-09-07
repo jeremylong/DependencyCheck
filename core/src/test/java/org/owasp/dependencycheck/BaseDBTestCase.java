@@ -48,57 +48,49 @@ public abstract class BaseDBTestCase extends BaseTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        ensureDBExists();
+        synchronized (this) {
+            ensureDBExists();
+        }
     }
 
     public void ensureDBExists() throws Exception {
-        File f = new File("./target/data/odc.mv.db");
-        if (f.exists() && f.isFile() && f.length() < 71680) {
-            f.delete();
-        }
-        File dataPath = getSettings().getH2DataDirectory();
-        String fileName = getSettings().getString(Settings.KEYS.DB_FILE_NAME);
-        LOGGER.trace("DB file name {}", fileName);
-        File dataFile = new File(dataPath, fileName);
-        LOGGER.trace("Ensuring {} exists", dataFile.toString());
-        if (!dataPath.exists() || !dataFile.exists()) {
-            LOGGER.trace("Extracting database to {}", dataPath.toString());
-            dataPath.mkdirs();
-            File path = new File(BaseDBTestCase.class.getClassLoader().getResource("data.zip").toURI().getPath());
-            try (FileInputStream fis = new FileInputStream(path);
-                    ZipInputStream zin = new ZipInputStream(new BufferedInputStream(fis))) {
-                ZipEntry entry;
-                while ((entry = zin.getNextEntry()) != null) {
-                    if (entry.isDirectory()) {
-                        final File d = new File(dataPath, entry.getName());
-                        d.mkdir();
-                        continue;
-                    }
-                    //File o = new File(dataPath, entry.getName());
-                    //o.createNewFile();
-                    dataFile.createNewFile();
-                    try (FileOutputStream fos = new FileOutputStream(dataFile, false);
-                            BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER_SIZE)) {
-                        IOUtils.copy(zin, dest);
-                    } catch (Throwable ex) {
-                        LOGGER.error("", ex);
-                    }
-                    //update the schema
-                    H2DBLock dblock = null;
-                    try {
-                        if (ConnectionFactory.isH2Connection(getSettings())) {
-                            dblock = new H2DBLock(getSettings());
-                            LOGGER.debug("locking for update");
-                            dblock.lock();
+        try (H2DBLock dblock = new H2DBLock(getSettings(), ConnectionFactory.isH2Connection(getSettings()))) {
+            File f = new File("./target/data/odc.mv.db");
+            if (f.exists() && f.isFile() && f.length() < 71680) {
+                f.delete();
+            }
+            File dataPath = getSettings().getH2DataDirectory();
+            String fileName = getSettings().getString(Settings.KEYS.DB_FILE_NAME);
+            LOGGER.trace("DB file name {}", fileName);
+            File dataFile = new File(dataPath, fileName);
+            LOGGER.trace("Ensuring {} exists", dataFile.toString());
+            if (!dataPath.exists() || !dataFile.exists()) {
+                LOGGER.trace("Extracting database to {}", dataPath.toString());
+                dataPath.mkdirs();
+                File path = new File(BaseDBTestCase.class.getClassLoader().getResource("data.zip").toURI().getPath());
+                try (FileInputStream fis = new FileInputStream(path);
+                        ZipInputStream zin = new ZipInputStream(new BufferedInputStream(fis))) {
+                    ZipEntry entry;
+                    while ((entry = zin.getNextEntry()) != null) {
+                        if (entry.isDirectory()) {
+                            final File d = new File(dataPath, entry.getName());
+                            d.mkdir();
+                            continue;
                         }
-                        ConnectionFactory factory = new ConnectionFactory(getSettings());
-                        factory.initialize();
-                    } finally {
-                        if (dblock != null) {
-                            dblock.release();
+                        //File o = new File(dataPath, entry.getName());
+                        //o.createNewFile();
+                        dataFile.createNewFile();
+                        try (FileOutputStream fos = new FileOutputStream(dataFile, false);
+                                BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER_SIZE)) {
+                            IOUtils.copy(zin, dest);
+                        } catch (Throwable ex) {
+                            LOGGER.error("", ex);
                         }
                     }
                 }
+                //update the schema
+                ConnectionFactory factory = new ConnectionFactory(getSettings());
+                factory.initialize();
             }
         }
     }

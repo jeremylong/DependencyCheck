@@ -67,7 +67,7 @@ public class H2DBCleanupHook extends H2DBShutdownHook {
     @Override
     public void run() {
         if (lock != null) {
-            lock.release();
+            lock.close();
             lock = null;
         }
     }

@@ -71,6 +71,18 @@ public class CvssV3 implements Serializable {
      * CVSS Base Severity.
      */
     private final String baseSeverity;
+    /**
+     * CVSSv3 Base Metric exploitability score.
+     */
+    private Float exploitabilityScore;
+    /**
+     * CVSSv3 Base Metric impact score.
+     */
+    private Float impactScore;
+    /**
+     * CVSS version.
+     */
+    private final String version;
 
     /**
      * Constructs a new CVSS V3 object.
@@ -90,6 +102,30 @@ public class CvssV3 implements Serializable {
     public CvssV3(String attackVector, String attackComplexity, String privilegesRequired,
             String userInteraction, String scope, String confidentialityImpact, String integrityImpact,
             String availabilityImpact, float baseScore, String baseSeverity) {
+        this(attackVector, attackComplexity, privilegesRequired, userInteraction, scope, confidentialityImpact,
+                integrityImpact, availabilityImpact, baseScore, baseSeverity, null, null, null);
+    }
+
+    /**
+     * Constructs a new CVSS V3 object.
+     *
+     * @param attackVector the attack vector value
+     * @param attackComplexity the attack complexity value
+     * @param privilegesRequired the privileges required value
+     * @param userInteraction the user interaction value
+     * @param scope the scope value
+     * @param confidentialityImpact the confidentiality impact value
+     * @param integrityImpact the integrity impact value
+     * @param availabilityImpact the availability impact value
+     * @param baseScore the base score
+     * @param baseSeverity the base severity
+     * @param exploitabilityScore the exploitability score
+     * @param impactScore the impact score
+     * @param version the CVSS version
+     */
+    public CvssV3(String attackVector, String attackComplexity, String privilegesRequired,
+            String userInteraction, String scope, String confidentialityImpact, String integrityImpact,
+            String availabilityImpact, float baseScore, String baseSeverity, Float exploitabilityScore, Float impactScore, String version) {
         this.attackVector = attackVector;
         this.attackComplexity = attackComplexity;
         this.privilegesRequired = privilegesRequired;
@@ -100,6 +136,9 @@ public class CvssV3 implements Serializable {
         this.availabilityImpact = availabilityImpact;
         this.baseScore = baseScore;
         this.baseSeverity = baseSeverity;
+        this.exploitabilityScore = exploitabilityScore;
+        this.impactScore = impactScore;
+        this.version = version;
     }
     //CSON: ParameterNumber
 
@@ -193,9 +232,37 @@ public class CvssV3 implements Serializable {
         return baseSeverity;
     }
 
+    /**
+     * Get the value of version.
+     *
+     * @return the value of version
+     */
+    public String getVersion() {
+        return version;
+    }
+
+    /**
+     * Returns the exploitabilityScore for the vulnerability.
+     *
+     * @return the exploitabilityScore
+     */
+    public Float getexploitabilityScore() {
+        return exploitabilityScore;
+    }
+
+    /**
+     * Returns the impactScore for the vulnerability.
+     *
+     * @return the impactScore
+     */
+    public Float getimpactScore() {
+        return impactScore;
+    }
+
     @Override
     public String toString() {
-        return String.format("/AV:%s/AC:%s/PR:%s/UI:%s/S:%s/C:%s/I:%s/A:%s",
+        return String.format("CVSS:%s/AV:%s/AC:%s/PR:%s/UI:%s/S:%s/C:%s/I:%s/A:%s",
+                version == null ? "" : version,
                 attackVector == null ? "" : attackVector.substring(0, 1),
                 attackComplexity == null ? "" : attackComplexity.substring(0, 1),
                 privilegesRequired == null ? "" : privilegesRequired.substring(0, 1),

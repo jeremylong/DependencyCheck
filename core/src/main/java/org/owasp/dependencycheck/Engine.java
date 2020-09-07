@@ -918,13 +918,7 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     public void doUpdates(boolean remainOpen) throws UpdateException, DatabaseException {
         if (mode.isDatabaseRequired()) {
-            H2DBLock dblock = null;
-            try {
-                if (ConnectionFactory.isH2Connection(settings)) {
-                    dblock = new H2DBLock(settings);
-                    LOGGER.debug("locking for update");
-                    dblock.lock();
-                }
+            try (H2DBLock dblock = new H2DBLock(getSettings(), ConnectionFactory.isH2Connection(getSettings()))) {
                 //lock is not needed as we already have the lock held
                 openDatabase(false, false);
                 LOGGER.info("Checking for updates");
@@ -957,10 +951,6 @@ public class Engine implements FileFilter, AutoCloseable {
                 }
             } catch (H2DBLockException ex) {
                 throw new UpdateException("Unable to obtain an exclusive lock on the H2 database to perform updates", ex);
-            } finally {
-                if (dblock != null) {
-                    dblock.release();
-                }
             }
         } else {
             LOGGER.info("Skipping update check in evidence collection mode.");
@@ -1034,12 +1024,7 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     public void openDatabase(boolean readOnly, boolean lockRequired) throws DatabaseException {
         if (mode.isDatabaseRequired() && database == null) {
-            H2DBLock lock = null;
-            try {
-                if (lockRequired && ConnectionFactory.isH2Connection(settings)) {
-                    lock = new H2DBLock(settings);
-                    lock.lock();
-                }
+            try (H2DBLock dblock = new H2DBLock(getSettings(), lockRequired && ConnectionFactory.isH2Connection(settings))) {
                 if (readOnly
                         && ConnectionFactory.isH2Connection(settings)
                         && settings.getString(Settings.KEYS.DB_CONNECTION_STRING).contains("file:%s")) {
@@ -1065,10 +1050,6 @@ public class Engine implements FileFilter, AutoCloseable {
                 throw new DatabaseException("Unable to open database in read only mode", ex);
             } catch (H2DBLockException ex) {
                 throw new DatabaseException("Failed to obtain lock - unable to open database", ex);
-            } finally {
-                if (lock != null) {
-                    lock.release();
-                }
             }
         }
     }

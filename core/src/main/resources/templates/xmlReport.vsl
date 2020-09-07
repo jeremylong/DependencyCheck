@@ -19,7 +19,7 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
 @version 2.0
 
 *#<?xml version="1.0"?>
-<analysis xmlns="https://jeremylong.github.io/DependencyCheck/dependency-check.2.4.xsd">
+<analysis xmlns="https://jeremylong.github.io/DependencyCheck/dependency-check.2.5.xsd">
     <scanInfo>
         <engineVersion>$version</engineVersion>
 #foreach($prop in $properties.getMetaData().entrySet())
@@ -209,6 +209,14 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
                         <integrityImpact>#if($vuln.cvssV2.integrityImpact)$enc.xml($vuln.cvssV2.integrityImpact)#end</integrityImpact>
                         <availabilityImpact>#if($vuln.cvssV2.availabilityImpact)$enc.xml($vuln.cvssV2.availabilityImpact)#end</availabilityImpact>
                         <severity>#if($vuln.cvssV2.severity)$enc.xml($vuln.cvssV2.severity)#end</severity>
+#if($vuln.cvssV2.version)<version>$enc.xml($vuln.cvssV2.version)</version>#end
+#if($vuln.cvssV2.exploitabilityScore)<exploitabilityScore>$enc.xml($vuln.cvssV2.exploitabilityScore)</exploitabilityScore>#end
+#if($vuln.cvssV2.impactScore)<impactScore>$enc.xml($vuln.cvssV2.impactScore)</impactScore>#end
+#if($vuln.cvssV2.acInsufInfo)<acInsufInfo>$enc.xml($vuln.cvssV2.acInsufInfo)</acInsufInfo>#end
+#if($vuln.cvssV2.obtainAllPrivilege)<obtainAllPrivilege>$enc.xml($vuln.cvssV2.obtainAllPrivilege)</obtainAllPrivilege>#end
+#if($vuln.cvssV2.obtainUserPrivilege)<obtainUserPrivilege>$enc.xml($vuln.cvssV2.obtainUserPrivilege)</obtainUserPrivilege>#end
+#if($vuln.cvssV2.obtainOtherPrivilege)<obtainOtherPrivilege>$enc.xml($vuln.cvssV2.obtainOtherPrivilege)</obtainOtherPrivilege>#end
+#if($vuln.cvssV2.userInteractionRequired)<userInteractionRequired>$enc.xml($vuln.cvssV2.userInteractionRequired)</userInteractionRequired>#end
                     </cvssV2>
 #end
 #if($vuln.cvssV3)
@@ -223,6 +231,9 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
                         <integrityImpact>#if($vuln.cvssV3.integrityImpact)$enc.xml($vuln.cvssV3.integrityImpact)#end</integrityImpact>
                         <availabilityImpact>#if($vuln.cvssV3.availabilityImpact)$enc.xml($vuln.cvssV3.availabilityImpact)#end</availabilityImpact>
                         <baseSeverity>#if($vuln.cvssV3.baseSeverity)$enc.xml($vuln.cvssV3.baseSeverity)#end</baseSeverity>
+#if($vuln.cvssV3.exploitabilityScore)<exploitabilityScore>$enc.xml($vuln.cvssV3.exploitabilityScore)</exploitabilityScore>#end
+#if($vuln.cvssV3.impactScore)<impactScore>$enc.xml($vuln.cvssV3.impactScore)</impactScore>#end
+#if($vuln.cvssV3.version)<version>$enc.xml($vuln.cvssV3.version)</version>#end
                     </cvssV3>
 #end
 #if (!$vuln.cwes.isEmpty())
@@ -271,6 +282,14 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
                         <integrityImpact>#if($vuln.cvssV2.integrityImpact)$enc.xml($vuln.cvssV2.integrityImpact)#end</integrityImpact>
                         <availabilityImpact>#if($vuln.cvssV2.availabilityImpact)$enc.xml($vuln.cvssV2.availabilityImpact)#end</availabilityImpact>
                         <severity>#if($vuln.cvssV2.severity)$enc.xml($vuln.cvssV2.severity)#end</severity>
+#if($vuln.cvssV2.version)<version>$enc.xml($vuln.cvssV2.version)</version>#end
+#if($vuln.cvssV2.exploitabilityScore)<exploitabilityScore>$enc.xml($vuln.cvssV2.exploitabilityScore)</exploitabilityScore>#end
+#if($vuln.cvssV2.impactScore)<impactScore>$enc.xml($vuln.cvssV2.impactScore)</impactScore>#end
+#if($vuln.cvssV2.acInsufInfo)<acInsufInfo>$enc.xml($vuln.cvssV2.acInsufInfo)</acInsufInfo>#end
+#if($vuln.cvssV2.obtainAllPrivilege)<obtainAllPrivilege>$enc.xml($vuln.cvssV2.obtainAllPrivilege)</obtainAllPrivilege>#end
+#if($vuln.cvssV2.obtainUserPrivilege)<obtainUserPrivilege>$enc.xml($vuln.cvssV2.obtainUserPrivilege)</obtainUserPrivilege>#end
+#if($vuln.cvssV2.obtainOtherPrivilege)<obtainOtherPrivilege>$enc.xml($vuln.cvssV2.obtainOtherPrivilege)</obtainOtherPrivilege>#end
+#if($vuln.cvssV2.userInteractionRequired)<userInteractionRequired>$enc.xml($vuln.cvssV2.userInteractionRequired)</userInteractionRequired>#end
                     </cvssV2>
 #end
 #if($vuln.cvssV3)
@@ -285,6 +304,9 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
                         <integrityImpact>#if($vuln.cvssV3.integrityImpact)$enc.xml($vuln.cvssV3.integrityImpact)#end</integrityImpact>
                         <availabilityImpact>#if($vuln.cvssV3.availabilityImpact)$enc.xml($vuln.cvssV3.availabilityImpact)#end</availabilityImpact>
                         <baseSeverity>#if($vuln.cvssV3.baseSeverity)$enc.xml($vuln.cvssV3.baseSeverity)#end</baseSeverity>
+#if($vuln.cvssV3.exploitabilityScore)<exploitabilityScore>$enc.xml($vuln.cvssV3.exploitabilityScore)</exploitabilityScore>#end
+#if($vuln.cvssV3.impactScore)<impactScore>$enc.xml($vuln.cvssV3.impactScore)</impactScore>#end
+#if($vuln.cvssV3.version)<version>$enc.xml($vuln.cvssV3.version)</version>#end
                     </cvssV3>
 #end
 #if (!$vuln.cwes.isEmpty())

@@ -20,7 +20,7 @@ Copyright (c) 2012 - Jeremy Long
 
     <groupId>org.owasp</groupId>
     <artifactId>dependency-check-parent</artifactId>
-    <version>5.3.3-SNAPSHOT</version>
+    <version>6.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -137,7 +137,7 @@ Copyright (c) 2012 - Jeremy Long
         <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
         <!-- upgrading beyond 2.5 breaks maven site-->
         <maven-jxr-plugin.version>2.5</maven-jxr-plugin.version>
-        <maven-project-info-reports-plugin.version>3.1.0</maven-project-info-reports-plugin.version>
+        <maven-project-info-reports-plugin.version>3.1.1</maven-project-info-reports-plugin.version>
         <maven-surefire-report-plugin.version>2.22.2</maven-surefire-report-plugin.version>
         <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
         <spotbugs.maven.plugin.version>4.0.4</spotbugs.maven.plugin.version>
@@ -150,7 +150,7 @@ Copyright (c) 2012 - Jeremy Long
         <commons-cli.version>1.4</commons-cli.version>
         <commons-io.version>2.7</commons-io.version>
         <commons-lang3.version>3.11</commons-lang3.version>
-        <commons-text.version>1.8</commons-text.version>
+        <commons-text.version>1.9</commons-text.version>
         <commons-jcs-core.version>2.2.1</commons-jcs-core.version>
         <com.sun.mail.mailapi.version>1.6.5</com.sun.mail.mailapi.version>
         <aho-corasick-double-array-trie.version>1.2.2</aho-corasick-double-array-trie.version>
@@ -158,7 +158,7 @@ Copyright (c) 2012 - Jeremy Long
         <hamcrest-core.version>2.2</hamcrest-core.version>
         <jackson.version>2.11.2</jackson.version>
         <jmockit.version>1.49</jmockit.version>
-        <mockito-core.version>3.4.4</mockito-core.version>
+        <mockito-core.version>3.5.10</mockito-core.version>
         <jsoup.version>1.13.1</jsoup.version>
         <commons-compress.version>1.20</commons-compress.version>
         <org.apache.maven.shared.file-management.version>3.0.0</org.apache.maven.shared.file-management.version>
@@ -887,7 +887,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>commons-validator</groupId>
                 <artifactId>commons-validator</artifactId>
-                <version>1.6</version>
+                <version>1.7</version>
             </dependency>
             <dependency>
                 <groupId>com.github.package-url</groupId>
