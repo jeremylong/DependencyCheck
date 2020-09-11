@@ -9,6 +9,16 @@ Dependency-Check is a Software Composition Analysis (SCA) tool that attempts to 
 
 Documentation and links to production binary releases can be found on the [github pages](http://jeremylong.github.io/DependencyCheck/). Additionally, more information about the architecture and ways to extend dependency-check can be found on the [wiki].
 
+6.0.0 Upgrade Notice
+--------------
+If upgrading to 6.0.0 or higher, there were breaking changes. If you get an error indicating you can't connect
+to the database you will need to run the purge command to remove the old database:
+- gradle: `./gradlew dependencyCheckPurge`
+- maven: `mvn org.owasp:dependency-check-maven:6.0.0:purge`
+- cli: `dependency-check.sh --purge`
+
+Homebrew users upgrading to dependency-check 6.0.0 will need to purge their old database.
+
 Current Releases
 -------------
 ### Jenkins Plugin
@@ -33,6 +43,7 @@ On Windows
 > .\bin\dependency-check.bat --out . --scan [path to jar files to be scanned]
 ```
 On Mac with [Homebrew](http://brew.sh)
+Note - homebrew users upgrading from 5.x to 6.0.0 will need to run `dependency-check.sh --purge`.
 ```
 $ brew update && brew install dependency-check
 $ dependency-check -h
