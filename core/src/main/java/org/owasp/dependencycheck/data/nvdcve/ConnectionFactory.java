@@ -367,6 +367,9 @@ public final class ConnectionFactory {
                     DBUtils.closeStatement(statement);
                 }
             } catch (IllegalArgumentException | IOException ex) {
+                if ("data/upgrade_4.2.sql".equals(updateFile)) {
+                    throw new DatabaseException("unable to upgrade the database schema - please run the dependency-check purge command to remove the existing database");
+                }
                 final String msg = String.format("Upgrade SQL file does not exist: %s", updateFile);
                 throw new DatabaseException(msg, ex);
             }
