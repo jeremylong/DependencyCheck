@@ -20,12 +20,12 @@ package org.owasp.dependencycheck.exception;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
- * An exception used when trying to obtain a lock on the H2 database.
+ * An exception used when trying to obtain a lock on a resource.
  *
  * @author Jeremy Long
  */
 @ThreadSafe
-public class H2DBLockException extends Exception {
+public class WriteLockException extends Exception {
 
     /**
      * The serial version UID for serialization.
@@ -33,37 +33,37 @@ public class H2DBLockException extends Exception {
     private static final long serialVersionUID = 8987298706527142594L;
 
     /**
-     * Creates a new H2DBLockException.
+     * Creates a new WriteLockException.
      */
-    public H2DBLockException() {
+    public WriteLockException() {
         super();
     }
 
     /**
-     * Creates a new H2DBLockException.
+     * Creates a new WriteLockException.
      *
      * @param msg a message for the exception.
      */
-    public H2DBLockException(String msg) {
+    public WriteLockException(String msg) {
         super(msg);
     }
 
     /**
-     * Creates a new H2DBLockException.
+     * Creates a new WriteLockException.
      *
      * @param ex the cause of the exception.
      */
-    public H2DBLockException(Throwable ex) {
+    public WriteLockException(Throwable ex) {
         super(ex);
     }
 
     /**
-     * Creates a new H2DBLockException.
+     * Creates a new WriteLockException.
      *
      * @param msg a message for the exception.
      * @param ex the cause of the exception.
      */
-    public H2DBLockException(String msg, Throwable ex) {
+    public WriteLockException(String msg, Throwable ex) {
         super(msg, ex);
     }
 }

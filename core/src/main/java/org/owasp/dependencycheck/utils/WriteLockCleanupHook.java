@@ -21,22 +21,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A cleanup hook that will register with the JVM to remove the H@DBLock file
+ * A cleanup hook that will register with the JVM to remove the WriteLock file
  * during an unexpected shutdown.
  *
  * @author Jeremy Long
  */
-public class H2DBCleanupHook extends H2DBShutdownHook {
+public class WriteLockCleanupHook extends WriteLockShutdownHook {
 
     /**
      * A reference to the lock file.
      */
-    private H2DBLock lock;
+    private WriteLock lock;
 
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(H2DBShutdownHookFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WriteLockCleanupHook.class);
 
     /**
      * Add the shutdown hook.
@@ -44,7 +44,7 @@ public class H2DBCleanupHook extends H2DBShutdownHook {
      * @param lock the lock object
      */
     @Override
-    public void add(H2DBLock lock) {
+    public void add(WriteLock lock) {
         this.lock = lock;
         Runtime.getRuntime().addShutdownHook(this);
     }

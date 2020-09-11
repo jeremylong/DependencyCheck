@@ -25,23 +25,23 @@ import java.security.SecureRandom;
 import java.sql.Timestamp;
 import java.util.Date;
 import javax.annotation.concurrent.NotThreadSafe;
-import org.owasp.dependencycheck.exception.H2DBLockException;
+import org.owasp.dependencycheck.exception.WriteLockException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The H2 DB lock file implementation; creates a custom lock file so that only a
- * single instance of dependency-check can update the embedded h2 database.
+ * A lock file implementation; creates a custom lock file so that only a single
+ * instance of dependency-check can update the a given resource.
  *
  * @author Jeremy Long
  */
 @NotThreadSafe
-public class H2DBLock implements AutoCloseable {
+public class WriteLock implements AutoCloseable {
 
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(H2DBLock.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WriteLock.class);
     /**
      * How long to sleep waiting for the lock.
      */
@@ -71,56 +71,79 @@ public class H2DBLock implements AutoCloseable {
      */
     private final String magic;
     /**
-     * A flag indicating whether or not an H2 database is being used.
+     * A flag indicating whether or not an resource is lockable.
      */
     private final boolean isLockable;
+    /**
+     * The name of the lock file.
+     */
+    private final String lockFileName;
 
     /**
      * The shutdown hook used to remove the lock file in case of an unexpected
      * shutdown.
      */
-    private H2DBShutdownHook hook = null;
+    private WriteLockShutdownHook hook = null;
 
     /**
-     * Constructs a new H2DB Lock object with the configured settings.
+     * Constructs a new Write Lock object with the configured settings.
      *
      * @param settings the configured settings
-     * @throws H2DBLockException thrown if a lock could not be obtained
+     * @throws WriteLockException thrown if a lock could not be obtained
      */
-    public H2DBLock(Settings settings) throws H2DBLockException {
+    public WriteLock(Settings settings) throws WriteLockException {
         this(settings, true);
     }
 
     /**
-     * Constructs a new H2DB Lock object with the configured settings.
+     * Constructs a new Write Lock object with the configured settings.
      *
      * @param settings the configured settings
-     * @param isH2Connection a flag indicating if the lock is for an H2 database
-     * - if false the H2DBLock does nothing
-     * @throws H2DBLockException thrown if a lock could not be obtained
+     * @param isLockable a flag indicating if a lock can be obtained for the
+     * resource; if false the lock does nothing. This is useful in the case of
+     * ODC where we need to lock for updates against H2 but we do not need to
+     * lock updates for other databases.
+     * @throws WriteLockException thrown if a lock could not be obtained
      */
-    public H2DBLock(Settings settings, boolean isH2Connection) throws H2DBLockException {
+    public WriteLock(Settings settings, boolean isLockable) throws WriteLockException {
+        this(settings, isLockable, "odc.update.lock");
+    }
+
+    /**
+     * Constructs a new Write Lock object with the configured settings.
+     *
+     * @param settings the configured settings
+     * @param isLockable a flag indicating if a lock can be obtained for the
+     * resource; if false the lock does nothing. This is useful in the case of
+     * ODC where we need to lock for updates against H2 but we do not need to
+     * lock updates for other databases.
+     * @param lockFileName the name of the lock file; note the lock file will be
+     * in the ODC data directory.
+     * @throws WriteLockException thrown if a lock could not be obtained
+     */
+    public WriteLock(Settings settings, boolean isLockable, String lockFileName) throws WriteLockException {
         this.settings = settings;
         final byte[] random = new byte[16];
         final SecureRandom gen = new SecureRandom();
         gen.nextBytes(random);
         magic = Checksum.getHex(random);
-        this.isLockable = isH2Connection;
+        this.isLockable = isLockable;
+        this.lockFileName = lockFileName;
         lock();
     }
 
     /**
-     * Obtains a lock on the H2 database.
+     * Obtains a lock on the resource.
      *
-     * @throws H2DBLockException thrown if a lock could not be obtained
+     * @throws WriteLockException thrown if a lock could not be obtained
      */
-    public final void lock() throws H2DBLockException {
+    public final void lock() throws WriteLockException {
         if (!isLockable) {
             return;
         }
         try {
             final File dir = settings.getDataDirectory();
-            lockFile = new File(dir, "odc.update.lock");
+            lockFile = new File(dir, lockFileName);
             checkState();
             int ctr = 0;
             do {
@@ -171,15 +194,15 @@ public class H2DBLock implements AutoCloseable {
                 }
             } while (++ctr < MAX_SLEEP_COUNT && (lock == null || !lock.isValid()));
             if (lock == null || !lock.isValid()) {
-                throw new H2DBLockException("Unable to obtain the update lock, skipping the database update. Skippinig the database update.");
+                throw new WriteLockException("Unable to obtain the update lock, skipping the database update. Skippinig the database update.");
             }
         } catch (IOException ex) {
-            throw new H2DBLockException(ex.getMessage(), ex);
+            throw new WriteLockException(ex.getMessage(), ex);
         }
     }
 
     /**
-     * Releases the lock on the H2 database.
+     * Releases the lock on the resource.
      */
     @Override
     public void close() {
@@ -216,22 +239,22 @@ public class H2DBLock implements AutoCloseable {
     }
 
     /**
-     * Checks the state of the custom h2 lock file and under some conditions
+     * Checks the state of the custom write lock file and under some conditions
      * will attempt to remove the lock file.
      *
-     * @throws H2DBLockException thrown if the lock directory does not exist and
-     * cannot be created
+     * @throws WriteLockException thrown if the lock directory does not exist
+     * and cannot be created
      */
-    private void checkState() throws H2DBLockException {
+    private void checkState() throws WriteLockException {
         if (!lockFile.getParentFile().isDirectory() && !lockFile.mkdir()) {
-            throw new H2DBLockException("Unable to create path to data directory.");
+            throw new WriteLockException("Unable to create path to data directory.");
         }
         if (lockFile.isFile()) {
             //TODO - this 30 minute check needs to be configurable.
             if (getFileAge(lockFile) > 30) {
-                LOGGER.debug("An old db update lock file was found: {}", lockFile.getAbsolutePath());
+                LOGGER.debug("An old write lock file was found: {}", lockFile.getAbsolutePath());
                 if (!lockFile.delete()) {
-                    LOGGER.warn("An old db update lock file was found but the system was unable to delete "
+                    LOGGER.warn("An old write lock file was found but the system was unable to delete "
                             + "the file. Consider manually deleting {}", lockFile.getAbsolutePath());
                 }
             } else {
@@ -277,7 +300,7 @@ public class H2DBLock implements AutoCloseable {
      */
     private void addShutdownHook() {
         if (hook == null) {
-            hook = H2DBShutdownHookFactory.getHook(settings);
+            hook = WriteLockShutdownHookFactory.getHook(settings);
             hook.add(this);
 
         }

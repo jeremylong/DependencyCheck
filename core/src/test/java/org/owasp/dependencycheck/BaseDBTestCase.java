@@ -27,7 +27,7 @@ import java.util.zip.ZipInputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.junit.Before;
 import org.owasp.dependencycheck.data.nvdcve.ConnectionFactory;
-import org.owasp.dependencycheck.utils.H2DBLock;
+import org.owasp.dependencycheck.utils.WriteLock;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +54,7 @@ public abstract class BaseDBTestCase extends BaseTest {
     }
 
     public void ensureDBExists() throws Exception {
-        try (H2DBLock dblock = new H2DBLock(getSettings(), ConnectionFactory.isH2Connection(getSettings()))) {
+        try (WriteLock dblock = new WriteLock(getSettings(), ConnectionFactory.isH2Connection(getSettings()))) {
             File f = new File("./target/data/odc.mv.db");
             if (f.exists() && f.isFile() && f.length() < 71680) {
                 f.delete();

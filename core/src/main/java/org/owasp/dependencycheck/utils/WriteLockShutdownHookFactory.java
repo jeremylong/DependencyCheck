@@ -22,39 +22,40 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Simple factory to instantiate the H2DB Shutdown Hook.
+ * Simple factory to instantiate the Write Lock Shutdown Hook.
  *
  * @author Jeremy Long
  */
-public final class H2DBShutdownHookFactory {
+public final class WriteLockShutdownHookFactory {
 
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(H2DBShutdownHookFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WriteLockShutdownHookFactory.class);
 
     /**
      * Empty constructor for utility class.
      */
-    private H2DBShutdownHookFactory() {
+    private WriteLockShutdownHookFactory() {
         //empty
     }
 
     /**
-     * Creates a new H2DB Shutdown Hook.
+     * Creates a new Write Lock Shutdown Hook.
      *
      * @param settings the configured settings
-     * @return the H2DB Shutdown Hook
+     * @return the Write Lock Shutdown Hook
      */
-    public static H2DBShutdownHook getHook(Settings settings) {
+    public static WriteLockShutdownHook getHook(Settings settings) {
         try {
-            final String className = settings.getString(Settings.KEYS.H2DB_SHUTDOWN_HOOK, "org.owasp.dependencycheck.utils.H2DBCleanupHook");
+            //Note - the write lock shutdown hook name is a setting because the shutdown hook is different in gradle
+            final String className = settings.getString(Settings.KEYS.WRITELOCK_SHUTDOWN_HOOK, "org.owasp.dependencycheck.utils.WriteLockCleanupHook");
             final Class<?> type = Class.forName(className);
-            return (H2DBShutdownHook) type.getDeclaredConstructor().newInstance();
+            return (WriteLockShutdownHook) type.getDeclaredConstructor().newInstance();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
                 | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException ex) {
             LOGGER.debug("Failed to instantiate {}, using default shutdown hook instead", ex);
-            return new H2DBCleanupHook();
+            return new WriteLockCleanupHook();
         }
     }
 }

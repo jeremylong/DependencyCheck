@@ -19,19 +19,19 @@ package org.owasp.dependencycheck.utils;
 
 /**
  * Definition of the shutdown hook used during the unexpected shutdown during
- * the update process of the H2 DB.
+ * the update process of a resources.
  *
  * @author Jeremy Long
  */
 @SuppressWarnings("squid:S2134")
-public abstract class H2DBShutdownHook extends Thread {
+public abstract class WriteLockShutdownHook extends Thread {
 
     /**
      * Adds the shutdown hook.
      *
-     * @param lock the H2DB Lock reference
+     * @param lock the Write Lock reference
      */
-    public abstract void add(H2DBLock lock);
+    public abstract void add(WriteLock lock);
 
     /**
      * Removes the shutdown hook.

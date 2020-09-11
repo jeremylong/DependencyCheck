@@ -59,6 +59,8 @@ import org.owasp.dependencycheck.dependency.Reference;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.exception.WriteLockException;
+import org.owasp.dependencycheck.utils.WriteLock;
 import org.owasp.dependencycheck.utils.search.FileContentSearch;
 
 /**
@@ -198,14 +200,15 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
             this.setEnabled(false);
             throw new InitializationException("Failed to initialize the RetireJS repo - data directory could not be created", ex);
         }
-        try (FileInputStream in = new FileInputStream(repoFile)) {
+        try (WriteLock lock = new WriteLock(getSettings(),true,repoFile.getName() + ".lock");
+                FileInputStream in = new FileInputStream(repoFile)) {
             this.jsRepository = new VulnerabilitiesRepositoryLoader().loadFromInputStream(in);
         } catch (JSONException ex) {
             this.setEnabled(false);
             throw new InitializationException("Failed to initialize the RetireJS repo: `" + repoFile.toString()
                     + "` appears to be malformed. Please delete the file or run the dependency-check purge "
                     + "command and re-try running dependency-check.", ex);
-        } catch (IOException ex) {
+        } catch (WriteLockException | IOException ex) {
             this.setEnabled(false);
             throw new InitializationException("Failed to initialize the RetireJS repo", ex);
         }
