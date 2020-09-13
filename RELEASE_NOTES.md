@@ -2,6 +2,17 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 6.0.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.0.1) (2020-09-13)
+
+### Changes
+
+- Improved error messages when upgrading from 5.x to 6.x; due to breaking database changes if the old
+  database schema is detected an error message is produced indicating that the old database should be purged.
+- Fixed the database path for the Ant and Gradle plugins.
+- Added locking around the RetireJS updates to resolve read/write conflicts in CI environments.
+
+- Full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/15?closed=1).
+
 ## [Version 6.0.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.0.0) (2020-09-07)
 
 ### Changes
