@@ -32,12 +32,19 @@ import org.owasp.dependencycheck.dependency.VulnerableSoftware;
  */
 public class CveItemOperator {
 
+    /**
+     * Extracts the english description from the CVE object.
+     *
+     * @param cve the CVE data
+     * @return the English descriptions from the CVE object
+     */
     public String extractDescription(DefCveItem cve) {
         return cve.getCve().getDescription().getDescriptionData().stream().filter((desc)
                 -> "en".equals(desc.getLang())).map(d
                 -> d.getValue()).collect(Collectors.joining(" "));
     }
 
+    //CSOFF: MissingSwitchDefault
     /**
      * Attempts to determine the ecosystem based on the vendor, product and
      * targetSw.
@@ -158,6 +165,7 @@ public class CveItemOperator {
         }
         return baseEcosystem;
     }
+    //CSON: MissingSwitchDefault
 
     /**
      * Attempts to determine the ecosystem based on the vendor, product and

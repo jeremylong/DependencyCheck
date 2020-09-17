@@ -147,7 +147,11 @@ public class PipAnalyzer extends AbstractFileTypeAnalyzer {
                     d.setName(identifiedPackage);
                     d.setVersion(identifiedVersion);
                     try {
-                        final PackageURL purl = PackageURLBuilder.aPackageURL().withType("pypi").withName(identifiedPackage).withVersion(identifiedVersion).build();
+                        final PackageURL purl = PackageURLBuilder.aPackageURL()
+                                .withType("pypi")
+                                .withName(identifiedPackage)
+                                .withVersion(identifiedVersion)
+                                .build();
                         d.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));
                     } catch (MalformedPackageURLException ex) {
                         LOGGER.debug("Unable to build package url for pypi", ex);

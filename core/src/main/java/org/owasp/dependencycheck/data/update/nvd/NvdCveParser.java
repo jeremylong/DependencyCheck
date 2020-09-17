@@ -93,7 +93,7 @@ public final class NvdCveParser {
                 InputStreamReader isr = new InputStreamReader(in, UTF_8);
                 JsonParser parser = objectReader.getFactory().createParser(in)) {
 
-            CveEcosystemMapper mapper = new CveEcosystemMapper();
+            final CveEcosystemMapper mapper = new CveEcosystemMapper();
             init(parser);
             while (parser.nextToken() == JsonToken.START_OBJECT) {
                 final DefCveItem cve = objectReader.readValue(parser);

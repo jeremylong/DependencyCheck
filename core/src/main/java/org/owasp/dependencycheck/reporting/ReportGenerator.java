@@ -143,7 +143,7 @@ public class ReportGenerator {
      * NVD CVE data)
      * @param settings a reference to the database settings
      * @deprecated Please use
-     * {@link #ReportGenerator(java.lang.String, java.util.List, java.util.List, org.owasp.dependencycheck.data.nvdcve.DatabaseProperties, org.owasp.dependencycheck.utils.Settings, org.owasp.dependencycheck.exception.ExceptionCollection)}
+     * {@link #ReportGenerator(java.lang.String, java.util.List, java.util.List, DatabaseProperties, Settings, ExceptionCollection)}
      */
     @Deprecated
     public ReportGenerator(String applicationName, List<Dependency> dependencies, List<Analyzer> analyzers,
@@ -182,7 +182,7 @@ public class ReportGenerator {
      * NVD CVE data)
      * @param settings a reference to the database settings
      * @deprecated Please use
-     * {@link #ReportGenerator(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.List, java.util.List, org.owasp.dependencycheck.data.nvdcve.DatabaseProperties, org.owasp.dependencycheck.utils.Settings, org.owasp.dependencycheck.exception.ExceptionCollection)}
+     * {@link #ReportGenerator(String, String, String, String, List, List, DatabaseProperties, Settings, ExceptionCollection)}
      */
     @Deprecated
     public ReportGenerator(String applicationName, String groupID, String artifactID, String version,

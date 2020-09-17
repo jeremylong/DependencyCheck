@@ -20,22 +20,63 @@ package org.owasp.dependencycheck.data.nvd.ecosystem;
 public enum FileExtensionHint implements EcosystemHint {
 
     // note: all must be lowercase
+    /**
+     * PHP file extension hint.
+     */
     PHP(".php", Ecosystem.PHP),
+    /**
+     * Perl file extension hint.
+     */
     PERL_PM(".pm", Ecosystem.PERL),
+    /**
+     * Perl file extension hint.
+     */
     PERL_PL(".pl", Ecosystem.PERL),
+    /**
+     * Java file extension hint.
+     */
     JAR_JAVA(".java", Ecosystem.JAVA),
+    /**
+     * Perl file extension hint.
+     */
     JAR_JSP(".jsp", Ecosystem.JAVA),
-    JAR_RUBY(".rb", Ecosystem.RUBY),
+    /**
+     * Ruby file extension hint.
+     */
+    RUBY(".rb", Ecosystem.RUBY),
+    /**
+     * Python file extension hint.
+     */
     PYTON(".py", Ecosystem.PYTHON),
+    /**
+     * C++ file extension hint.
+     */
     CMAKE_CPP(".cpp", Ecosystem.NATIVE),
+    /**
+     * C file extension hint.
+     */
     CMAKE_C(".c", Ecosystem.NATIVE),
+    /**
+     * C file extension hint.
+     */
     CMAKE_H(".h", Ecosystem.NATIVE);
 
+    /**
+     * The file extension for the ecosystem.
+     */
     private final String extension;
-
+    /**
+     * The ecosystem for the given file extension.
+     */
     private final String ecosystem;
 
-    private FileExtensionHint(String extension, String ecosystem) {
+    /**
+     * Constructs a new hint for the given file extension and ecosystem.
+     *
+     * @param extension the file extension to identify the given ecosystem
+     * @param ecosystem the ecosystem for the given file extension
+     */
+    FileExtensionHint(String extension, String ecosystem) {
         this.extension = extension;
         this.ecosystem = ecosystem;
     }

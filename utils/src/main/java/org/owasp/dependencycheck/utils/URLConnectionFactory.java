@@ -147,7 +147,8 @@ public final class URLConnectionFactory {
                 LOGGER.debug("Adding user info as basic authorization");
             }
             conn.addRequestProperty("Authorization", basicAuth);
-        } else if (StringUtils.isNotEmpty(settings.getString(Settings.KEYS.CVE_USER)) && StringUtils.isNotEmpty(settings.getString(Settings.KEYS.CVE_PASSWORD))) {
+        } else if (StringUtils.isNotEmpty(settings.getString(Settings.KEYS.CVE_USER))
+                && StringUtils.isNotEmpty(settings.getString(Settings.KEYS.CVE_PASSWORD))) {
             final String user = settings.getString(Settings.KEYS.CVE_USER);
             final String password = settings.getString(Settings.KEYS.CVE_PASSWORD);
             final String userColonPassword = user + ":" + password;

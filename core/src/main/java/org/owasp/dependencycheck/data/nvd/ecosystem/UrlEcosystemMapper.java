@@ -30,9 +30,15 @@ import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie.Hit;
 @NotThreadSafe
 public class UrlEcosystemMapper {
 
-    protected static final TreeMap<String, String> ECOSYSTEM_MAP;
+    /**
+     * The ecosystem map.
+     */
+    private static final TreeMap<String, String> ECOSYSTEM_MAP;
 
-    protected AhoCorasickDoubleArrayTrie<String> search;
+    /**
+     * TThe search array.
+     */
+    private final AhoCorasickDoubleArrayTrie<String> search;
 
     static {
         ECOSYSTEM_MAP = new TreeMap<>();
@@ -44,15 +50,24 @@ public class UrlEcosystemMapper {
         }
     }
 
+    /**
+     * Constructs a new URL ecosystem mapper.
+     */
     public UrlEcosystemMapper() {
         search = new AhoCorasickDoubleArrayTrie<>();
         search.build(ECOSYSTEM_MAP);
     }
 
+    /**
+     * Determines the ecosystem for the given CVE.
+     *
+     * @param cve the CVE data
+     * @return the ecosystem
+     */
     public String getEcosystem(DefCveItem cve) {
         for (Reference r : cve.getCve().getReferences().getReferenceData()) {
 
-            Hit<String> ecosystem = search.findFirst(r.getUrl());
+            final Hit<String> ecosystem = search.findFirst(r.getUrl());
             if (ecosystem != null) {
                 return ecosystem.value;
             }

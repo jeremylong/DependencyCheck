@@ -41,6 +41,7 @@ import org.owasp.dependencycheck.reporting.ReportGenerator.Format;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.SeverityUtil;
 import org.slf4j.impl.StaticLoggerBinder;
+//CSOFF: MethodCount
 
 /**
  * An Ant task definition to execute dependency-check during an Ant build.
@@ -992,7 +993,7 @@ public class Check extends Update {
      * Set the value of nodeAuditSkipDevDependencies.
      *
      * @param nodeAuditSkipDevDependencies new value of
- nodeAuditSkipDevDependencies
+     * nodeAuditSkipDevDependencies
      */
     public void setNodeAuditSkipDevDependencies(Boolean nodeAuditSkipDevDependencies) {
         this.nodeAuditSkipDevDependencies = nodeAuditSkipDevDependencies;
@@ -1160,8 +1161,7 @@ public class Check extends Update {
     /**
      * Set the value of mixAuditAnalyzerEnabled.
      *
-     * @param mixAuditAnalyzerEnabled new value of
-     * mixAuditAnalyzerEnabled
+     * @param mixAuditAnalyzerEnabled new value of mixAuditAnalyzerEnabled
      */
     public void setMixAuditAnalyzerEnabled(Boolean mixAuditAnalyzerEnabled) {
         this.mixAuditAnalyzerEnabled = mixAuditAnalyzerEnabled;
@@ -1848,3 +1848,4 @@ public class Check extends Update {
         }
     }
 }
+//CSON: MethodCount

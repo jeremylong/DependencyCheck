@@ -18,6 +18,20 @@
 package org.owasp.dependencycheck.data.nvd.ecosystem;
 
 public enum EcosystemHintNature {
-
-    FILE_EXTENSION, KEYWORD, URL_HOST, URL_PATH;
+    /**
+     * Hint is from the file extension.
+     */
+    FILE_EXTENSION,
+    /**
+     * Hint is from a keyword.
+     */
+    KEYWORD,
+    /**
+     * Hint is from the host in a URL.
+     */
+    URL_HOST,
+    /**
+     * Hint is from the URL path.
+     */
+    URL_PATH;
 }

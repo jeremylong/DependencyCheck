@@ -27,7 +27,6 @@ import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
 import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
 
 /**
- *
  * Utility for mapping CVEs to their ecosystems.
  * <br><br>
  * Follows a best effort approach:
@@ -39,12 +38,18 @@ import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
  * </ul>
  * This class is not thread safe and must be instantiated on a per-thread basis.
  *
+ * @author @skjolber
  */
 @NotThreadSafe
 public class CveEcosystemMapper {
 
+    /**
+     * A reference to the Description Ecosystem Mapper.
+     */
     private final DescriptionEcosystemMapper descriptionEcosystemMapper = new DescriptionEcosystemMapper();
-
+    /**
+     * A reference to the URL Ecosystem Mapper.
+     */
     private final UrlEcosystemMapper urlEcosystemMapper = new UrlEcosystemMapper();
 
     /**
@@ -57,12 +62,12 @@ public class CveEcosystemMapper {
      * <code>null</code>
      */
     public String getEcosystem(DefCveItem cve) {
-        //if there are multiple vendor/product pairs we don't know if they are 
+        //if there are multiple vendor/product pairs we don't know if they are
         //all the same ecosystem.
         if (hasMultipleVendorProductConfigurations(cve)) {
             return null;
         }
-        String ecosystem = descriptionEcosystemMapper.getEcosystem(cve);
+        final String ecosystem = descriptionEcosystemMapper.getEcosystem(cve);
         if (ecosystem != null) {
             return ecosystem;
         }

@@ -26,22 +26,70 @@ import org.owasp.dependencycheck.utils.Settings;
  */
 public final class Ecosystem {
 
-    public final static String RUBY = "ruby";
-    public final static String DOTNET = "dotnet";
-    public final static String IOS = "ios";
-    public final static String PHP = "php";
-    public final static String GOLANG = "golang";
-    public final static String JAVA = "java";
-    public final static String NATIVE = "native";
-    public final static String PYTHON = "python";
-    public final static String JAVASCRIPT = "js";
-    public final static String NODEJS = "nodejs";
-    public final static String RUST = "rust";
-    public final static String COLDFUSION = "coldfusion";
-    public final static String PERL = "perl";
-    public final static String ELIXIR = "exlixir";
+    /**
+     * The Ruby ecosystem.
+     */
+    public static final String RUBY = "ruby";
+    /**
+     * The dotnet ecosystem.
+     */
+    public static final String DOTNET = "dotnet";
+    /**
+     * The iOS ecosystem.
+     */
+    public static final String IOS = "ios";
+    /**
+     * The PHP ecosystem.
+     */
+    public static final String PHP = "php";
+    /**
+     * The Golang ecosystem.
+     */
+    public static final String GOLANG = "golang";
+    /**
+     * The Java ecosystem.
+     */
+    public static final String JAVA = "java";
+    /**
+     * The native ecosystem.
+     */
+    public static final String NATIVE = "native";
+    /**
+     * The Python ecosystem.
+     */
+    public static final String PYTHON = "python";
+    /**
+     * The JavaScript ecosystem.
+     */
+    public static final String JAVASCRIPT = "js";
+    /**
+     * The Node.JS ecosystem.
+     */
+    public static final String NODEJS = "nodejs";
+    /**
+     * The rust ecosystem.
+     */
+    public static final String RUST = "rust";
+    /**
+     * The rust ecosystem.
+     */
+    public static final String COLDFUSION = "coldfusion";
+    /**
+     * The Perl ecosystem.
+     */
+    public static final String PERL = "perl";
+    /**
+     * The Elixir ecosystem.
+     */
+    public static final String ELIXIR = "exlixir";
 
+    /**
+     * A reference to the ODC settings.
+     */
     private final Settings settings;
+    /**
+     * The lucene default query size.
+     */
     private final int defaultQuerySize;
 
     /**

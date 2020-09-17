@@ -49,7 +49,8 @@ public final class WriteLockShutdownHookFactory {
     public static WriteLockShutdownHook getHook(Settings settings) {
         try {
             //Note - the write lock shutdown hook name is a setting because the shutdown hook is different in gradle
-            final String className = settings.getString(Settings.KEYS.WRITELOCK_SHUTDOWN_HOOK, "org.owasp.dependencycheck.utils.WriteLockCleanupHook");
+            final String className = settings.getString(Settings.KEYS.WRITELOCK_SHUTDOWN_HOOK,
+                    "org.owasp.dependencycheck.utils.WriteLockCleanupHook");
             final Class<?> type = Class.forName(className);
             return (WriteLockShutdownHook) type.getDeclaredConstructor().newInstance();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException

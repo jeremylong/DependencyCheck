@@ -220,14 +220,16 @@ public class ArtifactorySearch {
 
                     final Matcher pathMatcher = PATH_PATTERN.matcher(file.getPath());
                     if (!pathMatcher.matches()) {
-                        throw new IllegalStateException("Cannot extract the Maven information from the path retrieved in Artifactory " + file.getPath());
+                        throw new IllegalStateException("Cannot extract the Maven information from the path "
+                                + "retrieved in Artifactory " + file.getPath());
                     }
 
                     final String groupId = pathMatcher.group("groupId").replace('/', '.');
                     final String artifactId = pathMatcher.group("artifactId");
                     final String version = pathMatcher.group("version");
 
-                    result.add(new MavenArtifact(groupId, artifactId, version, file.getDownloadUri(), MavenArtifact.derivePomUrl(artifactId, version, file.getDownloadUri())));
+                    result.add(new MavenArtifact(groupId, artifactId, version, file.getDownloadUri(),
+                            MavenArtifact.derivePomUrl(artifactId, version, file.getDownloadUri())));
 
                 } while (parser.nextToken() == com.fasterxml.jackson.core.JsonToken.START_OBJECT);
             } else {
