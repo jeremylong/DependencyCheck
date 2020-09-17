@@ -21,7 +21,7 @@ package org.owasp.dependencycheck.data.nvd.ecosystem;
  * Enumeration used for mapping CVEs to their ecosystems based on the
  * description.
  *
- * @author @skjolber
+ * @author skjolber
  */
 public enum DescriptionKeywordHint implements EcosystemHint {
 

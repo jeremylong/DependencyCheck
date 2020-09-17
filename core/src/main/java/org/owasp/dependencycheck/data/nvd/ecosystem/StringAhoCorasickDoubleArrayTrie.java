@@ -23,7 +23,7 @@ import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
  * Add method for String and IHitFull.
  *
  * @param <V> the object type
- * @author @skjolber
+ * @author skjolber
  */
 public class StringAhoCorasickDoubleArrayTrie<V> extends AhoCorasickDoubleArrayTrie<V> {
 

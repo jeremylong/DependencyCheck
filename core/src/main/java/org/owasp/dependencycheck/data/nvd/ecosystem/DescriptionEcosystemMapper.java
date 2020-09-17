@@ -31,7 +31,7 @@ import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
 /**
  * Helper utility for mapping CVEs to their ecosystems based on the description.
  *
- * @author @skjolber
+ * @author skjolber
  */
 @NotThreadSafe
 public class DescriptionEcosystemMapper {

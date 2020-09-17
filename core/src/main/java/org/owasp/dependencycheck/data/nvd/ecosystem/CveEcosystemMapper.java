@@ -38,7 +38,7 @@ import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
  * </ul>
  * This class is not thread safe and must be instantiated on a per-thread basis.
  *
- * @author @skjolber
+ * @author skjolber
  */
 @NotThreadSafe
 public class CveEcosystemMapper {
