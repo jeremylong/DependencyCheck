@@ -17,23 +17,19 @@
  */
 package org.owasp.dependencycheck.data.nvd.ecosystem;
 
+import org.apache.commons.lang3.StringUtils;
+import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.concurrent.NotThreadSafe;
-
 import java.util.TreeMap;
-
-import org.apache.commons.lang3.StringUtils;
-import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
 
 /**
  * Helper utility for mapping CVEs to their ecosystems based on the description.
  *
  * @author skjolber
  */
-@NotThreadSafe
 public class DescriptionEcosystemMapper {
 
     // static fields for thread-safe + hardcoded functionality
@@ -49,23 +45,6 @@ public class DescriptionEcosystemMapper {
      * Map of strings to ecosystems.
      */
     private static final TreeMap<String, EcosystemHint> ECOSYSTEM_MAP; // thread safe for reading
-
-    // take advantage of chars also being numbers
-    /**
-     * Prefix prefix for matching ecosystems.
-     */
-    private final boolean[] keywordPrefixes = getPrefixesFor(" -(\"'");
-    /**
-     * Postfix prefix for matching ecosystems.
-     */
-    private final boolean[] keywordPostfixes = getPrefixesFor(" -)\"',.:;");
-
-    //TODO - this is not threadsafe - yet it is used as if it was....
-    private final int[] values;
-    /**
-     * Aho Corasick double array trie used for parsing and matching ecosystems.
-     */
-    private final StringAhoCorasickDoubleArrayTrie<EcosystemHint> ahoCorasickDoubleArrayTrie;
 
     static {
         ECOSYSTEM_MAP = new TreeMap<>();
@@ -103,6 +82,27 @@ public class DescriptionEcosystemMapper {
         });
     }
 
+    // take advantage of chars also being numbers
+    /**
+     * Prefix prefix for matching ecosystems.
+     */
+    private final boolean[] keywordPrefixes = getPrefixesFor(" -(\"'");
+    /**
+     * Postfix prefix for matching ecosystems.
+     */
+    private final boolean[] keywordPostfixes = getPrefixesFor(" -)\"',.:;");
+    /**
+     * Aho Corasick double array trie used for parsing and matching ecosystems.
+     */
+    private final StringAhoCorasickDoubleArrayTrie<EcosystemHint> ahoCorasickDoubleArrayTrie;
+
+    /**
+     * Constructs a new description ecosystem mapper.
+     */
+    public DescriptionEcosystemMapper() {
+        ahoCorasickDoubleArrayTrie = toAhoCorasickDoubleArrayTrie();
+    }
+
     protected static boolean[] getPrefixesFor(String str) {
         int max = -1;
         for (int i = 0; i < str.length(); i++) {
@@ -118,128 +118,10 @@ public class DescriptionEcosystemMapper {
         return delimiters;
     }
 
-    /**
-     * Constructs a new description ecosystem mapper.
-     */
-    public DescriptionEcosystemMapper() {
-        values = new int[ECOSYSTEMS.length];
-        ahoCorasickDoubleArrayTrie = toAhoCorasickDoubleArrayTrie();
-    }
-
-    protected void increment(int i) {
-        values[HINT_TO_ECOSYSTEM_LOOKUP[i]]++;
-    }
-
-    protected void reset() {
-        for (int i = 0; i < values.length; i++) {
-            values[i] = 0;
-        }
-    }
-
     protected static StringAhoCorasickDoubleArrayTrie<EcosystemHint> toAhoCorasickDoubleArrayTrie() {
         final StringAhoCorasickDoubleArrayTrie<EcosystemHint> exact = new StringAhoCorasickDoubleArrayTrie<>();
         exact.build(ECOSYSTEM_MAP);
         return exact;
-    }
-
-    /**
-     * Returns the ecosystem if identified by English description from the CVE
-     * data.
-     *
-     * @param cve the CVE data
-     * @return the ecosystem if identified
-     */
-    public String getEcosystem(DefCveItem cve) {
-        cve.getCve().getDescription().getDescriptionData().stream()
-                .filter((langString) -> (langString.getLang().equals("en")))
-                .forEachOrdered((langString) -> {
-                    search(langString.getValue());
-                });
-        return getResult();
-    }
-
-    /**
-     * Determines the ecosystem for the given string.
-     *
-     * @param multicase the string to test
-     * @return the ecosystem
-     */
-    public String getEcosystem(String multicase) {
-        search(multicase);
-
-        return getResult();
-    }
-
-    private void search(String multicase) {
-        final String c = multicase.toLowerCase();
-
-        ahoCorasickDoubleArrayTrie.parseText(c, (begin, end, value, index) -> {
-            if (value.getNature() == EcosystemHintNature.FILE_EXTENSION) {
-                if (!isExtension(multicase, begin, end)) {
-                    return;
-                }
-
-                final String ecosystem = value.getEcosystem();
-                // real extension, if not part of url
-                if (Ecosystem.PHP.equals(ecosystem) && c.regionMatches(begin, ".php", 0, 4)) {
-                    if (isURL(c, begin)) {
-                        return;
-                    }
-                } else if (Ecosystem.JAVA.equals(ecosystem) && c.regionMatches(begin, ".jsp", 0, 4)) {
-                    if (isURL(c, begin)) {
-                        return;
-                    }
-                }
-            } else { // keyword
-
-                // check if full word, i.e. typically space first and then space or dot after
-                if (begin != 0) {
-                    final char startChar = c.charAt(begin - 1);
-                    if (startChar >= keywordPrefixes.length || !keywordPrefixes[startChar]) {
-                        return;
-                    }
-                }
-                if (end != c.length()) {
-                    final char endChar = c.charAt(end);
-                    if (endChar >= keywordPostfixes.length || !keywordPostfixes[endChar]) {
-                        return;
-                    }
-                }
-
-                final String ecosystem = value.getEcosystem();
-                if (Ecosystem.NATIVE.equals(ecosystem)) { // TODO could be checked afterwards
-                    if (StringUtils.contains(c, "android")) {
-                        return;
-                    }
-                }
-            }
-            increment(index);
-        });
-    }
-
-    private String getResult() {
-        final int best = getBestScoreAndReset();
-
-        if (best != -1) {
-            return ECOSYSTEMS[best];
-        }
-
-        return null;
-    }
-
-    private int getBestScoreAndReset() {
-        int best = -1;
-        int bestScore = -1;
-        for (int i = 0; i < values.length; i++) {
-            if (values[i] > 0) {
-                if (values[i] > bestScore) {
-                    best = i;
-                    bestScore = values[i];
-                }
-                values[i] = 0;
-            }
-        }
-        return best;
     }
 
     protected static boolean isExtension(String str, int begin, int end) {
@@ -284,5 +166,107 @@ public class DescriptionEcosystemMapper {
         }
 
         return false;
+    }
+
+    protected void increment(int i, int[] ecosystemMap) {
+        ecosystemMap[HINT_TO_ECOSYSTEM_LOOKUP[i]]++;
+    }
+
+    /**
+     * Returns the ecosystem if identified by English description from the CVE
+     * data.
+     *
+     * @param cve the CVE data
+     * @return the ecosystem if identified
+     */
+    public String getEcosystem(DefCveItem cve) {
+        int[] ecosystemMap = new int[ECOSYSTEMS.length];
+        cve.getCve().getDescription().getDescriptionData().stream()
+                .filter((langString) -> (langString.getLang().equals("en")))
+                .forEachOrdered((langString) -> {
+                    search(langString.getValue(), ecosystemMap);
+                });
+        return getResult(ecosystemMap);
+    }
+
+    /**
+     * Determines the ecosystem for the given string.
+     *
+     * @param multicase the string to test
+     * @return the ecosystem
+     */
+    public String getEcosystem(String multicase) {
+        int[] ecosystemMap = new int[ECOSYSTEMS.length];
+        search(multicase, ecosystemMap);
+        return getResult(ecosystemMap);
+    }
+
+    private void search(String multicase, int[] ecosystemMap) {
+        final String c = multicase.toLowerCase();
+        ahoCorasickDoubleArrayTrie.parseText(c, (begin, end, value, index) -> {
+            if (value.getNature() == EcosystemHintNature.FILE_EXTENSION) {
+                if (!isExtension(multicase, begin, end)) {
+                    return;
+                }
+
+                final String ecosystem = value.getEcosystem();
+                // real extension, if not part of url
+                if (Ecosystem.PHP.equals(ecosystem) && c.regionMatches(begin, ".php", 0, 4)) {
+                    if (isURL(c, begin)) {
+                        return;
+                    }
+                } else if (Ecosystem.JAVA.equals(ecosystem) && c.regionMatches(begin, ".jsp", 0, 4)) {
+                    if (isURL(c, begin)) {
+                        return;
+                    }
+                }
+            } else { // keyword
+
+                // check if full word, i.e. typically space first and then space or dot after
+                if (begin != 0) {
+                    final char startChar = c.charAt(begin - 1);
+                    if (startChar >= keywordPrefixes.length || !keywordPrefixes[startChar]) {
+                        return;
+                    }
+                }
+                if (end != c.length()) {
+                    final char endChar = c.charAt(end);
+                    if (endChar >= keywordPostfixes.length || !keywordPostfixes[endChar]) {
+                        return;
+                    }
+                }
+
+                final String ecosystem = value.getEcosystem();
+                if (Ecosystem.NATIVE.equals(ecosystem)) { // TODO could be checked afterwards
+                    if (StringUtils.contains(c, "android")) {
+                        return;
+                    }
+                }
+            }
+            increment(index, ecosystemMap);
+        });
+    }
+
+    private String getResult(int[] values) {
+        final int best = getBestScore(values);
+        if (best != -1) {
+            return ECOSYSTEMS[best];
+        }
+        return null;
+    }
+
+    private int getBestScore(int[] values) {
+        int bestIndex = -1;
+        int bestScore = -1;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] > 0) {
+                if (values[i] > bestScore) {
+                    bestIndex = i;
+                    bestScore = values[i];
+                }
+                values[i] = 0;
+            }
+        }
+        return bestIndex;
     }
 }
