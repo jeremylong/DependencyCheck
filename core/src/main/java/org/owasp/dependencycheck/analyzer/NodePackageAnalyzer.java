@@ -305,10 +305,11 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
     }
 
     /**
-     * @see NodePackageAnalyzer#shouldSkipDependency(java.lang.String,
+     * Checks if the given dependency should be skipped.
+     *  @see NodePackageAnalyzer#shouldSkipDependency(java.lang.String,
      * java.lang.String, boolean, boolean)
-     * @param name
-     * @param version
+     * @param name the name of the dependency to test
+     * @param version the version of the dependency to test
      * @return <code>true</code> if the dependency should be skipped; otherwise
      * <code>false</code>
      */
