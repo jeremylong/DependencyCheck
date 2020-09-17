@@ -31,8 +31,17 @@ import org.slf4j.LoggerFactory;
  */
 public final class CpeEcosystemCache {
 
-    private final static String MULTIPLE_ECOSYSTEMS_IDENTIFIED = "MULTIPLE";
+    /**
+     * The keyword/ecosystem used when multiple ecosystems have been identified.
+     */
+    private static final String MULTIPLE_ECOSYSTEMS_IDENTIFIED = "MULTIPLE";
+    /**
+     * The cache of CPE to ecosystem mappings.
+     */
     private static Map<Pair<String, String>, String> cache = new HashMap<>();
+    /**
+     * The map of ecosystem entries that have been updated.
+     */
     private static Map<Pair<String, String>, String> changed = new HashMap<>();
 
     private CpeEcosystemCache() {
@@ -42,10 +51,22 @@ public final class CpeEcosystemCache {
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(NvdCveParser.class);
-    
+
+    //CSOFF: EmptyBlock
+    /**
+     * Returns the ecosystem for the given CPE (vendor, product). If the CPE has
+     * a different ecosystem previously identified the ecosystem will be updated
+     * to Multiple; otherwise, if an ecosystem is provided it will be cached for
+     * future matching.
+     *
+     * @param vendor the vendor for the CPE
+     * @param product the product for the CPE
+     * @param identifiedEcosystem the ecosystem identified for a CVE.
+     * @return the ecosystem
+     */
     public static synchronized String getEcosystem(String vendor, String product, String identifiedEcosystem) {
-        Pair<String, String> key = new Pair<>(vendor, product);
-        String current = cache.get(key);
+        final Pair<String, String> key = new Pair<>(vendor, product);
+        final String current = cache.get(key);
         String result = null;
         if (current == null) {
             if (!Strings.isNullOrEmpty(identifiedEcosystem)) {
@@ -63,16 +84,34 @@ public final class CpeEcosystemCache {
         }
         return result;
     }
+    //CSON: EmptyBlock
 
+    /**
+     * Sets the ecosystem cache and resets the changed map.
+     *
+     * @param cache the new CPE to ecosystem mapping
+     */
     public static synchronized void setCache(Map<Pair<String, String>, String> cache) {
         CpeEcosystemCache.cache = cache;
         CpeEcosystemCache.changed = new HashMap<>();
     }
 
+    /**
+     * Returns the map of changed CPE to ecosystem mappings.
+     *
+     * @return the map of changed CPE to ecosystem mappings
+     */
     public static synchronized Map<Pair<String, String>, String> getChanged() {
         return CpeEcosystemCache.changed;
     }
 
+    /**
+     * Returns <code>true</code> if the ecosystem cache is empty; otherwise
+     * <code>false</code>.
+     *
+     * @return <code>true</code> if the ecosystem cache is empty; otherwise
+     * <code>false</code>
+     */
     public static synchronized boolean isEmpty() {
         return CpeEcosystemCache.cache.isEmpty();
     }

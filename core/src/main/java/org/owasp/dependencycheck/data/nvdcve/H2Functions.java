@@ -29,8 +29,13 @@ import org.h2.tools.SimpleResultSet;
  *
  * @author Jeremy Long
  */
-public class H2Functions {
+public final class H2Functions {
 
+    private H2Functions() {
+        //empty constructor for utility class
+    }
+
+    //CSOFF: ParameterNumber
     /**
      * Adds a CPE to a vulnerability; if the CPE is not contained in the
      * database it is first added.
@@ -63,7 +68,7 @@ public class H2Functions {
             String targetSw, String targetHw, String other, String ecosystem, String versionEndExcluding,
             String versionEndIncluding, String versionStartExcluding, String versionStartIncluding, Boolean vulnerable) throws SQLException {
         int cpeID = 0;
-        PreparedStatement selectCpeId = conn.prepareStatement("SELECT id, ecosystem FROM cpeEntry WHERE part=? AND vendor=? AND product=? "
+        final PreparedStatement selectCpeId = conn.prepareStatement("SELECT id, ecosystem FROM cpeEntry WHERE part=? AND vendor=? AND product=? "
                 + "AND version=? AND update_version=? AND edition=? AND lang=? AND sw_edition=? AND target_sw=? AND target_hw=? AND other=?");
         selectCpeId.setString(1, part);
         selectCpeId.setString(2, vendor);
@@ -80,9 +85,9 @@ public class H2Functions {
         try (ResultSet rs = selectCpeId.executeQuery()) {
             if (rs.next()) {
                 cpeID = rs.getInt(1);
-                String e = rs.getString(2);
+                final String e = rs.getString(2);
                 if (e == null && ecosystem != null) {
-                    PreparedStatement updateEcosystem = conn.prepareStatement("UPDATE cpeEntry SET ecosystem=? WHERE id=?");
+                    final PreparedStatement updateEcosystem = conn.prepareStatement("UPDATE cpeEntry SET ecosystem=? WHERE id=?");
                     updateEcosystem.setString(1, ecosystem);
                     updateEcosystem.setInt(2, cpeID);
                 }
@@ -90,7 +95,7 @@ public class H2Functions {
         }
         if (cpeID == 0) {
             final String[] returnedColumns = {"id"};
-            PreparedStatement insertCpe = conn.prepareStatement("INSERT INTO cpeEntry (part, vendor, product, version, update_version, "
+            final PreparedStatement insertCpe = conn.prepareStatement("INSERT INTO cpeEntry (part, vendor, product, version, update_version, "
                     + "edition, lang, sw_edition, target_sw, target_hw, other, ecosystem) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     returnedColumns);
             insertCpe.setString(1, part);
@@ -112,9 +117,11 @@ public class H2Functions {
                 }
             }
         }
+        //CSON: ParameterNumber
 
-        PreparedStatement insertSoftware = conn.prepareStatement("INSERT INTO software (cveid, cpeEntryId, versionEndExcluding, versionEndIncluding, "
-                + "versionStartExcluding, versionStartIncluding, vulnerable) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        final PreparedStatement insertSoftware = conn.prepareStatement("INSERT INTO software (cveid, cpeEntryId, "
+                + "versionEndExcluding, versionEndIncluding, versionStartExcluding, versionStartIncluding, "
+                + "vulnerable) VALUES (?, ?, ?, ?, ?, ?, ?)");
         insertSoftware.setInt(1, vulnerabilityId);
         insertSoftware.setInt(2, cpeID);
 
@@ -126,6 +133,7 @@ public class H2Functions {
         insertSoftware.execute();
     }
 
+    //CSOFF: ParameterNumber
     /**
      * Updates or inserts the vulnerability into the database. If updating a
      * vulnerability the method will delete all software, CWE, and references
@@ -180,11 +188,11 @@ public class H2Functions {
             String v3ConfidentialityImpact, String v3IntegrityImpact, String v3AvailabilityImpact,
             Float v3BaseScore, String v3BaseSeverity, String v3Version) throws SQLException {
 
-        SimpleResultSet ret = new SimpleResultSet();
+        final SimpleResultSet ret = new SimpleResultSet();
         ret.addColumn("id", Types.INTEGER, 10, 0);
 
         int vulnerabilityId = 0;
-        PreparedStatement selectVulnerabilityId = conn.prepareStatement("SELECT id FROM VULNERABILITY CVE WHERE cve=?");
+        final PreparedStatement selectVulnerabilityId = conn.prepareStatement("SELECT id FROM VULNERABILITY CVE WHERE cve=?");
         selectVulnerabilityId.setString(1, cve);
         try (ResultSet rs = selectVulnerabilityId.executeQuery()) {
             if (rs.next()) {
@@ -192,8 +200,9 @@ public class H2Functions {
             }
         }
 
-        PreparedStatement merge;
-        if (vulnerabilityId > 0) {//do deletes and updates
+        final PreparedStatement merge;
+        if (vulnerabilityId > 0) {
+            //do deletes and updates
             try (PreparedStatement refs = conn.prepareStatement("DELETE FROM reference WHERE cveid = ?")) {
                 refs.setInt(1, vulnerabilityId);
                 refs.executeUpdate();
@@ -218,7 +227,8 @@ public class H2Functions {
                     + "v3ConfidentialityImpact=?, v3IntegrityImpact=?, v3AvailabilityImpact=?, "
                     + "v3BaseScore=?, v3BaseSeverity=?, v3Version=? "
                     + "WHERE id=?");
-        } else {//just do insert
+        } else {
+            //just do insert
             final String[] returnedColumns = {"id"};
             merge = conn.prepareStatement("INSERT INTO VULNERABILITY (description, "
                     + "v2Severity, v2ExploitabilityScore, "
@@ -272,7 +282,7 @@ public class H2Functions {
         } else {
             merge.setInt(31, vulnerabilityId);
         }
-        int count = merge.executeUpdate();//TODO validate count is 1?
+        final int count = merge.executeUpdate();
         if (vulnerabilityId == 0) {
             try (ResultSet rs = merge.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -284,6 +294,7 @@ public class H2Functions {
         ret.addRow(vulnerabilityId);
         return ret;
     }
+    //CSON: ParameterNumber
 
     /**
      * Sets a parameter value on a prepared statement with null checks.

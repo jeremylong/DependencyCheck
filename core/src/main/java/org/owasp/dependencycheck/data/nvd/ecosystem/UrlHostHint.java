@@ -20,18 +20,48 @@ package org.owasp.dependencycheck.data.nvd.ecosystem;
 public enum UrlHostHint implements EcosystemHint {
 
     // note: all must be lowercase
+    /**
+     * Ruby ecosystem.
+     */
     RUBY("ruby-lang.org", Ecosystem.RUBY),
+    /**
+     * Python ecosystem.
+     */
     PYTHON("python.org", Ecosystem.PYTHON),
+    /**
+     * PHP ecosystem.
+     */
     DRUPAL("drupal.org", Ecosystem.PHP),
+    /**
+     * Node.js ecosystem.
+     */
     NODEJS("nodejs.org", Ecosystem.NODEJS),
+    /**
+     * Node.js ecosystem.
+     */
     NODE_SECURITY("nodesecurity.io", Ecosystem.NODEJS),
+    /**
+     * Rust ecosystem.
+     */
     RUST("rustsec.org", Ecosystem.RUST);
 
+    /**
+     * The keyword to identify the ecosystem.
+     */
     private final String keyword;
 
+    /**
+     * The ecosystem for the keyword.
+     */
     private final String ecosystem;
 
-    private UrlHostHint(String keyword, String ecosystem) {
+    /**
+     * Constructs a new URL Host Hint to map the keyword to the ecosystem.
+     *
+     * @param keyword the keyword
+     * @param ecosystem the ecosystem
+     */
+    UrlHostHint(String keyword, String ecosystem) {
         this.keyword = keyword;
         this.ecosystem = ecosystem;
     }

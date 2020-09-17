@@ -94,7 +94,8 @@ public final class Downloader {
             in = conn.fetch(url);
             ByteStreams.copy(in, out);
         } catch (IOException ex) {
-            final String msg = format("Download failed, unable to copy '%s' to '%s'; %s", url.toString(), outputPath.getAbsolutePath(), ex.getMessage());
+            final String msg = format("Download failed, unable to copy '%s' to '%s'; %s",
+                    url.toString(), outputPath.getAbsolutePath(), ex.getMessage());
             throw new DownloadFailedException(msg, ex);
         } finally {
             if (in != null) {

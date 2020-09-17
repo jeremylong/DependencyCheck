@@ -19,10 +19,25 @@ package org.owasp.dependencycheck.data.nvd.ecosystem;
 
 public interface EcosystemHint {
 
+    /**
+     * Returns the nature of the ecosystem hint.
+     *
+     * @return the nature of the ecosystem hint
+     */
     EcosystemHintNature getNature();
 
+    /**
+     * Returns the ecosystem.
+     *
+     * @return the ecosystem
+     */
     String getEcosystem();
 
+    /**
+     * Returns the value.
+     *
+     * @return the value
+     */
     String getValue();
 
 }

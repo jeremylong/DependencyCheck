@@ -37,6 +37,9 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 public final class CpeMatchStreamCollector implements Collector<DefNode, ArrayList<DefCpeMatch>, Stream<DefCpeMatch>> {
 
+    /**
+     * The singleton instance.
+     */
     private static final CpeMatchStreamCollector INSTANCE;
 
     static {

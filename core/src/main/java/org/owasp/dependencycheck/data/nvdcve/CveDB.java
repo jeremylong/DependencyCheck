@@ -327,7 +327,7 @@ public final class CveDB implements AutoCloseable {
      */
     private void prepareStatements() throws DatabaseException {
         for (PreparedStatementCveDb key : values()) {
-            PreparedStatement preparedStatement = prepareStatement(key);
+            final PreparedStatement preparedStatement = prepareStatement(key);
             if (preparedStatement != null) {
                 preparedStatements.put(key, preparedStatement);
             }
@@ -720,17 +720,17 @@ public final class CveDB implements AutoCloseable {
             psV.setString(1, cve);
             rsV = psV.executeQuery();
             if (rsV.next()) {
-                //1.id, 2.description, 
+                //1.id, 2.description,
                 final int cveId = rsV.getInt(1);
                 vuln = new Vulnerability();
                 vuln.setSource(Vulnerability.Source.NVD);
                 vuln.setName(cve);
                 vuln.setDescription(rsV.getString(2));
 
-                //3.v2Severity, 4.v2ExploitabilityScore, 5.v2ImpactScore, 6.v2AcInsufInfo, 7.v2ObtainAllPrivilege, 
-                //8.v2ObtainUserPrivilege, 9.v2ObtainOtherPrivilege, 10.v2UserInteractionRequired, 11.v2Score, 
-                //12.v2AccessVector, 13.v2AccessComplexity, 14.v2Authentication, 15.v2ConfidentialityImpact, 
-                //16.v2IntegrityImpact, 17.v2AvailabilityImpact, 18.v2Version, 
+                //3.v2Severity, 4.v2ExploitabilityScore, 5.v2ImpactScore, 6.v2AcInsufInfo, 7.v2ObtainAllPrivilege,
+                //8.v2ObtainUserPrivilege, 9.v2ObtainOtherPrivilege, 10.v2UserInteractionRequired, 11.v2Score,
+                //12.v2AccessVector, 13.v2AccessComplexity, 14.v2Authentication, 15.v2ConfidentialityImpact,
+                //16.v2IntegrityImpact, 17.v2AvailabilityImpact, 18.v2Version,
                 if (rsV.getObject(11) != null) {
                     final CvssV2 cvss = new CvssV2(rsV.getFloat(11), rsV.getString(12),
                             rsV.getString(13), rsV.getString(14), rsV.getString(15),
@@ -740,8 +740,8 @@ public final class CveDB implements AutoCloseable {
                             getBooleanValue(rsV, 9), getBooleanValue(rsV, 10), rsV.getString(18));
                     vuln.setCvssV2(cvss);
                 }
-                //19.v3ExploitabilityScore, 20.v3ImpactScore, 21.v3AttackVector, 22.v3AttackComplexity, 23.v3PrivilegesRequired, 
-                //24.v3UserInteraction, 25.v3Scope, 26.v3ConfidentialityImpact, 27.v3IntegrityImpact, 28.v3AvailabilityImpact, 
+                //19.v3ExploitabilityScore, 20.v3ImpactScore, 21.v3AttackVector, 22.v3AttackComplexity, 23.v3PrivilegesRequired,
+                //24.v3UserInteraction, 25.v3Scope, 26.v3ConfidentialityImpact, 27.v3IntegrityImpact, 28.v3AvailabilityImpact,
                 //29.v3BaseScore, 30.v3BaseSeverity, 21.v3Version
                 if (rsV.getObject(21) != null) {
                     final CvssV3 cvss = new CvssV3(rsV.getString(21), rsV.getString(22),
@@ -852,13 +852,13 @@ public final class CveDB implements AutoCloseable {
     }
 
     private void loadCpeEcosystemCache() {
-        Map<Pair<String, String>, String> map = new HashMap<>();
-        ResultSet rs;
+        final Map<Pair<String, String>, String> map = new HashMap<>();
+        final ResultSet rs;
         try (PreparedStatement ps = prepareStatement(SELECT_CPE_ECOSYSTEM)) {
             rs = ps.executeQuery();
             while (rs.next()) {
-                Pair<String, String> key = new Pair<>(rs.getString(1), rs.getString(1));
-                String value = rs.getString(3);
+                final Pair<String, String> key = new Pair<>(rs.getString(1), rs.getString(1));
+                final String value = rs.getString(3);
                 map.put(key, value);
             }
         } catch (SQLException ex) {
@@ -871,7 +871,7 @@ public final class CveDB implements AutoCloseable {
     }
 
     private void saveCpeEcosystemCache() {
-        Map<Pair<String, String>, String> map = CpeEcosystemCache.getChanged();
+        final Map<Pair<String, String>, String> map = CpeEcosystemCache.getChanged();
         if (map != null && !map.isEmpty()) {
             try (PreparedStatement ps = prepareStatement(MERGE_CPE_ECOSYSTEM)) {
                 for (Map.Entry<Pair<String, String>, String> entry : map.entrySet()) {
@@ -1089,7 +1089,7 @@ public final class CveDB implements AutoCloseable {
                 insertSoftware.setString(10, parsedCpe.getTargetSw());
                 insertSoftware.setString(11, parsedCpe.getTargetHw());
                 insertSoftware.setString(12, parsedCpe.getOther());
-                String ecosystem = CpeEcosystemCache.getEcosystem(parsedCpe.getVendor(), parsedCpe.getProduct(), 
+                final String ecosystem = CpeEcosystemCache.getEcosystem(parsedCpe.getVendor(), parsedCpe.getProduct(),
                         cveItemConverter.extractEcosystem(baseEcosystem, parsedCpe));
 
                 addNullableStringParameter(insertSoftware, 13, ecosystem);

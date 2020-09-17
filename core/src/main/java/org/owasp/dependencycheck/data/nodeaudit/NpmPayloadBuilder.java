@@ -22,7 +22,11 @@ import org.owasp.dependencycheck.analyzer.NodePackageAnalyzer;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-import javax.json.*;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonString;
+import javax.json.JsonValue;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
@@ -44,15 +48,15 @@ public final class NpmPayloadBuilder {
     /**
      * Builds an npm audit API payload.
      *
-     * @param lockJson            the package-lock.json
-     * @param packageJson         the package.json
-     * @param dependencyMap       a collection of module/version pairs that is
-     *                            populated while building the payload
+     * @param lockJson the package-lock.json
+     * @param packageJson the package.json
+     * @param dependencyMap a collection of module/version pairs that is
+     * populated while building the payload
      * @param skipDevDependencies whether devDependencies should be skipped
      * @return the npm audit API payload
      */
     public static JsonObject build(JsonObject lockJson, JsonObject packageJson,
-                                   Map<String, String> dependencyMap, boolean skipDevDependencies) {
+            Map<String, String> dependencyMap, boolean skipDevDependencies) {
         final JsonObjectBuilder payloadBuilder = Json.createObjectBuilder();
         addProjectInfo(packageJson, payloadBuilder);
 
@@ -120,9 +124,9 @@ public final class NpmPayloadBuilder {
      * Attempts to build the request data for NPM Audit API call. This may
      * produce a payload that will fail.
      *
-     * @param packageJson   a raw package-lock.json file
+     * @param packageJson a raw package-lock.json file
      * @param dependencyMap a collection of module/version pairs that is
-     *                      populated while building the payload
+     * populated while building the payload
      * @return the JSON payload for NPN Audit
      */
     public static JsonObject build(JsonObject packageJson, Map<String, String> dependencyMap) {
@@ -171,7 +175,7 @@ public final class NpmPayloadBuilder {
     /**
      * Adds the project name and version to the npm audit API payload.
      *
-     * @param packageJson    a reference to the package-lock.json
+     * @param packageJson a reference to the package-lock.json
      * @param payloadBuilder a reference to the npm audit API payload builder
      */
     private static void addProjectInfo(JsonObject packageJson, final JsonObjectBuilder payloadBuilder) {
@@ -204,7 +208,7 @@ public final class NpmPayloadBuilder {
      * Recursively builds the dependency structure - copying only the needed
      * items from the package-lock.json into the npm audit API payload.
      *
-     * @param dep           the parent dependency
+     * @param dep the parent dependency
      * @param dependencyMap the collection of child dependencies
      * @return the dependencies structure needed for the npm audit API payload
      */

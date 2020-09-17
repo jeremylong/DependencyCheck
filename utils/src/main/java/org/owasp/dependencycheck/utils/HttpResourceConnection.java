@@ -177,7 +177,7 @@ public class HttpResourceConnection implements AutoCloseable {
             conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
             conn.connect();
             int status = conn.getResponseCode();
-            String message = conn.getResponseMessage();
+            final String message = conn.getResponseMessage();
             int redirectCount = 0;
             // TODO - should this get replaced by using the conn.setInstanceFollowRedirects(true);
             while ((status == HttpURLConnection.HTTP_MOVED_TEMP

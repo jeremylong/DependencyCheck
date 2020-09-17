@@ -377,7 +377,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     protected List<IndexEntry> searchCPE(Map<String, MutableInt> vendor, Map<String, MutableInt> product,
             Set<String> vendorWeightings, Set<String> productWeightings, String ecosystem) {
 
-        int maxQueryResults = ecosystemTools.getLuceneMaxQueryLimitFor(ecosystem);
+        final int maxQueryResults = ecosystemTools.getLuceneMaxQueryLimitFor(ecosystem);
         final List<IndexEntry> ret = new ArrayList<>(maxQueryResults);
 
         final String searchString = buildSearch(vendor, product, vendorWeightings, productWeightings);
@@ -736,18 +736,6 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         String bestGuessURL = null;
         final Set<IdentifierMatch> collected = new HashSet<>();
 
-//        int maxDepth = 0;
-//        boolean maxDepthHasUpdate = false;
-//        for (Cpe cpe : cpes) {
-//            final DependencyVersion dbVer = DependencyVersionUtil.parseVersion(cpe.getVersion(), true);
-//            if (dbVer != null) {
-//                final int count = dbVer.getVersionParts().size();
-//                if (count > maxDepth) {
-//                    maxDepthHasUpdate = "*".equals(cpe.getUpdate()) ? false : true;
-//                    maxDepth = count;
-//                }
-//            }
-//        }
         if (dependency.getVersion() != null && !dependency.getVersion().isEmpty()) {
             //we shouldn't always use the dependency version - in some cases this causes FP
             boolean useDependencyVersion = true;
@@ -765,8 +753,6 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 final DependencyVersion depVersion = new DependencyVersion(dependency.getVersion());
                 if (depVersion.getVersionParts().size() > 0) {
                     cpeBuilder.part(Part.APPLICATION).vendor(vendor).product(product);
-                    //removed these conditions from the below if
-                    //(maxDepth == 3 || (maxDepthHasUpdate && maxDepth==4)) && depVersion.getVersionParts().size() == 4 &&
                     final int idx = depVersion.getVersionParts().size() - 1;
                     if (idx > 0 && depVersion.getVersionParts().get(idx)
                             .matches("^(v|release|snapshot|beta|alpha|u|rc|m|20\\d\\d).*$")) {
@@ -804,7 +790,6 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 }
                 DependencyVersion evBaseVer = null;
                 String evBaseVerUpdate = null;
-                //if (maxDepth == 3 && evVer.getVersionParts().size() == 4) {
                 final int idx = evVer.getVersionParts().size() - 1;
                 if (evVer.getVersionParts().get(idx)
                         .matches("^(v|release|snapshot|beta|alpha|u|rc|m|20\\d\\d).*$")) {
@@ -876,8 +861,6 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         }
 
         cpeBuilder.part(Part.APPLICATION).vendor(vendor).product(product);
-//        if (maxDepth == 3 && bestGuess.getVersionParts().size() == 4
-//                && bestGuess.getVersionParts().get(3).matches("^(v|release|snapshot|beta|alpha|u|rc|m|20\\d\\d).*$")) {
         final int idx = bestGuess.getVersionParts().size() - 1;
         if (bestGuess.getVersionParts().get(idx)
                 .matches("^(v|release|snapshot|beta|alpha|u|rc|m|20\\d\\d).*$")) {

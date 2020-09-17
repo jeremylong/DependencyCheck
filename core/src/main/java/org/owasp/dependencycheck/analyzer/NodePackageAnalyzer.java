@@ -269,21 +269,22 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
         }
     }
 
-
     /**
-     * should process the dependency ?
-     * Will return true if you need to skip it . (e.g. dependency can't be read, or if npm audit doesn't handle it)
+     * should process the dependency ? Will return true if you need to skip it .
+     * (e.g. dependency can't be read, or if npm audit doesn't handle it)
+     *
      * @param name the name of the dependency
      * @param version the version of the dependency
      * @param optional is the dependency optional ?
      * @param fileExist is the package.json available for this file ?
      * @return should you skip this dependency ?
      */
-    public static boolean shouldSkipDependency(String name, String version, boolean optional, boolean fileExist){
+    public static boolean shouldSkipDependency(String name, String version, boolean optional, boolean fileExist) {
         // some package manager can handle alias, yarn for example, but npm doesn't support it
-        if(version.startsWith("npm:")){
+        if (version.startsWith("npm:")) {
             //TODO make this an error that gets logged
-            LOGGER.warn("dependency skipped: package.json contain an alias for {} => {} npm audit doesn't support aliases", name, version.replace("npm:", ""));
+            LOGGER.warn("dependency skipped: package.json contain an alias for {} => {} npm audit doesn't "
+                    + "support aliases", name, version.replace("npm:", ""));
             return true;
         }
 
@@ -294,23 +295,26 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
 
         // this seems to produce crash sometimes, I need to tests
         // using a local node_module is not supported by npm audit, it crash
-        if(version.startsWith("file:")){
-            LOGGER.warn("dependency skipped: package.json contain an local node_module for {} seems to be located {} npm audit doesn't support locally referenced modules", name, version.replace("file:", ""));
+        if (version.startsWith("file:")) {
+            LOGGER.warn("dependency skipped: package.json contain an local node_module for {} seems to be "
+                    + "located {} npm audit doesn't support locally referenced modules",
+                    name, version.replace("file:", ""));
             return true;
         }
         return false;
     }
 
     /**
-     * @see NodePackageAnalyzer#shouldSkipDependency(java.lang.String, java.lang.String, boolean, boolean)
+     * @see NodePackageAnalyzer#shouldSkipDependency(java.lang.String,
+     * java.lang.String, boolean, boolean)
      * @param name
      * @param version
-     * @return
+     * @return <code>true</code> if the dependency should be skipped; otherwise
+     * <code>false</code>
      */
     public static boolean shouldSkipDependency(String name, String version) {
         return shouldSkipDependency(name, version, false, true);
     }
-
 
     /**
      * Process the dependencies in the lock file by first parsing its
@@ -330,15 +334,14 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
             final JsonObject deps = json.getJsonObject("dependencies");
             for (Map.Entry<String, JsonValue> entry : deps.entrySet()) {
                 final String name = entry.getKey();
-                String version;
+                final String version;
                 boolean optional = false;
 
                 final File base = Paths.get(baseDir.getPath(), "node_modules", name).toFile();
                 final File f = new File(base, PACKAGE_JSON);
-                Dependency[] dependencies = null;
                 JsonObject jo = null;
 
-                if(entry.getValue() instanceof JsonObject){
+                if (entry.getValue() instanceof JsonObject) {
                     jo = (JsonObject) entry.getValue();
                     version = jo.getString("version");
                     optional = jo.getBoolean("optional", false);
@@ -346,7 +349,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                     version = ((JsonString) entry.getValue()).getString();
                 }
 
-                if(shouldSkipDependency(name, version, optional, f.exists())){
+                if (shouldSkipDependency(name, version, optional, f.exists())) {
                     continue;
                 }
 

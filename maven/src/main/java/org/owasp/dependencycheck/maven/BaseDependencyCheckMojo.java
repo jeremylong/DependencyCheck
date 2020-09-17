@@ -768,7 +768,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "cveServerId")
     private String cveServerId;
     /**
-    /**
+     * /**
      * Optionally skip excessive CVE update checks for a designated duration in
      * hours.
      */
@@ -820,21 +820,22 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private Filter<String> artifactTypeExcluded;
 
     /**
-     * An collection of <code>fileSet</code>s that specify additional files and/or
-     * directories (from the basedir) to analyze as part of the scan. If not
-     * specified, defaults to Maven conventions of: src/main/resources,
+     * An collection of <code>fileSet</code>s that specify additional files
+     * and/or directories (from the basedir) to analyze as part of the scan. If
+     * not specified, defaults to Maven conventions of: src/main/resources,
      * src/main/filters, and src/main/webapp. Note, this cannot be set via the
      * command line - use `scanDirectory` instead.
      */
-    @Parameter()
+    @Parameter
     private List<FileSet> scanSet;
     /**
-     * A list of directories to scan. Note, this should only be used
-     * via the command line - if configuring the directories to scan
-     * consider using the `scanSet` instead.
+     * A list of directories to scan. Note, this should only be used via the
+     * command line - if configuring the directories to scan consider using the
+     * `scanSet` instead.
      */
     @Parameter(property = "scanDirectory")
     private List<String> scanDirectory;
+
     // </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Base Maven implementation">
     /**
@@ -1358,19 +1359,19 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         exCol = collectMavenDependencies(engine, project, nodes, buildingRequest, aggregate);
 
         final List<FileSet> projectScan;
-        
-        if (scanDirectory!=null && !scanDirectory.isEmpty()) {
-            if (scanSet==null) {
+
+        if (scanDirectory != null && !scanDirectory.isEmpty()) {
+            if (scanSet == null) {
                 scanSet = new ArrayList<>();
             }
             scanDirectory.stream().forEach(d -> {
-                FileSet fs = new FileSet();
+                final FileSet fs = new FileSet();
                 fs.setDirectory(d);
                 fs.addInclude(INCLUDE_ALL);
                 scanSet.add(fs);
             });
         }
-        
+
         if (scanSet == null || scanSet.isEmpty()) {
             // Define the default FileSets
             final FileSet resourcesSet = new FileSet();
@@ -1966,6 +1967,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
     }
 
+    //CSOFF: LineLength
     /**
      * Obtains the configured password for the given server.
      *
@@ -1975,7 +1977,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * password
      */
     private String decryptServerPassword(Server server) throws SecDispatcherException {
-        //CSOFF: LineLength
+
         //The following fix was copied from:
         //   https://github.com/bsorrentino/maven-confluence-plugin/blob/master/maven-confluence-reporting-plugin/src/main/java/org/bsc/maven/confluence/plugin/AbstractBaseConfluenceMojo.java
         //
@@ -1983,13 +1985,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         // org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException:
         // java.io.FileNotFoundException: ~/.settings-security.xml (No such file or directory)
         //
-        //CSON: LineLength
         if (securityDispatcher instanceof DefaultSecDispatcher) {
             ((DefaultSecDispatcher) securityDispatcher).setConfigurationFile("~/.m2/settings-security.xml");
         }
 
         return securityDispatcher.decrypt(server.getPassword());
     }
+    //CSON: LineLength
 
     /**
      * Combines the configured suppressionFile and suppressionFiles into a

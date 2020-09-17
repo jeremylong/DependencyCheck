@@ -20,19 +20,17 @@ package org.owasp.dependencycheck.data.nvd.ecosystem;
 import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
 
 /**
- *
  * Add method for String and IHitFull.
  *
- * TODO: Put in PR to relevant project
- *
- * @param <V>
+ * @param <V> the object type
+ * @author @skjolber
  */
 public class StringAhoCorasickDoubleArrayTrie<V> extends AhoCorasickDoubleArrayTrie<V> {
 
     private static final long serialVersionUID = -5923428681217396309L;
 
     /**
-     * Parse text
+     * Parse text.
      *
      * @param text The text
      * @param processor A processor which handles the output
@@ -42,7 +40,7 @@ public class StringAhoCorasickDoubleArrayTrie<V> extends AhoCorasickDoubleArrayT
         int currentState = 0;
         for (int i = 0; i < text.length(); i++) {
             currentState = getState(currentState, text.charAt(i));
-            int[] hitArray = output[currentState];
+            final int[] hitArray = output[currentState];
             if (hitArray != null) {
                 for (int hit : hitArray) {
                     processor.hit(position - l[hit], position, v[hit], hit);
@@ -55,16 +53,17 @@ public class StringAhoCorasickDoubleArrayTrie<V> extends AhoCorasickDoubleArrayT
     /**
      * transmit state, supports failure function
      *
-     * @param currentState
-     * @param character
-     * @return
+     * @param currentState the current state
+     * @param character the current character
+     * @return the new state
      */
     private int getState(int currentState, char character) {
-        int newCurrentState = transitionWithRoot(currentState, character);  //success
-        while (newCurrentState == -1) //failure
-        {
-            currentState = fail[currentState];
-            newCurrentState = transitionWithRoot(currentState, character);
+        int state = currentState;
+        int newCurrentState = transitionWithRoot(state, character);  //success
+        while (newCurrentState == -1) {
+            //failure
+            state = fail[state];
+            newCurrentState = transitionWithRoot(state, character);
         }
         return newCurrentState;
     }

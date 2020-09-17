@@ -622,7 +622,8 @@ public class Engine implements FileFilter, AutoCloseable {
                     for (Dependency existing : dependencies) {
                         if (sha1.equals(existing.getSha1sum())) {
                             if (existing.getFileName().contains(": ") || dependency.getFileName().contains(": ")) {
-                                continue;//this won't be quite right 100% of the time. Its possible that the ": " would get added later
+                                //TODO this won't be quite right 100% of the time. Its possible that the ": " would get added later
+                                continue;
                             }
                             found = true;
                             if (projectReference != null) {
@@ -1208,7 +1209,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param format the report format (ALL, HTML, CSV, JSON, etc.)
      * @throws ReportException thrown if there is an error generating the report
      * @deprecated use
-     * {@link #writeReports(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.io.File, java.lang.String, org.owasp.dependencycheck.exception.ExceptionCollection)}
+     * {@link #writeReports(String, String, String, String, File, String, ExceptionCollection)}
      */
     @Deprecated
     public synchronized void writeReports(String applicationName, @Nullable final String groupId,

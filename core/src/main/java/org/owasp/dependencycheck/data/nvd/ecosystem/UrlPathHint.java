@@ -20,14 +20,31 @@ package org.owasp.dependencycheck.data.nvd.ecosystem;
 public enum UrlPathHint implements EcosystemHint {
 
     // note: all must be lowercase
+    /**
+     * Elixir hint.
+     */
     ELIXIR("elixir-security-advisories", Ecosystem.ELIXIR),
+    /**
+     * Node.js hint.
+     */
     NPM("npm", Ecosystem.NODEJS);
 
+    /**
+     * The keyword to identify the ecosystem.
+     */
     private final String keyword;
-
+    /**
+     * The ecosystem identified by the keyword.
+     */
     private final String ecosystem;
 
-    private UrlPathHint(String keyword, String ecosystem) {
+    /**
+     * Constructs a new URL Path Hint used to map the keyword to the ecosystem.
+     *
+     * @param keyword the keyword to identify the ecosystem
+     * @param ecosystem the ecosystem identified by the keyword
+     */
+    UrlPathHint(String keyword, String ecosystem) {
         this.keyword = keyword;
         this.ecosystem = ecosystem;
     }
