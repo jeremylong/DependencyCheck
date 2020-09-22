@@ -20,6 +20,8 @@ package org.owasp.dependencycheck.data.nvdcve;
 import com.google.common.io.Resources;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
@@ -30,9 +32,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.concurrent.ThreadSafe;
 import org.anarres.jdiagnostics.DefaultQuery;
+import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.utils.DBUtils;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
+import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -314,10 +318,10 @@ public final class ConnectionFactory {
      */
     private void createTables(Connection conn) throws DatabaseException {
         LOGGER.debug("Creating database structure");
-
+        String dbStructure;
         try {
-            final String dbStructure = Resources.toString(Resources.getResource(DB_STRUCTURE_RESOURCE), StandardCharsets.UTF_8);
-
+            dbStructure = getResource(DB_STRUCTURE_RESOURCE);
+            
             Statement statement = null;
             try {
                 statement = conn.createStatement();
@@ -328,11 +332,25 @@ public final class ConnectionFactory {
             } finally {
                 DBUtils.closeStatement(statement);
             }
-        } catch (IllegalArgumentException | IOException ex) {
+        } catch (IOException ex) {
             throw new DatabaseException("Unable to create database schema", ex);
         } catch (LinkageError ex) {
             LOGGER.debug(new DefaultQuery(ex).call().toString());
         }
+    }
+
+    private String getResource(String resource) throws IOException {
+        String dbStructure;
+        try {
+            URL url = Resources.getResource(resource);
+            dbStructure = Resources.toString(url, StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException ex) {
+            LOGGER.debug("Resources.getResource(String) failed to find the DB Structure Resource", ex);
+            try (InputStream is = FileUtils.getResourceAsStream(resource)) {
+                dbStructure = IOUtils.toString(is, StandardCharsets.UTF_8);
+            }
+        }
+        return dbStructure;
     }
 
     /**
@@ -355,7 +373,7 @@ public final class ConnectionFactory {
             LOGGER.debug("Updating database structure");
             final String updateFile = String.format(DB_STRUCTURE_UPDATE_RESOURCE, currentDbVersion.toString());
             try {
-                final String dbStructureUpdate = Resources.toString(Resources.getResource(updateFile), StandardCharsets.UTF_8);
+                final String dbStructureUpdate = getResource(updateFile);
                 Statement statement = null;
                 try {
                     statement = conn.createStatement();
