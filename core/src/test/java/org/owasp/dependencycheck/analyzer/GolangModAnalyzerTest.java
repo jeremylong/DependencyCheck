@@ -53,6 +53,13 @@ public class GolangModAnalyzerTest extends BaseTest {
         getSettings().setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
         getSettings().setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, false);
         getSettings().setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, false);
+        //hack fix because IDE is not correctly pulling in path
+        if (getSettings().getString(Settings.KEYS.ANALYZER_GOLANG_PATH) == null) {
+            File go = new File("/usr/local/bin/go");
+            if (go.isFile() && go.canExecute()) {
+                getSettings().setString(Settings.KEYS.ANALYZER_GOLANG_PATH, "/usr/local/bin/go");
+            }
+        }
         analyzer = new GolangModAnalyzer();
         engine = new Engine(this.getSettings());
         analyzer.initialize(getSettings());
@@ -91,7 +98,7 @@ public class GolangModAnalyzerTest extends BaseTest {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "golang/go.mod"));
         analyzer.analyze(result, engine);
 
-        assertEquals(3, engine.getDependencies().length);
+        assertEquals(7, engine.getDependencies().length);
 
         boolean found = false;
         for (Dependency d : engine.getDependencies()) {

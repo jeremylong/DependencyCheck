@@ -115,13 +115,16 @@ public class GoModDependency {
 
         packageURLBuilder.withName(moduleName);
         packageURLBuilder.withNamespace(packageNamespace);
-        packageURLBuilder.withVersion(version);
-
+        if (StringUtils.isNotBlank(version)) {
+            packageURLBuilder.withVersion(version);
+        }
         dep.setEcosystem(DEPENDENCY_ECOSYSTEM);
         dep.setDisplayFileName(name + ":" + version);
         dep.setName(moduleName);
-        dep.setVersion(version);
-        dep.setPackagePath(String.format("%s:%s", name, version));
+        if (StringUtils.isNotBlank(version)) {
+            dep.setVersion(version);
+            dep.setPackagePath(String.format("%s:%s", name, version));
+        }
         dep.setFilePath(filePath);
         dep.setSha1sum(Checksum.getSHA1Checksum(filePath));
         dep.setSha256sum(Checksum.getSHA256Checksum(filePath));
@@ -136,8 +139,9 @@ public class GoModDependency {
         }
         dep.addEvidence(EvidenceType.PRODUCT, GO_MOD, "name", moduleName, Confidence.HIGHEST);
         dep.addEvidence(EvidenceType.VENDOR, GO_MOD, "name", moduleName, Confidence.HIGH);
-        dep.addEvidence(EvidenceType.VERSION, GO_MOD, "version", version, Confidence.HIGHEST);
-
+        if (StringUtils.isNotBlank(version)) {
+            dep.addEvidence(EvidenceType.VERSION, GO_MOD, "version", version, Confidence.HIGHEST);
+        }
         Identifier id;
         try {
             id = new PurlIdentifier(packageURLBuilder.build(), Confidence.HIGHEST);
