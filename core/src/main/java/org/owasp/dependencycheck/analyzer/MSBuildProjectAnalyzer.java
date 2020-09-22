@@ -41,6 +41,7 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
+import org.apache.commons.io.input.BOMInputStream;
 
 import static org.owasp.dependencycheck.analyzer.NuspecAnalyzer.DEPENDENCY_ECOSYSTEM;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
@@ -112,8 +113,9 @@ public class MSBuildProjectAnalyzer extends AbstractFileTypeAnalyzer {
             final MSBuildProjectParser parser = new XPathMSBuildProjectParser();
             final List<NugetPackageReference> packages;
 
-            try (FileInputStream fis = new FileInputStream(dependency.getActualFilePath())) {
-                packages = parser.parse(fis);
+            try (FileInputStream fis = new FileInputStream(dependency.getActualFilePath());
+                    BOMInputStream bis = new BOMInputStream(fis)) {
+                packages = parser.parse(bis);
             } catch (MSBuildProjectParseException | FileNotFoundException ex) {
                 throw new AnalysisException(ex);
             }
