@@ -145,6 +145,34 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
+     * Launches `go mod help` to test if go is installed.
+     *
+     * @return a reference to the launched process
+     * @throws AnalysisException thrown if there is an issue launching `go mod`
+     */
+    private Process testGoMod(File folder) throws AnalysisException {
+        if (!folder.isDirectory()) {
+            throw new AnalysisException(String.format("%s should have been a directory.", folder.getAbsolutePath()));
+        }
+
+        final List<String> args = new ArrayList<>();
+        args.add(getGo());
+        args.add("mod");
+        args.add("edit");
+        args.add("-json");
+
+        final ProcessBuilder builder = new ProcessBuilder(args);
+        builder.directory(folder);
+        try {
+            LOGGER.info("Launching: {} from {}", args, folder);
+            return builder.start();
+        } catch (IOException ioe) {
+            throw new AnalysisException("go initialization failure; this error can be ignored if you are not analyzing Go. "
+                    + "Otherwise ensure that go is installed and the path to go is correctly specified", ioe);
+        }
+    }
+
+    /**
      * Launches `go mod` in the given folder.
      *
      * @param folder the working folder
@@ -158,9 +186,10 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
 
         final List<String> args = new ArrayList<>();
         args.add(getGo());
-        args.add("mod");
-        args.add("edit");
+        args.add("list");
         args.add("-json");
+        args.add("-m");
+        args.add("all");
 
         final ProcessBuilder builder = new ProcessBuilder(args);
         builder.directory(folder);
@@ -186,7 +215,7 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
         setEnabled(false);
         final Process process;
         try {
-            process = launchGoMod(getSettings().getTempDirectory());
+            process = testGoMod(getSettings().getTempDirectory());
         } catch (AnalysisException ae) {
             final String msg = String.format("Exception from go process: %s. Disabling %s", ae.getCause(), ANALYZER_NAME);
             throw new InitializationException(msg, ae);
@@ -252,6 +281,7 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+        //engine.removeDependency(dependency);
         final File parentFile = dependency.getActualFile().getParentFile();
         final Process process = launchGoMod(parentFile);
 
@@ -274,12 +304,10 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
             if (!error.toString().equals("")) {
-                LOGGER.warn(error.toString());
-                throw new AnalysisException(error.toString());
+                LOGGER.warn("Warnings from go {}", error.toString());
+                //throw new AnalysisException(error.toString());
             }
-            final GoModJsonParser parser = new GoModJsonParser(process.getInputStream());
-            parser.process();
-            parser.getDependencies().forEach(goDep
+            GoModJsonParser.process(process.getInputStream()).forEach(goDep
                     -> engine.addDependency(goDep.toDependency(dependency))
             );
         } catch (IOException ioe) {
