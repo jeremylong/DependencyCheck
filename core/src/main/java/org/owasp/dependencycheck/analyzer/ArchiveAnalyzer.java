@@ -469,7 +469,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Checks if the file being scanned is a JAR that begins with '#!/bin' which
+     * Checks if the file being scanned is a JAR or WAR that begins with '#!/bin' which
      * indicates it is a fully executable jar. If a fully executable JAR is
      * identified the input stream will be advanced to the start of the actual
      * JAR file ( skipping the script).
@@ -482,7 +482,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws IOException thrown if there is an error reading the stream
      */
     private void ensureReadableJar(final String archiveExt, BufferedInputStream in) throws IOException {
-        if ("jar".equals(archiveExt) && in.markSupported()) {
+        if (("war".equals(archiveExt) || "jar".equals(archiveExt)) && in.markSupported()) {
             in.mark(7);
             final byte[] b = new byte[7];
             final int read = in.read(b);
