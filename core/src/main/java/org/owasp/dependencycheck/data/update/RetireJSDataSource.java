@@ -143,6 +143,7 @@ public class RetireJSDataSource implements CachedWebDataSource {
 
     @Override
     public boolean purge(Engine engine) {
+        this.settings = engine.getSettings();
         boolean result = true;
         try {
             final File dataDir = engine.getSettings().getDataDirectory();
