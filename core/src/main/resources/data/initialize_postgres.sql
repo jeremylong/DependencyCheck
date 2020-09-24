@@ -86,7 +86,7 @@ END IF;
 END
 $$ LANGUAGE plpgsql;
 
-GRANT EXECUTE ON FUNCTION public.save_property(varchar(50),varchar(500)) TO dcuser;
+GRANT EXECUTE ON FUNCTION public.merge_ecosystem(VARCHAR(255), VARCHAR(255), varchar(255)) TO dcuser;
 
 CREATE FUNCTION update_vulnerability (
     IN p_cveId VARCHAR(20), IN p_description VARCHAR(8000), IN p_v2Severity VARCHAR(20), 
