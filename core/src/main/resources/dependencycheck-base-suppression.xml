@@ -195,6 +195,7 @@
             41. <cpe>cpe:/a:security-framework_project:security-framework</cpe> is a rust library
             42. <cpe>cpe:/a:next:next</cpe> is NeXT system.
             43. <cpe>cpe:/a:property_pro:property_pro</cpe> is classic ASP
+            44. <cve>CVE-2020-10663</cve> is a ruby vulnerability
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -243,6 +244,7 @@
         <cpe>cpe:/a:security-framework_project:security-framework</cpe>
         <cpe>cpe:/a:next:next</cpe>
         <cpe>cpe:/a:property_pro:property_pro</cpe>
+        <cve>CVE-2020-10663</cve>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
