@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.concurrent.ThreadSafe;
@@ -88,6 +89,7 @@ public abstract class AbstractDependencyComparingAnalyzer extends AbstractAnalyz
             if (dependencies.length < 2) {
                 return;
             }
+            Arrays.sort(dependencies, (l, r) -> l.getFileName().compareTo(r.getFileName()));
             for (int x = 0; x < dependencies.length - 1; x++) {
                 final Dependency dependency = dependencies[x];
                 if (!dependenciesToRemove.contains(dependency)) {
