@@ -151,7 +151,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
                 mergeDependencies(nextDependency, dependency, dependenciesToRemove);
                 return true; //since we merged into the next dependency - skip forward to the next in mainIterator
             }
-        } else if (ecoSystemIs(AbstractNpmAnalyzer.NPM_DEPENDENCY_ECOSYSTEM, dependency, nextDependency)
+        } else if (ecosystemIs(AbstractNpmAnalyzer.NPM_DEPENDENCY_ECOSYSTEM, dependency, nextDependency)
                 && namesAreEqual(dependency, nextDependency)
                 && npmVersionsMatch(dependency.getVersion(), nextDependency.getVersion())) {
 
@@ -582,7 +582,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
      * @return true if the ecosystem is equal in both dependencies; otherwise
      * false
      */
-    private boolean ecoSystemIs(String ecoSystem, Dependency dependency, Dependency nextDependency) {
+    private boolean ecosystemIs(String ecoSystem, Dependency dependency, Dependency nextDependency) {
         return ecoSystem.equals(dependency.getEcosystem()) && ecoSystem.equals(nextDependency.getEcosystem());
     }
 
