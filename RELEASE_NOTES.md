@@ -2,6 +2,16 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 6.0.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.0.2) (2020-09-27)
+
+### Changes
+
+- Npm Audit Analyzer now correctly skips dev dependencies (`--nodeAuditSkipDevDependencies`); see #2482.
+- GoLang Analyzer now scans transitive dependencies; see #2680.
+- Several bug fixes found in 6.0.1.
+
+- Full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/16?closed=1).
+
 ## [Version 6.0.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.0.1) (2020-09-13)
 
 ### Changes
