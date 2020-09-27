@@ -6,6 +6,8 @@ Please see the [dependency-check google group](https://groups.google.com/forum/#
 
 ### Changes
 
+- The project is migrating from hosting the release archives on Bintray and moving them to Github under the assets for each [release](https://github.com/jeremylong/DependencyCheck/releases)
+  - **Please update any automation you have to point to the new location.**
 - Npm Audit Analyzer now correctly skips dev dependencies (`--nodeAuditSkipDevDependencies`); see #2482.
 - GoLang Analyzer now scans transitive dependencies; see #2680.
 - Several bug fixes found in 6.0.1.

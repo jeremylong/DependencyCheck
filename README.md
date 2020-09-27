@@ -29,8 +29,7 @@ For instructions on the use of the Jenkins plugin please see the [OWASP Dependen
 
 More detailed instructions can be found on the
 [dependency-check github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-cli/).
-The latest CLI can be downloaded from bintray's
-[dependency-check page](https://bintray.com/jeremy-long/owasp/dependency-check).
+The latest CLI can be downloaded from github in the [releases section](https://github.com/jeremylong/DependencyCheck/releases).
 
 On *nix
 ```
