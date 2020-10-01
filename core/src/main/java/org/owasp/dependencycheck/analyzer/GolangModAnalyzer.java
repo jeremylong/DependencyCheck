@@ -173,13 +173,13 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Launches `go mod` in the given folder.
+     * Launches `go list -json -m all` in the given folder.
      *
      * @param folder the working folder
      * @return a reference to the launched process
      * @throws AnalysisException thrown if there is an issue launching `go mod`
      */
-    private Process launchGoMod(File folder) throws AnalysisException {
+    private Process launchGoListAll(File folder) throws AnalysisException {
         if (!folder.isDirectory()) {
             throw new AnalysisException(String.format("%s should have been a directory.", folder.getAbsolutePath()));
         }
@@ -190,6 +190,36 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
         args.add("-json");
         args.add("-m");
         args.add("all");
+
+        final ProcessBuilder builder = new ProcessBuilder(args);
+        builder.directory(folder);
+        try {
+            LOGGER.info("Launching: {} from {}", args, folder);
+            return builder.start();
+        } catch (IOException ioe) {
+            throw new AnalysisException("go initialization failure; this error can be ignored if you are not analyzing Go. "
+                    + "Otherwise ensure that go is installed and the path to go is correctly specified", ioe);
+        }
+    }
+
+    /**
+     * Launches `go list -json -m readonly` in the given folder.
+     *
+     * @param folder the working folder
+     * @return a reference to the launched process
+     * @throws AnalysisException thrown if there is an issue launching `go mod`
+     */
+    private Process launchGoListReadonly(File folder) throws AnalysisException {
+        if (!folder.isDirectory()) {
+            throw new AnalysisException(String.format("%s should have been a directory.", folder.getAbsolutePath()));
+        }
+
+        final List<String> args = new ArrayList<>();
+        args.add(getGo());
+        args.add("list");
+        args.add("-json");
+        args.add("-m");
+        args.add("readonly");
 
         final ProcessBuilder builder = new ProcessBuilder(args);
         builder.directory(folder);
@@ -283,8 +313,16 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         //engine.removeDependency(dependency);
         final File parentFile = dependency.getActualFile().getParentFile();
-        final Process process = launchGoMod(parentFile);
+        Process process = launchGoListAll(parentFile);
 
+        process = evaluateProcess(process, parentFile);
+
+        GoModJsonParser.process(process.getInputStream()).forEach(goDep
+                -> engine.addDependency(goDep.toDependency(dependency))
+        );
+    }
+
+    private Process evaluateProcess(Process process, File directory) throws AnalysisException {
         final int exitValue;
         try {
             exitValue = process.waitFor();
@@ -303,15 +341,16 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
                     error.append(errReader.readLine());
                 }
             }
-            if (!error.toString().equals("")) {
+            if (error.length() > 0) {
                 LOGGER.warn("Warnings from go {}", error.toString());
-                //throw new AnalysisException(error.toString());
+                if (error.indexOf("can't compute 'all' using the vendor directory") >= 0) {
+                    LOGGER.warn("Switching to `go list -json -m readonly`");
+                    return evaluateProcess(launchGoListReadonly(directory), directory);
+                }
             }
-            GoModJsonParser.process(process.getInputStream()).forEach(goDep
-                    -> engine.addDependency(goDep.toDependency(dependency))
-            );
         } catch (IOException ioe) {
             LOGGER.warn("go mod failure", ioe);
         }
+        return process;
     }
 }
