@@ -106,7 +106,7 @@ public final class NpmPayloadBuilder {
             dependencies.entrySet().forEach((entry) -> {
                 final JsonObject dep = ((JsonObject) entry.getValue());
                 final String version = dep.getString("version");
-                final boolean isDev = Boolean.parseBoolean(dep.getString("dev", "false"));
+                final boolean isDev = dep.getBoolean("dev", false);
                 if (skipDevDependencies && isDev) {
                     return;
                 }
