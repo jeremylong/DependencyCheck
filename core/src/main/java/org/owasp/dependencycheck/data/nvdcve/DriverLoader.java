@@ -54,7 +54,9 @@ public final class DriverLoader {
      */
     public static void cleanup(Driver driver) {
         try {
+            LOGGER.debug("Begin deregister driver");
             DriverManager.deregisterDriver(driver);
+            LOGGER.debug("End deregister driver");
         } catch (SQLException ex) {
             LOGGER.debug("An error occurred unloading the database driver", ex);
         } catch (Throwable unexpected) {

@@ -284,10 +284,14 @@ public final class CveDB implements AutoCloseable {
     @Override
     public synchronized void close() {
         if (isOpen()) {
+            LOGGER.debug("Closing database");
             clearCache();
+            LOGGER.debug("Cache cleared");
             closeStatements();
+            LOGGER.debug("Statments closed");
             try {
                 connection.close();
+                LOGGER.debug("Connection closed");
             } catch (SQLException ex) {
                 LOGGER.error("There was an error attempting to close the CveDB, see the log for more details.");
                 LOGGER.debug("", ex);
@@ -296,6 +300,7 @@ public final class CveDB implements AutoCloseable {
                 LOGGER.debug("", ex);
             }
             releaseResources();
+            LOGGER.debug("Resources released");
             connectionFactory.cleanup();
         }
     }
