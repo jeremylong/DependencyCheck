@@ -440,6 +440,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2768
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/tomcat\-embed\-core@.*$</packageUrl>
+        <cve>CVE-2020-8022</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2859
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.atlassian\.jira/jira\-rest\-java\-client\-api@.*$</packageUrl>
