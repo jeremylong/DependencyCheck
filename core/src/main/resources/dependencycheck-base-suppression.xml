@@ -433,6 +433,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2794
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/co\.elastic\.apm/apm\-grails\-plugin@.*$</packageUrl>
+        <cpe>cpe:/a:grails:grails</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2859
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.atlassian\.jira/jira\-rest\-java\-client\-api@.*$</packageUrl>
