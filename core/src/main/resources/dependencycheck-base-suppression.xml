@@ -480,6 +480,20 @@
         <packageUrl regex="true">^pkg:maven/com\.typesafe\.play/cachecontrol_2\.13@.*$</packageUrl>
         <cpe>cpe:/a:playframework:play_framework</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+        FP per #2678
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.camel/camel\-cxf@.*$</packageUrl>
+        <cpe>cpe:/a:apache:cxf</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+        FP per #2678
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.camel/camel\-cxf\-transport@.*$</packageUrl>
+        <cpe>cpe:/a:apache:cxf</cpe>
+    </suppress>
     <suppress base="true">
         <notes><![CDATA[
         FP per #2859
