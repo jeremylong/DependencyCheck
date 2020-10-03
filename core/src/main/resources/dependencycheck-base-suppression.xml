@@ -475,6 +475,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2683
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.typesafe\.play/cachecontrol_2\.13@.*$</packageUrl>
+        <cpe>cpe:/a:playframework:play_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2859
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.atlassian\.jira/jira\-rest\-java\-client\-api@.*$</packageUrl>
