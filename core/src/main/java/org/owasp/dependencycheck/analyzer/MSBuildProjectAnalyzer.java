@@ -115,6 +115,8 @@ public class MSBuildProjectAnalyzer extends AbstractFileTypeAnalyzer {
 
             try (FileInputStream fis = new FileInputStream(dependency.getActualFilePath());
                     BOMInputStream bis = new BOMInputStream(fis)) {
+                //skip BOM if it exists
+                bis.getBOM();
                 packages = parser.parse(bis);
             } catch (MSBuildProjectParseException | FileNotFoundException ex) {
                 throw new AnalysisException(ex);
