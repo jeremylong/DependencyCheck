@@ -2109,7 +2109,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
         });
         invalid.forEach((s) -> {
-            getLog().warn("Invalid format specified: " + s);
+            getLog().warn("Invalid report format specified: " + s);
         });
         if (selectedFormats.contains("true")) {
             selectedFormats.remove("true");
