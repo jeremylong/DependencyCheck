@@ -449,6 +449,13 @@
         <notes><![CDATA[
         FP per #2768
         ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.evolvis\.tartools/rfc822@.*$</packageUrl>
+        <cpe>cpe:/a:man-cgi_project:man-cgi</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2768
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/tomcat\-embed\-core@.*$</packageUrl>
         <cve>CVE-2020-8022</cve>
     </suppress>
