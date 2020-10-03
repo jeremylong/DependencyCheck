@@ -125,7 +125,7 @@ Copyright (c) 2012 - Jeremy Long
         <github.global.server>github</github.global.server>
         
         <apache.lucene.version>8.6.2</apache.lucene.version>
-        <apache.ant.version>1.10.8</apache.ant.version>
+        <apache.ant.version>1.10.9</apache.ant.version>
         <slf4j.version>1.7.30</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <!-- Note that Maven will use classes from the distro, ignoring declared dependencies for Maven core... -->
@@ -140,7 +140,7 @@ Copyright (c) 2012 - Jeremy Long
         <maven-project-info-reports-plugin.version>3.1.1</maven-project-info-reports-plugin.version>
         <maven-surefire-report-plugin.version>2.22.2</maven-surefire-report-plugin.version>
         <jacoco-maven-plugin.version>0.8.6</jacoco-maven-plugin.version>
-        <spotbugs.maven.plugin.version>4.0.4</spotbugs.maven.plugin.version>
+        <spotbugs.maven.plugin.version>4.1.3</spotbugs.maven.plugin.version>
         <taglist-maven-plugin.version>2.4</taglist-maven-plugin.version>
         <versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
 
@@ -156,7 +156,7 @@ Copyright (c) 2012 - Jeremy Long
         <aho-corasick-double-array-trie.version>1.2.2</aho-corasick-double-array-trie.version>
         <junit.version>4.13</junit.version>
         <hamcrest-core.version>2.2</hamcrest-core.version>
-        <jackson.version>2.11.2</jackson.version>
+        <jackson.version>2.11.3</jackson.version>
         <jmockit.version>1.49</jmockit.version>
         <mockito-core.version>3.5.13</mockito-core.version>
         <jsoup.version>1.13.1</jsoup.version>
@@ -370,7 +370,7 @@ Copyright (c) 2012 - Jeremy Long
                                 if ("dependency-check-parent".equals("${project.artifactId}")) {
                                     config = "file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/src/main/config"
                                 } else {
-                                    config = "file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/../src/main/config"
+                                    config = new URI("file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/../src/main/config").normalize().toString()
                                 }
                                 project.properties['odc.config']= config
                                 ]]></script>
@@ -389,7 +389,7 @@ Copyright (c) 2012 - Jeremy Long
                                 if ("dependency-check-parent".equals("${project.artifactId}")) {
                                     config = "file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/src/main/config"
                                 } else {
-                                    config = "file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/../src/main/config"
+                                    config = new URI("file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/../src/main/config").normalize().toString()
                                 }
                                 project.properties['odc.config']= config
                                 ]]></script>
@@ -409,7 +409,7 @@ Copyright (c) 2012 - Jeremy Long
                                 if ("dependency-check-parent".equals("${project.artifactId}")) {
                                     config = "file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/src/main/config"
                                 } else {
-                                    config = "file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/../src/main/config"
+                                    config = new URI("file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/../src/main/config").normalize().toString()
                                 }
                                 project.properties['odc.config']= config
                                 ]]></script>

@@ -21,36 +21,16 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
 String oldReport = FileUtils.readFileToString(new File(basedir, "old/target/dependency-check-report.xml"), Charset.defaultCharset().name());
-int count = StringUtils.countMatches(oldReport, "pkg:maven/org.owasp.test.aggregate.issue-1527/war@1.0.0-SNAPSHOT");
+int count = StringUtils.countMatches(oldReport, "pkg:maven/org.slf4j/slf4j-api@1.7.30");
 if (count == 0) {
-    System.out.println(String.format("war-1.0.0-SNAPSHOT was not identified"));
-    return false;
-}
-count = StringUtils.countMatches(oldReport, "pkg:maven/org.apache.james/apache-mime4j-core@0.7.2");
-if (count == 0) {
-    System.out.println("org.apache.james:apache-mime4j-core:0.7.2 was not identified and is a dependency of war-1.0.0-SNAPSHOT");
-    return false;
-}
-count = StringUtils.countMatches(oldReport, "pkg:maven/org.hibernate/hibernate-validator@5.1.0.Final");
-if (count == 0) {
-    System.out.println("org.hibernate:hibernate-validator:5.1.0.Final was not identified, but is a transitive dependency of the old war-1.0.0-SNAPSHOT");
+    System.out.println("pkg:maven/org.slf4j/slf4j-api@1.7.30 was not identified and is a dependency of war-1.0.0-SNAPSHOT via lib-1.0.0-SNAPSHOT");
     return false;
 }
 
 String newReport = FileUtils.readFileToString(new File(basedir, "new/target/dependency-check-report.xml"), Charset.defaultCharset().name());
-count = StringUtils.countMatches(newReport, "pkg:maven/org.owasp.test.aggregate.issue-1527/war@1.0.0-SNAPSHOT");
-if (count == 0) {
-    System.out.println(String.format("war-1.0.0-SNAPSHOT was not identified"));
-    return false;
-}
-count = StringUtils.countMatches(newReport, "pkg:maven/org.apache.james/apache-mime4j-core@0.7.2");
-if (count == 0) {
-    System.out.println("org.apache.james:apache-mime4j-core:0.7.2 was not identified and is a dependency of war-1.0.0-SNAPSHOT");
-    return false;
-}
-count = StringUtils.countMatches(newReport, "pkg:maven/org.hibernate/hibernate-validator@5.1.2.Final");
+count = StringUtils.countMatches(newReport, "pkg:maven/org.slf4j/slf4j-api@1.7.30");
 if (count != 0) {
-    System.out.println("org.hibernate:hibernate-validator:5.1.0.Final was identified, but was only a dependency of the old war-1.0.0-SNAPSHOT");
+    System.out.println("pkg:maven/org.slf4j/slf4j-api@1.7.30 was identified but has been removed as a dependency in the new project to simulate mitigating vulnerabilities");
     return false;
 }
 

@@ -1490,12 +1490,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         for (MavenProject prj : reactorProjects) {
 
             getLog().debug(String.format("Comparing %s:%s:%s to %s:%s:%s",
-                    artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                    artifact.getGroupId(), artifact.getArtifactId(), artifact.getBaseVersion(),
                     prj.getGroupId(), prj.getArtifactId(), prj.getVersion()));
 
             if (prj.getArtifactId().equals(artifact.getArtifactId())
                     && prj.getGroupId().equals(artifact.getGroupId())
-                    && prj.getVersion().equals(artifact.getVersion())) {
+                    && prj.getVersion().equals(artifact.getBaseVersion())) {
 
                 final String displayName = String.format("%s:%s:%s",
                         prj.getGroupId(), prj.getArtifactId(), prj.getVersion());
@@ -1509,7 +1509,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 } else {
                     d = new Dependency(true);
                 }
-                final String key = String.format("%s:%s:%s", artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion());
+                final String key = String.format("%s:%s:%s", prj.getGroupId(), prj.getArtifactId(), prj.getVersion());
                 d.setSha1sum(Checksum.getSHA1Checksum(key));
                 d.setSha256sum(Checksum.getSHA256Checksum(key));
                 d.setMd5sum(Checksum.getMD5Checksum(key));
