@@ -426,6 +426,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2835
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.scanbot/scanbot\-sdk\-imageprocessing@.*$</packageUrl>
+        <cpe>cpe:/a:image_processing_software:image_processing_software</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2859
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.atlassian\.jira/jira\-rest\-java\-client\-api@.*$</packageUrl>
