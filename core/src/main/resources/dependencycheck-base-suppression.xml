@@ -461,6 +461,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2703
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.slf4j/log4j\-over\-slf4j@.*$</packageUrl>
+        <cpe>cpe:/a:apache:log4j</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2768
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/tomcat\-embed\-core@.*$</packageUrl>
