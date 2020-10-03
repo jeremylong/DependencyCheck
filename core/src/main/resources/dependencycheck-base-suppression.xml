@@ -454,6 +454,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2711
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.typesafe\.play/shaded\-oauth@.*$</packageUrl>
+        <cpe>cpe:/a:playframework:play_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2768
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/tomcat\-embed\-core@.*$</packageUrl>
