@@ -1051,6 +1051,15 @@
         <gav regex="true">org.apache.geronimo.specs:.*</gav>
         <cpe>cpe:/a:apache:geronimo</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+        FP per #2649
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat/tomcat\-jni@.*$</packageUrl>
+        <cpe>cpe:/a:apache:tomcat</cpe>
+        <cpe>cpe:/a:apache_tomcat:apache_tomcat</cpe>
+        <cpe>cpe:/a:apache_software_foundation:tomcat</cpe>
+    </suppress>
     <suppress base="true">
         <notes><![CDATA[
         This suppresses false positives identified on tomcat-embed-el.
@@ -2360,6 +2369,13 @@
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.zookeeper/zookeeper@.*$</packageUrl>
         <cpe>cpe:/a:apache:hadoop</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2650
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.sonatype\.nexus\.plugins/nexus\-restore\-helm@.*$</packageUrl>
+        <cpe>cpe:/a:sonatype:nexus</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
