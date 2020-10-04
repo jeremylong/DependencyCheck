@@ -114,6 +114,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             "built-by",
             "created-by",
             "builtby",
+            "built-with",
+            "builtwith",
             "createdby",
             "build-jdk",
             "buildjdk",
