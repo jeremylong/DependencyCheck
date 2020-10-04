@@ -440,6 +440,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2673 and #2672
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.geronimo/geronimo\-(health|metrics(-common)?)@.*$</packageUrl>
+        <cpe>cpe:/a:apache:geronimo</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2756
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/co\.elastic\.logging/logback\-ecs\-encoder@.*$</packageUrl>
