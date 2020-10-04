@@ -196,6 +196,7 @@
             42. <cpe>cpe:/a:next:next</cpe> is NeXT system.
             43. <cpe>cpe:/a:property_pro:property_pro</cpe> is classic ASP
             44. <cve>CVE-2020-10663</cve> is a ruby vulnerability
+            45. Facebook is not a dependency
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -245,6 +246,7 @@
         <cpe>cpe:/a:next:next</cpe>
         <cpe>cpe:/a:property_pro:property_pro</cpe>
         <cve>CVE-2020-10663</cve>
+        <cpe>cpe:/a:facebook:facebook</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
