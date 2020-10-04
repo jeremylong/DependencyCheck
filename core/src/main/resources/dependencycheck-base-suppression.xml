@@ -2152,6 +2152,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2651
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.vaadin/vaadin[^@]+testbench@.*$</packageUrl>
+        <cpe>cpe:/a:vaadin:vaadin</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2191
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.vaadin\.(addon|external).*$</packageUrl>
