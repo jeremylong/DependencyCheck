@@ -755,7 +755,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                     cpeBuilder.part(Part.APPLICATION).vendor(vendor).product(product);
                     final int idx = depVersion.getVersionParts().size() - 1;
                     if (idx > 0 && depVersion.getVersionParts().get(idx)
-                            .matches("^(v|release|snapshot|beta|alpha|u|rc|m|20\\d\\d).*$")) {
+                            .matches("^(v|final|release|snapshot|beta|alpha|u|rc|m|20\\d\\d).*$")) {
                         cpeBuilder.version(StringUtils.join(depVersion.getVersionParts().subList(0, idx), "."));
                         //when written - no update versions in the NVD start with v### - they all strip the v off
                         if (depVersion.getVersionParts().get(idx).matches("^v\\d.*$")) {
@@ -792,10 +792,10 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 String evBaseVerUpdate = null;
                 final int idx = evVer.getVersionParts().size() - 1;
                 if (evVer.getVersionParts().get(idx)
-                        .matches("^(v|release|snapshot|beta|alpha|u|rc|m|20\\d\\d).*$")) {
+                        .matches("^(v|release|final|snapshot|beta|alpha|u|rc|m|20\\d\\d).*$")) {
                     //store the update version
                     final String checkUpdate = evVer.getVersionParts().get(idx);
-                    if (checkUpdate.matches("^(v|release|snapshot|beta|alpha|u|rc|m|20\\d\\d).*$")) {
+                    if (checkUpdate.matches("^(v|release|final|snapshot|beta|alpha|u|rc|m|20\\d\\d).*$")) {
                         evBaseVerUpdate = checkUpdate;
                         evBaseVer = new DependencyVersion();
                         evBaseVer.setVersionParts(evVer.getVersionParts().subList(0, idx));
@@ -863,7 +863,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         cpeBuilder.part(Part.APPLICATION).vendor(vendor).product(product);
         final int idx = bestGuess.getVersionParts().size() - 1;
         if (bestGuess.getVersionParts().get(idx)
-                .matches("^(v|release|snapshot|beta|alpha|u|rc|m|20\\d\\d).*$")) {
+                .matches("^(v|release|final|snapshot|beta|alpha|u|rc|m|20\\d\\d).*$")) {
             cpeBuilder.version(StringUtils.join(bestGuess.getVersionParts().subList(0, idx), "."));
             //when written - no update versions in the NVD start with v### - they all strip the v off
             if (bestGuess.getVersionParts().get(idx).matches("^v\\d.*$")) {
