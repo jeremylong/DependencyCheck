@@ -349,6 +349,18 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                 } else if (("jboss".equals(cpe.getVendor()) && "jboss".equals(cpe.getProduct()))
                         && !dependency.getFileName().toLowerCase().matches("jboss-?[\\d.-]+(GA)?\\.jar")) {
                     dependency.removeVulnerableSoftwareIdentifier(i);
+                } else if ("java-websocket_project".equals(cpe.getVendor())
+                        && "java-websocket".equals(cpe.getProduct())) {
+                    boolean found = false;
+                    for (Identifier si : dependency.getSoftwareIdentifiers()) {
+                        if (si.getValue().toLowerCase().contains("org.java-websocket/java-websocket")) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        dependency.removeVulnerableSoftwareIdentifier(i);
+                    }
                 }
             }
         }
