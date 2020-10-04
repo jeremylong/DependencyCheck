@@ -1051,10 +1051,17 @@
         <gav regex="true">org.apache.geronimo.specs:.*</gav>
         <cpe>cpe:/a:apache:geronimo</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2646
+        ]]> </notes>
+        <packageUrl regex="true">^pkg:maven/dev\.miku/r2dbc\-mysql@.*$</packageUrl>
+        <cpe>cpe:/a:mysql:mysql</cpe>
+    </suppress>
+    <suppress base="true">
         <notes><![CDATA[
         FP per #2649
-        ]]></notes>
+        ]]> </notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat/tomcat\-jni@.*$</packageUrl>
         <cpe>cpe:/a:apache:tomcat</cpe>
         <cpe>cpe:/a:apache_tomcat:apache_tomcat</cpe>
