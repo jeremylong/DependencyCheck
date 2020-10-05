@@ -779,6 +779,14 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2554
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty\.alpn/alpn\-api@.*$</packageUrl>
+        <cpe>cpe:/a:jetty:jetty</cpe>
+        <cpe>cpe:/a:mortbay_jetty:jetty</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #1515
         ]]></notes>
         <gav regex="true">^org\.eclipse\.jetty\.alpn:alpn-api:.*$</gav>
