@@ -3340,9 +3340,11 @@
     <suppress base="true">
         <notes><![CDATA[
         FP per issue #999 - instead of suppressing the whole thing, we will just
-            suppress specific CVE that are for the server
+            suppress specific CVE that are for the server. Added CVEs per #2863.
         ]]></notes>
         <gav regex="true">^org\.mariadb\.jdbc:mariadb-java-client:.*$</gav>
+        <cve>CVE-2017-15365</cve>
+        <cve>CVE-2017-15945</cve>
         <cve>CVE-2016-5440</cve>
         <cve>CVE-2016-5584</cve>
         <cve>CVE-2014-6500</cve>
