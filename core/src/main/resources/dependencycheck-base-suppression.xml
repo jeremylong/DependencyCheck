@@ -834,6 +834,13 @@
         <packageUrl regex="true">^pkg:maven/com\.hazelcast/hazelcast\-kubernetes@.*$</packageUrl>
         <cpe>cpe:/a:hazelcast:hazelcast</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       FP per #2571
+       ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.hazelcast/hazelcast\-client\-protocol@.*$</packageUrl>
+        <cpe>cpe:/a:hazelcast:hazelcast</cpe>
+    </suppress>
     <!--suppress base="true">
         <notes><![CDATA[
         Removed as this is too generic and is masking vulnerabilities for the activemq-client
