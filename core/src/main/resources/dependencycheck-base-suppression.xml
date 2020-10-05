@@ -421,6 +421,20 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2627
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.minio/minio@.*$</packageUrl>
+        <cve>CVE-2018-1000538</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2627
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.minio/minio@.*$</packageUrl>
+        <cve>CVE-2020-11012</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Suppresses false positives per issue #1587
         ]]></notes>
         <gav regex="true">^org\.apache\.felix:org\.apache\.felix\.configadmin:.*$</gav>
