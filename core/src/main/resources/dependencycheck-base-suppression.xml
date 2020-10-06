@@ -197,7 +197,7 @@
             43. <cpe>cpe:/a:property_pro:property_pro</cpe> is classic ASP
             44. <cve>CVE-2020-10663</cve> is a ruby vulnerability
             45. Facebook is not a dependency
-            46. gitlab is not a depenency #2567
+            46. gitlab is not a depenency #2567 and is built using ruby
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>

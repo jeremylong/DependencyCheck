@@ -697,7 +697,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         // org name
         String orgUrl = pom.getOrganizationUrl();
         if (orgUrl != null && !orgUrl.isEmpty()) {
-            if (orgUrl.startsWith("https://github.com/")) {
+            if (orgUrl.startsWith("https://github.com/") || orgUrl.startsWith("https://gitlab.com/")) {
                 orgUrl = orgUrl.substring(19);
                 dependency.addEvidence(EvidenceType.PRODUCT, "pom", "url", orgUrl, Confidence.HIGH);
             } else {
@@ -729,7 +729,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
         String projectURL = pom.getProjectURL();
         if (projectURL != null && !projectURL.trim().isEmpty()) {
-            if (projectURL.startsWith("https://github.com/")) {
+            if (projectURL.startsWith("https://github.com/") || projectURL.startsWith("https://gitlab.com/")) {
                 projectURL = projectURL.substring(19);
                 dependency.addEvidence(EvidenceType.PRODUCT, "pom", "url", projectURL, Confidence.HIGH);
             } else {
@@ -825,7 +825,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 if (HTML_DETECTION_PATTERN.matcher(value).find()) {
                     value = Jsoup.parse(value).text();
                 }
-                if (value.startsWith("git@github.com:")) {
+                if (value.startsWith("git@github.com:") || value.startsWith("git@gitlab.com:")) {
                     value = value.substring(15);
                 }
                 if (IGNORE_VALUES.contains(value)) {
