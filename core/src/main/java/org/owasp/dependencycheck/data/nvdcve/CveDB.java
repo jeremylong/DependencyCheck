@@ -862,7 +862,7 @@ public final class CveDB implements AutoCloseable {
         try (PreparedStatement ps = prepareStatement(SELECT_CPE_ECOSYSTEM)) {
             rs = ps.executeQuery();
             while (rs.next()) {
-                final Pair<String, String> key = new Pair<>(rs.getString(1), rs.getString(1));
+                final Pair<String, String> key = new Pair<>(rs.getString(1), rs.getString(2));
                 final String value = rs.getString(3);
                 map.put(key, value);
             }
