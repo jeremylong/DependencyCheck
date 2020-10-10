@@ -321,7 +321,7 @@ public final class ConnectionFactory {
         String dbStructure;
         try {
             dbStructure = getResource(DB_STRUCTURE_RESOURCE);
-            
+
             Statement statement = null;
             try {
                 statement = conn.createStatement();
@@ -372,6 +372,10 @@ public final class ConnectionFactory {
         if (connectionString.startsWith("jdbc:h2:file:")) {
             LOGGER.debug("Updating database structure");
             final String updateFile = String.format(DB_STRUCTURE_UPDATE_RESOURCE, currentDbVersion.toString());
+            if ("data/upgrade_4.2.sql".equals(updateFile)) {
+                throw new DatabaseException("unable to upgrade the database schema - please run the dependency-check "
+                        + "purge command to remove the existing database");
+            }
             try {
                 final String dbStructureUpdate = getResource(updateFile);
                 Statement statement = null;
@@ -385,10 +389,6 @@ public final class ConnectionFactory {
                     DBUtils.closeStatement(statement);
                 }
             } catch (IllegalArgumentException | IOException ex) {
-                if ("data/upgrade_4.2.sql".equals(updateFile)) {
-                    throw new DatabaseException("unable to upgrade the database schema - please run the dependency-check "
-                            + "purge command to remove the existing database");
-                }
                 final String msg = String.format("Upgrade SQL file does not exist: %s", updateFile);
                 throw new DatabaseException(msg, ex);
             }
