@@ -124,7 +124,7 @@ Copyright (c) 2012 - Jeremy Long
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <github.global.server>github</github.global.server>
         
-        <apache.lucene.version>8.6.2</apache.lucene.version>
+        <apache.lucene.version>8.6.3</apache.lucene.version>
         <apache.ant.version>1.10.9</apache.ant.version>
         <slf4j.version>1.7.30</slf4j.version>
         <logback.version>1.2.3</logback.version>
