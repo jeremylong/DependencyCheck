@@ -1797,6 +1797,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        False positives per issue #2873
+        ]]></notes>
+        <packageUrl regex="true">^pkg:npm/faye\-websocket@.*$</packageUrl>
+        <cpe>cpe:/a:faye_project:faye</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Node.js false positives per issues #512 and #510
         ]]></notes>
         <filePath regex="true">.*package\.json$</filePath>
