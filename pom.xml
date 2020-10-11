@@ -368,11 +368,11 @@ Copyright (c) 2012 - Jeremy Long
                             <scripts>
                                 <script><![CDATA[
                                 if ("dependency-check-parent".equals("${project.artifactId}")) {
-                                    config = "file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/src/main/config"
+                                    relConfig = "src/main/config"
                                 } else {
-                                    config = new URI("file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/../src/main/config").normalize().toString()
+                                    relConfig = "../src/main/config"
                                 }
-                                project.properties['odc.config']= config
+                                project.properties['odc.config']= project.basedir.absoluteFile.toURI().resolve(relConfig).normalize().toString()
                                 ]]></script>
                             </scripts>
                         </configuration>
@@ -387,11 +387,11 @@ Copyright (c) 2012 - Jeremy Long
                             <scripts>
                                 <script><![CDATA[
                                 if ("dependency-check-parent".equals("${project.artifactId}")) {
-                                    config = "file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/src/main/config"
+                                    relConfig = "src/main/config"
                                 } else {
-                                    config = new URI("file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/../src/main/config").normalize().toString()
+                                    relConfig = "../src/main/config"
                                 }
-                                project.properties['odc.config']= config
+                                project.properties['odc.config']= project.basedir.absoluteFile.toURI().resolve(relConfig).normalize().toString()
                                 ]]></script>
                             </scripts>
                         </configuration>
@@ -407,11 +407,11 @@ Copyright (c) 2012 - Jeremy Long
                             <scripts>
                                 <script><![CDATA[
                                 if ("dependency-check-parent".equals("${project.artifactId}")) {
-                                    config = "file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/src/main/config"
+                                    relConfig = "src/main/config"
                                 } else {
-                                    config = new URI("file:///"+project.basedir.absolutePath.replace('\\','\\\\')+"/../src/main/config").normalize().toString()
+                                    relConfig = "../src/main/config"
                                 }
-                                project.properties['odc.config']= config
+                                project.properties['odc.config']= project.basedir.absoluteFile.toURI().resolve(relConfig).normalize().toString()
                                 ]]></script>
                             </scripts>
                         </configuration>
