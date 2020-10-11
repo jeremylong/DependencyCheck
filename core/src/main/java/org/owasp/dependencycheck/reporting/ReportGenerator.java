@@ -487,7 +487,7 @@ public class ReportGenerator {
         final String outputPath = path + ".pretty";
         final File in = new File(path);
         final File out = new File(outputPath);
-        try {
+        try (OutputStream os = new FileOutputStream(out)) {
             final TransformerFactory transformerFactory = SAXTransformerFactory.newInstance();
             transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             final Transformer transformer = transformerFactory.newTransformer();
@@ -499,11 +499,11 @@ public class ReportGenerator {
             final XMLReader saxReader = XmlUtils.buildSecureSaxParser().getXMLReader();
 
             saxs.setXMLReader(saxReader);
-            transformer.transform(saxs, new StreamResult(new OutputStreamWriter(new FileOutputStream(out), "utf-8")));
+            transformer.transform(saxs, new StreamResult(new OutputStreamWriter(os, "utf-8")));
         } catch (ParserConfigurationException | TransformerConfigurationException ex) {
             LOGGER.debug("Configuration exception when pretty printing", ex);
             LOGGER.error("Unable to generate pretty report, caused by: {}", ex.getMessage());
-        } catch (TransformerException | SAXException | FileNotFoundException | UnsupportedEncodingException ex) {
+        } catch (TransformerException | SAXException | IOException ex) {
             LOGGER.debug("Malformed XML?", ex);
             LOGGER.error("Unable to generate pretty report, caused by: {}", ex.getMessage());
         }
