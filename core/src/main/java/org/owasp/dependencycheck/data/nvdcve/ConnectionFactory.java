@@ -372,7 +372,7 @@ public final class ConnectionFactory {
         if (connectionString.startsWith("jdbc:h2:file:")) {
             LOGGER.debug("Updating database structure");
             final String updateFile = String.format(DB_STRUCTURE_UPDATE_RESOURCE, currentDbVersion.toString());
-            if ("data/upgrade_4.2.sql".equals(updateFile)) {
+            if ("data/upgrade_4.2.sql".equals(updateFile) && !FileUtils.getResourceAsFile(updateFile).exists()) {
                 throw new DatabaseException("unable to upgrade the database schema - please run the dependency-check "
                         + "purge command to remove the existing database");
             }
