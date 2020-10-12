@@ -271,6 +271,10 @@ public class Check extends Update {
      */
     private Boolean pipAnalyzerEnabled;
     /**
+     * Whether the pipfile analyzer should be enabled.
+     */
+    private Boolean pipfileAnalyzerEnabled;
+    /**
      * Sets the path for the mix_audit binary.
      */
     private String mixAuditPath;
@@ -810,6 +814,24 @@ public class Check extends Update {
      */
     public void setPipAnalyzerEnabled(Boolean pipAnalyzerEnabled) {
         this.pipAnalyzerEnabled = pipAnalyzerEnabled;
+    }
+
+    /**
+     * Get the value of pipfileAnalyzerEnabled.
+     *
+     * @return the value of pipfileAnalyzerEnabled
+     */
+    public Boolean isPipfileAnalyzerEnabled() {
+        return pipfileAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of pipfileAnalyzerEnabled.
+     *
+     * @param pipfileAnalyzerEnabled new value of pipfileAnalyzerEnabled
+     */
+    public void setPipfileAnalyzerEnabled(Boolean pipfileAnalyzerEnabled) {
+        this.pipfileAnalyzerEnabled = pipfileAnalyzerEnabled;
     }
 
     /**
@@ -1749,6 +1771,7 @@ public class Check extends Update {
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_WORKING_DIRECTORY, bundleAuditWorkingDirectory);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, autoconfAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_PIP_ENABLED, pipAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_PIPFILE_ENABLED, pipfileAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, nodeAuditAnalyzerEnabled);
