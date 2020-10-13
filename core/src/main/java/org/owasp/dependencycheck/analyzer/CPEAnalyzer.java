@@ -66,6 +66,8 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
+import org.owasp.dependencycheck.dependency.naming.Identifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
@@ -579,17 +581,36 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      */
     private boolean verifyEntry(final IndexEntry entry, final Dependency dependency) {
         boolean isValid = false;
-
         //TODO - does this nullify some of the fuzzy matching that happens in the lucene search?
         // for instance CPE some-component and in the evidence we have SomeComponent.
-        if (collectionContainsString(dependency.getEvidence(EvidenceType.PRODUCT), entry.getProduct())
+
+        //TODO - should this have a package manager only flag instead of just looking for NPM
+        if (Ecosystem.NODEJS.equals(dependency.getEcosystem())) {
+            for (Identifier i : dependency.getSoftwareIdentifiers()) {
+                if (i instanceof PurlIdentifier) {
+                    PurlIdentifier p = (PurlIdentifier) i;
+                    if (cleanPackageName(p.getName()).equals(cleanPackageName(entry.getProduct()))) {
+                        isValid=true;
+                    }
+                }
+            }
+        } else if (collectionContainsString(dependency.getEvidence(EvidenceType.PRODUCT), entry.getProduct())
                 && collectionContainsString(dependency.getEvidence(EvidenceType.VENDOR), entry.getVendor())) {
-            //&& collectionContainsVersion(dependency.getVersionEvidence(), entry.getVersion())
             isValid = true;
         }
         return isValid;
     }
-
+    /**
+     * Only returns alpha numeric characters contained in a given package name.
+     * @param name the package name to cleanse
+     * @return the cleansed packaage name
+     */
+    private String cleanPackageName(String name) {
+        if (name == null) {
+            return "";
+        }
+        return name.replaceAll("[^a-zA-Z0-9]+", "");
+    }
     /**
      * Used to determine if the EvidenceCollection contains a specific string.
      *
