@@ -737,6 +737,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        False positives per issue #2821
+        ]]></notes>
+        <packageUrl regex="true">^pkg:(generic|nuget)/Microsoft\.VisualStudio\.Web\.CodeGenerat.*$</packageUrl>
+        <cpe>cpe:/a:microsoft:visual_studio_code</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #1968
         ]]></notes>
         <packageUrl regex="true">^pkg:(generic|nuget)/Microsoft\.Win32\.Registry\.AccessControl@.*$</packageUrl>
