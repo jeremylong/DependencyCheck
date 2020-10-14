@@ -127,7 +127,7 @@ public class JsonArrayFixingInputStream extends InputStream {
      * @return the offset if found; otherwise <code>-1</code>
      */
     private int getClosingBraceOffset() {
-        for (int pos = bufferStart; pos < (bufferStart + bufferAvailable); pos++) {
+        for (int pos = bufferStart; pos < BUFFER_SIZE && pos < (bufferStart + bufferAvailable); pos++) {
             if (buffer[pos] == '}') {
                 return pos - bufferStart;
             }
