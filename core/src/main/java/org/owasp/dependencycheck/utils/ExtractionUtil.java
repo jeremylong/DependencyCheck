@@ -177,6 +177,7 @@ public final class ExtractionUtil {
                 } else {
                     final File file = new File(extractTo, entry.getName());
                     if (!file.getCanonicalPath().startsWith(destPath)) {
+                        LOGGER.debug("ZipSlip detected\n-Destination: " + destPath + "\n-Path: " + file.toString());
                         throw new ExtractionException("Archive contains a file that would be extracted outside of the target directory.");
                     }
                     try (FileOutputStream fos = new FileOutputStream(file)) {
@@ -283,6 +284,7 @@ public final class ExtractionUtil {
             if (filter.accept(file.getParentFile(), file.getName())) {
                 final String destPath = destination.getCanonicalPath();
                 if (!file.getCanonicalPath().startsWith(destPath)) {
+                    LOGGER.debug("ZipSlip detected\n-Destination: " + destPath + "\n-Path: " + file.toString());
                     final String msg = String.format(
                             "Archive contains a file (%s) that would be extracted outside of the target directory.",
                             file.getAbsolutePath());
