@@ -147,10 +147,22 @@ public final class URLConnectionFactory {
                 LOGGER.debug("Adding user info as basic authorization");
             }
             conn.addRequestProperty("Authorization", basicAuth);
-        } else if (StringUtils.isNotEmpty(settings.getString(Settings.KEYS.CVE_USER))
-                && StringUtils.isNotEmpty(settings.getString(Settings.KEYS.CVE_PASSWORD))) {
-            final String user = settings.getString(Settings.KEYS.CVE_USER);
-            final String password = settings.getString(Settings.KEYS.CVE_PASSWORD);
+        }
+    }
+
+    /**
+     * Adds a basic authentication header if the values in the settings are not
+     * null.
+     *
+     * @param conn the connection to add the basic auth header
+     * @param userKey the settings key for the username
+     * @param passwordKey the settings key for the password
+     */
+    public void addBasicAuthentication(HttpURLConnection conn, String userKey, String passwordKey) {
+        if (StringUtils.isNotEmpty(settings.getString(userKey))
+                && StringUtils.isNotEmpty(settings.getString(passwordKey))) {
+            final String user = settings.getString(userKey);
+            final String password = settings.getString(passwordKey);
             final String userColonPassword = user + ":" + password;
             final String basicAuth = "Basic " + Base64.getEncoder().encodeToString(userColonPassword.getBytes(UTF_8));
             if (LOGGER.isDebugEnabled()) {

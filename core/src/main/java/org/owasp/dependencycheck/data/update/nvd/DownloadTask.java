@@ -125,7 +125,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
             final long startDownload = System.currentTimeMillis();
             try {
                 final Downloader downloader = new Downloader(settings);
-                downloader.fetchFile(url1, file);
+                downloader.fetchFile(url1, file, Settings.KEYS.CVE_USER, Settings.KEYS.CVE_PASSWORD);
             } catch (DownloadFailedException ex) {
                 LOGGER.error("Download Failed for NVD CVE - {}\nSome CVEs may not be reported. Reason: {}",
                         nvdCveInfo.getId(), ex.getMessage());

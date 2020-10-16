@@ -60,7 +60,7 @@ public class URLConnectionFactoryIT extends BaseTest {
         mockServerClient.when(HttpRequest.request().withMethod("GET")
                 .withPath("/secure/resource.xml"), Times.once())
                 .respond(HttpResponse.response().withBody("Unauthorized").withStatusCode(401));
-        
+
         URL url = new URL("http://localhost:"
                 + mockServerClient.remoteAddress().getPort()
                 + "/secure/resource.xml");
@@ -88,7 +88,7 @@ public class URLConnectionFactoryIT extends BaseTest {
         mockServerClient.when(HttpRequest.request().withMethod("GET")
                 .withPath("/secure/resource.xml"), Times.once())
                 .respond(HttpResponse.response().withBody("Unauthorized").withStatusCode(401));
-        
+
         URL url = new URL("http://username:password@localhost:"
                 + mockServerClient.remoteAddress().getPort()
                 + "/secure/resource.xml");
