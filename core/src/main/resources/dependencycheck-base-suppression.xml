@@ -288,6 +288,20 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        Suppresses false positives per #2820
+        ]]></notes>
+        <packageUrl regex="true">^pkg:nuget/jQuery[\.-].*$</packageUrl>
+        <cpe>cpe:/a:jquery:jquery</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: System.Security.Cryptography.OpenSsl.dll
+        ]]></notes>
+        <packageUrl regex="true">^pkg:generic/System\.Security\.Cryptography\.OpenSsl@.*$</packageUrl>
+        <cpe>cpe:/a:openssl:openssl</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Suppresses false positives per #2882
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus\-mutiny@.*$</packageUrl>
