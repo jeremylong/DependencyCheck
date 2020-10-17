@@ -302,6 +302,28 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        file name: Microsoft.Bcl.AsyncInterfaces.dll
+        ]]></notes>
+        <packageUrl regex="true">^pkg:generic/Microsoft\.Bcl\.AsyncInterfaces@.*$</packageUrl>
+        <cpe>cpe:/a:microsoft:.net_core</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per #2819
+        ]]></notes>
+        <packageUrl regex="true">^pkg:generic/Microsoft\.DiaSymReader\.Native\.arm@.*$</packageUrl>
+        <cpe>cpe:/a:microsoft:visual_studio</cpe>
+        <cpe>cpe:/a:microsoft:visual_studio_2017</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per #2819
+        ]]></notes>
+        <packageUrl regex="true">^pkg:nuget/Microsoft\.DiaSymReader\.Native@.*$</packageUrl>
+        <cpe>cpe:/a:dia:dia</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Suppresses false positives per #2882
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus\-mutiny@.*$</packageUrl>
