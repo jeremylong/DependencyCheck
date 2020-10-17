@@ -623,14 +623,14 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        Suppresses false positives per issue #2865
+        Suppresses false positives per issue #2896
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.microsoft\.azure/msal4j@.*$</packageUrl>
         <cpe>cpe:/a:http_authentication_library_project:http_authentication_library</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        Suppresses false positives per issue #2865
+        Suppresses false positives per issue #2896
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.nimbusds/oauth2\-oidc\-sdk@.*$</packageUrl>
         <cpe>cpe:/a:openid:openid</cpe>
