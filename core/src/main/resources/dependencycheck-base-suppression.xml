@@ -288,6 +288,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        Suppresses false positives per #2882
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus\-mutiny@.*$</packageUrl>
+        <cpe>cpe:/a:mutiny:mutiny</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Suppresses false positives per #1396.
         ]]></notes>
         <gav regex="true">^org\.mitre:openid-connect-client:.*$</gav>
