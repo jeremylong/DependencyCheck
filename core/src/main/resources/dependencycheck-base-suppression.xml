@@ -288,9 +288,23 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        Suppresses false positives per #2549
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.jboss\.eap/wildfly\-client\-properties@.*$</packageUrl>
+        <cpe>cpe:/a:redhat:wildfly</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives
+        ]]></notes>
+        <packageUrl regex="true">^pkg:npm/rc@.*$</packageUrl>
+        <cpe>cpe:/a:rc_project:rc</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Suppresses false positives per #2820
         ]]></notes>
-        <packageUrl regex="true">^pkg:nuget/jQuery[\.-].*$</packageUrl>
+        <packageUrl regex="true">^pkg:nuget/(microsoft\.)?jQuery[\.-].*$</packageUrl>
         <cpe>cpe:/a:jquery:jquery</cpe>
     </suppress>
     <suppress base="true">
