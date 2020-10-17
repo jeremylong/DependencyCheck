@@ -288,6 +288,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        Suppresses false positives per #2512
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.poi/ooxml\-schemas@.*$</packageUrl>
+        <cpe>cpe:/a:apache:poi</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Suppresses false positives per #2549
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.jboss\.eap/wildfly\-client\-properties@.*$</packageUrl>
