@@ -112,7 +112,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * dependencies.
      */
     private static final FileFilter REMOVE_FROM_ANALYSIS = FileFilterBuilder.newInstance()
-            .addExtensions("zip", "tar", "gz", "tgz", "bz2", "tbz2").build();
+            .addExtensions("zip", "tar", "gz", "tgz", "bz2", "tbz2", "nupkg").build();
     /**
      * Detects files with .zip extension.
      */
