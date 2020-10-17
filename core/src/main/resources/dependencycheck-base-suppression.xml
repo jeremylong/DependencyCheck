@@ -288,6 +288,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        Suppresses false positives per #2511
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.vaadin/vaadin\-sass\-compiler@.*$</packageUrl>
+        <cpe>cpe:/a:compile-sass_project:compile-sass</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Suppresses false positives per #2512
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.poi/ooxml\-schemas@.*$</packageUrl>
@@ -2342,7 +2349,7 @@
         <notes><![CDATA[
         FP per #2191
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/com\.vaadin/.*(flow|theme|mixin|style|widget).*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/com\.vaadin/.*(sass|flow|theme|mixin|style|widget).*$</packageUrl>
         <cpe>cpe:/a:vaadin:vaadin</cpe>
     </suppress>
     <suppress base="true">
