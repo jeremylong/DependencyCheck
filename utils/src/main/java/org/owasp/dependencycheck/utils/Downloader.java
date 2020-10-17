@@ -71,7 +71,23 @@ public final class Downloader {
      * @throws ResourceNotFoundException thrown when a 404 is received
      */
     public void fetchFile(URL url, File outputPath) throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
-        fetchFile(url, outputPath, true);
+        fetchFile(url, outputPath, true, null, null);
+    }
+
+    /**
+     * Retrieves a file from a given URL and saves it to the outputPath.
+     *
+     * @param url the URL of the file to download
+     * @param outputPath the path to the save the file to
+     * @param userKey the settings key for the username to be used
+     * @param passwordKey the settings key for the password to be used
+     * @throws org.owasp.dependencycheck.utils.DownloadFailedException is thrown
+     * if there is an error downloading the file
+     * @throws TooManyRequestsException thrown when a 429 is received
+     * @throws ResourceNotFoundException thrown when a 404 is received
+     */
+    public void fetchFile(URL url, File outputPath, String userKey, String passwordKey) throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
+        fetchFile(url, outputPath, true, userKey, passwordKey);
     }
 
     /**
@@ -88,8 +104,27 @@ public final class Downloader {
      */
     public void fetchFile(URL url, File outputPath, boolean useProxy) throws DownloadFailedException,
             TooManyRequestsException, ResourceNotFoundException {
+        fetchFile(url, outputPath, useProxy, null, null);
+    }
+
+    /**
+     * Retrieves a file from a given URL and saves it to the outputPath.
+     *
+     * @param url the URL of the file to download
+     * @param outputPath the path to the save the file to
+     * @param useProxy whether to use the configured proxy when downloading
+     * files
+     * @param userKey the settings key for the username to be used
+     * @param passwordKey the settings key for the password to be used
+     * @throws org.owasp.dependencycheck.utils.DownloadFailedException is thrown
+     * if there is an error downloading the file
+     * @throws TooManyRequestsException thrown when a 429 is received
+     * @throws ResourceNotFoundException thrown when a 404 is received
+     */
+    public void fetchFile(URL url, File outputPath, boolean useProxy, String userKey, String passwordKey) throws DownloadFailedException,
+            TooManyRequestsException, ResourceNotFoundException {
         InputStream in = null;
-        try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy);
+        try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy, userKey, passwordKey);
                 OutputStream out = new FileOutputStream(outputPath)) {
             in = conn.fetch(url);
             ByteStreams.copy(in, out);
