@@ -29,6 +29,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.JDBCType;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -121,6 +122,8 @@ public final class CveDB implements AutoCloseable {
      * {@linkplain org.owasp.dependencycheck.data.nvd.json.DefCveItem}.
      */
     private final CveItemOperator cveItemConverter = new CveItemOperator();
+    private boolean isOracle=false;
+    private boolean lowDefaultFetch=false;
 
     /**
      * The enumeration value names must match the keys of the statements in the
@@ -265,6 +268,7 @@ public final class CveDB implements AutoCloseable {
             if (!isOpen()) {
                 connection = connectionFactory.getConnection();
                 final String databaseProductName = determineDatabaseProductName(this.connection);
+                isOracle = "oracle".equals(databaseProductName);
                 statementBundle = databaseProductName != null
                         ? ResourceBundle.getBundle("data/dbStatements", new Locale(databaseProductName))
                         : ResourceBundle.getBundle("data/dbStatements");
@@ -357,7 +361,16 @@ public final class CveDB implements AutoCloseable {
 //                final String[] returnedColumns = {"id"};
 //                preparedStatement = connection.prepareStatement(statementString, returnedColumns);
 //            } else {
-            preparedStatement = connection.prepareStatement(statementString);
+            if (isOracle && key == UPDATE_VULNERABILITY) {
+                preparedStatement = connection.prepareCall(statementString);
+            } else {
+                preparedStatement = connection.prepareStatement(statementString);
+            }
+            if (isOracle) {
+                // Oracle has a default fetch-size of 10; MariaDB, MySQL, SQLServer and PostgreSQL by default cache the full
+                // resultset at the client https://venkatsadasivam.com/2009/02/01/jdbc-performance-tuning-with-optimal-fetch-size/
+                preparedStatement.setFetchSize(10_000);
+            }
 //            }
         } catch (SQLException ex) {
             throw new DatabaseException(ex);
@@ -1001,13 +1014,24 @@ public final class CveDB implements AutoCloseable {
                 callUpdate.setNull(30, java.sql.Types.NULL);
                 callUpdate.setNull(31, java.sql.Types.NULL);
             }
-
-            try (ResultSet rs = callUpdate.executeQuery()) {
-                rs.next();
-                vulnerabilityId = rs.getInt(1);
-            } catch (SQLException ex) {
-                final String msg = String.format("Unable to retrieve id for new vulnerability for '%s'", cve.getCve().getCVEDataMeta().getId());
-                throw new DatabaseException(msg, ex);
+            if (isOracle) {
+                try {
+                    CallableStatement cs = (CallableStatement) callUpdate;
+                    cs.registerOutParameter(32, JDBCType.INTEGER);
+                    cs.executeUpdate();
+                    vulnerabilityId = cs.getInt(32);
+                } catch (SQLException ex) {
+                    final String msg = String.format("Unable to retrieve id for new vulnerability for '%s'", cve.getCve().getCVEDataMeta().getId());
+                    throw new DatabaseException(msg, ex);
+                }
+            } else {
+                try (ResultSet rs = callUpdate.executeQuery()) {
+                    rs.next();
+                    vulnerabilityId = rs.getInt(1);
+                } catch (SQLException ex) {
+                    final String msg = String.format("Unable to retrieve id for new vulnerability for '%s'", cve.getCve().getCVEDataMeta().getId());
+                    throw new DatabaseException(msg, ex);
+                }
             }
         } catch (SQLException ex) {
             throw new UnexpectedAnalysisException(ex);
