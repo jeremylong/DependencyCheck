@@ -1637,6 +1637,7 @@
         ]]></notes>
         <gav regex="true">^org\.glassfish\.grizzly:grizzly-http-client:.*$</gav>
         <cpe>cpe:/a:async-http-client_project:async-http-client</cpe>
+        <cpe>cpe:/a:asynchttpclient_project:async-http-client</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -2230,6 +2231,7 @@
         ]]></notes>
         <gav regex="true">^org\.asynchttpclient:async-http-client-netty-utils:.*$</gav>
         <cpe>cpe:/a:async-http-client_project:async-http-client</cpe>
+        <cpe>cpe:/a:asynchttpclient_project:async-http-client</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -2380,6 +2382,7 @@
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.softwaremill\.sttp.*$</packageUrl>
         <cpe>cpe:/a:async-http-client_project:async-http-client</cpe>
+        <cpe>cpe:/a:asynchttpclient_project:async-http-client</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
