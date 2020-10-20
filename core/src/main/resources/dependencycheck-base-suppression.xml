@@ -1548,6 +1548,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+       FP per #2908
+       ]]></notes>
+        <packageUrl regex="true">^pkg:maven/jakarta\.json/jakarta\.json\-api@.*$</packageUrl>
+        <cpe>cpe:/a:processing:processing</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         https://github.com/ojai/ojai is not mapr
         ]]></notes>
         <gav regex="true">^org\.ojai:ojai:.*$</gav>
