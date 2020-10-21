@@ -2547,6 +2547,20 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        False positive per #2912
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.linguafranca\.pwdb/database@.*$</packageUrl>
+        <cpe>cpe:/a:keepass:keepass</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per #2912
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.linguafranca\.pwdb/KeePass.*$</packageUrl>
+        <cpe>cpe:/a:keepass:keepass</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2248
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.zookeeper/zookeeper@.*$</packageUrl>
