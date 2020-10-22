@@ -23,9 +23,11 @@ REPO=
 
 # OS specific support.  $var _must_ be set to either true or false.
 cygwin=false;
+mingw=false;
 darwin=false;
 case "`uname`" in
   CYGWIN*) cygwin=true ;;
+  MINGW*) mingw=true ;;
   Darwin*) darwin=true
            if [ -z "$JAVA_VERSION" ] ; then
              JAVA_VERSION="CurrentJDK"
@@ -48,8 +50,8 @@ if [ -z "$JAVA_HOME" ] ; then
   fi
 fi
 
-# For Cygwin, ensure paths are in UNIX format before anything is touched
-if $cygwin ; then
+# For Cygwin and MINGW, ensure paths are in UNIX format before anything is touched
+if $cygwin || $mingw; then
   [ -n "$JAVA_HOME" ] && JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
   [ -n "$CLASSPATH" ] && CLASSPATH=`cygpath --path --unix "$CLASSPATH"`
 fi
@@ -90,8 +92,8 @@ if [ -n "$CLASSPATH_PREFIX" ] ; then
   CLASSPATH=$CLASSPATH_PREFIX:$CLASSPATH
 fi
 
-# For Cygwin, switch paths to Windows format before running java
-if $cygwin; then
+# For Cygwin and Mingw, switch paths to Windows format before running java
+if $cygwin || $mingw; then
   [ -n "$CLASSPATH" ] && CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
   [ -n "$JAVA_HOME" ] && JAVA_HOME=`cygpath --path --windows "$JAVA_HOME"`
   [ -n "$HOME" ] && HOME=`cygpath --path --windows "$HOME"`
