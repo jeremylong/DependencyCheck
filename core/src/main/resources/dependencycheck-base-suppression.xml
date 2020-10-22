@@ -2561,6 +2561,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        False positive per #2907
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/javax\.enterprise/cdi\-api@.*$</packageUrl>
+        <cve>CVE-2014-8122</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2248
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.zookeeper/zookeeper@.*$</packageUrl>
