@@ -198,6 +198,7 @@
             44. <cve>CVE-2020-10663</cve> is a ruby vulnerability
             45. Facebook is not a dependency
             46. gitlab is not a depenency #2567 and is built using ruby
+            47. DeleGate is a C-language application #2435
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -249,6 +250,7 @@
         <cve>CVE-2020-10663</cve>
         <cpe>cpe:/a:facebook:facebook</cpe>
         <cpe>cpe:/a:gitlab:gitlab</cpe>
+        <cpe>cpe:/a:delegate:delegate</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
