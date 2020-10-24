@@ -46,6 +46,7 @@ import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
+import java.util.Arrays;
 import org.owasp.dependencycheck.utils.SeverityUtil;
 
 /**
@@ -335,7 +336,8 @@ public class App {
                 baseDir = new File(tmpBase, tmpInclude);
                 include = "**/*";
             }
-
+            LOGGER.debug("BaseDir: " + baseDir);
+            LOGGER.debug("Include: " + include);
             scanner.setBasedir(baseDir);
             final String[] includes = {include};
             scanner.setIncludes(includes);
@@ -344,6 +346,9 @@ public class App {
                 scanner.setFollowSymlinks(false);
             }
             if (excludes != null && excludes.length > 0) {
+                for (String e : excludes) {
+                    LOGGER.debug("Exclude: " + e);
+                }
                 scanner.addExcludes(excludes);
             }
             scanner.scan();
