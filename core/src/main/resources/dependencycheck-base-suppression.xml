@@ -205,6 +205,7 @@
             44. <cve>CVE-2020-10663</cve> is a ruby vulnerability
             45. Facebook is not a dependency
             46. gitlab is not a depenency #2567 and is built using ruby
+            47. DeleGate is a C-language application #2435
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -256,6 +257,7 @@
         <cve>CVE-2020-10663</cve>
         <cpe>cpe:/a:facebook:facebook</cpe>
         <cpe>cpe:/a:gitlab:gitlab</cpe>
+        <cpe>cpe:/a:delegate:delegate</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -3755,5 +3757,13 @@
         <gav regex="true">^name\.neuhalfen\.projects\.crypto\.bouncycastle\.openpgp:bouncy-gpg:.*$</gav>
         <cpe>cpe:/a:gpg-pgp_project::gpg-pgp</cpe>
         <cpe>cpe:/a:openpgp:openpgp</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per  #1749
+        JCraft's agentproxy is a proxy to ssh-agent and Pageant, not the pure-Java SSH2 implementation Jsch
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.jcraft/jsch\.agentproxy.*$</packageUrl>
+        <cpe>cpe:/a:jcraft:jsch</cpe>
     </suppress>
 </suppressions>

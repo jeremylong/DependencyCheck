@@ -1662,16 +1662,16 @@ public class Check extends Update {
                 }
             }
             final ExceptionCollection exceptions = callExecuteAnalysis(engine);
-
-            for (String format : getReportFormats()) {
-                engine.writeReports(getProjectName(), new File(reportOutputDirectory), format, exceptions);
-            }
-
-            if (this.failBuildOnCVSS <= 10) {
-                checkForFailure(engine.getDependencies());
-            }
-            if (this.showSummary) {
-                DependencyCheckScanAgent.showSummary(engine.getDependencies());
+            if (exceptions == null || !exceptions.isFatal()) {
+                for (String format : getReportFormats()) {
+                    engine.writeReports(getProjectName(), new File(reportOutputDirectory), format, exceptions);
+                }
+                if (this.failBuildOnCVSS <= 10) {
+                    checkForFailure(engine.getDependencies());
+                }
+                if (this.showSummary) {
+                    DependencyCheckScanAgent.showSummary(engine.getDependencies());
+                }
             }
         } catch (DatabaseException ex) {
             final String msg = "Unable to connect to the dependency-check database; analysis has stopped";
