@@ -3751,4 +3751,12 @@
         <cpe>cpe:/a:gpg-pgp_project::gpg-pgp</cpe>
         <cpe>cpe:/a:openpgp:openpgp</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per  #1749
+        JCraft's agentproxy is a proxy to ssh-agent and Pageant, not the pure-Java SSH2 implementation Jsch
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.jcraft/jsch\.agentproxy.*$</packageUrl>
+        <cpe>cpe:/a:jcraft:jsch</cpe>
+    </suppress>
 </suppressions>
