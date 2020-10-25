@@ -216,6 +216,12 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * The parent directory for the individual directories per archive.
      */
     private File tempFileLocation = null;
+    /**
+     * Maven group id and artifact ids must match the regex to be considered
+     * valid. In some cases ODC cannot interpolate a variable and it produced
+     * invalid names.
+     */
+    private static final String VALID_NAME = "^[A-Za-z0-9_\\-.]+$";
 
     //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
     /**
@@ -673,17 +679,26 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         if (addAsIdentifier && isMainPom) {
-            Identifier id;
+            Identifier id = null;
             try {
-                final PackageURL purl = PackageURLBuilder.aPackageURL().withType("maven").withNamespace(originalGroupID)
-                        .withName(originalArtifactID).withVersion(version).build();
-                id = new PurlIdentifier(purl, Confidence.HIGH);
+                if (originalArtifactID != null && originalArtifactID.matches(VALID_NAME)
+                        && originalGroupID != null && originalGroupID.matches(VALID_NAME)) {
+                    final PackageURL purl = PackageURLBuilder.aPackageURL().withType("maven").withNamespace(originalGroupID)
+                            .withName(originalArtifactID).withVersion(version).build();
+                    id = new PurlIdentifier(purl, Confidence.HIGH);
+                } else {
+                    LOGGER.debug("Invalid maven identifier identified: " + originalGroupID + ":" + originalArtifactID);
+//                    final String gav = String.format("%s:%s:%s", originalGroupID, originalArtifactID, version);
+//                    id = new GenericIdentifier("generic:" + gav, Confidence.LOW);
+                }
             } catch (MalformedPackageURLException ex) {
                 final String gav = String.format("%s:%s:%s", originalGroupID, originalArtifactID, version);
                 LOGGER.debug("Error building package url for " + gav + "; using generic identifier instead.", ex);
                 id = new GenericIdentifier("maven:" + gav, Confidence.HIGH);
             }
-            dependency.addSoftwareIdentifier(id);
+            if (id != null) {
+                dependency.addSoftwareIdentifier(id);
+            }
         }
 
         // org name
