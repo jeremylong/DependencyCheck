@@ -44,6 +44,13 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
                 </includes>
             </resource>
             <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>completion-for-dependency-check.sh</include>
+                </includes>
+                <targetPath>${project.build.directory}/release/bin</targetPath>
+            </resource>
+            <resource>
                 <directory>${basedir}</directory>
                 <targetPath>META-INF</targetPath>
                 <includes>
