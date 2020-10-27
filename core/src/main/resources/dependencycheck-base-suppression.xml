@@ -16,6 +16,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2923
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.netbeans\.external/.*$</packageUrl>
+        <cpe>cpe:/a:apache:netbeans</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #1721
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.springframework\.batch/spring\-batch\-infrastructure@.*$</packageUrl>
