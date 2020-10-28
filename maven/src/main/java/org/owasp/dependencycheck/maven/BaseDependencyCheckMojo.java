@@ -1201,17 +1201,25 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             String version = null;
             List<ArtifactVersion> availableVersions = null;
             if (org.apache.maven.artifact.Artifact.SCOPE_SYSTEM.equals(dependencyNode.getArtifact().getScope())) {
-                for (org.apache.maven.model.Dependency d : project.getDependencies()) {
-                    final Artifact a = dependencyNode.getArtifact();
-                    if (d.getSystemPath() != null && artifactsMatch(d, a)) {
-
-                        artifactFile = new File(d.getSystemPath());
-                        isResolved = artifactFile.isFile();
-                        groupId = a.getGroupId();
-                        artifactId = a.getArtifactId();
-                        version = a.getVersion();
-                        availableVersions = a.getAvailableVersions();
-                        break;
+                final Artifact a = dependencyNode.getArtifact();
+                if (a.isResolved() && a.getFile().isFile()) {
+                    artifactFile = a.getFile();
+                    isResolved = artifactFile.isFile();
+                    groupId = a.getGroupId();
+                    artifactId = a.getArtifactId();
+                    version = a.getVersion();
+                    availableVersions = a.getAvailableVersions();
+                } else {
+                    for (org.apache.maven.model.Dependency d : project.getDependencies()) {
+                        if (d.getSystemPath() != null && artifactsMatch(d, a)) {
+                            artifactFile = new File(d.getSystemPath());
+                            isResolved = artifactFile.isFile();
+                            groupId = a.getGroupId();
+                            artifactId = a.getArtifactId();
+                            version = a.getVersion();
+                            availableVersions = a.getAvailableVersions();
+                            break;
+                        }
                     }
                 }
                 if (!isResolved) {
