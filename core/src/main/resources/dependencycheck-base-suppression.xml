@@ -16,6 +16,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2927
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-function\-core@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:cloud_foundation</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2923
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.netbeans\.external/.*$</packageUrl>
@@ -608,14 +615,14 @@
         <packageUrl regex="true">^pkg:maven/com\.typesafe\.play/cachecontrol_2\.13@.*$</packageUrl>
         <cpe>cpe:/a:playframework:play_framework</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         FP per #2678
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.camel/camel\-cxf@.*$</packageUrl>
         <cpe>cpe:/a:apache:cxf</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         FP per #2678
         ]]></notes>
@@ -3748,7 +3755,7 @@
         <gav regex="true">^io\.gitlab\.arturbosch\.detekt:detekt-.+:.*$</gav>
         <cpe>cpe:/a:gitlab:gitlab</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         false positive per #2721 on org.bouncycastle:bcpg-jdk15on
         caused by cpe:/a:openpgp:openpgp, cpe:/a:pgp:openpgp and cpe:/a:pgp:pgp
@@ -3758,7 +3765,7 @@
         <cpe>cpe:/a:pgp:openpgp</cpe>
         <cpe>cpe:/a:pgp:pgp</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
           false positive per #2721 on name.neuhalfen.projects.crypto.bouncycastle.openpgp:bouncy-gpg
           caused by cpe:/a:gpg-pgp_project::gpg-pgp and cpe:/a:openpgp:openpgp
