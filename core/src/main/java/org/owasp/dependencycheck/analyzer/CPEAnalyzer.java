@@ -590,7 +590,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 if (i instanceof PurlIdentifier) {
                     PurlIdentifier p = (PurlIdentifier) i;
                     if (cleanPackageName(p.getName()).equals(cleanPackageName(entry.getProduct()))) {
-                        isValid=true;
+                        isValid = true;
                     }
                 }
             }
@@ -600,8 +600,10 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         }
         return isValid;
     }
+
     /**
      * Only returns alpha numeric characters contained in a given package name.
+     *
      * @param name the package name to cleanse
      * @return the cleansed packaage name
      */
@@ -611,6 +613,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         }
         return name.replaceAll("[^a-zA-Z0-9]+", "");
     }
+
     /**
      * Used to determine if the EvidenceCollection contains a specific string.
      *
@@ -776,7 +779,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                     cpeBuilder.part(Part.APPLICATION).vendor(vendor).product(product);
                     final int idx = depVersion.getVersionParts().size() - 1;
                     if (idx > 0 && depVersion.getVersionParts().get(idx)
-                            .matches("^(v|final|release|snapshot|beta|alpha|u|rc|m|20\\d\\d).*$")) {
+                            .matches("^(v|final|release|snapshot|r|b|beta|a|alpha|u|rc|sp|dev|revision|service|build|pre|p|patch|update|m|20\\d\\d).*$")) {
                         cpeBuilder.version(StringUtils.join(depVersion.getVersionParts().subList(0, idx), "."));
                         //when written - no update versions in the NVD start with v### - they all strip the v off
                         if (depVersion.getVersionParts().get(idx).matches("^v\\d.*$")) {

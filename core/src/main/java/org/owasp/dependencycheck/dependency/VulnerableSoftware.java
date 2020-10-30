@@ -18,6 +18,8 @@
 package org.owasp.dependencycheck.dependency;
 
 import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -30,6 +32,7 @@ import org.owasp.dependencycheck.utils.DependencyVersion;
 import us.springett.parsers.cpe.Cpe;
 import us.springett.parsers.cpe.ICpe;
 import us.springett.parsers.cpe.exceptions.CpeValidationException;
+import us.springett.parsers.cpe.util.Convert;
 import us.springett.parsers.cpe.values.LogicalValue;
 import us.springett.parsers.cpe.values.Part;
 
@@ -196,7 +199,7 @@ public class VulnerableSoftware extends Cpe implements Serializable {
 
         //todo - if the vulnerablity has an update we are might not be collecting it correctly...
         // as such, this check might cause FN if the CVE has an update in the data set
-        result &= compareAttributes(this.getUpdate(), target.getUpdate());
+        result &= compareUpdateAttributes(this.getUpdate(), target.getUpdate());
         result &= compareAttributes(this.getEdition(), target.getEdition());
         result &= compareAttributes(this.getLanguage(), target.getLanguage());
         result &= compareAttributes(this.getSwEdition(), target.getSwEdition());
@@ -204,6 +207,103 @@ public class VulnerableSoftware extends Cpe implements Serializable {
         result &= compareAttributes(this.getTargetHw(), target.getTargetHw());
         result &= compareAttributes(this.getOther(), target.getOther());
         return result;
+    }
+
+    /**
+     * Performs the same operation as Cpe.compareAttributes() - except
+     * additional rules are applied to match a1 to alpha1 and the comparison of
+     * update attributes will also return true if the only difference between
+     * the strings is an underscore or hyphen.
+     *
+     * @param left the left value to compare
+     * @param right the right value to compare
+     * @return <code>true</code> if there is a match; otherwise
+     * <code>false</code>
+     */
+    protected static boolean compareUpdateAttributes(String left, String right) {
+        //the numbers below come from the CPE Matching standard
+        //Table 6-2: Enumeration of Attribute Comparison Set Relations
+        //https://nvlpubs.nist.gov/nistpubs/Legacy/IR/nistir7696.pdf
+
+        if (left.equalsIgnoreCase(right)) {
+            //1 6 9 - equals
+            return true;
+        } else if (LogicalValue.ANY.getAbbreviation().equals(left)) {
+            //2 3 4 - superset (4 is undefined - treating as true)
+            return true;
+        } else if (LogicalValue.NA.getAbbreviation().equals(left)
+                && LogicalValue.ANY.getAbbreviation().equals(right)) {
+            //5 - subset
+            return true;
+        } else if (LogicalValue.NA.getAbbreviation().equals(left)) {
+            //7 8 - disjoint, undefined
+            return false;
+        } else if (LogicalValue.NA.getAbbreviation().equals(right)) {
+            //12 16 - disjoint
+            return false;
+        } else if (LogicalValue.ANY.getAbbreviation().equals(right)) {
+            //13 15 - subset
+            return true;
+        }
+        final String leftValue = left.replace("-", "").replace("_", "");
+        final String rightValue = right.replace("-", "").replace("_", "");
+        if (leftValue.equalsIgnoreCase(rightValue)) {
+            //1 6 9 - equals
+            return true;
+        }
+
+        boolean results = false;
+        //10 11 14 17
+        if (containsSpecialCharacter(left)) {
+            Pattern p = Convert.wellFormedToPattern(left.toLowerCase());
+            Matcher m = p.matcher(right.toLowerCase());
+            results = m.matches();
+        }
+        if (!results && rightValue.matches("^[abu]\\d.*") && leftValue.matches("^(update|alpha|beta).*")) {
+            switch (right.charAt(0)) {
+                case 'u':
+                    results = compareUpdateAttributes(leftValue, "update" + rightValue.substring(1));
+                    break;
+                case 'a':
+                    results = compareUpdateAttributes(leftValue, "alpha" + rightValue.substring(1));
+                    break;
+                case 'b':
+                    results = compareUpdateAttributes(leftValue, "beta" + rightValue.substring(1));
+            }
+        }
+        if (!results && leftValue.matches("^[abu]\\d.*") && rightValue.matches("^(update|alpha|beta).*")) {
+            switch (left.charAt(0)) {
+                case 'u':
+                    results = compareUpdateAttributes("update" + leftValue.substring(1), rightValue);
+                    break;
+                case 'a':
+                    results = compareUpdateAttributes("alpha" + leftValue.substring(1), rightValue);
+                    break;
+                case 'b':
+                    results = compareUpdateAttributes("beta" + leftValue.substring(1), rightValue);
+            }
+        }
+        return results;
+    }
+
+    /**
+     * Determines if the string has an unquoted special character.
+     *
+     * @param value the string to check
+     * @return <code>true</code> if the string contains an unquoted special
+     * character; otherwise <code>false</code>
+     */
+    private static boolean containsSpecialCharacter(String value) {
+        for (int x = 0; x < value.length(); x++) {
+            char c = value.charAt(x);
+            if (c == '?' || c == '*') {
+                return true;
+            } else if (c == '\\') {
+                //skip the next character because it is quoted
+                x += 1;
+            }
+        }
+        return false;
     }
 
     /**
@@ -234,7 +334,7 @@ public class VulnerableSoftware extends Cpe implements Serializable {
 
         //todo - if the vulnerablity has an update we are might not be collecting it correctly...
         // as such, this check might cause FN if the CVE has an update in the data set
-        result &= compareAttributes(left.getWellFormedUpdate(), right.getWellFormedUpdate());
+        result &= compareUpdateAttributes(left.getWellFormedUpdate(), right.getWellFormedUpdate());
         result &= compareAttributes(left.getWellFormedEdition(), right.getWellFormedEdition());
         result &= compareAttributes(left.getWellFormedLanguage(), right.getWellFormedLanguage());
         result &= compareAttributes(left.getWellFormedSwEdition(), right.getWellFormedSwEdition());
