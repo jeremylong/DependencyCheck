@@ -1673,6 +1673,20 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #1755
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.micrometer/micrometer\-spring\-legacy@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #1755
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.squareup\.retrofit2?/(?!retrofit).*$</packageUrl>
+        <cpe>cpe:/a:squareup:retrofit</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         see https://github.com/jeremylong/DependencyCheck/issues/1927
         ]]></notes>
         <gav regex="true">^io\.prometheus:simpleclient_common:.*$</gav>
