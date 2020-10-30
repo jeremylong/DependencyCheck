@@ -16,6 +16,42 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2928
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.graalvm.*$</packageUrl>
+        <cpe>cpe:/a:oracle:openjdk</cpe>
+        <cpe>cpe:/a:sun:openjdk</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2928
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.graalvm\..*$</packageUrl>
+        <cpe>cpe:/a:oracle:graalvm</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2928
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.graalvm/graal\-sdk@.*$</packageUrl>
+        <cpe>cpe:/a:oracle:graalvm</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2928
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.graalvm/launcher\-common@.*$</packageUrl>
+        <cpe>cpe:/a:oracle:graalvm</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2928
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.graalvm/polyglot\-tck@.*$</packageUrl>
+        <cpe>cpe:/a:oracle:graalvm</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2927
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-function\-core@.*$</packageUrl>
