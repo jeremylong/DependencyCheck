@@ -1788,8 +1788,27 @@
         <notes><![CDATA[
         ActiveMQ false positives.
         ]]></notes>
-        <gav regex="true">org\.apache\.activemq:activemq-pool.*</gav>
+        <gav regex="true">org\.apache\.activemq:activemq(-jms)?-pool.*</gav>
         <cpe>cpe:/a:apache:activemq</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #1681
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.activemq/activemq-(openwire-legacy|spring)@.*$</packageUrl>
+        <cpe>cpe:/a:apache:activemq</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #1681
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.activemq/activemq\-client@.*$</packageUrl>
+        <cve>CVE-2015-5182</cve>
+        <cve>CVE-2015-5183</cve>
+        <cve>CVE-2015-5184</cve>
+        <cve>CVE-2019-0222</cve>
+        <cve>CVE-2020-13920</cve>
+        <cve>CVE-2020-1941</cve>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
