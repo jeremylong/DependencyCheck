@@ -1807,6 +1807,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #1740
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.integration/(?!spring\-integration\-(ws|xml)).*$</packageUrl>
+        <cve>CVE-2019-3772</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Spring data mongodb false positives.
         ]]></notes>
         <gav regex="true">org\.springframework\.data:spring-data-mongodb.*</gav>
