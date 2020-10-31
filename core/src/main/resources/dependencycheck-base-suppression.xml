@@ -1973,6 +1973,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        False positives per issue #1720
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring\-boot\-starter\-batch@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_batch</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         False positives per issue #642
         ]]></notes>
         <gav regex="true">^org\.springframework:spring-context:.*$</gav>
