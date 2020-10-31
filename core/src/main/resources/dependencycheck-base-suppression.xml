@@ -663,6 +663,21 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #1664
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.camel/camel\-servicenow(\-starter)?@.*$</packageUrl>
+        <cpe>cpe:/a:apache:camel</cpe>
+        <cpe>cpe:/a:servicenow:servicenow</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #1664
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.camel/json\-simple\-ordered@.*$</packageUrl>
+        <cpe>cpe:/a:apache:camel</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2678
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.camel/camel\-cxf@.*$</packageUrl>
