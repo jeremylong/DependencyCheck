@@ -257,6 +257,7 @@
             46. gitlab is not a depenency #2567 and is built using ruby
             47. DeleGate is a C-language application #2435
             48. thread_project - etherium token (https://nvd.nist.gov/vuln/detail/CVE-2018-13752) #1718
+            49. data_tools is a python library #1667
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -310,6 +311,7 @@
         <cpe>cpe:/a:gitlab:gitlab</cpe>
         <cpe>cpe:/a:delegate:delegate</cpe>
         <cpe>cpe:/a:thread_project:thread</cpe>
+        <cpe>cpe:/a:data_tools_project:data_tools</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
