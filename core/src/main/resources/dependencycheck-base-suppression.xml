@@ -464,6 +464,14 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+            FP per #1665
+            ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring\-security\-rsa@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
             Suppresses false positives per #1566.
             ]]></notes>
         <gav regex="true">^org\.springframework\.security\.oauth\.boot:spring-security-oauth2-autoconfigure:.*$</gav>
