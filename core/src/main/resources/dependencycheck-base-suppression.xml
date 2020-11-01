@@ -2685,6 +2685,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #1652
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.aries\.transaction/org\.apache\.aries\.transaction\.manager@.*$</packageUrl>
+        <cpe>cpe:/a:apache:geronimo</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         general FP cleanup
         ]]></notes>
         <gav regex="true">^org\.eclipse\.jetty\.orbit:javax\.annotation:.*$</gav>
