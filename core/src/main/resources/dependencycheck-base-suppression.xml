@@ -1529,6 +1529,27 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #1657
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.drizzle\.jdbc/drizzle\-jdbc@.*$</packageUrl>
+        <cpe>cpe:/a:mysql:mysql</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #1657
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.kerby/mysql\-backend@.*$</packageUrl>
+        <cpe>cpe:/a:mysql:mysql</cpe>
+    </suppress>  
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #1657
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.alibaba/druid@.*$</packageUrl>
+        <cpe>cpe:/a:alibaba:alibaba</cpe>
+    </suppress>  
+    <suppress base="true">
+        <notes><![CDATA[
         drop wizard false positives
         ]]></notes>
         <gav regex="true">io\.dropwizard\.metrics:metrics-httpclient:.*</gav>
