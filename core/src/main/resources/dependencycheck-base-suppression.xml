@@ -1522,6 +1522,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #1659
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.ops4j\.pax\..*$</packageUrl>
+        <cpe>cpe:/a:pax_project:pax</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         drop wizard false positives
         ]]></notes>
         <gav regex="true">io\.dropwizard\.metrics:metrics-httpclient:.*</gav>
