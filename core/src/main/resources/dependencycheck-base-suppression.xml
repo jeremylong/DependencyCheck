@@ -2590,6 +2590,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per issue #1654
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.directory\.server/apacheds.*$</packageUrl>
+        <cpe>cpe:/a:apache:http_server</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per issue #942
         ]]></notes>
         <gav regex="true">^org\.alfresco\.cmis\.client:alfresco-opencmis-extension:.*$</gav>
