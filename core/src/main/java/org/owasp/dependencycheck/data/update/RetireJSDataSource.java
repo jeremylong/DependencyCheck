@@ -83,7 +83,7 @@ public class RetireJSDataSource implements CachedWebDataSource {
             final URL url = new URL(configuredUrl);
             final File filepath = new File(url.getPath());
             final File repoFile = new File(settings.getDataDirectory(), filepath.getName());
-            final boolean proceed = enabled && (autoupdate || forceupdate) && shouldUpdate(repoFile);
+            final boolean proceed = enabled && (forceupdate || (autoupdate && shouldUpdate(repoFile)));
             if (proceed) {
                 LOGGER.debug("Begin RetireJS Update");
                 initializeRetireJsRepo(settings, url, repoFile);

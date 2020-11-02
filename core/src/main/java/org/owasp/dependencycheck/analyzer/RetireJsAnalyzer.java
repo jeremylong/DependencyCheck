@@ -178,9 +178,30 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
+
+        File repoFile = null;
+        boolean repoEmpty = false;
+        try {
+            final String configuredUrl = getSettings().getString(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, RetireJSDataSource.DEFAULT_JS_URL);
+            final URL url = new URL(configuredUrl);
+            final File filepath = new File(url.getPath());
+            repoFile = new File(getSettings().getDataDirectory(), filepath.getName());
+            if ( !repoFile.isFile() || repoFile.length() <= 1L) {
+                LOGGER.warn("Retire JS repository is empty or missing - attempting to force the update");
+                repoEmpty = true;
+                getSettings().setBoolean(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, true);
+            }
+        } catch (FileNotFoundException ex) {
+            this.setEnabled(false);
+            throw new InitializationException(String.format("RetireJS repo does not exist locally (%s)", repoFile), ex);
+        } catch (IOException ex) {
+            this.setEnabled(false);
+            throw new InitializationException("Failed to initialize the RetireJS", ex);
+        }
+
         final boolean autoupdate = getSettings().getBoolean(Settings.KEYS.AUTO_UPDATE, true);
         final boolean forceupdate = getSettings().getBoolean(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, false);
-        if (!autoupdate && forceupdate) {
+        if ((!autoupdate && forceupdate) || (autoupdate && repoEmpty)) {
             final RetireJSDataSource ds = new RetireJSDataSource();
             try {
                 ds.update(engine);
@@ -189,19 +210,6 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
             }
         }
 
-        File repoFile = null;
-        try {
-            final String configuredUrl = getSettings().getString(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, RetireJSDataSource.DEFAULT_JS_URL);
-            final URL url = new URL(configuredUrl);
-            final File filepath = new File(url.getPath());
-            repoFile = new File(getSettings().getDataDirectory(), filepath.getName());
-        } catch (FileNotFoundException ex) {
-            this.setEnabled(false);
-            throw new InitializationException(String.format("RetireJS repo does not exist locally (%s)", repoFile), ex);
-        } catch (IOException ex) {
-            this.setEnabled(false);
-            throw new InitializationException("Failed to initialize the RetireJS", ex);
-        }
         //several users are reporting that the retire js repository is getting corrupted.
         try (WriteLock lock = new WriteLock(getSettings(), true, repoFile.getName() + ".lock")) {
             final File temp = getSettings().getTempDirectory();
@@ -275,10 +283,10 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
                 results = scanner.scanScript(dependency.getActualFile().getAbsolutePath(), fileContent, 0);
             } catch (StackOverflowError ex) {
                 final String msg = String.format("An error occured trying to analyze %s. "
-                                + "To resolve this error please try increasing the Java stack size to "
-                                + "8mb and re-run dependency-check:%n%n"
-                                + "(win) : set JAVA_OPTS=\"-Xss8192k\"%n"
-                                + "(*nix): export JAVA_OPTS=\"-Xss8192k\"%n%n",
+                        + "To resolve this error please try increasing the Java stack size to "
+                        + "8mb and re-run dependency-check:%n%n"
+                        + "(win) : set JAVA_OPTS=\"-Xss8192k\"%n"
+                        + "(*nix): export JAVA_OPTS=\"-Xss8192k\"%n%n",
                         dependency.getDisplayFileName());
                 throw new AnalysisException(msg, ex);
             }
