@@ -52,9 +52,9 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per #2927
+        FP per #2927 & #2931
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-function\-core@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-.*$</packageUrl>
         <cpe>cpe:/a:vmware:cloud_foundation</cpe>
     </suppress>
     <suppress base="true">
