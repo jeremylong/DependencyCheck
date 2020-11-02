@@ -773,6 +773,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        Suppresses fp identified while testing #2686
+        ]]></notes>
+        <packageUrl regex="true">^pkg:(nuget|generic)/Azure\.Core(_sdk)?@.*$</packageUrl>
+        <cpe>cpe:/a:microsoft:.net_core</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Suppresses false positives per issue #2865
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.microsoft\.azure/msal4j@.*$</packageUrl>
