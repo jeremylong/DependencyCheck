@@ -1865,6 +1865,30 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2483
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.activemq/activemq\-all@.*$</packageUrl>
+        <cve>CVE-2015-5182</cve>
+        <cve>CVE-2015-5183</cve>
+        <cve>CVE-2015-5184</cve>
+        <cve>CVE-2019-0222</cve>
+        <cve>CVE-2020-13920</cve>
+        <cve>CVE-2020-1941</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2483
+        ]]></notes>
+        <filePath regex="true">.*activemq-all-5.15.11.jar/META-INF/maven.*/pom.xml</filePath>
+        <cve>CVE-2015-5182</cve>
+        <cve>CVE-2015-5183</cve>
+        <cve>CVE-2015-5184</cve>
+        <cve>CVE-2019-0222</cve>
+        <cve>CVE-2020-13920</cve>
+        <cve>CVE-2020-1941</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         ActiveMQ false positives.
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.activemq\.protobuf/activemq\-protobuf@.*$</packageUrl>
