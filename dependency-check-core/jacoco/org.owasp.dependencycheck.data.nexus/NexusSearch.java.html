@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NexusSearch.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nexus</a> &gt; <span class="el_source">NexusSearch.java</span></div><h1>NexusSearch.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nexus;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import javax.annotation.concurrent.ThreadSafe;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import org.owasp.dependencycheck.utils.Settings;
+
+import org.owasp.dependencycheck.utils.URLConnectionFactory;
+import org.owasp.dependencycheck.utils.XmlUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+/**
+ * Class of methods to search Nexus repositories.
+ *
+ * @author colezlaw
+ */
+@ThreadSafe
+public class NexusSearch {
+
+    /**
+     * The root URL for the Nexus repository service.
+     */
+    private final URL rootURL;
+
+    /**
+     * Whether to use the Proxy when making requests.
+     */
+    private final boolean useProxy;
+    /**
+     * The configured settings.
+     */
+    private final Settings settings;
+    /**
+     * Used for logging.
+     */
+<span class="nc" id="L66">    private static final Logger LOGGER = LoggerFactory.getLogger(NexusSearch.class);</span>
+
+    /**
+     * Creates a NexusSearch for the given repository URL.
+     *
+     * @param settings the configured settings
+     * @param useProxy flag indicating if the proxy settings should be used
+     * @throws java.net.MalformedURLException thrown if the configured URL is
+     * invalid
+     */
+<span class="nc" id="L76">    public NexusSearch(Settings settings, boolean useProxy) throws MalformedURLException {</span>
+<span class="nc" id="L77">        this.settings = settings;</span>
+<span class="nc" id="L78">        this.useProxy = useProxy;</span>
+
+<span class="nc" id="L80">        final String searchUrl = settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL);</span>
+<span class="nc" id="L81">        LOGGER.debug(&quot;Nexus Search URL: {}&quot;, searchUrl);</span>
+<span class="nc" id="L82">        this.rootURL = new URL(searchUrl);</span>
+
+<span class="nc" id="L84">    }</span>
+
+    /**
+     * Searches the configured Nexus repository for the given sha1 hash. If the
+     * artifact is found, a &lt;code&gt;MavenArtifact&lt;/code&gt; is populated with the
+     * coordinate information.
+     *
+     * @param sha1 The SHA-1 hash string for which to search
+     * @return the populated Maven coordinates
+     * @throws IOException if it's unable to connect to the specified repository
+     * or if the specified artifact is not found.
+     */
+    public MavenArtifact searchSha1(String sha1) throws IOException {
+<span class="nc bnc" id="L97" title="All 4 branches missed.">        if (null == sha1 || !sha1.matches(&quot;^[0-9A-Fa-f]{40}$&quot;)) {</span>
+<span class="nc" id="L98">            throw new IllegalArgumentException(&quot;Invalid SHA1 format&quot;);</span>
+        }
+
+<span class="nc" id="L101">        final URL url = new URL(rootURL, String.format(&quot;identify/sha1/%s&quot;,</span>
+<span class="nc" id="L102">                sha1.toLowerCase()));</span>
+
+<span class="nc" id="L104">        LOGGER.debug(&quot;Searching Nexus url {}&quot;, url);</span>
+
+        // Determine if we need to use a proxy. The rules:
+        // 1) If the proxy is set, AND the setting is set to true, use the proxy
+        // 2) Otherwise, don't use the proxy (either the proxy isn't configured,
+        // or proxy is specifically set to false
+        final HttpURLConnection conn;
+<span class="nc" id="L111">        final URLConnectionFactory factory = new URLConnectionFactory(settings);</span>
+<span class="nc" id="L112">        conn = factory.createHttpURLConnection(url, useProxy);</span>
+<span class="nc" id="L113">        conn.setDoOutput(true);</span>
+<span class="nc" id="L114">        final String authHeader = buildHttpAuthHeaderValue();</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">        if (!authHeader.isEmpty()) {</span>
+<span class="nc" id="L116">            conn.addRequestProperty(&quot;Authorization&quot;, authHeader);</span>
+        }
+
+        // JSON would be more elegant, but there's not currently a dependency
+        // on JSON, so don't want to add one just for this
+<span class="nc" id="L121">        conn.addRequestProperty(&quot;Accept&quot;, &quot;application/xml&quot;);</span>
+<span class="nc" id="L122">        conn.connect();</span>
+
+<span class="nc bnc" id="L124" title="All 3 branches missed.">        switch (conn.getResponseCode()) {</span>
+            case 200:
+                try {
+<span class="nc" id="L127">                    final DocumentBuilder builder = XmlUtils.buildSecureDocumentBuilder();</span>
+<span class="nc" id="L128">                    final Document doc = builder.parse(conn.getInputStream());</span>
+<span class="nc" id="L129">                    final XPath xpath = XPathFactory.newInstance().newXPath();</span>
+<span class="nc" id="L130">                    final String groupId = xpath</span>
+<span class="nc" id="L131">                            .evaluate(</span>
+                                    &quot;/org.sonatype.nexus.rest.model.NexusArtifact/groupId&quot;,
+                                    doc);
+<span class="nc" id="L134">                    final String artifactId = xpath.evaluate(</span>
+                            &quot;/org.sonatype.nexus.rest.model.NexusArtifact/artifactId&quot;,
+                            doc);
+<span class="nc" id="L137">                    final String version = xpath</span>
+<span class="nc" id="L138">                            .evaluate(</span>
+                                    &quot;/org.sonatype.nexus.rest.model.NexusArtifact/version&quot;,
+                                    doc);
+<span class="nc" id="L141">                    final String link = xpath</span>
+<span class="nc" id="L142">                            .evaluate(</span>
+                                    &quot;/org.sonatype.nexus.rest.model.NexusArtifact/artifactLink&quot;,
+                                    doc);
+<span class="nc" id="L145">                    final String pomLink = xpath</span>
+<span class="nc" id="L146">                            .evaluate(</span>
+                                    &quot;/org.sonatype.nexus.rest.model.NexusArtifact/pomLink&quot;,
+                                    doc);
+<span class="nc" id="L149">                    final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);</span>
+<span class="nc bnc" id="L150" title="All 4 branches missed.">                    if (link != null &amp;&amp; !link.isEmpty()) {</span>
+<span class="nc" id="L151">                        ma.setArtifactUrl(link);</span>
+                    }
+<span class="nc bnc" id="L153" title="All 4 branches missed.">                    if (pomLink != null &amp;&amp; !pomLink.isEmpty()) {</span>
+<span class="nc" id="L154">                        ma.setPomUrl(pomLink);</span>
+                    }
+<span class="nc" id="L156">                    return ma;</span>
+<span class="nc" id="L157">                } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {</span>
+                    // Anything else is jacked-up XML stuff that we really can't recover
+                    // from well
+<span class="nc" id="L160">                    throw new IOException(e.getMessage(), e);</span>
+                }
+            case 404:
+<span class="nc" id="L163">                throw new FileNotFoundException(&quot;Artifact not found in Nexus&quot;);</span>
+            default:
+<span class="nc" id="L165">                LOGGER.debug(&quot;Could not connect to Nexus received response code: {} {}&quot;,</span>
+<span class="nc" id="L166">                        conn.getResponseCode(), conn.getResponseMessage());</span>
+<span class="nc" id="L167">                throw new IOException(&quot;Could not connect to Nexus&quot;);</span>
+        }
+    }
+
+    /**
+     * Do a preflight request to see if the repository is actually working.
+     *
+     * @return whether the repository is listening and returns the /status URL
+     * correctly
+     */
+    public boolean preflightRequest() {
+        final HttpURLConnection conn;
+        try {
+<span class="nc" id="L180">            final URL url = new URL(rootURL, &quot;status&quot;);</span>
+<span class="nc" id="L181">            final URLConnectionFactory factory = new URLConnectionFactory(settings);</span>
+<span class="nc" id="L182">            conn = factory.createHttpURLConnection(url, useProxy);</span>
+<span class="nc" id="L183">            conn.addRequestProperty(&quot;Accept&quot;, &quot;application/xml&quot;);</span>
+<span class="nc" id="L184">            final String authHeader = buildHttpAuthHeaderValue();</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">            if (!authHeader.isEmpty()) {</span>
+<span class="nc" id="L186">                conn.addRequestProperty(&quot;Authorization&quot;, authHeader);</span>
+            }
+<span class="nc" id="L188">            conn.connect();</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">            if (conn.getResponseCode() != 200) {</span>
+<span class="nc" id="L190">                LOGGER.warn(&quot;Expected 200 result from Nexus, got {}&quot;, conn.getResponseCode());</span>
+<span class="nc" id="L191">                return false;</span>
+            }
+<span class="nc" id="L193">            final DocumentBuilder builder = XmlUtils.buildSecureDocumentBuilder();</span>
+
+<span class="nc" id="L195">            final Document doc = builder.parse(conn.getInputStream());</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">            if (!&quot;status&quot;.equals(doc.getDocumentElement().getNodeName())) {</span>
+<span class="nc" id="L197">                LOGGER.warn(&quot;Expected root node name of status, got {}&quot;, doc.getDocumentElement().getNodeName());</span>
+<span class="nc" id="L198">                return false;</span>
+            }
+<span class="nc" id="L200">        } catch (IOException | ParserConfigurationException | SAXException e) {</span>
+<span class="nc" id="L201">            LOGGER.warn(&quot;Pre-flight request to Nexus failed: &quot;, e);</span>
+<span class="nc" id="L202">            return false;</span>
+<span class="nc" id="L203">        }</span>
+<span class="nc" id="L204">        return true;</span>
+    }
+
+    /**
+     * Constructs the base64 encoded basic authentication header value.
+     *
+     * @return the base64 encoded basic authentication header value
+     */
+    private String buildHttpAuthHeaderValue() {
+<span class="nc" id="L213">        final String user = settings.getString(Settings.KEYS.ANALYZER_NEXUS_USER, &quot;&quot;);</span>
+<span class="nc" id="L214">        final String pass = settings.getString(Settings.KEYS.ANALYZER_NEXUS_PASSWORD, &quot;&quot;);</span>
+<span class="nc" id="L215">        String result = &quot;&quot;;</span>
+<span class="nc bnc" id="L216" title="All 4 branches missed.">        if (user.isEmpty() || pass.isEmpty()) {</span>
+<span class="nc" id="L217">            LOGGER.debug(&quot;Skip authentication as user and/or password for nexus is empty&quot;);</span>
+        } else {
+<span class="nc" id="L219">            final String auth = user + ':' + pass;</span>
+<span class="nc" id="L220">            final String base64Auth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));</span>
+<span class="nc" id="L221">            result = &quot;Basic &quot; + base64Auth;</span>
+        }
+<span class="nc" id="L223">        return result;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

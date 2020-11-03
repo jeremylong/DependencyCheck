@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NvdCveParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.update.nvd</a> &gt; <span class="el_source">NvdCveParser.java</span></div><h1>NvdCveParser.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2018 Steve Springett. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.update.nvd;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import java.util.zip.GZIPInputStream;
+import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
+import org.owasp.dependencycheck.data.nvd.ecosystem.CveEcosystemMapper;
+import org.owasp.dependencycheck.data.nvd.json.CpeMatchStreamCollector;
+import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.utils.Settings;
+
+/**
+ * Parser and processor of NVD CVE JSON data feeds.
+ *
+ * @author Jeremy Long
+ */
+public final class NvdCveParser {
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L55">    private static final Logger LOGGER = LoggerFactory.getLogger(NvdCveParser.class);</span>
+    /**
+     * A reference to the CVE DB.
+     */
+    private final CveDB cveDB;
+    /**
+     * The filter for 2.3 CPEs in the CVEs - we don't import unless we get a
+     * match.
+     */
+    private final String cpeStartsWithFilter;
+
+    /**
+     * Creates a new NVD CVE JSON Parser.
+     *
+     * @param settings the dependency-check settings
+     * @param db a reference to the database
+     */
+<span class="fc" id="L72">    public NvdCveParser(Settings settings, CveDB db) {</span>
+<span class="fc" id="L73">        this.cpeStartsWithFilter = settings.getString(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER, &quot;cpe:2.3:a:&quot;);</span>
+<span class="fc" id="L74">        this.cveDB = db;</span>
+<span class="fc" id="L75">    }</span>
+
+    /**
+     * Parses the NVD JSON file and inserts/updates data into the database.
+     *
+     * @param file the NVD JSON file to parse
+     * @throws UpdateException thrown if the file could not be read
+     */
+    public void parse(File file) throws UpdateException {
+<span class="fc" id="L84">        LOGGER.debug(&quot;Parsing &quot; + file.getName());</span>
+
+<span class="fc" id="L86">        final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);</span>
+<span class="fc" id="L87">        objectMapper.registerModule(new AfterburnerModule());</span>
+
+<span class="fc" id="L89">        final ObjectReader objectReader = objectMapper.readerFor(DefCveItem.class);</span>
+
+<span class="fc" id="L91">        try (InputStream fin = new FileInputStream(file);</span>
+<span class="fc" id="L92">                InputStream in = new GZIPInputStream(fin);</span>
+<span class="fc" id="L93">                InputStreamReader isr = new InputStreamReader(in, UTF_8);</span>
+<span class="fc" id="L94">                JsonParser parser = objectReader.getFactory().createParser(in)) {</span>
+
+<span class="fc" id="L96">            final CveEcosystemMapper mapper = new CveEcosystemMapper();</span>
+<span class="fc" id="L97">            init(parser);</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">            while (parser.nextToken() == JsonToken.START_OBJECT) {</span>
+<span class="fc" id="L99">                final DefCveItem cve = objectReader.readValue(parser);</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">                if (testCveCpeStartWithFilter(cve)) {</span>
+<span class="fc" id="L101">                    cveDB.updateVulnerability(cve, mapper.getEcosystem(cve));</span>
+                }
+<span class="fc" id="L103">            }</span>
+<span class="nc" id="L104">        } catch (FileNotFoundException ex) {</span>
+<span class="nc" id="L105">            LOGGER.error(ex.getMessage());</span>
+<span class="nc" id="L106">            throw new UpdateException(&quot;Unable to find the NVD CPE file, `&quot; + file + &quot;`, to parse&quot;, ex);</span>
+<span class="nc" id="L107">        } catch (IOException ex) {</span>
+<span class="nc" id="L108">            LOGGER.error(&quot;Error reading NVD JSON data: {}&quot;, file);</span>
+<span class="nc" id="L109">            LOGGER.debug(&quot;Error extracting the NVD JSON data from: &quot; + file.toString(), ex);</span>
+<span class="nc" id="L110">            throw new UpdateException(&quot;Unable to find the NVD CPE file to parse&quot;, ex);</span>
+<span class="fc" id="L111">        }</span>
+<span class="fc" id="L112">    }</span>
+
+    protected void init(JsonParser parser) throws IOException {
+<span class="fc" id="L115">        JsonToken nextToken = parser.nextToken();</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        if (nextToken != JsonToken.START_OBJECT) {</span>
+<span class="nc" id="L117">            throw new IOException(&quot;Expected &quot; + JsonToken.START_OBJECT + &quot;, got &quot; + nextToken);</span>
+        }
+
+        do {
+<span class="fc" id="L121">            nextToken = parser.nextToken();</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">            if (nextToken == null) {</span>
+<span class="nc" id="L123">                break;</span>
+            }
+
+<span class="fc bfc" id="L126" title="All 2 branches covered.">            if (nextToken.isStructStart()) {</span>
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">                if (nextToken == JsonToken.START_ARRAY) {</span>
+<span class="fc" id="L128">                    break;</span>
+                } else {
+<span class="nc" id="L130">                    parser.skipChildren();</span>
+                }
+            }
+        } while (true);
+<span class="fc" id="L134">    }</span>
+
+    /**
+     * Tests the CVE's CPE entries against the starts with filter. In general
+     * this limits the CVEs imported to just application level vulnerabilities.
+     *
+     * @param cve the CVE entry to examine
+     * @return &lt;code&gt;true&lt;/code&gt; if the CVE affects CPEs identified by the
+     * configured CPE Starts with filter
+     */
+    protected boolean testCveCpeStartWithFilter(final DefCveItem cve) {
+        //cycle through to see if this is a CPE we care about (use the CPE filters
+<span class="fc" id="L146">        return cve.getConfigurations().getNodes().stream()</span>
+<span class="fc" id="L147">                .collect(NodeFlatteningCollector.getInstance())</span>
+<span class="fc" id="L148">                .collect(CpeMatchStreamCollector.getInstance())</span>
+<span class="fc" id="L149">                .anyMatch(cpe -&gt; cpe.getCpe23Uri().startsWith(cpeStartsWithFilter));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

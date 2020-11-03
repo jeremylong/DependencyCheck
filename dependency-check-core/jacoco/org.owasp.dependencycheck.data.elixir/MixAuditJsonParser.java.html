@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MixAuditJsonParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.elixir</a> &gt; <span class="el_source">MixAuditJsonParser.java</span></div><h1>MixAuditJsonParser.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2020 The OWASP Foundation. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.elixir;
+
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.concurrent.NotThreadSafe;
+
+import javax.json.stream.JsonParsingException;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonString;
+
+/**
+ * Parses json output from `mix_audit --format json`.
+ *
+ * @author Christoph Sassenberg
+ */
+@NotThreadSafe
+public class MixAuditJsonParser {
+
+    /**
+     * A key in the mix json file.
+     */
+    static final String PASS_FAIL_KEY = &quot;pass&quot;;
+    /**
+     * A key in the mix json file.
+     */
+    static final String RESULTS_KEY = &quot;vulnerabilities&quot;;
+    /**
+     * A key in the mix json file.
+     */
+    static final String ADVISORY_KEY = &quot;advisory&quot;;
+    /**
+     * A key in the mix json file.
+     */
+    static final String DEPENDENCY_KEY = &quot;dependency&quot;;
+
+    /**
+     * The JsonReader for parsing JSON.
+     */
+    private final JsonReader jsonReader;
+
+    /**
+     * The List of MixAuditResults found.
+     */
+    private final List&lt;MixAuditResult&gt; mixAuditResults;
+
+    /**
+     * Whether the mix audit passed or failed.
+     */
+    private boolean mixAuditPass;
+
+    /**
+     * The LOGGER
+     */
+<span class="fc" id="L80">    private static final Logger LOGGER = LoggerFactory.getLogger(MixAuditJsonParser.class);</span>
+
+    /**
+     * Creates a MixAuditJsonParser from a Reader.
+     *
+     * @param reader - the java.io.Reader to read the json character stream from
+     */
+<span class="fc" id="L87">    public MixAuditJsonParser(Reader reader) {</span>
+<span class="fc" id="L88">        LOGGER.debug(&quot;Creating a MixAuditJsonParser&quot;);</span>
+<span class="fc" id="L89">        this.jsonReader = Json.createReader(reader);</span>
+<span class="fc" id="L90">        this.mixAuditResults = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L91">        this.mixAuditPass = false;</span>
+<span class="fc" id="L92">    }</span>
+
+    /**
+     * Process the input stream to create the list of dependencies.
+     *
+     * @throws AnalysisException thrown when there is an error parsing the
+     * results of `mix_audit --format json`
+     */
+    public void process() throws AnalysisException {
+<span class="fc" id="L101">        LOGGER.debug(&quot;Beginning mix_audit json output processing&quot;);</span>
+        try {
+<span class="fc" id="L103">            final JsonObject output = jsonReader.readObject();</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">            if (output.containsKey(PASS_FAIL_KEY)) {</span>
+<span class="fc" id="L105">                this.mixAuditPass = output.getBoolean(PASS_FAIL_KEY);</span>
+            }
+
+<span class="pc bpc" id="L108" title="2 of 4 branches missed.">            if (output.containsKey(RESULTS_KEY) &amp;&amp; output.isNull(RESULTS_KEY)) {</span>
+<span class="nc" id="L109">                LOGGER.debug(&quot;Found vulnerabilities&quot;);</span>
+            }
+<span class="fc" id="L111">            final JsonArray results = output.getJsonArray(RESULTS_KEY);</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">            for (JsonObject result : results.getValuesAs(JsonObject.class)) {</span>
+<span class="fc" id="L113">                final JsonObject advisory = result.getJsonObject(ADVISORY_KEY);</span>
+<span class="fc" id="L114">                final JsonObject dependency = result.getJsonObject(DEPENDENCY_KEY);</span>
+<span class="fc" id="L115">                final ArrayList&lt;String&gt; patchedVersions = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L117" title="All 2 branches covered.">                for (JsonString patchedVersion : advisory.getJsonArray(&quot;patched_versions&quot;).getValuesAs(JsonString.class)) {</span>
+<span class="fc" id="L118">                    patchedVersions.add(patchedVersion.getString());</span>
+<span class="fc" id="L119">                }</span>
+
+<span class="fc" id="L121">                final MixAuditResult r = new MixAuditResult(</span>
+<span class="fc" id="L122">                        advisory.getString(&quot;id&quot;),</span>
+<span class="fc" id="L123">                        advisory.getString(&quot;cve&quot;),</span>
+<span class="fc" id="L124">                        advisory.getString(&quot;title&quot;),</span>
+<span class="fc" id="L125">                        advisory.getString(&quot;description&quot;),</span>
+<span class="fc" id="L126">                        advisory.getString(&quot;disclosure_date&quot;),</span>
+<span class="fc" id="L127">                        advisory.getString(&quot;url&quot;),</span>
+                        patchedVersions,
+<span class="fc" id="L129">                        dependency.getString(&quot;lockfile&quot;),</span>
+<span class="fc" id="L130">                        dependency.getString(&quot;package&quot;),</span>
+<span class="fc" id="L131">                        dependency.getString(&quot;version&quot;)</span>
+                );
+
+<span class="fc" id="L134">                this.mixAuditResults.add(r);</span>
+<span class="fc" id="L135">            }</span>
+<span class="nc" id="L136">        } catch (JsonParsingException jsonpe) {</span>
+<span class="nc" id="L137">            throw new AnalysisException(&quot;Error parsing stream&quot;, jsonpe);</span>
+<span class="nc" id="L138">        } catch (JsonException jsone) {</span>
+<span class="nc" id="L139">            throw new AnalysisException(&quot;Error reading stream&quot;, jsone);</span>
+<span class="nc" id="L140">        } catch (IllegalStateException ise) {</span>
+<span class="nc" id="L141">            throw new AnalysisException(&quot;Illegal state while parsing mix_audit output&quot;, ise);</span>
+<span class="nc" id="L142">        } catch (ClassCastException cce) {</span>
+<span class="nc" id="L143">            throw new AnalysisException(&quot;JSON not exactly matching output of `mix_audit --format json`&quot;, cce);</span>
+<span class="fc" id="L144">        }</span>
+<span class="fc" id="L145">    }</span>
+
+    /**
+     * Gets the list of results.
+     *
+     * @return the list of results
+     */
+    public List&lt;MixAuditResult&gt; getResults() {
+<span class="fc" id="L153">        return mixAuditResults;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

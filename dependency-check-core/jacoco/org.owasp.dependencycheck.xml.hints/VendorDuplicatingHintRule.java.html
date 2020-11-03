@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VendorDuplicatingHintRule.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.xml.hints</a> &gt; <span class="el_source">VendorDuplicatingHintRule.java</span></div><h1>VendorDuplicatingHintRule.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2016 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.xml.hints;
+
+import javax.annotation.concurrent.ThreadSafe;
+
+/**
+ * Used to duplicate vendor evidence within a collection. The intent is if any
+ * evidence is found in a collection that matches the value given the evidence
+ * will be duplicated and the value replaced with the value indicated.
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+public class VendorDuplicatingHintRule {
+
+    /**
+     * The evidence value to duplicate if found.
+     */
+    private String value;
+
+    /**
+     * The value to replace when duplicating the evidence.
+     */
+    private String duplicate;
+
+    /**
+     * Constructs a new duplicating rule.
+     *
+     * @param value the value to duplicate the evidence if found
+     * @param duplicate the value to replace within the duplicated evidence
+     */
+<span class="fc" id="L48">    public VendorDuplicatingHintRule(String value, String duplicate) {</span>
+<span class="fc" id="L49">        this.value = value;</span>
+<span class="fc" id="L50">        this.duplicate = duplicate;</span>
+<span class="fc" id="L51">    }</span>
+
+    /**
+     * Get the value of value.
+     *
+     * @return the value of value
+     */
+    public String getValue() {
+<span class="fc" id="L59">        return value;</span>
+    }
+
+    /**
+     * Set the value of value.
+     *
+     * @param value new value of value
+     */
+    public void setValue(String value) {
+<span class="nc" id="L68">        this.value = value;</span>
+<span class="nc" id="L69">    }</span>
+
+    /**
+     * Get the value of duplicate.
+     *
+     * @return the value of duplicate
+     */
+    public String getDuplicate() {
+<span class="fc" id="L77">        return duplicate;</span>
+    }
+
+    /**
+     * Set the value of duplicate.
+     *
+     * @param duplicate new value of duplicate
+     */
+    public void setDuplicate(String duplicate) {
+<span class="nc" id="L86">        this.duplicate = duplicate;</span>
+<span class="nc" id="L87">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

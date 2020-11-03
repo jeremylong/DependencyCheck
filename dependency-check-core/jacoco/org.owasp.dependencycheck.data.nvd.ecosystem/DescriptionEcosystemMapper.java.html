@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DescriptionEcosystemMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvd.ecosystem</a> &gt; <span class="el_source">DescriptionEcosystemMapper.java</span></div><h1>DescriptionEcosystemMapper.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2020 The OWASP Foundation. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nvd.ecosystem;
+
+import org.apache.commons.lang3.StringUtils;
+import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
+/**
+ * Helper utility for mapping CVEs to their ecosystems based on the description.
+ *
+ * @author skjolber
+ */
+public class DescriptionEcosystemMapper {
+
+    // static fields for thread-safe + hardcoded functionality
+    /**
+     * The array of ecosystems.
+     */
+    private static final String[] ECOSYSTEMS;
+    /**
+     * A helper map to retrieve the index of an ecosystem.
+     */
+    private static final int[] HINT_TO_ECOSYSTEM_LOOKUP;
+    /**
+     * Map of strings to ecosystems.
+     */
+    private static final TreeMap&lt;String, EcosystemHint&gt; ECOSYSTEM_MAP; // thread safe for reading
+
+    static {
+<span class="fc" id="L50">        ECOSYSTEM_MAP = new TreeMap&lt;&gt;();</span>
+
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        for (FileExtensionHint fileExtensionHint : FileExtensionHint.values()) {</span>
+<span class="fc" id="L53">            ECOSYSTEM_MAP.put(fileExtensionHint.getValue(), fileExtensionHint);</span>
+        }
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        for (DescriptionKeywordHint descriptionKeywordHint : DescriptionKeywordHint.values()) {</span>
+<span class="fc" id="L56">            ECOSYSTEM_MAP.put(descriptionKeywordHint.getValue(), descriptionKeywordHint);</span>
+        }
+
+<span class="fc" id="L59">        final Map&lt;String, Integer&gt; ecosystemIndexes = new HashMap&lt;&gt;();</span>
+
+<span class="fc" id="L61">        HINT_TO_ECOSYSTEM_LOOKUP = new int[ECOSYSTEM_MAP.size()];</span>
+
+<span class="fc" id="L63">        int index = 0;</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        for (Entry&lt;String, EcosystemHint&gt; entry : ECOSYSTEM_MAP.entrySet()) {</span>
+<span class="fc" id="L65">            final EcosystemHint ecosystemHint = entry.getValue();</span>
+
+<span class="fc" id="L67">            Integer ecosystemIndex = ecosystemIndexes.get(ecosystemHint.getEcosystem());</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">            if (ecosystemIndex == null) {</span>
+<span class="fc" id="L69">                ecosystemIndex = ecosystemIndexes.size();</span>
+
+<span class="fc" id="L71">                ecosystemIndexes.put(ecosystemHint.getEcosystem(), ecosystemIndex);</span>
+            }
+
+<span class="fc" id="L74">            HINT_TO_ECOSYSTEM_LOOKUP[index] = ecosystemIndex;</span>
+
+<span class="fc" id="L76">            index++;</span>
+<span class="fc" id="L77">        }</span>
+
+<span class="fc" id="L79">        ECOSYSTEMS = new String[ecosystemIndexes.size()];</span>
+<span class="fc" id="L80">        ecosystemIndexes.entrySet().forEach((e) -&gt; {</span>
+<span class="fc" id="L81">            ECOSYSTEMS[e.getValue()] = e.getKey();</span>
+<span class="fc" id="L82">        });</span>
+<span class="fc" id="L83">    }</span>
+
+    // take advantage of chars also being numbers
+    /**
+     * Prefix prefix for matching ecosystems.
+     */
+<span class="fc" id="L89">    private final boolean[] keywordPrefixes = getPrefixesFor(&quot; -(\&quot;'&quot;);</span>
+    /**
+     * Postfix prefix for matching ecosystems.
+     */
+<span class="fc" id="L93">    private final boolean[] keywordPostfixes = getPrefixesFor(&quot; -)\&quot;',.:;&quot;);</span>
+    /**
+     * Aho Corasick double array trie used for parsing and matching ecosystems.
+     */
+    private final StringAhoCorasickDoubleArrayTrie&lt;EcosystemHint&gt; ahoCorasickDoubleArrayTrie;
+
+    /**
+     * Constructs a new description ecosystem mapper.
+     */
+<span class="fc" id="L102">    public DescriptionEcosystemMapper() {</span>
+<span class="fc" id="L103">        ahoCorasickDoubleArrayTrie = toAhoCorasickDoubleArrayTrie();</span>
+<span class="fc" id="L104">    }</span>
+
+    protected static boolean[] getPrefixesFor(String str) {
+<span class="fc" id="L107">        int max = -1;</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        for (int i = 0; i &lt; str.length(); i++) {</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">            if (max &lt; str.charAt(i)) {</span>
+<span class="fc" id="L110">                max = str.charAt(i);</span>
+            }
+        }
+
+<span class="fc" id="L114">        final boolean[] delimiters = new boolean[max + 1];</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        for (int i = 0; i &lt; str.length(); i++) {</span>
+<span class="fc" id="L116">            delimiters[str.charAt(i)] = true;</span>
+        }
+<span class="fc" id="L118">        return delimiters;</span>
+    }
+
+    protected static StringAhoCorasickDoubleArrayTrie&lt;EcosystemHint&gt; toAhoCorasickDoubleArrayTrie() {
+<span class="fc" id="L122">        final StringAhoCorasickDoubleArrayTrie&lt;EcosystemHint&gt; exact = new StringAhoCorasickDoubleArrayTrie&lt;&gt;();</span>
+<span class="fc" id="L123">        exact.build(ECOSYSTEM_MAP);</span>
+<span class="fc" id="L124">        return exact;</span>
+    }
+
+    protected static boolean isExtension(String str, int begin, int end) {
+<span class="fc bfc" id="L128" title="All 4 branches covered.">        if (str.length() != end &amp;&amp; Character.isLetterOrDigit(str.charAt(end))) {</span>
+<span class="fc" id="L129">            return false;</span>
+        }
+
+<span class="fc" id="L132">        return isLowercaseAscii(str, begin + 1, end);</span>
+    }
+
+    protected static boolean isLowercaseAscii(String multicase, int start, int end) {
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        for (int i = start; i &lt; end; i++) {</span>
+<span class="fc" id="L137">            final char c = multicase.charAt(i);</span>
+
+<span class="pc bpc" id="L139" title="1 of 4 branches missed.">            if (c &lt; 'a' || c &gt; 'z') {</span>
+<span class="fc" id="L140">                return false;</span>
+            }
+        }
+<span class="fc" id="L143">        return true;</span>
+    }
+
+    /**
+     * Tests if the string is a URL by looking for '://'.
+     *
+     * @param c the text to test.
+     * @param begin the position in the string to begin searching; note the
+     * search is decreasing to 0
+     * @return &lt;code&gt;true&lt;/code&gt; if `://` is found; otherwise &lt;code&gt;false&lt;/code&gt;
+     */
+    public static boolean isURL(String c, int begin) {
+<span class="fc" id="L155">        int pos = begin - 2;</span>
+
+<span class="fc bfc" id="L157" title="All 2 branches covered.">        while (pos &gt; 2) {</span>
+<span class="fc" id="L158">            pos--;</span>
+
+<span class="fc bfc" id="L160" title="All 2 branches covered.">            if (c.charAt(pos) == ' ') {</span>
+<span class="fc" id="L161">                return false;</span>
+            }
+<span class="fc bfc" id="L163" title="All 2 branches covered.">            if (c.charAt(pos) == ':') {</span>
+<span class="pc bpc" id="L164" title="2 of 4 branches missed.">                return c.charAt(pos + 1) == '/' &amp;&amp; c.charAt(pos + 2) == '/';</span>
+            }
+        }
+
+<span class="fc" id="L168">        return false;</span>
+    }
+
+    protected void increment(int i, int[] ecosystemMap) {
+<span class="fc" id="L172">        ecosystemMap[HINT_TO_ECOSYSTEM_LOOKUP[i]]++;</span>
+<span class="fc" id="L173">    }</span>
+
+    /**
+     * Returns the ecosystem if identified by English description from the CVE
+     * data.
+     *
+     * @param cve the CVE data
+     * @return the ecosystem if identified
+     */
+    public String getEcosystem(DefCveItem cve) {
+<span class="fc" id="L183">        int[] ecosystemMap = new int[ECOSYSTEMS.length];</span>
+<span class="fc" id="L184">        cve.getCve().getDescription().getDescriptionData().stream()</span>
+<span class="fc" id="L185">                .filter((langString) -&gt; (langString.getLang().equals(&quot;en&quot;)))</span>
+<span class="fc" id="L186">                .forEachOrdered((langString) -&gt; {</span>
+<span class="fc" id="L187">                    search(langString.getValue(), ecosystemMap);</span>
+<span class="fc" id="L188">                });</span>
+<span class="fc" id="L189">        return getResult(ecosystemMap);</span>
+    }
+
+    /**
+     * Determines the ecosystem for the given string.
+     *
+     * @param multicase the string to test
+     * @return the ecosystem
+     */
+    public String getEcosystem(String multicase) {
+<span class="nc" id="L199">        int[] ecosystemMap = new int[ECOSYSTEMS.length];</span>
+<span class="nc" id="L200">        search(multicase, ecosystemMap);</span>
+<span class="nc" id="L201">        return getResult(ecosystemMap);</span>
+    }
+
+    private void search(String multicase, int[] ecosystemMap) {
+<span class="fc" id="L205">        final String c = multicase.toLowerCase();</span>
+<span class="fc" id="L206">        ahoCorasickDoubleArrayTrie.parseText(c, (begin, end, value, index) -&gt; {</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">            if (value.getNature() == EcosystemHintNature.FILE_EXTENSION) {</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">                if (!isExtension(multicase, begin, end)) {</span>
+<span class="fc" id="L209">                    return;</span>
+                }
+
+<span class="fc" id="L212">                final String ecosystem = value.getEcosystem();</span>
+                // real extension, if not part of url
+<span class="pc bpc" id="L214" title="1 of 4 branches missed.">                if (Ecosystem.PHP.equals(ecosystem) &amp;&amp; c.regionMatches(begin, &quot;.php&quot;, 0, 4)) {</span>
+<span class="fc bfc" id="L215" title="All 2 branches covered.">                    if (isURL(c, begin)) {</span>
+<span class="fc" id="L216">                        return;</span>
+                    }
+<span class="fc bfc" id="L218" title="All 4 branches covered.">                } else if (Ecosystem.JAVA.equals(ecosystem) &amp;&amp; c.regionMatches(begin, &quot;.jsp&quot;, 0, 4)) {</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">                    if (isURL(c, begin)) {</span>
+<span class="fc" id="L220">                        return;</span>
+                    }
+                }
+<span class="fc" id="L223">            } else { // keyword</span>
+
+                // check if full word, i.e. typically space first and then space or dot after
+<span class="fc bfc" id="L226" title="All 2 branches covered.">                if (begin != 0) {</span>
+<span class="fc" id="L227">                    final char startChar = c.charAt(begin - 1);</span>
+<span class="pc bpc" id="L228" title="1 of 4 branches missed.">                    if (startChar &gt;= keywordPrefixes.length || !keywordPrefixes[startChar]) {</span>
+<span class="fc" id="L229">                        return;</span>
+                    }
+                }
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">                if (end != c.length()) {</span>
+<span class="fc" id="L233">                    final char endChar = c.charAt(end);</span>
+<span class="fc bfc" id="L234" title="All 4 branches covered.">                    if (endChar &gt;= keywordPostfixes.length || !keywordPostfixes[endChar]) {</span>
+<span class="fc" id="L235">                        return;</span>
+                    }
+                }
+
+<span class="fc" id="L239">                final String ecosystem = value.getEcosystem();</span>
+<span class="fc bfc" id="L240" title="All 2 branches covered.">                if (Ecosystem.NATIVE.equals(ecosystem)) { // TODO could be checked afterwards</span>
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">                    if (StringUtils.contains(c, &quot;android&quot;)) {</span>
+<span class="nc" id="L242">                        return;</span>
+                    }
+                }
+            }
+<span class="fc" id="L246">            increment(index, ecosystemMap);</span>
+<span class="fc" id="L247">        });</span>
+<span class="fc" id="L248">    }</span>
+
+    private String getResult(int[] values) {
+<span class="fc" id="L251">        final int best = getBestScore(values);</span>
+<span class="fc bfc" id="L252" title="All 2 branches covered.">        if (best != -1) {</span>
+<span class="fc" id="L253">            return ECOSYSTEMS[best];</span>
+        }
+<span class="fc" id="L255">        return null;</span>
+    }
+
+    private int getBestScore(int[] values) {
+<span class="fc" id="L259">        int bestIndex = -1;</span>
+<span class="fc" id="L260">        int bestScore = -1;</span>
+<span class="fc bfc" id="L261" title="All 2 branches covered.">        for (int i = 0; i &lt; values.length; i++) {</span>
+<span class="fc bfc" id="L262" title="All 2 branches covered.">            if (values[i] &gt; 0) {</span>
+<span class="fc bfc" id="L263" title="All 2 branches covered.">                if (values[i] &gt; bestScore) {</span>
+<span class="fc" id="L264">                    bestIndex = i;</span>
+<span class="fc" id="L265">                    bestScore = values[i];</span>
+                }
+<span class="fc" id="L267">                values[i] = 0;</span>
+            }
+        }
+<span class="fc" id="L270">        return bestIndex;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

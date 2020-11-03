@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FileImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.artifactory</a> &gt; <span class="el_source">FileImpl.java</span></div><h1>FileImpl.java</h1><pre class="source lang-java linenums">package org.owasp.dependencycheck.data.artifactory;
+
+import java.util.Date;
+
+/**
+ * Copied from JFrog's artifactory client.
+ *
+ * @see
+ * &lt;a href=&quot;https://github.com/jfrog/artifactory-client-java&quot;&gt;artifactory-client-java&lt;/a&gt;
+ *
+ * @author jbaruch
+ * @since 29/07/12
+ */
+<span class="fc" id="L14">public class FileImpl extends ItemImpl {</span>
+
+    private String downloadUri;
+    private Date created;
+    private String createdBy;
+    private long size;
+    private String mimeType;
+    private ChecksumsImpl checksums;
+    private ChecksumsImpl originalChecksums;
+    private String remoteUrl;
+
+    public boolean isFolder() {
+<span class="nc" id="L26">        return false;</span>
+    }
+
+    public Date getCreated() {
+<span class="nc" id="L30">        return new Date(created.getTime());</span>
+    }
+
+    public void setCreated(Date created) {
+<span class="fc" id="L34">        this.created = new Date(created.getTime());</span>
+<span class="fc" id="L35">    }</span>
+
+    public String getCreatedBy() {
+<span class="nc" id="L38">        return createdBy;</span>
+    }
+
+    public void setCreatedBy(String createdBy) {
+<span class="fc" id="L42">        this.createdBy = createdBy;</span>
+<span class="fc" id="L43">    }</span>
+
+    public String getDownloadUri() {
+<span class="fc" id="L46">        return downloadUri;</span>
+    }
+
+    public void setDownloadUri(String downloadUri) {
+<span class="fc" id="L50">        this.downloadUri = downloadUri;</span>
+<span class="fc" id="L51">    }</span>
+
+    public String getMimeType() {
+<span class="nc" id="L54">        return mimeType;</span>
+    }
+
+    public void setMimeType(String mimeType) {
+<span class="fc" id="L58">        this.mimeType = mimeType;</span>
+<span class="fc" id="L59">    }</span>
+
+    public long getSize() {
+<span class="nc" id="L62">        return size;</span>
+    }
+
+    public void setSize(long size) {
+<span class="fc" id="L66">        this.size = size;</span>
+<span class="fc" id="L67">    }</span>
+
+    public ChecksumsImpl getChecksums() {
+<span class="fc" id="L70">        return checksums;</span>
+    }
+
+    public void setChecksums(ChecksumsImpl checksums) {
+<span class="fc" id="L74">        this.checksums = checksums;</span>
+<span class="fc" id="L75">    }</span>
+
+    public ChecksumsImpl getOriginalChecksums() {
+<span class="nc" id="L78">        return originalChecksums;</span>
+    }
+
+    public void setOriginalChecksums(ChecksumsImpl originalChecksums) {
+<span class="fc" id="L82">        this.originalChecksums = originalChecksums;</span>
+<span class="fc" id="L83">    }</span>
+
+    public String getRemoteUrl() {
+<span class="nc" id="L86">        return remoteUrl;</span>
+    }
+
+    public void setRemoteUrl(String remoteUrl) {
+<span class="fc" id="L90">        this.remoteUrl = remoteUrl;</span>
+<span class="fc" id="L91">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

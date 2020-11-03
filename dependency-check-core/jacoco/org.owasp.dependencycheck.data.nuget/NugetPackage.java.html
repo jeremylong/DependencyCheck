@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NugetPackage.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nuget</a> &gt; <span class="el_source">NugetPackage.java</span></div><h1>NugetPackage.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nuget;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import javax.annotation.concurrent.ThreadSafe;
+
+/**
+ * Represents the contents of a Nuspec manifest.
+ *
+ * @author colezlaw
+ */
+@ThreadSafe
+<span class="fc" id="L31">public class NugetPackage extends NugetPackageReference {</span>
+
+    /**
+     * The title.
+     */
+    private String title;
+
+    /**
+     * The authors.
+     */
+    private String authors;
+
+    /**
+     * The owners.
+     */
+    private String owners;
+
+    /**
+     * The licenseUrl.
+     */
+    private String licenseUrl;
+
+    /**
+     * Sets the title.
+     *
+     * @param title the title
+     */
+    public void setTitle(String title) {
+<span class="fc" id="L59">        this.title = title;</span>
+<span class="fc" id="L60">    }</span>
+
+    /**
+     * Gets the title.
+     *
+     * @return the title
+     */
+    public String getTitle() {
+<span class="fc" id="L68">        return title;</span>
+    }
+
+    /**
+     * Sets the authors.
+     *
+     * @param authors the authors
+     */
+    public void setAuthors(String authors) {
+<span class="fc" id="L77">        this.authors = authors;</span>
+<span class="fc" id="L78">    }</span>
+
+    /**
+     * Gets the authors.
+     *
+     * @return the authors
+     */
+    public String getAuthors() {
+<span class="fc" id="L86">        return authors;</span>
+    }
+
+    /**
+     * Sets the owners.
+     *
+     * @param owners the owners
+     */
+    public void setOwners(String owners) {
+<span class="fc" id="L95">        this.owners = owners;</span>
+<span class="fc" id="L96">    }</span>
+
+    /**
+     * Gets the owners.
+     *
+     * @return the owners
+     */
+    public String getOwners() {
+<span class="fc" id="L104">        return owners;</span>
+    }
+
+    /**
+     * Sets the licenseUrl.
+     *
+     * @param licenseUrl the licenseUrl
+     */
+    public void setLicenseUrl(String licenseUrl) {
+<span class="fc" id="L113">        this.licenseUrl = licenseUrl;</span>
+<span class="fc" id="L114">    }</span>
+
+    /**
+     * Gets the licenseUrl.
+     *
+     * @return the licenseUrl
+     */
+    public String getLicenseUrl() {
+<span class="fc" id="L122">        return licenseUrl;</span>
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L127" title="All 4 branches missed.">        if (obj == null || !(obj instanceof NugetPackage)) {</span>
+<span class="nc" id="L128">            return false;</span>
+        }
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if (this == obj) {</span>
+<span class="nc" id="L131">            return true;</span>
+        }
+<span class="nc" id="L133">        final NugetPackage rhs = (NugetPackage) obj;</span>
+<span class="nc" id="L134">        return new EqualsBuilder()</span>
+<span class="nc" id="L135">                .appendSuper(super.equals(obj))</span>
+<span class="nc" id="L136">                .append(title, rhs.title)</span>
+<span class="nc" id="L137">                .append(authors, rhs.authors)</span>
+<span class="nc" id="L138">                .append(owners, rhs.owners)</span>
+<span class="nc" id="L139">                .append(licenseUrl, rhs.licenseUrl)</span>
+<span class="nc" id="L140">                .isEquals();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L145">        return new HashCodeBuilder(33, 87)</span>
+<span class="nc" id="L146">                .append(title)</span>
+<span class="nc" id="L147">                .append(authors)</span>
+<span class="nc" id="L148">                .append(owners)</span>
+<span class="nc" id="L149">                .append(licenseUrl)</span>
+<span class="nc" id="L150">                .toHashCode();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

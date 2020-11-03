@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EvidenceCollection.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.dependency</a> &gt; <span class="el_source">EvidenceCollection.java</span></div><h1>EvidenceCollection.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.dependency;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import javax.annotation.concurrent.ThreadSafe;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.owasp.dependencycheck.utils.Filter;
+
+/**
+ * Used to maintain a collection of Evidence.
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+<span class="fc" id="L35">class EvidenceCollection implements Serializable {</span>
+
+    /**
+     * The serial version UID for serialization.
+     */
+    private static final long serialVersionUID = 867580958972090027L;
+    /**
+     * A collection of vendor evidence.
+     */
+<span class="fc" id="L44">    private final Set&lt;Evidence&gt; vendors = new HashSet&lt;&gt;();</span>
+    /**
+     * A collection of strings used to adjust Lucene's vendor term weighting.
+     */
+<span class="fc" id="L48">    private final Set&lt;String&gt; vendorWeightings = new HashSet&lt;&gt;();</span>
+    /**
+     * A collection of product evidence.
+     */
+<span class="fc" id="L52">    private final Set&lt;Evidence&gt; products = new HashSet&lt;&gt;();</span>
+    /**
+     * A collection of strings used to adjust Lucene's product term weighting.
+     */
+<span class="fc" id="L56">    private final Set&lt;String&gt; productWeightings = new HashSet&lt;&gt;();</span>
+    /**
+     * A collection of version evidence.
+     */
+<span class="fc" id="L60">    private final Set&lt;Evidence&gt; versions = new HashSet&lt;&gt;();</span>
+
+    /**
+     * Used to iterate over highest confidence evidence contained in the
+     * collection.
+     */
+<span class="fc" id="L66">    private static final Filter&lt;Evidence&gt; HIGHEST_CONFIDENCE = new Filter&lt;Evidence&gt;() {</span>
+        @Override
+        public boolean passes(Evidence evidence) {
+<span class="fc bfc" id="L69" title="All 2 branches covered.">            return evidence.getConfidence() == Confidence.HIGHEST;</span>
+        }
+    };
+    /**
+     * Used to iterate over high confidence evidence contained in the
+     * collection.
+     */
+<span class="fc" id="L76">    private static final Filter&lt;Evidence&gt; HIGH_CONFIDENCE = new Filter&lt;Evidence&gt;() {</span>
+        @Override
+        public boolean passes(Evidence evidence) {
+<span class="fc bfc" id="L79" title="All 2 branches covered.">            return evidence.getConfidence() == Confidence.HIGH;</span>
+        }
+    };
+    /**
+     * Used to iterate over medium confidence evidence contained in the
+     * collection.
+     */
+<span class="fc" id="L86">    private static final Filter&lt;Evidence&gt; MEDIUM_CONFIDENCE = new Filter&lt;Evidence&gt;() {</span>
+        @Override
+        public boolean passes(Evidence evidence) {
+<span class="fc bfc" id="L89" title="All 2 branches covered.">            return evidence.getConfidence() == Confidence.MEDIUM;</span>
+        }
+    };
+    /**
+     * Used to iterate over low confidence evidence contained in the collection.
+     */
+<span class="fc" id="L95">    private static final Filter&lt;Evidence&gt; LOW_CONFIDENCE = new Filter&lt;Evidence&gt;() {</span>
+        @Override
+        public boolean passes(Evidence evidence) {
+<span class="fc bfc" id="L98" title="All 2 branches covered.">            return evidence.getConfidence() == Confidence.LOW;</span>
+        }
+    };
+
+    /**
+     * Used to iterate over evidence of the specified type and confidence.
+     *
+     * @param type the evidence type to iterate over
+     * @param confidence the confidence level for the evidence to be iterated
+     * over.
+     * @return Iterable&amp;lt;Evidence&amp;gt; an iterable collection of evidence
+     */
+    public synchronized Iterable&lt;Evidence&gt; getIterator(EvidenceType type, Confidence confidence) {
+<span class="pc bpc" id="L111" title="2 of 4 branches missed.">        if (null != confidence &amp;&amp; null != type) {</span>
+            final Set&lt;Evidence&gt; list;
+
+<span class="pc bpc" id="L114" title="1 of 4 branches missed.">            switch (type) {</span>
+                case VENDOR:
+<span class="fc" id="L116">                    list = Collections.unmodifiableSet(new HashSet&lt;&gt;(vendors));</span>
+<span class="fc" id="L117">                    break;</span>
+                case PRODUCT:
+<span class="fc" id="L119">                    list = Collections.unmodifiableSet(new HashSet&lt;&gt;(products));</span>
+<span class="fc" id="L120">                    break;</span>
+                case VERSION:
+<span class="fc" id="L122">                    list = Collections.unmodifiableSet(new HashSet&lt;&gt;(versions));</span>
+<span class="fc" id="L123">                    break;</span>
+                default:
+<span class="nc" id="L125">                    return null;</span>
+            }
+
+<span class="fc bfc" id="L128" title="All 4 branches covered.">            switch (confidence) {</span>
+                case HIGHEST:
+<span class="fc" id="L130">                    return EvidenceCollection.HIGHEST_CONFIDENCE.filter(list);</span>
+                case HIGH:
+<span class="fc" id="L132">                    return EvidenceCollection.HIGH_CONFIDENCE.filter(list);</span>
+                case MEDIUM:
+<span class="fc" id="L134">                    return EvidenceCollection.MEDIUM_CONFIDENCE.filter(list);</span>
+                default:
+<span class="fc" id="L136">                    return EvidenceCollection.LOW_CONFIDENCE.filter(list);</span>
+            }
+        }
+<span class="nc" id="L139">        return null;</span>
+    }
+
+    /**
+     * Adds evidence to the collection.
+     *
+     * @param type the type of evidence (vendor, product, version)
+     * @param e Evidence
+     */
+    public synchronized void addEvidence(EvidenceType type, Evidence e) {
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">        if (null != type) {</span>
+<span class="pc bpc" id="L150" title="1 of 4 branches missed.">            switch (type) {</span>
+                case VENDOR:
+<span class="fc" id="L152">                    vendors.add(e);</span>
+<span class="fc" id="L153">                    break;</span>
+                case PRODUCT:
+<span class="fc" id="L155">                    products.add(e);</span>
+<span class="fc" id="L156">                    break;</span>
+                case VERSION:
+<span class="fc" id="L158">                    versions.add(e);</span>
+<span class="fc" id="L159">                    break;</span>
+                default:
+                    break;
+            }
+        }
+<span class="fc" id="L164">    }</span>
+
+    /**
+     * Removes evidence from the collection.
+     *
+     * @param type the type of evidence (vendor, product, version)
+     * @param e Evidence.
+     */
+    public synchronized void removeEvidence(EvidenceType type, Evidence e) {
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">        if (null != type) {</span>
+<span class="pc bpc" id="L174" title="1 of 4 branches missed.">            switch (type) {</span>
+                case VENDOR:
+<span class="fc" id="L176">                    vendors.remove(e);</span>
+<span class="fc" id="L177">                    break;</span>
+                case PRODUCT:
+<span class="fc" id="L179">                    products.remove(e);</span>
+<span class="fc" id="L180">                    break;</span>
+                case VERSION:
+<span class="fc" id="L182">                    versions.remove(e);</span>
+<span class="fc" id="L183">                    break;</span>
+                default:
+                    break;
+            }
+        }
+<span class="fc" id="L188">    }</span>
+
+    /**
+     * Creates an Evidence object from the parameters and adds the resulting
+     * object to the evidence collection.
+     *
+     * @param type the type of evidence (vendor, product, version)
+     * @param source the source of the Evidence.
+     * @param name the name of the Evidence.
+     * @param value the value of the Evidence.
+     * @param confidence the confidence of the Evidence.
+     */
+    public void addEvidence(EvidenceType type, String source, String name, String value, Confidence confidence) {
+<span class="fc" id="L201">        final Evidence e = new Evidence(source, name, value, confidence);</span>
+<span class="fc" id="L202">        addEvidence(type, e);</span>
+<span class="fc" id="L203">    }</span>
+
+    /**
+     * Adds term to the vendor weighting collection. The terms added here are
+     * used later to boost the score of other terms. This is a way of combining
+     * evidence from multiple sources to boost the confidence of the given
+     * evidence.
+     *
+     * Example: The term 'Apache' is found in the manifest of a JAR and is added
+     * to the Collection. When we parse the package names within the JAR file we
+     * may add these package names to the &quot;weighted&quot; strings collection to boost
+     * the score in the Lucene query. That way when we construct the Lucene
+     * query we find the term Apache in the collection AND in the weighted
+     * strings; as such, we will boost the confidence of the term Apache.
+     *
+     * @param str to add to the weighting collection.
+     */
+    public synchronized void addVendorWeighting(String str) {
+<span class="fc" id="L221">        vendorWeightings.add(str.toLowerCase());</span>
+<span class="fc" id="L222">    }</span>
+
+    /**
+     * Adds term to the product weighting collection. The terms added here are
+     * used later to boost the score of other terms. This is a way of combining
+     * evidence from multiple sources to boost the confidence of the given
+     * evidence.
+     *
+     * Example: The term 'Apache' is found in the manifest of a JAR and is added
+     * to the Collection. When we parse the package names within the JAR file we
+     * may add these package names to the &quot;weighted&quot; strings collection to boost
+     * the score in the Lucene query. That way when we construct the Lucene
+     * query we find the term Apache in the collection AND in the weighted
+     * strings; as such, we will boost the confidence of the term Apache.
+     *
+     * @param str to add to the weighting collection.
+     */
+    public synchronized void addProductWeighting(String str) {
+<span class="fc" id="L240">        productWeightings.add(str.toLowerCase());</span>
+<span class="fc" id="L241">    }</span>
+
+    /**
+     * Returns an unmodifiable set of vendor Weightings - a list of terms that
+     * are believed to be of higher confidence when also found in another
+     * location.
+     *
+     * @return an unmodifiable set of vendor weighting strings
+     */
+    public synchronized Set&lt;String&gt; getVendorWeightings() {
+<span class="fc" id="L251">        return Collections.unmodifiableSet(new HashSet&lt;&gt;(vendorWeightings));</span>
+    }
+
+    /**
+     * Returns an unmodifiable set of product Weightings - a list of terms that
+     * are believed to be of higher confidence when also found in another
+     * location.
+     *
+     * @return an unmodifiable set of vendor weighting strings
+     */
+    public synchronized Set&lt;String&gt; getProductWeightings() {
+<span class="fc" id="L262">        return Collections.unmodifiableSet(new HashSet&lt;&gt;(productWeightings));</span>
+    }
+
+    /**
+     * Returns the unmodifiable set of evidence of the given type.
+     *
+     * @param type the type of evidence (vendor, product, version)
+     * @return the unmodifiable set of evidence
+     */
+    public synchronized Set&lt;Evidence&gt; getEvidence(EvidenceType type) {
+<span class="pc bpc" id="L272" title="1 of 2 branches missed.">        if (null != type) {</span>
+<span class="pc bpc" id="L273" title="1 of 4 branches missed.">            switch (type) {</span>
+                case VENDOR:
+<span class="fc" id="L275">                    return Collections.unmodifiableSet(new HashSet&lt;&gt;(vendors));</span>
+                case PRODUCT:
+<span class="fc" id="L277">                    return Collections.unmodifiableSet(new HashSet&lt;&gt;(products));</span>
+                case VERSION:
+<span class="fc" id="L279">                    return Collections.unmodifiableSet(new HashSet&lt;&gt;(versions));</span>
+                default:
+                    break;
+            }
+        }
+<span class="nc" id="L284">        return null;</span>
+    }
+
+    /**
+     * Returns the unmodifiable set of evidence.
+     *
+     * @return the unmodifiable set of evidence
+     */
+    public synchronized Set&lt;Evidence&gt; getEvidence() {
+<span class="fc" id="L293">        final Set&lt;Evidence&gt; e = new HashSet&lt;&gt;(vendors);</span>
+<span class="fc" id="L294">        e.addAll(products);</span>
+<span class="fc" id="L295">        e.addAll(versions);</span>
+<span class="fc" id="L296">        return Collections.unmodifiableSet(e);</span>
+    }
+
+    /**
+     * Tests if the evidence collection contains the given evidence.
+     *
+     * @param type the type of evidence (vendor, product, version)
+     * @param e the evidence to search
+     * @return true if the evidence is found; otherwise false
+     */
+    public synchronized boolean contains(EvidenceType type, Evidence e) {
+<span class="pc bpc" id="L307" title="1 of 2 branches missed.">        if (null != type) {</span>
+<span class="pc bpc" id="L308" title="1 of 4 branches missed.">            switch (type) {</span>
+                case VENDOR:
+<span class="fc" id="L310">                    return vendors.contains(e);</span>
+                case PRODUCT:
+<span class="fc" id="L312">                    return products.contains(e);</span>
+                case VERSION:
+<span class="fc" id="L314">                    return versions.contains(e);</span>
+                default:
+                    break;
+            }
+        }
+<span class="nc" id="L319">        return false;</span>
+    }
+
+    /**
+     * Returns whether or not the collection contains evidence of a specified
+     * type and confidence.
+     *
+     * @param type the type of evidence (vendor, product, version)
+     * @param confidence A Confidence value.
+     * @return boolean.
+     */
+    public synchronized boolean contains(EvidenceType type, Confidence confidence) {
+<span class="pc bpc" id="L331" title="1 of 2 branches missed.">        if (null == type) {</span>
+<span class="nc" id="L332">            return false;</span>
+        }
+        final Set&lt;Evidence&gt; col;
+<span class="pc bpc" id="L335" title="3 of 4 branches missed.">        switch (type) {</span>
+            case VENDOR:
+<span class="fc" id="L337">                col = vendors;</span>
+<span class="fc" id="L338">                break;</span>
+            case PRODUCT:
+<span class="nc" id="L340">                col = products;</span>
+<span class="nc" id="L341">                break;</span>
+            case VERSION:
+<span class="nc" id="L343">                col = versions;</span>
+<span class="nc" id="L344">                break;</span>
+            default:
+<span class="nc" id="L346">                return false;</span>
+        }
+<span class="pc bpc" id="L348" title="1 of 2 branches missed.">        for (Evidence e : col) {</span>
+<span class="pc bpc" id="L349" title="1 of 2 branches missed.">            if (e.getConfidence().equals(confidence)) {</span>
+<span class="fc" id="L350">                return true;</span>
+            }
+<span class="nc" id="L352">        }</span>
+<span class="nc" id="L353">        return false;</span>
+    }
+
+    /**
+     * Returns a string of evidence 'values'.
+     *
+     * @return a string containing the evidence.
+     */
+    @Override
+    public synchronized String toString() {
+<span class="nc" id="L363">        final StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L364">        sb.append(&quot;{vendors: [&quot;);</span>
+<span class="nc bnc" id="L365" title="All 2 branches missed.">        for (Evidence e : this.vendors) {</span>
+<span class="nc" id="L366">            sb.append(&quot;'&quot;).append(e.getValue()).append(&quot;', &quot;);</span>
+<span class="nc" id="L367">        }</span>
+<span class="nc" id="L368">        sb.append(&quot;],/nproducts: [&quot;);</span>
+<span class="nc bnc" id="L369" title="All 2 branches missed.">        for (Evidence e : this.products) {</span>
+<span class="nc" id="L370">            sb.append(&quot;'&quot;).append(e.getValue()).append(&quot;', &quot;);</span>
+<span class="nc" id="L371">        }</span>
+<span class="nc" id="L372">        sb.append(&quot;],/nversions: [&quot;);</span>
+<span class="nc bnc" id="L373" title="All 2 branches missed.">        for (Evidence e : this.versions) {</span>
+<span class="nc" id="L374">            sb.append(&quot;'&quot;).append(e.getValue()).append(&quot;', &quot;);</span>
+<span class="nc" id="L375">        }</span>
+<span class="nc" id="L376">        sb.append(&quot;]&quot;);</span>
+<span class="nc" id="L377">        return sb.toString();</span>
+    }
+
+    /**
+     * Returns the number of elements in the EvidenceCollection.
+     *
+     * @return the number of elements in the collection.
+     */
+    public synchronized int size() {
+<span class="fc" id="L386">        return vendors.size() + products.size() + versions.size();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L391">        return new HashCodeBuilder(13, 43)</span>
+<span class="fc" id="L392">                .append(vendors)</span>
+<span class="fc" id="L393">                .append(vendorWeightings)</span>
+<span class="fc" id="L394">                .append(products)</span>
+<span class="fc" id="L395">                .append(productWeightings)</span>
+<span class="fc" id="L396">                .append(versions)</span>
+<span class="fc" id="L397">                .toHashCode();</span>
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="pc bpc" id="L402" title="2 of 4 branches missed.">        if (obj == null || !(obj instanceof EvidenceCollection)) {</span>
+<span class="nc" id="L403">            return false;</span>
+        }
+<span class="pc bpc" id="L405" title="1 of 2 branches missed.">        if (this == obj) {</span>
+<span class="nc" id="L406">            return true;</span>
+        }
+<span class="fc" id="L408">        final EvidenceCollection other = (EvidenceCollection) obj;</span>
+<span class="fc" id="L409">        return new EqualsBuilder()</span>
+<span class="fc" id="L410">                .append(this.vendors, other.vendors)</span>
+<span class="fc" id="L411">                .append(this.vendorWeightings, other.vendorWeightings)</span>
+<span class="fc" id="L412">                .append(this.products, other.products)</span>
+<span class="fc" id="L413">                .append(this.productWeightings, other.productWeightings)</span>
+<span class="fc" id="L414">                .append(this.versions, other.versions)</span>
+<span class="fc" id="L415">                .isEquals();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

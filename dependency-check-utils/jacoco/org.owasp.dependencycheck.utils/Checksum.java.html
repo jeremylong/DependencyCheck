@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Checksum.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Utils</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">Checksum.java</span></div><h1>Checksum.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-utils.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.utils;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.charset.UnsupportedCharsetException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.hash.HashCode;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
+import com.google.common.io.Files;
+
+/**
+ * Includes methods to generate the MD5 and SHA1 checksum.
+ *
+ * @author Jeremy Long
+ * @version $Id: $Id
+ */
+public final class Checksum {
+
+    /**
+     * Hex code characters used in getHex.
+     */
+    private static final String HEXES = &quot;0123456789abcdef&quot;;
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L55">    private static final Logger LOGGER = LoggerFactory.getLogger(Checksum.class);</span>
+    /**
+     * MD5 constant.
+     */
+    private static final String MD5 = &quot;MD5&quot;;
+    /**
+     * SHA1 constant.
+     */
+    private static final String SHA1 = &quot;SHA1&quot;;
+    /**
+     * SHA256 constant.
+     */
+    private static final String SHA256 = &quot;SHA-256&quot;;
+    /**
+     * Cached file checksums for each supported algorithm.
+     */
+<span class="fc" id="L71">    private static final Map&lt;String, Map&lt;File, byte[]&gt;&gt; CHECKSUM_CACHES = new HashMap&lt;&gt;(3);</span>
+
+    static {
+<span class="fc" id="L74">        CHECKSUM_CACHES.put(MD5, new ConcurrentHashMap&lt;&gt;());</span>
+<span class="fc" id="L75">        CHECKSUM_CACHES.put(SHA256, new ConcurrentHashMap&lt;&gt;());</span>
+<span class="fc" id="L76">        CHECKSUM_CACHES.put(SHA1, new ConcurrentHashMap&lt;&gt;());</span>
+<span class="fc" id="L77">    }</span>
+
+    /**
+     * Private constructor for a utility class.
+     */
+    private Checksum() {
+    }
+
+    /**
+     * &lt;p&gt;
+     * Creates the cryptographic checksum of a given file using the specified
+     * algorithm.&lt;/p&gt;
+     *
+     * @param algorithm the algorithm to use to calculate the checksum
+     * @param file the file to calculate the checksum for
+     * @return the checksum
+     * @throws java.io.IOException when the file does not exist
+     * @throws java.security.NoSuchAlgorithmException when an algorithm is
+     * specified that does not exist
+     */
+    public static byte[] getChecksum(String algorithm, File file) throws NoSuchAlgorithmException, IOException {
+<span class="fc" id="L98">        final Map&lt;File, byte[]&gt; checksumCache = CHECKSUM_CACHES.get(algorithm.toUpperCase());</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        if (checksumCache == null) {</span>
+<span class="fc" id="L100">            throw new NoSuchAlgorithmException(algorithm);</span>
+        }
+<span class="fc" id="L102">        byte[] checksum = checksumCache.get(file);</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        if (checksum == null) {</span>
+<span class="fc" id="L104">            HashFunction hashFunction = null;</span>
+<span class="pc bpc" id="L105" title="2 of 4 branches missed.">            switch (algorithm.toUpperCase()) {</span>
+                case MD5:
+<span class="fc" id="L107">                    hashFunction = Hashing.md5();</span>
+<span class="fc" id="L108">                    break;</span>
+                case SHA1:
+<span class="fc" id="L110">                    hashFunction = Hashing.sha1();</span>
+<span class="fc" id="L111">                    break;</span>
+                case SHA256:
+<span class="nc" id="L113">                    hashFunction = Hashing.sha256();</span>
+<span class="nc" id="L114">                    break;</span>
+                default:
+<span class="nc" id="L116">                    throw new NoSuchAlgorithmException(algorithm);</span>
+            }
+<span class="fc" id="L118">            final HashCode hash = Files.asByteSource(file).hash(hashFunction);</span>
+<span class="fc" id="L119">            checksum = hash.asBytes();</span>
+<span class="fc" id="L120">            checksumCache.put(file, checksum);</span>
+        }
+<span class="fc" id="L122">        return checksum;</span>
+    }
+
+    /**
+     * Calculates the MD5 checksum of a specified file.
+     *
+     * @param file the file to generate the MD5 checksum
+     * @return the hex representation of the MD5 hash
+     * @throws java.io.IOException when the file passed in does not exist
+     * @throws java.security.NoSuchAlgorithmException when the MD5 algorithm is
+     * not available
+     */
+    public static String getMD5Checksum(File file) throws IOException, NoSuchAlgorithmException {
+<span class="fc" id="L135">        final byte[] b = getChecksum(MD5, file);</span>
+<span class="fc" id="L136">        return getHex(b);</span>
+    }
+
+    /**
+     * Calculates the SHA1 checksum of a specified file.
+     *
+     * @param file the file to generate the MD5 checksum
+     * @return the hex representation of the SHA1 hash
+     * @throws java.io.IOException when the file passed in does not exist
+     * @throws java.security.NoSuchAlgorithmException when the SHA1 algorithm is
+     * not available
+     */
+    public static String getSHA1Checksum(File file) throws IOException, NoSuchAlgorithmException {
+<span class="fc" id="L149">        final byte[] b = getChecksum(SHA1, file);</span>
+<span class="fc" id="L150">        return getHex(b);</span>
+    }
+
+    /**
+     * Calculates the SH256 checksum of a specified file.
+     *
+     * @param file the file to generate the MD5 checksum
+     * @return the hex representation of the SHA1 hash
+     * @throws java.io.IOException when the file passed in does not exist
+     * @throws java.security.NoSuchAlgorithmException when the SHA1 algorithm is
+     * not available
+     */
+    public static String getSHA256Checksum(File file) throws IOException, NoSuchAlgorithmException {
+<span class="nc" id="L163">        final byte[] b = getChecksum(SHA256, file);</span>
+<span class="nc" id="L164">        return getHex(b);</span>
+    }
+
+    /**
+     * Calculates the MD5 checksum of a specified bytes.
+     *
+     * @param algorithm the algorithm to use (md5, sha1, etc.) to calculate the
+     * message digest
+     * @param bytes the bytes to generate the MD5 checksum
+     * @return the hex representation of the MD5 hash
+     */
+    public static String getChecksum(String algorithm, byte[] bytes) {
+<span class="fc" id="L176">        final MessageDigest digest = getMessageDigest(algorithm);</span>
+<span class="fc" id="L177">        final byte[] b = digest.digest(bytes);</span>
+<span class="fc" id="L178">        return getHex(b);</span>
+    }
+
+    /**
+     * Calculates the MD5 checksum of the specified text.
+     *
+     * @param text the text to generate the MD5 checksum
+     * @return the hex representation of the MD5
+     */
+    public static String getMD5Checksum(String text) {
+<span class="fc" id="L188">        final byte[] data = stringToBytes(text);</span>
+<span class="fc" id="L189">        return getChecksum(MD5, data);</span>
+    }
+
+    /**
+     * Calculates the SHA1 checksum of the specified text.
+     *
+     * @param text the text to generate the SHA1 checksum
+     * @return the hex representation of the SHA1
+     */
+    public static String getSHA1Checksum(String text) {
+<span class="fc" id="L199">        final byte[] data = stringToBytes(text);</span>
+<span class="fc" id="L200">        return getChecksum(SHA1, data);</span>
+    }
+
+    /**
+     * Calculates the SHA1 checksum of the specified text.
+     *
+     * @param text the text to generate the SHA1 checksum
+     * @return the hex representation of the SHA1
+     */
+    public static String getSHA256Checksum(String text) {
+<span class="nc" id="L210">        final byte[] data = stringToBytes(text);</span>
+<span class="nc" id="L211">        return getChecksum(SHA256, data);</span>
+    }
+
+    /**
+     * Converts the given text into bytes.
+     *
+     * @param text the text to convert
+     * @return the bytes
+     */
+    private static byte[] stringToBytes(String text) {
+        byte[] data;
+        try {
+<span class="fc" id="L223">            data = text.getBytes(Charset.forName(StandardCharsets.UTF_8.name()));</span>
+<span class="nc" id="L224">        } catch (UnsupportedCharsetException ex) {</span>
+<span class="nc" id="L225">            data = text.getBytes(Charset.defaultCharset());</span>
+<span class="fc" id="L226">        }</span>
+<span class="fc" id="L227">        return data;</span>
+    }
+
+    /**
+     * &lt;p&gt;
+     * Converts a byte array into a hex string.&lt;/p&gt;
+     *
+     * &lt;p&gt;
+     * This method was copied from &lt;a
+     * href=&quot;http://www.rgagnon.com/javadetails/java-0596.html&quot;&gt;http://www.rgagnon.com/javadetails/java-0596.html&lt;/a&gt;&lt;/p&gt;
+     *
+     * @param raw a byte array
+     * @return the hex representation of the byte array
+     */
+    public static String getHex(byte[] raw) {
+<span class="pc bpc" id="L242" title="1 of 2 branches missed.">        if (raw == null) {</span>
+<span class="nc" id="L243">            return null;</span>
+        }
+<span class="fc" id="L245">        final StringBuilder hex = new StringBuilder(2 * raw.length);</span>
+<span class="fc bfc" id="L246" title="All 2 branches covered.">        for (final byte b : raw) {</span>
+<span class="fc" id="L247">            hex.append(HEXES.charAt((b &amp; 0xF0) &gt;&gt; 4)).append(HEXES.charAt(b &amp; 0x0F));</span>
+        }
+<span class="fc" id="L249">        return hex.toString();</span>
+    }
+
+    /**
+     * Returns the message digest.
+     *
+     * @param algorithm the algorithm for the message digest
+     * @return the message digest
+     */
+    private static MessageDigest getMessageDigest(String algorithm) {
+        try {
+<span class="fc" id="L260">            return MessageDigest.getInstance(algorithm);</span>
+<span class="nc" id="L261">        } catch (NoSuchAlgorithmException e) {</span>
+<span class="nc" id="L262">            LOGGER.error(e.getMessage(), e);</span>
+<span class="nc" id="L263">            final String msg = String.format(&quot;Failed to obtain the %s message digest.&quot;, algorithm);</span>
+<span class="nc" id="L264">            throw new IllegalStateException(msg, e);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NuspecParseException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nuget</a> &gt; <span class="el_source">NuspecParseException.java</span></div><h1>NuspecParseException.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nuget;
+
+import javax.annotation.concurrent.ThreadSafe;
+
+/**
+ * Exception during the parsing of a Nuspec file.
+ *
+ * @author colezlaw
+ */
+@ThreadSafe
+public class NuspecParseException extends Exception {
+
+    /**
+     * The serial version UID for serialization.
+     */
+    private static final long serialVersionUID = 2782788205039488966L;
+
+    /**
+     * Constructs a new exception with &lt;code&gt;null&lt;/code&gt; as its detail message.
+     *
+     * The cause is not initialized, and may subsequently be initialized by a
+     * call to {@link java.lang.Throwable#initCause(java.lang.Throwable)}.
+     */
+    public NuspecParseException() {
+<span class="nc" id="L42">        super();</span>
+<span class="nc" id="L43">    }</span>
+
+    /**
+     * Constructs a new exception with the specified detail message. The cause
+     * is not initialized, and may subsequently be initialized by a call to
+     * {@link java.lang.Throwable#initCause(java.lang.Throwable)}.
+     *
+     * @param message the detail message. The detail message is saved for later
+     * retrieval by the {@link java.lang.Throwable#getMessage()} method.
+     */
+    public NuspecParseException(String message) {
+<span class="fc" id="L54">        super(message);</span>
+<span class="fc" id="L55">    }</span>
+
+    /**
+     * Constructs a new exception with the specified detail message and cause.
+     *
+     * Note that the detail message associated with &lt;code&gt;cause&lt;/code&gt; is
+     * &lt;em&gt;not&lt;/em&gt;
+     * automatically incorporated in this exception's detail message.
+     *
+     * @param message the detail message (which is saved for later retrieval by
+     * the {@link java.lang.Throwable#getMessage()} method.
+     * @param cause the cause (which is saved for later retrieval by the
+     * {@link java.lang.Throwable#getCause()} method). (A &lt;code&gt;null&lt;/code&gt;
+     * value is permitted, and indicates that the cause is nonexistent or
+     * unknown).
+     */
+    public NuspecParseException(String message, Throwable cause) {
+<span class="fc" id="L72">        super(message, cause);</span>
+<span class="fc" id="L73">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

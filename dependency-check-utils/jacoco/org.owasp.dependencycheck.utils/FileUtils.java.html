@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FileUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Utils</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">FileUtils.java</span></div><h1>FileUtils.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-utils.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.utils;
+
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.UUID;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * A collection of utilities for processing information about files.
+ *
+ * @author Jeremy Long
+ */
+public final class FileUtils {
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L48">    private static final Logger LOGGER = LoggerFactory.getLogger(FileUtils.class);</span>
+    /**
+     * Bit bucket for non-Windows systems
+     */
+    private static final String BIT_BUCKET_UNIX = &quot;/dev/null&quot;;
+
+    /**
+     * Bit bucket for Windows systems (yes, only one 'L')
+     */
+    private static final String BIT_BUCKET_WIN = &quot;NUL&quot;;
+
+    /**
+     * Private constructor for a utility class.
+     */
+    private FileUtils() {
+    }
+
+    /**
+     * Returns the (lowercase) file extension for a specified file.
+     *
+     * @param fileName the file name to retrieve the file extension from.
+     * @return the file extension.
+     */
+    @Nullable
+    public static String getFileExtension(@NotNull String fileName) {
+        @Nullable
+<span class="fc" id="L74">        final String fileExt = FilenameUtils.getExtension(fileName);</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        return StringUtils.isNoneEmpty(fileExt) ? StringUtils.lowerCase(fileExt) : null;</span>
+    }
+
+    /**
+     * Deletes a file. If the File is a directory it will recursively delete the
+     * contents.
+     *
+     * @param file the File to delete
+     * @return true if the file was deleted successfully, otherwise false
+     */
+    public static boolean delete(@Nullable File file) {
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">        if (file == null) {</span>
+<span class="nc" id="L87">            LOGGER.warn(&quot;cannot delete null File&quot;);</span>
+<span class="nc" id="L88">            return false;</span>
+        }
+
+        try {
+<span class="fc" id="L92">            org.apache.commons.io.FileUtils.forceDelete(file);</span>
+<span class="nc" id="L93">        } catch (IOException ex) {</span>
+<span class="nc" id="L94">            LOGGER.trace(ex.getMessage(), ex);</span>
+<span class="nc" id="L95">            LOGGER.debug(&quot;Failed to delete file: {} (error message: {}); attempting to delete on exit.&quot;, file.getPath(), ex.getMessage());</span>
+<span class="nc" id="L96">            file.deleteOnExit();</span>
+<span class="nc" id="L97">            return false;</span>
+<span class="fc" id="L98">        }</span>
+
+<span class="fc" id="L100">        return true;</span>
+    }
+
+    /**
+     * Creates a unique temporary directory in the given directory.
+     *
+     * @param base the base directory to create a temporary directory within
+     * @return the temporary directory
+     * @throws java.io.IOException thrown when a directory cannot be created
+     * within the base directory
+     */
+    @NotNull
+    public static File createTempDirectory(@Nullable final File base) throws IOException {
+<span class="fc" id="L113">        final File tempDir = new File(base, &quot;dctemp&quot; + UUID.randomUUID().toString());</span>
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">        if (tempDir.exists()) {</span>
+<span class="nc" id="L115">            return createTempDirectory(base);</span>
+        }
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">        if (!tempDir.mkdirs()) {</span>
+<span class="nc" id="L118">            throw new IOException(&quot;Could not create temp directory `&quot; + tempDir.getAbsolutePath() + &quot;`&quot;);</span>
+        }
+<span class="fc" id="L120">        LOGGER.debug(&quot;Temporary directory is `{}`&quot;, tempDir.getAbsolutePath());</span>
+<span class="fc" id="L121">        return tempDir;</span>
+    }
+
+    /**
+     * Return the bit bucket for the OS. '/dev/null' for Unix and 'NUL' for
+     * Windows
+     *
+     * @return a String containing the bit bucket
+     */
+    @NotNull
+    public static String getBitBucket() {
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        return SystemUtils.IS_OS_WINDOWS ? BIT_BUCKET_WIN : BIT_BUCKET_UNIX;</span>
+    }
+
+    /**
+     * Close the given {@link java.io.Closeable} instance, ignoring nulls, and
+     * logging any thrown {@link java.io.IOException}.
+     *
+     * @param closeable to be closed
+     */
+    public static void close(@Nullable final Closeable closeable) {
+<span class="nc bnc" id="L142" title="All 2 branches missed.">        if (null != closeable) {</span>
+            try {
+<span class="nc" id="L144">                closeable.close();</span>
+<span class="nc" id="L145">            } catch (IOException ex) {</span>
+<span class="nc" id="L146">                LOGGER.trace(&quot;&quot;, ex);</span>
+<span class="nc" id="L147">            }</span>
+        }
+<span class="nc" id="L149">    }</span>
+
+    /**
+     * Gets the {@link java.io.InputStream} for this resource.
+     *
+     * @param resource path
+     * @return the input stream for the given resource
+     */
+    @Nullable
+    public static InputStream getResourceAsStream(@NotNull String resource) {
+<span class="fc" id="L159">        final ClassLoader classLoader = FileUtils.class.getClassLoader();</span>
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">        final InputStream inputStream = classLoader != null</span>
+<span class="pc" id="L161">                ? classLoader.getResourceAsStream(resource)</span>
+<span class="pc" id="L162">                : ClassLoader.getSystemResourceAsStream(resource);</span>
+
+<span class="pc bpc" id="L164" title="1 of 2 branches missed.">        if (inputStream == null) {</span>
+            try {
+<span class="nc" id="L166">                return new FileInputStream(resource);</span>
+<span class="nc" id="L167">            } catch (final FileNotFoundException e) {</span>
+<span class="nc" id="L168">                LOGGER.error(&quot;Unable to create an Input Stream for &quot; + resource, e);</span>
+            }
+        }
+<span class="fc" id="L171">        return inputStream;</span>
+    }
+
+    /**
+     * Returns a File object for the given resource. The resource is attempted
+     * to be loaded from the class loader.
+     *
+     * @param resource path
+     * @return the file reference for the resource
+     */
+    public static File getResourceAsFile(final String resource) {
+<span class="nc" id="L182">        final ClassLoader classLoader = FileUtils.class.getClassLoader();</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">        final String path = classLoader != null</span>
+<span class="nc" id="L184">                ? classLoader.getResource(resource).getFile()</span>
+<span class="nc" id="L185">                : ClassLoader.getSystemResource(resource).getFile();</span>
+
+<span class="nc bnc" id="L187" title="All 2 branches missed.">        if (path == null) {</span>
+<span class="nc" id="L188">            return new File(resource);</span>
+        }
+<span class="nc" id="L190">        return new File(path);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

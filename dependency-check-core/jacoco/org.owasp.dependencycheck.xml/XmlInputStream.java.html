@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XmlInputStream.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.xml</a> &gt; <span class="el_source">XmlInputStream.java</span></div><h1>XmlInputStream.java</h1><pre class="source lang-java linenums">package org.owasp.dependencycheck.xml;
+
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import javax.annotation.concurrent.NotThreadSafe;
+
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Cleans up often very bad XML. Primarily, this will convert named HTM entities
+ * into their HTM encoded Unicode code point representation.
+ *
+ * &lt;ol&gt;
+ * &lt;li&gt;Strips leading white space&lt;/li&gt;
+ * &lt;li&gt;Recodes &amp;amp;pound; etc to &amp;amp;#...;&lt;/li&gt;
+ * &lt;li&gt;Recodes lone &amp;amp; as &amp;amp;amp;&lt;/li&gt;
+ * &lt;/ol&gt;
+ * &lt;p&gt;
+ * This is a slightly modified (class/method rename) from an SO answer:
+ * https://stackoverflow.com/questions/7286428/help-the-java-sax-parser-to-understand-bad-xml&lt;/p&gt;
+ *
+ * @author https://stackoverflow.com/users/823393/oldcurmudgeon
+ */
+@NotThreadSafe
+public class XmlInputStream extends FilterInputStream {
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L33">    private static final Logger LOGGER = LoggerFactory.getLogger(XmlInputStream.class);</span>
+    /**
+     * The minimum length of characters to read.
+     */
+    private static final int MIN_LENGTH = 2;
+    /**
+     * Holder for everything we've read.
+     */
+<span class="fc" id="L41">    private final StringBuilder red = new StringBuilder();</span>
+    /**
+     * Data that needs to be pushed back.
+     */
+<span class="fc" id="L45">    private final StringBuilder pushBack = new StringBuilder();</span>
+    /**
+     * How much we've given them.
+     */
+<span class="fc" id="L49">    private int given = 0;</span>
+    /**
+     * How much we've read.
+     */
+<span class="fc" id="L53">    private int pulled = 0;</span>
+
+    /**
+     * Constructs a new XML Input Stream.
+     *
+     * @param in the base input stream
+     */
+    public XmlInputStream(InputStream in) {
+<span class="fc" id="L61">        super(in);</span>
+<span class="fc" id="L62">    }</span>
+
+    /**
+     * NB: This is a Troll length (i.e. it goes 1, 2, many) so 2 actually means
+     * &quot;at least 2&quot;
+     *
+     * @return the length
+     */
+    public int length() {
+        try {
+<span class="fc" id="L72">            final StringBuilder s = read(MIN_LENGTH);</span>
+<span class="fc" id="L73">            pushBack.append(s);</span>
+<span class="fc" id="L74">            return s.length();</span>
+<span class="nc" id="L75">        } catch (IOException ex) {</span>
+<span class="nc" id="L76">            LOGGER.warn(&quot;Oops &quot;, ex);</span>
+        }
+<span class="nc" id="L78">        return 0;</span>
+    }
+
+    /**
+     * Read n characters.
+     *
+     * @param n the number of characters to read
+     * @return the characters read
+     * @throws IOException thrown when an error occurs
+     */
+    private StringBuilder read(int n) throws IOException {
+        // Input stream finished?
+<span class="fc" id="L90">        boolean eof = false;</span>
+        // Read that many.
+<span class="fc" id="L92">        final StringBuilder s = new StringBuilder(n);</span>
+<span class="fc bfc" id="L93" title="All 4 branches covered.">        while (s.length() &lt; n &amp;&amp; !eof) {</span>
+            // Always get from the pushBack buffer.
+<span class="fc bfc" id="L95" title="All 2 branches covered.">            if (pushBack.length() == 0) {</span>
+                // Read something from the stream into pushBack.
+<span class="fc" id="L97">                eof = readIntoPushBack();</span>
+            }
+
+            // Pushback only contains deliverable codes.
+<span class="fc bfc" id="L101" title="All 2 branches covered.">            if (pushBack.length() &gt; 0) {</span>
+                // Grab one character
+<span class="fc" id="L103">                s.append(pushBack.charAt(0));</span>
+                // Remove it from pushBack
+<span class="fc" id="L105">                pushBack.deleteCharAt(0);</span>
+            }
+
+        }
+<span class="fc" id="L109">        return s;</span>
+    }
+
+    /**
+     * Might not actually push back anything but usually will.
+     *
+     * @return true if at end-of-file
+     * @throws IOException thrown if there is an IO exception in the underlying
+     * steam
+     */
+    private boolean readIntoPushBack() throws IOException {
+        // File finished?
+<span class="fc" id="L121">        boolean eof = false;</span>
+        // Next char.
+<span class="fc" id="L123">        final int ch = in.read();</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        if (ch &gt;= 0) {</span>
+            // Discard whitespace at start?
+<span class="pc bpc" id="L126" title="1 of 4 branches missed.">            if (!(pulled == 0 &amp;&amp; isWhiteSpace(ch))) {</span>
+                // Good code.
+<span class="fc" id="L128">                pulled += 1;</span>
+                // Parse out the &amp;stuff;
+<span class="fc bfc" id="L130" title="All 2 branches covered.">                if (ch == '&amp;') {</span>
+                    // Process the &amp;
+<span class="fc" id="L132">                    readAmpersand();</span>
+                } else {
+                    // Not an '&amp;', just append.
+<span class="fc" id="L135">                    pushBack.append((char) ch);</span>
+                }
+            }
+        } else {
+            // Hit end of file.
+<span class="fc" id="L140">            eof = true;</span>
+        }
+<span class="fc" id="L142">        return eof;</span>
+    }
+
+    /**
+     * Deal with an ampersand in the stream.
+     *
+     * @throws IOException thrown if an unknown entity is encountered
+     */
+    private void readAmpersand() throws IOException {
+        // Read the whole word, up to and including the ;
+<span class="fc" id="L152">        final StringBuilder reference = new StringBuilder();</span>
+        int ch;
+        // Should end in a ';'
+<span class="fc bfc" id="L155" title="All 2 branches covered.">        for (ch = in.read(); isAlphaNumeric(ch); ch = in.read()) {</span>
+<span class="fc" id="L156">            reference.append((char) ch);</span>
+        }
+        // Did we tidily finish?
+<span class="fc bfc" id="L159" title="All 2 branches covered.">        if (ch == ';') {</span>
+            // Yes! Translate it into a &amp;#nnn; code.
+<span class="fc" id="L161">            final String code = XmlEntity.fromNamedReference(reference);</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">            if (code != null) {</span>
+                // Keep it.
+<span class="fc" id="L164">                pushBack.append(code);</span>
+            } else {
+                // invalid entity. Encode the &amp; and append the sequence of chars.
+<span class="fc" id="L167">                pushBack.append(&quot;&amp;#38;&quot;).append(reference).append((char) ch);</span>
+            }
+<span class="fc" id="L169">        } else {</span>
+            // Did not terminate properly!
+            // Perhaps an &amp; on its own or a malformed reference.
+            // Either way, escape the &amp;
+<span class="fc" id="L173">            pushBack.append(&quot;&amp;#38;&quot;).append(reference).append((char) ch);</span>
+        }
+<span class="fc" id="L175">    }</span>
+
+    /**
+     * Keep track of what we've given them.
+     *
+     * @param s the sequence of characters given
+     * @param wanted the number of characters wanted
+     * @param got the number of characters given
+     */
+    private void given(CharSequence s, int wanted, int got) {
+<span class="fc" id="L185">        red.append(s);</span>
+<span class="fc" id="L186">        given += got;</span>
+<span class="fc" id="L187">        LOGGER.trace(&quot;Given: [&quot; + wanted + &quot;,&quot; + got + &quot;]-&quot; + s);</span>
+<span class="fc" id="L188">    }</span>
+
+    /**
+     * Reads the next byte.
+     *
+     * @return the byte read
+     * @throws IOException thrown when there is an problem reading
+     */
+    @Override
+    public int read() throws IOException {
+<span class="fc" id="L198">        final StringBuilder s = read(1);</span>
+<span class="fc" id="L199">        given(s, 1, 1);</span>
+<span class="fc bfc" id="L200" title="All 2 branches covered.">        return s.length() &gt; 0 ? s.charAt(0) : -1;</span>
+    }
+
+    /**
+     * Reads the next length of bytes from the stream into the given byte array
+     * at the given offset.
+     *
+     * @param data the buffer to store the data read
+     * @param offset the offset in the buffer to start writing
+     * @param length the length of data to read
+     * @return the number of bytes read
+     * @throws IOException thrown when there is an issue with the underlying
+     * stream
+     */
+    @Override
+    public int read(@NotNull byte[] data, int offset, int length) throws IOException {
+<span class="fc" id="L216">        final StringBuilder s = read(length);</span>
+<span class="fc" id="L217">        int n = 0;</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">        for (int i = 0; i &lt; Math.min(length, s.length()); i++) {</span>
+<span class="fc" id="L219">            data[offset + i] = (byte) s.charAt(i);</span>
+<span class="fc" id="L220">            n += 1;</span>
+        }
+<span class="fc" id="L222">        given(s, length, n);</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">        return n &gt; 0 ? n : -1;</span>
+    }
+
+    /**
+     * To string implementation.
+     *
+     * @return a string representation of the data given and read from the
+     * stream.
+     */
+    @Override
+    public String toString() {
+<span class="fc" id="L234">        final String s = red.toString();</span>
+<span class="fc" id="L235">        final StringBuilder h = new StringBuilder();</span>
+        // Hex dump the small ones.
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">        if (s.length() &lt; 8) {</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">            for (int i = 0; i &lt; s.length(); i++) {</span>
+<span class="fc" id="L239">                h.append(&quot; &quot;).append(Integer.toHexString(s.charAt(i)));</span>
+            }
+        }
+<span class="pc bpc" id="L242" title="1 of 2 branches missed.">        return &quot;[&quot; + given + &quot;]-\&quot;&quot; + s + &quot;\&quot;&quot; + (h.length() &gt; 0 ? &quot; (&quot; + h.toString() + &quot;)&quot; : &quot;&quot;);</span>
+    }
+
+    /**
+     * Determines if the character is whitespace.
+     *
+     * @param ch the character to check
+     * @return true if the character is whitespace; otherwise false
+     */
+    private boolean isWhiteSpace(int ch) {
+<span class="pc bpc" id="L252" title="1 of 2 branches missed.">        switch (ch) {</span>
+            case ' ':
+            case '\r':
+            case '\n':
+            case '\t':
+<span class="nc" id="L257">                return true;</span>
+            default:
+<span class="fc" id="L259">                return false;</span>
+        }
+    }
+
+    /**
+     * Checks if the given character is alpha-numeric.
+     *
+     * @param ch the character to check
+     * @return true if the character is alpha-numeric; otherwise false.
+     */
+    private boolean isAlphaNumeric(int ch) {
+<span class="pc bpc" id="L270" title="5 of 12 branches missed.">        return ('a' &lt;= ch &amp;&amp; ch &lt;= 'z')</span>
+                || ('A' &lt;= ch &amp;&amp; ch &lt;= 'Z')
+                || ('0' &lt;= ch &amp;&amp; ch &lt;= '9');
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

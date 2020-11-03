@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UrlStringUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">UrlStringUtils.java</span></div><h1>UrlStringUtils.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.utils;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
+import javax.annotation.concurrent.ThreadSafe;
+
+/**
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+public final class UrlStringUtils {
+
+    /**
+     * A regular expression to test if a string contains a URL.
+     */
+<span class="fc" id="L38">    private static final Pattern CONTAINS_URL_TEST = Pattern.compile(&quot;^.*(ht|f)tps?://.*$&quot;, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);</span>
+    /**
+     * A regular expression to test if a string is a URL.
+     */
+<span class="fc" id="L42">    private static final Pattern IS_URL_TEST = Pattern.compile(&quot;^(ht|f)tps?://.*&quot;, Pattern.CASE_INSENSITIVE);</span>
+    /**
+     * A listing of domain parts that should not be used as evidence. Yes, this
+     * is an incomplete list.
+     */
+<span class="fc" id="L47">    private static final String[] IGNORE_LIST = {&quot;www&quot;, &quot;com&quot;, &quot;org&quot;, &quot;gov&quot;, &quot;info&quot;, &quot;name&quot;, &quot;net&quot;, &quot;pro&quot;, &quot;tel&quot;, &quot;mobi&quot;, &quot;xxx&quot;, &quot;github&quot;, &quot;gitlab&quot;};</span>
+
+    static {
+<span class="fc" id="L50">        Arrays.sort(IGNORE_LIST);</span>
+<span class="fc" id="L51">    }</span>
+
+    /**
+     * Private constructor for a utility class.
+     */
+    private UrlStringUtils() {
+    }
+
+    /**
+     * Tests if the text provided contains a URL. This is somewhat limited
+     * search in that it only looks for (ftp|http|https)://
+     *
+     * @param text the text to search
+     * @return true if the text contains a url, otherwise false
+     */
+    public static boolean containsUrl(String text) {
+<span class="fc" id="L67">        return CONTAINS_URL_TEST.matcher(text).matches();</span>
+    }
+
+    /**
+     * Tests if the given text is url.
+     *
+     * @param text the string to test
+     * @return returns true if the text is a url, otherwise false
+     */
+    public static boolean isUrl(String text) {
+<span class="fc" id="L77">        return IS_URL_TEST.matcher(text).matches();</span>
+    }
+
+    /**
+     * &lt;p&gt;
+     * Takes a URL, in String format, and adds the important parts of the URL to
+     * a list of strings.&lt;/p&gt;
+     * &lt;p&gt;
+     * Example, given the following input:&lt;/p&gt;
+     * &lt;code&gt;&quot;https://www.somedomain.com/path1/path2/file.php?id=439&quot;&lt;/code&gt;
+     * &lt;p&gt;
+     * The function would return:&lt;/p&gt;
+     * &lt;code&gt;{&quot;some.domain&quot;, &quot;path1&quot;, &quot;path2&quot;, &quot;file&quot;}&lt;/code&gt;
+     *
+     * @param text a URL
+     * @return importantParts a list of the important parts of the URL
+     * @throws MalformedURLException thrown if the URL is malformed
+     */
+    @SuppressWarnings(&quot;StringSplitter&quot;)
+    public static List&lt;String&gt; extractImportantUrlData(String text) throws MalformedURLException {
+<span class="fc" id="L97">        final List&lt;String&gt; importantParts = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L98">        final URL url = new URL(text);</span>
+<span class="fc" id="L99">        final String[] domain = url.getHost().split(&quot;\\.&quot;);</span>
+        //add the domain except www and the tld.
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        for (int i = 0; i &lt; domain.length - 1; i++) {</span>
+<span class="fc" id="L102">            final String sub = domain[i];</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">            if (Arrays.binarySearch(IGNORE_LIST, sub.toLowerCase()) &lt; 0) {</span>
+<span class="fc" id="L104">                importantParts.add(sub);</span>
+            }
+        }
+<span class="fc" id="L107">        final String document = url.getPath();</span>
+<span class="fc" id="L108">        final String[] pathParts = document.split(&quot;[\\\\//]&quot;);</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        for (int i = 0; i &lt; pathParts.length - 1; i++) {</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">            if (!pathParts[i].isEmpty()) {</span>
+<span class="fc" id="L111">                importantParts.add(pathParts[i]);</span>
+            }
+        }
+<span class="pc bpc" id="L114" title="1 of 4 branches missed.">        if (pathParts.length &gt; 0 &amp;&amp; !pathParts[pathParts.length - 1].isEmpty()) {</span>
+<span class="fc" id="L115">            final String tmp = pathParts[pathParts.length - 1];</span>
+<span class="fc" id="L116">            final int pos = tmp.lastIndexOf('.');</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">            if (pos &gt; 1) {</span>
+<span class="fc" id="L118">                importantParts.add(tmp.substring(0, pos));</span>
+<span class="pc bpc" id="L119" title="1 of 4 branches missed.">            } else if (pos == 0 &amp;&amp; tmp.length() &gt; 1) {</span>
+<span class="fc" id="L120">                importantParts.add(tmp.substring(1));</span>
+            } else {
+<span class="fc" id="L122">                importantParts.add(tmp);</span>
+            }
+        }
+<span class="fc" id="L125">        return importantParts;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

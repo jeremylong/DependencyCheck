@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EvidenceMatcher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.xml.hints</a> &gt; <span class="el_source">EvidenceMatcher.java</span></div><h1>EvidenceMatcher.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2017 Hans Aikema. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.xml.hints;
+
+import java.util.regex.Pattern;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Evidence;
+
+/**
+ * EvidenceMatcher can match one or more {@link Evidence}s. By using regular
+ * expressions for some fields and allowing omission of Evidence fields it can
+ * be used to match more than one occurrence of evidence to enable hints that
+ * work for a range of similar false positives/false negatives.
+ *
+ * The EvidenceMatcher is used for processing Evidences of a project's
+ * dependencies in conjunction with the {@code &lt;given&gt;} and {@code &lt;remove&gt;}
+ * clauses of the hints file.
+ *
+ * @author Hans Aikema
+ */
+public class EvidenceMatcher {
+
+    /**
+     * The name that the {@link Evidence} should have for a match.
+     */
+    private final String name;
+
+    /**
+     * The source that the {@link Evidence} should have for a match. A
+     * {@code null}-value is allowed and functions as a wildcard.
+     */
+    private final String source;
+
+    /**
+     * The value that the {@link Evidence} should have for a match.
+     */
+    private final String value;
+
+    /**
+     * Whether the {@link EvidenceMatcher#value} should be interpreted as a
+     * regular expression.
+     */
+    private final boolean regex;
+
+    /**
+     * The confidence that the {@link Evidence} should have for a match. A
+     * {@code null}-value is allowed and functions as a wildcard.
+     */
+    private final Confidence confidence;
+
+    /**
+     * Creates a new EvidenceMatcher objects.
+     *
+     * @param source the source of the evidence, a source that is {@code null}
+     * indicates any source should match.
+     * @param name the non-{@code null} name of the evidence.
+     * @param value the non-{@code null} value of the evidence.
+     * @param regex whether value is a regex.
+     * @param confidence the confidence of the evidence, a confidence that is
+     * {@code null} indicates any confidence should match.
+     */
+<span class="fc" id="L77">    public EvidenceMatcher(String source, String name, String value, boolean regex, Confidence confidence) {</span>
+<span class="fc" id="L78">        this.source = source;</span>
+<span class="fc" id="L79">        this.name = name;</span>
+<span class="fc" id="L80">        this.value = value;</span>
+<span class="fc" id="L81">        this.confidence = confidence;</span>
+<span class="fc" id="L82">        this.regex = regex;</span>
+<span class="fc" id="L83">    }</span>
+
+    /**
+     * Tests whether the given Evidence matches this EvidenceMatcher.
+     *
+     * @param evidence the evidence to match
+     * @return whether the evidence matches this matcher
+     */
+    public boolean matches(Evidence evidence) {
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        return sourceMatches(evidence)</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">                &amp;&amp; confidenceMatches(evidence)</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">                &amp;&amp; name.equalsIgnoreCase(evidence.getName())</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">                &amp;&amp; valueMatches(evidence);</span>
+    }
+
+    /**
+     * Standard toString() implementation.
+     *
+     * @return the string representation of the object
+     */
+    @Override
+    public String toString() {
+<span class="nc" id="L105">        return &quot;HintEvidenceMatcher{&quot; + &quot;name=&quot; + name + &quot;, source=&quot; + source + &quot;, value=&quot; + value</span>
+                + &quot;, confidence=&quot; + confidence + &quot;, regex=&quot; + regex + '}';
+    }
+
+    /**
+     * package-private getter to allow testability of the parser without mocking.
+     *
+     * @return The name property
+     */
+    String getName() {
+<span class="fc" id="L115">        return name;</span>
+    }
+
+    /**
+     * package-private getter to allow testability of the parser without mocking.
+     *
+     * @return The source property
+     */
+    String getSource() {
+<span class="nc" id="L124">        return source;</span>
+    }
+
+    /**
+     * package-private getter to allow testability of the parser without mocking.
+     *
+     * @return The value property
+     */
+    String getValue() {
+<span class="nc" id="L133">        return value;</span>
+    }
+
+    /**
+     * package-private getter to allow testability of the parser without mocking.
+     *
+     * @return The regex property
+     */
+    boolean isRegex() {
+<span class="fc" id="L142">        return regex;</span>
+    }
+
+    /**
+     * package-private getter to allow testability of the parser without mocking.
+     *
+     * @return The confidence property
+     */
+    Confidence getConfidence() {
+<span class="nc" id="L151">        return confidence;</span>
+    }
+
+    /**
+     * Checks whether the value of the evidence matches this matcher. When
+     * {@link #isRegex()} is {@code true} value is used as a
+     * {@link java.util.regex.Pattern} that it should match. Otherwise the value
+     * must be case-insensitive equal to the evidence's value.
+     *
+     * @param evidence the evidence to match
+     * @return &lt;code&gt;true&lt;/code&gt; if the evidence matches; otherwise
+     * &lt;code&gt;false&lt;/code&gt;
+     */
+    private boolean valueMatches(Evidence evidence) {
+        final boolean result;
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        if (regex) {</span>
+<span class="fc" id="L167">            result = Pattern.matches(value, evidence.getValue());</span>
+        } else {
+<span class="fc" id="L169">            result = value.equalsIgnoreCase(evidence.getValue());</span>
+        }
+<span class="fc" id="L171">        return result;</span>
+    }
+
+    /**
+     * Checks whether the source of the evidence matches this matcher. If our
+     * source is {@code null} any source in the evidence matches. Otherwise the
+     * source in the evidence must be case-insensitive equal to our source.
+     *
+     * @param evidence The evidence to inspect
+     * @return {@code true} is the source of the evidence matches, false
+     * otherwise.
+     */
+    private boolean sourceMatches(Evidence evidence) {
+<span class="fc bfc" id="L184" title="All 4 branches covered.">        return this.source == null || source.equalsIgnoreCase(evidence.getSource());</span>
+    }
+
+    /**
+     * Checks whether the confidence of the evidence matches this matcher. If
+     * our confidence is {@code null} any confidence in the evidence matches.
+     * Otherwise the confidence in the evidence must be exactly equal to our
+     * confidence.
+     *
+     * @param evidence The evidence to inspect
+     * @return {@code true} is the confidence of the evidence matches, false
+     * otherwise.
+     */
+    private boolean confidenceMatches(Evidence evidence) {
+<span class="fc bfc" id="L198" title="All 4 branches covered.">        return this.confidence == null || confidence.equals(evidence.getConfidence());</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

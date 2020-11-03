@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AnalyzerService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">AnalyzerService.java</span></div><h1>AnalyzerService.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import java.util.ArrayList;
+
+import org.slf4j.LoggerFactory;
+
+import static java.util.Arrays.asList;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.ServiceLoader;
+import javax.annotation.concurrent.ThreadSafe;
+
+import org.owasp.dependencycheck.utils.Settings;
+
+/**
+ * The Analyzer Service Loader. This class loads all services that implement
+ * {@link org.owasp.dependencycheck.analyzer.Analyzer}.
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+public class AnalyzerService {
+
+    /**
+     * The Logger for use throughout the class.
+     */
+<span class="fc" id="L45">    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(AnalyzerService.class);</span>
+
+    /**
+     * The service loader for analyzers.
+     */
+    private final ServiceLoader&lt;Analyzer&gt; service;
+    /**
+     * The configured settings.
+     */
+    private final Settings settings;
+
+    /**
+     * Creates a new instance of AnalyzerService.
+     *
+     * @param classLoader the ClassLoader to use when dynamically loading
+     *                    Analyzer and Update services
+     * @param settings    the configured settings
+     */
+<span class="fc" id="L63">    public AnalyzerService(ClassLoader classLoader, Settings settings) {</span>
+<span class="fc" id="L64">        service = ServiceLoader.load(Analyzer.class, classLoader);</span>
+<span class="fc" id="L65">        this.settings = settings;</span>
+<span class="fc" id="L66">    }</span>
+
+    /**
+     * Returns a list of all instances of the Analyzer interface.
+     *
+     * @return a list of Analyzers.
+     */
+    public List&lt;Analyzer&gt; getAnalyzers() {
+<span class="fc" id="L74">        return getAnalyzers(AnalysisPhase.values());</span>
+    }
+
+    /**
+     * Returns a list of all instances of the Analyzer interface that are bound
+     * to one of the given phases.
+     *
+     * @param phases the phases to obtain analyzers for
+     * @return a list of Analyzers.
+     */
+    public List&lt;Analyzer&gt; getAnalyzers(AnalysisPhase... phases) {
+<span class="fc" id="L85">        return getAnalyzers(asList(phases));</span>
+    }
+
+    /**
+     * Returns a list of all instances of the Analyzer interface that are bound
+     * to one of the given phases.
+     *
+     * @param phases the phases to obtain analyzers for
+     * @return a list of Analyzers
+     */
+    public List&lt;Analyzer&gt; getAnalyzers(List&lt;AnalysisPhase&gt; phases) {
+<span class="fc" id="L96">        final List&lt;Analyzer&gt; analyzers = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L97">        final Iterator&lt;Analyzer&gt; iterator = service.iterator();</span>
+        final boolean experimentalEnabled;
+        final boolean retiredEnabled;
+<span class="fc" id="L100">        experimentalEnabled = settings.getBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, false);</span>
+<span class="fc" id="L101">        retiredEnabled = settings.getBoolean(Settings.KEYS.ANALYZER_RETIRED_ENABLED, false);</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        while (iterator.hasNext()) {</span>
+<span class="fc" id="L103">            final Analyzer a = iterator.next();</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">            if (!phases.contains(a.getAnalysisPhase())) {</span>
+<span class="fc" id="L105">                continue;</span>
+            }
+<span class="fc bfc" id="L107" title="All 4 branches covered.">            if (!experimentalEnabled &amp;&amp; a.getClass().isAnnotationPresent(Experimental.class)) {</span>
+<span class="fc" id="L108">                continue;</span>
+            }
+<span class="pc bpc" id="L110" title="1 of 4 branches missed.">            if (!retiredEnabled &amp;&amp; a.getClass().isAnnotationPresent(Retired.class)) {</span>
+<span class="nc" id="L111">                continue;</span>
+            }
+<span class="fc" id="L113">            LOGGER.debug(&quot;Loaded Analyzer {}&quot;, a.getName());</span>
+<span class="fc" id="L114">            analyzers.add(a);</span>
+<span class="fc" id="L115">        }</span>
+<span class="fc" id="L116">        return analyzers;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

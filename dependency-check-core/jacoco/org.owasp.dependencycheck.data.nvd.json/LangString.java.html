@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LangString.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvd.json</a> &gt; <span class="el_source">LangString.java</span></div><h1>LangString.java</h1><pre class="source lang-java linenums">
+package org.owasp.dependencycheck.data.nvd.json;
+
+import java.util.HashMap;
+import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({
+    &quot;lang&quot;,
+    &quot;value&quot;
+})
+<span class="fc" id="L18">public class LangString {</span>
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;lang&quot;)
+    private String lang;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;value&quot;)
+    private String value;
+<span class="fc" id="L34">    @JsonIgnore</span>
+    private Map&lt;String, Object&gt; additionalProperties = new HashMap&lt;String, Object&gt;();
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;lang&quot;)
+    public String getLang() {
+<span class="fc" id="L44">        return lang;</span>
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;lang&quot;)
+    public void setLang(String lang) {
+<span class="fc" id="L54">        this.lang = lang;</span>
+<span class="fc" id="L55">    }</span>
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;value&quot;)
+    public String getValue() {
+<span class="fc" id="L64">        return value;</span>
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;value&quot;)
+    public void setValue(String value) {
+<span class="fc" id="L74">        this.value = value;</span>
+<span class="fc" id="L75">    }</span>
+
+    @JsonAnyGetter
+    public Map&lt;String, Object&gt; getAdditionalProperties() {
+<span class="nc" id="L79">        return this.additionalProperties;</span>
+    }
+
+    @JsonAnySetter
+    public void setAdditionalProperty(String name, Object value) {
+<span class="nc" id="L84">        this.additionalProperties.put(name, value);</span>
+<span class="nc" id="L85">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L89">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L90">        sb.append(LangString.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');</span>
+<span class="nc" id="L91">        sb.append(&quot;lang&quot;);</span>
+<span class="nc" id="L92">        sb.append('=');</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        sb.append(((this.lang == null)?&quot;&lt;null&gt;&quot;:this.lang));</span>
+<span class="nc" id="L94">        sb.append(',');</span>
+<span class="nc" id="L95">        sb.append(&quot;value&quot;);</span>
+<span class="nc" id="L96">        sb.append('=');</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        sb.append(((this.value == null)?&quot;&lt;null&gt;&quot;:this.value));</span>
+<span class="nc" id="L98">        sb.append(',');</span>
+<span class="nc" id="L99">        sb.append(&quot;additionalProperties&quot;);</span>
+<span class="nc" id="L100">        sb.append('=');</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        sb.append(((this.additionalProperties == null)?&quot;&lt;null&gt;&quot;:this.additionalProperties));</span>
+<span class="nc" id="L102">        sb.append(',');</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (sb.charAt((sb.length()- 1)) == ',') {</span>
+<span class="nc" id="L104">            sb.setCharAt((sb.length()- 1), ']');</span>
+        } else {
+<span class="nc" id="L106">            sb.append(']');</span>
+        }
+<span class="nc" id="L108">        return sb.toString();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L113">        int result = 1;</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">        result = ((result* 31)+((this.lang == null)? 0 :this.lang.hashCode()));</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        result = ((result* 31)+((this.value == null)? 0 :this.value.hashCode()));</span>
+<span class="nc" id="L117">        return result;</span>
+    }
+
+    @Override
+    public boolean equals(Object other) {
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        if (other == this) {</span>
+<span class="nc" id="L123">            return true;</span>
+        }
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if ((other instanceof LangString) == false) {</span>
+<span class="nc" id="L126">            return false;</span>
+        }
+<span class="nc" id="L128">        LangString rhs = ((LangString) other);</span>
+<span class="nc bnc" id="L129" title="All 18 branches missed.">        return ((((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&amp;&amp;this.additionalProperties.equals(rhs.additionalProperties)))&amp;&amp;((this.lang == rhs.lang)||((this.lang!= null)&amp;&amp;this.lang.equals(rhs.lang))))&amp;&amp;((this.value == rhs.value)||((this.value!= null)&amp;&amp;this.value.equals(rhs.value))));</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>App.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.cwe</a> &gt; <span class="el_source">App.java</span></div><h1>App.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2018 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.cwe;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import org.owasp.dependencycheck.utils.XmlUtils;
+import org.xml.sax.SAXException;
+
+/**
+ * Utility application to process and serialize the CWE data. This class should
+ * be used with the 'research concepts' view from
+ * https://cwe.mitre.org/data/downloads.html.
+ *
+ * @author Jeremy Long
+ */
+@SuppressWarnings(&quot;squid:S106&quot;)
+public final class App {
+
+    /**
+     * Empty constructor for utility class.
+     */
+    private App() {
+    }
+
+    /**
+     * The main method for the application.
+     *
+     * @param args the command line arguments
+     */
+    @SuppressWarnings(&quot;squid:S4823&quot;)
+    public static void main(String[] args) {
+        final File in;
+        final File out;
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        if (args.length == 0) {</span>
+<span class="nc" id="L56">            System.err.println(&quot;Incorrect arguments - please provide one or more files as input&quot;);</span>
+<span class="nc" id="L57">            System.err.println(&quot;Download the research concepts, developer concepts, and architectural concepts view of the CWE from &quot;</span>
+                    + &quot;https://cwe.mitre.org/data/downloads.html&quot;);
+<span class="nc" id="L59">            return;</span>
+        }
+<span class="nc" id="L61">        in = new File(args[0]);</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        if (!in.isFile()) {</span>
+<span class="nc" id="L63">            System.err.println(String.format(&quot;%s does not exist&quot;, in.getAbsolutePath()));</span>
+<span class="nc" id="L64">            return;</span>
+        }
+<span class="nc" id="L66">        out = new File(&quot;cwe.hashmap.serialized&quot;);</span>
+<span class="nc" id="L67">        final HashMap&lt;String, String&gt; cwe = readCweData(args);</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        if (cwe != null) {</span>
+<span class="nc" id="L69">            serializeCweData(cwe, out);</span>
+        }
+<span class="nc" id="L71">    }</span>
+
+    /**
+     * Reads the CWE data from the array of files.
+     *
+     * @param files the array of files to parse
+     * @return a map of the CWE data
+     */
+    private static HashMap&lt;String, String&gt; readCweData(String[] files) {
+        try {
+<span class="nc" id="L81">            final SAXParser saxParser = XmlUtils.buildSecureSaxParser();</span>
+<span class="nc" id="L82">            final CweHandler handler = new CweHandler();</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">            for (String f : files) {</span>
+<span class="nc" id="L84">                final File in = new File(f);</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">                if (!in.isFile()) {</span>
+<span class="nc" id="L86">                    System.err.println(String.format(&quot;File not found %s&quot;, in));</span>
+<span class="nc" id="L87">                    return null;</span>
+                }
+<span class="nc" id="L89">                System.out.println(String.format(&quot;Parsing %s&quot;, in));</span>
+<span class="nc" id="L90">                saxParser.parse(in, handler);</span>
+            }
+<span class="nc" id="L92">            return handler.getCwe();</span>
+<span class="nc" id="L93">        } catch (SAXException | IOException | ParserConfigurationException ex) {</span>
+<span class="nc" id="L94">            System.err.println(String.format(&quot;Error generating serialized data: %s&quot;, ex.getMessage()));</span>
+        }
+<span class="nc" id="L96">        return null;</span>
+    }
+
+    /**
+     * Writes the map of CWE data to disk.
+     *
+     * @param cwe the CWE data
+     * @param out the file output location
+     */
+    private static void serializeCweData(HashMap&lt;String, String&gt; cwe, File out) {
+<span class="nc" id="L106">        try (FileOutputStream fout = new FileOutputStream(out);</span>
+<span class="nc" id="L107">                ObjectOutputStream objOut = new ObjectOutputStream(fout)) {</span>
+<span class="nc" id="L108">            System.out.println(&quot;Writing &quot; + cwe.size() + &quot; cwe entries.&quot;);</span>
+<span class="nc" id="L109">            objOut.writeObject(cwe);</span>
+<span class="nc" id="L110">            System.out.println(String.format(&quot;Serialized CWE data written to %s&quot;, out.getCanonicalPath()));</span>
+<span class="nc" id="L111">            System.out.println(&quot;To update the ODC CWE data copy the serialized file to 'src/main/resources/data/cwe.hashmap.serialized'&quot;);</span>
+<span class="nc" id="L112">        } catch (IOException ex) {</span>
+<span class="nc" id="L113">            System.err.println(String.format(&quot;Error generating serialized data: %s&quot;, ex.getMessage()));</span>
+<span class="nc" id="L114">        }</span>
+<span class="nc" id="L115">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

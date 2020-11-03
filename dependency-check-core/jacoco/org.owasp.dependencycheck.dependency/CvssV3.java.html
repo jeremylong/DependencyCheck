@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CvssV3.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.dependency</a> &gt; <span class="el_source">CvssV3.java</span></div><h1>CvssV3.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2018 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.dependency;
+
+import java.io.Serializable;
+
+/**
+ * CVSS V3 scoring information.
+ *
+ * @author Jeremy Long
+ */
+public class CvssV3 implements Serializable {
+
+    /**
+     * Serial version UID.
+     */
+    private static final long serialVersionUID = -315810090425928920L;
+
+    /**
+     * CVSS Availability Impact.
+     */
+    private final String attackVector;
+    /**
+     * CVSS Availability Impact.
+     */
+    private final String attackComplexity;
+    /**
+     * CVSS Availability Impact.
+     */
+    private final String privilegesRequired;
+    /**
+     * CVSS Availability Impact.
+     */
+    private final String userInteraction;
+    /**
+     * CVSS Availability Impact.
+     */
+    private final String scope;
+    /**
+     * CVSS Availability Impact.
+     */
+    private final String confidentialityImpact;
+    /**
+     * CVSS Availability Impact.
+     */
+    private final String integrityImpact;
+    /**
+     * CVSS Availability Impact.
+     */
+    private final String availabilityImpact;
+    /**
+     * CVSS Base Score.
+     */
+    private final float baseScore;
+    /**
+     * CVSS Base Severity.
+     */
+    private final String baseSeverity;
+    /**
+     * CVSSv3 Base Metric exploitability score.
+     */
+    private Float exploitabilityScore;
+    /**
+     * CVSSv3 Base Metric impact score.
+     */
+    private Float impactScore;
+    /**
+     * CVSS version.
+     */
+    private final String version;
+
+    /**
+     * Constructs a new CVSS V3 object.
+     *
+     * @param attackVector the attack vector value
+     * @param attackComplexity the attack complexity value
+     * @param privilegesRequired the privileges required value
+     * @param userInteraction the user interaction value
+     * @param scope the scope value
+     * @param confidentialityImpact the confidentiality impact value
+     * @param integrityImpact the integrity impact value
+     * @param availabilityImpact the availability impact value
+     * @param baseScore the base score
+     * @param baseSeverity the base severity
+     */
+    //CSOFF: ParameterNumber
+    public CvssV3(String attackVector, String attackComplexity, String privilegesRequired,
+            String userInteraction, String scope, String confidentialityImpact, String integrityImpact,
+            String availabilityImpact, float baseScore, String baseSeverity) {
+<span class="nc" id="L105">        this(attackVector, attackComplexity, privilegesRequired, userInteraction, scope, confidentialityImpact,</span>
+                integrityImpact, availabilityImpact, baseScore, baseSeverity, null, null, null);
+<span class="nc" id="L107">    }</span>
+
+    /**
+     * Constructs a new CVSS V3 object.
+     *
+     * @param attackVector the attack vector value
+     * @param attackComplexity the attack complexity value
+     * @param privilegesRequired the privileges required value
+     * @param userInteraction the user interaction value
+     * @param scope the scope value
+     * @param confidentialityImpact the confidentiality impact value
+     * @param integrityImpact the integrity impact value
+     * @param availabilityImpact the availability impact value
+     * @param baseScore the base score
+     * @param baseSeverity the base severity
+     * @param exploitabilityScore the exploitability score
+     * @param impactScore the impact score
+     * @param version the CVSS version
+     */
+    public CvssV3(String attackVector, String attackComplexity, String privilegesRequired,
+            String userInteraction, String scope, String confidentialityImpact, String integrityImpact,
+<span class="fc" id="L128">            String availabilityImpact, float baseScore, String baseSeverity, Float exploitabilityScore, Float impactScore, String version) {</span>
+<span class="fc" id="L129">        this.attackVector = attackVector;</span>
+<span class="fc" id="L130">        this.attackComplexity = attackComplexity;</span>
+<span class="fc" id="L131">        this.privilegesRequired = privilegesRequired;</span>
+<span class="fc" id="L132">        this.userInteraction = userInteraction;</span>
+<span class="fc" id="L133">        this.scope = scope;</span>
+<span class="fc" id="L134">        this.confidentialityImpact = confidentialityImpact;</span>
+<span class="fc" id="L135">        this.integrityImpact = integrityImpact;</span>
+<span class="fc" id="L136">        this.availabilityImpact = availabilityImpact;</span>
+<span class="fc" id="L137">        this.baseScore = baseScore;</span>
+<span class="fc" id="L138">        this.baseSeverity = baseSeverity;</span>
+<span class="fc" id="L139">        this.exploitabilityScore = exploitabilityScore;</span>
+<span class="fc" id="L140">        this.impactScore = impactScore;</span>
+<span class="fc" id="L141">        this.version = version;</span>
+<span class="fc" id="L142">    }</span>
+    //CSON: ParameterNumber
+
+    /**
+     * Get the value of attackVector.
+     *
+     * @return the value of attackVector
+     */
+    public String getAttackVector() {
+<span class="fc" id="L151">        return attackVector;</span>
+    }
+
+    /**
+     * Get the value of attackComplexity.
+     *
+     * @return the value of attackComplexity
+     */
+    public String getAttackComplexity() {
+<span class="fc" id="L160">        return attackComplexity;</span>
+    }
+
+    /**
+     * Get the value of privilegesRequired.
+     *
+     * @return the value of privilegesRequired
+     */
+    public String getPrivilegesRequired() {
+<span class="fc" id="L169">        return privilegesRequired;</span>
+    }
+
+    /**
+     * Get the value of userInteraction.
+     *
+     * @return the value of userInteraction
+     */
+    public String getUserInteraction() {
+<span class="fc" id="L178">        return userInteraction;</span>
+    }
+
+    /**
+     * Get the value of scope.
+     *
+     * @return the value of scope
+     */
+    public String getScope() {
+<span class="fc" id="L187">        return scope;</span>
+    }
+
+    /**
+     * Get the value of confidentialityImpact.
+     *
+     * @return the value of confidentialityImpact
+     */
+    public String getConfidentialityImpact() {
+<span class="fc" id="L196">        return confidentialityImpact;</span>
+    }
+
+    /**
+     * Get the value of integrityImpact.
+     *
+     * @return the value of integrityImpact
+     */
+    public String getIntegrityImpact() {
+<span class="fc" id="L205">        return integrityImpact;</span>
+    }
+
+    /**
+     * Get the value of availabilityImpact.
+     *
+     * @return the value of availabilityImpact
+     */
+    public String getAvailabilityImpact() {
+<span class="fc" id="L214">        return availabilityImpact;</span>
+    }
+
+    /**
+     * Get the value of baseScore.
+     *
+     * @return the value of baseScore
+     */
+    public float getBaseScore() {
+<span class="fc" id="L223">        return baseScore;</span>
+    }
+
+    /**
+     * Get the value of baseSeverity.
+     *
+     * @return the value of baseSeverity
+     */
+    public String getBaseSeverity() {
+<span class="fc" id="L232">        return baseSeverity;</span>
+    }
+
+    /**
+     * Get the value of version.
+     *
+     * @return the value of version
+     */
+    public String getVersion() {
+<span class="fc" id="L241">        return version;</span>
+    }
+
+    /**
+     * Returns the exploitabilityScore for the vulnerability.
+     *
+     * @return the exploitabilityScore
+     */
+    public Float getexploitabilityScore() {
+<span class="fc" id="L250">        return exploitabilityScore;</span>
+    }
+
+    /**
+     * Returns the impactScore for the vulnerability.
+     *
+     * @return the impactScore
+     */
+    public Float getimpactScore() {
+<span class="fc" id="L259">        return impactScore;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="pc bpc" id="L264" title="2 of 4 branches missed.">        return String.format(&quot;CVSS:%s/AV:%s/AC:%s/PR:%s/UI:%s/S:%s/C:%s/I:%s/A:%s&quot;,</span>
+                version == null ? &quot;&quot; : version,
+<span class="pc bpc" id="L266" title="1 of 2 branches missed.">                attackVector == null ? &quot;&quot; : attackVector.substring(0, 1),</span>
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">                attackComplexity == null ? &quot;&quot; : attackComplexity.substring(0, 1),</span>
+<span class="pc bpc" id="L268" title="1 of 2 branches missed.">                privilegesRequired == null ? &quot;&quot; : privilegesRequired.substring(0, 1),</span>
+<span class="pc bpc" id="L269" title="1 of 2 branches missed.">                userInteraction == null ? &quot;&quot; : userInteraction.substring(0, 1),</span>
+<span class="pc bpc" id="L270" title="1 of 2 branches missed.">                scope == null ? &quot;&quot; : scope.substring(0, 1),</span>
+<span class="pc bpc" id="L271" title="1 of 2 branches missed.">                confidentialityImpact == null ? &quot;&quot; : confidentialityImpact.substring(0, 1),</span>
+<span class="pc bpc" id="L272" title="1 of 2 branches missed.">                integrityImpact == null ? &quot;&quot; : integrityImpact.substring(0, 1),</span>
+<span class="fc" id="L273">                availabilityImpact == null ? &quot;&quot; : availabilityImpact.substring(0, 1));</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

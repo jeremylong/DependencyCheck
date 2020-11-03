@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ComposerLockAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">ComposerLockAnalyzer.java</span></div><h1>ComposerLockAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2015 The OWASP Foundation. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURL;
+import com.github.packageurl.PackageURLBuilder;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.data.composer.ComposerException;
+import org.owasp.dependencycheck.data.composer.ComposerLockParser;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.Checksum;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.IOException;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+
+/**
+ * Used to analyze a composer.lock file for a composer PHP app.
+ *
+ * @author colezlaw
+ */
+@Experimental
+<span class="fc" id="L50">public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {</span>
+
+    /**
+     * A descriptor for the type of dependencies processed or added by this
+     * analyzer.
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.PYTHON;
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L61">    private static final Logger LOGGER = LoggerFactory.getLogger(ComposerLockAnalyzer.class);</span>
+
+    /**
+     * The analyzer name.
+     */
+    private static final String ANALYZER_NAME = &quot;Composer.lock analyzer&quot;;
+
+    /**
+     * composer.json.
+     */
+    private static final String COMPOSER_LOCK = &quot;composer.lock&quot;;
+
+    /**
+     * The FileFilter.
+     */
+<span class="fc" id="L76">    private static final FileFilter FILE_FILTER = FileFilterBuilder.newInstance().addFilenames(COMPOSER_LOCK).build();</span>
+
+    /**
+     * Returns the FileFilter.
+     *
+     * @return the FileFilter
+     */
+    @Override
+    protected FileFilter getFileFilter() {
+<span class="fc" id="L85">        return FILE_FILTER;</span>
+    }
+
+    /**
+     * Initializes the analyzer.
+     *
+     * @param engine a reference to the dependency-check engine
+     * @throws InitializationException thrown if an exception occurs getting an
+     * instance of SHA1
+     */
+    @Override
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
+        // do nothing
+<span class="fc" id="L98">    }</span>
+
+    /**
+     * Entry point for the analyzer.
+     *
+     * @param dependency the dependency to analyze
+     * @param engine the engine scanning
+     * @throws AnalysisException if there's a failure during analysis
+     */
+    @Override
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+<span class="fc" id="L109">        engine.removeDependency(dependency);</span>
+<span class="fc" id="L110">        try (FileInputStream fis = new FileInputStream(dependency.getActualFile())) {</span>
+<span class="fc" id="L111">            final ComposerLockParser clp = new ComposerLockParser(fis);</span>
+<span class="fc" id="L112">            LOGGER.debug(&quot;Checking composer.lock file {}&quot;, dependency.getActualFilePath());</span>
+<span class="fc" id="L113">            clp.process();</span>
+<span class="fc" id="L114">            clp.getDependencies().stream().map((dep) -&gt; {</span>
+<span class="fc" id="L115">                final Dependency d = new Dependency(dependency.getActualFile(), true);</span>
+<span class="fc" id="L116">                final String filePath = String.format(&quot;%s:%s/%s/%s&quot;, dependency.getFilePath(), dep.getGroup(), dep.getProject(), dep.getVersion());</span>
+<span class="fc" id="L117">                d.setName(dep.getProject());</span>
+<span class="fc" id="L118">                d.setVersion(dep.getVersion());</span>
+                try {
+<span class="fc" id="L120">                    final PackageURL purl = PackageURLBuilder.aPackageURL().withType(&quot;composer&quot;).withNamespace(dep.getGroup())</span>
+<span class="fc" id="L121">                            .withName(dep.getProject()).withVersion(dep.getVersion()).build();</span>
+<span class="fc" id="L122">                    d.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
+<span class="nc" id="L123">                } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L124">                    LOGGER.debug(&quot;Unable to build package url for composer&quot;, ex);</span>
+<span class="nc" id="L125">                    d.addSoftwareIdentifier(new GenericIdentifier(&quot;cocoapods:&quot; + dep.getGroup() + &quot;/&quot; + dep.getProject()</span>
+<span class="nc" id="L126">                            + &quot;@&quot; + dep.getVersion(), Confidence.HIGHEST));</span>
+<span class="fc" id="L127">                }</span>
+<span class="fc" id="L128">                d.setPackagePath(String.format(&quot;%s:%s&quot;, dep.getProject(), dep.getVersion()));</span>
+<span class="fc" id="L129">                d.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc" id="L130">                d.setFilePath(filePath);</span>
+<span class="fc" id="L131">                d.setSha1sum(Checksum.getSHA1Checksum(filePath));</span>
+<span class="fc" id="L132">                d.setSha256sum(Checksum.getSHA256Checksum(filePath));</span>
+<span class="fc" id="L133">                d.setMd5sum(Checksum.getMD5Checksum(filePath));</span>
+<span class="fc" id="L134">                d.addEvidence(EvidenceType.VENDOR, COMPOSER_LOCK, &quot;vendor&quot;, dep.getGroup(), Confidence.HIGHEST);</span>
+<span class="fc" id="L135">                d.addEvidence(EvidenceType.PRODUCT, COMPOSER_LOCK, &quot;product&quot;, dep.getProject(), Confidence.HIGHEST);</span>
+<span class="fc" id="L136">                d.addEvidence(EvidenceType.VERSION, COMPOSER_LOCK, &quot;version&quot;, dep.getVersion(), Confidence.HIGHEST);</span>
+<span class="fc" id="L137">                return d;</span>
+<span class="fc" id="L138">            }).forEach((d) -&gt; {</span>
+<span class="fc" id="L139">                LOGGER.debug(&quot;Adding dependency {}&quot;, d.getDisplayFileName());</span>
+<span class="fc" id="L140">                engine.addDependency(d);</span>
+<span class="fc" id="L141">            });</span>
+<span class="nc" id="L142">        } catch (IOException ex) {</span>
+<span class="nc" id="L143">            LOGGER.warn(&quot;Error opening dependency {}&quot;, dependency.getActualFilePath());</span>
+<span class="nc" id="L144">        } catch (ComposerException ce) {</span>
+<span class="nc" id="L145">            LOGGER.warn(&quot;Error parsing composer.json {}&quot;, dependency.getActualFilePath(), ce);</span>
+<span class="pc" id="L146">        }</span>
+<span class="fc" id="L147">    }</span>
+
+    /**
+     * Gets the key to determine whether the analyzer is enabled.
+     *
+     * @return the key specifying whether the analyzer is enabled
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+<span class="fc" id="L156">        return Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED;</span>
+    }
+
+    /**
+     * Returns the analyzer's name.
+     *
+     * @return the analyzer's name
+     */
+    @Override
+    public String getName() {
+<span class="fc" id="L166">        return ANALYZER_NAME;</span>
+    }
+
+    /**
+     * Returns the phase this analyzer should run under.
+     *
+     * @return the analysis phase
+     */
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+<span class="fc" id="L176">        return AnalysisPhase.INFORMATION_COLLECTION;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

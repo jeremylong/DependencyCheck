@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DriverShim.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvdcve</a> &gt; <span class="el_source">DriverShim.java</span></div><h1>DriverShim.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nvdcve;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverPropertyInfo;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.Properties;
+import javax.annotation.concurrent.ThreadSafe;
+
+/**
+ * &lt;p&gt;
+ * Driver shim to get around the class loader issue with the DriverManager. The
+ * following code is a nearly identical copy (with more comments and a few more
+ * methods implemented) of the DriverShim from:&lt;/p&gt;
+ * &lt;blockquote&gt;http://www.kfu.com/~nsayer/Java/dyn-jdbc.html&lt;/blockquote&gt;
+ *
+ * @author Jeremy Long
+ * @see java.sql.Driver
+ */
+@ThreadSafe
+class DriverShim implements Driver {
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L51">    private static final Logger LOGGER = LoggerFactory.getLogger(DriverShim.class);</span>
+    /**
+     * The database driver being wrapped.
+     */
+    private final Driver driver;
+
+    /**
+     * Constructs a new wrapper around a Driver.
+     *
+     * @param driver the database driver to wrap
+     */
+<span class="fc" id="L62">    DriverShim(Driver driver) {</span>
+<span class="fc" id="L63">        this.driver = driver;</span>
+<span class="fc" id="L64">    }</span>
+
+    /**
+     * Wraps the underlying driver's call to acceptsURL. Returns whether or not
+     * the driver can open a connection to the given URL.
+     *
+     * @param url the URL of the database
+     * @return true if the wrapped driver can connect to the specified URL
+     * @throws SQLException thrown if there is an error connecting to the
+     * database
+     * @see java.sql.Driver#acceptsURL(java.lang.String)
+     */
+    @Override
+    public boolean acceptsURL(String url) throws SQLException {
+<span class="fc" id="L78">        return this.driver.acceptsURL(url);</span>
+    }
+
+    /**
+     * Wraps the call to the underlying driver's connect method.
+     *
+     * @param url the URL of the database
+     * @param info a collection of string/value pairs
+     * @return a Connection object
+     * @throws SQLException thrown if there is an error connecting to the
+     * database
+     * @see java.sql.Driver#connect(java.lang.String, java.util.Properties)
+     */
+    @Override
+    public Connection connect(String url, Properties info) throws SQLException {
+<span class="nc" id="L93">        return this.driver.connect(url, info);</span>
+    }
+
+    /**
+     * Returns the wrapped driver's major version number.
+     *
+     * @return the wrapped driver's major version number
+     * @see java.sql.Driver#getMajorVersion()
+     */
+    @Override
+    public int getMajorVersion() {
+<span class="nc" id="L104">        return this.driver.getMajorVersion();</span>
+    }
+
+    /**
+     * Returns the wrapped driver's minor version number.
+     *
+     * @return the wrapped driver's minor version number
+     * @see java.sql.Driver#getMinorVersion()
+     */
+    @Override
+    public int getMinorVersion() {
+<span class="nc" id="L115">        return this.driver.getMinorVersion();</span>
+    }
+
+    /**
+     * Wraps the call to the underlying driver's getParentLogger method.
+     *
+     * @return the parent's Logger
+     * @throws SQLFeatureNotSupportedException thrown if the feature is not
+     * supported
+     * @see java.sql.Driver#getParentLogger()
+     */
+    @Override
+    public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        //return driver.getParentLogger();
+        final Method m;
+        try {
+<span class="nc" id="L131">            m = driver.getClass().getMethod(&quot;getParentLogger&quot;);</span>
+<span class="nc" id="L132">        } catch (Throwable e) {</span>
+<span class="nc" id="L133">            throw new SQLFeatureNotSupportedException();</span>
+<span class="nc" id="L134">        }</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        if (m != null) {</span>
+            try {
+<span class="nc" id="L137">                return (java.util.logging.Logger) m.invoke(m);</span>
+<span class="nc" id="L138">            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {</span>
+<span class="nc" id="L139">                LOGGER.trace(&quot;&quot;, ex);</span>
+            }
+        }
+<span class="nc" id="L142">        throw new SQLFeatureNotSupportedException();</span>
+    }
+
+    /**
+     * Wraps the call to the underlying driver's getPropertyInfo method.
+     *
+     * @param url the URL of the database
+     * @param info a collection of string/value pairs
+     * @return an array of DriverPropertyInfo objects
+     * @throws SQLException thrown if there is an error accessing the database
+     * @see java.sql.Driver#getPropertyInfo(java.lang.String,
+     * java.util.Properties)
+     */
+    @Override
+    public DriverPropertyInfo[] getPropertyInfo(String url, Properties info) throws SQLException {
+<span class="nc" id="L157">        return this.driver.getPropertyInfo(url, info);</span>
+    }
+
+    /**
+     * Returns whether or not the wrapped driver is jdbcCompliant.
+     *
+     * @return true if the wrapped driver is JDBC compliant; otherwise false
+     * @see java.sql.Driver#jdbcCompliant()
+     */
+    @Override
+    public boolean jdbcCompliant() {
+<span class="nc" id="L168">        return this.driver.jdbcCompliant();</span>
+    }
+
+    /**
+     * Standard implementation of hashCode.
+     *
+     * @return the hashCode of the object
+     */
+    @Override
+    public int hashCode() {
+<span class="nc" id="L178">        return new HashCodeBuilder(7, 97)</span>
+<span class="nc" id="L179">                .append(driver)</span>
+<span class="nc" id="L180">                .toHashCode();</span>
+    }
+
+    /**
+     * Standard implementation of equals.
+     *
+     * @param obj the object to compare
+     * @return returns true if the objects are equal; otherwise false
+     */
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L191" title="All 4 branches missed.">        if (obj == null || !(obj instanceof DriverShim)) {</span>
+<span class="nc" id="L192">            return false;</span>
+        }
+<span class="nc bnc" id="L194" title="All 2 branches missed.">        if (this == obj) {</span>
+<span class="nc" id="L195">            return true;</span>
+        }
+<span class="nc" id="L197">        final DriverShim rhs = (DriverShim) obj;</span>
+<span class="nc" id="L198">        return new EqualsBuilder()</span>
+<span class="nc" id="L199">                .append(driver, rhs.driver)</span>
+<span class="nc" id="L200">                .isEquals();</span>
+    }
+
+    /**
+     * Standard implementation of toString().
+     *
+     * @return the String representation of the object
+     */
+    @Override
+    public String toString() {
+<span class="fc" id="L210">        return &quot;DriverShim{&quot; + &quot;driver=&quot; + driver + '}';</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GoModDependency.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.golang</a> &gt; <span class="el_source">GoModDependency.java</span></div><h1>GoModDependency.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2019 Matthijs van den Bos. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.golang;
+
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURLBuilder;
+import org.apache.commons.lang3.StringUtils;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.Identifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.owasp.dependencycheck.utils.Checksum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.owasp.dependencycheck.analyzer.GolangModAnalyzer.DEPENDENCY_ECOSYSTEM;
+import static org.owasp.dependencycheck.analyzer.GolangModAnalyzer.GO_MOD;
+
+/**
+ * Represents a Go module dependency.
+ *
+ * @author Matthijs van den Bos
+ */
+public class GoModDependency {
+
+    /**
+     * A reference to the logger.
+     */
+<span class="fc" id="L46">    private static final Logger LOGGER = LoggerFactory.getLogger(GoModDependency.class);</span>
+    /**
+     * The module path.
+     */
+    private final String modulePath;
+    /**
+     * The version.
+     */
+    private final String version;
+
+    /**
+     * A Package-URL builder.
+     */
+    private final PackageURLBuilder packageURLBuilder;
+
+    /**
+     * Constructs a new GoModDependency.
+     *
+     * @param modulePath the module path
+     * @param version the dependency version
+     */
+<span class="fc" id="L67">    GoModDependency(String modulePath, String version) {</span>
+<span class="fc" id="L68">        this.modulePath = modulePath;</span>
+<span class="fc" id="L69">        this.version = version;</span>
+
+<span class="fc" id="L71">        packageURLBuilder = PackageURLBuilder.aPackageURL().withType(&quot;golang&quot;);</span>
+<span class="fc" id="L72">    }</span>
+
+    /**
+     * Converts the GoModDependency into a Dependency object.
+     *
+     * @param parentDependency the parent dependency
+     * @return the resulting Dependency object
+     */
+    public Dependency toDependency(Dependency parentDependency) {
+<span class="fc" id="L81">        return createDependency(parentDependency, modulePath, version);</span>
+    }
+
+    /**
+     * Builds a dependency object based on the given data.
+     *
+     * @param parentDependency a reference to the parent dependency
+     * @param name the name of the dependency
+     * @param version the version of the dependency
+     * @return a new dependency object
+     */
+    private Dependency createDependency(Dependency parentDependency, String name, String version) {
+<span class="fc" id="L93">        final Dependency dep = new Dependency(parentDependency.getActualFile(), true);</span>
+
+<span class="fc" id="L95">        String namespace = null;</span>
+<span class="fc" id="L96">        String vendor = null;</span>
+<span class="fc" id="L97">        String moduleName = null;</span>
+<span class="fc" id="L98">        String packageNamespace = null;</span>
+
+        // separate the product from the vendor
+<span class="fc" id="L101">        final int lastSlash = name.lastIndexOf(&quot;/&quot;);</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        if (lastSlash &gt; 0) {</span>
+<span class="fc" id="L103">            packageNamespace = name.substring(0, lastSlash);</span>
+<span class="fc" id="L104">            final int pos = packageNamespace.indexOf(&quot;/&quot;);</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">            if (pos &gt; 0) {</span>
+<span class="fc" id="L106">                namespace = packageNamespace.substring(0, pos);</span>
+<span class="fc" id="L107">                vendor = packageNamespace.substring(pos + 1);</span>
+            }
+<span class="fc" id="L109">            moduleName = name.substring(lastSlash + 1);</span>
+<span class="fc" id="L110">        } else {</span>
+<span class="nc" id="L111">            moduleName = name;</span>
+        }
+
+<span class="fc" id="L114">        final String filePath = String.format(&quot;%s:%s/%s/%s&quot;, parentDependency.getFilePath(), packageNamespace, moduleName, version);</span>
+
+<span class="fc" id="L116">        packageURLBuilder.withName(moduleName);</span>
+<span class="fc" id="L117">        packageURLBuilder.withNamespace(packageNamespace);</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        if (StringUtils.isNotBlank(version)) {</span>
+<span class="fc" id="L119">            packageURLBuilder.withVersion(version);</span>
+        }
+<span class="fc" id="L121">        dep.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc" id="L122">        dep.setDisplayFileName(name + &quot;:&quot; + version);</span>
+<span class="fc" id="L123">        dep.setName(moduleName);</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        if (StringUtils.isNotBlank(version)) {</span>
+<span class="fc" id="L125">            dep.setVersion(version);</span>
+<span class="fc" id="L126">            dep.setPackagePath(String.format(&quot;%s:%s&quot;, name, version));</span>
+        }
+<span class="fc" id="L128">        dep.setFilePath(filePath);</span>
+<span class="fc" id="L129">        dep.setSha1sum(Checksum.getSHA1Checksum(filePath));</span>
+<span class="fc" id="L130">        dep.setSha256sum(Checksum.getSHA256Checksum(filePath));</span>
+<span class="fc" id="L131">        dep.setMd5sum(Checksum.getMD5Checksum(filePath));</span>
+
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        if (vendor != null) {</span>
+<span class="fc" id="L134">            dep.addEvidence(EvidenceType.VENDOR, GO_MOD, &quot;vendor&quot;, vendor, Confidence.HIGHEST);</span>
+<span class="fc" id="L135">            dep.addEvidence(EvidenceType.VENDOR, GO_MOD, &quot;vendor&quot;, vendor, Confidence.MEDIUM);</span>
+        }
+<span class="fc bfc" id="L137" title="All 4 branches covered.">        if (namespace != null &amp;&amp; !&quot;golang.org&quot;.equals(namespace)) {</span>
+<span class="fc" id="L138">            dep.addEvidence(EvidenceType.VENDOR, GO_MOD, &quot;namespace&quot;, namespace, Confidence.LOW);</span>
+        }
+<span class="fc" id="L140">        dep.addEvidence(EvidenceType.PRODUCT, GO_MOD, &quot;name&quot;, moduleName, Confidence.HIGHEST);</span>
+<span class="fc" id="L141">        dep.addEvidence(EvidenceType.VENDOR, GO_MOD, &quot;name&quot;, moduleName, Confidence.HIGH);</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        if (StringUtils.isNotBlank(version)) {</span>
+<span class="fc" id="L143">            dep.addEvidence(EvidenceType.VERSION, GO_MOD, &quot;version&quot;, version, Confidence.HIGHEST);</span>
+        }
+        Identifier id;
+        try {
+<span class="fc" id="L147">            id = new PurlIdentifier(packageURLBuilder.build(), Confidence.HIGHEST);</span>
+<span class="nc" id="L148">        } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L149">            LOGGER.warn(&quot;Unable to create package-url identifier for `{}` in `{}` - reason: {}&quot;,</span>
+<span class="nc" id="L150">                    name, parentDependency.getFilePath(), ex.getMessage());</span>
+<span class="nc" id="L151">            final StringBuilder value = new StringBuilder(name);</span>
+<span class="nc bnc" id="L152" title="All 2 branches missed.">            if (StringUtils.isNotBlank(version)) {</span>
+<span class="nc" id="L153">                value.append(&quot;@&quot;).append(version);</span>
+            }
+<span class="nc" id="L155">            id = new GenericIdentifier(value.toString(), Confidence.HIGH);</span>
+<span class="fc" id="L156">        }</span>
+<span class="fc" id="L157">        dep.addSoftwareIdentifier(id);</span>
+<span class="fc" id="L158">        return dep;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L163">        return modulePath + &quot;: &quot; + version;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

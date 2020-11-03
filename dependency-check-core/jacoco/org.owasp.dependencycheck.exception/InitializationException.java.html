@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InitializationException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.exception</a> &gt; <span class="el_source">InitializationException.java</span></div><h1>InitializationException.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2016 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.exception;
+
+import javax.annotation.concurrent.ThreadSafe;
+
+/**
+ * An exception used when initializing analyzers.
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+public class InitializationException extends Exception {
+
+    /**
+     * The serial version UID for serialization.
+     */
+    private static final long serialVersionUID = 6034529098584358957L;
+
+    /**
+     * Whether or not the exception is fatal.
+     */
+<span class="pc" id="L38">    private boolean fatal = true;</span>
+
+    /**
+     * Get the value of fatal.
+     *
+     * @return the value of fatal
+     */
+    public boolean isFatal() {
+<span class="fc" id="L46">        return fatal;</span>
+    }
+
+    /**
+     * Set the value of fatal.
+     *
+     * @param fatal new value of fatal
+     */
+    public void setFatal(boolean fatal) {
+<span class="nc" id="L55">        this.fatal = fatal;</span>
+<span class="nc" id="L56">    }</span>
+
+    /**
+     * Creates a new InitializationException.
+     */
+    public InitializationException() {
+<span class="nc" id="L62">        super();</span>
+<span class="nc" id="L63">    }</span>
+
+    /**
+     * Creates a new InitializationException.
+     *
+     * @param msg a message for the exception.
+     */
+    public InitializationException(String msg) {
+<span class="nc" id="L71">        super(msg);</span>
+<span class="nc" id="L72">    }</span>
+
+    /**
+     * Creates a new InitializationException.
+     *
+     * @param ex the cause of the exception.
+     */
+    public InitializationException(Throwable ex) {
+<span class="nc" id="L80">        super(ex);</span>
+<span class="nc" id="L81">    }</span>
+
+    /**
+     * Creates a new InitializationException.
+     *
+     * @param msg a message for the exception.
+     * @param ex the cause of the exception.
+     */
+    public InitializationException(String msg, Throwable ex) {
+<span class="fc" id="L90">        super(msg, ex);</span>
+<span class="fc" id="L91">    }</span>
+
+    /**
+     * Creates a new InitializationException.
+     *
+     * @param msg a message for the exception.
+     * @param ex the cause of the exception.
+     * @param fatal whether or not the exception is fatal.
+     */
+    public InitializationException(String msg, Throwable ex, boolean fatal) {
+<span class="fc" id="L101">        super(msg, ex);</span>
+<span class="fc" id="L102">        this.fatal = fatal;</span>
+<span class="fc" id="L103">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

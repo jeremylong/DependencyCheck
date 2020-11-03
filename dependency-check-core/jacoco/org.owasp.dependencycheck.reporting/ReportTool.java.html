@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReportTool.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.reporting</a> &gt; <span class="el_source">ReportTool.java</span></div><h1>ReportTool.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2018 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.reporting;
+
+import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.Identifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.owasp.dependencycheck.utils.SeverityUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import us.springett.parsers.cpe.Cpe;
+import us.springett.parsers.cpe.exceptions.CpeEncodingException;
+import us.springett.parsers.cpe.util.Convert;
+
+/**
+ * Utilities to format items in the Velocity reports.
+ *
+ * @author Jeremy Long
+ */
+<span class="fc" id="L36">public class ReportTool {</span>
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L41">    private static final Logger LOGGER = LoggerFactory.getLogger(ReportTool.class);</span>
+
+    /**
+     * Converts an identifier into the Suppression string when possible.
+     *
+     * @param id the Identifier to format
+     * @return the formatted suppression string when possible; otherwise
+     * &lt;code&gt;null&lt;/code&gt;.
+     */
+    public String identifierToSuppressionId(Identifier id) {
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        if (id instanceof PurlIdentifier) {</span>
+<span class="fc" id="L52">            final PurlIdentifier purl = (PurlIdentifier) id;</span>
+<span class="fc" id="L53">            return purl.toString();</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        } else if (id instanceof CpeIdentifier) {</span>
+            try {
+<span class="fc" id="L56">                final CpeIdentifier cpeId = (CpeIdentifier) id;</span>
+<span class="fc" id="L57">                final Cpe cpe = cpeId.getCpe();</span>
+<span class="fc" id="L58">                return String.format(&quot;cpe:/%s:%s:%s&quot;, Convert.wellFormedToCpeUri(cpe.getPart()),</span>
+<span class="fc" id="L59">                        Convert.wellFormedToCpeUri(cpe.getWellFormedVendor()),</span>
+<span class="fc" id="L60">                        Convert.wellFormedToCpeUri(cpe.getWellFormedProduct()));</span>
+<span class="nc" id="L61">            } catch (CpeEncodingException ex) {</span>
+<span class="nc" id="L62">                LOGGER.debug(&quot;Unable to convert to cpe URI&quot;, ex);</span>
+<span class="nc" id="L63">            }</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        } else if (id instanceof GenericIdentifier) {</span>
+<span class="nc" id="L65">            return id.getValue();</span>
+        }
+<span class="nc" id="L67">        return null;</span>
+    }
+
+    /**
+     * Estimates the CVSS V2 score for the given severity.
+     *
+     * @param severity the text representation of a score
+     * @return the estimated score
+     */
+    public float estimateSeverity(String severity) {
+<span class="fc" id="L77">        return SeverityUtil.estimateCvssV2(severity);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

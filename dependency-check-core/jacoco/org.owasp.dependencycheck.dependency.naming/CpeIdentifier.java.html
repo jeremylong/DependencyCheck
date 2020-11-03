@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CpeIdentifier.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.dependency.naming</a> &gt; <span class="el_source">CpeIdentifier.java</span></div><h1>CpeIdentifier.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2019 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.dependency.naming;
+
+import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jetbrains.annotations.NotNull;
+import org.owasp.dependencycheck.dependency.Confidence;
+import us.springett.parsers.cpe.Cpe;
+import us.springett.parsers.cpe.CpeBuilder;
+import us.springett.parsers.cpe.exceptions.CpeValidationException;
+import us.springett.parsers.cpe.values.Part;
+
+/**
+ * A CPE Identifier for a dependency object.
+ *
+ * @author Jeremy Long
+ */
+public class CpeIdentifier implements Identifier {
+
+    /**
+     * The serial version UID for serialization.
+     */
+    private static final long serialVersionUID = 2901855131887281680L;
+
+    /**
+     * The CPE identifier.
+     */
+    private final Cpe cpe;
+    /**
+     * The confidence that this is the correct identifier.
+     */
+    private Confidence confidence;
+    /**
+     * The URL for the identifier.
+     */
+    private String url;
+    /**
+     * Notes about the vulnerability. Generally used for suppression
+     * information.
+     */
+    private String notes;
+
+    /**
+     * Constructs a new CPE Identifier from a CPE object with the given
+     * confidence.
+     *
+     * @param cpe the CPE value
+     * @param confidence the confidence in the identifiers match
+     */
+<span class="fc" id="L67">    public CpeIdentifier(Cpe cpe, Confidence confidence) {</span>
+<span class="fc" id="L68">        this.cpe = cpe;</span>
+<span class="fc" id="L69">        this.confidence = confidence;</span>
+<span class="fc" id="L70">        this.url = null;</span>
+<span class="fc" id="L71">    }</span>
+
+    /**
+     * Constructs a new CPE Identifier from a CPE object with the given
+     * confidence.
+     *
+     * @param cpe the CPE value
+     * @param url the URL for the identifier
+     * @param confidence the confidence in the identifiers match
+     */
+<span class="fc" id="L81">    public CpeIdentifier(Cpe cpe, String url, Confidence confidence) {</span>
+<span class="fc" id="L82">        this.cpe = cpe;</span>
+<span class="fc" id="L83">        this.confidence = confidence;</span>
+<span class="fc" id="L84">        this.url = url;</span>
+<span class="fc" id="L85">    }</span>
+
+    /**
+     * Constructs a new CPE Identifier from a CPE object with the given
+     * confidence.
+     *
+     * @param vendor the vendor
+     * @param product the product name
+     * @param version the version
+     * @param confidence the confidence in the identifiers match
+     * @throws CpeValidationException thrown if there is an error converting the
+     * vendor, product, and version into a CPE object
+     */
+<span class="fc" id="L98">    public CpeIdentifier(String vendor, String product, String version, Confidence confidence) throws CpeValidationException {</span>
+<span class="fc" id="L99">        final CpeBuilder builder = new CpeBuilder();</span>
+<span class="fc" id="L100">        this.cpe = builder.part(Part.APPLICATION).vendor(vendor).product(product).version(version).build();</span>
+<span class="fc" id="L101">        this.confidence = confidence;</span>
+<span class="fc" id="L102">    }</span>
+
+    /**
+     * Returns the CPE object.
+     *
+     * @return the CPE object
+     */
+    public Cpe getCpe() {
+<span class="fc" id="L110">        return cpe;</span>
+    }
+
+    @Override
+    public Confidence getConfidence() {
+<span class="fc" id="L115">        return confidence;</span>
+    }
+
+    @Override
+    public String getNotes() {
+<span class="fc" id="L120">        return notes;</span>
+    }
+
+    @Override
+    public String getUrl() {
+<span class="fc" id="L125">        return url;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setConfidence(Confidence confidence) {
+<span class="fc" id="L133">        this.confidence = confidence;</span>
+<span class="fc" id="L134">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setUrl(String url) {
+<span class="nc" id="L141">        this.url = url;</span>
+<span class="nc" id="L142">    }</span>
+
+    @Override
+    public void setNotes(String notes) {
+<span class="fc" id="L146">        this.notes = notes;</span>
+<span class="fc" id="L147">    }</span>
+
+    @Override
+    public String getValue() {
+<span class="fc" id="L151">        return cpe.toCpe23FS();</span>
+    }
+
+    /**
+     * Returns the CPE 2.3 formatted string.
+     *
+     * @return the CPE 2.3 formatted string
+     */
+    @Override
+    public String toString() {
+<span class="nc" id="L161">        return cpe.toCpe23FS();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L166">        return new HashCodeBuilder(95, 183)</span>
+<span class="fc" id="L167">                .append(this.cpe)</span>
+<span class="fc" id="L168">                .append(this.confidence)</span>
+<span class="fc" id="L169">                .append(this.url)</span>
+<span class="fc" id="L170">                .append(this.notes)</span>
+<span class="fc" id="L171">                .toHashCode();</span>
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="pc bpc" id="L176" title="2 of 4 branches missed.">        if (obj == null || !(obj instanceof CpeIdentifier)) {</span>
+<span class="nc" id="L177">            return false;</span>
+        }
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">        if (this == obj) {</span>
+<span class="nc" id="L180">            return true;</span>
+        }
+<span class="fc" id="L182">        final CpeIdentifier other = (CpeIdentifier) obj;</span>
+<span class="fc" id="L183">        return new EqualsBuilder().append(cpe, other.cpe)</span>
+<span class="fc" id="L184">                .append(this.confidence, other.confidence)</span>
+<span class="fc" id="L185">                .append(this.url, other.url)</span>
+<span class="fc" id="L186">                .append(this.notes, other.notes).isEquals();</span>
+    }
+
+    @Override
+    public int compareTo(@NotNull Identifier o) {
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">        if (o instanceof CpeIdentifier) {</span>
+<span class="fc" id="L192">            final CpeIdentifier other = (CpeIdentifier) o;</span>
+<span class="fc" id="L193">            return new CompareToBuilder()</span>
+<span class="fc" id="L194">                    .append(this.cpe, other.cpe)</span>
+<span class="fc" id="L195">                    .append(this.url, other.getUrl())</span>
+<span class="fc" id="L196">                    .append(this.confidence, other.getConfidence())</span>
+<span class="fc" id="L197">                    .toComparison();</span>
+
+        }
+<span class="nc" id="L200">        return new CompareToBuilder()</span>
+<span class="nc" id="L201">                .append(this.toString(), o.toString())</span>
+<span class="nc" id="L202">                .append(this.url, o.getUrl())</span>
+<span class="nc" id="L203">                .append(this.confidence, o.getConfidence())</span>
+<span class="nc" id="L204">                .toComparison();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

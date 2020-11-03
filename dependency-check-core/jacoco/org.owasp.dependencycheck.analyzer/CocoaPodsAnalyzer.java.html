@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CocoaPodsAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">CocoaPodsAnalyzer.java</span></div><h1>CocoaPodsAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2016 IBM Corporation. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURLBuilder;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.annotation.concurrent.ThreadSafe;
+
+import org.apache.commons.io.FileUtils;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.Checksum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * This analyzer is used to analyze SWIFT and Objective-C packages by collecting
+ * information from .podspec files. CocoaPods dependency manager see
+ * https://cocoapods.org/.
+ *
+ * @author Bianca Jiang (https://twitter.com/biancajiang)
+ */
+@Experimental
+@ThreadSafe
+<span class="fc" id="L54">public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {</span>
+
+    /**
+     * A descriptor for the type of dependencies processed or added by this
+     * analyzer.
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.IOS;
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L65">    private static final Logger LOGGER = LoggerFactory.getLogger(CocoaPodsAnalyzer.class);</span>
+    /**
+     * The name of the analyzer.
+     */
+    private static final String ANALYZER_NAME = &quot;CocoaPods Package Analyzer&quot;;
+
+    /**
+     * The phase that this analyzer is intended to run in.
+     */
+<span class="fc" id="L74">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;</span>
+
+    /**
+     * The file name to scan.
+     */
+    public static final String PODSPEC = &quot;podspec&quot;;
+    /**
+     * The file name to scan.
+     */
+    public static final String PODFILE_LOCK = &quot;Podfile.lock&quot;;
+    /**
+     * Filter that detects files named &quot;*.podspec&quot; and &quot;Podfile.lock&quot;.
+     */
+<span class="fc" id="L87">    private static final FileFilter PODS_FILTER = FileFilterBuilder.newInstance().addExtensions(PODSPEC).addFilenames(PODFILE_LOCK).build();</span>
+
+    /**
+     * The capture group #1 is the block variable. e.g. &quot;Pod::Spec.new do
+     * |spec|&quot;
+     */
+<span class="fc" id="L93">    private static final Pattern PODSPEC_BLOCK_PATTERN = Pattern.compile(&quot;Pod::Spec\\.new\\s+?do\\s+?\\|(.+?)\\|&quot;);</span>
+
+    /**
+     * The capture group #1 is the dependency name, #2 is dependency version
+     */
+<span class="fc" id="L98">    private static final Pattern PODFILE_LOCK_DEPENDENCY_PATTERN = Pattern.compile(&quot;  - \&quot;?(.*) \\((\\d+\\.\\d+\\.\\d+)\\)\&quot;?&quot;);</span>
+
+    /**
+     * Returns the FileFilter
+     *
+     * @return the FileFilter
+     */
+    @Override
+    protected FileFilter getFileFilter() {
+<span class="fc" id="L107">        return PODS_FILTER;</span>
+    }
+
+    @Override
+    protected void prepareFileTypeAnalyzer(Engine engine) {
+        // NO-OP
+<span class="fc" id="L113">    }</span>
+
+    /**
+     * Returns the name of the analyzer.
+     *
+     * @return the name of the analyzer.
+     */
+    @Override
+    public String getName() {
+<span class="fc" id="L122">        return ANALYZER_NAME;</span>
+    }
+
+    /**
+     * Returns the phase that the analyzer is intended to run in.
+     *
+     * @return the phase that the analyzer is intended to run in.
+     */
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+<span class="fc" id="L132">        return ANALYSIS_PHASE;</span>
+    }
+
+    /**
+     * Returns the key used in the properties file to reference the analyzer's
+     * enabled property.
+     *
+     * @return the analyzer's enabled property setting key
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+<span class="fc" id="L143">        return Settings.KEYS.ANALYZER_COCOAPODS_ENABLED;</span>
+    }
+
+    @Override
+    protected void analyzeDependency(Dependency dependency, Engine engine)
+            throws AnalysisException {
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        if (PODFILE_LOCK.equals(dependency.getFileName())) {</span>
+<span class="fc" id="L150">            analyzePodfileLockDependencies(dependency, engine);</span>
+        }
+
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        if (dependency.getFileName().endsWith(PODSPEC)) {</span>
+<span class="fc" id="L154">            analyzePodspecDependency(dependency);</span>
+        }
+<span class="fc" id="L156">    }</span>
+
+    /**
+     * Analyzes the podfile.lock file to extract evidence for the dependency.
+     *
+     * @param podfileLock the dependency to analyze
+     * @param engine the analysis engine
+     * @throws AnalysisException thrown if there is an error analyzing the
+     * dependency
+     */
+    private void analyzePodfileLockDependencies(Dependency podfileLock, Engine engine)
+            throws AnalysisException {
+<span class="fc" id="L168">        engine.removeDependency(podfileLock);</span>
+
+        final String contents;
+        try {
+<span class="fc" id="L172">            contents = FileUtils.readFileToString(podfileLock.getActualFile(), Charset.defaultCharset());</span>
+<span class="nc" id="L173">        } catch (IOException e) {</span>
+<span class="nc" id="L174">            throw new AnalysisException(</span>
+                    &quot;Problem occurred while reading dependency file.&quot;, e);
+<span class="fc" id="L176">        }</span>
+
+<span class="fc" id="L178">        final Matcher matcher = PODFILE_LOCK_DEPENDENCY_PATTERN.matcher(contents);</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">        while (matcher.find()) {</span>
+<span class="fc" id="L180">            final String name = matcher.group(1);</span>
+<span class="fc" id="L181">            final String version = matcher.group(2);</span>
+
+<span class="fc" id="L183">            final Dependency dependency = new Dependency(podfileLock.getActualFile(), true);</span>
+<span class="fc" id="L184">            dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc" id="L185">            dependency.setName(name);</span>
+<span class="fc" id="L186">            dependency.setVersion(version);</span>
+<span class="fc" id="L187">            final String packagePath = String.format(&quot;%s:%s&quot;, name, version);</span>
+<span class="fc" id="L188">            dependency.setPackagePath(packagePath);</span>
+<span class="fc" id="L189">            dependency.setDisplayFileName(packagePath);</span>
+<span class="fc" id="L190">            dependency.setSha1sum(Checksum.getSHA1Checksum(packagePath));</span>
+<span class="fc" id="L191">            dependency.setSha256sum(Checksum.getSHA256Checksum(packagePath));</span>
+<span class="fc" id="L192">            dependency.setMd5sum(Checksum.getMD5Checksum(packagePath));</span>
+<span class="fc" id="L193">            dependency.addEvidence(EvidenceType.VENDOR, PODFILE_LOCK, &quot;name&quot;, name, Confidence.HIGHEST);</span>
+<span class="fc" id="L194">            dependency.addEvidence(EvidenceType.PRODUCT, PODFILE_LOCK, &quot;name&quot;, name, Confidence.HIGHEST);</span>
+<span class="fc" id="L195">            dependency.addEvidence(EvidenceType.VERSION, PODFILE_LOCK, &quot;version&quot;, version, Confidence.HIGHEST);</span>
+<span class="fc" id="L196">            engine.addDependency(dependency);</span>
+<span class="fc" id="L197">        }</span>
+<span class="fc" id="L198">    }</span>
+
+    /**
+     * Analyzes the podspec and adds the evidence to the dependency.
+     *
+     * @param dependency the dependency
+     * @throws AnalysisException thrown if there is an error analyzing the
+     * podspec
+     */
+    private void analyzePodspecDependency(Dependency dependency)
+            throws AnalysisException {
+<span class="fc" id="L209">        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+        String contents;
+        try {
+<span class="fc" id="L212">            contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());</span>
+<span class="nc" id="L213">        } catch (IOException e) {</span>
+<span class="nc" id="L214">            throw new AnalysisException(</span>
+                    &quot;Problem occurred while reading dependency file.&quot;, e);
+<span class="fc" id="L216">        }</span>
+<span class="fc" id="L217">        final Matcher matcher = PODSPEC_BLOCK_PATTERN.matcher(contents);</span>
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">        if (matcher.find()) {</span>
+<span class="fc" id="L219">            contents = contents.substring(matcher.end());</span>
+<span class="fc" id="L220">            final String blockVariable = matcher.group(1);</span>
+<span class="fc" id="L221">            PackageURLBuilder builder = null;</span>
+<span class="fc" id="L222">            final String name = determineEvidence(contents, blockVariable, &quot;name&quot;);</span>
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">            if (!name.isEmpty()) {</span>
+<span class="fc" id="L224">                dependency.addEvidence(EvidenceType.PRODUCT, PODSPEC, &quot;name_project&quot;, name, Confidence.HIGHEST);</span>
+<span class="fc" id="L225">                dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, &quot;name_project&quot;, name, Confidence.HIGHEST);</span>
+<span class="fc" id="L226">                dependency.setName(name);</span>
+
+<span class="fc" id="L228">                builder = PackageURLBuilder.aPackageURL();</span>
+<span class="fc" id="L229">                builder.withType(&quot;cocoapods&quot;).withName(name);</span>
+            }
+<span class="fc" id="L231">            final String version = determineEvidence(contents, blockVariable, &quot;version&quot;);</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">            if (!version.isEmpty()) {</span>
+<span class="fc" id="L233">                dependency.addEvidence(EvidenceType.VERSION, PODSPEC, &quot;version&quot;, version, Confidence.HIGHEST);</span>
+<span class="fc" id="L234">                dependency.setVersion(version);</span>
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">                if (builder != null) {</span>
+<span class="fc" id="L236">                    builder.withVersion(version);</span>
+                }
+            }
+
+<span class="fc" id="L240">            final String summary = determineEvidence(contents, blockVariable, &quot;summary&quot;);</span>
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">            if (!summary.isEmpty()) {</span>
+<span class="nc" id="L242">                dependency.addEvidence(EvidenceType.PRODUCT, PODSPEC, &quot;summary&quot;, summary, Confidence.HIGHEST);</span>
+            }
+
+<span class="fc" id="L245">            final String author = determineEvidence(contents, blockVariable, &quot;authors?&quot;);</span>
+<span class="pc bpc" id="L246" title="1 of 2 branches missed.">            if (!author.isEmpty()) {</span>
+<span class="fc" id="L247">                dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, &quot;author&quot;, author, Confidence.HIGHEST);</span>
+            }
+<span class="fc" id="L249">            final String homepage = determineEvidence(contents, blockVariable, &quot;homepage&quot;);</span>
+<span class="pc bpc" id="L250" title="1 of 2 branches missed.">            if (!homepage.isEmpty()) {</span>
+<span class="fc" id="L251">                dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, &quot;homepage&quot;, homepage, Confidence.HIGHEST);</span>
+            }
+<span class="fc" id="L253">            final String license = determineEvidence(contents, blockVariable, &quot;licen[cs]es?&quot;);</span>
+<span class="pc bpc" id="L254" title="1 of 2 branches missed.">            if (!license.isEmpty()) {</span>
+<span class="fc" id="L255">                dependency.setLicense(license);</span>
+            }
+
+<span class="pc bpc" id="L258" title="1 of 2 branches missed.">            if (builder != null) {</span>
+                try {
+<span class="fc" id="L260">                    final PurlIdentifier purl = new PurlIdentifier(builder.build(), homepage, Confidence.HIGHEST);</span>
+<span class="fc" id="L261">                    dependency.addSoftwareIdentifier(purl);</span>
+<span class="nc" id="L262">                } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L263">                    LOGGER.debug(&quot;Unable to generate purl for cocoapod&quot;, ex);</span>
+<span class="nc" id="L264">                    final StringBuilder sb = new StringBuilder(&quot;pkg:cocoapods/&quot;);</span>
+<span class="nc" id="L265">                    sb.append(name);</span>
+<span class="nc bnc" id="L266" title="All 2 branches missed.">                    if (!version.isEmpty()) {</span>
+<span class="nc" id="L267">                        sb.append(&quot;@&quot;).append(version);</span>
+                    }
+<span class="nc" id="L269">                    final GenericIdentifier id = new GenericIdentifier(sb.toString(), Confidence.HIGHEST);</span>
+<span class="nc" id="L270">                    dependency.addSoftwareIdentifier(id);</span>
+<span class="fc" id="L271">                }</span>
+            }
+        }
+<span class="pc bpc" id="L274" title="2 of 4 branches missed.">        if (dependency.getVersion() != null &amp;&amp; !dependency.getVersion().isEmpty()) {</span>
+<span class="fc" id="L275">            dependency.setDisplayFileName(String.format(&quot;%s:%s&quot;, dependency.getName(), dependency.getVersion()));</span>
+        } else {
+<span class="nc" id="L277">            dependency.setDisplayFileName(dependency.getName());</span>
+        }
+<span class="fc" id="L279">        setPackagePath(dependency);</span>
+<span class="fc" id="L280">    }</span>
+
+    /**
+     * Extracts evidence from the contents and adds it to the given evidence
+     * collection.
+     *
+     * @param contents the text to extract evidence from
+     * @param blockVariable the block variable within the content to search for
+     * @param fieldPattern the field pattern within the contents to search for
+     * @return the evidence
+     */
+    private String determineEvidence(String contents, String blockVariable, String fieldPattern) {
+<span class="fc" id="L292">        String value = &quot;&quot;;</span>
+
+        //capture array value between [ ]
+<span class="fc" id="L295">        final Matcher arrayMatcher = Pattern.compile(</span>
+<span class="fc" id="L296">                String.format(&quot;\\s*?%s\\.%s\\s*?=\\s*?\\{\\s*?(.*?)\\s*?\\}&quot;, blockVariable, fieldPattern),</span>
+<span class="fc" id="L297">                Pattern.CASE_INSENSITIVE).matcher(contents);</span>
+<span class="fc bfc" id="L298" title="All 2 branches covered.">        if (arrayMatcher.find()) {</span>
+<span class="fc" id="L299">            value = arrayMatcher.group(1);</span>
+        } else { //capture single value between quotes
+<span class="fc" id="L301">            final Matcher matcher = Pattern.compile(</span>
+<span class="fc" id="L302">                    String.format(&quot;\\s*?%s\\.%s\\s*?=\\s*?(['\&quot;])(.*?)\\1&quot;, blockVariable, fieldPattern),</span>
+<span class="fc" id="L303">                    Pattern.CASE_INSENSITIVE).matcher(contents);</span>
+<span class="fc bfc" id="L304" title="All 2 branches covered.">            if (matcher.find()) {</span>
+<span class="fc" id="L305">                value = matcher.group(2);</span>
+            }
+        }
+<span class="fc" id="L308">        return value;</span>
+    }
+
+    /**
+     * Sets the package path on the given dependency.
+     *
+     * @param dep the dependency to update
+     */
+    private void setPackagePath(Dependency dep) {
+<span class="fc" id="L317">        final File file = new File(dep.getFilePath());</span>
+<span class="fc" id="L318">        final String parent = file.getParent();</span>
+<span class="pc bpc" id="L319" title="1 of 2 branches missed.">        if (parent != null) {</span>
+<span class="fc" id="L320">            dep.setPackagePath(parent);</span>
+        }
+<span class="fc" id="L322">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

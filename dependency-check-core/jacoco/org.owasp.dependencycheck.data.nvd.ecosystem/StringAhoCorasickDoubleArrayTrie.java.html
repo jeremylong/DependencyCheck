@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StringAhoCorasickDoubleArrayTrie.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvd.ecosystem</a> &gt; <span class="el_source">StringAhoCorasickDoubleArrayTrie.java</span></div><h1>StringAhoCorasickDoubleArrayTrie.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2020 The OWASP Foundation. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nvd.ecosystem;
+
+import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
+
+/**
+ * Add method for String and IHitFull.
+ *
+ * @param &lt;V&gt; the object type
+ * @author skjolber
+ */
+<span class="fc" id="L28">public class StringAhoCorasickDoubleArrayTrie&lt;V&gt; extends AhoCorasickDoubleArrayTrie&lt;V&gt; {</span>
+
+    private static final long serialVersionUID = -5923428681217396309L;
+
+    /**
+     * Parse text.
+     *
+     * @param text The text
+     * @param processor A processor which handles the output
+     */
+    public void parseText(String text, IHitFull&lt;V&gt; processor) {
+<span class="fc" id="L39">        int position = 1;</span>
+<span class="fc" id="L40">        int currentState = 0;</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        for (int i = 0; i &lt; text.length(); i++) {</span>
+<span class="fc" id="L42">            currentState = getState(currentState, text.charAt(i));</span>
+<span class="fc" id="L43">            final int[] hitArray = output[currentState];</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">            if (hitArray != null) {</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">                for (int hit : hitArray) {</span>
+<span class="fc" id="L46">                    processor.hit(position - l[hit], position, v[hit], hit);</span>
+                }
+            }
+<span class="fc" id="L49">            ++position;</span>
+        }
+<span class="fc" id="L51">    }</span>
+
+    /**
+     * transmit state, supports failure function
+     *
+     * @param currentState the current state
+     * @param character the current character
+     * @return the new state
+     */
+    private int getState(int currentState, char character) {
+<span class="fc" id="L61">        int state = currentState;</span>
+<span class="fc" id="L62">        int newCurrentState = transitionWithRoot(state, character);  //success</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        while (newCurrentState == -1) {</span>
+            //failure
+<span class="fc" id="L65">            state = fail[state];</span>
+<span class="fc" id="L66">            newCurrentState = transitionWithRoot(state, character);</span>
+        }
+<span class="fc" id="L68">        return newCurrentState;</span>
+    }
+
+    public V[] getValues() {
+<span class="nc" id="L72">        return v;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

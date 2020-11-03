@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JsonArrayFixingInputStream.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Utils</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">JsonArrayFixingInputStream.java</span></div><h1>JsonArrayFixingInputStream.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-utils.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2020 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.utils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Fixes a poorly formatted jSON array such as those returned by
+ * &lt;code&gt;go list -json -m all&lt;/code&gt;.
+ * &lt;p&gt;
+ * Example:&lt;/p&gt;
+ * &lt;code&gt;
+ * { &quot;name1&quot;: &quot;value&quot; }
+ * { &quot;name2&quot; : &quot;value&quot; }
+ * &lt;/code&gt; Would be transformed into:  &lt;code&gt;
+ * [{ &quot;name1&quot;: &quot;value&quot; },
+ * { &quot;name2&quot; : &quot;value&quot; }]
+ * &lt;/code&gt;
+ * &lt;p&gt;
+ * Note that this is a naive implementation and will incorrectly transform a
+ * stream if there are '}' contained within the names of values.&lt;/p&gt;
+ *
+ * @author Jeremy Long
+ */
+public class JsonArrayFixingInputStream extends InputStream {
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L48">    private static final Logger LOGGER = LoggerFactory.getLogger(JsonArrayFixingInputStream.class);</span>
+    /**
+     * The buffer length.
+     */
+    private static final int BUFFER_SIZE = 2048;
+    /**
+     * The input stream to be filtered.
+     */
+    protected volatile InputStream in;
+    /**
+     * The read buffer.
+     */
+<span class="fc" id="L60">    private final byte[] buffer = new byte[BUFFER_SIZE];</span>
+    /**
+     * The read offset for the buffer.
+     */
+<span class="fc" id="L64">    private int bufferStart = 0;</span>
+    /**
+     * The number characters available to read.
+     */
+<span class="fc" id="L68">    private int bufferAvailable = 0;</span>
+    /**
+     * A flag indicating if the output still requires a trailing curly brace.
+     */
+<span class="fc" id="L72">    private boolean needsTrailingBrace = true;</span>
+    /**
+     * A flag indicating if the stream is just starting.
+     */
+<span class="fc" id="L76">    private boolean firstRead = true;</span>
+
+    /**
+     * Constructs a new filtering input stream used to fix a poorly formatted
+     * JSON array.
+     *
+     * @param in the InputStream containing the poorly formed JSON array
+     */
+<span class="fc" id="L84">    public JsonArrayFixingInputStream(InputStream in) {</span>
+<span class="fc" id="L85">        this.in = in;</span>
+<span class="fc" id="L86">        this.bufferAvailable = 1;</span>
+<span class="fc" id="L87">        buffer[bufferStart] = '[';</span>
+<span class="fc" id="L88">    }</span>
+
+    /**
+     * Advances the buffer to the next block if required.
+     *
+     * @param start the offset to copy the next block into
+     * @return the number of characters read
+     * @throws IOException thrown if there is an error reading from the stream
+     */
+    private boolean advanceStream() throws IOException {
+<span class="fc" id="L98">        boolean chomp = false;</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        if (firstRead) {</span>
+<span class="fc" id="L100">            chomp = true;</span>
+<span class="fc" id="L101">            firstRead = false;</span>
+<span class="fc" id="L102">            bufferStart = 0;</span>
+<span class="fc" id="L103">            bufferAvailable = in.read(buffer, 1, BUFFER_SIZE - 1) + 1;</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        } else if (bufferAvailable == 0) {</span>
+<span class="fc" id="L105">            chomp = true;</span>
+<span class="fc" id="L106">            bufferStart = 0;</span>
+<span class="fc" id="L107">            bufferAvailable = in.read(buffer, 0, BUFFER_SIZE);</span>
+        }
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        if (chomp) {</span>
+            //chomp new lines
+<span class="pc bpc" id="L111" title="1 of 6 branches missed.">            while (bufferAvailable &gt; 0</span>
+                    &amp;&amp; (buffer[bufferStart + bufferAvailable - 1] == '\n'
+                    || buffer[bufferStart + bufferAvailable - 1] == '\r')) {
+<span class="fc" id="L114">                bufferAvailable -= 1;</span>
+            }
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">            if (bufferAvailable == 0) {</span>
+<span class="nc" id="L117">                return advanceStream();</span>
+            }
+        }
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        return bufferAvailable &gt; 0;</span>
+    }
+
+    /**
+     * Searches for the offset from the buffer start for the next closing curly
+     * brace.
+     *
+     * @return the offset if found; otherwise &lt;code&gt;-1&lt;/code&gt;
+     */
+    private int getClosingBraceOffset() {
+<span class="fc bfc" id="L130" title="All 4 branches covered.">        for (int pos = bufferStart; pos &lt; BUFFER_SIZE &amp;&amp; pos &lt; (bufferStart + bufferAvailable); pos++) {</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">            if (buffer[pos] == '}') {</span>
+<span class="fc" id="L132">                return pos - bufferStart;</span>
+            }
+        }
+<span class="fc" id="L135">        return -1;</span>
+    }
+
+    /**
+     * Increments the buffer start and appropriately inserts any necessary
+     * needed curly braces or commas.
+     *
+     * @throws IOException thrown if there is an error reading from the stream
+     */
+    private void incrementRead() throws IOException {
+<span class="fc bfc" id="L145" title="All 2 branches covered.">        if (buffer[bufferStart] == '}') {</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">            if (bufferAvailable &gt; 1) {</span>
+<span class="fc" id="L147">                buffer[bufferStart] = ',';</span>
+            } else {
+<span class="fc" id="L149">                bufferAvailable = 0;</span>
+<span class="pc bpc" id="L150" title="2 of 4 branches missed.">                if (advanceStream() || needsTrailingBrace) {</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">                    if (bufferAvailable &gt;= 1) {</span>
+<span class="nc" id="L152">                        bufferStart = 0;</span>
+<span class="nc" id="L153">                        bufferAvailable += 1;</span>
+<span class="nc" id="L154">                        buffer[bufferStart] = ',';</span>
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">                    } else if (needsTrailingBrace) {</span>
+<span class="fc" id="L156">                        needsTrailingBrace = false;</span>
+<span class="fc" id="L157">                        buffer[bufferStart] = ']';</span>
+<span class="fc" id="L158">                        bufferAvailable = 1;</span>
+                    }
+                }
+            }
+        } else {
+<span class="fc" id="L163">            bufferStart += 1;</span>
+<span class="fc" id="L164">            bufferAvailable -= 1;</span>
+        }
+<span class="fc" id="L166">    }</span>
+
+    @Override
+    public int read() throws IOException {
+<span class="fc bfc" id="L170" title="All 2 branches covered.">        if (advanceStream()) {</span>
+<span class="fc" id="L171">            int value = buffer[bufferStart];</span>
+<span class="fc" id="L172">            incrementRead();</span>
+<span class="fc" id="L173">            return value;</span>
+        }
+<span class="fc" id="L175">        return -1;</span>
+    }
+
+    @Override
+    public int read(byte b[]) throws IOException {
+<span class="fc" id="L180">        return this.read(b, 0, b.length);</span>
+    }
+
+    @Override
+    public int read(byte b[], int off, int len) throws IOException {
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        if (advanceStream()) {</span>
+<span class="fc" id="L186">            int brace = getClosingBraceOffset();</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">            if (brace == 0) {</span>
+<span class="fc" id="L188">                b[off] = buffer[bufferStart];</span>
+<span class="fc" id="L189">                incrementRead();</span>
+<span class="fc" id="L190">                return 1;</span>
+            }
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">            int copyLength = bufferAvailable &gt; len ? len : bufferAvailable;</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">            if (brace &gt; 0) {</span>
+<span class="pc bpc" id="L194" title="1 of 2 branches missed.">                copyLength = copyLength &gt; brace ? brace : copyLength;</span>
+            }
+<span class="fc" id="L196">            int copyEnd = copyLength + off;</span>
+<span class="fc bfc" id="L197" title="All 2 branches covered.">            for (int pos = off; pos &lt; copyEnd; pos++) {</span>
+<span class="fc" id="L198">                b[pos] = buffer[bufferStart];</span>
+<span class="fc" id="L199">                bufferStart += 1;</span>
+            }
+<span class="fc" id="L201">            bufferAvailable -= copyLength;</span>
+<span class="fc" id="L202">            return copyLength;</span>
+        }
+<span class="fc" id="L204">        return -1;</span>
+    }
+
+    @Override
+    public long skip(long n) throws IOException {
+<span class="fc" id="L209">        throw new UnsupportedOperationException(&quot;Unable to skip using the JsonArrayFixingInputStream&quot;);</span>
+    }
+
+    @Override
+    public int available() throws IOException {
+<span class="fc" id="L214">        return in.available() + bufferAvailable;</span>
+    }
+
+    @Override
+    public void close() throws IOException {
+<span class="fc" id="L219">        in.close();</span>
+<span class="fc" id="L220">    }</span>
+
+    @Override
+    public boolean markSupported() {
+<span class="fc" id="L224">        return false;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

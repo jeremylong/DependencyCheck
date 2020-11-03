@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CpeMemoryIndex.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.cpe</a> &gt; <span class="el_source">CpeMemoryIndex.java</span></div><h1>CpeMemoryIndex.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2020 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.cpe;
+
+import javax.annotation.concurrent.ThreadSafe;
+
+/**
+ * &lt;p&gt;
+ * An in memory Lucene index that contains the vendor/product combinations from
+ * the CPE (application) identifiers within the NVD CVE data.&lt;/p&gt;
+ *
+ * This is the last remaining singleton in dependency-check-core; The use of
+ * this singleton - while it may not technically be thread-safe (one database
+ * used to build this index may not have the same entries as another) the risk
+ * of this is currently believed to be small. As this memory index consumes a
+ * large amount of memory we will remain using the singleton pattern for now.
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+public final class CpeMemoryIndex extends AbstractMemoryIndex {
+
+    /**
+     * Singleton instance.
+     */
+<span class="fc" id="L41">    private static final CpeMemoryIndex INSTANCE = new CpeMemoryIndex();</span>
+
+    /**
+     * private constructor for singleton.
+     */
+    private CpeMemoryIndex() {
+    }
+
+    /**
+     * Gets the singleton instance of the CpeMemoryIndex.
+     *
+     * @return the instance of the CpeMemoryIndex
+     */
+    public static CpeMemoryIndex getInstance() {
+<span class="fc" id="L55">        return INSTANCE;</span>
+    }
+
+    /**
+     * Gets the singleton instance of the CpeMemoryIndex.
+     *
+     * @return the instance of the CpeMemoryIndex
+     */
+    @Override
+    protected AbstractMemoryIndex instance() {
+<span class="fc" id="L65">        return (AbstractMemoryIndex) INSTANCE;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

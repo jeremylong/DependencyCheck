@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StaticLoggerBinder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Ant Task</a> &gt; <a href="index.source.html" class="el_package">org.slf4j.impl</a> &gt; <span class="el_source">StaticLoggerBinder.java</span></div><h1>StaticLoggerBinder.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-ant.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2015 The OWASP Foundation. All Rights Reserved.
+ */
+package org.slf4j.impl;
+
+import org.apache.tools.ant.Task;
+import org.owasp.dependencycheck.ant.logging.AntLoggerFactory;
+import org.slf4j.ILoggerFactory;
+import org.slf4j.spi.LoggerFactoryBinder;
+
+/**
+ * The binding of org.slf4j.LoggerFactory class with an actual instance of
+ * org.slf4j.ILoggerFactory is performed using information returned by this
+ * class.
+ *
+ * @author colezlaw
+ */
+//CSOFF: FinalClass
+@SuppressWarnings({&quot;squid:S1444&quot;, &quot;squid:ClassVariableVisibilityCheck&quot;})
+public class StaticLoggerBinder implements LoggerFactoryBinder {
+//CSON: FinalClass
+
+    /**
+     * The unique instance of this class
+     */
+<span class="fc" id="L40">    private static final StaticLoggerBinder SINGLETON = new StaticLoggerBinder();</span>
+    /**
+     * Ant tasks have the log method we actually want to call. So we hang onto
+     * the task as a delegate
+     */
+<span class="fc" id="L45">    private Task task = null;</span>
+
+    /**
+     * Declare the version of the SLF4J API this implementation is compiled
+     * against. The value of this filed is usually modified with each release.
+     */
+    // to avoid constant folding by the compiler, this field must *not* be final
+    //CSOFF: StaticVariableName
+    //CSOFF: VisibilityModifier
+    @SuppressWarnings(&quot;squid:S3008&quot;)
+<span class="fc" id="L55">    public static String REQUESTED_API_VERSION = &quot;1.7.12&quot;; // final</span>
+    //CSON: VisibilityModifier
+    //CSON: StaticVariableName
+
+    /**
+     * The logger factory class string.
+     */
+<span class="fc" id="L62">    private static final String LOGGER_FACTORY_CLASS = AntLoggerFactory.class.getName();</span>
+
+    /**
+     * The ILoggerFactory instance returned by the {@link #getLoggerFactory}
+     * method should always be the smae object
+     */
+    private ILoggerFactory loggerFactory;
+
+    /**
+     * Return the singleton of this class.
+     *
+     * @return the StaticLoggerBinder singleton
+     */
+    public static StaticLoggerBinder getSingleton() {
+<span class="fc" id="L76">        return SINGLETON;</span>
+    }
+
+    /**
+     * Set the Task which will this is to log through.
+     *
+     * @param task the task through which to log
+     */
+    public void setTask(Task task) {
+<span class="fc" id="L85">        this.task = task;</span>
+<span class="fc" id="L86">        loggerFactory = new AntLoggerFactory(task);</span>
+<span class="fc" id="L87">    }</span>
+
+    /**
+     * Constructs a new static logger binder.
+     */
+<span class="fc" id="L92">    private StaticLoggerBinder() {</span>
+<span class="fc" id="L93">        loggerFactory = new AntLoggerFactory(task);</span>
+<span class="fc" id="L94">    }</span>
+
+    /**
+     * Returns the logger factory.
+     *
+     * @return the logger factory
+     */
+    @Override
+    public ILoggerFactory getLoggerFactory() {
+<span class="fc" id="L103">        return loggerFactory;</span>
+    }
+
+    /**
+     * Returns the logger factory class string.
+     *
+     * @return the logger factory class string
+     */
+    @Override
+    public String getLoggerFactoryClassStr() {
+<span class="nc" id="L113">        return LOGGER_FACTORY_CLASS;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

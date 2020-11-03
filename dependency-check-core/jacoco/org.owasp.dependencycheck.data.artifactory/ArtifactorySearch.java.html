@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ArtifactorySearch.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.artifactory</a> &gt; <span class="el_source">ArtifactorySearch.java</span></div><h1>ArtifactorySearch.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2018 Nicolas Henneaux. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.artifactory;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.annotation.concurrent.ThreadSafe;
+
+import org.owasp.dependencycheck.data.nexus.MavenArtifact;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.Checksum;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.URLConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.google.common.base.Objects;
+
+/**
+ * Class of methods to search Artifactory for hashes and determine Maven GAV
+ * from there.
+ *
+ * Data classes copied from JFrog's artifactory-client-java project.
+ *
+ * @author nhenneaux
+ */
+@ThreadSafe
+@SuppressWarnings(&quot;squid:S2647&quot;)
+public class ArtifactorySearch {
+
+    /**
+     * Used for logging.
+     */
+<span class="fc" id="L66">    private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactorySearch.class);</span>
+
+    /**
+     * Pattern to match the path returned by the Artifactory AQL API.
+     */
+<span class="fc" id="L71">    private static final Pattern PATH_PATTERN = Pattern.compile(&quot;^/(?&lt;groupId&gt;.+)/(?&lt;artifactId&gt;[^/]+)/(?&lt;version&gt;[^/]+)/[^/]+$&quot;);</span>
+    /**
+     * Extracted duplicateArtifactorySearchIT.java comment.
+     */
+    private static final String WHILE_ACTUAL_IS = &quot; while actual is &quot;;
+    /**
+     * The URL for the Central service.
+     */
+    private final String rootURL;
+
+    /**
+     * Whether to use the Proxy when making requests.
+     */
+    private final boolean useProxy;
+
+    /**
+     * The configured settings.
+     */
+    private final Settings settings;
+
+    /**
+     * Search result reader
+     */
+    private final ObjectReader objectReader;
+
+    /**
+     * Creates a NexusSearch for the given repository URL.
+     *
+     * @param settings the configured settings
+     */
+<span class="fc" id="L101">    public ArtifactorySearch(Settings settings) {</span>
+<span class="fc" id="L102">        this.settings = settings;</span>
+
+<span class="fc" id="L104">        final String searchUrl = settings.getString(Settings.KEYS.ANALYZER_ARTIFACTORY_URL);</span>
+
+<span class="fc" id="L106">        this.rootURL = searchUrl;</span>
+<span class="fc" id="L107">        LOGGER.debug(&quot;Artifactory Search URL {}&quot;, searchUrl);</span>
+
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">        if (null != settings.getString(Settings.KEYS.PROXY_SERVER)) {</span>
+<span class="nc" id="L110">            boolean useProxySettings = false;</span>
+            try {
+<span class="nc" id="L112">                useProxySettings = settings.getBoolean(Settings.KEYS.ANALYZER_ARTIFACTORY_USES_PROXY);</span>
+<span class="nc" id="L113">            } catch (InvalidSettingException e) {</span>
+<span class="nc" id="L114">                LOGGER.error(&quot;Settings {} is invalid, only, true/false is valid&quot;, Settings.KEYS.ANALYZER_ARTIFACTORY_USES_PROXY, e);</span>
+<span class="nc" id="L115">            }</span>
+<span class="nc" id="L116">            this.useProxy = useProxySettings;</span>
+<span class="nc" id="L117">            LOGGER.debug(&quot;Using proxy? {}&quot;, useProxy);</span>
+<span class="nc" id="L118">        } else {</span>
+<span class="fc" id="L119">            useProxy = false;</span>
+<span class="fc" id="L120">            LOGGER.debug(&quot;Not using proxy&quot;);</span>
+        }
+
+<span class="fc" id="L123">        objectReader = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).readerFor(FileImpl.class);</span>
+<span class="fc" id="L124">    }</span>
+
+    /**
+     * Searches the configured Central URL for the given hash (MD5, SHA1 and
+     * SHA256). If the artifact is found, a &lt;code&gt;MavenArtifact&lt;/code&gt; is
+     * populated with the GAV.
+     *
+     * @param dependency the dependency for which to search (search is based on
+     * hashes)
+     * @return the populated Maven GAV.
+     * @throws FileNotFoundException if the specified artifact is not found
+     * @throws IOException if it's unable to connect to the specified repository
+     */
+    public List&lt;MavenArtifact&gt; search(Dependency dependency) throws IOException {
+
+<span class="fc" id="L139">        final String sha1sum = dependency.getSha1sum();</span>
+<span class="fc" id="L140">        final URL url = buildUrl(sha1sum);</span>
+<span class="nc" id="L141">        final HttpURLConnection conn = connect(url);</span>
+<span class="nc" id="L142">        final int responseCode = conn.getResponseCode();</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">        if (responseCode == 200) {</span>
+<span class="nc" id="L144">            return processResponse(dependency, conn);</span>
+        }
+<span class="nc" id="L146">        throw new IOException(&quot;Could not connect to Artifactory &quot; + url + &quot; (&quot; + responseCode + &quot;): &quot; + conn.getResponseMessage());</span>
+
+    }
+
+    /**
+     * Makes an connection to the given URL.
+     *
+     * @param url the URL to connect to
+     * @return the HTTP URL Connection
+     * @throws IOException thrown if there is an error making the connection
+     */
+    private HttpURLConnection connect(URL url) throws IOException {
+<span class="fc" id="L158">        LOGGER.debug(&quot;Searching Artifactory url {}&quot;, url);</span>
+
+        // Determine if we need to use a proxy. The rules:
+        // 1) If the proxy is set, AND the setting is set to true, use the proxy
+        // 2) Otherwise, don't use the proxy (either the proxy isn't configured,
+        // or proxy is specifically set to false)
+<span class="fc" id="L164">        final URLConnectionFactory factory = new URLConnectionFactory(settings);</span>
+<span class="fc" id="L165">        final HttpURLConnection conn = factory.createHttpURLConnection(url, useProxy);</span>
+<span class="fc" id="L166">        conn.setDoOutput(true);</span>
+
+<span class="fc" id="L168">        conn.addRequestProperty(&quot;X-Result-Detail&quot;, &quot;info&quot;);</span>
+
+<span class="fc" id="L170">        final String username = settings.getString(Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME);</span>
+<span class="fc" id="L171">        final String apiToken = settings.getString(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN);</span>
+<span class="pc bpc" id="L172" title="3 of 4 branches missed.">        if (username != null &amp;&amp; apiToken != null) {</span>
+<span class="nc" id="L173">            final String userpassword = username + &quot;:&quot; + apiToken;</span>
+<span class="nc" id="L174">            final String encodedAuthorization = Base64.getEncoder().encodeToString(userpassword.getBytes(StandardCharsets.UTF_8));</span>
+<span class="nc" id="L175">            conn.addRequestProperty(&quot;Authorization&quot;, &quot;Basic &quot; + encodedAuthorization);</span>
+<span class="nc" id="L176">        } else {</span>
+<span class="fc" id="L177">            final String bearerToken = settings.getString(Settings.KEYS.ANALYZER_ARTIFACTORY_BEARER_TOKEN);</span>
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">            if (bearerToken != null) {</span>
+<span class="nc" id="L179">                conn.addRequestProperty(&quot;Authorization&quot;, &quot;Bearer &quot; + bearerToken);</span>
+            }
+        }
+
+<span class="nc" id="L183">        conn.connect();</span>
+<span class="nc" id="L184">        return conn;</span>
+    }
+
+    /**
+     * Constructs the URL using the SHA1 checksum.
+     *
+     * @param sha1sum the SHA1 checksum
+     * @return the API URL to search for the given checksum
+     * @throws MalformedURLException thrown if the URL is malformed
+     */
+    private URL buildUrl(String sha1sum) throws MalformedURLException {
+        // TODO Investigate why sha256 parameter is not working
+        // API defined https://www.jfrog.com/confluence/display/RTF/Artifactory+REST+API#ArtifactoryRESTAPI-ChecksumSearch
+<span class="fc" id="L197">        return new URL(rootURL + &quot;/api/search/checksum?sha1=&quot; + sha1sum);</span>
+    }
+
+    /**
+     * Process the Artifactory response.
+     *
+     * @param dependency the dependency
+     * @param conn the HTTP URL Connection
+     * @return a list of the Maven Artifact information
+     * @throws IOException thrown if there is an I/O error
+     */
+    protected List&lt;MavenArtifact&gt; processResponse(Dependency dependency, HttpURLConnection conn) throws IOException {
+<span class="fc" id="L209">        final List&lt;MavenArtifact&gt; result = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L211">        try (InputStreamReader streamReader = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);</span>
+<span class="fc" id="L212">                JsonParser parser = objectReader.getFactory().createParser(streamReader)) {</span>
+
+<span class="pc bpc" id="L214" title="1 of 4 branches missed.">            if (init(parser) &amp;&amp; parser.nextToken() == com.fasterxml.jackson.core.JsonToken.START_OBJECT) {</span>
+                // at least one result
+                do {
+<span class="fc" id="L217">                    final FileImpl file = objectReader.readValue(parser);</span>
+
+<span class="fc" id="L219">                    checkHashes(dependency, file.getChecksums());</span>
+
+<span class="fc" id="L221">                    final Matcher pathMatcher = PATH_PATTERN.matcher(file.getPath());</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">                    if (!pathMatcher.matches()) {</span>
+<span class="fc" id="L223">                        throw new IllegalStateException(&quot;Cannot extract the Maven information from the path &quot;</span>
+<span class="fc" id="L224">                                + &quot;retrieved in Artifactory &quot; + file.getPath());</span>
+                    }
+
+<span class="fc" id="L227">                    final String groupId = pathMatcher.group(&quot;groupId&quot;).replace('/', '.');</span>
+<span class="fc" id="L228">                    final String artifactId = pathMatcher.group(&quot;artifactId&quot;);</span>
+<span class="fc" id="L229">                    final String version = pathMatcher.group(&quot;version&quot;);</span>
+
+<span class="fc" id="L231">                    result.add(new MavenArtifact(groupId, artifactId, version, file.getDownloadUri(),</span>
+<span class="fc" id="L232">                            MavenArtifact.derivePomUrl(artifactId, version, file.getDownloadUri())));</span>
+
+<span class="fc bfc" id="L234" title="All 2 branches covered.">                } while (parser.nextToken() == com.fasterxml.jackson.core.JsonToken.START_OBJECT);</span>
+            } else {
+<span class="fc" id="L236">                throw new FileNotFoundException(&quot;Artifact &quot; + dependency + &quot; not found in Artifactory&quot;);</span>
+            }
+        }
+
+<span class="fc" id="L240">        return result;</span>
+    }
+
+    protected boolean init(JsonParser parser) throws IOException {
+<span class="fc" id="L244">        com.fasterxml.jackson.core.JsonToken nextToken = parser.nextToken();</span>
+<span class="pc bpc" id="L245" title="1 of 2 branches missed.">        if (nextToken != com.fasterxml.jackson.core.JsonToken.START_OBJECT) {</span>
+<span class="nc" id="L246">            throw new IOException(&quot;Expected &quot; + com.fasterxml.jackson.core.JsonToken.START_OBJECT + &quot;, got &quot; + nextToken);</span>
+        }
+
+        do {
+<span class="fc" id="L250">            nextToken = parser.nextToken();</span>
+<span class="pc bpc" id="L251" title="1 of 2 branches missed.">            if (nextToken == null) {</span>
+<span class="nc" id="L252">                break;</span>
+            }
+
+<span class="fc bfc" id="L255" title="All 2 branches covered.">            if (nextToken.isStructStart()) {</span>
+<span class="pc bpc" id="L256" title="2 of 4 branches missed.">                if (nextToken == com.fasterxml.jackson.core.JsonToken.START_ARRAY &amp;&amp; Objects.equal(&quot;results&quot;, parser.currentName())) {</span>
+<span class="fc" id="L257">                    return true;</span>
+                } else {
+<span class="nc" id="L259">                    parser.skipChildren();</span>
+                }
+            }
+        } while (true);
+
+<span class="nc" id="L264">        return false;</span>
+    }
+
+    /**
+     * Validates the hashes of the dependency.
+     *
+     * @param dependency the dependency
+     * @param checksums the collection of checksums (md5, sha1, sha256)
+     * @throws FileNotFoundException thrown if one of the checksums does not
+     * match
+     */
+    private void checkHashes(Dependency dependency, ChecksumsImpl checksums) throws FileNotFoundException {
+<span class="fc" id="L276">        final String md5sum = dependency.getMd5sum();</span>
+<span class="fc bfc" id="L277" title="All 2 branches covered.">        if (!checksums.getMd5().equals(md5sum)) {</span>
+<span class="fc" id="L278">            throw new FileNotFoundException(&quot;Artifact found by API is not matching the md5 &quot;</span>
+<span class="fc" id="L279">                    + &quot;of the artifact (repository hash is &quot; + checksums.getMd5() + WHILE_ACTUAL_IS + md5sum + &quot;) !&quot;);</span>
+        }
+<span class="fc" id="L281">        final String sha1sum = dependency.getSha1sum();</span>
+<span class="fc bfc" id="L282" title="All 2 branches covered.">        if (!checksums.getSha1().equals(sha1sum)) {</span>
+<span class="fc" id="L283">            throw new FileNotFoundException(&quot;Artifact found by API is not matching the SHA1 &quot;</span>
+<span class="fc" id="L284">                    + &quot;of the artifact (repository hash is &quot; + checksums.getSha1() + WHILE_ACTUAL_IS + sha1sum + &quot;) !&quot;);</span>
+        }
+<span class="fc" id="L286">        final String sha256sum = dependency.getSha256sum();</span>
+<span class="fc bfc" id="L287" title="All 4 branches covered.">        if (checksums.getSha256() != null &amp;&amp; !checksums.getSha256().equals(sha256sum)) {</span>
+<span class="fc" id="L288">            throw new FileNotFoundException(&quot;Artifact found by API is not matching the SHA-256 &quot;</span>
+<span class="fc" id="L289">                    + &quot;of the artifact (repository hash is &quot; + checksums.getSha256() + WHILE_ACTUAL_IS + sha256sum + &quot;) !&quot;);</span>
+        }
+<span class="fc" id="L291">    }</span>
+
+    /**
+     * Performs a pre-flight request to ensure the Artifactory service is
+     * reachable.
+     *
+     * @return &lt;code&gt;true&lt;/code&gt; if Artifactory could be reached; otherwise
+     * &lt;code&gt;false&lt;/code&gt;.
+     */
+    public boolean preflightRequest() {
+        try {
+<span class="nc" id="L302">            final URL url = buildUrl(Checksum.getSHA1Checksum(UUID.randomUUID().toString()));</span>
+<span class="nc" id="L303">            final HttpURLConnection connection = connect(url);</span>
+<span class="nc bnc" id="L304" title="All 2 branches missed.">            if (connection.getResponseCode() != 200) {</span>
+<span class="nc" id="L305">                LOGGER.warn(&quot;Expected 200 result from Artifactory ({}), got {}&quot;, url, connection.getResponseCode());</span>
+<span class="nc" id="L306">                return false;</span>
+            }
+<span class="nc" id="L308">            return true;</span>
+<span class="nc" id="L309">        } catch (IOException e) {</span>
+<span class="nc" id="L310">            LOGGER.error(&quot;Cannot connect to Artifactory&quot;, e);</span>
+<span class="nc" id="L311">            return false;</span>
+        }
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

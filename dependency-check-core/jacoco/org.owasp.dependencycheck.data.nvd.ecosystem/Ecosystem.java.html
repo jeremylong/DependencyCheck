@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Ecosystem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvd.ecosystem</a> &gt; <span class="el_source">Ecosystem.java</span></div><h1>Ecosystem.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2020 The OWASP Foundation. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nvd.ecosystem;
+
+import org.owasp.dependencycheck.utils.Settings;
+
+/**
+ * Collection of the standard ecosystems for dependency-check.
+ *
+ * @author Jeremy Long
+ */
+public final class Ecosystem {
+
+    /**
+     * The Ruby ecosystem.
+     */
+    public static final String RUBY = &quot;ruby&quot;;
+    /**
+     * The dotnet ecosystem.
+     */
+    public static final String DOTNET = &quot;dotnet&quot;;
+    /**
+     * The iOS ecosystem.
+     */
+    public static final String IOS = &quot;ios&quot;;
+    /**
+     * The PHP ecosystem.
+     */
+    public static final String PHP = &quot;php&quot;;
+    /**
+     * The Golang ecosystem.
+     */
+    public static final String GOLANG = &quot;golang&quot;;
+    /**
+     * The Java ecosystem.
+     */
+    public static final String JAVA = &quot;java&quot;;
+    /**
+     * The native ecosystem.
+     */
+    public static final String NATIVE = &quot;native&quot;;
+    /**
+     * The Python ecosystem.
+     */
+    public static final String PYTHON = &quot;python&quot;;
+    /**
+     * The JavaScript ecosystem.
+     */
+    public static final String JAVASCRIPT = &quot;js&quot;;
+    /**
+     * The Node.JS ecosystem.
+     */
+    public static final String NODEJS = &quot;nodejs&quot;;
+    /**
+     * The rust ecosystem.
+     */
+    public static final String RUST = &quot;rust&quot;;
+    /**
+     * The rust ecosystem.
+     */
+    public static final String COLDFUSION = &quot;coldfusion&quot;;
+    /**
+     * The Perl ecosystem.
+     */
+    public static final String PERL = &quot;perl&quot;;
+    /**
+     * The Elixir ecosystem.
+     */
+    public static final String ELIXIR = &quot;exlixir&quot;;
+
+    /**
+     * A reference to the ODC settings.
+     */
+    private final Settings settings;
+    /**
+     * The lucene default query size.
+     */
+    private final int defaultQuerySize;
+
+    /**
+     * Instantiates the ecosystem utility class.
+     *
+     * @param settings the ODC configuration
+     */
+<span class="fc" id="L100">    public Ecosystem(Settings settings) {</span>
+<span class="fc" id="L101">        this.settings = settings;</span>
+<span class="fc" id="L102">        this.defaultQuerySize = settings.getInt(Settings.KEYS.MAX_QUERY_SIZE_DEFAULT, 100);</span>
+<span class="fc" id="L103">    }</span>
+
+    /**
+     * Returns the max query result size for the Lucene search for each
+     * ecosystem.
+     *
+     * @param ecosystem the ecosystem
+     * @return the max query result size
+     */
+    public int getLuceneMaxQueryLimitFor(String ecosystem) {
+<span class="fc" id="L113">        return settings.getInt(Settings.KEYS.MAX_QUERY_SIZE_PREFIX + ecosystem, defaultQuerySize);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

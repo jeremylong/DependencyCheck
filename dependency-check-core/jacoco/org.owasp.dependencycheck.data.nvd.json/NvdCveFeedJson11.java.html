@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NvdCveFeedJson11.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvd.json</a> &gt; <span class="el_source">NvdCveFeedJson11.java</span></div><h1>NvdCveFeedJson11.java</h1><pre class="source lang-java linenums">
+package org.owasp.dependencycheck.data.nvd.json;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+
+/**
+ * JSON Schema for NVD Vulnerability Data Feed version 1.1
+ * &lt;p&gt;
+ * 
+ * 
+ */
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({
+    &quot;CVE_data_type&quot;,
+    &quot;CVE_data_format&quot;,
+    &quot;CVE_data_version&quot;,
+    &quot;CVE_data_numberOfCVEs&quot;,
+    &quot;CVE_data_timestamp&quot;,
+    &quot;CVE_Items&quot;
+})
+<span class="nc" id="L32">public class NvdCveFeedJson11 {</span>
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;CVE_data_type&quot;)
+    private String cVEDataType;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;CVE_data_format&quot;)
+    private String cVEDataFormat;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;CVE_data_version&quot;)
+    private String cVEDataVersion;
+    /**
+     * NVD adds number of CVE in this feed
+     * 
+     */
+    @JsonProperty(&quot;CVE_data_numberOfCVEs&quot;)
+    @JsonPropertyDescription(&quot;NVD adds number of CVE in this feed&quot;)
+    private String cVEDataNumberOfCVEs;
+    /**
+     * NVD adds feed date timestamp
+     * 
+     */
+    @JsonProperty(&quot;CVE_data_timestamp&quot;)
+    @JsonPropertyDescription(&quot;NVD adds feed date timestamp&quot;)
+    private String cVEDataTimestamp;
+    /**
+     * NVD feed array of CVE
+     * (Required)
+     * 
+     */
+<span class="nc" id="L74">    @JsonProperty(&quot;CVE_Items&quot;)</span>
+    @JsonPropertyDescription(&quot;NVD feed array of CVE&quot;)
+    private List&lt;DefCveItem&gt; cVEItems = new ArrayList&lt;DefCveItem&gt;();
+<span class="nc" id="L77">    @JsonIgnore</span>
+    private Map&lt;String, Object&gt; additionalProperties = new HashMap&lt;String, Object&gt;();
+
+    @JsonProperty(&quot;CVE_data_type&quot;)
+    public String getCVEDataType() {
+<span class="nc" id="L82">        return cVEDataType;</span>
+    }
+
+    @JsonProperty(&quot;CVE_data_type&quot;)
+    public void setCVEDataType(String cVEDataType) {
+<span class="nc" id="L87">        this.cVEDataType = cVEDataType;</span>
+<span class="nc" id="L88">    }</span>
+
+    @JsonProperty(&quot;CVE_data_format&quot;)
+    public String getCVEDataFormat() {
+<span class="nc" id="L92">        return cVEDataFormat;</span>
+    }
+
+    @JsonProperty(&quot;CVE_data_format&quot;)
+    public void setCVEDataFormat(String cVEDataFormat) {
+<span class="nc" id="L97">        this.cVEDataFormat = cVEDataFormat;</span>
+<span class="nc" id="L98">    }</span>
+
+    @JsonProperty(&quot;CVE_data_version&quot;)
+    public String getCVEDataVersion() {
+<span class="nc" id="L102">        return cVEDataVersion;</span>
+    }
+
+    @JsonProperty(&quot;CVE_data_version&quot;)
+    public void setCVEDataVersion(String cVEDataVersion) {
+<span class="nc" id="L107">        this.cVEDataVersion = cVEDataVersion;</span>
+<span class="nc" id="L108">    }</span>
+
+    /**
+     * NVD adds number of CVE in this feed
+     * 
+     */
+    @JsonProperty(&quot;CVE_data_numberOfCVEs&quot;)
+    public String getCVEDataNumberOfCVEs() {
+<span class="nc" id="L116">        return cVEDataNumberOfCVEs;</span>
+    }
+
+    /**
+     * NVD adds number of CVE in this feed
+     * 
+     */
+    @JsonProperty(&quot;CVE_data_numberOfCVEs&quot;)
+    public void setCVEDataNumberOfCVEs(String cVEDataNumberOfCVEs) {
+<span class="nc" id="L125">        this.cVEDataNumberOfCVEs = cVEDataNumberOfCVEs;</span>
+<span class="nc" id="L126">    }</span>
+
+    /**
+     * NVD adds feed date timestamp
+     * 
+     */
+    @JsonProperty(&quot;CVE_data_timestamp&quot;)
+    public String getCVEDataTimestamp() {
+<span class="nc" id="L134">        return cVEDataTimestamp;</span>
+    }
+
+    /**
+     * NVD adds feed date timestamp
+     * 
+     */
+    @JsonProperty(&quot;CVE_data_timestamp&quot;)
+    public void setCVEDataTimestamp(String cVEDataTimestamp) {
+<span class="nc" id="L143">        this.cVEDataTimestamp = cVEDataTimestamp;</span>
+<span class="nc" id="L144">    }</span>
+
+    /**
+     * NVD feed array of CVE
+     * 
+     */
+    @JsonProperty(&quot;CVE_Items&quot;)
+    public List&lt;DefCveItem&gt; getCVEItems() {
+<span class="nc" id="L152">        return cVEItems;</span>
+    }
+
+    /**
+     * NVD feed array of CVE
+     * 
+     */
+    @JsonProperty(&quot;CVE_Items&quot;)
+    public void setCVEItems(List&lt;DefCveItem&gt; cVEItems) {
+<span class="nc" id="L161">        this.cVEItems = cVEItems;</span>
+<span class="nc" id="L162">    }</span>
+
+    @JsonAnyGetter
+    public Map&lt;String, Object&gt; getAdditionalProperties() {
+<span class="nc" id="L166">        return this.additionalProperties;</span>
+    }
+
+    @JsonAnySetter
+    public void setAdditionalProperty(String name, Object value) {
+<span class="nc" id="L171">        this.additionalProperties.put(name, value);</span>
+<span class="nc" id="L172">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L176">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L177">        sb.append(NvdCveFeedJson11 .class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');</span>
+<span class="nc" id="L178">        sb.append(&quot;cVEDataType&quot;);</span>
+<span class="nc" id="L179">        sb.append('=');</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">        sb.append(((this.cVEDataType == null)?&quot;&lt;null&gt;&quot;:this.cVEDataType));</span>
+<span class="nc" id="L181">        sb.append(',');</span>
+<span class="nc" id="L182">        sb.append(&quot;cVEDataFormat&quot;);</span>
+<span class="nc" id="L183">        sb.append('=');</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">        sb.append(((this.cVEDataFormat == null)?&quot;&lt;null&gt;&quot;:this.cVEDataFormat));</span>
+<span class="nc" id="L185">        sb.append(',');</span>
+<span class="nc" id="L186">        sb.append(&quot;cVEDataVersion&quot;);</span>
+<span class="nc" id="L187">        sb.append('=');</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">        sb.append(((this.cVEDataVersion == null)?&quot;&lt;null&gt;&quot;:this.cVEDataVersion));</span>
+<span class="nc" id="L189">        sb.append(',');</span>
+<span class="nc" id="L190">        sb.append(&quot;cVEDataNumberOfCVEs&quot;);</span>
+<span class="nc" id="L191">        sb.append('=');</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">        sb.append(((this.cVEDataNumberOfCVEs == null)?&quot;&lt;null&gt;&quot;:this.cVEDataNumberOfCVEs));</span>
+<span class="nc" id="L193">        sb.append(',');</span>
+<span class="nc" id="L194">        sb.append(&quot;cVEDataTimestamp&quot;);</span>
+<span class="nc" id="L195">        sb.append('=');</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">        sb.append(((this.cVEDataTimestamp == null)?&quot;&lt;null&gt;&quot;:this.cVEDataTimestamp));</span>
+<span class="nc" id="L197">        sb.append(',');</span>
+<span class="nc" id="L198">        sb.append(&quot;cVEItems&quot;);</span>
+<span class="nc" id="L199">        sb.append('=');</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">        sb.append(((this.cVEItems == null)?&quot;&lt;null&gt;&quot;:this.cVEItems));</span>
+<span class="nc" id="L201">        sb.append(',');</span>
+<span class="nc" id="L202">        sb.append(&quot;additionalProperties&quot;);</span>
+<span class="nc" id="L203">        sb.append('=');</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">        sb.append(((this.additionalProperties == null)?&quot;&lt;null&gt;&quot;:this.additionalProperties));</span>
+<span class="nc" id="L205">        sb.append(',');</span>
+<span class="nc bnc" id="L206" title="All 2 branches missed.">        if (sb.charAt((sb.length()- 1)) == ',') {</span>
+<span class="nc" id="L207">            sb.setCharAt((sb.length()- 1), ']');</span>
+        } else {
+<span class="nc" id="L209">            sb.append(']');</span>
+        }
+<span class="nc" id="L211">        return sb.toString();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L216">        int result = 1;</span>
+<span class="nc bnc" id="L217" title="All 2 branches missed.">        result = ((result* 31)+((this.cVEDataNumberOfCVEs == null)? 0 :this.cVEDataNumberOfCVEs.hashCode()));</span>
+<span class="nc bnc" id="L218" title="All 2 branches missed.">        result = ((result* 31)+((this.cVEDataFormat == null)? 0 :this.cVEDataFormat.hashCode()));</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">        result = ((result* 31)+((this.cVEDataTimestamp == null)? 0 :this.cVEDataTimestamp.hashCode()));</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">        result = ((result* 31)+((this.cVEDataType == null)? 0 :this.cVEDataType.hashCode()));</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">        result = ((result* 31)+((this.cVEItems == null)? 0 :this.cVEItems.hashCode()));</span>
+<span class="nc bnc" id="L222" title="All 2 branches missed.">        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));</span>
+<span class="nc bnc" id="L223" title="All 2 branches missed.">        result = ((result* 31)+((this.cVEDataVersion == null)? 0 :this.cVEDataVersion.hashCode()));</span>
+<span class="nc" id="L224">        return result;</span>
+    }
+
+    @Override
+    public boolean equals(Object other) {
+<span class="nc bnc" id="L229" title="All 2 branches missed.">        if (other == this) {</span>
+<span class="nc" id="L230">            return true;</span>
+        }
+<span class="nc bnc" id="L232" title="All 2 branches missed.">        if ((other instanceof NvdCveFeedJson11) == false) {</span>
+<span class="nc" id="L233">            return false;</span>
+        }
+<span class="nc" id="L235">        NvdCveFeedJson11 rhs = ((NvdCveFeedJson11) other);</span>
+<span class="nc bnc" id="L236" title="All 42 branches missed.">        return ((((((((this.cVEDataNumberOfCVEs == rhs.cVEDataNumberOfCVEs)||((this.cVEDataNumberOfCVEs!= null)&amp;&amp;this.cVEDataNumberOfCVEs.equals(rhs.cVEDataNumberOfCVEs)))&amp;&amp;((this.cVEDataFormat == rhs.cVEDataFormat)||((this.cVEDataFormat!= null)&amp;&amp;this.cVEDataFormat.equals(rhs.cVEDataFormat))))&amp;&amp;((this.cVEDataTimestamp == rhs.cVEDataTimestamp)||((this.cVEDataTimestamp!= null)&amp;&amp;this.cVEDataTimestamp.equals(rhs.cVEDataTimestamp))))&amp;&amp;((this.cVEDataType == rhs.cVEDataType)||((this.cVEDataType!= null)&amp;&amp;this.cVEDataType.equals(rhs.cVEDataType))))&amp;&amp;((this.cVEItems == rhs.cVEItems)||((this.cVEItems!= null)&amp;&amp;this.cVEItems.equals(rhs.cVEItems))))&amp;&amp;((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&amp;&amp;this.additionalProperties.equals(rhs.additionalProperties))))&amp;&amp;((this.cVEDataVersion == rhs.cVEDataVersion)||((this.cVEDataVersion!= null)&amp;&amp;this.cVEDataVersion.equals(rhs.cVEDataVersion))));</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

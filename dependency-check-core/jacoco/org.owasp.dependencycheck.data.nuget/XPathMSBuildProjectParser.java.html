@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XPathMSBuildProjectParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nuget</a> &gt; <span class="el_source">XPathMSBuildProjectParser.java</span></div><h1>XPathMSBuildProjectParser.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2018 Paul Irwin. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nuget;
+
+import org.owasp.dependencycheck.utils.XmlUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Parses a MSBuild project file for NuGet references using XPath.
+ *
+ * @author paulirwin
+ */
+<span class="fc" id="L43">public class XPathMSBuildProjectParser implements MSBuildProjectParser {</span>
+
+    /**
+     * Parses the given stream for MSBuild PackageReference elements.
+     *
+     * @param stream the input stream to parse
+     * @return a collection of discovered NuGet package references
+     * @throws MSBuildProjectParseException if an exception occurs
+     */
+    @Override
+    public List&lt;NugetPackageReference&gt; parse(InputStream stream) throws MSBuildProjectParseException {
+        try {
+<span class="fc" id="L55">            final DocumentBuilder db = XmlUtils.buildSecureDocumentBuilder();</span>
+<span class="fc" id="L56">            final Document d = db.parse(stream);</span>
+
+<span class="fc" id="L58">            final XPath xpath = XPathFactory.newInstance().newXPath();</span>
+<span class="fc" id="L59">            final List&lt;NugetPackageReference&gt; packages = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L61">            final NodeList nodeList = (NodeList) xpath.evaluate(&quot;//PackageReference&quot;, d, XPathConstants.NODESET);</span>
+
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">            if (nodeList == null) {</span>
+<span class="nc" id="L64">                throw new MSBuildProjectParseException(&quot;Unable to parse MSBuild project file&quot;);</span>
+            }
+
+<span class="fc bfc" id="L67" title="All 2 branches covered.">            for (int i = 0; i &lt; nodeList.getLength(); i++) {</span>
+<span class="fc" id="L68">                final Node node = nodeList.item(i);</span>
+<span class="fc" id="L69">                final NamedNodeMap attrs = node.getAttributes();</span>
+
+<span class="fc" id="L71">                final Node include = attrs.getNamedItem(&quot;Include&quot;);</span>
+<span class="fc" id="L72">                final Node version = attrs.getNamedItem(&quot;Version&quot;);</span>
+
+<span class="pc bpc" id="L74" title="2 of 4 branches missed.">                if (include != null &amp;&amp; version != null) {</span>
+<span class="fc" id="L75">                    final NugetPackageReference npr = new NugetPackageReference();</span>
+
+<span class="fc" id="L77">                    npr.setId(include.getNodeValue());</span>
+<span class="fc" id="L78">                    npr.setVersion(version.getNodeValue());</span>
+
+<span class="fc" id="L80">                    packages.add(npr);</span>
+                }
+            }
+
+<span class="fc" id="L84">            return packages;</span>
+<span class="nc" id="L85">        } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException | MSBuildProjectParseException e) {</span>
+<span class="nc" id="L86">            throw new MSBuildProjectParseException(&quot;Unable to parse MSBuild project file&quot;, e);</span>
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

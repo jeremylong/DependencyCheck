@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NodeAuditSearch.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nodeaudit</a> &gt; <span class="el_source">NodeAuditSearch.java</span></div><h1>NodeAuditSearch.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2018 Steve Springett. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nodeaudit;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.util.List;
+import javax.annotation.concurrent.ThreadSafe;
+
+import org.json.JSONObject;
+import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.URLConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import org.apache.commons.jcs.access.exception.CacheException;
+
+import static org.owasp.dependencycheck.analyzer.NodeAuditAnalyzer.DEFAULT_URL;
+
+import org.owasp.dependencycheck.analyzer.exception.SearchException;
+import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
+import org.owasp.dependencycheck.data.cache.DataCache;
+import org.owasp.dependencycheck.data.cache.DataCacheFactory;
+import org.owasp.dependencycheck.utils.Checksum;
+import org.owasp.dependencycheck.utils.URLConnectionFailureException;
+
+/**
+ * Class of methods to search via Node Audit API.
+ *
+ * @author Steve Springett
+ */
+@ThreadSafe
+public class NodeAuditSearch {
+
+    /**
+     * The URL for the public Node Audit API.
+     */
+    private final URL nodeAuditUrl;
+
+    /**
+     * Whether to use the Proxy when making requests.
+     */
+    private final boolean useProxy;
+    /**
+     * The configured settings.
+     */
+    private final Settings settings;
+    /**
+     * Used for logging.
+     */
+<span class="nc" id="L77">    private static final Logger LOGGER = LoggerFactory.getLogger(NodeAuditSearch.class);</span>
+    /**
+     * Persisted disk cache for `npm audit` results.
+     */
+    private DataCache&lt;List&lt;Advisory&gt;&gt; cache;
+
+    /**
+     * Creates a NodeAuditSearch for the given repository URL.
+     *
+     * @param settings the configured settings
+     * @throws java.net.MalformedURLException thrown if the configured URL is
+     * invalid
+     */
+<span class="nc" id="L90">    public NodeAuditSearch(Settings settings) throws MalformedURLException {</span>
+<span class="nc" id="L91">        final String searchUrl = settings.getString(Settings.KEYS.ANALYZER_NODE_AUDIT_URL, DEFAULT_URL);</span>
+<span class="nc" id="L92">        LOGGER.debug(&quot;Node Audit Search URL: {}&quot;, searchUrl);</span>
+<span class="nc" id="L93">        this.nodeAuditUrl = new URL(searchUrl);</span>
+<span class="nc" id="L94">        this.settings = settings;</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (null != settings.getString(Settings.KEYS.PROXY_SERVER)) {</span>
+<span class="nc" id="L96">            useProxy = true;</span>
+<span class="nc" id="L97">            LOGGER.debug(&quot;Using proxy&quot;);</span>
+        } else {
+<span class="nc" id="L99">            useProxy = false;</span>
+<span class="nc" id="L100">            LOGGER.debug(&quot;Not using proxy&quot;);</span>
+        }
+<span class="nc bnc" id="L102" title="All 2 branches missed.">        if (settings.getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, true)) {</span>
+            try {
+<span class="nc" id="L104">                final DataCacheFactory factory = new DataCacheFactory(settings);</span>
+<span class="nc" id="L105">                cache = factory.getNodeAuditCache();</span>
+<span class="nc" id="L106">            } catch (CacheException ex) {</span>
+<span class="nc" id="L107">                settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, false);</span>
+<span class="nc" id="L108">                LOGGER.debug(&quot;Error creating cache, disabling caching&quot;, ex);</span>
+<span class="nc" id="L109">            }</span>
+        }
+<span class="nc" id="L111">    }</span>
+
+    /**
+     * Submits the package.json file to the Node Audit API and returns a list of
+     * zero or more Advisories.
+     *
+     * @param packageJson the package.json file retrieved from the Dependency
+     * @return a List of zero or more Advisory object
+     * @throws SearchException if Node Audit API is unable to analyze the
+     * package
+     * @throws IOException if it's unable to connect to Node Audit API
+     */
+    public List&lt;Advisory&gt; submitPackage(JsonObject packageJson) throws SearchException, IOException {
+<span class="nc" id="L124">        String key = null;</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (cache != null) {</span>
+<span class="nc" id="L126">            key = Checksum.getSHA256Checksum(packageJson.toString());</span>
+<span class="nc" id="L127">            final List&lt;Advisory&gt; cached = cache.get(key);</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">            if (cached != null) {</span>
+<span class="nc" id="L129">                LOGGER.debug(&quot;cache hit for node audit: &quot; + key);</span>
+<span class="nc" id="L130">                return cached;</span>
+            }
+        }
+<span class="nc" id="L133">        return submitPackage(packageJson, key, 0);</span>
+    }
+
+    /**
+     * Submits the package.json file to the Node Audit API and returns a list of
+     * zero or more Advisories.
+     *
+     * @param packageJson the package.json file retrieved from the Dependency
+     * @param key the key for the cache entry
+     * @param count the current retry count
+     * @return a List of zero or more Advisory object
+     * @throws SearchException if Node Audit API is unable to analyze the
+     * package
+     * @throws IOException if it's unable to connect to Node Audit API
+     */
+    private List&lt;Advisory&gt; submitPackage(JsonObject packageJson, String key, int count) throws SearchException, IOException {
+        try {
+<span class="nc bnc" id="L150" title="All 2 branches missed.">            if (LOGGER.isDebugEnabled()) {</span>
+<span class="nc" id="L151">                LOGGER.debug(&quot;----------------------------------------&quot;);</span>
+<span class="nc" id="L152">                LOGGER.debug(&quot;Node Audit Payload:&quot;);</span>
+<span class="nc" id="L153">                LOGGER.debug(packageJson.toString());</span>
+<span class="nc" id="L154">                LOGGER.debug(&quot;----------------------------------------&quot;);</span>
+<span class="nc" id="L155">                LOGGER.debug(&quot;----------------------------------------&quot;);</span>
+            }
+<span class="nc" id="L157">            final byte[] packageDatabytes = packageJson.toString().getBytes(StandardCharsets.UTF_8);</span>
+<span class="nc" id="L158">            final URLConnectionFactory factory = new URLConnectionFactory(settings);</span>
+<span class="nc" id="L159">            final HttpURLConnection conn = factory.createHttpURLConnection(nodeAuditUrl, useProxy);</span>
+<span class="nc" id="L160">            conn.setDoOutput(true);</span>
+<span class="nc" id="L161">            conn.setDoInput(true);</span>
+<span class="nc" id="L162">            conn.setRequestMethod(&quot;POST&quot;);</span>
+<span class="nc" id="L163">            conn.setRequestProperty(&quot;user-agent&quot;, &quot;npm/6.1.0 node/v10.5.0 linux x64&quot;);</span>
+<span class="nc" id="L164">            conn.setRequestProperty(&quot;npm-in-ci&quot;, &quot;false&quot;);</span>
+<span class="nc" id="L165">            conn.setRequestProperty(&quot;npm-scope&quot;, &quot;&quot;);</span>
+<span class="nc" id="L166">            conn.setRequestProperty(&quot;npm-session&quot;, generateRandomSession());</span>
+<span class="nc" id="L167">            conn.setRequestProperty(&quot;content-type&quot;, &quot;application/json&quot;);</span>
+<span class="nc" id="L168">            conn.setRequestProperty(&quot;Content-Length&quot;, Integer.toString(packageDatabytes.length));</span>
+<span class="nc" id="L169">            conn.connect();</span>
+
+<span class="nc" id="L171">            try (OutputStream os = new BufferedOutputStream(conn.getOutputStream())) {</span>
+<span class="nc" id="L172">                os.write(packageDatabytes);</span>
+<span class="nc" id="L173">                os.flush();</span>
+            }
+
+<span class="nc bnc" id="L176" title="All 4 branches missed.">            switch (conn.getResponseCode()) {</span>
+                case 200:
+<span class="nc" id="L178">                    try (InputStream in = new BufferedInputStream(conn.getInputStream());</span>
+<span class="nc" id="L179">                            JsonReader jsonReader = Json.createReader(in)) {</span>
+<span class="nc" id="L180">                        final JSONObject jsonResponse = new JSONObject(jsonReader.readObject().toString());</span>
+<span class="nc" id="L181">                        final NpmAuditParser parser = new NpmAuditParser();</span>
+<span class="nc" id="L182">                        final List&lt;Advisory&gt; advisories = parser.parse(jsonResponse);</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">                        if (cache != null) {</span>
+<span class="nc" id="L184">                            cache.put(key, advisories);</span>
+                        }
+<span class="nc" id="L186">                        return advisories;</span>
+<span class="nc" id="L187">                    } catch (Exception ex) {</span>
+<span class="nc" id="L188">                        LOGGER.debug(&quot;Error connecting to Node Audit API. Error: {}&quot;,</span>
+<span class="nc" id="L189">                                ex.getMessage());</span>
+<span class="nc" id="L190">                        throw new SearchException(&quot;Could not connect to Node Audit API: &quot; + ex.getMessage(), ex);</span>
+                    }
+                case 503:
+<span class="nc" id="L193">                    LOGGER.debug(&quot;Node Audit API returned `{} {}` - retrying request.&quot;,</span>
+<span class="nc" id="L194">                            conn.getResponseCode(), conn.getResponseMessage());</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">                    if (count &lt; 5) {</span>
+<span class="nc" id="L196">                        final int next = count + 1;</span>
+                        try {
+<span class="nc" id="L198">                            Thread.sleep(1500L * next);</span>
+<span class="nc" id="L199">                        } catch (InterruptedException ex) {</span>
+<span class="nc" id="L200">                            Thread.currentThread().interrupt();</span>
+<span class="nc" id="L201">                            throw new UnexpectedAnalysisException(ex);</span>
+<span class="nc" id="L202">                        }</span>
+<span class="nc" id="L203">                        return submitPackage(packageJson, key, next);</span>
+                    }
+<span class="nc" id="L205">                    throw new SearchException(&quot;Could not perform Node Audit analysis - service returned a 503.&quot;);</span>
+                case 400:
+<span class="nc" id="L207">                    LOGGER.debug(&quot;Invalid payload submitted to Node Audit API. Received response code: {} {}&quot;,</span>
+<span class="nc" id="L208">                            conn.getResponseCode(), conn.getResponseMessage());</span>
+<span class="nc" id="L209">                    throw new SearchException(&quot;Could not perform Node Audit analysis. Invalid payload submitted to Node Audit API.&quot;);</span>
+                default:
+<span class="nc" id="L211">                    LOGGER.debug(&quot;Could not connect to Node Audit API. Received response code: {} {}&quot;,</span>
+<span class="nc" id="L212">                            conn.getResponseCode(), conn.getResponseMessage());</span>
+<span class="nc" id="L213">                    throw new IOException(&quot;Could not connect to Node Audit API&quot;);</span>
+            }
+<span class="nc" id="L215">        } catch (IOException ex) {</span>
+<span class="nc bnc" id="L216" title="All 2 branches missed.">            if (ex instanceof javax.net.ssl.SSLHandshakeException</span>
+<span class="nc bnc" id="L217" title="All 2 branches missed.">                    &amp;&amp; ex.getMessage().contains(&quot;unable to find valid certification path to requested target&quot;)) {</span>
+<span class="nc" id="L218">                final String msg = String.format(&quot;Unable to connect to '%s' - the Java trust store does not contain a trusted root for the cert. &quot;</span>
+                        + &quot; Please see https://github.com/jeremylong/InstallCert for one method of updating the trusted certificates.&quot;, nodeAuditUrl);
+<span class="nc" id="L220">                throw new URLConnectionFailureException(msg, ex);</span>
+            }
+<span class="nc" id="L222">            throw ex;</span>
+        }
+    }
+
+    /**
+     * Generates a random 16 character lower-case hex string.
+     *
+     * @return a random 16 character lower-case hex string
+     */
+    private String generateRandomSession() {
+<span class="nc" id="L232">        final int length = 16;</span>
+<span class="nc" id="L233">        final SecureRandom r = new SecureRandom();</span>
+<span class="nc" id="L234">        final StringBuilder sb = new StringBuilder();</span>
+<span class="nc bnc" id="L235" title="All 2 branches missed.">        while (sb.length() &lt; length) {</span>
+<span class="nc" id="L236">            sb.append(Integer.toHexString(r.nextInt()));</span>
+        }
+<span class="nc" id="L238">        return sb.toString().substring(0, length);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

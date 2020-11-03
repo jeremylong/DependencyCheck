@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MetaProperties.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvd.json</a> &gt; <span class="el_source">MetaProperties.java</span></div><h1>MetaProperties.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2019 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nvd.json;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Properties;
+import org.owasp.dependencycheck.data.update.exception.InvalidDataException;
+
+/**
+ * Meta properties object to hold information about the NVD CVE data.
+ *
+ * @author Jeremy Long
+ */
+public class MetaProperties {
+
+    /**
+     * The SHA256 of the NVD file.
+     */
+    private String sha256;
+    /**
+     * The last modified date of the NVD file in epoch time.
+     */
+    private long lastModifiedDate;
+    /**
+     * The size of the NVD file.
+     */
+    private long size;
+    /**
+     * The size of the zipped NVD file.
+     */
+    private long zipSize;
+    /**
+     * The size of the gzipped NVD file.
+     */
+    private long gzSize;
+
+    /**
+     * Get the value of gzSize.
+     *
+     * @return the value of gzSize
+     */
+    public long getGzSize() {
+<span class="nc" id="L63">        return gzSize;</span>
+    }
+
+    /**
+     * Get the value of zipSize.
+     *
+     * @return the value of zipSize
+     */
+    public long getZipSize() {
+<span class="nc" id="L72">        return zipSize;</span>
+    }
+
+    /**
+     * Get the value of size.
+     *
+     * @return the value of size
+     */
+    public long getSize() {
+<span class="nc" id="L81">        return size;</span>
+    }
+
+    /**
+     * Get the value of lastModifiedDate in epoch time.
+     *
+     * @return the value of lastModifiedDate
+     */
+    public long getLastModifiedDate() {
+<span class="fc" id="L90">        return lastModifiedDate;</span>
+    }
+
+    /**
+     * Get the value of SHA256.
+     *
+     * @return the value of SHA256
+     */
+    public String getSha256() {
+<span class="nc" id="L99">        return sha256;</span>
+    }
+
+    /**
+     * Constructs a new MetaProperties object to hold information about the NVD
+     * data.
+     *
+     * @param contents the contents of the meta file
+     * @throws InvalidDataException thrown if the meta file contents cannot be
+     * parsed
+     */
+<span class="fc" id="L110">    public MetaProperties(String contents) throws InvalidDataException {</span>
+<span class="fc" id="L111">        final Properties properties = new Properties();</span>
+<span class="fc" id="L112">        try (Reader r = new StringReader(contents)) {</span>
+<span class="fc" id="L113">            properties.load(r);</span>
+<span class="nc" id="L114">        } catch (IOException ex) {</span>
+<span class="nc" id="L115">            throw new InvalidDataException(&quot;Unable to parse meta file data&quot;, ex);</span>
+<span class="fc" id="L116">        }</span>
+<span class="fc" id="L117">        this.sha256 = properties.getProperty(&quot;sha256&quot;);</span>
+        try {
+<span class="fc" id="L119">            final String date = properties.getProperty(&quot;lastModifiedDate&quot;);</span>
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">            if (date == null) {</span>
+<span class="nc" id="L121">                throw new InvalidDataException(&quot;lastModifiedDate not found in meta file&quot;);</span>
+            }
+<span class="fc" id="L123">            this.lastModifiedDate = ZonedDateTime.parse(date, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toEpochSecond();</span>
+<span class="nc" id="L124">        } catch (DateTimeParseException ex) {</span>
+<span class="nc" id="L125">            throw new InvalidDataException(&quot;Meta file lastModifiedDate cannot be parsed: &quot;</span>
+<span class="nc" id="L126">                    + properties.getProperty(&quot;lastModifiedDate&quot;), ex);</span>
+<span class="fc" id="L127">        }</span>
+        try {
+<span class="fc" id="L129">            this.zipSize = Long.parseLong(properties.getProperty(&quot;zipSize&quot;));</span>
+<span class="nc" id="L130">        } catch (NumberFormatException ex) {</span>
+<span class="nc" id="L131">            throw new InvalidDataException(&quot;Meta file zip size cannot be parsed: &quot;</span>
+<span class="nc" id="L132">                    + properties.getProperty(&quot;zipSize&quot;), ex);</span>
+<span class="fc" id="L133">        }</span>
+        try {
+<span class="fc" id="L135">            this.gzSize = Long.parseLong(properties.getProperty(&quot;gzSize&quot;));</span>
+<span class="nc" id="L136">        } catch (NumberFormatException ex) {</span>
+<span class="nc" id="L137">            throw new InvalidDataException(&quot;Meta file gz size cannot be parsed: &quot;</span>
+<span class="nc" id="L138">                    + properties.getProperty(&quot;gzSize&quot;), ex);</span>
+<span class="fc" id="L139">        }</span>
+        try {
+<span class="fc" id="L141">            this.size = Long.parseLong(properties.getProperty(&quot;size&quot;));</span>
+<span class="nc" id="L142">        } catch (NumberFormatException ex) {</span>
+<span class="nc" id="L143">            throw new InvalidDataException(&quot;Meta file size cannot be parsed: &quot;</span>
+<span class="nc" id="L144">                    + properties.getProperty(&quot;size&quot;), ex);</span>
+<span class="fc" id="L145">        }</span>
+<span class="fc" id="L146">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

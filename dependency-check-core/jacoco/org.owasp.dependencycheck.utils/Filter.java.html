@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Filter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">Filter.java</span></div><h1>Filter.java</h1><pre class="source lang-java linenums">package org.owasp.dependencycheck.utils;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import javax.annotation.concurrent.NotThreadSafe;
+
+/**
+ * This is an abstract filter that can be used to filter iterable list.
+ *
+ * This Filter class was copied from:
+ * http://erikras.com/2008/01/18/the-filter-pattern-java-conditional-abstraction-with-iterables/
+ *
+ * Erik Rasmussen - © 2006 - 2012 All Rights Reserved. @author Erik Rasmussen
+ * https://plus.google.com/115403795880834599019/?rel=author
+ *
+ * @param &lt;T&gt; the type to filter
+ */
+@NotThreadSafe
+<span class="fc" id="L21">public abstract class Filter&lt;T&gt; {</span>
+
+    /**
+     * Determines whether the object passes the filter.
+     *
+     * @param object the object to test
+     * @return whether or not the object passes the filter
+     */
+    public abstract boolean passes(T object);
+
+    /**
+     * Filters a given iterator.
+     *
+     * @param iterator the iterator to filter
+     * @return the filtered iterator
+     */
+    public Iterator&lt;T&gt; filter(Iterator&lt;T&gt; iterator) {
+<span class="fc" id="L38">        return new FilterIterator(iterator);</span>
+    }
+
+    /**
+     * Filters a given iterable.
+     *
+     * @param iterable the iterable to filter
+     * @return the filtered iterable
+     */
+    public Iterable&lt;T&gt; filter(final Iterable&lt;T&gt; iterable) {
+<span class="fc" id="L48">        return new Iterable&lt;T&gt;() {</span>
+
+            @NotNull
+            @Override
+            public Iterator&lt;T&gt; iterator() {
+<span class="fc" id="L53">                return filter(iterable.iterator());</span>
+            }
+        };
+    }
+
+    private class FilterIterator implements Iterator&lt;T&gt; {
+
+        private final Iterator&lt;T&gt; iterator;
+        private T next;
+
+<span class="fc" id="L63">        private FilterIterator(Iterator&lt;T&gt; iterator) {</span>
+<span class="fc" id="L64">            this.iterator = iterator;</span>
+<span class="fc" id="L65">            toNext();</span>
+<span class="fc" id="L66">        }</span>
+
+        @Override
+        public boolean hasNext() {
+<span class="fc bfc" id="L70" title="All 2 branches covered.">            return next != null;</span>
+        }
+
+        @Override
+        public T next() {
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">            if (next == null) {</span>
+<span class="nc" id="L76">                throw new NoSuchElementException();</span>
+            }
+<span class="fc" id="L78">            final T returnValue = next;</span>
+<span class="fc" id="L79">            toNext();</span>
+<span class="fc" id="L80">            return returnValue;</span>
+        }
+
+        @Override
+        public void remove() {
+<span class="nc" id="L85">            throw new UnsupportedOperationException();</span>
+        }
+
+        private void toNext() {
+<span class="fc" id="L89">            next = null;</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">            while (iterator.hasNext()) {</span>
+<span class="fc" id="L91">                final T item = iterator.next();</span>
+<span class="pc bpc" id="L92" title="1 of 4 branches missed.">                if (item != null &amp;&amp; passes(item)) {</span>
+<span class="fc" id="L93">                    next = item;</span>
+<span class="fc" id="L94">                    break;</span>
+                }
+<span class="fc" id="L96">            }</span>
+<span class="fc" id="L97">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

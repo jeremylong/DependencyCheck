@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HintRule.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.xml.hints</a> &gt; <span class="el_source">HintRule.java</span></div><h1>HintRule.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2016 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.xml.hints;
+
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.concurrent.NotThreadSafe;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.xml.suppression.PropertyType;
+
+/**
+ * A collection of product and vendor evidence to match; if any evidence is
+ * matched the addVendor and addProduct evidence should be added to the
+ * dependency.
+ *
+ * @author Jeremy Long
+ */
+@NotThreadSafe
+<span class="fc" id="L35">public class HintRule {</span>
+
+    /**
+     * The list of file names to match.
+     */
+<span class="fc" id="L40">    private final List&lt;PropertyType&gt; fileNames = new ArrayList&lt;&gt;();</span>
+    /**
+     * The list of vendor evidence that is being matched.
+     */
+<span class="fc" id="L44">    private final List&lt;EvidenceMatcher&gt; givenVendor = new ArrayList&lt;&gt;();</span>
+    /**
+     * The list of product evidence that is being matched.
+     */
+<span class="fc" id="L48">    private final List&lt;EvidenceMatcher&gt; givenProduct = new ArrayList&lt;&gt;();</span>
+    /**
+     * The list of product evidence that is being matched.
+     */
+<span class="fc" id="L52">    private final List&lt;EvidenceMatcher&gt; givenVersion = new ArrayList&lt;&gt;();</span>
+    /**
+     * The list of vendor hints to add.
+     */
+<span class="fc" id="L56">    private final List&lt;Evidence&gt; addVendor = new ArrayList&lt;&gt;();</span>
+    /**
+     * The list of product evidence to add.
+     */
+<span class="fc" id="L60">    private final List&lt;Evidence&gt; addProduct = new ArrayList&lt;&gt;();</span>
+    /**
+     * The list of version evidence to add.
+     */
+<span class="fc" id="L64">    private final List&lt;Evidence&gt; addVersion = new ArrayList&lt;&gt;();</span>
+
+    /**
+     * The list of vendor hints to remove.
+     */
+<span class="fc" id="L69">    private final List&lt;EvidenceMatcher&gt; removeVendor = new ArrayList&lt;&gt;();</span>
+    /**
+     * The list of product evidence to remove.
+     */
+<span class="fc" id="L73">    private final List&lt;EvidenceMatcher&gt; removeProduct = new ArrayList&lt;&gt;();</span>
+    /**
+     * The list of version evidence to remove.
+     */
+<span class="fc" id="L77">    private final List&lt;EvidenceMatcher&gt; removeVersion = new ArrayList&lt;&gt;();</span>
+
+    /**
+     * Adds the filename evidence to the collection.
+     *
+     * @param filename the filename to add
+     */
+    public void addFilename(PropertyType filename) {
+<span class="fc" id="L85">        this.fileNames.add(filename);</span>
+<span class="fc" id="L86">    }</span>
+
+    /**
+     * Returns the list of fileName evidence to match against.
+     *
+     * @return the list of fileName evidence to match against
+     */
+    public List&lt;PropertyType&gt; getFileNames() {
+<span class="fc" id="L94">        return fileNames;</span>
+    }
+
+    /**
+     * Adds a given product to the list of evidence to matched.
+     *
+     * @param source the source of the evidence
+     * @param name the name of the evidence
+     * @param value the value of the evidence
+     * @param regex whether value is a regex
+     * @param confidence the confidence of the evidence
+     */
+    public void addGivenProduct(String source, String name, String value, boolean regex, Confidence confidence) {
+<span class="fc" id="L107">        givenProduct.add(new EvidenceMatcher(source, name, value, regex, confidence));</span>
+<span class="fc" id="L108">    }</span>
+
+    /**
+     * Get the value of givenProduct.
+     *
+     * @return the value of givenProduct
+     */
+    public List&lt;EvidenceMatcher&gt; getGivenProduct() {
+<span class="fc" id="L116">        return givenProduct;</span>
+    }
+
+    /**
+     * Adds a given vendors to the list of evidence to matched.
+     *
+     * @param source the source of the evidence
+     * @param name the name of the evidence
+     * @param value the value of the evidence
+     * @param regex whether value is a regex
+     * @param confidence the confidence of the evidence
+     */
+    public void addGivenVendor(String source, String name, String value, boolean regex, Confidence confidence) {
+<span class="fc" id="L129">        givenVendor.add(new EvidenceMatcher(source, name, value, regex, confidence));</span>
+<span class="fc" id="L130">    }</span>
+
+    /**
+     * Get the value of givenVendor.
+     *
+     * @return the value of givenVendor
+     */
+    public List&lt;EvidenceMatcher&gt; getGivenVendor() {
+<span class="fc" id="L138">        return givenVendor;</span>
+    }
+
+    /**
+     * Adds a given product to the list of evidence to add when matched.
+     *
+     * @param source the source of the evidence
+     * @param name the name of the evidence
+     * @param value the value of the evidence
+     * @param confidence the confidence of the evidence
+     */
+    public void addAddProduct(String source, String name, String value, Confidence confidence) {
+<span class="fc" id="L150">        addProduct.add(new Evidence(source, name, value, confidence));</span>
+<span class="fc" id="L151">    }</span>
+
+    /**
+     * Get the value of addProduct.
+     *
+     * @return the value of addProduct
+     */
+    public List&lt;Evidence&gt; getAddProduct() {
+<span class="fc" id="L159">        return addProduct;</span>
+    }
+
+    /**
+     * Adds a given version to the list of evidence to add when matched.
+     *
+     * @param source the source of the evidence
+     * @param name the name of the evidence
+     * @param value the value of the evidence
+     * @param confidence the confidence of the evidence
+     */
+    public void addAddVersion(String source, String name, String value, Confidence confidence) {
+<span class="fc" id="L171">        addVersion.add(new Evidence(source, name, value, confidence));</span>
+<span class="fc" id="L172">    }</span>
+
+    /**
+     * Get the value of addVersion.
+     *
+     * @return the value of addVersion
+     */
+    public List&lt;Evidence&gt; getAddVersion() {
+<span class="fc" id="L180">        return addVersion;</span>
+    }
+
+    /**
+     * Adds a given vendor to the list of evidence to add when matched.
+     *
+     * @param source the source of the evidence
+     * @param name the name of the evidence
+     * @param value the value of the evidence
+     * @param confidence the confidence of the evidence
+     */
+    public void addAddVendor(String source, String name, String value, Confidence confidence) {
+<span class="fc" id="L192">        addVendor.add(new Evidence(source, name, value, confidence));</span>
+<span class="fc" id="L193">    }</span>
+
+    /**
+     * Get the value of addVendor.
+     *
+     * @return the value of addVendor
+     */
+    public List&lt;Evidence&gt; getAddVendor() {
+<span class="fc" id="L201">        return addVendor;</span>
+    }
+
+    /**
+     * Adds a given vendor to the list of evidence to remove when matched.
+     *
+     * @param source the source of the evidence
+     * @param name the name of the evidence
+     * @param value the value of the evidence
+     * @param regex whether value is a regex
+     * @param confidence the confidence of the evidence
+     */
+    public void addRemoveVendor(String source, String name, String value, boolean regex, Confidence confidence) {
+<span class="fc" id="L214">        removeVendor.add(new EvidenceMatcher(source, name, value, regex, confidence));</span>
+<span class="fc" id="L215">    }</span>
+    /**
+     * Get the value of removeVendor.
+     *
+     * @return the value of removeVendor
+     */
+    public List&lt;EvidenceMatcher&gt; getRemoveVendor() {
+<span class="fc" id="L222">        return removeVendor;</span>
+    }
+    /**
+     * Adds a given product to the list of evidence to remove when matched.
+     *
+     * @param source the source of the evidence
+     * @param name the name of the evidence
+     * @param value the value of the evidence
+     * @param regex whether value is a regex
+     * @param confidence the confidence of the evidence
+     */
+    public void addRemoveProduct(String source, String name, String value, boolean regex, Confidence confidence) {
+<span class="fc" id="L234">        removeProduct.add(new EvidenceMatcher(source, name, value, regex, confidence));</span>
+<span class="fc" id="L235">    }</span>
+    /**
+     * Get the value of removeProduct.
+     *
+     * @return the value of removeProduct
+     */
+    public List&lt;EvidenceMatcher&gt; getRemoveProduct() {
+<span class="fc" id="L242">        return removeProduct;</span>
+    }
+    /**
+     * Adds a given version to the list of evidence to remove when matched.
+     *
+     * @param source the source of the evidence
+     * @param name the name of the evidence
+     * @param value the value of the evidence
+     * @param regex whether value is a regex
+     * @param confidence the confidence of the evidence
+     */
+    public void addRemoveVersion(String source, String name, String value, boolean regex, Confidence confidence) {
+<span class="fc" id="L254">        removeVersion.add(new EvidenceMatcher(source, name, value, regex, confidence));</span>
+<span class="fc" id="L255">    }</span>
+    /**
+     * Get the value of removeVersion.
+     *
+     * @return the value of removeVersion
+     */
+    public List&lt;EvidenceMatcher&gt; getRemoveVersion() {
+<span class="fc" id="L262">        return removeVersion;</span>
+    }
+    /**
+     * Adds a given version to the list of evidence to match.
+     *
+     * @param source the source of the evidence
+     * @param name the name of the evidence
+     * @param value the value of the evidence
+     * @param regex whether value is a regex
+     * @param confidence the confidence of the evidence
+     */
+    public void addGivenVersion(String source, String name, String value, boolean regex, Confidence confidence) {
+<span class="fc" id="L274">        givenVersion.add(new EvidenceMatcher(source, name, value, regex, confidence));</span>
+<span class="fc" id="L275">    }</span>
+    /**
+     * Get the value of givenVersion.
+     *
+     * @return the value of givenVersion
+     */
+    public List&lt;EvidenceMatcher&gt; getGivenVersion() {
+<span class="fc" id="L282">        return givenVersion;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

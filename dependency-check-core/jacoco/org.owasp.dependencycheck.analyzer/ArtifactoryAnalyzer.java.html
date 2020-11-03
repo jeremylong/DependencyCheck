@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ArtifactoryAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">ArtifactoryAnalyzer.java</span></div><h1>ArtifactoryAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2018 Nicolas Henneaux. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import org.apache.commons.io.FileUtils;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.data.artifactory.ArtifactorySearch;
+import org.owasp.dependencycheck.data.nexus.MavenArtifact;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.DownloadFailedException;
+import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.xml.pom.PomUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.concurrent.ThreadSafe;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.util.List;
+import org.owasp.dependencycheck.utils.ResourceNotFoundException;
+import org.owasp.dependencycheck.utils.TooManyRequestsException;
+
+/**
+ * Analyzer which will attempt to locate a dependency, and the GAV information,
+ * by querying Artifactory for the dependency's hashes digest.
+ *
+ * @author nhenneaux
+ */
+@ThreadSafe
+<span class="fc" id="L57">public class ArtifactoryAnalyzer extends AbstractFileTypeAnalyzer {</span>
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L62">    private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactoryAnalyzer.class);</span>
+
+    /**
+     * The name of the analyzer.
+     */
+    private static final String ANALYZER_NAME = &quot;Artifactory Analyzer&quot;;
+
+    /**
+     * The phase in which this analyzer runs.
+     */
+<span class="fc" id="L72">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;</span>
+
+    /**
+     * The types of files on which this will work.
+     */
+    private static final String SUPPORTED_EXTENSIONS = &quot;jar&quot;;
+
+    /**
+     * The file filter used to determine which files this analyzer supports.
+     */
+<span class="fc" id="L82">    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(SUPPORTED_EXTENSIONS).build();</span>
+
+    /**
+     * The searcher itself.
+     */
+    private ArtifactorySearch searcher;
+
+    /**
+     * Initializes the analyzer with the configured settings.
+     *
+     * @param settings the configured settings to use
+     */
+    @Override
+    public synchronized void initialize(Settings settings) {
+<span class="fc" id="L96">        super.initialize(settings);</span>
+<span class="fc" id="L97">        setEnabled(checkEnabled());</span>
+<span class="fc" id="L98">    }</span>
+
+    /**
+     * Whether the analyzer is configured to support parallel processing.
+     *
+     * @return true if configured to support parallel processing; otherwise
+     * false
+     */
+    @Override
+    public boolean supportsParallelProcessing() {
+<span class="nc" id="L108">        return getSettings().getBoolean(Settings.KEYS.ANALYZER_ARTIFACTORY_PARALLEL_ANALYSIS, true);</span>
+    }
+
+    /**
+     * Determines if this analyzer is enabled.
+     *
+     * @return &lt;code&gt;true&lt;/code&gt; if the analyzer is enabled; otherwise
+     * &lt;code&gt;false&lt;/code&gt;
+     */
+    private boolean checkEnabled() {
+        try {
+<span class="fc" id="L119">            return getSettings().getBoolean(Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED);</span>
+<span class="nc" id="L120">        } catch (InvalidSettingException ise) {</span>
+<span class="nc" id="L121">            LOGGER.warn(&quot;Invalid setting. Disabling the Artifactory analyzer&quot;);</span>
+        }
+<span class="nc" id="L123">        return false;</span>
+    }
+
+    /**
+     * Initializes the analyzer once before any analysis is performed.
+     *
+     * @param engine a reference to the dependency-check engine
+     * @throws InitializationException thrown when the analyzer is unable to
+     * connect to Artifactory
+     */
+    @Override
+    public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
+<span class="nc" id="L135">        LOGGER.debug(&quot;Initializing Artifactory analyzer&quot;);</span>
+<span class="nc" id="L136">        final boolean enabled = isEnabled();</span>
+<span class="nc" id="L137">        LOGGER.debug(&quot;Artifactory analyzer enabled: {}&quot;, enabled);</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">        if (enabled) {</span>
+<span class="nc" id="L139">            searcher = new ArtifactorySearch(getSettings());</span>
+<span class="nc" id="L140">            final boolean preflightRequest = searcher.preflightRequest();</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">            if (!preflightRequest) {</span>
+<span class="nc" id="L142">                setEnabled(false);</span>
+<span class="nc" id="L143">                throw new InitializationException(&quot;There was an issue connecting to Artifactory . Disabling analyzer.&quot;);</span>
+            }
+        }
+<span class="nc" id="L146">    }</span>
+
+    /**
+     * Returns the analyzer's name.
+     *
+     * @return the name of the analyzer
+     */
+    @Override
+    public String getName() {
+<span class="fc" id="L155">        return ANALYZER_NAME;</span>
+    }
+
+    /**
+     * Returns the key used in the properties file to to reference the
+     * analyzer's enabled property.
+     *
+     * @return the analyzer's enabled property setting key.
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+<span class="fc" id="L166">        return Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED;</span>
+    }
+
+    /**
+     * Returns the analysis phase under which the analyzer runs.
+     *
+     * @return the phase under which the analyzer runs
+     */
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+<span class="fc" id="L176">        return ANALYSIS_PHASE;</span>
+    }
+
+    @Override
+    protected FileFilter getFileFilter() {
+<span class="fc" id="L181">        return FILTER;</span>
+    }
+
+    /**
+     * Performs the analysis.
+     *
+     * @param dependency the dependency to analyze
+     * @param engine the engine
+     * @throws AnalysisException when there's an exception during analysis
+     */
+    @Override
+    public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        for (Evidence e : dependency.getEvidence(EvidenceType.VENDOR)) {</span>
+<span class="nc bnc" id="L194" title="All 2 branches missed.">            if (&quot;pom&quot;.equals(e.getSource())) {</span>
+<span class="nc" id="L195">                return;</span>
+            }
+<span class="nc" id="L197">        }</span>
+        try {
+<span class="nc" id="L199">            final List&lt;MavenArtifact&gt; mas = searcher.search(dependency);</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">            final Confidence confidence = mas.size() &gt; 1 ? Confidence.HIGH : Confidence.HIGHEST;</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">            for (MavenArtifact ma : mas) {</span>
+<span class="nc" id="L202">                LOGGER.debug(&quot;Artifactory analyzer found artifact ({}) for dependency ({})&quot;, ma, dependency.getFileName());</span>
+<span class="nc" id="L203">                dependency.addAsEvidence(&quot;artifactory&quot;, ma, confidence);</span>
+
+<span class="nc bnc" id="L205" title="All 2 branches missed.">                if (ma.getPomUrl() != null) {</span>
+<span class="nc" id="L206">                    processPom(dependency, ma);</span>
+                }
+<span class="nc" id="L208">            }</span>
+<span class="nc" id="L209">        } catch (IllegalArgumentException iae) {</span>
+<span class="nc" id="L210">            LOGGER.info(&quot;invalid sha1-hash on {}&quot;, dependency.getFileName());</span>
+<span class="nc" id="L211">        } catch (FileNotFoundException fnfe) {</span>
+<span class="nc" id="L212">            LOGGER.debug(&quot;Artifact not found in repository: '{}&quot;, dependency.getFileName());</span>
+<span class="nc" id="L213">        } catch (IOException ioe) {</span>
+<span class="nc" id="L214">            final String message = &quot;Could not connect to Artifactory search. Analysis failed.&quot;;</span>
+<span class="nc" id="L215">            LOGGER.error(message, ioe);</span>
+<span class="nc" id="L216">            throw new AnalysisException(message, ioe);</span>
+<span class="nc" id="L217">        }</span>
+<span class="nc" id="L218">    }</span>
+
+    /**
+     * If necessary, downloads the pom.xml from Central and adds the evidence to
+     * the dependency.
+     *
+     * @param dependency the dependency to download and process the pom.xml
+     * @param ma the Maven artifact coordinates
+     * @throws IOException thrown if there is an I/O error
+     * @throws AnalysisException thrown if there is an error analyzing the pom
+     */
+    private void processPom(Dependency dependency, MavenArtifact ma) throws IOException, AnalysisException {
+<span class="nc" id="L230">        File pomFile = null;</span>
+        try {
+<span class="nc" id="L232">            final File baseDir = getSettings().getTempDirectory();</span>
+<span class="nc" id="L233">            pomFile = File.createTempFile(&quot;pom&quot;, &quot;.xml&quot;, baseDir);</span>
+<span class="nc" id="L234">            Files.delete(pomFile.toPath());</span>
+<span class="nc" id="L235">            LOGGER.debug(&quot;Downloading {}&quot;, ma.getPomUrl());</span>
+            //TODO add caching
+<span class="nc" id="L237">            final Downloader downloader = new Downloader(getSettings());</span>
+<span class="nc" id="L238">            downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);</span>
+<span class="nc" id="L239">            PomUtils.analyzePOM(dependency, pomFile);</span>
+
+<span class="nc" id="L241">        } catch (DownloadFailedException ex) {</span>
+<span class="nc" id="L242">            LOGGER.warn(&quot;Unable to download pom.xml for {} from Artifactory; &quot;</span>
+<span class="nc" id="L243">                    + &quot;this could result in undetected CPE/CVEs.&quot;, dependency.getFileName());</span>
+<span class="nc" id="L244">        } catch (TooManyRequestsException ex) {</span>
+<span class="nc" id="L245">            this.setEnabled(false);</span>
+<span class="nc" id="L246">            throw new AnalysisException(&quot;Received a 429 - too many requests from Artifactory; &quot;</span>
+                    + &quot;the artifactory analyzer is being disabled.&quot;, ex);
+<span class="nc" id="L248">        } catch (ResourceNotFoundException ex) {</span>
+<span class="nc" id="L249">            LOGGER.warn(&quot;pom.xml not found for {} from Artifactory; &quot;</span>
+<span class="nc" id="L250">                    + &quot;this could result in undetected CPE/CVEs.&quot;, dependency.getFileName());</span>
+        } finally {
+<span class="nc bnc" id="L252" title="All 6 branches missed.">            if (pomFile != null &amp;&amp; pomFile.exists() &amp;&amp; !FileUtils.deleteQuietly(pomFile)) {</span>
+<span class="nc" id="L253">                LOGGER.debug(&quot;Failed to delete temporary pom file {}&quot;, pomFile);</span>
+<span class="nc" id="L254">                pomFile.deleteOnExit();</span>
+            }
+        }
+<span class="nc" id="L257">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

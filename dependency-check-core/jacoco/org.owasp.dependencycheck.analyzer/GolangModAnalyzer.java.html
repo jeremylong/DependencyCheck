@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GolangModAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">GolangModAnalyzer.java</span></div><h1>GolangModAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2019 Matthijs van den Bos. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.data.golang.GoModJsonParser;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
+
+/**
+ * Go mod dependency analyzer.
+ *
+ * @author Matthijs van den Bos
+ */
+@Experimental
+<span class="fc" id="L48">public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {</span>
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L53">    private static final Logger LOGGER = LoggerFactory.getLogger(GolangModAnalyzer.class);</span>
+
+    /**
+     * A descriptor for the type of dependencies processed or added by this
+     * analyzer.
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.GOLANG;
+
+    /**
+     * The name of the analyzer.
+     */
+    private static final String ANALYZER_NAME = &quot;Golang Mod Analyzer&quot;;
+
+    /**
+     * Lock file name. Please note that go.sum is NOT considered a lock file and
+     * may contain dependencies that are no longer used and dependencies of
+     * dependencies. According to here, go.mod should be used for reproducible
+     * builds:
+     * https://github.com/golang/go/wiki/Modules#is-gosum-a-lock-file-why-does-gosum-include-information-for-module-versions-i-am-no-longer-using
+     */
+    public static final String GO_MOD = &quot;go.mod&quot;;
+
+    /**
+     * The file filter for Gopkg.lock
+     */
+<span class="fc" id="L78">    private static final FileFilter GO_MOD_FILTER = FileFilterBuilder.newInstance()</span>
+<span class="fc" id="L79">            .addFilenames(GO_MOD)</span>
+<span class="fc" id="L80">            .build();</span>
+
+    /**
+     * Returns the name of the Golang Mode Analyzer.
+     *
+     * @return the name of the analyzer
+     */
+    @Override
+    public String getName() {
+<span class="fc" id="L89">        return ANALYZER_NAME;</span>
+    }
+
+    /**
+     * Tell that we are used for information collection.
+     *
+     * @return INFORMATION_COLLECTION
+     */
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+<span class="fc" id="L99">        return AnalysisPhase.INFORMATION_COLLECTION;</span>
+    }
+
+    /**
+     * Returns the key name for the analyzers enabled setting.
+     *
+     * @return the key name for the analyzers enabled setting
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+<span class="fc" id="L109">        return Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED;</span>
+    }
+
+    /**
+     * Returns the FileFilter
+     *
+     * @return the FileFilter
+     */
+    @Override
+    protected FileFilter getFileFilter() {
+<span class="fc" id="L119">        return GO_MOD_FILTER;</span>
+    }
+
+    /**
+     * Attempts to determine the path to `go`.
+     *
+     * @return the path to `go`
+     */
+    private String getGo() {
+<span class="fc" id="L128">        final String goPath = getSettings().getString(Settings.KEYS.ANALYZER_GOLANG_PATH);</span>
+
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        if (goPath == null) {</span>
+<span class="fc" id="L131">            LOGGER.warn(</span>
+                    &quot;Path to `go` executable not set. Trying default location. If you do want to set it, please set the `{}` property&quot;,
+                    Settings.KEYS.ANALYZER_GOLANG_PATH
+            );
+<span class="fc" id="L135">            return &quot;go&quot;;</span>
+        } else {
+<span class="nc" id="L137">            final File goFile = new File(goPath);</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">            if (goFile.isFile()) {</span>
+<span class="nc" id="L139">                return goFile.getAbsolutePath();</span>
+            }
+        }
+
+<span class="nc" id="L143">        LOGGER.warn(&quot;Path to `go` exec executable does not exist: {}. Trying default location&quot;, goPath);</span>
+<span class="nc" id="L144">        return &quot;go&quot;;</span>
+    }
+
+    /**
+     * Launches `go mod help` to test if go is installed.
+     *
+     * @return a reference to the launched process
+     * @throws AnalysisException thrown if there is an issue launching `go mod`
+     */
+    private Process testGoMod(File folder) throws AnalysisException {
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">        if (!folder.isDirectory()) {</span>
+<span class="nc" id="L155">            throw new AnalysisException(String.format(&quot;%s should have been a directory.&quot;, folder.getAbsolutePath()));</span>
+        }
+
+<span class="fc" id="L158">        final List&lt;String&gt; args = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L159">        args.add(getGo());</span>
+<span class="fc" id="L160">        args.add(&quot;mod&quot;);</span>
+<span class="fc" id="L161">        args.add(&quot;edit&quot;);</span>
+<span class="fc" id="L162">        args.add(&quot;-json&quot;);</span>
+
+<span class="fc" id="L164">        final ProcessBuilder builder = new ProcessBuilder(args);</span>
+<span class="fc" id="L165">        builder.directory(folder);</span>
+        try {
+<span class="fc" id="L167">            LOGGER.info(&quot;Launching: {} from {}&quot;, args, folder);</span>
+<span class="fc" id="L168">            return builder.start();</span>
+<span class="nc" id="L169">        } catch (IOException ioe) {</span>
+<span class="nc" id="L170">            throw new AnalysisException(&quot;go initialization failure; this error can be ignored if you are not analyzing Go. &quot;</span>
+                    + &quot;Otherwise ensure that go is installed and the path to go is correctly specified&quot;, ioe);
+        }
+    }
+
+    /**
+     * Launches `go list -json -m all` in the given folder.
+     *
+     * @param folder the working folder
+     * @return a reference to the launched process
+     * @throws AnalysisException thrown if there is an issue launching `go mod`
+     */
+    private Process launchGoListAll(File folder) throws AnalysisException {
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">        if (!folder.isDirectory()) {</span>
+<span class="nc" id="L184">            throw new AnalysisException(String.format(&quot;%s should have been a directory.&quot;, folder.getAbsolutePath()));</span>
+        }
+
+<span class="fc" id="L187">        final List&lt;String&gt; args = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L188">        args.add(getGo());</span>
+<span class="fc" id="L189">        args.add(&quot;list&quot;);</span>
+<span class="fc" id="L190">        args.add(&quot;-json&quot;);</span>
+<span class="fc" id="L191">        args.add(&quot;-m&quot;);</span>
+<span class="fc" id="L192">        args.add(&quot;all&quot;);</span>
+
+<span class="fc" id="L194">        final ProcessBuilder builder = new ProcessBuilder(args);</span>
+<span class="fc" id="L195">        builder.directory(folder);</span>
+        try {
+<span class="fc" id="L197">            LOGGER.info(&quot;Launching: {} from {}&quot;, args, folder);</span>
+<span class="fc" id="L198">            return builder.start();</span>
+<span class="nc" id="L199">        } catch (IOException ioe) {</span>
+<span class="nc" id="L200">            throw new AnalysisException(&quot;go initialization failure; this error can be ignored if you are not analyzing Go. &quot;</span>
+                    + &quot;Otherwise ensure that go is installed and the path to go is correctly specified&quot;, ioe);
+        }
+    }
+
+    /**
+     * Launches `go list -json -m readonly` in the given folder.
+     *
+     * @param folder the working folder
+     * @return a reference to the launched process
+     * @throws AnalysisException thrown if there is an issue launching `go mod`
+     */
+    private Process launchGoListReadonly(File folder) throws AnalysisException {
+<span class="nc bnc" id="L213" title="All 2 branches missed.">        if (!folder.isDirectory()) {</span>
+<span class="nc" id="L214">            throw new AnalysisException(String.format(&quot;%s should have been a directory.&quot;, folder.getAbsolutePath()));</span>
+        }
+
+<span class="nc" id="L217">        final List&lt;String&gt; args = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L218">        args.add(getGo());</span>
+<span class="nc" id="L219">        args.add(&quot;list&quot;);</span>
+<span class="nc" id="L220">        args.add(&quot;-json&quot;);</span>
+<span class="nc" id="L221">        args.add(&quot;-m&quot;);</span>
+<span class="nc" id="L222">        args.add(&quot;readonly&quot;);</span>
+
+<span class="nc" id="L224">        final ProcessBuilder builder = new ProcessBuilder(args);</span>
+<span class="nc" id="L225">        builder.directory(folder);</span>
+        try {
+<span class="nc" id="L227">            LOGGER.info(&quot;Launching: {} from {}&quot;, args, folder);</span>
+<span class="nc" id="L228">            return builder.start();</span>
+<span class="nc" id="L229">        } catch (IOException ioe) {</span>
+<span class="nc" id="L230">            throw new AnalysisException(&quot;go initialization failure; this error can be ignored if you are not analyzing Go. &quot;</span>
+                    + &quot;Otherwise ensure that go is installed and the path to go is correctly specified&quot;, ioe);
+        }
+    }
+
+    /**
+     * No-op initializer implementation.
+     *
+     * @param engine a reference to the dependency-check engine
+     * @throws InitializationException never thrown
+     */
+    @SuppressWarnings(&quot;fallthrough&quot;)
+    @SuppressFBWarnings(justification = &quot;The fallthrough is intentional to avoid code duplication&quot;, value = {&quot;SF_SWITCH_NO_DEFAULT&quot;})
+    @Override
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
+<span class="fc" id="L245">        setEnabled(false);</span>
+        final Process process;
+        try {
+<span class="fc" id="L248">            process = testGoMod(getSettings().getTempDirectory());</span>
+<span class="nc" id="L249">        } catch (AnalysisException ae) {</span>
+<span class="nc" id="L250">            final String msg = String.format(&quot;Exception from go process: %s. Disabling %s&quot;, ae.getCause(), ANALYZER_NAME);</span>
+<span class="nc" id="L251">            throw new InitializationException(msg, ae);</span>
+<span class="nc" id="L252">        } catch (IOException ex) {</span>
+<span class="nc" id="L253">            throw new InitializationException(&quot;Unable to create temporary file, the Go Mod Analyzer will be disabled&quot;, ex);</span>
+<span class="fc" id="L254">        }</span>
+
+        final int exitValue;
+        try {
+<span class="fc" id="L258">            exitValue = process.waitFor();</span>
+<span class="nc" id="L259">        } catch (InterruptedException ex) {</span>
+<span class="nc" id="L260">            final String msg = String.format(&quot;Go mod process was interrupted. Disabling %s&quot;, ANALYZER_NAME);</span>
+<span class="nc" id="L261">            Thread.currentThread().interrupt();</span>
+<span class="nc" id="L262">            throw new InitializationException(msg);</span>
+<span class="fc" id="L263">        }</span>
+
+<span class="fc" id="L265">        final int expectedNoModuleFoundExitValue = 1;</span>
+<span class="fc" id="L266">        final int possiblyGoTooOldExitValue = 2;</span>
+<span class="fc" id="L267">        final int goExecutableNotFoundExitValue = 127;</span>
+
+<span class="pc bpc" id="L269" title="3 of 4 branches missed.">        switch (exitValue) {</span>
+            case expectedNoModuleFoundExitValue:
+<span class="fc" id="L271">                setEnabled(true);</span>
+<span class="fc" id="L272">                LOGGER.info(&quot;{} is enabled.&quot;, ANALYZER_NAME);</span>
+<span class="fc" id="L273">                return;</span>
+            case goExecutableNotFoundExitValue:
+<span class="nc" id="L275">                throw new InitializationException(String.format(&quot;Go executable not found. Disabling %s: %s&quot;, ANALYZER_NAME, exitValue));</span>
+            case possiblyGoTooOldExitValue:
+<span class="nc" id="L277">                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))) {</span>
+<span class="nc bnc" id="L278" title="All 2 branches missed.">                    if (!reader.ready()) {</span>
+<span class="nc" id="L279">                        LOGGER.warn(&quot;Go mod error stream unexpectedly not ready. Disabling {}&quot;, ANALYZER_NAME);</span>
+<span class="nc" id="L280">                        throw new InitializationException(&quot;Go mod error stream unexpectedly not ready.&quot;);</span>
+                    } else {
+<span class="nc" id="L282">                        final String line = reader.readLine();</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">                        if (line == null) {</span>
+<span class="nc" id="L284">                            LOGGER.warn(&quot;An error occurred calling `go` - no output could be read. Disabling {}.&quot;, ANALYZER_NAME);</span>
+<span class="nc" id="L285">                            throw new InitializationException(&quot;Error calling `go` - no output could be read.&quot;);</span>
+                        }
+<span class="nc bnc" id="L287" title="All 2 branches missed.">                        if (line.contains(&quot;unknown subcommand \&quot;mod\&quot;&quot;)) {</span>
+<span class="nc" id="L288">                            LOGGER.warn(&quot;Your version of `go` does not support modules. Disabling {}. Error: `{}`&quot;, ANALYZER_NAME, line);</span>
+<span class="nc" id="L289">                            throw new InitializationException(&quot;Go version does not support modules.&quot;);</span>
+                        }
+                    }
+<span class="nc" id="L292">                } catch (UnsupportedEncodingException ex) {</span>
+<span class="nc" id="L293">                    throw new InitializationException(&quot;Unexpected go encoding.&quot;, ex);</span>
+<span class="nc" id="L294">                } catch (IOException ex) {</span>
+<span class="nc" id="L295">                    throw new InitializationException(&quot;Unable to read go output.&quot;, ex);</span>
+<span class="nc" id="L296">                }</span>
+            // fall through
+            default:
+<span class="nc" id="L299">                final String msg = String.format(&quot;Unexpected exit code from go process. Disabling %s: %s&quot;, ANALYZER_NAME, exitValue);</span>
+<span class="nc" id="L300">                throw new InitializationException(msg);</span>
+        }
+    }
+
+    /**
+     * Analyzes go packages and adds evidence to the dependency.
+     *
+     * @param dependency the dependency being analyzed
+     * @param engine the engine being used to perform the scan
+     * @throws AnalysisException thrown if there is an unrecoverable error
+     * analyzing the dependency
+     */
+    @Override
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+        //engine.removeDependency(dependency);
+<span class="fc" id="L315">        final File parentFile = dependency.getActualFile().getParentFile();</span>
+<span class="fc" id="L316">        Process process = launchGoListAll(parentFile);</span>
+
+<span class="fc" id="L318">        process = evaluateProcess(process, parentFile);</span>
+
+<span class="fc" id="L320">        GoModJsonParser.process(process.getInputStream()).forEach(goDep</span>
+<span class="fc" id="L321">                -&gt; engine.addDependency(goDep.toDependency(dependency))</span>
+        );
+<span class="fc" id="L323">    }</span>
+
+    private Process evaluateProcess(Process process, File directory) throws AnalysisException {
+        final int exitValue;
+        try {
+<span class="fc" id="L328">            exitValue = process.waitFor();</span>
+<span class="nc" id="L329">        } catch (InterruptedException ie) {</span>
+<span class="nc" id="L330">            Thread.currentThread().interrupt();</span>
+<span class="nc" id="L331">            throw new AnalysisException(&quot;go process interrupted&quot;, ie);</span>
+<span class="fc" id="L332">        }</span>
+<span class="pc bpc" id="L333" title="2 of 4 branches missed.">        if (exitValue &lt; 0 || exitValue &gt; 1) {</span>
+<span class="nc" id="L334">            final String msg = String.format(&quot;Unexpected exit code from go process; exit code: %s&quot;, exitValue);</span>
+<span class="nc" id="L335">            throw new AnalysisException(msg);</span>
+        }
+        try {
+<span class="fc" id="L338">            final StringBuilder error = new StringBuilder();</span>
+<span class="fc" id="L339">            try (BufferedReader errReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))) {</span>
+<span class="fc bfc" id="L340" title="All 2 branches covered.">                while (errReader.ready()) {</span>
+<span class="fc" id="L341">                    error.append(errReader.readLine());</span>
+                }
+            }
+<span class="pc bpc" id="L344" title="1 of 2 branches missed.">            if (error.length() &gt; 0) {</span>
+<span class="fc" id="L345">                LOGGER.warn(&quot;Warnings from go {}&quot;, error.toString());</span>
+<span class="pc bpc" id="L346" title="1 of 2 branches missed.">                if (error.indexOf(&quot;can't compute 'all' using the vendor directory&quot;) &gt;= 0) {</span>
+<span class="nc" id="L347">                    LOGGER.warn(&quot;Switching to `go list -json -m readonly`&quot;);</span>
+<span class="nc" id="L348">                    return evaluateProcess(launchGoListReadonly(directory), directory);</span>
+                }
+            }
+<span class="nc" id="L351">        } catch (IOException ioe) {</span>
+<span class="nc" id="L352">            LOGGER.warn(&quot;go mod failure&quot;, ioe);</span>
+<span class="fc" id="L353">        }</span>
+<span class="fc" id="L354">        return process;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,1074 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DependencyCheckScanAgent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.agent</a> &gt; <span class="el_source">DependencyCheckScanAgent.java</span></div><h1>DependencyCheckScanAgent.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2014 Steve Springett. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.agent;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.annotation.concurrent.NotThreadSafe;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Vulnerability;
+import org.owasp.dependencycheck.exception.ExceptionCollection;
+import org.owasp.dependencycheck.exception.ReportException;
+import org.owasp.dependencycheck.exception.ScanAgentException;
+import org.owasp.dependencycheck.reporting.ReportGenerator;
+import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * This class provides a way to easily conduct a scan solely based on existing
+ * evidence metadata rather than collecting evidence from the files themselves.
+ * This class is based on the Ant task and Maven plugin with the exception that
+ * it takes a list of dependencies that can be programmatically added from data
+ * in a spreadsheet, database or some other datasource and conduct a scan based
+ * on this pre-defined evidence.
+ *
+ * &lt;h2&gt;Example:&lt;/h2&gt;
+ * &lt;pre&gt;
+ * List&amp;lt;Dependency&amp;gt; dependencies = new ArrayList&amp;lt;Dependency&amp;gt;();
+ * Dependency dependency = new Dependency(new File(FileUtils.getBitBucket()));
+ * dependency.addEvidence(EvidenceType.PRODUCT, &quot;my-datasource&quot;, &quot;name&quot;, &quot;Jetty&quot;, Confidence.HIGH);
+ * dependency.addEvidence(EvidenceType.VERSION, &quot;my-datasource&quot;, &quot;version&quot;, &quot;5.1.10&quot;, Confidence.HIGH);
+ * dependency.addEvidence(EvidenceType.VENDOR, &quot;my-datasource&quot;, &quot;vendor&quot;, &quot;mortbay&quot;, Confidence.HIGH);
+ * dependencies.add(dependency);
+ *
+ * DependencyCheckScanAgent scan = new DependencyCheckScanAgent();
+ * scan.setDependencies(dependencies);
+ * scan.setReportFormat(ReportGenerator.Format.ALL);
+ * scan.setReportOutputDirectory(System.getProperty(&quot;user.home&quot;));
+ * scan.execute();
+ * &lt;/pre&gt;
+ *
+ * @author Steve Springett
+ */
+@SuppressWarnings(&quot;unused&quot;)
+@NotThreadSafe
+<span class="fc" id="L67">public class DependencyCheckScanAgent {</span>
+
+    //&lt;editor-fold defaultstate=&quot;collapsed&quot; desc=&quot;private fields&quot;&gt;
+    /**
+     * System specific new line character.
+     */
+<span class="fc" id="L73">    private static final String NEW_LINE = System.getProperty(&quot;line.separator&quot;, &quot;\n&quot;).intern();</span>
+    /**
+     * Logger for use throughout the class.
+     */
+<span class="fc" id="L77">    private static final Logger LOGGER = LoggerFactory.getLogger(DependencyCheckScanAgent.class);</span>
+    /**
+     * The application name for the report.
+     */
+<span class="fc" id="L81">    private String applicationName = &quot;Dependency-Check&quot;;</span>
+    /**
+     * The pre-determined dependencies to scan
+     */
+    private List&lt;Dependency&gt; dependencies;
+    /**
+     * The location of the data directory that contains
+     */
+<span class="fc" id="L89">    private String dataDirectory = null;</span>
+    /**
+     * Specifies the destination directory for the generated Dependency-Check
+     * report.
+     */
+    private String reportOutputDirectory;
+    /**
+     * Specifies if the build should be failed if a CVSS score above a specified
+     * level is identified. The default is 11 which means since the CVSS scores
+     * are 0-10, by default the build will never fail and the CVSS score is set
+     * to 11. The valid range for the fail build on CVSS is 0 to 11, where
+     * anything above 10 will not cause the build to fail.
+     */
+<span class="fc" id="L102">    private float failBuildOnCVSS = 11;</span>
+    /**
+     * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not
+     * recommended that this be turned to false. Default is true.
+     */
+<span class="fc" id="L107">    private boolean autoUpdate = true;</span>
+    /**
+     * Sets whether the data directory should be updated without performing a
+     * scan. Default is false.
+     */
+<span class="fc" id="L112">    private boolean updateOnly = false;</span>
+    /**
+     * flag indicating whether or not to generate a report of findings.
+     */
+<span class="fc" id="L116">    private boolean generateReport = true;</span>
+    /**
+     * The report format to be generated (HTML, XML, CSV, JSON, JUNIT, ALL). This
+     * configuration option has no affect if using this within the Site plugin
+     * unless the externalReport is set to true. Default is HTML.
+     */
+<span class="fc" id="L122">    private ReportGenerator.Format reportFormat = ReportGenerator.Format.HTML;</span>
+    /**
+     * The Proxy Server.
+     */
+    private String proxyServer;
+    /**
+     * The Proxy Port.
+     */
+    private String proxyPort;
+    /**
+     * The Proxy username.
+     */
+    private String proxyUsername;
+    /**
+     * The Proxy password.
+     */
+    private String proxyPassword;
+    /**
+     * The Connection Timeout.
+     */
+    private String connectionTimeout;
+    /**
+     * The file path used for verbose logging.
+     */
+<span class="fc" id="L146">    private String logFile = null;</span>
+    /**
+     * flag indicating whether or not to show a summary of findings.
+     */
+<span class="fc" id="L150">    private boolean showSummary = true;</span>
+    /**
+     * The path to the suppression file.
+     */
+    private String suppressionFile;
+    /**
+     * The password to use when connecting to the database.
+     */
+    private String databasePassword;
+    /**
+     * The starting string that identifies CPEs that are qualified to be
+     * imported.
+     */
+    private String cpeStartsWithFilter;
+    /**
+     * Whether or not the Maven Central analyzer is enabled.
+     */
+<span class="fc" id="L167">    private boolean centralAnalyzerEnabled = true;</span>
+    /**
+     * The URL of Maven Central.
+     */
+    private String centralUrl;
+    /**
+     * Whether or not the nexus analyzer is enabled.
+     */
+<span class="fc" id="L175">    private boolean nexusAnalyzerEnabled = true;</span>
+    /**
+     * The URL of the Nexus server.
+     */
+    private String nexusUrl;
+    /**
+     * Whether or not the defined proxy should be used when connecting to Nexus.
+     */
+<span class="fc" id="L183">    private boolean nexusUsesProxy = true;</span>
+    /**
+     * The database driver name; such as org.h2.Driver.
+     */
+    private String databaseDriverName;
+    /**
+     * The path to the database driver JAR file if it is not on the class path.
+     */
+    private String databaseDriverPath;
+    /**
+     * The database connection string.
+     */
+    private String connectionString;
+    /**
+     * The user name for connecting to the database.
+     */
+    private String databaseUser;
+    /**
+     * Additional ZIP File extensions to add analyze. This should be a
+     * comma-separated list of file extensions to treat like ZIP files.
+     */
+    private String zipExtensions;
+    /**
+     * The URL for the modified NVD CVE JSON.
+     */
+    private String cveUrlModified;
+    /**
+     * The base URL for the NVD CVE JSON data feeds.
+     */
+    private String cveUrlBase;
+    /**
+     * The path to dotnet core for .NET assembly analysis.
+     */
+    private String pathToCore;
+    /**
+     * The configured settings.
+     */
+    private Settings settings;
+    /**
+     * The path to optional dependency-check properties file. This will be used
+     * to side-load additional user-defined properties.
+     * {@link Settings#mergeProperties(String)}
+     */
+    private String propertiesFilePath;
+    //&lt;/editor-fold&gt;
+    //&lt;editor-fold defaultstate=&quot;collapsed&quot; desc=&quot;getters/setters&quot;&gt;
+
+    /**
+     * Get the value of applicationName.
+     *
+     * @return the value of applicationName
+     */
+    public String getApplicationName() {
+<span class="nc" id="L236">        return applicationName;</span>
+    }
+
+    /**
+     * Set the value of applicationName.
+     *
+     * @param applicationName new value of applicationName
+     */
+    public void setApplicationName(String applicationName) {
+<span class="fc" id="L245">        this.applicationName = applicationName;</span>
+<span class="fc" id="L246">    }</span>
+
+    /**
+     * Returns a list of pre-determined dependencies.
+     *
+     * @return returns a list of dependencies
+     */
+    public List&lt;Dependency&gt; getDependencies() {
+<span class="fc" id="L254">        return dependencies;</span>
+    }
+
+    /**
+     * Sets the list of dependencies to scan.
+     *
+     * @param dependencies new value of dependencies
+     */
+    public void setDependencies(List&lt;Dependency&gt; dependencies) {
+<span class="fc" id="L263">        this.dependencies = dependencies;</span>
+<span class="fc" id="L264">    }</span>
+
+    /**
+     * Get the value of dataDirectory.
+     *
+     * @return the value of dataDirectory
+     */
+    public String getDataDirectory() {
+<span class="nc" id="L272">        return dataDirectory;</span>
+    }
+
+    /**
+     * Set the value of dataDirectory.
+     *
+     * @param dataDirectory new value of dataDirectory
+     */
+    public void setDataDirectory(String dataDirectory) {
+<span class="nc" id="L281">        this.dataDirectory = dataDirectory;</span>
+<span class="nc" id="L282">    }</span>
+
+    /**
+     * Get the value of reportOutputDirectory.
+     *
+     * @return the value of reportOutputDirectory
+     */
+    public String getReportOutputDirectory() {
+<span class="nc" id="L290">        return reportOutputDirectory;</span>
+    }
+
+    /**
+     * Set the value of reportOutputDirectory.
+     *
+     * @param reportOutputDirectory new value of reportOutputDirectory
+     */
+    public void setReportOutputDirectory(String reportOutputDirectory) {
+<span class="fc" id="L299">        this.reportOutputDirectory = reportOutputDirectory;</span>
+<span class="fc" id="L300">    }</span>
+
+    /**
+     * Get the value of failBuildOnCVSS.
+     *
+     * @return the value of failBuildOnCVSS
+     */
+    public float getFailBuildOnCVSS() {
+<span class="nc" id="L308">        return failBuildOnCVSS;</span>
+    }
+
+    /**
+     * Set the value of failBuildOnCVSS.
+     *
+     * @param failBuildOnCVSS new value of failBuildOnCVSS
+     */
+    public void setFailBuildOnCVSS(float failBuildOnCVSS) {
+<span class="nc" id="L317">        this.failBuildOnCVSS = failBuildOnCVSS;</span>
+<span class="nc" id="L318">    }</span>
+
+    /**
+     * Get the value of autoUpdate.
+     *
+     * @return the value of autoUpdate
+     */
+    public boolean isAutoUpdate() {
+<span class="nc" id="L326">        return autoUpdate;</span>
+    }
+
+    /**
+     * Set the value of autoUpdate.
+     *
+     * @param autoUpdate new value of autoUpdate
+     */
+    public void setAutoUpdate(boolean autoUpdate) {
+<span class="fc" id="L335">        this.autoUpdate = autoUpdate;</span>
+<span class="fc" id="L336">    }</span>
+
+    /**
+     * Get the value of updateOnly.
+     *
+     * @return the value of updateOnly
+     */
+    public boolean isUpdateOnly() {
+<span class="nc" id="L344">        return updateOnly;</span>
+    }
+
+    /**
+     * Set the value of updateOnly.
+     *
+     * @param updateOnly new value of updateOnly
+     */
+    public void setUpdateOnly(boolean updateOnly) {
+<span class="fc" id="L353">        this.updateOnly = updateOnly;</span>
+<span class="fc" id="L354">    }</span>
+
+    /**
+     * Get the value of generateReport.
+     *
+     * @return the value of generateReport
+     */
+    public boolean isGenerateReport() {
+<span class="nc" id="L362">        return generateReport;</span>
+    }
+
+    /**
+     * Set the value of generateReport.
+     *
+     * @param generateReport new value of generateReport
+     */
+    public void setGenerateReport(boolean generateReport) {
+<span class="nc" id="L371">        this.generateReport = generateReport;</span>
+<span class="nc" id="L372">    }</span>
+
+    /**
+     * Get the value of reportFormat.
+     *
+     * @return the value of reportFormat
+     */
+    public ReportGenerator.Format getReportFormat() {
+<span class="nc" id="L380">        return reportFormat;</span>
+    }
+
+    /**
+     * Set the value of reportFormat.
+     *
+     * @param reportFormat new value of reportFormat
+     */
+    public void setReportFormat(ReportGenerator.Format reportFormat) {
+<span class="fc" id="L389">        this.reportFormat = reportFormat;</span>
+<span class="fc" id="L390">    }</span>
+
+    /**
+     * Get the value of proxyServer.
+     *
+     * @return the value of proxyServer
+     */
+    public String getProxyServer() {
+<span class="nc" id="L398">        return proxyServer;</span>
+    }
+
+    /**
+     * Set the value of proxyServer.
+     *
+     * @param proxyServer new value of proxyServer
+     */
+    public void setProxyServer(String proxyServer) {
+<span class="nc" id="L407">        this.proxyServer = proxyServer;</span>
+<span class="nc" id="L408">    }</span>
+
+    /**
+     * Get the value of proxyServer.
+     *
+     * @return the value of proxyServer
+     * @deprecated use
+     * {@link org.owasp.dependencycheck.agent.DependencyCheckScanAgent#getProxyServer()}
+     * instead
+     */
+    @Deprecated
+    public String getProxyUrl() {
+<span class="nc" id="L420">        return proxyServer;</span>
+    }
+
+    /**
+     * Set the value of proxyServer.
+     *
+     * @param proxyUrl new value of proxyServer
+     * @deprecated use {@link org.owasp.dependencycheck.agent.DependencyCheckScanAgent#setProxyServer(java.lang.String)
+     * } instead
+     */
+    @Deprecated
+    public void setProxyUrl(String proxyUrl) {
+<span class="nc" id="L432">        this.proxyServer = proxyUrl;</span>
+<span class="nc" id="L433">    }</span>
+
+    /**
+     * Get the value of proxyPort.
+     *
+     * @return the value of proxyPort
+     */
+    public String getProxyPort() {
+<span class="nc" id="L441">        return proxyPort;</span>
+    }
+
+    /**
+     * Set the value of proxyPort.
+     *
+     * @param proxyPort new value of proxyPort
+     */
+    public void setProxyPort(String proxyPort) {
+<span class="nc" id="L450">        this.proxyPort = proxyPort;</span>
+<span class="nc" id="L451">    }</span>
+
+    /**
+     * Get the value of proxyUsername.
+     *
+     * @return the value of proxyUsername
+     */
+    public String getProxyUsername() {
+<span class="nc" id="L459">        return proxyUsername;</span>
+    }
+
+    /**
+     * Set the value of proxyUsername.
+     *
+     * @param proxyUsername new value of proxyUsername
+     */
+    public void setProxyUsername(String proxyUsername) {
+<span class="nc" id="L468">        this.proxyUsername = proxyUsername;</span>
+<span class="nc" id="L469">    }</span>
+
+    /**
+     * Get the value of proxyPassword.
+     *
+     * @return the value of proxyPassword
+     */
+    public String getProxyPassword() {
+<span class="nc" id="L477">        return proxyPassword;</span>
+    }
+
+    /**
+     * Set the value of proxyPassword.
+     *
+     * @param proxyPassword new value of proxyPassword
+     */
+    public void setProxyPassword(String proxyPassword) {
+<span class="nc" id="L486">        this.proxyPassword = proxyPassword;</span>
+<span class="nc" id="L487">    }</span>
+
+    /**
+     * Get the value of connectionTimeout.
+     *
+     * @return the value of connectionTimeout
+     */
+    public String getConnectionTimeout() {
+<span class="nc" id="L495">        return connectionTimeout;</span>
+    }
+
+    /**
+     * Set the value of connectionTimeout.
+     *
+     * @param connectionTimeout new value of connectionTimeout
+     */
+    public void setConnectionTimeout(String connectionTimeout) {
+<span class="nc" id="L504">        this.connectionTimeout = connectionTimeout;</span>
+<span class="nc" id="L505">    }</span>
+
+    /**
+     * Get the value of logFile.
+     *
+     * @return the value of logFile
+     */
+    public String getLogFile() {
+<span class="nc" id="L513">        return logFile;</span>
+    }
+
+    /**
+     * Set the value of logFile.
+     *
+     * @param logFile new value of logFile
+     */
+    public void setLogFile(String logFile) {
+<span class="nc" id="L522">        this.logFile = logFile;</span>
+<span class="nc" id="L523">    }</span>
+
+    /**
+     * Get the value of suppressionFile.
+     *
+     * @return the value of suppressionFile
+     */
+    public String getSuppressionFile() {
+<span class="nc" id="L531">        return suppressionFile;</span>
+    }
+
+    /**
+     * Set the value of suppressionFile.
+     *
+     * @param suppressionFile new value of suppressionFile
+     */
+    public void setSuppressionFile(String suppressionFile) {
+<span class="nc" id="L540">        this.suppressionFile = suppressionFile;</span>
+<span class="nc" id="L541">    }</span>
+
+    /**
+     * Get the value of showSummary.
+     *
+     * @return the value of showSummary
+     */
+    public boolean isShowSummary() {
+<span class="nc" id="L549">        return showSummary;</span>
+    }
+
+    /**
+     * Set the value of showSummary.
+     *
+     * @param showSummary new value of showSummary
+     */
+    public void setShowSummary(boolean showSummary) {
+<span class="nc" id="L558">        this.showSummary = showSummary;</span>
+<span class="nc" id="L559">    }</span>
+
+    /**
+     * Sets starting string that identifies CPEs that are qualified to be
+     * imported.
+     *
+     * @param cpeStartsWithFilter filters CPEs based on this starting string
+     * (i.e. cpe:/a: )
+     */
+    public void setCpeStartsWithFilter(String cpeStartsWithFilter) {
+<span class="nc" id="L569">        this.cpeStartsWithFilter = cpeStartsWithFilter;</span>
+<span class="nc" id="L570">    }</span>
+
+    /**
+     * Returns the starting string that identifies CPEs that are qualified to be
+     * imported.
+     *
+     * @return the CPE starting filter (i.e. cpe:/a: )
+     */
+    public String getCpeStartsWithFilter() {
+<span class="nc" id="L579">        return cpeStartsWithFilter;</span>
+    }
+
+    /**
+     * Get the value of centralAnalyzerEnabled.
+     *
+     * @return the value of centralAnalyzerEnabled
+     */
+    public boolean isCentralAnalyzerEnabled() {
+<span class="nc" id="L588">        return centralAnalyzerEnabled;</span>
+    }
+
+    /**
+     * Set the value of centralAnalyzerEnabled.
+     *
+     * @param centralAnalyzerEnabled new value of centralAnalyzerEnabled
+     */
+    public void setCentralAnalyzerEnabled(boolean centralAnalyzerEnabled) {
+<span class="fc" id="L597">        this.centralAnalyzerEnabled = centralAnalyzerEnabled;</span>
+<span class="fc" id="L598">    }</span>
+
+    /**
+     * Get the value of centralUrl.
+     *
+     * @return the value of centralUrl
+     */
+    public String getCentralUrl() {
+<span class="nc" id="L606">        return centralUrl;</span>
+    }
+
+    /**
+     * Set the value of centralUrl.
+     *
+     * @param centralUrl new value of centralUrl
+     */
+    public void setCentralUrl(String centralUrl) {
+<span class="nc" id="L615">        this.centralUrl = centralUrl;</span>
+<span class="nc" id="L616">    }</span>
+
+    /**
+     * Get the value of nexusAnalyzerEnabled.
+     *
+     * @return the value of nexusAnalyzerEnabled
+     */
+    public boolean isNexusAnalyzerEnabled() {
+<span class="nc" id="L624">        return nexusAnalyzerEnabled;</span>
+    }
+
+    /**
+     * Set the value of nexusAnalyzerEnabled.
+     *
+     * @param nexusAnalyzerEnabled new value of nexusAnalyzerEnabled
+     */
+    public void setNexusAnalyzerEnabled(boolean nexusAnalyzerEnabled) {
+<span class="nc" id="L633">        this.nexusAnalyzerEnabled = nexusAnalyzerEnabled;</span>
+<span class="nc" id="L634">    }</span>
+
+    /**
+     * Get the value of nexusUrl.
+     *
+     * @return the value of nexusUrl
+     */
+    public String getNexusUrl() {
+<span class="nc" id="L642">        return nexusUrl;</span>
+    }
+
+    /**
+     * Set the value of nexusUrl.
+     *
+     * @param nexusUrl new value of nexusUrl
+     */
+    public void setNexusUrl(String nexusUrl) {
+<span class="nc" id="L651">        this.nexusUrl = nexusUrl;</span>
+<span class="nc" id="L652">    }</span>
+
+    /**
+     * Get the value of nexusUsesProxy.
+     *
+     * @return the value of nexusUsesProxy
+     */
+    public boolean isNexusUsesProxy() {
+<span class="nc" id="L660">        return nexusUsesProxy;</span>
+    }
+
+    /**
+     * Set the value of nexusUsesProxy.
+     *
+     * @param nexusUsesProxy new value of nexusUsesProxy
+     */
+    public void setNexusUsesProxy(boolean nexusUsesProxy) {
+<span class="nc" id="L669">        this.nexusUsesProxy = nexusUsesProxy;</span>
+<span class="nc" id="L670">    }</span>
+
+    /**
+     * Get the value of databaseDriverName.
+     *
+     * @return the value of databaseDriverName
+     */
+    public String getDatabaseDriverName() {
+<span class="nc" id="L678">        return databaseDriverName;</span>
+    }
+
+    /**
+     * Set the value of databaseDriverName.
+     *
+     * @param databaseDriverName new value of databaseDriverName
+     */
+    public void setDatabaseDriverName(String databaseDriverName) {
+<span class="nc" id="L687">        this.databaseDriverName = databaseDriverName;</span>
+<span class="nc" id="L688">    }</span>
+
+    /**
+     * Get the value of databaseDriverPath.
+     *
+     * @return the value of databaseDriverPath
+     */
+    public String getDatabaseDriverPath() {
+<span class="nc" id="L696">        return databaseDriverPath;</span>
+    }
+
+    /**
+     * Set the value of databaseDriverPath.
+     *
+     * @param databaseDriverPath new value of databaseDriverPath
+     */
+    public void setDatabaseDriverPath(String databaseDriverPath) {
+<span class="nc" id="L705">        this.databaseDriverPath = databaseDriverPath;</span>
+<span class="nc" id="L706">    }</span>
+
+    /**
+     * Get the value of connectionString.
+     *
+     * @return the value of connectionString
+     */
+    public String getConnectionString() {
+<span class="nc" id="L714">        return connectionString;</span>
+    }
+
+    /**
+     * Set the value of connectionString.
+     *
+     * @param connectionString new value of connectionString
+     */
+    public void setConnectionString(String connectionString) {
+<span class="nc" id="L723">        this.connectionString = connectionString;</span>
+<span class="nc" id="L724">    }</span>
+
+    /**
+     * Get the value of databaseUser.
+     *
+     * @return the value of databaseUser
+     */
+    public String getDatabaseUser() {
+<span class="nc" id="L732">        return databaseUser;</span>
+    }
+
+    /**
+     * Set the value of databaseUser.
+     *
+     * @param databaseUser new value of databaseUser
+     */
+    public void setDatabaseUser(String databaseUser) {
+<span class="nc" id="L741">        this.databaseUser = databaseUser;</span>
+<span class="nc" id="L742">    }</span>
+
+    /**
+     * Get the value of databasePassword.
+     *
+     * @return the value of databasePassword
+     */
+    public String getDatabasePassword() {
+<span class="nc" id="L750">        return databasePassword;</span>
+    }
+
+    /**
+     * Set the value of databasePassword.
+     *
+     * @param databasePassword new value of databasePassword
+     */
+    public void setDatabasePassword(String databasePassword) {
+<span class="nc" id="L759">        this.databasePassword = databasePassword;</span>
+<span class="nc" id="L760">    }</span>
+
+    /**
+     * Get the value of zipExtensions.
+     *
+     * @return the value of zipExtensions
+     */
+    public String getZipExtensions() {
+<span class="nc" id="L768">        return zipExtensions;</span>
+    }
+
+    /**
+     * Set the value of zipExtensions.
+     *
+     * @param zipExtensions new value of zipExtensions
+     */
+    public void setZipExtensions(String zipExtensions) {
+<span class="nc" id="L777">        this.zipExtensions = zipExtensions;</span>
+<span class="nc" id="L778">    }</span>
+
+    /**
+     * Get the value of cveUrlModified.
+     *
+     * @return the value of cveUrlModified
+     */
+    public String getCveUrlModified() {
+<span class="nc" id="L786">        return cveUrlModified;</span>
+    }
+
+    /**
+     * Set the value of cveUrlModified.
+     *
+     * @param cveUrlModified new value of cveUrlModified
+     */
+    public void setCveUrlModified(String cveUrlModified) {
+<span class="nc" id="L795">        this.cveUrlModified = cveUrlModified;</span>
+<span class="nc" id="L796">    }</span>
+
+    /**
+     * Get the value of cveUrlBase.
+     *
+     * @return the value of cveUrlBase
+     */
+    public String getCveUrlBase() {
+<span class="nc" id="L804">        return cveUrlBase;</span>
+    }
+
+    /**
+     * Set the value of cveUrlBase.
+     *
+     * @param cveUrlBase new value of cveUrlBase
+     */
+    public void setCveUrlBase(String cveUrlBase) {
+<span class="nc" id="L813">        this.cveUrlBase = cveUrlBase;</span>
+<span class="nc" id="L814">    }</span>
+
+    /**
+     * Get the value of pathToCore.
+     *
+     * @return the value of pathToCore
+     */
+    public String getPathToDotnetCore() {
+<span class="nc" id="L822">        return pathToCore;</span>
+    }
+
+    /**
+     * Set the value of pathToCore.
+     *
+     * @param pathToCore new value of pathToCore
+     */
+    public void setPathToDotnetCore(String pathToCore) {
+<span class="nc" id="L831">        this.pathToCore = pathToCore;</span>
+<span class="nc" id="L832">    }</span>
+
+    /**
+     * Get the value of propertiesFilePath.
+     *
+     * @return the value of propertiesFilePath
+     */
+    public String getPropertiesFilePath() {
+<span class="nc" id="L840">        return propertiesFilePath;</span>
+    }
+
+    /**
+     * Set the value of propertiesFilePath.
+     *
+     * @param propertiesFilePath new value of propertiesFilePath
+     */
+    public void setPropertiesFilePath(String propertiesFilePath) {
+<span class="nc" id="L849">        this.propertiesFilePath = propertiesFilePath;</span>
+<span class="nc" id="L850">    }</span>
+    //&lt;/editor-fold&gt;
+
+    /**
+     * Executes the Dependency-Check on the dependent libraries. &lt;b&gt;Note&lt;/b&gt;,
+     * the engine object returned from this method must be closed by calling
+     * `close()`
+     *
+     * @return the Engine used to scan the dependencies.
+     * @throws ExceptionCollection a collection of one or more exceptions that
+     * occurred during analysis.
+     */
+    @SuppressWarnings(&quot;squid:S2095&quot;)
+    private Engine executeDependencyCheck() throws ExceptionCollection {
+<span class="fc" id="L864">        populateSettings();</span>
+        final Engine engine;
+        try {
+<span class="fc" id="L867">            engine = new Engine(settings);</span>
+<span class="nc" id="L868">        } catch (DatabaseException ex) {</span>
+<span class="nc" id="L869">            throw new ExceptionCollection(ex, true);</span>
+<span class="fc" id="L870">        }</span>
+<span class="pc bpc" id="L871" title="1 of 2 branches missed.">        if (this.updateOnly) {</span>
+            try {
+<span class="nc" id="L873">                engine.doUpdates();</span>
+<span class="nc" id="L874">            } catch (UpdateException ex) {</span>
+<span class="nc" id="L875">                throw new ExceptionCollection(ex);</span>
+            } finally {
+<span class="nc" id="L877">                engine.close();</span>
+            }
+        } else {
+<span class="fc" id="L880">            engine.setDependencies(this.dependencies);</span>
+<span class="fc" id="L881">            engine.analyzeDependencies();</span>
+        }
+<span class="fc" id="L883">        return engine;</span>
+    }
+
+    /**
+     * Generates the reports for a given dependency-check engine.
+     *
+     * @param engine a dependency-check engine
+     * @param outDirectory the directory to write the reports to
+     * @throws ScanAgentException thrown if there is an error generating the
+     * report
+     */
+    private void generateExternalReports(Engine engine, File outDirectory) throws ScanAgentException {
+        try {
+<span class="fc" id="L896">            engine.writeReports(applicationName, outDirectory, this.reportFormat.name());</span>
+<span class="nc" id="L897">        } catch (ReportException ex) {</span>
+<span class="nc" id="L898">            LOGGER.debug(&quot;Unexpected exception occurred during analysis; please see the verbose error log for more details.&quot;, ex);</span>
+<span class="nc" id="L899">            throw new ScanAgentException(&quot;Error generating the report&quot;, ex);</span>
+<span class="fc" id="L900">        }</span>
+<span class="fc" id="L901">    }</span>
+
+    /**
+     * Takes the properties supplied and updates the dependency-check settings.
+     * Additionally, this sets the system properties required to change the
+     * proxy server, port, and connection timeout.
+     */
+    private void populateSettings() {
+<span class="fc" id="L909">        settings = new Settings();</span>
+<span class="pc bpc" id="L910" title="1 of 2 branches missed.">        if (dataDirectory != null) {</span>
+<span class="nc" id="L911">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);</span>
+        } else {
+<span class="fc" id="L913">            final File jarPath = new File(DependencyCheckScanAgent.class.getProtectionDomain().getCodeSource().getLocation().getPath());</span>
+<span class="fc" id="L914">            final File base = jarPath.getParentFile();</span>
+<span class="fc" id="L915">            final String sub = settings.getString(Settings.KEYS.DATA_DIRECTORY);</span>
+<span class="fc" id="L916">            final File dataDir = new File(base, sub);</span>
+<span class="fc" id="L917">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());</span>
+        }
+<span class="pc bpc" id="L919" title="1 of 2 branches missed.">        if (propertiesFilePath != null) {</span>
+            try {
+<span class="nc" id="L921">                settings.mergeProperties(propertiesFilePath);</span>
+<span class="nc" id="L922">                LOGGER.info(&quot;Successfully loaded user-defined properties&quot;);</span>
+<span class="nc" id="L923">            } catch (IOException e) {</span>
+<span class="nc" id="L924">                LOGGER.error(&quot;Unable to merge user-defined properties&quot;, e);</span>
+<span class="nc" id="L925">                LOGGER.error(&quot;Continuing execution&quot;);</span>
+<span class="nc" id="L926">            }</span>
+        }
+
+<span class="fc" id="L929">        settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);</span>
+<span class="fc" id="L930">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER, proxyServer);</span>
+<span class="fc" id="L931">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);</span>
+<span class="fc" id="L932">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME, proxyUsername);</span>
+<span class="fc" id="L933">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPassword);</span>
+<span class="fc" id="L934">        settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);</span>
+<span class="fc" id="L935">        settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);</span>
+<span class="fc" id="L936">        settings.setStringIfNotEmpty(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER, cpeStartsWithFilter);</span>
+<span class="fc" id="L937">        settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);</span>
+<span class="fc" id="L938">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_CENTRAL_URL, centralUrl);</span>
+<span class="fc" id="L939">        settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);</span>
+<span class="fc" id="L940">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);</span>
+<span class="fc" id="L941">        settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);</span>
+<span class="fc" id="L942">        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);</span>
+<span class="fc" id="L943">        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);</span>
+<span class="fc" id="L944">        settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);</span>
+<span class="fc" id="L945">        settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);</span>
+<span class="fc" id="L946">        settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);</span>
+<span class="fc" id="L947">        settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);</span>
+<span class="fc" id="L948">        settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveUrlModified);</span>
+<span class="fc" id="L949">        settings.setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON, cveUrlBase);</span>
+<span class="fc" id="L950">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH, pathToCore);</span>
+<span class="fc" id="L951">    }</span>
+
+    /**
+     * Executes the dependency-check and generates the report.
+     *
+     * @return a reference to the engine used to perform the scan.
+     * @throws org.owasp.dependencycheck.exception.ScanAgentException thrown if
+     * there is an exception executing the scan.
+     */
+    public Engine execute() throws ScanAgentException {
+<span class="fc" id="L961">        Engine engine = null;</span>
+        try {
+<span class="fc" id="L963">            engine = executeDependencyCheck();</span>
+<span class="pc bpc" id="L964" title="1 of 2 branches missed.">            if (!this.updateOnly) {</span>
+<span class="pc bpc" id="L965" title="1 of 2 branches missed.">                if (this.generateReport) {</span>
+<span class="fc" id="L966">                    generateExternalReports(engine, new File(this.reportOutputDirectory));</span>
+                }
+<span class="pc bpc" id="L968" title="1 of 2 branches missed.">                if (this.showSummary) {</span>
+<span class="fc" id="L969">                    showSummary(engine.getDependencies());</span>
+                }
+<span class="pc bpc" id="L971" title="1 of 2 branches missed.">                if (this.failBuildOnCVSS &lt;= 10) {</span>
+<span class="nc" id="L972">                    checkForFailure(engine.getDependencies());</span>
+                }
+            }
+<span class="nc" id="L975">        } catch (ExceptionCollection ex) {</span>
+<span class="nc bnc" id="L976" title="All 2 branches missed.">            if (ex.isFatal()) {</span>
+<span class="nc" id="L977">                LOGGER.error(&quot;A fatal exception occurred during analysis; analysis has stopped. Please see the debug log for more details.&quot;);</span>
+<span class="nc" id="L978">                LOGGER.debug(&quot;&quot;, ex);</span>
+            }
+<span class="nc" id="L980">            throw new ScanAgentException(&quot;One or more exceptions occurred during analysis; please see the debug log for more details.&quot;, ex);</span>
+        } finally {
+<span class="pc bpc" id="L982" title="1 of 2 branches missed.">            if (engine != null) {</span>
+<span class="fc" id="L983">                engine.close();</span>
+            }
+<span class="fc" id="L985">            settings.cleanup(true);</span>
+        }
+<span class="fc" id="L987">        return engine;</span>
+    }
+
+    /**
+     * Checks to see if a vulnerability has been identified with a CVSS score
+     * that is above the threshold set in the configuration.
+     *
+     * @param dependencies the list of dependency objects
+     * @throws org.owasp.dependencycheck.exception.ScanAgentException thrown if
+     * there is an exception executing the scan.
+     */
+    private void checkForFailure(Dependency[] dependencies) throws ScanAgentException {
+<span class="nc" id="L999">        final StringBuilder ids = new StringBuilder();</span>
+<span class="nc bnc" id="L1000" title="All 2 branches missed.">        for (Dependency d : dependencies) {</span>
+<span class="nc" id="L1001">            boolean addName = true;</span>
+<span class="nc bnc" id="L1002" title="All 2 branches missed.">            for (Vulnerability v : d.getVulnerabilities()) {</span>
+<span class="nc bnc" id="L1003" title="All 2 branches missed.">                if (v.getCvssV2().getScore() &gt;= failBuildOnCVSS) {</span>
+<span class="nc bnc" id="L1004" title="All 2 branches missed.">                    if (addName) {</span>
+<span class="nc" id="L1005">                        addName = false;</span>
+<span class="nc" id="L1006">                        ids.append(NEW_LINE).append(d.getFileName()).append(&quot;: &quot;);</span>
+<span class="nc" id="L1007">                        ids.append(v.getName());</span>
+                    } else {
+<span class="nc" id="L1009">                        ids.append(&quot;, &quot;).append(v.getName());</span>
+                    }
+                }
+<span class="nc" id="L1012">            }</span>
+        }
+<span class="nc bnc" id="L1014" title="All 2 branches missed.">        if (ids.length() &gt; 0) {</span>
+            final String msg;
+<span class="nc bnc" id="L1016" title="All 2 branches missed.">            if (showSummary) {</span>
+<span class="nc" id="L1017">                msg = String.format(&quot;%n%nDependency-Check Failure:%n&quot;</span>
+                        + &quot;One or more dependencies were identified with vulnerabilities that have a CVSS score greater than or equal to '%.1f': %s%n&quot;
+<span class="nc" id="L1019">                        + &quot;See the dependency-check report for more details.%n%n&quot;, failBuildOnCVSS, ids.toString());</span>
+            } else {
+<span class="nc" id="L1021">                msg = String.format(&quot;%n%nDependency-Check Failure:%n&quot;</span>
+                        + &quot;One or more dependencies were identified with vulnerabilities.%n%n&quot;
+                        + &quot;See the dependency-check report for more details.%n%n&quot;);
+            }
+<span class="nc" id="L1025">            throw new ScanAgentException(msg);</span>
+        }
+<span class="nc" id="L1027">    }</span>
+
+    /**
+     * Generates a warning message listing a summary of dependencies and their
+     * associated CPE and CVE entries.
+     *
+     * @param dependencies a list of dependency objects
+     */
+    public static void showSummary(Dependency[] dependencies) {
+<span class="fc" id="L1036">        showSummary(null, dependencies);</span>
+<span class="fc" id="L1037">    }</span>
+
+    /**
+     * Generates a warning message listing a summary of dependencies and their
+     * associated CPE and CVE entries.
+     *
+     * @param projectName the name of the project
+     * @param dependencies a list of dependency objects
+     */
+    public static void showSummary(String projectName, Dependency[] dependencies) {
+<span class="fc" id="L1047">        final StringBuilder summary = new StringBuilder();</span>
+<span class="fc bfc" id="L1048" title="All 2 branches covered.">        for (Dependency d : dependencies) {</span>
+<span class="fc" id="L1049">            final String ids = d.getVulnerabilities(true).stream()</span>
+<span class="fc" id="L1050">                    .map(v -&gt; v.getName())</span>
+<span class="fc" id="L1051">                    .collect(Collectors.joining(&quot;, &quot;));</span>
+<span class="pc bpc" id="L1052" title="1 of 2 branches missed.">            if (ids.length() &gt; 0) {</span>
+<span class="fc" id="L1053">                summary.append(d.getFileName()).append(&quot; (&quot;);</span>
+<span class="fc" id="L1054">                summary.append(Stream.concat(d.getSoftwareIdentifiers().stream(), d.getVulnerableSoftwareIdentifiers().stream())</span>
+<span class="fc" id="L1055">                        .map(i -&gt; i.getValue())</span>
+<span class="fc" id="L1056">                        .collect(Collectors.joining(&quot;, &quot;)));</span>
+<span class="fc" id="L1057">                summary.append(&quot;) : &quot;).append(ids).append(NEW_LINE);</span>
+            }
+        }
+<span class="pc bpc" id="L1060" title="1 of 2 branches missed.">        if (summary.length() &gt; 0) {</span>
+<span class="pc bpc" id="L1061" title="3 of 4 branches missed.">            if (projectName == null || projectName.isEmpty()) {</span>
+<span class="fc" id="L1062">                LOGGER.warn(&quot;\n\nOne or more dependencies were identified with known vulnerabilities:\n\n{}\n\n&quot;</span>
+                        + &quot;See the dependency-check report for more details.\n\n&quot;,
+<span class="fc" id="L1064">                        summary.toString());</span>
+            } else {
+<span class="nc" id="L1066">                LOGGER.warn(&quot;\n\nOne or more dependencies were identified with known vulnerabilities in {}:\n\n{}\n\n&quot;</span>
+                        + &quot;See the dependency-check report for more details.\n\n&quot;,
+                        projectName,
+<span class="nc" id="L1069">                        summary.toString());</span>
+            }
+        }
+<span class="fc" id="L1072">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

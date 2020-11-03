@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GenericIdentifier.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.dependency.naming</a> &gt; <span class="el_source">GenericIdentifier.java</span></div><h1>GenericIdentifier.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2019 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.dependency.naming;
+
+import javax.annotation.concurrent.ThreadSafe;
+import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jetbrains.annotations.NotNull;
+import org.owasp.dependencycheck.dependency.Confidence;
+
+/**
+ * In identifier such as a CPE or dependency coordinates (i.e. GAV).
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+public class GenericIdentifier implements Identifier {
+
+    /**
+     * The serial version UID for serialization.
+     */
+    private static final long serialVersionUID = 8683243972735598200L;
+
+    /**
+     * The confidence that this is the correct identifier.
+     */
+    private Confidence confidence;
+    /**
+     * The value of the identifier
+     */
+    private final String value;
+    /**
+     * The URL for the identifier.
+     */
+    private String url;
+    /**
+     * Notes about the vulnerability. Generally used for suppression
+     * information.
+     */
+    private String notes;
+
+    /**
+     * Constructs a new Identifier with the specified data.
+     *
+     * @param value the identifier value
+     * @param confidence the confidence level that the identifier is correct
+     */
+<span class="fc" id="L64">    public GenericIdentifier(String value, Confidence confidence) {</span>
+<span class="fc" id="L65">        this.confidence = confidence;</span>
+<span class="fc" id="L66">        this.value = value;</span>
+<span class="fc" id="L67">        this.url = null;</span>
+<span class="fc" id="L68">    }</span>
+
+    /**
+     * Constructs a new Identifier with the specified data.
+     *
+     * @param confidence the confidence level that the identifier is correct
+     * @param value the identifier value
+     * @param url the identifier URL
+     */
+<span class="nc" id="L77">    public GenericIdentifier(String value, String url, Confidence confidence) {</span>
+<span class="nc" id="L78">        this.confidence = confidence;</span>
+<span class="nc" id="L79">        this.value = value;</span>
+<span class="nc" id="L80">        this.url = url;</span>
+<span class="nc" id="L81">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Confidence getConfidence() {
+<span class="fc" id="L88">        return confidence;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getValue() {
+<span class="fc" id="L96">        return value;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getUrl() {
+<span class="nc" id="L104">        return url;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getNotes() {
+<span class="nc" id="L112">        return notes;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setConfidence(Confidence confidence) {
+<span class="nc" id="L120">        this.confidence = confidence;</span>
+<span class="nc" id="L121">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setUrl(String url) {
+<span class="nc" id="L128">        this.url = url;</span>
+<span class="nc" id="L129">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setNotes(String notes) {
+<span class="nc" id="L136">        this.notes = notes;</span>
+<span class="nc" id="L137">    }</span>
+
+    /**
+     * Basic implementation of equals.
+     *
+     * @param obj the identifier to compare
+     * @return true if the objects are equal
+     */
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L147" title="All 4 branches missed.">        if (obj == null || !(obj instanceof GenericIdentifier)) {</span>
+<span class="nc" id="L148">            return false;</span>
+        }
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        if (this == obj) {</span>
+<span class="nc" id="L151">            return true;</span>
+        }
+<span class="nc" id="L153">        final GenericIdentifier other = (GenericIdentifier) obj;</span>
+<span class="nc" id="L154">        return new EqualsBuilder()</span>
+<span class="nc" id="L155">                .append(this.value, other.value)</span>
+<span class="nc" id="L156">                .append(this.url, other.url)</span>
+<span class="nc" id="L157">                .append(this.confidence, other.confidence)</span>
+<span class="nc" id="L158">                .isEquals();</span>
+    }
+
+    /**
+     * Basic implementation of hasCode.
+     *
+     * @return the hash code
+     */
+    @Override
+    public int hashCode() {
+<span class="fc" id="L168">        return new HashCodeBuilder(5, 49)</span>
+<span class="fc" id="L169">                .append(value)</span>
+<span class="fc" id="L170">                .append(url)</span>
+<span class="fc" id="L171">                .append(confidence)</span>
+<span class="fc" id="L172">                .toHashCode();</span>
+    }
+
+    /**
+     * Standard implementation of toString; displays identifier value and type.
+     *
+     * @return a String representation of the object
+     */
+    @Override
+    public String toString() {
+<span class="nc" id="L182">        return value;</span>
+    }
+
+    /**
+     * Implementation of the comparator interface.
+     *
+     * @param o the object being compared
+     * @return an integer indicating the ordering
+     */
+    @Override
+    public int compareTo(@NotNull Identifier o) {
+<span class="nc" id="L193">        return new CompareToBuilder()</span>
+<span class="nc" id="L194">                .append(this.value, o.toString())</span>
+<span class="nc" id="L195">                .append(this.url, o.getUrl())</span>
+<span class="nc" id="L196">                .append(this.confidence, o.getConfidence())</span>
+<span class="nc" id="L197">                .toComparison();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

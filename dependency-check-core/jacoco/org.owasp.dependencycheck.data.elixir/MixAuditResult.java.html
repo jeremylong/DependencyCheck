@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MixAuditResult.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.elixir</a> &gt; <span class="el_source">MixAuditResult.java</span></div><h1>MixAuditResult.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2020 OWASP Foundation. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.elixir;
+
+import java.util.List;
+
+/**
+ * Represents a single vulnerability result from `mix_audit --format json`.
+ *
+ * @author defsprite
+ */
+public class MixAuditResult {
+
+    /**
+     * The vulnerability id.
+     */
+    private final String id;
+    /**
+     * The CVE ID.
+     */
+    private final String cve;
+    /**
+     * The vulnerability title.
+     */
+    private final String title;
+    /**
+     * The vulnerability description.
+     */
+    private final String description;
+    /**
+     * The vulnerability disclosure date.
+     */
+    private final String disclosureDate;
+    /**
+     * The link to the vulnerability details.
+     */
+    private final String url;
+    /**
+     * The list of patched versions.
+     */
+    private final List&lt;String&gt; patchedVersions;
+
+    /**
+     * The path to the lock file.
+     */
+    private final String dependencyLockfile;
+    /**
+     * The dependency package name.
+     */
+    private final String dependencyPackage;
+    /**
+     * The dependency version.
+     */
+    private final String dependencyVersion;
+
+    //CSOFF: ParameterNumber
+    /**
+     * Constructs a new Mix Audit Result.
+     *
+     * @param id the vulnerability id
+     * @param cve the CVE entry name
+     * @param title the CVE title
+     * @param description the description of the vulnerability
+     * @param disclosureDate the vulnerability disclosure date
+     * @param url a link to the vulnerability information
+     * @param patchedVersions the list of patched versions
+     * @param dependencyLockfile the path to the lock file
+     * @param dependencyPackage the name of the dependency
+     * @param dependencyVersion the version of the dependency
+     */
+    public MixAuditResult(String id, String cve, String title, String description, String disclosureDate,
+            String url, List&lt;String&gt; patchedVersions, String dependencyLockfile, String dependencyPackage,
+<span class="fc" id="L88">            String dependencyVersion) {</span>
+<span class="fc" id="L89">        this.id = id;</span>
+<span class="fc" id="L90">        this.cve = cve;</span>
+<span class="fc" id="L91">        this.title = title;</span>
+<span class="fc" id="L92">        this.description = description;</span>
+<span class="fc" id="L93">        this.disclosureDate = disclosureDate;</span>
+<span class="fc" id="L94">        this.url = url;</span>
+<span class="fc" id="L95">        this.patchedVersions = patchedVersions;</span>
+<span class="fc" id="L96">        this.dependencyLockfile = dependencyLockfile;</span>
+<span class="fc" id="L97">        this.dependencyPackage = dependencyPackage;</span>
+<span class="fc" id="L98">        this.dependencyVersion = dependencyVersion;</span>
+<span class="fc" id="L99">    }</span>
+    //CSON: ParameterNumber
+
+    /**
+     * Returns the vulnerability id.
+     *
+     * @return the vulnerability id
+     */
+    public String getId() {
+<span class="fc" id="L108">        return id;</span>
+    }
+
+    /**
+     * Returns the CVE entry name.
+     *
+     * @return the CVE entry name
+     */
+    public String getCve() {
+<span class="fc" id="L117">        return cve;</span>
+    }
+
+    /**
+     * Returns the vulnerability title.
+     *
+     * @return the vulnerability title
+     */
+    public String getTitle() {
+<span class="fc" id="L126">        return title;</span>
+    }
+
+    /**
+     * Returns the vulnerability description.
+     *
+     * @return the vulnerability description
+     */
+    public String getDescription() {
+<span class="fc" id="L135">        return description;</span>
+    }
+
+    /**
+     * Returns the vulnerability disclosure date.
+     *
+     * @return the vulnerability disclosure date
+     */
+    public String getDisclosureDate() {
+<span class="nc" id="L144">        return disclosureDate;</span>
+    }
+
+    /**
+     * Returns the URL to the vulnerability page.
+     *
+     * @return the URL to the vulnerability page
+     */
+    public String getUrl() {
+<span class="fc" id="L153">        return url;</span>
+    }
+
+    /**
+     * Returns the list of patched versions.
+     *
+     * @return the list of patched versions
+     */
+    public List&lt;String&gt; getPatchedVersions() {
+<span class="nc" id="L162">        return patchedVersions;</span>
+    }
+
+    /**
+     * Returns the path to the dependency lock file.
+     *
+     * @return the path to the dependency lock file
+     */
+    public String getDependencyLockfile() {
+<span class="fc" id="L171">        return dependencyLockfile;</span>
+    }
+
+    /**
+     * Returns the package name.
+     *
+     * @return the package name
+     */
+    public String getDependencyPackage() {
+<span class="fc" id="L180">        return dependencyPackage;</span>
+    }
+
+    /**
+     * Returns the dependency version.
+     *
+     * @return the dependency version
+     */
+    public String getDependencyVersion() {
+<span class="fc" id="L189">        return dependencyVersion;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

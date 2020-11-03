@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OpenSSLAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">OpenSSLAnalyzer.java</span></div><h1>OpenSSLAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2015 Institute for Defense Analyses. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURL;
+import com.github.packageurl.PackageURLBuilder;
+import org.apache.commons.io.FileUtils;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.Settings;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.owasp.dependencycheck.exception.InitializationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Used to analyze OpenSSL source code present in the file system.
+ *
+ * @author Dale Visser
+ */
+@ThreadSafe
+<span class="fc" id="L51">public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {</span>
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L56">    private static final Logger LOGGER = LoggerFactory.getLogger(OpenSSLAnalyzer.class);</span>
+    /**
+     * Hexadecimal.
+     */
+    private static final int HEXADECIMAL = 16;
+    /**
+     * Filename to analyze. All other .h files get removed from consideration.
+     */
+    private static final String OPENSSLV_H = &quot;opensslv.h&quot;;
+
+    /**
+     * Filter that detects files named &quot;__init__.py&quot;.
+     */
+<span class="fc" id="L69">    private static final FileFilter OPENSSLV_FILTER = FileFilterBuilder.newInstance().addFilenames(OPENSSLV_H).build();</span>
+    /**
+     * Open SSL Version number pattern.
+     */
+<span class="fc" id="L73">    private static final Pattern VERSION_PATTERN = Pattern.compile(</span>
+            &quot;define\\s+OPENSSL_VERSION_NUMBER\\s+0x([0-9a-zA-Z]{8})L&quot;, Pattern.DOTALL
+            | Pattern.CASE_INSENSITIVE);
+    /**
+     * The offset of the major version number.
+     */
+    private static final int MAJOR_OFFSET = 28;
+    /**
+     * The mask for the minor version number.
+     */
+    private static final long MINOR_MASK = 0x0ff00000L;
+    /**
+     * The offset of the minor version number.
+     */
+    private static final int MINOR_OFFSET = 20;
+    /**
+     * The max for the fix version.
+     */
+    private static final long FIX_MASK = 0x000ff000L;
+    /**
+     * The offset for the fix version.
+     */
+    private static final int FIX_OFFSET = 12;
+    /**
+     * The mask for the patch version.
+     */
+    private static final long PATCH_MASK = 0x00000ff0L;
+    /**
+     * The offset for the patch version.
+     */
+    private static final int PATCH_OFFSET = 4;
+    /**
+     * Number of letters.
+     */
+    private static final int NUM_LETTERS = 26;
+    /**
+     * The status mask.
+     */
+    private static final int STATUS_MASK = 0x0000000f;
+
+    /**
+     * Returns the open SSL version as a string.
+     *
+     * @param openSSLVersionConstant The open SSL version
+     * @return the version of openssl
+     */
+    protected static String getOpenSSLVersion(long openSSLVersionConstant) {
+<span class="fc" id="L120">        final long major = openSSLVersionConstant &gt;&gt;&gt; MAJOR_OFFSET;</span>
+<span class="fc" id="L121">        final long minor = (openSSLVersionConstant &amp; MINOR_MASK) &gt;&gt;&gt; MINOR_OFFSET;</span>
+<span class="fc" id="L122">        final long fix = (openSSLVersionConstant &amp; FIX_MASK) &gt;&gt;&gt; FIX_OFFSET;</span>
+<span class="fc" id="L123">        final long patchLevel = (openSSLVersionConstant &amp; PATCH_MASK) &gt;&gt;&gt; PATCH_OFFSET;</span>
+<span class="pc bpc" id="L124" title="1 of 4 branches missed.">        final String patch = 0 == patchLevel || patchLevel &gt; NUM_LETTERS ? &quot;&quot; : String.valueOf((char) (patchLevel + 'a' - 1));</span>
+<span class="fc" id="L125">        final int statusCode = (int) (openSSLVersionConstant &amp; STATUS_MASK);</span>
+<span class="fc bfc" id="L126" title="All 4 branches covered.">        final String status = 0xf == statusCode ? &quot;&quot; : (0 == statusCode ? &quot;-dev&quot; : &quot;-beta&quot; + statusCode);</span>
+<span class="fc" id="L127">        return String.format(&quot;%d.%d.%d%s%s&quot;, major, minor, fix, patch, status);</span>
+    }
+
+    /**
+     * Returns the name of the Python Package Analyzer.
+     *
+     * @return the name of the analyzer
+     */
+    @Override
+    public String getName() {
+<span class="fc" id="L137">        return &quot;OpenSSL Source Analyzer&quot;;</span>
+    }
+
+    /**
+     * Tell that we are used for information collection.
+     *
+     * @return INFORMATION_COLLECTION
+     */
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+<span class="fc" id="L147">        return AnalysisPhase.INFORMATION_COLLECTION;</span>
+    }
+
+    /**
+     * Returns the set of supported file extensions.
+     *
+     * @return the set of supported file extensions
+     */
+    @Override
+    protected FileFilter getFileFilter() {
+<span class="fc" id="L157">        return OPENSSLV_FILTER;</span>
+    }
+
+    /**
+     * Returns the setting for the analyzer enabled setting key.
+     *
+     * @return the setting for the analyzer enabled setting key
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+<span class="fc" id="L167">        return Settings.KEYS.ANALYZER_OPENSSL_ENABLED;</span>
+    }
+
+    /**
+     * No-op initializer implementation.
+     *
+     * @param engine a reference to the dependency-check engine
+     * @throws InitializationException never thrown
+     */
+    @Override
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
+        // Nothing to do here.
+<span class="fc" id="L179">    }</span>
+
+    /**
+     * Analyzes python packages and adds evidence to the dependency.
+     *
+     * @param dependency the dependency being analyzed
+     * @param engine the engine being used to perform the scan
+     * @throws AnalysisException thrown if there is an unrecoverable error
+     * analyzing the dependency
+     */
+    @Override
+    protected void analyzeDependency(Dependency dependency, Engine engine)
+            throws AnalysisException {
+<span class="fc" id="L192">        final File file = dependency.getActualFile();</span>
+<span class="fc" id="L193">        final String parentName = file.getParentFile().getName();</span>
+<span class="fc" id="L194">        boolean found = false;</span>
+<span class="fc" id="L195">        final String contents = getFileContents(file);</span>
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">        if (!contents.isEmpty()) {</span>
+<span class="fc" id="L197">            final Matcher matcher = VERSION_PATTERN.matcher(contents);</span>
+<span class="pc bpc" id="L198" title="1 of 2 branches missed.">            if (matcher.find()) {</span>
+<span class="fc" id="L199">                found = true;</span>
+<span class="fc" id="L200">                final String version = getOpenSSLVersion(Long.parseLong(matcher.group(1), HEXADECIMAL));</span>
+<span class="fc" id="L201">                dependency.addEvidence(EvidenceType.VERSION, OPENSSLV_H, &quot;Version Constant&quot;,</span>
+                        version, Confidence.HIGH);
+                try {
+<span class="fc" id="L204">                    final PackageURL purl = PackageURLBuilder.aPackageURL().withType(&quot;generic&quot;)</span>
+<span class="fc" id="L205">                            .withName(&quot;openssl&quot;).withVersion(version).build();</span>
+<span class="fc" id="L206">                    dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
+<span class="nc" id="L207">                } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L208">                    LOGGER.debug(&quot;Unable to build package url for openssl&quot;, ex);</span>
+<span class="nc" id="L209">                    final GenericIdentifier id = new GenericIdentifier(&quot;generic:openssl@&quot; + version, Confidence.HIGHEST);</span>
+<span class="nc" id="L210">                    dependency.addSoftwareIdentifier(id);</span>
+<span class="fc" id="L211">                }</span>
+
+            }
+        }
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">        if (found) {</span>
+<span class="fc" id="L216">            dependency.setDisplayFileName(parentName + File.separatorChar + OPENSSLV_H);</span>
+<span class="fc" id="L217">            dependency.addEvidence(EvidenceType.VENDOR, OPENSSLV_H, &quot;Vendor&quot;, &quot;OpenSSL&quot;, Confidence.HIGHEST);</span>
+<span class="fc" id="L218">            dependency.addEvidence(EvidenceType.PRODUCT, OPENSSLV_H, &quot;Product&quot;, &quot;OpenSSL&quot;, Confidence.HIGHEST);</span>
+        } else {
+<span class="nc" id="L220">            engine.removeDependency(dependency);</span>
+        }
+<span class="fc" id="L222">    }</span>
+
+    /**
+     * Retrieves the contents of a given file.
+     *
+     * @param actualFile the file to read
+     * @return the contents of the file
+     * @throws AnalysisException thrown if there is an IO Exception
+     */
+    private String getFileContents(final File actualFile)
+            throws AnalysisException {
+        try {
+<span class="fc" id="L234">            return FileUtils.readFileToString(actualFile, Charset.defaultCharset()).trim();</span>
+<span class="nc" id="L235">        } catch (IOException e) {</span>
+<span class="nc" id="L236">            throw new AnalysisException(</span>
+                    &quot;Problem occurred while reading dependency file.&quot;, e);
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

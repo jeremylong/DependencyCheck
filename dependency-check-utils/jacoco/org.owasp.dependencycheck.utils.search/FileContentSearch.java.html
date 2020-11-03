@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FileContentSearch.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Utils</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils.search</a> &gt; <span class="el_source">FileContentSearch.java</span></div><h1>FileContentSearch.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2018 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.utils.search;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.regex.Pattern;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+/**
+ * Utility for searching files.
+ *
+ * @author Jeremy Long
+ * @version $Id: $Id
+ */
+public final class FileContentSearch {
+
+    /**
+     * Private constructor for a utility class.
+     */
+    private FileContentSearch() {
+        //empty constructor for utility class.
+    }
+
+    /**
+     * Determines if the given file contains the given regular expression.
+     *
+     * @param file the file to test
+     * @param pattern the pattern used to test the file
+     * @return &lt;code&gt;true&lt;/code&gt; if the regular expression matches the file
+     * content; otherwise &lt;code&gt;false&lt;/code&gt;
+     * @throws java.io.IOException thrown if there is an error reading the file
+     */
+    public static boolean contains(File file, String pattern) throws IOException {
+<span class="fc" id="L53">        try (Scanner fileScanner = new Scanner(file, UTF_8.name())) {</span>
+<span class="fc" id="L54">            final Pattern regex = Pattern.compile(pattern);</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">            if (fileScanner.findWithinHorizon(regex, 0) != null) {</span>
+<span class="fc" id="L56">                return true;</span>
+            }
+        }
+<span class="fc" id="L59">        return false;</span>
+    }
+
+    /**
+     * Determines if the given file contains the given regular expressions.
+     *
+     * @param file the file to test
+     * @param patterns the array of patterns used to test the file
+     * @return &lt;code&gt;true&lt;/code&gt; if one of the regular expressions matches the
+     * file content; otherwise &lt;code&gt;false&lt;/code&gt;
+     * @throws java.io.IOException thrown if there is an error reading the file
+     */
+    public static boolean contains(File file, String[] patterns) throws IOException {
+<span class="fc" id="L72">        final List&lt;Pattern&gt; regexes = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        for (String pattern : patterns) {</span>
+<span class="fc" id="L74">            regexes.add(Pattern.compile(pattern));</span>
+        }
+<span class="fc" id="L76">        try (Scanner fileScanner = new Scanner(file, UTF_8.name())) {</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">            return regexes.stream().anyMatch((regex) -&gt; (fileScanner.findWithinHorizon(regex, 0) != null));</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

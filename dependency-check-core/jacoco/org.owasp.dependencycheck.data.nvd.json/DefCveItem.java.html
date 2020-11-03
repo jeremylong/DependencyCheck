@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefCveItem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvd.json</a> &gt; <span class="el_source">DefCveItem.java</span></div><h1>DefCveItem.java</h1><pre class="source lang-java linenums">
+package org.owasp.dependencycheck.data.nvd.json;
+
+import java.util.HashMap;
+import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+
+/**
+ * Defines a vulnerability in the NVD data feed.
+ * 
+ */
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({
+    &quot;cve&quot;,
+    &quot;configurations&quot;,
+    &quot;impact&quot;
+})
+<span class="fc" id="L25">public class DefCveItem {</span>
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;cve&quot;)
+    private CVEJSON40Min11 cve;
+    /**
+     * Defines the set of product configurations for a NVD applicability statement.
+     * 
+     */
+    @JsonProperty(&quot;configurations&quot;)
+    @JsonPropertyDescription(&quot;Defines the set of product configurations for a NVD applicability statement.&quot;)
+    private DefConfigurations configurations;
+    /**
+     * Impact scores for a vulnerability as found on NVD.
+     * 
+     */
+    @JsonProperty(&quot;impact&quot;)
+    @JsonPropertyDescription(&quot;Impact scores for a vulnerability as found on NVD.&quot;)
+    private DefImpact impact;
+<span class="fc" id="L48">    @JsonIgnore</span>
+    private Map&lt;String, Object&gt; additionalProperties = new HashMap&lt;String, Object&gt;();
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;cve&quot;)
+    public CVEJSON40Min11 getCve() {
+<span class="fc" id="L58">        return cve;</span>
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;cve&quot;)
+    public void setCve(CVEJSON40Min11 cve) {
+<span class="fc" id="L68">        this.cve = cve;</span>
+<span class="fc" id="L69">    }</span>
+
+    /**
+     * Defines the set of product configurations for a NVD applicability statement.
+     * 
+     */
+    @JsonProperty(&quot;configurations&quot;)
+    public DefConfigurations getConfigurations() {
+<span class="fc" id="L77">        return configurations;</span>
+    }
+
+    /**
+     * Defines the set of product configurations for a NVD applicability statement.
+     * 
+     */
+    @JsonProperty(&quot;configurations&quot;)
+    public void setConfigurations(DefConfigurations configurations) {
+<span class="fc" id="L86">        this.configurations = configurations;</span>
+<span class="fc" id="L87">    }</span>
+
+    /**
+     * Impact scores for a vulnerability as found on NVD.
+     * 
+     */
+    @JsonProperty(&quot;impact&quot;)
+    public DefImpact getImpact() {
+<span class="fc" id="L95">        return impact;</span>
+    }
+
+    /**
+     * Impact scores for a vulnerability as found on NVD.
+     * 
+     */
+    @JsonProperty(&quot;impact&quot;)
+    public void setImpact(DefImpact impact) {
+<span class="fc" id="L104">        this.impact = impact;</span>
+<span class="fc" id="L105">    }</span>
+
+    @JsonAnyGetter
+    public Map&lt;String, Object&gt; getAdditionalProperties() {
+<span class="nc" id="L109">        return this.additionalProperties;</span>
+    }
+
+    @JsonAnySetter
+    public void setAdditionalProperty(String name, Object value) {
+<span class="fc" id="L114">        this.additionalProperties.put(name, value);</span>
+<span class="fc" id="L115">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L119">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L120">        sb.append(DefCveItem.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');</span>
+<span class="nc" id="L121">        sb.append(&quot;cve&quot;);</span>
+<span class="nc" id="L122">        sb.append('=');</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">        sb.append(((this.cve == null)?&quot;&lt;null&gt;&quot;:this.cve));</span>
+<span class="nc" id="L124">        sb.append(',');</span>
+<span class="nc" id="L125">        sb.append(&quot;configurations&quot;);</span>
+<span class="nc" id="L126">        sb.append('=');</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        sb.append(((this.configurations == null)?&quot;&lt;null&gt;&quot;:this.configurations));</span>
+<span class="nc" id="L128">        sb.append(',');</span>
+<span class="nc" id="L129">        sb.append(&quot;impact&quot;);</span>
+<span class="nc" id="L130">        sb.append('=');</span>
+<span class="nc bnc" id="L131" title="All 2 branches missed.">        sb.append(((this.impact == null)?&quot;&lt;null&gt;&quot;:this.impact));</span>
+<span class="nc" id="L132">        sb.append(',');</span>
+<span class="nc" id="L133">        sb.append(&quot;additionalProperties&quot;);</span>
+<span class="nc" id="L134">        sb.append('=');</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        sb.append(((this.additionalProperties == null)?&quot;&lt;null&gt;&quot;:this.additionalProperties));</span>
+<span class="nc" id="L136">        sb.append(',');</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        if (sb.charAt((sb.length()- 1)) == ',') {</span>
+<span class="nc" id="L138">            sb.setCharAt((sb.length()- 1), ']');</span>
+        } else {
+<span class="nc" id="L140">            sb.append(']');</span>
+        }
+<span class="nc" id="L142">        return sb.toString();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L147">        int result = 1;</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">        result = ((result* 31)+((this.cve == null)? 0 :this.cve.hashCode()));</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        result = ((result* 31)+((this.configurations == null)? 0 :this.configurations.hashCode()));</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">        result = ((result* 31)+((this.impact == null)? 0 :this.impact.hashCode()));</span>
+<span class="nc" id="L152">        return result;</span>
+    }
+
+    @Override
+    public boolean equals(Object other) {
+<span class="nc bnc" id="L157" title="All 2 branches missed.">        if (other == this) {</span>
+<span class="nc" id="L158">            return true;</span>
+        }
+<span class="nc bnc" id="L160" title="All 2 branches missed.">        if ((other instanceof DefCveItem) == false) {</span>
+<span class="nc" id="L161">            return false;</span>
+        }
+<span class="nc" id="L163">        DefCveItem rhs = ((DefCveItem) other);</span>
+<span class="nc bnc" id="L164" title="All 24 branches missed.">        return (((((this.cve == rhs.cve)||((this.cve!= null)&amp;&amp;this.cve.equals(rhs.cve)))&amp;&amp;((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&amp;&amp;this.additionalProperties.equals(rhs.additionalProperties))))&amp;&amp;((this.configurations == rhs.configurations)||((this.configurations!= null)&amp;&amp;this.configurations.equals(rhs.configurations))))&amp;&amp;((this.impact == rhs.impact)||((this.impact!= null)&amp;&amp;this.impact.equals(rhs.impact))));</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

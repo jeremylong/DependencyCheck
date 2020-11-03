@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ComposerLockParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.composer</a> &gt; <span class="el_source">ComposerLockParser.java</span></div><h1>ComposerLockParser.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2015 The OWASP Foundation. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.composer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.stream.JsonParsingException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.concurrent.NotThreadSafe;
+
+/**
+ * Parses a Composer.lock file from an input stream. In a separate class so it can hopefully be injected.
+ *
+ * @author colezlaw
+ */
+@NotThreadSafe
+public class ComposerLockParser {
+
+    /**
+     * The JsonReader for parsing JSON
+     */
+    private final JsonReader jsonReader;
+
+    /**
+     * The List of ComposerDependencies found
+     */
+    private final List&lt;ComposerDependency&gt; composerDependencies;
+
+    /**
+     * The LOGGER
+     */
+<span class="fc" id="L55">    private static final Logger LOGGER = LoggerFactory.getLogger(ComposerLockParser.class);</span>
+
+    /**
+     * Creates a ComposerLockParser from a JsonReader and an InputStream.
+     *
+     * @param inputStream the InputStream to parse
+     */
+<span class="fc" id="L62">    public ComposerLockParser(InputStream inputStream) {</span>
+<span class="fc" id="L63">        LOGGER.debug(&quot;Creating a ComposerLockParser&quot;);</span>
+<span class="fc" id="L64">        this.jsonReader = Json.createReader(inputStream);</span>
+<span class="fc" id="L65">        this.composerDependencies = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L66">    }</span>
+
+    /**
+     * Process the input stream to create the list of dependencies.
+     */
+    public void process() {
+<span class="fc" id="L72">        LOGGER.debug(&quot;Beginning Composer lock processing&quot;);</span>
+        try {
+<span class="fc" id="L74">            final JsonObject composer = jsonReader.readObject();</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">            if (composer.containsKey(&quot;packages&quot;)) {</span>
+<span class="fc" id="L76">                LOGGER.debug(&quot;Found packages&quot;);</span>
+<span class="fc" id="L77">                final JsonArray packages = composer.getJsonArray(&quot;packages&quot;);</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">                for (JsonObject pkg : packages.getValuesAs(JsonObject.class)) {</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">                    if (pkg.containsKey(&quot;name&quot;)) {</span>
+<span class="fc" id="L80">                        final String groupName = pkg.getString(&quot;name&quot;);</span>
+<span class="pc bpc" id="L81" title="2 of 4 branches missed.">                        if (groupName.indexOf('/') &gt;= 0 &amp;&amp; groupName.indexOf('/') &lt;= groupName.length() - 1) {</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">                            if (pkg.containsKey(&quot;version&quot;)) {</span>
+<span class="fc" id="L83">                                final String group = groupName.substring(0, groupName.indexOf('/'));</span>
+<span class="fc" id="L84">                                final String project = groupName.substring(groupName.indexOf('/') + 1);</span>
+<span class="fc" id="L85">                                String version = pkg.getString(&quot;version&quot;);</span>
+                                // Some version numbers begin with v - which doesn't end up matching CPE's
+<span class="fc bfc" id="L87" title="All 2 branches covered.">                                if (version.startsWith(&quot;v&quot;)) {</span>
+<span class="fc" id="L88">                                    version = version.substring(1);</span>
+                                }
+<span class="fc" id="L90">                                LOGGER.debug(&quot;Got package {}/{}/{}&quot;, group, project, version);</span>
+<span class="fc" id="L91">                                composerDependencies.add(new ComposerDependency(group, project, version));</span>
+<span class="fc" id="L92">                            } else {</span>
+<span class="nc" id="L93">                                LOGGER.debug(&quot;Group/package {} does not have a version&quot;, groupName);</span>
+                            }
+                        } else {
+<span class="nc" id="L96">                            LOGGER.debug(&quot;Got a dependency with no name&quot;);</span>
+                        }
+                    }
+<span class="fc" id="L99">                }</span>
+            }
+<span class="fc" id="L101">        } catch (JsonParsingException jsonpe) {</span>
+<span class="fc" id="L102">            throw new ComposerException(&quot;Error parsing stream&quot;, jsonpe);</span>
+<span class="nc" id="L103">        } catch (JsonException jsone) {</span>
+<span class="nc" id="L104">            throw new ComposerException(&quot;Error reading stream&quot;, jsone);</span>
+<span class="nc" id="L105">        } catch (IllegalStateException ise) {</span>
+<span class="nc" id="L106">            throw new ComposerException(&quot;Illegal state in composer stream&quot;, ise);</span>
+<span class="fc" id="L107">        } catch (ClassCastException cce) {</span>
+<span class="fc" id="L108">            throw new ComposerException(&quot;Not exactly composer lock&quot;, cce);</span>
+<span class="fc" id="L109">        }</span>
+<span class="fc" id="L110">    }</span>
+
+    /**
+     * Gets the list of dependencies.
+     *
+     * @return the list of dependencies
+     */
+    public List&lt;ComposerDependency&gt; getDependencies() {
+<span class="fc" id="L118">        return composerDependencies;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

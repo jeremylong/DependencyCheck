@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Description.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvd.json</a> &gt; <span class="el_source">Description.java</span></div><h1>Description.java</h1><pre class="source lang-java linenums">
+package org.owasp.dependencycheck.data.nvd.json;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({
+    &quot;description_data&quot;
+})
+<span class="fc" id="L19">public class Description {</span>
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+<span class="fc" id="L26">    @JsonProperty(&quot;description_data&quot;)</span>
+    private List&lt;LangString&gt; descriptionData = new ArrayList&lt;LangString&gt;();
+<span class="fc" id="L28">    @JsonIgnore</span>
+    private Map&lt;String, Object&gt; additionalProperties = new HashMap&lt;String, Object&gt;();
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;description_data&quot;)
+    public List&lt;LangString&gt; getDescriptionData() {
+<span class="fc" id="L38">        return descriptionData;</span>
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;description_data&quot;)
+    public void setDescriptionData(List&lt;LangString&gt; descriptionData) {
+<span class="fc" id="L48">        this.descriptionData = descriptionData;</span>
+<span class="fc" id="L49">    }</span>
+
+    @JsonAnyGetter
+    public Map&lt;String, Object&gt; getAdditionalProperties() {
+<span class="nc" id="L53">        return this.additionalProperties;</span>
+    }
+
+    @JsonAnySetter
+    public void setAdditionalProperty(String name, Object value) {
+<span class="nc" id="L58">        this.additionalProperties.put(name, value);</span>
+<span class="nc" id="L59">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L63">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L64">        sb.append(Description.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');</span>
+<span class="nc" id="L65">        sb.append(&quot;descriptionData&quot;);</span>
+<span class="nc" id="L66">        sb.append('=');</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        sb.append(((this.descriptionData == null)?&quot;&lt;null&gt;&quot;:this.descriptionData));</span>
+<span class="nc" id="L68">        sb.append(',');</span>
+<span class="nc" id="L69">        sb.append(&quot;additionalProperties&quot;);</span>
+<span class="nc" id="L70">        sb.append('=');</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        sb.append(((this.additionalProperties == null)?&quot;&lt;null&gt;&quot;:this.additionalProperties));</span>
+<span class="nc" id="L72">        sb.append(',');</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (sb.charAt((sb.length()- 1)) == ',') {</span>
+<span class="nc" id="L74">            sb.setCharAt((sb.length()- 1), ']');</span>
+        } else {
+<span class="nc" id="L76">            sb.append(']');</span>
+        }
+<span class="nc" id="L78">        return sb.toString();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L83">        int result = 1;</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        result = ((result* 31)+((this.descriptionData == null)? 0 :this.descriptionData.hashCode()));</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));</span>
+<span class="nc" id="L86">        return result;</span>
+    }
+
+    @Override
+    public boolean equals(Object other) {
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (other == this) {</span>
+<span class="nc" id="L92">            return true;</span>
+        }
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if ((other instanceof Description) == false) {</span>
+<span class="nc" id="L95">            return false;</span>
+        }
+<span class="nc" id="L97">        Description rhs = ((Description) other);</span>
+<span class="nc bnc" id="L98" title="All 12 branches missed.">        return (((this.descriptionData == rhs.descriptionData)||((this.descriptionData!= null)&amp;&amp;this.descriptionData.equals(rhs.descriptionData)))&amp;&amp;((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&amp;&amp;this.additionalProperties.equals(rhs.additionalProperties))));</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

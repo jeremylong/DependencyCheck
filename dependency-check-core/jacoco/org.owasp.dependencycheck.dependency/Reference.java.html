@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Reference.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.dependency</a> &gt; <span class="el_source">Reference.java</span></div><h1>Reference.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.dependency;
+
+import java.io.Serializable;
+import javax.annotation.concurrent.ThreadSafe;
+import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * An external reference for a vulnerability. This contains a name, URL, and a
+ * source.
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+public class Reference implements Serializable, Comparable&lt;Reference&gt; {
+
+    /**
+     * the serial version uid.
+     */
+    private static final long serialVersionUID = -3444464824563008021L;
+    /**
+     * The name of the reference.
+     */
+    private String name;
+    /**
+     * the url for the reference.
+     */
+    private String url;
+    /**
+     * the source of the reference.
+     */
+    private String source;
+
+    /**
+     * Creates a new reference.
+     */
+<span class="fc" id="L56">    public Reference() {</span>
+<span class="fc" id="L57">    }</span>
+
+    /**
+     * Creates a new reference.
+     *
+     * @param name the reference name
+     * @param source the reference source
+     * @param url the reference url
+     */
+<span class="fc" id="L66">    public Reference(String name, String source, String url) {</span>
+<span class="fc" id="L67">        this.name = name;</span>
+<span class="fc" id="L68">        this.source = source;</span>
+<span class="fc" id="L69">        this.url = url;</span>
+<span class="fc" id="L70">    }</span>
+
+    /**
+     * Get the value of name.
+     *
+     * @return the value of name
+     */
+    public String getName() {
+<span class="fc" id="L78">        return name;</span>
+    }
+
+    /**
+     * Set the value of name.
+     *
+     * @param name new value of name
+     */
+    public void setName(String name) {
+<span class="fc" id="L87">        this.name = name;</span>
+<span class="fc" id="L88">    }</span>
+
+    /**
+     * Get the value of url.
+     *
+     * @return the value of url
+     */
+    public String getUrl() {
+<span class="fc" id="L96">        return url;</span>
+    }
+
+    /**
+     * Set the value of url.
+     *
+     * @param url new value of url
+     */
+    public void setUrl(String url) {
+<span class="fc" id="L105">        this.url = url;</span>
+<span class="fc" id="L106">    }</span>
+
+    /**
+     * Get the value of source.
+     *
+     * @return the value of source
+     */
+    public String getSource() {
+<span class="fc" id="L114">        return source;</span>
+    }
+
+    /**
+     * Set the value of source.
+     *
+     * @param source new value of source
+     */
+    public void setSource(String source) {
+<span class="fc" id="L123">        this.source = source;</span>
+<span class="fc" id="L124">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L128">        return &quot;Reference: { name='&quot; + this.name + &quot;', url='&quot; + this.url + &quot;', source='&quot; + this.source + &quot;' }&quot;;</span>
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L133" title="All 4 branches missed.">        if (obj == null || !(obj instanceof Reference)) {</span>
+<span class="nc" id="L134">            return false;</span>
+        }
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        if (this == obj) {</span>
+<span class="nc" id="L137">            return true;</span>
+        }
+<span class="nc" id="L139">        final Reference rhs = (Reference) obj;</span>
+<span class="nc" id="L140">        return new EqualsBuilder()</span>
+<span class="nc" id="L141">                .append(source, rhs.source)</span>
+<span class="nc" id="L142">                .append(name, rhs.name)</span>
+<span class="nc" id="L143">                .append(url, rhs.url)</span>
+<span class="nc" id="L144">                .isEquals();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L149">        return new HashCodeBuilder(5, 67)</span>
+<span class="fc" id="L150">                .append(source)</span>
+<span class="fc" id="L151">                .append(name)</span>
+<span class="fc" id="L152">                .append(url)</span>
+<span class="fc" id="L153">                .toHashCode();</span>
+    }
+
+    /**
+     * Implementation of the comparable interface.
+     *
+     * @param o the Reference being compared
+     * @return an integer indicating the ordering of the two objects
+     */
+    @Override
+    public int compareTo(@NotNull Reference o) {
+<span class="fc" id="L164">        return new CompareToBuilder()</span>
+<span class="fc" id="L165">                .append(source, o.source)</span>
+<span class="fc" id="L166">                .append(name, o.name)</span>
+<span class="fc" id="L167">                .append(url, o.url)</span>
+<span class="fc" id="L168">                .toComparison();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

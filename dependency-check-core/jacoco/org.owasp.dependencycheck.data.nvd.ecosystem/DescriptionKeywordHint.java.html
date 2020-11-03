@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DescriptionKeywordHint.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvd.ecosystem</a> &gt; <span class="el_source">DescriptionKeywordHint.java</span></div><h1>DescriptionKeywordHint.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2020 The OWASP Foundation. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nvd.ecosystem;
+
+/**
+ * Enumeration used for mapping CVEs to their ecosystems based on the
+ * description.
+ *
+ * @author skjolber
+ */
+<span class="fc" id="L26">public enum DescriptionKeywordHint implements EcosystemHint {</span>
+
+    // note: all must be lowercase
+    /**
+     * The NPM Ecosystem (node.js).
+     */
+<span class="fc" id="L32">    NPM(&quot;npm&quot;, Ecosystem.NODEJS),</span>
+    /**
+     * The node.js ecosystem.
+     */
+<span class="fc" id="L36">    NODEJS(&quot;node.js&quot;, Ecosystem.NODEJS),</span>
+    /**
+     * The grails ecosystem (java).
+     */
+<span class="fc" id="L40">    GRAILS(&quot;grails&quot;, Ecosystem.JAVA),</span>
+    /**
+     * The ruby ecosystem.
+     */
+<span class="fc" id="L44">    RUBY_GEM(&quot;ruby gem&quot;, Ecosystem.RUBY),</span>
+    /**
+     * The django ecosystem.
+     */
+<span class="fc" id="L48">    DJANGO(&quot;django&quot;, Ecosystem.PYTHON),</span>
+    /**
+     * Description text to identify native ecosystems.
+     */
+<span class="fc" id="L52">    BUFFER_OVERFLOW(&quot;buffer overflow&quot;, Ecosystem.NATIVE),</span>
+    /**
+     * Description text to identify native ecosystems.
+     */
+<span class="fc" id="L56">    BUFFER_OVERFLOWS(&quot;buffer overflows&quot;, Ecosystem.NATIVE),</span>
+    /**
+     * The word press ecosystem (PHP).
+     */
+<span class="fc" id="L60">    WORDPRESS(&quot;wordpress&quot;, Ecosystem.PHP),</span>
+    /**
+     * The drupal ecosystem (PHP).
+     */
+<span class="fc" id="L64">    DRUPAL(&quot;drupal&quot;, Ecosystem.PHP),</span>
+    /**
+     * The joomla ecosystem (PHP).
+     */
+<span class="fc" id="L68">    JOOMLA(&quot;joomla&quot;, Ecosystem.PHP),</span>
+    /**
+     * The joomla ecosystem (PHP).
+     */
+<span class="fc" id="L72">    JOOMLA_EXCLAMATION_MARK(&quot;joomla!&quot;, Ecosystem.PHP),</span>
+    /**
+     * The moodle ecosystem (PHP).
+     */
+<span class="fc" id="L76">    MOODLE(&quot;moodle&quot;, Ecosystem.PHP),</span>
+    /**
+     * The typo3 ecosystem (PHP).
+     */
+<span class="fc" id="L80">    TYPO3(&quot;typo3&quot;, Ecosystem.PHP),</span>
+    /**
+     * The Java ecosystem (Java).
+     */
+<span class="fc" id="L84">    JAVA_SE(&quot;java se&quot;, Ecosystem.JAVA),</span>
+    /**
+     * The Java ecosystem (Java).
+     */
+<span class="fc" id="L88">    JAVA_EE(&quot;java ee&quot;, Ecosystem.JAVA);</span>
+
+    /**
+     * The keyword for the description identification.
+     */
+    private final String keyword;
+    /**
+     * The ecosystem identified by the keyword.
+     */
+    private final String ecosystem;
+
+    /**
+     * Constructs a new keyword hint.
+     *
+     * @param keyword the keyword contained in CVE descriptions
+     * @param ecosystem the ecosystem identified by the keyword
+     */
+<span class="fc" id="L105">    DescriptionKeywordHint(String keyword, String ecosystem) {</span>
+<span class="fc" id="L106">        this.keyword = keyword;</span>
+<span class="fc" id="L107">        this.ecosystem = ecosystem;</span>
+<span class="fc" id="L108">    }</span>
+
+    /**
+     * Returns the ecosystem.
+     *
+     * @return the ecosystem
+     */
+    @Override
+    public String getEcosystem() {
+<span class="fc" id="L117">        return ecosystem;</span>
+    }
+
+    /**
+     * Returns the keyword.
+     *
+     * @return the keyword
+     */
+    public String getKeyword() {
+<span class="fc" id="L126">        return keyword;</span>
+    }
+
+    /**
+     * Returns the nature.
+     *
+     * @return the nature
+     */
+    @Override
+    public EcosystemHintNature getNature() {
+<span class="fc" id="L136">        return EcosystemHintNature.KEYWORD;</span>
+    }
+
+    /**
+     * Returns the keyword.
+     *
+     * @return the keyword
+     */
+    @Override
+    public String getValue() {
+<span class="fc" id="L146">        return getKeyword();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NuspecAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">NuspecAnalyzer.java</span></div><h1>NuspecAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURL;
+import com.github.packageurl.PackageURLBuilder;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.data.nuget.NugetPackage;
+import org.owasp.dependencycheck.data.nuget.NuspecParseException;
+import org.owasp.dependencycheck.data.nuget.NuspecParser;
+import org.owasp.dependencycheck.data.nuget.XPathNuspecParser;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.owasp.dependencycheck.exception.InitializationException;
+
+/**
+ * Analyzer which will parse a Nuspec file to gather module information.
+ *
+ * @author colezlaw
+ */
+@ThreadSafe
+<span class="fc" id="L52">public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {</span>
+
+    /**
+     * A descriptor for the type of dependencies processed or added by this
+     * analyzer.
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.DOTNET;
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L63">    private static final Logger LOGGER = LoggerFactory.getLogger(NuspecAnalyzer.class);</span>
+
+    /**
+     * The name of the analyzer.
+     */
+    private static final String ANALYZER_NAME = &quot;Nuspec Analyzer&quot;;
+
+    /**
+     * The phase in which the analyzer runs.
+     */
+<span class="fc" id="L73">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;</span>
+
+    /**
+     * The types of files on which this will work.
+     */
+    private static final String SUPPORTED_EXTENSIONS = &quot;nuspec&quot;;
+    /**
+     * The file filter used to determine which files this analyzer supports.
+     */
+<span class="fc" id="L82">    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(SUPPORTED_EXTENSIONS).build();</span>
+
+    /**
+     * Initializes the analyzer once before any analysis is performed.
+     *
+     * @param engine a reference to the dependency-check engine
+     * @throws InitializationException if there's an error during initialization
+     */
+    @Override
+    public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
+        //nothing to initialize
+<span class="fc" id="L93">    }</span>
+
+    /**
+     * Returns the analyzer's name.
+     *
+     * @return the name of the analyzer
+     */
+    @Override
+    public String getName() {
+<span class="fc" id="L102">        return ANALYZER_NAME;</span>
+    }
+
+    /**
+     * Returns the key used in the properties file to reference the analyzer's
+     * enabled property.
+     *
+     * @return the analyzer's enabled property setting key
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+<span class="fc" id="L113">        return Settings.KEYS.ANALYZER_NUSPEC_ENABLED;</span>
+    }
+
+    /**
+     * Returns the analysis phase under which the analyzer runs.
+     *
+     * @return the phase under which this analyzer runs
+     */
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+<span class="fc" id="L123">        return ANALYSIS_PHASE;</span>
+    }
+
+    /**
+     * Returns the FileFilter
+     *
+     * @return the FileFilter
+     */
+    @Override
+    protected FileFilter getFileFilter() {
+<span class="fc" id="L133">        return FILTER;</span>
+    }
+
+    /**
+     * Performs the analysis.
+     *
+     * @param dependency the dependency to analyze
+     * @param engine the engine
+     * @throws AnalysisException when there's an exception during analysis
+     */
+    @Override
+    public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+<span class="fc" id="L145">        LOGGER.debug(&quot;Checking Nuspec file {}&quot;, dependency);</span>
+        try {
+<span class="fc" id="L147">            final NuspecParser parser = new XPathNuspecParser();</span>
+            final NugetPackage np;
+<span class="fc" id="L149">            try (FileInputStream fis = new FileInputStream(dependency.getActualFilePath())) {</span>
+<span class="fc" id="L150">                np = parser.parse(fis);</span>
+<span class="nc" id="L151">            } catch (NuspecParseException | FileNotFoundException ex) {</span>
+<span class="nc" id="L152">                throw new AnalysisException(ex);</span>
+<span class="fc" id="L153">            }</span>
+
+<span class="fc" id="L155">            dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">            if (np.getOwners() != null) {</span>
+<span class="fc" id="L157">                dependency.addEvidence(EvidenceType.VENDOR, &quot;nuspec&quot;, &quot;owners&quot;, np.getOwners(), Confidence.HIGHEST);</span>
+            }
+<span class="fc" id="L159">            dependency.addEvidence(EvidenceType.VENDOR, &quot;nuspec&quot;, &quot;authors&quot;, np.getAuthors(), Confidence.HIGH);</span>
+<span class="fc" id="L160">            dependency.addEvidence(EvidenceType.VERSION, &quot;nuspec&quot;, &quot;version&quot;, np.getVersion(), Confidence.HIGHEST);</span>
+<span class="fc" id="L161">            dependency.addEvidence(EvidenceType.PRODUCT, &quot;nuspec&quot;, &quot;id&quot;, np.getId(), Confidence.HIGHEST);</span>
+<span class="fc" id="L162">            dependency.setName(np.getId());</span>
+<span class="fc" id="L163">            dependency.setVersion(np.getVersion());</span>
+            try {
+<span class="fc" id="L165">                final PackageURL purl = PackageURLBuilder.aPackageURL().withType(&quot;nuget&quot;).withName(np.getId()).withVersion(np.getVersion()).build();</span>
+<span class="fc" id="L166">                dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
+<span class="nc" id="L167">            } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L168">                LOGGER.debug(&quot;Unable to build package url for nuspec&quot;, ex);</span>
+<span class="nc" id="L169">                final GenericIdentifier gid = new GenericIdentifier(&quot;nuspec:&quot; + np.getId() + &quot;@&quot; + np.getVersion(), Confidence.HIGHEST);</span>
+<span class="nc" id="L170">                dependency.addSoftwareIdentifier(gid);</span>
+<span class="fc" id="L171">            }</span>
+<span class="fc" id="L172">            final String packagePath = String.format(&quot;%s:%s&quot;, np.getId(), np.getVersion());</span>
+<span class="fc" id="L173">            dependency.setPackagePath(packagePath);</span>
+<span class="fc" id="L174">            dependency.setDisplayFileName(packagePath);</span>
+<span class="pc bpc" id="L175" title="3 of 4 branches missed.">            if (np.getLicenseUrl() != null &amp;&amp; !np.getLicenseUrl().isEmpty()) {</span>
+<span class="nc" id="L176">                dependency.setLicense(np.getLicenseUrl());</span>
+            }
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">            if (np.getTitle() != null) {</span>
+<span class="fc" id="L179">                dependency.addEvidence(EvidenceType.PRODUCT, &quot;nuspec&quot;, &quot;title&quot;, np.getTitle(), Confidence.MEDIUM);</span>
+            }
+<span class="nc" id="L181">        } catch (Throwable e) {</span>
+<span class="nc" id="L182">            throw new AnalysisException(e);</span>
+<span class="fc" id="L183">        }</span>
+<span class="fc" id="L184">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DatabaseProperties.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvdcve</a> &gt; <span class="el_source">DatabaseProperties.java</span></div><h1>DatabaseProperties.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nvdcve;
+
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.TreeMap;
+import javax.annotation.concurrent.ThreadSafe;
+
+import org.owasp.dependencycheck.data.update.nvd.NvdCveInfo;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * This is a wrapper around a set of properties that are stored in the database.
+ * This class is safe to be accessed from multiple threads in parallel.
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+public class DatabaseProperties {
+
+    /**
+     * The Logger.
+     */
+<span class="fc" id="L47">    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseProperties.class);</span>
+    /**
+     * Modified key word, used as a key to store information about the modified
+     * file (i.e. the containing the last 8 days of updates)..
+     */
+    public static final String MODIFIED = &quot;Modified&quot;;
+    /**
+     * The properties file key for the last checked field - used to store the
+     * last check time of the Modified NVD CVE xml file.
+     */
+    public static final String LAST_CHECKED = &quot;NVD CVE Checked&quot;;
+    /**
+     * The properties file key for the last updated field - used to store the
+     * last updated time of the Modified NVD CVE xml file.
+     */
+    public static final String LAST_UPDATED = &quot;NVD CVE Modified&quot;;
+    /**
+     * Stores the last updated time for each of the NVD CVE files. These
+     * timestamps should be updated if we process the modified file within 7
+     * days of the last update.
+     */
+    public static final String LAST_UPDATED_BASE = &quot;NVD CVE &quot;;
+    /**
+     * The key for the last time the CPE data was updated.
+     */
+    public static final String LAST_CPE_UPDATE = &quot;LAST_CPE_UPDATE&quot;;
+    /**
+     * The key for the database schema version.
+     */
+    public static final String VERSION = &quot;version&quot;;
+
+    /**
+     * A collection of properties about the data.
+     */
+    private final Properties properties;
+    /**
+     * A reference to the database.
+     */
+    private final CveDB cveDB;
+
+    /**
+     * Constructs a new data properties object.
+     *
+     * @param cveDB the database object holding the properties
+     */
+<span class="fc" id="L92">    DatabaseProperties(CveDB cveDB) {</span>
+<span class="fc" id="L93">        this.cveDB = cveDB;</span>
+<span class="fc" id="L94">        this.properties = cveDB.getProperties();</span>
+<span class="fc" id="L95">    }</span>
+
+    /**
+     * Returns whether or not any properties are set.
+     *
+     * @return whether or not any properties are set
+     */
+    public synchronized boolean isEmpty() {
+<span class="pc bpc" id="L103" title="2 of 4 branches missed.">        return properties == null || properties.isEmpty();</span>
+    }
+
+    /**
+     * Saves the last updated information to the properties file.
+     *
+     * @param updatedValue the updated NVD CVE entry
+     * @throws UpdateException is thrown if there is an update exception
+     */
+    public synchronized void save(NvdCveInfo updatedValue) throws UpdateException {
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">        if (updatedValue == null) {</span>
+<span class="nc" id="L114">            return;</span>
+        }
+<span class="fc" id="L116">        save(LAST_UPDATED_BASE + updatedValue.getId(), String.valueOf(updatedValue.getTimestamp()));</span>
+<span class="fc" id="L117">    }</span>
+
+    /**
+     * Saves the key value pair to the properties store.
+     *
+     * @param key the property key
+     * @param value the property value
+     * @throws UpdateException is thrown if there is an update exception
+     */
+    public synchronized void save(String key, String value) throws UpdateException {
+<span class="fc" id="L127">        properties.put(key, value);</span>
+<span class="fc" id="L128">        cveDB.saveProperty(key, value);</span>
+<span class="fc" id="L129">    }</span>
+
+    /**
+     * Returns the property value for the given key. If the key is not contained
+     * in the underlying properties null is returned.
+     *
+     * @param key the property key
+     * @return the value of the property
+     */
+    public synchronized String getProperty(String key) {
+<span class="fc" id="L139">        return properties.getProperty(key);</span>
+    }
+
+    /**
+     * Returns the property value for the given key. If the key is not contained
+     * in the underlying properties the default value is returned.
+     *
+     * @param key the property key
+     * @param defaultValue the default value
+     * @return the value of the property
+     */
+    public synchronized String getProperty(String key, String defaultValue) {
+<span class="fc" id="L151">        return properties.getProperty(key, defaultValue);</span>
+    }
+
+    /**
+     * Returns the collection of Database Properties as a properties collection.
+     *
+     * @return the collection of Database Properties
+     */
+    public synchronized Properties getProperties() {
+<span class="fc" id="L160">        return properties;</span>
+    }
+
+    /**
+     * Returns a map of the meta data from the database properties. This
+     * primarily contains timestamps of when the NVD CVE information was last
+     * updated.
+     *
+     * @return a map of the database meta data
+     */
+    public synchronized Map&lt;String, String&gt; getMetaData() {
+<span class="fc" id="L171">        final Map&lt;String, String&gt; map = new TreeMap&lt;&gt;();</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        for (Entry&lt;Object, Object&gt; entry : properties.entrySet()) {</span>
+<span class="fc" id="L173">            final String key = (String) entry.getKey();</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">            if (!&quot;version&quot;.equals(key)) {</span>
+<span class="fc bfc" id="L175" title="All 6 branches covered.">                if (&quot;NVD CVE Modified&quot;.equals(key) || &quot;NVD CVE Checked&quot;.equals(key) || &quot;VersionCheckOn&quot;.equals(key)) {</span>
+                    try {
+<span class="fc" id="L177">                        final long epoch = Long.parseLong((String) entry.getValue());</span>
+<span class="fc" id="L178">                        final ZonedDateTime dateTime = Instant.ofEpochSecond(epoch).atZone(ZoneId.systemDefault());</span>
+<span class="fc" id="L179">                        final String formatted = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(dateTime);</span>
+<span class="fc" id="L180">                        map.put(key, formatted);</span>
+<span class="nc" id="L181">                    } catch (Throwable ex) { //deliberately being broad in this catch clause</span>
+<span class="nc" id="L182">                        LOGGER.debug(&quot;Unable to parse timestamp from DB&quot;, ex);</span>
+<span class="nc" id="L183">                        map.put(key, (String) entry.getValue());</span>
+<span class="pc" id="L184">                    }</span>
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">                } else if (!key.startsWith(&quot;NVD CVE &quot;)) {</span>
+<span class="nc" id="L186">                    map.put(key, (String) entry.getValue());</span>
+                }
+            }
+<span class="fc" id="L189">        }</span>
+<span class="fc" id="L190">        return map;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

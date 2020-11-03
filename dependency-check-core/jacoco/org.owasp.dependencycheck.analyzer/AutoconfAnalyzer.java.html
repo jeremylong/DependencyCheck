@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AutoconfAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">AutoconfAnalyzer.java</span></div><h1>AutoconfAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2015 Institute for Defense Analyses. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import org.apache.commons.io.FileUtils;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.UrlStringUtils;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.exception.InitializationException;
+
+/**
+ * Used to analyze Autoconf input files named configure.ac or configure.in.
+ * Files simply named &quot;configure&quot; are also analyzed, assuming they are generated
+ * by Autoconf, and contain certain special package descriptor variables.
+ *
+ * @author Dale Visser
+ * @see &lt;a href=&quot;https://www.gnu.org/software/autoconf/&quot;&gt;Autoconf - GNU Project
+ * - Free Software Foundation (FSF)&lt;/a&gt;
+ */
+@Experimental
+<span class="fc" id="L48">public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {</span>
+
+    /**
+     * Autoconf output filename.
+     */
+    private static final String CONFIGURE = &quot;configure&quot;;
+
+    /**
+     * Autoconf input filename.
+     */
+    private static final String CONFIGURE_IN = &quot;configure.in&quot;;
+
+    /**
+     * Autoconf input filename.
+     */
+    private static final String CONFIGURE_AC = &quot;configure.ac&quot;;
+
+    /**
+     * The name of the analyzer.
+     */
+    private static final String ANALYZER_NAME = &quot;Autoconf Analyzer&quot;;
+
+    /**
+     * The phase that this analyzer is intended to run in.
+     */
+<span class="fc" id="L73">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;</span>
+
+    /**
+     * The set of file extensions supported by this analyzer.
+     */
+<span class="fc" id="L78">    private static final String[] EXTENSIONS = {&quot;ac&quot;, &quot;in&quot;};</span>
+
+    /**
+     * Matches AC_INIT variables in the output configure script.
+     */
+<span class="fc" id="L83">    private static final Pattern PACKAGE_VAR = Pattern.compile(</span>
+            &quot;PACKAGE_(.+?)='(.*?)'&quot;, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+
+    /**
+     * Matches AC_INIT statement in configure.ac file.
+     */
+    private static final Pattern AC_INIT_PATTERN;
+
+    static {
+        // each instance of param or sep_param has a capture group
+<span class="fc" id="L93">        final String param = &quot;\\[{0,2}(.+?)\\]{0,2}&quot;;</span>
+<span class="fc" id="L94">        final String sepParam = &quot;\\s*,\\s*&quot; + param;</span>
+        // Group 1: Package
+        // Group 2: Version
+        // Group 3: optional
+        // Group 4: Bug report address (if it exists)
+        // Group 5: optional
+        // Group 6: Tarname (if it exists)
+        // Group 7: optional
+        // Group 8: URL (if it exists)
+<span class="fc" id="L103">        AC_INIT_PATTERN = Pattern.compile(String.format(</span>
+                &quot;AC_INIT\\(%s%s(%s)?(%s)?(%s)?\\s*\\)&quot;, param, sepParam,
+                sepParam, sepParam, sepParam), Pattern.DOTALL
+                | Pattern.CASE_INSENSITIVE);
+    }
+
+    /**
+     * The file filter used to determine which files this analyzer supports.
+     */
+<span class="fc" id="L112">    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addFilenames(CONFIGURE).addExtensions(</span>
+<span class="fc" id="L113">            EXTENSIONS).build();</span>
+
+    /**
+     * Returns the FileFilter
+     *
+     * @return the FileFilter
+     */
+    @Override
+    protected FileFilter getFileFilter() {
+<span class="fc" id="L122">        return FILTER;</span>
+    }
+
+    /**
+     * Returns the name of the analyzer.
+     *
+     * @return the name of the analyzer.
+     */
+    @Override
+    public String getName() {
+<span class="fc" id="L132">        return ANALYZER_NAME;</span>
+    }
+
+    /**
+     * Returns the phase that the analyzer is intended to run in.
+     *
+     * @return the phase that the analyzer is intended to run in.
+     */
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+<span class="fc" id="L142">        return ANALYSIS_PHASE;</span>
+    }
+
+    /**
+     * Returns the key used in the properties file to reference the analyzer's
+     * enabled property.
+     *
+     * @return the analyzer's enabled property setting key
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+<span class="fc" id="L153">        return Settings.KEYS.ANALYZER_AUTOCONF_ENABLED;</span>
+    }
+
+    @Override
+    protected void analyzeDependency(Dependency dependency, Engine engine)
+            throws AnalysisException {
+<span class="fc" id="L159">        final File actualFile = dependency.getActualFile();</span>
+<span class="fc" id="L160">        final String name = actualFile.getName();</span>
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">        if (name.startsWith(CONFIGURE)) {</span>
+<span class="fc" id="L162">            final File parent = actualFile.getParentFile();</span>
+<span class="fc" id="L163">            final String parentName = parent.getName();</span>
+<span class="fc" id="L164">            dependency.setDisplayFileName(parentName + &quot;/&quot; + name);</span>
+<span class="fc" id="L165">            final boolean isOutputScript = CONFIGURE.equals(name);</span>
+<span class="pc bpc" id="L166" title="1 of 4 branches missed.">            if (isOutputScript || CONFIGURE_AC.equals(name)</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">                    || CONFIGURE_IN.equals(name)) {</span>
+<span class="fc" id="L168">                final String contents = getFileContents(actualFile);</span>
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">                if (!contents.isEmpty()) {</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">                    if (isOutputScript) {</span>
+<span class="fc" id="L171">                        extractConfigureScriptEvidence(dependency, name, contents);</span>
+                    } else {
+<span class="fc" id="L173">                        gatherEvidence(dependency, name, contents);</span>
+                    }
+                }
+            }
+<span class="fc" id="L177">        } else {</span>
+<span class="nc" id="L178">            engine.removeDependency(dependency);</span>
+        }
+<span class="fc" id="L180">    }</span>
+
+    /**
+     * Extracts evidence from the configuration.
+     *
+     * @param dependency the dependency being analyzed
+     * @param name the name of the source of evidence
+     * @param contents the contents to analyze for evidence
+     */
+    private void extractConfigureScriptEvidence(Dependency dependency,
+            final String name, final String contents) {
+<span class="fc" id="L191">        final Matcher matcher = PACKAGE_VAR.matcher(contents);</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">        while (matcher.find()) {</span>
+<span class="fc" id="L193">            final String variable = matcher.group(1);</span>
+<span class="fc" id="L194">            final String value = matcher.group(2);</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">            if (!value.isEmpty()) {</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">                if (variable.endsWith(&quot;NAME&quot;)) {</span>
+<span class="fc" id="L197">                    dependency.addEvidence(EvidenceType.PRODUCT, name, variable, value, Confidence.HIGHEST);</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">                } else if (&quot;VERSION&quot;.equals(variable)) {</span>
+<span class="fc" id="L199">                    dependency.addEvidence(EvidenceType.VERSION, name, variable, value, Confidence.HIGHEST);</span>
+<span class="fc bfc" id="L200" title="All 2 branches covered.">                } else if (&quot;BUGREPORT&quot;.equals(variable)) {</span>
+<span class="fc" id="L201">                    dependency.addEvidence(EvidenceType.VENDOR, name, variable, value, Confidence.HIGH);</span>
+<span class="fc bfc" id="L202" title="All 2 branches covered.">                } else if (&quot;URL&quot;.equals(variable)) {</span>
+<span class="fc" id="L203">                    dependency.addEvidence(EvidenceType.VENDOR, name, variable, value, Confidence.HIGH);</span>
+                }
+            }
+<span class="fc" id="L206">        }</span>
+<span class="fc" id="L207">    }</span>
+
+    /**
+     * Retrieves the contents of a given file.
+     *
+     * @param actualFile the file to read
+     * @return the contents of the file
+     * @throws AnalysisException thrown if there is an IO Exception
+     */
+    private String getFileContents(final File actualFile)
+            throws AnalysisException {
+        try {
+<span class="fc" id="L219">            return FileUtils.readFileToString(actualFile, Charset.defaultCharset()).trim();</span>
+<span class="nc" id="L220">        } catch (IOException e) {</span>
+<span class="nc" id="L221">            throw new AnalysisException(</span>
+                    &quot;Problem occurred while reading dependency file.&quot;, e);
+        }
+    }
+
+    /**
+     * Gathers evidence from a given file
+     *
+     * @param dependency the dependency to add evidence to
+     * @param name the source of the evidence
+     * @param contents the evidence to analyze
+     */
+    private void gatherEvidence(Dependency dependency, final String name,
+            String contents) {
+<span class="fc" id="L235">        final Matcher matcher = AC_INIT_PATTERN.matcher(contents);</span>
+<span class="pc bpc" id="L236" title="1 of 2 branches missed.">        if (matcher.find()) {</span>
+<span class="fc" id="L237">            dependency.addEvidence(EvidenceType.PRODUCT, name, &quot;Package&quot;, matcher.group(1), Confidence.HIGHEST);</span>
+<span class="fc" id="L238">            dependency.addEvidence(EvidenceType.VERSION, name, &quot;Package Version&quot;, matcher.group(2), Confidence.HIGHEST);</span>
+
+<span class="pc bpc" id="L240" title="1 of 2 branches missed.">            if (null != matcher.group(3)) {</span>
+<span class="fc" id="L241">                dependency.addEvidence(EvidenceType.VENDOR, name, &quot;Bug report address&quot;, matcher.group(4), Confidence.HIGH);</span>
+            }
+<span class="fc bfc" id="L243" title="All 2 branches covered.">            if (null != matcher.group(5)) {</span>
+<span class="fc" id="L244">                dependency.addEvidence(EvidenceType.PRODUCT, name, &quot;Tarname&quot;, matcher.group(6), Confidence.HIGH);</span>
+            }
+<span class="fc bfc" id="L246" title="All 2 branches covered.">            if (null != matcher.group(7)) {</span>
+<span class="fc" id="L247">                final String url = matcher.group(8);</span>
+<span class="pc bpc" id="L248" title="1 of 2 branches missed.">                if (UrlStringUtils.isUrl(url)) {</span>
+<span class="fc" id="L249">                    dependency.addEvidence(EvidenceType.VENDOR, name, &quot;URL&quot;, url, Confidence.HIGH);</span>
+                }
+            }
+        }
+<span class="fc" id="L253">    }</span>
+
+    /**
+     * Initializes the file type analyzer.
+     *
+     * @param engine a reference to the dependency-check engine
+     * @throws InitializationException thrown if there is an exception during
+     * initialization
+     */
+    @Override
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
+        // No initialization needed.
+<span class="fc" id="L265">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

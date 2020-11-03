@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ChecksumsImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.artifactory</a> &gt; <span class="el_source">ChecksumsImpl.java</span></div><h1>ChecksumsImpl.java</h1><pre class="source lang-java linenums">package org.owasp.dependencycheck.data.artifactory;
+
+/**
+ * Copied from JFrog's artifactory client.
+ *
+ * @see
+ * &lt;a href=&quot;https://github.com/jfrog/artifactory-client-java&quot;&gt;artifactory-client-java&lt;/a&gt;
+ *
+ * @author jbaruch
+ * @since 29/07/12
+ */
+<span class="fc" id="L12">public class ChecksumsImpl {</span>
+
+    private String md5;
+    private String sha1;
+    private String sha256;
+
+    public String getMd5() {
+<span class="fc" id="L19">        return md5;</span>
+    }
+
+    public void setMd5(String md5) {
+<span class="fc" id="L23">        this.md5 = md5;</span>
+<span class="fc" id="L24">    }</span>
+
+    public String getSha1() {
+<span class="fc" id="L27">        return sha1;</span>
+    }
+
+    public void setSha1(String sha1) {
+<span class="fc" id="L31">        this.sha1 = sha1;</span>
+<span class="fc" id="L32">    }</span>
+
+    public String getSha256() {
+<span class="fc" id="L35">        return sha256;</span>
+    }
+
+    public void setSha256(String sha256) {
+<span class="fc" id="L39">        this.sha256 = sha256;</span>
+<span class="fc" id="L40">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

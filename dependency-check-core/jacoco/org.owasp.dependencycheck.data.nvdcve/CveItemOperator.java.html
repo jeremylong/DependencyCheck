@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CveItemOperator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvdcve</a> &gt; <span class="el_source">CveItemOperator.java</span></div><h1>CveItemOperator.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2020 OWASP Foundation. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nvdcve;
+
+import java.util.stream.Collectors;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
+
+import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
+import org.owasp.dependencycheck.dependency.VulnerableSoftware;
+
+/**
+ *
+ * Utility for processing {@linkplain DefCveItem} in order to extract key values
+ * like textual description and ecosystem type.
+ *
+ * @author skjolber
+ */
+<span class="fc" id="L33">public class CveItemOperator {</span>
+
+    /**
+     * Extracts the english description from the CVE object.
+     *
+     * @param cve the CVE data
+     * @return the English descriptions from the CVE object
+     */
+    public String extractDescription(DefCveItem cve) {
+<span class="fc" id="L42">        return cve.getCve().getDescription().getDescriptionData().stream().filter((desc)</span>
+<span class="fc" id="L43">                -&gt; &quot;en&quot;.equals(desc.getLang())).map(d</span>
+<span class="fc" id="L44">                -&gt; d.getValue()).collect(Collectors.joining(&quot; &quot;));</span>
+    }
+
+    //CSOFF: MissingSwitchDefault
+    /**
+     * Attempts to determine the ecosystem based on the vendor, product and
+     * targetSw.
+     *
+     * @param baseEcosystem the base ecosystem
+     * @param vendor the vendor
+     * @param product the product
+     * @param targetSw the target software
+     * @return the ecosystem if one is identified
+     */
+    private String extractEcosystem(String baseEcosystem, String vendor, String product, String targetSw) {
+        //TODO the following was added to reduce the need for the slow UPDATE_ECOSYSTEM2 query
+        // the following should be analyzed to determine if an ecosystem should be returned.
+        // Note that these all have 'bindings' in the description of a vulnerability in more than
+        // one case these were related to language bindings; as such the list need to be reviewed and refined.
+<span class="pc bpc" id="L63" title="3 of 4 branches missed.">        if ((&quot;mysql&quot;.equals(vendor) &amp;&amp; &quot;mysql&quot;.equals(product))</span>
+<span class="fc bfc" id="L64" title="All 4 branches covered.">                || (&quot;postgresql&quot;.equals(vendor) &amp;&amp; &quot;postgresql&quot;.equals(product))</span>
+<span class="pc bpc" id="L65" title="3 of 4 branches missed.">                || (&quot;picketlink&quot;.equals(vendor) &amp;&amp; &quot;picketlink&quot;.equals(product))</span>
+<span class="pc bpc" id="L66" title="3 of 4 branches missed.">                || (&quot;libxl_project&quot;.equals(vendor) &amp;&amp; &quot;libxl&quot;.equals(product))</span>
+<span class="pc bpc" id="L67" title="3 of 4 branches missed.">                || (&quot;ocaml&quot;.equals(vendor) &amp;&amp; &quot;postgresql-ocaml&quot;.equals(product))</span>
+<span class="pc bpc" id="L68" title="3 of 4 branches missed.">                || (&quot;curses_project&quot;.equals(vendor) &amp;&amp; &quot;curses&quot;.equals(product))</span>
+<span class="pc bpc" id="L69" title="3 of 4 branches missed.">                || (&quot;dalekjs&quot;.equals(vendor) &amp;&amp; &quot;dalekjs&quot;.equals(product))</span>
+<span class="fc bfc" id="L70" title="All 4 branches covered.">                || (&quot;microsoft&quot;.equals(vendor) &amp;&amp; &quot;internet_explorer&quot;.equals(product))</span>
+<span class="pc bpc" id="L71" title="1 of 4 branches missed.">                || (&quot;jenkins&quot;.equals(vendor) &amp;&amp; &quot;ssh_credentials&quot;.equals(product))</span>
+<span class="fc bfc" id="L72" title="All 4 branches covered.">                || (&quot;kubernetes&quot;.equals(vendor) &amp;&amp; &quot;kubernetes&quot;.equals(product))</span>
+<span class="pc bpc" id="L73" title="1 of 4 branches missed.">                || (&quot;gnome&quot;.equals(vendor) &amp;&amp; &quot;nautilus-python&quot;.equals(product))</span>
+<span class="pc bpc" id="L74" title="1 of 4 branches missed.">                || (&quot;apache&quot;.equals(vendor) &amp;&amp; &quot;qpid_proton&quot;.equals(product))</span>
+<span class="pc bpc" id="L75" title="3 of 4 branches missed.">                || (&quot;mysql-ocaml&quot;.equals(vendor) &amp;&amp; &quot;mysql-ocaml&quot;.equals(product))</span>
+<span class="fc bfc" id="L76" title="All 4 branches covered.">                || (&quot;google&quot;.equals(vendor) &amp;&amp; &quot;chrome&quot;.equals(product))</span>
+<span class="pc bpc" id="L77" title="1 of 4 branches missed.">                || (&quot;canonical&quot;.equals(vendor) &amp;&amp; &quot;ltsp_display_manager&quot;.equals(product))</span>
+<span class="pc bpc" id="L78" title="1 of 4 branches missed.">                || (&quot;gnome&quot;.equals(vendor) &amp;&amp; &quot;vala&quot;.equals(product))</span>
+<span class="fc bfc" id="L79" title="All 4 branches covered.">                || (&quot;apple&quot;.equals(vendor) &amp;&amp; &quot;safari&quot;.equals(product))</span>
+<span class="pc bpc" id="L80" title="3 of 4 branches missed.">                || (&quot;mapbox&quot;.equals(vendor) &amp;&amp; &quot;npm-test-sqlite3-trunk&quot;.equals(product))</span>
+<span class="pc bpc" id="L81" title="1 of 4 branches missed.">                || (&quot;apple&quot;.equals(vendor) &amp;&amp; &quot;webkit&quot;.equals(product))</span>
+<span class="fc bfc" id="L82" title="All 4 branches covered.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;firefox&quot;.equals(product))</span>
+<span class="pc bpc" id="L83" title="1 of 4 branches missed.">                || (&quot;apache&quot;.equals(vendor) &amp;&amp; &quot;thrift&quot;.equals(product))</span>
+<span class="pc bpc" id="L84" title="1 of 4 branches missed.">                || (&quot;apache&quot;.equals(vendor) &amp;&amp; &quot;qpid&quot;.equals(product))</span>
+<span class="fc bfc" id="L85" title="All 4 branches covered.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;thunderbird&quot;.equals(product))</span>
+<span class="fc bfc" id="L86" title="All 4 branches covered.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;firefox_esr&quot;.equals(product))</span>
+<span class="pc bpc" id="L87" title="1 of 4 branches missed.">                || (&quot;redhat&quot;.equals(vendor) &amp;&amp; &quot;jboss_amq_clients_2&quot;.equals(product))</span>
+<span class="pc bpc" id="L88" title="3 of 4 branches missed.">                || (&quot;node-opencv_project&quot;.equals(vendor) &amp;&amp; &quot;node-opencv&quot;.equals(product))</span>
+<span class="pc bpc" id="L89" title="1 of 4 branches missed.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;seamonkey&quot;.equals(product))</span>
+<span class="pc bpc" id="L90" title="1 of 4 branches missed.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;thunderbird_esr&quot;.equals(product))</span>
+<span class="pc bpc" id="L91" title="3 of 4 branches missed.">                || (&quot;mnet_soft_factory&quot;.equals(vendor) &amp;&amp; &quot;nodemanager_professional&quot;.equals(product))</span>
+<span class="pc bpc" id="L92" title="1 of 4 branches missed.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;mozilla_suite&quot;.equals(product))</span>
+<span class="pc bpc" id="L93" title="3 of 4 branches missed.">                || (&quot;theforeman&quot;.equals(vendor) &amp;&amp; &quot;hammer_cli&quot;.equals(product))</span>
+<span class="fc bfc" id="L94" title="All 4 branches covered.">                || (&quot;ibm&quot;.equals(vendor) &amp;&amp; &quot;websphere_application_server&quot;.equals(product))</span>
+<span class="pc bpc" id="L95" title="1 of 4 branches missed.">                || (&quot;sap&quot;.equals(vendor) &amp;&amp; &quot;hana_extend_application_services&quot;.equals(product))</span>
+<span class="pc bpc" id="L96" title="1 of 4 branches missed.">                || (&quot;apache&quot;.equals(vendor) &amp;&amp; &quot;zookeeper&quot;.equals(product))) {</span>
+<span class="fc" id="L97">            return null;</span>
+        }
+
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        if (&quot;ibm&quot;.equals(vendor)</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">                &amp;&amp; &quot;java&quot;.equals(product)) {</span>
+<span class="nc" id="L102">            return Ecosystem.NATIVE;</span>
+        }
+
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        if (&quot;oracle&quot;.equals(vendor)</span>
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">                &amp;&amp; &quot;vm&quot;.equals(product)) {</span>
+<span class="nc" id="L107">            return Ecosystem.NATIVE;</span>
+        }
+<span class="pc bpc" id="L109" title="2 of 12 branches missed.">        switch (targetSw) {</span>
+            case &quot;asp.net&quot;://.net
+            case &quot;c#&quot;://.net
+            case &quot;.net&quot;://.net
+            case &quot;dotnetnuke&quot;://.net
+<span class="fc" id="L114">                return Ecosystem.DOTNET;</span>
+            case &quot;android&quot;://android
+            case &quot;java&quot;://java
+<span class="fc" id="L117">                return Ecosystem.JAVA;</span>
+            case &quot;c/c++&quot;://c++
+            case &quot;borland_c++&quot;://c++
+            case &quot;visual_c++&quot;://c++
+            case &quot;gnu_c++&quot;://c++
+            case &quot;linux_kernel&quot;://native
+            case &quot;linux&quot;://native
+            case &quot;unix&quot;://native
+            case &quot;suse_linux&quot;://native
+            case &quot;redhat_enterprise_linux&quot;://native
+            case &quot;debian&quot;://native
+<span class="fc" id="L128">                return Ecosystem.NATIVE;</span>
+            case &quot;coldfusion&quot;://coldfusion
+<span class="nc" id="L130">                return Ecosystem.COLDFUSION;</span>
+            case &quot;ios&quot;://ios
+            case &quot;iphone&quot;://ios
+            case &quot;ipad&quot;://ios
+            case &quot;iphone_os&quot;://ios
+<span class="fc" id="L135">                return Ecosystem.IOS;</span>
+            case &quot;jquery&quot;://javascript
+<span class="nc" id="L137">                return Ecosystem.JAVASCRIPT;</span>
+            case &quot;node.js&quot;://node.js
+            case &quot;nodejs&quot;://node.js
+<span class="fc" id="L140">                return Ecosystem.NODEJS;</span>
+            case &quot;perl&quot;://perl
+<span class="fc" id="L142">                return Ecosystem.PERL;</span>
+            case &quot;joomla!&quot;://php
+            case &quot;joomla&quot;://php
+            case &quot;mybb&quot;://php
+            case &quot;simplesamlphp&quot;://php
+            case &quot;craft_cms&quot;://php
+            case &quot;moodle&quot;://php
+            case &quot;phpcms&quot;://php
+            case &quot;buddypress&quot;://php
+            case &quot;typo3&quot;://php
+            case &quot;php&quot;://php
+            case &quot;wordpress&quot;://php
+            case &quot;drupal&quot;://php
+            case &quot;mediawiki&quot;://php
+            case &quot;symfony&quot;://php
+            case &quot;openpne&quot;://php
+            case &quot;vbulletin3&quot;://php
+            case &quot;vbulletin4&quot;://php
+<span class="fc" id="L160">                return Ecosystem.PHP;</span>
+            case &quot;python&quot;://python
+<span class="fc" id="L162">                return Ecosystem.PYTHON;</span>
+            case &quot;ruby&quot;://ruby
+<span class="fc" id="L164">                return Ecosystem.RUBY;</span>
+        }
+<span class="fc" id="L166">        return baseEcosystem;</span>
+    }
+    //CSON: MissingSwitchDefault
+
+    /**
+     * Attempts to determine the ecosystem based on the vendor, product and
+     * targetSw.
+     *
+     * @param baseEcosystem the base ecosystem
+     * @param parsedCpe the CPE identifier
+     * @return the ecosystem if one is identified
+     */
+    public String extractEcosystem(String baseEcosystem, VulnerableSoftware parsedCpe) {
+<span class="fc" id="L179">        return extractEcosystem(baseEcosystem, parsedCpe.getVendor(), parsedCpe.getProduct(), parsedCpe.getTargetSw());</span>
+    }
+
+    /**
+     * Determines if the CVE entry is rejected.
+     *
+     * @param description the CVE description
+     * @return &lt;code&gt;true&lt;/code&gt; if the CVE was rejected; otherwise
+     * &lt;code&gt;false&lt;/code&gt;
+     */
+    public boolean isRejected(String description) {
+<span class="fc" id="L190">        return description.startsWith(&quot;** REJECT **&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

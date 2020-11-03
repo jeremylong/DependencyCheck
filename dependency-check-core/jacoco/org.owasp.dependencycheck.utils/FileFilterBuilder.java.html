@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FileFilterBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">FileFilterBuilder.java</span></div><h1>FileFilterBuilder.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2015 Institute for Defense Analyses. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.utils;
+
+import org.apache.commons.io.IOCase;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.NameFileFilter;
+import org.apache.commons.io.filefilter.OrFileFilter;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
+
+import java.io.FileFilter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import javax.annotation.concurrent.NotThreadSafe;
+
+/**
+ * &lt;p&gt;
+ * Utility class for building useful {@link FileFilter} instances for
+ * {@link org.owasp.dependencycheck.analyzer.AbstractFileTypeAnalyzer} implementations. The built filter uses {@link OrFileFilter}
+ * to logically OR the given filter conditions. Example usage:&lt;/p&gt;
+ *
+ * &lt;pre&gt;
+ *     FileFilter filter = FileFilterBuilder.newInstance().addExtensions(&quot;jar&quot;, &quot;war&quot;).build();
+ * &lt;/pre&gt;
+ *
+ * @author Dale Visser
+ * @see &lt;a href=&quot;https://en.wikipedia.org/wiki/Builder_pattern&quot;&gt;Builder pattern&lt;/a&gt;
+ */
+@NotThreadSafe
+<span class="fc" id="L48">public class FileFilterBuilder {</span>
+
+    /**
+     * A set of filenames to filter.
+     */
+<span class="fc" id="L53">    private final Set&lt;String&gt; filenames = new HashSet&lt;&gt;();</span>
+    /**
+     * A set of extensions to filter.
+     */
+<span class="fc" id="L57">    private final Set&lt;String&gt; extensions = new HashSet&lt;&gt;();</span>
+    /**
+     * An array list of file filters.
+     */
+<span class="fc" id="L61">    private final List&lt;IOFileFilter&gt; fileFilters = new ArrayList&lt;&gt;();</span>
+
+    /**
+     * Create a new instance and return it. This method is for convenience in using the builder pattern within a single statement.
+     *
+     * @return a new builder instance
+     */
+    public static FileFilterBuilder newInstance() {
+<span class="fc" id="L69">        return new FileFilterBuilder();</span>
+    }
+
+    /**
+     * Add to the set of filenames to accept for analysis. Case-sensitivity is assumed.
+     *
+     * @param names one or more filenames to accept for analysis
+     * @return this builder
+     */
+    public FileFilterBuilder addFilenames(String... names) {
+<span class="fc" id="L79">        filenames.addAll(Arrays.asList(names));</span>
+<span class="fc" id="L80">        return this;</span>
+    }
+
+    /**
+     * Add to the set of file extensions to accept for analysis. Case-insensitivity is assumed.
+     *
+     * @param extensions one or more file extensions to accept for analysis
+     * @return this builder
+     */
+    public FileFilterBuilder addExtensions(String... extensions) {
+<span class="fc" id="L90">        return this.addExtensions(Arrays.asList(extensions));</span>
+    }
+
+    /**
+     * Add to the set of file extensions to accept for analysis. Case-insensitivity is assumed.
+     *
+     * @param extensions one or more file extensions to accept for analysis
+     * @return this builder
+     */
+    public FileFilterBuilder addExtensions(Iterable&lt;String&gt; extensions) {
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        for (String extension : extensions) {</span>
+            // Ultimately, SuffixFileFilter will be used, and the &quot;.&quot; needs to be explicit.
+<span class="fc bfc" id="L102" title="All 2 branches covered.">            this.extensions.add(extension.startsWith(&quot;.&quot;) ? extension : &quot;.&quot; + extension);</span>
+<span class="fc" id="L103">        }</span>
+<span class="fc" id="L104">        return this;</span>
+    }
+
+    /**
+     * Add to a list of {@link IOFileFilter} instances to consult for whether to accept a file for analysis.
+     *
+     * @param filters one or more file filters to consult for whether to accept for analysis
+     * @return this builder
+     */
+    public FileFilterBuilder addFileFilters(IOFileFilter... filters) {
+<span class="fc" id="L114">        fileFilters.addAll(Arrays.asList(filters));</span>
+<span class="fc" id="L115">        return this;</span>
+    }
+
+    /**
+     * Builds the filter and returns it.
+     *
+     * @return a filter that is the logical OR of all the conditions provided by the add... methods
+     * @throws IllegalStateException if no add... method has been called with one or more arguments
+     */
+    public FileFilter build() {
+<span class="pc bpc" id="L125" title="3 of 6 branches missed.">        if (filenames.isEmpty() &amp;&amp; extensions.isEmpty() &amp;&amp; fileFilters.isEmpty()) {</span>
+<span class="nc" id="L126">            throw new IllegalStateException(&quot;May only be invoked after at least one add... method has been invoked.&quot;);</span>
+        }
+<span class="fc" id="L128">        final OrFileFilter filter = new OrFileFilter();</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        if (!filenames.isEmpty()) {</span>
+<span class="fc" id="L130">            filter.addFileFilter(new NameFileFilter(new ArrayList&lt;&gt;(filenames)));</span>
+        }
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        if (!extensions.isEmpty()) {</span>
+<span class="fc" id="L133">            filter.addFileFilter(new SuffixFileFilter(new ArrayList&lt;&gt;(extensions), IOCase.INSENSITIVE));</span>
+        }
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        for (IOFileFilter iof : fileFilters) {</span>
+<span class="fc" id="L136">            filter.addFileFilter(iof);</span>
+<span class="fc" id="L137">        }</span>
+<span class="fc" id="L138">        return filter;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

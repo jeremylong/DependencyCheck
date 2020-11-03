@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GolangDepAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">GolangDepAnalyzer.java</span></div><h1>GolangDepAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2019 Nima Yahyazadeh. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURL;
+import com.github.packageurl.PackageURLBuilder;
+import java.io.FileFilter;
+import java.util.List;
+
+import javax.annotation.concurrent.ThreadSafe;
+
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.Settings;
+
+import com.moandjiezana.toml.Toml;
+import org.apache.commons.lang3.StringUtils;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.Identifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.owasp.dependencycheck.utils.Checksum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Go lang dependency analyzer.
+ *
+ * @author Nima Yahyazadeh
+ * @author Jeremy Long
+ */
+@ThreadSafe
+@Experimental
+<span class="fc" id="L55">public class GolangDepAnalyzer extends AbstractFileTypeAnalyzer {</span>
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L60">    private static final Logger LOGGER = LoggerFactory.getLogger(GolangDepAnalyzer.class);</span>
+    /**
+     * A descriptor for the type of dependencies processed or added by this
+     * analyzer.
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.GOLANG;
+
+    /**
+     * Lock file name.
+     */
+    private static final String GOPKG_LOCK = &quot;Gopkg.lock&quot;;
+
+    /**
+     * The file filter for Gopkg.lock
+     */
+<span class="fc" id="L75">    private static final FileFilter GOPKG_LOCK_FILTER = FileFilterBuilder.newInstance()</span>
+<span class="fc" id="L76">            .addFilenames(GOPKG_LOCK)</span>
+<span class="fc" id="L77">            .build();</span>
+
+    /**
+     * Returns the name of the Python Package Analyzer.
+     *
+     * @return the name of the analyzer
+     */
+    @Override
+    public String getName() {
+<span class="fc" id="L86">        return &quot;Golang Dep Analyzer&quot;;</span>
+    }
+
+    /**
+     * Tell that we are used for information collection.
+     *
+     * @return INFORMATION_COLLECTION
+     */
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+<span class="fc" id="L96">        return AnalysisPhase.INFORMATION_COLLECTION;</span>
+    }
+
+    /**
+     * Returns the key name for the analyzers enabled setting.
+     *
+     * @return the key name for the analyzers enabled setting
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+<span class="fc" id="L106">        return Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED;</span>
+    }
+
+    /**
+     * Returns the FileFilter
+     *
+     * @return the FileFilter
+     */
+    @Override
+    protected FileFilter getFileFilter() {
+<span class="fc" id="L116">        return GOPKG_LOCK_FILTER;</span>
+    }
+
+    /**
+     * No-op initializer implementation.
+     *
+     * @param engine a reference to the dependency-check engine
+     *
+     * @throws InitializationException never thrown
+     */
+    @Override
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
+        // Nothing to do here.
+<span class="fc" id="L129">    }</span>
+
+    /**
+     * Analyzes go packages and adds evidence to the dependency.
+     *
+     * @param dependency the dependency being analyzed
+     * @param engine the engine being used to perform the scan
+     *
+     * @throws AnalysisException thrown if there is an unrecoverable error
+     * analyzing the dependency
+     */
+    @Override
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+        //do not report on the build file itself
+<span class="fc" id="L143">        engine.removeDependency(dependency);</span>
+
+<span class="fc" id="L145">        final Toml result = new Toml().read(dependency.getActualFile());</span>
+<span class="fc" id="L146">        final List&lt;Toml&gt; projectsLocks = result.getTables(&quot;projects&quot;);</span>
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">        if (projectsLocks == null) {</span>
+<span class="nc" id="L148">            return;</span>
+        }
+<span class="fc" id="L150">        projectsLocks.forEach((project) -&gt; {</span>
+<span class="fc" id="L151">            final String name = project.getString(&quot;name&quot;);</span>
+<span class="fc" id="L152">            final String version = project.getString(&quot;version&quot;);</span>
+<span class="fc" id="L153">            final String revision = project.getString(&quot;revision&quot;);</span>
+
+<span class="fc" id="L155">            Dependency dep = createDependency(dependency, name, version, revision, null);</span>
+<span class="fc" id="L156">            engine.addDependency(dep);</span>
+<span class="fc" id="L157">            final List&lt;String&gt; packages = project.getList(&quot;packages&quot;);</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">            for (String pkg : packages) {</span>
+<span class="pc bpc" id="L159" title="1 of 4 branches missed.">                if (StringUtils.isNotBlank(pkg) &amp;&amp; !&quot;.&quot;.equals(pkg)) {</span>
+<span class="fc" id="L160">                    dep = createDependency(dependency, name, version, revision, pkg);</span>
+<span class="fc" id="L161">                    engine.addDependency(dep);</span>
+                }
+<span class="fc" id="L163">            }</span>
+<span class="fc" id="L164">        });</span>
+<span class="fc" id="L165">    }</span>
+
+    /**
+     * Builds a dependency object based on the given data.
+     *
+     * @param parentDependency a reference to the parent dependency
+     * @param name the name of the dependency
+     * @param version the version of the dependency
+     * @param revision the revision of the dependency
+     * @param subPath the sub-path of the dependency
+     * @return a new dependency object
+     */
+    private Dependency createDependency(Dependency parentDependency, String name, String version, String revision, String subPath) {
+<span class="fc" id="L178">        final Dependency dep = new Dependency(parentDependency.getActualFile(), true);</span>
+<span class="fc" id="L179">        dep.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc bfc" id="L180" title="All 2 branches covered.">        if (StringUtils.isNotBlank(subPath)) {</span>
+<span class="fc" id="L181">            dep.setDisplayFileName(name + &quot;/&quot; + subPath);</span>
+<span class="fc" id="L182">            dep.setName(name + &quot;/&quot; + subPath);</span>
+        } else {
+<span class="fc" id="L184">            dep.setDisplayFileName(name);</span>
+<span class="fc" id="L185">            dep.setName(name);</span>
+        }
+<span class="fc" id="L187">        final PackageURLBuilder packageBuilder = PackageURLBuilder.aPackageURL().withType(&quot;golang&quot;);</span>
+
+<span class="fc" id="L189">        String baseNamespace = null;</span>
+<span class="fc" id="L190">        String depNamespace = null;</span>
+<span class="fc" id="L191">        String depName = null;</span>
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">        if (StringUtils.isNotBlank(name)) {</span>
+<span class="fc" id="L193">            final int slashPos = name.indexOf(&quot;/&quot;);</span>
+<span class="pc bpc" id="L194" title="1 of 2 branches missed.">            if (slashPos &gt; 0) {</span>
+<span class="fc" id="L195">                baseNamespace = name.substring(0, slashPos);</span>
+<span class="fc" id="L196">                final int lastSlash = name.lastIndexOf(&quot;/&quot;);</span>
+<span class="fc" id="L197">                depName = name.substring(lastSlash + 1);</span>
+<span class="pc bpc" id="L198" title="1 of 2 branches missed.">                if (lastSlash != slashPos) {</span>
+<span class="fc" id="L199">                    depNamespace = name.substring(slashPos + 1, lastSlash);</span>
+<span class="fc" id="L200">                    dep.addEvidence(EvidenceType.PRODUCT, GOPKG_LOCK, &quot;namespace&quot;, depNamespace, Confidence.HIGH);</span>
+<span class="fc" id="L201">                    dep.addEvidence(EvidenceType.VENDOR, GOPKG_LOCK, &quot;namespace&quot;, depNamespace, Confidence.HIGH);</span>
+<span class="fc" id="L202">                    packageBuilder.withNamespace(baseNamespace + &quot;/&quot; + depNamespace);</span>
+                } else {
+<span class="nc" id="L204">                    packageBuilder.withNamespace(baseNamespace);</span>
+                }
+<span class="fc" id="L206">                packageBuilder.withName(depName);</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">                if (!&quot;golang.org&quot;.equals(baseNamespace)) {</span>
+<span class="fc" id="L208">                    dep.addEvidence(EvidenceType.PRODUCT, GOPKG_LOCK, &quot;namespace&quot;, baseNamespace, Confidence.LOW);</span>
+<span class="fc" id="L209">                    dep.addEvidence(EvidenceType.VENDOR, GOPKG_LOCK, &quot;namespace&quot;, baseNamespace, Confidence.LOW);</span>
+                }
+
+<span class="fc" id="L212">                dep.addEvidence(EvidenceType.PRODUCT, GOPKG_LOCK, &quot;name&quot;, depName, Confidence.HIGHEST);</span>
+<span class="fc" id="L213">                dep.addEvidence(EvidenceType.VENDOR, GOPKG_LOCK, &quot;name&quot;, depName, Confidence.HIGHEST);</span>
+<span class="fc" id="L214">            } else {</span>
+<span class="nc" id="L215">                packageBuilder.withName(name);</span>
+<span class="nc" id="L216">                dep.addEvidence(EvidenceType.PRODUCT, GOPKG_LOCK, &quot;namespace&quot;, name, Confidence.HIGHEST);</span>
+<span class="nc" id="L217">                dep.addEvidence(EvidenceType.VENDOR, GOPKG_LOCK, &quot;namespace&quot;, name, Confidence.HIGHEST);</span>
+            }
+        }
+<span class="fc bfc" id="L220" title="All 2 branches covered.">        if (StringUtils.isNotBlank(version)) {</span>
+<span class="fc" id="L221">            packageBuilder.withVersion(version);</span>
+<span class="fc" id="L222">            dep.setVersion(version);</span>
+<span class="fc" id="L223">            dep.addEvidence(EvidenceType.VERSION, GOPKG_LOCK, &quot;version&quot;, version, Confidence.HIGHEST);</span>
+        }
+<span class="fc bfc" id="L225" title="All 2 branches covered.">        if (StringUtils.isNotBlank(revision)) {</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">            if (version == null) {</span>
+                //this is used to help determine the actual version in the NVD - a commit hash doesn't work
+                // instead we need to make it an asterik for the CPE...
+                //dep.setVersion(revision);
+<span class="fc" id="L230">                packageBuilder.withVersion(revision);</span>
+            }
+            //Revision (which appears to be a commit hash) won't be of any value in the analysis.
+            //dep.addEvidence(EvidenceType.PRODUCT, GOPKG_LOCK, &quot;revision&quot;, revision, Confidence.HIGHEST);
+        }
+<span class="fc bfc" id="L235" title="All 2 branches covered.">        if (StringUtils.isNotBlank(subPath)) {</span>
+<span class="fc" id="L236">            packageBuilder.withSubpath(subPath);</span>
+<span class="fc" id="L237">            dep.addEvidence(EvidenceType.PRODUCT, GOPKG_LOCK, &quot;package&quot;, subPath, Confidence.HIGH);</span>
+<span class="fc" id="L238">            dep.addEvidence(EvidenceType.VENDOR, GOPKG_LOCK, &quot;package&quot;, subPath, Confidence.MEDIUM);</span>
+        }
+
+        Identifier id;
+        try {
+<span class="fc" id="L243">            final PackageURL purl = packageBuilder.build();</span>
+<span class="fc" id="L244">            id = new PurlIdentifier(purl, Confidence.HIGHEST);</span>
+<span class="nc" id="L245">        } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L246">            LOGGER.warn(&quot;Unable to create package-url identifier for `{}` in `{}` - reason: {}&quot;,</span>
+<span class="nc" id="L247">                    name, parentDependency.getFilePath(), ex.getMessage());</span>
+<span class="nc" id="L248">            final StringBuilder value = new StringBuilder(name);</span>
+<span class="nc bnc" id="L249" title="All 2 branches missed.">            if (StringUtils.isNotBlank(subPath)) {</span>
+<span class="nc" id="L250">                value.append(&quot;/&quot;).append(subPath);</span>
+            }
+<span class="nc bnc" id="L252" title="All 2 branches missed.">            if (StringUtils.isNotBlank(version)) {</span>
+<span class="nc" id="L253">                value.append(&quot;@&quot;).append(version);</span>
+            }
+<span class="nc" id="L255">            id = new GenericIdentifier(value.toString(), Confidence.HIGH);</span>
+<span class="fc" id="L256">        }</span>
+<span class="fc" id="L257">        dep.addSoftwareIdentifier(id);</span>
+<span class="fc" id="L258">        dep.setSha1sum(Checksum.getSHA1Checksum(id.toString()));</span>
+<span class="fc" id="L259">        dep.setMd5sum(Checksum.getMD5Checksum(id.toString()));</span>
+<span class="fc" id="L260">        dep.setSha256sum(Checksum.getSHA256Checksum(id.toString()));</span>
+
+<span class="fc" id="L262">        return dep;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

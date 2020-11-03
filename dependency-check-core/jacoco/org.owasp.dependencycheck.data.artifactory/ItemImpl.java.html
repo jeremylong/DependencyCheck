@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ItemImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.artifactory</a> &gt; <span class="el_source">ItemImpl.java</span></div><h1>ItemImpl.java</h1><pre class="source lang-java linenums">package org.owasp.dependencycheck.data.artifactory;
+
+import java.io.File;
+import java.util.Date;
+
+/**
+ * Copied from JFrog's artifactory client.
+ *
+ * @see
+ * &lt;a href=&quot;https://github.com/jfrog/artifactory-client-java&quot;&gt;artifactory-client-java&lt;/a&gt;
+ *
+ * @author jbaruch
+ * @since 29/07/12
+ */
+public class ItemImpl {
+
+    private String uri;
+    private String repo;
+    private String path;
+    private boolean folder;
+    private String metadataUri;
+    private Date lastModified;
+    private String modifiedBy;
+    private Date lastUpdated;
+
+<span class="nc" id="L26">    protected ItemImpl(boolean folder, String uri, String metadataUri, Date lastModified, String modifiedBy, Date lastUpdated) {</span>
+<span class="nc" id="L27">        this.folder = folder;</span>
+<span class="nc" id="L28">        this.uri = uri;</span>
+<span class="nc" id="L29">        this.metadataUri = metadataUri;</span>
+<span class="nc" id="L30">        this.lastModified = lastModified;</span>
+<span class="nc" id="L31">        this.modifiedBy = modifiedBy;</span>
+<span class="nc" id="L32">        this.lastUpdated = lastUpdated;</span>
+<span class="nc" id="L33">    }</span>
+
+<span class="fc" id="L35">    protected ItemImpl() {</span>
+<span class="fc" id="L36">    }</span>
+
+<span class="nc" id="L38">    protected ItemImpl(boolean folder, String uri) {</span>
+<span class="nc" id="L39">        this.folder = folder;</span>
+<span class="nc" id="L40">        this.uri = uri;</span>
+<span class="nc" id="L41">    }</span>
+
+    public String getPath() {
+<span class="fc" id="L44">        return path;</span>
+    }
+
+    private void setPath(String path) {
+<span class="fc" id="L48">        this.path = path;</span>
+<span class="fc" id="L49">    }</span>
+
+    public String getRepo() {
+<span class="nc" id="L52">        return repo;</span>
+    }
+
+    private void setRepo(String repo) {
+<span class="fc" id="L56">        this.repo = repo;</span>
+<span class="fc" id="L57">    }</span>
+
+    public boolean isFolder() {
+<span class="nc" id="L60">        return folder;</span>
+    }
+
+    private void setFolder(boolean folder) {
+<span class="nc" id="L64">        this.folder = folder;</span>
+<span class="nc" id="L65">    }</span>
+
+    public String getName() {
+<span class="nc" id="L68">        return new File(uri).getName();</span>
+    }
+
+    public String getUri() {
+<span class="nc" id="L72">        return uri;</span>
+    }
+
+    private void setUri(String uri) {
+<span class="fc" id="L76">        this.uri = uri;</span>
+<span class="fc" id="L77">    }</span>
+
+    public String getMetadataUri() {
+<span class="nc" id="L80">        return metadataUri;</span>
+    }
+
+    private void setMetadataUri(String metadataUri) {
+<span class="nc" id="L84">        this.metadataUri = metadataUri;</span>
+<span class="nc" id="L85">    }</span>
+
+    public Date getLastModified() {
+<span class="nc" id="L88">        return lastModified;</span>
+    }
+
+    private void setLastModified(Date lastModified) {
+<span class="fc" id="L92">        this.lastModified = lastModified;</span>
+<span class="fc" id="L93">    }</span>
+
+    public String getModifiedBy() {
+<span class="nc" id="L96">        return modifiedBy;</span>
+    }
+
+    private void setModifiedBy(String modifiedBy) {
+<span class="fc" id="L100">        this.modifiedBy = modifiedBy;</span>
+<span class="fc" id="L101">    }</span>
+
+    public Date getLastUpdated() {
+<span class="nc" id="L104">        return lastUpdated;</span>
+    }
+
+    private void setLastUpdated(Date lastUpdated) {
+<span class="fc" id="L108">        this.lastUpdated = lastUpdated;</span>
+<span class="fc" id="L109">    }</span>
+
+    @Override
+    public boolean equals(Object o) {
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (this == o) {</span>
+<span class="nc" id="L114">            return true;</span>
+        }
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        if (!(o instanceof ItemImpl)) {</span>
+<span class="nc" id="L117">            return false;</span>
+        }
+
+<span class="nc" id="L120">        ItemImpl item = (ItemImpl) o;</span>
+
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        if (!uri.equals(item.uri)) {</span>
+<span class="nc" id="L123">            return false;</span>
+        }
+
+<span class="nc" id="L126">        return true;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L131">        return uri.hashCode();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

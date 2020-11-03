@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NugetPackageReference.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nuget</a> &gt; <span class="el_source">NugetPackageReference.java</span></div><h1>NugetPackageReference.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2018 Paul Irwin. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nuget;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+/**
+ * Represents a reference to a NuGet package and version.
+ *
+ * @author paulirwin
+ */
+<span class="fc" id="L28">public class NugetPackageReference {</span>
+
+    /**
+     * The id.
+     */
+    private String id;
+
+    /**
+     * The version.
+     */
+    private String version;
+
+    /**
+     * Sets the id.
+     *
+     * @param id the id
+     */
+    public void setId(String id) {
+<span class="fc" id="L46">        this.id = id;</span>
+<span class="fc" id="L47">    }</span>
+
+    /**
+     * Gets the id.
+     *
+     * @return the id
+     */
+    public String getId() {
+<span class="fc" id="L55">        return id;</span>
+    }
+
+    /**
+     * Sets the version.
+     *
+     * @param version the version
+     */
+    public void setVersion(String version) {
+<span class="fc" id="L64">        this.version = version;</span>
+<span class="fc" id="L65">    }</span>
+
+    /**
+     * Gets the version.
+     *
+     * @return the version
+     */
+    public String getVersion() {
+<span class="fc" id="L73">        return version;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L81" title="All 4 branches missed.">        if (obj == null || !(obj instanceof NugetPackageReference)) {</span>
+<span class="nc" id="L82">            return false;</span>
+        }
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        if (this == obj) {</span>
+<span class="nc" id="L85">            return true;</span>
+        }
+<span class="nc" id="L87">        final NugetPackageReference rhs = (NugetPackageReference) obj;</span>
+<span class="nc" id="L88">        return new EqualsBuilder()</span>
+<span class="nc" id="L89">                .append(id, rhs.id)</span>
+<span class="nc" id="L90">                .append(version, rhs.version)</span>
+<span class="nc" id="L91">                .isEquals();</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+<span class="nc" id="L99">        return new HashCodeBuilder(7, 89)</span>
+<span class="nc" id="L100">                .append(id)</span>
+<span class="nc" id="L101">                .append(version)</span>
+<span class="nc" id="L102">                .toHashCode();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

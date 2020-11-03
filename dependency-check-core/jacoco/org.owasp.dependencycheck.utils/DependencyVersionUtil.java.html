@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DependencyVersionUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">DependencyVersionUtil.java</span></div><h1>DependencyVersionUtil.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.utils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.annotation.concurrent.ThreadSafe;
+
+/**
+ * &lt;p&gt;
+ * A utility class to extract version numbers from file names (or other strings
+ * containing version numbers.&lt;/p&gt;
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+public final class DependencyVersionUtil {
+
+    /**
+     * Regular expression to extract version numbers from file names.
+     */
+<span class="fc" id="L39">    private static final Pattern RX_VERSION = Pattern.compile(</span>
+            &quot;\\d+(\\.\\d+){1,6}([._-]?(snapshot|release|final|alpha|beta|[a-zA-Z]{1,3}[_-]?\\d{1,8}|[a-z]\\b|\\d{1,8}\\b))?&quot;, Pattern.CASE_INSENSITIVE);
+    /**
+     * Regular expression to extract a single version number without periods.
+     * This is a last ditch effort just to check in case we are missing a
+     * version number using the previous regex.
+     */
+<span class="fc" id="L46">    private static final Pattern RX_SINGLE_VERSION = Pattern.compile(</span>
+            &quot;\\d+(\\.\\d+){0,6}([._-]?(snapshot|release|final|alpha|beta|[a-zA-Z]{1,3}[_-]?\\d{1,8}))?&quot;);
+
+    /**
+     * Regular expression to extract the part before the version numbers if
+     * there are any based on RX_VERSION. In most cases, this part represents a
+     * more accurate name.
+     */
+<span class="fc" id="L54">    private static final Pattern RX_PRE_VERSION = Pattern.compile(&quot;^(.+)[_-](\\d+\\.\\d{1,6})+&quot;);</span>
+
+    /**
+     * Private constructor for utility class.
+     */
+    private DependencyVersionUtil() {
+    }
+
+    /**
+     * &lt;p&gt;
+     * A utility class to extract version numbers from file names (or other
+     * strings containing version numbers.&lt;/p&gt;
+     * &lt;pre&gt;
+     * Example:
+     * Give the file name: library-name-1.4.1r2-release.jar
+     * This function would return: 1.4.1.r2&lt;/pre&gt;
+     *
+     * @param text the text being analyzed
+     * @return a DependencyVersion containing the version
+     */
+    public static DependencyVersion parseVersion(String text) {
+<span class="fc" id="L75">        return parseVersion(text, false);</span>
+    }
+
+    /**
+     * &lt;p&gt;
+     * A utility class to extract version numbers from file names (or other
+     * strings containing version numbers.&lt;/p&gt;
+     * &lt;pre&gt;
+     * Example:
+     * Give the file name: library-name-1.4.1r2-release.jar
+     * This function would return: 1.4.1.r2&lt;/pre&gt;
+     *
+     * @param text the text being analyzed
+     * @param firstMatchOnly if &lt;code&gt;false&lt;/code&gt; and more then one version
+     * string is found in the given text, null will be returned. Otherwise, the
+     * first version found will be returned.
+     * @return a DependencyVersion containing the version
+     */
+    public static DependencyVersion parseVersion(String text, boolean firstMatchOnly) {
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">        if (text == null) {</span>
+<span class="nc" id="L95">            return null;</span>
+        }
+        //'-' is a special case used within the CVE entries, just include it as the version.
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        if (&quot;-&quot;.equals(text)) {</span>
+<span class="fc" id="L99">            final DependencyVersion dv = new DependencyVersion();</span>
+<span class="fc" id="L100">            final List&lt;String&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L101">            list.add(text);</span>
+<span class="fc" id="L102">            dv.setVersionParts(list);</span>
+<span class="fc" id="L103">            return dv;</span>
+        }
+<span class="fc" id="L105">        String version = null;</span>
+<span class="fc" id="L106">        Matcher matcher = RX_VERSION.matcher(text);</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        if (matcher.find()) {</span>
+<span class="fc" id="L108">            version = matcher.group();</span>
+        }
+        //throw away the results if there are two things that look like version numbers
+<span class="fc bfc" id="L111" title="All 4 branches covered.">        if (!firstMatchOnly &amp;&amp; matcher.find()) {</span>
+<span class="fc" id="L112">            return null;</span>
+        }
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        if (version == null) {</span>
+<span class="fc" id="L115">            matcher = RX_SINGLE_VERSION.matcher(text);</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">            if (matcher.find()) {</span>
+<span class="fc" id="L117">                version = matcher.group();</span>
+            } else {
+<span class="fc" id="L119">                return null;</span>
+            }
+            //throw away the results if there are two things that look like version numbers
+<span class="fc bfc" id="L122" title="All 2 branches covered.">            if (matcher.find()) {</span>
+<span class="fc" id="L123">                return null;</span>
+            }
+        }
+<span class="pc bpc" id="L126" title="2 of 6 branches missed.">        if (version != null &amp;&amp; version.endsWith(&quot;-py2&quot;) &amp;&amp; version.length() &gt; 4) {</span>
+<span class="fc" id="L127">            version = version.substring(0, version.length() - 4);</span>
+        }
+<span class="fc" id="L129">        return new DependencyVersion(version);</span>
+    }
+
+    /**
+     * &lt;p&gt;
+     * A utility class to extract the part before version numbers from file
+     * names (or other strings containing version numbers. In most cases, this
+     * part represents a more accurate name than the full file name.&lt;/p&gt;
+     * &lt;pre&gt;
+     * Example:
+     * Give the file name: library-name-1.4.1r2-release.jar
+     * This function would return: library-name&lt;/pre&gt;
+     *
+     * @param text the text being analyzed
+     * @return the part before the version numbers if any, otherwise return the
+     * text itself.
+     */
+    public static String parsePreVersion(String text) {
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        if (parseVersion(text) == null) {</span>
+<span class="fc" id="L148">            return text;</span>
+        }
+
+<span class="fc" id="L151">        final Matcher matcher = RX_PRE_VERSION.matcher(text);</span>
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">        if (matcher.find()) {</span>
+<span class="fc" id="L153">            return matcher.group(1);</span>
+        }
+<span class="nc" id="L155">        return text;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Advisory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nodeaudit</a> &gt; <span class="el_source">Advisory.java</span></div><h1>Advisory.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2018 Steve Springett. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nodeaudit;
+
+import java.io.Serializable;
+import java.util.List;
+import javax.annotation.concurrent.ThreadSafe;
+
+/**
+ * The response from NPM Audit API will respond with 0 or more advisories. This
+ * class defines the Advisory objects returned.
+ *
+ * @author Steve Springett
+ */
+@ThreadSafe
+<span class="nc" id="L31">public class Advisory implements Serializable {</span>
+
+    /**
+     * Serial version UID.
+     */
+    private static final long serialVersionUID = -6157232800626565476L;
+
+    /**
+     * The unique ID of the advisory as issued by NPM.
+     */
+    private int id;
+
+    /**
+     * The timestamp of which the advisory was created.
+     */
+    private String created;
+
+    /**
+     * The timestamp of the last update to the advisory.
+     */
+    private String updated;
+
+    /**
+     * The title/name of the advisory.
+     */
+    private String title;
+
+    /**
+     * A detailed description of the advisory.
+     */
+    private String overview;
+
+    /**
+     * Recommendations for mitigation. Typically involves updating to a newer
+     * release.
+     */
+    private String recommendation;
+
+    /**
+     * The name of the individual or organization that found the issue.
+     */
+    private String foundBy;
+
+    /**
+     * The name of the individual or organization that reported the issue.
+     */
+    private String reportedBy;
+
+    /**
+     * The name of the Node module the advisory is for.
+     */
+    private String moduleName;
+
+    /**
+     * The version of the Node module.
+     */
+    private String version;
+
+    /**
+     * The optional CVE(s) associated with this advisory.
+     */
+    private List&lt;String&gt; cves;
+
+    /**
+     * A string representation of the versions containing the vulnerability.
+     */
+    private String vulnerableVersions;
+
+    /**
+     * A string representation of the versions that have been patched.
+     */
+    private String patchedVersions;
+
+    /**
+     * The references names in the advisory. This field contains MarkDown
+     * (including \n, *, and other characters)
+     */
+    private String references;
+
+    /**
+     * The access of the advisory.
+     */
+    private String access;
+
+    /**
+     * The severity of the advisory.
+     */
+    private String severity;
+
+    /**
+     * The CWE of the advisory.
+     */
+    private String cwe;
+
+    public int getId() {
+<span class="nc" id="L126">        return id;</span>
+    }
+
+    public void setId(int id) {
+<span class="nc" id="L130">        this.id = id;</span>
+<span class="nc" id="L131">    }</span>
+
+    public String getCreated() {
+<span class="nc" id="L134">        return created;</span>
+    }
+
+    public void setCreated(String created) {
+<span class="nc" id="L138">        this.created = created;</span>
+<span class="nc" id="L139">    }</span>
+
+    public String getUpdated() {
+<span class="nc" id="L142">        return updated;</span>
+    }
+
+    public void setUpdated(String updated) {
+<span class="nc" id="L146">        this.updated = updated;</span>
+<span class="nc" id="L147">    }</span>
+
+    public String getTitle() {
+<span class="nc" id="L150">        return title;</span>
+    }
+
+    public void setTitle(String title) {
+<span class="nc" id="L154">        this.title = title;</span>
+<span class="nc" id="L155">    }</span>
+
+    public String getOverview() {
+<span class="nc" id="L158">        return overview;</span>
+    }
+
+    public void setOverview(String overview) {
+<span class="nc" id="L162">        this.overview = overview;</span>
+<span class="nc" id="L163">    }</span>
+
+    public String getRecommendation() {
+<span class="nc" id="L166">        return recommendation;</span>
+    }
+
+    public void setRecommendation(String recommendation) {
+<span class="nc" id="L170">        this.recommendation = recommendation;</span>
+<span class="nc" id="L171">    }</span>
+
+    public String getFoundBy() {
+<span class="nc" id="L174">        return foundBy;</span>
+    }
+
+    public void setFoundBy(String foundBy) {
+<span class="nc" id="L178">        this.foundBy = foundBy;</span>
+<span class="nc" id="L179">    }</span>
+
+    public String getReportedBy() {
+<span class="nc" id="L182">        return reportedBy;</span>
+    }
+
+    public void setReportedBy(String reportedBy) {
+<span class="nc" id="L186">        this.reportedBy = reportedBy;</span>
+<span class="nc" id="L187">    }</span>
+
+    public String getModuleName() {
+<span class="nc" id="L190">        return moduleName;</span>
+    }
+
+    public void setModuleName(String moduleName) {
+<span class="nc" id="L194">        this.moduleName = moduleName;</span>
+<span class="nc" id="L195">    }</span>
+
+    public String getVersion() {
+<span class="nc" id="L198">        return version;</span>
+    }
+
+    public void setVersion(String version) {
+<span class="nc" id="L202">        this.version = version;</span>
+<span class="nc" id="L203">    }</span>
+
+    public List&lt;String&gt; getCves() {
+<span class="nc" id="L206">        return cves;</span>
+    }
+
+    public void setCves(List&lt;String&gt; cves) {
+<span class="nc" id="L210">        this.cves = cves;</span>
+<span class="nc" id="L211">    }</span>
+
+    public String getVulnerableVersions() {
+<span class="nc" id="L214">        return vulnerableVersions;</span>
+    }
+
+    public void setVulnerableVersions(String vulnerableVersions) {
+<span class="nc" id="L218">        this.vulnerableVersions = vulnerableVersions;</span>
+<span class="nc" id="L219">    }</span>
+
+    public String getPatchedVersions() {
+<span class="nc" id="L222">        return patchedVersions;</span>
+    }
+
+    public void setPatchedVersions(String patchedVersions) {
+<span class="nc" id="L226">        this.patchedVersions = patchedVersions;</span>
+<span class="nc" id="L227">    }</span>
+
+    public String getReferences() {
+<span class="nc" id="L230">        return references;</span>
+    }
+
+    public void setReferences(String references) {
+<span class="nc" id="L234">        this.references = references;</span>
+<span class="nc" id="L235">    }</span>
+
+    public String getAccess() {
+<span class="nc" id="L238">        return access;</span>
+    }
+
+    public void setAccess(String access) {
+<span class="nc" id="L242">        this.access = access;</span>
+<span class="nc" id="L243">    }</span>
+
+    public String getSeverity() {
+<span class="nc" id="L246">        return severity;</span>
+    }
+
+    public void setSeverity(String severity) {
+<span class="nc" id="L250">        this.severity = severity;</span>
+<span class="nc" id="L251">    }</span>
+
+    public String getCwe() {
+<span class="nc" id="L254">        return cwe;</span>
+    }
+
+    public void setCwe(String cwe) {
+<span class="nc" id="L258">        this.cwe = cwe;</span>
+<span class="nc" id="L259">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

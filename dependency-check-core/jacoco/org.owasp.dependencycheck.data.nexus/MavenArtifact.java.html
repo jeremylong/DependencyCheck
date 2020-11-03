@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MavenArtifact.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nexus</a> &gt; <span class="el_source">MavenArtifact.java</span></div><h1>MavenArtifact.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nexus;
+
+import java.io.Serializable;
+import javax.annotation.concurrent.ThreadSafe;
+
+/**
+ * Simple bean representing a Maven Artifact.
+ *
+ * @author colezlaw
+ * @author nhenneaux
+ */
+@ThreadSafe
+public class MavenArtifact implements Serializable {
+
+    /**
+     * Generated UID.
+     */
+    private static final long serialVersionUID = -9112154330099159722L;
+
+    /**
+     * The groupId
+     */
+    private String groupId;
+
+    /**
+     * The artifactId
+     */
+    private String artifactId;
+
+    /**
+     * The version
+     */
+    private String version;
+
+    /**
+     * The artifact URL. This may change depending on which Nexus server the
+     * search took place.
+     */
+    private String artifactUrl;
+    /**
+     * The URL to download the POM from.
+     */
+    private String pomUrl;
+
+    /**
+     * Creates an empty MavenArtifact.
+     */
+<span class="nc" id="L65">    public MavenArtifact() {</span>
+<span class="nc" id="L66">    }</span>
+
+    /**
+     * Creates a MavenArtifact with the given attributes.
+     *
+     * @param groupId the groupId
+     * @param artifactId the artifactId
+     * @param version the version
+     */
+<span class="nc" id="L75">    public MavenArtifact(String groupId, String artifactId, String version) {</span>
+<span class="nc" id="L76">        this.groupId = groupId;</span>
+<span class="nc" id="L77">        this.artifactId = artifactId;</span>
+<span class="nc" id="L78">        this.version = version;</span>
+<span class="nc" id="L79">    }</span>
+
+    /**
+     * Creates a MavenArtifact with the given attributes.
+     *
+     * @param groupId the groupId
+     * @param artifactId the artifactId
+     * @param version the version
+     * @param url the artifactLink URL
+     */
+<span class="fc" id="L89">    public MavenArtifact(String groupId, String artifactId, String version, String url) {</span>
+<span class="fc" id="L90">        this.groupId = groupId;</span>
+<span class="fc" id="L91">        this.artifactId = artifactId;</span>
+<span class="fc" id="L92">        this.version = version;</span>
+<span class="fc" id="L93">        this.artifactUrl = url;</span>
+<span class="fc" id="L94">    }</span>
+
+    /**
+     * Creates a MavenArtifact with the given attributes.
+     *
+     * @param groupId the groupId
+     * @param artifactId the artifactId
+     * @param version the version
+     * @param artifactUrl the artifactLink URL
+     * @param pomUrl the pomUrl
+     */
+<span class="fc" id="L105">    public MavenArtifact(String groupId, String artifactId, String version, String artifactUrl, String pomUrl) {</span>
+<span class="fc" id="L106">        this.groupId = groupId;</span>
+<span class="fc" id="L107">        this.artifactId = artifactId;</span>
+<span class="fc" id="L108">        this.version = version;</span>
+<span class="fc" id="L109">        this.artifactUrl = artifactUrl;</span>
+<span class="fc" id="L110">        this.pomUrl = pomUrl;</span>
+<span class="fc" id="L111">    }</span>
+
+    /**
+     * Tries to determine the URL to the pom.xml.
+     *
+     * @param artifactId the artifact id
+     * @param version the version
+     * @param artifactUrl the artifact URL
+     * @return the string representation of the URL
+     */
+    public static String derivePomUrl(String artifactId, String version, String artifactUrl) {
+<span class="fc" id="L122">        return artifactUrl.substring(0, artifactUrl.lastIndexOf('/')) + '/' + artifactId + '-' + version + &quot;.pom&quot;;</span>
+    }
+
+    /**
+     * Returns the Artifact coordinates as a String.
+     *
+     * @return the String representation of the artifact coordinates
+     */
+    @Override
+    public String toString() {
+<span class="nc" id="L132">        return String.format(&quot;%s:%s:%s&quot;, groupId, artifactId, version);</span>
+    }
+
+    /**
+     * Gets the groupId.
+     *
+     * @return the groupId
+     */
+    public String getGroupId() {
+<span class="fc" id="L141">        return groupId;</span>
+    }
+
+    /**
+     * Sets the groupId.
+     *
+     * @param groupId the groupId
+     */
+    public void setGroupId(String groupId) {
+<span class="nc" id="L150">        this.groupId = groupId;</span>
+<span class="nc" id="L151">    }</span>
+
+    /**
+     * Gets the artifactId.
+     *
+     * @return the artifactId
+     */
+    public String getArtifactId() {
+<span class="fc" id="L159">        return artifactId;</span>
+    }
+
+    /**
+     * Sets the artifactId.
+     *
+     * @param artifactId the artifactId
+     */
+    public void setArtifactId(String artifactId) {
+<span class="nc" id="L168">        this.artifactId = artifactId;</span>
+<span class="nc" id="L169">    }</span>
+
+    /**
+     * Gets the version.
+     *
+     * @return the version
+     */
+    public String getVersion() {
+<span class="fc" id="L177">        return version;</span>
+    }
+
+    /**
+     * Sets the version.
+     *
+     * @param version the version
+     */
+    public void setVersion(String version) {
+<span class="nc" id="L186">        this.version = version;</span>
+<span class="nc" id="L187">    }</span>
+
+    /**
+     * Gets the artifactUrl.
+     *
+     * @return the artifactUrl
+     */
+    public String getArtifactUrl() {
+<span class="fc" id="L195">        return artifactUrl;</span>
+    }
+
+    /**
+     * Sets the artifactUrl.
+     *
+     * @param artifactUrl the artifactUrl
+     */
+    public void setArtifactUrl(String artifactUrl) {
+<span class="nc" id="L204">        this.artifactUrl = artifactUrl;</span>
+<span class="nc" id="L205">    }</span>
+
+    /**
+     * Get the value of pomUrl.
+     *
+     * @return the value of pomUrl
+     */
+    public String getPomUrl() {
+<span class="fc" id="L213">        return pomUrl;</span>
+    }
+
+    /**
+     * Set the value of pomUrl.
+     *
+     * @param pomUrl new value of pomUrl
+     */
+    public void setPomUrl(String pomUrl) {
+<span class="nc" id="L222">        this.pomUrl = pomUrl;</span>
+<span class="nc" id="L223">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

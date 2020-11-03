@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CweDB.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.cwe</a> &gt; <span class="el_source">CweDB.java</span></div><h1>CweDB.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2018 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.cwe;
+
+import org.owasp.dependencycheck.utils.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.util.HashMap;
+import java.util.Map;
+import javax.annotation.concurrent.ThreadSafe;
+
+/**
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+public final class CweDB {
+
+    /**
+     * The Logger.
+     */
+<span class="fc" id="L41">    private static final Logger LOGGER = LoggerFactory.getLogger(CweDB.class);</span>
+    /**
+     * A HashMap of the CWE data.
+     */
+<span class="fc" id="L45">    private static final Map&lt;String, String&gt; CWE = loadData();</span>
+
+    /**
+     * Empty private constructor as this is a utility class.
+     */
+    private CweDB() {
+        //empty
+    }
+
+    /**
+     * Loads a HashMap containing the CWE data from a resource found in the jar.
+     *
+     * @return a HashMap of CWE data
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    private static Map&lt;String, String&gt; loadData() {
+<span class="fc" id="L61">        final String filePath = &quot;data/cwe.hashmap.serialized&quot;;</span>
+<span class="fc" id="L62">        try (InputStream input = FileUtils.getResourceAsStream(filePath);</span>
+<span class="fc" id="L63">                ObjectInputStream oin = new ObjectInputStream(input)) {</span>
+<span class="fc" id="L64">            return (HashMap&lt;String, String&gt;) oin.readObject();</span>
+<span class="nc" id="L65">        } catch (ClassNotFoundException ex) {</span>
+<span class="nc" id="L66">            LOGGER.warn(&quot;Unable to load CWE data. This should not be an issue.&quot;);</span>
+<span class="nc" id="L67">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L68">        } catch (IOException ex) {</span>
+<span class="nc" id="L69">            LOGGER.warn(&quot;Unable to load CWE data due to an IO Error. This should not be an issue.&quot;);</span>
+<span class="nc" id="L70">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L71">        }</span>
+<span class="nc" id="L72">        return null;</span>
+    }
+
+    /**
+     * &lt;p&gt;
+     * Returns the full CWE name from the CWE ID.&lt;/p&gt;
+     *
+     * @param cweId the CWE ID
+     * @return the full name of the CWE
+     */
+    public static synchronized String getName(String cweId) {
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        if (cweId != null) {</span>
+<span class="fc" id="L84">            return CWE.get(cweId);</span>
+        }
+<span class="nc" id="L86">        return null;</span>
+    }
+
+    /**
+     * &lt;p&gt;
+     * Returns the full CWE name from the CWE ID.&lt;/p&gt;
+     *
+     * @param cweId the CWE ID
+     * @return the full name of the CWE
+     */
+    public static synchronized String getFullName(String cweId) {
+<span class="fc" id="L97">        final String name = getName(cweId);</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        if (name != null) {</span>
+<span class="fc" id="L99">            return cweId + &quot; &quot; + name;</span>
+        }
+<span class="fc" id="L101">        return cweId;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">AbstractAnalyzer.java</span></div><h1>AbstractAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.Settings;
+
+import javax.annotation.concurrent.ThreadSafe;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Base class for analyzers to avoid code duplication of prepare and close as
+ * most analyzers do not need these methods.
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+<span class="fc" id="L38">public abstract class AbstractAnalyzer implements Analyzer {</span>
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L43">    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAnalyzer.class);</span>
+    /**
+     * A flag indicating whether or not the analyzer is enabled.
+     */
+<span class="fc" id="L47">    private volatile boolean enabled = true;</span>
+    /**
+     * The configured settings.
+     */
+    private Settings settings;
+
+    /**
+     * Get the value of enabled.
+     *
+     * @return the value of enabled
+     */
+    @Override
+    public boolean isEnabled() {
+<span class="fc" id="L60">        return enabled;</span>
+    }
+
+    /**
+     * Set the value of enabled.
+     *
+     * @param enabled new value of enabled
+     */
+    public void setEnabled(boolean enabled) {
+<span class="fc" id="L69">        this.enabled = enabled;</span>
+<span class="fc" id="L70">    }</span>
+
+    /**
+     * Returns the configured settings.
+     *
+     * @return the configured settings
+     */
+    protected Settings getSettings() {
+<span class="fc" id="L78">        return settings;</span>
+    }
+
+    /**
+     * Initializes the analyzer with the configured settings.
+     *
+     * @param settings the configured settings to use
+     */
+    @Override
+    public void initialize(Settings settings) {
+<span class="fc" id="L88">        this.settings = settings;</span>
+<span class="fc" id="L89">        final String key = getAnalyzerEnabledSettingKey();</span>
+<span class="fc" id="L90">        this.setEnabled(settings.getBoolean(key, true));</span>
+<span class="fc" id="L91">    }</span>
+
+    /**
+     * Initialize the abstract analyzer.
+     *
+     * @param engine a reference to the dependency-check engine
+     * @throws InitializationException thrown if there is an exception
+     */
+    @Override
+    public final void prepare(Engine engine) throws InitializationException {
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        if (isEnabled()) {</span>
+<span class="fc" id="L102">            prepareAnalyzer(engine);</span>
+        } else {
+<span class="fc" id="L104">            LOGGER.debug(&quot;{} has been disabled&quot;, getName());</span>
+        }
+<span class="fc" id="L106">    }</span>
+
+    /**
+     * Prepares a given Analyzer. This will be skipped if the analyzer is
+     * disabled.
+     *
+     * @param engine a reference to the dependency-check engine
+     * @throws InitializationException thrown if there is an exception
+     */
+    protected void prepareAnalyzer(Engine engine) throws InitializationException {
+        // Intentionally empty, analyzer will override this if they must prepare anything.
+<span class="fc" id="L117">    }</span>
+
+    /**
+     * Analyzes a given dependency. If the dependency is an archive, such as a
+     * WAR or EAR, the contents are extracted, scanned, and added to the list of
+     * dependencies within the engine.
+     *
+     * @param dependency the dependency to analyze
+     * @param engine     the engine scanning
+     * @throws AnalysisException thrown if there is an analysis exception
+     */
+    @Override
+    public final void analyze(Dependency dependency, Engine engine) throws AnalysisException {
+<span class="fc bfc" id="L130" title="All 2 branches covered.">        if (this.isEnabled()) {</span>
+<span class="fc" id="L131">            analyzeDependency(dependency, engine);</span>
+        }
+<span class="fc" id="L133">    }</span>
+
+    /**
+     * Analyzes a given dependency. If the dependency is an archive, such as a
+     * WAR or EAR, the contents are extracted, scanned, and added to the list of
+     * dependencies within the engine.
+     *
+     * @param dependency the dependency to analyze
+     * @param engine     the engine scanning
+     * @throws AnalysisException thrown if there is an analysis exception
+     */
+    protected abstract void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException;
+
+    /**
+     * The close method does nothing for this Analyzer.
+     *
+     * @throws Exception thrown if there is an exception
+     */
+    @Override
+    public final void close() throws Exception {
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        if (isEnabled()) {</span>
+<span class="fc" id="L154">            closeAnalyzer();</span>
+        }
+<span class="fc" id="L156">    }</span>
+
+    /**
+     * Closes a given Analyzer. This will be skipped if the analyzer is
+     * disabled.
+     *
+     * @throws Exception thrown if there is an exception
+     */
+    protected void closeAnalyzer() throws Exception {
+        // Intentionally empty, analyzer will override this if they must close a resource.
+<span class="fc" id="L166">    }</span>
+
+    /**
+     * The default is to support parallel processing.
+     *
+     * @return true
+     */
+    @Override
+    public boolean supportsParallelProcessing() {
+<span class="fc" id="L175">        return true;</span>
+    }
+
+    /**
+     * &lt;p&gt;
+     * Returns the setting key to determine if the analyzer is enabled.&lt;/p&gt;
+     *
+     * @return the key for the analyzer's enabled property
+     */
+    protected abstract String getAnalyzerEnabledSettingKey();
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Update.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Ant Task</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.taskdefs</a> &gt; <span class="el_source">Update.java</span></div><h1>Update.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-ant.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2015 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.taskdefs;
+
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.impl.StaticLoggerBinder;
+
+/**
+ * An Ant task definition to execute dependency-check update. This will download
+ * the latest data from the National Vulnerability Database (NVD) and store a
+ * copy in the local database.
+ *
+ * @author Jeremy Long
+ */
+//While duplicate code is general bad - this is calling out getters/setters
+//on unrelated ODC clients (the DependencyCheckScanAgent).
+@SuppressWarnings(&quot;common-java:DuplicatedBlocks&quot;)
+public class Update extends Purge {
+
+    /**
+     * The Proxy Server.
+     */
+    private String proxyServer;
+    /**
+     * The Proxy Port.
+     */
+    private String proxyPort;
+    /**
+     * The Proxy username.
+     */
+    private String proxyUsername;
+    /**
+     * The Proxy password.
+     */
+    private String proxyPassword;
+    /**
+     * Non proxy hosts
+     */
+    private String nonProxyHosts;
+    /**
+     * The Connection Timeout.
+     */
+    private String connectionTimeout;
+    /**
+     * The database driver name; such as org.h2.Driver.
+     */
+    private String databaseDriverName;
+    /**
+     * The path to the database driver JAR file if it is not on the class path.
+     */
+    private String databaseDriverPath;
+    /**
+     * The database connection string.
+     */
+    private String connectionString;
+    /**
+     * The user name for connecting to the database.
+     */
+    private String databaseUser;
+    /**
+     * The password to use when connecting to the database.
+     */
+    private String databasePassword;
+    /**
+     * The URL for the modified NVD CVE JSON file.
+     */
+    private String cveUrlModified;
+    /**
+     * Base Data Mirror URL for CVE JSON files.
+     */
+    private String cveUrlBase;
+    /**
+     * The number of hours to wait before re-checking for updates.
+     */
+    private Integer cveValidForHours;
+
+    /**
+     * Construct a new UpdateTask.
+     */
+    public Update() {
+<span class="fc" id="L101">        super();</span>
+        // Call this before Dependency Check Core starts logging anything - this way, all SLF4J messages from
+        // core end up coming through this tasks logger
+<span class="fc" id="L104">        StaticLoggerBinder.getSingleton().setTask(this);</span>
+<span class="fc" id="L105">    }</span>
+
+    /**
+     * Get the value of proxyServer.
+     *
+     * @return the value of proxyServer
+     */
+    public String getProxyServer() {
+<span class="nc" id="L113">        return proxyServer;</span>
+    }
+
+    /**
+     * Set the value of proxyServer.
+     *
+     * @param server new value of proxyServer
+     */
+    public void setProxyServer(String server) {
+<span class="nc" id="L122">        this.proxyServer = server;</span>
+<span class="nc" id="L123">    }</span>
+
+    /**
+     * Get the value of proxyPort.
+     *
+     * @return the value of proxyPort
+     */
+    public String getProxyPort() {
+<span class="nc" id="L131">        return proxyPort;</span>
+    }
+
+    /**
+     * Set the value of proxyPort.
+     *
+     * @param proxyPort new value of proxyPort
+     */
+    public void setProxyPort(String proxyPort) {
+<span class="nc" id="L140">        this.proxyPort = proxyPort;</span>
+<span class="nc" id="L141">    }</span>
+
+    /**
+     * Get the value of proxyUsername.
+     *
+     * @return the value of proxyUsername
+     */
+    public String getProxyUsername() {
+<span class="nc" id="L149">        return proxyUsername;</span>
+    }
+
+    /**
+     * Set the value of proxyUsername.
+     *
+     * @param proxyUsername new value of proxyUsername
+     */
+    public void setProxyUsername(String proxyUsername) {
+<span class="nc" id="L158">        this.proxyUsername = proxyUsername;</span>
+<span class="nc" id="L159">    }</span>
+
+    /**
+     * Get the value of proxyPassword.
+     *
+     * @return the value of proxyPassword
+     */
+    public String getProxyPassword() {
+<span class="nc" id="L167">        return proxyPassword;</span>
+    }
+
+    /**
+     * Set the value of proxyPassword.
+     *
+     * @param proxyPassword new value of proxyPassword
+     */
+    public void setProxyPassword(String proxyPassword) {
+<span class="nc" id="L176">        this.proxyPassword = proxyPassword;</span>
+<span class="nc" id="L177">    }</span>
+
+    /**
+     * Get the value of nonProxyHosts.
+     *
+     * @return the value of nonProxyHosts
+     */
+    public String getNonProxyHosts() {
+<span class="nc" id="L185">        return nonProxyHosts;</span>
+    }
+
+    /**
+     * Set the value of nonProxyHosts.
+     *
+     * @param nonProxyHosts new value of nonProxyHosts
+     */
+    public void setNonProxyHosts(String nonProxyHosts) {
+<span class="nc" id="L194">        this.nonProxyHosts = nonProxyHosts;</span>
+<span class="nc" id="L195">    }</span>
+
+    /**
+     * Get the value of connectionTimeout.
+     *
+     * @return the value of connectionTimeout
+     */
+    public String getConnectionTimeout() {
+<span class="nc" id="L203">        return connectionTimeout;</span>
+    }
+
+    /**
+     * Set the value of connectionTimeout.
+     *
+     * @param connectionTimeout new value of connectionTimeout
+     */
+    public void setConnectionTimeout(String connectionTimeout) {
+<span class="nc" id="L212">        this.connectionTimeout = connectionTimeout;</span>
+<span class="nc" id="L213">    }</span>
+
+    /**
+     * Get the value of databaseDriverName.
+     *
+     * @return the value of databaseDriverName
+     */
+    public String getDatabaseDriverName() {
+<span class="nc" id="L221">        return databaseDriverName;</span>
+    }
+
+    /**
+     * Set the value of databaseDriverName.
+     *
+     * @param databaseDriverName new value of databaseDriverName
+     */
+    public void setDatabaseDriverName(String databaseDriverName) {
+<span class="nc" id="L230">        this.databaseDriverName = databaseDriverName;</span>
+<span class="nc" id="L231">    }</span>
+
+    /**
+     * Get the value of databaseDriverPath.
+     *
+     * @return the value of databaseDriverPath
+     */
+    public String getDatabaseDriverPath() {
+<span class="nc" id="L239">        return databaseDriverPath;</span>
+    }
+
+    /**
+     * Set the value of databaseDriverPath.
+     *
+     * @param databaseDriverPath new value of databaseDriverPath
+     */
+    public void setDatabaseDriverPath(String databaseDriverPath) {
+<span class="nc" id="L248">        this.databaseDriverPath = databaseDriverPath;</span>
+<span class="nc" id="L249">    }</span>
+
+    /**
+     * Get the value of connectionString.
+     *
+     * @return the value of connectionString
+     */
+    public String getConnectionString() {
+<span class="nc" id="L257">        return connectionString;</span>
+    }
+
+    /**
+     * Set the value of connectionString.
+     *
+     * @param connectionString new value of connectionString
+     */
+    public void setConnectionString(String connectionString) {
+<span class="nc" id="L266">        this.connectionString = connectionString;</span>
+<span class="nc" id="L267">    }</span>
+
+    /**
+     * Get the value of databaseUser.
+     *
+     * @return the value of databaseUser
+     */
+    public String getDatabaseUser() {
+<span class="nc" id="L275">        return databaseUser;</span>
+    }
+
+    /**
+     * Set the value of databaseUser.
+     *
+     * @param databaseUser new value of databaseUser
+     */
+    public void setDatabaseUser(String databaseUser) {
+<span class="nc" id="L284">        this.databaseUser = databaseUser;</span>
+<span class="nc" id="L285">    }</span>
+
+    /**
+     * Get the value of databasePassword.
+     *
+     * @return the value of databasePassword
+     */
+    public String getDatabasePassword() {
+<span class="nc" id="L293">        return databasePassword;</span>
+    }
+
+    /**
+     * Set the value of databasePassword.
+     *
+     * @param databasePassword new value of databasePassword
+     */
+    public void setDatabasePassword(String databasePassword) {
+<span class="nc" id="L302">        this.databasePassword = databasePassword;</span>
+<span class="nc" id="L303">    }</span>
+
+    /**
+     * Set the value of cveUrlModified.
+     *
+     * @param cveUrlModified new value of cveUrlModified
+     */
+    public void setCveUrlModified(String cveUrlModified) {
+<span class="nc" id="L311">        this.cveUrlModified = cveUrlModified;</span>
+<span class="nc" id="L312">    }</span>
+
+    /**
+     * Get the value of cveUrlModified.
+     *
+     * @return the value of cveUrlModified
+     */
+    public String getCveUrlModified() {
+<span class="nc" id="L320">        return cveUrlModified;</span>
+    }
+
+    /**
+     * Get the value of cveUrlBase.
+     *
+     * @return the value of cveUrlBase
+     */
+    public String getCveUrlBase() {
+<span class="nc" id="L329">        return cveUrlBase;</span>
+    }
+
+    /**
+     * Set the value of cveUrlBase.
+     *
+     * @param cveUrlBase new value of cveUrlBase
+     */
+    public void setCveUrlBase(String cveUrlBase) {
+<span class="nc" id="L338">        this.cveUrlBase = cveUrlBase;</span>
+<span class="nc" id="L339">    }</span>
+
+    /**
+     * Get the value of cveValidForHours.
+     *
+     * @return the value of cveValidForHours
+     */
+    public Integer getCveValidForHours() {
+<span class="nc" id="L347">        return cveValidForHours;</span>
+    }
+
+    /**
+     * Set the value of cveValidForHours.
+     *
+     * @param cveValidForHours new value of cveValidForHours
+     */
+    public void setCveValidForHours(Integer cveValidForHours) {
+<span class="nc" id="L356">        this.cveValidForHours = cveValidForHours;</span>
+<span class="nc" id="L357">    }</span>
+
+    /**
+     * Executes the update by initializing the settings, downloads the NVD XML
+     * data, and then processes the data storing it in the local database.
+     *
+     * @throws BuildException thrown if a connection to the local database
+     * cannot be made.
+     */
+    //see note on `Check.dealWithReferences()` for information on this suppression
+    @SuppressWarnings(&quot;squid:RedundantThrowsDeclarationCheck&quot;)
+    @Override
+    public void execute() throws BuildException {
+<span class="nc" id="L370">        populateSettings();</span>
+<span class="nc" id="L371">        try (Engine engine = new Engine(Update.class.getClassLoader(), getSettings())) {</span>
+<span class="nc" id="L372">            engine.doUpdates();</span>
+<span class="nc" id="L373">        } catch (UpdateException ex) {</span>
+<span class="nc bnc" id="L374" title="All 2 branches missed.">            if (this.isFailOnError()) {</span>
+<span class="nc" id="L375">                throw new BuildException(ex);</span>
+            }
+<span class="nc" id="L377">            log(ex.getMessage(), Project.MSG_ERR);</span>
+<span class="nc" id="L378">        } catch (DatabaseException ex) {</span>
+<span class="nc" id="L379">            final String msg = &quot;Unable to connect to the dependency-check database; unable to update the NVD data&quot;;</span>
+<span class="nc bnc" id="L380" title="All 2 branches missed.">            if (this.isFailOnError()) {</span>
+<span class="nc" id="L381">                throw new BuildException(msg, ex);</span>
+            }
+<span class="nc" id="L383">            log(msg, Project.MSG_ERR);</span>
+        } finally {
+<span class="nc" id="L385">            getSettings().cleanup();</span>
+        }
+<span class="nc" id="L387">    }</span>
+
+    /**
+     * Takes the properties supplied and updates the dependency-check settings.
+     * Additionally, this sets the system properties required to change the
+     * proxy server, port, and connection timeout.
+     *
+     * @throws BuildException thrown when an invalid setting is configured.
+     */
+    //see note on `Check.dealWithReferences()` for information on this suppression
+    @SuppressWarnings(&quot;squid:RedundantThrowsDeclarationCheck&quot;)
+    @Override
+    protected void populateSettings() throws BuildException {
+<span class="fc" id="L400">        super.populateSettings();</span>
+<span class="fc" id="L401">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER, proxyServer);</span>
+<span class="fc" id="L402">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);</span>
+<span class="fc" id="L403">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME, proxyUsername);</span>
+<span class="fc" id="L404">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPassword);</span>
+<span class="fc" id="L405">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_NON_PROXY_HOSTS, nonProxyHosts);</span>
+<span class="fc" id="L406">        getSettings().setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);</span>
+<span class="fc" id="L407">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);</span>
+<span class="fc" id="L408">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);</span>
+<span class="fc" id="L409">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);</span>
+<span class="fc" id="L410">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);</span>
+<span class="fc" id="L411">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);</span>
+<span class="fc" id="L412">        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveUrlModified);</span>
+<span class="fc" id="L413">        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON, cveUrlBase);</span>
+<span class="pc bpc" id="L414" title="1 of 2 branches missed.">        if (cveValidForHours != null) {</span>
+<span class="nc bnc" id="L415" title="All 2 branches missed.">            if (cveValidForHours &gt;= 0) {</span>
+<span class="nc" id="L416">                getSettings().setInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);</span>
+            } else {
+<span class="nc" id="L418">                throw new BuildException(&quot;Invalid setting: `cpeValidForHours` must be 0 or greater&quot;);</span>
+            }
+        }
+<span class="fc" id="L421">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

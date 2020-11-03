@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExpectedObjectInputStream.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Utils</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">ExpectedObjectInputStream.java</span></div><h1>ExpectedObjectInputStream.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-utils.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2016 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.utils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InvalidClassException;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * An ObjectInputStream that will only deserialize expected classes.
+ *
+ * @author Jeremy Long
+ * @version $Id: $Id
+ */
+// NotThreadSafe
+public class ExpectedObjectInputStream extends ObjectInputStream {
+
+    /**
+     * The list of fully qualified class names that are able to be deserialized.
+     */
+<span class="fc" id="L41">    private final List&lt;String&gt; expected = new ArrayList&lt;&gt;();</span>
+
+    /**
+     * Constructs a new ExpectedOjectInputStream that can be used to securely deserialize an object by restricting the classes
+     * that can deserialized to a known set of expected classes.
+     *
+     * @param inputStream the input stream that contains the object to deserialize
+     * @param expected the fully qualified class names of the classes that can be deserialized
+     * @throws java.io.IOException thrown if there is an error reading from the stream
+     */
+    public ExpectedObjectInputStream(InputStream inputStream, String... expected) throws IOException {
+<span class="fc" id="L52">        super(inputStream);</span>
+<span class="fc" id="L53">        this.expected.addAll(Arrays.asList(expected));</span>
+<span class="fc" id="L54">    }</span>
+
+    /**
+     * {@inheritDoc}
+     *
+     * Only deserialize instances of expected classes by validating the class name prior to deserialization.
+     */
+    @Override
+    protected Class&lt;?&gt; resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        if (!this.expected.contains(desc.getName())) {</span>
+<span class="fc" id="L64">            throw new InvalidClassException(&quot;Unexpected deserialization &quot;, desc.getName());</span>
+        }
+<span class="fc" id="L66">        return super.resolveClass(desc);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

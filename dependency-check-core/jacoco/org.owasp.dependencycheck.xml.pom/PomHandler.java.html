@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PomHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.xml.pom</a> &gt; <span class="el_source">PomHandler.java</span></div><h1>PomHandler.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2015 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.xml.pom;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+import javax.annotation.concurrent.NotThreadSafe;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+/**
+ * A handler to read the pom.xml model.
+ *
+ * @author Jeremy Long
+ */
+@NotThreadSafe
+<span class="fc" id="L33">public class PomHandler extends DefaultHandler {</span>
+
+    /**
+     * The project element.
+     */
+    public static final String PROJECT = &quot;project&quot;;
+    /**
+     * The artifactId element.
+     */
+    public static final String GROUPID = &quot;groupId&quot;;
+    /**
+     * The artifactId element.
+     */
+    public static final String ARTIFACTID = &quot;artifactId&quot;;
+    /**
+     * The version element.
+     */
+    public static final String VERSION = &quot;version&quot;;
+    /**
+     * The parent element.
+     */
+    public static final String PARENT = &quot;parent&quot;;
+    /**
+     * The name element.
+     */
+    public static final String NAME = &quot;name&quot;;
+    /**
+     * The organization element.
+     */
+    public static final String ORGANIZATION = &quot;organization&quot;;
+    /**
+     * The description element.
+     */
+    public static final String DESCRIPTION = &quot;description&quot;;
+    /**
+     * The licenses element.
+     */
+    public static final String LICENSES = &quot;licenses&quot;;
+    /**
+     * The license element.
+     */
+    public static final String LICENSE_NODE = &quot;license&quot;;
+    /**
+     * The url element.
+     */
+    public static final String URL = &quot;url&quot;;
+    /**
+     * The pom model.
+     */
+<span class="fc" id="L82">    private final Model model = new Model();</span>
+    /**
+     * The stack of elements processed; used to determine the parent node.
+     */
+<span class="fc" id="L86">    private final Deque&lt;String&gt; stack = new ArrayDeque&lt;&gt;();</span>
+    /**
+     * The license object.
+     */
+<span class="fc" id="L90">    private License license = null;</span>
+    /**
+     * The current node text being extracted from the element.
+     */
+    private StringBuilder currentText;
+
+    /**
+     * Returns the model obtained from the pom.xml.
+     *
+     * @return the model object
+     */
+    public Model getModel() {
+<span class="fc" id="L102">        return model;</span>
+    }
+
+    /**
+     * Handles the start element event.
+     *
+     * @param uri the uri of the element being processed
+     * @param localName the local name of the element being processed
+     * @param qName the qName of the element being processed
+     * @param attributes the attributes of the element being processed
+     * @throws SAXException thrown if there is an exception processing
+     */
+    @Override
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+<span class="fc" id="L116">        currentText = new StringBuilder();</span>
+<span class="fc" id="L117">        stack.push(qName);</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        if (LICENSE_NODE.equals(qName)) {</span>
+<span class="fc" id="L119">            license = new License();</span>
+        }
+<span class="fc" id="L121">    }</span>
+
+    /**
+     * Handles the end element event.
+     *
+     * @param uri the URI of the element
+     * @param localName the local name of the element
+     * @param qName the qName of the element
+     * @throws SAXException thrown if there is an exception processing
+     */
+    @Override
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+<span class="fc" id="L133">        stack.pop();</span>
+<span class="fc" id="L134">        final String parentNode = stack.peek();</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        if (null != parentNode) {</span>
+<span class="fc bfc" id="L136" title="All 6 branches covered.">            switch (parentNode) {</span>
+                case PROJECT:
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">                    if (null != qName) {</span>
+<span class="fc bfc" id="L139" title="All 7 branches covered.">                        switch (qName) {</span>
+                            case GROUPID:
+<span class="fc" id="L141">                                model.setGroupId(currentText.toString());</span>
+<span class="fc" id="L142">                                break;</span>
+                            case ARTIFACTID:
+<span class="fc" id="L144">                                model.setArtifactId(currentText.toString());</span>
+<span class="fc" id="L145">                                break;</span>
+                            case VERSION:
+<span class="fc" id="L147">                                model.setVersion(currentText.toString());</span>
+<span class="fc" id="L148">                                break;</span>
+                            case NAME:
+<span class="fc" id="L150">                                model.setName(currentText.toString());</span>
+<span class="fc" id="L151">                                break;</span>
+                            case DESCRIPTION:
+<span class="fc" id="L153">                                model.setDescription(currentText.toString());</span>
+<span class="fc" id="L154">                                break;</span>
+                            case URL:
+<span class="fc" id="L156">                                model.setProjectURL(currentText.toString());</span>
+<span class="fc" id="L157">                                break;</span>
+                            default:
+<span class="fc" id="L159">                                break;</span>
+                        }
+                    }
+                    break;
+                case ORGANIZATION:
+<span class="fc bfc" id="L164" title="All 2 branches covered.">                    if (NAME.equals(qName)) {</span>
+<span class="fc" id="L165">                        model.setOrganization(currentText.toString());</span>
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">                    } else if (URL.equals(qName)) {</span>
+<span class="fc" id="L167">                        model.setOrganizationUrl(currentText.toString());</span>
+                    }
+                    break;
+                case PARENT:
+<span class="pc bpc" id="L171" title="1 of 2 branches missed.">                    if (null != qName) {</span>
+<span class="fc bfc" id="L172" title="All 4 branches covered.">                        switch (qName) {</span>
+                            case GROUPID:
+<span class="fc" id="L174">                                model.setParentGroupId(currentText.toString());</span>
+<span class="fc" id="L175">                                break;</span>
+                            case ARTIFACTID:
+<span class="fc" id="L177">                                model.setParentArtifactId(currentText.toString());</span>
+<span class="fc" id="L178">                                break;</span>
+                            case VERSION:
+<span class="fc" id="L180">                                model.setParentVersion(currentText.toString());</span>
+<span class="fc" id="L181">                                break;</span>
+                            default:
+<span class="fc" id="L183">                                break;</span>
+                        }
+                    }
+                    break;
+                case LICENSE_NODE:
+<span class="pc bpc" id="L188" title="1 of 2 branches missed.">                    if (license != null) {</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">                        if (NAME.equals(qName)) {</span>
+<span class="fc" id="L190">                            license.setName(currentText.toString());</span>
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">                        } else if (URL.equals(qName)) {</span>
+<span class="fc" id="L192">                            license.setUrl(currentText.toString());</span>
+                        }
+                    }
+                    break;
+                case LICENSES:
+<span class="pc bpc" id="L197" title="2 of 4 branches missed.">                    if (LICENSE_NODE.equals(qName) &amp;&amp; license != null) {</span>
+<span class="fc" id="L198">                        model.addLicense(license);</span>
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+<span class="fc" id="L205">    }</span>
+
+    /**
+     * Collects the body text of the node being processed.
+     *
+     * @param ch the char array of text
+     * @param start the start position to copy text from in the char array
+     * @param length the number of characters to copy from the char array
+     * @throws SAXException thrown if there is a parsing exception
+     */
+    @Override
+    public void characters(char[] ch, int start, int length) throws SAXException {
+<span class="fc" id="L217">        currentText.append(ch, start, length);</span>
+<span class="fc" id="L218">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NpmAuditParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nodeaudit</a> &gt; <span class="el_source">NpmAuditParser.java</span></div><h1>NpmAuditParser.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2018 Steve Springett. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nodeaudit;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Parser for NPM Audit API response. This parser is derived from:
+ * https://github.com/DependencyTrack/dependency-track/blob/master/src/main/java/org/owasp/dependencytrack/parser/npm/audit/NpmAuditParser.java
+ *
+ * @author Steve Springett
+ */
+<span class="nc" id="L34">public class NpmAuditParser {</span>
+
+    /**
+     * The logger.
+     */
+<span class="nc" id="L39">    private static final Logger LOGGER = LoggerFactory.getLogger(NpmAuditParser.class);</span>
+
+    /**
+     * Parses the JSON response from the NPM Audit API.
+     *
+     * @param jsonResponse the JSON node to parse
+     * @return an AdvisoryResults object
+     */
+    public List&lt;Advisory&gt; parse(JSONObject jsonResponse) {
+<span class="nc" id="L48">        LOGGER.debug(&quot;Parsing JSON node&quot;);</span>
+<span class="nc" id="L49">        final List&lt;Advisory&gt; advisories = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L50">        final JSONObject jsonAdvisories = jsonResponse.getJSONObject(&quot;advisories&quot;);</span>
+<span class="nc" id="L51">        final Iterator&lt;?&gt; keys = jsonAdvisories.keys();</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        while (keys.hasNext()) {</span>
+<span class="nc" id="L53">            final String key = (String) keys.next();</span>
+<span class="nc" id="L54">            final Advisory advisory = parseAdvisory(jsonAdvisories.getJSONObject(key));</span>
+<span class="nc" id="L55">            advisories.add(advisory);</span>
+<span class="nc" id="L56">        }</span>
+<span class="nc" id="L57">        return advisories;</span>
+    }
+
+    /**
+     * Parses the advisory from Node Audit.
+     *
+     * @param object the JSON object containing the advisory
+     * @return the Advisory object
+     */
+    private Advisory parseAdvisory(JSONObject object) {
+<span class="nc" id="L67">        final Advisory advisory = new Advisory();</span>
+<span class="nc" id="L68">        advisory.setId(object.getInt(&quot;id&quot;));</span>
+<span class="nc" id="L69">        advisory.setOverview(object.optString(&quot;overview&quot;, null));</span>
+<span class="nc" id="L70">        advisory.setReferences(object.optString(&quot;references&quot;, null));</span>
+<span class="nc" id="L71">        advisory.setCreated(object.optString(&quot;created&quot;, null));</span>
+<span class="nc" id="L72">        advisory.setUpdated(object.optString(&quot;updated&quot;, null));</span>
+<span class="nc" id="L73">        advisory.setRecommendation(object.optString(&quot;recommendation&quot;, null));</span>
+<span class="nc" id="L74">        advisory.setTitle(object.optString(&quot;title&quot;, null));</span>
+        //advisory.setFoundBy(object.optString(&quot;author&quot;, null));
+        //advisory.setReportedBy(object.optString(&quot;author&quot;, null));
+<span class="nc" id="L77">        advisory.setModuleName(object.optString(&quot;module_name&quot;, null));</span>
+<span class="nc" id="L78">        advisory.setVulnerableVersions(object.optString(&quot;vulnerable_versions&quot;, null));</span>
+<span class="nc" id="L79">        advisory.setPatchedVersions(object.optString(&quot;patched_versions&quot;, null));</span>
+<span class="nc" id="L80">        advisory.setAccess(object.optString(&quot;access&quot;, null));</span>
+<span class="nc" id="L81">        advisory.setSeverity(object.optString(&quot;severity&quot;, null));</span>
+<span class="nc" id="L82">        advisory.setCwe(object.optString(&quot;cwe&quot;, null));</span>
+
+<span class="nc" id="L84">        final JSONArray findings = object.optJSONArray(&quot;findings&quot;);</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        for (int i = 0; i &lt; findings.length(); i++) {</span>
+<span class="nc" id="L86">            final JSONObject finding = findings.getJSONObject(i);</span>
+<span class="nc" id="L87">            final String version = finding.optString(&quot;version&quot;, null);</span>
+<span class="nc" id="L88">            final JSONArray paths = finding.optJSONArray(&quot;paths&quot;);</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">            for (int j = 0; j &lt; paths.length(); j++) {</span>
+<span class="nc" id="L90">                final String path = paths.getString(j);</span>
+<span class="nc bnc" id="L91" title="All 4 branches missed.">                if (path != null &amp;&amp; path.equals(advisory.getModuleName())) {</span>
+<span class="nc" id="L92">                    advisory.setVersion(version);</span>
+                }
+            }
+        }
+
+<span class="nc" id="L97">        final JSONArray jsonCves = object.optJSONArray(&quot;cves&quot;);</span>
+<span class="nc" id="L98">        final List&lt;String&gt; stringCves = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        if (jsonCves != null) {</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">            for (int j = 0; j &lt; jsonCves.length(); j++) {</span>
+<span class="nc" id="L101">                stringCves.add(jsonCves.getString(j));</span>
+            }
+<span class="nc" id="L103">            advisory.setCves(stringCves);</span>
+        }
+<span class="nc" id="L105">        return advisory;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

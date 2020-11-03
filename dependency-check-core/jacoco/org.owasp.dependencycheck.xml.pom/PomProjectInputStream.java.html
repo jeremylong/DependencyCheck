@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PomProjectInputStream.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.xml.pom</a> &gt; <span class="el_source">PomProjectInputStream.java</span></div><h1>PomProjectInputStream.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2018 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.xml.pom;
+
+import java.io.BufferedInputStream;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+/**
+ * Filters everything in an input stream prior to the &amp;lt;project&amp;gt; element.
+ * This is useful to filter out the DOCTYPE declarations that can cause parsing
+ * issues.
+ *
+ * @author Jeremy Long
+ */
+public class PomProjectInputStream extends FilterInputStream {
+
+    /**
+     * The project tag for a pom.xml.
+     */
+<span class="fc" id="L37">    private static final byte[] PROJECT = {60, 112, 114, 111, 106, 101, 99, 116};</span>
+    //private static final byte[] PROJECT = &quot;&lt;project&quot;.getBytes();
+
+    /**
+     * The size of the buffer used to scan the input stream.
+     */
+    protected static final int BUFFER_SIZE = 1024;
+
+    /**
+     * Constructs a new POM project filtering input stream. The input stream is
+     * wrapped in a buffered input stream.
+     *
+     * @param in the input stream
+     * @throws IOException thrown if there is an I/O error
+     */
+    public PomProjectInputStream(InputStream in) throws IOException {
+<span class="fc" id="L53">        super(new BufferedInputStream(in));</span>
+<span class="fc" id="L54">        skipToProject();</span>
+<span class="fc" id="L55">    }</span>
+
+    /**
+     * Skips bytes from the input stream until it finds the &amp;lt;project&amp;gt;
+     * element.
+     *
+     * @throws IOException thrown if an I/O error occurs
+     */
+    private void skipToProject() throws IOException {
+<span class="fc" id="L64">        final byte[] buffer = new byte[BUFFER_SIZE];</span>
+<span class="fc" id="L65">        super.mark(BUFFER_SIZE);</span>
+<span class="fc" id="L66">        int count = super.read(buffer, 0, BUFFER_SIZE);</span>
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">        while (count &gt; 0) {</span>
+<span class="fc" id="L68">            final int pos = findSequence(PROJECT, buffer);</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">            if (pos &gt;= 0) {</span>
+<span class="fc" id="L70">                super.reset();</span>
+<span class="fc" id="L71">                final long skipped = super.skip((long) pos);</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">                if (skipped != pos) {</span>
+<span class="nc" id="L73">                    throw new IOException(&quot;Error skipping pom header information&quot;);</span>
+                }
+<span class="fc" id="L75">                return;</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">            } else if (count - PROJECT.length == 0) {</span>
+<span class="fc" id="L77">                return;</span>
+            }
+<span class="fc" id="L79">            super.reset();</span>
+<span class="fc" id="L80">            final long skipTo = (long) count - PROJECT.length;</span>
+<span class="fc" id="L81">            final long skipped = super.skip(skipTo);</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">            if (skipped != skipTo) {</span>
+<span class="nc" id="L83">                throw new IOException(&quot;Error skipping pom header information&quot;);</span>
+            }
+<span class="fc" id="L85">            super.mark(BUFFER_SIZE);</span>
+<span class="fc" id="L86">            count = super.read(buffer, 0, BUFFER_SIZE);</span>
+<span class="fc" id="L87">        }</span>
+<span class="nc" id="L88">    }</span>
+
+    /**
+     * Tests the buffer to see if it contains the given sequence[1]..[n]. It is
+     * assumed that sequence[0] is checked prior to calling this method and that
+     * buffer[pos] equals sequence[0].
+     *
+     * @param sequence the prefix to scan against
+     * @param buffer the buffer to scan
+     * @param pos the position in the buffer to being searching
+     * @return &lt;code&gt;true&lt;/code&gt;if the next set of bytes from the input stream
+     * match the contents of the prefix.
+     */
+    private static boolean testRemaining(byte[] sequence, byte[] buffer, int pos) {
+<span class="fc" id="L102">        boolean match = true;</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        for (int i = 1; i &lt; sequence.length; i++) {</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">            if (buffer[pos + i] != sequence[i]) {</span>
+<span class="fc" id="L105">                match = false;</span>
+<span class="fc" id="L106">                break;</span>
+            }
+        }
+<span class="fc" id="L109">        return match;</span>
+    }
+
+    /**
+     * Finds the start of the given sequence in the buffer. If not found, -1 is
+     * returned.
+     *
+     * @param sequence the sequence to locate
+     * @param buffer the buffer to search
+     * @return the starting position of the sequence in the buffer if found;
+     * otherwise -1
+     */
+    protected static int findSequence(byte[] sequence, byte[] buffer) {
+<span class="fc" id="L122">        int pos = -1;</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">        for (int i = 0; i &lt; buffer.length - sequence.length + 1; i++) {</span>
+<span class="fc bfc" id="L124" title="All 4 branches covered.">            if (buffer[i] == sequence[0] &amp;&amp; testRemaining(sequence, buffer, i)) {</span>
+<span class="fc" id="L125">                pos = i;</span>
+<span class="fc" id="L126">                break;</span>
+            }
+        }
+<span class="fc" id="L129">        return pos;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

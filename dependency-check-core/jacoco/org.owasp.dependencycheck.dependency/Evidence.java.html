@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Evidence.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.dependency</a> &gt; <span class="el_source">Evidence.java</span></div><h1>Evidence.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.dependency;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.Serializable;
+import javax.annotation.concurrent.ThreadSafe;
+
+/**
+ * Evidence is a piece of information about a Dependency.
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+public class Evidence implements Serializable, Comparable&lt;Evidence&gt; {
+
+    /**
+     * The serial version UID for serialization.
+     */
+    private static final long serialVersionUID = 2402386455919067874L;
+
+    /**
+     * The name of the evidence.
+     */
+    private String name;
+
+    /**
+     * The source of the evidence.
+     */
+    private String source;
+
+    /**
+     * The value of the evidence.
+     */
+    private String value;
+
+    /**
+     * The confidence level for the evidence.
+     */
+    private Confidence confidence;
+
+    /**
+     * Creates a new Evidence object.
+     */
+<span class="nc" id="L65">    public Evidence() {</span>
+<span class="nc" id="L66">    }</span>
+
+    /**
+     * Creates a new Evidence objects.
+     *
+     * @param source     the source of the evidence.
+     * @param name       the name of the evidence.
+     * @param value      the value of the evidence.
+     * @param confidence the confidence of the evidence.
+     */
+<span class="fc" id="L76">    public Evidence(String source, String name, String value, Confidence confidence) {</span>
+<span class="fc" id="L77">        this.source = source;</span>
+<span class="fc" id="L78">        this.name = name;</span>
+<span class="fc" id="L79">        this.value = value;</span>
+<span class="fc" id="L80">        this.confidence = confidence;</span>
+<span class="fc" id="L81">    }</span>
+
+    /**
+     * Get the value of name.
+     *
+     * @return the value of name
+     */
+    public String getName() {
+<span class="fc" id="L89">        return name;</span>
+    }
+
+    /**
+     * Set the value of name.
+     *
+     * @param name new value of name
+     */
+    public void setName(String name) {
+<span class="nc" id="L98">        this.name = name;</span>
+<span class="nc" id="L99">    }</span>
+
+    /**
+     * Get the value of source.
+     *
+     * @return the value of source
+     */
+    public String getSource() {
+<span class="fc" id="L107">        return source;</span>
+    }
+
+    /**
+     * Set the value of source.
+     *
+     * @param source new value of source
+     */
+    public void setSource(String source) {
+<span class="nc" id="L116">        this.source = source;</span>
+<span class="nc" id="L117">    }</span>
+
+    /**
+     * Get the value of value.
+     *
+     * @return the value of value
+     */
+    public String getValue() {
+<span class="fc" id="L125">        return value;</span>
+    }
+
+    /**
+     * Set the value of value.
+     *
+     * @param value new value of value
+     */
+    public void setValue(String value) {
+<span class="nc" id="L134">        this.value = value;</span>
+<span class="nc" id="L135">    }</span>
+
+    /**
+     * Get the value of confidence.
+     *
+     * @return the value of confidence
+     */
+    public Confidence getConfidence() {
+<span class="fc" id="L143">        return confidence;</span>
+    }
+
+    /**
+     * Set the value of confidence.
+     *
+     * @param confidence new value of confidence
+     */
+    public void setConfidence(Confidence confidence) {
+<span class="nc" id="L152">        this.confidence = confidence;</span>
+<span class="nc" id="L153">    }</span>
+
+    /**
+     * Implements the hashCode for Evidence.
+     *
+     * @return hash code.
+     */
+    @Override
+    public int hashCode() {
+<span class="fc" id="L162">        return new HashCodeBuilder(303, 367)</span>
+<span class="fc" id="L163">                .append(StringUtils.lowerCase(name))</span>
+<span class="fc" id="L164">                .append(StringUtils.lowerCase(source))</span>
+<span class="fc" id="L165">                .append(StringUtils.lowerCase(value))</span>
+<span class="fc" id="L166">                .append(confidence)</span>
+<span class="fc" id="L167">                .toHashCode();</span>
+    }
+
+    /**
+     * Implements equals for Evidence.
+     *
+     * @param obj an object to check the equality of.
+     * @return whether the two objects are equal.
+     */
+    @Override
+    public boolean equals(Object obj) {
+<span class="pc bpc" id="L178" title="2 of 4 branches missed.">        if (obj == null || !(obj instanceof Evidence)) {</span>
+<span class="nc" id="L179">            return false;</span>
+        }
+<span class="pc bpc" id="L181" title="1 of 2 branches missed.">        if (this == obj) {</span>
+<span class="nc" id="L182">            return true;</span>
+        }
+<span class="fc" id="L184">        final Evidence o = (Evidence) obj;</span>
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">        return new EqualsBuilder()</span>
+<span class="pc bpc" id="L186" title="2 of 4 branches missed.">                .append(this.source == null ? null : this.source.toLowerCase(), o.source == null ? null : o.source.toLowerCase())</span>
+<span class="pc bpc" id="L187" title="2 of 4 branches missed.">                .append(this.name == null ? null : this.name.toLowerCase(), o.name == null ? null : o.name.toLowerCase())</span>
+<span class="pc bpc" id="L188" title="1 of 2 branches missed.">                .append(this.value == null ? null : this.value.toLowerCase(), o.value == null ? null : o.value.toLowerCase())</span>
+<span class="fc" id="L189">                .append(this.confidence, o.getConfidence())</span>
+<span class="fc" id="L190">                .build();</span>
+    }
+
+    /**
+     * Implementation of the comparable interface.
+     *
+     * @param o the evidence being compared
+     * @return an integer indicating the ordering of the two objects
+     */
+    @SuppressWarnings(&quot;deprecation&quot;)
+    @Override
+    public int compareTo(@NotNull Evidence o) {
+<span class="pc bpc" id="L202" title="1 of 2 branches missed.">        return new CompareToBuilder()</span>
+<span class="pc bpc" id="L203" title="2 of 4 branches missed.">                .append(this.source == null ? null : this.source.toLowerCase(), o.source == null ? null : o.source.toLowerCase())</span>
+<span class="pc bpc" id="L204" title="2 of 4 branches missed.">                .append(this.name == null ? null : this.name.toLowerCase(), o.name == null ? null : o.name.toLowerCase())</span>
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">                .append(this.value == null ? null : this.value.toLowerCase(), o.value == null ? null : o.value.toLowerCase())</span>
+<span class="fc" id="L206">                .append(this.confidence, o.getConfidence())</span>
+<span class="fc" id="L207">                .toComparison();</span>
+    }
+
+    /**
+     * Standard toString() implementation.
+     *
+     * @return the string representation of the object
+     */
+    @Override
+    public String toString() {
+<span class="fc" id="L217">        return &quot;Evidence{&quot; + &quot;name=&quot; + name + &quot;, source=&quot; + source + &quot;, value=&quot; + value + &quot;, confidence=&quot; + confidence + '}';</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

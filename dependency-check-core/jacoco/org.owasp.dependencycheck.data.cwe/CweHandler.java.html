@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CweHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.cwe</a> &gt; <span class="el_source">CweHandler.java</span></div><h1>CweHandler.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.cwe;
+
+import java.util.HashMap;
+import javax.annotation.concurrent.NotThreadSafe;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+/**
+ * A SAX Handler that will parse the CWE XML.
+ *
+ * @author Jeremy Long
+ */
+@NotThreadSafe
+<span class="nc" id="L32">public class CweHandler extends DefaultHandler {</span>
+
+    /**
+     * a HashMap containing the CWE data.
+     */
+<span class="nc" id="L37">    private final HashMap&lt;String, String&gt; cwe = new HashMap&lt;&gt;();</span>
+
+    /**
+     * Returns the HashMap of CWE entries (CWE-ID, Full CWE Name).
+     *
+     * @return a HashMap of CWE entries &amp;lt;String, String&amp;gt;
+     */
+    public HashMap&lt;String, String&gt; getCwe() {
+<span class="nc" id="L45">        return cwe;</span>
+    }
+
+    @Override
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+
+<span class="nc bnc" id="L51" title="All 4 branches missed.">        if (&quot;Weakness&quot;.equals(qName) || &quot;Category&quot;.equals(qName)) {</span>
+<span class="nc" id="L52">            final String id = &quot;CWE-&quot; + attributes.getValue(&quot;ID&quot;);</span>
+<span class="nc" id="L53">            final String name = attributes.getValue(&quot;Name&quot;);</span>
+<span class="nc" id="L54">            cwe.put(id, name);</span>
+        }
+<span class="nc" id="L56">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

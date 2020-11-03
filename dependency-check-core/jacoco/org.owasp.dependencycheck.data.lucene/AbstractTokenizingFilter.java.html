@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractTokenizingFilter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.lucene</a> &gt; <span class="el_source">AbstractTokenizingFilter.java</span></div><h1>AbstractTokenizingFilter.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.lucene;
+
+import java.io.IOException;
+import java.util.ArrayDeque;
+import javax.annotation.concurrent.NotThreadSafe;
+import org.apache.lucene.analysis.TokenFilter;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+
+/**
+ * An abstract tokenizing filter that can be used as the base for a tokenizing
+ * filter.
+ *
+ * @author Jeremy Long
+ */
+@NotThreadSafe
+public abstract class AbstractTokenizingFilter extends TokenFilter {
+
+    /**
+     * The char term attribute.
+     */
+<span class="fc" id="L39">    private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);</span>
+
+    /**
+     * A collection of tokens to add to the stream.
+     */
+    private final ArrayDeque&lt;String&gt; tokens;
+
+    /**
+     * Gets the CharTermAttribute.
+     *
+     * @return the CharTermAttribute
+     */
+    protected CharTermAttribute getTermAtt() {
+<span class="fc" id="L52">        return termAtt;</span>
+    }
+
+    /**
+     * Gets the list of tokens.
+     *
+     * @return the list of tokens
+     */
+    protected ArrayDeque&lt;String&gt; getTokens() {
+<span class="fc" id="L61">        return tokens;</span>
+    }
+
+    /**
+     * Constructs a new AbstractTokenizingFilter.
+     *
+     * @param stream the TokenStream that this filter will process
+     */
+    public AbstractTokenizingFilter(TokenStream stream) {
+<span class="fc" id="L70">        super(stream);</span>
+<span class="fc" id="L71">        tokens = new ArrayDeque&lt;&gt;();</span>
+<span class="fc" id="L72">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset() throws IOException {
+<span class="fc" id="L79">        super.reset();</span>
+<span class="fc" id="L80">        tokens.clear();</span>
+<span class="fc" id="L81">    }</span>
+
+    /**
+     * Adds a term, if one exists, from the tokens collection.
+     *
+     * @return whether or not a new term was added
+     */
+    protected boolean addTerm() {
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        final boolean termAdded = !tokens.isEmpty();</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        if (termAdded) {</span>
+<span class="fc" id="L91">            final String term = tokens.pop();</span>
+<span class="fc" id="L92">            clearAttributes();</span>
+<span class="fc" id="L93">            termAtt.append(term);</span>
+        }
+<span class="fc" id="L95">        return termAdded;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

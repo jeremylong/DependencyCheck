@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LuceneUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.lucene</a> &gt; <span class="el_source">LuceneUtils.java</span></div><h1>LuceneUtils.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.lucene;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import javax.annotation.concurrent.ThreadSafe;
+
+/**
+ * &lt;p&gt;
+ * Lucene utils is a set of utilize written to make constructing Lucene queries
+ * simpler.&lt;/p&gt;
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+public final class LuceneUtils {
+
+    /**
+     * Private constructor as this is a utility class.
+     */
+    private LuceneUtils() {
+    }
+
+    /**
+     * Determines if the given term is a Lucene keyword (e.g. AND, OR, NOT).
+     *
+     * @param term the term to test
+     * @return &lt;code&gt;true&lt;/code&gt;if the term is a keyword; otherwise
+     * &lt;code&gt;false&lt;/code&gt;
+     */
+    public static boolean isKeyword(String term) {
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        switch (term.toUpperCase()) {</span>
+            case &quot;AND&quot;:
+            case &quot;OR&quot;:
+            case &quot;NOT&quot;:
+            //the following are likely not needed, but may cause a rare issue so we'll consider them keywords
+            case &quot;TO&quot;:
+            case &quot;-&quot;:
+            case &quot;+&quot;:
+<span class="fc" id="L55">                return true;</span>
+            default:
+<span class="fc" id="L57">                return false;</span>
+        }
+    }
+
+    /**
+     * Appends the text to the supplied StringBuilder escaping Lucene control
+     * characters in the process.
+     *
+     * @param buf a StringBuilder to append the escaped text to
+     * @param text the data to be escaped
+     */
+    @SuppressWarnings(&quot;fallthrough&quot;)
+    @SuppressFBWarnings(justification = &quot;As this is an encoding method the fallthrough is intentional&quot;, value = {&quot;SF_SWITCH_NO_DEFAULT&quot;})
+    public static void appendEscapedLuceneQuery(StringBuilder buf,
+            final CharSequence text) {
+
+<span class="pc bpc" id="L73" title="1 of 4 branches missed.">        if (text == null || buf == null) {</span>
+<span class="fc" id="L74">            return;</span>
+        }
+
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        for (int i = 0; i &lt; text.length(); i++) {</span>
+<span class="fc" id="L78">            final char c = text.charAt(i);</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">            switch (c) {</span>
+                case '+':
+                case '-':
+                case '&amp;':
+                case '|':
+                case '!':
+                case '(':
+                case ')':
+                case '{':
+                case '}':
+                case '[':
+                case ']':
+                case '^':
+                case '&quot;':
+                case '~':
+                case '*':
+                case '?':
+                case ':':
+                case '/':
+                case '\\': //it is supposed to fall through here
+<span class="fc" id="L99">                    buf.append('\\');</span>
+                default:
+<span class="fc" id="L101">                    buf.append(c);</span>
+                    break;
+            }
+        }
+<span class="fc" id="L105">    }</span>
+
+    /**
+     * Escapes the text passed in so that it is treated as data instead of
+     * control characters.
+     *
+     * @param text data to be escaped
+     * @return the escaped text.
+     */
+    public static String escapeLuceneQuery(final CharSequence text) {
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        if (text == null) {</span>
+<span class="fc" id="L116">            return null;</span>
+        }
+<span class="fc" id="L118">        final int size = text.length() &lt;&lt; 1;</span>
+<span class="fc" id="L119">        final StringBuilder buf = new StringBuilder(size);</span>
+<span class="fc" id="L120">        appendEscapedLuceneQuery(buf, text);</span>
+<span class="fc" id="L121">        return buf.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

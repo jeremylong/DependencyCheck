@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AlphaNumericFilter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.lucene</a> &gt; <span class="el_source">AlphaNumericFilter.java</span></div><h1>AlphaNumericFilter.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2017 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.lucene;
+
+import java.io.IOException;
+import java.util.ArrayDeque;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
+
+/**
+ * A simple alphanumeric filter that removes non-alphanumeric characters from
+ * the terms. If a term contains a non-alphanumeric character it may be split
+ * into multiple terms:
+ *
+ * &lt;table summary=&quot;Example filtering&quot;&gt;
+ * &lt;tr&gt;&lt;th&gt;term&lt;/th&gt;&lt;th&gt;results in&lt;/th&gt;&lt;/tr&gt;
+ * &lt;tr&gt;&lt;td&gt;bob&lt;/td&gt;&lt;td&gt;bob&lt;/td&gt;&lt;/tr&gt;
+ * &lt;tr&gt;&lt;td&gt;bob-cat&lt;/td&gt;&lt;td&gt;bob cat&lt;/td&gt;&lt;/tr&gt;
+ * &lt;tr&gt;&lt;td&gt;#$%&lt;/td&gt;&lt;td&gt;[skipped]&lt;/td&gt;&lt;/tr&gt;
+ * &lt;/table&gt;
+ *
+ * @author jeremy long
+ */
+public final class AlphaNumericFilter extends AbstractTokenizingFilter {
+
+    /**
+     * The position increment attribute.
+     */
+<span class="fc" id="L47">    private final PositionIncrementAttribute posIncrementAttribute = addAttribute(PositionIncrementAttribute.class);</span>
+    /**
+     * Used to count the number of terms skipped as they were only made up of
+     * special characters.
+     */
+    private int skipCounter;
+
+    /**
+     * Constructs a new AlphaNumericFilter.
+     *
+     * @param stream the TokenStream that this filter will process
+     */
+    public AlphaNumericFilter(TokenStream stream) {
+<span class="fc" id="L60">        super(stream);</span>
+<span class="fc" id="L61">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean incrementToken() throws IOException {
+<span class="fc" id="L68">        final ArrayDeque&lt;String&gt; tokens = getTokens();</span>
+<span class="fc" id="L69">        final CharTermAttribute termAtt = getTermAtt();</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if (tokens.isEmpty()) {</span>
+            String[] parts;
+<span class="fc" id="L72">            skipCounter = 0;</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">            while (input.incrementToken()) {</span>
+<span class="fc" id="L74">                final String text = new String(termAtt.buffer(), 0, termAtt.length());</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">                if (text.isEmpty()) {</span>
+<span class="fc" id="L76">                    return true;</span>
+                }
+<span class="fc" id="L78">                parts = text.split(&quot;[^a-zA-Z0-9]&quot;);</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">                if (parts.length == 0) {</span>
+<span class="fc" id="L80">                    skipCounter += posIncrementAttribute.getPositionIncrement();</span>
+                } else {
+<span class="fc bfc" id="L82" title="All 2 branches covered.">                    if (skipCounter != 0) {</span>
+<span class="fc" id="L83">                        posIncrementAttribute.setPositionIncrement(posIncrementAttribute.getPositionIncrement() + skipCounter);</span>
+                    }
+<span class="fc bfc" id="L85" title="All 2 branches covered.">                    for (String part : parts) {</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">                        if (!part.isEmpty()) {</span>
+<span class="fc" id="L87">                            tokens.add(part);</span>
+                        }
+                    }
+<span class="fc" id="L90">                    break;</span>
+                }
+<span class="fc" id="L92">            }</span>
+        }
+<span class="fc" id="L94">        return addTerm();</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset() throws IOException {
+<span class="fc" id="L102">        super.reset();</span>
+<span class="fc" id="L103">        skipCounter = 0;</span>
+<span class="fc" id="L104">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void end() throws IOException {
+<span class="fc" id="L111">        super.end();</span>
+<span class="fc" id="L112">        posIncrementAttribute.setPositionIncrement(posIncrementAttribute.getPositionIncrement() + skipCounter);</span>
+<span class="fc" id="L113">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+<span class="nc" id="L120">        return new HashCodeBuilder(13, 103)</span>
+<span class="nc" id="L121">                .appendSuper(super.hashCode())</span>
+<span class="nc" id="L122">                .append(posIncrementAttribute)</span>
+<span class="nc" id="L123">                .append(skipCounter)</span>
+<span class="nc" id="L124">                .build();</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L132" title="All 4 branches missed.">        if (obj == null || !(obj instanceof AlphaNumericFilter)) {</span>
+<span class="nc" id="L133">            return false;</span>
+        }
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        if (this == obj) {</span>
+<span class="nc" id="L136">            return true;</span>
+        }
+<span class="nc" id="L138">        final AlphaNumericFilter rhs = (AlphaNumericFilter) obj;</span>
+<span class="nc" id="L139">        return new EqualsBuilder()</span>
+<span class="nc" id="L140">                .appendSuper(super.equals(obj))</span>
+<span class="nc" id="L141">                .append(skipCounter, rhs.skipCounter)</span>
+<span class="nc" id="L142">                .append(posIncrementAttribute, rhs.posIncrementAttribute)</span>
+<span class="nc" id="L143">                .isEquals();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

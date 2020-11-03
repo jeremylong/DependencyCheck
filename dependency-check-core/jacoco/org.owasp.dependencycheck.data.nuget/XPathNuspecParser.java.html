@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XPathNuspecParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nuget</a> &gt; <span class="el_source">XPathNuspecParser.java</span></div><h1>XPathNuspecParser.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nuget;
+
+import java.io.IOException;
+import java.io.InputStream;
+import javax.annotation.concurrent.ThreadSafe;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import org.owasp.dependencycheck.utils.XmlUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
+/**
+ * Parse a Nuspec file using XPath.
+ *
+ * @author colezlaw
+ */
+@ThreadSafe
+<span class="fc" id="L40">public class XPathNuspecParser implements NuspecParser {</span>
+
+    /**
+     * Gets the string value of a node or null if it's not present
+     *
+     * @param n the node to test
+     * @return the string content of the node, or null if the node itself is
+     * null
+     */
+    private String getOrNull(Node n) {
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (n != null) {</span>
+<span class="fc" id="L51">            return n.getTextContent();</span>
+        } else {
+<span class="fc" id="L53">            return null;</span>
+        }
+    }
+
+    /**
+     * Parse an input stream and return the resulting {@link NugetPackage}.
+     *
+     * @param stream the input stream to parse
+     * @return the populated bean
+     * @throws NuspecParseException when an exception occurs
+     */
+    @Override
+    public NugetPackage parse(InputStream stream) throws NuspecParseException {
+        try {
+<span class="fc" id="L67">            final DocumentBuilder db = XmlUtils.buildSecureDocumentBuilder();</span>
+<span class="fc" id="L68">            final Document d = db.parse(stream);</span>
+
+<span class="fc" id="L70">            final XPath xpath = XPathFactory.newInstance().newXPath();</span>
+<span class="fc" id="L71">            final NugetPackage nuspec = new NugetPackage();</span>
+
+<span class="fc bfc" id="L73" title="All 2 branches covered.">            if (xpath.evaluate(&quot;/package/metadata/id&quot;, d, XPathConstants.NODE) == null</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">                    || xpath.evaluate(&quot;/package/metadata/version&quot;, d, XPathConstants.NODE) == null</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">                    || xpath.evaluate(&quot;/package/metadata/authors&quot;, d, XPathConstants.NODE) == null</span>
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">                    || xpath.evaluate(&quot;/package/metadata/description&quot;, d, XPathConstants.NODE) == null) {</span>
+<span class="fc" id="L77">                throw new NuspecParseException(&quot;Invalid Nuspec format&quot;);</span>
+            }
+
+<span class="fc" id="L80">            nuspec.setId(xpath.evaluate(&quot;/package/metadata/id&quot;, d));</span>
+<span class="fc" id="L81">            nuspec.setVersion(xpath.evaluate(&quot;/package/metadata/version&quot;, d));</span>
+<span class="fc" id="L82">            nuspec.setAuthors(xpath.evaluate(&quot;/package/metadata/authors&quot;, d));</span>
+<span class="fc" id="L83">            nuspec.setOwners(getOrNull((Node) xpath.evaluate(&quot;/package/metadata/owners&quot;, d, XPathConstants.NODE)));</span>
+<span class="fc" id="L84">            nuspec.setLicenseUrl(getOrNull((Node) xpath.evaluate(&quot;/package/metadata/licenseUrl&quot;, d, XPathConstants.NODE)));</span>
+<span class="fc" id="L85">            nuspec.setTitle(getOrNull((Node) xpath.evaluate(&quot;/package/metadata/title&quot;, d, XPathConstants.NODE)));</span>
+<span class="fc" id="L86">            return nuspec;</span>
+<span class="fc" id="L87">        } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException | NuspecParseException e) {</span>
+<span class="fc" id="L88">            throw new NuspecParseException(&quot;Unable to parse nuspec&quot;, e);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

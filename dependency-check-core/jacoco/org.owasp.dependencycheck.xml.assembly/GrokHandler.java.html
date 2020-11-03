@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GrokHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.xml.assembly</a> &gt; <span class="el_source">GrokHandler.java</span></div><h1>GrokHandler.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2019 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.xml.assembly;
+
+import javax.annotation.concurrent.NotThreadSafe;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+/**
+ * A handler to read Grok Assembly XML files.
+ *
+ * @author Jeremy Long
+ */
+@NotThreadSafe
+<span class="fc" id="L31">public class GrokHandler extends DefaultHandler {</span>
+
+    /**
+     * An XML node name.
+     */
+    private static final String ERROR = &quot;error&quot;;
+    /**
+     * An XML node name.
+     */
+    private static final String WARNING = &quot;warning&quot;;
+    /**
+     * An XML node name.
+     */
+    private static final String COMPANY_NAME = &quot;companyName&quot;;
+    /**
+     * An XML node name.
+     */
+    private static final String PRODUCT_NAME = &quot;productName&quot;;
+    /**
+     * An XML node name.
+     */
+    private static final String PRODUCT_VERSION = &quot;productVersion&quot;;
+    /**
+     * An XML node name.
+     */
+    private static final String COMMENTS = &quot;comments&quot;;
+    /**
+     * An XML node name.
+     */
+    private static final String FILE_DESCRIPTION = &quot;fileDescription&quot;;
+    /**
+     * An XML node name.
+     */
+    private static final String FILE_NAME = &quot;fileName&quot;;
+    /**
+     * An XML node name.
+     */
+    private static final String FILE_VERSION = &quot;fileVersion&quot;;
+    /**
+     * An XML node name.
+     */
+    private static final String INTERNAL_NAME = &quot;internalName&quot;;
+    /**
+     * An XML node name.
+     */
+    private static final String ORIGINAL_FILE_NAME = &quot;originalFilename&quot;;
+    /**
+     * An XML node name.
+     */
+    private static final String FULLNAME = &quot;fullName&quot;;
+    /**
+     * An XML node name.
+     */
+    private static final String NAMESPACE = &quot;namespace&quot;;
+
+    /**
+     * The current rule being read.
+     */
+<span class="fc" id="L89">    private final AssemblyData data = new AssemblyData();</span>
+    /**
+     * The current node text being extracted from the element.
+     */
+    private StringBuilder currentText;
+
+    /**
+     * Handles the start element event.
+     *
+     * @param uri the uri of the element being processed
+     * @param localName the local name of the element being processed
+     * @param qName the qName of the element being processed
+     * @param attributes the attributes of the element being processed
+     * @throws SAXException thrown if there is an exception processing
+     */
+    @Override
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+<span class="fc" id="L106">        currentText = new StringBuilder();</span>
+<span class="fc" id="L107">    }</span>
+
+    /**
+     * Handles the end element event.
+     *
+     * @param uri the URI of the element
+     * @param localName the local name of the element
+     * @param qName the qName of the element
+     * @throws SAXException thrown if there is an exception processing
+     */
+    @Override
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">        if (null != qName) {</span>
+<span class="pc bpc" id="L120" title="1 of 14 branches missed.">            switch (qName) {</span>
+                case COMPANY_NAME:
+<span class="fc" id="L122">                    data.setCompanyName(currentText.toString());</span>
+<span class="fc" id="L123">                    break;</span>
+                case PRODUCT_NAME:
+<span class="fc" id="L125">                    data.setProductName(currentText.toString());</span>
+<span class="fc" id="L126">                    break;</span>
+                case PRODUCT_VERSION:
+<span class="fc" id="L128">                    data.setProductVersion(currentText.toString());</span>
+<span class="fc" id="L129">                    break;</span>
+                case COMMENTS:
+<span class="fc" id="L131">                    data.setComments(currentText.toString());</span>
+<span class="fc" id="L132">                    break;</span>
+                case FILE_DESCRIPTION:
+<span class="fc" id="L134">                    data.setFileDescription(currentText.toString());</span>
+<span class="fc" id="L135">                    break;</span>
+                case FILE_NAME:
+<span class="fc" id="L137">                    data.setFileName(currentText.toString());</span>
+<span class="fc" id="L138">                    break;</span>
+                case FILE_VERSION:
+<span class="fc" id="L140">                    data.setFileVersion(currentText.toString());</span>
+<span class="fc" id="L141">                    break;</span>
+                case INTERNAL_NAME:
+<span class="fc" id="L143">                    data.setInternalName(currentText.toString());</span>
+<span class="fc" id="L144">                    break;</span>
+                case ORIGINAL_FILE_NAME:
+<span class="fc" id="L146">                    data.setOriginalFilename(currentText.toString());</span>
+<span class="fc" id="L147">                    break;</span>
+                case FULLNAME:
+<span class="fc" id="L149">                    data.setFullName(currentText.toString());</span>
+<span class="fc" id="L150">                    break;</span>
+                case NAMESPACE:
+<span class="fc" id="L152">                    data.addNamespace(currentText.toString());</span>
+<span class="fc" id="L153">                    break;</span>
+                case ERROR:
+<span class="fc" id="L155">                    data.setError(currentText.toString());</span>
+<span class="fc" id="L156">                    break;</span>
+                case WARNING:
+<span class="nc" id="L158">                    data.setWarning(currentText.toString());</span>
+<span class="nc" id="L159">                    break;</span>
+                default:
+                    break;
+            }
+        }
+<span class="fc" id="L164">    }</span>
+
+    /**
+     * Collects the body text of the node being processed.
+     *
+     * @param ch the char array of text
+     * @param start the start position to copy text from in the char array
+     * @param length the number of characters to copy from the char array
+     * @throws SAXException thrown if there is a parsing exception
+     */
+    @Override
+    public void characters(char[] ch, int start, int length) throws SAXException {
+<span class="fc" id="L176">        currentText.append(ch, start, length);</span>
+<span class="fc" id="L177">    }</span>
+
+    AssemblyData getAssemblyData() {
+<span class="fc" id="L180">        return data;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SearchFieldAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.lucene</a> &gt; <span class="el_source">SearchFieldAnalyzer.java</span></div><h1>SearchFieldAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.lucene;
+
+import java.io.IOException;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.analysis.core.LowerCaseFilter;
+import org.apache.lucene.analysis.core.StopFilter;
+import org.apache.lucene.analysis.core.WhitespaceTokenizer;
+import org.apache.lucene.analysis.miscellaneous.WordDelimiterGraphFilter;
+import org.apache.lucene.analysis.CharArraySet;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
+
+/**
+ * A Lucene field analyzer used to analyzer queries against the CPE data.
+ *
+ * @author Jeremy Long
+ */
+public class SearchFieldAnalyzer extends Analyzer {
+
+    /**
+     * The list of additional stop words to use.
+     */
+<span class="fc" id="L41">    private static final String[] ADDITIONAL_STOP_WORDS = {&quot;software&quot;, &quot;framework&quot;, &quot;inc&quot;,</span>
+        &quot;com&quot;, &quot;org&quot;, &quot;net&quot;, &quot;www&quot;, &quot;consulting&quot;, &quot;ltd&quot;, &quot;foundation&quot;, &quot;project&quot;};
+    /**
+     * The set of stop words to use in the analyzer.
+     */
+    private final CharArraySet stopWords;
+    /**
+     * A reference to the concatenating filter so that it can be reset/cleared.
+     */
+    private TokenPairConcatenatingFilter concatenatingFilter;
+
+    /**
+     * Returns the set of stop words being used.
+     *
+     * @return the set of stop words being used
+     */
+    public static CharArraySet getStopWords() {
+<span class="fc" id="L58">        final CharArraySet words = StopFilter.makeStopSet(ADDITIONAL_STOP_WORDS, true);</span>
+<span class="fc" id="L59">        words.addAll(EnglishAnalyzer.ENGLISH_STOP_WORDS_SET);</span>
+<span class="fc" id="L60">        return words;</span>
+    }
+
+    /**
+     * Constructs a new SearchFieldAnalyzer.
+     *
+     */
+<span class="fc" id="L67">    public SearchFieldAnalyzer() {</span>
+<span class="fc" id="L68">        stopWords = getStopWords();</span>
+<span class="fc" id="L69">    }</span>
+
+    /**
+     * Creates a the TokenStreamComponents used to analyze the stream.
+     *
+     * @param fieldName the field that this lucene analyzer will process
+     * @return the token stream filter chain
+     */
+    @Override
+    protected TokenStreamComponents createComponents(String fieldName) {
+        //final Tokenizer source = new AlphaNumericTokenizer();
+<span class="fc" id="L80">        final Tokenizer source = new WhitespaceTokenizer();</span>
+<span class="fc" id="L81">        TokenStream stream = source;</span>
+
+<span class="fc" id="L83">        stream = new UrlTokenizingFilter(stream);</span>
+<span class="fc" id="L84">        stream = new AlphaNumericFilter(stream);</span>
+<span class="fc" id="L85">        stream = new WordDelimiterGraphFilter(stream,</span>
+                WordDelimiterGraphFilter.GENERATE_WORD_PARTS
+                //| WordDelimiterGraphFilter.GENERATE_NUMBER_PARTS
+                | WordDelimiterGraphFilter.PRESERVE_ORIGINAL
+                | WordDelimiterGraphFilter.SPLIT_ON_CASE_CHANGE
+                | WordDelimiterGraphFilter.SPLIT_ON_NUMERICS
+                | WordDelimiterGraphFilter.STEM_ENGLISH_POSSESSIVE, null);
+
+<span class="fc" id="L93">        stream = new LowerCaseFilter(stream);</span>
+
+<span class="fc" id="L95">        stream = new StopFilter(stream, stopWords);</span>
+<span class="fc" id="L96">        concatenatingFilter = new TokenPairConcatenatingFilter(stream);</span>
+
+<span class="fc" id="L98">        return new TokenStreamComponents(source, concatenatingFilter);</span>
+    }
+
+    /**
+     * Resets the analyzer. This must be manually called between searching and
+     * indexing.
+     *
+     * @throws IOException thrown if there is an error reseting the tokenizer
+     */
+    public void reset() throws IOException {
+<span class="fc" id="L108">        concatenatingFilter.clear();</span>
+<span class="fc" id="L109">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

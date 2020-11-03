@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ODCConnectionTransport.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.ossindex</a> &gt; <span class="el_source">ODCConnectionTransport.java</span></div><h1>ODCConnectionTransport.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2019 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.ossindex;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.net.HttpHeaders.AUTHORIZATION;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.URLConnectionFactory;
+import org.sonatype.ossindex.service.client.OssindexClientConfiguration;
+import org.sonatype.ossindex.service.client.transport.BasicAuthHelper;
+import org.sonatype.ossindex.service.client.transport.HttpUrlConnectionTransport;
+import org.sonatype.ossindex.service.client.transport.UserAgentSupplier;
+
+/**
+ * ODC connection transport is used instead of HttpUrlConnectionTransport
+ * because the proxy information is already configured.
+ *
+ * @author Jeremy Long
+ */
+public class ODCConnectionTransport extends HttpUrlConnectionTransport {
+
+    /**
+     * The OSS Index client configuration.
+     */
+    private final OssindexClientConfiguration configuration;
+    /**
+     * The URL Connection factory.
+     */
+    private final URLConnectionFactory connectionFactory;
+    /**
+     * The user agent to send in the HTTP connection.
+     */
+    private final UserAgentSupplier userAgent;
+
+    /**
+     * Constructs a new transport object to connect to the OSS Index.
+     *
+     * @param settings the ODC settings
+     * @param config the OSS client configuration
+     * @param userAgent the user agent to send to OSS Index
+     */
+    public ODCConnectionTransport(Settings settings, OssindexClientConfiguration config, UserAgentSupplier userAgent) {
+<span class="nc" id="L61">        super(userAgent);</span>
+<span class="nc" id="L62">        this.userAgent = checkNotNull(userAgent);</span>
+<span class="nc" id="L63">        this.configuration = checkNotNull(config);</span>
+<span class="nc" id="L64">        connectionFactory = new URLConnectionFactory(settings);</span>
+<span class="nc" id="L65">    }</span>
+
+    @Override
+    protected HttpURLConnection connect(final URL url) throws IOException {
+<span class="nc" id="L69">        final HttpURLConnection connection = connectionFactory.createHttpURLConnection(url);</span>
+<span class="nc" id="L70">        connection.setRequestProperty(&quot;User-Agent&quot;, userAgent.get());</span>
+
+<span class="nc" id="L72">        final String authorization = BasicAuthHelper.authorizationHeader(configuration.getAuthConfiguration());</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (authorization != null) {</span>
+<span class="nc" id="L74">            connection.setRequestProperty(AUTHORIZATION, authorization);</span>
+        }
+<span class="nc" id="L76">        return connection;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

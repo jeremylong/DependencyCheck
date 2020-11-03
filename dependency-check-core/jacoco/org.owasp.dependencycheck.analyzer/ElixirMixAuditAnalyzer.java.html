@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ElixirMixAuditAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">ElixirMixAuditAnalyzer.java</span></div><h1>ElixirMixAuditAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2020 The OWASP Foundation. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURL;
+import com.github.packageurl.PackageURLBuilder;
+import com.google.common.collect.ImmutableList;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.data.elixir.MixAuditJsonParser;
+import org.owasp.dependencycheck.data.elixir.MixAuditResult;
+import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.CvssV2;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.dependency.Vulnerability;
+import org.owasp.dependencycheck.dependency.VulnerableSoftware;
+import org.owasp.dependencycheck.dependency.VulnerableSoftwareBuilder;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.Checksum;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import us.springett.parsers.cpe.exceptions.CpeValidationException;
+import us.springett.parsers.cpe.values.Part;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
+@Experimental
+<span class="fc" id="L60">public class ElixirMixAuditAnalyzer extends AbstractFileTypeAnalyzer {</span>
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L65">    private static final Logger LOGGER = LoggerFactory.getLogger(ElixirMixAuditAnalyzer.class);</span>
+
+    /**
+     * A descriptor for the type of dependencies processed or added by this
+     * analyzer.
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = &quot;elixir&quot;;
+
+    /**
+     * The name of the analyzer.
+     */
+    private static final String ANALYZER_NAME = &quot;Elixir Mix Audit Analyzer&quot;;
+
+    /**
+     * The phase that this analyzer is intended to run in.
+     */
+<span class="fc" id="L81">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.PRE_INFORMATION_COLLECTION;</span>
+    /**
+     * The filter defining which files will be analyzed.
+     */
+<span class="fc" id="L85">    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addFilenames(&quot;mix.lock&quot;).build();</span>
+    /**
+     * Name.
+     */
+    public static final String NAME = &quot;Name: &quot;;
+    /**
+     * Version.
+     */
+    public static final String VERSION = &quot;Version: &quot;;
+    /**
+     * Advisory.
+     */
+    public static final String ADVISORY = &quot;Advisory: &quot;;
+    /**
+     * Criticality.
+     */
+    public static final String CRITICALITY = &quot;Criticality: &quot;;
+    /**
+     * The DAL.
+     */
+<span class="fc" id="L105">    private CveDB cvedb = null;</span>
+
+    /**
+     * @return a filter that accepts files named mix.lock
+     */
+    @Override
+    protected FileFilter getFileFilter() {
+<span class="fc" id="L112">        return FILTER;</span>
+    }
+
+    @Override
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        if (engine != null) {</span>
+<span class="fc" id="L118">            this.cvedb = engine.getDatabase();</span>
+        }
+
+        // Here we check if mix_audit actually runs from this location. We do this by running the
+        // `mix_audit --version` command and seeing whether or not it succeeds (if it returns with an exit value of 0)
+        final Process process;
+        try {
+<span class="fc" id="L125">            final List&lt;String&gt; mixAuditArgs = ImmutableList.of(&quot;--version&quot;);</span>
+<span class="nc" id="L126">            process = launchMixAudit(getSettings().getTempDirectory(), mixAuditArgs);</span>
+<span class="fc" id="L127">        } catch (AnalysisException ae) {</span>
+<span class="fc" id="L128">            setEnabled(false);</span>
+<span class="fc" id="L129">            final String msg = String.format(&quot;Exception from mix_audit process: %s. Disabling %s&quot;, ae.getCause(), ANALYZER_NAME);</span>
+<span class="fc" id="L130">            throw new InitializationException(msg, ae);</span>
+<span class="nc" id="L131">        } catch (IOException ex) {</span>
+<span class="nc" id="L132">            setEnabled(false);</span>
+<span class="nc" id="L133">            throw new InitializationException(&quot;Unable to create temporary file, the Mix Audit Analyzer will be disabled&quot;, ex);</span>
+<span class="nc" id="L134">        }</span>
+
+        final int exitValue;
+        try {
+<span class="nc" id="L138">            exitValue = process.waitFor();</span>
+<span class="nc" id="L139">        } catch (InterruptedException ex) {</span>
+<span class="nc" id="L140">            setEnabled(false);</span>
+<span class="nc" id="L141">            final String msg = String.format(&quot;mix_audit process was interrupted. Disabling %s&quot;, ANALYZER_NAME);</span>
+<span class="nc" id="L142">            Thread.currentThread().interrupt();</span>
+<span class="nc" id="L143">            throw new InitializationException(msg);</span>
+<span class="nc" id="L144">        }</span>
+
+        final String mixAuditVersionDetails;
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        if (exitValue != 0) {</span>
+<span class="nc" id="L148">            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))) {</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">                if (!reader.ready()) {</span>
+<span class="nc" id="L150">                    LOGGER.warn(&quot;Unexpected exit value from mix_audit process and error stream unexpectedly not ready to capture error details. &quot;</span>
+<span class="nc" id="L151">                            + &quot;Disabling {}. Exit value was: {}&quot;, ANALYZER_NAME, exitValue);</span>
+<span class="nc" id="L152">                    setEnabled(false);</span>
+<span class="nc" id="L153">                    throw new InitializationException(&quot;mix_audit error stream unexpectedly not ready.&quot;);</span>
+                } else {
+<span class="nc" id="L155">                    final String line = reader.readLine();</span>
+<span class="nc" id="L156">                    setEnabled(false);</span>
+<span class="nc" id="L157">                    LOGGER.warn(&quot;Unexpected exit value from mix_audit process. Disabling {}. Exit value was: {}. &quot;</span>
+<span class="nc" id="L158">                            + &quot;error stream output from mix_audit process was: {}&quot;, ANALYZER_NAME, exitValue, line);</span>
+<span class="nc" id="L159">                    throw new InitializationException(&quot;Unexpected exit value from bundle-audit process.&quot;);</span>
+                }
+<span class="nc bnc" id="L161" title="All 4 branches missed.">            } catch (UnsupportedEncodingException ex) {</span>
+<span class="nc" id="L162">                setEnabled(false);</span>
+<span class="nc" id="L163">                throw new InitializationException(&quot;Unexpected mix_audit encoding when reading error stream.&quot;, ex);</span>
+<span class="nc" id="L164">            } catch (IOException ex) {</span>
+<span class="nc" id="L165">                setEnabled(false);</span>
+<span class="nc" id="L166">                throw new InitializationException(&quot;Unable to read mix_audit output from error stream.&quot;, ex);</span>
+            }
+        } else {
+<span class="nc" id="L169">            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">                if (!reader.ready()) {</span>
+<span class="nc" id="L171">                    LOGGER.warn(&quot;mix_audit input stream unexpectedly not ready to capture version details. Disabling {}&quot;, ANALYZER_NAME);</span>
+<span class="nc" id="L172">                    setEnabled(false);</span>
+<span class="nc" id="L173">                    throw new InitializationException(&quot;mix_audit input stream unexpectedly not ready to capture version details.&quot;);</span>
+                } else {
+<span class="nc" id="L175">                    mixAuditVersionDetails = reader.readLine();</span>
+                }
+<span class="nc" id="L177">            } catch (UnsupportedEncodingException ex) {</span>
+<span class="nc" id="L178">                setEnabled(false);</span>
+<span class="nc" id="L179">                throw new InitializationException(&quot;Unexpected mix_audit encoding when reading input stream.&quot;, ex);</span>
+<span class="nc" id="L180">            } catch (IOException ex) {</span>
+<span class="nc" id="L181">                setEnabled(false);</span>
+<span class="nc" id="L182">                throw new InitializationException(&quot;Unable to read mix_audit output from input stream.&quot;, ex);</span>
+<span class="nc" id="L183">            }</span>
+        }
+
+<span class="nc bnc" id="L186" title="All 2 branches missed.">        if (isEnabled()) {</span>
+<span class="nc" id="L187">            LOGGER.info(&quot;{} is enabled and is using mix_audit with version: {}.&quot;, ANALYZER_NAME, mixAuditVersionDetails);</span>
+        }
+<span class="nc" id="L189">    }</span>
+
+    /**
+     * Returns the key used in the properties file to reference the analyzer's
+     * enabled property.
+     *
+     * @return the analyzer's enabled property setting key
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+<span class="fc" id="L199">        return Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED;</span>
+    }
+
+    /**
+     * Returns the name of the analyzer.
+     *
+     * @return the name of the analyzer.
+     */
+    @Override
+    public String getName() {
+<span class="fc" id="L209">        return ANALYZER_NAME;</span>
+    }
+
+    /**
+     * Returns the phase that the analyzer is intended to run in.
+     *
+     * @return the phase that the analyzer is intended to run in.
+     */
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+<span class="fc" id="L219">        return ANALYSIS_PHASE;</span>
+    }
+
+    /**
+     * Launch mix audit.
+     *
+     * @param folder directory that contains the mix.lock file
+     * @param mixAuditArgs the arguments to pass to mix audit
+     * @return a handle to the process
+     * @throws AnalysisException thrown when there is an issue launching mix
+     * audit
+     */
+    private Process launchMixAudit(File folder, List&lt;String&gt; mixAuditArgs) throws AnalysisException {
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">        if (!folder.isDirectory()) {</span>
+<span class="nc" id="L233">            throw new AnalysisException(String.format(&quot;%s should have been a directory.&quot;, folder.getAbsolutePath()));</span>
+        }
+
+<span class="fc" id="L236">        final List&lt;String&gt; args = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L237">        final String mixAuditPath = getSettings().getString(Settings.KEYS.ANALYZER_MIX_AUDIT_PATH);</span>
+<span class="fc" id="L238">        File mixAudit = null;</span>
+
+<span class="fc bfc" id="L240" title="All 2 branches covered.">        if (mixAuditPath != null) {</span>
+<span class="fc" id="L241">            mixAudit = new File(mixAuditPath);</span>
+<span class="pc bpc" id="L242" title="1 of 2 branches missed.">            if (!mixAudit.isFile()) {</span>
+<span class="nc" id="L243">                LOGGER.warn(&quot;Supplied `mixAudit` path is incorrect: {}&quot;, mixAuditPath);</span>
+<span class="nc" id="L244">                mixAudit = null;</span>
+            }
+        } else {
+<span class="fc" id="L247">            final Path homePath = Paths.get(System.getProperty(&quot;user.home&quot;));</span>
+<span class="fc" id="L248">            final Path escriptPath = Paths.get(homePath.toString(), &quot;.mix&quot;, &quot;escripts&quot;, &quot;mix_audit&quot;);</span>
+<span class="fc" id="L249">            mixAudit = escriptPath.toFile();</span>
+        }
+
+<span class="pc bpc" id="L252" title="1 of 2 branches missed.">        args.add(mixAudit != null ? mixAudit.getAbsolutePath() : &quot;mix_audit&quot;);</span>
+<span class="fc" id="L253">        args.addAll(mixAuditArgs);</span>
+<span class="fc" id="L254">        final ProcessBuilder builder = new ProcessBuilder(args);</span>
+
+<span class="fc" id="L256">        builder.directory(folder);</span>
+        try {
+<span class="fc" id="L258">            LOGGER.info(&quot;Launching: {} from {}&quot;, args, folder);</span>
+<span class="nc" id="L259">            return builder.start();</span>
+<span class="fc" id="L260">        } catch (IOException ioe) {</span>
+<span class="fc" id="L261">            throw new AnalysisException(&quot;mix_audit initialization failure; this error can be ignored if you are not analyzing Elixir. &quot;</span>
+                    + &quot;Otherwise ensure that mix_audit is installed and the path to mix_audit is correctly specified&quot;, ioe);
+        }
+    }
+
+    /**
+     * Determines if the analyzer can analyze the given file type.
+     *
+     * @param dependency the dependency to determine if it can analyze
+     * @param engine the dependency-check engine
+     * @throws AnalysisException thrown if there is an analysis exception.
+     */
+    @Override
+    protected void analyzeDependency(Dependency dependency, Engine engine)
+            throws AnalysisException {
+<span class="nc" id="L276">        final File parentFile = dependency.getActualFile().getParentFile();</span>
+<span class="nc" id="L277">        final List&lt;String&gt; mixAuditArgs = ImmutableList.of(&quot;--format&quot;, &quot;json&quot;);</span>
+
+<span class="nc" id="L279">        final Process process = launchMixAudit(parentFile, mixAuditArgs);</span>
+        final int exitValue;
+        try {
+<span class="nc" id="L282">            exitValue = process.waitFor();</span>
+<span class="nc" id="L283">        } catch (InterruptedException ie) {</span>
+<span class="nc" id="L284">            Thread.currentThread().interrupt();</span>
+<span class="nc" id="L285">            throw new AnalysisException(&quot;mix_audit process interrupted&quot;, ie);</span>
+<span class="nc" id="L286">        }</span>
+<span class="nc bnc" id="L287" title="All 4 branches missed.">        if (exitValue &lt; 0 || exitValue &gt; 1) {</span>
+<span class="nc" id="L288">            final String msg = String.format(&quot;Unexpected exit code from mix_audit process; exit code: %s&quot;, exitValue);</span>
+<span class="nc" id="L289">            throw new AnalysisException(msg);</span>
+        }
+        try {
+<span class="nc" id="L292">            try (BufferedReader errReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))) {</span>
+<span class="nc bnc" id="L293" title="All 2 branches missed.">                while (errReader.ready()) {</span>
+<span class="nc" id="L294">                    final String error = errReader.readLine();</span>
+<span class="nc" id="L295">                    LOGGER.warn(error);</span>
+<span class="nc" id="L296">                }</span>
+            }
+<span class="nc" id="L298">            try (BufferedReader rdr = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {</span>
+<span class="nc" id="L299">                processMixAuditOutput(dependency, engine, rdr);</span>
+            }
+<span class="nc" id="L301">        } catch (IOException | CpeValidationException ioe) {</span>
+<span class="nc" id="L302">            LOGGER.warn(&quot;mix_audit failure&quot;, ioe);</span>
+<span class="nc" id="L303">        }</span>
+<span class="nc" id="L304">    }</span>
+
+    /**
+     * Processes the mix audit output.
+     *
+     * @param original the dependency
+     * @param engine the dependency-check engine
+     * @param rdr the reader of the report
+     * @throws IOException thrown if the report cannot be read
+     * @throws CpeValidationException if there is an error building the
+     * CPE/VulnerableSoftware object
+     */
+    private void processMixAuditOutput(Dependency original, Engine engine, BufferedReader rdr) throws AnalysisException, CpeValidationException {
+<span class="nc" id="L317">        final MixAuditJsonParser parser = new MixAuditJsonParser(rdr);</span>
+<span class="nc" id="L318">        parser.process();</span>
+
+<span class="nc bnc" id="L320" title="All 2 branches missed.">        for (MixAuditResult result : parser.getResults()) {</span>
+<span class="nc" id="L321">            final Dependency dependency = createDependency(original, result.getDependencyPackage(), result.getDependencyVersion());</span>
+<span class="nc" id="L322">            Vulnerability vulnerability = cvedb.getVulnerability(result.getCve());</span>
+
+<span class="nc bnc" id="L324" title="All 2 branches missed.">            if (vulnerability == null) {</span>
+<span class="nc" id="L325">                vulnerability = createVulnerability(result);</span>
+            }
+
+<span class="nc" id="L328">            dependency.addVulnerability(vulnerability);</span>
+<span class="nc" id="L329">            engine.addDependency(dependency);</span>
+<span class="nc" id="L330">        }</span>
+<span class="nc" id="L331">    }</span>
+
+    private Dependency createDependency(Dependency parentDependency, String packageName, String version) {
+<span class="nc" id="L334">        final Dependency dep = new Dependency(parentDependency.getActualFile(), true);</span>
+
+<span class="nc" id="L336">        final String identifier = String.format(&quot;%s:%s&quot;, packageName, version);</span>
+
+<span class="nc" id="L338">        dep.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="nc" id="L339">        dep.setDisplayFileName(identifier);</span>
+<span class="nc" id="L340">        dep.setName(packageName);</span>
+<span class="nc" id="L341">        dep.setVersion(version);</span>
+<span class="nc" id="L342">        dep.setPackagePath(identifier);</span>
+<span class="nc" id="L343">        dep.setMd5sum(Checksum.getMD5Checksum(identifier));</span>
+<span class="nc" id="L344">        dep.setSha1sum(Checksum.getSHA1Checksum(identifier));</span>
+<span class="nc" id="L345">        dep.setSha256sum(Checksum.getSHA256Checksum(identifier));</span>
+
+<span class="nc" id="L347">        dep.addEvidence(EvidenceType.VERSION, &quot;mix_audit&quot;, &quot;Version&quot;, version, Confidence.HIGHEST);</span>
+<span class="nc" id="L348">        dep.addEvidence(EvidenceType.PRODUCT, &quot;mix_audit&quot;, &quot;Package&quot;, packageName, Confidence.HIGHEST);</span>
+
+        try {
+<span class="nc" id="L351">            final PackageURL purl = PackageURLBuilder.aPackageURL().withType(&quot;hex&quot;).withName(packageName)</span>
+<span class="nc" id="L352">                    .withVersion(version).build();</span>
+<span class="nc" id="L353">            dep.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
+<span class="nc" id="L354">        } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L355">            LOGGER.debug(&quot;Unable to build package url for hex&quot;, ex);</span>
+<span class="nc" id="L356">            final GenericIdentifier id = new GenericIdentifier(&quot;hex:&quot; + packageName + &quot;@&quot; + version,</span>
+                    Confidence.HIGHEST);
+<span class="nc" id="L358">            dep.addSoftwareIdentifier(id);</span>
+<span class="nc" id="L359">        }</span>
+
+<span class="nc" id="L361">        return dep;</span>
+    }
+
+    private Vulnerability createVulnerability(MixAuditResult result) throws CpeValidationException {
+<span class="nc" id="L365">        final String product = result.getDependencyPackage();</span>
+<span class="nc" id="L366">        final String version = result.getDependencyVersion();</span>
+
+<span class="nc" id="L368">        final Vulnerability vulnerability = new Vulnerability();</span>
+<span class="nc" id="L369">        vulnerability.setSource(Vulnerability.Source.MIXAUDIT);</span>
+
+<span class="nc" id="L371">        final VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder();</span>
+<span class="nc" id="L372">        final VulnerableSoftware vs = builder.part(Part.APPLICATION)</span>
+<span class="nc" id="L373">                .vendor(String.format(&quot;%s_project&quot;, product))</span>
+<span class="nc" id="L374">                .product(product)</span>
+<span class="nc" id="L375">                .version(version).build();</span>
+
+<span class="nc" id="L377">        vulnerability.addVulnerableSoftware(vs);</span>
+<span class="nc" id="L378">        vulnerability.setMatchedVulnerableSoftware(vs);</span>
+
+<span class="nc" id="L380">        vulnerability.setCvssV2(new CvssV2(-1, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;unknown&quot;));</span>
+<span class="nc" id="L381">        vulnerability.setDescription(result.getDescription());</span>
+<span class="nc" id="L382">        vulnerability.setName(result.getCve());</span>
+
+<span class="nc" id="L384">        return vulnerability;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

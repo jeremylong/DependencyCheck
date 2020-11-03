@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XmlEntity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.xml</a> &gt; <span class="el_source">XmlEntity.java</span></div><h1>XmlEntity.java</h1><pre class="source lang-java linenums">package org.owasp.dependencycheck.xml;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import javax.annotation.concurrent.ThreadSafe;
+
+/**
+ * This is a utility class to convert named XML Entities (such as &amp;oslash;) into
+ * its HTML encoded Unicode code point (i.e. &amp;amp;#248;). This is a slightly
+ * modified (class/method rename) from an SO answer:
+ * https://stackoverflow.com/questions/7286428/help-the-java-sax-parser-to-understand-bad-xml
+ *
+ * @author https://stackoverflow.com/users/823393/oldcurmudgeon
+ */
+@ThreadSafe
+public final class XmlEntity {
+
+    /**
+     * The map of HTML entities.
+     */
+    private static final Map&lt;String, Integer&gt; SPECIALS;
+
+    //&lt;editor-fold defaultstate=&quot;collapsed&quot; desc=&quot;Initialize SPECIALS&quot;&gt;
+    /*
+     * Create a map HTML Named Entities to their numeric equivalent. Derived
+     * from Wikipedia
+     * http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
+     */
+    static {
+<span class="fc" id="L31">        final Map&lt;String, Integer&gt; map = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L32">        map.put(&quot;quot&quot;, 34);</span>
+<span class="fc" id="L33">        map.put(&quot;amp&quot;, 38);</span>
+<span class="fc" id="L34">        map.put(&quot;apos&quot;, 39);</span>
+<span class="fc" id="L35">        map.put(&quot;lt&quot;, 60);</span>
+<span class="fc" id="L36">        map.put(&quot;gt&quot;, 62);</span>
+<span class="fc" id="L37">        map.put(&quot;nbsp&quot;, 160);</span>
+<span class="fc" id="L38">        map.put(&quot;iexcl&quot;, 161);</span>
+<span class="fc" id="L39">        map.put(&quot;cent&quot;, 162);</span>
+<span class="fc" id="L40">        map.put(&quot;pound&quot;, 163);</span>
+<span class="fc" id="L41">        map.put(&quot;curren&quot;, 164);</span>
+<span class="fc" id="L42">        map.put(&quot;yen&quot;, 165);</span>
+<span class="fc" id="L43">        map.put(&quot;brvbar&quot;, 166);</span>
+<span class="fc" id="L44">        map.put(&quot;sect&quot;, 167);</span>
+<span class="fc" id="L45">        map.put(&quot;uml&quot;, 168);</span>
+<span class="fc" id="L46">        map.put(&quot;copy&quot;, 169);</span>
+<span class="fc" id="L47">        map.put(&quot;ordf&quot;, 170);</span>
+<span class="fc" id="L48">        map.put(&quot;laquo&quot;, 171);</span>
+<span class="fc" id="L49">        map.put(&quot;not&quot;, 172);</span>
+<span class="fc" id="L50">        map.put(&quot;shy&quot;, 173);</span>
+<span class="fc" id="L51">        map.put(&quot;reg&quot;, 174);</span>
+<span class="fc" id="L52">        map.put(&quot;macr&quot;, 175);</span>
+<span class="fc" id="L53">        map.put(&quot;deg&quot;, 176);</span>
+<span class="fc" id="L54">        map.put(&quot;plusmn&quot;, 177);</span>
+<span class="fc" id="L55">        map.put(&quot;sup2&quot;, 178);</span>
+<span class="fc" id="L56">        map.put(&quot;sup3&quot;, 179);</span>
+<span class="fc" id="L57">        map.put(&quot;acute&quot;, 180);</span>
+<span class="fc" id="L58">        map.put(&quot;micro&quot;, 181);</span>
+<span class="fc" id="L59">        map.put(&quot;para&quot;, 182);</span>
+<span class="fc" id="L60">        map.put(&quot;middot&quot;, 183);</span>
+<span class="fc" id="L61">        map.put(&quot;cedil&quot;, 184);</span>
+<span class="fc" id="L62">        map.put(&quot;sup1&quot;, 185);</span>
+<span class="fc" id="L63">        map.put(&quot;ordm&quot;, 186);</span>
+<span class="fc" id="L64">        map.put(&quot;raquo&quot;, 187);</span>
+<span class="fc" id="L65">        map.put(&quot;frac14&quot;, 188);</span>
+<span class="fc" id="L66">        map.put(&quot;frac12&quot;, 189);</span>
+<span class="fc" id="L67">        map.put(&quot;frac34&quot;, 190);</span>
+<span class="fc" id="L68">        map.put(&quot;iquest&quot;, 191);</span>
+<span class="fc" id="L69">        map.put(&quot;Agrave&quot;, 192);</span>
+<span class="fc" id="L70">        map.put(&quot;Aacute&quot;, 193);</span>
+<span class="fc" id="L71">        map.put(&quot;Acirc&quot;, 194);</span>
+<span class="fc" id="L72">        map.put(&quot;Atilde&quot;, 195);</span>
+<span class="fc" id="L73">        map.put(&quot;Auml&quot;, 196);</span>
+<span class="fc" id="L74">        map.put(&quot;Aring&quot;, 197);</span>
+<span class="fc" id="L75">        map.put(&quot;AElig&quot;, 198);</span>
+<span class="fc" id="L76">        map.put(&quot;Ccedil&quot;, 199);</span>
+<span class="fc" id="L77">        map.put(&quot;Egrave&quot;, 200);</span>
+<span class="fc" id="L78">        map.put(&quot;Eacute&quot;, 201);</span>
+<span class="fc" id="L79">        map.put(&quot;Ecirc&quot;, 202);</span>
+<span class="fc" id="L80">        map.put(&quot;Euml&quot;, 203);</span>
+<span class="fc" id="L81">        map.put(&quot;Igrave&quot;, 204);</span>
+<span class="fc" id="L82">        map.put(&quot;Iacute&quot;, 205);</span>
+<span class="fc" id="L83">        map.put(&quot;Icirc&quot;, 206);</span>
+<span class="fc" id="L84">        map.put(&quot;Iuml&quot;, 207);</span>
+<span class="fc" id="L85">        map.put(&quot;ETH&quot;, 208);</span>
+<span class="fc" id="L86">        map.put(&quot;Ntilde&quot;, 209);</span>
+<span class="fc" id="L87">        map.put(&quot;Ograve&quot;, 210);</span>
+<span class="fc" id="L88">        map.put(&quot;Oacute&quot;, 211);</span>
+<span class="fc" id="L89">        map.put(&quot;Ocirc&quot;, 212);</span>
+<span class="fc" id="L90">        map.put(&quot;Otilde&quot;, 213);</span>
+<span class="fc" id="L91">        map.put(&quot;Ouml&quot;, 214);</span>
+<span class="fc" id="L92">        map.put(&quot;times&quot;, 215);</span>
+<span class="fc" id="L93">        map.put(&quot;Oslash&quot;, 216);</span>
+<span class="fc" id="L94">        map.put(&quot;Ugrave&quot;, 217);</span>
+<span class="fc" id="L95">        map.put(&quot;Uacute&quot;, 218);</span>
+<span class="fc" id="L96">        map.put(&quot;Ucirc&quot;, 219);</span>
+<span class="fc" id="L97">        map.put(&quot;Uuml&quot;, 220);</span>
+<span class="fc" id="L98">        map.put(&quot;Yacute&quot;, 221);</span>
+<span class="fc" id="L99">        map.put(&quot;THORN&quot;, 222);</span>
+<span class="fc" id="L100">        map.put(&quot;szlig&quot;, 223);</span>
+<span class="fc" id="L101">        map.put(&quot;agrave&quot;, 224);</span>
+<span class="fc" id="L102">        map.put(&quot;aacute&quot;, 225);</span>
+<span class="fc" id="L103">        map.put(&quot;acirc&quot;, 226);</span>
+<span class="fc" id="L104">        map.put(&quot;atilde&quot;, 227);</span>
+<span class="fc" id="L105">        map.put(&quot;auml&quot;, 228);</span>
+<span class="fc" id="L106">        map.put(&quot;aring&quot;, 229);</span>
+<span class="fc" id="L107">        map.put(&quot;aelig&quot;, 230);</span>
+<span class="fc" id="L108">        map.put(&quot;ccedil&quot;, 231);</span>
+<span class="fc" id="L109">        map.put(&quot;egrave&quot;, 232);</span>
+<span class="fc" id="L110">        map.put(&quot;eacute&quot;, 233);</span>
+<span class="fc" id="L111">        map.put(&quot;ecirc&quot;, 234);</span>
+<span class="fc" id="L112">        map.put(&quot;euml&quot;, 235);</span>
+<span class="fc" id="L113">        map.put(&quot;igrave&quot;, 236);</span>
+<span class="fc" id="L114">        map.put(&quot;iacute&quot;, 237);</span>
+<span class="fc" id="L115">        map.put(&quot;icirc&quot;, 238);</span>
+<span class="fc" id="L116">        map.put(&quot;iuml&quot;, 239);</span>
+<span class="fc" id="L117">        map.put(&quot;eth&quot;, 240);</span>
+<span class="fc" id="L118">        map.put(&quot;ntilde&quot;, 241);</span>
+<span class="fc" id="L119">        map.put(&quot;ograve&quot;, 242);</span>
+<span class="fc" id="L120">        map.put(&quot;oacute&quot;, 243);</span>
+<span class="fc" id="L121">        map.put(&quot;ocirc&quot;, 244);</span>
+<span class="fc" id="L122">        map.put(&quot;otilde&quot;, 245);</span>
+<span class="fc" id="L123">        map.put(&quot;ouml&quot;, 246);</span>
+<span class="fc" id="L124">        map.put(&quot;divide&quot;, 247);</span>
+<span class="fc" id="L125">        map.put(&quot;oslash&quot;, 248);</span>
+<span class="fc" id="L126">        map.put(&quot;ugrave&quot;, 249);</span>
+<span class="fc" id="L127">        map.put(&quot;uacute&quot;, 250);</span>
+<span class="fc" id="L128">        map.put(&quot;ucirc&quot;, 251);</span>
+<span class="fc" id="L129">        map.put(&quot;uuml&quot;, 252);</span>
+<span class="fc" id="L130">        map.put(&quot;yacute&quot;, 253);</span>
+<span class="fc" id="L131">        map.put(&quot;thorn&quot;, 254);</span>
+<span class="fc" id="L132">        map.put(&quot;yuml&quot;, 255);</span>
+<span class="fc" id="L133">        map.put(&quot;OElig&quot;, 338);</span>
+<span class="fc" id="L134">        map.put(&quot;oelig&quot;, 339);</span>
+<span class="fc" id="L135">        map.put(&quot;Scaron&quot;, 352);</span>
+<span class="fc" id="L136">        map.put(&quot;scaron&quot;, 353);</span>
+<span class="fc" id="L137">        map.put(&quot;Yuml&quot;, 376);</span>
+<span class="fc" id="L138">        map.put(&quot;fnof&quot;, 402);</span>
+<span class="fc" id="L139">        map.put(&quot;circ&quot;, 710);</span>
+<span class="fc" id="L140">        map.put(&quot;tilde&quot;, 732);</span>
+<span class="fc" id="L141">        map.put(&quot;Alpha&quot;, 913);</span>
+<span class="fc" id="L142">        map.put(&quot;Beta&quot;, 914);</span>
+<span class="fc" id="L143">        map.put(&quot;Gamma&quot;, 915);</span>
+<span class="fc" id="L144">        map.put(&quot;Delta&quot;, 916);</span>
+<span class="fc" id="L145">        map.put(&quot;Epsilon&quot;, 917);</span>
+<span class="fc" id="L146">        map.put(&quot;Zeta&quot;, 918);</span>
+<span class="fc" id="L147">        map.put(&quot;Eta&quot;, 919);</span>
+<span class="fc" id="L148">        map.put(&quot;Theta&quot;, 920);</span>
+<span class="fc" id="L149">        map.put(&quot;Iota&quot;, 921);</span>
+<span class="fc" id="L150">        map.put(&quot;Kappa&quot;, 922);</span>
+<span class="fc" id="L151">        map.put(&quot;Lambda&quot;, 923);</span>
+<span class="fc" id="L152">        map.put(&quot;Mu&quot;, 924);</span>
+<span class="fc" id="L153">        map.put(&quot;Nu&quot;, 925);</span>
+<span class="fc" id="L154">        map.put(&quot;Xi&quot;, 926);</span>
+<span class="fc" id="L155">        map.put(&quot;Omicron&quot;, 927);</span>
+<span class="fc" id="L156">        map.put(&quot;Pi&quot;, 928);</span>
+<span class="fc" id="L157">        map.put(&quot;Rho&quot;, 929);</span>
+<span class="fc" id="L158">        map.put(&quot;Sigma&quot;, 931);</span>
+<span class="fc" id="L159">        map.put(&quot;Tau&quot;, 932);</span>
+<span class="fc" id="L160">        map.put(&quot;Upsilon&quot;, 933);</span>
+<span class="fc" id="L161">        map.put(&quot;Phi&quot;, 934);</span>
+<span class="fc" id="L162">        map.put(&quot;Chi&quot;, 935);</span>
+<span class="fc" id="L163">        map.put(&quot;Psi&quot;, 936);</span>
+<span class="fc" id="L164">        map.put(&quot;Omega&quot;, 937);</span>
+<span class="fc" id="L165">        map.put(&quot;alpha&quot;, 945);</span>
+<span class="fc" id="L166">        map.put(&quot;beta&quot;, 946);</span>
+<span class="fc" id="L167">        map.put(&quot;gamma&quot;, 947);</span>
+<span class="fc" id="L168">        map.put(&quot;delta&quot;, 948);</span>
+<span class="fc" id="L169">        map.put(&quot;epsilon&quot;, 949);</span>
+<span class="fc" id="L170">        map.put(&quot;zeta&quot;, 950);</span>
+<span class="fc" id="L171">        map.put(&quot;eta&quot;, 951);</span>
+<span class="fc" id="L172">        map.put(&quot;theta&quot;, 952);</span>
+<span class="fc" id="L173">        map.put(&quot;iota&quot;, 953);</span>
+<span class="fc" id="L174">        map.put(&quot;kappa&quot;, 954);</span>
+<span class="fc" id="L175">        map.put(&quot;lambda&quot;, 955);</span>
+<span class="fc" id="L176">        map.put(&quot;mu&quot;, 956);</span>
+<span class="fc" id="L177">        map.put(&quot;nu&quot;, 957);</span>
+<span class="fc" id="L178">        map.put(&quot;xi&quot;, 958);</span>
+<span class="fc" id="L179">        map.put(&quot;omicron&quot;, 959);</span>
+<span class="fc" id="L180">        map.put(&quot;pi&quot;, 960);</span>
+<span class="fc" id="L181">        map.put(&quot;rho&quot;, 961);</span>
+<span class="fc" id="L182">        map.put(&quot;sigmaf&quot;, 962);</span>
+<span class="fc" id="L183">        map.put(&quot;sigma&quot;, 963);</span>
+<span class="fc" id="L184">        map.put(&quot;tau&quot;, 964);</span>
+<span class="fc" id="L185">        map.put(&quot;upsilon&quot;, 965);</span>
+<span class="fc" id="L186">        map.put(&quot;phi&quot;, 966);</span>
+<span class="fc" id="L187">        map.put(&quot;chi&quot;, 967);</span>
+<span class="fc" id="L188">        map.put(&quot;psi&quot;, 968);</span>
+<span class="fc" id="L189">        map.put(&quot;omega&quot;, 969);</span>
+<span class="fc" id="L190">        map.put(&quot;thetasym&quot;, 977);</span>
+<span class="fc" id="L191">        map.put(&quot;upsih&quot;, 978);</span>
+<span class="fc" id="L192">        map.put(&quot;piv&quot;, 982);</span>
+<span class="fc" id="L193">        map.put(&quot;ensp&quot;, 8194);</span>
+<span class="fc" id="L194">        map.put(&quot;emsp&quot;, 8195);</span>
+<span class="fc" id="L195">        map.put(&quot;thinsp&quot;, 8201);</span>
+<span class="fc" id="L196">        map.put(&quot;zwnj&quot;, 8204);</span>
+<span class="fc" id="L197">        map.put(&quot;zwj&quot;, 8205);</span>
+<span class="fc" id="L198">        map.put(&quot;lrm&quot;, 8206);</span>
+<span class="fc" id="L199">        map.put(&quot;rlm&quot;, 8207);</span>
+<span class="fc" id="L200">        map.put(&quot;ndash&quot;, 8211);</span>
+<span class="fc" id="L201">        map.put(&quot;mdash&quot;, 8212);</span>
+<span class="fc" id="L202">        map.put(&quot;lsquo&quot;, 8216);</span>
+<span class="fc" id="L203">        map.put(&quot;rsquo&quot;, 8217);</span>
+<span class="fc" id="L204">        map.put(&quot;sbquo&quot;, 8218);</span>
+<span class="fc" id="L205">        map.put(&quot;ldquo&quot;, 8220);</span>
+<span class="fc" id="L206">        map.put(&quot;rdquo&quot;, 8221);</span>
+<span class="fc" id="L207">        map.put(&quot;bdquo&quot;, 8222);</span>
+<span class="fc" id="L208">        map.put(&quot;dagger&quot;, 8224);</span>
+<span class="fc" id="L209">        map.put(&quot;Dagger&quot;, 8225);</span>
+<span class="fc" id="L210">        map.put(&quot;bull&quot;, 8226);</span>
+<span class="fc" id="L211">        map.put(&quot;hellip&quot;, 8230);</span>
+<span class="fc" id="L212">        map.put(&quot;permil&quot;, 8240);</span>
+<span class="fc" id="L213">        map.put(&quot;prime&quot;, 8242);</span>
+<span class="fc" id="L214">        map.put(&quot;Prime&quot;, 8243);</span>
+<span class="fc" id="L215">        map.put(&quot;lsaquo&quot;, 8249);</span>
+<span class="fc" id="L216">        map.put(&quot;rsaquo&quot;, 8250);</span>
+<span class="fc" id="L217">        map.put(&quot;oline&quot;, 8254);</span>
+<span class="fc" id="L218">        map.put(&quot;frasl&quot;, 8260);</span>
+<span class="fc" id="L219">        map.put(&quot;euro&quot;, 8364);</span>
+<span class="fc" id="L220">        map.put(&quot;image&quot;, 8465);</span>
+<span class="fc" id="L221">        map.put(&quot;weierp&quot;, 8472);</span>
+<span class="fc" id="L222">        map.put(&quot;real&quot;, 8476);</span>
+<span class="fc" id="L223">        map.put(&quot;trade&quot;, 8482);</span>
+<span class="fc" id="L224">        map.put(&quot;alefsym&quot;, 8501);</span>
+<span class="fc" id="L225">        map.put(&quot;larr&quot;, 8592);</span>
+<span class="fc" id="L226">        map.put(&quot;uarr&quot;, 8593);</span>
+<span class="fc" id="L227">        map.put(&quot;rarr&quot;, 8594);</span>
+<span class="fc" id="L228">        map.put(&quot;darr&quot;, 8595);</span>
+<span class="fc" id="L229">        map.put(&quot;harr&quot;, 8596);</span>
+<span class="fc" id="L230">        map.put(&quot;crarr&quot;, 8629);</span>
+<span class="fc" id="L231">        map.put(&quot;lArr&quot;, 8656);</span>
+<span class="fc" id="L232">        map.put(&quot;uArr&quot;, 8657);</span>
+<span class="fc" id="L233">        map.put(&quot;rArr&quot;, 8658);</span>
+<span class="fc" id="L234">        map.put(&quot;dArr&quot;, 8659);</span>
+<span class="fc" id="L235">        map.put(&quot;hArr&quot;, 8660);</span>
+<span class="fc" id="L236">        map.put(&quot;forall&quot;, 8704);</span>
+<span class="fc" id="L237">        map.put(&quot;part&quot;, 8706);</span>
+<span class="fc" id="L238">        map.put(&quot;exist&quot;, 8707);</span>
+<span class="fc" id="L239">        map.put(&quot;empty&quot;, 8709);</span>
+<span class="fc" id="L240">        map.put(&quot;nabla&quot;, 8711);</span>
+<span class="fc" id="L241">        map.put(&quot;isin&quot;, 8712);</span>
+<span class="fc" id="L242">        map.put(&quot;notin&quot;, 8713);</span>
+<span class="fc" id="L243">        map.put(&quot;ni&quot;, 8715);</span>
+<span class="fc" id="L244">        map.put(&quot;prod&quot;, 8719);</span>
+<span class="fc" id="L245">        map.put(&quot;sum&quot;, 8721);</span>
+<span class="fc" id="L246">        map.put(&quot;minus&quot;, 8722);</span>
+<span class="fc" id="L247">        map.put(&quot;lowast&quot;, 8727);</span>
+<span class="fc" id="L248">        map.put(&quot;radic&quot;, 8730);</span>
+<span class="fc" id="L249">        map.put(&quot;prop&quot;, 8733);</span>
+<span class="fc" id="L250">        map.put(&quot;infin&quot;, 8734);</span>
+<span class="fc" id="L251">        map.put(&quot;ang&quot;, 8736);</span>
+<span class="fc" id="L252">        map.put(&quot;and&quot;, 8743);</span>
+<span class="fc" id="L253">        map.put(&quot;or&quot;, 8744);</span>
+<span class="fc" id="L254">        map.put(&quot;cap&quot;, 8745);</span>
+<span class="fc" id="L255">        map.put(&quot;cup&quot;, 8746);</span>
+<span class="fc" id="L256">        map.put(&quot;int&quot;, 8747);</span>
+<span class="fc" id="L257">        map.put(&quot;there4&quot;, 8756);</span>
+<span class="fc" id="L258">        map.put(&quot;sim&quot;, 8764);</span>
+<span class="fc" id="L259">        map.put(&quot;cong&quot;, 8773);</span>
+<span class="fc" id="L260">        map.put(&quot;asymp&quot;, 8776);</span>
+<span class="fc" id="L261">        map.put(&quot;ne&quot;, 8800);</span>
+<span class="fc" id="L262">        map.put(&quot;equiv&quot;, 8801);</span>
+<span class="fc" id="L263">        map.put(&quot;le&quot;, 8804);</span>
+<span class="fc" id="L264">        map.put(&quot;ge&quot;, 8805);</span>
+<span class="fc" id="L265">        map.put(&quot;sub&quot;, 8834);</span>
+<span class="fc" id="L266">        map.put(&quot;sup&quot;, 8835);</span>
+<span class="fc" id="L267">        map.put(&quot;nsub&quot;, 8836);</span>
+<span class="fc" id="L268">        map.put(&quot;sube&quot;, 8838);</span>
+<span class="fc" id="L269">        map.put(&quot;supe&quot;, 8839);</span>
+<span class="fc" id="L270">        map.put(&quot;oplus&quot;, 8853);</span>
+<span class="fc" id="L271">        map.put(&quot;otimes&quot;, 8855);</span>
+<span class="fc" id="L272">        map.put(&quot;perp&quot;, 8869);</span>
+<span class="fc" id="L273">        map.put(&quot;sdot&quot;, 8901);</span>
+<span class="fc" id="L274">        map.put(&quot;lceil&quot;, 8968);</span>
+<span class="fc" id="L275">        map.put(&quot;rceil&quot;, 8969);</span>
+<span class="fc" id="L276">        map.put(&quot;lfloor&quot;, 8970);</span>
+<span class="fc" id="L277">        map.put(&quot;rfloor&quot;, 8971);</span>
+<span class="fc" id="L278">        map.put(&quot;lang&quot;, 10216);</span>
+<span class="fc" id="L279">        map.put(&quot;rang&quot;, 10217);</span>
+<span class="fc" id="L280">        map.put(&quot;loz&quot;, 9674);</span>
+<span class="fc" id="L281">        map.put(&quot;spades&quot;, 9824);</span>
+<span class="fc" id="L282">        map.put(&quot;clubs&quot;, 9827);</span>
+<span class="fc" id="L283">        map.put(&quot;hearts&quot;, 9829);</span>
+<span class="fc" id="L284">        map.put(&quot;diams&quot;, 9830);</span>
+<span class="fc" id="L285">        SPECIALS = Collections.unmodifiableMap(map);</span>
+<span class="fc" id="L286">    }</span>
+    //&lt;/editor-fold&gt;
+
+    /**
+     * Private constructor for a utility class.
+     */
+    private XmlEntity() {
+    }
+
+    /**
+     * Converts a named XML entity into its HTML encoded Unicode code point.
+     *
+     * @param s the named entity (note, this should not include the leading
+     * '&amp;amp;' or trailing ';'
+     * @return the HTML encoded Unicode code point representation of the named
+     * entity
+     */
+    public static String fromNamedReference(CharSequence s) {
+<span class="fc bfc" id="L304" title="All 2 branches covered.">        if (s == null) {</span>
+<span class="fc" id="L305">            return null;</span>
+        }
+<span class="fc" id="L307">        final Integer code = SPECIALS.get(s.toString());</span>
+<span class="fc bfc" id="L308" title="All 2 branches covered.">        if (code != null) {</span>
+<span class="fc" id="L309">            return &quot;&amp;#&quot; + code + &quot;;&quot;;</span>
+        }
+<span class="fc" id="L311">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

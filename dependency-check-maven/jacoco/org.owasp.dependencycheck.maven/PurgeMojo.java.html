@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PurgeMojo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.maven</a> &gt; <span class="el_source">PurgeMojo.java</span></div><h1>PurgeMojo.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-maven.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2015 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.maven;
+
+import java.util.Locale;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.exception.ExceptionCollection;
+
+/**
+ * Maven Plugin that purges the local copy of the NVD data.
+ *
+ * @author Jeremy Long
+ */
+@Mojo(
+        name = &quot;purge&quot;,
+        defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
+        requiresProject = false,
+        threadSafe = true,
+        requiresDependencyResolution = ResolutionScope.NONE,
+        requiresOnline = true,
+        aggregator = true
+)
+<span class="nc" id="L43">public class PurgeMojo extends BaseDependencyCheckMojo {</span>
+
+    /**
+     * Returns false; this mojo cannot generate a report.
+     *
+     * @return &lt;code&gt;false&lt;/code&gt;
+     */
+    @Override
+    public boolean canGenerateReport() {
+<span class="nc" id="L52">        return false;</span>
+    }
+
+    /**
+     * Purges the local copy of the NVD.
+     *
+     * @throws MojoExecutionException thrown if there is an exception executing
+     * the goal
+     * @throws MojoFailureException thrown if dependency-check is configured to
+     * fail the build
+     */
+    @Override
+    protected void runCheck() throws MojoExecutionException, MojoFailureException {
+<span class="nc" id="L65">        populateSettings();</span>
+<span class="nc" id="L66">        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, getSettings())) {</span>
+<span class="nc" id="L67">            engine.purge();</span>
+        } finally {
+<span class="nc" id="L69">            getSettings().cleanup();</span>
+        }
+<span class="nc" id="L71">    }</span>
+
+    /**
+     * Returns the report name.
+     *
+     * @param locale the location
+     * @return the report name
+     */
+    @Override
+    public String getName(Locale locale) {
+<span class="nc" id="L81">        return &quot;dependency-check-purge&quot;;</span>
+    }
+
+    /**
+     * Gets the description of the Dependency-Check report to be displayed in
+     * the Maven Generated Reports page.
+     *
+     * @param locale The Locale to get the description for
+     * @return the description
+     */
+    @Override
+    public String getDescription(Locale locale) {
+<span class="nc" id="L93">        return &quot;Purges the local cache of the NVD dataT.&quot;;</span>
+    }
+
+    /**
+     * Throws an exception if called. The purge mojo does not scan dependencies.
+     *
+     * @param engine the engine used to scan
+     * @return a collection of exceptions
+     * @throws MojoExecutionException thrown if there is an exception
+     */
+    @Override
+    protected ExceptionCollection scanDependencies(Engine engine) throws MojoExecutionException {
+<span class="nc" id="L105">        throw new UnsupportedOperationException(&quot;Operation not supported&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

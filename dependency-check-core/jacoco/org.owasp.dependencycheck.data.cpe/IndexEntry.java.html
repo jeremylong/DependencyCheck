@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IndexEntry.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.cpe</a> &gt; <span class="el_source">IndexEntry.java</span></div><h1>IndexEntry.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.cpe;
+
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import javax.annotation.concurrent.ThreadSafe;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+/**
+ * A CPE entry containing the name, vendor, product, and version.
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+<span class="fc" id="L35">public class IndexEntry implements Serializable {</span>
+
+    /**
+     * the serial version uid.
+     */
+    private static final long serialVersionUID = 8011924485946326934L;
+    /**
+     * The vendor name.
+     */
+    private String vendor;
+    /**
+     * The documentId.
+     */
+    private int documentId;
+    /**
+     * The product name.
+     */
+    private String product;
+    /**
+     * The search score.
+     */
+    private float searchScore;
+
+    /**
+     * Get the value of documentId.
+     *
+     * @return the value of documentId
+     */
+    public int getDocumentId() {
+<span class="fc" id="L64">        return documentId;</span>
+    }
+
+    /**
+     * Set the value of documentId.
+     *
+     * @param documentId new value of documentId
+     */
+    public void setDocumentId(int documentId) {
+<span class="fc" id="L73">        this.documentId = documentId;</span>
+<span class="fc" id="L74">    }</span>
+
+    /**
+     * Get the value of vendor.
+     *
+     * @return the value of vendor
+     */
+    public String getVendor() {
+<span class="fc" id="L82">        return vendor;</span>
+    }
+
+    /**
+     * Set the value of vendor.
+     *
+     * @param vendor new value of vendor
+     */
+    public void setVendor(String vendor) {
+<span class="fc" id="L91">        this.vendor = vendor;</span>
+<span class="fc" id="L92">    }</span>
+
+    /**
+     * Get the value of product.
+     *
+     * @return the value of product
+     */
+    public String getProduct() {
+<span class="fc" id="L100">        return product;</span>
+    }
+
+    /**
+     * Set the value of product.
+     *
+     * @param product new value of product
+     */
+    public void setProduct(String product) {
+<span class="fc" id="L109">        this.product = product;</span>
+<span class="fc" id="L110">    }</span>
+
+    /**
+     * Get the value of searchScore.
+     *
+     * @return the value of searchScore
+     */
+    public float getSearchScore() {
+<span class="nc" id="L118">        return searchScore;</span>
+    }
+
+    /**
+     * Set the value of searchScore.
+     *
+     * @param searchScore new value of searchScore
+     */
+    public void setSearchScore(float searchScore) {
+<span class="fc" id="L127">        this.searchScore = searchScore;</span>
+<span class="fc" id="L128">    }</span>
+
+    /**
+     * &lt;p&gt;
+     * Parses a name attribute value, from the cpe.xml, into its corresponding
+     * parts: vendor, product.&lt;/p&gt;
+     * &lt;p&gt;
+     * Example:&lt;/p&gt;
+     * &lt;code&gt;nbsp;nbsp;nbsp;cpe:/a:apache:struts:1.1:rc2&lt;/code&gt;
+     *
+     * &lt;p&gt;
+     * Results in:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;Vendor: apache&lt;/li&gt; &lt;li&gt;Product: struts&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;p&gt;
+     * If it is necessary to parse the CPE into more parts (i.e. to include
+     * version and revision) then you should use the `cpe-parser`.
+     *
+     * @param cpeName the CPE name
+     * @throws UnsupportedEncodingException should never be thrown...
+     */
+    public void parseName(String cpeName) throws UnsupportedEncodingException {
+<span class="pc bpc" id="L149" title="2 of 4 branches missed.">        if (cpeName != null &amp;&amp; cpeName.length() &gt; 7) {</span>
+<span class="fc" id="L150">            final String cpeNameWithoutPrefix = cpeName.substring(7);</span>
+<span class="fc" id="L151">            final String[] data = StringUtils.split(cpeNameWithoutPrefix, ':');</span>
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">            if (data.length &gt;= 1) {</span>
+<span class="fc" id="L153">                vendor = URLDecoder.decode(data[0].replace(&quot;+&quot;, &quot;%2B&quot;), StandardCharsets.UTF_8.name());</span>
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">                if (data.length &gt;= 2) {</span>
+<span class="fc" id="L155">                    product = URLDecoder.decode(data[1].replace(&quot;+&quot;, &quot;%2B&quot;), StandardCharsets.UTF_8.name());</span>
+                }
+            }
+        }
+<span class="fc" id="L159">    }</span>
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L163">        return new HashCodeBuilder(5, 27)</span>
+<span class="nc" id="L164">                .append(documentId)</span>
+<span class="nc" id="L165">                .append(vendor)</span>
+<span class="nc" id="L166">                .append(product)</span>
+<span class="nc" id="L167">                .append(searchScore)</span>
+<span class="nc" id="L168">                .build();</span>
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="pc bpc" id="L173" title="2 of 4 branches missed.">        if (obj == null || !(obj instanceof IndexEntry)) {</span>
+<span class="nc" id="L174">            return false;</span>
+        }
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">        if (this == obj) {</span>
+<span class="nc" id="L177">            return true;</span>
+        }
+<span class="fc" id="L179">        final IndexEntry rhs = (IndexEntry) obj;</span>
+<span class="fc" id="L180">        return new EqualsBuilder()</span>
+<span class="fc" id="L181">                .append(vendor, rhs.vendor)</span>
+<span class="fc" id="L182">                .append(product, rhs.product)</span>
+<span class="fc" id="L183">                .isEquals();</span>
+    }
+
+    /**
+     * Standard implementation of toString showing vendor and product.
+     *
+     * @return the string representation of the object
+     */
+    @Override
+    public String toString() {
+<span class="nc" id="L193">        return &quot;IndexEntry{&quot; + &quot;vendor=&quot; + vendor + &quot;, product=&quot; + product + &quot;', score=&quot; + searchScore + &quot;}&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

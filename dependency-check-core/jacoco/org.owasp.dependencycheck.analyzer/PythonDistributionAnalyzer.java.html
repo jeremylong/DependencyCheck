@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PythonDistributionAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">PythonDistributionAnalyzer.java</span></div><h1>PythonDistributionAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2015 Institute for Defense Analyses. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURL;
+import com.github.packageurl.PackageURLBuilder;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import org.apache.commons.io.filefilter.NameFileFilter;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
+import org.apache.commons.lang3.StringUtils;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetHeaders;
+import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.ExtractionException;
+import org.owasp.dependencycheck.utils.ExtractionUtil;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.FileUtils;
+import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.UrlStringUtils;
+import java.util.concurrent.atomic.AtomicInteger;
+import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+
+/**
+ * Used to analyze a Wheel or egg distribution files, or their contents in
+ * unzipped form, and collect information that can be used to determine the
+ * associated CPE.
+ *
+ * @author Dale Visser
+ */
+@Experimental
+@ThreadSafe
+<span class="fc" id="L66">public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {</span>
+
+    /**
+     * A descriptor for the type of dependencies processed or added by this
+     * analyzer.
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.PYTHON;
+
+    /**
+     * Name of egg metadata files to analyze.
+     */
+    private static final String PKG_INFO = &quot;PKG-INFO&quot;;
+    /**
+     * Name of wheel metadata files to analyze.
+     */
+    private static final String METADATA = &quot;METADATA&quot;;
+    /**
+     * The logger.
+     */
+<span class="fc" id="L85">    private static final Logger LOGGER = LoggerFactory.getLogger(PythonDistributionAnalyzer.class);</span>
+    /**
+     * The count of directories created during analysis. This is used for
+     * creating temporary directories.
+     */
+<span class="fc" id="L90">    private static final AtomicInteger DIR_COUNT = new AtomicInteger(0);</span>
+    /**
+     * The name of the analyzer.
+     */
+    private static final String ANALYZER_NAME = &quot;Python Distribution Analyzer&quot;;
+    /**
+     * The phase that this analyzer is intended to run in.
+     */
+<span class="fc" id="L98">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;</span>
+    /**
+     * The set of file extensions supported by this analyzer.
+     */
+<span class="fc" id="L102">    private static final String[] EXTENSIONS = {&quot;whl&quot;, &quot;egg&quot;, &quot;zip&quot;};</span>
+    /**
+     * Used to match on egg archive candidate extensions.
+     */
+<span class="fc" id="L106">    private static final FileFilter EGG_OR_ZIP = FileFilterBuilder.newInstance().addExtensions(&quot;egg&quot;, &quot;zip&quot;).build();</span>
+    /**
+     * Used to detect files with a .whl extension.
+     */
+<span class="fc" id="L110">    private static final FileFilter WHL_FILTER = FileFilterBuilder.newInstance().addExtensions(&quot;whl&quot;).build();</span>
+    /**
+     * The parent directory for the individual directories per archive.
+     */
+    private File tempFileLocation;
+    /**
+     * Filter that detects *.dist-info files (but doesn't verify they are
+     * directories.
+     */
+<span class="fc" id="L119">    private static final FilenameFilter DIST_INFO_FILTER = new SuffixFileFilter(&quot;.dist-info&quot;);</span>
+    /**
+     * Filter that detects files named &quot;METADATA&quot;.
+     */
+<span class="fc" id="L123">    private static final FilenameFilter EGG_INFO_FILTER = new NameFileFilter(&quot;EGG-INFO&quot;);</span>
+    /**
+     * Filter that detects files named &quot;METADATA&quot;.
+     */
+<span class="fc" id="L127">    private static final NameFileFilter METADATA_FILTER = new NameFileFilter(METADATA);</span>
+    /**
+     * Filter that detects files named &quot;PKG-INFO&quot;.
+     */
+<span class="fc" id="L131">    private static final NameFileFilter PKG_INFO_FILTER = new NameFileFilter(PKG_INFO);</span>
+    /**
+     * The file filter used to determine which files this analyzer supports.
+     */
+<span class="fc" id="L135">    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addFileFilters(</span>
+<span class="fc" id="L136">            METADATA_FILTER, PKG_INFO_FILTER).addExtensions(EXTENSIONS).build();</span>
+
+    /**
+     * Returns the FileFilter
+     *
+     * @return the FileFilter
+     */
+    @Override
+    protected FileFilter getFileFilter() {
+<span class="fc" id="L145">        return FILTER;</span>
+    }
+
+    /**
+     * Returns the name of the analyzer.
+     *
+     * @return the name of the analyzer.
+     */
+    @Override
+    public String getName() {
+<span class="fc" id="L155">        return ANALYZER_NAME;</span>
+    }
+
+    /**
+     * Returns the phase that the analyzer is intended to run in.
+     *
+     * @return the phase that the analyzer is intended to run in.
+     */
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+<span class="fc" id="L165">        return ANALYSIS_PHASE;</span>
+    }
+
+    /**
+     * Returns the key used in the properties file to reference the analyzer's
+     * enabled property.
+     *
+     * @return the analyzer's enabled property setting key
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+<span class="fc" id="L176">        return Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED;</span>
+    }
+
+    @Override
+    protected void analyzeDependency(Dependency dependency, Engine engine)
+            throws AnalysisException {
+
+<span class="fc" id="L183">        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc" id="L184">        final File actualFile = dependency.getActualFile();</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        if (WHL_FILTER.accept(actualFile)) {</span>
+<span class="fc" id="L186">            collectMetadataFromArchiveFormat(dependency, DIST_INFO_FILTER,</span>
+                    METADATA_FILTER);
+<span class="fc bfc" id="L188" title="All 2 branches covered.">        } else if (EGG_OR_ZIP.accept(actualFile)) {</span>
+<span class="fc" id="L189">            collectMetadataFromArchiveFormat(dependency, EGG_INFO_FILTER,</span>
+                    PKG_INFO_FILTER);
+        } else {
+<span class="fc" id="L192">            final String name = actualFile.getName();</span>
+<span class="fc" id="L193">            final boolean metadata = METADATA.equals(name);</span>
+<span class="pc bpc" id="L194" title="1 of 4 branches missed.">            if (metadata || PKG_INFO.equals(name)) {</span>
+<span class="fc" id="L195">                final File parent = actualFile.getParentFile();</span>
+<span class="fc" id="L196">                final String parentName = parent.getName();</span>
+<span class="pc bpc" id="L197" title="1 of 4 branches missed.">                if (parent.isDirectory()</span>
+<span class="pc bpc" id="L198" title="1 of 2 branches missed.">                        &amp;&amp; ((metadata &amp;&amp; parentName.endsWith(&quot;.dist-info&quot;))</span>
+<span class="fc bfc" id="L199" title="All 2 branches covered.">                        || parentName.endsWith(&quot;.egg-info&quot;) || &quot;EGG-INFO&quot;</span>
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">                        .equals(parentName))) {</span>
+<span class="fc" id="L201">                    collectWheelMetadata(dependency, actualFile);</span>
+                }
+            }
+        }
+<span class="fc" id="L205">    }</span>
+
+    /**
+     * Collects the meta data from an archive.
+     *
+     * @param dependency the archive being scanned
+     * @param folderFilter the filter to apply to the folder
+     * @param metadataFilter the filter to apply to the meta data
+     * @throws AnalysisException thrown when there is a problem analyzing the
+     * dependency
+     */
+    private void collectMetadataFromArchiveFormat(Dependency dependency,
+            FilenameFilter folderFilter, FilenameFilter metadataFilter)
+            throws AnalysisException {
+<span class="fc" id="L219">        final File temp = getNextTempDirectory();</span>
+<span class="fc" id="L220">        LOGGER.debug(&quot;{} exists? {}&quot;, temp, temp.exists());</span>
+        try {
+<span class="fc" id="L222">            ExtractionUtil.extractFilesUsingFilter(</span>
+<span class="fc" id="L223">                    new File(dependency.getActualFilePath()), temp,</span>
+                    metadataFilter);
+<span class="nc" id="L225">        } catch (ExtractionException ex) {</span>
+<span class="nc" id="L226">            throw new AnalysisException(ex);</span>
+<span class="fc" id="L227">        }</span>
+
+<span class="fc" id="L229">        File matchingFile = getMatchingFile(temp, folderFilter);</span>
+<span class="pc bpc" id="L230" title="1 of 2 branches missed.">        if (matchingFile != null) {</span>
+<span class="fc" id="L231">            matchingFile = getMatchingFile(matchingFile, metadataFilter);</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">            if (matchingFile != null) {</span>
+<span class="fc" id="L233">                collectWheelMetadata(dependency, matchingFile);</span>
+            }
+        }
+<span class="fc" id="L236">    }</span>
+
+    /**
+     * Makes sure a usable temporary directory is available.
+     *
+     * @param engine a reference to the dependency-check engine
+     * @throws InitializationException an AnalyzeException is thrown when the
+     * temp directory cannot be created
+     */
+    @Override
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
+        try {
+<span class="fc" id="L248">            final File baseDir = getSettings().getTempDirectory();</span>
+<span class="fc" id="L249">            tempFileLocation = File.createTempFile(&quot;check&quot;, &quot;tmp&quot;, baseDir);</span>
+<span class="pc bpc" id="L250" title="1 of 2 branches missed.">            if (!tempFileLocation.delete()) {</span>
+<span class="nc" id="L251">                setEnabled(false);</span>
+<span class="nc" id="L252">                final String msg = String.format(</span>
+                        &quot;Unable to delete temporary file '%s'.&quot;,
+<span class="nc" id="L254">                        tempFileLocation.getAbsolutePath());</span>
+<span class="nc" id="L255">                throw new InitializationException(msg);</span>
+            }
+<span class="pc bpc" id="L257" title="1 of 2 branches missed.">            if (!tempFileLocation.mkdirs()) {</span>
+<span class="nc" id="L258">                setEnabled(false);</span>
+<span class="nc" id="L259">                final String msg = String.format(</span>
+                        &quot;Unable to create directory '%s'.&quot;,
+<span class="nc" id="L261">                        tempFileLocation.getAbsolutePath());</span>
+<span class="nc" id="L262">                throw new InitializationException(msg);</span>
+            }
+<span class="nc" id="L264">        } catch (IOException ex) {</span>
+<span class="nc" id="L265">            setEnabled(false);</span>
+<span class="nc" id="L266">            throw new InitializationException(&quot;Unable to create a temporary file&quot;, ex);</span>
+<span class="fc" id="L267">        }</span>
+<span class="fc" id="L268">    }</span>
+
+    /**
+     * Deletes any files extracted from the Wheel during analysis.
+     */
+    @Override
+    public void closeAnalyzer() {
+<span class="pc bpc" id="L275" title="2 of 4 branches missed.">        if (tempFileLocation != null &amp;&amp; tempFileLocation.exists()) {</span>
+<span class="fc" id="L276">            LOGGER.debug(&quot;Attempting to delete temporary files&quot;);</span>
+<span class="fc" id="L277">            final boolean success = FileUtils.delete(tempFileLocation);</span>
+<span class="pc bpc" id="L278" title="3 of 4 branches missed.">            if (!success &amp;&amp; tempFileLocation.exists()) {</span>
+<span class="nc" id="L279">                final String[] l = tempFileLocation.list();</span>
+<span class="nc bnc" id="L280" title="All 4 branches missed.">                if (l != null &amp;&amp; l.length &gt; 0) {</span>
+<span class="nc" id="L281">                    LOGGER.warn(&quot;Failed to delete some temporary files, see the log for more details&quot;);</span>
+                }
+            }
+        }
+<span class="fc" id="L285">    }</span>
+
+    /**
+     * Gathers evidence from the METADATA file.
+     *
+     * @param dependency the dependency being analyzed
+     * @param file a reference to the manifest/properties file
+     */
+    private static void collectWheelMetadata(Dependency dependency, File file) {
+<span class="fc" id="L294">        final InternetHeaders headers = getManifestProperties(file);</span>
+<span class="fc" id="L295">        final String version = addPropertyToEvidence(dependency, EvidenceType.VERSION, Confidence.HIGHEST, headers, &quot;Version&quot;);</span>
+<span class="fc" id="L296">        final String name = addPropertyToEvidence(dependency, EvidenceType.VENDOR, Confidence.HIGHEST, headers, &quot;Name&quot;);</span>
+<span class="fc" id="L297">        addPropertyToEvidence(dependency, EvidenceType.PRODUCT, Confidence.HIGHEST, headers, &quot;Name&quot;);</span>
+
+<span class="fc" id="L299">        final String packagePath = String.format(&quot;%s:%s&quot;, name, version);</span>
+<span class="fc" id="L300">        dependency.setName(name);</span>
+<span class="fc" id="L301">        dependency.setVersion(version);</span>
+<span class="fc" id="L302">        dependency.setPackagePath(packagePath);</span>
+<span class="fc" id="L303">        dependency.setDisplayFileName(packagePath);</span>
+<span class="fc" id="L304">        final String url = headers.getHeader(&quot;Home-page&quot;, null);</span>
+<span class="pc bpc" id="L305" title="1 of 2 branches missed.">        if (StringUtils.isNotBlank(url)) {</span>
+<span class="pc bpc" id="L306" title="1 of 2 branches missed.">            if (UrlStringUtils.isUrl(url)) {</span>
+<span class="fc" id="L307">                dependency.addEvidence(EvidenceType.VENDOR, METADATA, &quot;vendor&quot;, url, Confidence.MEDIUM);</span>
+            }
+        }
+<span class="fc" id="L310">        addPropertyToEvidence(dependency, EvidenceType.VENDOR, Confidence.LOW, headers, &quot;Author&quot;);</span>
+<span class="fc" id="L311">        final String summary = headers.getHeader(&quot;Summary&quot;, null);</span>
+<span class="pc bpc" id="L312" title="1 of 2 branches missed.">        if (StringUtils.isNotBlank(summary)) {</span>
+<span class="fc" id="L313">            JarAnalyzer.addDescription(dependency, summary, METADATA, &quot;summary&quot;);</span>
+        }
+
+        try {
+<span class="fc" id="L317">            final PackageURL purl = PackageURLBuilder.aPackageURL().withType(&quot;pypi&quot;)</span>
+<span class="fc" id="L318">                    .withName(name).withVersion(version).build();</span>
+<span class="fc" id="L319">            dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
+<span class="nc" id="L320">        } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L321">            LOGGER.debug(&quot;Unable to build package url for python&quot;, ex);</span>
+<span class="nc" id="L322">            final GenericIdentifier id = new GenericIdentifier(&quot;generic:&quot; + name + &quot;@&quot; + version, Confidence.HIGHEST);</span>
+<span class="nc" id="L323">            dependency.addSoftwareIdentifier(id);</span>
+<span class="fc" id="L324">        }</span>
+<span class="fc" id="L325">    }</span>
+
+    /**
+     * Adds a value to the evidence collection.
+     *
+     * @param dependency the dependency being analyzed
+     * @param type the type of evidence to add
+     * @param confidence the confidence in the evidence being added
+     * @param headers the properties collection
+     * @param property the property name
+     * @return returns the value of the property if found; otherwise
+     * &lt;code&gt;null&lt;/code&gt;
+     */
+    private static String addPropertyToEvidence(Dependency dependency, EvidenceType type, Confidence confidence,
+            InternetHeaders headers, String property) {
+<span class="fc" id="L340">        final String value = headers.getHeader(property, null);</span>
+<span class="fc" id="L341">        LOGGER.debug(&quot;Property: {}, Value: {}&quot;, property, value);</span>
+<span class="pc bpc" id="L342" title="1 of 2 branches missed.">        if (StringUtils.isNotBlank(value)) {</span>
+<span class="fc" id="L343">            dependency.addEvidence(type, METADATA, property, value, confidence);</span>
+        }
+<span class="fc" id="L345">        return value;</span>
+    }
+
+    /**
+     * Returns a list of files that match the given filter, this does not
+     * recursively scan the directory.
+     *
+     * @param folder the folder to filter
+     * @param filter the filter to apply to the files in the directory
+     * @return the list of Files in the directory that match the provided filter
+     */
+    private static File getMatchingFile(File folder, FilenameFilter filter) {
+<span class="fc" id="L357">        File result = null;</span>
+<span class="fc" id="L358">        final File[] matches = folder.listFiles(filter);</span>
+<span class="pc bpc" id="L359" title="2 of 4 branches missed.">        if (null != matches &amp;&amp; 1 == matches.length) {</span>
+<span class="fc" id="L360">            result = matches[0];</span>
+        }
+<span class="fc" id="L362">        return result;</span>
+    }
+
+    /**
+     * Reads the manifest entries from the provided file.
+     *
+     * @param manifest the manifest
+     * @return the manifest entries
+     */
+    private static InternetHeaders getManifestProperties(File manifest) {
+<span class="fc" id="L372">        final InternetHeaders result = new InternetHeaders();</span>
+<span class="pc bpc" id="L373" title="1 of 2 branches missed.">        if (null == manifest) {</span>
+<span class="nc" id="L374">            LOGGER.debug(&quot;Manifest file not found.&quot;);</span>
+        } else {
+<span class="fc" id="L376">            try (InputStream in = new BufferedInputStream(new FileInputStream(manifest))) {</span>
+<span class="fc" id="L377">                result.load(in);</span>
+<span class="nc" id="L378">            } catch (MessagingException | FileNotFoundException e) {</span>
+<span class="nc" id="L379">                LOGGER.warn(e.getMessage(), e);</span>
+<span class="nc" id="L380">            } catch (IOException ex) {</span>
+<span class="nc" id="L381">                LOGGER.warn(ex.getMessage(), ex);</span>
+<span class="pc" id="L382">            }</span>
+        }
+<span class="fc" id="L384">        return result;</span>
+    }
+
+    /**
+     * Retrieves the next temporary destination directory for extracting an
+     * archive.
+     *
+     * @return a directory
+     * @throws AnalysisException thrown if unable to create temporary directory
+     */
+    private File getNextTempDirectory() throws AnalysisException {
+        File directory;
+
+        // getting an exception for some directories not being able to be
+        // created; might be because the directory already exists?
+        do {
+<span class="fc" id="L400">            final int dirCount = DIR_COUNT.incrementAndGet();</span>
+<span class="fc" id="L401">            directory = new File(tempFileLocation, String.valueOf(dirCount));</span>
+<span class="pc bpc" id="L402" title="1 of 2 branches missed.">        } while (directory.exists());</span>
+<span class="pc bpc" id="L403" title="1 of 2 branches missed.">        if (!directory.mkdirs()) {</span>
+<span class="nc" id="L404">            throw new AnalysisException(String.format(</span>
+                    &quot;Unable to create temp directory '%s'.&quot;,
+<span class="nc" id="L406">                    directory.getAbsolutePath()));</span>
+        }
+<span class="fc" id="L408">        return directory;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

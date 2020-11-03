@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GrokErrorHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.xml.assembly</a> &gt; <span class="el_source">GrokErrorHandler.java</span></div><h1>GrokErrorHandler.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2019 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.xml.assembly;
+
+import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.utils.XmlUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
+/**
+ * An XML parsing error handler.
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+<span class="fc" id="L34">public class GrokErrorHandler implements ErrorHandler {</span>
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L39">    private static final Logger LOGGER = LoggerFactory.getLogger(GrokErrorHandler.class);</span>
+
+    /**
+     * Logs warnings.
+     *
+     * @param ex the warning to log
+     * @throws SAXException is never thrown
+     */
+    @Override
+    public void warning(SAXParseException ex) throws SAXException {
+<span class="nc" id="L49">        LOGGER.trace(&quot;&quot;, ex);</span>
+<span class="nc" id="L50">    }</span>
+
+    /**
+     * Handles errors.
+     *
+     * @param ex the error to handle
+     * @throws SAXException is always thrown
+     */
+    @Override
+    public void error(SAXParseException ex) throws SAXException {
+<span class="nc" id="L60">        throw new SAXException(XmlUtils.getPrettyParseExceptionInfo(ex));</span>
+    }
+
+    /**
+     * Handles fatal exceptions.
+     *
+     * @param ex a fatal exception
+     * @throws SAXException is always thrown
+     */
+    @Override
+    public void fatalError(SAXParseException ex) throws SAXException {
+<span class="nc" id="L71">        throw new SAXException(XmlUtils.getPrettyParseExceptionInfo(ex));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

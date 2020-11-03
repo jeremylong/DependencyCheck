@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PythonPackageAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">PythonPackageAnalyzer.java</span></div><h1>PythonPackageAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2015 Institute for Defense Analyses. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURL;
+import com.github.packageurl.PackageURLBuilder;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.NameFileFilter;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.UrlStringUtils;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.owasp.dependencycheck.exception.InitializationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Used to analyze a Python package, and collect information that can be used to
+ * determine the associated CPE.
+ *
+ * @author Dale Visser
+ */
+@Experimental
+@ThreadSafe
+<span class="fc" id="L57">public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {</span>
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L62">    private static final Logger LOGGER = LoggerFactory.getLogger(PythonPackageAnalyzer.class);</span>
+
+    /**
+     * A descriptor for the type of dependencies processed or added by this
+     * analyzer.
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.PYTHON;
+
+    /**
+     * Used when compiling file scanning regex patterns.
+     */
+    private static final int REGEX_OPTIONS = Pattern.DOTALL | Pattern.CASE_INSENSITIVE;
+
+    /**
+     * Filename extensions for files to be analyzed.
+     */
+    private static final String EXTENSIONS = &quot;py&quot;;
+
+    /**
+     * Pattern for matching the module doc string in a source file.
+     */
+<span class="fc" id="L83">    private static final Pattern MODULE_DOCSTRING = Pattern.compile(&quot;^(['\\\&quot;]{3})(.*?)\\1&quot;, REGEX_OPTIONS);</span>
+
+    /**
+     * Matches assignments to version variables in Python source code.
+     */
+<span class="fc" id="L88">    private static final Pattern VERSION_PATTERN = Pattern.compile(&quot;\\b(__)?version(__)? *= *(['\&quot;]+)(\\d+\\.\\d+.*?)\\3&quot;,</span>
+            REGEX_OPTIONS);
+
+    /**
+     * Matches assignments to title variables in Python source code.
+     */
+<span class="fc" id="L94">    private static final Pattern TITLE_PATTERN = compileAssignPattern(&quot;title&quot;);</span>
+
+    /**
+     * Matches assignments to summary variables in Python source code.
+     */
+<span class="fc" id="L99">    private static final Pattern SUMMARY_PATTERN = compileAssignPattern(&quot;summary&quot;);</span>
+
+    /**
+     * Matches assignments to URL/URL variables in Python source code.
+     */
+<span class="fc" id="L104">    private static final Pattern URI_PATTERN = compileAssignPattern(&quot;ur[il]&quot;);</span>
+
+    /**
+     * Matches assignments to home page variables in Python source code.
+     */
+<span class="fc" id="L109">    private static final Pattern HOMEPAGE_PATTERN = compileAssignPattern(&quot;home_?page&quot;);</span>
+
+    /**
+     * Matches assignments to author variables in Python source code.
+     */
+<span class="fc" id="L114">    private static final Pattern AUTHOR_PATTERN = compileAssignPattern(&quot;author&quot;);</span>
+
+    /**
+     * Filter that detects files named &quot;__init__.py&quot;.
+     */
+<span class="fc" id="L119">    private static final FileFilter INIT_PY_FILTER = new NameFileFilter(&quot;__init__.py&quot;);</span>
+
+    /**
+     * The file filter for python files.
+     */
+<span class="fc" id="L124">    private static final FileFilter PY_FILTER = new SuffixFileFilter(&quot;.py&quot;);</span>
+
+    /**
+     * The file filter used to determine which files this analyzer supports.
+     */
+<span class="fc" id="L129">    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();</span>
+
+    /**
+     * Returns the name of the Python Package Analyzer.
+     *
+     * @return the name of the analyzer
+     */
+    @Override
+    public String getName() {
+<span class="fc" id="L138">        return &quot;Python Package Analyzer&quot;;</span>
+    }
+
+    /**
+     * Tell that we are used for information collection.
+     *
+     * @return INFORMATION_COLLECTION
+     */
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+<span class="fc" id="L148">        return AnalysisPhase.INFORMATION_COLLECTION;</span>
+    }
+
+    /**
+     * Returns the key name for the analyzers enabled setting.
+     *
+     * @return the key name for the analyzers enabled setting
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+<span class="fc" id="L158">        return Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED;</span>
+    }
+
+    /**
+     * Returns the FileFilter
+     *
+     * @return the FileFilter
+     */
+    @Override
+    protected FileFilter getFileFilter() {
+<span class="fc" id="L168">        return FILTER;</span>
+    }
+
+    /**
+     * No-op initializer implementation.
+     *
+     * @param engine a reference to the dependency-check engine
+     * @throws InitializationException never thrown
+     */
+    @Override
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
+        // Nothing to do here.
+<span class="fc" id="L180">    }</span>
+
+    /**
+     * Utility function to create a regex pattern matcher.
+     *
+     * @param name the value to use when constructing the assignment pattern
+     * @return the compiled Pattern
+     */
+    private static Pattern compileAssignPattern(String name) {
+<span class="fc" id="L189">        return Pattern.compile(</span>
+<span class="fc" id="L190">                String.format(&quot;\\b(__)?%s(__)?\\b *= *(['\&quot;]+)(.*?)\\3&quot;, name),</span>
+                REGEX_OPTIONS);
+    }
+
+    /**
+     * Analyzes python packages and adds evidence to the dependency.
+     *
+     * @param dependency the dependency being analyzed
+     * @param engine the engine being used to perform the scan
+     * @throws AnalysisException thrown if there is an unrecoverable error
+     * analyzing the dependency
+     */
+    @Override
+    protected void analyzeDependency(Dependency dependency, Engine engine)
+            throws AnalysisException {
+<span class="fc" id="L205">        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc" id="L206">        final File file = dependency.getActualFile();</span>
+<span class="fc" id="L207">        final File parent = file.getParentFile();</span>
+<span class="fc" id="L208">        final String parentName = parent.getName();</span>
+<span class="pc bpc" id="L209" title="1 of 2 branches missed.">        if (INIT_PY_FILTER.accept(file)) {</span>
+            //by definition, the containing folder of __init__.py is considered the package, even the file is empty:
+            //&quot;The __init__.py files are required to make Python treat the directories as containing packages&quot;
+            //see section &quot;6.4 Packages&quot; from https://docs.python.org/2/tutorial/modules.html;
+<span class="fc" id="L213">            dependency.addEvidence(EvidenceType.PRODUCT, file.getName(), &quot;PackageName&quot;, parentName, Confidence.HIGHEST);</span>
+<span class="fc" id="L214">            dependency.setName(parentName);</span>
+
+<span class="fc" id="L216">            final File[] fileList = parent.listFiles(PY_FILTER);</span>
+<span class="pc bpc" id="L217" title="1 of 2 branches missed.">            if (fileList != null) {</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">                for (final File sourceFile : fileList) {</span>
+<span class="fc" id="L219">                    analyzeFileContents(dependency, sourceFile);</span>
+                }
+            }
+<span class="fc" id="L222">        } else {</span>
+<span class="nc" id="L223">            engine.removeDependency(dependency);</span>
+        }
+<span class="fc" id="L225">    }</span>
+
+    /**
+     * This should gather information from leading docstrings, file comments,
+     * and assignments to __version__, __title__, __summary__, __uri__, __url__,
+     * __home*page__, __author__, and their all caps equivalents.
+     *
+     * @param dependency the dependency being analyzed
+     * @param file the file name to analyze
+     * @throws AnalysisException thrown if there is an unrecoverable error
+     */
+    private void analyzeFileContents(Dependency dependency, File file)
+            throws AnalysisException {
+        final String contents;
+        try {
+<span class="fc" id="L240">            contents = FileUtils.readFileToString(file, Charset.defaultCharset()).trim();</span>
+<span class="nc" id="L241">        } catch (IOException e) {</span>
+<span class="nc" id="L242">            throw new AnalysisException(&quot;Problem occurred while reading dependency file.&quot;, e);</span>
+<span class="fc" id="L243">        }</span>
+<span class="pc bpc" id="L244" title="1 of 2 branches missed.">        if (!contents.isEmpty()) {</span>
+<span class="fc" id="L245">            final String source = file.getName();</span>
+<span class="fc" id="L246">             gatherEvidence(dependency, EvidenceType.VERSION, VERSION_PATTERN, contents,</span>
+                    source, &quot;SourceVersion&quot;, Confidence.MEDIUM);
+<span class="fc" id="L248">            addSummaryInfo(dependency, SUMMARY_PATTERN, 4, contents,</span>
+                    source, &quot;summary&quot;);
+<span class="fc bfc" id="L250" title="All 2 branches covered.">            if (INIT_PY_FILTER.accept(file)) {</span>
+<span class="fc" id="L251">                addSummaryInfo(dependency, MODULE_DOCSTRING, 2,</span>
+                        contents, source, &quot;docstring&quot;);
+            }
+<span class="fc" id="L254">            gatherEvidence(dependency, EvidenceType.PRODUCT, TITLE_PATTERN, contents,</span>
+                    source, &quot;SourceTitle&quot;, Confidence.LOW);
+
+<span class="fc" id="L257">            gatherEvidence(dependency, EvidenceType.VENDOR, AUTHOR_PATTERN, contents,</span>
+                    source, &quot;SourceAuthor&quot;, Confidence.MEDIUM);
+<span class="fc" id="L259">            gatherHomePageEvidence(dependency, EvidenceType.VENDOR, URI_PATTERN,</span>
+                    source, &quot;URL&quot;, contents);
+<span class="fc" id="L261">            gatherHomePageEvidence(dependency, EvidenceType.VENDOR, HOMEPAGE_PATTERN,</span>
+                    source, &quot;HomePage&quot;, contents);
+
+            try {
+<span class="fc" id="L265">                final PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType(&quot;pypi&quot;).withName(dependency.getName());</span>
+<span class="fc bfc" id="L266" title="All 2 branches covered.">                if (dependency.getVersion() != null) {</span>
+<span class="fc" id="L267">                    builder.withVersion(dependency.getVersion());</span>
+                }
+<span class="fc" id="L269">                final PackageURL purl = builder.build();</span>
+<span class="fc" id="L270">                dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
+<span class="nc" id="L271">            } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L272">                LOGGER.debug(&quot;Unable to build package url for python&quot;, ex);</span>
+                final GenericIdentifier id;
+<span class="nc bnc" id="L274" title="All 2 branches missed.">                if (dependency.getVersion() != null) {</span>
+<span class="nc" id="L275">                    id = new GenericIdentifier(&quot;generic:&quot; + dependency.getName() + &quot;@&quot; + dependency.getVersion(), Confidence.HIGHEST);</span>
+                } else {
+<span class="nc" id="L277">                    id = new GenericIdentifier(&quot;generic:&quot; + dependency.getName(), Confidence.HIGHEST);</span>
+                }
+<span class="nc" id="L279">                dependency.addSoftwareIdentifier(id);</span>
+<span class="fc" id="L280">            }</span>
+        }
+<span class="fc" id="L282">    }</span>
+
+    /**
+     * Adds summary information to the dependency
+     *
+     * @param dependency the dependency being analyzed
+     * @param pattern the pattern used to perform analysis
+     * @param group the group from the pattern that indicates the data to use
+     * @param contents the data being analyzed
+     * @param source the source name to use when recording the evidence
+     * @param key the key name to use when recording the evidence
+     */
+    private void addSummaryInfo(Dependency dependency, Pattern pattern,
+            int group, String contents, String source, String key) {
+<span class="fc" id="L296">        final Matcher matcher = pattern.matcher(contents);</span>
+<span class="fc" id="L297">        final boolean found = matcher.find();</span>
+<span class="fc bfc" id="L298" title="All 2 branches covered.">        if (found) {</span>
+<span class="fc" id="L299">            JarAnalyzer.addDescription(dependency, matcher.group(group),</span>
+                    source, key);
+        }
+<span class="fc" id="L302">    }</span>
+
+    /**
+     * Collects evidence from the home page URL.
+     *
+     * @param dependency the dependency that is being analyzed
+     * @param type the type of evidence
+     * @param pattern the pattern to match
+     * @param source the source of the evidence
+     * @param name the name of the evidence
+     * @param contents the home page URL
+     */
+    private void gatherHomePageEvidence(Dependency dependency, EvidenceType type, Pattern pattern,
+            String source, String name, String contents) {
+<span class="fc" id="L316">        final Matcher matcher = pattern.matcher(contents);</span>
+<span class="fc bfc" id="L317" title="All 2 branches covered.">        if (matcher.find()) {</span>
+<span class="fc" id="L318">            final String url = matcher.group(4);</span>
+<span class="pc bpc" id="L319" title="1 of 2 branches missed.">            if (UrlStringUtils.isUrl(url)) {</span>
+<span class="fc" id="L320">                dependency.addEvidence(type, source, name, url, Confidence.MEDIUM);</span>
+            }
+        }
+<span class="fc" id="L323">    }</span>
+
+    /**
+     * Gather evidence from a Python source file using the given string
+     * assignment regex pattern.
+     *
+     * @param dependency the dependency that is being analyzed
+     * @param type the type of evidence
+     * @param pattern to scan contents with
+     * @param contents of Python source file
+     * @param source for storing evidence
+     * @param name of evidence
+     * @param confidence in evidence
+     */
+    private void gatherEvidence(Dependency dependency, EvidenceType type, Pattern pattern, String contents,
+            String source, String name, Confidence confidence) {
+<span class="fc" id="L339">        final Matcher matcher = pattern.matcher(contents);</span>
+<span class="fc" id="L340">        final boolean found = matcher.find();</span>
+<span class="fc bfc" id="L341" title="All 2 branches covered.">        if (found) {</span>
+<span class="fc" id="L342">            dependency.addEvidence(type, source, name, matcher.group(4), confidence);</span>
+<span class="fc bfc" id="L343" title="All 2 branches covered.">            if (type == EvidenceType.VERSION) {</span>
+                //TODO - this seems broken as we are cycling over py files and could be grabbing versions from multiple?
+<span class="fc" id="L345">                dependency.setVersion(matcher.group(4));</span>
+<span class="fc" id="L346">                final String dispName = String.format(&quot;%s:%s&quot;, dependency.getName(), dependency.getVersion());</span>
+<span class="fc" id="L347">                dependency.setDisplayFileName(dispName);</span>
+            }
+        }
+<span class="fc" id="L350">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NpmCPEAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">NpmCPEAnalyzer.java</span></div><h1>NpmCPEAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2020 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+import javax.annotation.concurrent.ThreadSafe;
+import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.data.cpe.IndexException;
+import org.owasp.dependencycheck.data.cpe.NpmCpeMemoryIndex;
+import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * NpmCPEAnalyzer takes a project dependency and attempts to discern if there is
+ * an associated CPE. Unlike the CPEAnalyzer, the NpmCPEAnalyzer only includes
+ * product and vendor associates known to be related to node from the NVD data
+ * set. It uses the evidence contained within the dependency to search the
+ * Lucene index.
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+@Experimental
+<span class="fc" id="L47">public class NpmCPEAnalyzer extends CPEAnalyzer {</span>
+
+    /**
+     * The Logger.
+     */
+<span class="fc" id="L52">    private static final Logger LOGGER = LoggerFactory.getLogger(CPEAnalyzer.class);</span>
+
+    /**
+     * Returns the analysis phase that this analyzer should run in.
+     *
+     * @return the analysis phase that this analyzer should run in.
+     */
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+        //TODO this is a hack because we use the same singleton CPE Index as the CPE Analyzer
+        // thus to filter to just node products we can't run in the same phase.
+        // possibly extenend the CPE Index to include an ecosystem and use that
+        // as a filter for node..
+<span class="fc" id="L65">        return AnalysisPhase.PRE_IDENTIFIER_ANALYSIS;</span>
+    }
+
+    /**
+     * Returns the name of this analyzer.
+     *
+     * @return the name of this analyzer.
+     */
+    @Override
+    public String getName() {
+<span class="fc" id="L75">        return &quot;NPM CPE Analyzer&quot;;</span>
+    }
+
+    /**
+     * &lt;p&gt;
+     * Returns the setting key to determine if the analyzer is enabled.&lt;/p&gt;
+     *
+     * @return the key for the analyzer's enabled property
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+<span class="fc" id="L86">        return Settings.KEYS.ANALYZER_NPM_CPE_ENABLED;</span>
+    }
+
+    /**
+     * Opens the data source.
+     *
+     * @param cve a reference to the NVD CVE database
+     * @throws IOException when the Lucene directory to be queried does not
+     * exist or is corrupt.
+     * @throws DatabaseException when the database throws an exception. This
+     * usually occurs when the database is in use by another process.
+     */
+    @Override
+    public void open(CveDB cve) throws IOException, DatabaseException {
+<span class="fc" id="L100">        setCveDB(cve);</span>
+<span class="fc" id="L101">        setMemoryIndex(NpmCpeMemoryIndex.getInstance());</span>
+        try {
+<span class="fc" id="L103">            final long creationStart = System.currentTimeMillis();</span>
+<span class="fc" id="L104">            getMemoryIndex().open(cve.getVendorProductListForNode(), this.getSettings());</span>
+<span class="fc" id="L105">            final long creationSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - creationStart);</span>
+<span class="fc" id="L106">            LOGGER.info(&quot;Created CPE Index ({} seconds)&quot;, creationSeconds);</span>
+<span class="nc" id="L107">        } catch (IndexException ex) {</span>
+<span class="nc" id="L108">            LOGGER.debug(&quot;IndexException&quot;, ex);</span>
+<span class="nc" id="L109">            throw new DatabaseException(ex);</span>
+<span class="fc" id="L110">        }</span>
+<span class="fc" id="L111">    }</span>
+
+    /**
+     * Analyzes a dependency and attempts to determine if there are any CPE
+     * identifiers for this dependency.
+     *
+     * @param dependency The Dependency to analyze.
+     * @param engine The analysis engine
+     * @throws AnalysisException is thrown if there is an issue analyzing the
+     * dependency.
+     */
+    @Override
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        if (!&quot;npm&quot;.equals(dependency.getEcosystem())) {</span>
+<span class="fc" id="L125">            return;</span>
+        }
+        try {
+<span class="fc" id="L128">            determineCPE(dependency);</span>
+<span class="nc" id="L129">        } catch (CorruptIndexException ex) {</span>
+<span class="nc" id="L130">            throw new AnalysisException(&quot;CPE Index is corrupt.&quot;, ex);</span>
+<span class="nc" id="L131">        } catch (IOException ex) {</span>
+<span class="nc" id="L132">            throw new AnalysisException(&quot;Failure opening the CPE Index.&quot;, ex);</span>
+<span class="nc" id="L133">        } catch (ParseException ex) {</span>
+<span class="nc" id="L134">            throw new AnalysisException(&quot;Unable to parse the generated Lucene query for this dependency.&quot;, ex);</span>
+<span class="fc" id="L135">        }</span>
+<span class="fc" id="L136">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

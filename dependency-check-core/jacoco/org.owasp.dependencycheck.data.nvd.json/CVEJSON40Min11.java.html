@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CVEJSON40Min11.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvd.json</a> &gt; <span class="el_source">CVEJSON40Min11.java</span></div><h1>CVEJSON40Min11.java</h1><pre class="source lang-java linenums">
+package org.owasp.dependencycheck.data.nvd.json;
+
+import java.util.HashMap;
+import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({
+    &quot;CVE_data_meta&quot;,
+    &quot;problemtype&quot;,
+    &quot;references&quot;,
+    &quot;description&quot;
+})
+<span class="fc" id="L20">public class CVEJSON40Min11 {</span>
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;CVE_data_meta&quot;)
+    private CVEDataMeta cVEDataMeta;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;problemtype&quot;)
+    private Problemtype problemtype;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;references&quot;)
+    private References references;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;description&quot;)
+    private Description description;
+<span class="fc" id="L50">    @JsonIgnore</span>
+    private Map&lt;String, Object&gt; additionalProperties = new HashMap&lt;String, Object&gt;();
+
+    @JsonProperty(&quot;CVE_data_meta&quot;)
+    public CVEDataMeta getCVEDataMeta() {
+<span class="fc" id="L55">        return cVEDataMeta;</span>
+    }
+
+    @JsonProperty(&quot;CVE_data_meta&quot;)
+    public void setCVEDataMeta(CVEDataMeta cVEDataMeta) {
+<span class="fc" id="L60">        this.cVEDataMeta = cVEDataMeta;</span>
+<span class="fc" id="L61">    }</span>
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;problemtype&quot;)
+    public Problemtype getProblemtype() {
+<span class="fc" id="L70">        return problemtype;</span>
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;problemtype&quot;)
+    public void setProblemtype(Problemtype problemtype) {
+<span class="fc" id="L80">        this.problemtype = problemtype;</span>
+<span class="fc" id="L81">    }</span>
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;references&quot;)
+    public References getReferences() {
+<span class="fc" id="L90">        return references;</span>
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;references&quot;)
+    public void setReferences(References references) {
+<span class="fc" id="L100">        this.references = references;</span>
+<span class="fc" id="L101">    }</span>
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;description&quot;)
+    public Description getDescription() {
+<span class="fc" id="L110">        return description;</span>
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;description&quot;)
+    public void setDescription(Description description) {
+<span class="fc" id="L120">        this.description = description;</span>
+<span class="fc" id="L121">    }</span>
+
+    @JsonAnyGetter
+    public Map&lt;String, Object&gt; getAdditionalProperties() {
+<span class="nc" id="L125">        return this.additionalProperties;</span>
+    }
+
+    @JsonAnySetter
+    public void setAdditionalProperty(String name, Object value) {
+<span class="fc" id="L130">        this.additionalProperties.put(name, value);</span>
+<span class="fc" id="L131">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L135">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L136">        sb.append(CVEJSON40Min11 .class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');</span>
+<span class="nc" id="L137">        sb.append(&quot;cVEDataMeta&quot;);</span>
+<span class="nc" id="L138">        sb.append('=');</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        sb.append(((this.cVEDataMeta == null)?&quot;&lt;null&gt;&quot;:this.cVEDataMeta));</span>
+<span class="nc" id="L140">        sb.append(',');</span>
+<span class="nc" id="L141">        sb.append(&quot;problemtype&quot;);</span>
+<span class="nc" id="L142">        sb.append('=');</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">        sb.append(((this.problemtype == null)?&quot;&lt;null&gt;&quot;:this.problemtype));</span>
+<span class="nc" id="L144">        sb.append(',');</span>
+<span class="nc" id="L145">        sb.append(&quot;references&quot;);</span>
+<span class="nc" id="L146">        sb.append('=');</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        sb.append(((this.references == null)?&quot;&lt;null&gt;&quot;:this.references));</span>
+<span class="nc" id="L148">        sb.append(',');</span>
+<span class="nc" id="L149">        sb.append(&quot;description&quot;);</span>
+<span class="nc" id="L150">        sb.append('=');</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">        sb.append(((this.description == null)?&quot;&lt;null&gt;&quot;:this.description));</span>
+<span class="nc" id="L152">        sb.append(',');</span>
+<span class="nc" id="L153">        sb.append(&quot;additionalProperties&quot;);</span>
+<span class="nc" id="L154">        sb.append('=');</span>
+<span class="nc bnc" id="L155" title="All 2 branches missed.">        sb.append(((this.additionalProperties == null)?&quot;&lt;null&gt;&quot;:this.additionalProperties));</span>
+<span class="nc" id="L156">        sb.append(',');</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">        if (sb.charAt((sb.length()- 1)) == ',') {</span>
+<span class="nc" id="L158">            sb.setCharAt((sb.length()- 1), ']');</span>
+        } else {
+<span class="nc" id="L160">            sb.append(']');</span>
+        }
+<span class="nc" id="L162">        return sb.toString();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L167">        int result = 1;</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">        result = ((result* 31)+((this.cVEDataMeta == null)? 0 :this.cVEDataMeta.hashCode()));</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">        result = ((result* 31)+((this.description == null)? 0 :this.description.hashCode()));</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">        result = ((result* 31)+((this.problemtype == null)? 0 :this.problemtype.hashCode()));</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">        result = ((result* 31)+((this.references == null)? 0 :this.references.hashCode()));</span>
+<span class="nc" id="L173">        return result;</span>
+    }
+
+    @Override
+    public boolean equals(Object other) {
+<span class="nc bnc" id="L178" title="All 2 branches missed.">        if (other == this) {</span>
+<span class="nc" id="L179">            return true;</span>
+        }
+<span class="nc bnc" id="L181" title="All 2 branches missed.">        if ((other instanceof CVEJSON40Min11) == false) {</span>
+<span class="nc" id="L182">            return false;</span>
+        }
+<span class="nc" id="L184">        CVEJSON40Min11 rhs = ((CVEJSON40Min11) other);</span>
+<span class="nc bnc" id="L185" title="All 30 branches missed.">        return ((((((this.cVEDataMeta == rhs.cVEDataMeta)||((this.cVEDataMeta!= null)&amp;&amp;this.cVEDataMeta.equals(rhs.cVEDataMeta)))&amp;&amp;((this.description == rhs.description)||((this.description!= null)&amp;&amp;this.description.equals(rhs.description))))&amp;&amp;((this.problemtype == rhs.problemtype)||((this.problemtype!= null)&amp;&amp;this.problemtype.equals(rhs.problemtype))))&amp;&amp;((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&amp;&amp;this.additionalProperties.equals(rhs.additionalProperties))))&amp;&amp;((this.references == rhs.references)||((this.references!= null)&amp;&amp;this.references.equals(rhs.references))));</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

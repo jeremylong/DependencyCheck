@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CheckMojo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.maven</a> &gt; <span class="el_source">CheckMojo.java</span></div><h1>CheckMojo.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-maven.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.maven;
+
+import java.util.Locale;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.exception.ExceptionCollection;
+
+/**
+ * Maven Plugin that checks the project dependencies to see if they have any
+ * known published vulnerabilities.
+ *
+ * @author Jeremy Long
+ */
+@Mojo(
+        name = &quot;check&quot;,
+        defaultPhase = LifecyclePhase.VERIFY,
+        threadSafe = true,
+        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+        requiresOnline = true
+)
+<span class="fc" id="L43">public class CheckMojo extends BaseDependencyCheckMojo {</span>
+
+    /**
+     * The name of the report in the site.
+     */
+<span class="fc" id="L48">    @SuppressWarnings(&quot;CanBeFinal&quot;)</span>
+    @Parameter(property = &quot;name&quot;, defaultValue = &quot;dependency-check&quot;, required = true)
+    private String name = &quot;dependency-check&quot;;
+
+    /**
+     * Returns whether or not a the report can be generated.
+     *
+     * @return &lt;code&gt;true&lt;/code&gt; if the report can be generated; otherwise
+     * &lt;code&gt;false&lt;/code&gt;
+     */
+    @Override
+    public boolean canGenerateReport() {
+<span class="fc" id="L60">        populateSettings();</span>
+<span class="fc" id="L61">        boolean isCapable = false;</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">        for (Artifact a : getProject().getArtifacts()) {</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">            if (!getArtifactScopeExcluded().passes(a.getScope())) {</span>
+<span class="fc" id="L64">                isCapable = true;</span>
+<span class="fc" id="L65">                break;</span>
+            }
+<span class="nc" id="L67">        }</span>
+<span class="fc" id="L68">        return isCapable;</span>
+    }
+
+    /**
+     * Returns the report name.
+     *
+     * @param locale the location
+     * @return the report name
+     */
+    @Override
+    public String getName(Locale locale) {
+<span class="fc" id="L79">        return name;</span>
+    }
+
+    /**
+     * Gets the description of the Dependency-Check report to be displayed in
+     * the Maven Generated Reports page.
+     *
+     * @param locale The Locale to get the description for
+     * @return the description
+     */
+    @Override
+    public String getDescription(Locale locale) {
+<span class="fc" id="L91">        return &quot;Generates a report providing details on any published vulnerabilities within project dependencies. &quot;</span>
+                + &quot;This report is a best effort and may contain false positives and false negatives.&quot;;
+    }
+
+    /**
+     * Scans the dependencies of the project.
+     *
+     * @param engine the engine used to perform the scanning
+     * @return a collection of exceptions
+     * @throws MojoExecutionException thrown if a fatal exception occurs
+     */
+    @Override
+    protected ExceptionCollection scanDependencies(final Engine engine) throws MojoExecutionException {
+<span class="fc" id="L104">        return scanArtifacts(getProject(), engine);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

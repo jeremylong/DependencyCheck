@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CentralSearch.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.central</a> &gt; <span class="el_source">CentralSearch.java</span></div><h1>CentralSearch.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.central;
+
+import org.owasp.dependencycheck.utils.TooManyRequestsException;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.concurrent.ThreadSafe;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import org.apache.commons.jcs.access.exception.CacheException;
+import org.owasp.dependencycheck.data.cache.DataCache;
+import org.owasp.dependencycheck.data.cache.DataCacheFactory;
+import org.owasp.dependencycheck.data.nexus.MavenArtifact;
+import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.URLConnectionFactory;
+import org.owasp.dependencycheck.utils.XmlUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+/**
+ * Class of methods to search Maven Central via Central.
+ *
+ * @author colezlaw
+ */
+@ThreadSafe
+public class CentralSearch {
+
+    /**
+     * The URL for the Central service.
+     */
+    private final String rootURL;
+
+    /**
+     * The Central Search Query.
+     */
+    private final String query;
+
+    /**
+     * Whether to use the Proxy when making requests.
+     */
+    private final boolean useProxy;
+
+    /**
+     * Used for logging.
+     */
+<span class="fc" id="L75">    private static final Logger LOGGER = LoggerFactory.getLogger(CentralSearch.class);</span>
+    /**
+     * The configured settings.
+     */
+    private final Settings settings;
+    /**
+     * Persisted disk cache for `npm audit` results.
+     */
+    private DataCache&lt;List&lt;MavenArtifact&gt;&gt; cache;
+
+    /**
+     * Creates a NexusSearch for the given repository URL.
+     *
+     * @param settings the configured settings
+     * @throws MalformedURLException thrown if the configured URL is invalid
+     */
+<span class="fc" id="L91">    public CentralSearch(Settings settings) throws MalformedURLException {</span>
+<span class="fc" id="L92">        this.settings = settings;</span>
+
+<span class="fc" id="L94">        final String searchUrl = settings.getString(Settings.KEYS.ANALYZER_CENTRAL_URL);</span>
+<span class="fc" id="L95">        LOGGER.debug(&quot;Central Search URL: {}&quot;, searchUrl);</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">        if (isInvalidURL(searchUrl)) {</span>
+<span class="nc" id="L97">            throw new MalformedURLException(String.format(&quot;The configured central analyzer URL is invalid: %s&quot;, searchUrl));</span>
+        }
+<span class="fc" id="L99">        this.rootURL = searchUrl;</span>
+<span class="fc" id="L100">        final String queryStr = settings.getString(Settings.KEYS.ANALYZER_CENTRAL_QUERY);</span>
+<span class="fc" id="L101">        LOGGER.debug(&quot;Central Search Query: {}&quot;, queryStr);</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        if (!queryStr.matches(&quot;^%s.*%s.*$&quot;)) {</span>
+<span class="nc" id="L103">            final String msg = String.format(&quot;The configured central analyzer query parameter is invalid (it must have two %%s): %s&quot;, queryStr);</span>
+<span class="nc" id="L104">            throw new MalformedURLException(msg);</span>
+        }
+<span class="fc" id="L106">        this.query = queryStr;</span>
+<span class="fc" id="L107">        LOGGER.debug(&quot;Central Search Full URL: {}&quot;, String.format(query, rootURL, &quot;[SHA1]&quot;));</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        if (null != settings.getString(Settings.KEYS.PROXY_SERVER)) {</span>
+<span class="nc" id="L109">            useProxy = true;</span>
+<span class="nc" id="L110">            LOGGER.debug(&quot;Using proxy&quot;);</span>
+        } else {
+<span class="fc" id="L112">            useProxy = false;</span>
+<span class="fc" id="L113">            LOGGER.debug(&quot;Not using proxy&quot;);</span>
+        }
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        if (settings.getBoolean(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE, true)) {</span>
+            try {
+<span class="fc" id="L117">                final DataCacheFactory factory = new DataCacheFactory(settings);</span>
+<span class="fc" id="L118">                cache = factory.getCentralCache();</span>
+<span class="nc" id="L119">            } catch (CacheException ex) {</span>
+<span class="nc" id="L120">                settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE, false);</span>
+<span class="nc" id="L121">                LOGGER.debug(&quot;Error creating cache, disabling caching&quot;, ex);</span>
+<span class="fc" id="L122">            }</span>
+        }
+<span class="fc" id="L124">    }</span>
+
+    /**
+     * Searches the configured Central URL for the given SHA1 hash. If the
+     * artifact is found, a &lt;code&gt;MavenArtifact&lt;/code&gt; is populated with the
+     * GAV.
+     *
+     * @param sha1 the SHA-1 hash string for which to search
+     * @return the populated Maven GAV.
+     * @throws FileNotFoundException if the specified artifact is not found
+     * @throws IOException if it's unable to connect to the specified repository
+     * @throws TooManyRequestsException if Central has received too many
+     * requests.
+     */
+    public List&lt;MavenArtifact&gt; searchSha1(String sha1) throws IOException, TooManyRequestsException {
+<span class="fc bfc" id="L139" title="All 4 branches covered.">        if (null == sha1 || !sha1.matches(&quot;^[0-9A-Fa-f]{40}$&quot;)) {</span>
+<span class="fc" id="L140">            throw new IllegalArgumentException(&quot;Invalid SHA1 format&quot;);</span>
+        }
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">        if (cache != null) {</span>
+<span class="fc" id="L143">            final List&lt;MavenArtifact&gt; cached = cache.get(sha1);</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">            if (cached != null) {</span>
+<span class="nc" id="L145">                LOGGER.debug(&quot;cache hit for Central: &quot; + sha1);</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">                if (cached.isEmpty()) {</span>
+<span class="nc" id="L147">                    throw new FileNotFoundException(&quot;Artifact not found in Central&quot;);</span>
+                }
+<span class="nc" id="L149">                return cached;</span>
+            }
+        }
+<span class="fc" id="L152">        final List&lt;MavenArtifact&gt; result = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L153">        final URL url = new URL(String.format(query, rootURL, sha1));</span>
+
+<span class="fc" id="L155">        LOGGER.debug(&quot;Searching Central url {}&quot;, url);</span>
+
+        // Determine if we need to use a proxy. The rules:
+        // 1) If the proxy is set, AND the setting is set to true, use the proxy
+        // 2) Otherwise, don't use the proxy (either the proxy isn't configured,
+        // or proxy is specifically set to false)
+<span class="fc" id="L161">        final URLConnectionFactory factory = new URLConnectionFactory(settings);</span>
+<span class="fc" id="L162">        final HttpURLConnection conn = factory.createHttpURLConnection(url, useProxy);</span>
+
+<span class="fc" id="L164">        conn.setDoOutput(true);</span>
+
+        // JSON would be more elegant, but there's not currently a dependency
+        // on JSON, so don't want to add one just for this
+<span class="fc" id="L168">        conn.addRequestProperty(&quot;Accept&quot;, &quot;application/xml&quot;);</span>
+<span class="fc" id="L169">        conn.connect();</span>
+
+<span class="pc bpc" id="L171" title="1 of 2 branches missed.">        if (conn.getResponseCode() == 200) {</span>
+<span class="fc" id="L172">            boolean missing = false;</span>
+            try {
+<span class="fc" id="L174">                final DocumentBuilder builder = XmlUtils.buildSecureDocumentBuilder();</span>
+<span class="fc" id="L175">                final Document doc = builder.parse(conn.getInputStream());</span>
+<span class="fc" id="L176">                final XPath xpath = XPathFactory.newInstance().newXPath();</span>
+<span class="fc" id="L177">                final String numFound = xpath.evaluate(&quot;/response/result/@numFound&quot;, doc);</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">                if (&quot;0&quot;.equals(numFound)) {</span>
+<span class="fc" id="L179">                    missing = true;</span>
+                } else {
+<span class="fc" id="L181">                    final NodeList docs = (NodeList) xpath.evaluate(&quot;/response/result/doc&quot;, doc, XPathConstants.NODESET);</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">                    for (int i = 0; i &lt; docs.getLength(); i++) {</span>
+<span class="fc" id="L183">                        final String g = xpath.evaluate(&quot;./str[@name='g']&quot;, docs.item(i));</span>
+<span class="fc" id="L184">                        LOGGER.trace(&quot;GroupId: {}&quot;, g);</span>
+<span class="fc" id="L185">                        final String a = xpath.evaluate(&quot;./str[@name='a']&quot;, docs.item(i));</span>
+<span class="fc" id="L186">                        LOGGER.trace(&quot;ArtifactId: {}&quot;, a);</span>
+<span class="fc" id="L187">                        final String v = xpath.evaluate(&quot;./str[@name='v']&quot;, docs.item(i));</span>
+<span class="fc" id="L188">                        final NodeList attributes = (NodeList) xpath.evaluate(&quot;./arr[@name='ec']/str&quot;, docs.item(i), XPathConstants.NODESET);</span>
+<span class="fc" id="L189">                        boolean pomAvailable = false;</span>
+<span class="fc" id="L190">                        boolean jarAvailable = false;</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">                        for (int x = 0; x &lt; attributes.getLength(); x++) {</span>
+<span class="fc" id="L192">                            final String tmp = xpath.evaluate(&quot;.&quot;, attributes.item(x));</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">                            if (&quot;.pom&quot;.equals(tmp)) {</span>
+<span class="fc" id="L194">                                pomAvailable = true;</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">                            } else if (&quot;.jar&quot;.equals(tmp)) {</span>
+<span class="fc" id="L196">                                jarAvailable = true;</span>
+                            }
+                        }
+<span class="fc" id="L199">                        final String centralContentUrl = settings.getString(Settings.KEYS.CENTRAL_CONTENT_URL);</span>
+<span class="fc" id="L200">                        String artifactUrl = null;</span>
+<span class="fc" id="L201">                        String pomUrl = null;</span>
+<span class="pc bpc" id="L202" title="1 of 2 branches missed.">                        if (jarAvailable) {</span>
+                            //org/springframework/spring-core/3.2.0.RELEASE/spring-core-3.2.0.RELEASE.pom
+<span class="fc" id="L204">                            artifactUrl = centralContentUrl + g.replace('.', '/') + '/' + a + '/'</span>
+                                    + v + '/' + a + '-' + v + &quot;.jar&quot;;
+                        }
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">                        if (pomAvailable) {</span>
+                            //org/springframework/spring-core/3.2.0.RELEASE/spring-core-3.2.0.RELEASE.pom
+<span class="fc" id="L209">                            pomUrl = centralContentUrl + g.replace('.', '/') + '/' + a + '/'</span>
+                                    + v + '/' + a + '-' + v + &quot;.pom&quot;;
+                        }
+<span class="fc" id="L212">                        result.add(new MavenArtifact(g, a, v, artifactUrl, pomUrl));</span>
+                    }
+                }
+<span class="nc" id="L215">            } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {</span>
+                // Anything else is jacked up XML stuff that we really can't recover from well
+<span class="nc" id="L217">                throw new IOException(e.getMessage(), e);</span>
+<span class="fc" id="L218">            }</span>
+
+<span class="fc bfc" id="L220" title="All 2 branches covered.">            if (missing) {</span>
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">                if (cache != null) {</span>
+<span class="fc" id="L222">                    cache.put(sha1, result);</span>
+                }
+<span class="fc" id="L224">                throw new FileNotFoundException(&quot;Artifact not found in Central&quot;);</span>
+            }
+<span class="pc bnc" id="L226" title="All 2 branches missed.">        } else if (conn.getResponseCode() == 429) {</span>
+<span class="nc" id="L227">            final String errorMessage = &quot;Too many requests sent to MavenCentral; additional requests are being rejected.&quot;;</span>
+<span class="nc" id="L228">            throw new TooManyRequestsException(errorMessage);</span>
+        } else {
+<span class="nc" id="L230">            final String errorMessage = &quot;Could not connect to MavenCentral (&quot; + conn.getResponseCode() + &quot;): &quot; + conn.getResponseMessage();</span>
+<span class="nc" id="L231">            throw new IOException(errorMessage);</span>
+        }
+<span class="pc bpc" id="L233" title="1 of 2 branches missed.">        if (cache != null) {</span>
+<span class="fc" id="L234">            cache.put(sha1, result);</span>
+        }
+<span class="fc" id="L236">        return result;</span>
+    }
+
+    /**
+     * Tests to determine if the given URL is &lt;b&gt;invalid&lt;/b&gt;.
+     *
+     * @param url the URL to evaluate
+     * @return true if the URL is malformed; otherwise false
+     */
+    private boolean isInvalidURL(String url) {
+        try {
+<span class="fc" id="L247">            final URL u = new URL(url);</span>
+<span class="fc" id="L248">            u.toURI();</span>
+<span class="nc" id="L249">        } catch (MalformedURLException | URISyntaxException e) {</span>
+<span class="nc" id="L250">            LOGGER.trace(&quot;URL is invalid: {}&quot;, url);</span>
+<span class="nc" id="L251">            return true;</span>
+<span class="fc" id="L252">        }</span>
+<span class="fc" id="L253">        return false;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

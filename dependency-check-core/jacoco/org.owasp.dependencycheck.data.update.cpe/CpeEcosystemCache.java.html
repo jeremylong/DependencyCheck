@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CpeEcosystemCache.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.update.cpe</a> &gt; <span class="el_source">CpeEcosystemCache.java</span></div><h1>CpeEcosystemCache.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2020 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.update.cpe;
+
+import com.google.common.base.Strings;
+import java.util.HashMap;
+import java.util.Map;
+import org.owasp.dependencycheck.data.update.nvd.NvdCveParser;
+import org.owasp.dependencycheck.utils.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ *
+ * @author Jeremy Long
+ */
+public final class CpeEcosystemCache {
+
+    /**
+     * The keyword/ecosystem used when multiple ecosystems have been identified.
+     */
+    private static final String MULTIPLE_ECOSYSTEMS_IDENTIFIED = &quot;MULTIPLE&quot;;
+    /**
+     * The cache of CPE to ecosystem mappings.
+     */
+<span class="fc" id="L41">    private static Map&lt;Pair&lt;String, String&gt;, String&gt; cache = new HashMap&lt;&gt;();</span>
+    /**
+     * The map of ecosystem entries that have been updated.
+     */
+<span class="fc" id="L45">    private static Map&lt;Pair&lt;String, String&gt;, String&gt; changed = new HashMap&lt;&gt;();</span>
+
+    private CpeEcosystemCache() {
+        //empty constructor for utiilty class
+    }
+    /**
+     * The logger.
+     */
+<span class="fc" id="L53">    private static final Logger LOGGER = LoggerFactory.getLogger(NvdCveParser.class);</span>
+
+    //CSOFF: EmptyBlock
+    /**
+     * Returns the ecosystem for the given CPE (vendor, product). If the CPE has
+     * a different ecosystem previously identified the ecosystem will be updated
+     * to Multiple; otherwise, if an ecosystem is provided it will be cached for
+     * future matching.
+     *
+     * @param vendor the vendor for the CPE
+     * @param product the product for the CPE
+     * @param identifiedEcosystem the ecosystem identified for a CVE.
+     * @return the ecosystem
+     */
+    public static synchronized String getEcosystem(String vendor, String product, String identifiedEcosystem) {
+<span class="fc" id="L68">        final Pair&lt;String, String&gt; key = new Pair&lt;&gt;(vendor, product);</span>
+<span class="fc" id="L69">        final String current = cache.get(key);</span>
+<span class="fc" id="L70">        String result = null;</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (current == null) {</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">            if (!Strings.isNullOrEmpty(identifiedEcosystem)) {</span>
+<span class="fc" id="L73">                cache.put(key, identifiedEcosystem);</span>
+<span class="fc" id="L74">                changed.put(key, identifiedEcosystem);</span>
+<span class="fc" id="L75">                result = identifiedEcosystem;</span>
+            }
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        } else if (MULTIPLE_ECOSYSTEMS_IDENTIFIED.equals(current)) {</span>
+            //do nothing - result is already null
+<span class="fc bfc" id="L79" title="All 4 branches covered.">        } else if (current.equals(identifiedEcosystem) || identifiedEcosystem == null) {</span>
+<span class="fc" id="L80">            result = current;</span>
+        } else {
+<span class="fc" id="L82">            cache.put(key, MULTIPLE_ECOSYSTEMS_IDENTIFIED);</span>
+<span class="fc" id="L83">            changed.put(key, MULTIPLE_ECOSYSTEMS_IDENTIFIED);</span>
+        }
+<span class="fc" id="L85">        return result;</span>
+    }
+    //CSON: EmptyBlock
+
+    /**
+     * Sets the ecosystem cache and resets the changed map.
+     *
+     * @param cache the new CPE to ecosystem mapping
+     */
+    public static synchronized void setCache(Map&lt;Pair&lt;String, String&gt;, String&gt; cache) {
+<span class="fc" id="L95">        CpeEcosystemCache.cache = cache;</span>
+<span class="fc" id="L96">        CpeEcosystemCache.changed = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L97">    }</span>
+
+    /**
+     * Returns the map of changed CPE to ecosystem mappings.
+     *
+     * @return the map of changed CPE to ecosystem mappings
+     */
+    public static synchronized Map&lt;Pair&lt;String, String&gt;, String&gt; getChanged() {
+<span class="fc" id="L105">        return CpeEcosystemCache.changed;</span>
+    }
+
+    /**
+     * Returns &lt;code&gt;true&lt;/code&gt; if the ecosystem cache is empty; otherwise
+     * &lt;code&gt;false&lt;/code&gt;.
+     *
+     * @return &lt;code&gt;true&lt;/code&gt; if the ecosystem cache is empty; otherwise
+     * &lt;code&gt;false&lt;/code&gt;
+     */
+    public static synchronized boolean isEmpty() {
+<span class="fc" id="L116">        return CpeEcosystemCache.cache.isEmpty();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

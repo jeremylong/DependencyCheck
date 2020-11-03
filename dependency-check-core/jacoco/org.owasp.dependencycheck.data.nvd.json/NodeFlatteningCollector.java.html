@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NodeFlatteningCollector.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvd.json</a> &gt; <span class="el_source">NodeFlatteningCollector.java</span></div><h1>NodeFlatteningCollector.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2018 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nvd.json;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
+import java.util.stream.Stream;
+
+import javax.annotation.concurrent.ThreadSafe;
+
+/**
+ * Used to flatten a hierarchical list of nodes with children.
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+public final class NodeFlatteningCollector implements Collector&lt;DefNode, ArrayList&lt;DefNode&gt;, Stream&lt;DefNode&gt;&gt; {
+
+    /**
+     * Singleton instance variable.
+     */
+    private static final NodeFlatteningCollector INSTANCE;
+
+    static {
+<span class="fc" id="L47">        INSTANCE = new NodeFlatteningCollector();</span>
+<span class="fc" id="L48">    }</span>
+
+    public static NodeFlatteningCollector getInstance() {
+<span class="fc" id="L51">        return INSTANCE;</span>
+    }
+
+    private NodeFlatteningCollector() {
+    }
+
+    /**
+     * Flattens the hierarchical list of nodes.
+     *
+     * @param node the node with children to flatten
+     * @return the flattened list of nodes
+     */
+    private List&lt;DefNode&gt; flatten(DefNode node) {
+<span class="fc" id="L64">        final List&lt;DefNode&gt; result = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L65">        result.add(node);</span>
+<span class="fc" id="L66">        return flatten(result, node.getChildren());</span>
+    }
+
+    /**
+     * Flattens the hierarchical list of nodes.
+     *
+     * @param result the results
+     * @param nodes the nodes
+     * @return the flattened list of nodes
+     */
+    private List&lt;DefNode&gt; flatten(List&lt;DefNode&gt; result, List&lt;DefNode&gt; nodes) {
+<span class="fc" id="L77">        nodes.forEach(n -&gt; {</span>
+<span class="fc" id="L78">            flatten(result, n.getChildren());</span>
+<span class="fc" id="L79">            result.add(n);</span>
+<span class="fc" id="L80">        });</span>
+<span class="fc" id="L81">        return result;</span>
+    }
+
+    @Override
+    public Supplier&lt;ArrayList&lt;DefNode&gt;&gt; supplier() {
+<span class="fc" id="L86">        return ArrayList::new;</span>
+    }
+
+    @Override
+    public BiConsumer&lt;ArrayList&lt;DefNode&gt;, DefNode&gt; accumulator() {
+<span class="fc" id="L91">        return (nodes, n) -&gt; nodes.addAll(flatten(n));</span>
+    }
+
+    @Override
+    public BinaryOperator&lt;ArrayList&lt;DefNode&gt;&gt; combiner() {
+<span class="fc" id="L96">        return (map, other) -&gt; {</span>
+<span class="nc" id="L97">            map.addAll(other);</span>
+<span class="nc" id="L98">            return map;</span>
+        };
+    }
+
+    @Override
+    public Function&lt;ArrayList&lt;DefNode&gt;, Stream&lt;DefNode&gt;&gt; finisher() {
+<span class="fc" id="L104">        return (m) -&gt; m.stream();</span>
+    }
+
+    @Override
+    public Set&lt;Characteristics&gt; characteristics() {
+<span class="fc" id="L109">        return EnumSet.of(Characteristics.UNORDERED);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
