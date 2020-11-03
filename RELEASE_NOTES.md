@@ -2,6 +2,26 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 6.0.3](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.0.3) (2020-11-03)
+
+### Changes
+
+- Added a bash command completion script (see #2916); to add completion to your shell
+  `completion-for-dependency-check.sh` can be found in the bin directory of the CLI:
+   ```bash
+   $ source completion-for-dependency-check.sh
+   ```
+- An experimental PIP File Analyzer was added (see #2877).
+- Analysis of Node JS produced several false positives (see #2796); the analysis has
+  been updated to reduce the number of false positives.
+  - If analyzing Node JS projects it is highly recommended to disable the Node JS Analyzer
+    and solely rely on the Node Audit Analyzer. There are plans to rework Node JS analysis
+    in a future release.
+- Support for external Oracle databases has been add for the 6.x releases (see #2899) 
+- Resolved several reported false positives.
+- Several other bug fixes have been implemented; see the full listing of 
+  [changes](https://github.com/jeremylong/DependencyCheck/milestone/17?closed=1).
+
 ## [Version 6.0.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.0.2) (2020-09-27)
 
 ### Changes
