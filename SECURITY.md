@@ -15,7 +15,7 @@
 
 If a security vulnerability is identified in dependency-check please
 open an [issue](https://github.com/jeremylong/DependencyCheck/issues/new/choose)
-and/or submit a PR to resolve the identified vulnerabilitiy..
+and/or submit a PR to resolve the identified vulnerability.
 
 The team is very responsive to reported vulnerabilities - historically having reported issues resolved in 30 days or less.
 
