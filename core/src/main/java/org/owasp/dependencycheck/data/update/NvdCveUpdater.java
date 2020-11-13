@@ -337,7 +337,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
         try {
             final URL u = new URL(metaUrl);
             final Downloader d = new Downloader(settings);
-            final String content = d.fetchContent(u, true);
+            final String content = d.fetchContent(u, true, Settings.KEYS.CVE_USER, Settings.KEYS.CVE_PASSWORD);
             return new MetaProperties(content);
         } catch (MalformedURLException ex) {
             throw new UpdateException("Meta file url is invalid: " + metaUrl, ex);

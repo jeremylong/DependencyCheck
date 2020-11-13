@@ -156,8 +156,26 @@ public final class Downloader {
      * @throws ResourceNotFoundException thrown when a 404 is received
      */
     public String fetchContent(URL url, boolean useProxy) throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
+        return fetchContent(url, useProxy, null, null);
+    }
+
+    /**
+     * Retrieves a file from a given URL and returns the contents.
+     *
+     * @param url the URL of the file to download
+     * @param useProxy whether to use the configured proxy when downloading
+     * files
+     * @return the content of the file
+     * @param userKey the settings key for the username to be used
+     * @param passwordKey the settings key for the password to be used
+     * @throws DownloadFailedException is thrown if there is an error
+     * downloading the file
+     * @throws TooManyRequestsException thrown when a 429 is received
+     * @throws ResourceNotFoundException thrown when a 404 is received
+     */
+    public String fetchContent(URL url, boolean useProxy, String userKey, String passwordKey) throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
         InputStream in = null;
-        try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy);
+        try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy, userKey, passwordKey);
                 ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             in = conn.fetch(url);
             ByteStreams.copy(in, out);
