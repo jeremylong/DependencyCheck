@@ -18,9 +18,9 @@
 package org.owasp.dependencycheck.data.golang;
 
 import java.io.IOException;
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.concurrent.ThreadSafe;
 import javax.json.Json;
@@ -28,11 +28,13 @@ import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import javax.json.JsonReaderFactory;
 import javax.json.stream.JsonParsingException;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.utils.JsonArrayFixingInputStream;
 
 /**
@@ -61,23 +63,20 @@ public final class GoModJsonParser {
      */
     public static List<GoModDependency> process(InputStream inputStream) throws AnalysisException {
         LOGGER.debug("Beginning go.mod processing");
+
         List<GoModDependency> goModDependencies = new ArrayList<>();
         try (JsonArrayFixingInputStream jsonStream = new JsonArrayFixingInputStream(inputStream)) {
-//            String array = IOUtils.toString(inputStream, UTF_8);
-//            array = array.trim().replace("}", "},");
-//            array = "[" + array.substring(0, array.length() - 1) + "]";
-//
-//            JsonReader reader = Json.createReader(new StringReader(array));
-            try (JsonReader reader = Json.createReader(jsonStream)) {
+            JsonReaderFactory factory = Json.createReaderFactory(null);
+            try (JsonReader reader = factory.createReader(jsonStream, java.nio.charset.StandardCharsets.UTF_8)) {
                 final JsonArray modules = reader.readArray();
-                for (JsonObject module : modules.getValuesAs(JsonObject.class)) {
+                modules.getValuesAs(JsonObject.class).forEach((module) -> {
                     final String path = module.getString("Path");
                     String version = module.getString("Version", null);
                     if (version != null && version.startsWith("v")) {
                         version = version.substring(1);
                     }
                     goModDependencies.add(new GoModDependency(path, version));
-                }
+                });
             }
         } catch (JsonParsingException jsonpe) {
             throw new AnalysisException("Error parsing stream", jsonpe);
