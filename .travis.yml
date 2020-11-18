@@ -37,9 +37,9 @@ matrix:
         - JDK="JDK8"
       script:
         - if [ ! -z "$TRAVIS_TAG" ]; then 
-            travis_wait 60 mvn -X -s settings.xml install site site:stage -DreleaseTesting -Danalyzer.node.package.enabled=false -Danalyzer.node.audit.enabled=false; 
+            travis_wait 60 mvn -s settings.xml install site site:stage -DreleaseTesting -Danalyzer.node.package.enabled=false -Danalyzer.node.audit.enabled=false; 
           else 
-            travis_wait 60 mvn -X -s settings.xml install -DreleaseTesting -Danalyzer.node.package.enabled=false -Danalyzer.node.audit.enabled=false; 
+            travis_wait 60 mvn -s settings.xml install -DreleaseTesting -Danalyzer.node.package.enabled=false -Danalyzer.node.audit.enabled=false; 
           fi
 
 after_success:
