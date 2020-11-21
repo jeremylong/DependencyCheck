@@ -588,7 +588,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         if (Ecosystem.NODEJS.equals(dependency.getEcosystem())) {
             for (Identifier i : dependency.getSoftwareIdentifiers()) {
                 if (i instanceof PurlIdentifier) {
-                    PurlIdentifier p = (PurlIdentifier) i;
+                    final PurlIdentifier p = (PurlIdentifier) i;
                     if (cleanPackageName(p.getName()).equals(cleanPackageName(entry.getProduct()))) {
                         isValid = true;
                     }

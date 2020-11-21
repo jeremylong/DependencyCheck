@@ -64,9 +64,9 @@ public final class GoModJsonParser {
     public static List<GoModDependency> process(InputStream inputStream) throws AnalysisException {
         LOGGER.debug("Beginning go.mod processing");
 
-        List<GoModDependency> goModDependencies = new ArrayList<>();
+        final List<GoModDependency> goModDependencies = new ArrayList<>();
         try (JsonArrayFixingInputStream jsonStream = new JsonArrayFixingInputStream(inputStream)) {
-            JsonReaderFactory factory = Json.createReaderFactory(null);
+            final JsonReaderFactory factory = Json.createReaderFactory(null);
             try (JsonReader reader = factory.createReader(jsonStream, java.nio.charset.StandardCharsets.UTF_8)) {
                 final JsonArray modules = reader.readArray();
                 modules.getValuesAs(JsonObject.class).forEach((module) -> {

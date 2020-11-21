@@ -255,8 +255,8 @@ public class VulnerableSoftware extends Cpe implements Serializable {
         boolean results = false;
         //10 11 14 17
         if (containsSpecialCharacter(left)) {
-            Pattern p = Convert.wellFormedToPattern(left.toLowerCase());
-            Matcher m = p.matcher(right.toLowerCase());
+            final Pattern p = Convert.wellFormedToPattern(left.toLowerCase());
+            final Matcher m = p.matcher(right.toLowerCase());
             results = m.matches();
         }
         if (!results && rightValue.matches("^[abu]\\d.*") && leftValue.matches("^(update|alpha|beta).*")) {
@@ -269,6 +269,9 @@ public class VulnerableSoftware extends Cpe implements Serializable {
                     break;
                 case 'b':
                     results = compareUpdateAttributes(leftValue, "beta" + rightValue.substring(1));
+                    break;
+                default:
+                    break;
             }
         }
         if (!results && leftValue.matches("^[abu]\\d.*") && rightValue.matches("^(update|alpha|beta).*")) {
@@ -281,6 +284,9 @@ public class VulnerableSoftware extends Cpe implements Serializable {
                     break;
                 case 'b':
                     results = compareUpdateAttributes("beta" + leftValue.substring(1), rightValue);
+                    break;
+                default:
+                    break;
             }
         }
         return results;
@@ -295,7 +301,7 @@ public class VulnerableSoftware extends Cpe implements Serializable {
      */
     private static boolean containsSpecialCharacter(String value) {
         for (int x = 0; x < value.length(); x++) {
-            char c = value.charAt(x);
+            final char c = value.charAt(x);
             if (c == '?' || c == '*') {
                 return true;
             } else if (c == '\\') {

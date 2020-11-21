@@ -209,11 +209,15 @@ public class ExceptionCollection extends Exception {
     public String getMessage() {
         final StringBuilder sb = new StringBuilder(MSG);
 
-        this.exceptions.forEach((t) -> sb.append("\n\t").append(t.getClass().getSimpleName()).append(": ").append(ExceptionCollection.nestedCauseList(t)));
+        this.exceptions.forEach((t) -> sb.append("\n\t")
+                .append(t.getClass().getSimpleName())
+                .append(": ")
+                .append(ExceptionCollection.nestedCauseList(t)));
         return sb.toString();
     }
+
     private static StringBuilder nestedCauseList(Throwable t) {
-        StringBuilder sb = new StringBuilder(t.getMessage());
+        final StringBuilder sb = new StringBuilder(t.getMessage());
         Throwable nestedCause = t.getCause();
         while (nestedCause != null) {
             sb.append("\n\t\tcaused by ").append(nestedCause.getClass().getSimpleName()).append(": ").append(nestedCause.getMessage());

@@ -150,10 +150,10 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
      * @return the filtered list of vulnerabilities
      */
     private List<Vulnerability> filterEcosystem(String ecosystem, List<Vulnerability> vulnerabilities) {
-        List<Vulnerability> remove = new ArrayList<>();
+        final List<Vulnerability> remove = new ArrayList<>();
         vulnerabilities.forEach((v) -> {
             boolean found = false;
-            List<VulnerableSoftware> removeSoftare = new ArrayList<>();
+            final List<VulnerableSoftware> removeSoftare = new ArrayList<>();
             for (VulnerableSoftware s : v.getVulnerableSoftware()) {
                 if (ecosystemMatchesTargetSoftware(ecosystem, s.getTargetSw())) {
                     found = true;

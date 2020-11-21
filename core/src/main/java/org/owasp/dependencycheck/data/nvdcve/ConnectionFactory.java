@@ -318,7 +318,7 @@ public final class ConnectionFactory {
      */
     private void createTables(Connection conn) throws DatabaseException {
         LOGGER.debug("Creating database structure");
-        String dbStructure;
+        final String dbStructure;
         try {
             dbStructure = getResource(DB_STRUCTURE_RESOURCE);
 
@@ -342,7 +342,7 @@ public final class ConnectionFactory {
     private String getResource(String resource) throws IOException {
         String dbStructure;
         try {
-            URL url = Resources.getResource(resource);
+            final URL url = Resources.getResource(resource);
             dbStructure = Resources.toString(url, StandardCharsets.UTF_8);
         } catch (IllegalArgumentException ex) {
             LOGGER.debug("Resources.getResource(String) failed to find the DB Structure Resource", ex);

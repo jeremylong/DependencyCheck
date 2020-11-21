@@ -53,7 +53,7 @@ public class JsonArrayFixingInputStream extends InputStream {
     /**
      * The input stream to be filtered.
      */
-    protected volatile InputStream in;
+    private volatile InputStream in;
     /**
      * The read buffer.
      */
@@ -90,7 +90,6 @@ public class JsonArrayFixingInputStream extends InputStream {
     /**
      * Advances the buffer to the next block if required.
      *
-     * @param start the offset to copy the next block into
      * @return the number of characters read
      * @throws IOException thrown if there is an error reading from the stream
      */
@@ -168,7 +167,7 @@ public class JsonArrayFixingInputStream extends InputStream {
     @Override
     public int read() throws IOException {
         if (advanceStream()) {
-            int value = buffer[bufferStart];
+            final int value = buffer[bufferStart];
             incrementRead();
             return value;
         }
@@ -183,7 +182,7 @@ public class JsonArrayFixingInputStream extends InputStream {
     @Override
     public int read(byte b[], int off, int len) throws IOException {
         if (advanceStream()) {
-            int brace = getClosingBraceOffset();
+            final int brace = getClosingBraceOffset();
             if (brace == 0) {
                 b[off] = buffer[bufferStart];
                 incrementRead();
@@ -193,7 +192,7 @@ public class JsonArrayFixingInputStream extends InputStream {
             if (brace > 0) {
                 copyLength = copyLength > brace ? brace : copyLength;
             }
-            int copyEnd = copyLength + off;
+            final int copyEnd = copyLength + off;
             for (int pos = off; pos < copyEnd; pos++) {
                 b[pos] = buffer[bufferStart];
                 bufferStart += 1;

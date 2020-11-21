@@ -186,8 +186,8 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
             final URL url = new URL(configuredUrl);
             final File filepath = new File(url.getPath());
             repoFile = new File(getSettings().getDataDirectory(), filepath.getName());
-            if ( !repoFile.isFile() || repoFile.length() <= 1L) {
-                LOGGER.warn("Retire JS repository is empty or missing - attempting to force the update");
+            if (!repoFile.isFile() || repoFile.length() <= 1L) {
+                    LOGGER.warn("Retire JS repository is empty or missing - attempting to force the update");
                 repoEmpty = true;
                 getSettings().setBoolean(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, true);
             }

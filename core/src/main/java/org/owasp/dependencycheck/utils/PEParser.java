@@ -430,6 +430,8 @@ public class PEParser {
             case ImageDataDirectoryType.RESERVED:
                 id.setReserved(b);
                 break;
+            default:
+                break;
         }
     }
 

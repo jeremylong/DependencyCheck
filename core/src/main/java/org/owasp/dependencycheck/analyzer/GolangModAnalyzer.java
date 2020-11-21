@@ -74,6 +74,9 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
      */
     public static final String GO_MOD = "go.mod";
 
+    /**
+     * The path to the go executable.
+     */
     private static String goPath = "go";
     /**
      * The file filter for Gopkg.lock
@@ -138,7 +141,8 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
                     if (goFile.isFile()) {
                         goPath = goFile.getAbsolutePath();
                     } else {
-                        LOGGER.warn("Provided path to `go` executable is invalid. Trying default location. If you do want to set it, please set the `{}` property",
+                        LOGGER.warn("Provided path to `go` executable is invalid. Trying default location. "
+                                + "If you do want to set it, please set the `{}` property",
                                 Settings.KEYS.ANALYZER_GOLANG_PATH
                         );
                         goPath = "go";
@@ -152,6 +156,7 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Launches `go mod help` to test if go is installed.
      *
+     * @param folder the folder location to execute go mode help in
      * @return a reference to the launched process
      * @throws AnalysisException thrown if there is an issue launching `go mod`
      */

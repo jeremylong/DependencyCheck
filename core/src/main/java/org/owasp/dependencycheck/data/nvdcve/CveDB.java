@@ -122,8 +122,10 @@ public final class CveDB implements AutoCloseable {
      * {@linkplain org.owasp.dependencycheck.data.nvd.json.DefCveItem}.
      */
     private final CveItemOperator cveItemConverter = new CveItemOperator();
-    private boolean isOracle=false;
-    private boolean lowDefaultFetch=false;
+    /**
+     * Flag indicating if the database is Oracle.
+     */
+    private boolean isOracle = false;
 
     /**
      * The enumeration value names must match the keys of the statements in the
@@ -871,7 +873,7 @@ public final class CveDB implements AutoCloseable {
 
     private void loadCpeEcosystemCache() {
         final Map<Pair<String, String>, String> map = new HashMap<>();
-        final ResultSet rs;
+        ResultSet rs = null;
         try (PreparedStatement ps = prepareStatement(SELECT_CPE_ECOSYSTEM)) {
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -883,6 +885,8 @@ public final class CveDB implements AutoCloseable {
             final String msg = String.format("Error loading the Cpe Ecosystem Cache: %s", ex.getMessage());
             LOGGER.debug(msg, ex);
             throw new DatabaseException(msg, ex);
+        } finally {
+            DBUtils.closeResultSet(rs);
         }
 
         CpeEcosystemCache.setCache(map);
@@ -1016,7 +1020,7 @@ public final class CveDB implements AutoCloseable {
             }
             if (isOracle) {
                 try {
-                    CallableStatement cs = (CallableStatement) callUpdate;
+                    final CallableStatement cs = (CallableStatement) callUpdate;
                     cs.registerOutParameter(32, JDBCType.INTEGER);
                     cs.executeUpdate();
                     vulnerabilityId = cs.getInt(32);
