@@ -535,9 +535,9 @@ public class ReportGenerator {
 
         try (InputStream is = new FileInputStream(in);
                 OutputStream os = new FileOutputStream(out)) {
-            
-            JsonParser parser = factory.createParser(is);
-            JsonGenerator generator = factory.createGenerator(os);
+
+            final JsonParser parser = factory.createParser(is);
+            final JsonGenerator generator = factory.createGenerator(os);
 
             generator.useDefaultPrettyPrinter();
 
