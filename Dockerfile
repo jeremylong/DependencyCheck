@@ -35,9 +35,11 @@ RUN apk update                                                                  
             "mysql-connector-java-${MYSQL_DRIVER_VERSION}/mysql-connector-java-${MYSQL_DRIVER_VERSION}.jar" && \
     addgroup -S ${user} && adduser -S -G ${user} ${user}                                             && \
     mkdir /usr/share/dependency-check/data                                                           && \
-    chown -R ${user}:${user} /usr/share/dependency-check                                             && \
+    chown -R ${user}:0 /usr/share/dependency-check                                                   && \
+    chmod -R g=u /usr/share/dependency-check                                                         && \
     mkdir /report                                                                                    && \
-    chown -R ${user}:${user} /report                                                                 && \
+    chown -R ${user}:0 /report                                                                       && \
+    chmod -R g=u /report                                                                             && \
     apk del .build-deps
 
 ### remove any suid sgid - we don't need them
