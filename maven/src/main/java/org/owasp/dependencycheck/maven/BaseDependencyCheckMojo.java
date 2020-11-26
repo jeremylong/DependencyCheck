@@ -1840,7 +1840,17 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             settings.setString(Settings.KEYS.PROXY_SERVER, proxy.getHost());
             settings.setString(Settings.KEYS.PROXY_PORT, Integer.toString(proxy.getPort()));
             final String userName = proxy.getUsername();
-            final String password = proxy.getPassword();
+            String password = proxy.getPassword();
+	        if (password != null && !password.isEmpty()) {
+                if (settings.getBoolean(Settings.KEYS.PROXY_DISABLE_SCHEMAS, true)) {
+                    System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
+                }
+	            try {
+	                password = decryptPasswordFromSettings(password);
+	            } catch (SecDispatcherException ex) {
+	                password = handleSecDispatcherException("proxy", proxy.getId(), password, ex);
+	            }
+            }
             settings.setStringIfNotNull(Settings.KEYS.PROXY_USERNAME, userName);
             settings.setStringIfNotNull(Settings.KEYS.PROXY_PASSWORD, password);
             settings.setStringIfNotNull(Settings.KEYS.PROXY_NON_PROXY_HOSTS, proxy.getNonProxyHosts());
@@ -1955,24 +1965,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 final String username = server.getUsername();
                 String password = null;
                 try {
-                    password = decryptServerPassword(server);
+                    password = decryptPasswordFromSettings(server.getPassword());
                 } catch (SecDispatcherException ex) {
-                    if (ex.getCause() instanceof FileNotFoundException
-                            || (ex.getCause() != null && ex.getCause().getCause() instanceof FileNotFoundException)) {
-                        //maybe its not encrypted?
-                        final String tmp = server.getPassword();
-                        if (tmp.startsWith("{") && tmp.endsWith("}")) {
-                            getLog().error(String.format(
-                                    "Unable to decrypt the server password for server id '%s' in settings.xml%n\tCause: %s",
-                                    serverId, ex.getMessage()));
-                        } else {
-                            password = tmp;
-                        }
-                    } else {
-                        getLog().error(String.format(
-                                "Unable to decrypt the server password for server id '%s' in settings.xml%n\tCause: %s",
-                                serverId, ex.getMessage()));
-                    }
+                    password = handleSecDispatcherException("server", serverId, server.getPassword(), ex);
                 }
                 settings.setStringIfNotEmpty(userSettingKey, username);
                 settings.setStringIfNotEmpty(passwordSettingKey, password);
@@ -1984,14 +1979,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
     //CSOFF: LineLength
     /**
-     * Obtains the configured password for the given server.
-     *
-     * @param server the configured server from the settings.xml
+     * Decrypts a password from the Maven settings if it needs to be decrypted.
+     * If it's not encrypted the input password will be returned unchanged.
+     * 
+     * @param the original password value from the settings.xml
      * @return the decrypted password from the Maven configuration
      * @throws SecDispatcherException thrown if there is an error decrypting the
      * password
      */
-    private String decryptServerPassword(Server server) throws SecDispatcherException {
+    private String decryptPasswordFromSettings(String password) throws SecDispatcherException {
 
         //The following fix was copied from:
         //   https://github.com/bsorrentino/maven-confluence-plugin/blob/master/maven-confluence-reporting-plugin/src/main/java/org/bsc/maven/confluence/plugin/AbstractBaseConfluenceMojo.java
@@ -2004,9 +2000,40 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             ((DefaultSecDispatcher) securityDispatcher).setConfigurationFile("~/.m2/settings-security.xml");
         }
 
-        return securityDispatcher.decrypt(server.getPassword());
-    }
+        return securityDispatcher.decrypt(password);
+    }    
     //CSON: LineLength
+
+	/**
+	 * Handles a SecDispatcherException that was thrown at an attempt to decrypt an encrypted password from the Maven settings.
+	 * 
+	 * @param settingsElementName - "server" or "proxy"
+	 * @param settingsElementId - value of the id attribute of the proxy resp. server element to which the password belongs
+	 * @param passwordValueFromSettings - original, undecrypted password value from the settings
+	 * @param ex - the Exception to handle
+	 * @return the password fallback value to go on with, might be a not working one.
+	 */
+	private String handleSecDispatcherException(String settingsElementName, String settingsElementId, String passwordValueFromSettings,
+			SecDispatcherException ex) {
+		String password = passwordValueFromSettings;
+		if (ex.getCause() instanceof FileNotFoundException
+		        || (ex.getCause() != null && ex.getCause().getCause() instanceof FileNotFoundException)) {
+		    //maybe its not encrypted?
+		    final String tmp = passwordValueFromSettings;
+		    if (tmp.startsWith("{") && tmp.endsWith("}")) {
+		        getLog().error(String.format(
+		                "Unable to decrypt the %s password for %s id '%s' in settings.xml%n\tCause: %s",
+		                settingsElementName, settingsElementName, settingsElementId, ex.getMessage()));
+		    } else {
+		        password = tmp;
+		    }
+		} else {
+		    getLog().error(String.format(
+		            "Unable to decrypt the %s password for %s id '%s' in settings.xml%n\tCause: %s",
+		            settingsElementName, settingsElementName, settingsElementId, ex.getMessage()));
+		}
+		return password;
+	}
 
     /**
      * Combines the configured suppressionFile and suppressionFiles into a
