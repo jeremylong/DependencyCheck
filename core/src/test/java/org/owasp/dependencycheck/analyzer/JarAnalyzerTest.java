@@ -235,7 +235,7 @@ public class JarAnalyzerTest extends BaseTest {
         JarAnalyzer instance = new JarAnalyzer();
         Dependency textFileWithJarExtension = new Dependency();
         textFileWithJarExtension
-                .setActualFilePath(BaseTest.getResourceAsFile(this, "textFileWithJarExtension.jar").getAbsolutePath());
+                .setActualFilePath(BaseTest.getResourceAsFile(this, "test.properties").getAbsolutePath());
         textFileWithJarExtension.setFileName("textFileWithJarExtension.jar");
         try (Engine engine = new Engine(getSettings())) {
             engine.setDependencies(Collections.singletonList(textFileWithJarExtension));
