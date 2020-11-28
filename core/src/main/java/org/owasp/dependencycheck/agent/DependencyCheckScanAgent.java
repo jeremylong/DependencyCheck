@@ -33,6 +33,7 @@ import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.exception.ScanAgentException;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.SeverityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,9 +116,9 @@ public class DependencyCheckScanAgent {
      */
     private boolean generateReport = true;
     /**
-     * The report format to be generated (HTML, XML, CSV, JSON, JUNIT, ALL). This
-     * configuration option has no affect if using this within the Site plugin
-     * unless the externalReport is set to true. Default is HTML.
+     * The report format to be generated (HTML, XML, CSV, JSON, JUNIT, ALL).
+     * This configuration option has no affect if using this within the Site
+     * plugin unless the externalReport is set to true. Default is HTML.
      */
     private ReportGenerator.Format reportFormat = ReportGenerator.Format.HTML;
     /**
@@ -1000,7 +1001,10 @@ public class DependencyCheckScanAgent {
         for (Dependency d : dependencies) {
             boolean addName = true;
             for (Vulnerability v : d.getVulnerabilities()) {
-                if (v.getCvssV2().getScore() >= failBuildOnCVSS) {
+                if ((v.getCvssV2() != null && v.getCvssV2().getScore() >= failBuildOnCVSS)
+                        || (v.getCvssV3() != null && v.getCvssV3().getBaseScore() >= failBuildOnCVSS)
+                        || (v.getUnscoredSeverity() != null && SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) >= failBuildOnCVSS)
+                        || (failBuildOnCVSS <= 0.0f)) { //safety net to fail on any if for some reason the above misses on 0
                     if (addName) {
                         addName = false;
                         ids.append(NEW_LINE).append(d.getFileName()).append(": ");

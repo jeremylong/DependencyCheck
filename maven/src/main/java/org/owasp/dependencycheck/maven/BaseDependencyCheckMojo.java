@@ -194,7 +194,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "failBuildOnCVSS", defaultValue = "11", required = true)
-    private float failBuildOnCVSS = 11;
+    private float failBuildOnCVSS = 11f;
     /**
      * Specifies the CVSS score that is considered a "test" failure when
      * generating a jUnit style report. The default value is 0 - all
@@ -208,6 +208,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "failBuildOnAnyVulnerability", defaultValue = "false", required = true)
+    @Deprecated
     private boolean failBuildOnAnyVulnerability = false;
     /**
      * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not
@@ -1841,15 +1842,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             settings.setString(Settings.KEYS.PROXY_PORT, Integer.toString(proxy.getPort()));
             final String userName = proxy.getUsername();
             String password = proxy.getPassword();
-	        if (password != null && !password.isEmpty()) {
+            if (password != null && !password.isEmpty()) {
                 if (settings.getBoolean(Settings.KEYS.PROXY_DISABLE_SCHEMAS, true)) {
                     System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
                 }
-	            try {
-	                password = decryptPasswordFromSettings(password);
-	            } catch (SecDispatcherException ex) {
-	                password = handleSecDispatcherException("proxy", proxy.getId(), password, ex);
-	            }
+                try {
+                    password = decryptPasswordFromSettings(password);
+                } catch (SecDispatcherException ex) {
+                    password = handleSecDispatcherException("proxy", proxy.getId(), password, ex);
+                }
             }
             settings.setStringIfNotNull(Settings.KEYS.PROXY_USERNAME, userName);
             settings.setStringIfNotNull(Settings.KEYS.PROXY_PASSWORD, password);
@@ -1981,7 +1982,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * Decrypts a password from the Maven settings if it needs to be decrypted.
      * If it's not encrypted the input password will be returned unchanged.
-     * 
+     *
      * @param the original password value from the settings.xml
      * @return the decrypted password from the Maven configuration
      * @throws SecDispatcherException thrown if there is an error decrypting the
@@ -2001,39 +2002,43 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
 
         return securityDispatcher.decrypt(password);
-    }    
+    }
     //CSON: LineLength
 
-	/**
-	 * Handles a SecDispatcherException that was thrown at an attempt to decrypt an encrypted password from the Maven settings.
-	 * 
-	 * @param settingsElementName - "server" or "proxy"
-	 * @param settingsElementId - value of the id attribute of the proxy resp. server element to which the password belongs
-	 * @param passwordValueFromSettings - original, undecrypted password value from the settings
-	 * @param ex - the Exception to handle
-	 * @return the password fallback value to go on with, might be a not working one.
-	 */
-	private String handleSecDispatcherException(String settingsElementName, String settingsElementId, String passwordValueFromSettings,
-			SecDispatcherException ex) {
-		String password = passwordValueFromSettings;
-		if (ex.getCause() instanceof FileNotFoundException
-		        || (ex.getCause() != null && ex.getCause().getCause() instanceof FileNotFoundException)) {
-		    //maybe its not encrypted?
-		    final String tmp = passwordValueFromSettings;
-		    if (tmp.startsWith("{") && tmp.endsWith("}")) {
-		        getLog().error(String.format(
-		                "Unable to decrypt the %s password for %s id '%s' in settings.xml%n\tCause: %s",
-		                settingsElementName, settingsElementName, settingsElementId, ex.getMessage()));
-		    } else {
-		        password = tmp;
-		    }
-		} else {
-		    getLog().error(String.format(
-		            "Unable to decrypt the %s password for %s id '%s' in settings.xml%n\tCause: %s",
-		            settingsElementName, settingsElementName, settingsElementId, ex.getMessage()));
-		}
-		return password;
-	}
+    /**
+     * Handles a SecDispatcherException that was thrown at an attempt to decrypt
+     * an encrypted password from the Maven settings.
+     *
+     * @param settingsElementName - "server" or "proxy"
+     * @param settingsElementId - value of the id attribute of the proxy resp.
+     * server element to which the password belongs
+     * @param passwordValueFromSettings - original, undecrypted password value
+     * from the settings
+     * @param ex - the Exception to handle
+     * @return the password fallback value to go on with, might be a not working
+     * one.
+     */
+    private String handleSecDispatcherException(String settingsElementName, String settingsElementId, String passwordValueFromSettings,
+            SecDispatcherException ex) {
+        String password = passwordValueFromSettings;
+        if (ex.getCause() instanceof FileNotFoundException
+                || (ex.getCause() != null && ex.getCause().getCause() instanceof FileNotFoundException)) {
+            //maybe its not encrypted?
+            final String tmp = passwordValueFromSettings;
+            if (tmp.startsWith("{") && tmp.endsWith("}")) {
+                getLog().error(String.format(
+                        "Unable to decrypt the %s password for %s id '%s' in settings.xml%n\tCause: %s",
+                        settingsElementName, settingsElementName, settingsElementId, ex.getMessage()));
+            } else {
+                password = tmp;
+            }
+        } else {
+            getLog().error(String.format(
+                    "Unable to decrypt the %s password for %s id '%s' in settings.xml%n\tCause: %s",
+                    settingsElementName, settingsElementName, settingsElementId, ex.getMessage()));
+        }
+        return password;
+    }
 
     /**
      * Combines the configured suppressionFile and suppressionFiles into a
@@ -2209,7 +2214,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             for (Vulnerability v : d.getVulnerabilities()) {
                 if (failBuildOnAnyVulnerability || (v.getCvssV2() != null && v.getCvssV2().getScore() >= failBuildOnCVSS)
                         || (v.getCvssV3() != null && v.getCvssV3().getBaseScore() >= failBuildOnCVSS)
-                        || (v.getUnscoredSeverity() != null && SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) >= failBuildOnCVSS)) {
+                        || (v.getUnscoredSeverity() != null && SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) >= failBuildOnCVSS)
+                        || (failBuildOnCVSS <= 0.0f)) { //safety net to fail on any if for some reason the above misses on 0
                     if (addName) {
                         addName = false;
                         ids.append(NEW_LINE).append(d.getFileName()).append(": ");

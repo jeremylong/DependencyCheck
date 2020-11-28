@@ -52,6 +52,11 @@ import org.slf4j.impl.StaticLoggerBinder;
 public class Check extends Update {
 
     /**
+     * System specific new line character.
+     */
+    private static final String NEW_LINE = System.getProperty("line.separator", "\n").intern();
+
+    /**
      * Whether the ruby gemspec analyzer should be enabled.
      */
     private Boolean rubygemsAnalyzerEnabled;
@@ -1821,11 +1826,15 @@ public class Check extends Update {
     private void checkForFailure(Dependency[] dependencies) throws BuildException {
         final StringBuilder ids = new StringBuilder();
         for (Dependency d : dependencies) {
+            boolean addName = true;
             for (Vulnerability v : d.getVulnerabilities()) {
                 if ((v.getCvssV2() != null && v.getCvssV2().getScore() >= failBuildOnCVSS)
                         || (v.getCvssV3() != null && v.getCvssV3().getBaseScore() >= failBuildOnCVSS)
-                        || (v.getUnscoredSeverity() != null && SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) >= failBuildOnCVSS)) {
-                    if (ids.length() == 0) {
+                        || (v.getUnscoredSeverity() != null && SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) >= failBuildOnCVSS)
+                        || (failBuildOnCVSS <= 0.0f)) { //safety net to fail on any if for some reason the above misses on 0
+                    if (addName) {
+                        addName = false;
+                        ids.append(NEW_LINE).append(d.getFileName()).append(": ");
                         ids.append(v.getName());
                     } else {
                         ids.append(", ").append(v.getName());
