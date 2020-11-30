@@ -15,4 +15,4 @@ jobs:
         with:
           java-version: 1.8 
       - name: Build with Maven
-        run: mvn -s settings.xml verify -DreleaseTesting -Danalyzer.node.package.enabled=false -Danalyzer.node.audit.enabled=false
+        run: mvn -s settings.xml verify -DreleaseTesting
