@@ -205,6 +205,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private float junitFailOnCVSS = 0;
     /**
      * Fail the build if any dependency has a vulnerability listed.
+     *
+     * @deprecated use {@link BaseDependencyCheckMojo#failBuildOnCVSS} with a
+     * value of 0 instead
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "failBuildOnAnyVulnerability", defaultValue = "false", required = true)
@@ -2215,7 +2218,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 if (failBuildOnAnyVulnerability || (v.getCvssV2() != null && v.getCvssV2().getScore() >= failBuildOnCVSS)
                         || (v.getCvssV3() != null && v.getCvssV3().getBaseScore() >= failBuildOnCVSS)
                         || (v.getUnscoredSeverity() != null && SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) >= failBuildOnCVSS)
-                        || (failBuildOnCVSS <= 0.0f)) { //safety net to fail on any if for some reason the above misses on 0
+                        //safety net to fail on any if for some reason the above misses on 0
+                        || (failBuildOnCVSS <= 0.0f)) {
                     if (addName) {
                         addName = false;
                         ids.append(NEW_LINE).append(d.getFileName()).append(": ");
