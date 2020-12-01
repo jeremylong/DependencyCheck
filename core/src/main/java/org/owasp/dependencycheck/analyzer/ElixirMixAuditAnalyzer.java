@@ -17,44 +17,27 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import com.github.packageurl.MalformedPackageURLException;
-import com.github.packageurl.PackageURL;
-import com.github.packageurl.PackageURLBuilder;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.data.elixir.MixAuditJsonParser;
-import org.owasp.dependencycheck.data.elixir.MixAuditResult;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
-import org.owasp.dependencycheck.dependency.Confidence;
-import org.owasp.dependencycheck.dependency.CvssV2;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.EvidenceType;
-import org.owasp.dependencycheck.dependency.Vulnerability;
-import org.owasp.dependencycheck.dependency.VulnerableSoftware;
-import org.owasp.dependencycheck.dependency.VulnerableSoftwareBuilder;
-import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
-import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.exception.InitializationException;
-import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import us.springett.parsers.cpe.exceptions.CpeValidationException;
-import us.springett.parsers.cpe.values.Part;
-
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import org.owasp.dependencycheck.processing.MixAuditProcessor;
+import org.owasp.dependencycheck.utils.processing.ProcessReader;
 
 @Experimental
 public class ElixirMixAuditAnalyzer extends AbstractFileTypeAnalyzer {
@@ -134,57 +117,46 @@ public class ElixirMixAuditAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         final int exitValue;
-        try {
-            exitValue = process.waitFor();
-        } catch (InterruptedException ex) {
-            setEnabled(false);
-            final String msg = String.format("mix_audit process was interrupted. Disabling %s", ANALYZER_NAME);
-            Thread.currentThread().interrupt();
-            throw new InitializationException(msg);
-        }
-
         final String mixAuditVersionDetails;
-        if (exitValue != 0) {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))) {
-                if (!reader.ready()) {
+        try (ProcessReader processReader = new ProcessReader(process)) {
+            processReader.readAll();
+            exitValue = process.exitValue();
+
+            if (exitValue != 0) {
+                if (Strings.isNullOrEmpty(processReader.getError())) {
                     LOGGER.warn("Unexpected exit value from mix_audit process and error stream unexpectedly not ready to capture error details. "
                             + "Disabling {}. Exit value was: {}", ANALYZER_NAME, exitValue);
                     setEnabled(false);
                     throw new InitializationException("mix_audit error stream unexpectedly not ready.");
                 } else {
-                    final String line = reader.readLine();
                     setEnabled(false);
                     LOGGER.warn("Unexpected exit value from mix_audit process. Disabling {}. Exit value was: {}. "
-                            + "error stream output from mix_audit process was: {}", ANALYZER_NAME, exitValue, line);
+                            + "error stream output from mix_audit process was: {}", ANALYZER_NAME, exitValue, processReader.getError());
                     throw new InitializationException("Unexpected exit value from bundle-audit process.");
                 }
-            } catch (UnsupportedEncodingException ex) {
-                setEnabled(false);
-                throw new InitializationException("Unexpected mix_audit encoding when reading error stream.", ex);
-            } catch (IOException ex) {
-                setEnabled(false);
-                throw new InitializationException("Unable to read mix_audit output from error stream.", ex);
-            }
-        } else {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
-                if (!reader.ready()) {
+            } else {
+                if (Strings.isNullOrEmpty(processReader.getOutput())) {
                     LOGGER.warn("mix_audit input stream unexpectedly not ready to capture version details. Disabling {}", ANALYZER_NAME);
                     setEnabled(false);
                     throw new InitializationException("mix_audit input stream unexpectedly not ready to capture version details.");
                 } else {
-                    mixAuditVersionDetails = reader.readLine();
+                    mixAuditVersionDetails = processReader.getOutput();
                 }
-            } catch (UnsupportedEncodingException ex) {
-                setEnabled(false);
-                throw new InitializationException("Unexpected mix_audit encoding when reading input stream.", ex);
-            } catch (IOException ex) {
-                setEnabled(false);
-                throw new InitializationException("Unable to read mix_audit output from input stream.", ex);
             }
+        } catch (InterruptedException ex) {
+            setEnabled(false);
+            final String msg = String.format("mix_audit process was interrupted. Disabling %s", ANALYZER_NAME);
+            Thread.currentThread().interrupt();
+            throw new InitializationException(msg);
+        } catch (IOException ex) {
+            setEnabled(false);
+            final String msg = String.format("IOException '%s' during mix_audit process was interrupted. Disabling %s",
+                    ex.getMessage(), ANALYZER_NAME);
+            throw new InitializationException(msg);
         }
 
         if (isEnabled()) {
-            LOGGER.info("{} is enabled and is using mix_audit with version: {}.", ANALYZER_NAME, mixAuditVersionDetails);
+            LOGGER.debug("{} is enabled and is using mix_audit with version: {}.", ANALYZER_NAME, mixAuditVersionDetails);
         }
     }
 
@@ -278,109 +250,20 @@ public class ElixirMixAuditAnalyzer extends AbstractFileTypeAnalyzer {
 
         final Process process = launchMixAudit(parentFile, mixAuditArgs);
         final int exitValue;
-        try {
-            exitValue = process.waitFor();
+        try (MixAuditProcessor processor = new MixAuditProcessor(dependency, engine);
+                ProcessReader processReader = new ProcessReader(process, processor)) {
+            processReader.readAll();
+            exitValue = process.exitValue();
+            if (exitValue < 0 || exitValue > 1) {
+                final String msg = String.format("Unexpected exit code from mix_audit process; exit code: %s", exitValue);
+                throw new AnalysisException(msg);
+            }
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
             throw new AnalysisException("mix_audit process interrupted", ie);
-        }
-        if (exitValue < 0 || exitValue > 1) {
-            final String msg = String.format("Unexpected exit code from mix_audit process; exit code: %s", exitValue);
-            throw new AnalysisException(msg);
-        }
-        try {
-            try (BufferedReader errReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))) {
-                while (errReader.ready()) {
-                    final String error = errReader.readLine();
-                    LOGGER.warn(error);
-                }
-            }
-            try (BufferedReader rdr = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
-                processMixAuditOutput(dependency, engine, rdr);
-            }
         } catch (IOException | CpeValidationException ioe) {
             LOGGER.warn("mix_audit failure", ioe);
+            throw new AnalysisException("mix_audit failure", ioe);
         }
-    }
-
-    /**
-     * Processes the mix audit output.
-     *
-     * @param original the dependency
-     * @param engine the dependency-check engine
-     * @param rdr the reader of the report
-     * @throws IOException thrown if the report cannot be read
-     * @throws CpeValidationException if there is an error building the
-     * CPE/VulnerableSoftware object
-     */
-    private void processMixAuditOutput(Dependency original, Engine engine, BufferedReader rdr) throws AnalysisException, CpeValidationException {
-        final MixAuditJsonParser parser = new MixAuditJsonParser(rdr);
-        parser.process();
-
-        for (MixAuditResult result : parser.getResults()) {
-            final Dependency dependency = createDependency(original, result.getDependencyPackage(), result.getDependencyVersion());
-            Vulnerability vulnerability = cvedb.getVulnerability(result.getCve());
-
-            if (vulnerability == null) {
-                vulnerability = createVulnerability(result);
-            }
-
-            dependency.addVulnerability(vulnerability);
-            engine.addDependency(dependency);
-        }
-    }
-
-    private Dependency createDependency(Dependency parentDependency, String packageName, String version) {
-        final Dependency dep = new Dependency(parentDependency.getActualFile(), true);
-
-        final String identifier = String.format("%s:%s", packageName, version);
-
-        dep.setEcosystem(DEPENDENCY_ECOSYSTEM);
-        dep.setDisplayFileName(identifier);
-        dep.setName(packageName);
-        dep.setVersion(version);
-        dep.setPackagePath(identifier);
-        dep.setMd5sum(Checksum.getMD5Checksum(identifier));
-        dep.setSha1sum(Checksum.getSHA1Checksum(identifier));
-        dep.setSha256sum(Checksum.getSHA256Checksum(identifier));
-
-        dep.addEvidence(EvidenceType.VERSION, "mix_audit", "Version", version, Confidence.HIGHEST);
-        dep.addEvidence(EvidenceType.PRODUCT, "mix_audit", "Package", packageName, Confidence.HIGHEST);
-
-        try {
-            final PackageURL purl = PackageURLBuilder.aPackageURL().withType("hex").withName(packageName)
-                    .withVersion(version).build();
-            dep.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));
-        } catch (MalformedPackageURLException ex) {
-            LOGGER.debug("Unable to build package url for hex", ex);
-            final GenericIdentifier id = new GenericIdentifier("hex:" + packageName + "@" + version,
-                    Confidence.HIGHEST);
-            dep.addSoftwareIdentifier(id);
-        }
-
-        return dep;
-    }
-
-    private Vulnerability createVulnerability(MixAuditResult result) throws CpeValidationException {
-        final String product = result.getDependencyPackage();
-        final String version = result.getDependencyVersion();
-
-        final Vulnerability vulnerability = new Vulnerability();
-        vulnerability.setSource(Vulnerability.Source.MIXAUDIT);
-
-        final VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder();
-        final VulnerableSoftware vs = builder.part(Part.APPLICATION)
-                .vendor(String.format("%s_project", product))
-                .product(product)
-                .version(version).build();
-
-        vulnerability.addVulnerableSoftware(vs);
-        vulnerability.setMatchedVulnerableSoftware(vs);
-
-        vulnerability.setCvssV2(new CvssV2(-1, "-", "-", "-", "-", "-", "-", "unknown"));
-        vulnerability.setDescription(result.getDescription());
-        vulnerability.setName(result.getCve());
-
-        return vulnerability;
     }
 }
