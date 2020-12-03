@@ -92,6 +92,18 @@ public class JsonArrayFixingInputStreamTest {
             + "	\"Time\": \"2017-12-14T13:08:43Z\",\n"
             + "	\"Indirect\": true,\n"
             + "	\"GoMod\": \"/Users/jeremy/go/pkg/mod/cache/download/golang.org/x/text/@v/v0.3.0.mod\"\n"
+            + "}\n"
+            + "{\n"
+            + " \"Path\": \"github.com/Microsoft/hcsshim\",\n"
+            + " \"Version\": \"v0.8.7\",\n"
+            + " \"Replace\": {\n"
+            + " \"Path\": \"github.com/Microsoft/hcsshim\",\n"
+            + " \"Version\": \"v0.8.8-0.20200421182805-c3e488f0d815\",\n"
+            + " \"Time\": \"2020-04-21T18:28:05Z\",\n"
+            + " \"GoMod\": \"/Users/me/go/pkg/mod/cache/download/github.com/!microsoft/hcsshim/@v/v0.8.8-0.20200421182805-c3e488f0d815.mod\"\n"
+            + "},\n"
+            + "	\"Indirect\": true,\n"
+            + "\"GoMod\": \"/Users/me/go/pkg/mod/cache/download/github.com/!microsoft/hcsshim/@v/v0.8.8-0.20200421182805-c3e488f0d815.mod\"\n"
             + "}\n";
 
     @BeforeClass
@@ -189,7 +201,7 @@ public class JsonArrayFixingInputStreamTest {
                 JsonArrayFixingInputStream instance = new JsonArrayFixingInputStream(sample)) {
             try (JsonReader reader = Json.createReader(instance)) {
                 final JsonArray modules = reader.readArray();
-                assertEquals(7, modules.size());
+                assertEquals(8, modules.size());
             }
         }
     }
@@ -283,6 +295,16 @@ public class JsonArrayFixingInputStreamTest {
             boolean result = instance.markSupported();
             assertFalse(result);
         }
+    }
+
+    @Test
+    public void testIsWhiteSpace() throws Exception {
+        JsonArrayFixingInputStream instance = new JsonArrayFixingInputStream(null);
+        assertFalse(instance.isWhiteSpace((byte)'a'));
+        assertTrue(instance.isWhiteSpace((byte)'\n'));
+        assertTrue(instance.isWhiteSpace((byte)'\t'));
+        assertTrue(instance.isWhiteSpace((byte)'\r'));
+        assertTrue(instance.isWhiteSpace((byte)' '));
     }
 
 }

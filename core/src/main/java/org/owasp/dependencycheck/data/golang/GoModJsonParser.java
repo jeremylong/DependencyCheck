@@ -75,7 +75,11 @@ public final class GoModJsonParser {
                     if (version != null && version.startsWith("v")) {
                         version = version.substring(1);
                     }
-                    goModDependencies.add(new GoModDependency(path, version));
+                    String dir = null;
+                    if (module.getJsonString("Dir") != null ) {
+                        dir = module.getString("Dir");
+                    }
+                    goModDependencies.add(new GoModDependency(path, version, dir));
                 });
             }
         } catch (JsonParsingException jsonpe) {

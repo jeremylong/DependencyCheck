@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
  * @author jeremy
  */
 public class GoModJsonParserTest {
-    
+
     String issue2891 = "{\n"
             + "	\"Path\": \"cloud.google.com/go\",\n"
             + "	\"Version\": \"v0.26.0\",\n"
@@ -765,6 +765,18 @@ public class GoModJsonParserTest {
             + "	\"Time\": \"2019-01-02T05:43:23Z\",\n"
             + "	\"Indirect\": true,\n"
             + "	\"GoMod\": \"/Users/me/go/pkg/mod/cache/download/honnef.co/go/tools/@v/v0.0.0-20190102054323-c2f93a96b099.mod\"\n"
+            + "}\n"
+            + "{\n"
+            + " \"Path\": \"github.com/Microsoft/hcsshim\",\n"
+            + " \"Version\": \"v0.8.7\",\n"
+            + " \"Replace\": {\n"
+            + " \"Path\": \"github.com/Microsoft/hcsshim\",\n"
+            + " \"Version\": \"v0.8.8-0.20200421182805-c3e488f0d815\",\n"
+            + " \"Time\": \"2020-04-21T18:28:05Z\",\n"
+            + " \"GoMod\": \"/Users/me/go/pkg/mod/cache/download/github.com/!microsoft/hcsshim/@v/v0.8.8-0.20200421182805-c3e488f0d815.mod\"\n"
+            + "},\n"
+            + "	\"Indirect\": true,\n"
+            + "\"GoMod\": \"/Users/me/go/pkg/mod/cache/download/github.com/!microsoft/hcsshim/@v/v0.8.8-0.20200421182805-c3e488f0d815.mod\"\n"
             + "}\n";
 
     /**
@@ -775,6 +787,6 @@ public class GoModJsonParserTest {
         InputStream inputStream = new ByteArrayInputStream(issue2891.getBytes());
         List<GoModDependency> expResult = null;
         List<GoModDependency> result = GoModJsonParser.process(inputStream);
-        assertEquals(95, result.size());
+        assertEquals(96, result.size());
     }
 }

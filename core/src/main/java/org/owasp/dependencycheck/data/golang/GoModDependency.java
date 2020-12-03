@@ -19,6 +19,14 @@ package org.owasp.dependencycheck.data.golang;
 
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURLBuilder;
+import com.google.common.base.Strings;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -45,6 +53,11 @@ public class GoModDependency {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(GoModDependency.class);
     /**
+     * A list of license files we recognize.
+     */
+    private static final Set<String> LICENSE_FILES = new HashSet<String>(Arrays.asList("LICENSE", "LICENCE", "LICENSE.TXT",
+            "LICENSE.MD", "LICENCE.MD", "LICENSE.CODE", "LICENCE.CODE", "COPYING"));
+    /**
      * The module path.
      */
     private final String modulePath;
@@ -52,22 +65,26 @@ public class GoModDependency {
      * The version.
      */
     private final String version;
-
     /**
      * A Package-URL builder.
      */
     private final PackageURLBuilder packageURLBuilder;
+    /**
+     * The module Dir.
+     */
+    private final String dir;
 
     /**
      * Constructs a new GoModDependency.
      *
      * @param modulePath the module path
      * @param version the dependency version
+     * @param dir the directory that the module exists within
      */
-    GoModDependency(String modulePath, String version) {
+    GoModDependency(String modulePath, String version, String dir) {
         this.modulePath = modulePath;
         this.version = version;
-
+        this.dir = dir;
         packageURLBuilder = PackageURLBuilder.aPackageURL().withType("golang");
     }
 
@@ -126,13 +143,10 @@ public class GoModDependency {
             dep.setPackagePath(String.format("%s:%s", name, version));
         }
         dep.setFilePath(filePath);
-        dep.setSha1sum(Checksum.getSHA1Checksum(filePath));
-        dep.setSha256sum(Checksum.getSHA256Checksum(filePath));
-        dep.setMd5sum(Checksum.getMD5Checksum(filePath));
 
         if (vendor != null) {
             dep.addEvidence(EvidenceType.VENDOR, GO_MOD, "vendor", vendor, Confidence.HIGHEST);
-            dep.addEvidence(EvidenceType.VENDOR, GO_MOD, "vendor", vendor, Confidence.MEDIUM);
+            dep.addEvidence(EvidenceType.PRODUCT, GO_MOD, "vendor", vendor, Confidence.MEDIUM);
         }
         if (namespace != null && !"golang.org".equals(namespace)) {
             dep.addEvidence(EvidenceType.VENDOR, GO_MOD, "namespace", namespace, Confidence.LOW);
@@ -155,7 +169,42 @@ public class GoModDependency {
             id = new GenericIdentifier(value.toString(), Confidence.HIGH);
         }
         dep.addSoftwareIdentifier(id);
+        if (StringUtils.isNotBlank(dir)) {
+            File file = new File(dir);
+            if (file.exists()) {
+                dep.setFilePath(file.getAbsolutePath());
+                dep.setActualFilePath(file.getAbsolutePath());
+                dep.setFileName(file.getName());
+                extractLicense(dep, file);
+            }
+        }
         return dep;
+    }
+
+    /**
+     * Extracts the content of the license file into the dependency's license
+     * field.
+     *
+     *
+     * @param dependency the dependency being analyzed
+     * @param file the license file
+     */
+    private void extractLicense(Dependency dependency, File file) {
+        File[] files = file.listFiles();
+        if (files != null) {
+            for (File f : files) {
+                if (LICENSE_FILES.contains(f.getName().toUpperCase())) {
+                    try {
+                        final String license = FileUtils.readFileToString(f, Charset.forName("UTF-8"));
+                        dependency.setLicense(license);
+                        break;
+                    } catch (IOException ex) {
+                        LOGGER.debug("Error reading license file `" + file.getAbsolutePath()
+                                + "`: " + ex.getMessage(), ex);
+                    }
+                }
+            }
+        }
     }
 
     @Override

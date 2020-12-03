@@ -141,16 +141,27 @@ public class JsonArrayFixingInputStream extends InputStream {
      * @throws IOException thrown if there is an error reading from the stream
      */
     private void incrementRead() throws IOException {
+        // buffer[bufferStart] is the value that was just read.
         if (buffer[bufferStart] == '}') {
             if (bufferAvailable > 1) {
-                buffer[bufferStart] = ',';
+                if (hasTrailingComma(bufferStart)) {
+                    //increment normally
+                    bufferStart += 1;
+                    bufferAvailable -= 1;
+                } else {
+                    //replace '}' with ',' and don't increment counters
+                    buffer[bufferStart] = ',';
+                }
             } else {
                 bufferAvailable = 0;
                 if (advanceStream() || needsTrailingBrace) {
                     if (bufferAvailable >= 1) {
-                        bufferStart = 0;
-                        bufferAvailable += 1;
-                        buffer[bufferStart] = ',';
+                        //the stream was advanced - so check if buffer[0] has a comma
+                        if (!hasTrailingComma(-1)) {
+                            //this only works because the output always
+                            // has a \n following a closing brace...
+                            buffer[bufferStart] = ',';
+                        }
                     } else if (needsTrailingBrace) {
                         needsTrailingBrace = false;
                         buffer[bufferStart] = ']';
@@ -221,5 +232,32 @@ public class JsonArrayFixingInputStream extends InputStream {
     @Override
     public boolean markSupported() {
         return false;
+    }
+
+    /**
+     * Tests if the buffer has a trailing comma after having just output a closing curly brace.
+     * @param start the position to start checking the buffer from
+     * @return <code>true</code> if there is a trailing comma; otherwise <code>false</code>
+     */
+    private boolean hasTrailingComma(int start) {
+        return (bufferAvailable >= 1 && buffer[start + 1] == ',')
+                || bufferAvailable >= 2 && isWhiteSpace(buffer[start + 1]) && buffer[start + 2] == ',';
+    }
+
+    /**
+     * Tests if the byte passed in is a white space character.
+     * @param c the byte representing the character to test
+     * @return <code>true</code> if the byte is white space; otherwise <code>false</code>
+     */
+    protected boolean isWhiteSpace(byte c) {
+        switch (c) {
+            case '\n':
+            case '\r':
+            case '\t':
+            case ' ':
+                return true;
+            default:
+                return false;
+        }
     }
 }
