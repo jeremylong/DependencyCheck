@@ -2,6 +2,13 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2940
+        ]]></notes>
+        <packageUrl regex="true">^pkg:npm/cross\-env@.*$</packageUrl>
+        <cpe>cpe:/a:crossenv_project:crossenv</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2594
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/ch\.qos\.logback\.contrib/.*$</packageUrl>
