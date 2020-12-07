@@ -19,7 +19,6 @@ package org.owasp.dependencycheck.data.golang;
 
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURLBuilder;
-import com.google.common.base.Strings;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -34,7 +33,6 @@ import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.Identifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
-import org.owasp.dependencycheck.utils.Checksum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -170,7 +168,7 @@ public class GoModDependency {
         }
         dep.addSoftwareIdentifier(id);
         if (StringUtils.isNotBlank(dir)) {
-            File file = new File(dir);
+            final File file = new File(dir);
             if (file.exists()) {
                 dep.setFilePath(file.getAbsolutePath());
                 dep.setActualFilePath(file.getAbsolutePath());
@@ -190,7 +188,7 @@ public class GoModDependency {
      * @param file the license file
      */
     private void extractLicense(Dependency dependency, File file) {
-        File[] files = file.listFiles();
+        final File[] files = file.listFiles();
         if (files != null) {
             for (File f : files) {
                 if (LICENSE_FILES.contains(f.getName().toUpperCase())) {

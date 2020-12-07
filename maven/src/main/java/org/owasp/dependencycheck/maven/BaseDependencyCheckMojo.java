@@ -1986,7 +1986,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Decrypts a password from the Maven settings if it needs to be decrypted.
      * If it's not encrypted the input password will be returned unchanged.
      *
-     * @param the original password value from the settings.xml
+     * @param password the original password value from the settings.xml
      * @return the decrypted password from the Maven configuration
      * @throws SecDispatcherException thrown if there is an error decrypting the
      * password

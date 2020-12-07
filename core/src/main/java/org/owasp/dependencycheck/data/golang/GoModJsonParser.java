@@ -76,7 +76,7 @@ public final class GoModJsonParser {
                         version = version.substring(1);
                     }
                     String dir = null;
-                    if (module.getJsonString("Dir") != null ) {
+                    if (module.getJsonString("Dir") != null) {
                         dir = module.getString("Dir");
                     }
                     goModDependencies.add(new GoModDependency(path, version, dir));

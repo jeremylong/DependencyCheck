@@ -183,7 +183,7 @@ public final class FileUtils {
         final ClassLoader classLoader = FileUtils.class.getClassLoader();
         String path = null;
         if (classLoader != null) {
-            URL url = classLoader.getResource(resource);
+            final URL url = classLoader.getResource(resource);
             if (url != null) {
                 path = url.getFile();
             }
