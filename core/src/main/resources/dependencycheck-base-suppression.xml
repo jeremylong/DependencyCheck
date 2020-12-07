@@ -2,6 +2,13 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2957
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.jboss\.resteasy/resteasy\-spring\-boot\-starter@.*$</packageUrl>
+        <cpe>cpe:/a:redhat:resteasy</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2956
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.github\.docker\-java/docker\-java.*$</packageUrl>
