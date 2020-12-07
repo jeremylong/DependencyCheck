@@ -9,6 +9,14 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2955
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.micrometer/micrometer\-core@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:ace</cpe>
+        <cpe>cpe:/a:vmware:vmware_ace</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2594
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/ch\.qos\.logback\.contrib/.*$</packageUrl>
