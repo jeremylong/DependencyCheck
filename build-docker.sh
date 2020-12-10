@@ -2,10 +2,10 @@
 
 VERSION=$(mvn -q \
     -Dexec.executable="echo" \
-    -Dexec.args="${project.version}" \
+    -Dexec.args='${project.version}' \
     --non-recursive \
     org.codehaus.mojo:exec-maven-plugin:1.3.1:exec)
-echo "$VERSION"
+
 FILE=./cli/target/dependency-check-$VERSION-release.zip
 if [ -f "$FILE" ]; then
     docker build . --build-arg VERSION=$VERSION -t owasp/dependency-check:$VERSION
