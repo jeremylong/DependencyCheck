@@ -544,6 +544,7 @@ public class ReportGenerator {
             while (parser.nextToken() != null) {
                 generator.copyCurrentEvent(parser);
             }
+            generator.flush();
         } catch (IOException ex) {
             LOGGER.debug("Malformed JSON?", ex);
             throw new ReportException("Unable to generate json report", ex);
