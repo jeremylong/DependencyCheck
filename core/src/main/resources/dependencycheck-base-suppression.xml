@@ -109,9 +109,16 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2975
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.itextpdf\.tool/xfa\-.*$</packageUrl>
+        <cpe>cpe:/a:itextpdf:itext</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2974
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/com\.itextpdf/xfa\-itextpdf@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/com\.itextpdf/xfa\-.*$</packageUrl>
         <cpe>cpe:/a:itextpdf:itext</cpe>
     </suppress>
     <suppress base="true">
