@@ -2,6 +2,13 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
+        FP per #3001
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.google\.http\-client/google\-http\-client@.*$</packageUrl>
+        <cpe>cpe:/a:apache:httpclient</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2999
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.github\.jhipster/jhipster\-framework@.*$</packageUrl>
