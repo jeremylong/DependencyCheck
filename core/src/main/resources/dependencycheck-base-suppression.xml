@@ -2,6 +2,13 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2982
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.mybatis/mybatis\-spring@.*$</packageUrl>
+        <cpe>cpe:/a:mybatis:mybatis</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2978
         ]]></notes>
         <packageUrl regex="true">^pkg:(generic|nuget)/Microsoft\.IdentityModel\.Protocols\.OpenIdConnect@.*$</packageUrl>
