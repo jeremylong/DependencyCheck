@@ -2672,6 +2672,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        Fp per #2995
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.opencensus/opencensus\-contrib\-grpc\-util@.*$</packageUrl>
+        <cpe>cpe:/a:grpc:grpc</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         False positive per issue #1259 and #2991
         ]]></notes>
         <gav regex="true">^com\.google\.api\.grpc:proto-.*$</gav>
