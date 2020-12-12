@@ -2,6 +2,15 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2978
+        ]]></notes>
+        <packageUrl regex="true">^pkg:(generic|nuget)/Microsoft\.IdentityModel\.Protocols\.OpenIdConnect@.*$</packageUrl>
+        <cpe>cpe:/a:microsoft:identitymodel</cpe>
+        <cpe>cpe:/a:openid:openid</cpe>
+        <cpe>cpe:/a:openid:openid_connect</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2972
         ]]></notes>
         <packageUrl regex="true">^pkg:composer/php\-.*$</packageUrl>
@@ -431,28 +440,28 @@
         <notes><![CDATA[
         Suppresses false positives per #2820
         ]]></notes>
-        <packageUrl regex="true">^pkg:nuget/(microsoft\.)?jQuery[\.-].*$</packageUrl>
+        <packageUrl regex="true">^pkg:(generic|nuget)/(microsoft\.)?jQuery[\.-].*$</packageUrl>
         <cpe>cpe:/a:jquery:jquery</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
         file name: System.Security.Cryptography.OpenSsl.dll
         ]]></notes>
-        <packageUrl regex="true">^pkg:generic/System\.Security\.Cryptography\.OpenSsl@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:(generic|nuget)/System\.Security\.Cryptography\.OpenSsl@.*$</packageUrl>
         <cpe>cpe:/a:openssl:openssl</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
         file name: Microsoft.Bcl.AsyncInterfaces.dll
         ]]></notes>
-        <packageUrl regex="true">^pkg:generic/Microsoft\.Bcl\.AsyncInterfaces@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:(generic|nuget)/Microsoft\.Bcl\.AsyncInterfaces@.*$</packageUrl>
         <cpe>cpe:/a:microsoft:.net_core</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
         Suppresses false positives per #2819
         ]]></notes>
-        <packageUrl regex="true">^pkg:generic/Microsoft\.DiaSymReader\.Native\.arm@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:(generic|nuget)/Microsoft\.DiaSymReader\.Native\.arm@.*$</packageUrl>
         <cpe>cpe:/a:microsoft:visual_studio</cpe>
         <cpe>cpe:/a:microsoft:visual_studio_2017</cpe>
     </suppress>
@@ -460,7 +469,7 @@
         <notes><![CDATA[
         Suppresses false positives per #2819
         ]]></notes>
-        <packageUrl regex="true">^pkg:nuget/Microsoft\.DiaSymReader\.Native@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:(generic|nuget)/Microsoft\.DiaSymReader\.Native@.*$</packageUrl>
         <cpe>cpe:/a:dia:dia</cpe>
     </suppress>
     <suppress base="true">
