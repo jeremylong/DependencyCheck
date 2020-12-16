@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>purl to maven dependency converter</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+        <script type="module" src="js/package-url.js"></script>
+        <script src="js/purl.js"></script>
+        <style>
+            textarea { resize:none }
+        </style>
+    </head>
+    <body>
+        <div role="application" class="container" aria-describedby="description">
+            <div class="page-header">
+                <h1 id="header">Convert package-urls to maven dependency</h1>
+                <p id="description">Paste a package-url (or enter a package-url 
+                    and press enter) into the text box and the maven coordinates
+                    will be generated and copied to the clipboard.</p>
+            </div>
+            <div class="container">
+                <div class="form-group">
+                    <input class="form-control" id="purl" autofocus
+                           type="text" placeholder="pkg:maven/org.owasp/dependency-check-core@6.0.0"
+                           aria-label="Paste a package URL or enter a package URL and hit enter"/>
+                    <textarea class="form-control " rows="5" id="coord" 
+                              aria-label="Contains the generated maven coordinates" readonly></textarea>
+                </div>
+
+                <div id="invalid" class="alert alert-danger collapse">
+                    Invalid package-url!
+                </div>
+                <div id="error" class="alert alert-danger align-middle collapse">
+                    Error copying the Maven coordinates.
+                </div>
+                <div id="success" class="alert alert-success align-middle collapse">
+                    Maven coordinates copied!
+                </div>
+            </div>
+        </div>        
+    </body>
+</html>
