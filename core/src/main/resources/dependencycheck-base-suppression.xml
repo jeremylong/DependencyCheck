@@ -4071,4 +4071,25 @@
         <packageUrl regex="true">^pkg:maven/org\.infinispan\.protostream/protostream@.*$</packageUrl>
         <cpe>cpe:/a:infinispan:infinispan</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3026 on io.hawtio.hawtio-wildfly
+       ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.hawt/hawtio\-wildfly@.*$</packageUrl>
+        <cpe>cpe:/a:hawt:hawtio</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3026 on io.hawtio.hawtio-wildfly
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.hawt/hawtio\-wildfly@.*$</packageUrl>
+        <cpe>cpe:/a:hawt.io:hawtio</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3026 on io.hawtio.hawtio-wildfly
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.hawt/hawtio\-wildfly@.*$</packageUrl>
+        <cpe>cpe:/a:redhat:wildfly</cpe>
+    </suppress>
 </suppressions>
