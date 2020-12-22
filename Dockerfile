@@ -9,6 +9,8 @@ FROM mcr.microsoft.com/dotnet/core/runtime:3.1-alpine
 ARG VERSION
 ARG POSTGRES_DRIVER_VERSION=42.2.6
 ARG MYSQL_DRIVER_VERSION=8.0.17
+ARG UID=1000
+ARG GID=1000
 
 ENV user=dependencycheck
 ENV JAVA_HOME=/opt/jdk
@@ -31,7 +33,7 @@ RUN apk update                                                                  
     curl -Ls "https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-${MYSQL_DRIVER_VERSION}.tar.gz" \
         | tar -xz --directory "/usr/share/dependency-check/plugins" --strip-components=1 --no-same-owner \
             "mysql-connector-java-${MYSQL_DRIVER_VERSION}/mysql-connector-java-${MYSQL_DRIVER_VERSION}.jar" && \
-    addgroup -S ${user} && adduser -S -G ${user} ${user}                                             && \
+    addgroup -S -g ${GID} ${user} && adduser -S -D -u ${UID} -G ${user} ${user}                      && \
     mkdir /usr/share/dependency-check/data                                                           && \
     chown -R ${user}:0 /usr/share/dependency-check                                                   && \
     chmod -R g=u /usr/share/dependency-check                                                         && \
@@ -42,7 +44,7 @@ RUN apk update                                                                  
 
 ### remove any suid sgid - we don't need them
 RUN find / -perm +6000 -type f -exec chmod a-s {} \;
-USER ${user}
+USER ${UID}
 
 VOLUME ["/src", "/report"]
 
