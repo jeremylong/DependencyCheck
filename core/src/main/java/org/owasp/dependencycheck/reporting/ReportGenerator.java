@@ -395,6 +395,7 @@ public class ReportGenerator {
     @SuppressFBWarnings(justification = "try with resources will clean up the output stream", value = {"OBL_UNSATISFIED_OBLIGATION"})
     protected void processTemplate(String template, File file) throws ReportException {
         ensureParentDirectoryExists(file);
+        LOGGER.info("Writing report to: " + file.getAbsolutePath());
         try (OutputStream output = new FileOutputStream(file)) {
             processTemplate(template, output);
         } catch (IOException ex) {
