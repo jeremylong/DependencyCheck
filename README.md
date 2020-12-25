@@ -85,6 +85,14 @@ The dependency-check plugin can be configured using the following:
 
 For instructions on the use of the Ant Task, please see the [dependency-check-ant github page](http://jeremylong.github.io/DependencyCheck/dependency-check-ant).
 
+Development Prerequisites
+-------------
+
+For installation to pass, you must have the following components installed:
+* Go: `go version` 1.12 and higher
+* Java: `java --version` 1.8.0 and higher
+* Maven: `mvn --version` 3.5.0 and higher
+
 Development Usage
 -------------
 The following instructions outline how to compile and use the current snapshot. While every intention is to maintain a stable snapshot it is recommended
