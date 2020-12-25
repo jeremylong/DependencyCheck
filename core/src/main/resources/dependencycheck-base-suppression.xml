@@ -9,10 +9,30 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per #3002, CVE is for grpc-js
+        FP per #3002, CVE is for grpc-js and c
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.grpc/grpc\-.*$</packageUrl>
         <cve>CVE-2020-7768</cve>
+        <cve>CVE-2017-7861</cve>
+        <cve>CVE-2017-8359</cve>
+        <cve>CVE-2017-9431</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #3002, CVE is for grpc-js and c
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.google\.api\.grpc/grpc\-google\-common\-protos@.*$</packageUrl>
+        <cve>CVE-2020-7768</cve>
+        <cve>CVE-2017-7861</cve>
+        <cve>CVE-2017-8359</cve>
+        <cve>CVE-2017-9431</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #3002, CVE is for grpc-js
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.lightstep\.tracer/.*$</packageUrl>
+        <cpe>cpe:/a:grpc:grpc</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
