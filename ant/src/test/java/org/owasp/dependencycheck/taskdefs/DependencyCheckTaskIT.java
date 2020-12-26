@@ -103,7 +103,11 @@ public class DependencyCheckTaskIT extends BaseDBTestCase {
         Exception exception = Assert.assertThrows(BuildException.class, () -> {
             buildFileRule.executeTarget("failCVSS");
         });
-        Assert.assertTrue(exception.getMessage().contains("One or more dependencies were identified with vulnerabilities that have a CVSS score greater than or equal to '3.0':"));
+
+        String expectedMessage = String.format("One or more dependencies were identified with vulnerabilities that " +
+                "have a CVSS score greater than or equal to '%.1f':", 3.0f);
+
+        Assert.assertTrue(exception.getMessage().contains(expectedMessage));
     }
 
     /**
