@@ -323,6 +323,23 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "suppressionFile")
     private String suppressionFile;
     /**
+     * The username used when connecting to the suppressionFiles.
+     */
+    @Parameter(property = "suppressionFileUser")
+    private String suppressionFileUser;
+    /**
+     * The password used when connecting to the suppressionFiles.
+     */
+    @Parameter(property = "suppressionFilePassword")
+    private String suppressionFilePassword;
+    /**
+     * The server id in the settings.xml; used to retrieve encrypted passwords
+     * from the settings.xml for suppressionFile(s).
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "suppressionFileServerId")
+    private String suppressionFileServerId;
+    /**
      * The path to the hints file.
      */
     @SuppressWarnings("CanBeFinal")
@@ -1950,6 +1967,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         } else {
             settings.setStringIfNotEmpty(Settings.KEYS.CVE_USER, cveUser);
             settings.setStringIfNotEmpty(Settings.KEYS.CVE_PASSWORD, cvePassword);
+        }
+        if (suppressionFileUser == null && suppressionFilePassword == null && suppressionFileServerId != null) {
+            configureServerCredentials(suppressionFileServerId, Settings.KEYS.SUPPRESSION_FILE_USER, Settings.KEYS.SUPPRESSION_FILE_PASSWORD);
+        } else {
+            settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE_USER, suppressionFileUser);
+            settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE_PASSWORD, suppressionFilePassword);
         }
     }
 
