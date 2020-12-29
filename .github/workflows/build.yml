@@ -14,6 +14,7 @@ on:
 
 jobs:
   build:
+    name: Build dependency-check
     runs-on: ubuntu-latest 
     steps:
       - uses: actions/checkout@v2
@@ -63,12 +64,13 @@ jobs:
             cli/target/jacoco-results/**/*.html
   
   publish_coverage:
-    - runs-on: ubuntu-latest 
-      steps:
-        - name: Run codacy-coverage-reporter
-          needs: code-coverage-report
-          if: github.ref == 'refs/heads/main'
-          uses: codacy/codacy-coverage-reporter-action@master
-          with:
-            project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-            coverage-reports: utils/target/jacoco-results/jacoco.xml,core/target/jacoco-results/jacoco.xml,maven/target/jacoco-results/jacoco.xml,ant/target/jacoco-results/jacoco.xml,cli/target/jacoco-results/jacoco.xml
+    name: publish code coverage reports  
+    runs-on: ubuntu-latest 
+    steps:
+      - name: Run codacy-coverage-reporter
+        needs: code-coverage-report
+        if: github.ref == 'refs/heads/main'
+        uses: codacy/codacy-coverage-reporter-action@master
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: utils/target/jacoco-results/jacoco.xml,core/target/jacoco-results/jacoco.xml,maven/target/jacoco-results/jacoco.xml,ant/target/jacoco-results/jacoco.xml,cli/target/jacoco-results/jacoco.xml
