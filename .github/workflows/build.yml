@@ -2,11 +2,19 @@ name: Java CI
 
 on: 
   push:
+    branches:
+      - main
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.txt'
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.txt'
 
 jobs:
   build:
     runs-on: ubuntu-latest 
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 1.8
@@ -14,11 +22,11 @@ jobs:
         with:
           java-version: 1.8 
       - name: Build with Maven
-        run: mvn -s settings.xml verify -DreleaseTesting --no-transfer-progress  
-      - name: Archive test results
+        run: mvn -s settings.xml verify -DreleaseTesting --no-transfer-progress --batch-mode
+      - name: Archive IT test logs
         uses: actions/upload-artifact@v2
         with:
-          name: test-results
+          name: it-test-logs
           retention-days: 7
           path: |
             maven/target/it/1551-verify-dependency-managemen/build.log
@@ -48,13 +56,19 @@ jobs:
             maven/target/jacoco-results/jacoco.xml
             ant/target/jacoco-results/jacoco.xml
             cli/target/jacoco-results/jacoco.xml
-            utils/target/jacoco-results/**/*.html
+            utils/target/jacoco-    results/**/*.html
             core/target/jacoco-results/**/*.html
             maven/target/jacoco-results/**/*.html
             ant/target/jacoco-results/**/*.html
             cli/target/jacoco-results/**/*.html
-      - name: Run codacy-coverage-reporter
-        uses: codacy/codacy-coverage-reporter-action@master
-        with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: utils/target/jacoco-results/jacoco.xml,core/target/jacoco-results/jacoco.xml,maven/target/jacoco-results/jacoco.xml,ant/target/jacoco-results/jacoco.xml,cli/target/jacoco-results/jacoco.xml
+  
+  publish_coverage:
+    - runs-on: ubuntu-latest 
+      steps:
+        - name: Run codacy-coverage-reporter
+          needs: code-coverage-report
+          if: github.ref == 'refs/heads/main'
+          uses: codacy/codacy-coverage-reporter-action@master
+          with:
+            project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+            coverage-reports: utils/target/jacoco-results/jacoco.xml,core/target/jacoco-results/jacoco.xml,maven/target/jacoco-results/jacoco.xml,ant/target/jacoco-results/jacoco.xml,cli/target/jacoco-results/jacoco.xml
