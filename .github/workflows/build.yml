@@ -39,9 +39,9 @@ jobs:
             maven/target/it/1512-transitive-test/build.log
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
-        retention-days: 7
         with:
           name: code-coverage-report
+          retention-days: 7
           path: |
             utils/target/jacoco-results/jacoco.xml
             core/target/jacoco-results/jacoco.xml
