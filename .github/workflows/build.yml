@@ -14,7 +14,45 @@ jobs:
         with:
           java-version: 1.8 
       - name: Build with Maven
-        run: mvn -s settings.xml verify -DreleaseTesting --no-transfer-progress
+        run: mvn -s settings.xml verify -DreleaseTesting --no-transfer-progress  
+      - name: Archive test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          retention-days: 7
+          path: |
+            maven/target/it/1551-verify-dependency-managemen/build.log
+            maven/target/it/740-aggregate/build.log
+            maven/target/it/617-hierarchical-cross-deps/build.log
+            maven/target/it/618-aggregator-purge/build.log
+            maven/target/it/618-aggregator-update-only/build.log
+            maven/target/it/629-jackson-dataformat/build.log
+            maven/target/it/690-threadsafety/build.log
+            maven/target/it/710-pom-parse-error/build.log
+            maven/target/it/729-system-scope-resolved/build.log
+            maven/target/it/729-system-scope-skipped/build.log
+            maven/target/it/730-multiple-suppression-files/build.log
+            maven/target/it/730-multiple-suppression-files-configs/build.log
+            maven/target/it/815-broken-suppression-aggregate/build.log
+            maven/target/it/846-site-plugin/build.log
+            maven/target/it/false-positives/build.log
+            maven/target/it/1512-transitive-test/build.log
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v2
+        retention-days: 7
+        with:
+          name: code-coverage-report
+          path: |
+            utils/target/jacoco-results/jacoco.xml
+            core/target/jacoco-results/jacoco.xml
+            maven/target/jacoco-results/jacoco.xml
+            ant/target/jacoco-results/jacoco.xml
+            cli/target/jacoco-results/jacoco.xml
+            utils/target/jacoco-results/**/*.html
+            core/target/jacoco-results/**/*.html
+            maven/target/jacoco-results/**/*.html
+            ant/target/jacoco-results/**/*.html
+            cli/target/jacoco-results/**/*.html
       - name: Run codacy-coverage-reporter
         uses: codacy/codacy-coverage-reporter-action@master
         with:
