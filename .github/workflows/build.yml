@@ -41,7 +41,7 @@ jobs:
         id: get-version
         run: |
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-          echo "VERSION=$VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: echo version
         id: echo-version
         run: |
