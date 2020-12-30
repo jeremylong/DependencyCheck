@@ -1,4 +1,4 @@
-name: Java CI
+name: Build and Deploy
 
 on: 
   push:
@@ -79,7 +79,7 @@ jobs:
             maven/target/jacoco-results/jacoco.xml
             ant/target/jacoco-results/jacoco.xml
             cli/target/jacoco-results/jacoco.xml
-            utils/target/jacoco-    results/**/*.html
+            utils/target/jacoco-results/**/*.html
             core/target/jacoco-results/**/*.html
             maven/target/jacoco-results/**/*.html
             ant/target/jacoco-results/**/*.html
