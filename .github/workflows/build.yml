@@ -17,6 +17,10 @@ jobs:
     name: Build dependency-check
     runs-on: ubuntu-latest 
     steps:
+      - name: Install gpg secret key
+        run: |
+          cat <(echo -e "${{ secrets.OSSRH_GPG_SECRET_KEY }}") | gpg --batch --import
+          gpg --list-secret-keys --keyid-format LONG
       - uses: actions/checkout@v2
       - name: Check Maven Cache
         uses: actions/cache@v2
@@ -27,30 +31,27 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8 
-      - name: Build with Maven
-        run: mvn -s settings.xml verify -DreleaseTesting --no-transfer-progress --batch-mode
+          server-id: ossrh
+          server-username: ${{ secrets.OSSRH_USERNAME }}
+          server-password: ${{ secrets.OSSRH_TOKEN }}
+      - name: Build Snapshot with Maven
+        if: !startswith(github.ref, 'refs/tags/v')
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+        run: mvn -s settings.xml -Prelease package verify javadoc:jar source:jar deploy gpg:sign -DreleaseTesting --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} 
+      - name: Build Release with Maven
+        if: startswith(github.ref, 'refs/tags/v')
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+        run: mvn -s settings.xml -Prelease clean package verify source:jar javadoc:jar site site:stage gpg:sign deploy -DreleaseTesting --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} 
       - name: Archive IT test logs
         uses: actions/upload-artifact@v2
         with:
           name: it-test-logs
           retention-days: 7
-          path: |
-            maven/target/it/1551-verify-dependency-managemen/build.log
-            maven/target/it/740-aggregate/build.log
-            maven/target/it/617-hierarchical-cross-deps/build.log
-            maven/target/it/618-aggregator-purge/build.log
-            maven/target/it/618-aggregator-update-only/build.log
-            maven/target/it/629-jackson-dataformat/build.log
-            maven/target/it/690-threadsafety/build.log
-            maven/target/it/710-pom-parse-error/build.log
-            maven/target/it/729-system-scope-resolved/build.log
-            maven/target/it/729-system-scope-skipped/build.log
-            maven/target/it/730-multiple-suppression-files/build.log
-            maven/target/it/730-multiple-suppression-files-configs/build.log
-            maven/target/it/815-broken-suppression-aggregate/build.log
-            maven/target/it/846-site-plugin/build.log
-            maven/target/it/false-positives/build.log
-            maven/target/it/1512-transitive-test/build.log
+          path: maven/target/it/**/build.log
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
         with:
@@ -67,7 +68,41 @@ jobs:
             maven/target/jacoco-results/**/*.html
             ant/target/jacoco-results/**/*.html
             cli/target/jacoco-results/**/*.html
-  
+      - name: Archive Release
+        uses: actions/upload-artifact@v2
+        if: startswith(github.ref, 'refs/tags/v')
+        with:
+          name: archive-release
+          retention-days: 7
+          path: |
+            maven/target/*.asc
+            maven/target/*.jar
+            maven/target/*.pom
+            ant/target/*.asc
+            ant/target/*.zip
+            ant/taget/*.jar
+            ant/target/*.pom
+            cli/target/*.asc
+            cli/target/*.zip
+            core/target/*.asc
+            core/target/*.jar
+            core/target/*.pom
+            utils/target/*.asc
+            utils/target/*.jar
+            utils/target/*.pom
+            archetype/target/*.asc
+            archetype/target/*.jar
+            archetype/target/*.pom
+            target/*.asc
+            target/*.pom
+      - name: Archive Site
+        uses: actions/upload-artifact@v2
+        if: startswith(github.ref, 'refs/tags/v')
+        with:
+          name: archive-site
+          retention-days: 7
+          path: target/staging/
+
   publish_coverage:
     name: publish code coverage reports  
     runs-on: ubuntu-latest 
@@ -84,3 +119,24 @@ jobs:
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: utils/target/jacoco-results/jacoco.xml,core/target/jacoco-results/jacoco.xml,maven/target/jacoco-results/jacoco.xml,ant/target/jacoco-results/jacoco.xml,cli/target/jacoco-results/jacoco.xml
+#  release:
+#    name: Publish Release
+#    runs-on: ubuntu-latest
+#    if: startswith(github.ref, 'refs/tags/v')
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#      - name: Create Release
+#        id: create_release
+#        uses: actions/create-release@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+#        with:
+#          tag_name: ${{ github.ref }}
+#          release_name: Release ${{ github.ref }}
+#          body: |
+#            Changes in this Release
+#            - First Change
+#            - Second Change
+#          draft: false
+#          prerelease: false
