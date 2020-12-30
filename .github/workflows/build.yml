@@ -157,7 +157,7 @@ jobs:
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Upload CLI
-        id: upload-release-asset 
+        id: upload-release-cli
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -167,7 +167,7 @@ jobs:
           asset_name: dependency-check-${{env.VERSION}}-release.zip
           asset_content_type: application/zip
       - name: Upload CLI signature
-        id: upload-release-asset 
+        id: upload-release-cli-sig 
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -177,7 +177,7 @@ jobs:
           asset_name: dependency-check-${{env.VERSION}}-release.zip.asc
           asset_content_type: text/plain
       - name: Upload ANT
-        id: upload-release-asset 
+        id: upload-release-ant 
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -187,7 +187,7 @@ jobs:
           asset_name: dependency-check-ant-${{env.VERSION}}-release.zip
           asset_content_type: application/zip
       - name: Upload ANT signature
-        id: upload-release-asset 
+        id: upload-release-cli-sig
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
