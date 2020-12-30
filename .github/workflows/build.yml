@@ -25,13 +25,13 @@ jobs:
         with:
           path: ~/.m2/repository/
           key: mvn-repo
-      - name: Check Maven Cache
+      - name: Check Local Maven Cache
         id: maven-it-cache
         uses: actions/cache@v2
         with:
           path: maven/target/local-repo
           key: mvn-it-repo
-      - name: Check Maven Cache
+      - name: Check ODC Data Cache
         id: odc-data-cache
         uses: actions/cache@v2
         with:
@@ -78,7 +78,7 @@ jobs:
             **/target/jacoco-results/**/*.html
       - name: Archive Release
         id: archive-release
-        if: startswith(github.ref, 'refs/tags/v')
+        #if: startswith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v2
         with:
           name: archive-release
@@ -113,7 +113,26 @@ jobs:
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: utils/target/jacoco-results/jacoco.xml,core/target/jacoco-results/jacoco.xml,maven/target/jacoco-results/jacoco.xml,ant/target/jacoco-results/jacoco.xml,cli/target/jacoco-results/jacoco.xml
-  
+
+  docker:
+    name: Build Docker
+    runs-on: ubuntu-latest
+    needs: build
+    #if: startswith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Download release build
+        uses: actions/download-artifact@v2
+        with:
+          name: archive-release
+      - name: Build Docker Image
+        run: ./build-docker.sh
+      - name: Test Docker Image
+        run: ./test-docker.sh
+      - name: login dockerhub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin ${{ secrets.DOCKER_PASSWORD }}
+        
   release:
     name: Publish Release
     runs-on: ubuntu-latest
