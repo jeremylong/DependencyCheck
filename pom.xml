@@ -1203,7 +1203,7 @@ Copyright (c) 2012 - Jeremy Long
                         <configuration>
                             <serverId>ossrh</serverId>
                             <nexusurl>https://oss.sonatype.org/</nexusurl>
-                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
                 </plugins>
