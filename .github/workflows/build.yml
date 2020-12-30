@@ -187,7 +187,7 @@ jobs:
           asset_name: dependency-check-ant-${{env.VERSION}}-release.zip
           asset_content_type: application/zip
       - name: Upload ANT signature
-        id: upload-release-cli-sig
+        id: upload-release-ant-sig
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
