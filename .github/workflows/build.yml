@@ -18,11 +18,11 @@ jobs:
     runs-on: ubuntu-latest 
     steps:
       - uses: actions/checkout@v2
-      - name: Check Maven Com Cache
+      - name: Check Maven Cache
         uses: actions/cache@v2
         with:
           path: ~/.m2/repository/
-          key: mvn-repo-${{ hashFiles('**/pom.xml') }}
+          key: mvn-repo
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:

@@ -186,14 +186,12 @@ Copyright (c) 2012 - Jeremy Long
     </properties>
     <distributionManagement>
         <snapshotRepository>
-            <id>snapshot</id>
-            <name>snapshot</name>
-            <url>https://dependencycheck.jfrog.io/dependencycheck/libs-snapshot-local</url>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
         <repository>
-            <id>release</id>
-            <name>release</name>
-            <url>https://dependencycheck.jfrog.io/dependencycheck/libs-release-local</url>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
         <site>
             <id>gh-pages</id>
@@ -1195,6 +1193,17 @@ Copyright (c) 2012 - Jeremy Long
                                 <arg>--pinentry-mode</arg>
                                 <arg>loopback</arg>
                             </gpgArguments>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.8</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusurl>https://oss.sonatype.org/</nexusurl>
+                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
                 </plugins>
