@@ -41,13 +41,14 @@ jobs:
         id: get-version
         run: |
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          echo "VERSION=$VERSION"
       - name: echo version
         id: echo-version
         run: |
           echo "version: $VERSION"
       - name: Build Snapshot with Maven
-        id: build-snapshot
-        if: ${{ !startswith(github.ref, 'refs/tags/v') }}
+        id: build-snapsh    ot
+        if: ${{ !startswith(github.ref, 'refs/tags/v') }}   
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
