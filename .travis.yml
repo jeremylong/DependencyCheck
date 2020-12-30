@@ -66,19 +66,19 @@ after_failure:
     - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/false-positives/build.log
     - cat /home/travis/build/jeremylong/DependencyCheck/maven/target/it/1512-transitive-test/build.log
 
-deploy:
-  - provider: script
-    script: mvn --settings .travis.settings.xml package source:jar javadoc:jar deploy -DskipTests=true
-    skip_cleanup: true
-    on:
-      branch: main
-      jdk: oraclejdk8
-  - provider: pages
-    skip_cleanup: true
-    local_dir: target/staging
-    github_token: $GITHUB_TOKEN
-    on:
-      tags: true
-      branch: main
-      jdk: oraclejdk8
- 
+#deploy:
+#  - provider: script
+#    script: mvn --settings .travis.settings.xml package source:jar javadoc:jar deploy -DskipTests=true
+#    skip_cleanup: true
+#    on:
+#      branch: main
+#      jdk: oraclejdk8
+#  - provider: pages
+#    skip_cleanup: true
+#    local_dir: target/staging
+#    github_token: $GITHUB_TOKEN
+#    on:
+#      tags: true
+#      branch: main
+#      jdk: oraclejdk8
+# 
