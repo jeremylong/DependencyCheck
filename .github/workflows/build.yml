@@ -47,7 +47,7 @@ jobs:
         run: |
           echo "version: $VERSION"
       - name: Build Snapshot with Maven
-        id: build-snapsh    ot
+        id: build-snapshot
         if: ${{ !startswith(github.ref, 'refs/tags/v') }}   
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
