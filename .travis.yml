@@ -71,7 +71,7 @@ deploy:
     script: mvn --settings .travis.settings.xml package source:jar javadoc:jar deploy -DskipTests=true
     skip_cleanup: true
     on:
-      branch: master
+      branch: main
       jdk: oraclejdk8
   - provider: pages
     skip_cleanup: true
@@ -79,6 +79,6 @@ deploy:
     github_token: $GITHUB_TOKEN
     on:
       tags: true
-      branch: master
+      branch: main
       jdk: oraclejdk8
  
