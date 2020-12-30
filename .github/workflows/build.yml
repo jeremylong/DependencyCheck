@@ -74,16 +74,8 @@ jobs:
           name: code-coverage-report
           retention-days: 7
           path: |
-            utils/target/jacoco-results/jacoco.xml
-            core/target/jacoco-results/jacoco.xml
-            maven/target/jacoco-results/jacoco.xml
-            ant/target/jacoco-results/jacoco.xml
-            cli/target/jacoco-results/jacoco.xml
-            utils/target/jacoco-results/**/*.html
-            core/target/jacoco-results/**/*.html
-            maven/target/jacoco-results/**/*.html
-            ant/target/jacoco-results/**/*.html
-            cli/target/jacoco-results/**/*.html
+            **/target/jacoco-results/jacoco.xml
+            **/target/jacoco-results/**/*.html
       - name: Archive Release
         id: archive-release
         if: startswith(github.ref, 'refs/tags/v')
@@ -92,26 +84,11 @@ jobs:
           name: archive-release
           retention-days: 7
           path: |
-            maven/target/*.asc
-            maven/target/*.jar
-            maven/target/*.pom
-            ant/target/*.asc
+            **/target/*.asc
+            **/target/*.jar
+            **/target/*.pom
             ant/target/*.zip
-            ant/taget/*.jar
-            ant/target/*.pom
-            cli/target/*.asc
             cli/target/*.zip
-            core/target/*.asc
-            core/target/*.jar
-            core/target/*.pom
-            utils/target/*.asc
-            utils/target/*.jar
-            utils/target/*.pom
-            archetype/target/*.asc
-            archetype/target/*.jar
-            archetype/target/*.pom
-            target/*.asc
-            target/*.pom
       - name: Archive Site
         id: archive-site
         uses: actions/upload-artifact@v2
