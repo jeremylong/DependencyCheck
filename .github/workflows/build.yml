@@ -7,10 +7,6 @@ on:
     paths-ignore:
       - '**/*.md'
       - '**/*.txt'
-  pull_request:
-    paths-ignore:
-      - '**/*.md'
-      - '**/*.txt'
 
 jobs:
   build:
@@ -29,15 +25,6 @@ jobs:
         with:
           path: ~/.m2/repository/
           key: mvn-repo
-      - name: Get version
-        id: get-version
-        run: |
-          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-      - name: echo version
-        id: echo-version
-        run: |
-          echo "VERSION is ${{env.VERSION}}"
       - name: Set up JDK 1.8
         id: jdk-8
         uses: actions/setup-java@v1
@@ -175,7 +162,37 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: cli/target/dependency-check-${{env.VERSION}}-release.zip
-          asset_name: my-artifact.zip
+          asset_name: dependency-check-${{env.VERSION}}-release.zip
           asset_content_type: application/zip
+      - name: Upload CLI signature
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: cli/target/dependency-check-${{env.VERSION}}-release.zip.asc
+          asset_name: dependency-check-${{env.VERSION}}-release.zip.asc
+          asset_content_type: text/plain
+      - name: Upload ANT
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ant/target/dependency-check-ant-${{env.VERSION}}-release.zip
+          asset_name: dependency-check-ant-${{env.VERSION}}-release.zip
+          asset_content_type: application/zip
+      - name: Upload ANT signature
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ant/target/dependency-check-ant-${{env.VERSION}}-release.zip.asc
+          asset_name: dependency-check-ant-${{env.VERSION}}-release.zip.asc
+          asset_content_type: text/plain
