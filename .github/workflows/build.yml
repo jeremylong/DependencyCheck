@@ -147,15 +147,11 @@ jobs:
         run: mvn -s settings.xml package -DskipTests=true --no-transfer-progress --batch-mode
       - name: Test Docker Image
         run: ./test-docker.sh
-      - name: Get version
-        id: get-version
-        run: |
-          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-      - name: Login to Docker Hub
-        #if: startswith(github.ref, 'refs/tags/v')
+      - name: Deploy Docker Image
+        if: startswith(github.ref, 'refs/tags/v')
         run: |
           echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin 2>/dev/null
+          ./publish-docker.sh
         
   release:
     name: Publish Release
