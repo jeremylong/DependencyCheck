@@ -123,6 +123,12 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
     steps:
+      - name: Check Maven Cache
+        id: maven-cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository/
+          key: mvn-repo
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Download release build
@@ -132,11 +138,13 @@ jobs:
       - name: Build Docker Image
         run: ./build-docker.sh
       - name: build scan target
-        run: mvn -s settings.xml package -DskipTests=true
+        run: mvn -s settings.xml package -DskipTests=true --no-transfer-progress --batch-mode
       - name: Test Docker Image
         run: ./test-docker.sh
       - name: login dockerhub
-        run: docker login -u $DOCKER_USERNAME -p $DOCKER_TOKEN
+        #if: startswith(github.ref, 'refs/tags/v')
+        run: |
+          echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
         
   release:
     name: Publish Release
