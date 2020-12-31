@@ -2,6 +2,14 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 6.0.4](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.0.4) (2020-12-31)
+
+### Changes
+
+- Minor bug fixes and reduction of false positives. 
+- See the full listing of 
+  [changes](https://github.com/jeremylong/DependencyCheck/milestone/18?closed=1).
+
 ## [Version 6.0.3](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.0.3) (2020-11-03)
 
 ### Changes

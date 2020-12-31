@@ -175,8 +175,8 @@ jobs:
           release_name: Release ${{ github.ref }}
           body: |
             Changes in this Release
-            - First Change
-            - Second Change
+            - Minor bug fixes and reduction of false positives. 
+            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/18?closed=1).
           draft: false
           prerelease: false
       - name: Get version
