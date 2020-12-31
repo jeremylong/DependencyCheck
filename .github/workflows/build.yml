@@ -154,20 +154,8 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Login to Docker Hub
         #if: startswith(github.ref, 'refs/tags/v')
-        uses: actions-hub/docker/login@master
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_TOKEN }}
-      - name: Push to docker hub :latest
-        if: startswith(github.ref, 'refs/tags/v')
-        uses: actions-hub/docker@master
-        with:
-          args: push owasp/dependency-check:${{env.VERSION}}
-      - name: Push to docker hub :latest
-        if: startswith(github.ref, 'refs/tags/v')
-        uses: actions-hub/docker@master
-        with:
-          args: push owasp/dependency-check:latest
+        run: |
+          echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin 2>/dev/null
         
   release:
     name: Publish Release
