@@ -147,10 +147,27 @@ jobs:
         run: mvn -s settings.xml package -DskipTests=true --no-transfer-progress --batch-mode
       - name: Test Docker Image
         run: ./test-docker.sh
-      - name: login dockerhub
-        #if: startswith(github.ref, 'refs/tags/v')
+      - name: Get version
+        id: get-version
         run: |
-          echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
+          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Login to Docker Hub
+        #if: startswith(github.ref, 'refs/tags/v')
+        uses: actions-hub/docker/login@master
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Push to docker hub :latest
+        if: startswith(github.ref, 'refs/tags/v')
+        uses: actions-hub/docker@master
+        with:
+          args: push owasp/dependency-check:${{env.VERSION}}
+      - name: Push to docker hub :latest
+        if: startswith(github.ref, 'refs/tags/v')
+        uses: actions-hub/docker@master
+        with:
+          args: push owasp/dependency-check:latest
         
   release:
     name: Publish Release
