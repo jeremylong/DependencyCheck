@@ -129,6 +129,12 @@ jobs:
         with:
           path: ~/.m2/repository/
           key: mvn-repo
+      - name: Check Docker ODC Cache
+        id: docker-odc-cache
+        uses: actions/cache@v2
+        with:
+          path: ~/OWASP-Dependency-Check
+          key: docker-repo
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Download release build
