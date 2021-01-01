@@ -93,7 +93,7 @@ Copyright (c) 2012 - Jeremy Long
     <scm>
         <connection>scm:git:https://github.com/jeremylong/DependencyCheck.git</connection>
         <url>https://github.com/jeremylong/DependencyCheck</url>
-        <developerConnection>scm:git:git@github.com:jeremylong/DependencyCheck.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/jeremylong/DependencyCheck.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
     <issueManagement>
@@ -702,6 +702,14 @@ Copyright (c) 2012 - Jeremy Long
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+                    <arguments>-Dmaven.javadoc.skip=true -Dmaven.test.skipTests=true -Dmaven.test.skip=true</arguments>
+                </configuration>
             </plugin>
         </plugins>
     </build>
