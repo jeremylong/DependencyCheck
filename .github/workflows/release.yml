@@ -46,24 +46,16 @@ jobs:
         run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
-      - name: Get version
-        run: |
-          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-          echo "VERSION=$VERSION"
       - name: Prepare Release
         id: prepare-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mvn -s settings.xml release:prepare --no-transfer-progress --batch-mode
-      - name: Get tags
+      - name: Checkout Release Tag
         run: |
-          git tag
-      - name: Get version
-        run: |
-          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-          echo "VERSION=$VERSION"
-      - uses: actions/checkout@v2
+          VERSION=$(git tag)
+          git checkout $version
       - name: Get version
         run: |
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
