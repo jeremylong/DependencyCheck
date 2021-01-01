@@ -438,366 +438,368 @@
 <a class="jxr_linenumber" name="L430" href="#L430">430</a>             <strong class="jxr_keyword">case</strong> ImageDataDirectoryType.RESERVED:
 <a class="jxr_linenumber" name="L431" href="#L431">431</a>                 id.setReserved(b);
 <a class="jxr_linenumber" name="L432" href="#L432">432</a>                 <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="L433" href="#L433">433</a>         }
-<a class="jxr_linenumber" name="L434" href="#L434">434</a>     }
-<a class="jxr_linenumber" name="L435" href="#L435">435</a> 
-<a class="jxr_linenumber" name="L436" href="#L436">436</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> byte[] readPreambleData(<strong class="jxr_keyword">int</strong> pointer, IDataReader dr)
-<a class="jxr_linenumber" name="L437" href="#L437">437</a>             <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L438" href="#L438">438</a>         <strong class="jxr_keyword">if</strong> (pointer &gt; dr.getPosition()) {
-<a class="jxr_linenumber" name="L439" href="#L439">439</a>             byte[] pa = <strong class="jxr_keyword">new</strong> byte[pointer - dr.getPosition()];
-<a class="jxr_linenumber" name="L440" href="#L440">440</a>             dr.read(pa);
-<a class="jxr_linenumber" name="L441" href="#L441">441</a>             <strong class="jxr_keyword">boolean</strong> zeroes = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L442" href="#L442">442</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; pa.length; i++) {
-<a class="jxr_linenumber" name="L443" href="#L443">443</a>                 <strong class="jxr_keyword">if</strong> (pa[i] != 0) {
-<a class="jxr_linenumber" name="L444" href="#L444">444</a>                     zeroes = false;
-<a class="jxr_linenumber" name="L445" href="#L445">445</a>                     <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="L446" href="#L446">446</a>                 }
-<a class="jxr_linenumber" name="L447" href="#L447">447</a>             }
-<a class="jxr_linenumber" name="L448" href="#L448">448</a>             <strong class="jxr_keyword">if</strong> (!zeroes) {
-<a class="jxr_linenumber" name="L449" href="#L449">449</a>                 <strong class="jxr_keyword">return</strong> pa;
-<a class="jxr_linenumber" name="L450" href="#L450">450</a>             }
-<a class="jxr_linenumber" name="L451" href="#L451">451</a>         }
-<a class="jxr_linenumber" name="L452" href="#L452">452</a> 
-<a class="jxr_linenumber" name="L453" href="#L453">453</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L454" href="#L454">454</a>     }
-<a class="jxr_linenumber" name="L455" href="#L455">455</a> 
-<a class="jxr_linenumber" name="L456" href="#L456">456</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> readDebugRawData(PE pe, DataEntry entry, IDataReader dr)
-<a class="jxr_linenumber" name="L457" href="#L457">457</a>             <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L458" href="#L458">458</a>         <em class="jxr_comment">// Read any preamble data</em>
-<a class="jxr_linenumber" name="L459" href="#L459">459</a>         ImageData id = pe.getImageData();
-<a class="jxr_linenumber" name="L460" href="#L460">460</a>         byte[] pa = readPreambleData(entry.pointer, dr);
-<a class="jxr_linenumber" name="L461" href="#L461">461</a>         <strong class="jxr_keyword">if</strong> (pa != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L462" href="#L462">462</a>             id.setDebugRawDataPreamble(pa);
-<a class="jxr_linenumber" name="L463" href="#L463">463</a>         }
-<a class="jxr_linenumber" name="L464" href="#L464">464</a>         DebugDirectory dd = id.getDebug();
-<a class="jxr_linenumber" name="L465" href="#L465">465</a>         byte[] b = <strong class="jxr_keyword">new</strong> byte[dd.getSizeOfData()];
-<a class="jxr_linenumber" name="L466" href="#L466">466</a>         dr.read(b);
-<a class="jxr_linenumber" name="L467" href="#L467">467</a>         id.setDebugRawData(b);
-<a class="jxr_linenumber" name="L468" href="#L468">468</a>     }
-<a class="jxr_linenumber" name="L469" href="#L469">469</a> 
-<a class="jxr_linenumber" name="L470" href="#L470">470</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> readSection(PE pe, DataEntry entry, IDataReader dr)
-<a class="jxr_linenumber" name="L471" href="#L471">471</a>             <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L472" href="#L472">472</a>         SectionTable st = pe.getSectionTable();
-<a class="jxr_linenumber" name="L473" href="#L473">473</a>         SectionHeader sh = st.getHeader(entry.index);
-<a class="jxr_linenumber" name="L474" href="#L474">474</a>         SectionData sd = <strong class="jxr_keyword">new</strong> SectionData();
-<a class="jxr_linenumber" name="L475" href="#L475">475</a> 
-<a class="jxr_linenumber" name="L476" href="#L476">476</a>         <em class="jxr_comment">// Read any preamble - store if non-zero</em>
-<a class="jxr_linenumber" name="L477" href="#L477">477</a>         byte[] pa = readPreambleData(sh.getPointerToRawData(), dr);
-<a class="jxr_linenumber" name="L478" href="#L478">478</a>         <strong class="jxr_keyword">if</strong> (pa != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L479" href="#L479">479</a>             sd.setPreamble(pa);
-<a class="jxr_linenumber" name="L480" href="#L480">480</a>         }
-<a class="jxr_linenumber" name="L481" href="#L481">481</a> 
-<a class="jxr_linenumber" name="L482" href="#L482">482</a>         <em class="jxr_comment">// Read in the raw data block</em>
-<a class="jxr_linenumber" name="L483" href="#L483">483</a>         dr.jumpTo(sh.getPointerToRawData());
-<a class="jxr_linenumber" name="L484" href="#L484">484</a>         byte[] b = <strong class="jxr_keyword">new</strong> byte[sh.getSizeOfRawData()];
-<a class="jxr_linenumber" name="L485" href="#L485">485</a>         dr.read(b);
-<a class="jxr_linenumber" name="L486" href="#L486">486</a>         sd.setData(b);
-<a class="jxr_linenumber" name="L487" href="#L487">487</a>         st.put(entry.index, sd);
-<a class="jxr_linenumber" name="L488" href="#L488">488</a> 
-<a class="jxr_linenumber" name="L489" href="#L489">489</a>         <em class="jxr_comment">// Check for an image directory within this section</em>
-<a class="jxr_linenumber" name="L490" href="#L490">490</a>         <strong class="jxr_keyword">int</strong> ddc = pe.getOptionalHeader().getDataDirectoryCount();
-<a class="jxr_linenumber" name="L491" href="#L491">491</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; ddc; i++) {
-<a class="jxr_linenumber" name="L492" href="#L492">492</a>             <strong class="jxr_keyword">if</strong> (i == ImageDataDirectoryType.CERTIFICATE_TABLE) {
-<a class="jxr_linenumber" name="L493" href="#L493">493</a>                 <strong class="jxr_keyword">continue</strong>;
-<a class="jxr_linenumber" name="L494" href="#L494">494</a>             }
-<a class="jxr_linenumber" name="L495" href="#L495">495</a>             ImageDataDirectory idd = pe.getOptionalHeader().getDataDirectory(i);
-<a class="jxr_linenumber" name="L496" href="#L496">496</a>             <strong class="jxr_keyword">if</strong> (idd.getSize() &gt; 0) {
-<a class="jxr_linenumber" name="L497" href="#L497">497</a>                 <strong class="jxr_keyword">int</strong> vad = sh.getVirtualAddress();
-<a class="jxr_linenumber" name="L498" href="#L498">498</a>                 <strong class="jxr_keyword">int</strong> vex = vad + sh.getVirtualSize();
-<a class="jxr_linenumber" name="L499" href="#L499">499</a>                 <strong class="jxr_keyword">int</strong> dad = idd.getVirtualAddress();
-<a class="jxr_linenumber" name="L500" href="#L500">500</a>                 <strong class="jxr_keyword">if</strong> (dad &gt;= vad &amp;&amp; dad &lt; vex) {
-<a class="jxr_linenumber" name="L501" href="#L501">501</a>                     <strong class="jxr_keyword">int</strong> off = dad - vad;
-<a class="jxr_linenumber" name="L502" href="#L502">502</a>                     IDataReader idr = <strong class="jxr_keyword">new</strong> ByteArrayDataReader(b, off,
-<a class="jxr_linenumber" name="L503" href="#L503">503</a>                             idd.getSize());
-<a class="jxr_linenumber" name="L504" href="#L504">504</a>                     DataEntry de = <strong class="jxr_keyword">new</strong> DataEntry(i, 0);
-<a class="jxr_linenumber" name="L505" href="#L505">505</a>                     de.baseAddress = sh.getVirtualAddress();
-<a class="jxr_linenumber" name="L506" href="#L506">506</a>                     readImageData(pe, de, idr);
-<a class="jxr_linenumber" name="L507" href="#L507">507</a>                 }
-<a class="jxr_linenumber" name="L508" href="#L508">508</a>             }
-<a class="jxr_linenumber" name="L509" href="#L509">509</a>         }
-<a class="jxr_linenumber" name="L510" href="#L510">510</a>     }
-<a class="jxr_linenumber" name="L511" href="#L511">511</a> 
-<a class="jxr_linenumber" name="L512" href="#L512">512</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> BoundImportDirectoryTable readBoundImportDirectoryTable(
-<a class="jxr_linenumber" name="L513" href="#L513">513</a>             byte[] b) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L514" href="#L514">514</a>         DataReader dr = <strong class="jxr_keyword">new</strong> DataReader(b);
-<a class="jxr_linenumber" name="L515" href="#L515">515</a>         BoundImportDirectoryTable bidt = <strong class="jxr_keyword">new</strong> BoundImportDirectoryTable();
-<a class="jxr_linenumber" name="L516" href="#L516">516</a>         List&lt;BoundImport&gt; imports = <strong class="jxr_keyword">new</strong> ArrayList&lt;BoundImport&gt;();
-<a class="jxr_linenumber" name="L517" href="#L517">517</a>         BoundImport bi = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L518" href="#L518">518</a>         <strong class="jxr_keyword">while</strong> ((bi = readBoundImport(dr)) != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L519" href="#L519">519</a>             bidt.add(bi);
-<a class="jxr_linenumber" name="L520" href="#L520">520</a>             imports.add(bi);
-<a class="jxr_linenumber" name="L521" href="#L521">521</a>         }
-<a class="jxr_linenumber" name="L522" href="#L522">522</a>         Collections.sort(imports, <strong class="jxr_keyword">new</strong> Comparator&lt;BoundImport&gt;() {
-<a class="jxr_linenumber" name="L523" href="#L523">523</a>             @Override
-<a class="jxr_linenumber" name="L524" href="#L524">524</a>             <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> compare(BoundImport o1, BoundImport o2) {
-<a class="jxr_linenumber" name="L525" href="#L525">525</a>                 <strong class="jxr_keyword">return</strong> o1.getOffsetToModuleName() - o2.getOffsetToModuleName();
-<a class="jxr_linenumber" name="L526" href="#L526">526</a>             }
-<a class="jxr_linenumber" name="L527" href="#L527">527</a>         });
-<a class="jxr_linenumber" name="L528" href="#L528">528</a>         IntMap names = <strong class="jxr_keyword">new</strong> IntMap();
-<a class="jxr_linenumber" name="L529" href="#L529">529</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; imports.size(); i++) {
-<a class="jxr_linenumber" name="L530" href="#L530">530</a>             bi = imports.get(i);
-<a class="jxr_linenumber" name="L531" href="#L531">531</a>             <strong class="jxr_keyword">int</strong> offset = bi.getOffsetToModuleName();
-<a class="jxr_linenumber" name="L532" href="#L532">532</a>             String n = (String) names.get(offset);
-<a class="jxr_linenumber" name="L533" href="#L533">533</a>             <strong class="jxr_keyword">if</strong> (n == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L534" href="#L534">534</a>                 dr.jumpTo(offset);
-<a class="jxr_linenumber" name="L535" href="#L535">535</a>                 n = dr.readUtf();
-<a class="jxr_linenumber" name="L536" href="#L536">536</a>                 names.put(offset, n);
-<a class="jxr_linenumber" name="L537" href="#L537">537</a>             }
-<a class="jxr_linenumber" name="L538" href="#L538">538</a>             bi.setModuleName(n);
-<a class="jxr_linenumber" name="L539" href="#L539">539</a>         }
-<a class="jxr_linenumber" name="L540" href="#L540">540</a>         <strong class="jxr_keyword">return</strong> bidt;
-<a class="jxr_linenumber" name="L541" href="#L541">541</a>     }
-<a class="jxr_linenumber" name="L542" href="#L542">542</a> 
-<a class="jxr_linenumber" name="L543" href="#L543">543</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> BoundImport readBoundImport(IDataReader dr)
-<a class="jxr_linenumber" name="L544" href="#L544">544</a>             <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L545" href="#L545">545</a>         BoundImport bi = <strong class="jxr_keyword">new</strong> BoundImport();
-<a class="jxr_linenumber" name="L546" href="#L546">546</a>         bi.setTimestamp(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L547" href="#L547">547</a>         bi.setOffsetToModuleName(dr.readWord());
-<a class="jxr_linenumber" name="L548" href="#L548">548</a>         bi.setNumberOfModuleForwarderRefs(dr.readWord());
-<a class="jxr_linenumber" name="L549" href="#L549">549</a> 
-<a class="jxr_linenumber" name="L550" href="#L550">550</a>         <strong class="jxr_keyword">if</strong> (bi.getTimestamp() == 0 &amp;&amp; bi.getOffsetToModuleName() == 0
-<a class="jxr_linenumber" name="L551" href="#L551">551</a>                 &amp;&amp; bi.getNumberOfModuleForwarderRefs() == 0) {
-<a class="jxr_linenumber" name="L552" href="#L552">552</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L553" href="#L553">553</a>         }
-<a class="jxr_linenumber" name="L554" href="#L554">554</a> 
-<a class="jxr_linenumber" name="L555" href="#L555">555</a>         <strong class="jxr_keyword">return</strong> bi;
-<a class="jxr_linenumber" name="L556" href="#L556">556</a>     }
-<a class="jxr_linenumber" name="L557" href="#L557">557</a> 
-<a class="jxr_linenumber" name="L558" href="#L558">558</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> ImportDirectory readImportDirectory(byte[] b, <strong class="jxr_keyword">int</strong> baseAddress)
-<a class="jxr_linenumber" name="L559" href="#L559">559</a>             <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L560" href="#L560">560</a>         DataReader dr = <strong class="jxr_keyword">new</strong> DataReader(b);
-<a class="jxr_linenumber" name="L561" href="#L561">561</a>         ImportDirectory id = <strong class="jxr_keyword">new</strong> ImportDirectory();
-<a class="jxr_linenumber" name="L562" href="#L562">562</a>         ImportDirectoryEntry ide = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L563" href="#L563">563</a>         <strong class="jxr_keyword">while</strong> ((ide = readImportDirectoryEntry(dr)) != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L564" href="#L564">564</a>             id.add(ide);
-<a class="jxr_linenumber" name="L565" href="#L565">565</a>         }
-<a class="jxr_linenumber" name="L566" href="#L566">566</a> 
-<a class="jxr_linenumber" name="L567" href="#L567">567</a>         <em class="jxr_comment">/*</em>
-<a class="jxr_linenumber" name="L568" href="#L568">568</a> <em class="jxr_comment">		 * FIXME - name table refer to data outside image directory for (int i =</em>
-<a class="jxr_linenumber" name="L569" href="#L569">569</a> <em class="jxr_comment">		 * 0; i &lt; id.size(); i++) { ImportDirectoryEntry e = id.getEntry(i);</em>
-<a class="jxr_linenumber" name="L570" href="#L570">570</a> <em class="jxr_comment">		 * dr.jumpTo(e.getNameRVA() - baseAddress); String name = dr.readUtf();</em>
-<a class="jxr_linenumber" name="L571" href="#L571">571</a> <em class="jxr_comment">		 * dr.jumpTo(e.getImportLookupTableRVA() - baseAddress);</em>
-<a class="jxr_linenumber" name="L572" href="#L572">572</a> <em class="jxr_comment">		 * ImportDirectoryTable nt = readImportDirectoryTable(dr, baseAddress);</em>
-<a class="jxr_linenumber" name="L573" href="#L573">573</a> <em class="jxr_comment">		 * dr.jumpTo(e.getImportAddressTableRVA() - baseAddress);</em>
-<a class="jxr_linenumber" name="L574" href="#L574">574</a> <em class="jxr_comment">		 * ImportDirectoryTable at = null; // readImportDirectoryTable(dr, //</em>
-<a class="jxr_linenumber" name="L575" href="#L575">575</a> <em class="jxr_comment">		 * baseAddress); id.add(name, nt, at); }</em>
-<a class="jxr_linenumber" name="L576" href="#L576">576</a> <em class="jxr_comment">         */</em>
-<a class="jxr_linenumber" name="L577" href="#L577">577</a>         <strong class="jxr_keyword">return</strong> id;
-<a class="jxr_linenumber" name="L578" href="#L578">578</a>     }
-<a class="jxr_linenumber" name="L579" href="#L579">579</a> 
-<a class="jxr_linenumber" name="L580" href="#L580">580</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> ImportDirectoryEntry readImportDirectoryEntry(IDataReader dr)
-<a class="jxr_linenumber" name="L581" href="#L581">581</a>             <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L582" href="#L582">582</a>         ImportDirectoryEntry id = <strong class="jxr_keyword">new</strong> ImportDirectoryEntry();
-<a class="jxr_linenumber" name="L583" href="#L583">583</a>         id.setImportLookupTableRVA(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L584" href="#L584">584</a>         id.setTimeDateStamp(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L585" href="#L585">585</a>         id.setForwarderChain(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L586" href="#L586">586</a>         id.setNameRVA(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L587" href="#L587">587</a>         id.setImportAddressTableRVA(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L588" href="#L588">588</a> 
-<a class="jxr_linenumber" name="L589" href="#L589">589</a>         <em class="jxr_comment">// The last entry is null</em>
-<a class="jxr_linenumber" name="L590" href="#L590">590</a>         <strong class="jxr_keyword">if</strong> (id.getImportLookupTableRVA() == 0) {
-<a class="jxr_linenumber" name="L591" href="#L591">591</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L592" href="#L592">592</a>         }
-<a class="jxr_linenumber" name="L593" href="#L593">593</a> 
-<a class="jxr_linenumber" name="L594" href="#L594">594</a>         <strong class="jxr_keyword">return</strong> id;
-<a class="jxr_linenumber" name="L595" href="#L595">595</a>     }
-<a class="jxr_linenumber" name="L596" href="#L596">596</a> 
-<a class="jxr_linenumber" name="L597" href="#L597">597</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> ImportDirectoryTable readImportDirectoryTable(IDataReader dr,
-<a class="jxr_linenumber" name="L598" href="#L598">598</a>             <strong class="jxr_keyword">int</strong> baseAddress) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L599" href="#L599">599</a>         ImportDirectoryTable idt = <strong class="jxr_keyword">new</strong> ImportDirectoryTable();
-<a class="jxr_linenumber" name="L600" href="#L600">600</a>         ImportEntry ie = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L601" href="#L601">601</a>         <strong class="jxr_keyword">while</strong> ((ie = readImportEntry(dr)) != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L602" href="#L602">602</a>             idt.add(ie);
-<a class="jxr_linenumber" name="L603" href="#L603">603</a>         }
-<a class="jxr_linenumber" name="L604" href="#L604">604</a> 
-<a class="jxr_linenumber" name="L605" href="#L605">605</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; idt.size(); i++) {
-<a class="jxr_linenumber" name="L606" href="#L606">606</a>             ImportEntry iee = idt.getEntry(i);
-<a class="jxr_linenumber" name="L607" href="#L607">607</a>             <strong class="jxr_keyword">if</strong> ((iee.getVal() &amp; 0x80000000) != 0) {
-<a class="jxr_linenumber" name="L608" href="#L608">608</a>                 iee.setOrdinal(iee.getVal() &amp; 0x7fffffff);
-<a class="jxr_linenumber" name="L609" href="#L609">609</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L610" href="#L610">610</a>                 dr.jumpTo(iee.getVal() - baseAddress);
-<a class="jxr_linenumber" name="L611" href="#L611">611</a>                 dr.readWord(); <em class="jxr_comment">// FIXME this is an index into the export table</em>
-<a class="jxr_linenumber" name="L612" href="#L612">612</a>                 iee.setName(dr.readUtf());
-<a class="jxr_linenumber" name="L613" href="#L613">613</a>             }
-<a class="jxr_linenumber" name="L614" href="#L614">614</a>         }
-<a class="jxr_linenumber" name="L615" href="#L615">615</a>         <strong class="jxr_keyword">return</strong> idt;
-<a class="jxr_linenumber" name="L616" href="#L616">616</a>     }
-<a class="jxr_linenumber" name="L617" href="#L617">617</a> 
-<a class="jxr_linenumber" name="L618" href="#L618">618</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> ImportEntry readImportEntry(IDataReader dr)
-<a class="jxr_linenumber" name="L619" href="#L619">619</a>             <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L620" href="#L620">620</a>         ImportEntry ie = <strong class="jxr_keyword">new</strong> ImportEntry();
-<a class="jxr_linenumber" name="L621" href="#L621">621</a>         ie.setVal(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L622" href="#L622">622</a>         <strong class="jxr_keyword">if</strong> (ie.getVal() == 0) {
-<a class="jxr_linenumber" name="L623" href="#L623">623</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L624" href="#L624">624</a>         }
-<a class="jxr_linenumber" name="L625" href="#L625">625</a> 
-<a class="jxr_linenumber" name="L626" href="#L626">626</a>         <strong class="jxr_keyword">return</strong> ie;
-<a class="jxr_linenumber" name="L627" href="#L627">627</a>     }
-<a class="jxr_linenumber" name="L628" href="#L628">628</a> 
-<a class="jxr_linenumber" name="L629" href="#L629">629</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> ExportDirectory readExportDirectory(byte[] b)
-<a class="jxr_linenumber" name="L630" href="#L630">630</a>             <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L631" href="#L631">631</a>         DataReader dr = <strong class="jxr_keyword">new</strong> DataReader(b);
-<a class="jxr_linenumber" name="L632" href="#L632">632</a>         ExportDirectory edt = <strong class="jxr_keyword">new</strong> ExportDirectory();
-<a class="jxr_linenumber" name="L633" href="#L633">633</a>         edt.set(b);
-<a class="jxr_linenumber" name="L634" href="#L634">634</a>         edt.setExportFlags(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L635" href="#L635">635</a>         edt.setTimeDateStamp(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L636" href="#L636">636</a>         edt.setMajorVersion(dr.readWord());
-<a class="jxr_linenumber" name="L637" href="#L637">637</a>         edt.setMinorVersion(dr.readWord());
-<a class="jxr_linenumber" name="L638" href="#L638">638</a>         edt.setNameRVA(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L639" href="#L639">639</a>         edt.setOrdinalBase(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L640" href="#L640">640</a>         edt.setAddressTableEntries(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L641" href="#L641">641</a>         edt.setNumberOfNamePointers(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L642" href="#L642">642</a>         edt.setExportAddressTableRVA(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L643" href="#L643">643</a>         edt.setNamePointerRVA(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L644" href="#L644">644</a>         edt.setOrdinalTableRVA(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L645" href="#L645">645</a>         <strong class="jxr_keyword">return</strong> edt;
-<a class="jxr_linenumber" name="L646" href="#L646">646</a>     }
-<a class="jxr_linenumber" name="L647" href="#L647">647</a> 
-<a class="jxr_linenumber" name="L648" href="#L648">648</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> LoadConfigDirectory readLoadConfigDirectory(PE pe, byte[] b)
-<a class="jxr_linenumber" name="L649" href="#L649">649</a>             <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L650" href="#L650">650</a>         DataReader dr = <strong class="jxr_keyword">new</strong> DataReader(b);
-<a class="jxr_linenumber" name="L651" href="#L651">651</a>         LoadConfigDirectory lcd = <strong class="jxr_keyword">new</strong> LoadConfigDirectory();
-<a class="jxr_linenumber" name="L652" href="#L652">652</a>         lcd.set(b);
-<a class="jxr_linenumber" name="L653" href="#L653">653</a>         lcd.setSize(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L654" href="#L654">654</a>         lcd.setTimeDateStamp(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L655" href="#L655">655</a>         lcd.setMajorVersion(dr.readWord());
-<a class="jxr_linenumber" name="L656" href="#L656">656</a>         lcd.setMinorVersion(dr.readWord());
-<a class="jxr_linenumber" name="L657" href="#L657">657</a>         lcd.setGlobalFlagsClear(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L658" href="#L658">658</a>         lcd.setGlobalFlagsSet(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L659" href="#L659">659</a>         lcd.setCriticalSectionDefaultTimeout(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L660" href="#L660">660</a>         lcd.setDeCommitFreeBlockThreshold(pe.is64() ? dr.readLong() : dr.readDoubleWord());
-<a class="jxr_linenumber" name="L661" href="#L661">661</a>         lcd.setDeCommitTotalFreeThreshold(pe.is64() ? dr.readLong() : dr.readDoubleWord());
-<a class="jxr_linenumber" name="L662" href="#L662">662</a>         lcd.setLockPrefixTable(pe.is64() ? dr.readLong() : dr.readDoubleWord());
-<a class="jxr_linenumber" name="L663" href="#L663">663</a>         lcd.setMaximumAllocationSize(pe.is64() ? dr.readLong() : dr.readDoubleWord());
-<a class="jxr_linenumber" name="L664" href="#L664">664</a>         lcd.setVirtualMemoryThreshold(pe.is64() ? dr.readLong() : dr.readDoubleWord());
-<a class="jxr_linenumber" name="L665" href="#L665">665</a>         lcd.setProcessAffinityMask(pe.is64() ? dr.readLong() : dr.readDoubleWord());
-<a class="jxr_linenumber" name="L666" href="#L666">666</a>         lcd.setProcessHeapFlags(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L667" href="#L667">667</a>         lcd.setCsdVersion(dr.readWord());
-<a class="jxr_linenumber" name="L668" href="#L668">668</a>         lcd.setReserved(dr.readWord());
-<a class="jxr_linenumber" name="L669" href="#L669">669</a>         lcd.setEditList(pe.is64() ? dr.readLong() : dr.readDoubleWord());
-<a class="jxr_linenumber" name="L670" href="#L670">670</a>         <strong class="jxr_keyword">if</strong> (dr.hasMore()) <em class="jxr_comment">// optional</em>
-<a class="jxr_linenumber" name="L671" href="#L671">671</a>         {
-<a class="jxr_linenumber" name="L672" href="#L672">672</a>             lcd.setSecurityCookie(pe.is64() ? dr.readLong() : dr.readDoubleWord());
-<a class="jxr_linenumber" name="L673" href="#L673">673</a>         }
-<a class="jxr_linenumber" name="L674" href="#L674">674</a>         <strong class="jxr_keyword">if</strong> (dr.hasMore()) <em class="jxr_comment">// optional</em>
-<a class="jxr_linenumber" name="L675" href="#L675">675</a>         {
-<a class="jxr_linenumber" name="L676" href="#L676">676</a>             lcd.setSeHandlerTable(pe.is64() ? dr.readLong() : dr.readDoubleWord());
-<a class="jxr_linenumber" name="L677" href="#L677">677</a>         }
-<a class="jxr_linenumber" name="L678" href="#L678">678</a>         <strong class="jxr_keyword">if</strong> (dr.hasMore()) <em class="jxr_comment">// optional</em>
-<a class="jxr_linenumber" name="L679" href="#L679">679</a>         {
-<a class="jxr_linenumber" name="L680" href="#L680">680</a>             lcd.setSeHandlerCount(pe.is64() ? dr.readLong() : dr.readDoubleWord());
-<a class="jxr_linenumber" name="L681" href="#L681">681</a>         }
-<a class="jxr_linenumber" name="L682" href="#L682">682</a> 
-<a class="jxr_linenumber" name="L683" href="#L683">683</a>         <strong class="jxr_keyword">return</strong> lcd;
-<a class="jxr_linenumber" name="L684" href="#L684">684</a>     }
-<a class="jxr_linenumber" name="L685" href="#L685">685</a> 
-<a class="jxr_linenumber" name="L686" href="#L686">686</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> DebugDirectory readDebugDirectory(byte[] b)
-<a class="jxr_linenumber" name="L687" href="#L687">687</a>             <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L688" href="#L688">688</a>         <strong class="jxr_keyword">return</strong> readDebugDirectory(b, <strong class="jxr_keyword">new</strong> DataReader(b));
-<a class="jxr_linenumber" name="L689" href="#L689">689</a>     }
-<a class="jxr_linenumber" name="L690" href="#L690">690</a> 
-<a class="jxr_linenumber" name="L691" href="#L691">691</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> DebugDirectory readDebugDirectory(byte[] b, IDataReader dr)
-<a class="jxr_linenumber" name="L692" href="#L692">692</a>             <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L693" href="#L693">693</a>         DebugDirectory dd = <strong class="jxr_keyword">new</strong> DebugDirectory();
-<a class="jxr_linenumber" name="L694" href="#L694">694</a>         dd.set(b);
-<a class="jxr_linenumber" name="L695" href="#L695">695</a>         dd.setCharacteristics(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L696" href="#L696">696</a>         dd.setTimeDateStamp(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L697" href="#L697">697</a>         dd.setMajorVersion(dr.readWord());
-<a class="jxr_linenumber" name="L698" href="#L698">698</a>         dd.setMajorVersion(dr.readWord());
-<a class="jxr_linenumber" name="L699" href="#L699">699</a>         dd.setType(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L700" href="#L700">700</a>         dd.setSizeOfData(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L701" href="#L701">701</a>         dd.setAddressOfRawData(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L702" href="#L702">702</a>         dd.setPointerToRawData(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L703" href="#L703">703</a>         <strong class="jxr_keyword">return</strong> dd;
-<a class="jxr_linenumber" name="L704" href="#L704">704</a>     }
-<a class="jxr_linenumber" name="L705" href="#L705">705</a> 
-<a class="jxr_linenumber" name="L706" href="#L706">706</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> ResourceDirectory readResourceDirectory(byte[] b,
-<a class="jxr_linenumber" name="L707" href="#L707">707</a>             <strong class="jxr_keyword">int</strong> baseAddress) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L708" href="#L708">708</a>         IDataReader dr = <strong class="jxr_keyword">new</strong> ByteArrayDataReader(b);
-<a class="jxr_linenumber" name="L709" href="#L709">709</a>         <strong class="jxr_keyword">return</strong> readResourceDirectory(dr, baseAddress);
-<a class="jxr_linenumber" name="L710" href="#L710">710</a>     }
-<a class="jxr_linenumber" name="L711" href="#L711">711</a> 
-<a class="jxr_linenumber" name="L712" href="#L712">712</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> ResourceDirectory readResourceDirectory(IDataReader dr,
-<a class="jxr_linenumber" name="L713" href="#L713">713</a>             <strong class="jxr_keyword">int</strong> baseAddress) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L714" href="#L714">714</a>         ResourceDirectory d = <strong class="jxr_keyword">new</strong> ResourceDirectory();
-<a class="jxr_linenumber" name="L715" href="#L715">715</a>         d.setTable(readResourceDirectoryTable(dr));
-<a class="jxr_linenumber" name="L716" href="#L716">716</a>         <strong class="jxr_keyword">int</strong> ne = d.getTable().getNumNameEntries()
-<a class="jxr_linenumber" name="L717" href="#L717">717</a>                 + d.getTable().getNumIdEntries();
-<a class="jxr_linenumber" name="L718" href="#L718">718</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; ne; i++) {
-<a class="jxr_linenumber" name="L719" href="#L719">719</a>             d.add(readResourceEntry(dr, baseAddress));
-<a class="jxr_linenumber" name="L720" href="#L720">720</a>         }
-<a class="jxr_linenumber" name="L721" href="#L721">721</a> 
-<a class="jxr_linenumber" name="L722" href="#L722">722</a>         <strong class="jxr_keyword">return</strong> d;
-<a class="jxr_linenumber" name="L723" href="#L723">723</a>     }
-<a class="jxr_linenumber" name="L724" href="#L724">724</a> 
-<a class="jxr_linenumber" name="L725" href="#L725">725</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> ResourceEntry readResourceEntry(IDataReader dr,
-<a class="jxr_linenumber" name="L726" href="#L726">726</a>             <strong class="jxr_keyword">int</strong> baseAddress) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L727" href="#L727">727</a>         ResourceEntry re = <strong class="jxr_keyword">new</strong> ResourceEntry();
-<a class="jxr_linenumber" name="L728" href="#L728">728</a>         <strong class="jxr_keyword">int</strong> id = dr.readDoubleWord();
-<a class="jxr_linenumber" name="L729" href="#L729">729</a>         <strong class="jxr_keyword">int</strong> offset = dr.readDoubleWord();
-<a class="jxr_linenumber" name="L730" href="#L730">730</a>         re.setOffset(offset);
-<a class="jxr_linenumber" name="L731" href="#L731">731</a>         <strong class="jxr_keyword">int</strong> pos = dr.getPosition();
-<a class="jxr_linenumber" name="L732" href="#L732">732</a>         <strong class="jxr_keyword">if</strong> ((id &amp; 0x80000000) != 0) {
-<a class="jxr_linenumber" name="L733" href="#L733">733</a>             dr.jumpTo(id &amp; 0x7fffffff);
-<a class="jxr_linenumber" name="L734" href="#L734">734</a>             re.setName(dr.readUnicode(dr.readWord()));
-<a class="jxr_linenumber" name="L735" href="#L735">735</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L736" href="#L736">736</a>             re.setId(id);
-<a class="jxr_linenumber" name="L737" href="#L737">737</a>         }
-<a class="jxr_linenumber" name="L738" href="#L738">738</a>         <strong class="jxr_keyword">if</strong> ((offset &amp; 0x80000000) != 0) {
-<a class="jxr_linenumber" name="L739" href="#L739">739</a>             dr.jumpTo(offset &amp; 0x7fffffff);
-<a class="jxr_linenumber" name="L740" href="#L740">740</a>             re.setDirectory(readResourceDirectory(dr, baseAddress));
-<a class="jxr_linenumber" name="L741" href="#L741">741</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L742" href="#L742">742</a>             dr.jumpTo(offset);
-<a class="jxr_linenumber" name="L743" href="#L743">743</a>             <strong class="jxr_keyword">int</strong> rva = dr.readDoubleWord();
-<a class="jxr_linenumber" name="L744" href="#L744">744</a>             <strong class="jxr_keyword">int</strong> size = dr.readDoubleWord();
-<a class="jxr_linenumber" name="L745" href="#L745">745</a>             <strong class="jxr_keyword">int</strong> cp = dr.readDoubleWord();
-<a class="jxr_linenumber" name="L746" href="#L746">746</a>             <strong class="jxr_keyword">int</strong> res = dr.readDoubleWord();
-<a class="jxr_linenumber" name="L747" href="#L747">747</a>             re.setDataRVA(rva);
-<a class="jxr_linenumber" name="L748" href="#L748">748</a>             re.setCodePage(cp);
-<a class="jxr_linenumber" name="L749" href="#L749">749</a>             re.setReserved(res);
-<a class="jxr_linenumber" name="L750" href="#L750">750</a>             dr.jumpTo(rva - baseAddress);
-<a class="jxr_linenumber" name="L751" href="#L751">751</a>             byte[] b = <strong class="jxr_keyword">new</strong> byte[size];
-<a class="jxr_linenumber" name="L752" href="#L752">752</a>             dr.read(b);
-<a class="jxr_linenumber" name="L753" href="#L753">753</a>             re.setData(b);
-<a class="jxr_linenumber" name="L754" href="#L754">754</a>         }
-<a class="jxr_linenumber" name="L755" href="#L755">755</a>         dr.jumpTo(pos);
-<a class="jxr_linenumber" name="L756" href="#L756">756</a>         <strong class="jxr_keyword">return</strong> re;
-<a class="jxr_linenumber" name="L757" href="#L757">757</a>     }
-<a class="jxr_linenumber" name="L758" href="#L758">758</a> 
-<a class="jxr_linenumber" name="L759" href="#L759">759</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> ResourceDirectoryTable readResourceDirectoryTable(
-<a class="jxr_linenumber" name="L760" href="#L760">760</a>             IDataReader dr) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L761" href="#L761">761</a>         ResourceDirectoryTable t = <strong class="jxr_keyword">new</strong> ResourceDirectoryTable();
-<a class="jxr_linenumber" name="L762" href="#L762">762</a>         t.setCharacteristics(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L763" href="#L763">763</a>         t.setTimeDateStamp(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L764" href="#L764">764</a>         t.setMajorVersion(dr.readWord());
-<a class="jxr_linenumber" name="L765" href="#L765">765</a>         t.setMinVersion(dr.readWord());
-<a class="jxr_linenumber" name="L766" href="#L766">766</a>         t.setNumNameEntries(dr.readWord());
-<a class="jxr_linenumber" name="L767" href="#L767">767</a>         t.setNumIdEntries(dr.readWord());
-<a class="jxr_linenumber" name="L768" href="#L768">768</a> 
-<a class="jxr_linenumber" name="L769" href="#L769">769</a>         <strong class="jxr_keyword">return</strong> t;
-<a class="jxr_linenumber" name="L770" href="#L770">770</a>     }
-<a class="jxr_linenumber" name="L771" href="#L771">771</a> 
-<a class="jxr_linenumber" name="L772" href="#L772">772</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> AttributeCertificateTable readAttributeCertificateTable(byte[] b)
-<a class="jxr_linenumber" name="L773" href="#L773">773</a>             <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L774" href="#L774">774</a>         <strong class="jxr_keyword">return</strong> readAttributeCertificateTable(b, <strong class="jxr_keyword">new</strong> DataReader(b));
-<a class="jxr_linenumber" name="L775" href="#L775">775</a>     }
-<a class="jxr_linenumber" name="L776" href="#L776">776</a> 
-<a class="jxr_linenumber" name="L777" href="#L777">777</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> AttributeCertificateTable readAttributeCertificateTable(byte[] b, IDataReader dr)
-<a class="jxr_linenumber" name="L778" href="#L778">778</a>             <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L779" href="#L779">779</a>         AttributeCertificateTable dd = <strong class="jxr_keyword">new</strong> AttributeCertificateTable();
-<a class="jxr_linenumber" name="L780" href="#L780">780</a>         dd.set(b);
-<a class="jxr_linenumber" name="L781" href="#L781">781</a>         dd.setLength(dr.readDoubleWord());
-<a class="jxr_linenumber" name="L782" href="#L782">782</a>         dd.setRevision(dr.readWord());
-<a class="jxr_linenumber" name="L783" href="#L783">783</a>         dd.setCertificateType(dr.readWord());
-<a class="jxr_linenumber" name="L784" href="#L784">784</a>         byte[] certificate = <strong class="jxr_keyword">new</strong> byte[dd.getLength() - 8];
-<a class="jxr_linenumber" name="L785" href="#L785">785</a>         dr.read(certificate);
-<a class="jxr_linenumber" name="L786" href="#L786">786</a>         dd.setCertificate(certificate);
-<a class="jxr_linenumber" name="L787" href="#L787">787</a>         <strong class="jxr_keyword">return</strong> dd;
-<a class="jxr_linenumber" name="L788" href="#L788">788</a>     }
-<a class="jxr_linenumber" name="L789" href="#L789">789</a> 
-<a class="jxr_linenumber" name="L790" href="#L790">790</a> }
+<a class="jxr_linenumber" name="L433" href="#L433">433</a>             <strong class="jxr_keyword">default</strong>:
+<a class="jxr_linenumber" name="L434" href="#L434">434</a>                 <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="L435" href="#L435">435</a>         }
+<a class="jxr_linenumber" name="L436" href="#L436">436</a>     }
+<a class="jxr_linenumber" name="L437" href="#L437">437</a> 
+<a class="jxr_linenumber" name="L438" href="#L438">438</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> byte[] readPreambleData(<strong class="jxr_keyword">int</strong> pointer, IDataReader dr)
+<a class="jxr_linenumber" name="L439" href="#L439">439</a>             <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L440" href="#L440">440</a>         <strong class="jxr_keyword">if</strong> (pointer &gt; dr.getPosition()) {
+<a class="jxr_linenumber" name="L441" href="#L441">441</a>             byte[] pa = <strong class="jxr_keyword">new</strong> byte[pointer - dr.getPosition()];
+<a class="jxr_linenumber" name="L442" href="#L442">442</a>             dr.read(pa);
+<a class="jxr_linenumber" name="L443" href="#L443">443</a>             <strong class="jxr_keyword">boolean</strong> zeroes = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L444" href="#L444">444</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; pa.length; i++) {
+<a class="jxr_linenumber" name="L445" href="#L445">445</a>                 <strong class="jxr_keyword">if</strong> (pa[i] != 0) {
+<a class="jxr_linenumber" name="L446" href="#L446">446</a>                     zeroes = false;
+<a class="jxr_linenumber" name="L447" href="#L447">447</a>                     <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="L448" href="#L448">448</a>                 }
+<a class="jxr_linenumber" name="L449" href="#L449">449</a>             }
+<a class="jxr_linenumber" name="L450" href="#L450">450</a>             <strong class="jxr_keyword">if</strong> (!zeroes) {
+<a class="jxr_linenumber" name="L451" href="#L451">451</a>                 <strong class="jxr_keyword">return</strong> pa;
+<a class="jxr_linenumber" name="L452" href="#L452">452</a>             }
+<a class="jxr_linenumber" name="L453" href="#L453">453</a>         }
+<a class="jxr_linenumber" name="L454" href="#L454">454</a> 
+<a class="jxr_linenumber" name="L455" href="#L455">455</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L456" href="#L456">456</a>     }
+<a class="jxr_linenumber" name="L457" href="#L457">457</a> 
+<a class="jxr_linenumber" name="L458" href="#L458">458</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> readDebugRawData(PE pe, DataEntry entry, IDataReader dr)
+<a class="jxr_linenumber" name="L459" href="#L459">459</a>             <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L460" href="#L460">460</a>         <em class="jxr_comment">// Read any preamble data</em>
+<a class="jxr_linenumber" name="L461" href="#L461">461</a>         ImageData id = pe.getImageData();
+<a class="jxr_linenumber" name="L462" href="#L462">462</a>         byte[] pa = readPreambleData(entry.pointer, dr);
+<a class="jxr_linenumber" name="L463" href="#L463">463</a>         <strong class="jxr_keyword">if</strong> (pa != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L464" href="#L464">464</a>             id.setDebugRawDataPreamble(pa);
+<a class="jxr_linenumber" name="L465" href="#L465">465</a>         }
+<a class="jxr_linenumber" name="L466" href="#L466">466</a>         DebugDirectory dd = id.getDebug();
+<a class="jxr_linenumber" name="L467" href="#L467">467</a>         byte[] b = <strong class="jxr_keyword">new</strong> byte[dd.getSizeOfData()];
+<a class="jxr_linenumber" name="L468" href="#L468">468</a>         dr.read(b);
+<a class="jxr_linenumber" name="L469" href="#L469">469</a>         id.setDebugRawData(b);
+<a class="jxr_linenumber" name="L470" href="#L470">470</a>     }
+<a class="jxr_linenumber" name="L471" href="#L471">471</a> 
+<a class="jxr_linenumber" name="L472" href="#L472">472</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> readSection(PE pe, DataEntry entry, IDataReader dr)
+<a class="jxr_linenumber" name="L473" href="#L473">473</a>             <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L474" href="#L474">474</a>         SectionTable st = pe.getSectionTable();
+<a class="jxr_linenumber" name="L475" href="#L475">475</a>         SectionHeader sh = st.getHeader(entry.index);
+<a class="jxr_linenumber" name="L476" href="#L476">476</a>         SectionData sd = <strong class="jxr_keyword">new</strong> SectionData();
+<a class="jxr_linenumber" name="L477" href="#L477">477</a> 
+<a class="jxr_linenumber" name="L478" href="#L478">478</a>         <em class="jxr_comment">// Read any preamble - store if non-zero</em>
+<a class="jxr_linenumber" name="L479" href="#L479">479</a>         byte[] pa = readPreambleData(sh.getPointerToRawData(), dr);
+<a class="jxr_linenumber" name="L480" href="#L480">480</a>         <strong class="jxr_keyword">if</strong> (pa != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L481" href="#L481">481</a>             sd.setPreamble(pa);
+<a class="jxr_linenumber" name="L482" href="#L482">482</a>         }
+<a class="jxr_linenumber" name="L483" href="#L483">483</a> 
+<a class="jxr_linenumber" name="L484" href="#L484">484</a>         <em class="jxr_comment">// Read in the raw data block</em>
+<a class="jxr_linenumber" name="L485" href="#L485">485</a>         dr.jumpTo(sh.getPointerToRawData());
+<a class="jxr_linenumber" name="L486" href="#L486">486</a>         byte[] b = <strong class="jxr_keyword">new</strong> byte[sh.getSizeOfRawData()];
+<a class="jxr_linenumber" name="L487" href="#L487">487</a>         dr.read(b);
+<a class="jxr_linenumber" name="L488" href="#L488">488</a>         sd.setData(b);
+<a class="jxr_linenumber" name="L489" href="#L489">489</a>         st.put(entry.index, sd);
+<a class="jxr_linenumber" name="L490" href="#L490">490</a> 
+<a class="jxr_linenumber" name="L491" href="#L491">491</a>         <em class="jxr_comment">// Check for an image directory within this section</em>
+<a class="jxr_linenumber" name="L492" href="#L492">492</a>         <strong class="jxr_keyword">int</strong> ddc = pe.getOptionalHeader().getDataDirectoryCount();
+<a class="jxr_linenumber" name="L493" href="#L493">493</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; ddc; i++) {
+<a class="jxr_linenumber" name="L494" href="#L494">494</a>             <strong class="jxr_keyword">if</strong> (i == ImageDataDirectoryType.CERTIFICATE_TABLE) {
+<a class="jxr_linenumber" name="L495" href="#L495">495</a>                 <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="L496" href="#L496">496</a>             }
+<a class="jxr_linenumber" name="L497" href="#L497">497</a>             ImageDataDirectory idd = pe.getOptionalHeader().getDataDirectory(i);
+<a class="jxr_linenumber" name="L498" href="#L498">498</a>             <strong class="jxr_keyword">if</strong> (idd.getSize() &gt; 0) {
+<a class="jxr_linenumber" name="L499" href="#L499">499</a>                 <strong class="jxr_keyword">int</strong> vad = sh.getVirtualAddress();
+<a class="jxr_linenumber" name="L500" href="#L500">500</a>                 <strong class="jxr_keyword">int</strong> vex = vad + sh.getVirtualSize();
+<a class="jxr_linenumber" name="L501" href="#L501">501</a>                 <strong class="jxr_keyword">int</strong> dad = idd.getVirtualAddress();
+<a class="jxr_linenumber" name="L502" href="#L502">502</a>                 <strong class="jxr_keyword">if</strong> (dad &gt;= vad &amp;&amp; dad &lt; vex) {
+<a class="jxr_linenumber" name="L503" href="#L503">503</a>                     <strong class="jxr_keyword">int</strong> off = dad - vad;
+<a class="jxr_linenumber" name="L504" href="#L504">504</a>                     IDataReader idr = <strong class="jxr_keyword">new</strong> ByteArrayDataReader(b, off,
+<a class="jxr_linenumber" name="L505" href="#L505">505</a>                             idd.getSize());
+<a class="jxr_linenumber" name="L506" href="#L506">506</a>                     DataEntry de = <strong class="jxr_keyword">new</strong> DataEntry(i, 0);
+<a class="jxr_linenumber" name="L507" href="#L507">507</a>                     de.baseAddress = sh.getVirtualAddress();
+<a class="jxr_linenumber" name="L508" href="#L508">508</a>                     readImageData(pe, de, idr);
+<a class="jxr_linenumber" name="L509" href="#L509">509</a>                 }
+<a class="jxr_linenumber" name="L510" href="#L510">510</a>             }
+<a class="jxr_linenumber" name="L511" href="#L511">511</a>         }
+<a class="jxr_linenumber" name="L512" href="#L512">512</a>     }
+<a class="jxr_linenumber" name="L513" href="#L513">513</a> 
+<a class="jxr_linenumber" name="L514" href="#L514">514</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> BoundImportDirectoryTable readBoundImportDirectoryTable(
+<a class="jxr_linenumber" name="L515" href="#L515">515</a>             byte[] b) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L516" href="#L516">516</a>         DataReader dr = <strong class="jxr_keyword">new</strong> DataReader(b);
+<a class="jxr_linenumber" name="L517" href="#L517">517</a>         BoundImportDirectoryTable bidt = <strong class="jxr_keyword">new</strong> BoundImportDirectoryTable();
+<a class="jxr_linenumber" name="L518" href="#L518">518</a>         List&lt;BoundImport&gt; imports = <strong class="jxr_keyword">new</strong> ArrayList&lt;BoundImport&gt;();
+<a class="jxr_linenumber" name="L519" href="#L519">519</a>         BoundImport bi = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L520" href="#L520">520</a>         <strong class="jxr_keyword">while</strong> ((bi = readBoundImport(dr)) != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L521" href="#L521">521</a>             bidt.add(bi);
+<a class="jxr_linenumber" name="L522" href="#L522">522</a>             imports.add(bi);
+<a class="jxr_linenumber" name="L523" href="#L523">523</a>         }
+<a class="jxr_linenumber" name="L524" href="#L524">524</a>         Collections.sort(imports, <strong class="jxr_keyword">new</strong> Comparator&lt;BoundImport&gt;() {
+<a class="jxr_linenumber" name="L525" href="#L525">525</a>             @Override
+<a class="jxr_linenumber" name="L526" href="#L526">526</a>             <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> compare(BoundImport o1, BoundImport o2) {
+<a class="jxr_linenumber" name="L527" href="#L527">527</a>                 <strong class="jxr_keyword">return</strong> o1.getOffsetToModuleName() - o2.getOffsetToModuleName();
+<a class="jxr_linenumber" name="L528" href="#L528">528</a>             }
+<a class="jxr_linenumber" name="L529" href="#L529">529</a>         });
+<a class="jxr_linenumber" name="L530" href="#L530">530</a>         IntMap names = <strong class="jxr_keyword">new</strong> IntMap();
+<a class="jxr_linenumber" name="L531" href="#L531">531</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; imports.size(); i++) {
+<a class="jxr_linenumber" name="L532" href="#L532">532</a>             bi = imports.get(i);
+<a class="jxr_linenumber" name="L533" href="#L533">533</a>             <strong class="jxr_keyword">int</strong> offset = bi.getOffsetToModuleName();
+<a class="jxr_linenumber" name="L534" href="#L534">534</a>             String n = (String) names.get(offset);
+<a class="jxr_linenumber" name="L535" href="#L535">535</a>             <strong class="jxr_keyword">if</strong> (n == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L536" href="#L536">536</a>                 dr.jumpTo(offset);
+<a class="jxr_linenumber" name="L537" href="#L537">537</a>                 n = dr.readUtf();
+<a class="jxr_linenumber" name="L538" href="#L538">538</a>                 names.put(offset, n);
+<a class="jxr_linenumber" name="L539" href="#L539">539</a>             }
+<a class="jxr_linenumber" name="L540" href="#L540">540</a>             bi.setModuleName(n);
+<a class="jxr_linenumber" name="L541" href="#L541">541</a>         }
+<a class="jxr_linenumber" name="L542" href="#L542">542</a>         <strong class="jxr_keyword">return</strong> bidt;
+<a class="jxr_linenumber" name="L543" href="#L543">543</a>     }
+<a class="jxr_linenumber" name="L544" href="#L544">544</a> 
+<a class="jxr_linenumber" name="L545" href="#L545">545</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> BoundImport readBoundImport(IDataReader dr)
+<a class="jxr_linenumber" name="L546" href="#L546">546</a>             <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L547" href="#L547">547</a>         BoundImport bi = <strong class="jxr_keyword">new</strong> BoundImport();
+<a class="jxr_linenumber" name="L548" href="#L548">548</a>         bi.setTimestamp(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L549" href="#L549">549</a>         bi.setOffsetToModuleName(dr.readWord());
+<a class="jxr_linenumber" name="L550" href="#L550">550</a>         bi.setNumberOfModuleForwarderRefs(dr.readWord());
+<a class="jxr_linenumber" name="L551" href="#L551">551</a> 
+<a class="jxr_linenumber" name="L552" href="#L552">552</a>         <strong class="jxr_keyword">if</strong> (bi.getTimestamp() == 0 &amp;&amp; bi.getOffsetToModuleName() == 0
+<a class="jxr_linenumber" name="L553" href="#L553">553</a>                 &amp;&amp; bi.getNumberOfModuleForwarderRefs() == 0) {
+<a class="jxr_linenumber" name="L554" href="#L554">554</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L555" href="#L555">555</a>         }
+<a class="jxr_linenumber" name="L556" href="#L556">556</a> 
+<a class="jxr_linenumber" name="L557" href="#L557">557</a>         <strong class="jxr_keyword">return</strong> bi;
+<a class="jxr_linenumber" name="L558" href="#L558">558</a>     }
+<a class="jxr_linenumber" name="L559" href="#L559">559</a> 
+<a class="jxr_linenumber" name="L560" href="#L560">560</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> ImportDirectory readImportDirectory(byte[] b, <strong class="jxr_keyword">int</strong> baseAddress)
+<a class="jxr_linenumber" name="L561" href="#L561">561</a>             <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L562" href="#L562">562</a>         DataReader dr = <strong class="jxr_keyword">new</strong> DataReader(b);
+<a class="jxr_linenumber" name="L563" href="#L563">563</a>         ImportDirectory id = <strong class="jxr_keyword">new</strong> ImportDirectory();
+<a class="jxr_linenumber" name="L564" href="#L564">564</a>         ImportDirectoryEntry ide = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L565" href="#L565">565</a>         <strong class="jxr_keyword">while</strong> ((ide = readImportDirectoryEntry(dr)) != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L566" href="#L566">566</a>             id.add(ide);
+<a class="jxr_linenumber" name="L567" href="#L567">567</a>         }
+<a class="jxr_linenumber" name="L568" href="#L568">568</a> 
+<a class="jxr_linenumber" name="L569" href="#L569">569</a>         <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="L570" href="#L570">570</a> <em class="jxr_comment">		 * FIXME - name table refer to data outside image directory for (int i =</em>
+<a class="jxr_linenumber" name="L571" href="#L571">571</a> <em class="jxr_comment">		 * 0; i &lt; id.size(); i++) { ImportDirectoryEntry e = id.getEntry(i);</em>
+<a class="jxr_linenumber" name="L572" href="#L572">572</a> <em class="jxr_comment">		 * dr.jumpTo(e.getNameRVA() - baseAddress); String name = dr.readUtf();</em>
+<a class="jxr_linenumber" name="L573" href="#L573">573</a> <em class="jxr_comment">		 * dr.jumpTo(e.getImportLookupTableRVA() - baseAddress);</em>
+<a class="jxr_linenumber" name="L574" href="#L574">574</a> <em class="jxr_comment">		 * ImportDirectoryTable nt = readImportDirectoryTable(dr, baseAddress);</em>
+<a class="jxr_linenumber" name="L575" href="#L575">575</a> <em class="jxr_comment">		 * dr.jumpTo(e.getImportAddressTableRVA() - baseAddress);</em>
+<a class="jxr_linenumber" name="L576" href="#L576">576</a> <em class="jxr_comment">		 * ImportDirectoryTable at = null; // readImportDirectoryTable(dr, //</em>
+<a class="jxr_linenumber" name="L577" href="#L577">577</a> <em class="jxr_comment">		 * baseAddress); id.add(name, nt, at); }</em>
+<a class="jxr_linenumber" name="L578" href="#L578">578</a> <em class="jxr_comment">         */</em>
+<a class="jxr_linenumber" name="L579" href="#L579">579</a>         <strong class="jxr_keyword">return</strong> id;
+<a class="jxr_linenumber" name="L580" href="#L580">580</a>     }
+<a class="jxr_linenumber" name="L581" href="#L581">581</a> 
+<a class="jxr_linenumber" name="L582" href="#L582">582</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> ImportDirectoryEntry readImportDirectoryEntry(IDataReader dr)
+<a class="jxr_linenumber" name="L583" href="#L583">583</a>             <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L584" href="#L584">584</a>         ImportDirectoryEntry id = <strong class="jxr_keyword">new</strong> ImportDirectoryEntry();
+<a class="jxr_linenumber" name="L585" href="#L585">585</a>         id.setImportLookupTableRVA(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L586" href="#L586">586</a>         id.setTimeDateStamp(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L587" href="#L587">587</a>         id.setForwarderChain(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L588" href="#L588">588</a>         id.setNameRVA(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L589" href="#L589">589</a>         id.setImportAddressTableRVA(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L590" href="#L590">590</a> 
+<a class="jxr_linenumber" name="L591" href="#L591">591</a>         <em class="jxr_comment">// The last entry is null</em>
+<a class="jxr_linenumber" name="L592" href="#L592">592</a>         <strong class="jxr_keyword">if</strong> (id.getImportLookupTableRVA() == 0) {
+<a class="jxr_linenumber" name="L593" href="#L593">593</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L594" href="#L594">594</a>         }
+<a class="jxr_linenumber" name="L595" href="#L595">595</a> 
+<a class="jxr_linenumber" name="L596" href="#L596">596</a>         <strong class="jxr_keyword">return</strong> id;
+<a class="jxr_linenumber" name="L597" href="#L597">597</a>     }
+<a class="jxr_linenumber" name="L598" href="#L598">598</a> 
+<a class="jxr_linenumber" name="L599" href="#L599">599</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> ImportDirectoryTable readImportDirectoryTable(IDataReader dr,
+<a class="jxr_linenumber" name="L600" href="#L600">600</a>             <strong class="jxr_keyword">int</strong> baseAddress) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L601" href="#L601">601</a>         ImportDirectoryTable idt = <strong class="jxr_keyword">new</strong> ImportDirectoryTable();
+<a class="jxr_linenumber" name="L602" href="#L602">602</a>         ImportEntry ie = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L603" href="#L603">603</a>         <strong class="jxr_keyword">while</strong> ((ie = readImportEntry(dr)) != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L604" href="#L604">604</a>             idt.add(ie);
+<a class="jxr_linenumber" name="L605" href="#L605">605</a>         }
+<a class="jxr_linenumber" name="L606" href="#L606">606</a> 
+<a class="jxr_linenumber" name="L607" href="#L607">607</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; idt.size(); i++) {
+<a class="jxr_linenumber" name="L608" href="#L608">608</a>             ImportEntry iee = idt.getEntry(i);
+<a class="jxr_linenumber" name="L609" href="#L609">609</a>             <strong class="jxr_keyword">if</strong> ((iee.getVal() &amp; 0x80000000) != 0) {
+<a class="jxr_linenumber" name="L610" href="#L610">610</a>                 iee.setOrdinal(iee.getVal() &amp; 0x7fffffff);
+<a class="jxr_linenumber" name="L611" href="#L611">611</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L612" href="#L612">612</a>                 dr.jumpTo(iee.getVal() - baseAddress);
+<a class="jxr_linenumber" name="L613" href="#L613">613</a>                 dr.readWord(); <em class="jxr_comment">// FIXME this is an index into the export table</em>
+<a class="jxr_linenumber" name="L614" href="#L614">614</a>                 iee.setName(dr.readUtf());
+<a class="jxr_linenumber" name="L615" href="#L615">615</a>             }
+<a class="jxr_linenumber" name="L616" href="#L616">616</a>         }
+<a class="jxr_linenumber" name="L617" href="#L617">617</a>         <strong class="jxr_keyword">return</strong> idt;
+<a class="jxr_linenumber" name="L618" href="#L618">618</a>     }
+<a class="jxr_linenumber" name="L619" href="#L619">619</a> 
+<a class="jxr_linenumber" name="L620" href="#L620">620</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> ImportEntry readImportEntry(IDataReader dr)
+<a class="jxr_linenumber" name="L621" href="#L621">621</a>             <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L622" href="#L622">622</a>         ImportEntry ie = <strong class="jxr_keyword">new</strong> ImportEntry();
+<a class="jxr_linenumber" name="L623" href="#L623">623</a>         ie.setVal(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L624" href="#L624">624</a>         <strong class="jxr_keyword">if</strong> (ie.getVal() == 0) {
+<a class="jxr_linenumber" name="L625" href="#L625">625</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L626" href="#L626">626</a>         }
+<a class="jxr_linenumber" name="L627" href="#L627">627</a> 
+<a class="jxr_linenumber" name="L628" href="#L628">628</a>         <strong class="jxr_keyword">return</strong> ie;
+<a class="jxr_linenumber" name="L629" href="#L629">629</a>     }
+<a class="jxr_linenumber" name="L630" href="#L630">630</a> 
+<a class="jxr_linenumber" name="L631" href="#L631">631</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> ExportDirectory readExportDirectory(byte[] b)
+<a class="jxr_linenumber" name="L632" href="#L632">632</a>             <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L633" href="#L633">633</a>         DataReader dr = <strong class="jxr_keyword">new</strong> DataReader(b);
+<a class="jxr_linenumber" name="L634" href="#L634">634</a>         ExportDirectory edt = <strong class="jxr_keyword">new</strong> ExportDirectory();
+<a class="jxr_linenumber" name="L635" href="#L635">635</a>         edt.set(b);
+<a class="jxr_linenumber" name="L636" href="#L636">636</a>         edt.setExportFlags(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L637" href="#L637">637</a>         edt.setTimeDateStamp(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L638" href="#L638">638</a>         edt.setMajorVersion(dr.readWord());
+<a class="jxr_linenumber" name="L639" href="#L639">639</a>         edt.setMinorVersion(dr.readWord());
+<a class="jxr_linenumber" name="L640" href="#L640">640</a>         edt.setNameRVA(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L641" href="#L641">641</a>         edt.setOrdinalBase(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L642" href="#L642">642</a>         edt.setAddressTableEntries(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L643" href="#L643">643</a>         edt.setNumberOfNamePointers(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L644" href="#L644">644</a>         edt.setExportAddressTableRVA(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L645" href="#L645">645</a>         edt.setNamePointerRVA(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L646" href="#L646">646</a>         edt.setOrdinalTableRVA(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L647" href="#L647">647</a>         <strong class="jxr_keyword">return</strong> edt;
+<a class="jxr_linenumber" name="L648" href="#L648">648</a>     }
+<a class="jxr_linenumber" name="L649" href="#L649">649</a> 
+<a class="jxr_linenumber" name="L650" href="#L650">650</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> LoadConfigDirectory readLoadConfigDirectory(PE pe, byte[] b)
+<a class="jxr_linenumber" name="L651" href="#L651">651</a>             <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L652" href="#L652">652</a>         DataReader dr = <strong class="jxr_keyword">new</strong> DataReader(b);
+<a class="jxr_linenumber" name="L653" href="#L653">653</a>         LoadConfigDirectory lcd = <strong class="jxr_keyword">new</strong> LoadConfigDirectory();
+<a class="jxr_linenumber" name="L654" href="#L654">654</a>         lcd.set(b);
+<a class="jxr_linenumber" name="L655" href="#L655">655</a>         lcd.setSize(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L656" href="#L656">656</a>         lcd.setTimeDateStamp(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L657" href="#L657">657</a>         lcd.setMajorVersion(dr.readWord());
+<a class="jxr_linenumber" name="L658" href="#L658">658</a>         lcd.setMinorVersion(dr.readWord());
+<a class="jxr_linenumber" name="L659" href="#L659">659</a>         lcd.setGlobalFlagsClear(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L660" href="#L660">660</a>         lcd.setGlobalFlagsSet(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L661" href="#L661">661</a>         lcd.setCriticalSectionDefaultTimeout(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L662" href="#L662">662</a>         lcd.setDeCommitFreeBlockThreshold(pe.is64() ? dr.readLong() : dr.readDoubleWord());
+<a class="jxr_linenumber" name="L663" href="#L663">663</a>         lcd.setDeCommitTotalFreeThreshold(pe.is64() ? dr.readLong() : dr.readDoubleWord());
+<a class="jxr_linenumber" name="L664" href="#L664">664</a>         lcd.setLockPrefixTable(pe.is64() ? dr.readLong() : dr.readDoubleWord());
+<a class="jxr_linenumber" name="L665" href="#L665">665</a>         lcd.setMaximumAllocationSize(pe.is64() ? dr.readLong() : dr.readDoubleWord());
+<a class="jxr_linenumber" name="L666" href="#L666">666</a>         lcd.setVirtualMemoryThreshold(pe.is64() ? dr.readLong() : dr.readDoubleWord());
+<a class="jxr_linenumber" name="L667" href="#L667">667</a>         lcd.setProcessAffinityMask(pe.is64() ? dr.readLong() : dr.readDoubleWord());
+<a class="jxr_linenumber" name="L668" href="#L668">668</a>         lcd.setProcessHeapFlags(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L669" href="#L669">669</a>         lcd.setCsdVersion(dr.readWord());
+<a class="jxr_linenumber" name="L670" href="#L670">670</a>         lcd.setReserved(dr.readWord());
+<a class="jxr_linenumber" name="L671" href="#L671">671</a>         lcd.setEditList(pe.is64() ? dr.readLong() : dr.readDoubleWord());
+<a class="jxr_linenumber" name="L672" href="#L672">672</a>         <strong class="jxr_keyword">if</strong> (dr.hasMore()) <em class="jxr_comment">// optional</em>
+<a class="jxr_linenumber" name="L673" href="#L673">673</a>         {
+<a class="jxr_linenumber" name="L674" href="#L674">674</a>             lcd.setSecurityCookie(pe.is64() ? dr.readLong() : dr.readDoubleWord());
+<a class="jxr_linenumber" name="L675" href="#L675">675</a>         }
+<a class="jxr_linenumber" name="L676" href="#L676">676</a>         <strong class="jxr_keyword">if</strong> (dr.hasMore()) <em class="jxr_comment">// optional</em>
+<a class="jxr_linenumber" name="L677" href="#L677">677</a>         {
+<a class="jxr_linenumber" name="L678" href="#L678">678</a>             lcd.setSeHandlerTable(pe.is64() ? dr.readLong() : dr.readDoubleWord());
+<a class="jxr_linenumber" name="L679" href="#L679">679</a>         }
+<a class="jxr_linenumber" name="L680" href="#L680">680</a>         <strong class="jxr_keyword">if</strong> (dr.hasMore()) <em class="jxr_comment">// optional</em>
+<a class="jxr_linenumber" name="L681" href="#L681">681</a>         {
+<a class="jxr_linenumber" name="L682" href="#L682">682</a>             lcd.setSeHandlerCount(pe.is64() ? dr.readLong() : dr.readDoubleWord());
+<a class="jxr_linenumber" name="L683" href="#L683">683</a>         }
+<a class="jxr_linenumber" name="L684" href="#L684">684</a> 
+<a class="jxr_linenumber" name="L685" href="#L685">685</a>         <strong class="jxr_keyword">return</strong> lcd;
+<a class="jxr_linenumber" name="L686" href="#L686">686</a>     }
+<a class="jxr_linenumber" name="L687" href="#L687">687</a> 
+<a class="jxr_linenumber" name="L688" href="#L688">688</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> DebugDirectory readDebugDirectory(byte[] b)
+<a class="jxr_linenumber" name="L689" href="#L689">689</a>             <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L690" href="#L690">690</a>         <strong class="jxr_keyword">return</strong> readDebugDirectory(b, <strong class="jxr_keyword">new</strong> DataReader(b));
+<a class="jxr_linenumber" name="L691" href="#L691">691</a>     }
+<a class="jxr_linenumber" name="L692" href="#L692">692</a> 
+<a class="jxr_linenumber" name="L693" href="#L693">693</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> DebugDirectory readDebugDirectory(byte[] b, IDataReader dr)
+<a class="jxr_linenumber" name="L694" href="#L694">694</a>             <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L695" href="#L695">695</a>         DebugDirectory dd = <strong class="jxr_keyword">new</strong> DebugDirectory();
+<a class="jxr_linenumber" name="L696" href="#L696">696</a>         dd.set(b);
+<a class="jxr_linenumber" name="L697" href="#L697">697</a>         dd.setCharacteristics(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L698" href="#L698">698</a>         dd.setTimeDateStamp(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L699" href="#L699">699</a>         dd.setMajorVersion(dr.readWord());
+<a class="jxr_linenumber" name="L700" href="#L700">700</a>         dd.setMajorVersion(dr.readWord());
+<a class="jxr_linenumber" name="L701" href="#L701">701</a>         dd.setType(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L702" href="#L702">702</a>         dd.setSizeOfData(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L703" href="#L703">703</a>         dd.setAddressOfRawData(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L704" href="#L704">704</a>         dd.setPointerToRawData(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L705" href="#L705">705</a>         <strong class="jxr_keyword">return</strong> dd;
+<a class="jxr_linenumber" name="L706" href="#L706">706</a>     }
+<a class="jxr_linenumber" name="L707" href="#L707">707</a> 
+<a class="jxr_linenumber" name="L708" href="#L708">708</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> ResourceDirectory readResourceDirectory(byte[] b,
+<a class="jxr_linenumber" name="L709" href="#L709">709</a>             <strong class="jxr_keyword">int</strong> baseAddress) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L710" href="#L710">710</a>         IDataReader dr = <strong class="jxr_keyword">new</strong> ByteArrayDataReader(b);
+<a class="jxr_linenumber" name="L711" href="#L711">711</a>         <strong class="jxr_keyword">return</strong> readResourceDirectory(dr, baseAddress);
+<a class="jxr_linenumber" name="L712" href="#L712">712</a>     }
+<a class="jxr_linenumber" name="L713" href="#L713">713</a> 
+<a class="jxr_linenumber" name="L714" href="#L714">714</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> ResourceDirectory readResourceDirectory(IDataReader dr,
+<a class="jxr_linenumber" name="L715" href="#L715">715</a>             <strong class="jxr_keyword">int</strong> baseAddress) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L716" href="#L716">716</a>         ResourceDirectory d = <strong class="jxr_keyword">new</strong> ResourceDirectory();
+<a class="jxr_linenumber" name="L717" href="#L717">717</a>         d.setTable(readResourceDirectoryTable(dr));
+<a class="jxr_linenumber" name="L718" href="#L718">718</a>         <strong class="jxr_keyword">int</strong> ne = d.getTable().getNumNameEntries()
+<a class="jxr_linenumber" name="L719" href="#L719">719</a>                 + d.getTable().getNumIdEntries();
+<a class="jxr_linenumber" name="L720" href="#L720">720</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; ne; i++) {
+<a class="jxr_linenumber" name="L721" href="#L721">721</a>             d.add(readResourceEntry(dr, baseAddress));
+<a class="jxr_linenumber" name="L722" href="#L722">722</a>         }
+<a class="jxr_linenumber" name="L723" href="#L723">723</a> 
+<a class="jxr_linenumber" name="L724" href="#L724">724</a>         <strong class="jxr_keyword">return</strong> d;
+<a class="jxr_linenumber" name="L725" href="#L725">725</a>     }
+<a class="jxr_linenumber" name="L726" href="#L726">726</a> 
+<a class="jxr_linenumber" name="L727" href="#L727">727</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> ResourceEntry readResourceEntry(IDataReader dr,
+<a class="jxr_linenumber" name="L728" href="#L728">728</a>             <strong class="jxr_keyword">int</strong> baseAddress) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L729" href="#L729">729</a>         ResourceEntry re = <strong class="jxr_keyword">new</strong> ResourceEntry();
+<a class="jxr_linenumber" name="L730" href="#L730">730</a>         <strong class="jxr_keyword">int</strong> id = dr.readDoubleWord();
+<a class="jxr_linenumber" name="L731" href="#L731">731</a>         <strong class="jxr_keyword">int</strong> offset = dr.readDoubleWord();
+<a class="jxr_linenumber" name="L732" href="#L732">732</a>         re.setOffset(offset);
+<a class="jxr_linenumber" name="L733" href="#L733">733</a>         <strong class="jxr_keyword">int</strong> pos = dr.getPosition();
+<a class="jxr_linenumber" name="L734" href="#L734">734</a>         <strong class="jxr_keyword">if</strong> ((id &amp; 0x80000000) != 0) {
+<a class="jxr_linenumber" name="L735" href="#L735">735</a>             dr.jumpTo(id &amp; 0x7fffffff);
+<a class="jxr_linenumber" name="L736" href="#L736">736</a>             re.setName(dr.readUnicode(dr.readWord()));
+<a class="jxr_linenumber" name="L737" href="#L737">737</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L738" href="#L738">738</a>             re.setId(id);
+<a class="jxr_linenumber" name="L739" href="#L739">739</a>         }
+<a class="jxr_linenumber" name="L740" href="#L740">740</a>         <strong class="jxr_keyword">if</strong> ((offset &amp; 0x80000000) != 0) {
+<a class="jxr_linenumber" name="L741" href="#L741">741</a>             dr.jumpTo(offset &amp; 0x7fffffff);
+<a class="jxr_linenumber" name="L742" href="#L742">742</a>             re.setDirectory(readResourceDirectory(dr, baseAddress));
+<a class="jxr_linenumber" name="L743" href="#L743">743</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L744" href="#L744">744</a>             dr.jumpTo(offset);
+<a class="jxr_linenumber" name="L745" href="#L745">745</a>             <strong class="jxr_keyword">int</strong> rva = dr.readDoubleWord();
+<a class="jxr_linenumber" name="L746" href="#L746">746</a>             <strong class="jxr_keyword">int</strong> size = dr.readDoubleWord();
+<a class="jxr_linenumber" name="L747" href="#L747">747</a>             <strong class="jxr_keyword">int</strong> cp = dr.readDoubleWord();
+<a class="jxr_linenumber" name="L748" href="#L748">748</a>             <strong class="jxr_keyword">int</strong> res = dr.readDoubleWord();
+<a class="jxr_linenumber" name="L749" href="#L749">749</a>             re.setDataRVA(rva);
+<a class="jxr_linenumber" name="L750" href="#L750">750</a>             re.setCodePage(cp);
+<a class="jxr_linenumber" name="L751" href="#L751">751</a>             re.setReserved(res);
+<a class="jxr_linenumber" name="L752" href="#L752">752</a>             dr.jumpTo(rva - baseAddress);
+<a class="jxr_linenumber" name="L753" href="#L753">753</a>             byte[] b = <strong class="jxr_keyword">new</strong> byte[size];
+<a class="jxr_linenumber" name="L754" href="#L754">754</a>             dr.read(b);
+<a class="jxr_linenumber" name="L755" href="#L755">755</a>             re.setData(b);
+<a class="jxr_linenumber" name="L756" href="#L756">756</a>         }
+<a class="jxr_linenumber" name="L757" href="#L757">757</a>         dr.jumpTo(pos);
+<a class="jxr_linenumber" name="L758" href="#L758">758</a>         <strong class="jxr_keyword">return</strong> re;
+<a class="jxr_linenumber" name="L759" href="#L759">759</a>     }
+<a class="jxr_linenumber" name="L760" href="#L760">760</a> 
+<a class="jxr_linenumber" name="L761" href="#L761">761</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> ResourceDirectoryTable readResourceDirectoryTable(
+<a class="jxr_linenumber" name="L762" href="#L762">762</a>             IDataReader dr) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L763" href="#L763">763</a>         ResourceDirectoryTable t = <strong class="jxr_keyword">new</strong> ResourceDirectoryTable();
+<a class="jxr_linenumber" name="L764" href="#L764">764</a>         t.setCharacteristics(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L765" href="#L765">765</a>         t.setTimeDateStamp(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L766" href="#L766">766</a>         t.setMajorVersion(dr.readWord());
+<a class="jxr_linenumber" name="L767" href="#L767">767</a>         t.setMinVersion(dr.readWord());
+<a class="jxr_linenumber" name="L768" href="#L768">768</a>         t.setNumNameEntries(dr.readWord());
+<a class="jxr_linenumber" name="L769" href="#L769">769</a>         t.setNumIdEntries(dr.readWord());
+<a class="jxr_linenumber" name="L770" href="#L770">770</a> 
+<a class="jxr_linenumber" name="L771" href="#L771">771</a>         <strong class="jxr_keyword">return</strong> t;
+<a class="jxr_linenumber" name="L772" href="#L772">772</a>     }
+<a class="jxr_linenumber" name="L773" href="#L773">773</a> 
+<a class="jxr_linenumber" name="L774" href="#L774">774</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> AttributeCertificateTable readAttributeCertificateTable(byte[] b)
+<a class="jxr_linenumber" name="L775" href="#L775">775</a>             <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L776" href="#L776">776</a>         <strong class="jxr_keyword">return</strong> readAttributeCertificateTable(b, <strong class="jxr_keyword">new</strong> DataReader(b));
+<a class="jxr_linenumber" name="L777" href="#L777">777</a>     }
+<a class="jxr_linenumber" name="L778" href="#L778">778</a> 
+<a class="jxr_linenumber" name="L779" href="#L779">779</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> AttributeCertificateTable readAttributeCertificateTable(byte[] b, IDataReader dr)
+<a class="jxr_linenumber" name="L780" href="#L780">780</a>             <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L781" href="#L781">781</a>         AttributeCertificateTable dd = <strong class="jxr_keyword">new</strong> AttributeCertificateTable();
+<a class="jxr_linenumber" name="L782" href="#L782">782</a>         dd.set(b);
+<a class="jxr_linenumber" name="L783" href="#L783">783</a>         dd.setLength(dr.readDoubleWord());
+<a class="jxr_linenumber" name="L784" href="#L784">784</a>         dd.setRevision(dr.readWord());
+<a class="jxr_linenumber" name="L785" href="#L785">785</a>         dd.setCertificateType(dr.readWord());
+<a class="jxr_linenumber" name="L786" href="#L786">786</a>         byte[] certificate = <strong class="jxr_keyword">new</strong> byte[dd.getLength() - 8];
+<a class="jxr_linenumber" name="L787" href="#L787">787</a>         dr.read(certificate);
+<a class="jxr_linenumber" name="L788" href="#L788">788</a>         dd.setCertificate(certificate);
+<a class="jxr_linenumber" name="L789" href="#L789">789</a>         <strong class="jxr_keyword">return</strong> dd;
+<a class="jxr_linenumber" name="L790" href="#L790">790</a>     }
+<a class="jxr_linenumber" name="L791" href="#L791">791</a> 
+<a class="jxr_linenumber" name="L792" href="#L792">792</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2012&#x2013;2020 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2012&#x2013;2021 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
 </body>
 </html>

@@ -36,7 +36,7 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <em class="jxr_javadoccomment"> * @author jeremy</em>
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/owasp/dependencycheck/data/golang/GoModJsonParserTest.html">GoModJsonParserTest</a> {
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>      
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>      String issue2891 = <span class="jxr_string">"{\n"</span>
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>              + <span class="jxr_string">"	\&quot;Path\&quot;: \&quot;cloud.google.com/go\&quot;,\n"</span>
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>              + <span class="jxr_string">"	\&quot;Version\&quot;: \&quot;v0.26.0\&quot;,\n"</span>
@@ -773,21 +773,33 @@
 <a class="jxr_linenumber" name="L765" href="#L765">765</a>             + <span class="jxr_string">"	\&quot;Time\&quot;: \&quot;2019-01-02T05:43:23Z\&quot;,\n"</span>
 <a class="jxr_linenumber" name="L766" href="#L766">766</a>             + <span class="jxr_string">"	\&quot;Indirect\&quot;: true,\n"</span>
 <a class="jxr_linenumber" name="L767" href="#L767">767</a>             + <span class="jxr_string">"	\&quot;GoMod\&quot;: \&quot;/Users/me/go/pkg/mod/cache/download/honnef.co/go/tools/@v/v0.0.0-20190102054323-c2f93a96b099.mod\&quot;\n"</span>
-<a class="jxr_linenumber" name="L768" href="#L768">768</a>             + <span class="jxr_string">"}\n"</span>;
-<a class="jxr_linenumber" name="L769" href="#L769">769</a> 
-<a class="jxr_linenumber" name="L770" href="#L770">770</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L771" href="#L771">771</a> <em class="jxr_javadoccomment">     * Test of process method, of class GoModJsonParser.</em>
-<a class="jxr_linenumber" name="L772" href="#L772">772</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L773" href="#L773">773</a>     @Test
-<a class="jxr_linenumber" name="L774" href="#L774">774</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testProcess() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L775" href="#L775">775</a>         InputStream inputStream = <strong class="jxr_keyword">new</strong> ByteArrayInputStream(issue2891.getBytes());
-<a class="jxr_linenumber" name="L776" href="#L776">776</a>         List&lt;GoModDependency&gt; expResult = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L777" href="#L777">777</a>         List&lt;GoModDependency&gt; result = GoModJsonParser.process(inputStream);
-<a class="jxr_linenumber" name="L778" href="#L778">778</a>         assertEquals(95, result.size());
-<a class="jxr_linenumber" name="L779" href="#L779">779</a>     }
-<a class="jxr_linenumber" name="L780" href="#L780">780</a> }
+<a class="jxr_linenumber" name="L768" href="#L768">768</a>             + <span class="jxr_string">"}\n"</span>
+<a class="jxr_linenumber" name="L769" href="#L769">769</a>             + <span class="jxr_string">"{\n"</span>
+<a class="jxr_linenumber" name="L770" href="#L770">770</a>             + <span class="jxr_string">" \&quot;Path\&quot;: \&quot;github.com/Microsoft/hcsshim\&quot;,\n"</span>
+<a class="jxr_linenumber" name="L771" href="#L771">771</a>             + <span class="jxr_string">" \&quot;Version\&quot;: \&quot;v0.8.7\&quot;,\n"</span>
+<a class="jxr_linenumber" name="L772" href="#L772">772</a>             + <span class="jxr_string">" \&quot;Replace\&quot;: {\n"</span>
+<a class="jxr_linenumber" name="L773" href="#L773">773</a>             + <span class="jxr_string">" \&quot;Path\&quot;: \&quot;github.com/Microsoft/hcsshim\&quot;,\n"</span>
+<a class="jxr_linenumber" name="L774" href="#L774">774</a>             + <span class="jxr_string">" \&quot;Version\&quot;: \&quot;v0.8.8-0.20200421182805-c3e488f0d815\&quot;,\n"</span>
+<a class="jxr_linenumber" name="L775" href="#L775">775</a>             + <span class="jxr_string">" \&quot;Time\&quot;: \&quot;2020-04-21T18:28:05Z\&quot;,\n"</span>
+<a class="jxr_linenumber" name="L776" href="#L776">776</a>             + <span class="jxr_string">" \&quot;GoMod\&quot;: \&quot;/Users/me/go/pkg/mod/cache/download/github.com/!microsoft/hcsshim/@v/v0.8.8-0.20200421182805-c3e488f0d815.mod\&quot;\n"</span>
+<a class="jxr_linenumber" name="L777" href="#L777">777</a>             + <span class="jxr_string">"},\n"</span>
+<a class="jxr_linenumber" name="L778" href="#L778">778</a>             + <span class="jxr_string">"	\&quot;Indirect\&quot;: true,\n"</span>
+<a class="jxr_linenumber" name="L779" href="#L779">779</a>             + <span class="jxr_string">"\&quot;GoMod\&quot;: \&quot;/Users/me/go/pkg/mod/cache/download/github.com/!microsoft/hcsshim/@v/v0.8.8-0.20200421182805-c3e488f0d815.mod\&quot;\n"</span>
+<a class="jxr_linenumber" name="L780" href="#L780">780</a>             + <span class="jxr_string">"}\n"</span>;
+<a class="jxr_linenumber" name="L781" href="#L781">781</a> 
+<a class="jxr_linenumber" name="L782" href="#L782">782</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L783" href="#L783">783</a> <em class="jxr_javadoccomment">     * Test of process method, of class GoModJsonParser.</em>
+<a class="jxr_linenumber" name="L784" href="#L784">784</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L785" href="#L785">785</a>     @Test
+<a class="jxr_linenumber" name="L786" href="#L786">786</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testProcess() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L787" href="#L787">787</a>         InputStream inputStream = <strong class="jxr_keyword">new</strong> ByteArrayInputStream(issue2891.getBytes());
+<a class="jxr_linenumber" name="L788" href="#L788">788</a>         List&lt;GoModDependency&gt; expResult = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L789" href="#L789">789</a>         List&lt;GoModDependency&gt; result = GoModJsonParser.process(inputStream);
+<a class="jxr_linenumber" name="L790" href="#L790">790</a>         assertEquals(96, result.size());
+<a class="jxr_linenumber" name="L791" href="#L791">791</a>     }
+<a class="jxr_linenumber" name="L792" href="#L792">792</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2012&#x2013;2020 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2012&#x2013;2021 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
 </body>
 </html>

@@ -53,7 +53,7 @@ public class JsonArrayFixingInputStream extends InputStream {
     /**
      * The input stream to be filtered.
      */
-    protected volatile InputStream in;
+    private volatile InputStream in;
     /**
      * The read buffer.
      */
@@ -90,34 +90,33 @@ public class JsonArrayFixingInputStream extends InputStream {
     /**
      * Advances the buffer to the next block if required.
      *
-     * @param start the offset to copy the next block into
      * @return the number of characters read
      * @throws IOException thrown if there is an error reading from the stream
      */
     private boolean advanceStream() throws IOException {
-<span class="fc" id="L98">        boolean chomp = false;</span>
-<span class="fc bfc" id="L99" title="All 2 branches covered.">        if (firstRead) {</span>
-<span class="fc" id="L100">            chomp = true;</span>
-<span class="fc" id="L101">            firstRead = false;</span>
-<span class="fc" id="L102">            bufferStart = 0;</span>
-<span class="fc" id="L103">            bufferAvailable = in.read(buffer, 1, BUFFER_SIZE - 1) + 1;</span>
-<span class="fc bfc" id="L104" title="All 2 branches covered.">        } else if (bufferAvailable == 0) {</span>
-<span class="fc" id="L105">            chomp = true;</span>
-<span class="fc" id="L106">            bufferStart = 0;</span>
-<span class="fc" id="L107">            bufferAvailable = in.read(buffer, 0, BUFFER_SIZE);</span>
+<span class="fc" id="L97">        boolean chomp = false;</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        if (firstRead) {</span>
+<span class="fc" id="L99">            chomp = true;</span>
+<span class="fc" id="L100">            firstRead = false;</span>
+<span class="fc" id="L101">            bufferStart = 0;</span>
+<span class="fc" id="L102">            bufferAvailable = in.read(buffer, 1, BUFFER_SIZE - 1) + 1;</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        } else if (bufferAvailable == 0) {</span>
+<span class="fc" id="L104">            chomp = true;</span>
+<span class="fc" id="L105">            bufferStart = 0;</span>
+<span class="fc" id="L106">            bufferAvailable = in.read(buffer, 0, BUFFER_SIZE);</span>
         }
-<span class="fc bfc" id="L109" title="All 2 branches covered.">        if (chomp) {</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        if (chomp) {</span>
             //chomp new lines
-<span class="pc bpc" id="L111" title="1 of 6 branches missed.">            while (bufferAvailable &gt; 0</span>
+<span class="pc bpc" id="L110" title="1 of 6 branches missed.">            while (bufferAvailable &gt; 0</span>
                     &amp;&amp; (buffer[bufferStart + bufferAvailable - 1] == '\n'
                     || buffer[bufferStart + bufferAvailable - 1] == '\r')) {
-<span class="fc" id="L114">                bufferAvailable -= 1;</span>
+<span class="fc" id="L113">                bufferAvailable -= 1;</span>
             }
-<span class="pc bpc" id="L116" title="1 of 2 branches missed.">            if (bufferAvailable == 0) {</span>
-<span class="nc" id="L117">                return advanceStream();</span>
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">            if (bufferAvailable == 0) {</span>
+<span class="nc" id="L116">                return advanceStream();</span>
             }
         }
-<span class="fc bfc" id="L120" title="All 2 branches covered.">        return bufferAvailable &gt; 0;</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        return bufferAvailable &gt; 0;</span>
     }
 
     /**
@@ -127,12 +126,12 @@ public class JsonArrayFixingInputStream extends InputStream {
      * @return the offset if found; otherwise &lt;code&gt;-1&lt;/code&gt;
      */
     private int getClosingBraceOffset() {
-<span class="fc bfc" id="L130" title="All 4 branches covered.">        for (int pos = bufferStart; pos &lt; BUFFER_SIZE &amp;&amp; pos &lt; (bufferStart + bufferAvailable); pos++) {</span>
-<span class="fc bfc" id="L131" title="All 2 branches covered.">            if (buffer[pos] == '}') {</span>
-<span class="fc" id="L132">                return pos - bufferStart;</span>
+<span class="fc bfc" id="L129" title="All 4 branches covered.">        for (int pos = bufferStart; pos &lt; BUFFER_SIZE &amp;&amp; pos &lt; (bufferStart + bufferAvailable); pos++) {</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">            if (buffer[pos] == '}') {</span>
+<span class="fc" id="L131">                return pos - bufferStart;</span>
             }
         }
-<span class="fc" id="L135">        return -1;</span>
+<span class="fc" id="L134">        return -1;</span>
     }
 
     /**
@@ -142,86 +141,124 @@ public class JsonArrayFixingInputStream extends InputStream {
      * @throws IOException thrown if there is an error reading from the stream
      */
     private void incrementRead() throws IOException {
+        // buffer[bufferStart] is the value that was just read.
 <span class="fc bfc" id="L145" title="All 2 branches covered.">        if (buffer[bufferStart] == '}') {</span>
 <span class="fc bfc" id="L146" title="All 2 branches covered.">            if (bufferAvailable &gt; 1) {</span>
-<span class="fc" id="L147">                buffer[bufferStart] = ',';</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">                if (hasTrailingComma(bufferStart)) {</span>
+                    //increment normally
+<span class="fc" id="L149">                    bufferStart += 1;</span>
+<span class="fc" id="L150">                    bufferAvailable -= 1;</span>
+                } else {
+                    //replace '}' with ',' and don't increment counters
+<span class="fc" id="L153">                    buffer[bufferStart] = ',';</span>
+                }
             } else {
-<span class="fc" id="L149">                bufferAvailable = 0;</span>
-<span class="pc bpc" id="L150" title="2 of 4 branches missed.">                if (advanceStream() || needsTrailingBrace) {</span>
-<span class="pc bpc" id="L151" title="1 of 2 branches missed.">                    if (bufferAvailable &gt;= 1) {</span>
-<span class="nc" id="L152">                        bufferStart = 0;</span>
-<span class="nc" id="L153">                        bufferAvailable += 1;</span>
-<span class="nc" id="L154">                        buffer[bufferStart] = ',';</span>
-<span class="pc bpc" id="L155" title="1 of 2 branches missed.">                    } else if (needsTrailingBrace) {</span>
-<span class="fc" id="L156">                        needsTrailingBrace = false;</span>
-<span class="fc" id="L157">                        buffer[bufferStart] = ']';</span>
-<span class="fc" id="L158">                        bufferAvailable = 1;</span>
+<span class="fc" id="L156">                bufferAvailable = 0;</span>
+<span class="pc bpc" id="L157" title="2 of 4 branches missed.">                if (advanceStream() || needsTrailingBrace) {</span>
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">                    if (bufferAvailable &gt;= 1) {</span>
+                        //the stream was advanced - so check if buffer[0] has a comma
+<span class="nc bnc" id="L160" title="All 2 branches missed.">                        if (!hasTrailingComma(-1)) {</span>
+                            //this only works because the output always
+                            // has a \n following a closing brace...
+<span class="nc" id="L163">                            buffer[bufferStart] = ',';</span>
+                        }
+<span class="pc bpc" id="L165" title="1 of 2 branches missed.">                    } else if (needsTrailingBrace) {</span>
+<span class="fc" id="L166">                        needsTrailingBrace = false;</span>
+<span class="fc" id="L167">                        buffer[bufferStart] = ']';</span>
+<span class="fc" id="L168">                        bufferAvailable = 1;</span>
                     }
                 }
             }
         } else {
-<span class="fc" id="L163">            bufferStart += 1;</span>
-<span class="fc" id="L164">            bufferAvailable -= 1;</span>
+<span class="fc" id="L173">            bufferStart += 1;</span>
+<span class="fc" id="L174">            bufferAvailable -= 1;</span>
         }
-<span class="fc" id="L166">    }</span>
+<span class="fc" id="L176">    }</span>
 
     @Override
     public int read() throws IOException {
-<span class="fc bfc" id="L170" title="All 2 branches covered.">        if (advanceStream()) {</span>
-<span class="fc" id="L171">            int value = buffer[bufferStart];</span>
-<span class="fc" id="L172">            incrementRead();</span>
-<span class="fc" id="L173">            return value;</span>
+<span class="fc bfc" id="L180" title="All 2 branches covered.">        if (advanceStream()) {</span>
+<span class="fc" id="L181">            final int value = buffer[bufferStart];</span>
+<span class="fc" id="L182">            incrementRead();</span>
+<span class="fc" id="L183">            return value;</span>
         }
-<span class="fc" id="L175">        return -1;</span>
+<span class="fc" id="L185">        return -1;</span>
     }
 
     @Override
     public int read(byte b[]) throws IOException {
-<span class="fc" id="L180">        return this.read(b, 0, b.length);</span>
+<span class="fc" id="L190">        return this.read(b, 0, b.length);</span>
     }
 
     @Override
     public int read(byte b[], int off, int len) throws IOException {
-<span class="fc bfc" id="L185" title="All 2 branches covered.">        if (advanceStream()) {</span>
-<span class="fc" id="L186">            int brace = getClosingBraceOffset();</span>
-<span class="fc bfc" id="L187" title="All 2 branches covered.">            if (brace == 0) {</span>
-<span class="fc" id="L188">                b[off] = buffer[bufferStart];</span>
-<span class="fc" id="L189">                incrementRead();</span>
-<span class="fc" id="L190">                return 1;</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">        if (advanceStream()) {</span>
+<span class="fc" id="L196">            final int brace = getClosingBraceOffset();</span>
+<span class="fc bfc" id="L197" title="All 2 branches covered.">            if (brace == 0) {</span>
+<span class="fc" id="L198">                b[off] = buffer[bufferStart];</span>
+<span class="fc" id="L199">                incrementRead();</span>
+<span class="fc" id="L200">                return 1;</span>
             }
-<span class="pc bpc" id="L192" title="1 of 2 branches missed.">            int copyLength = bufferAvailable &gt; len ? len : bufferAvailable;</span>
-<span class="fc bfc" id="L193" title="All 2 branches covered.">            if (brace &gt; 0) {</span>
-<span class="pc bpc" id="L194" title="1 of 2 branches missed.">                copyLength = copyLength &gt; brace ? brace : copyLength;</span>
+<span class="pc bpc" id="L202" title="1 of 2 branches missed.">            int copyLength = bufferAvailable &gt; len ? len : bufferAvailable;</span>
+<span class="fc bfc" id="L203" title="All 2 branches covered.">            if (brace &gt; 0) {</span>
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">                copyLength = copyLength &gt; brace ? brace : copyLength;</span>
             }
-<span class="fc" id="L196">            int copyEnd = copyLength + off;</span>
-<span class="fc bfc" id="L197" title="All 2 branches covered.">            for (int pos = off; pos &lt; copyEnd; pos++) {</span>
-<span class="fc" id="L198">                b[pos] = buffer[bufferStart];</span>
-<span class="fc" id="L199">                bufferStart += 1;</span>
+<span class="fc" id="L206">            final int copyEnd = copyLength + off;</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">            for (int pos = off; pos &lt; copyEnd; pos++) {</span>
+<span class="fc" id="L208">                b[pos] = buffer[bufferStart];</span>
+<span class="fc" id="L209">                bufferStart += 1;</span>
             }
-<span class="fc" id="L201">            bufferAvailable -= copyLength;</span>
-<span class="fc" id="L202">            return copyLength;</span>
+<span class="fc" id="L211">            bufferAvailable -= copyLength;</span>
+<span class="fc" id="L212">            return copyLength;</span>
         }
-<span class="fc" id="L204">        return -1;</span>
+<span class="fc" id="L214">        return -1;</span>
     }
 
     @Override
     public long skip(long n) throws IOException {
-<span class="fc" id="L209">        throw new UnsupportedOperationException(&quot;Unable to skip using the JsonArrayFixingInputStream&quot;);</span>
+<span class="fc" id="L219">        throw new UnsupportedOperationException(&quot;Unable to skip using the JsonArrayFixingInputStream&quot;);</span>
     }
 
     @Override
     public int available() throws IOException {
-<span class="fc" id="L214">        return in.available() + bufferAvailable;</span>
+<span class="fc" id="L224">        return in.available() + bufferAvailable;</span>
     }
 
     @Override
     public void close() throws IOException {
-<span class="fc" id="L219">        in.close();</span>
-<span class="fc" id="L220">    }</span>
+<span class="fc" id="L229">        in.close();</span>
+<span class="fc" id="L230">    }</span>
 
     @Override
     public boolean markSupported() {
-<span class="fc" id="L224">        return false;</span>
+<span class="fc" id="L234">        return false;</span>
+    }
+
+    /**
+     * Tests if the buffer has a trailing comma after having just output a closing curly brace.
+     * @param start the position to start checking the buffer from
+     * @return &lt;code&gt;true&lt;/code&gt; if there is a trailing comma; otherwise &lt;code&gt;false&lt;/code&gt;
+     */
+    private boolean hasTrailingComma(int start) {
+<span class="pc bpc" id="L243" title="2 of 6 branches missed.">        return (bufferAvailable &gt;= 1 &amp;&amp; buffer[start + 1] == ',')</span>
+<span class="pc bpc" id="L244" title="1 of 4 branches missed.">                || bufferAvailable &gt;= 2 &amp;&amp; isWhiteSpace(buffer[start + 1]) &amp;&amp; buffer[start + 2] == ',';</span>
+    }
+
+    /**
+     * Tests if the byte passed in is a white space character.
+     * @param c the byte representing the character to test
+     * @return &lt;code&gt;true&lt;/code&gt; if the byte is white space; otherwise &lt;code&gt;false&lt;/code&gt;
+     */
+    protected boolean isWhiteSpace(byte c) {
+<span class="fc bfc" id="L253" title="All 2 branches covered.">        switch (c) {</span>
+            case '\n':
+            case '\r':
+            case '\t':
+            case ' ':
+<span class="fc" id="L258">                return true;</span>
+            default:
+<span class="fc" id="L260">                return false;</span>
+        }
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

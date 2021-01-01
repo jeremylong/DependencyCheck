@@ -301,7 +301,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
 <span class="fc" id="L301">        final List&lt;String&gt; aa = new ArrayList&lt;&gt;();</span>
 <span class="fc bfc" id="L302" title="All 2 branches covered.">        for (String preferredProtocol : preferredProtocols) {</span>
 <span class="fc" id="L303">            final int idx = Arrays.binarySearch(availableProtocols, preferredProtocol);</span>
-<span class="fc bfc" id="L304" title="All 2 branches covered.">            if (idx &gt;= 0) {</span>
+<span class="pc bpc" id="L304" title="1 of 2 branches missed.">            if (idx &gt;= 0) {</span>
 <span class="fc" id="L305">                aa.add(preferredProtocol);</span>
             }
         }

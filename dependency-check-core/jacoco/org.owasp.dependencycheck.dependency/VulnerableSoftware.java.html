@@ -255,8 +255,8 @@ public class VulnerableSoftware extends Cpe implements Serializable {
 <span class="fc" id="L255">        boolean results = false;</span>
         //10 11 14 17
 <span class="pc bpc" id="L257" title="1 of 2 branches missed.">        if (containsSpecialCharacter(left)) {</span>
-<span class="nc" id="L258">            Pattern p = Convert.wellFormedToPattern(left.toLowerCase());</span>
-<span class="nc" id="L259">            Matcher m = p.matcher(right.toLowerCase());</span>
+<span class="nc" id="L258">            final Pattern p = Convert.wellFormedToPattern(left.toLowerCase());</span>
+<span class="nc" id="L259">            final Matcher m = p.matcher(right.toLowerCase());</span>
 <span class="nc" id="L260">            results = m.matches();</span>
         }
 <span class="pc bpc" id="L262" title="2 of 6 branches missed.">        if (!results &amp;&amp; rightValue.matches(&quot;^[abu]\\d.*&quot;) &amp;&amp; leftValue.matches(&quot;^(update|alpha|beta).*&quot;)) {</span>
@@ -269,21 +269,27 @@ public class VulnerableSoftware extends Cpe implements Serializable {
 <span class="nc" id="L269">                    break;</span>
                 case 'b':
 <span class="nc" id="L271">                    results = compareUpdateAttributes(leftValue, &quot;beta&quot; + rightValue.substring(1));</span>
+<span class="nc" id="L272">                    break;</span>
+                default:
+                    break;
             }
         }
-<span class="pc bpc" id="L274" title="1 of 6 branches missed.">        if (!results &amp;&amp; leftValue.matches(&quot;^[abu]\\d.*&quot;) &amp;&amp; rightValue.matches(&quot;^(update|alpha|beta).*&quot;)) {</span>
-<span class="pc bpc" id="L275" title="1 of 4 branches missed.">            switch (left.charAt(0)) {</span>
+<span class="pc bpc" id="L277" title="1 of 6 branches missed.">        if (!results &amp;&amp; leftValue.matches(&quot;^[abu]\\d.*&quot;) &amp;&amp; rightValue.matches(&quot;^(update|alpha|beta).*&quot;)) {</span>
+<span class="pc bpc" id="L278" title="1 of 4 branches missed.">            switch (left.charAt(0)) {</span>
                 case 'u':
-<span class="fc" id="L277">                    results = compareUpdateAttributes(&quot;update&quot; + leftValue.substring(1), rightValue);</span>
-<span class="fc" id="L278">                    break;</span>
-                case 'a':
-<span class="fc" id="L280">                    results = compareUpdateAttributes(&quot;alpha&quot; + leftValue.substring(1), rightValue);</span>
+<span class="fc" id="L280">                    results = compareUpdateAttributes(&quot;update&quot; + leftValue.substring(1), rightValue);</span>
 <span class="fc" id="L281">                    break;</span>
+                case 'a':
+<span class="fc" id="L283">                    results = compareUpdateAttributes(&quot;alpha&quot; + leftValue.substring(1), rightValue);</span>
+<span class="fc" id="L284">                    break;</span>
                 case 'b':
-<span class="fc" id="L283">                    results = compareUpdateAttributes(&quot;beta&quot; + leftValue.substring(1), rightValue);</span>
+<span class="fc" id="L286">                    results = compareUpdateAttributes(&quot;beta&quot; + leftValue.substring(1), rightValue);</span>
+<span class="fc" id="L287">                    break;</span>
+                default:
+                    break;
             }
         }
-<span class="fc" id="L286">        return results;</span>
+<span class="fc" id="L292">        return results;</span>
     }
 
     /**
@@ -294,16 +300,16 @@ public class VulnerableSoftware extends Cpe implements Serializable {
      * character; otherwise &lt;code&gt;false&lt;/code&gt;
      */
     private static boolean containsSpecialCharacter(String value) {
-<span class="fc bfc" id="L297" title="All 2 branches covered.">        for (int x = 0; x &lt; value.length(); x++) {</span>
-<span class="fc" id="L298">            char c = value.charAt(x);</span>
-<span class="pc bpc" id="L299" title="2 of 4 branches missed.">            if (c == '?' || c == '*') {</span>
-<span class="nc" id="L300">                return true;</span>
-<span class="pc bpc" id="L301" title="1 of 2 branches missed.">            } else if (c == '\\') {</span>
+<span class="fc bfc" id="L303" title="All 2 branches covered.">        for (int x = 0; x &lt; value.length(); x++) {</span>
+<span class="fc" id="L304">            final char c = value.charAt(x);</span>
+<span class="pc bpc" id="L305" title="2 of 4 branches missed.">            if (c == '?' || c == '*') {</span>
+<span class="nc" id="L306">                return true;</span>
+<span class="pc bpc" id="L307" title="1 of 2 branches missed.">            } else if (c == '\\') {</span>
                 //skip the next character because it is quoted
-<span class="nc" id="L303">                x += 1;</span>
+<span class="nc" id="L309">                x += 1;</span>
             }
         }
-<span class="fc" id="L306">        return false;</span>
+<span class="fc" id="L312">        return false;</span>
     }
 
     /**
@@ -315,33 +321,33 @@ public class VulnerableSoftware extends Cpe implements Serializable {
      * &lt;code&gt;false&lt;/code&gt;
      */
     public static boolean testMatch(ICpe left, ICpe right) {
-<span class="nc" id="L318">        boolean result = true;</span>
-<span class="nc" id="L319">        result &amp;= compareAttributes(left.getPart(), right.getPart());</span>
-<span class="nc" id="L320">        result &amp;= compareAttributes(left.getWellFormedVendor(), right.getWellFormedVendor());</span>
-<span class="nc" id="L321">        result &amp;= compareAttributes(left.getWellFormedProduct(), right.getWellFormedProduct());</span>
+<span class="nc" id="L324">        boolean result = true;</span>
+<span class="nc" id="L325">        result &amp;= compareAttributes(left.getPart(), right.getPart());</span>
+<span class="nc" id="L326">        result &amp;= compareAttributes(left.getWellFormedVendor(), right.getWellFormedVendor());</span>
+<span class="nc" id="L327">        result &amp;= compareAttributes(left.getWellFormedProduct(), right.getWellFormedProduct());</span>
 
-<span class="nc bnc" id="L323" title="All 2 branches missed.">        if (right instanceof VulnerableSoftware) {</span>
-<span class="nc" id="L324">            final VulnerableSoftware vs = (VulnerableSoftware) right;</span>
-<span class="nc" id="L325">            result &amp;= vs.vulnerable;</span>
-<span class="nc" id="L326">            result &amp;= compareVersions(vs, left.getVersion());</span>
-<span class="nc bnc" id="L327" title="All 2 branches missed.">        } else if (left instanceof VulnerableSoftware) {</span>
-<span class="nc" id="L328">            final VulnerableSoftware vs = (VulnerableSoftware) left;</span>
-<span class="nc" id="L329">            result &amp;= vs.vulnerable;</span>
-<span class="nc" id="L330">            result &amp;= compareVersions(vs, right.getVersion());</span>
-<span class="nc" id="L331">        } else {</span>
-<span class="nc" id="L332">            result &amp;= compareAttributes(left.getWellFormedVersion(), right.getWellFormedVersion());</span>
+<span class="nc bnc" id="L329" title="All 2 branches missed.">        if (right instanceof VulnerableSoftware) {</span>
+<span class="nc" id="L330">            final VulnerableSoftware vs = (VulnerableSoftware) right;</span>
+<span class="nc" id="L331">            result &amp;= vs.vulnerable;</span>
+<span class="nc" id="L332">            result &amp;= compareVersions(vs, left.getVersion());</span>
+<span class="nc bnc" id="L333" title="All 2 branches missed.">        } else if (left instanceof VulnerableSoftware) {</span>
+<span class="nc" id="L334">            final VulnerableSoftware vs = (VulnerableSoftware) left;</span>
+<span class="nc" id="L335">            result &amp;= vs.vulnerable;</span>
+<span class="nc" id="L336">            result &amp;= compareVersions(vs, right.getVersion());</span>
+<span class="nc" id="L337">        } else {</span>
+<span class="nc" id="L338">            result &amp;= compareAttributes(left.getWellFormedVersion(), right.getWellFormedVersion());</span>
         }
 
         //todo - if the vulnerablity has an update we are might not be collecting it correctly...
         // as such, this check might cause FN if the CVE has an update in the data set
-<span class="nc" id="L337">        result &amp;= compareUpdateAttributes(left.getWellFormedUpdate(), right.getWellFormedUpdate());</span>
-<span class="nc" id="L338">        result &amp;= compareAttributes(left.getWellFormedEdition(), right.getWellFormedEdition());</span>
-<span class="nc" id="L339">        result &amp;= compareAttributes(left.getWellFormedLanguage(), right.getWellFormedLanguage());</span>
-<span class="nc" id="L340">        result &amp;= compareAttributes(left.getWellFormedSwEdition(), right.getWellFormedSwEdition());</span>
-<span class="nc" id="L341">        result &amp;= compareAttributes(left.getWellFormedTargetSw(), right.getWellFormedTargetSw());</span>
-<span class="nc" id="L342">        result &amp;= compareAttributes(left.getWellFormedTargetHw(), right.getWellFormedTargetHw());</span>
-<span class="nc" id="L343">        result &amp;= compareAttributes(left.getWellFormedOther(), right.getWellFormedOther());</span>
-<span class="nc" id="L344">        return result;</span>
+<span class="nc" id="L343">        result &amp;= compareUpdateAttributes(left.getWellFormedUpdate(), right.getWellFormedUpdate());</span>
+<span class="nc" id="L344">        result &amp;= compareAttributes(left.getWellFormedEdition(), right.getWellFormedEdition());</span>
+<span class="nc" id="L345">        result &amp;= compareAttributes(left.getWellFormedLanguage(), right.getWellFormedLanguage());</span>
+<span class="nc" id="L346">        result &amp;= compareAttributes(left.getWellFormedSwEdition(), right.getWellFormedSwEdition());</span>
+<span class="nc" id="L347">        result &amp;= compareAttributes(left.getWellFormedTargetSw(), right.getWellFormedTargetSw());</span>
+<span class="nc" id="L348">        result &amp;= compareAttributes(left.getWellFormedTargetHw(), right.getWellFormedTargetHw());</span>
+<span class="nc" id="L349">        result &amp;= compareAttributes(left.getWellFormedOther(), right.getWellFormedOther());</span>
+<span class="nc" id="L350">        return result;</span>
     }
 
     /**
@@ -361,7 +367,7 @@ public class VulnerableSoftware extends Cpe implements Serializable {
      */
     @Override
     public boolean matchedBy(ICpe target) {
-<span class="nc" id="L364">        return testMatch(target, this);</span>
+<span class="nc" id="L370">        return testMatch(target, this);</span>
     }
 
     /**
@@ -374,7 +380,7 @@ public class VulnerableSoftware extends Cpe implements Serializable {
      * &lt;code&gt;false&lt;/code&gt;
      */
     protected boolean compareVersionRange(String targetVersion) {
-<span class="fc" id="L377">        return compareVersions(this, targetVersion);</span>
+<span class="fc" id="L383">        return compareVersions(this, targetVersion);</span>
     }
 
     /**
@@ -388,40 +394,40 @@ public class VulnerableSoftware extends Cpe implements Serializable {
      * &lt;code&gt;false&lt;/code&gt;
      */
     protected static boolean compareVersions(VulnerableSoftware vs, String targetVersion) {
-<span class="fc bfc" id="L391" title="All 2 branches covered.">        if (LogicalValue.NA.getAbbreviation().equals(vs.getVersion())) {</span>
-<span class="fc" id="L392">            return false;</span>
+<span class="fc bfc" id="L397" title="All 2 branches covered.">        if (LogicalValue.NA.getAbbreviation().equals(vs.getVersion())) {</span>
+<span class="fc" id="L398">            return false;</span>
         }
         //if any of the four conditions will be evaluated - then true;
-<span class="pc bpc" id="L395" title="1 of 6 branches missed.">        boolean result = (vs.versionEndExcluding != null &amp;&amp; !vs.versionEndExcluding.isEmpty())</span>
-<span class="pc bpc" id="L396" title="1 of 4 branches missed.">                || (vs.versionStartExcluding != null &amp;&amp; !vs.versionStartExcluding.isEmpty())</span>
-<span class="pc bpc" id="L397" title="1 of 4 branches missed.">                || (vs.versionEndIncluding != null &amp;&amp; !vs.versionEndIncluding.isEmpty())</span>
-<span class="pc bpc" id="L398" title="1 of 2 branches missed.">                || (vs.versionStartIncluding != null &amp;&amp; !vs.versionStartIncluding.isEmpty());</span>
+<span class="pc bpc" id="L401" title="1 of 6 branches missed.">        boolean result = (vs.versionEndExcluding != null &amp;&amp; !vs.versionEndExcluding.isEmpty())</span>
+<span class="pc bpc" id="L402" title="1 of 4 branches missed.">                || (vs.versionStartExcluding != null &amp;&amp; !vs.versionStartExcluding.isEmpty())</span>
+<span class="pc bpc" id="L403" title="1 of 4 branches missed.">                || (vs.versionEndIncluding != null &amp;&amp; !vs.versionEndIncluding.isEmpty())</span>
+<span class="pc bpc" id="L404" title="1 of 2 branches missed.">                || (vs.versionStartIncluding != null &amp;&amp; !vs.versionStartIncluding.isEmpty());</span>
 
-<span class="fc bfc" id="L400" title="All 4 branches covered.">        if (!result &amp;&amp; compareAttributes(vs.getVersion(), targetVersion)) {</span>
-<span class="fc" id="L401">            return true;</span>
+<span class="fc bfc" id="L406" title="All 4 branches covered.">        if (!result &amp;&amp; compareAttributes(vs.getVersion(), targetVersion)) {</span>
+<span class="fc" id="L407">            return true;</span>
         }
 
-<span class="fc" id="L404">        final DependencyVersion target = new DependencyVersion(targetVersion);</span>
-<span class="pc bpc" id="L405" title="1 of 2 branches missed.">        if (target.getVersionParts().isEmpty()) {</span>
-<span class="nc" id="L406">            return false;</span>
+<span class="fc" id="L410">        final DependencyVersion target = new DependencyVersion(targetVersion);</span>
+<span class="pc bpc" id="L411" title="1 of 2 branches missed.">        if (target.getVersionParts().isEmpty()) {</span>
+<span class="nc" id="L412">            return false;</span>
         }
-<span class="pc bpc" id="L408" title="1 of 6 branches missed.">        if (result &amp;&amp; vs.versionEndExcluding != null &amp;&amp; !vs.versionEndExcluding.isEmpty()) {</span>
-<span class="fc" id="L409">            final DependencyVersion endExcluding = new DependencyVersion(vs.versionEndExcluding);</span>
-<span class="fc bfc" id="L410" title="All 2 branches covered.">            result = endExcluding.compareTo(target) &gt; 0;</span>
+<span class="pc bpc" id="L414" title="1 of 6 branches missed.">        if (result &amp;&amp; vs.versionEndExcluding != null &amp;&amp; !vs.versionEndExcluding.isEmpty()) {</span>
+<span class="fc" id="L415">            final DependencyVersion endExcluding = new DependencyVersion(vs.versionEndExcluding);</span>
+<span class="fc bfc" id="L416" title="All 2 branches covered.">            result = endExcluding.compareTo(target) &gt; 0;</span>
         }
-<span class="pc bpc" id="L412" title="1 of 6 branches missed.">        if (result &amp;&amp; vs.versionStartExcluding != null &amp;&amp; !vs.versionStartExcluding.isEmpty()) {</span>
-<span class="fc" id="L413">            final DependencyVersion startExcluding = new DependencyVersion(vs.versionStartExcluding);</span>
-<span class="fc bfc" id="L414" title="All 2 branches covered.">            result = startExcluding.compareTo(target) &lt; 0;</span>
+<span class="pc bpc" id="L418" title="1 of 6 branches missed.">        if (result &amp;&amp; vs.versionStartExcluding != null &amp;&amp; !vs.versionStartExcluding.isEmpty()) {</span>
+<span class="fc" id="L419">            final DependencyVersion startExcluding = new DependencyVersion(vs.versionStartExcluding);</span>
+<span class="fc bfc" id="L420" title="All 2 branches covered.">            result = startExcluding.compareTo(target) &lt; 0;</span>
         }
-<span class="pc bpc" id="L416" title="1 of 6 branches missed.">        if (result &amp;&amp; vs.versionEndIncluding != null &amp;&amp; !vs.versionEndIncluding.isEmpty()) {</span>
-<span class="fc" id="L417">            final DependencyVersion endIncluding = new DependencyVersion(vs.versionEndIncluding);</span>
-<span class="fc bfc" id="L418" title="All 2 branches covered.">            result &amp;= endIncluding.compareTo(target) &gt;= 0;</span>
+<span class="pc bpc" id="L422" title="1 of 6 branches missed.">        if (result &amp;&amp; vs.versionEndIncluding != null &amp;&amp; !vs.versionEndIncluding.isEmpty()) {</span>
+<span class="fc" id="L423">            final DependencyVersion endIncluding = new DependencyVersion(vs.versionEndIncluding);</span>
+<span class="fc bfc" id="L424" title="All 2 branches covered.">            result &amp;= endIncluding.compareTo(target) &gt;= 0;</span>
         }
-<span class="pc bpc" id="L420" title="1 of 6 branches missed.">        if (result &amp;&amp; vs.versionStartIncluding != null &amp;&amp; !vs.versionStartIncluding.isEmpty()) {</span>
-<span class="fc" id="L421">            final DependencyVersion startIncluding = new DependencyVersion(vs.versionStartIncluding);</span>
-<span class="fc bfc" id="L422" title="All 2 branches covered.">            result &amp;= startIncluding.compareTo(target) &lt;= 0;</span>
+<span class="pc bpc" id="L426" title="1 of 6 branches missed.">        if (result &amp;&amp; vs.versionStartIncluding != null &amp;&amp; !vs.versionStartIncluding.isEmpty()) {</span>
+<span class="fc" id="L427">            final DependencyVersion startIncluding = new DependencyVersion(vs.versionStartIncluding);</span>
+<span class="fc bfc" id="L428" title="All 2 branches covered.">            result &amp;= startIncluding.compareTo(target) &lt;= 0;</span>
         }
-<span class="fc" id="L424">        return result;</span>
+<span class="fc" id="L430">        return result;</span>
     }
 
     /**
@@ -430,7 +436,7 @@ public class VulnerableSoftware extends Cpe implements Serializable {
      * @return the versionEndExcluding
      */
     public String getVersionEndExcluding() {
-<span class="fc" id="L433">        return versionEndExcluding;</span>
+<span class="fc" id="L439">        return versionEndExcluding;</span>
     }
 
     /**
@@ -439,7 +445,7 @@ public class VulnerableSoftware extends Cpe implements Serializable {
      * @return the versionEndIncluding
      */
     public String getVersionEndIncluding() {
-<span class="fc" id="L442">        return versionEndIncluding;</span>
+<span class="fc" id="L448">        return versionEndIncluding;</span>
     }
 
     /**
@@ -448,7 +454,7 @@ public class VulnerableSoftware extends Cpe implements Serializable {
      * @return the versionStartExcluding
      */
     public String getVersionStartExcluding() {
-<span class="fc" id="L451">        return versionStartExcluding;</span>
+<span class="fc" id="L457">        return versionStartExcluding;</span>
     }
 
     /**
@@ -457,7 +463,7 @@ public class VulnerableSoftware extends Cpe implements Serializable {
      * @return the versionStartIncluding
      */
     public String getVersionStartIncluding() {
-<span class="fc" id="L460">        return versionStartIncluding;</span>
+<span class="fc" id="L466">        return versionStartIncluding;</span>
     }
 
     /**
@@ -466,50 +472,50 @@ public class VulnerableSoftware extends Cpe implements Serializable {
      * @return the value of vulnerable
      */
     public boolean isVulnerable() {
-<span class="fc" id="L469">        return vulnerable;</span>
+<span class="fc" id="L475">        return vulnerable;</span>
     }
 
     @Override
     public String toString() {
-<span class="fc" id="L474">        final StringBuilder sb = new StringBuilder();</span>
-<span class="fc" id="L475">        sb.append(this.toCpe23FS());</span>
-<span class="fc" id="L476">        boolean textAdded = false;</span>
-<span class="pc bpc" id="L477" title="1 of 4 branches missed.">        if (versionStartIncluding != null &amp;&amp; !versionStartIncluding.isEmpty()) {</span>
-<span class="fc" id="L478">            sb.append(&quot; versions from (including) &quot;)</span>
-<span class="fc" id="L479">                    .append(versionStartIncluding);</span>
-<span class="fc" id="L480">            textAdded = true;</span>
+<span class="fc" id="L480">        final StringBuilder sb = new StringBuilder();</span>
+<span class="fc" id="L481">        sb.append(this.toCpe23FS());</span>
+<span class="fc" id="L482">        boolean textAdded = false;</span>
+<span class="pc bpc" id="L483" title="1 of 4 branches missed.">        if (versionStartIncluding != null &amp;&amp; !versionStartIncluding.isEmpty()) {</span>
+<span class="fc" id="L484">            sb.append(&quot; versions from (including) &quot;)</span>
+<span class="fc" id="L485">                    .append(versionStartIncluding);</span>
+<span class="fc" id="L486">            textAdded = true;</span>
         }
-<span class="pc bpc" id="L482" title="3 of 4 branches missed.">        if (versionStartExcluding != null &amp;&amp; !versionStartExcluding.isEmpty()) {</span>
-<span class="nc bnc" id="L483" title="All 2 branches missed.">            if (textAdded) {</span>
-<span class="nc" id="L484">                sb.append(&quot;;&quot;);</span>
+<span class="pc bpc" id="L488" title="3 of 4 branches missed.">        if (versionStartExcluding != null &amp;&amp; !versionStartExcluding.isEmpty()) {</span>
+<span class="nc bnc" id="L489" title="All 2 branches missed.">            if (textAdded) {</span>
+<span class="nc" id="L490">                sb.append(&quot;;&quot;);</span>
             }
-<span class="nc" id="L486">            sb.append(&quot; versions from (excluding) &quot;)</span>
-<span class="nc" id="L487">                    .append(versionStartExcluding);</span>
-<span class="nc" id="L488">            textAdded = true;</span>
+<span class="nc" id="L492">            sb.append(&quot; versions from (excluding) &quot;)</span>
+<span class="nc" id="L493">                    .append(versionStartExcluding);</span>
+<span class="nc" id="L494">            textAdded = true;</span>
         }
-<span class="pc bpc" id="L490" title="1 of 4 branches missed.">        if (versionEndIncluding != null &amp;&amp; !versionEndIncluding.isEmpty()) {</span>
-<span class="fc bfc" id="L491" title="All 2 branches covered.">            if (textAdded) {</span>
-<span class="fc" id="L492">                sb.append(&quot;;&quot;);</span>
+<span class="pc bpc" id="L496" title="1 of 4 branches missed.">        if (versionEndIncluding != null &amp;&amp; !versionEndIncluding.isEmpty()) {</span>
+<span class="fc bfc" id="L497" title="All 2 branches covered.">            if (textAdded) {</span>
+<span class="fc" id="L498">                sb.append(&quot;;&quot;);</span>
             }
-<span class="fc" id="L494">            sb.append(&quot; versions up to (including) &quot;)</span>
-<span class="fc" id="L495">                    .append(versionEndIncluding);</span>
-<span class="fc" id="L496">            textAdded = true;</span>
+<span class="fc" id="L500">            sb.append(&quot; versions up to (including) &quot;)</span>
+<span class="fc" id="L501">                    .append(versionEndIncluding);</span>
+<span class="fc" id="L502">            textAdded = true;</span>
         }
-<span class="pc bpc" id="L498" title="1 of 4 branches missed.">        if (versionEndExcluding != null &amp;&amp; !versionEndExcluding.isEmpty()) {</span>
-<span class="pc bpc" id="L499" title="1 of 2 branches missed.">            if (textAdded) {</span>
-<span class="fc" id="L500">                sb.append(&quot;;&quot;);</span>
+<span class="pc bpc" id="L504" title="1 of 4 branches missed.">        if (versionEndExcluding != null &amp;&amp; !versionEndExcluding.isEmpty()) {</span>
+<span class="pc bpc" id="L505" title="1 of 2 branches missed.">            if (textAdded) {</span>
+<span class="fc" id="L506">                sb.append(&quot;;&quot;);</span>
             }
-<span class="fc" id="L502">            sb.append(&quot; versions up to (excluding) &quot;)</span>
-<span class="fc" id="L503">                    .append(versionEndExcluding);</span>
-<span class="fc" id="L504">            textAdded = true;</span>
+<span class="fc" id="L508">            sb.append(&quot; versions up to (excluding) &quot;)</span>
+<span class="fc" id="L509">                    .append(versionEndExcluding);</span>
+<span class="fc" id="L510">            textAdded = true;</span>
         }
-<span class="pc bpc" id="L506" title="1 of 2 branches missed.">        if (!vulnerable) {</span>
-<span class="nc bnc" id="L507" title="All 2 branches missed.">            if (textAdded) {</span>
-<span class="nc" id="L508">                sb.append(&quot;;&quot;);</span>
+<span class="pc bpc" id="L512" title="1 of 2 branches missed.">        if (!vulnerable) {</span>
+<span class="nc bnc" id="L513" title="All 2 branches missed.">            if (textAdded) {</span>
+<span class="nc" id="L514">                sb.append(&quot;;&quot;);</span>
             }
-<span class="nc" id="L510">            sb.append(&quot; version is NOT VULNERABLE&quot;);</span>
+<span class="nc" id="L516">            sb.append(&quot; version is NOT VULNERABLE&quot;);</span>
         }
-<span class="fc" id="L512">        return sb.toString();</span>
+<span class="fc" id="L518">        return sb.toString();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

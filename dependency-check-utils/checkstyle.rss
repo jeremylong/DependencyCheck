@@ -23,10 +23,10 @@ under the License.
     <link>https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils</link>
     <description>Dependency-Check Utils - Checkstyle report</description>
     <language>en-us</language>
-    <copyright>&#169;2012 - 2020 OWASP</copyright>
+    <copyright>&#169;2012 - 2021 OWASP</copyright>
     <item>
-      <title>File: 19,
-             Errors: 6,
+      <title>File: 22,
+             Errors: 2,
              Warnings: 0,
              Infos: 0
       </title>
@@ -74,7 +74,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.SSLSocketFactoryEx.java">org/owasp/dependencycheck/utils/SSLSocketFactoryEx.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.DownloadFailedException.java">org/owasp/dependencycheck/utils/DownloadFailedException.java</a>
                 </td>
                 <td>
                   0
@@ -88,7 +88,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.DownloadFailedException.java">org/owasp/dependencycheck/utils/DownloadFailedException.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.SSLSocketFactoryEx.java">org/owasp/dependencycheck/utils/SSLSocketFactoryEx.java</a>
                 </td>
                 <td>
                   0
@@ -125,7 +125,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  1
+                  2
                 </td>
               </tr>
                           <tr>
@@ -145,6 +145,20 @@ under the License.
                           <tr>
                 <td>
                   <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.InvalidSettingException.java">org/owasp/dependencycheck/utils/InvalidSettingException.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.processing.ProcessReader.java">org/owasp/dependencycheck/utils/processing/ProcessReader.java</a>
                 </td>
                 <td>
                   0
@@ -200,6 +214,20 @@ under the License.
               </tr>
                           <tr>
                 <td>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.processing.package-info.java">org/owasp/dependencycheck/utils/processing/package-info.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.URLConnectionFailureException.java">org/owasp/dependencycheck/utils/URLConnectionFailureException.java</a>
                 </td>
                 <td>
@@ -229,6 +257,20 @@ under the License.
                           <tr>
                 <td>
                   <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.TooManyRequestsException.java">org/owasp/dependencycheck/utils/TooManyRequestsException.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.processing.Processor.java">org/owasp/dependencycheck/utils/processing/Processor.java</a>
                 </td>
                 <td>
                   0
@@ -279,7 +321,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  5
+                  0
                 </td>
               </tr>
                           <tr>

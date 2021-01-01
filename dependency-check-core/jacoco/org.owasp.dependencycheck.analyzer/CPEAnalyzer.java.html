@@ -492,10 +492,10 @@ import us.springett.parsers.cpe.values.Part;
 <span class="fc" id="L492">                    addSpace = true;</span>
                 }
 <span class="fc" id="L494">                addedTerm = true;</span>
-<span class="pc bpc" id="L495" title="1 of 2 branches missed.">                if (LuceneUtils.isKeyword(word)) {</span>
-<span class="nc" id="L496">                    sb.append(&quot;\&quot;&quot;);</span>
-<span class="nc" id="L497">                    LuceneUtils.appendEscapedLuceneQuery(sb, word);</span>
-<span class="nc" id="L498">                    sb.append(&quot;\&quot;&quot;);</span>
+<span class="fc bfc" id="L495" title="All 2 branches covered.">                if (LuceneUtils.isKeyword(word)) {</span>
+<span class="fc" id="L496">                    sb.append(&quot;\&quot;&quot;);</span>
+<span class="fc" id="L497">                    LuceneUtils.appendEscapedLuceneQuery(sb, word);</span>
+<span class="fc" id="L498">                    sb.append(&quot;\&quot;&quot;);</span>
                 } else {
 <span class="fc" id="L500">                    LuceneUtils.appendEscapedLuceneQuery(sb, word);</span>
                 }
@@ -585,15 +585,15 @@ import us.springett.parsers.cpe.values.Part;
         // for instance CPE some-component and in the evidence we have SomeComponent.
 
         //TODO - should this have a package manager only flag instead of just looking for NPM
-<span class="pc bpc" id="L588" title="1 of 2 branches missed.">        if (Ecosystem.NODEJS.equals(dependency.getEcosystem())) {</span>
-<span class="nc bnc" id="L589" title="All 2 branches missed.">            for (Identifier i : dependency.getSoftwareIdentifiers()) {</span>
-<span class="nc bnc" id="L590" title="All 2 branches missed.">                if (i instanceof PurlIdentifier) {</span>
-<span class="nc" id="L591">                    PurlIdentifier p = (PurlIdentifier) i;</span>
-<span class="nc bnc" id="L592" title="All 2 branches missed.">                    if (cleanPackageName(p.getName()).equals(cleanPackageName(entry.getProduct()))) {</span>
-<span class="nc" id="L593">                        isValid = true;</span>
+<span class="fc bfc" id="L588" title="All 2 branches covered.">        if (Ecosystem.NODEJS.equals(dependency.getEcosystem())) {</span>
+<span class="fc bfc" id="L589" title="All 2 branches covered.">            for (Identifier i : dependency.getSoftwareIdentifiers()) {</span>
+<span class="pc bpc" id="L590" title="1 of 2 branches missed.">                if (i instanceof PurlIdentifier) {</span>
+<span class="fc" id="L591">                    final PurlIdentifier p = (PurlIdentifier) i;</span>
+<span class="fc bfc" id="L592" title="All 2 branches covered.">                    if (cleanPackageName(p.getName()).equals(cleanPackageName(entry.getProduct()))) {</span>
+<span class="fc" id="L593">                        isValid = true;</span>
                     }
                 }
-<span class="nc" id="L596">            }</span>
+<span class="fc" id="L596">            }</span>
 <span class="fc bfc" id="L597" title="All 2 branches covered.">        } else if (collectionContainsString(dependency.getEvidence(EvidenceType.PRODUCT), entry.getProduct())</span>
 <span class="fc bfc" id="L598" title="All 2 branches covered.">                &amp;&amp; collectionContainsString(dependency.getEvidence(EvidenceType.VENDOR), entry.getVendor())) {</span>
 <span class="fc" id="L599">            isValid = true;</span>
@@ -608,10 +608,10 @@ import us.springett.parsers.cpe.values.Part;
      * @return the cleansed packaage name
      */
     private String cleanPackageName(String name) {
-<span class="nc bnc" id="L611" title="All 2 branches missed.">        if (name == null) {</span>
+<span class="pc bpc" id="L611" title="1 of 2 branches missed.">        if (name == null) {</span>
 <span class="nc" id="L612">            return &quot;&quot;;</span>
         }
-<span class="nc" id="L614">        return name.replaceAll(&quot;[^a-zA-Z0-9]+&quot;, &quot;&quot;);</span>
+<span class="fc" id="L614">        return name.replaceAll(&quot;[^a-zA-Z0-9]+&quot;, &quot;&quot;);</span>
     }
 
     /**
@@ -767,11 +767,11 @@ import us.springett.parsers.cpe.values.Part;
 <span class="pc bpc" id="L767" title="1 of 4 branches missed.">            if (dependency.getName() != null &amp;&amp; !dependency.getName().isEmpty()) {</span>
 <span class="fc" id="L768">                final String name = dependency.getName();</span>
 <span class="fc bfc" id="L769" title="All 2 branches covered.">                for (String word : product.split(&quot;[^a-zA-Z0-9]&quot;)) {</span>
-<span class="pc bpc" id="L770" title="3 of 4 branches missed.">                    useDependencyVersion &amp;= name.contains(word) || stopWords.contains(word);</span>
+<span class="pc bpc" id="L770" title="1 of 4 branches missed.">                    useDependencyVersion &amp;= name.contains(word) || stopWords.contains(word);</span>
                 }
             }
 
-<span class="pc bpc" id="L774" title="1 of 2 branches missed.">            if (useDependencyVersion) {</span>
+<span class="fc bfc" id="L774" title="All 2 branches covered.">            if (useDependencyVersion) {</span>
                 //TODO - we need to filter this so that we only use this if something in the
                 //dependency.getName() matches the vendor/product in some way
 <span class="fc" id="L777">                final DependencyVersion depVersion = new DependencyVersion(dependency.getVersion());</span>
@@ -908,7 +908,7 @@ import us.springett.parsers.cpe.values.Part;
 <span class="nc" id="L908">        } catch (CpeValidationException ex) {</span>
 <span class="nc" id="L909">            throw new AnalysisException(String.format(&quot;Unable to create a CPE for %s:%s:%s&quot;, vendor, product, bestGuess.toString()));</span>
 <span class="fc" id="L910">        }</span>
-<span class="pc bpc" id="L911" title="1 of 2 branches missed.">        if (!&quot;-&quot;.equals(guessCpe.getVersion())) {</span>
+<span class="fc bfc" id="L911" title="All 2 branches covered.">        if (!&quot;-&quot;.equals(guessCpe.getVersion())) {</span>
 <span class="fc" id="L912">            String url = null;</span>
 <span class="fc bfc" id="L913" title="All 2 branches covered.">            if (bestGuessURL != null) {</span>
 <span class="fc" id="L914">                url = bestGuessURL;</span>
@@ -921,7 +921,7 @@ import us.springett.parsers.cpe.values.Part;
 <span class="fc" id="L921">            collected.add(match);</span>
         }
 <span class="fc" id="L923">        boolean identifierAdded = false;</span>
-<span class="pc bpc" id="L924" title="1 of 2 branches missed.">        if (!collected.isEmpty()) {</span>
+<span class="fc bfc" id="L924" title="All 2 branches covered.">        if (!collected.isEmpty()) {</span>
 <span class="fc" id="L925">            final List&lt;IdentifierMatch&gt; items = new ArrayList&lt;&gt;(collected);</span>
 
 <span class="fc" id="L927">            Collections.sort(items);</span>

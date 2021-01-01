@@ -23,7 +23,7 @@ under the License.
     <link>https://github.com/jeremylong/DependencyCheck.git/dependency-check-plugin</link>
     <description>Dependency-Check Plugin Archetype - Checkstyle report</description>
     <language>en-us</language>
-    <copyright>&#169;2012 - 2020 OWASP</copyright>
+    <copyright>&#169;2012 - 2021 OWASP</copyright>
     <item>
       <title>File: 0,
              Errors: 0,

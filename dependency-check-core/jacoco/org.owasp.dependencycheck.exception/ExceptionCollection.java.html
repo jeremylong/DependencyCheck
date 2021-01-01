@@ -209,17 +209,21 @@ public class ExceptionCollection extends Exception {
     public String getMessage() {
 <span class="fc" id="L210">        final StringBuilder sb = new StringBuilder(MSG);</span>
 
-<span class="fc" id="L212">        this.exceptions.forEach((t) -&gt; sb.append(&quot;\n\t&quot;).append(t.getClass().getSimpleName()).append(&quot;: &quot;).append(ExceptionCollection.nestedCauseList(t)));</span>
-<span class="fc" id="L213">        return sb.toString();</span>
+<span class="fc" id="L212">        this.exceptions.forEach((t) -&gt; sb.append(&quot;\n\t&quot;)</span>
+<span class="fc" id="L213">                .append(t.getClass().getSimpleName())</span>
+<span class="fc" id="L214">                .append(&quot;: &quot;)</span>
+<span class="fc" id="L215">                .append(ExceptionCollection.nestedCauseList(t)));</span>
+<span class="fc" id="L216">        return sb.toString();</span>
     }
+
     private static StringBuilder nestedCauseList(Throwable t) {
-<span class="fc" id="L216">        StringBuilder sb = new StringBuilder(t.getMessage());</span>
-<span class="fc" id="L217">        Throwable nestedCause = t.getCause();</span>
-<span class="fc bfc" id="L218" title="All 2 branches covered.">        while (nestedCause != null) {</span>
-<span class="fc" id="L219">            sb.append(&quot;\n\t\tcaused by &quot;).append(nestedCause.getClass().getSimpleName()).append(&quot;: &quot;).append(nestedCause.getMessage());</span>
-<span class="fc" id="L220">            nestedCause = nestedCause.getCause();</span>
+<span class="fc" id="L220">        final StringBuilder sb = new StringBuilder(t.getMessage());</span>
+<span class="fc" id="L221">        Throwable nestedCause = t.getCause();</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">        while (nestedCause != null) {</span>
+<span class="fc" id="L223">            sb.append(&quot;\n\t\tcaused by &quot;).append(nestedCause.getClass().getSimpleName()).append(&quot;: &quot;).append(nestedCause.getMessage());</span>
+<span class="fc" id="L224">            nestedCause = nestedCause.getCause();</span>
         }
-<span class="fc" id="L222">        return sb;</span>
+<span class="fc" id="L226">        return sb;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

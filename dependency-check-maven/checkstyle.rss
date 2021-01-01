@@ -23,7 +23,7 @@ under the License.
     <link>https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven</link>
     <description>Dependency-Check Maven Plugin - Checkstyle report</description>
     <language>en-us</language>
-    <copyright>&#169;2013 - 2020 OWASP</copyright>
+    <copyright>&#169;2013 - 2021 OWASP</copyright>
     <item>
       <title>File: 79,
              Errors: 2,
@@ -312,7 +312,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#NOTICE.txt">NOTICE.txt</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#target.it.1527-aggregate-updated-dependencies.new.lib.target.maven-archiver.pom.properties">target/it/1527-aggregate-updated-dependencies/new/lib/target/maven-archiver/pom.properties</a>
                 </td>
                 <td>
                   0
@@ -326,7 +326,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#target.it.1527-aggregate-updated-dependencies.new.lib.target.maven-archiver.pom.properties">target/it/1527-aggregate-updated-dependencies/new/lib/target/maven-archiver/pom.properties</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#NOTICE.txt">NOTICE.txt</a>
                 </td>
                 <td>
                   0
@@ -438,7 +438,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#target.it.690-threadsafety.invoker.properties">target/it/690-threadsafety/invoker.properties</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#target.it.1751-use-child-repositories.invoker.properties">target/it/1751-use-child-repositories/invoker.properties</a>
                 </td>
                 <td>
                   0
@@ -452,7 +452,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#target.it.1751-use-child-repositories.invoker.properties">target/it/1751-use-child-repositories/invoker.properties</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#target.it.690-threadsafety.invoker.properties">target/it/690-threadsafety/invoker.properties</a>
                 </td>
                 <td>
                   0
@@ -662,7 +662,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#src.it.1751-use-child-repositories.invoker.properties">src/it/1751-use-child-repositories/invoker.properties</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#src.test.resources.mojo.properties">src/test/resources/mojo.properties</a>
                 </td>
                 <td>
                   0
@@ -676,7 +676,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#src.test.resources.mojo.properties">src/test/resources/mojo.properties</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#src.it.1751-use-child-repositories.invoker.properties">src/it/1751-use-child-repositories/invoker.properties</a>
                 </td>
                 <td>
                   0
@@ -788,7 +788,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#target.maven-archiver.pom.properties">target/maven-archiver/pom.properties</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#target.it.1751-use-child-repositories.1751-child-two.target.maven-archiver.pom.properties">target/it/1751-use-child-repositories/1751-child-two/target/maven-archiver/pom.properties</a>
                 </td>
                 <td>
                   0
@@ -802,7 +802,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#target.it.1751-use-child-repositories.1751-child-two.target.maven-archiver.pom.properties">target/it/1751-use-child-repositories/1751-child-two/target/maven-archiver/pom.properties</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#target.maven-archiver.pom.properties">target/maven-archiver/pom.properties</a>
                 </td>
                 <td>
                   0
@@ -914,7 +914,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#target.it.1677-dependency-management.invoker.properties">target/it/1677-dependency-management/invoker.properties</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#target.it.740-aggregate.first.target.maven-archiver.pom.properties">target/it/740-aggregate/first/target/maven-archiver/pom.properties</a>
                 </td>
                 <td>
                   0
@@ -928,7 +928,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#target.it.740-aggregate.first.target.maven-archiver.pom.properties">target/it/740-aggregate/first/target/maven-archiver/pom.properties</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#target.it.1677-dependency-management.invoker.properties">target/it/1677-dependency-management/invoker.properties</a>
                 </td>
                 <td>
                   0

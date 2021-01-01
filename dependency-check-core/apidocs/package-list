@@ -25,6 +25,7 @@ org.owasp.dependencycheck.data.update.nvd
 org.owasp.dependencycheck.dependency
 org.owasp.dependencycheck.dependency.naming
 org.owasp.dependencycheck.exception
+org.owasp.dependencycheck.processing
 org.owasp.dependencycheck.reporting
 org.owasp.dependencycheck.utils
 org.owasp.dependencycheck.xml

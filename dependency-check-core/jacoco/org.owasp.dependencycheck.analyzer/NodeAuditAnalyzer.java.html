@@ -115,30 +115,30 @@ import us.springett.parsers.cpe.values.Part;
      */
     @Override
     public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
-<span class="nc bnc" id="L118" title="All 4 branches missed.">        if (!isEnabled() || !getFilesMatched()) {</span>
+<span class="pc bpc" id="L118" title="2 of 4 branches missed.">        if (!isEnabled() || !getFilesMatched()) {</span>
 <span class="nc" id="L119">            this.setEnabled(false);</span>
 <span class="nc" id="L120">            return;</span>
         }
-<span class="nc bnc" id="L122" title="All 2 branches missed.">        if (searcher == null) {</span>
-<span class="nc" id="L123">            LOGGER.debug(&quot;Initializing {}&quot;, getName());</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        if (searcher == null) {</span>
+<span class="fc" id="L123">            LOGGER.debug(&quot;Initializing {}&quot;, getName());</span>
             try {
-<span class="nc" id="L125">                searcher = new NodeAuditSearch(getSettings());</span>
+<span class="fc" id="L125">                searcher = new NodeAuditSearch(getSettings());</span>
 <span class="nc" id="L126">            } catch (MalformedURLException ex) {</span>
 <span class="nc" id="L127">                setEnabled(false);</span>
 <span class="nc" id="L128">                throw new InitializationException(&quot;The configured URL to NPM Audit API is malformed&quot;, ex);</span>
-<span class="nc" id="L129">            }</span>
+<span class="fc" id="L129">            }</span>
             try {
-<span class="nc" id="L131">                final Settings settings = engine.getSettings();</span>
-<span class="nc" id="L132">                final boolean nodeEnabled = settings.getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED);</span>
-<span class="nc bnc" id="L133" title="All 2 branches missed.">                if (!nodeEnabled) {</span>
-<span class="nc" id="L134">                    LOGGER.warn(&quot;The Node Package Analyzer has been disabled; the resulting report will only &quot;</span>
+<span class="fc" id="L131">                final Settings settings = engine.getSettings();</span>
+<span class="fc" id="L132">                final boolean nodeEnabled = settings.getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED);</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">                if (!nodeEnabled) {</span>
+<span class="fc" id="L134">                    LOGGER.warn(&quot;The Node Package Analyzer has been disabled; the resulting report will only &quot;</span>
                             + &quot;contain the known vulnerable dependency - not a bill of materials for the node project.&quot;);
                 }
 <span class="nc" id="L137">            } catch (InvalidSettingException ex) {</span>
 <span class="nc" id="L138">                throw new InitializationException(&quot;Unable to read configuration settings&quot;, ex);</span>
-<span class="nc" id="L139">            }</span>
+<span class="fc" id="L139">            }</span>
         }
-<span class="nc" id="L141">    }</span>
+<span class="fc" id="L141">    }</span>
 
     /**
      * Returns the name of the analyzer.
@@ -173,27 +173,27 @@ import us.springett.parsers.cpe.values.Part;
 
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-<span class="nc bnc" id="L176" title="All 2 branches missed.">        if (dependency.getDisplayFileName().equals(dependency.getFileName())) {</span>
-<span class="nc" id="L177">            engine.removeDependency(dependency);</span>
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">        if (dependency.getDisplayFileName().equals(dependency.getFileName())) {</span>
+<span class="fc" id="L177">            engine.removeDependency(dependency);</span>
         }
-<span class="nc" id="L179">        final File packageLock = dependency.getActualFile();</span>
-<span class="nc bnc" id="L180" title="All 6 branches missed.">        if (!packageLock.isFile() || packageLock.length() == 0 || !shouldProcess(packageLock)) {</span>
-<span class="nc" id="L181">            return;</span>
+<span class="fc" id="L179">        final File packageLock = dependency.getActualFile();</span>
+<span class="pc bpc" id="L180" title="1 of 6 branches missed.">        if (!packageLock.isFile() || packageLock.length() == 0 || !shouldProcess(packageLock)) {</span>
+<span class="fc" id="L181">            return;</span>
         }
-<span class="nc" id="L183">        final File packageJson = new File(packageLock.getParentFile(), &quot;package.json&quot;);</span>
+<span class="fc" id="L183">        final File packageJson = new File(packageLock.getParentFile(), &quot;package.json&quot;);</span>
         final List&lt;Advisory&gt; advisories;
-<span class="nc" id="L185">        final Map&lt;String, String&gt; dependencyMap = new HashMap&lt;&gt;();</span>
-<span class="nc bnc" id="L186" title="All 2 branches missed.">        if (packageJson.isFile()) {</span>
-<span class="nc" id="L187">            advisories = analyzePackage(packageLock, packageJson, dependency, dependencyMap);</span>
+<span class="fc" id="L185">        final Map&lt;String, String&gt; dependencyMap = new HashMap&lt;&gt;();</span>
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">        if (packageJson.isFile()) {</span>
+<span class="fc" id="L187">            advisories = analyzePackage(packageLock, packageJson, dependency, dependencyMap);</span>
         } else {
 <span class="nc" id="L189">            advisories = legacyAnalysis(packageLock, dependency, dependencyMap);</span>
         }
         try {
-<span class="nc" id="L192">            processResults(advisories, engine, dependency, dependencyMap);</span>
+<span class="fc" id="L192">            processResults(advisories, engine, dependency, dependencyMap);</span>
 <span class="nc" id="L193">        } catch (CpeValidationException ex) {</span>
 <span class="nc" id="L194">            throw new UnexpectedAnalysisException(ex);</span>
-<span class="nc" id="L195">        }</span>
-<span class="nc" id="L196">    }</span>
+<span class="fc" id="L195">        }</span>
+<span class="fc" id="L196">    }</span>
 
     /**
      * Processes the advisories creating the appropriate dependency objects and
@@ -210,41 +210,41 @@ import us.springett.parsers.cpe.values.Part;
     private void processResults(final List&lt;Advisory&gt; advisories, Engine engine,
             Dependency dependency, Map&lt;String, String&gt; dependencyMap)
             throws CpeValidationException {
-<span class="nc bnc" id="L213" title="All 2 branches missed.">        for (Advisory advisory : advisories) {</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">        for (Advisory advisory : advisories) {</span>
             //Create a new vulnerability out of the advisory returned by nsp.
-<span class="nc" id="L215">            final Vulnerability vuln = new Vulnerability();</span>
-<span class="nc" id="L216">            vuln.setDescription(advisory.getOverview());</span>
-<span class="nc" id="L217">            vuln.setName(String.valueOf(advisory.getId()));</span>
-<span class="nc" id="L218">            vuln.setUnscoredSeverity(advisory.getSeverity());</span>
-<span class="nc" id="L219">            vuln.setSource(Vulnerability.Source.NPM);</span>
-<span class="nc" id="L220">            vuln.addReference(</span>
-<span class="nc" id="L221">                    &quot;Advisory &quot; + advisory.getId() + &quot;: &quot; + advisory.getTitle(),</span>
-<span class="nc" id="L222">                    advisory.getReferences(),</span>
+<span class="fc" id="L215">            final Vulnerability vuln = new Vulnerability();</span>
+<span class="fc" id="L216">            vuln.setDescription(advisory.getOverview());</span>
+<span class="fc" id="L217">            vuln.setName(String.valueOf(advisory.getId()));</span>
+<span class="fc" id="L218">            vuln.setUnscoredSeverity(advisory.getSeverity());</span>
+<span class="fc" id="L219">            vuln.setSource(Vulnerability.Source.NPM);</span>
+<span class="fc" id="L220">            vuln.addReference(</span>
+<span class="fc" id="L221">                    &quot;Advisory &quot; + advisory.getId() + &quot;: &quot; + advisory.getTitle(),</span>
+<span class="fc" id="L222">                    advisory.getReferences(),</span>
                     null
             );
 
             //Create a single vulnerable software object - these do not use CPEs unlike the NVD.
-<span class="nc" id="L227">            final VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder();</span>
-<span class="nc" id="L228">            builder.part(Part.APPLICATION).product(advisory.getModuleName().replace(&quot; &quot;, &quot;_&quot;))</span>
-<span class="nc" id="L229">                    .version(advisory.getVulnerableVersions().replace(&quot; &quot;, &quot;&quot;));</span>
-<span class="nc" id="L230">            final VulnerableSoftware vs = builder.build();</span>
-<span class="nc" id="L231">            vuln.setVulnerableSoftware(Collections.singleton(vs));</span>
+<span class="fc" id="L227">            final VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder();</span>
+<span class="fc" id="L228">            builder.part(Part.APPLICATION).product(advisory.getModuleName().replace(&quot; &quot;, &quot;_&quot;))</span>
+<span class="fc" id="L229">                    .version(advisory.getVulnerableVersions().replace(&quot; &quot;, &quot;&quot;));</span>
+<span class="fc" id="L230">            final VulnerableSoftware vs = builder.build();</span>
+<span class="fc" id="L231">            vuln.setVulnerableSoftware(Collections.singleton(vs));</span>
 
-<span class="nc" id="L233">            String version = advisory.getVersion();</span>
-<span class="nc bnc" id="L234" title="All 4 branches missed.">            if (version == null &amp;&amp; dependencyMap.containsKey(advisory.getModuleName())) {</span>
-<span class="nc" id="L235">                version = dependencyMap.get(advisory.getModuleName());</span>
+<span class="fc" id="L233">            String version = advisory.getVersion();</span>
+<span class="pc bpc" id="L234" title="1 of 4 branches missed.">            if (version == null &amp;&amp; dependencyMap.containsKey(advisory.getModuleName())) {</span>
+<span class="fc" id="L235">                version = dependencyMap.get(advisory.getModuleName());</span>
             }
 
-<span class="nc" id="L238">            final Dependency existing = findDependency(engine, advisory.getModuleName(), version);</span>
-<span class="nc bnc" id="L239" title="All 2 branches missed.">            if (existing == null) {</span>
-<span class="nc" id="L240">                final Dependency nodeModule = createDependency(dependency, advisory.getModuleName(), version, &quot;transitive&quot;);</span>
-<span class="nc" id="L241">                nodeModule.addVulnerability(vuln);</span>
-<span class="nc" id="L242">                engine.addDependency(nodeModule);</span>
-<span class="nc" id="L243">            } else {</span>
-<span class="nc" id="L244">                replaceOrAddVulnerability(existing, vuln);</span>
+<span class="fc" id="L238">            final Dependency existing = findDependency(engine, advisory.getModuleName(), version);</span>
+<span class="fc bfc" id="L239" title="All 2 branches covered.">            if (existing == null) {</span>
+<span class="fc" id="L240">                final Dependency nodeModule = createDependency(dependency, advisory.getModuleName(), version, &quot;transitive&quot;);</span>
+<span class="fc" id="L241">                nodeModule.addVulnerability(vuln);</span>
+<span class="fc" id="L242">                engine.addDependency(nodeModule);</span>
+<span class="fc" id="L243">            } else {</span>
+<span class="fc" id="L244">                replaceOrAddVulnerability(existing, vuln);</span>
             }
-<span class="nc" id="L246">        }</span>
-<span class="nc" id="L247">    }</span>
+<span class="fc" id="L246">        }</span>
+<span class="fc" id="L247">    }</span>
 
     /**
      * Evaluates if the vulnerability is already present; if it is the
@@ -254,20 +254,20 @@ import us.springett.parsers.cpe.values.Part;
      * @param vuln the vulnerability to add
      */
     private void replaceOrAddVulnerability(Dependency dependency, Vulnerability vuln) {
-<span class="nc" id="L257">        boolean found = false;</span>
-<span class="nc bnc" id="L258" title="All 2 branches missed.">        for (Vulnerability existing : dependency.getVulnerabilities()) {</span>
-<span class="nc bnc" id="L259" title="All 2 branches missed.">            for (Reference ref : existing.getReferences()) {</span>
-<span class="nc bnc" id="L260" title="All 2 branches missed.">                if (ref.getName() != null</span>
-<span class="nc bnc" id="L261" title="All 2 branches missed.">                        &amp;&amp; vuln.getSource().toString().equals(&quot;NPM&quot;)</span>
-<span class="nc bnc" id="L262" title="All 2 branches missed.">                        &amp;&amp; ref.getName().equals(&quot;https://nodesecurity.io/advisories/&quot; + vuln.getName())) {</span>
+<span class="fc" id="L257">        boolean found = false;</span>
+<span class="fc bfc" id="L258" title="All 2 branches covered.">        for (Vulnerability existing : dependency.getVulnerabilities()) {</span>
+<span class="fc bfc" id="L259" title="All 2 branches covered.">            for (Reference ref : existing.getReferences()) {</span>
+<span class="pc bpc" id="L260" title="1 of 2 branches missed.">                if (ref.getName() != null</span>
+<span class="pc bpc" id="L261" title="1 of 2 branches missed.">                        &amp;&amp; vuln.getSource().toString().equals(&quot;NPM&quot;)</span>
+<span class="pc bpc" id="L262" title="1 of 2 branches missed.">                        &amp;&amp; ref.getName().equals(&quot;https://nodesecurity.io/advisories/&quot; + vuln.getName())) {</span>
 <span class="nc" id="L263">                    found = true;</span>
                 }
-<span class="nc" id="L265">            }</span>
-<span class="nc" id="L266">        }</span>
-<span class="nc bnc" id="L267" title="All 2 branches missed.">        if (!found) {</span>
-<span class="nc" id="L268">            dependency.addVulnerability(vuln);</span>
+<span class="fc" id="L265">            }</span>
+<span class="fc" id="L266">        }</span>
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">        if (!found) {</span>
+<span class="fc" id="L268">            dependency.addVulnerability(vuln);</span>
         }
-<span class="nc" id="L270">    }</span>
+<span class="fc" id="L270">    }</span>
 
     /**
      * Analyzes the package and package-lock files by extracting dependency
@@ -288,20 +288,20 @@ import us.springett.parsers.cpe.values.Part;
     private List&lt;Advisory&gt; analyzePackage(final File lockFile, final File packageFile,
             Dependency dependency, Map&lt;String, String&gt; dependencyMap)
             throws AnalysisException {
-<span class="nc" id="L291">        try (JsonReader lockReader = Json.createReader(FileUtils.openInputStream(lockFile));</span>
-<span class="nc" id="L292">                JsonReader packageReader = Json.createReader(FileUtils.openInputStream(packageFile))) {</span>
+<span class="fc" id="L291">        try (JsonReader lockReader = Json.createReader(FileUtils.openInputStream(lockFile));</span>
+<span class="fc" id="L292">                JsonReader packageReader = Json.createReader(FileUtils.openInputStream(packageFile))) {</span>
 
             // Retrieves the contents of package-lock.json from the Dependency
-<span class="nc" id="L295">            final JsonObject lockJson = lockReader.readObject();</span>
+<span class="fc" id="L295">            final JsonObject lockJson = lockReader.readObject();</span>
             // Retrieves the contents of package-lock.json from the Dependency
-<span class="nc" id="L297">            final JsonObject packageJson = packageReader.readObject();</span>
+<span class="fc" id="L297">            final JsonObject packageJson = packageReader.readObject();</span>
 
             // Modify the payload to meet the NPM Audit API requirements
-<span class="nc" id="L300">            final JsonObject payload = NpmPayloadBuilder.build(lockJson, packageJson, dependencyMap,</span>
-<span class="nc" id="L301">                    getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false));</span>
+<span class="fc" id="L300">            final JsonObject payload = NpmPayloadBuilder.build(lockJson, packageJson, dependencyMap,</span>
+<span class="fc" id="L301">                    getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false));</span>
 
             // Submits the package payload to the nsp check service
-<span class="nc" id="L304">            return searcher.submitPackage(payload);</span>
+<span class="fc" id="L304">            return searcher.submitPackage(payload);</span>
 
 <span class="nc" id="L306">        } catch (URLConnectionFailureException e) {</span>
 <span class="nc" id="L307">            this.setEnabled(false);</span>

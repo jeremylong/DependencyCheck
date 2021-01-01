@@ -74,7 +74,7 @@ public class NodeAuditSearch {
     /**
      * Used for logging.
      */
-<span class="nc" id="L77">    private static final Logger LOGGER = LoggerFactory.getLogger(NodeAuditSearch.class);</span>
+<span class="fc" id="L77">    private static final Logger LOGGER = LoggerFactory.getLogger(NodeAuditSearch.class);</span>
     /**
      * Persisted disk cache for `npm audit` results.
      */
@@ -87,28 +87,28 @@ public class NodeAuditSearch {
      * @throws java.net.MalformedURLException thrown if the configured URL is
      * invalid
      */
-<span class="nc" id="L90">    public NodeAuditSearch(Settings settings) throws MalformedURLException {</span>
-<span class="nc" id="L91">        final String searchUrl = settings.getString(Settings.KEYS.ANALYZER_NODE_AUDIT_URL, DEFAULT_URL);</span>
-<span class="nc" id="L92">        LOGGER.debug(&quot;Node Audit Search URL: {}&quot;, searchUrl);</span>
-<span class="nc" id="L93">        this.nodeAuditUrl = new URL(searchUrl);</span>
-<span class="nc" id="L94">        this.settings = settings;</span>
-<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (null != settings.getString(Settings.KEYS.PROXY_SERVER)) {</span>
+<span class="fc" id="L90">    public NodeAuditSearch(Settings settings) throws MalformedURLException {</span>
+<span class="fc" id="L91">        final String searchUrl = settings.getString(Settings.KEYS.ANALYZER_NODE_AUDIT_URL, DEFAULT_URL);</span>
+<span class="fc" id="L92">        LOGGER.debug(&quot;Node Audit Search URL: {}&quot;, searchUrl);</span>
+<span class="fc" id="L93">        this.nodeAuditUrl = new URL(searchUrl);</span>
+<span class="fc" id="L94">        this.settings = settings;</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        if (null != settings.getString(Settings.KEYS.PROXY_SERVER)) {</span>
 <span class="nc" id="L96">            useProxy = true;</span>
 <span class="nc" id="L97">            LOGGER.debug(&quot;Using proxy&quot;);</span>
         } else {
-<span class="nc" id="L99">            useProxy = false;</span>
-<span class="nc" id="L100">            LOGGER.debug(&quot;Not using proxy&quot;);</span>
+<span class="fc" id="L99">            useProxy = false;</span>
+<span class="fc" id="L100">            LOGGER.debug(&quot;Not using proxy&quot;);</span>
         }
-<span class="nc bnc" id="L102" title="All 2 branches missed.">        if (settings.getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, true)) {</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        if (settings.getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, true)) {</span>
             try {
-<span class="nc" id="L104">                final DataCacheFactory factory = new DataCacheFactory(settings);</span>
-<span class="nc" id="L105">                cache = factory.getNodeAuditCache();</span>
+<span class="fc" id="L104">                final DataCacheFactory factory = new DataCacheFactory(settings);</span>
+<span class="fc" id="L105">                cache = factory.getNodeAuditCache();</span>
 <span class="nc" id="L106">            } catch (CacheException ex) {</span>
 <span class="nc" id="L107">                settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, false);</span>
 <span class="nc" id="L108">                LOGGER.debug(&quot;Error creating cache, disabling caching&quot;, ex);</span>
-<span class="nc" id="L109">            }</span>
+<span class="fc" id="L109">            }</span>
         }
-<span class="nc" id="L111">    }</span>
+<span class="fc" id="L111">    }</span>
 
     /**
      * Submits the package.json file to the Node Audit API and returns a list of
@@ -121,16 +121,16 @@ public class NodeAuditSearch {
      * @throws IOException if it's unable to connect to Node Audit API
      */
     public List&lt;Advisory&gt; submitPackage(JsonObject packageJson) throws SearchException, IOException {
-<span class="nc" id="L124">        String key = null;</span>
-<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (cache != null) {</span>
-<span class="nc" id="L126">            key = Checksum.getSHA256Checksum(packageJson.toString());</span>
-<span class="nc" id="L127">            final List&lt;Advisory&gt; cached = cache.get(key);</span>
-<span class="nc bnc" id="L128" title="All 2 branches missed.">            if (cached != null) {</span>
+<span class="fc" id="L124">        String key = null;</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">        if (cache != null) {</span>
+<span class="fc" id="L126">            key = Checksum.getSHA256Checksum(packageJson.toString());</span>
+<span class="fc" id="L127">            final List&lt;Advisory&gt; cached = cache.get(key);</span>
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">            if (cached != null) {</span>
 <span class="nc" id="L129">                LOGGER.debug(&quot;cache hit for node audit: &quot; + key);</span>
 <span class="nc" id="L130">                return cached;</span>
             }
         }
-<span class="nc" id="L133">        return submitPackage(packageJson, key, 0);</span>
+<span class="fc" id="L133">        return submitPackage(packageJson, key, 0);</span>
     }
 
     /**
@@ -147,43 +147,43 @@ public class NodeAuditSearch {
      */
     private List&lt;Advisory&gt; submitPackage(JsonObject packageJson, String key, int count) throws SearchException, IOException {
         try {
-<span class="nc bnc" id="L150" title="All 2 branches missed.">            if (LOGGER.isDebugEnabled()) {</span>
+<span class="pc bpc" id="L150" title="1 of 2 branches missed.">            if (LOGGER.isDebugEnabled()) {</span>
 <span class="nc" id="L151">                LOGGER.debug(&quot;----------------------------------------&quot;);</span>
 <span class="nc" id="L152">                LOGGER.debug(&quot;Node Audit Payload:&quot;);</span>
 <span class="nc" id="L153">                LOGGER.debug(packageJson.toString());</span>
 <span class="nc" id="L154">                LOGGER.debug(&quot;----------------------------------------&quot;);</span>
 <span class="nc" id="L155">                LOGGER.debug(&quot;----------------------------------------&quot;);</span>
             }
-<span class="nc" id="L157">            final byte[] packageDatabytes = packageJson.toString().getBytes(StandardCharsets.UTF_8);</span>
-<span class="nc" id="L158">            final URLConnectionFactory factory = new URLConnectionFactory(settings);</span>
-<span class="nc" id="L159">            final HttpURLConnection conn = factory.createHttpURLConnection(nodeAuditUrl, useProxy);</span>
-<span class="nc" id="L160">            conn.setDoOutput(true);</span>
-<span class="nc" id="L161">            conn.setDoInput(true);</span>
-<span class="nc" id="L162">            conn.setRequestMethod(&quot;POST&quot;);</span>
-<span class="nc" id="L163">            conn.setRequestProperty(&quot;user-agent&quot;, &quot;npm/6.1.0 node/v10.5.0 linux x64&quot;);</span>
-<span class="nc" id="L164">            conn.setRequestProperty(&quot;npm-in-ci&quot;, &quot;false&quot;);</span>
-<span class="nc" id="L165">            conn.setRequestProperty(&quot;npm-scope&quot;, &quot;&quot;);</span>
-<span class="nc" id="L166">            conn.setRequestProperty(&quot;npm-session&quot;, generateRandomSession());</span>
-<span class="nc" id="L167">            conn.setRequestProperty(&quot;content-type&quot;, &quot;application/json&quot;);</span>
-<span class="nc" id="L168">            conn.setRequestProperty(&quot;Content-Length&quot;, Integer.toString(packageDatabytes.length));</span>
-<span class="nc" id="L169">            conn.connect();</span>
+<span class="fc" id="L157">            final byte[] packageDatabytes = packageJson.toString().getBytes(StandardCharsets.UTF_8);</span>
+<span class="fc" id="L158">            final URLConnectionFactory factory = new URLConnectionFactory(settings);</span>
+<span class="fc" id="L159">            final HttpURLConnection conn = factory.createHttpURLConnection(nodeAuditUrl, useProxy);</span>
+<span class="fc" id="L160">            conn.setDoOutput(true);</span>
+<span class="fc" id="L161">            conn.setDoInput(true);</span>
+<span class="fc" id="L162">            conn.setRequestMethod(&quot;POST&quot;);</span>
+<span class="fc" id="L163">            conn.setRequestProperty(&quot;user-agent&quot;, &quot;npm/6.1.0 node/v10.5.0 linux x64&quot;);</span>
+<span class="fc" id="L164">            conn.setRequestProperty(&quot;npm-in-ci&quot;, &quot;false&quot;);</span>
+<span class="fc" id="L165">            conn.setRequestProperty(&quot;npm-scope&quot;, &quot;&quot;);</span>
+<span class="fc" id="L166">            conn.setRequestProperty(&quot;npm-session&quot;, generateRandomSession());</span>
+<span class="fc" id="L167">            conn.setRequestProperty(&quot;content-type&quot;, &quot;application/json&quot;);</span>
+<span class="fc" id="L168">            conn.setRequestProperty(&quot;Content-Length&quot;, Integer.toString(packageDatabytes.length));</span>
+<span class="fc" id="L169">            conn.connect();</span>
 
-<span class="nc" id="L171">            try (OutputStream os = new BufferedOutputStream(conn.getOutputStream())) {</span>
-<span class="nc" id="L172">                os.write(packageDatabytes);</span>
-<span class="nc" id="L173">                os.flush();</span>
+<span class="fc" id="L171">            try (OutputStream os = new BufferedOutputStream(conn.getOutputStream())) {</span>
+<span class="fc" id="L172">                os.write(packageDatabytes);</span>
+<span class="fc" id="L173">                os.flush();</span>
             }
 
-<span class="nc bnc" id="L176" title="All 4 branches missed.">            switch (conn.getResponseCode()) {</span>
+<span class="pc bpc" id="L176" title="3 of 4 branches missed.">            switch (conn.getResponseCode()) {</span>
                 case 200:
-<span class="nc" id="L178">                    try (InputStream in = new BufferedInputStream(conn.getInputStream());</span>
-<span class="nc" id="L179">                            JsonReader jsonReader = Json.createReader(in)) {</span>
-<span class="nc" id="L180">                        final JSONObject jsonResponse = new JSONObject(jsonReader.readObject().toString());</span>
-<span class="nc" id="L181">                        final NpmAuditParser parser = new NpmAuditParser();</span>
-<span class="nc" id="L182">                        final List&lt;Advisory&gt; advisories = parser.parse(jsonResponse);</span>
-<span class="nc bnc" id="L183" title="All 2 branches missed.">                        if (cache != null) {</span>
-<span class="nc" id="L184">                            cache.put(key, advisories);</span>
+<span class="fc" id="L178">                    try (InputStream in = new BufferedInputStream(conn.getInputStream());</span>
+<span class="fc" id="L179">                            JsonReader jsonReader = Json.createReader(in)) {</span>
+<span class="fc" id="L180">                        final JSONObject jsonResponse = new JSONObject(jsonReader.readObject().toString());</span>
+<span class="fc" id="L181">                        final NpmAuditParser parser = new NpmAuditParser();</span>
+<span class="fc" id="L182">                        final List&lt;Advisory&gt; advisories = parser.parse(jsonResponse);</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">                        if (cache != null) {</span>
+<span class="fc" id="L184">                            cache.put(key, advisories);</span>
                         }
-<span class="nc" id="L186">                        return advisories;</span>
+<span class="fc" id="L186">                        return advisories;</span>
 <span class="nc" id="L187">                    } catch (Exception ex) {</span>
 <span class="nc" id="L188">                        LOGGER.debug(&quot;Error connecting to Node Audit API. Error: {}&quot;,</span>
 <span class="nc" id="L189">                                ex.getMessage());</span>
@@ -229,13 +229,13 @@ public class NodeAuditSearch {
      * @return a random 16 character lower-case hex string
      */
     private String generateRandomSession() {
-<span class="nc" id="L232">        final int length = 16;</span>
-<span class="nc" id="L233">        final SecureRandom r = new SecureRandom();</span>
-<span class="nc" id="L234">        final StringBuilder sb = new StringBuilder();</span>
-<span class="nc bnc" id="L235" title="All 2 branches missed.">        while (sb.length() &lt; length) {</span>
-<span class="nc" id="L236">            sb.append(Integer.toHexString(r.nextInt()));</span>
+<span class="fc" id="L232">        final int length = 16;</span>
+<span class="fc" id="L233">        final SecureRandom r = new SecureRandom();</span>
+<span class="fc" id="L234">        final StringBuilder sb = new StringBuilder();</span>
+<span class="fc bfc" id="L235" title="All 2 branches covered.">        while (sb.length() &lt; length) {</span>
+<span class="fc" id="L236">            sb.append(Integer.toHexString(r.nextInt()));</span>
         }
-<span class="nc" id="L238">        return sb.toString().substring(0, length);</span>
+<span class="fc" id="L238">        return sb.toString().substring(0, length);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

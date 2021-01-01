@@ -345,7 +345,7 @@
 <a class="jxr_linenumber" name="L337" href="#L337">337</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L338" href="#L338">338</a>             <strong class="jxr_keyword">final</strong> URL u = <strong class="jxr_keyword">new</strong> URL(metaUrl);
 <a class="jxr_linenumber" name="L339" href="#L339">339</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../org/owasp/dependencycheck/utils/Downloader.html">Downloader</a> d = <strong class="jxr_keyword">new</strong> <a href="../../../../../org/owasp/dependencycheck/utils/Downloader.html">Downloader</a>(settings);
-<a class="jxr_linenumber" name="L340" href="#L340">340</a>             <strong class="jxr_keyword">final</strong> String content = d.fetchContent(u, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L340" href="#L340">340</a>             <strong class="jxr_keyword">final</strong> String content = d.fetchContent(u, <strong class="jxr_keyword">true</strong>, Settings.KEYS.CVE_USER, Settings.KEYS.CVE_PASSWORD);
 <a class="jxr_linenumber" name="L341" href="#L341">341</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/owasp/dependencycheck/data/nvd/json/MetaProperties.html">MetaProperties</a>(content);
 <a class="jxr_linenumber" name="L342" href="#L342">342</a>         } <strong class="jxr_keyword">catch</strong> (MalformedURLException ex) {
 <a class="jxr_linenumber" name="L343" href="#L343">343</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/owasp/dependencycheck/data/update/exception/UpdateException.html">UpdateException</a>(<span class="jxr_string">"Meta file url is invalid: "</span> + metaUrl, ex);
@@ -494,6 +494,6 @@
 <a class="jxr_linenumber" name="L486" href="#L486">486</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2012&#x2013;2020 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2012&#x2013;2021 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
 </body>
 </html>

@@ -64,8 +64,8 @@ import org.owasp.dependencycheck.utils.Settings;
                         try {
 <span class="fc" id="L65">                            final List&lt;Vulnerability&gt; vulns = filterEcosystem(dependency.getEcosystem(), cveDB.getVulnerabilities(i.getCpe()));</span>
 
-<span class="pc bpc" id="L67" title="1 of 2 branches missed.">                            if (Ecosystem.NODEJS.equals(dependency.getEcosystem())) {</span>
-<span class="nc" id="L68">                                replaceOrAddVulnerability(dependency, vulns);</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">                            if (Ecosystem.NODEJS.equals(dependency.getEcosystem())) {</span>
+<span class="fc" id="L68">                                replaceOrAddVulnerability(dependency, vulns);</span>
                             } else {
 <span class="fc" id="L70">                                dependency.addVulnerabilities(vulns);</span>
                             }
@@ -128,7 +128,7 @@ import org.owasp.dependencycheck.utils.Settings;
      * @param vulns the vulnerability to add
      */
     private void replaceOrAddVulnerability(Dependency dependency, List&lt;Vulnerability&gt; vulns) {
-<span class="nc" id="L131">        vulns.stream().forEach(v -&gt; {</span>
+<span class="fc" id="L131">        vulns.stream().forEach(v -&gt; {</span>
 <span class="nc" id="L132">            v.getReferences().stream().forEach(ref -&gt; {</span>
 <span class="nc" id="L133">                dependency.getVulnerabilities().stream().forEach(existing -&gt; {</span>
 <span class="nc bnc" id="L134" title="All 2 branches missed.">                    if (existing.getSource() == Source.NPM</span>
@@ -139,8 +139,8 @@ import org.owasp.dependencycheck.utils.Settings;
 <span class="nc" id="L139">                });</span>
 <span class="nc" id="L140">            });</span>
 <span class="nc" id="L141">        });</span>
-<span class="nc" id="L142">        dependency.addVulnerabilities(vulns);</span>
-<span class="nc" id="L143">    }</span>
+<span class="fc" id="L142">        dependency.addVulnerabilities(vulns);</span>
+<span class="fc" id="L143">    }</span>
 
     /**
      * Filters the list of vulnerabilities for the given ecosystem.
@@ -150,10 +150,10 @@ import org.owasp.dependencycheck.utils.Settings;
      * @return the filtered list of vulnerabilities
      */
     private List&lt;Vulnerability&gt; filterEcosystem(String ecosystem, List&lt;Vulnerability&gt; vulnerabilities) {
-<span class="fc" id="L153">        List&lt;Vulnerability&gt; remove = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L153">        final List&lt;Vulnerability&gt; remove = new ArrayList&lt;&gt;();</span>
 <span class="fc" id="L154">        vulnerabilities.forEach((v) -&gt; {</span>
 <span class="fc" id="L155">            boolean found = false;</span>
-<span class="fc" id="L156">            List&lt;VulnerableSoftware&gt; removeSoftare = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L156">            final List&lt;VulnerableSoftware&gt; removeSoftare = new ArrayList&lt;&gt;();</span>
 <span class="fc bfc" id="L157" title="All 2 branches covered.">            for (VulnerableSoftware s : v.getVulnerableSoftware()) {</span>
 <span class="pc bpc" id="L158" title="1 of 2 branches missed.">                if (ecosystemMatchesTargetSoftware(ecosystem, s.getTargetSw())) {</span>
 <span class="fc" id="L159">                    found = true;</span>

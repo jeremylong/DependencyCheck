@@ -186,8 +186,8 @@ import java.util.Map;
 <span class="fc" id="L186">            final URL url = new URL(configuredUrl);</span>
 <span class="fc" id="L187">            final File filepath = new File(url.getPath());</span>
 <span class="fc" id="L188">            repoFile = new File(getSettings().getDataDirectory(), filepath.getName());</span>
-<span class="pc bpc" id="L189" title="2 of 4 branches missed.">            if ( !repoFile.isFile() || repoFile.length() &lt;= 1L) {</span>
-<span class="nc" id="L190">                LOGGER.warn(&quot;Retire JS repository is empty or missing - attempting to force the update&quot;);</span>
+<span class="pc bpc" id="L189" title="2 of 4 branches missed.">            if (!repoFile.isFile() || repoFile.length() &lt;= 1L) {</span>
+<span class="nc" id="L190">                    LOGGER.warn(&quot;Retire JS repository is empty or missing - attempting to force the update&quot;);</span>
 <span class="nc" id="L191">                repoEmpty = true;</span>
 <span class="nc" id="L192">                getSettings().setBoolean(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, true);</span>
             }

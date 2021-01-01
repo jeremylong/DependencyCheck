@@ -337,7 +337,7 @@ import org.slf4j.LoggerFactory;
         try {
 <span class="fc" id="L338">            final URL u = new URL(metaUrl);</span>
 <span class="fc" id="L339">            final Downloader d = new Downloader(settings);</span>
-<span class="fc" id="L340">            final String content = d.fetchContent(u, true);</span>
+<span class="fc" id="L340">            final String content = d.fetchContent(u, true, Settings.KEYS.CVE_USER, Settings.KEYS.CVE_PASSWORD);</span>
 <span class="fc" id="L341">            return new MetaProperties(content);</span>
 <span class="nc" id="L342">        } catch (MalformedURLException ex) {</span>
 <span class="nc" id="L343">            throw new UpdateException(&quot;Meta file url is invalid: &quot; + metaUrl, ex);</span>

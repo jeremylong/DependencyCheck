@@ -94,7 +94,7 @@ public final class DBUtils {
      */
     public static void closeResultSet(ResultSet rs) {
         try {
-<span class="pc bpc" id="L97" title="1 of 4 branches missed.">            if (rs != null &amp;&amp; !rs.isClosed()) {</span>
+<span class="fc bfc" id="L97" title="All 4 branches covered.">            if (rs != null &amp;&amp; !rs.isClosed()) {</span>
 <span class="fc" id="L98">                rs.close();</span>
             }
 <span class="nc" id="L100">        } catch (SQLException ex) {</span>

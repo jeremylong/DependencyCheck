@@ -180,7 +180,7 @@ public class DescriptionEcosystemMapper {
      * @return the ecosystem if identified
      */
     public String getEcosystem(DefCveItem cve) {
-<span class="fc" id="L183">        int[] ecosystemMap = new int[ECOSYSTEMS.length];</span>
+<span class="fc" id="L183">        final int[] ecosystemMap = new int[ECOSYSTEMS.length];</span>
 <span class="fc" id="L184">        cve.getCve().getDescription().getDescriptionData().stream()</span>
 <span class="fc" id="L185">                .filter((langString) -&gt; (langString.getLang().equals(&quot;en&quot;)))</span>
 <span class="fc" id="L186">                .forEachOrdered((langString) -&gt; {</span>
@@ -196,7 +196,7 @@ public class DescriptionEcosystemMapper {
      * @return the ecosystem
      */
     public String getEcosystem(String multicase) {
-<span class="nc" id="L199">        int[] ecosystemMap = new int[ECOSYSTEMS.length];</span>
+<span class="nc" id="L199">        final int[] ecosystemMap = new int[ECOSYSTEMS.length];</span>
 <span class="nc" id="L200">        search(multicase, ecosystemMap);</span>
 <span class="nc" id="L201">        return getResult(ecosystemMap);</span>
     }

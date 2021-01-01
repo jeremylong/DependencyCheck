@@ -188,7 +188,7 @@
 <a class="jxr_linenumber" name="L180" href="#L180">180</a> <em class="jxr_javadoccomment">     * @return the ecosystem if identified</em>
 <a class="jxr_linenumber" name="L181" href="#L181">181</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L182" href="#L182">182</a>     <strong class="jxr_keyword">public</strong> String getEcosystem(DefCveItem cve) {
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>         <strong class="jxr_keyword">int</strong>[] ecosystemMap = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">int</strong>[ECOSYSTEMS.length];
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong>[] ecosystemMap = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">int</strong>[ECOSYSTEMS.length];
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>         cve.getCve().getDescription().getDescriptionData().stream()
 <a class="jxr_linenumber" name="L185" href="#L185">185</a>                 .filter((langString) -&gt; (langString.getLang().equals(<span class="jxr_string">"en"</span>)))
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>                 .forEachOrdered((langString) -&gt; {
@@ -204,7 +204,7 @@
 <a class="jxr_linenumber" name="L196" href="#L196">196</a> <em class="jxr_javadoccomment">     * @return the ecosystem</em>
 <a class="jxr_linenumber" name="L197" href="#L197">197</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L198" href="#L198">198</a>     <strong class="jxr_keyword">public</strong> String getEcosystem(String multicase) {
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>         <strong class="jxr_keyword">int</strong>[] ecosystemMap = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">int</strong>[ECOSYSTEMS.length];
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong>[] ecosystemMap = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">int</strong>[ECOSYSTEMS.length];
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>         search(multicase, ecosystemMap);
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>         <strong class="jxr_keyword">return</strong> getResult(ecosystemMap);
 <a class="jxr_linenumber" name="L202" href="#L202">202</a>     }
@@ -280,6 +280,6 @@
 <a class="jxr_linenumber" name="L272" href="#L272">272</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2012&#x2013;2020 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2012&#x2013;2021 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
 </body>
 </html>
