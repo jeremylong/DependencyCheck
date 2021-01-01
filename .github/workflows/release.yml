@@ -52,6 +52,7 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
         run: |
+          export GPG_TTY=$(tty)
           mvn -s settings.xml release:prepare --no-transfer-progress --batch-mode 
           mvn -s settings.xml clean package source:jar javadoc:jar gpg:sign deploy site site:stage -DreleaseTesting --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} 
       - name: Archive IT test logs
