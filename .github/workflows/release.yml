@@ -42,6 +42,10 @@ jobs:
           server-id: ossrh
           server-username: ${{ secrets.OSSRH_USERNAME }}
           server-password: ${{ secrets.OSSRH_TOKEN }}
+      - name: Configure Git user
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
       - name: Build Release with Maven
         id: build-release
         env:
@@ -234,6 +238,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Configure Git user
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
       - name: Snapshot version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
