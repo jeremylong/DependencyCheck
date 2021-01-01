@@ -1,0 +1,248 @@
+name: Build and Deploy
+
+on: 
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.txt'
+  create:
+    tags:
+      - v*
+
+jobs:
+  build:
+    name: Build dependency-check
+    runs-on: ubuntu-latest 
+    steps:
+      - name: Install gpg secret key
+        id: install-gpg-key
+        run: |
+          cat <(echo -e "${{ secrets.OSSRH_GPG_SECRET_KEY }}") | gpg --batch --import
+          gpg --list-secret-keys --keyid-format LONG
+      - uses: actions/checkout@v2
+      - name: Check Maven Cache
+        id: maven-cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository/
+          key: mvn-repo
+      - name: Check Local Maven Cache
+        id: maven-it-cache
+        uses: actions/cache@v2
+        with:
+          path: maven/target/local-repo
+          key: mvn-it-repo
+      - name: Check ODC Data Cache
+        id: odc-data-cache
+        uses: actions/cache@v2
+        with:
+          path: core/target/data
+          key: odc-data
+      - name: Set up JDK 1.8
+        id: jdk-8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8 
+          server-id: ossrh
+          server-username: ${{ secrets.OSSRH_USERNAME }}
+          server-password: ${{ secrets.OSSRH_TOKEN }}
+      - name: Build Snapshot with Maven
+        id: build-snapshot
+        if: ${{ !startswith(github.ref, 'refs/tags/v') }}   
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+        run: mvn -s settings.xml -Prelease clean package verify source:jar javadoc:jar gpg:sign deploy -DreleaseTesting --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} 
+      - name: Build Release with Maven
+        id: build-release
+        if: startswith(github.ref, 'refs/tags/v')
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+        run: mvn -s settings.xml -Prelease clean package verify source:jar javadoc:jar gpg:sign deploy site site:stage -DreleaseTesting --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} 
+      - name: Archive IT test logs
+        id: archive-logs
+        uses: actions/upload-artifact@v2
+        with:
+          name: it-test-logs
+          retention-days: 7
+          path: maven/target/it/**/build.log
+      - name: Archive code coverage results
+        id: archive-coverage
+        if: (startswith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main')
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-coverage-report
+          retention-days: 7
+          path: |
+            **/target/jacoco-results/jacoco.xml
+            **/target/jacoco-results/**/*.html
+      - name: Archive Release
+        id: archive-release
+        #if: startswith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v2
+        with:
+          name: archive-release
+          retention-days: 7
+          path: |
+            **/target/*.asc
+            **/target/*.jar
+            **/target/*.pom
+            ant/target/*.zip
+            cli/target/*.zip
+      - name: Archive Site
+        id: archive-site
+        uses: actions/upload-artifact@v2
+        if: startswith(github.ref, 'refs/tags/v')
+        with:
+          name: archive-site
+          retention-days: 7
+          path: target/staging/
+
+  publish_coverage:
+    name: publish code coverage reports  
+    runs-on: ubuntu-latest 
+    needs: build
+    if: (startswith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main')
+    steps:
+      - name: Download coverage reports
+        uses: actions/download-artifact@v2
+        with:
+          name: code-coverage-report
+      - name: Run codacy-coverage-reporter
+        uses: codacy/codacy-coverage-reporter-action@master
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: utils/target/jacoco-results/jacoco.xml,core/target/jacoco-results/jacoco.xml,maven/target/jacoco-results/jacoco.xml,ant/target/jacoco-results/jacoco.xml,cli/target/jacoco-results/jacoco.xml
+
+  docker:
+    name: Build Docker
+    runs-on: ubuntu-latest
+    needs: build
+    #if: startswith(github.ref, 'refs/tags/v')
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+    steps:
+      - name: Check Maven Cache
+        id: maven-cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository/
+          key: mvn-repo
+      - name: Check Docker ODC Cache
+        id: docker-odc-cache
+        uses: actions/cache@v2
+        with:
+          path: ~/OWASP-Dependency-Check
+          key: docker-repo
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Download release build
+        uses: actions/download-artifact@v2
+        with:
+          name: archive-release
+      - name: Build Docker Image
+        run: ./build-docker.sh
+      - name: build scan target
+        run: mvn -s settings.xml package -DskipTests=true --no-transfer-progress --batch-mode
+      - name: Test Docker Image
+        run: ./test-docker.sh
+      - name: Deploy Docker Image
+        if: startswith(github.ref, 'refs/tags/v')
+        run: |
+          echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin 2>/dev/null
+          ./publish-docker.sh
+        
+  release:
+    name: Publish Release
+    runs-on: ubuntu-latest
+    needs: build
+    if: startswith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Download release build
+        uses: actions/download-artifact@v2
+        with:
+          name: archive-release
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Changes in this Release
+            - Minor bug fixes and reduction of false positives. 
+            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/18?closed=1).
+          draft: false
+          prerelease: false
+      - name: Get version
+        id: get-version
+        run: |
+          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Upload CLI
+        id: upload-release-cli
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: cli/target/dependency-check-${{env.VERSION}}-release.zip
+          asset_name: dependency-check-${{env.VERSION}}-release.zip
+          asset_content_type: application/zip
+      - name: Upload CLI signature
+        id: upload-release-cli-sig 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: cli/target/dependency-check-${{env.VERSION}}-release.zip.asc
+          asset_name: dependency-check-${{env.VERSION}}-release.zip.asc
+          asset_content_type: text/plain
+      - name: Upload ANT
+        id: upload-release-ant 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ant/target/dependency-check-ant-${{env.VERSION}}-release.zip
+          asset_name: dependency-check-ant-${{env.VERSION}}-release.zip
+          asset_content_type: application/zip
+      - name: Upload ANT signature
+        id: upload-release-ant-sig
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ant/target/dependency-check-ant-${{env.VERSION}}-release.zip.asc
+          asset_name: dependency-check-ant-${{env.VERSION}}-release.zip.asc
+          asset_content_type: text/plain
+
+  publish:
+    name: Publish gh-pages
+    runs-on: ubuntu-latest
+    needs: build
+    if: startswith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Download Site
+        uses: actions/download-artifact@v2
+        with:
+          name: archive-site
+      - name: Deploy gh-pages
+        uses: JamesIves/github-pages-deploy-action@3.7.1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_MESSAGE: ${{ format('Publishing github pages for release version {0}', steps.set_maven_project_version.outputs.RELEASE_VERSION) }}
+          BRANCH: gh-pages
+          FOLDER: target/staging
+          CLEAN: true
