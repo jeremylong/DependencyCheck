@@ -20,7 +20,7 @@ Copyright (c) 2012 - Jeremy Long
 
     <groupId>org.owasp</groupId>
     <artifactId>dependency-check-parent</artifactId>
-    <version>6.0.4-SNAPSHOT</version>
+    <version>6.0.4</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -94,7 +94,7 @@ Copyright (c) 2012 - Jeremy Long
         <connection>scm:git:https://github.com/jeremylong/DependencyCheck.git</connection>
         <url>https://github.com/jeremylong/DependencyCheck</url>
         <developerConnection>scm:git:https://github.com/jeremylong/DependencyCheck.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>v6.0.4</tag>
     </scm>
     <issueManagement>
         <system>github</system>
@@ -177,7 +177,7 @@ Copyright (c) 2012 - Jeremy Long
         <com.google.guava.version>30.1-jre</com.google.guava.version>
         
         <!--necassary for some IDEs to be able to execute test cases (Netbeans)-->
-        <surefireArgLine/>
+        <surefireArgLine />
         
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -700,7 +700,7 @@ Copyright (c) 2012 - Jeremy Long
                             <target name="copy xsd to site">
                                 <copy todir="target/site/">
                                     <fileset dir="core/src/main/resources/schema/">
-                                        <include name="**/*.xsd"/>
+                                        <include name="**/*.xsd" />
                                     </fileset>
                                 </copy>
                             </target>
