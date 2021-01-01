@@ -53,8 +53,6 @@ jobs:
         run: |
           mvn -s settings.xml release:prepare --no-transfer-progress --batch-mode
           git reset --hard HEAD~1
-          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-          git commit -am "version $VERSION"
           git push origin release --tags
       - name: Get version
         run: |
