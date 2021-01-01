@@ -1,15 +1,9 @@
-name: Build and Deploy
+name: Build and Deploy Release
 
 on: 
   push:
     branches:
-      - main
-    paths-ignore:
-      - '**/*.md'
-      - '**/*.txt'
-  create:
-    tags:
-      - v*
+      - release
 
 jobs:
   build:
@@ -48,20 +42,14 @@ jobs:
           server-id: ossrh
           server-username: ${{ secrets.OSSRH_USERNAME }}
           server-password: ${{ secrets.OSSRH_TOKEN }}
-      - name: Build Snapshot with Maven
-        id: build-snapshot
-        if: ${{ !startswith(github.ref, 'refs/tags/v') }}   
-        env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-        run: mvn -s settings.xml -Prelease clean package verify source:jar javadoc:jar gpg:sign deploy -DreleaseTesting --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} 
       - name: Build Release with Maven
         id: build-release
-        if: startswith(github.ref, 'refs/tags/v')
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-        run: mvn -s settings.xml -Prelease clean package verify source:jar javadoc:jar gpg:sign deploy site site:stage -DreleaseTesting --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} 
+        run: |
+          mvn -s settings.xml release:prepare --no-transfer-progress --batch-mode
+          mvn -s settings.xml -Prelease clean package verify source:jar javadoc:jar gpg:sign deploy site site:stage -DreleaseTesting --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} 
       - name: Archive IT test logs
         id: archive-logs
         uses: actions/upload-artifact@v2
@@ -71,7 +59,6 @@ jobs:
           path: maven/target/it/**/build.log
       - name: Archive code coverage results
         id: archive-coverage
-        if: (startswith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main')
         uses: actions/upload-artifact@v2
         with:
           name: code-coverage-report
@@ -81,7 +68,6 @@ jobs:
             **/target/jacoco-results/**/*.html
       - name: Archive Release
         id: archive-release
-        #if: startswith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v2
         with:
           name: archive-release
@@ -95,7 +81,6 @@ jobs:
       - name: Archive Site
         id: archive-site
         uses: actions/upload-artifact@v2
-        if: startswith(github.ref, 'refs/tags/v')
         with:
           name: archive-site
           retention-days: 7
@@ -105,7 +90,6 @@ jobs:
     name: publish code coverage reports  
     runs-on: ubuntu-latest 
     needs: build
-    if: (startswith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main')
     steps:
       - name: Download coverage reports
         uses: actions/download-artifact@v2
@@ -121,7 +105,6 @@ jobs:
     name: Build Docker
     runs-on: ubuntu-latest
     needs: build
-    #if: startswith(github.ref, 'refs/tags/v')
     env:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
@@ -151,7 +134,6 @@ jobs:
       - name: Test Docker Image
         run: ./test-docker.sh
       - name: Deploy Docker Image
-        if: startswith(github.ref, 'refs/tags/v')
         run: |
           echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin 2>/dev/null
           ./publish-docker.sh
@@ -160,7 +142,6 @@ jobs:
     name: Publish Release
     runs-on: ubuntu-latest
     needs: build
-    if: startswith(github.ref, 'refs/tags/v')
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -232,7 +213,6 @@ jobs:
     name: Publish gh-pages
     runs-on: ubuntu-latest
     needs: build
-    if: startswith(github.ref, 'refs/tags/v')
     steps:
       - name: Download Site
         uses: actions/download-artifact@v2
@@ -246,3 +226,20 @@ jobs:
           BRANCH: gh-pages
           FOLDER: target/staging
           CLEAN: true
+
+  bumpversion:
+    name: Bump Development Version
+    runs-on: ubuntu-latest
+    needs: docker
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Snapshot version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mvn --batch-mode release:update-versions
+          git fetch origin main
+          git checkout main
+          git merge release
+          git push origin main
