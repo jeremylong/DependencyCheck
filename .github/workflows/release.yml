@@ -46,12 +46,19 @@ jobs:
         run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
+      - name: Get version
+        run: |
+          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          echo "VERSION=$VERSION"
       - name: Prepare Release
         id: prepare-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mvn -s settings.xml release:prepare --no-transfer-progress --batch-mode 
+          mvn -s settings.xml release:prepare --no-transfer-progress --batch-mode
+      - name: Get tags
+        run: |
+          git tag
       - name: Get version
         run: |
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
@@ -104,164 +111,164 @@ jobs:
           retention-days: 7
           path: target/staging/
 
-  publish_coverage:
-    name: publish code coverage reports  
-    runs-on: ubuntu-latest 
-    needs: build
-    steps:
-      - name: Download coverage reports
-        uses: actions/download-artifact@v2
-        with:
-          name: code-coverage-report
-      - name: Run codacy-coverage-reporter
-        uses: codacy/codacy-coverage-reporter-action@master
-        with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: utils/target/jacoco-results/jacoco.xml,core/target/jacoco-results/jacoco.xml,maven/target/jacoco-results/jacoco.xml,ant/target/jacoco-results/jacoco.xml,cli/target/jacoco-results/jacoco.xml
-
-  docker:
-    name: Publish Docker
-    runs-on: ubuntu-latest
-    needs: build
-    env:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-    steps:
-      - name: Check Maven Cache
-        id: maven-cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository/
-          key: mvn-repo
-      - name: Check Docker ODC Cache
-        id: docker-odc-cache
-        uses: actions/cache@v2
-        with:
-          path: ~/OWASP-Dependency-Check
-          key: docker-repo
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Download release build
-        uses: actions/download-artifact@v2
-        with:
-          name: archive-release
-      - name: Build Docker Image
-        run: ./build-docker.sh
-      - name: build scan target
-        run: mvn -s settings.xml package -DskipTests=true --no-transfer-progress --batch-mode
-      - name: Test Docker Image
-        run: ./test-docker.sh
-      - name: Deploy Docker Image
-        run: |
-          echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin 2>/dev/null
-          ./publish-docker.sh
-        
-  release:
-    name: Publish Release
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Download release build
-        uses: actions/download-artifact@v2
-        with:
-          name: archive-release
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            Changes in this Release
-            - Minor bug fixes and reduction of false positives. 
-            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/18?closed=1).
-          draft: false
-          prerelease: false
-      - name: Get version
-        id: get-version
-        run: |
-          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-      - name: Upload CLI
-        id: upload-release-cli
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: cli/target/dependency-check-${{env.VERSION}}-release.zip
-          asset_name: dependency-check-${{env.VERSION}}-release.zip
-          asset_content_type: application/zip
-      - name: Upload CLI signature
-        id: upload-release-cli-sig 
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: cli/target/dependency-check-${{env.VERSION}}-release.zip.asc
-          asset_name: dependency-check-${{env.VERSION}}-release.zip.asc
-          asset_content_type: text/plain
-      - name: Upload ANT
-        id: upload-release-ant 
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ant/target/dependency-check-ant-${{env.VERSION}}-release.zip
-          asset_name: dependency-check-ant-${{env.VERSION}}-release.zip
-          asset_content_type: application/zip
-      - name: Upload ANT signature
-        id: upload-release-ant-sig
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ant/target/dependency-check-ant-${{env.VERSION}}-release.zip.asc
-          asset_name: dependency-check-ant-${{env.VERSION}}-release.zip.asc
-          asset_content_type: text/plain
-
-  publish:
-    name: Publish gh-pages
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Download Site
-        uses: actions/download-artifact@v2
-        with:
-          name: archive-site
-      - name: Deploy gh-pages
-        uses: JamesIves/github-pages-deploy-action@3.7.1
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COMMIT_MESSAGE: ${{ format('Publishing github pages for release version {0}', steps.set_maven_project_version.outputs.RELEASE_VERSION) }}
-          BRANCH: gh-pages
-          FOLDER: target/staging
-          CLEAN: true
-
-  bumpversion:
-    name: Bump Development Version
-    runs-on: ubuntu-latest
-    needs: [docker, publish, release]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Configure Git user
-        run: |
-          git config user.email "actions@github.com"
-          git config user.name "GitHub Actions"
-      - name: Snapshot version
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          mvn --batch-mode release:update-versions
-          git fetch origin main
-          git checkout main
-          git merge release
-          git push origin main
+#  publish_coverage:
+#    name: publish code coverage reports  
+#    runs-on: ubuntu-latest 
+#    needs: build
+#    steps:
+#      - name: Download coverage reports
+#        uses: actions/download-artifact@v2
+#        with:
+#          name: code-coverage-report
+#      - name: Run codacy-coverage-reporter
+#        uses: codacy/codacy-coverage-reporter-action@master
+#        with:
+#          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+#          coverage-reports: utils/target/jacoco-results/jacoco.xml,core/target/jacoco-results/jacoco.xml,maven/target/jacoco-results/jacoco.xml,ant/target/jacoco-results/jacoco.xml,cli/target/jacoco-results/jacoco.xml
+#
+#  docker:
+#    name: Publish Docker
+#    runs-on: ubuntu-latest
+#    needs: build
+#    env:
+#      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+#      DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+#    steps:
+#      - name: Check Maven Cache
+#        id: maven-cache
+#        uses: actions/cache@v2
+#        with:
+#          path: ~/.m2/repository/
+#          key: mvn-repo
+#      - name: Check Docker ODC Cache
+#        id: docker-odc-cache
+#        uses: actions/cache@v2
+#        with:
+#          path: ~/OWASP-Dependency-Check
+#          key: docker-repo
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#      - name: Download release build
+#        uses: actions/download-artifact@v2
+#        with:
+#          name: archive-release
+#      - name: Build Docker Image
+#        run: ./build-docker.sh
+#      - name: build scan target
+#        run: mvn -s settings.xml package -DskipTests=true --no-transfer-progress --batch-mode
+#      - name: Test Docker Image
+#        run: ./test-docker.sh
+#      - name: Deploy Docker Image
+#        run: |
+#          echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin 2>/dev/null
+#          ./publish-docker.sh
+#        
+#  release:
+#    name: Publish Release
+#    runs-on: ubuntu-latest
+#    needs: build
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#      - name: Download release build
+#        uses: actions/download-artifact@v2
+#        with:
+#          name: archive-release
+#      - name: Create Release
+#        id: create_release
+#        uses: actions/create-release@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          tag_name: ${{ github.ref }}
+#          release_name: Release ${{ github.ref }}
+#          body: |
+#            Changes in this Release
+#            - Minor bug fixes and reduction of false positives. 
+#            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/18?closed=1).
+#          draft: false
+#          prerelease: false
+#      - name: Get version
+#        id: get-version
+#        run: |
+#          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+#          echo "VERSION=$VERSION" >> $GITHUB_ENV
+#      - name: Upload CLI
+#        id: upload-release-cli
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          upload_url: ${{ steps.create_release.outputs.upload_url }}
+#          asset_path: cli/target/dependency-check-${{env.VERSION}}-release.zip
+#          asset_name: dependency-check-${{env.VERSION}}-release.zip
+#          asset_content_type: application/zip
+#      - name: Upload CLI signature
+#        id: upload-release-cli-sig 
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          upload_url: ${{ steps.create_release.outputs.upload_url }}
+#          asset_path: cli/target/dependency-check-${{env.VERSION}}-release.zip.asc
+#          asset_name: dependency-check-${{env.VERSION}}-release.zip.asc
+#          asset_content_type: text/plain
+#      - name: Upload ANT
+#        id: upload-release-ant 
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          upload_url: ${{ steps.create_release.outputs.upload_url }}
+#          asset_path: ant/target/dependency-check-ant-${{env.VERSION}}-release.zip
+#          asset_name: dependency-check-ant-${{env.VERSION}}-release.zip
+#          asset_content_type: application/zip
+#      - name: Upload ANT signature
+#        id: upload-release-ant-sig
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          upload_url: ${{ steps.create_release.outputs.upload_url }}
+#          asset_path: ant/target/dependency-check-ant-${{env.VERSION}}-release.zip.asc
+#          asset_name: dependency-check-ant-${{env.VERSION}}-release.zip.asc
+#          asset_content_type: text/plain
+#
+#  publish:
+#    name: Publish gh-pages
+#    runs-on: ubuntu-latest
+#    needs: build
+#    steps:
+#      - name: Download Site
+#        uses: actions/download-artifact@v2
+#        with:
+#          name: archive-site
+#      - name: Deploy gh-pages
+#        uses: JamesIves/github-pages-deploy-action@3.7.1
+#        with:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          COMMIT_MESSAGE: ${{ format('Publishing github pages for release version {0}', steps.set_maven_project_version.outputs.RELEASE_VERSION) }}
+#          BRANCH: gh-pages
+#          FOLDER: target/staging
+#          CLEAN: true
+#
+#  bumpversion:
+#    name: Bump Development Version
+#    runs-on: ubuntu-latest
+#    needs: [docker, publish, release]
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#      - name: Configure Git user
+#        run: |
+#          git config user.email "actions@github.com"
+#          git config user.name "GitHub Actions"
+#      - name: Snapshot version
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          mvn --batch-mode release:update-versions
+#          git fetch origin main
+#          git checkout main
+#          git merge release
+#          git push origin main
