@@ -52,7 +52,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mvn -s settings.xml release:prepare --no-transfer-progress --batch-mode 
+      - name: Get version
+        run: |
+          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          echo "VERSION=$VERSION"
       - uses: actions/checkout@v2
+      - name: Get version
+        run: |
+          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          echo "VERSION=$VERSION"
       - name: Build Release with Maven
         id: build-release
         env:
