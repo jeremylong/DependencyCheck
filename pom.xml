@@ -708,7 +708,7 @@ Copyright (c) 2012 - Jeremy Long
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
                     <tagNameFormat>v@{project.version}</tagNameFormat>
-                    <arguments>-Dmaven.javadoc.skip=true -Dmaven.test.skipTests=true -Dmaven.test.skip=true</arguments>
+                    <arguments>-Dmaven.javadoc.skip=true -Dmaven.test.skip=true</arguments>
                 </configuration>
             </plugin>
         </plugins>
