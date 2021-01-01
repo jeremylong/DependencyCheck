@@ -52,57 +52,56 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mvn -s settings.xml release:prepare --no-transfer-progress --batch-mode
-      - name: Checkout Release Tag
-        run: |
-          VERSION=$(git tag)
-          echo "tag: $VERSION"
-          git checkout $VERSION
+          git reset --hard HEAD~1
+          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          git commit -am "version $VERSION"
+          git push origin release --tags
       - name: Get version
         run: |
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
           echo "VERSION=$VERSION"
-      - name: Build Release with Maven
-        id: build-release
-        env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-        run: |
-          mvn -s settings.xml -Prelease clean package source:jar javadoc:jar gpg:sign deploy site site:stage -DreleaseTesting --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} 
-      - name: Archive IT test logs
-        id: archive-logs
-        uses: actions/upload-artifact@v2
-        with:
-          name: it-test-logs
-          retention-days: 7
-          path: maven/target/it/**/build.log
-      - name: Archive code coverage results
-        id: archive-coverage
-        uses: actions/upload-artifact@v2
-        with:
-          name: code-coverage-report
-          retention-days: 7
-          path: |
-            **/target/jacoco-results/jacoco.xml
-            **/target/jacoco-results/**/*.html
-      - name: Archive Release
-        id: archive-release
-        uses: actions/upload-artifact@v2
-        with:
-          name: archive-release
-          retention-days: 7
-          path: |
-            **/target/*.asc
-            **/target/*.jar
-            **/target/*.pom
-            ant/target/*.zip
-            cli/target/*.zip
-      - name: Archive Site
-        id: archive-site
-        uses: actions/upload-artifact@v2
-        with:
-          name: archive-site
-          retention-days: 7
-          path: target/staging/
+#      - name: Build Release with Maven
+#        id: build-release
+#        env:
+#          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+#          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+#        run: |
+#          mvn -s settings.xml -Prelease clean package source:jar javadoc:jar gpg:sign deploy site site:stage -DreleaseTesting --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} 
+#      - name: Archive IT test logs
+#        id: archive-logs
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: it-test-logs
+#          retention-days: 7
+#          path: maven/target/it/**/build.log
+#      - name: Archive code coverage results
+#        id: archive-coverage
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: code-coverage-report
+#          retention-days: 7
+#          path: |
+#            **/target/jacoco-results/jacoco.xml
+#            **/target/jacoco-results/**/*.html
+#      - name: Archive Release
+#        id: archive-release
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: archive-release
+#          retention-days: 7
+#          path: |
+#            **/target/*.asc
+#            **/target/*.jar
+#            **/target/*.pom
+#            ant/target/*.zip
+#            cli/target/*.zip
+#      - name: Archive Site
+#        id: archive-site
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: archive-site
+#          retention-days: 7
+#          path: target/staging/
 
 #  publish_coverage:
 #    name: publish code coverage reports  
