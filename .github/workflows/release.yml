@@ -138,6 +138,8 @@ jobs:
           key: docker-repo
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          ref: release
       - name: Download release build
         uses: actions/download-artifact@v2
         with:
@@ -160,6 +162,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          ref: release
       - name: Download release build
         uses: actions/download-artifact@v2
         with:
@@ -249,6 +253,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          ref: release
       - name: Configure Git user
         run: |
           git config user.email "actions@github.com"
