@@ -46,13 +46,19 @@ jobs:
         run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
+      - name: Prepare Release
+        id: prepare-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mvn -s settings.xml release:prepare --no-transfer-progress --batch-mode 
+      - uses: actions/checkout@v2
       - name: Build Release with Maven
         id: build-release
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
         run: |
-          mvn -s settings.xml release:prepare --no-transfer-progress --batch-mode 
           mvn -s settings.xml -Prelease clean package source:jar javadoc:jar gpg:sign deploy site site:stage -DreleaseTesting --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} 
       - name: Archive IT test logs
         id: archive-logs
