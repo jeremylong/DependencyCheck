@@ -709,6 +709,7 @@ Copyright (c) 2012 - Jeremy Long
                 <configuration>
                     <tagNameFormat>v@{project.version}</tagNameFormat>
                     <arguments>-Dmaven.javadoc.skip=true -DskipTests -DskipITs</arguments>
+                    <updateWorkingCopyVersions>false</updateWorkingCopyVersions>
                 </configuration>
             </plugin>
         </plugins>
