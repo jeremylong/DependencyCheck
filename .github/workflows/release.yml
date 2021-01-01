@@ -230,7 +230,7 @@ jobs:
   bumpversion:
     name: Bump Development Version
     runs-on: ubuntu-latest
-    needs: docker
+    needs: [docker, publish, release]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
