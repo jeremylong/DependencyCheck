@@ -52,6 +52,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mvn -s settings.xml release:prepare --no-transfer-progress --batch-mode
+      - name: Checkout Release Tag
+        run: |
+          VERSION=$(git tag)
+          echo "tag: $VERSION"
+          git checkout $VERSION
       - name: Get version
         run: |
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
