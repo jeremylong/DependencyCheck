@@ -1,5 +1,13 @@
 name: Build and Deploy Release
 
+##
+## Automates the release process
+## Before invoking update the 'body:' below and the release_notes.md
+## invoke using: 
+##
+##      git push origin main:release
+##
+
 on: 
   push:
     branches:
@@ -138,6 +146,8 @@ jobs:
           key: docker-repo
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          ref: release
       - name: Download release build
         uses: actions/download-artifact@v2
         with:
@@ -160,6 +170,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          ref: release
+      - name: Get version
+        id: get-version
+        run: |
+          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Download release build
         uses: actions/download-artifact@v2
         with:
@@ -170,19 +187,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: v${{ env.VERSION }}
+          release_name: Version ${{ env.VERSION }}
           body: |
             Changes in this Release
             - Minor bug fixes and reduction of false positives. 
             - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/18?closed=1).
           draft: false
           prerelease: false
-      - name: Get version
-        id: get-version
-        run: |
-          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Upload CLI
         id: upload-release-cli
         uses: actions/upload-release-asset@v1
@@ -249,6 +261,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          ref: release
       - name: Configure Git user
         run: |
           git config user.email "actions@github.com"
@@ -258,7 +272,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mvn --batch-mode release:update-versions
+          git commit -am 'snapshot version'
           git fetch origin main
           git checkout main
           git merge release
           git push origin main
+          git push origin --delete release
