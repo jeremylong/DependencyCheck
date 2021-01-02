@@ -307,6 +307,10 @@ public final class CliParser {
                         "Base URL for each year’s CVE files (json.gz), the %d will be replaced with the year."))
                 .addOption(newOptionWithArg(ARGUMENT.CVE_MODIFIED_URL, "url",
                         "URL for the modified CVE (json.gz)."))
+                .addOption(newOptionWithArg(ARGUMENT.CVE_USER, "user",
+                        "Credentials for basic authentication to the CVE data."))
+                .addOption(newOptionWithArg(ARGUMENT.CVE_PASSWORD, "password",
+                        "Credentials for basic authentication to the CVE data."))
                 .addOption(newOptionWithArg(ARGUMENT.PROXY_PORT, "port",
                         "The proxy port to use when downloading resources."))
                 .addOption(newOptionWithArg(ARGUMENT.PROXY_SERVER, "server",
@@ -391,6 +395,7 @@ public final class CliParser {
                 .addOption(newOptionWithArg(ARGUMENT.PATH_TO_CORE, "path", "The path to dotnet core."))
                 .addOption(newOptionWithArg(ARGUMENT.HINTS_FILE, "file", "The file path to the hints XML file."))
                 .addOption(newOption(ARGUMENT.RETIRED, "Enables the retired analyzers."))
+                .addOption(newOption(ARGUMENT.DISABLE_MSBUILD, "Disable the MS Build Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_JAR, "Disable the Jar Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_ARCHIVE, "Disable the Archive Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_ASSEMBLY, "Disable the .NET Assembly Analyzer."))
@@ -572,7 +577,24 @@ public final class CliParser {
      * @return the value of the argument
      */
     public String getStringArgument(String option) {
+        return getStringArgument(option, null);
+    }
+
+    /**
+     * Returns the argument value for the given option.
+     *
+     * @param option the option
+     * @param key the dependency-check settings key for the option.
+     * @return the value of the argument
+     */
+    public String getStringArgument(String option, String key) {
         if (line != null && line.hasOption(option)) {
+            if (key != null && (option.toLowerCase().endsWith("password")
+                    || option.toLowerCase().endsWith("pass"))) {
+                LOGGER.warn("{} used on the command line, consider moving the password "
+                        + "to a properties file using the key `{}` and using the "
+                        + "--propertyfile argument instead", option, key);
+            }
             return line.getOptionValue(option);
         }
         return null;
@@ -1041,9 +1063,21 @@ public final class CliParser {
          */
         public static final String CVE_VALID_FOR_HOURS = "cveValidForHours";
         /**
+         * The username for basic auth to the CVE data.
+         */
+        public static final String CVE_USER = "cveUser";
+        /**
+         * The password for basic auth to the CVE data.
+         */
+        public static final String CVE_PASSWORD = "cvePassword";
+        /**
          * Disables the Jar Analyzer.
          */
         public static final String DISABLE_JAR = "disableJar";
+        /**
+         * Disable the MS Build Analyzer.
+         */
+        public static final String DISABLE_MSBUILD = "disableMSBuild";
         /**
          * Disables the Archive Analyzer.
          */

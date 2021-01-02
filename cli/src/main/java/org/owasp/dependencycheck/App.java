@@ -430,7 +430,7 @@ public class App {
         settings.setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME,
                 cli.getStringArgument(CliParser.ARGUMENT.PROXY_USERNAME));
         settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD,
-                cli.getStringArgument(CliParser.ARGUMENT.PROXY_PASSWORD));
+                cli.getStringArgument(CliParser.ARGUMENT.PROXY_PASSWORD, Settings.KEYS.PROXY_PASSWORD));
         settings.setStringIfNotEmpty(Settings.KEYS.PROXY_NON_PROXY_HOSTS,
                 cli.getStringArgument(CliParser.ARGUMENT.NON_PROXY_HOSTS));
         settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT,
@@ -456,6 +456,8 @@ public class App {
                 cli.hasOption(CliParser.ARGUMENT.RETIRE_JS_FORCEUPDATE));
         settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_JAR, Settings.KEYS.ANALYZER_JAR_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_MSBUILD_PROJECT_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_MSBUILD, Settings.KEYS.ANALYZER_MSBUILD_PROJECT_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_ARCHIVE, Settings.KEYS.ANALYZER_ARCHIVE_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED,
@@ -519,7 +521,7 @@ public class App {
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_USER,
                 cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_USERNAME));
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD,
-                cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_PASSWORD));
+                cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_PASSWORD, Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD));
         settings.setFloat(Settings.KEYS.JUNIT_FAIL_ON_CVSS,
                 cli.getFloatArgument(CliParser.ARGUMENT.FAIL_JUNIT_ON_CVSS, 0));
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED,
@@ -547,7 +549,7 @@ public class App {
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_USER,
                 cli.getStringArgument(CliParser.ARGUMENT.NEXUS_USERNAME));
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_PASSWORD,
-                cli.getStringArgument(CliParser.ARGUMENT.NEXUS_PASSWORD));
+                cli.getStringArgument(CliParser.ARGUMENT.NEXUS_PASSWORD, Settings.KEYS.ANALYZER_NEXUS_PASSWORD));
         //TODO deprecate this in favor of non-proxy host
         final boolean nexusUsesProxy = cli.isNexusUsesProxy();
         settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
@@ -560,7 +562,7 @@ public class App {
         settings.setStringIfNotEmpty(Settings.KEYS.DB_USER,
                 cli.getStringArgument(CliParser.ARGUMENT.DB_NAME));
         settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD,
-                cli.getStringArgument(CliParser.ARGUMENT.DB_PASSWORD));
+                cli.getStringArgument(CliParser.ARGUMENT.DB_PASSWORD, Settings.KEYS.DB_PASSWORD));
         settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS,
                 cli.getStringArgument(CliParser.ARGUMENT.ADDITIONAL_ZIP_EXTENSIONS));
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH,
@@ -569,6 +571,10 @@ public class App {
                 cli.getStringArgument(CliParser.ARGUMENT.CVE_BASE_URL));
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON,
                 cli.getStringArgument(CliParser.ARGUMENT.CVE_MODIFIED_URL));
+        settings.setStringIfNotEmpty(Settings.KEYS.CVE_USER,
+                cli.getStringArgument(CliParser.ARGUMENT.CVE_USER));
+        settings.setStringIfNotEmpty(Settings.KEYS.CVE_PASSWORD,
+                cli.getStringArgument(CliParser.ARGUMENT.CVE_PASSWORD, Settings.KEYS.CVE_PASSWORD));
     }
 
     /**

@@ -27,6 +27,8 @@ _odc_completions()
             --cveUrlBase
             --cveUrlModified
             --cveValidForHours
+            --cveUser <user>
+            --cvePassword <password>
         -d --data
             --dbDriverName
             --dbDriverPath
@@ -45,6 +47,7 @@ _odc_completions()
             --disableGolangMod
             --disableJar
             --disableMixAudit
+            --disableMSBuild
             --disableNodeAudit
             --disableNodeAuditCache
             --disableNodeJS
