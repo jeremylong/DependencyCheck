@@ -1,10 +1,7 @@
 name: coverity-scan
 on:
-  push:
-    branches:
-      - main
-#  schedule:
-#    - cron: '0 0 * * SAT'
+  schedule:
+    - cron: '0 0 * * SAT'
 
 jobs:
   scan:
@@ -18,7 +15,7 @@ jobs:
           java-version: 1.8 
       - name: Get coverity cli
         run: |
-          wget https://scan.coverity.com/download/linux64 --post-data "token=${{ secrets.COVERITY_TOKEN }}&project=jeremylong%2FDependencyCheck" -O coverity_tool.tgz
+          wget https://scan.coverity.com/download/linux64 --no-verbose --post-data "token=${{ secrets.COVERITY_TOKEN }}&project=jeremylong%2FDependencyCheck" -O coverity_tool.tgz
           mkdir coverity_tool
           tar xzf coverity_tool.tgz --strip 1 -C coverity_tool
       - name: Perform coverity scan
