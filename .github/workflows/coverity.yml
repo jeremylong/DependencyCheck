@@ -24,7 +24,7 @@ jobs:
       - name: Perform coverity scan
         run: |
           export PATH=`pwd`/coverity_tool/bin:$PATH
-          cov-build --dir cov-int mvn -DskipTests=true compile
+          cov-build --dir cov-int mvn -DskipTests=true package --no-transfer-progress --batch-mode
       - name: Submit coverity scan
         run: |
           tar czvf scan.tgz cov-int
