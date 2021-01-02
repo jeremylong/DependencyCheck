@@ -1,7 +1,10 @@
 name: coverity-scan
 on:
-  schedule:
-    - cron: '0 0 * * SAT'
+  push:
+    branches:
+      - main
+#  schedule:
+#    - cron: '0 0 * * SAT'
 
 jobs:
   scan:
@@ -17,7 +20,7 @@ jobs:
         run: |
           wget https://scan.coverity.com/download/linux64 --post-data "token=${{ secrets.COVERITY_TOKEN }}&project=jeremylong%2FDependencyCheck" -O coverity_tool.tgz
           mkdir coverity_tool
-          tar xzf coverity_tool.tar.gz --strip 1 -C coverity_tool
+          tar xzf coverity_tool.tgz --strip 1 -C coverity_tool
       - name: Perform coverity scan
         run: |
           export PATH=`pwd`/coverity_tool/bin:$PATH
