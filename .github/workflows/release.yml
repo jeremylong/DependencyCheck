@@ -277,3 +277,4 @@ jobs:
           git checkout main
           git merge release
           git push origin main
+          git push origin --delete release
