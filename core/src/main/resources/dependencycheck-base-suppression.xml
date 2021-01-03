@@ -3001,6 +3001,14 @@
 
     <suppress base="true">
         <notes><![CDATA[
+        FP per issue #3041
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/mysql/mysql\-connector\-java@.*$</packageUrl>
+        <cpe>cpe:/a:oracle:connector%2fj</cpe>
+        <cpe>cpe:/a:oracle:jdbc</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per issue #952 - instead of suppressing the whole thing, we will just
             suppress specific CVE that are for the server
         ]]></notes>
