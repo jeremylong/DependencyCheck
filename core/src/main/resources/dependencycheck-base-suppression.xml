@@ -2,6 +2,14 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
+        FP per #3015 & #3016
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/co\.elastic\.apm/apm\-.*$</packageUrl>
+        <cpe>cpe:/a:grpc:grpc</cpe>
+        <cpe>cpe:/a:apache:httpclient</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #3005
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.google\.apis/google\-api\-services\-sqladmin@.*$</packageUrl>
