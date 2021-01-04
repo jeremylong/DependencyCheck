@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.analyzer;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nodeaudit.Advisory;
@@ -34,6 +35,8 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -84,13 +87,17 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
      * The file name to scan.
      */
     public static final String SHRINKWRAP_JSON = "npm-shrinkwrap.json";
+    /**
+     * The file name to scan.
+     */
+    public static final String YARN_PACKAGE_LOCK = "yarn.lock";
 
     /**
      * Filter that detects files named "package-lock.json or
      * npm-shrinkwrap.json".
      */
     private static final FileFilter PACKAGE_JSON_FILTER = FileFilterBuilder.newInstance()
-            .addFilenames(PACKAGE_LOCK_JSON, SHRINKWRAP_JSON).build();
+            .addFilenames(PACKAGE_LOCK_JSON, SHRINKWRAP_JSON, YARN_PACKAGE_LOCK).build();
 
     /**
      * The Node Audit Searcher.
@@ -288,17 +295,24 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
     private List<Advisory> analyzePackage(final File lockFile, final File packageFile,
             Dependency dependency, Map<String, String> dependencyMap)
             throws AnalysisException {
-        try (JsonReader lockReader = Json.createReader(FileUtils.openInputStream(lockFile));
-                JsonReader packageReader = Json.createReader(FileUtils.openInputStream(packageFile))) {
-
-            // Retrieves the contents of package-lock.json from the Dependency
-            final JsonObject lockJson = lockReader.readObject();
+        try {
+            JsonReader packageReader = Json.createReader(FileUtils.openInputStream(packageFile));
+            final JsonObject lockJson;
+            String lockFileName = lockFile.getName();
+            LOGGER.debug("Lock file name: {}", lockFileName);
+            boolean skipDevDependencies = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false);
+            if(YARN_PACKAGE_LOCK.equals(lockFileName)){
+                lockJson = fetchYarnAuditJson(dependency, skipDevDependencies);
+            } else {
+                JsonReader lockReader = Json.createReader(FileUtils.openInputStream(lockFile));
+                // Retrieves the contents of package-lock.json from the Dependency
+                lockJson = lockReader.readObject();
+            }
             // Retrieves the contents of package-lock.json from the Dependency
             final JsonObject packageJson = packageReader.readObject();
 
             // Modify the payload to meet the NPM Audit API requirements
-            final JsonObject payload = NpmPayloadBuilder.build(lockJson, packageJson, dependencyMap,
-                    getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false));
+            final JsonObject payload = NpmPayloadBuilder.build(lockJson, packageJson, dependencyMap, skipDevDependencies);
 
             // Submits the package payload to the nsp check service
             return searcher.submitPackage(payload);
@@ -381,6 +395,37 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
         } catch (SearchException ex) {
             LOGGER.error("NodeAuditAnalyzer failed on {}", dependency.getActualFilePath());
             throw ex;
+        }
+    }
+
+    private JsonObject fetchYarnAuditJson(Dependency dependency, boolean skipDevDependencies) throws AnalysisException {
+        File folder = dependency.getActualFile().getParentFile();
+        if (!folder.isDirectory()) {
+            throw new AnalysisException(String.format("%s should have been a directory.", folder.getAbsolutePath()));
+        }
+        try {
+            final List<String> args = new ArrayList<>();
+            args.add("/bin/sh");
+            args.add("-c");
+            if(skipDevDependencies){
+                args.add("yarn audit --groups dependencies --json --verbose | grep \"Audit Request\"");
+            } else {
+                args.add("yarn audit --json --verbose | grep \"Audit Request\"");
+            }
+            final ProcessBuilder builder = new ProcessBuilder(args);
+            builder.directory(folder);
+            LOGGER.debug("Launching: {}", args);
+            Process proc = builder.start();
+            String output = IOUtils.toString(proc.getInputStream(), StandardCharsets.UTF_8);
+            output = output.replace("Audit Request: ", "");
+            String errOutput = IOUtils.toString(proc.getErrorStream(), StandardCharsets.UTF_8);
+            LOGGER.debug("Process Out: {}", output);
+            LOGGER.debug("Process Error Out: {}", errOutput);
+            JsonObject response = Json.createReader(IOUtils.toInputStream(output, StandardCharsets.UTF_8)).readObject();
+            String data = response.getString("data");
+            return Json.createReader(IOUtils.toInputStream(data, StandardCharsets.UTF_8)).readObject();
+        } catch (IOException ioe) {
+            throw new AnalysisException("yarn audit failure; this error can be ignored if you are not analyzing projects with a yarn lockfile.", ioe);
         }
     }
 }

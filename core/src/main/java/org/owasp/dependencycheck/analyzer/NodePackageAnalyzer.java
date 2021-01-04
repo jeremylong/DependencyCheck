@@ -207,10 +207,10 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
      * <code>true</code>
      */
     private boolean noLockFileExists(File dependencyFile) {
-        //TODO if we support yarn we need to add the check for the yarn.yml file
         final File lock = new File(dependencyFile.getParentFile(), "package-lock.json");
         final File shrinkwrap = new File(dependencyFile.getParentFile(), "npm-shrinkwrap.json");
-        return !(lock.isFile() || shrinkwrap.isFile());
+        final File yarnLock = new File(dependencyFile.getParentFile(), "yarn.lock");
+        return !(lock.isFile() || shrinkwrap.isFile() || yarnLock.isFile());
     }
 
     @Override
