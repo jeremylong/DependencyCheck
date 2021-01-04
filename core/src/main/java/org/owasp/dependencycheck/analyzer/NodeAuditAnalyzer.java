@@ -37,10 +37,12 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.concurrent.ThreadSafe;
 import javax.json.Json;
 import javax.json.JsonException;
@@ -405,23 +407,27 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
         }
         try {
             final List<String> args = new ArrayList<>();
-            args.add("/bin/sh");
-            args.add("-c");
+            args.add("yarn");
+            args.add("audit");
             if(skipDevDependencies){
-                args.add("yarn audit --groups dependencies --json --verbose | grep \"Audit Request\"");
-            } else {
-                args.add("yarn audit --json --verbose | grep \"Audit Request\"");
+                args.add("--groups");
+                args.add("dependencies");
             }
+            args.add("--json");
+            args.add("--verbose");
             final ProcessBuilder builder = new ProcessBuilder(args);
             builder.directory(folder);
+
             LOGGER.debug("Launching: {}", args);
             Process proc = builder.start();
             String output = IOUtils.toString(proc.getInputStream(), StandardCharsets.UTF_8);
-            output = output.replace("Audit Request: ", "");
+            String auditRequest = Arrays.stream(output.split("\n")).filter(line -> line.contains("Audit Request")).findFirst().get();
+            auditRequest = auditRequest.replace("Audit Request: ", "");
+
             String errOutput = IOUtils.toString(proc.getErrorStream(), StandardCharsets.UTF_8);
-            LOGGER.debug("Process Out: {}", output);
+            LOGGER.debug("Process Out: {}", auditRequest);
             LOGGER.debug("Process Error Out: {}", errOutput);
-            JsonObject response = Json.createReader(IOUtils.toInputStream(output, StandardCharsets.UTF_8)).readObject();
+            JsonObject response = Json.createReader(IOUtils.toInputStream(auditRequest, StandardCharsets.UTF_8)).readObject();
             String data = response.getString("data");
             return Json.createReader(IOUtils.toInputStream(data, StandardCharsets.UTF_8)).readObject();
         } catch (IOException ioe) {
