@@ -258,6 +258,14 @@ public final class Settings {
          */
         public static final String SUPPRESSION_FILE = "suppression.file";
         /**
+         * The username used when connecting to the suppressionFiles.
+         */
+        public static final String SUPPRESSION_FILE_USER = "suppression.file.user";
+        /**
+         * The password used when connecting to the suppressionFiles.
+         */
+        public static final String SUPPRESSION_FILE_PASSWORD = "suppression.file.password";
+        /**
          * The key for the hint file.
          */
         public static final String HINTS_FILE = "hints.file";
