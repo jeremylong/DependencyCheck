@@ -2,6 +2,14 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
+        FP per #3053
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.seleniumhq\.selenium/selenium\-opera\-driver@.*$</packageUrl>
+        <cpe>cpe:/a:opera:opera</cpe>
+        <cpe>cpe:/a:opera_software:opera</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #3000
         ]]></notes>
         <packageUrl regex="true">^pkg:(generic|nuget)/(ProcessSnapshotCleanup|QTAgent.{0,10}|QTDCAgent|QTDCAgent32|TDEnvCleanup|UiaComWrapper|VSTestVideoRecorder|VisualStudioDatastoreConfigurationProvider|msdia140typelib_clr0200)@.*$</packageUrl>
