@@ -12,7 +12,6 @@
     "dont-sniff-mimetype": "^1.0.0",
     "express": "^4.13.4",
     "express-session": "^1.13.0",
-    "fake_submodule": "file:fake_submodule",
     "forever": "^0.15.1",
     "helmet": "^2.0.0",
     "marked": "0.3.5",
@@ -28,8 +27,8 @@
     "//": "a9 insecure components"
   },
   "engines": {
-    "node": "4.4.x",
-    "npm": "2.15.x"
+    "node": "12.x.x",
+    "npm": "6.x.x"
   },
   "scripts": {
     "start": "node server.js",
@@ -39,7 +38,6 @@
   },
   "devDependencies": {
     "async": "^2.0.0-rc.4",
-    "fake_submodule": "file:fake_submodule",
     "grunt": "^1.0.1",
     "grunt-cli": "^1.2.0",
     "grunt-concurrent": "^2.3.0",

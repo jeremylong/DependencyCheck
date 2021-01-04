@@ -18,8 +18,6 @@
 package org.owasp.dependencycheck.data.nodeaudit;
 
 import org.owasp.dependencycheck.analyzer.NodePackageAnalyzer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -39,11 +37,6 @@ import javax.annotation.concurrent.ThreadSafe;
  */
 @ThreadSafe
 public final class NpmPayloadBuilder {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(NpmPayloadBuilder.class);
 
     /**
      * Private constructor for utility class.
@@ -236,8 +229,8 @@ public final class NpmPayloadBuilder {
         if (dep.containsKey("dependencies")) {
             final JsonObjectBuilder dependeciesBuilder = Json.createObjectBuilder();
             dep.getJsonObject("dependencies").entrySet().forEach((entry) -> {
-                final String version = ((JsonObject) entry.getValue()).getString("version");
-                dependencyMap.put(entry.getKey(), version);
+                final String v = ((JsonObject) entry.getValue()).getString("version");
+                dependencyMap.put(entry.getKey(), v);
                 dependeciesBuilder.add(entry.getKey(), buildDependencies((JsonObject) entry.getValue(), dependencyMap));
             });
             depBuilder.add("dependencies", dependeciesBuilder.build());
