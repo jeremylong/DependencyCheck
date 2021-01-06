@@ -47,6 +47,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #3057
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.taglibs/taglibs\-standard\-impl@.*$</packageUrl>
+        <cpe>cpe:/a:tag_project:tag</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #3043
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.nimbusds/lang\-tag@.*$</packageUrl>
