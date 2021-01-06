@@ -93,7 +93,7 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
             <relatedDependencies>
 #foreach($related in $dependency.getRelatedDependencies())
                 <relatedDependency#if($related.isVirtual()) isVirtual="true"#end>
-                    <fileName>$enc.xml($related.FileName)</fileName>
+                    <fileName>$enc.xml($related.DisplayFileName)</fileName>
                     <filePath>$enc.xml($related.FilePath)</filePath>
                     <sha256>#if(!$dependency.isVirtual())$enc.xml($dependency.Sha256sum)#end</sha256>
                     <sha1>#if(!$related.isVirtual())$enc.xml($related.Sha1sum)#end</sha1>
