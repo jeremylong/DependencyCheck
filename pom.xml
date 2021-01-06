@@ -140,7 +140,7 @@ Copyright (c) 2012 - Jeremy Long
         <maven-project-info-reports-plugin.version>3.1.1</maven-project-info-reports-plugin.version>
         <maven-surefire-report-plugin.version>2.22.2</maven-surefire-report-plugin.version>
         <jacoco-maven-plugin.version>0.8.6</jacoco-maven-plugin.version>
-        <spotbugs.maven.plugin.version>4.1.4</spotbugs.maven.plugin.version>
+        <spotbugs.maven.plugin.version>4.2.0</spotbugs.maven.plugin.version>
         <taglist-maven-plugin.version>2.4</taglist-maven-plugin.version>
         <versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
 
@@ -158,7 +158,7 @@ Copyright (c) 2012 - Jeremy Long
         <hamcrest-core.version>2.2</hamcrest-core.version>
         <jackson.version>2.12.0</jackson.version>
         <jmockit.version>1.49</jmockit.version>
-        <mockito-core.version>3.6.28</mockito-core.version>
+        <mockito-core.version>3.7.0</mockito-core.version>
         <jsoup.version>1.13.1</jsoup.version>
         <commons-compress.version>1.20</commons-compress.version>
         <org.apache.maven.shared.file-management.version>3.0.0</org.apache.maven.shared.file-management.version>
@@ -172,7 +172,7 @@ Copyright (c) 2012 - Jeremy Long
         <org.glassfish.javax.json.version>1.1.4</org.glassfish.javax.json.version>
         <maven-artifact-transfer.version>0.13.1</maven-artifact-transfer.version>
         <groovy-all.version>2.4.21</groovy-all.version>
-        <gmavenplus-plugin.version>1.12.0</gmavenplus-plugin.version>
+        <gmavenplus-plugin.version>1.12.1</gmavenplus-plugin.version>
         <com.h3xstream.retirejs.core.version>3.0.2</com.h3xstream.retirejs.core.version>
         <com.google.guava.version>30.1-jre</com.google.guava.version>
         
