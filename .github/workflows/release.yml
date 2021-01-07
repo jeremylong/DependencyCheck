@@ -278,7 +278,7 @@ jobs:
           subject: jeremy-long
           repository: owasp
           package: dependency-check
-          version: ${{ evn.VERSION }}
+          version: ${{ env.VERSION }}
           sourcePath: 'cli/target/dependency-check-${{env.VERSION}}-release.zip'
           override: 1
           username: jeremy-long
@@ -288,7 +288,7 @@ jobs:
           subject: jeremy-long
           repository: owasp
           package: dependency-check
-          version: ${{ evn.VERSION }}
+          version: ${{ env.VERSION }}
           sourcePath: 'cli/target/dependency-check-${{env.VERSION}}-release.zip.asc'
           override: 1
           username: jeremy-long
@@ -298,7 +298,7 @@ jobs:
           subject: jeremy-long
           repository: owasp
           package: dependency-check-ant
-          version: ${{ evn.VERSION }}
+          version: ${{ env.VERSION }}
           sourcePath: 'ant/target/dependency-check-ant-${{env.VERSION}}-release.zip'
           override: 1
           username: jeremy-long
@@ -308,7 +308,7 @@ jobs:
           subject: jeremy-long
           repository: owasp
           package: dependency-check-ant
-          version: ${{ evn.VERSION }}
+          version: ${{ env.VERSION }}
           sourcePath: 'ant/target/dependency-check-ant-${{env.VERSION}}-release.zip.asc'
           override: 1
           username: jeremy-long
