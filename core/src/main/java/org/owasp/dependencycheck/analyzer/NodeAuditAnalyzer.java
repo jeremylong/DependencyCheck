@@ -237,7 +237,7 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
             builder.part(Part.APPLICATION).product(advisory.getModuleName().replace(" ", "_"))
                     .version(advisory.getVulnerableVersions().replace(" ", ""));
             final VulnerableSoftware vs = builder.build();
-            vuln.setVulnerableSoftware(Collections.singleton(vs));
+            vuln.addVulnerableSoftware(vs);
 
             String version = advisory.getVersion();
             if (version == null && dependencyMap.containsKey(advisory.getModuleName())) {

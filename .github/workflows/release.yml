@@ -7,6 +7,8 @@ name: Build and Deploy Release
 ##
 ##      git push origin main:release
 ##
+## A release workflow bug may create a tag for refs/heads/release
+## This can be deleted using $ git push --delete origin refs/tags/refs/heads/release
 
 on: 
   push:
@@ -191,8 +193,9 @@ jobs:
           release_name: Version ${{ env.VERSION }}
           body: |
             Changes in this Release
-            - Minor bug fixes and reduction of false positives. 
-            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/18?closed=1).
+            - Added missing command line arguments per #3028 and #3035.
+            - False positive reduction and minor bug fixes.
+            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/19?closed=1).
           draft: false
           prerelease: false
       - name: Upload CLI
@@ -277,7 +280,7 @@ jobs:
           subject: jeremy-long
           repository: owasp
           package: dependency-check
-          version: ${{ evn.VERSION }}
+          version: ${{ env.VERSION }}
           sourcePath: 'cli/target/dependency-check-${{env.VERSION}}-release.zip'
           override: 1
           username: jeremy-long
@@ -287,7 +290,7 @@ jobs:
           subject: jeremy-long
           repository: owasp
           package: dependency-check
-          version: ${{ evn.VERSION }}
+          version: ${{ env.VERSION }}
           sourcePath: 'cli/target/dependency-check-${{env.VERSION}}-release.zip.asc'
           override: 1
           username: jeremy-long
@@ -297,7 +300,7 @@ jobs:
           subject: jeremy-long
           repository: owasp
           package: dependency-check-ant
-          version: ${{ evn.VERSION }}
+          version: ${{ env.VERSION }}
           sourcePath: 'ant/target/dependency-check-ant-${{env.VERSION}}-release.zip'
           override: 1
           username: jeremy-long
@@ -307,7 +310,7 @@ jobs:
           subject: jeremy-long
           repository: owasp
           package: dependency-check-ant
-          version: ${{ evn.VERSION }}
+          version: ${{ env.VERSION }}
           sourcePath: 'ant/target/dependency-check-ant-${{env.VERSION}}-release.zip.asc'
           override: 1
           username: jeremy-long
