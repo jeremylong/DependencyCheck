@@ -7,6 +7,8 @@ name: Build and Deploy Release
 ##
 ##      git push origin main:release
 ##
+## A release workflow bug may create a tag for refs/heads/release
+## This can be deleted using $ git push --delete origin refs/tags/refs/heads/release
 
 on: 
   push:
