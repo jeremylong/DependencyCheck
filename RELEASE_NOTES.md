@@ -2,14 +2,13 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
-## Pending Release
+## [Version 6.0.5](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.0.5) (2021-01-07)
 
 ### Changes
 
 - Added missing command line arguments per #3028 and #3035.
-- Added warning to the CLI if passwords are used via the command line - a properties file should be used instead (see PR #3048).
-- See the full listing of 
-  [changes](https://github.com/jeremylong/DependencyCheck/milestone/19?closed=1).
+- False positive reduction and minor bug fixes.
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/19?closed=1).
 
 ## [Version 6.0.4](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.0.4) (2020-12-31)
 

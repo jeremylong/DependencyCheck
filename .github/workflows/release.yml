@@ -191,8 +191,9 @@ jobs:
           release_name: Version ${{ env.VERSION }}
           body: |
             Changes in this Release
-            - Minor bug fixes and reduction of false positives. 
-            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/18?closed=1).
+            - Added missing command line arguments per #3028 and #3035.
+            - False positive reduction and minor bug fixes.
+            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/19?closed=1).
           draft: false
           prerelease: false
       - name: Upload CLI
