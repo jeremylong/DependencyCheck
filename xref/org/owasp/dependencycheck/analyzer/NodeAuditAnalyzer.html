@@ -236,7 +236,7 @@
 <a class="jxr_linenumber" name="L228" href="#L228">228</a>             builder.part(Part.APPLICATION).product(advisory.getModuleName().replace(<span class="jxr_string">" "</span>, <span class="jxr_string">"_"</span>))
 <a class="jxr_linenumber" name="L229" href="#L229">229</a>                     .version(advisory.getVulnerableVersions().replace(<span class="jxr_string">" "</span>, <span class="jxr_string">""</span>));
 <a class="jxr_linenumber" name="L230" href="#L230">230</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/VulnerableSoftware.html">VulnerableSoftware</a> vs = builder.build();
-<a class="jxr_linenumber" name="L231" href="#L231">231</a>             vuln.setVulnerableSoftware(Collections.singleton(vs));
+<a class="jxr_linenumber" name="L231" href="#L231">231</a>             vuln.addVulnerableSoftware(vs);
 <a class="jxr_linenumber" name="L232" href="#L232">232</a> 
 <a class="jxr_linenumber" name="L233" href="#L233">233</a>             String version = advisory.getVersion();
 <a class="jxr_linenumber" name="L234" href="#L234">234</a>             <strong class="jxr_keyword">if</strong> (version == <strong class="jxr_keyword">null</strong> &amp;&amp; dependencyMap.containsKey(advisory.getModuleName())) {

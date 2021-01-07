@@ -197,12 +197,12 @@
 <a class="jxr_linenumber" name="L189" href="#L189">189</a>                 <strong class="jxr_keyword">final</strong> URL url = <strong class="jxr_keyword">new</strong> URL(suppressionFilePath);
 <a class="jxr_linenumber" name="L190" href="#L190">190</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/utils/Downloader.html">Downloader</a> downloader = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/utils/Downloader.html">Downloader</a>(getSettings());
 <a class="jxr_linenumber" name="L191" href="#L191">191</a>                 <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L192" href="#L192">192</a>                     downloader.fetchFile(url, file, false);
+<a class="jxr_linenumber" name="L192" href="#L192">192</a>                     downloader.fetchFile(url, file, false, Settings.KEYS.SUPPRESSION_FILE_USER, Settings.KEYS.SUPPRESSION_FILE_PASSWORD);
 <a class="jxr_linenumber" name="L193" href="#L193">193</a>                 } <strong class="jxr_keyword">catch</strong> (DownloadFailedException ex) {
 <a class="jxr_linenumber" name="L194" href="#L194">194</a>                     LOGGER.trace(<span class="jxr_string">"Failed download suppression file - first attempt"</span>, ex);
 <a class="jxr_linenumber" name="L195" href="#L195">195</a>                     <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L196" href="#L196">196</a>                         Thread.sleep(500);
-<a class="jxr_linenumber" name="L197" href="#L197">197</a>                         downloader.fetchFile(url, file, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>                         downloader.fetchFile(url, file, <strong class="jxr_keyword">true</strong>, Settings.KEYS.SUPPRESSION_FILE_USER, Settings.KEYS.SUPPRESSION_FILE_PASSWORD);
 <a class="jxr_linenumber" name="L198" href="#L198">198</a>                     } <strong class="jxr_keyword">catch</strong> (TooManyRequestsException ex1) {
 <a class="jxr_linenumber" name="L199" href="#L199">199</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/suppression/SuppressionParseException.html">SuppressionParseException</a>(<span class="jxr_string">"Unable to download supression file `"</span> + file
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>                                 + <span class="jxr_string">"`; received 429 - too many requests"</span>, ex1);

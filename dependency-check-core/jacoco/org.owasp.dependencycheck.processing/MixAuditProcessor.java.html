@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MixAuditProcessor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.processing</a> &gt; <span class="el_source">MixAuditProcessor.java</span></div><h1>MixAuditProcessor.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2020 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.processing;
+
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURL;
+import com.github.packageurl.PackageURLBuilder;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import org.owasp.dependencycheck.Engine;
+import static org.owasp.dependencycheck.analyzer.ElixirMixAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.data.elixir.MixAuditJsonParser;
+import org.owasp.dependencycheck.data.elixir.MixAuditResult;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.CvssV2;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.dependency.Vulnerability;
+import org.owasp.dependencycheck.dependency.VulnerableSoftware;
+import org.owasp.dependencycheck.dependency.VulnerableSoftwareBuilder;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.owasp.dependencycheck.utils.Checksum;
+import org.owasp.dependencycheck.utils.processing.Processor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import us.springett.parsers.cpe.exceptions.CpeValidationException;
+import us.springett.parsers.cpe.values.Part;
+
+/**
+ * Processor for the output of `mix_audit`.
+ *
+ * @author Jeremy Long
+ */
+public class MixAuditProcessor extends Processor&lt;InputStream&gt; {
+
+    /**
+     * The logger.
+     */
+<span class="nc" id="L59">    private static final Logger LOGGER = LoggerFactory.getLogger(MixAuditProcessor.class);</span>
+    /**
+     * Reference to the dependency-check engine.
+     */
+    private final Engine engine;
+    /**
+     * Reference to the go.mod dependency.
+     */
+    private final Dependency mixDependency;
+    /**
+     * Temporary storage for an exception if it occurs during the processing.
+     */
+    private IOException ioException;
+    /**
+     * Temporary storage for an exception if it occurs during the processing.
+     */
+    private CpeValidationException cpeException;
+    /**
+     * Temporary storage for an exception if it occurs during the processing.
+     */
+    private AnalysisException analysisException;
+
+    /**
+     * Constructs a new processor to consume the output of `mix_audit`.
+     *
+     * @param mixDependency a reference to `mix.lock` dependency
+     * @param engine a reference to the dependency-check engine
+     */
+<span class="nc" id="L87">    public MixAuditProcessor(Dependency mixDependency, Engine engine) {</span>
+<span class="nc" id="L88">        this.engine = engine;</span>
+<span class="nc" id="L89">        this.mixDependency = mixDependency;</span>
+<span class="nc" id="L90">    }</span>
+
+    @Override
+    public void run() {
+<span class="nc" id="L94">        try (BufferedReader rdr = new BufferedReader(new InputStreamReader(getInput(), StandardCharsets.UTF_8))) {</span>
+<span class="nc" id="L95">            processMixAuditOutput(rdr);</span>
+<span class="nc" id="L96">        } catch (IOException ex) {</span>
+<span class="nc" id="L97">            this.ioException = ex;</span>
+<span class="nc" id="L98">        } catch (AnalysisException ex) {</span>
+<span class="nc" id="L99">            this.analysisException = ex;</span>
+<span class="nc" id="L100">        } catch (CpeValidationException ex) {</span>
+<span class="nc" id="L101">            this.cpeException = ex;</span>
+<span class="nc" id="L102">        }</span>
+<span class="nc" id="L103">    }</span>
+
+    /**
+     * Throws any exceptions that occurred during processing.
+     *
+     * @throws IOException thrown if there was an error reading from the process
+     * @throws AnalysisException thrown if an analysis error occurred
+     * @throws CpeValidationException if there is an error building the
+     * CPE/VulnerableSoftware object
+     */
+    @Override
+    public void close() throws IOException, AnalysisException, CpeValidationException {
+<span class="nc bnc" id="L115" title="All 2 branches missed.">        if (ioException != null) {</span>
+<span class="nc" id="L116">            addSuppressedExceptions(ioException, analysisException, cpeException);</span>
+<span class="nc" id="L117">            throw ioException;</span>
+        }
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (analysisException != null) {</span>
+<span class="nc" id="L120">            addSuppressedExceptions(analysisException, cpeException);</span>
+<span class="nc" id="L121">            throw analysisException;</span>
+        }
+<span class="nc bnc" id="L123" title="All 2 branches missed.">        if (cpeException != null) {</span>
+<span class="nc" id="L124">            throw cpeException;</span>
+        }
+<span class="nc" id="L126">    }</span>
+
+    /**
+     * Processes the mix audit output.
+     *
+     * @param rdr the reader of the report
+     * @throws AnalysisException thrown if an analysis error occurred
+     * @throws CpeValidationException if there is an error building the
+     * CPE/VulnerableSoftware object
+     */
+    private void processMixAuditOutput(BufferedReader rdr) throws AnalysisException, CpeValidationException {
+<span class="nc" id="L137">        final MixAuditJsonParser parser = new MixAuditJsonParser(rdr);</span>
+<span class="nc" id="L138">        parser.process();</span>
+
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        for (MixAuditResult result : parser.getResults()) {</span>
+<span class="nc" id="L141">            final Dependency dependency = createDependency(mixDependency, result.getDependencyPackage(), result.getDependencyVersion());</span>
+<span class="nc" id="L142">            Vulnerability vulnerability = engine.getDatabase().getVulnerability(result.getCve());</span>
+
+<span class="nc bnc" id="L144" title="All 2 branches missed.">            if (vulnerability == null) {</span>
+<span class="nc" id="L145">                vulnerability = createVulnerability(result);</span>
+            }
+
+<span class="nc" id="L148">            dependency.addVulnerability(vulnerability);</span>
+<span class="nc" id="L149">            engine.addDependency(dependency);</span>
+<span class="nc" id="L150">        }</span>
+<span class="nc" id="L151">    }</span>
+
+    private Dependency createDependency(Dependency parentDependency, String packageName, String version) {
+<span class="nc" id="L154">        final Dependency dep = new Dependency(parentDependency.getActualFile(), true);</span>
+
+<span class="nc" id="L156">        final String identifier = String.format(&quot;%s:%s&quot;, packageName, version);</span>
+
+<span class="nc" id="L158">        dep.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="nc" id="L159">        dep.setDisplayFileName(identifier);</span>
+<span class="nc" id="L160">        dep.setName(packageName);</span>
+<span class="nc" id="L161">        dep.setVersion(version);</span>
+<span class="nc" id="L162">        dep.setPackagePath(identifier);</span>
+<span class="nc" id="L163">        dep.setMd5sum(Checksum.getMD5Checksum(identifier));</span>
+<span class="nc" id="L164">        dep.setSha1sum(Checksum.getSHA1Checksum(identifier));</span>
+<span class="nc" id="L165">        dep.setSha256sum(Checksum.getSHA256Checksum(identifier));</span>
+
+<span class="nc" id="L167">        dep.addEvidence(EvidenceType.VERSION, &quot;mix_audit&quot;, &quot;Version&quot;, version, Confidence.HIGHEST);</span>
+<span class="nc" id="L168">        dep.addEvidence(EvidenceType.PRODUCT, &quot;mix_audit&quot;, &quot;Package&quot;, packageName, Confidence.HIGHEST);</span>
+
+        try {
+<span class="nc" id="L171">            final PackageURL purl = PackageURLBuilder.aPackageURL().withType(&quot;hex&quot;).withName(packageName)</span>
+<span class="nc" id="L172">                    .withVersion(version).build();</span>
+<span class="nc" id="L173">            dep.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
+<span class="nc" id="L174">        } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L175">            LOGGER.debug(&quot;Unable to build package url for hex&quot;, ex);</span>
+<span class="nc" id="L176">            final GenericIdentifier id = new GenericIdentifier(&quot;hex:&quot; + packageName + &quot;@&quot; + version,</span>
+                    Confidence.HIGHEST);
+<span class="nc" id="L178">            dep.addSoftwareIdentifier(id);</span>
+<span class="nc" id="L179">        }</span>
+
+<span class="nc" id="L181">        return dep;</span>
+    }
+
+    private Vulnerability createVulnerability(MixAuditResult result) throws CpeValidationException {
+<span class="nc" id="L185">        final String product = result.getDependencyPackage();</span>
+<span class="nc" id="L186">        final String version = result.getDependencyVersion();</span>
+
+<span class="nc" id="L188">        final Vulnerability vulnerability = new Vulnerability();</span>
+<span class="nc" id="L189">        vulnerability.setSource(Vulnerability.Source.MIXAUDIT);</span>
+
+<span class="nc" id="L191">        final VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder();</span>
+<span class="nc" id="L192">        final VulnerableSoftware vs = builder.part(Part.APPLICATION)</span>
+<span class="nc" id="L193">                .vendor(String.format(&quot;%s_project&quot;, product))</span>
+<span class="nc" id="L194">                .product(product)</span>
+<span class="nc" id="L195">                .version(version).build();</span>
+
+<span class="nc" id="L197">        vulnerability.addVulnerableSoftware(vs);</span>
+<span class="nc" id="L198">        vulnerability.setMatchedVulnerableSoftware(vs);</span>
+
+<span class="nc" id="L200">        vulnerability.setCvssV2(new CvssV2(-1, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;unknown&quot;));</span>
+<span class="nc" id="L201">        vulnerability.setDescription(result.getDescription());</span>
+<span class="nc" id="L202">        vulnerability.setName(result.getCve());</span>
+
+<span class="nc" id="L204">        return vulnerability;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

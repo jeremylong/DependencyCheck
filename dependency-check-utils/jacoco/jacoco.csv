@@ -18,5 +18,5 @@ Dependency-Check Utils,org.owasp.dependencycheck.utils,DownloadFailedException,1
 Dependency-Check Utils,org.owasp.dependencycheck.utils,Checksum,50,177,3,9,14,41,5,14,2,10
 Dependency-Check Utils,org.owasp.dependencycheck.utils,XmlUtils,209,0,19,0,50,0,15,0,5,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils.processing,Processor,38,0,4,0,12,0,7,0,5,0
-Dependency-Check Utils,org.owasp.dependencycheck.utils.processing,ProcessReader.Gobbler,33,0,4,0,13,0,6,0,4,0
+Dependency-Check Utils,org.owasp.dependencycheck.utils.processing,ProcessReader.Gobbler,30,0,2,0,12,0,5,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils.processing,ProcessReader,139,0,14,0,39,0,15,0,8,0

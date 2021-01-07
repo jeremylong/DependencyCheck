@@ -228,7 +228,7 @@ import us.springett.parsers.cpe.values.Part;
 <span class="fc" id="L228">            builder.part(Part.APPLICATION).product(advisory.getModuleName().replace(&quot; &quot;, &quot;_&quot;))</span>
 <span class="fc" id="L229">                    .version(advisory.getVulnerableVersions().replace(&quot; &quot;, &quot;&quot;));</span>
 <span class="fc" id="L230">            final VulnerableSoftware vs = builder.build();</span>
-<span class="fc" id="L231">            vuln.setVulnerableSoftware(Collections.singleton(vs));</span>
+<span class="fc" id="L231">            vuln.addVulnerableSoftware(vs);</span>
 
 <span class="fc" id="L233">            String version = advisory.getVersion();</span>
 <span class="pc bpc" id="L234" title="1 of 4 branches missed.">            if (version == null &amp;&amp; dependencyMap.containsKey(advisory.getModuleName())) {</span>

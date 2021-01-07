@@ -1425,8 +1425,8 @@ public final class CveDB implements AutoCloseable {
 <span class="fc bfc" id="L1425" title="All 2 branches covered.">                if (matched == null) {</span>
 <span class="fc" id="L1426">                    matched = vs;</span>
                 } else {
-<span class="fc bfc" id="L1428" title="All 4 branches covered.">                    if (&quot;*&quot;.equals(vs.getWellFormedUpdate()) &amp;&amp; !&quot;*&quot;.equals(matched.getWellFormedUpdate())) {</span>
-<span class="fc" id="L1429">                        matched = vs;</span>
+<span class="pc bpc" id="L1428" title="1 of 4 branches missed.">                    if (&quot;*&quot;.equals(vs.getWellFormedUpdate()) &amp;&amp; !&quot;*&quot;.equals(matched.getWellFormedUpdate())) {</span>
+<span class="nc" id="L1429">                        matched = vs;</span>
                     }
                 }
             }

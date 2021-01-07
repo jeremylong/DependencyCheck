@@ -189,12 +189,12 @@ import org.xml.sax.SAXException;
 <span class="fc" id="L189">                final URL url = new URL(suppressionFilePath);</span>
 <span class="fc" id="L190">                final Downloader downloader = new Downloader(getSettings());</span>
                 try {
-<span class="fc" id="L192">                    downloader.fetchFile(url, file, false);</span>
+<span class="fc" id="L192">                    downloader.fetchFile(url, file, false, Settings.KEYS.SUPPRESSION_FILE_USER, Settings.KEYS.SUPPRESSION_FILE_PASSWORD);</span>
 <span class="nc" id="L193">                } catch (DownloadFailedException ex) {</span>
 <span class="nc" id="L194">                    LOGGER.trace(&quot;Failed download suppression file - first attempt&quot;, ex);</span>
                     try {
 <span class="nc" id="L196">                        Thread.sleep(500);</span>
-<span class="nc" id="L197">                        downloader.fetchFile(url, file, true);</span>
+<span class="nc" id="L197">                        downloader.fetchFile(url, file, true, Settings.KEYS.SUPPRESSION_FILE_USER, Settings.KEYS.SUPPRESSION_FILE_PASSWORD);</span>
 <span class="nc" id="L198">                    } catch (TooManyRequestsException ex1) {</span>
 <span class="nc" id="L199">                        throw new SuppressionParseException(&quot;Unable to download supression file `&quot; + file</span>
                                 + &quot;`; received 429 - too many requests&quot;, ex1);

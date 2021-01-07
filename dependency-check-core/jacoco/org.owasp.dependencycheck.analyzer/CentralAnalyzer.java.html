@@ -221,10 +221,10 @@ import org.owasp.dependencycheck.xml.pom.Model;
     @Override
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
 <span class="pc bpc" id="L223" title="1 of 2 branches missed.">        for (Evidence e : dependency.getEvidence(EvidenceType.VENDOR)) {</span>
-<span class="pc bpc" id="L224" title="1 of 2 branches missed.">            if (&quot;pom&quot;.equals(e.getSource())) {</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">            if (&quot;pom&quot;.equals(e.getSource())) {</span>
 <span class="fc" id="L225">                return;</span>
             }
-<span class="nc" id="L227">        }</span>
+<span class="fc" id="L227">        }</span>
         try {
 <span class="nc" id="L229">            final List&lt;MavenArtifact&gt; mas = fetchMavenArtifacts(dependency);</span>
 <span class="nc bnc" id="L230" title="All 2 branches missed.">            final Confidence confidence = mas.size() &gt; 1 ? Confidence.HIGH : Confidence.HIGHEST;</span>

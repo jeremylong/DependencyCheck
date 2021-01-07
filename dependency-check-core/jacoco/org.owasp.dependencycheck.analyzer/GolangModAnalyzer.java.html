@@ -336,8 +336,8 @@ import org.owasp.dependencycheck.utils.processing.ProcessReader;
 <span class="fc" id="L336">            processReader.readAll();</span>
 <span class="fc" id="L337">            final String error = processReader.getError();</span>
 <span class="pc bpc" id="L338" title="1 of 2 branches missed.">            if (error != null) {</span>
-<span class="nc" id="L339">                LOGGER.warn(&quot;Warnings from go {}&quot;, error);</span>
-<span class="nc bnc" id="L340" title="All 2 branches missed.">                if (error.contains(&quot;can't compute 'all' using the vendor directory&quot;)) {</span>
+<span class="fc" id="L339">                LOGGER.warn(&quot;Warnings from go {}&quot;, error);</span>
+<span class="pc bpc" id="L340" title="1 of 2 branches missed.">                if (error.contains(&quot;can't compute 'all' using the vendor directory&quot;)) {</span>
 <span class="nc" id="L341">                    LOGGER.warn(&quot;Switching to `go list -json -m readonly`&quot;);</span>
 <span class="nc" id="L342">                    process.destroy();</span>
 <span class="nc" id="L343">                    analyzeDependency(dependency, engine, true);</span>

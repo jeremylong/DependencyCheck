@@ -26,7 +26,7 @@ under the License.
     <copyright>&#169;2012 - 2021 OWASP</copyright>
     <item>
       <title>File: 412,
-             Errors: 9,
+             Errors: 10,
              Warnings: 0,
              Infos: 0
       </title>
@@ -3933,7 +3933,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  0
+                  1
                 </td>
               </tr>
                           <tr>
