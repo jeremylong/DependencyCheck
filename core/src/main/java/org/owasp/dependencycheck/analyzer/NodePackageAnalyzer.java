@@ -185,12 +185,12 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
      */
     private boolean isNodeAuditEnabled(Engine engine) {
         for (Analyzer a : engine.getAnalyzers()) {
-            if (a instanceof NodeAuditAnalyzer) {
+            if (a instanceof NodeAuditAnalyzer || a instanceof YarnAuditAnalyzer) {
                 if (a.isEnabled()) {
                     try {
-                        ((NodeAuditAnalyzer) a).prepareFileTypeAnalyzer(engine);
+                        ((AbstractNpmAnalyzer) a).prepareFileTypeAnalyzer(engine);
                     } catch (InitializationException ex) {
-                        LOGGER.debug("Error initializing the NodeAuditAnalyzer");
+                        LOGGER.debug("Error initializing the {}", a.getName());
                     }
                 }
                 return a.isEnabled();

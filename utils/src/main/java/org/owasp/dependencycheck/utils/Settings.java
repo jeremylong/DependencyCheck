@@ -301,6 +301,10 @@ public final class Settings {
          */
         public static final String ANALYZER_NODE_AUDIT_ENABLED = "analyzer.node.audit.enabled";
         /**
+         * The properties key for whether the Yarn Audit analyzer is enabled.
+         */
+        public static final String ANALYZER_YARN_AUDIT_ENABLED = "analyzer.yarn.audit.enabled";
+        /**
          * The properties key for supplying the URL to the Node Audit API.
          */
         public static final String ANALYZER_NODE_AUDIT_URL = "analyzer.node.audit.url";

@@ -69,6 +69,10 @@ public class Check extends Update {
      */
     private Boolean nodeAuditAnalyzerEnabled;
     /**
+     * Whether or not the Yarn Audit Analyzer is enabled.
+     */
+    private Boolean yarnAuditAnalyzerEnabled;
+    /**
      * Sets whether or not the Node Audit Analyzer should use a local cache.
      */
     private Boolean nodeAuditAnalyzerUseCache;
@@ -990,6 +994,25 @@ public class Check extends Update {
     }
 
     /**
+     * Get the value of yarnAuditAnalyzerEnabled.
+     *
+     * @return the value of yarnAuditAnalyzerEnabled
+     */
+    public Boolean isYarnAuditAnalyzerEnabled() {
+        return yarnAuditAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of yarnAuditAnalyzerEnabled.
+     *
+     * @param yarnAuditAnalyzerEnabled new value of yarnAuditAnalyzerEnabled
+     */
+    public void setYarnAuditAnalyzerEnabled(Boolean yarnAuditAnalyzerEnabled) {
+        this.yarnAuditAnalyzerEnabled = yarnAuditAnalyzerEnabled;
+    }
+
+
+    /**
      * Get the value of nodeAuditAnalyzerUseCache.
      *
      * @return the value of nodeAuditAnalyzerUseCache
@@ -1780,6 +1803,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, nodeAuditAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, yarnAuditAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, nodeAuditAnalyzerUseCache);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, nodeAuditSkipDevDependencies);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);

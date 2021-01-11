@@ -495,6 +495,8 @@ public class App {
         //TODO next major - remove the deprecated check in isNodeAuditDisabled
         settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED,
                 !cli.isNodeAuditDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED,
+                !cli.isYarnAuditDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NODE_AUDIT_CACHE, Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE));
         settings.setBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED,
