@@ -125,15 +125,15 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
                     break;
                 case yarnExecutableNotFoundExitValue:
                     this.setEnabled(false);
-                    throw new InitializationException(String.format("Yarn executable not found. Disabling %s: %s", getName(), exitValue));
+                    LOGGER.warn("The {} has been disabled. Yarn executable was not found.", getName());
                 default:
                     this.setEnabled(false);
-                    final String msg = String.format("Unexpected exit code from yarn process. Disabling %s: %s", getName(), exitValue);
-                    throw new InitializationException(msg);
+                    LOGGER.warn("The {} has been disabled. Yarn executable was not found.", getName());
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (Exception e) {
             this.setEnabled(false);
-            throw new InitializationException("Unexpected exception while testing for yarn command", e);
+            LOGGER.debug("The {} has been disabled. Yarn executable was not found.", e);
+            LOGGER.warn("The {} has been disabled. Yarn executable was not found.", getName());
         }
     }
 
