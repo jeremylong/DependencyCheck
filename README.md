@@ -89,9 +89,12 @@ Development Prerequisites
 -------------
 
 For installation to pass, you must have the following components installed:
-* Go: `go version` 1.12 and higher
 * Java: `java --version` 1.8.0 and higher
 * Maven: `mvn --version` 3.5.0 and higher
+
+Tests cases require:
+* Go: `go version` 1.12 and higher
+* Ruby [bundler-audit](https://github.com/rubysec/bundler-audit#install)
 
 Development Usage
 -------------
