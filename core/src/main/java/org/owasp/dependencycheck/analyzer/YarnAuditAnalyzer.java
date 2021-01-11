@@ -207,25 +207,18 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
 
         } catch (URLConnectionFailureException e) {
             this.setEnabled(false);
-            throw new AnalysisException("Failed to connect to the NPM Audit API (NodeAuditAnalyzer); the analyzer "
+            throw new AnalysisException("Failed to connect to the NPM Audit API (YarnAuditAnalyzer); the analyzer "
                     + "is being disabled and may result in false negatives.", e);
         } catch (IOException e) {
             LOGGER.debug("Error reading dependency or connecting to NPM Audit API", e);
             this.setEnabled(false);
-            throw new AnalysisException("Failed to read results from the NPM Audit API (NodeAuditAnalyzer); "
+            throw new AnalysisException("Failed to read results from the NPM Audit API (YarnAuditAnalyzer); "
                     + "the analyzer is being disabled and may result in false negatives.", e);
         } catch (JsonException e) {
             throw new AnalysisException(String.format("Failed to parse %s file from the NPM Audit API "
-                    + "(NodeAuditAnalyzer).", lockFile.getPath()), e);
+                    + "(YarnAuditAnalyzer).", lockFile.getPath()), e);
         } catch (SearchException ex) {
-            final File yarnCheck = new File(lockFile.getParentFile(), "yarn.lock");
-            if (yarnCheck.exists()) {
-                final String msg = "NodeAuditAnalyzer filed on " + dependency.getActualFilePath()
-                        + " - yarn.lock was identified if generated using synp the lock file may not be in the correct format.";
-                LOGGER.error(msg);
-                throw new AnalysisException("msg", ex);
-            }
-            LOGGER.error("NodeAuditAnalyzer failed on {}", dependency.getActualFilePath());
+            LOGGER.error("YarnAuditAnalyzer failed on {}", dependency.getActualFilePath());
             throw ex;
         }
     }
