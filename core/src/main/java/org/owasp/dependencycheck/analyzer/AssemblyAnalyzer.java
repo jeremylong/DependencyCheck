@@ -150,7 +150,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 processReader.readAll();
 
                 final String errorOutput = processReader.getError();
-                if (Strings.isNullOrEmpty(errorOutput)) {
+                if (!Strings.isNullOrEmpty(errorOutput)) {
                     LOGGER.warn("Error from GrokAssembly: {}", errorOutput);
                 }
                 final int exitValue = proc.exitValue();
