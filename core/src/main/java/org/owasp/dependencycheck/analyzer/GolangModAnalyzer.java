@@ -221,6 +221,7 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
         args.add("list");
         args.add("-json");
         args.add("-m");
+        args.add("-mod");
         args.add("readonly");
         args.add("all");
 
