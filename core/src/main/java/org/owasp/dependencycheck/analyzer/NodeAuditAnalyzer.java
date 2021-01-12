@@ -177,6 +177,11 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
             engine.removeDependency(dependency);
         }
         final File packageLock = dependency.getActualFile();
+        final File shrinkwrap = new File(packageLock.getParentFile(), SHRINKWRAP_JSON);
+        if (PACKAGE_LOCK_JSON.equals(dependency.getFileName()) && shrinkwrap.isFile()) {
+            LOGGER.debug("Skipping {} because shrinkwrap lock file exists", dependency.getFilePath());
+            return;
+        }
         if (!packageLock.isFile() || packageLock.length() == 0 || !shouldProcess(packageLock)) {
             return;
         }
