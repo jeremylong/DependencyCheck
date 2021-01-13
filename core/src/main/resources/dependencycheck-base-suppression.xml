@@ -2,6 +2,14 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
+        FP per #3073
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.pivotal\.cfenv/java\-cfenv\-boot\-pivotal\-scs@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #3053
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.seleniumhq\.selenium/selenium\-opera\-driver@.*$</packageUrl>
