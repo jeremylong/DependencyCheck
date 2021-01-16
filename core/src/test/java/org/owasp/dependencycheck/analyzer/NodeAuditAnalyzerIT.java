@@ -26,7 +26,7 @@ public class NodeAuditAnalyzerIT extends BaseTest {
             final Dependency toScan = new Dependency(BaseTest.getResourceAsFile(this, "nodeaudit/package-lock.json"));
             analyzer.analyze(toScan, engine);
             boolean found = false;
-            assertTrue("Mpre then 1 dependency should be identified", 1 < engine.getDependencies().length);
+            assertTrue("More then 1 dependency should be identified", 1 < engine.getDependencies().length);
             for (Dependency result : engine.getDependencies()) {
                 if ("package-lock.json?uglify-js".equals(result.getFileName())) {
                     found = true;
