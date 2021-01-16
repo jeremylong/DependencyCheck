@@ -1,0 +1,129 @@
+{
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "dependency-check",
+          "version": "$version",
+          "informationUri": "https://jeremylong.github.io/DependencyCheck/"
+        },
+        "properties": {
+          "disclaimer": "Dependency-Check is an open source tool performing a best effort analysis of 3rd party dependencies; false positives and false negatives may exist in the analysis performed by the tool. Use of the tool and the reporting provided constitutes acceptance for use in an AS IS condition, and there are NO warranties, implied or otherwise, with regard to the analysis or its use. Any use of the tool and the reporting provided is at the user’s risk. In no event shall the copyright holder or OWASP be held liable for any damages whatsoever arising out of or in connection with the use of this tool, the analysis performed, or the resulting report.",
+          "nvd": "This report contains data retrieved from the National Vulnerability Database: http://nvd.nist.gov",
+          "npm": "This report may contain data retrieved from the NPM Public Advisories: https://www.npmjs.com/advisories",
+          "retirejs": "This report may contain data retrieved from the RetireJS community: https://retirejs.github.io/retire.js/",
+          "ossindex": "This report may contain data retrieved from the Sonatype OSS Index: https://ossindex.sonatype.org"
+          #foreach($prop in $properties.getMetaData().entrySet())
+            ,"$enc.json($prop.key)": "$enc.json($prop.value)"
+          #end
+          }
+      },
+      "artifacts": [
+        #foreach($dependency in $dependencies)#if($foreach.count > 1),#end{
+          #if($dependency.description)
+          "description": {
+             "text": "$enc.json($dependency.description)"
+          },
+          #end
+          "location": {
+            "uri": "file:///$enc.json($dependency.FilePath)"
+          },
+          #if(!$dependency.isVirtual())
+          "hashes": {
+            "md5": "$enc.json($dependency.Md5sum)",
+            "sha1": "$enc.json($dependency.Sha1sum)",
+            "sha256": "$enc.json($dependency.Sha256sum)"
+          },#end
+          "properties": {
+            #set($needsComma=0)
+            #if($dependency.license)"license": "$enc.json($dependency.license)"#set($needsComma=1)#end
+            #if($dependency.getSoftwareIdentifiers() && $dependency.getSoftwareIdentifiers().size()>0)
+                #foreach($id in $dependency.getSoftwareIdentifiers())
+                    #if($needsComma==1 || $foreach.count > 1),#end
+                    "id$foreach.count": "$enc.json($id.value)"
+                #end
+                #set($needsComma=1)
+            #end
+            #if($dependency.getVulnerableSoftwareIdentifiers() && $dependency.getVulnerableSoftwareIdentifiers().size()>0)
+                #foreach($id in $dependency.getVulnerableSoftwareIdentifiers())
+                    #if($needsComma==1 || $foreach.count > 1),#end
+                    "vid$foreach.count": "$enc.json($id.value)"
+                #end
+            #end
+          }
+        }
+        #end
+      ],
+      "results": [
+        #set($needsComma=0)
+        #foreach($dependency in $dependencies)
+        #if($foreach.count > 1)
+            #set($needsComma=1)
+        #end
+        #set($depIndex=$foreach.count-1)
+          #foreach($vuln in $dependency.getVulnerabilities(true))#if($needsComma==1 || $foreach.count > 1),#end {
+          #set($needsComma=0)
+          "ruleId": "$enc.json($vuln.name)",
+          "message": {
+            "text": "$enc.json($vuln.name)#if($vuln.description) - $enc.json($vuln.description)#end"
+          },
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///$enc.json($dependency.FilePath)",
+                  "index": $depIndex
+                }
+              }
+            }
+          ],
+          "properties": {
+                #if($vuln.UnscoredSeverity)
+                "unscored": "true", 
+                "severity" : "#if($vuln.unscoredSeverity.equals("0.0"))Unknown#else$enc.json($vuln.unscoredSeverity)#end",
+                #end
+                #if($vuln.cvssV2)
+                    "cvssv2_score": $vuln.cvssV2.score,
+                    "cvssv2_accessVector": "$enc.json($vuln.cvssV2.accessVector)",
+                    "cvssv2_accessComplexity": "$enc.json($vuln.cvssV2.accessComplexity)",
+                    "cvssv2_authenticationr": "$enc.json($vuln.cvssV2.authentication)",
+                    "cvssv2_confidentialImpact": "$enc.json($vuln.cvssV2.confidentialityImpact)",
+                    "cvssv2_integrityImpact": "$enc.json($vuln.cvssV2.integrityImpact)",
+                    "cvssv2_availabilityImpact": "$enc.json($vuln.cvssV2.availabilityImpact)",
+                    "cvssv2_severity": "$enc.json($vuln.cvssV2.severity)",
+                    #if($vuln.cvssV2.version)"cvssv2_version": "$enc.json($vuln.cvssV2.version)",#end
+                    #if($vuln.cvssV2.exploitabilityScore)"cvssv2_exploitabilityScore": "$enc.json($vuln.cvssV2.exploitabilityScore)",#end
+                    #if($vuln.cvssV2.impactScore)"cvssv2_impactScore": "$enc.json($vuln.cvssV2.impactScore)",#end
+                    #if($vuln.cvssV2.acInsufInfo)"cvssv2_acInsufInfo": "$enc.json($vuln.cvssV2.acInsufInfo)",#end
+                    #if($vuln.cvssV2.obtainAllPrivilege)"cvssv2_obtainAllPrivilege": "$enc.json($vuln.cvssV2.obtainAllPrivilege)",#end
+                    #if($vuln.cvssV2.obtainUserPrivilege)"cvssv2_obtainUserPrivilege": "$enc.json($vuln.cvssV2.obtainUserPrivilege)",#end
+                    #if($vuln.cvssV2.obtainOtherPrivilege)"cvssv2_obtainOtherPrivilege": "$enc.json($vuln.cvssV2.obtainOtherPrivilege)",#end
+                    #if($vuln.cvssV2.userInteractionRequired)"cvssv2_userInteractionRequired": "$enc.json($vuln.cvssV2.userInteractionRequired)",#end
+
+                #end
+                #if($vuln.cvssV3)
+                    "cvssv3_baseScore": $vuln.cvssV3.baseScore,
+                    "cvssv3_attackVector": "$enc.json($vuln.cvssV3.attackVector)",
+                    "cvssv3_attackComplexity": "$enc.json($vuln.cvssV3.attackComplexity)",
+                    "cvssv3_privilegesRequired": "$enc.json($vuln.cvssV3.privilegesRequired)",
+                    "cvssv3_userInteraction": "$enc.json($vuln.cvssV3.userInteraction)",
+                    "cvssv3_scope": "$enc.json($vuln.cvssV3.scope)",
+                    "cvssv3_confidentialityImpact": "$enc.json($vuln.cvssV3.confidentialityImpact)",
+                    "cvssv3_integrityImpact": "$enc.json($vuln.cvssV3.integrityImpact)",
+                    "cvssv3_availabilityImpact": "$enc.json($vuln.cvssV3.availabilityImpact)",
+                    "cvssv3_baseSeverity": "$enc.json($vuln.cvssV3.baseSeverity)",
+                    #if($vuln.cvssV3.exploitabilityScore)"cvssv3_exploitabilityScore": "$enc.json($vuln.cvssV3.exploitabilityScore)",#end
+                    #if($vuln.cvssV3.impactScore)"cvssv3_impactScore": "$enc.json($vuln.cvssV3.impactScore)",#end
+                    #if($vuln.cvssV3.version)"cvssv3_version": "$enc.json($vuln.cvssV3.version)",#end
+                #end
+                "source": "$enc.json($vuln.getSource().name())"
+            }
+          }#end
+        #end
+      ]
+    }
+  ]
+}
