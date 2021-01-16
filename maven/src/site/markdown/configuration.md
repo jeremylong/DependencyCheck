@@ -16,8 +16,8 @@ Property                    | Description                        | Default Value
 ----------------------------|------------------------------------|------------------
 autoUpdate                  | Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false. | true
 cveValidForHours            | Sets the number of hours to wait before checking for new updates from the NVD.                                     | 4
-format                      | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, ALL). This configuration is ignored if `formats` is defined. This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | HTML
-formats                     | A list of report formats to be generated (HTML, XML, CSV, JSON, JUNIT, ALL). This configuration overrides the value from `format`. This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | &nbsp;
+format                      | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, SARIF, ALL). This configuration is ignored if `formats` is defined. This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | HTML
+formats                     | A list of report formats to be generated (HTML, XML, CSV, JSON, JUNIT, SARIF, ALL). This configuration overrides the value from `format`. This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | &nbsp;
 junitFailOnCVSS             | If using the JUNIT report format the junitFailOnCVSS sets the CVSS score threshold that is considered a failure.   | 0
 prettyPrint                 | Whether the XML and JSON formatted reports should be pretty printed.                                               | false
 failBuildOnCVSS             | Specifies if the build should be failed if a CVSS score equal to or above a specified level is identified. The default is 11 which means since the CVSS scores are 0-10, by default the build will never fail. | 11
