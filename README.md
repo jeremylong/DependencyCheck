@@ -95,6 +95,7 @@ For installation to pass, you must have the following components installed:
 Tests cases require:
 * Go: `go version` 1.12 and higher
 * Ruby [bundler-audit](https://github.com/rubysec/bundler-audit#install)
+* [Yarn](https://classic.yarnpkg.com/en/docs/install/)
 
 Development Usage
 -------------
