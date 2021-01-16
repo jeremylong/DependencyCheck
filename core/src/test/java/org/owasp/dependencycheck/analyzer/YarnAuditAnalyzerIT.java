@@ -18,9 +18,9 @@ public class YarnAuditAnalyzerIT extends BaseTest {
 
     @Test
     public void testAnalyzePackageYarn() throws AnalysisException, InitializationException, InvalidSettingException {
-        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED), is(true));
+        //Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED), is(true));
         try (Engine engine = new Engine(getSettings())) {
-            NodeAuditAnalyzer analyzer = new NodeAuditAnalyzer();
+            YarnAuditAnalyzer analyzer = new YarnAuditAnalyzer();
             analyzer.setFilesMatched(true);
             analyzer.initialize(getSettings());
             analyzer.prepare(engine);
@@ -38,6 +38,9 @@ public class YarnAuditAnalyzerIT extends BaseTest {
                 }
             }
             assertTrue("Uglify was not found", found);
+        } catch (InitializationException ex) {
+            //yarn is not installed - skip the test case.
+            Assume.assumeNoException(ex);
         }
     }
 }

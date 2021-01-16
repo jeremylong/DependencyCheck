@@ -1,5 +1,6 @@
 package org.owasp.dependencycheck.analyzer;
 
+import com.google.common.base.Strings;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -102,7 +103,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
     @Override
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         super.prepareFileTypeAnalyzer(engine);
-        if(!isEnabled()){
+        if (!isEnabled()) {
             LOGGER.debug("{} Analyzer is disabled skipping yarn executable check", getName());
             return;
         }
@@ -114,26 +115,28 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
         LOGGER.debug("Launching: {}", args);
         try {
             Process process = builder.start();
-            ProcessReader processReader = new ProcessReader(process);
-            processReader.readAll();
-            final int exitValue = process.waitFor();
-            final int expectedExitValue = 1;
-            final int yarnExecutableNotFoundExitValue = 127;
-            switch (exitValue) {
-                case expectedExitValue:
-                    LOGGER.debug("{} is enabled.", getName());
-                    break;
-                case yarnExecutableNotFoundExitValue:
-                    this.setEnabled(false);
-                    LOGGER.warn("The {} has been disabled. Yarn executable was not found.", getName());
-                default:
-                    this.setEnabled(false);
-                    LOGGER.warn("The {} has been disabled. Yarn executable was not found.", getName());
+            try (ProcessReader processReader = new ProcessReader(process)) {
+                processReader.readAll();
+                final int exitValue = process.waitFor();
+                final int expectedExitValue = 1;
+                final int yarnExecutableNotFoundExitValue = 127;
+                switch (exitValue) {
+                    case expectedExitValue:
+                        LOGGER.debug("{} is enabled.", getName());
+                        break;
+                    case yarnExecutableNotFoundExitValue:
+                        this.setEnabled(false);
+                        LOGGER.warn("The {} has been disabled. Yarn executable was not found.", getName());
+                    default:
+                        this.setEnabled(false);
+                        LOGGER.warn("The {} has been disabled. Yarn executable was not found.", getName());
+                }
             }
-        } catch (Exception e) {
+        } catch (Exception ex) {
             this.setEnabled(false);
-            LOGGER.debug("The {} has been disabled. Yarn executable was not found.", e);
+            LOGGER.debug("The {} has been disabled. Yarn executable was not found.", ex);
             LOGGER.warn("The {} has been disabled. Yarn executable was not found.", getName());
+            throw new InitializationException("Unable to read yarn audit output.", ex);
         }
     }
 
@@ -146,7 +149,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
             final List<String> args = new ArrayList<>();
             args.add("yarn");
             args.add("audit");
-            if(skipDevDependencies){
+            if (skipDevDependencies) {
                 args.add("--groups");
                 args.add("dependencies");
             }
@@ -156,17 +159,26 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
             builder.directory(folder);
 
             LOGGER.debug("Launching: {}", args);
-            Process proc = builder.start();
-            String output = IOUtils.toString(proc.getInputStream(), StandardCharsets.UTF_8);
-            String auditRequest = Arrays.stream(output.split("\n")).filter(line -> line.contains("Audit Request")).findFirst().get();
-            auditRequest = auditRequest.replace("Audit Request: ", "");
+            Process process = builder.start();
+            try (ProcessReader processReader = new ProcessReader(process)) {
+                processReader.readAll();
+                String auditRequest = Arrays.stream(processReader.getOutput().split("\n"))
+                        .filter(line -> line.contains("Audit Request"))
+                        .findFirst().get();
+                auditRequest = auditRequest.replace("Audit Request: ", "");
 
-            String errOutput = IOUtils.toString(proc.getErrorStream(), StandardCharsets.UTF_8);
-            LOGGER.debug("Process Out: {}", auditRequest);
-            LOGGER.debug("Process Error Out: {}", errOutput);
-            JsonObject response = Json.createReader(IOUtils.toInputStream(auditRequest, StandardCharsets.UTF_8)).readObject();
-            String data = response.getString("data");
-            return Json.createReader(IOUtils.toInputStream(data, StandardCharsets.UTF_8)).readObject();
+                LOGGER.debug("Process Out: {}", auditRequest);
+                String errOutput = processReader.getError();
+                if (!Strings.isNullOrEmpty(errOutput)) {
+                    LOGGER.debug("Process Error Out: {}", errOutput);
+                }
+                JsonObject response = Json.createReader(IOUtils.toInputStream(auditRequest, StandardCharsets.UTF_8)).readObject();
+                String data = response.getString("data");
+                return Json.createReader(IOUtils.toInputStream(data, StandardCharsets.UTF_8)).readObject();
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                throw new AnalysisException("Yarn audit process was interrupted.", ex);
+            }
         } catch (IOException ioe) {
             throw new AnalysisException("yarn audit failure; this error can be ignored if you are not analyzing projects with a yarn lockfile.", ioe);
         }
@@ -179,8 +191,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
      *
      * @param lockFile a reference to the package-lock.json
      * @param packageFile a reference to the package.json
-     * @param dependency a reference to the dependency-object for the
-     * yarn.lock
+     * @param dependency a reference to the dependency-object for the yarn.lock
      * @param dependencyMap a collection of module/version pairs; during
      * creation of the payload the dependency map is populated with the
      * module/version information.
@@ -189,12 +200,12 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
      * submitting the npm audit API payload
      */
     private List<Advisory> analyzePackage(final File lockFile, final File packageFile,
-                                          Dependency dependency, Map<String, String> dependencyMap)
+            Dependency dependency, Map<String, String> dependencyMap)
             throws AnalysisException {
         try {
             Boolean skipDevDependencies = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false);
             // Retrieves the contents of package-lock.json from the Dependency
-            final JsonObject lockJson =fetchYarnAuditJson(dependency, skipDevDependencies);
+            final JsonObject lockJson = fetchYarnAuditJson(dependency, skipDevDependencies);
             // Retrieves the contents of package-lock.json from the Dependency
             final JsonReader packageReader = Json.createReader(FileUtils.openInputStream(packageFile));
             final JsonObject packageJson = packageReader.readObject();
