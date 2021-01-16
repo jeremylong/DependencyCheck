@@ -48,6 +48,7 @@ _odc_completions()
             --disableJar
             --disableMixAudit
             --disableMSBuild
+            --disableYarnAudit
             --disableNodeAudit
             --disableNodeAuditCache
             --disableNodeJS
