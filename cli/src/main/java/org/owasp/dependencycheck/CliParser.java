@@ -423,6 +423,7 @@ public final class CliParser {
                 .addOption(newOption(ARGUMENT.DISABLE_GO_DEP, "Disable the Golang Package Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_NODE_JS, "Disable the Node.js Package Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_NODE_AUDIT, "Disable the Node Audit Analyzer."))
+                .addOption(newOption(ARGUMENT.DISABLE_YARN_AUDIT, "Disable the Yarn Audit Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_NODE_AUDIT_CACHE, "Disallow the Node Audit Analyzer from caching results"))
                 .addOption(newOption(ARGUMENT.DISABLE_NODE_AUDIT_SKIPDEV, "Configures the Node Audit Analyzer to skip devDependencies"))
                 .addOption(newOption(ARGUMENT.DISABLE_RETIRE_JS, "Disable the RetireJS Analyzer."))
@@ -529,6 +530,16 @@ public final class CliParser {
             return true;
         }
         return hasDisableOption(ARGUMENT.DISABLE_NODE_AUDIT, Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED);
+    }
+
+    /**
+     * Returns true if the disableYarnAudit command line argument was specified.
+     *
+     * @return true if the disableYarnAudit command line argument was specified;
+     * otherwise false
+     */
+    public boolean isYarnAuditDisabled() {
+        return hasDisableOption(ARGUMENT.DISABLE_YARN_AUDIT, Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED);
     }
 
     /**
@@ -1195,6 +1206,10 @@ public final class CliParser {
          * Disables the Node Audit Analyzer.
          */
         public static final String DISABLE_NODE_AUDIT = "disableNodeAudit";
+        /**
+         * Disables the Yarn Audit Analyzer.
+         */
+        public static final String DISABLE_YARN_AUDIT = "disableYarnAudit";
         /**
          * Disables the Node Audit Analyzer's ability to cache results locally.
          */

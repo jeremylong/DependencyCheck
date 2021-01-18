@@ -27,8 +27,8 @@
     "//": "a9 insecure components"
   },
   "engines": {
-    "node": "4.4.x",
-    "npm": "2.15.x"
+    "node": "15.x.x",
+    "npm": "6.x.x"
   },
   "scripts": {
     "start": "node server.js",
@@ -38,7 +38,6 @@
   },
   "devDependencies": {
     "async": "^2.0.0-rc.4",
-    "fake_submodule": "file:fake_submodule",
     "grunt": "^1.0.1",
     "grunt-cli": "^1.2.0",
     "grunt-concurrent": "^2.3.0",
