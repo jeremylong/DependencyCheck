@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +54,13 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
      */
     private static final FileFilter LOCK_FILE_FILTER = FileFilterBuilder.newInstance()
             .addFilenames(YARN_PACKAGE_LOCK).build();
+
+    /**
+     * An expected error from `yarn audit --offline --verbose --json` that will
+     * be ignored.
+     */
+    private static final String EXPECTED_ERROR = "{\"type\":\"error\",\"data\":\"Can't make a request in "
+            + "offline mode (\\\"https://registry.yarnpkg.com/-/npm/v1/security/audits\\\")\"}\n";
 
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
@@ -109,8 +117,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
         }
         final List<String> args = new ArrayList<>();
         args.add("yarn");
-        args.add("audit");
-        args.add("--offline");
+        args.add("--help");
         final ProcessBuilder builder = new ProcessBuilder(args);
         LOGGER.debug("Launching: {}", args);
         try {
@@ -118,7 +125,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
             try (ProcessReader processReader = new ProcessReader(process)) {
                 processReader.readAll();
                 final int exitValue = process.waitFor();
-                final int expectedExitValue = 1;
+                final int expectedExitValue = 0;
                 final int yarnExecutableNotFoundExitValue = 127;
                 switch (exitValue) {
                     case expectedExitValue:
@@ -147,8 +154,11 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
         }
         try {
             final List<String> args = new ArrayList<>();
+
             args.add("yarn");
             args.add("audit");
+            //offline audit is not supported - but the audit request is generated in the verbose output
+            args.add("--offline");
             if (skipDevDependencies) {
                 args.add("--groups");
                 args.add("dependencies");
@@ -157,24 +167,30 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
             args.add("--verbose");
             final ProcessBuilder builder = new ProcessBuilder(args);
             builder.directory(folder);
-
             LOGGER.debug("Launching: {}", args);
             Process process = builder.start();
             try (ProcessReader processReader = new ProcessReader(process)) {
                 processReader.readAll();
-                String auditRequest = Arrays.stream(processReader.getOutput().split("\n"))
+                String errOutput = processReader.getError();
+
+                if (!Strings.isNullOrEmpty(errOutput) && !EXPECTED_ERROR.equals(errOutput)) {
+                    LOGGER.debug("Process Error Out: {}", errOutput);
+                    LOGGER.debug("Process Out: {}", processReader.getOutput());
+                }
+                
+                String verboseJson = Arrays.stream(processReader.getOutput().split("\n"))
                         .filter(line -> line.contains("Audit Request"))
                         .findFirst().get();
-                auditRequest = auditRequest.replace("Audit Request: ", "");
-
-                LOGGER.debug("Process Out: {}", auditRequest);
-                String errOutput = processReader.getError();
-                if (!Strings.isNullOrEmpty(errOutput)) {
-                    LOGGER.debug("Process Error Out: {}", errOutput);
+                String auditRequest;
+                try (JsonReader reader = Json.createReader(IOUtils.toInputStream(verboseJson, StandardCharsets.UTF_8))) {
+                    JsonObject jsonObject = reader.readObject();
+                    auditRequest = jsonObject.getString("data");
+                    //auditRequest = auditRequest.replace("Audit Request: ", "");
+                    auditRequest = auditRequest.substring(15);
                 }
-                JsonObject response = Json.createReader(IOUtils.toInputStream(auditRequest, StandardCharsets.UTF_8)).readObject();
-                String data = response.getString("data");
-                return Json.createReader(IOUtils.toInputStream(data, StandardCharsets.UTF_8)).readObject();
+                LOGGER.debug("Audit Request: {}", auditRequest);
+
+                return Json.createReader(IOUtils.toInputStream(auditRequest, StandardCharsets.UTF_8)).readObject();
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
                 throw new AnalysisException("Yarn audit process was interrupted.", ex);

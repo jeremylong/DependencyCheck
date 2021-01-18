@@ -18,6 +18,7 @@ public class YarnAuditAnalyzerIT extends BaseTest {
 
     @Test
     public void testAnalyzePackageYarn() throws AnalysisException, InitializationException, InvalidSettingException {
+        
         //Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED), is(true));
         try (Engine engine = new Engine(getSettings())) {
             YarnAuditAnalyzer analyzer = new YarnAuditAnalyzer();
