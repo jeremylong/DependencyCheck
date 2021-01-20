@@ -103,11 +103,11 @@ public final class NvdCveParser {
             }
         } catch (FileNotFoundException ex) {
             LOGGER.error(ex.getMessage());
-            throw new UpdateException("Unable to find the NVD CPE file, `" + file + "`, to parse", ex);
+            throw new UpdateException("Unable to find the NVD CVE file, `" + file + "`, to parse", ex);
         } catch (IOException ex) {
             LOGGER.error("Error reading NVD JSON data: {}", file);
             LOGGER.debug("Error extracting the NVD JSON data from: " + file.toString(), ex);
-            throw new UpdateException("Unable to find the NVD CPE file to parse", ex);
+            throw new UpdateException("Unable to find the NVD CVE file to parse", ex);
         }
     }
 
