@@ -209,12 +209,12 @@ public class Check extends Update {
      */
     private Boolean autoUpdate;
     /**
-     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, ALL).
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF, ALL).
      * Default is HTML.
      */
     private String reportFormat = "HTML";
     /**
-     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, ALL).
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF, ALL).
      * Default is HTML.
      */
     private final List<String> reportFormats = new ArrayList<>();
@@ -1884,7 +1884,7 @@ public class Check extends Update {
 
     /**
      * An enumeration of supported report formats: "ALL", "HTML", "XML", "CSV",
-     * "JSON", "JUNIT", etc..
+     * "JSON", "JUNIT", "SARIF", etc..
      */
     public static class ReportFormats extends EnumeratedAttribute {
 
