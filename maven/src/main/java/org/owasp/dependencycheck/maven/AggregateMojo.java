@@ -201,7 +201,10 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                 .filter(c -> c != null)
                 .map(c -> c.getValue())
                 .findFirst();
-        boolean skip = value.isPresent() && "true".equalsIgnoreCase(value.get());
+
+        String property = mavenProject.getProperties().getProperty("dependency-check.skip");
+
+        boolean skip = (value.isPresent() && "true".equalsIgnoreCase(value.get())) || "true".equalsIgnoreCase(property);
         if (skip) {
             getLog().debug("Aggregation skipping " + mavenProject.getId());
         }
