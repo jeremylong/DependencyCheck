@@ -68,69 +68,74 @@ public final class H2Functions {
             String targetSw, String targetHw, String other, String ecosystem, String versionEndExcluding,
             String versionEndIncluding, String versionStartExcluding, String versionStartIncluding, Boolean vulnerable) throws SQLException {
         int cpeID = 0;
-        final PreparedStatement selectCpeId = conn.prepareStatement("SELECT id, ecosystem FROM cpeEntry WHERE part=? AND vendor=? AND product=? "
-                + "AND version=? AND update_version=? AND edition=? AND lang=? AND sw_edition=? AND target_sw=? AND target_hw=? AND other=?");
-        selectCpeId.setString(1, part);
-        selectCpeId.setString(2, vendor);
-        selectCpeId.setString(3, product);
-        selectCpeId.setString(4, version);
-        selectCpeId.setString(5, update);
-        selectCpeId.setString(6, edition);
-        selectCpeId.setString(7, language);
-        selectCpeId.setString(8, swEdition);
-        selectCpeId.setString(9, targetSw);
-        selectCpeId.setString(10, targetHw);
-        selectCpeId.setString(11, other);
+        try (PreparedStatement selectCpeId = conn.prepareStatement("SELECT id, ecosystem FROM cpeEntry WHERE part=? AND vendor=? AND product=? "
+                + "AND version=? AND update_version=? AND edition=? AND lang=? AND sw_edition=? AND target_sw=? AND target_hw=? AND other=?")) {
+            selectCpeId.setString(1, part);
+            selectCpeId.setString(2, vendor);
+            selectCpeId.setString(3, product);
+            selectCpeId.setString(4, version);
+            selectCpeId.setString(5, update);
+            selectCpeId.setString(6, edition);
+            selectCpeId.setString(7, language);
+            selectCpeId.setString(8, swEdition);
+            selectCpeId.setString(9, targetSw);
+            selectCpeId.setString(10, targetHw);
+            selectCpeId.setString(11, other);
 
-        try (ResultSet rs = selectCpeId.executeQuery()) {
-            if (rs.next()) {
-                cpeID = rs.getInt(1);
-                final String e = rs.getString(2);
-                if (e == null && ecosystem != null) {
-                    final PreparedStatement updateEcosystem = conn.prepareStatement("UPDATE cpeEntry SET ecosystem=? WHERE id=?");
-                    updateEcosystem.setString(1, ecosystem);
-                    updateEcosystem.setInt(2, cpeID);
+            try (ResultSet rs = selectCpeId.executeQuery()) {
+                if (rs.next()) {
+                    cpeID = rs.getInt(1);
+                    final String e = rs.getString(2);
+                    if (e == null && ecosystem != null) {
+                        try (PreparedStatement updateEcosystem = conn.prepareStatement("UPDATE cpeEntry SET ecosystem=? WHERE id=?")) {
+                            updateEcosystem.setString(1, ecosystem);
+                            updateEcosystem.setInt(2, cpeID);
+                            updateEcosystem.execute();
+                        }
+                    }
                 }
             }
         }
         if (cpeID == 0) {
             final String[] returnedColumns = {"id"};
-            final PreparedStatement insertCpe = conn.prepareStatement("INSERT INTO cpeEntry (part, vendor, product, version, update_version, "
+            try (PreparedStatement insertCpe = conn.prepareStatement("INSERT INTO cpeEntry (part, vendor, product, version, update_version, "
                     + "edition, lang, sw_edition, target_sw, target_hw, other, ecosystem) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    returnedColumns);
-            insertCpe.setString(1, part);
-            insertCpe.setString(2, vendor);
-            insertCpe.setString(3, product);
-            insertCpe.setString(4, version);
-            insertCpe.setString(5, update);
-            insertCpe.setString(6, edition);
-            insertCpe.setString(7, language);
-            insertCpe.setString(8, swEdition);
-            insertCpe.setString(9, targetSw);
-            insertCpe.setString(10, targetHw);
-            insertCpe.setString(11, other);
-            setStringOrNull(insertCpe, 12, ecosystem);
-            insertCpe.executeUpdate();
-            try (ResultSet rs = insertCpe.getGeneratedKeys()) {
-                if (rs.next()) {
-                    cpeID = rs.getInt(1);
+                    returnedColumns)) {
+                insertCpe.setString(1, part);
+                insertCpe.setString(2, vendor);
+                insertCpe.setString(3, product);
+                insertCpe.setString(4, version);
+                insertCpe.setString(5, update);
+                insertCpe.setString(6, edition);
+                insertCpe.setString(7, language);
+                insertCpe.setString(8, swEdition);
+                insertCpe.setString(9, targetSw);
+                insertCpe.setString(10, targetHw);
+                insertCpe.setString(11, other);
+                setStringOrNull(insertCpe, 12, ecosystem);
+                insertCpe.executeUpdate();
+                try (ResultSet rs = insertCpe.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        cpeID = rs.getInt(1);
+                    }
                 }
             }
         }
         //CSON: ParameterNumber
 
-        final PreparedStatement insertSoftware = conn.prepareStatement("INSERT INTO software (cveid, cpeEntryId, "
+        try (PreparedStatement insertSoftware = conn.prepareStatement("INSERT INTO software (cveid, cpeEntryId, "
                 + "versionEndExcluding, versionEndIncluding, versionStartExcluding, versionStartIncluding, "
-                + "vulnerable) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        insertSoftware.setInt(1, vulnerabilityId);
-        insertSoftware.setInt(2, cpeID);
+                + "vulnerable) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+            insertSoftware.setInt(1, vulnerabilityId);
+            insertSoftware.setInt(2, cpeID);
 
-        setStringOrNull(insertSoftware, 3, versionEndExcluding);
-        setStringOrNull(insertSoftware, 4, versionEndIncluding);
-        setStringOrNull(insertSoftware, 5, versionStartExcluding);
-        setStringOrNull(insertSoftware, 6, versionStartIncluding);
-        setBooleanOrNull(insertSoftware, 7, vulnerable);
-        insertSoftware.execute();
+            setStringOrNull(insertSoftware, 3, versionEndExcluding);
+            setStringOrNull(insertSoftware, 4, versionEndIncluding);
+            setStringOrNull(insertSoftware, 5, versionStartExcluding);
+            setStringOrNull(insertSoftware, 6, versionStartIncluding);
+            setBooleanOrNull(insertSoftware, 7, vulnerable);
+            insertSoftware.execute();
+        }
     }
 
     //CSOFF: ParameterNumber
@@ -192,105 +197,110 @@ public final class H2Functions {
         ret.addColumn("id", Types.INTEGER, 10, 0);
 
         int vulnerabilityId = 0;
-        final PreparedStatement selectVulnerabilityId = conn.prepareStatement("SELECT id FROM VULNERABILITY CVE WHERE cve=?");
-        selectVulnerabilityId.setString(1, cve);
-        try (ResultSet rs = selectVulnerabilityId.executeQuery()) {
-            if (rs.next()) {
-                vulnerabilityId = rs.getInt(1);
-            }
-        }
-
-        final PreparedStatement merge;
-        if (vulnerabilityId > 0) {
-            //do deletes and updates
-            try (PreparedStatement refs = conn.prepareStatement("DELETE FROM reference WHERE cveid = ?")) {
-                refs.setInt(1, vulnerabilityId);
-                refs.executeUpdate();
-            }
-            try (PreparedStatement software = conn.prepareStatement("DELETE FROM software WHERE cveid = ?")) {
-                software.setInt(1, vulnerabilityId);
-                software.executeUpdate();
-            }
-            try (PreparedStatement cwe = conn.prepareStatement("DELETE FROM cweEntry WHERE cveid = ?")) {
-                cwe.setInt(1, vulnerabilityId);
-                cwe.executeUpdate();
-            }
-            merge = conn.prepareStatement("UPDATE VULNERABILITY SET description=?, "
-                    + "v2Severity=?, v2ExploitabilityScore=?, "
-                    + "v2ImpactScore=?, v2AcInsufInfo=?, v2ObtainAllPrivilege=?, "
-                    + "v2ObtainUserPrivilege=?, v2ObtainOtherPrivilege=?, v2UserInteractionRequired=?, "
-                    + "v2Score=?, v2AccessVector=?, v2AccessComplexity=?, "
-                    + "v2Authentication=?, v2ConfidentialityImpact=?, v2IntegrityImpact=?, "
-                    + "v2AvailabilityImpact=?, v2Version=?, v3ExploitabilityScore=?, "
-                    + "v3ImpactScore=?, v3AttackVector=?, v3AttackComplexity=?, "
-                    + "v3PrivilegesRequired=?, v3UserInteraction=?, v3Scope=?, "
-                    + "v3ConfidentialityImpact=?, v3IntegrityImpact=?, v3AvailabilityImpact=?, "
-                    + "v3BaseScore=?, v3BaseSeverity=?, v3Version=? "
-                    + "WHERE id=?");
-        } else {
-            //just do insert
-            final String[] returnedColumns = {"id"};
-            merge = conn.prepareStatement("INSERT INTO VULNERABILITY (description, "
-                    + "v2Severity, v2ExploitabilityScore, "
-                    + "v2ImpactScore, v2AcInsufInfo, v2ObtainAllPrivilege, "
-                    + "v2ObtainUserPrivilege, v2ObtainOtherPrivilege, v2UserInteractionRequired, "
-                    + "v2Score, v2AccessVector, v2AccessComplexity, "
-                    + "v2Authentication, v2ConfidentialityImpact, v2IntegrityImpact, "
-                    + "v2AvailabilityImpact, v2Version, v3ExploitabilityScore, "
-                    + "v3ImpactScore, v3AttackVector, v3AttackComplexity, "
-                    + "v3PrivilegesRequired, v3UserInteraction, v3Scope, "
-                    + "v3ConfidentialityImpact, v3IntegrityImpact, v3AvailabilityImpact, "
-                    + "v3BaseScore, v3BaseSeverity, v3Version, cve) VALUES (?, ?, ?, ?, ?, ?, "
-                    + "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    returnedColumns);
-        }
-
-        merge.setString(1, description);
-
-        setStringOrNull(merge, 2, v2Severity);
-        setFloatOrNull(merge, 3, v2ExploitabilityScore);
-        setFloatOrNull(merge, 4, v2ImpactScore);
-        setBooleanOrNull(merge, 5, v2AcInsufInfo);
-        setBooleanOrNull(merge, 6, v2ObtainAllPrivilege);
-        setBooleanOrNull(merge, 7, v2ObtainUserPrivilege);
-        setBooleanOrNull(merge, 8, v2ObtainOtherPrivilege);
-        setBooleanOrNull(merge, 9, v2UserInteractionRequired);
-        setFloatOrNull(merge, 10, v2Score);
-        setStringOrNull(merge, 11, v2AccessVector);
-        setStringOrNull(merge, 12, v2AccessComplexity);
-        setStringOrNull(merge, 13, v2Authentication);
-        setStringOrNull(merge, 14, v2ConfidentialityImpact);
-        setStringOrNull(merge, 15, v2IntegrityImpact);
-        setStringOrNull(merge, 16, v2AvailabilityImpact);
-        setStringOrNull(merge, 17, v2Version);
-        setFloatOrNull(merge, 18, v3ExploitabilityScore);
-        setFloatOrNull(merge, 19, v3ImpactScore);
-        setStringOrNull(merge, 20, v3AttackVector);
-        setStringOrNull(merge, 21, v3AttackComplexity);
-        setStringOrNull(merge, 22, v3PrivilegesRequired);
-        setStringOrNull(merge, 23, v3UserInteraction);
-        setStringOrNull(merge, 24, v3Scope);
-        setStringOrNull(merge, 25, v3ConfidentialityImpact);
-        setStringOrNull(merge, 26, v3IntegrityImpact);
-        setStringOrNull(merge, 27, v3AvailabilityImpact);
-        setFloatOrNull(merge, 28, v3BaseScore);
-        setStringOrNull(merge, 29, v3BaseSeverity);
-        setStringOrNull(merge, 30, v3Version);
-
-        if (vulnerabilityId == 0) {
-            merge.setString(31, cve);
-        } else {
-            merge.setInt(31, vulnerabilityId);
-        }
-        final int count = merge.executeUpdate();
-        if (vulnerabilityId == 0) {
-            try (ResultSet rs = merge.getGeneratedKeys()) {
+        try (PreparedStatement selectVulnerabilityId = conn.prepareStatement("SELECT id FROM VULNERABILITY CVE WHERE cve=?")) {
+            selectVulnerabilityId.setString(1, cve);
+            try (ResultSet rs = selectVulnerabilityId.executeQuery()) {
                 if (rs.next()) {
                     vulnerabilityId = rs.getInt(1);
                 }
             }
         }
+        PreparedStatement merge = null;
+        try {
+            if (vulnerabilityId > 0) {
+                //do deletes and updates
+                try (PreparedStatement refs = conn.prepareStatement("DELETE FROM reference WHERE cveid = ?")) {
+                    refs.setInt(1, vulnerabilityId);
+                    refs.executeUpdate();
+                }
+                try (PreparedStatement software = conn.prepareStatement("DELETE FROM software WHERE cveid = ?")) {
+                    software.setInt(1, vulnerabilityId);
+                    software.executeUpdate();
+                }
+                try (PreparedStatement cwe = conn.prepareStatement("DELETE FROM cweEntry WHERE cveid = ?")) {
+                    cwe.setInt(1, vulnerabilityId);
+                    cwe.executeUpdate();
+                }
+                merge = conn.prepareStatement("UPDATE VULNERABILITY SET description=?, "
+                        + "v2Severity=?, v2ExploitabilityScore=?, "
+                        + "v2ImpactScore=?, v2AcInsufInfo=?, v2ObtainAllPrivilege=?, "
+                        + "v2ObtainUserPrivilege=?, v2ObtainOtherPrivilege=?, v2UserInteractionRequired=?, "
+                        + "v2Score=?, v2AccessVector=?, v2AccessComplexity=?, "
+                        + "v2Authentication=?, v2ConfidentialityImpact=?, v2IntegrityImpact=?, "
+                        + "v2AvailabilityImpact=?, v2Version=?, v3ExploitabilityScore=?, "
+                        + "v3ImpactScore=?, v3AttackVector=?, v3AttackComplexity=?, "
+                        + "v3PrivilegesRequired=?, v3UserInteraction=?, v3Scope=?, "
+                        + "v3ConfidentialityImpact=?, v3IntegrityImpact=?, v3AvailabilityImpact=?, "
+                        + "v3BaseScore=?, v3BaseSeverity=?, v3Version=? "
+                        + "WHERE id=?");
+            } else {
+                //just do insert
+                final String[] returnedColumns = {"id"};
+                merge = conn.prepareStatement("INSERT INTO VULNERABILITY (description, "
+                        + "v2Severity, v2ExploitabilityScore, "
+                        + "v2ImpactScore, v2AcInsufInfo, v2ObtainAllPrivilege, "
+                        + "v2ObtainUserPrivilege, v2ObtainOtherPrivilege, v2UserInteractionRequired, "
+                        + "v2Score, v2AccessVector, v2AccessComplexity, "
+                        + "v2Authentication, v2ConfidentialityImpact, v2IntegrityImpact, "
+                        + "v2AvailabilityImpact, v2Version, v3ExploitabilityScore, "
+                        + "v3ImpactScore, v3AttackVector, v3AttackComplexity, "
+                        + "v3PrivilegesRequired, v3UserInteraction, v3Scope, "
+                        + "v3ConfidentialityImpact, v3IntegrityImpact, v3AvailabilityImpact, "
+                        + "v3BaseScore, v3BaseSeverity, v3Version, cve) VALUES (?, ?, ?, ?, ?, ?, "
+                        + "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        returnedColumns);
+            }
 
+            merge.setString(1, description);
+
+            setStringOrNull(merge, 2, v2Severity);
+            setFloatOrNull(merge, 3, v2ExploitabilityScore);
+            setFloatOrNull(merge, 4, v2ImpactScore);
+            setBooleanOrNull(merge, 5, v2AcInsufInfo);
+            setBooleanOrNull(merge, 6, v2ObtainAllPrivilege);
+            setBooleanOrNull(merge, 7, v2ObtainUserPrivilege);
+            setBooleanOrNull(merge, 8, v2ObtainOtherPrivilege);
+            setBooleanOrNull(merge, 9, v2UserInteractionRequired);
+            setFloatOrNull(merge, 10, v2Score);
+            setStringOrNull(merge, 11, v2AccessVector);
+            setStringOrNull(merge, 12, v2AccessComplexity);
+            setStringOrNull(merge, 13, v2Authentication);
+            setStringOrNull(merge, 14, v2ConfidentialityImpact);
+            setStringOrNull(merge, 15, v2IntegrityImpact);
+            setStringOrNull(merge, 16, v2AvailabilityImpact);
+            setStringOrNull(merge, 17, v2Version);
+            setFloatOrNull(merge, 18, v3ExploitabilityScore);
+            setFloatOrNull(merge, 19, v3ImpactScore);
+            setStringOrNull(merge, 20, v3AttackVector);
+            setStringOrNull(merge, 21, v3AttackComplexity);
+            setStringOrNull(merge, 22, v3PrivilegesRequired);
+            setStringOrNull(merge, 23, v3UserInteraction);
+            setStringOrNull(merge, 24, v3Scope);
+            setStringOrNull(merge, 25, v3ConfidentialityImpact);
+            setStringOrNull(merge, 26, v3IntegrityImpact);
+            setStringOrNull(merge, 27, v3AvailabilityImpact);
+            setFloatOrNull(merge, 28, v3BaseScore);
+            setStringOrNull(merge, 29, v3BaseSeverity);
+            setStringOrNull(merge, 30, v3Version);
+
+            if (vulnerabilityId == 0) {
+                merge.setString(31, cve);
+            } else {
+                merge.setInt(31, vulnerabilityId);
+            }
+            final int count = merge.executeUpdate();
+            if (vulnerabilityId == 0) {
+                try (ResultSet rs = merge.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        vulnerabilityId = rs.getInt(1);
+                    }
+                }
+            }
+        } finally {
+            if (merge != null) {
+                merge.close();
+            }
+        }
         ret.addRow(vulnerabilityId);
         return ret;
     }

@@ -218,9 +218,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
                 return null;
             }
             final String releaseVersion = new String(ByteStreams.toByteArray(conn.getInputStream()), StandardCharsets.UTF_8);
-            if (releaseVersion != null) {
-                return releaseVersion.trim();
-            }
+            return releaseVersion.trim();
         } catch (MalformedURLException ex) {
             LOGGER.debug("Unable to retrieve current release version of dependency-check - malformed url?");
         } catch (URLConnectionFailureException ex) {

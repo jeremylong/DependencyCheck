@@ -21,12 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
-import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -192,7 +189,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
      * otherwise <code>false</code>
      */
     protected boolean isConfiguredToSkip(MavenProject mavenProject) {
-        Optional<String> value = mavenProject.getBuildPlugins().stream()
+        final Optional<String> value = mavenProject.getBuildPlugins().stream()
                 .filter(f -> "org.owasp:dependency-check-maven".equals(f.getKey()))
                 .map(c -> c.getConfiguration())
                 .filter(c -> c != null && c instanceof Xpp3Dom)
@@ -202,9 +199,9 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                 .map(c -> c.getValue())
                 .findFirst();
 
-        String property = mavenProject.getProperties().getProperty("dependency-check.skip");
+        final String property = mavenProject.getProperties().getProperty("dependency-check.skip");
 
-        boolean skip = (value.isPresent() && "true".equalsIgnoreCase(value.get())) || "true".equalsIgnoreCase(property);
+        final boolean skip = (value.isPresent() && "true".equalsIgnoreCase(value.get())) || "true".equalsIgnoreCase(property);
         if (skip) {
             getLog().debug("Aggregation skipping " + mavenProject.getId());
         }

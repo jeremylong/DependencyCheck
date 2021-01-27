@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.data.nvdcve;
 //CSOFF: AvoidStarImport
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.collections.map.ReferenceMap;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
@@ -1616,6 +1617,7 @@ public final class CveDB implements AutoCloseable {
      * @return the Boolean value; or null
      * @throws SQLException thrown if there is an error obtaining the value
      */
+    @SuppressFBWarnings("NP_BOOLEAN_RETURN_NULL")
     private Boolean getBooleanValue(ResultSet rs, int index) throws SQLException {
         if (rs.getObject(index) == null) {
             return null;

@@ -173,8 +173,8 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
             Dependency dependency, Map<String, String> dependencyMap)
             throws AnalysisException {
         try {
-            JsonReader packageReader = Json.createReader(FileUtils.openInputStream(packageFile));
-            JsonReader lockReader = Json.createReader(FileUtils.openInputStream(lockFile));
+            final JsonReader packageReader = Json.createReader(FileUtils.openInputStream(packageFile));
+            final JsonReader lockReader = Json.createReader(FileUtils.openInputStream(lockFile));
             // Retrieves the contents of package-lock.json from the Dependency
             final JsonObject lockJson = lockReader.readObject();
             // Retrieves the contents of package-lock.json from the Dependency
@@ -185,7 +185,7 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
                     getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false));
 
             // Submits the package payload to the nsp check service
-            return searcher.submitPackage(payload);
+            return getSearcher().submitPackage(payload);
 
         } catch (URLConnectionFailureException e) {
             this.setEnabled(false);
@@ -248,7 +248,7 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
             final JsonObject payload = NpmPayloadBuilder.build(packageJson, dependencyMap);
 
             // Submits the package payload to the nsp check service
-            return searcher.submitPackage(payload);
+            return getSearcher().submitPackage(payload);
 
         } catch (URLConnectionFailureException e) {
             this.setEnabled(false);

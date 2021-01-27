@@ -86,7 +86,7 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The Node Audit Searcher.
      */
-    protected NodeAuditSearch searcher;
+    private NodeAuditSearch searcher;
 
     /**
      * Determines if the file can be analyzed by the analyzer.
@@ -440,7 +440,7 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws CpeValidationException thrown when a CPE cannot be created
      */
     protected void processResults(final List<Advisory> advisories, Engine engine,
-                                Dependency dependency, Map<String, String> dependencyMap)
+            Dependency dependency, Map<String, String> dependencyMap)
             throws CpeValidationException {
         for (Advisory advisory : advisories) {
             //Create a new vulnerability out of the advisory returned by nsp.
@@ -499,5 +499,14 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
         if (!found) {
             dependency.addVulnerability(vuln);
         }
+    }
+
+    /**
+     * Returns the node audit search utility.
+     *
+     * @return the node audit search utility
+     */
+    protected NodeAuditSearch getSearcher() {
+        return searcher;
     }
 }

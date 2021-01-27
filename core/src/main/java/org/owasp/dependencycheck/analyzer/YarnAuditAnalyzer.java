@@ -1,10 +1,26 @@
+/*
+ * This file is part of dependency-check-ant.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2021 The OWASP Foundation. All Rights Reserved.
+ */
 package org.owasp.dependencycheck.analyzer;
 
 import com.google.common.base.Strings;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -121,7 +137,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
         final ProcessBuilder builder = new ProcessBuilder(args);
         LOGGER.debug("Launching: {}", args);
         try {
-            Process process = builder.start();
+            final Process process = builder.start();
             try (ProcessReader processReader = new ProcessReader(process)) {
                 processReader.readAll();
                 final int exitValue = process.waitFor();
@@ -148,7 +164,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
     }
 
     private JsonObject fetchYarnAuditJson(Dependency dependency, boolean skipDevDependencies) throws AnalysisException {
-        File folder = dependency.getActualFile().getParentFile();
+        final File folder = dependency.getActualFile().getParentFile();
         if (!folder.isDirectory()) {
             throw new AnalysisException(String.format("%s should have been a directory.", folder.getAbsolutePath()));
         }
@@ -168,22 +184,22 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
             final ProcessBuilder builder = new ProcessBuilder(args);
             builder.directory(folder);
             LOGGER.debug("Launching: {}", args);
-            Process process = builder.start();
+            final Process process = builder.start();
             try (ProcessReader processReader = new ProcessReader(process)) {
                 processReader.readAll();
-                String errOutput = processReader.getError();
+                final String errOutput = processReader.getError();
 
                 if (!Strings.isNullOrEmpty(errOutput) && !EXPECTED_ERROR.equals(errOutput)) {
                     LOGGER.debug("Process Error Out: {}", errOutput);
                     LOGGER.debug("Process Out: {}", processReader.getOutput());
                 }
-                
-                String verboseJson = Arrays.stream(processReader.getOutput().split("\n"))
+
+                final String verboseJson = Arrays.stream(processReader.getOutput().split("\n"))
                         .filter(line -> line.contains("Audit Request"))
                         .findFirst().get();
                 String auditRequest;
                 try (JsonReader reader = Json.createReader(IOUtils.toInputStream(verboseJson, StandardCharsets.UTF_8))) {
-                    JsonObject jsonObject = reader.readObject();
+                    final JsonObject jsonObject = reader.readObject();
                     auditRequest = jsonObject.getString("data");
                     //auditRequest = auditRequest.replace("Audit Request: ", "");
                     auditRequest = auditRequest.substring(15);
@@ -219,7 +235,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
             Dependency dependency, Map<String, String> dependencyMap)
             throws AnalysisException {
         try {
-            Boolean skipDevDependencies = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false);
+            final Boolean skipDevDependencies = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false);
             // Retrieves the contents of package-lock.json from the Dependency
             final JsonObject lockJson = fetchYarnAuditJson(dependency, skipDevDependencies);
             // Retrieves the contents of package-lock.json from the Dependency
@@ -230,7 +246,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
             final JsonObject payload = NpmPayloadBuilder.build(lockJson, packageJson, dependencyMap, skipDevDependencies);
 
             // Submits the package payload to the nsp check service
-            return searcher.submitPackage(payload);
+            return getSearcher().submitPackage(payload);
 
         } catch (URLConnectionFailureException e) {
             this.setEnabled(false);
