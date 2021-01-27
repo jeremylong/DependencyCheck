@@ -21,14 +21,19 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 
@@ -108,17 +113,19 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         }
         for (String m : project.getModules()) {
             for (MavenProject mod : getReactorProjects()) {
-                try {
-                    File mpp = new File(project.getBasedir(), m);
-                    mpp = mpp.getCanonicalFile();
-                    if (mpp.compareTo(mod.getBasedir()) == 0 && descendants.add(mod)
-                            && getLog().isDebugEnabled()) {
-                        getLog().debug(String.format("Descendant module %s added", mod.getName()));
+                if (!isConfiguredToSkip(mod)) {
+                    try {
+                        File mpp = new File(project.getBasedir(), m);
+                        mpp = mpp.getCanonicalFile();
+                        if (mpp.compareTo(mod.getBasedir()) == 0 && descendants.add(mod)
+                                && getLog().isDebugEnabled()) {
+                            getLog().debug(String.format("Descendant module %s added", mod.getName()));
 
-                    }
-                } catch (IOException ex) {
-                    if (getLog().isDebugEnabled()) {
-                        getLog().debug("Unable to determine module path", ex);
+                        }
+                    } catch (IOException ex) {
+                        if (getLog().isDebugEnabled()) {
+                            getLog().debug("Unable to determine module path", ex);
+                        }
                     }
                 }
             }
@@ -126,38 +133,46 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         do {
             size = descendants.size();
             for (MavenProject p : getReactorProjects()) {
-                if (project.equals(p.getParent()) || descendants.contains(p.getParent())) {
-                    if (descendants.add(p) && getLog().isDebugEnabled()) {
-                        getLog().debug(String.format("Descendant %s added", p.getName()));
+                if (!isConfiguredToSkip(p)) {
+                    if (project.equals(p.getParent()) || descendants.contains(p.getParent())) {
+                        if (descendants.add(p) && getLog().isDebugEnabled()) {
+                            getLog().debug(String.format("Descendant %s added", p.getName()));
 
-                    }
-                    for (MavenProject modTest : getReactorProjects()) {
-                        if (p.getModules() != null && p.getModules().contains(modTest.getName())
-                                && descendants.add(modTest)
-                                && getLog().isDebugEnabled()) {
-                            getLog().debug(String.format("Descendant %s added", modTest.getName()));
                         }
-                    }
-                }
-                final Set<MavenProject> addedDescendants = new HashSet<>();
-                for (MavenProject dec : descendants) {
-                    for (String mod : dec.getModules()) {
-                        try {
-                            File mpp = new File(dec.getBasedir(), mod);
-                            mpp = mpp.getCanonicalFile();
-                            if (mpp.compareTo(p.getBasedir()) == 0) {
-                                addedDescendants.add(p);
-                            }
-                        } catch (IOException ex) {
-                            if (getLog().isDebugEnabled()) {
-                                getLog().debug("Unable to determine module path", ex);
+                        for (MavenProject modTest : getReactorProjects()) {
+                            if (!isConfiguredToSkip(modTest)) {
+                                if (p.getModules() != null && p.getModules().contains(modTest.getName())
+                                        && descendants.add(modTest)
+                                        && getLog().isDebugEnabled()) {
+                                    getLog().debug(String.format("Descendant %s added", modTest.getName()));
+                                }
                             }
                         }
                     }
-                }
-                for (MavenProject addedDescendant : addedDescendants) {
-                    if (descendants.add(addedDescendant) && getLog().isDebugEnabled()) {
-                        getLog().debug(String.format("Descendant module %s added", addedDescendant.getName()));
+                    final Set<MavenProject> addedDescendants = new HashSet<>();
+                    for (MavenProject dec : descendants) {
+                        if (!isConfiguredToSkip(dec)) {
+                            for (String mod : dec.getModules()) {
+                                try {
+                                    File mpp = new File(dec.getBasedir(), mod);
+                                    mpp = mpp.getCanonicalFile();
+                                    if (mpp.compareTo(p.getBasedir()) == 0) {
+                                        addedDescendants.add(p);
+                                    }
+                                } catch (IOException ex) {
+                                    if (getLog().isDebugEnabled()) {
+                                        getLog().debug("Unable to determine module path", ex);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    for (MavenProject addedDescendant : addedDescendants) {
+                        if (!isConfiguredToSkip(addedDescendant)) {
+                            if (descendants.add(addedDescendant) && getLog().isDebugEnabled()) {
+                                getLog().debug(String.format("Descendant module %s added", addedDescendant.getName()));
+                            }
+                        }
                     }
                 }
             }
@@ -166,6 +181,34 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
             getLog().debug(String.format("%s has %d children", project, descendants.size()));
         }
         return descendants;
+    }
+
+    /**
+     * Checks the ODC configuration in the child project to see if should be
+     * skipped.
+     *
+     * @param mavenProject the maven project to check
+     * @return <code>true</code> if the project is configured to skip ODC;
+     * otherwise <code>false</code>
+     */
+    protected boolean isConfiguredToSkip(MavenProject mavenProject) {
+        Optional<String> value = mavenProject.getBuildPlugins().stream()
+                .filter(f -> "org.owasp:dependency-check-maven".equals(f.getKey()))
+                .map(c -> c.getConfiguration())
+                .filter(c -> c != null && c instanceof Xpp3Dom)
+                .map(c -> (Xpp3Dom) c)
+                .map(c -> c.getChild("skip"))
+                .filter(c -> c != null)
+                .map(c -> c.getValue())
+                .findFirst();
+
+        String property = mavenProject.getProperties().getProperty("dependency-check.skip");
+
+        boolean skip = (value.isPresent() && "true".equalsIgnoreCase(value.get())) || "true".equalsIgnoreCase(property);
+        if (skip) {
+            getLog().debug("Aggregation skipping " + mavenProject.getId());
+        }
+        return skip;
     }
 
     /**
