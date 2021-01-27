@@ -2,6 +2,15 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 6.1.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.1.0) (2021-01-27)
+
+### Changes
+
+- Added SARIF file format per [#3081](https://github.com/jeremylong/DependencyCheck/issues/3081).
+- Added support for Yarn per [#3063](https://github.com/jeremylong/DependencyCheck/pull/3063).
+- False positive reduction and minor bug fixes.
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/20?closed=1).
+
 ## [Version 6.0.5](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.0.5) (2021-01-07)
 
 ### Changes
