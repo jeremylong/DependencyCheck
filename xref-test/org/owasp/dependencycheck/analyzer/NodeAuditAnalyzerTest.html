@@ -27,9 +27,10 @@
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>          NodeAuditAnalyzer analyzer = <strong class="jxr_keyword">new</strong> NodeAuditAnalyzer();
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>          assertThat(analyzer.accept(<strong class="jxr_keyword">new</strong> File(<span class="jxr_string">"package-lock.json"</span>)), is(<strong class="jxr_keyword">true</strong>));
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>          assertThat(analyzer.accept(<strong class="jxr_keyword">new</strong> File(<span class="jxr_string">"npm-shrinkwrap.json"</span>)), is(<strong class="jxr_keyword">true</strong>));
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>          assertThat(analyzer.accept(<strong class="jxr_keyword">new</strong> File(<span class="jxr_string">"package.json"</span>)), is(false));
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>      }
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  }
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>          assertThat(analyzer.accept(<strong class="jxr_keyword">new</strong> File(<span class="jxr_string">"yarn.lock"</span>)), is(false));
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>          assertThat(analyzer.accept(<strong class="jxr_keyword">new</strong> File(<span class="jxr_string">"package.json"</span>)), is(false));
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>      }
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2021 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

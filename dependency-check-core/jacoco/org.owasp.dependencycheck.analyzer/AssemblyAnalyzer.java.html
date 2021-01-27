@@ -150,8 +150,8 @@ import org.owasp.dependencycheck.xml.assembly.GrokParseException;
 <span class="fc" id="L150">                processReader.readAll();</span>
 
 <span class="fc" id="L152">                final String errorOutput = processReader.getError();</span>
-<span class="pc bpc" id="L153" title="1 of 2 branches missed.">                if (Strings.isNullOrEmpty(errorOutput)) {</span>
-<span class="fc" id="L154">                    LOGGER.warn(&quot;Error from GrokAssembly: {}&quot;, errorOutput);</span>
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">                if (!Strings.isNullOrEmpty(errorOutput)) {</span>
+<span class="nc" id="L154">                    LOGGER.warn(&quot;Error from GrokAssembly: {}&quot;, errorOutput);</span>
                 }
 <span class="fc" id="L156">                final int exitValue = proc.exitValue();</span>
 

@@ -258,7 +258,7 @@ import org.slf4j.spi.LocationAwareLogger;
     @Parameter(property = &quot;dependency-check.virtualSnapshotsFromReactor&quot;, defaultValue = &quot;true&quot;)
     private Boolean virtualSnapshotsFromReactor;
     /**
-     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, ALL).
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF, ALL).
      * Multiple formats can be selected using a comma delineated list.
      */
 <span class="fc" id="L264">    @SuppressWarnings(&quot;CanBeFinal&quot;)</span>
@@ -272,7 +272,7 @@ import org.slf4j.spi.LocationAwareLogger;
     @Parameter(property = &quot;prettyPrint&quot;)
     private Boolean prettyPrint;
     /**
-     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, ALL).
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF, ALL).
      * Multiple formats can be selected using a comma delineated list.
      */
     @Parameter(property = &quot;formats&quot;, required = true)

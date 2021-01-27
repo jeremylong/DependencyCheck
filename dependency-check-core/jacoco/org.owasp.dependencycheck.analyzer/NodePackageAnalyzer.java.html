@@ -185,12 +185,12 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
      */
     private boolean isNodeAuditEnabled(Engine engine) {
 <span class="pc bpc" id="L187" title="1 of 2 branches missed.">        for (Analyzer a : engine.getAnalyzers()) {</span>
-<span class="fc bfc" id="L188" title="All 2 branches covered.">            if (a instanceof NodeAuditAnalyzer) {</span>
+<span class="pc bpc" id="L188" title="1 of 4 branches missed.">            if (a instanceof NodeAuditAnalyzer || a instanceof YarnAuditAnalyzer) {</span>
 <span class="pc bpc" id="L189" title="1 of 2 branches missed.">                if (a.isEnabled()) {</span>
                     try {
-<span class="fc" id="L191">                        ((NodeAuditAnalyzer) a).prepareFileTypeAnalyzer(engine);</span>
+<span class="fc" id="L191">                        ((AbstractNpmAnalyzer) a).prepareFileTypeAnalyzer(engine);</span>
 <span class="nc" id="L192">                    } catch (InitializationException ex) {</span>
-<span class="nc" id="L193">                        LOGGER.debug(&quot;Error initializing the NodeAuditAnalyzer&quot;);</span>
+<span class="nc" id="L193">                        LOGGER.debug(&quot;Error initializing the {}&quot;, a.getName());</span>
 <span class="fc" id="L194">                    }</span>
                 }
 <span class="fc" id="L196">                return a.isEnabled();</span>
@@ -207,10 +207,10 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
      * &lt;code&gt;true&lt;/code&gt;
      */
     private boolean noLockFileExists(File dependencyFile) {
-        //TODO if we support yarn we need to add the check for the yarn.yml file
-<span class="fc" id="L211">        final File lock = new File(dependencyFile.getParentFile(), &quot;package-lock.json&quot;);</span>
-<span class="fc" id="L212">        final File shrinkwrap = new File(dependencyFile.getParentFile(), &quot;npm-shrinkwrap.json&quot;);</span>
-<span class="pc bpc" id="L213" title="1 of 4 branches missed.">        return !(lock.isFile() || shrinkwrap.isFile());</span>
+<span class="fc" id="L210">        final File lock = new File(dependencyFile.getParentFile(), &quot;package-lock.json&quot;);</span>
+<span class="fc" id="L211">        final File shrinkwrap = new File(dependencyFile.getParentFile(), &quot;npm-shrinkwrap.json&quot;);</span>
+<span class="fc" id="L212">        final File yarnLock = new File(dependencyFile.getParentFile(), &quot;yarn.lock&quot;);</span>
+<span class="pc bpc" id="L213" title="2 of 6 branches missed.">        return !(lock.isFile() || shrinkwrap.isFile() || yarnLock.isFile());</span>
     }
 
     @Override

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -29,6 +30,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 
@@ -46,12 +48,12 @@ import org.owasp.dependencycheck.exception.ExceptionCollection;
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
         requiresOnline = true
 )
-<span class="fc" id="L49">public class AggregateMojo extends BaseDependencyCheckMojo {</span>
+<span class="fc" id="L51">public class AggregateMojo extends BaseDependencyCheckMojo {</span>
 
     /**
      * The name of the report in the site.
      */
-<span class="fc" id="L54">    @SuppressWarnings(&quot;CanBeFinal&quot;)</span>
+<span class="fc" id="L56">    @SuppressWarnings(&quot;CanBeFinal&quot;)</span>
     @Parameter(property = &quot;name&quot;, defaultValue = &quot;dependency-check:aggregate&quot;, required = true)
     private String name = &quot;dependency-check:aggregate&quot;;
 
@@ -64,30 +66,30 @@ import org.owasp.dependencycheck.exception.ExceptionCollection;
      */
     @Override
     protected ExceptionCollection scanDependencies(final Engine engine) throws MojoExecutionException {
-<span class="fc" id="L67">        ExceptionCollection exCol = scanArtifacts(getProject(), engine, true);</span>
-<span class="fc bfc" id="L68" title="All 2 branches covered.">        for (MavenProject childProject : getDescendants(this.getProject())) {</span>
+<span class="fc" id="L69">        ExceptionCollection exCol = scanArtifacts(getProject(), engine, true);</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        for (MavenProject childProject : getDescendants(this.getProject())) {</span>
             //TODO consider the following as to whether a child should be skipped per #2152
             //childProject.getBuildPlugins().get(0).getExecutions().get(0).getConfiguration()
-<span class="fc" id="L71">            final ExceptionCollection ex = scanArtifacts(childProject, engine, true);</span>
-<span class="pc bpc" id="L72" title="1 of 2 branches missed.">            if (ex != null) {</span>
-<span class="nc bnc" id="L73" title="All 2 branches missed.">                if (exCol == null) {</span>
-<span class="nc" id="L74">                    exCol = ex;</span>
+<span class="fc" id="L73">            final ExceptionCollection ex = scanArtifacts(childProject, engine, true);</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">            if (ex != null) {</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">                if (exCol == null) {</span>
+<span class="nc" id="L76">                    exCol = ex;</span>
                 }
-<span class="nc" id="L76">                exCol.getExceptions().addAll(ex.getExceptions());</span>
-<span class="nc bnc" id="L77" title="All 2 branches missed.">                if (ex.isFatal()) {</span>
-<span class="nc" id="L78">                    exCol.setFatal(true);</span>
-<span class="nc" id="L79">                    final String msg = String.format(&quot;Fatal exception(s) analyzing %s&quot;, childProject.getName());</span>
-<span class="nc bnc" id="L80" title="All 2 branches missed.">                    if (this.isFailOnError()) {</span>
-<span class="nc" id="L81">                        throw new MojoExecutionException(msg, exCol);</span>
+<span class="nc" id="L78">                exCol.getExceptions().addAll(ex.getExceptions());</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">                if (ex.isFatal()) {</span>
+<span class="nc" id="L80">                    exCol.setFatal(true);</span>
+<span class="nc" id="L81">                    final String msg = String.format(&quot;Fatal exception(s) analyzing %s&quot;, childProject.getName());</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">                    if (this.isFailOnError()) {</span>
+<span class="nc" id="L83">                        throw new MojoExecutionException(msg, exCol);</span>
                     }
-<span class="nc" id="L83">                    getLog().error(msg);</span>
-<span class="nc bnc" id="L84" title="All 2 branches missed.">                    if (getLog().isDebugEnabled()) {</span>
-<span class="nc" id="L85">                        getLog().debug(exCol);</span>
+<span class="nc" id="L85">                    getLog().error(msg);</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">                    if (getLog().isDebugEnabled()) {</span>
+<span class="nc" id="L87">                        getLog().debug(exCol);</span>
                     }
                 }
             }
-<span class="fc" id="L89">        }</span>
-<span class="fc" id="L90">        return exCol;</span>
+<span class="fc" id="L91">        }</span>
+<span class="fc" id="L92">        return exCol;</span>
     }
 
     /**
@@ -98,74 +100,112 @@ import org.owasp.dependencycheck.exception.ExceptionCollection;
      * @return the set of descendant projects
      */
     protected Set&lt;MavenProject&gt; getDescendants(MavenProject project) {
-<span class="pc bpc" id="L101" title="1 of 2 branches missed.">        if (project == null) {</span>
-<span class="nc" id="L102">            return Collections.emptySet();</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">        if (project == null) {</span>
+<span class="nc" id="L104">            return Collections.emptySet();</span>
         }
-<span class="fc" id="L104">        final Set&lt;MavenProject&gt; descendants = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L106">        final Set&lt;MavenProject&gt; descendants = new HashSet&lt;&gt;();</span>
         int size;
-<span class="fc bfc" id="L106" title="All 2 branches covered.">        if (getLog().isDebugEnabled()) {</span>
-<span class="fc" id="L107">            getLog().debug(String.format(&quot;Collecting descendants of %s&quot;, project.getName()));</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        if (getLog().isDebugEnabled()) {</span>
+<span class="fc" id="L109">            getLog().debug(String.format(&quot;Collecting descendants of %s&quot;, project.getName()));</span>
         }
-<span class="fc bfc" id="L109" title="All 2 branches covered.">        for (String m : project.getModules()) {</span>
-<span class="fc bfc" id="L110" title="All 2 branches covered.">            for (MavenProject mod : getReactorProjects()) {</span>
-                try {
-<span class="fc" id="L112">                    File mpp = new File(project.getBasedir(), m);</span>
-<span class="fc" id="L113">                    mpp = mpp.getCanonicalFile();</span>
-<span class="pc bpc" id="L114" title="1 of 4 branches missed.">                    if (mpp.compareTo(mod.getBasedir()) == 0 &amp;&amp; descendants.add(mod)</span>
-<span class="fc bfc" id="L115" title="All 2 branches covered.">                            &amp;&amp; getLog().isDebugEnabled()) {</span>
-<span class="fc" id="L116">                        getLog().debug(String.format(&quot;Descendant module %s added&quot;, mod.getName()));</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        for (String m : project.getModules()) {</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">            for (MavenProject mod : getReactorProjects()) {</span>
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">                if (!isConfiguredToSkip(mod)) {</span>
+                    try {
+<span class="fc" id="L115">                        File mpp = new File(project.getBasedir(), m);</span>
+<span class="fc" id="L116">                        mpp = mpp.getCanonicalFile();</span>
+<span class="pc bpc" id="L117" title="1 of 4 branches missed.">                        if (mpp.compareTo(mod.getBasedir()) == 0 &amp;&amp; descendants.add(mod)</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">                                &amp;&amp; getLog().isDebugEnabled()) {</span>
+<span class="fc" id="L119">                            getLog().debug(String.format(&quot;Descendant module %s added&quot;, mod.getName()));</span>
 
-                    }
-<span class="nc" id="L119">                } catch (IOException ex) {</span>
-<span class="nc bnc" id="L120" title="All 2 branches missed.">                    if (getLog().isDebugEnabled()) {</span>
-<span class="nc" id="L121">                        getLog().debug(&quot;Unable to determine module path&quot;, ex);</span>
-                    }
-<span class="fc" id="L123">                }</span>
-<span class="fc" id="L124">            }</span>
-<span class="fc" id="L125">        }</span>
-        do {
-<span class="fc" id="L127">            size = descendants.size();</span>
-<span class="fc bfc" id="L128" title="All 2 branches covered.">            for (MavenProject p : getReactorProjects()) {</span>
-<span class="fc bfc" id="L129" title="All 4 branches covered.">                if (project.equals(p.getParent()) || descendants.contains(p.getParent())) {</span>
-<span class="pc bpc" id="L130" title="3 of 4 branches missed.">                    if (descendants.add(p) &amp;&amp; getLog().isDebugEnabled()) {</span>
-<span class="nc" id="L131">                        getLog().debug(String.format(&quot;Descendant %s added&quot;, p.getName()));</span>
-
-                    }
-<span class="fc bfc" id="L134" title="All 2 branches covered.">                    for (MavenProject modTest : getReactorProjects()) {</span>
-<span class="pc bpc" id="L135" title="1 of 4 branches missed.">                        if (p.getModules() != null &amp;&amp; p.getModules().contains(modTest.getName())</span>
-<span class="fc bfc" id="L136" title="All 2 branches covered.">                                &amp;&amp; descendants.add(modTest)</span>
-<span class="pc bpc" id="L137" title="1 of 2 branches missed.">                                &amp;&amp; getLog().isDebugEnabled()) {</span>
-<span class="fc" id="L138">                            getLog().debug(String.format(&quot;Descendant %s added&quot;, modTest.getName()));</span>
                         }
-<span class="fc" id="L140">                    }</span>
+<span class="nc" id="L122">                    } catch (IOException ex) {</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                        if (getLog().isDebugEnabled()) {</span>
+<span class="nc" id="L124">                            getLog().debug(&quot;Unable to determine module path&quot;, ex);</span>
+                        }
+<span class="fc" id="L126">                    }</span>
                 }
-<span class="fc" id="L142">                final Set&lt;MavenProject&gt; addedDescendants = new HashSet&lt;&gt;();</span>
-<span class="fc bfc" id="L143" title="All 2 branches covered.">                for (MavenProject dec : descendants) {</span>
-<span class="fc bfc" id="L144" title="All 2 branches covered.">                    for (String mod : dec.getModules()) {</span>
-                        try {
-<span class="fc" id="L146">                            File mpp = new File(dec.getBasedir(), mod);</span>
-<span class="fc" id="L147">                            mpp = mpp.getCanonicalFile();</span>
-<span class="fc bfc" id="L148" title="All 2 branches covered.">                            if (mpp.compareTo(p.getBasedir()) == 0) {</span>
-<span class="fc" id="L149">                                addedDescendants.add(p);</span>
+<span class="fc" id="L128">            }</span>
+<span class="fc" id="L129">        }</span>
+        do {
+<span class="fc" id="L131">            size = descendants.size();</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">            for (MavenProject p : getReactorProjects()) {</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">                if (!isConfiguredToSkip(p)) {</span>
+<span class="fc bfc" id="L134" title="All 4 branches covered.">                    if (project.equals(p.getParent()) || descendants.contains(p.getParent())) {</span>
+<span class="pc bpc" id="L135" title="3 of 4 branches missed.">                        if (descendants.add(p) &amp;&amp; getLog().isDebugEnabled()) {</span>
+<span class="nc" id="L136">                            getLog().debug(String.format(&quot;Descendant %s added&quot;, p.getName()));</span>
+
+                        }
+<span class="fc bfc" id="L139" title="All 2 branches covered.">                        for (MavenProject modTest : getReactorProjects()) {</span>
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">                            if (!isConfiguredToSkip(modTest)) {</span>
+<span class="pc bpc" id="L141" title="1 of 4 branches missed.">                                if (p.getModules() != null &amp;&amp; p.getModules().contains(modTest.getName())</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">                                        &amp;&amp; descendants.add(modTest)</span>
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">                                        &amp;&amp; getLog().isDebugEnabled()) {</span>
+<span class="fc" id="L144">                                    getLog().debug(String.format(&quot;Descendant %s added&quot;, modTest.getName()));</span>
+                                }
                             }
-<span class="nc" id="L151">                        } catch (IOException ex) {</span>
-<span class="nc bnc" id="L152" title="All 2 branches missed.">                            if (getLog().isDebugEnabled()) {</span>
-<span class="nc" id="L153">                                getLog().debug(&quot;Unable to determine module path&quot;, ex);</span>
-                            }
-<span class="fc" id="L155">                        }</span>
-<span class="fc" id="L156">                    }</span>
-<span class="fc" id="L157">                }</span>
-<span class="fc bfc" id="L158" title="All 2 branches covered.">                for (MavenProject addedDescendant : addedDescendants) {</span>
-<span class="pc bpc" id="L159" title="3 of 4 branches missed.">                    if (descendants.add(addedDescendant) &amp;&amp; getLog().isDebugEnabled()) {</span>
-<span class="nc" id="L160">                        getLog().debug(String.format(&quot;Descendant module %s added&quot;, addedDescendant.getName()));</span>
+<span class="fc" id="L147">                        }</span>
                     }
-<span class="fc" id="L162">                }</span>
-<span class="fc" id="L163">            }</span>
-<span class="fc bfc" id="L164" title="All 4 branches covered.">        } while (size != 0 &amp;&amp; size != descendants.size());</span>
-<span class="fc bfc" id="L165" title="All 2 branches covered.">        if (getLog().isDebugEnabled()) {</span>
-<span class="fc" id="L166">            getLog().debug(String.format(&quot;%s has %d children&quot;, project, descendants.size()));</span>
+<span class="fc" id="L149">                    final Set&lt;MavenProject&gt; addedDescendants = new HashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">                    for (MavenProject dec : descendants) {</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">                        if (!isConfiguredToSkip(dec)) {</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">                            for (String mod : dec.getModules()) {</span>
+                                try {
+<span class="fc" id="L154">                                    File mpp = new File(dec.getBasedir(), mod);</span>
+<span class="fc" id="L155">                                    mpp = mpp.getCanonicalFile();</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">                                    if (mpp.compareTo(p.getBasedir()) == 0) {</span>
+<span class="fc" id="L157">                                        addedDescendants.add(p);</span>
+                                    }
+<span class="nc" id="L159">                                } catch (IOException ex) {</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">                                    if (getLog().isDebugEnabled()) {</span>
+<span class="nc" id="L161">                                        getLog().debug(&quot;Unable to determine module path&quot;, ex);</span>
+                                    }
+<span class="fc" id="L163">                                }</span>
+<span class="fc" id="L164">                            }</span>
+                        }
+<span class="fc" id="L166">                    }</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">                    for (MavenProject addedDescendant : addedDescendants) {</span>
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">                        if (!isConfiguredToSkip(addedDescendant)) {</span>
+<span class="pc bpc" id="L169" title="3 of 4 branches missed.">                            if (descendants.add(addedDescendant) &amp;&amp; getLog().isDebugEnabled()) {</span>
+<span class="nc" id="L170">                                getLog().debug(String.format(&quot;Descendant module %s added&quot;, addedDescendant.getName()));</span>
+                            }
+                        }
+<span class="fc" id="L173">                    }</span>
+                }
+<span class="fc" id="L175">            }</span>
+<span class="fc bfc" id="L176" title="All 4 branches covered.">        } while (size != 0 &amp;&amp; size != descendants.size());</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">        if (getLog().isDebugEnabled()) {</span>
+<span class="fc" id="L178">            getLog().debug(String.format(&quot;%s has %d children&quot;, project, descendants.size()));</span>
         }
-<span class="fc" id="L168">        return descendants;</span>
+<span class="fc" id="L180">        return descendants;</span>
+    }
+
+    /**
+     * Checks the ODC configuration in the child project to see if should be
+     * skipped.
+     *
+     * @param mavenProject the maven project to check
+     * @return &lt;code&gt;true&lt;/code&gt; if the project is configured to skip ODC;
+     * otherwise &lt;code&gt;false&lt;/code&gt;
+     */
+    protected boolean isConfiguredToSkip(MavenProject mavenProject) {
+<span class="fc" id="L192">        final Optional&lt;String&gt; value = mavenProject.getBuildPlugins().stream()</span>
+<span class="fc" id="L193">                .filter(f -&gt; &quot;org.owasp:dependency-check-maven&quot;.equals(f.getKey()))</span>
+<span class="fc" id="L194">                .map(c -&gt; c.getConfiguration())</span>
+<span class="pc bpc" id="L195" title="1 of 4 branches missed.">                .filter(c -&gt; c != null &amp;&amp; c instanceof Xpp3Dom)</span>
+<span class="fc" id="L196">                .map(c -&gt; (Xpp3Dom) c)</span>
+<span class="fc" id="L197">                .map(c -&gt; c.getChild(&quot;skip&quot;))</span>
+<span class="pc bpc" id="L198" title="1 of 2 branches missed.">                .filter(c -&gt; c != null)</span>
+<span class="pc" id="L199">                .map(c -&gt; c.getValue())</span>
+<span class="fc" id="L200">                .findFirst();</span>
+
+<span class="fc" id="L202">        final String property = mavenProject.getProperties().getProperty(&quot;dependency-check.skip&quot;);</span>
+
+<span class="pc bpc" id="L204" title="4 of 6 branches missed.">        final boolean skip = (value.isPresent() &amp;&amp; &quot;true&quot;.equalsIgnoreCase(value.get())) || &quot;true&quot;.equalsIgnoreCase(property);</span>
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">        if (skip) {</span>
+<span class="nc" id="L206">            getLog().debug(&quot;Aggregation skipping &quot; + mavenProject.getId());</span>
+        }
+<span class="fc" id="L208">        return skip;</span>
     }
 
     /**
@@ -176,12 +216,12 @@ import org.owasp.dependencycheck.exception.ExceptionCollection;
      * &lt;code&gt;false&lt;/code&gt;
      */
     protected boolean isMultiModule(MavenProject mavenProject) {
-<span class="nc" id="L179">        return &quot;pom&quot;.equals(mavenProject.getPackaging());</span>
+<span class="nc" id="L219">        return &quot;pom&quot;.equals(mavenProject.getPackaging());</span>
     }
 
     @Override
     public boolean canGenerateReport() {
-<span class="nc" id="L184">        return true; //aggregate always returns true for now - we can look at a more complicated/accurate solution later</span>
+<span class="nc" id="L224">        return true; //aggregate always returns true for now - we can look at a more complicated/accurate solution later</span>
     }
 
     /**
@@ -192,7 +232,7 @@ import org.owasp.dependencycheck.exception.ExceptionCollection;
      */
     @Override
     public String getName(Locale locale) {
-<span class="nc" id="L195">        return name;</span>
+<span class="nc" id="L235">        return name;</span>
     }
 
     /**
@@ -204,7 +244,7 @@ import org.owasp.dependencycheck.exception.ExceptionCollection;
      */
     @Override
     public String getDescription(Locale locale) {
-<span class="nc" id="L207">        return &quot;Generates an aggregate report of all child Maven projects providing details on any &quot;</span>
+<span class="nc" id="L247">        return &quot;Generates an aggregate report of all child Maven projects providing details on any &quot;</span>
                 + &quot;published vulnerabilities within project dependencies. This report is a best &quot;
                 + &quot;effort and may contain false positives and false negatives.&quot;;
     }

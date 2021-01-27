@@ -1,4 +1,4 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-Dependency-Check Command Line,org.owasp.dependencycheck,App,861,808,97,63,214,189,68,27,10,5
+Dependency-Check Command Line,org.owasp.dependencycheck,App,862,817,98,64,214,191,69,27,10,5
 Dependency-Check Command Line,org.owasp.dependencycheck,CliParser.ARGUMENT,3,0,0,0,1,0,1,0,1,0
-Dependency-Check Command Line,org.owasp.dependencycheck,CliParser,355,1100,83,77,76,207,67,56,7,36
+Dependency-Check Command Line,org.owasp.dependencycheck,CliParser,355,1110,83,77,76,209,67,57,7,37

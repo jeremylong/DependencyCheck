@@ -218,26 +218,24 @@ public class EngineVersionCheck implements CachedWebDataSource {
 <span class="nc" id="L218">                return null;</span>
             }
 <span class="fc" id="L220">            final String releaseVersion = new String(ByteStreams.toByteArray(conn.getInputStream()), StandardCharsets.UTF_8);</span>
-<span class="pc bpc" id="L221" title="1 of 2 branches missed.">            if (releaseVersion != null) {</span>
-<span class="fc" id="L222">                return releaseVersion.trim();</span>
-            }
-<span class="nc" id="L224">        } catch (MalformedURLException ex) {</span>
-<span class="nc" id="L225">            LOGGER.debug(&quot;Unable to retrieve current release version of dependency-check - malformed url?&quot;);</span>
-<span class="nc" id="L226">        } catch (URLConnectionFailureException ex) {</span>
-<span class="nc" id="L227">            LOGGER.debug(&quot;Unable to retrieve current release version of dependency-check - connection failed&quot;);</span>
-<span class="nc" id="L228">        } catch (IOException ex) {</span>
-<span class="nc" id="L229">            LOGGER.debug(&quot;Unable to retrieve current release version of dependency-check - i/o exception&quot;);</span>
+<span class="fc" id="L221">            return releaseVersion.trim();</span>
+<span class="nc" id="L222">        } catch (MalformedURLException ex) {</span>
+<span class="nc" id="L223">            LOGGER.debug(&quot;Unable to retrieve current release version of dependency-check - malformed url?&quot;);</span>
+<span class="nc" id="L224">        } catch (URLConnectionFailureException ex) {</span>
+<span class="nc" id="L225">            LOGGER.debug(&quot;Unable to retrieve current release version of dependency-check - connection failed&quot;);</span>
+<span class="nc" id="L226">        } catch (IOException ex) {</span>
+<span class="nc" id="L227">            LOGGER.debug(&quot;Unable to retrieve current release version of dependency-check - i/o exception&quot;);</span>
         } finally {
-<span class="pc bpc" id="L231" title="1 of 2 branches missed.">            if (conn != null) {</span>
-<span class="fc" id="L232">                conn.disconnect();</span>
+<span class="pc bpc" id="L229" title="1 of 2 branches missed.">            if (conn != null) {</span>
+<span class="fc" id="L230">                conn.disconnect();</span>
             }
         }
-<span class="nc" id="L235">        return null;</span>
+<span class="nc" id="L233">        return null;</span>
     }
 
     @Override
     public boolean purge(Engine engine) {
-<span class="nc" id="L240">        return true;</span>
+<span class="nc" id="L238">        return true;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

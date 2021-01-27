@@ -34,7 +34,7 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>              <strong class="jxr_keyword">final</strong> Dependency toScan = <strong class="jxr_keyword">new</strong> Dependency(BaseTest.getResourceAsFile(<strong class="jxr_keyword">this</strong>, <span class="jxr_string">"nodeaudit/package-lock.json"</span>));
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>              analyzer.analyze(toScan, engine);
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>              <strong class="jxr_keyword">boolean</strong> found = false;
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>              assertTrue(<span class="jxr_string">"Mpre then 1 dependency should be identified"</span>, 1 &lt; engine.getDependencies().length);
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>              assertTrue(<span class="jxr_string">"More then 1 dependency should be identified"</span>, 1 &lt; engine.getDependencies().length);
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>              <strong class="jxr_keyword">for</strong> (Dependency result : engine.getDependencies()) {
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>                  <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"package-lock.json?uglify-js"</span>.equals(result.getFileName())) {
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>                      found = <strong class="jxr_keyword">true</strong>;

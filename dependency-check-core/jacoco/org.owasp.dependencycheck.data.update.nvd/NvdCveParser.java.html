@@ -103,11 +103,11 @@ public final class NvdCveParser {
 <span class="fc" id="L103">            }</span>
 <span class="nc" id="L104">        } catch (FileNotFoundException ex) {</span>
 <span class="nc" id="L105">            LOGGER.error(ex.getMessage());</span>
-<span class="nc" id="L106">            throw new UpdateException(&quot;Unable to find the NVD CPE file, `&quot; + file + &quot;`, to parse&quot;, ex);</span>
+<span class="nc" id="L106">            throw new UpdateException(&quot;Unable to find the NVD CVE file, `&quot; + file + &quot;`, to parse&quot;, ex);</span>
 <span class="nc" id="L107">        } catch (IOException ex) {</span>
 <span class="nc" id="L108">            LOGGER.error(&quot;Error reading NVD JSON data: {}&quot;, file);</span>
 <span class="nc" id="L109">            LOGGER.debug(&quot;Error extracting the NVD JSON data from: &quot; + file.toString(), ex);</span>
-<span class="nc" id="L110">            throw new UpdateException(&quot;Unable to find the NVD CPE file to parse&quot;, ex);</span>
+<span class="nc" id="L110">            throw new UpdateException(&quot;Unable to find the NVD CVE file to parse&quot;, ex);</span>
 <span class="fc" id="L111">        }</span>
 <span class="fc" id="L112">    }</span>
 
