@@ -93,6 +93,7 @@ For installation to pass, you must have the following components installed:
 * Maven: `mvn --version` 3.5.0 and higher
 
 Tests cases require:
+* dotnet core version 3.1 or higher
 * Go: `go version` 1.12 and higher
 * Ruby [bundler-audit](https://github.com/rubysec/bundler-audit#install)
 * [Yarn](https://classic.yarnpkg.com/en/docs/install/)
