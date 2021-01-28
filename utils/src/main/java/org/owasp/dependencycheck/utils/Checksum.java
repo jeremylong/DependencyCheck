@@ -27,14 +27,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.hash.HashCode;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
-import com.google.common.io.Files;
 
 /**
  * Includes methods to generate the MD5 and SHA1 checksum.
@@ -101,22 +98,7 @@ public final class Checksum {
         }
         byte[] checksum = checksumCache.get(file);
         if (checksum == null) {
-            HashFunction hashFunction = null;
-            switch (algorithm.toUpperCase()) {
-                case MD5:
-                    hashFunction = Hashing.md5();
-                    break;
-                case SHA1:
-                    hashFunction = Hashing.sha1();
-                    break;
-                case SHA256:
-                    hashFunction = Hashing.sha256();
-                    break;
-                default:
-                    throw new NoSuchAlgorithmException(algorithm);
-            }
-            final HashCode hash = Files.asByteSource(file).hash(hashFunction);
-            checksum = hash.asBytes();
+            checksum = new DigestUtils(algorithm).digest(file);
             checksumCache.put(file, checksum);
         }
         return checksum;
