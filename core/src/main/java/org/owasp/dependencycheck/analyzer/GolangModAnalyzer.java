@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import com.google.common.base.Strings;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FileFilter;
@@ -33,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.processing.GoModProcessor;
 import org.owasp.dependencycheck.utils.processing.ProcessReader;
@@ -272,13 +272,13 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
                         throw new InitializationException(String.format("Go executable not found. Disabling %s: %s", ANALYZER_NAME, exitValue));
                     case possiblyGoTooOldExitValue:
                         final String error = processReader.getError();
-                        if (Strings.isNullOrEmpty(error)) {
+                        if (!StringUtils.isEmpty(error)) {
+                            if (error.contains("unknown subcommand \"mod\"")) {
+                                LOGGER.warn("Your version of `go` does not support modules. Disabling {}. Error: `{}`", ANALYZER_NAME, error);
+                                throw new InitializationException("Go version does not support modules.");
+                            }
                             LOGGER.warn("An error occurred calling `go` - no output could be read. Disabling {}.", ANALYZER_NAME);
                             throw new InitializationException("Error calling `go` - no output could be read.");
-                        }
-                        if (error.contains("unknown subcommand \"mod\"")) {
-                            LOGGER.warn("Your version of `go` does not support modules. Disabling {}. Error: `{}`", ANALYZER_NAME, error);
-                            throw new InitializationException("Go version does not support modules.");
                         }
                     // fall through
                     default:

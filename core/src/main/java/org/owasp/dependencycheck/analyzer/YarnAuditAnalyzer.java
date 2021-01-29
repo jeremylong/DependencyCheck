@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import com.google.common.base.Strings;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -36,6 +35,7 @@ import javax.json.JsonReader;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.analyzer.exception.SearchException;
@@ -189,7 +189,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
                 processReader.readAll();
                 final String errOutput = processReader.getError();
 
-                if (!Strings.isNullOrEmpty(errOutput) && !EXPECTED_ERROR.equals(errOutput)) {
+                if (!StringUtils.isEmpty(errOutput) && !EXPECTED_ERROR.equals(errOutput)) {
                     LOGGER.debug("Process Error Out: {}", errOutput);
                     LOGGER.debug("Process Out: {}", processReader.getOutput());
                 }

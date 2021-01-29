@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck;
 
-import com.google.common.collect.ImmutableList;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.jcs.JCS;
@@ -52,6 +51,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -1220,7 +1220,7 @@ public class Engine implements FileFilter, AutoCloseable {
         /**
          * The analysis phases included in the mode.
          */
-        private final ImmutableList<AnalysisPhase> phases;
+        private final List<AnalysisPhase> phases;
 
         /**
          * Constructs a new mode.
@@ -1230,11 +1230,7 @@ public class Engine implements FileFilter, AutoCloseable {
          */
         Mode(boolean databaseRequired, AnalysisPhase... phases) {
             this.databaseRequired = databaseRequired;
-            //must use Guava 11.0.1 API as of 3/30/2019 due to Jenkins compatability issues
-            //this.phases = Arrays.stream(phases).collect(ImmutableList.toImmutableList());
-            this.phases = new ImmutableList.Builder<AnalysisPhase>()
-                    .add(phases)
-                    .build();
+            this.phases = Collections.unmodifiableList(Arrays.asList(phases));
         }
 
         /**
@@ -1251,7 +1247,7 @@ public class Engine implements FileFilter, AutoCloseable {
          *
          * @return the phases for this mode
          */
-        public ImmutableList<AnalysisPhase> getPhases() {
+        public List<AnalysisPhase> getPhases() {
             return phases;
         }
     }

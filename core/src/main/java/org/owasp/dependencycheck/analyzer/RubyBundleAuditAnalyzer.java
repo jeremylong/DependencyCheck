@@ -17,12 +17,12 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -204,7 +204,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         }
         String bundleAuditVersionDetails = null;
         try {
-            final List<String> bundleAuditArgs = ImmutableList.of("version");
+            final List<String> bundleAuditArgs = Arrays.asList("version");
             final Process process = launchBundleAudit(getSettings().getTempDirectory(), bundleAuditArgs);
             try (ProcessReader processReader = new ProcessReader(process)) {
                 processReader.readAll();
@@ -275,7 +275,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             needToDisableGemspecAnalyzer = false;
         }
         final File parentFile = dependency.getActualFile().getParentFile();
-        final List<String> bundleAuditArgs = ImmutableList.of("check", "--verbose");
+        final List<String> bundleAuditArgs = Arrays.asList("check", "--verbose");
 
         final Process process = launchBundleAudit(parentFile, bundleAuditArgs);
         try (BundlerAuditProcessor processor = new BundlerAuditProcessor(dependency, engine);

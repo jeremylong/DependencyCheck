@@ -46,7 +46,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-import com.google.common.base.Objects;
 
 /**
  * Class of methods to search Artifactory for hashes and determine Maven GAV
@@ -253,7 +252,7 @@ public class ArtifactorySearch {
             }
 
             if (nextToken.isStructStart()) {
-                if (nextToken == com.fasterxml.jackson.core.JsonToken.START_ARRAY && Objects.equal("results", parser.currentName())) {
+                if (nextToken == com.fasterxml.jackson.core.JsonToken.START_ARRAY && "results".equals(parser.currentName())) {
                     return true;
                 } else {
                     parser.skipChildren();

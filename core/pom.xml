@@ -274,10 +274,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <artifactId>jackson-module-afterburner</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.h3xstream.retirejs</groupId>
             <artifactId>retirejs-core</artifactId>
         </dependency>

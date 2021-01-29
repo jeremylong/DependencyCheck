@@ -174,7 +174,6 @@ Copyright (c) 2012 - Jeremy Long
         <groovy-all.version>2.4.21</groovy-all.version>
         <gmavenplus-plugin.version>1.12.1</gmavenplus-plugin.version>
         <com.h3xstream.retirejs.core.version>3.0.2</com.h3xstream.retirejs.core.version>
-        <com.google.guava.version>30.1-jre</com.google.guava.version>
         
         <!--necassary for some IDEs to be able to execute test cases (Netbeans)-->
         <surefireArgLine />
@@ -1045,9 +1044,9 @@ Copyright (c) 2012 - Jeremy Long
                 <version>${apache.lucene.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${com.google.guava.version}</version>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.15</version>
             </dependency>
             <dependency>
                 <groupId>com.h3xstream.retirejs</groupId>

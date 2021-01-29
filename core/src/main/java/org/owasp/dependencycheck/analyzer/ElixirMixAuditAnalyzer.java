@@ -17,8 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
@@ -35,7 +33,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.processing.MixAuditProcessor;
 import org.owasp.dependencycheck.utils.processing.ProcessReader;
 
@@ -105,7 +105,7 @@ public class ElixirMixAuditAnalyzer extends AbstractFileTypeAnalyzer {
         // `mix_audit --version` command and seeing whether or not it succeeds (if it returns with an exit value of 0)
         final Process process;
         try {
-            final List<String> mixAuditArgs = ImmutableList.of("--version");
+            final List<String> mixAuditArgs = Arrays.asList("--version");
             process = launchMixAudit(getSettings().getTempDirectory(), mixAuditArgs);
         } catch (AnalysisException ae) {
             setEnabled(false);
@@ -123,7 +123,7 @@ public class ElixirMixAuditAnalyzer extends AbstractFileTypeAnalyzer {
             exitValue = process.exitValue();
 
             if (exitValue != 0) {
-                if (Strings.isNullOrEmpty(processReader.getError())) {
+                if (StringUtils.isEmpty(processReader.getError())) {
                     LOGGER.warn("Unexpected exit value from mix_audit process and error stream unexpectedly not ready to capture error details. "
                             + "Disabling {}. Exit value was: {}", ANALYZER_NAME, exitValue);
                     setEnabled(false);
@@ -135,7 +135,7 @@ public class ElixirMixAuditAnalyzer extends AbstractFileTypeAnalyzer {
                     throw new InitializationException("Unexpected exit value from bundle-audit process.");
                 }
             } else {
-                if (Strings.isNullOrEmpty(processReader.getOutput())) {
+                if (StringUtils.isEmpty(processReader.getOutput())) {
                     LOGGER.warn("mix_audit input stream unexpectedly not ready to capture version details. Disabling {}", ANALYZER_NAME);
                     setEnabled(false);
                     throw new InitializationException("mix_audit input stream unexpectedly not ready to capture version details.");
@@ -246,7 +246,7 @@ public class ElixirMixAuditAnalyzer extends AbstractFileTypeAnalyzer {
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
         final File parentFile = dependency.getActualFile().getParentFile();
-        final List<String> mixAuditArgs = ImmutableList.of("--format", "json");
+        final List<String> mixAuditArgs = Arrays.asList("--format", "json");
 
         final Process process = launchMixAudit(parentFile, mixAuditArgs);
         final int exitValue;
