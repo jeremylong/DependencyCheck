@@ -46,6 +46,14 @@
     </hint>
     <hint>
         <given>
+            <evidence regex="true" type="vendor" source="pom" name="groupid" value="hibernate" />
+        </given>
+        <add>
+            <evidence type="product" source="hint analyzer" name="product" value="orm" confidence="HIGHEST"/>
+        </add>
+    </hint>
+    <hint>
+        <given>
             <evidence regex="true" type="vendor" source="pom" name="name" value=".*\bO/RM\b.*" />
         </given>
         <add>
