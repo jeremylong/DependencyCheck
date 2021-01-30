@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.analyzer;
 
 import com.github.packageurl.MalformedPackageURLException;
-import com.google.common.base.Strings;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -150,7 +149,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 processReader.readAll();
 
                 final String errorOutput = processReader.getError();
-                if (!Strings.isNullOrEmpty(errorOutput)) {
+                if (!StringUtils.isEmpty(errorOutput)) {
                     LOGGER.warn("Error from GrokAssembly: {}", errorOutput);
                 }
                 final int exitValue = proc.exitValue();
@@ -365,7 +364,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             try (ProcessReader processReader = new ProcessReader(p)) {
                 processReader.readAll();
                 final String error = processReader.getError();
-                if (p.exitValue() != 1 || !Strings.isNullOrEmpty(error)) {
+                if (p.exitValue() != 1 || !StringUtils.isEmpty(error)) {
                     LOGGER.warn("An error occurred with the .NET AssemblyAnalyzer, please see the log for more details.");
                     LOGGER.debug("GrokAssembly.dll is not working properly");
                     grokAssembly = null;

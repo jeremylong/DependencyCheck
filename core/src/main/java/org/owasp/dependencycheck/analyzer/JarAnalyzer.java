@@ -20,7 +20,6 @@ package org.owasp.dependencycheck.analyzer;
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
-import com.google.common.io.ByteStreams;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FileFilter;
@@ -54,6 +53,7 @@ import java.util.zip.ZipEntry;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.h2.util.IOUtils;
 import org.jsoup.Jsoup;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -559,7 +559,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         }
         try (InputStream input = jar.getInputStream(entry);
                 FileOutputStream fos = new FileOutputStream(file)) {
-            ByteStreams.copy(input, fos);
+            IOUtils.copy(input, fos);
         } catch (IOException ex) {
             LOGGER.warn("An error occurred reading '{}' from '{}'.", path, jar.getName());
             LOGGER.error("", ex);

@@ -17,13 +17,13 @@
  */
 package org.owasp.dependencycheck.data.update;
 
-import com.google.common.io.ByteStreams;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import javax.annotation.concurrent.ThreadSafe;
+import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -217,7 +217,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
             if (conn.getResponseCode() != 200) {
                 return null;
             }
-            final String releaseVersion = new String(ByteStreams.toByteArray(conn.getInputStream()), StandardCharsets.UTF_8);
+            final String releaseVersion = new String(IOUtils.toByteArray(conn.getInputStream()), StandardCharsets.UTF_8);
             return releaseVersion.trim();
         } catch (MalformedURLException ex) {
             LOGGER.debug("Unable to retrieve current release version of dependency-check - malformed url?");
