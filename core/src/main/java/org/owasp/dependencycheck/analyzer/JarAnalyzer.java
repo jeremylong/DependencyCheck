@@ -151,6 +151,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             "ipojo-components",
             "ipojo-extension",
             "plugin-dependencies",
+            "today",
+            "tstamp",
+            "dstamp",
             "eclipse-sourcereferences");
     /**
      * Deprecated Jar manifest attribute, that is, nonetheless, useful for
