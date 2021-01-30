@@ -322,11 +322,11 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 currentDep.addEvidence(EvidenceType.VENDOR, source, "Vendor", product, Confidence.MEDIUM);
                 currentDep.addEvidence(EvidenceType.VERSION, source, "Version", version, Confidence.MEDIUM);
             }
-            if (StringUtils.isEmpty(currentDep.getName())) {
+            if (StringUtils.isBlank(currentDep.getName())) {
                 currentDep.setName(product);
                 currentDep.setDisplayFileName(product);
             }
-            if (StringUtils.isEmpty(currentDep.getVersion())) {
+            if (StringUtils.isBlank(currentDep.getVersion())) {
                 final DependencyVersion vers = DependencyVersionUtil.parseVersion(version, true);
                 if (vers != null) {
                     currentDep.setVersion(vers.toString());

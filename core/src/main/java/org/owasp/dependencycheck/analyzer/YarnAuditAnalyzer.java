@@ -189,7 +189,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
                 processReader.readAll();
                 final String errOutput = processReader.getError();
 
-                if (!StringUtils.isEmpty(errOutput) && !EXPECTED_ERROR.equals(errOutput)) {
+                if (!StringUtils.isBlank(errOutput) && !EXPECTED_ERROR.equals(errOutput)) {
                     LOGGER.debug("Process Error Out: {}", errOutput);
                     LOGGER.debug("Process Out: {}", processReader.getOutput());
                 }

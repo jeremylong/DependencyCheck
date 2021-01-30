@@ -415,7 +415,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
                             }
                             // CSON: NeedBraces
                         }
-                        if (StringUtils.isEmpty(individualVuln.getName())) {
+                        if (StringUtils.isBlank(individualVuln.getName())) {
                             individualVuln.setName("Vulnerability in " + libraryResult.getLibrary().getName());
                         }
                         individualVuln.setSource(Vulnerability.Source.RETIREJS);

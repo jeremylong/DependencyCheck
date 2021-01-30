@@ -69,7 +69,7 @@ public final class CpeEcosystemCache {
         final String current = cache.get(key);
         String result = null;
         if (current == null) {
-            if (!StringUtils.isEmpty(identifiedEcosystem)) {
+            if (!StringUtils.isBlank(identifiedEcosystem)) {
                 cache.put(key, identifiedEcosystem);
                 changed.put(key, identifiedEcosystem);
                 result = identifiedEcosystem;

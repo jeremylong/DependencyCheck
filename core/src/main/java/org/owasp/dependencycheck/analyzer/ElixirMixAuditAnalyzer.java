@@ -123,7 +123,7 @@ public class ElixirMixAuditAnalyzer extends AbstractFileTypeAnalyzer {
             exitValue = process.exitValue();
 
             if (exitValue != 0) {
-                if (StringUtils.isEmpty(processReader.getError())) {
+                if (StringUtils.isBlank(processReader.getError())) {
                     LOGGER.warn("Unexpected exit value from mix_audit process and error stream unexpectedly not ready to capture error details. "
                             + "Disabling {}. Exit value was: {}", ANALYZER_NAME, exitValue);
                     setEnabled(false);
@@ -135,7 +135,7 @@ public class ElixirMixAuditAnalyzer extends AbstractFileTypeAnalyzer {
                     throw new InitializationException("Unexpected exit value from bundle-audit process.");
                 }
             } else {
-                if (StringUtils.isEmpty(processReader.getOutput())) {
+                if (StringUtils.isBlank(processReader.getOutput())) {
                     LOGGER.warn("mix_audit input stream unexpectedly not ready to capture version details. Disabling {}", ANALYZER_NAME);
                     setEnabled(false);
                     throw new InitializationException("mix_audit input stream unexpectedly not ready to capture version details.");

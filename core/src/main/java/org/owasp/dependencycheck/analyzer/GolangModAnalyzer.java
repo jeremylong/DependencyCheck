@@ -271,7 +271,7 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
                         throw new InitializationException(String.format("Go executable not found. Disabling %s: %s", ANALYZER_NAME, exitValue));
                     case possiblyGoTooOldExitValue:
                         final String error = processReader.getError();
-                        if (!StringUtils.isEmpty(error)) {
+                        if (!StringUtils.isBlank(error)) {
                             if (error.contains("unknown subcommand \"mod\"")) {
                                 LOGGER.warn("Your version of `go` does not support modules. Disabling {}. Error: `{}`", ANALYZER_NAME, error);
                                 throw new InitializationException("Go version does not support modules.");
