@@ -272,6 +272,10 @@ public class Check extends Update {
      */
     private Boolean assemblyAnalyzerEnabled;
     /**
+     * Whether or not the MS Build Assembly Analyzer is enabled.
+     */
+    private Boolean msbuildAnalyzerEnabled;
+    /**
      * Whether the autoconf analyzer should be enabled.
      */
     private Boolean autoconfAnalyzerEnabled;
@@ -735,6 +739,23 @@ public class Check extends Update {
         this.assemblyAnalyzerEnabled = assemblyAnalyzerEnabled;
     }
 
+    /**
+     * Returns whether or not the analyzer is enabled.
+     *
+     * @return true if the analyzer is enabled
+     */
+    public Boolean isMSBuildAnalyzerEnabled() {
+        return msbuildAnalyzerEnabled;
+    }
+
+    /**
+     * Sets whether or not the analyzer is enabled.
+     *
+     * @param msbuildAnalyzerEnabled the value of the new setting
+     */
+    public void setMSBuildAnalyzerEnabled(Boolean msbuildAnalyzerEnabled) {
+        this.msbuildAnalyzerEnabled = msbuildAnalyzerEnabled;
+    }
     /**
      * Returns whether or not the analyzer is enabled.
      *
@@ -1823,6 +1844,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_MSBUILD_PROJECT_ENABLED, msbuildAnalyzerEnabled);
         getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
         getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_USER, nexusUser);
         getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_PASSWORD, nexusPassword);

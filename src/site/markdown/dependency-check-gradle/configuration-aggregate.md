@@ -126,6 +126,7 @@ analyzers    | opensslEnabled        | Sets whether or not the openssl Analyzer 
 analyzers    | nuspecEnabled         | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.                                                  | true
 analyzers    | nugetconfEnabled      | Sets whether or not the [experimental](../analyzers/index.html) .NET Nuget packages.config Analyzer will be used. | true
 analyzers    | assemblyEnabled       | Sets whether or not the .NET Assembly Analyzer should be used.                                                    | true
+analyzers    | msbuildEnabled        | Sets whether or not the MS Build Analyzer should be used.                                                         | true
 analyzers    | pathToDotnet          | The path to dotnet core - needed on some systems to analyze .net assemblies.                                      | &nbsp;
 analyzers    | cmakeEnabled          | Sets whether or not the [experimental](../analyzers/index.html) CMake Analyzer should be used.                    | true
 analyzers    | autoconfEnabled       | Sets whether or not the [experimental](../analyzers/index.html) autoconf Analyzer should be used.                 | true

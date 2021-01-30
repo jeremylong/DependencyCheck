@@ -438,7 +438,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "yarnAuditAnalyzerEnabled")
     private Boolean yarnAuditAnalyzerEnabled;
-    
+
     /**
      * Sets whether or not the Node Audit Analyzer should use a local cache.
      */
@@ -475,6 +475,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     @Parameter(property = "assemblyAnalyzerEnabled")
     private Boolean assemblyAnalyzerEnabled;
+    /**
+     * Whether or not the MS Build Analyzer is enabled.
+     */
+    @Parameter(property = "msbuildAnalyzerEnabled")
+    private Boolean msbuildAnalyzerEnabled;
     /**
      * Whether or not the .NET Nuspec Analyzer is enabled.
      */
@@ -1898,6 +1903,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED, artifactoryAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_MSBUILD_PROJECT_ENABLED, msbuildAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
         settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH, pathToCore);

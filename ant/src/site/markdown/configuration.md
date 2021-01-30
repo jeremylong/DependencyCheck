@@ -120,6 +120,7 @@ bundleAuditAnalyzerEnabled          | Sets whether the [experimental](../analyze
 bundleAuditPath                     | Sets the path to the bundle audit executable; only used if bundle audit analyzer is enabled and experimental analyzers are enabled.  | &nbsp;
 swiftPackageManagerAnalyzerEnabled  | Sets whether the [experimental](../analyzers/index.html) Switft Package Analyzer should be used.           | true
 assemblyAnalyzerEnabled             | Sets whether the .NET Assembly Analyzer should be used.                                                    | true
+msbuildAnalyzerEnabled              | Sets whether the MSBuild Analyzer should be used.                                                          | true
 pathToCore                          | The path to dotnet core .NET assembly analysis on non-windows systems.                                     | &nbsp;
 golangDepEnabled                    | Sets whether or not the [experimental](../analyzers/index.html) Golang Dependency Analyzer should be used. | true
 golangModEnabled                    | Sets whether or not the [experimental](../analyzers/index.html) Goland Module Analyzer should be used; requires `go` to be installed. | true
