@@ -286,8 +286,8 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
                 ProcessReader processReader = new ProcessReader(process, processor)) {
             processReader.readAll();
             final String error = processReader.getError();
-            if (error != null) {
-                LOGGER.warn("Warnings from go {}", error);
+            if (!StringUtils.isBlank(error)) {
+                LOGGER.warn("Warnings from `go`: {}", error);
             }
             exitValue = process.exitValue();
             if (exitValue < 0 || exitValue > 1) {
