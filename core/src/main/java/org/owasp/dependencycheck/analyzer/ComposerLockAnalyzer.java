@@ -53,7 +53,7 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
-    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.PYTHON;
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.PHP;
 
     /**
      * The logger.
