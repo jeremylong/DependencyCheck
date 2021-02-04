@@ -171,7 +171,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 throw new AnalysisException(error);
             }
             if (data.getWarning() != null) {
-                LOGGER.debug("Grok Assembly - could not get namespace on dependency `{}` - ()", dependency.getActualFilePath(), data.getWarning());
+                LOGGER.debug("Grok Assembly - could not get namespace on dependency `{}` - {}", dependency.getActualFilePath(), data.getWarning());
             }
             updateDependency(data, dependency);
         } catch (GrokParseException saxe) {

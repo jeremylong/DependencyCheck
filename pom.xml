@@ -130,7 +130,7 @@ Copyright (c) 2012 - Jeremy Long
         <logback.version>1.2.3</logback.version>
         <!-- Note that Maven will use classes from the distro, ignoring declared dependencies for Maven core... -->
         <maven.api.version>3.1.0</maven.api.version>
-        <reporting.checkstyle-plugin.version>3.1.1</reporting.checkstyle-plugin.version>
+        <reporting.checkstyle-plugin.version>3.1.2</reporting.checkstyle-plugin.version>
         <doxia-module-markdown.version>1.9.1</doxia-module-markdown.version>
         <maven-antrun-plugin.version>3.0.0</maven-antrun-plugin.version>
         <maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
