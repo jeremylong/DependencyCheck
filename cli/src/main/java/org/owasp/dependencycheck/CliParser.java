@@ -370,6 +370,8 @@ public final class CliParser {
                         "The Artifactory URL."))
                 .addOption(newOptionWithArg(ARGUMENT.PATH_TO_GO, "path",
                         "The path to the `go` executable."))
+                .addOption(newOptionWithArg(ARGUMENT.PATH_TO_YARN, "path",
+                        "The path to the `yarn` executable."))
                 .addOption(newOptionWithArg(ARGUMENT.CVE_VALID_FOR_HOURS, "hours",
                         "The number of hours to wait before checking for new updates from the NVD."))
                 .addOption(newOptionWithArg(ARGUMENT.RETIREJS_FILTERS, "pattern",
@@ -1121,6 +1123,10 @@ public final class CliParser {
          * The CLI argument name for setting the path to `go`.
          */
         public static final String PATH_TO_GO = "go";
+        /**
+         * The CLI argument name for setting the path to `yarn`.
+         */
+        public static final String PATH_TO_YARN = "yarn";
         /**
          * Disables the Ruby Gemspec Analyzer.
          */

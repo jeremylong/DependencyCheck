@@ -156,6 +156,7 @@ nodeAudit    | enabled               | Sets whether the Node Audit Analyzer shou
 nodeAudit    | useCache              | Sets whether the Node Audit Analyzer should cache results locally.                                                | true
 nodeAudit    | skipDevDependencies   | Sets whether the Node Audit Analyzer should skip devDependencies.                                                 | false
 nodeAudit    | yarnEnabled           | Sets whether the Yarn Audit Analyzer should be used. This analyzer requires yarn and an internet connection.      | true
+nodeAudit    | yarnPath              | Sets the path to the `yarn` executable.                                                                           | &nbsp;
 retirejs     | enabled               | Sets whether the RetireJS Analyzer should be used.                                                                | true
 retirejs     | forceupdate           | Sets whether the RetireJS Analyzer should update regardless of the `autoupdate` setting.                          | false
 retirejs     | retireJsUrl           | The URL to the Retire JS repository.                                                                              | https://raw.githubusercontent.com/Retirejs/retire.js/master/repository/jsrepository.json

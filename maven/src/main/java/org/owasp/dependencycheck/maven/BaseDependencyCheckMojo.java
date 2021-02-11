@@ -252,6 +252,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "pathToGo")
     private String pathToGo;
     /**
+     * Sets the path to `yarn`.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "pathToYarn")
+    private String pathToYarn;
+    /**
      * Use pom dependency information for snapshot dependencies that are part of
      * the Maven reactor while aggregate scanning a multi-module project.
      */
@@ -1868,6 +1874,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED, golangDepEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED, golangModEnabled);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH, pathToGo);
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_YARN_PATH, pathToYarn);
 
         final Proxy proxy = getMavenProxy();
         if (proxy != null) {

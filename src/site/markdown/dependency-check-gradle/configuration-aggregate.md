@@ -132,7 +132,6 @@ analyzers    | cmakeEnabled          | Sets whether or not the [experimental](..
 analyzers    | autoconfEnabled       | Sets whether or not the [experimental](../analyzers/index.html) autoconf Analyzer should be used.                 | true
 analyzers    | composerEnabled       | Sets whether or not the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.   | true
 analyzers    | nodeEnabled           | Sets whether or not the Node.js Analyzer should be used.                                                          | true
-analyzers    | yarnAuditEnabled      | Sets whether the Yarn Audit Analyzer should be used. This analyzer requires yarn and an internet connection.      | true
 analyzers    | cocoapodsEnabled      | Sets whether or not the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used.                | true
 analyzers    | swiftEnabled          | Sets whether or not the [experimental](../analyzers/index.html) Swift Package Manager Analyzer should be used.    | true
 analyzers    | bundleAuditEnabled    | Sets whether or not the [experimental](../analyzers/index.html) Ruby Bundle Audit Analyzer should be used.        | true
@@ -155,6 +154,8 @@ artifactory  | bearerToken           | The bearer token to connect to Artifactor
 nodeAudit    | enabled               | Sets whether the Node Audit Analyzer should be used. This analyzer requires an internet connection.               | true
 nodeAudit    | useCache              | Sets whether the Node Audit Analyzer should cache results locally.                                                | true
 nodeAudit    | skipDevDependencies   | Sets whether the Node Audit Analyzer should skip devDependencies.                                                 | false
+nodeAudit    | yarnEnabled           | Sets whether the Yarn Audit Analyzer should be used. This analyzer requires yarn and an internet connection.      | true
+nodeAudit    | yarnPath              | Sets the path to the `yarn` executable.                                                                           | &nbsp;
 retirejs     | enabled               | Sets whether the RetireJS Analyzer should be used.                                                                | true
 retirejs     | forceupdate           | Sets whether the RetireJS Analyzer should update regardless of the `autoupdate` setting.                          | false
 retirejs     | retireJsUrl           | The URL to the Retire JS repository.                                                                              | https://raw.githubusercontent.com/Retirejs/retire.js/master/repository/jsrepository.json
