@@ -182,10 +182,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
                     if (yarnFile.isFile()) {
                         yarnPath = yarnFile.getAbsolutePath();
                     } else {
-                        LOGGER.warn("Provided path to `go` executable is invalid. Trying default location. "
-                                + "If you do want to set it, please set the `{}` property",
-                                Settings.KEYS.ANALYZER_GOLANG_PATH
-                        );
+                        LOGGER.warn("Provided path to `yarn` executable is invalid.");
                         yarnPath = "yarn";
                     }
                 }
