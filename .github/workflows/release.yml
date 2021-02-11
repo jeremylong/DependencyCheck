@@ -256,11 +256,8 @@ jobs:
       - name: Deploy gh-pages
         uses: JamesIves/github-pages-deploy-action@4.0.0
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COMMIT_MESSAGE: ${{ format('Publishing github pages for release version {0}', steps.set_maven_project_version.outputs.RELEASE_VERSION) }}
-          BRANCH: gh-pages
-          FOLDER: target/staging
-          CLEAN: true
+          branch: gh-pages
+          folder: target/staging
 
   bintray:
     name: Publish to bintray
