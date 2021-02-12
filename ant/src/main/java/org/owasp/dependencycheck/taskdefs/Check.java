@@ -171,7 +171,10 @@ public class Check extends Update {
      * Sets the path to `go`.
      */
     private String pathToGo;
-
+    /**
+     * The path to `yarn`.
+     */
+    private String pathToYarn;
     /**
      * Additional ZIP File extensions to add analyze. This should be a
      * comma-separated list of file extensions to treat like ZIP files.
@@ -209,13 +212,13 @@ public class Check extends Update {
      */
     private Boolean autoUpdate;
     /**
-     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF, ALL).
-     * Default is HTML.
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF,
+     * ALL). Default is HTML.
      */
     private String reportFormat = "HTML";
     /**
-     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF, ALL).
-     * Default is HTML.
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF,
+     * ALL). Default is HTML.
      */
     private final List<String> reportFormats = new ArrayList<>();
     /**
@@ -756,6 +759,7 @@ public class Check extends Update {
     public void setMSBuildAnalyzerEnabled(Boolean msbuildAnalyzerEnabled) {
         this.msbuildAnalyzerEnabled = msbuildAnalyzerEnabled;
     }
+
     /**
      * Returns whether or not the analyzer is enabled.
      *
@@ -1031,7 +1035,6 @@ public class Check extends Update {
     public void setYarnAuditAnalyzerEnabled(Boolean yarnAuditAnalyzerEnabled) {
         this.yarnAuditAnalyzerEnabled = yarnAuditAnalyzerEnabled;
     }
-
 
     /**
      * Get the value of nodeAuditAnalyzerUseCache.
@@ -1326,6 +1329,24 @@ public class Check extends Update {
      */
     public void setGolangModEnabled(Boolean golangModEnabled) {
         this.golangModEnabled = golangModEnabled;
+    }
+
+    /**
+     * Get the value of pathToYarn.
+     *
+     * @return the value of pathToYarn
+     */
+    public String getPathToYarn() {
+        return pathToYarn;
+    }
+
+    /**
+     * Set the value of pathToYarn.
+     *
+     * @param pathToYarn new value of pathToYarn
+     */
+    public void setPathToYarn(String pathToYarn) {
+        this.pathToYarn = pathToYarn;
     }
 
     /**
@@ -1835,6 +1856,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED, golangDepEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED, golangModEnabled);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH, pathToGo);
+        getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_YARN_PATH, pathToYarn);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED, mixAuditAnalyzerEnabled);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_MIX_AUDIT_PATH, mixAuditPath);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);

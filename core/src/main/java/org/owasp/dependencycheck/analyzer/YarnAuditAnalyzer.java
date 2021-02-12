@@ -78,6 +78,10 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
     private static final String EXPECTED_ERROR = "{\"type\":\"error\",\"data\":\"Can't make a request in "
             + "offline mode (\\\"https://registry.yarnpkg.com/-/npm/v1/security/audits\\\")\"}\n";
 
+    /**
+     * The path to the `yarn` executable.
+     */
+    private String yarnPath;
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         if (dependency.getDisplayFileName().equals(dependency.getFileName())) {
@@ -132,7 +136,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
             return;
         }
         final List<String> args = new ArrayList<>();
-        args.add("yarn");
+        args.add(getYarn());
         args.add("--help");
         final ProcessBuilder builder = new ProcessBuilder(args);
         LOGGER.debug("Launching: {}", args);
@@ -162,7 +166,30 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
             throw new InitializationException("Unable to read yarn audit output.", ex);
         }
     }
-
+    /**
+     * Attempts to determine the path to `yarn`.
+     *
+     * @return the path to `yarn`
+     */
+    private String getYarn() {
+        synchronized (this) {
+            if (yarnPath == null) {
+                final String path = getSettings().getString(Settings.KEYS.ANALYZER_YARN_PATH);
+                if (path == null) {
+                    yarnPath = "yarn";
+                } else {
+                    final File yarnFile = new File(path);
+                    if (yarnFile.isFile()) {
+                        yarnPath = yarnFile.getAbsolutePath();
+                    } else {
+                        LOGGER.warn("Provided path to `yarn` executable is invalid.");
+                        yarnPath = "yarn";
+                    }
+                }
+            }
+        }
+        return yarnPath;
+    }
     private JsonObject fetchYarnAuditJson(Dependency dependency, boolean skipDevDependencies) throws AnalysisException {
         final File folder = dependency.getActualFile().getParentFile();
         if (!folder.isDirectory()) {
@@ -171,7 +198,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
         try {
             final List<String> args = new ArrayList<>();
 
-            args.add("yarn");
+            args.add(getYarn());
             args.add("audit");
             //offline audit is not supported - but the audit request is generated in the verbose output
             args.add("--offline");

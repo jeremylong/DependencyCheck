@@ -379,6 +379,10 @@ public final class Settings {
          */
         public static final String ANALYZER_GOLANG_PATH = "analyzer.golang.path";
         /**
+         * The path to go, if available.
+         */
+        public static final String ANALYZER_YARN_PATH = "analyzer.yarn.path";
+        /**
          * The properties key for whether the Golang Dep analyzer is enabled.
          */
         public static final String ANALYZER_GOLANG_DEP_ENABLED = "analyzer.golang.dep.enabled";

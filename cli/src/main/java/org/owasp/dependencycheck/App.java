@@ -448,6 +448,8 @@ public class App {
                 cli.hasOption(CliParser.ARGUMENT.RETIRED));
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH,
                 cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_GO));
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_YARN_PATH,
+                cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_YARN));
         settings.setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT,
                 cli.hasOption(CliParser.ARGUMENT.PRETTY_PRINT));
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL,
