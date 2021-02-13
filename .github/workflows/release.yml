@@ -244,6 +244,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: release
       - name: Download Site
         uses: actions/download-artifact@v2
         with:
