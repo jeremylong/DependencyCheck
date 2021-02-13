@@ -193,10 +193,9 @@ jobs:
           release_name: Version ${{ env.VERSION }}
           body: |
             Changes in this Release
-            - Added SARIF file format per [#3081](https://github.com/jeremylong/DependencyCheck/issues/3081).
-            - Added support for Yarn per [#3063](https://github.com/jeremylong/DependencyCheck/pull/3063).
-            - False positive reduction and minor bug fixes.
-            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/20?closed=1).
+            - Added missing configuration options for yarn and msbuild.
+            - Several bug fixes.
+            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/21?closed=1).
           draft: false
           prerelease: false
       - name: Upload CLI

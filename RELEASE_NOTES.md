@@ -2,6 +2,14 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 6.1.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.1.1) (2021-02-13)
+
+### Changes
+
+- Added missing configuration options for yarn and msbuild.
+- Several bug fixes.
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/21?closed=1).
+
 ## [Version 6.1.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.1.0) (2021-01-27)
 
 ### Changes
