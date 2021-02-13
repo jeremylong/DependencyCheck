@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.owasp.dependencycheck.analyzer.GolangModAnalyzer.DEPENDENCY_ECOSYSTEM;
 import static org.owasp.dependencycheck.analyzer.GolangModAnalyzer.GO_MOD;
+import org.owasp.dependencycheck.utils.Checksum;
 
 /**
  * Represents a Go module dependency.
@@ -49,11 +50,11 @@ public class GoModDependency {
     /**
      * A reference to the logger.
      */
-<span class="fc" id="L52">    private static final Logger LOGGER = LoggerFactory.getLogger(GoModDependency.class);</span>
+<span class="fc" id="L53">    private static final Logger LOGGER = LoggerFactory.getLogger(GoModDependency.class);</span>
     /**
      * A list of license files we recognize.
      */
-<span class="fc" id="L56">    private static final Set&lt;String&gt; LICENSE_FILES = new HashSet&lt;String&gt;(Arrays.asList(&quot;LICENSE&quot;, &quot;LICENCE&quot;, &quot;LICENSE.TXT&quot;,</span>
+<span class="fc" id="L57">    private static final Set&lt;String&gt; LICENSE_FILES = new HashSet&lt;String&gt;(Arrays.asList(&quot;LICENSE&quot;, &quot;LICENCE&quot;, &quot;LICENSE.TXT&quot;,</span>
             &quot;LICENSE.MD&quot;, &quot;LICENCE.MD&quot;, &quot;LICENSE.CODE&quot;, &quot;LICENCE.CODE&quot;, &quot;COPYING&quot;));
     /**
      * The module path.
@@ -79,12 +80,12 @@ public class GoModDependency {
      * @param version the dependency version
      * @param dir the directory that the module exists within
      */
-<span class="fc" id="L82">    GoModDependency(String modulePath, String version, String dir) {</span>
-<span class="fc" id="L83">        this.modulePath = modulePath;</span>
-<span class="fc" id="L84">        this.version = version;</span>
-<span class="fc" id="L85">        this.dir = dir;</span>
-<span class="fc" id="L86">        packageURLBuilder = PackageURLBuilder.aPackageURL().withType(&quot;golang&quot;);</span>
-<span class="fc" id="L87">    }</span>
+<span class="fc" id="L83">    GoModDependency(String modulePath, String version, String dir) {</span>
+<span class="fc" id="L84">        this.modulePath = modulePath;</span>
+<span class="fc" id="L85">        this.version = version;</span>
+<span class="fc" id="L86">        this.dir = dir;</span>
+<span class="fc" id="L87">        packageURLBuilder = PackageURLBuilder.aPackageURL().withType(&quot;golang&quot;);</span>
+<span class="fc" id="L88">    }</span>
 
     /**
      * Converts the GoModDependency into a Dependency object.
@@ -93,7 +94,7 @@ public class GoModDependency {
      * @return the resulting Dependency object
      */
     public Dependency toDependency(Dependency parentDependency) {
-<span class="fc" id="L96">        return createDependency(parentDependency, modulePath, version);</span>
+<span class="fc" id="L97">        return createDependency(parentDependency, modulePath, version);</span>
     }
 
     /**
@@ -105,78 +106,79 @@ public class GoModDependency {
      * @return a new dependency object
      */
     private Dependency createDependency(Dependency parentDependency, String name, String version) {
-<span class="fc" id="L108">        final Dependency dep = new Dependency(parentDependency.getActualFile(), true);</span>
+<span class="fc" id="L109">        final Dependency dep = new Dependency(parentDependency.getActualFile(), true);</span>
 
-<span class="fc" id="L110">        String namespace = null;</span>
-<span class="fc" id="L111">        String vendor = null;</span>
-<span class="fc" id="L112">        String moduleName = null;</span>
-<span class="fc" id="L113">        String packageNamespace = null;</span>
+<span class="fc" id="L111">        String namespace = null;</span>
+<span class="fc" id="L112">        String vendor = null;</span>
+<span class="fc" id="L113">        String moduleName = null;</span>
+<span class="fc" id="L114">        String packageNamespace = null;</span>
 
         // separate the product from the vendor
-<span class="fc" id="L116">        final int lastSlash = name.lastIndexOf(&quot;/&quot;);</span>
-<span class="pc bpc" id="L117" title="1 of 2 branches missed.">        if (lastSlash &gt; 0) {</span>
-<span class="fc" id="L118">            packageNamespace = name.substring(0, lastSlash);</span>
-<span class="fc" id="L119">            final int pos = packageNamespace.indexOf(&quot;/&quot;);</span>
-<span class="fc bfc" id="L120" title="All 2 branches covered.">            if (pos &gt; 0) {</span>
-<span class="fc" id="L121">                namespace = packageNamespace.substring(0, pos);</span>
-<span class="fc" id="L122">                vendor = packageNamespace.substring(pos + 1);</span>
+<span class="fc" id="L117">        final int lastSlash = name.lastIndexOf(&quot;/&quot;);</span>
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">        if (lastSlash &gt; 0) {</span>
+<span class="fc" id="L119">            packageNamespace = name.substring(0, lastSlash);</span>
+<span class="fc" id="L120">            final int pos = packageNamespace.indexOf(&quot;/&quot;);</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">            if (pos &gt; 0) {</span>
+<span class="fc" id="L122">                namespace = packageNamespace.substring(0, pos);</span>
+<span class="fc" id="L123">                vendor = packageNamespace.substring(pos + 1);</span>
             }
-<span class="fc" id="L124">            moduleName = name.substring(lastSlash + 1);</span>
-<span class="fc" id="L125">        } else {</span>
-<span class="nc" id="L126">            moduleName = name;</span>
+<span class="fc" id="L125">            moduleName = name.substring(lastSlash + 1);</span>
+<span class="fc" id="L126">        } else {</span>
+<span class="nc" id="L127">            moduleName = name;</span>
         }
 
-<span class="fc" id="L129">        final String filePath = String.format(&quot;%s:%s/%s/%s&quot;, parentDependency.getFilePath(), packageNamespace, moduleName, version);</span>
+<span class="fc" id="L130">        final String filePath = String.format(&quot;%s:%s/%s/%s&quot;, parentDependency.getFilePath(), packageNamespace, moduleName, version);</span>
+        //virtual dep need a sha1 for the html report
+<span class="fc" id="L132">        dep.setSha1sum(Checksum.getSHA1Checksum(filePath));</span>
+<span class="fc" id="L133">        packageURLBuilder.withName(moduleName);</span>
+<span class="fc" id="L134">        packageURLBuilder.withNamespace(packageNamespace);</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        if (StringUtils.isNotBlank(version)) {</span>
+<span class="fc" id="L136">            packageURLBuilder.withVersion(version);</span>
+        }
+<span class="fc" id="L138">        dep.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc" id="L139">        dep.setDisplayFileName(name + &quot;:&quot; + version);</span>
+<span class="fc" id="L140">        dep.setName(moduleName);</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        if (StringUtils.isNotBlank(version)) {</span>
+<span class="fc" id="L142">            dep.setVersion(version);</span>
+<span class="fc" id="L143">            dep.setPackagePath(String.format(&quot;%s:%s&quot;, name, version));</span>
+        }
+<span class="fc" id="L145">        dep.setFilePath(filePath);</span>
 
-<span class="fc" id="L131">        packageURLBuilder.withName(moduleName);</span>
-<span class="fc" id="L132">        packageURLBuilder.withNamespace(packageNamespace);</span>
-<span class="fc bfc" id="L133" title="All 2 branches covered.">        if (StringUtils.isNotBlank(version)) {</span>
-<span class="fc" id="L134">            packageURLBuilder.withVersion(version);</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        if (vendor != null) {</span>
+<span class="fc" id="L148">            dep.addEvidence(EvidenceType.VENDOR, GO_MOD, &quot;vendor&quot;, vendor, Confidence.HIGHEST);</span>
+<span class="fc" id="L149">            dep.addEvidence(EvidenceType.PRODUCT, GO_MOD, &quot;vendor&quot;, vendor, Confidence.MEDIUM);</span>
         }
-<span class="fc" id="L136">        dep.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
-<span class="fc" id="L137">        dep.setDisplayFileName(name + &quot;:&quot; + version);</span>
-<span class="fc" id="L138">        dep.setName(moduleName);</span>
-<span class="fc bfc" id="L139" title="All 2 branches covered.">        if (StringUtils.isNotBlank(version)) {</span>
-<span class="fc" id="L140">            dep.setVersion(version);</span>
-<span class="fc" id="L141">            dep.setPackagePath(String.format(&quot;%s:%s&quot;, name, version));</span>
+<span class="fc bfc" id="L151" title="All 4 branches covered.">        if (namespace != null &amp;&amp; !&quot;golang.org&quot;.equals(namespace)) {</span>
+<span class="fc" id="L152">            dep.addEvidence(EvidenceType.VENDOR, GO_MOD, &quot;namespace&quot;, namespace, Confidence.LOW);</span>
         }
-<span class="fc" id="L143">        dep.setFilePath(filePath);</span>
-
-<span class="fc bfc" id="L145" title="All 2 branches covered.">        if (vendor != null) {</span>
-<span class="fc" id="L146">            dep.addEvidence(EvidenceType.VENDOR, GO_MOD, &quot;vendor&quot;, vendor, Confidence.HIGHEST);</span>
-<span class="fc" id="L147">            dep.addEvidence(EvidenceType.PRODUCT, GO_MOD, &quot;vendor&quot;, vendor, Confidence.MEDIUM);</span>
-        }
-<span class="fc bfc" id="L149" title="All 4 branches covered.">        if (namespace != null &amp;&amp; !&quot;golang.org&quot;.equals(namespace)) {</span>
-<span class="fc" id="L150">            dep.addEvidence(EvidenceType.VENDOR, GO_MOD, &quot;namespace&quot;, namespace, Confidence.LOW);</span>
-        }
-<span class="fc" id="L152">        dep.addEvidence(EvidenceType.PRODUCT, GO_MOD, &quot;name&quot;, moduleName, Confidence.HIGHEST);</span>
-<span class="fc" id="L153">        dep.addEvidence(EvidenceType.VENDOR, GO_MOD, &quot;name&quot;, moduleName, Confidence.HIGH);</span>
-<span class="fc bfc" id="L154" title="All 2 branches covered.">        if (StringUtils.isNotBlank(version)) {</span>
-<span class="fc" id="L155">            dep.addEvidence(EvidenceType.VERSION, GO_MOD, &quot;version&quot;, version, Confidence.HIGHEST);</span>
+<span class="fc" id="L154">        dep.addEvidence(EvidenceType.PRODUCT, GO_MOD, &quot;name&quot;, moduleName, Confidence.HIGHEST);</span>
+<span class="fc" id="L155">        dep.addEvidence(EvidenceType.VENDOR, GO_MOD, &quot;name&quot;, moduleName, Confidence.HIGH);</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">        if (StringUtils.isNotBlank(version)) {</span>
+<span class="fc" id="L157">            dep.addEvidence(EvidenceType.VERSION, GO_MOD, &quot;version&quot;, version, Confidence.HIGHEST);</span>
         }
         Identifier id;
         try {
-<span class="fc" id="L159">            id = new PurlIdentifier(packageURLBuilder.build(), Confidence.HIGHEST);</span>
-<span class="nc" id="L160">        } catch (MalformedPackageURLException ex) {</span>
-<span class="nc" id="L161">            LOGGER.warn(&quot;Unable to create package-url identifier for `{}` in `{}` - reason: {}&quot;,</span>
-<span class="nc" id="L162">                    name, parentDependency.getFilePath(), ex.getMessage());</span>
-<span class="nc" id="L163">            final StringBuilder value = new StringBuilder(name);</span>
-<span class="nc bnc" id="L164" title="All 2 branches missed.">            if (StringUtils.isNotBlank(version)) {</span>
-<span class="nc" id="L165">                value.append(&quot;@&quot;).append(version);</span>
+<span class="fc" id="L161">            id = new PurlIdentifier(packageURLBuilder.build(), Confidence.HIGHEST);</span>
+<span class="nc" id="L162">        } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L163">            LOGGER.warn(&quot;Unable to create package-url identifier for `{}` in `{}` - reason: {}&quot;,</span>
+<span class="nc" id="L164">                    name, parentDependency.getFilePath(), ex.getMessage());</span>
+<span class="nc" id="L165">            final StringBuilder value = new StringBuilder(name);</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">            if (StringUtils.isNotBlank(version)) {</span>
+<span class="nc" id="L167">                value.append(&quot;@&quot;).append(version);</span>
             }
-<span class="nc" id="L167">            id = new GenericIdentifier(value.toString(), Confidence.HIGH);</span>
-<span class="fc" id="L168">        }</span>
-<span class="fc" id="L169">        dep.addSoftwareIdentifier(id);</span>
-<span class="fc bfc" id="L170" title="All 2 branches covered.">        if (StringUtils.isNotBlank(dir)) {</span>
-<span class="fc" id="L171">            final File file = new File(dir);</span>
-<span class="pc bpc" id="L172" title="1 of 2 branches missed.">            if (file.exists()) {</span>
-<span class="fc" id="L173">                dep.setFilePath(file.getAbsolutePath());</span>
-<span class="fc" id="L174">                dep.setActualFilePath(file.getAbsolutePath());</span>
-<span class="fc" id="L175">                dep.setFileName(file.getName());</span>
-<span class="fc" id="L176">                extractLicense(dep, file);</span>
+<span class="nc" id="L169">            id = new GenericIdentifier(value.toString(), Confidence.HIGH);</span>
+<span class="fc" id="L170">        }</span>
+<span class="fc" id="L171">        dep.addSoftwareIdentifier(id);</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        if (StringUtils.isNotBlank(dir)) {</span>
+<span class="fc" id="L173">            final File file = new File(dir);</span>
+<span class="pc bpc" id="L174" title="1 of 2 branches missed.">            if (file.exists()) {</span>
+<span class="fc" id="L175">                dep.setFilePath(file.getAbsolutePath());</span>
+<span class="fc" id="L176">                dep.setActualFilePath(file.getAbsolutePath());</span>
+<span class="fc" id="L177">                dep.setFileName(file.getName());</span>
+<span class="fc" id="L178">                extractLicense(dep, file);</span>
             }
         }
-<span class="fc" id="L179">        return dep;</span>
+<span class="fc" id="L181">        return dep;</span>
     }
 
     /**
@@ -188,26 +190,26 @@ public class GoModDependency {
      * @param file the license file
      */
     private void extractLicense(Dependency dependency, File file) {
-<span class="fc" id="L191">        final File[] files = file.listFiles();</span>
-<span class="pc bpc" id="L192" title="1 of 2 branches missed.">        if (files != null) {</span>
-<span class="fc bfc" id="L193" title="All 2 branches covered.">            for (File f : files) {</span>
-<span class="pc bpc" id="L194" title="1 of 2 branches missed.">                if (LICENSE_FILES.contains(f.getName().toUpperCase())) {</span>
+<span class="fc" id="L193">        final File[] files = file.listFiles();</span>
+<span class="pc bpc" id="L194" title="1 of 2 branches missed.">        if (files != null) {</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">            for (File f : files) {</span>
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">                if (LICENSE_FILES.contains(f.getName().toUpperCase())) {</span>
                     try {
-<span class="nc" id="L196">                        final String license = FileUtils.readFileToString(f, Charset.forName(&quot;UTF-8&quot;));</span>
-<span class="nc" id="L197">                        dependency.setLicense(license);</span>
-<span class="nc" id="L198">                        break;</span>
-<span class="nc" id="L199">                    } catch (IOException ex) {</span>
-<span class="nc" id="L200">                        LOGGER.debug(&quot;Error reading license file `&quot; + file.getAbsolutePath()</span>
-<span class="nc" id="L201">                                + &quot;`: &quot; + ex.getMessage(), ex);</span>
+<span class="nc" id="L198">                        final String license = FileUtils.readFileToString(f, Charset.forName(&quot;UTF-8&quot;));</span>
+<span class="nc" id="L199">                        dependency.setLicense(license);</span>
+<span class="nc" id="L200">                        break;</span>
+<span class="nc" id="L201">                    } catch (IOException ex) {</span>
+<span class="nc" id="L202">                        LOGGER.debug(&quot;Error reading license file `&quot; + file.getAbsolutePath()</span>
+<span class="nc" id="L203">                                + &quot;`: &quot; + ex.getMessage(), ex);</span>
                     }
                 }
             }
         }
-<span class="fc" id="L206">    }</span>
+<span class="fc" id="L208">    }</span>
 
     @Override
     public String toString() {
-<span class="nc" id="L210">        return modulePath + &quot;: &quot; + version;</span>
+<span class="nc" id="L212">        return modulePath + &quot;: &quot; + version;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

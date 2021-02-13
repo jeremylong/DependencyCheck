@@ -55,7 +55,7 @@ public final class WriteLockShutdownHookFactory {
 <span class="fc" id="L55">            return (WriteLockShutdownHook) type.getDeclaredConstructor().newInstance();</span>
 <span class="nc" id="L56">        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException</span>
                 | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException ex) {
-<span class="nc" id="L58">            LOGGER.debug(&quot;Failed to instantiate {}, using default shutdown hook instead&quot;, ex);</span>
+<span class="nc" id="L58">            LOGGER.debug(&quot;Failed to instantiate specified shutdown hook, using default shutdown hook instead&quot;, ex);</span>
 <span class="nc" id="L59">            return new WriteLockCleanupHook();</span>
         }
     }

@@ -17,8 +17,6 @@
  */
 package org.owasp.dependencycheck.data.ossindex;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.net.HttpHeaders.AUTHORIZATION;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -37,6 +35,10 @@ import org.sonatype.ossindex.service.client.transport.UserAgentSupplier;
  */
 public class ODCConnectionTransport extends HttpUrlConnectionTransport {
 
+    /**
+     * The authorization header.
+     */
+    private static final String AUTHORIZATION = &quot;Authorization&quot;;
     /**
      * The OSS Index client configuration.
      */
@@ -58,22 +60,22 @@ public class ODCConnectionTransport extends HttpUrlConnectionTransport {
      * @param userAgent the user agent to send to OSS Index
      */
     public ODCConnectionTransport(Settings settings, OssindexClientConfiguration config, UserAgentSupplier userAgent) {
-<span class="nc" id="L61">        super(userAgent);</span>
-<span class="nc" id="L62">        this.userAgent = checkNotNull(userAgent);</span>
-<span class="nc" id="L63">        this.configuration = checkNotNull(config);</span>
-<span class="nc" id="L64">        connectionFactory = new URLConnectionFactory(settings);</span>
-<span class="nc" id="L65">    }</span>
+<span class="nc" id="L63">        super(userAgent);</span>
+<span class="nc" id="L64">        this.userAgent = userAgent;</span>
+<span class="nc" id="L65">        this.configuration = config;</span>
+<span class="nc" id="L66">        connectionFactory = new URLConnectionFactory(settings);</span>
+<span class="nc" id="L67">    }</span>
 
     @Override
     protected HttpURLConnection connect(final URL url) throws IOException {
-<span class="nc" id="L69">        final HttpURLConnection connection = connectionFactory.createHttpURLConnection(url);</span>
-<span class="nc" id="L70">        connection.setRequestProperty(&quot;User-Agent&quot;, userAgent.get());</span>
+<span class="nc" id="L71">        final HttpURLConnection connection = connectionFactory.createHttpURLConnection(url);</span>
+<span class="nc" id="L72">        connection.setRequestProperty(&quot;User-Agent&quot;, userAgent.get());</span>
 
-<span class="nc" id="L72">        final String authorization = BasicAuthHelper.authorizationHeader(configuration.getAuthConfiguration());</span>
-<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (authorization != null) {</span>
-<span class="nc" id="L74">            connection.setRequestProperty(AUTHORIZATION, authorization);</span>
+<span class="nc" id="L74">        final String authorization = BasicAuthHelper.authorizationHeader(configuration.getAuthConfiguration());</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        if (authorization != null) {</span>
+<span class="nc" id="L76">            connection.setRequestProperty(AUTHORIZATION, authorization);</span>
         }
-<span class="nc" id="L76">        return connection;</span>
+<span class="nc" id="L78">        return connection;</span>
     }
 
 }

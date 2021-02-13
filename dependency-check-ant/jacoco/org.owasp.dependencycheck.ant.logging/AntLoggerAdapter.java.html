@@ -142,10 +142,10 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void debug(String msg, Throwable t) {
-<span class="nc bnc" id="L145" title="All 2 branches missed.">        if (task != null) {</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">        if (task != null) {</span>
 <span class="nc" id="L146">            task.log(msg, t, Project.MSG_DEBUG);</span>
         }
-<span class="nc" id="L148">    }</span>
+<span class="fc" id="L148">    }</span>
 
     @Override
     public boolean isInfoEnabled() {

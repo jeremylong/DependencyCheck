@@ -17,12 +17,12 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -204,7 +204,7 @@ import us.springett.parsers.cpe.exceptions.CpeValidationException;
         }
 <span class="fc" id="L205">        String bundleAuditVersionDetails = null;</span>
         try {
-<span class="fc" id="L207">            final List&lt;String&gt; bundleAuditArgs = ImmutableList.of(&quot;version&quot;);</span>
+<span class="fc" id="L207">            final List&lt;String&gt; bundleAuditArgs = Arrays.asList(&quot;version&quot;);</span>
 <span class="nc" id="L208">            final Process process = launchBundleAudit(getSettings().getTempDirectory(), bundleAuditArgs);</span>
 <span class="nc" id="L209">            try (ProcessReader processReader = new ProcessReader(process)) {</span>
 <span class="nc" id="L210">                processReader.readAll();</span>
@@ -275,7 +275,7 @@ import us.springett.parsers.cpe.exceptions.CpeValidationException;
 <span class="nc" id="L275">            needToDisableGemspecAnalyzer = false;</span>
         }
 <span class="nc" id="L277">        final File parentFile = dependency.getActualFile().getParentFile();</span>
-<span class="nc" id="L278">        final List&lt;String&gt; bundleAuditArgs = ImmutableList.of(&quot;check&quot;, &quot;--verbose&quot;);</span>
+<span class="nc" id="L278">        final List&lt;String&gt; bundleAuditArgs = Arrays.asList(&quot;check&quot;, &quot;--verbose&quot;);</span>
 
 <span class="nc" id="L280">        final Process process = launchBundleAudit(parentFile, bundleAuditArgs);</span>
 <span class="nc" id="L281">        try (BundlerAuditProcessor processor = new BundlerAuditProcessor(dependency, engine);</span>

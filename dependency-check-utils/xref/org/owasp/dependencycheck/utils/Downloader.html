@@ -25,16 +25,16 @@
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  <strong class="jxr_keyword">package</strong> org.owasp.dependencycheck.utils;
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> com.google.common.io.ByteStreams;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> java.io.ByteArrayOutputStream;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> java.io.File;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> java.io.FileOutputStream;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> java.io.InputStream;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> java.io.OutputStream;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> java.net.URL;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> java.lang.String.format;
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> java.nio.charset.StandardCharsets;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> java.io.ByteArrayOutputStream;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> java.io.File;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> java.io.FileOutputStream;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> java.io.InputStream;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> java.io.OutputStream;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> java.net.URL;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> java.lang.String.format;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> java.nio.charset.StandardCharsets;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.io.IOUtils;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  
@@ -135,7 +135,7 @@
 <a class="jxr_linenumber" name="L127" href="#L127">127</a>         <strong class="jxr_keyword">try</strong> (HttpResourceConnection conn = <strong class="jxr_keyword">new</strong> HttpResourceConnection(settings, useProxy, userKey, passwordKey);
 <a class="jxr_linenumber" name="L128" href="#L128">128</a>                 OutputStream out = <strong class="jxr_keyword">new</strong> FileOutputStream(outputPath)) {
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>             in = conn.fetch(url);
-<a class="jxr_linenumber" name="L130" href="#L130">130</a>             ByteStreams.copy(in, out);
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>             IOUtils.copy(in, out);
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>         } <strong class="jxr_keyword">catch</strong> (IOException ex) {
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>             <strong class="jxr_keyword">final</strong> String msg = format(<span class="jxr_string">"Download failed, unable to copy '%s' to '%s'; %s"</span>,
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>                     url.toString(), outputPath.getAbsolutePath(), ex.getMessage());
@@ -186,7 +186,7 @@
 <a class="jxr_linenumber" name="L178" href="#L178">178</a>         <strong class="jxr_keyword">try</strong> (HttpResourceConnection conn = <strong class="jxr_keyword">new</strong> HttpResourceConnection(settings, useProxy, userKey, passwordKey);
 <a class="jxr_linenumber" name="L179" href="#L179">179</a>                 ByteArrayOutputStream out = <strong class="jxr_keyword">new</strong> ByteArrayOutputStream()) {
 <a class="jxr_linenumber" name="L180" href="#L180">180</a>             in = conn.fetch(url);
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>             ByteStreams.copy(in, out);
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>             IOUtils.copy(in, out);
 <a class="jxr_linenumber" name="L182" href="#L182">182</a>             <strong class="jxr_keyword">return</strong> out.toString(UTF8);
 <a class="jxr_linenumber" name="L183" href="#L183">183</a>         } <strong class="jxr_keyword">catch</strong> (IOException ex) {
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>             <strong class="jxr_keyword">final</strong> String msg = format(<span class="jxr_string">"Download failed, unable to retrieve '%s'; %s"</span>, url.toString(), ex.getMessage());

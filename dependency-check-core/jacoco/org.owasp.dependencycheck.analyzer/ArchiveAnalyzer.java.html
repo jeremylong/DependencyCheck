@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import com.google.common.io.ByteStreams;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -45,6 +44,7 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2Utils;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
+import org.apache.commons.compress.utils.IOUtils;
 
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -580,7 +580,7 @@ import org.slf4j.LoggerFactory;
 <span class="nc" id="L580">            throw new AnalysisException(msg);</span>
         }
 <span class="fc" id="L582">        try (FileOutputStream fos = new FileOutputStream(file)) {</span>
-<span class="fc" id="L583">            ByteStreams.copy(input, fos);</span>
+<span class="fc" id="L583">            IOUtils.copy(input, fos);</span>
 <span class="nc" id="L584">        } catch (FileNotFoundException ex) {</span>
 <span class="nc" id="L585">            LOGGER.debug(&quot;&quot;, ex);</span>
 <span class="nc" id="L586">            final String msg = String.format(&quot;Unable to find file '%s'.&quot;, file.getName());</span>
@@ -603,7 +603,7 @@ import org.slf4j.LoggerFactory;
     private void decompressFile(CompressorInputStream inputStream, File outputFile) throws ArchiveExtractionException {
 <span class="fc" id="L604">        LOGGER.debug(&quot;Decompressing '{}'&quot;, outputFile.getPath());</span>
 <span class="fc" id="L605">        try (FileOutputStream out = new FileOutputStream(outputFile)) {</span>
-<span class="fc" id="L606">            ByteStreams.copy(inputStream, out);</span>
+<span class="fc" id="L606">            IOUtils.copy(inputStream, out);</span>
 <span class="nc" id="L607">        } catch (IOException ex) {</span>
 <span class="nc" id="L608">            LOGGER.debug(&quot;&quot;, ex);</span>
 <span class="nc" id="L609">            throw new ArchiveExtractionException(ex);</span>

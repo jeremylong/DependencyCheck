@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck;
 
-import com.google.common.collect.ImmutableList;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.jcs.JCS;
@@ -52,6 +51,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -1220,7 +1220,7 @@ public class Engine implements FileFilter, AutoCloseable {
         /**
          * The analysis phases included in the mode.
          */
-        private final ImmutableList&lt;AnalysisPhase&gt; phases;
+        private final List&lt;AnalysisPhase&gt; phases;
 
         /**
          * Constructs a new mode.
@@ -1230,12 +1230,8 @@ public class Engine implements FileFilter, AutoCloseable {
          */
 <span class="fc" id="L1231">        Mode(boolean databaseRequired, AnalysisPhase... phases) {</span>
 <span class="fc" id="L1232">            this.databaseRequired = databaseRequired;</span>
-            //must use Guava 11.0.1 API as of 3/30/2019 due to Jenkins compatability issues
-            //this.phases = Arrays.stream(phases).collect(ImmutableList.toImmutableList());
-<span class="fc" id="L1235">            this.phases = new ImmutableList.Builder&lt;AnalysisPhase&gt;()</span>
-<span class="fc" id="L1236">                    .add(phases)</span>
-<span class="fc" id="L1237">                    .build();</span>
-<span class="fc" id="L1238">        }</span>
+<span class="fc" id="L1233">            this.phases = Collections.unmodifiableList(Arrays.asList(phases));</span>
+<span class="fc" id="L1234">        }</span>
 
         /**
          * Returns true if the database is required; otherwise false.
@@ -1243,7 +1239,7 @@ public class Engine implements FileFilter, AutoCloseable {
          * @return whether or not the database is required
          */
         private boolean isDatabaseRequired() {
-<span class="fc" id="L1246">            return databaseRequired;</span>
+<span class="fc" id="L1242">            return databaseRequired;</span>
         }
 
         /**
@@ -1251,8 +1247,8 @@ public class Engine implements FileFilter, AutoCloseable {
          *
          * @return the phases for this mode
          */
-        public ImmutableList&lt;AnalysisPhase&gt; getPhases() {
-<span class="fc" id="L1255">            return phases;</span>
+        public List&lt;AnalysisPhase&gt; getPhases() {
+<span class="fc" id="L1251">            return phases;</span>
         }
     }
 }

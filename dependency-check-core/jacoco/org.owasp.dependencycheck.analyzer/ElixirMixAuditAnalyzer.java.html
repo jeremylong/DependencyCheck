@@ -17,8 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
@@ -35,7 +33,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.processing.MixAuditProcessor;
 import org.owasp.dependencycheck.utils.processing.ProcessReader;
 
@@ -105,7 +105,7 @@ import org.owasp.dependencycheck.utils.processing.ProcessReader;
         // `mix_audit --version` command and seeing whether or not it succeeds (if it returns with an exit value of 0)
         final Process process;
         try {
-<span class="fc" id="L108">            final List&lt;String&gt; mixAuditArgs = ImmutableList.of(&quot;--version&quot;);</span>
+<span class="fc" id="L108">            final List&lt;String&gt; mixAuditArgs = Arrays.asList(&quot;--version&quot;);</span>
 <span class="nc" id="L109">            process = launchMixAudit(getSettings().getTempDirectory(), mixAuditArgs);</span>
 <span class="fc" id="L110">        } catch (AnalysisException ae) {</span>
 <span class="fc" id="L111">            setEnabled(false);</span>
@@ -123,7 +123,7 @@ import org.owasp.dependencycheck.utils.processing.ProcessReader;
 <span class="nc" id="L123">            exitValue = process.exitValue();</span>
 
 <span class="nc bnc" id="L125" title="All 2 branches missed.">            if (exitValue != 0) {</span>
-<span class="nc bnc" id="L126" title="All 2 branches missed.">                if (Strings.isNullOrEmpty(processReader.getError())) {</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">                if (StringUtils.isBlank(processReader.getError())) {</span>
 <span class="nc" id="L127">                    LOGGER.warn(&quot;Unexpected exit value from mix_audit process and error stream unexpectedly not ready to capture error details. &quot;</span>
 <span class="nc" id="L128">                            + &quot;Disabling {}. Exit value was: {}&quot;, ANALYZER_NAME, exitValue);</span>
 <span class="nc" id="L129">                    setEnabled(false);</span>
@@ -135,7 +135,7 @@ import org.owasp.dependencycheck.utils.processing.ProcessReader;
 <span class="nc" id="L135">                    throw new InitializationException(&quot;Unexpected exit value from bundle-audit process.&quot;);</span>
                 }
             } else {
-<span class="nc bnc" id="L138" title="All 2 branches missed.">                if (Strings.isNullOrEmpty(processReader.getOutput())) {</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">                if (StringUtils.isBlank(processReader.getOutput())) {</span>
 <span class="nc" id="L139">                    LOGGER.warn(&quot;mix_audit input stream unexpectedly not ready to capture version details. Disabling {}&quot;, ANALYZER_NAME);</span>
 <span class="nc" id="L140">                    setEnabled(false);</span>
 <span class="nc" id="L141">                    throw new InitializationException(&quot;mix_audit input stream unexpectedly not ready to capture version details.&quot;);</span>
@@ -246,7 +246,7 @@ import org.owasp.dependencycheck.utils.processing.ProcessReader;
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
 <span class="nc" id="L248">        final File parentFile = dependency.getActualFile().getParentFile();</span>
-<span class="nc" id="L249">        final List&lt;String&gt; mixAuditArgs = ImmutableList.of(&quot;--format&quot;, &quot;json&quot;);</span>
+<span class="nc" id="L249">        final List&lt;String&gt; mixAuditArgs = Arrays.asList(&quot;--format&quot;, &quot;json&quot;);</span>
 
 <span class="nc" id="L251">        final Process process = launchMixAudit(parentFile, mixAuditArgs);</span>
         final int exitValue;

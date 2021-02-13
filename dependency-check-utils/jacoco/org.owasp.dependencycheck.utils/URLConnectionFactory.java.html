@@ -194,15 +194,15 @@ public final class URLConnectionFactory {
 <span class="nc" id="L194">                    final String nonProxyHostPrefix = nonProxyHost.substring(0, pos);</span>
 <span class="nc" id="L195">                    final String nonProxyHostSuffix = nonProxyHost.substring(pos + 1);</span>
                     // prefix*
-<span class="nc bnc" id="L197" title="All 6 branches missed.">                    if (!StringUtils.isEmpty(nonProxyHostPrefix) &amp;&amp; host.startsWith(nonProxyHostPrefix) &amp;&amp; StringUtils.isEmpty(nonProxyHostSuffix)) {</span>
+<span class="nc bnc" id="L197" title="All 6 branches missed.">                    if (!StringUtils.isBlank(nonProxyHostPrefix) &amp;&amp; host.startsWith(nonProxyHostPrefix) &amp;&amp; StringUtils.isBlank(nonProxyHostSuffix)) {</span>
 <span class="nc" id="L198">                        return true;</span>
                     }
                     // *suffix
-<span class="nc bnc" id="L201" title="All 6 branches missed.">                    if (StringUtils.isEmpty(nonProxyHostPrefix) &amp;&amp; !StringUtils.isEmpty(nonProxyHostSuffix) &amp;&amp; host.endsWith(nonProxyHostSuffix)) {</span>
+<span class="nc bnc" id="L201" title="All 6 branches missed.">                    if (StringUtils.isBlank(nonProxyHostPrefix) &amp;&amp; !StringUtils.isBlank(nonProxyHostSuffix) &amp;&amp; host.endsWith(nonProxyHostSuffix)) {</span>
 <span class="nc" id="L202">                        return true;</span>
                     }
                     // prefix*suffix
-<span class="nc bnc" id="L205" title="All 6 branches missed.">                    if (!StringUtils.isEmpty(nonProxyHostPrefix) &amp;&amp; host.startsWith(nonProxyHostPrefix) &amp;&amp; !StringUtils.isEmpty(nonProxyHostSuffix)</span>
+<span class="nc bnc" id="L205" title="All 6 branches missed.">                    if (!StringUtils.isBlank(nonProxyHostPrefix) &amp;&amp; host.startsWith(nonProxyHostPrefix) &amp;&amp; !StringUtils.isBlank(nonProxyHostSuffix)</span>
 <span class="nc bnc" id="L206" title="All 2 branches missed.">                            &amp;&amp; host.endsWith(nonProxyHostSuffix)) {</span>
 <span class="nc" id="L207">                        return true;</span>
                     }

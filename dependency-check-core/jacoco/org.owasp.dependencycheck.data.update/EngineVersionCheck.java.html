@@ -17,13 +17,13 @@
  */
 package org.owasp.dependencycheck.data.update;
 
-import com.google.common.io.ByteStreams;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import javax.annotation.concurrent.ThreadSafe;
+import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -217,7 +217,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
 <span class="pc bpc" id="L217" title="1 of 2 branches missed.">            if (conn.getResponseCode() != 200) {</span>
 <span class="nc" id="L218">                return null;</span>
             }
-<span class="fc" id="L220">            final String releaseVersion = new String(ByteStreams.toByteArray(conn.getInputStream()), StandardCharsets.UTF_8);</span>
+<span class="fc" id="L220">            final String releaseVersion = new String(IOUtils.toByteArray(conn.getInputStream()), StandardCharsets.UTF_8);</span>
 <span class="fc" id="L221">            return releaseVersion.trim();</span>
 <span class="nc" id="L222">        } catch (MalformedURLException ex) {</span>
 <span class="nc" id="L223">            LOGGER.debug(&quot;Unable to retrieve current release version of dependency-check - malformed url?&quot;);</span>

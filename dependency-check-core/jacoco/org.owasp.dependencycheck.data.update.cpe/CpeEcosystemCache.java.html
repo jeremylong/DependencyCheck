@@ -17,9 +17,9 @@
  */
 package org.owasp.dependencycheck.data.update.cpe;
 
-import com.google.common.base.Strings;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.data.update.nvd.NvdCveParser;
 import org.owasp.dependencycheck.utils.Pair;
 import org.slf4j.Logger;
@@ -69,12 +69,12 @@ public final class CpeEcosystemCache {
 <span class="fc" id="L69">        final String current = cache.get(key);</span>
 <span class="fc" id="L70">        String result = null;</span>
 <span class="fc bfc" id="L71" title="All 2 branches covered.">        if (current == null) {</span>
-<span class="fc bfc" id="L72" title="All 2 branches covered.">            if (!Strings.isNullOrEmpty(identifiedEcosystem)) {</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">            if (!StringUtils.isBlank(identifiedEcosystem)) {</span>
 <span class="fc" id="L73">                cache.put(key, identifiedEcosystem);</span>
 <span class="fc" id="L74">                changed.put(key, identifiedEcosystem);</span>
 <span class="fc" id="L75">                result = identifiedEcosystem;</span>
             }
-<span class="fc bfc" id="L77" title="All 2 branches covered.">        } else if (MULTIPLE_ECOSYSTEMS_IDENTIFIED.equals(current)) {</span>
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">        } else if (MULTIPLE_ECOSYSTEMS_IDENTIFIED.equals(current)) {</span>
             //do nothing - result is already null
 <span class="fc bfc" id="L79" title="All 4 branches covered.">        } else if (current.equals(identifiedEcosystem) || identifiedEcosystem == null) {</span>
 <span class="fc" id="L80">            result = current;</span>

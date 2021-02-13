@@ -322,11 +322,11 @@ import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 <span class="nc" id="L322">                currentDep.addEvidence(EvidenceType.VENDOR, source, &quot;Vendor&quot;, product, Confidence.MEDIUM);</span>
 <span class="nc" id="L323">                currentDep.addEvidence(EvidenceType.VERSION, source, &quot;Version&quot;, version, Confidence.MEDIUM);</span>
             }
-<span class="pc bpc" id="L325" title="1 of 2 branches missed.">            if (StringUtils.isEmpty(currentDep.getName())) {</span>
+<span class="pc bpc" id="L325" title="1 of 2 branches missed.">            if (StringUtils.isBlank(currentDep.getName())) {</span>
 <span class="fc" id="L326">                currentDep.setName(product);</span>
 <span class="fc" id="L327">                currentDep.setDisplayFileName(product);</span>
             }
-<span class="pc bpc" id="L329" title="1 of 2 branches missed.">            if (StringUtils.isEmpty(currentDep.getVersion())) {</span>
+<span class="pc bpc" id="L329" title="1 of 2 branches missed.">            if (StringUtils.isBlank(currentDep.getVersion())) {</span>
 <span class="fc" id="L330">                final DependencyVersion vers = DependencyVersionUtil.parseVersion(version, true);</span>
 <span class="fc bfc" id="L331" title="All 2 branches covered.">                if (vers != null) {</span>
 <span class="fc" id="L332">                    currentDep.setVersion(vers.toString());</span>

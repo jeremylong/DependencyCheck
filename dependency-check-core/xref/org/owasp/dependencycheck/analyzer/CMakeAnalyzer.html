@@ -330,11 +330,11 @@
 <a class="jxr_linenumber" name="L322" href="#L322">322</a>                 currentDep.addEvidence(EvidenceType.VENDOR, source, <span class="jxr_string">"Vendor"</span>, product, Confidence.MEDIUM);
 <a class="jxr_linenumber" name="L323" href="#L323">323</a>                 currentDep.addEvidence(EvidenceType.VERSION, source, <span class="jxr_string">"Version"</span>, version, Confidence.MEDIUM);
 <a class="jxr_linenumber" name="L324" href="#L324">324</a>             }
-<a class="jxr_linenumber" name="L325" href="#L325">325</a>             <strong class="jxr_keyword">if</strong> (StringUtils.isEmpty(currentDep.getName())) {
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>             <strong class="jxr_keyword">if</strong> (StringUtils.isBlank(currentDep.getName())) {
 <a class="jxr_linenumber" name="L326" href="#L326">326</a>                 currentDep.setName(product);
 <a class="jxr_linenumber" name="L327" href="#L327">327</a>                 currentDep.setDisplayFileName(product);
 <a class="jxr_linenumber" name="L328" href="#L328">328</a>             }
-<a class="jxr_linenumber" name="L329" href="#L329">329</a>             <strong class="jxr_keyword">if</strong> (StringUtils.isEmpty(currentDep.getVersion())) {
+<a class="jxr_linenumber" name="L329" href="#L329">329</a>             <strong class="jxr_keyword">if</strong> (StringUtils.isBlank(currentDep.getVersion())) {
 <a class="jxr_linenumber" name="L330" href="#L330">330</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/utils/DependencyVersion.html">DependencyVersion</a> vers = DependencyVersionUtil.parseVersion(version, <strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L331" href="#L331">331</a>                 <strong class="jxr_keyword">if</strong> (vers != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L332" href="#L332">332</a>                     currentDep.setVersion(vers.toString());

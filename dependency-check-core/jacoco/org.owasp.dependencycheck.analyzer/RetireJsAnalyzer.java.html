@@ -20,7 +20,6 @@ package org.owasp.dependencycheck.analyzer;
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
-import com.google.common.io.ByteStreams;
 import com.h3xstream.retirejs.repo.JsLibrary;
 import com.h3xstream.retirejs.repo.JsLibraryResult;
 import com.h3xstream.retirejs.repo.JsVulnerability;
@@ -64,6 +63,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.io.IOUtils;
 
 /**
  * The RetireJS analyzer uses the manually curated list of vulnerabilities from
@@ -276,7 +276,7 @@ import java.util.Map;
     @Override
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
 <span class="fc" id="L278">        try (InputStream fis = new FileInputStream(dependency.getActualFile())) {</span>
-<span class="fc" id="L279">            final byte[] fileContent = ByteStreams.toByteArray(fis);</span>
+<span class="fc" id="L279">            final byte[] fileContent = IOUtils.toByteArray(fis);</span>
 <span class="fc" id="L280">            final ScannerFacade scanner = new ScannerFacade(jsRepository);</span>
             final List&lt;JsLibraryResult&gt; results;
             try {
@@ -415,7 +415,7 @@ import java.util.Map;
                             }
                             // CSON: NeedBraces
 <span class="fc" id="L417">                        }</span>
-<span class="pc bpc" id="L418" title="1 of 2 branches missed.">                        if (StringUtils.isEmpty(individualVuln.getName())) {</span>
+<span class="pc bpc" id="L418" title="1 of 2 branches missed.">                        if (StringUtils.isBlank(individualVuln.getName())) {</span>
 <span class="nc" id="L419">                            individualVuln.setName(&quot;Vulnerability in &quot; + libraryResult.getLibrary().getName());</span>
                         }
 <span class="fc" id="L421">                        individualVuln.setSource(Vulnerability.Source.RETIREJS);</span>

@@ -647,9 +647,9 @@ public final class CveDB implements AutoCloseable {
      */
     public synchronized List&lt;Vulnerability&gt; getVulnerabilities(Cpe cpe) throws DatabaseException {
 <span class="fc" id="L649">        final List&lt;Vulnerability&gt; cachedVulnerabilities = vulnerabilitiesForCpeCache.get(cpe.toCpe23FS());</span>
-<span class="fc bfc" id="L650" title="All 2 branches covered.">        if (cachedVulnerabilities != null) {</span>
-<span class="fc" id="L651">            LOGGER.debug(&quot;Cache hit for {}&quot;, cpe.toCpe23FS());</span>
-<span class="fc" id="L652">            return cachedVulnerabilities;</span>
+<span class="pc bpc" id="L650" title="1 of 2 branches missed.">        if (cachedVulnerabilities != null) {</span>
+<span class="nc" id="L651">            LOGGER.debug(&quot;Cache hit for {}&quot;, cpe.toCpe23FS());</span>
+<span class="nc" id="L652">            return cachedVulnerabilities;</span>
         } else {
 <span class="fc" id="L654">            LOGGER.debug(&quot;Cache miss for {}&quot;, cpe.toCpe23FS());</span>
         }
@@ -1367,8 +1367,8 @@ public final class CveDB implements AutoCloseable {
             }
 <span class="pc bpc" id="L1368" title="1 of 2 branches missed.">            if (psEcosystem2 != null) {</span>
 <span class="fc" id="L1369">                final int count = psEcosystem2.executeUpdate();</span>
-<span class="fc bfc" id="L1370" title="All 2 branches covered.">                if (count &gt; 0) {</span>
-<span class="fc" id="L1371">                    LOGGER.info(&quot;Removed the CPE ecosystem on {} NVD records&quot;, count);</span>
+<span class="pc bpc" id="L1370" title="1 of 2 branches missed.">                if (count &gt; 0) {</span>
+<span class="nc" id="L1371">                    LOGGER.info(&quot;Removed the CPE ecosystem on {} NVD records&quot;, count);</span>
                 }
             }
 <span class="pc bpc" id="L1374" title="1 of 2 branches missed.">            if (psOrphans != null) {</span>
@@ -1426,8 +1426,8 @@ public final class CveDB implements AutoCloseable {
 <span class="fc bfc" id="L1426" title="All 2 branches covered.">                if (matched == null) {</span>
 <span class="fc" id="L1427">                    matched = vs;</span>
                 } else {
-<span class="fc bfc" id="L1429" title="All 4 branches covered.">                    if (&quot;*&quot;.equals(vs.getWellFormedUpdate()) &amp;&amp; !&quot;*&quot;.equals(matched.getWellFormedUpdate())) {</span>
-<span class="fc" id="L1430">                        matched = vs;</span>
+<span class="pc bpc" id="L1429" title="1 of 4 branches missed.">                    if (&quot;*&quot;.equals(vs.getWellFormedUpdate()) &amp;&amp; !&quot;*&quot;.equals(matched.getWellFormedUpdate())) {</span>
+<span class="nc" id="L1430">                        matched = vs;</span>
                     }
                 }
             }
@@ -1619,10 +1619,10 @@ public final class CveDB implements AutoCloseable {
      */
     @SuppressFBWarnings(&quot;NP_BOOLEAN_RETURN_NULL&quot;)
     private Boolean getBooleanValue(ResultSet rs, int index) throws SQLException {
-<span class="fc bfc" id="L1622" title="All 2 branches covered.">        if (rs.getObject(index) == null) {</span>
+<span class="pc bpc" id="L1622" title="1 of 2 branches missed.">        if (rs.getObject(index) == null) {</span>
 <span class="fc" id="L1623">            return null;</span>
         }
-<span class="fc" id="L1625">        return rs.getBoolean(index);</span>
+<span class="nc" id="L1625">        return rs.getBoolean(index);</span>
     }
 
     /**
@@ -1635,10 +1635,10 @@ public final class CveDB implements AutoCloseable {
      * @throws SQLException thrown if there is an error obtaining the value
      */
     private Float getFloatValue(ResultSet rs, int index) throws SQLException {
-<span class="fc bfc" id="L1638" title="All 2 branches covered.">        if (rs.getObject(index) == null) {</span>
+<span class="pc bpc" id="L1638" title="1 of 2 branches missed.">        if (rs.getObject(index) == null) {</span>
 <span class="fc" id="L1639">            return null;</span>
         }
-<span class="fc" id="L1641">        return rs.getFloat(index);</span>
+<span class="nc" id="L1641">        return rs.getFloat(index);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

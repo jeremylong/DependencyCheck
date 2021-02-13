@@ -8,28 +8,28 @@
 <div id="overview"><a href="../../../../../apidocs/org/owasp/dependencycheck/utils/SSLSocketFactoryEx.html">View Javadoc</a></div><pre>
 <a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> org.owasp.dependencycheck.utils;
 <a class="jxr_linenumber" name="L2" href="#L2">2</a>   
-<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> com.google.common.base.Strings;
-<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> java.io.FileInputStream;
-<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <strong class="jxr_keyword">import</strong> java.io.IOException;
-<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">import</strong> java.net.InetAddress;
-<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <strong class="jxr_keyword">import</strong> java.net.Socket;
-<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <strong class="jxr_keyword">import</strong> java.security.KeyManagementException;
-<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <strong class="jxr_keyword">import</strong> java.security.KeyStore;
-<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <strong class="jxr_keyword">import</strong> java.security.KeyStoreException;
-<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <strong class="jxr_keyword">import</strong> java.security.NoSuchAlgorithmException;
-<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <strong class="jxr_keyword">import</strong> java.security.SecureRandom;
-<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <strong class="jxr_keyword">import</strong> java.security.UnrecoverableKeyException;
-<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <strong class="jxr_keyword">import</strong> java.security.cert.CertificateException;
-<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
-<a class="jxr_linenumber" name="L16" href="#L16">16</a>  <strong class="jxr_keyword">import</strong> java.util.Arrays;
-<a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">import</strong> java.util.List;
-<a class="jxr_linenumber" name="L18" href="#L18">18</a>  <strong class="jxr_keyword">import</strong> javax.net.ssl.KeyManager;
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> javax.net.ssl.KeyManagerFactory;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> javax.net.ssl.SSLContext;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> javax.net.ssl.SSLSocket;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> javax.net.ssl.SSLSocketFactory;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> javax.net.ssl.TrustManager;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> javax.net.ssl.TrustManagerFactory;
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> java.io.FileInputStream;
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <strong class="jxr_keyword">import</strong> java.net.InetAddress;
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">import</strong> java.net.Socket;
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <strong class="jxr_keyword">import</strong> java.security.KeyManagementException;
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <strong class="jxr_keyword">import</strong> java.security.KeyStore;
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <strong class="jxr_keyword">import</strong> java.security.KeyStoreException;
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <strong class="jxr_keyword">import</strong> java.security.NoSuchAlgorithmException;
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <strong class="jxr_keyword">import</strong> java.security.SecureRandom;
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <strong class="jxr_keyword">import</strong> java.security.UnrecoverableKeyException;
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <strong class="jxr_keyword">import</strong> java.security.cert.CertificateException;
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <strong class="jxr_keyword">import</strong> java.util.Arrays;
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">import</strong> javax.net.ssl.KeyManager;
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  <strong class="jxr_keyword">import</strong> javax.net.ssl.KeyManagerFactory;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> javax.net.ssl.SSLContext;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> javax.net.ssl.SSLSocket;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> javax.net.ssl.SSLSocketFactory;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> javax.net.ssl.TrustManager;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> javax.net.ssl.TrustManagerFactory;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.lang3.StringUtils;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
@@ -323,7 +323,7 @@
 <a class="jxr_linenumber" name="L315" href="#L315">315</a>         <strong class="jxr_keyword">final</strong> String ksType = System.getProperty(<span class="jxr_string">"javax.net.ssl.keyStoreType"</span>);
 <a class="jxr_linenumber" name="L316" href="#L316">316</a>         <strong class="jxr_keyword">final</strong> String ksPass = System.getProperty(<span class="jxr_string">"javax.net.ssl.keyStorePassword"</span>);
 <a class="jxr_linenumber" name="L317" href="#L317">317</a> 
-<a class="jxr_linenumber" name="L318" href="#L318">318</a>         <strong class="jxr_keyword">if</strong> (!Strings.isNullOrEmpty(ksPath) &amp;&amp; !Strings.isNullOrEmpty(ksType) &amp;&amp; !Strings.isNullOrEmpty(ksPass)) {
+<a class="jxr_linenumber" name="L318" href="#L318">318</a>         <strong class="jxr_keyword">if</strong> (!StringUtils.isAnyEmpty(ksPath, ksType, ksPass)) {
 <a class="jxr_linenumber" name="L319" href="#L319">319</a>             <strong class="jxr_keyword">try</strong> (FileInputStream fis = <strong class="jxr_keyword">new</strong> FileInputStream(ksPath)) {
 <a class="jxr_linenumber" name="L320" href="#L320">320</a>                 <strong class="jxr_keyword">final</strong> KeyStore ks = KeyStore.getInstance(ksType);
 <a class="jxr_linenumber" name="L321" href="#L321">321</a>                 ks.load(fis, ksPass.toCharArray());
@@ -343,7 +343,7 @@
 <a class="jxr_linenumber" name="L335" href="#L335">335</a>         <strong class="jxr_keyword">final</strong> String tsPath = System.getProperty(<span class="jxr_string">"javax.net.ssl.trustStore"</span>);
 <a class="jxr_linenumber" name="L336" href="#L336">336</a>         <strong class="jxr_keyword">final</strong> String tsPass = System.getProperty(<span class="jxr_string">"javax.net.ssl.trustStorePassword"</span>);
 <a class="jxr_linenumber" name="L337" href="#L337">337</a> 
-<a class="jxr_linenumber" name="L338" href="#L338">338</a>         <strong class="jxr_keyword">if</strong> (!Strings.isNullOrEmpty(tsPath) &amp;&amp; !Strings.isNullOrEmpty(ksType) &amp;&amp; !Strings.isNullOrEmpty(tsPass)) {
+<a class="jxr_linenumber" name="L338" href="#L338">338</a>         <strong class="jxr_keyword">if</strong> (!StringUtils.isAnyEmpty(tsPath, ksType, tsPass)) {
 <a class="jxr_linenumber" name="L339" href="#L339">339</a>             <strong class="jxr_keyword">try</strong> (FileInputStream fis = <strong class="jxr_keyword">new</strong> FileInputStream(tsPath)) {
 <a class="jxr_linenumber" name="L340" href="#L340">340</a>                 <strong class="jxr_keyword">final</strong> KeyStore ts = KeyStore.getInstance(ksType);
 <a class="jxr_linenumber" name="L341" href="#L341">341</a>                 ts.load(fis, tsPass.toCharArray());
