@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import com.fasterxml.jackson.core.util.VersionUtil;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -71,6 +72,7 @@ import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
+import org.owasp.dependencycheck.utils.Pair;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -252,6 +254,12 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * @throws AnalysisException thrown if the suppression rules failed
      */
     protected void determineCPE(Dependency dependency) throws CorruptIndexException, IOException, ParseException, AnalysisException {
+        boolean identifierAdded;
+
+        if (simpleSearch(dependency)) {
+            return;
+        }
+
         final Map<String, MutableInt> vendors = new HashMap<>();
         final Map<String, MutableInt> products = new HashMap<>();
         final Set<Integer> previouslyFound = new HashSet<>();
@@ -269,7 +277,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                     continue;
                 }
 
-                boolean identifierAdded = false;
+                identifierAdded = false;
                 for (IndexEntry e : entries) {
                     if (previouslyFound.contains(e.getDocumentId()) /*|| (filter > 0 && e.getSearchScore() < filter)*/) {
                         continue;
@@ -295,7 +303,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * the EvidenceCollection (filtered for a specific confidence). This
      * attempts to prevent duplicate terms from being added.</p>
      * <p>
-     * Note, if the evidence is longer then 200 characters it will be
+     * Note, if the evidence is longer then 1000 characters it will be
      * truncated.</p>
      *
      * @param terms the collection of terms
@@ -777,19 +785,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 final DependencyVersion depVersion = new DependencyVersion(dependency.getVersion());
                 if (depVersion.getVersionParts().size() > 0) {
                     cpeBuilder.part(Part.APPLICATION).vendor(vendor).product(product);
-                    final int idx = depVersion.getVersionParts().size() - 1;
-                    if (idx > 0 && depVersion.getVersionParts().get(idx)
-                            .matches("^(v|final|release|snapshot|r|b|beta|a|alpha|u|rc|sp|dev|revision|service|build|pre|p|patch|update|m|20\\d\\d).*$")) {
-                        cpeBuilder.version(StringUtils.join(depVersion.getVersionParts().subList(0, idx), "."));
-                        //when written - no update versions in the NVD start with v### - they all strip the v off
-                        if (depVersion.getVersionParts().get(idx).matches("^v\\d.*$")) {
-                            cpeBuilder.update(depVersion.getVersionParts().get(idx).substring(1));
-                        } else {
-                            cpeBuilder.update(depVersion.getVersionParts().get(idx));
-                        }
-                    } else {
-                        cpeBuilder.version(depVersion.toString());
-                    }
+                    addVersionAndUpdate(depVersion, cpeBuilder);
                     try {
                         final Cpe depCpe = cpeBuilder.build();
                         final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(vendor, UTF8),
@@ -994,6 +990,73 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         return entries.stream()
                 .map(c -> c.getCpe())
                 .collect(Collectors.toSet());
+    }
+
+    /**
+     * Performs a simplistic search for CPE entries based on the vendor and
+     * product from a Purl identifier.
+     *
+     * @param dependency the dependency to perform the search for a CPE
+     * @return <code>true</code> if an identifier is found; otherwise
+     * <code>false</code>
+     */
+    private boolean simpleSearch(Dependency dependency) {
+        return dependency.getSoftwareIdentifiers()
+                .stream()
+                .filter(i -> i instanceof PurlIdentifier)
+                .map(i -> {
+                    PurlIdentifier p = (PurlIdentifier) i;
+                    String vendor = p.getNamespace();
+                    if (vendor == null) {
+                        vendor = p.getName();
+                    }
+                    String product = p.getName();
+                    DependencyVersion depVersion = DependencyVersionUtil.parseVersion(p.getVersion(), false);
+                    boolean identifierAdded = false;
+                    if (depVersion != null) {
+                        String majorVersion = depVersion.getVersionParts().get(0);
+
+                        Set<Pair<String, String>> simpleMatches = cve.simpleCPESearch(vendor, product, majorVersion);
+                        for (Pair<String, String> match : simpleMatches) {
+                            final Set<CpePlus> cpePlusEntries = cve.getCPEs(vendor, product);
+                            final Set<Cpe> cpes = filterEcosystem(dependency.getEcosystem(), cpePlusEntries);
+                            if (cpes == null || cpes.isEmpty()) {
+                                continue;
+                            }
+
+                            final CpeBuilder cpeBuilder = new CpeBuilder();
+                            cpeBuilder.part(Part.APPLICATION).vendor(match.getLeft()).product(match.getRight());
+                            addVersionAndUpdate(depVersion, cpeBuilder);
+                            try {
+                                final Cpe cpeId = cpeBuilder.build();
+                                final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(cpeId.getVendor(), UTF8),
+                                        URLEncoder.encode(cpeId.getProduct(), UTF8), URLEncoder.encode(cpeId.getVersion(), UTF8));
+                                CpeIdentifier identifier = new CpeIdentifier(cpeId, url, Confidence.HIGHEST);
+                                dependency.addVulnerableSoftwareIdentifier(identifier);
+                                identifierAdded = true;
+                            } catch (CpeValidationException | UnsupportedEncodingException ex) {
+                                LOGGER.debug("Error building CPE ", ex);
+                            }
+                        }
+                    }
+                    return identifierAdded;
+                }).anyMatch(p -> p);
+    }
+
+    private void addVersionAndUpdate(DependencyVersion depVersion, final CpeBuilder cpeBuilder) {
+        final int idx = depVersion.getVersionParts().size() - 1;
+        if (idx > 0 && depVersion.getVersionParts().get(idx)
+                .matches("^(v|final|release|snapshot|r|b|beta|a|alpha|u|rc|sp|dev|revision|service|build|pre|p|patch|update|m|20\\d\\d).*$")) {
+            cpeBuilder.version(StringUtils.join(depVersion.getVersionParts().subList(0, idx), "."));
+            //when written - no update versions in the NVD start with v### - they all strip the v off
+            if (depVersion.getVersionParts().get(idx).matches("^v\\d.*$")) {
+                cpeBuilder.update(depVersion.getVersionParts().get(idx).substring(1));
+            } else {
+                cpeBuilder.update(depVersion.getVersionParts().get(idx));
+            }
+        } else {
+            cpeBuilder.version(depVersion.toString());
+        }
     }
 
     /**
