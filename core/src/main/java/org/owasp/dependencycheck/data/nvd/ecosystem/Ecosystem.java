@@ -99,8 +99,7 @@ public final class Ecosystem {
      */
     public Ecosystem(Settings settings) {
         this.settings = settings;
-        //this.defaultQuerySize = settings.getInt(Settings.KEYS.MAX_QUERY_SIZE_DEFAULT, 100);
-        this.defaultQuerySize = 10000;
+        this.defaultQuerySize = settings.getInt(Settings.KEYS.MAX_QUERY_SIZE_DEFAULT, 100);
     }
 
     /**
