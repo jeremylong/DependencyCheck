@@ -1155,6 +1155,13 @@ Copyright (c) 2012 - Jeremy Long
                     </exclusion>
                 </exclusions>
             </dependency>
+            <!--Guava is not directly used - but ossindex uses a known vulnerable version
+                to support Java 7-->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>[24.1.1,)</version>
+            </dependency>
             <dependency>
                 <groupId>com.hankcs</groupId>
                 <artifactId>aho-corasick-double-array-trie</artifactId>

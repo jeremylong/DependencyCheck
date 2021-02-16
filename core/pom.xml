@@ -281,6 +281,12 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <groupId>org.sonatype.ossindex</groupId>
             <artifactId>ossindex-service-client</artifactId>
         </dependency>
+        <!--Guava is not directly used - but ossindex uses a known vulnerable version
+        to support Java 7-->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.moandjiezana.toml</groupId>
             <artifactId>toml4j</artifactId>
