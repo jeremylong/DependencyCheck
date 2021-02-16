@@ -110,8 +110,10 @@ public class NpmPayloadBuilderTest {
         Assert.assertTrue(requires.containsKey("abbrev"));
         Assert.assertEquals("^1.1.1", requires.getString("abbrev"));
 
-        //local and alias need to be skipped
-        Assert.assertFalse(requires.containsKey("react-dom"));
+        //alias is not skipped
+        Assert.assertTrue(requires.containsKey("react-dom"));
+
+        //local need to be skipped
         Assert.assertFalse(requires.containsKey("fake_submodule"));
 
         Assert.assertFalse(sanitized.containsKey("lockfileVersion"));
@@ -169,8 +171,10 @@ public class NpmPayloadBuilderTest {
             Assert.assertTrue(sanitized.containsKey("dependencies"));
             Assert.assertTrue(sanitized.containsKey("requires"));
 
-            //local and alias need to be skipped
-            Assert.assertFalse(requires.containsKey("react-dom"));
+            // Alias is not skipped
+            Assert.assertTrue(requires.containsKey("react-dom"));
+
+            //local need to be skipped
             Assert.assertFalse(requires.containsKey("fake_submodule"));
         }
     }
