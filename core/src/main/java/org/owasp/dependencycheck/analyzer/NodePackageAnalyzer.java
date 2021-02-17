@@ -280,14 +280,6 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
      * @return should you skip this dependency ?
      */
     public static boolean shouldSkipDependency(String name, String version, boolean optional, boolean fileExist) {
-        // some package manager can handle alias, yarn for example, but npm doesn't support it
-        if (version.startsWith("npm:")) {
-            //TODO make this an error that gets logged
-            LOGGER.warn("dependency skipped: package.json contain an alias for {} => {} npm audit doesn't "
-                    + "support aliases", name, version.replace("npm:", ""));
-            return true;
-        }
-
         if (optional && !fileExist) {
             LOGGER.warn("dependency skipped: node module {} seems optional and not installed", name);
             return true;
