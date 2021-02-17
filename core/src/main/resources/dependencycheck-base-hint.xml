@@ -373,5 +373,15 @@
             <evidence type="product" source="hint analyzer" name="product" value="modules" confidence="HIGHEST"/>
             <evidence type="product" source="hint analyzer" name="product" value="java8" confidence="HIGHEST"/>
         </add>
+    </hint>
+    <hint>
+        <given>
+            <evidence type="vendor" source="pom" name="groupid" value="org.cryptacular"/>
+            <evidence type="vendor" source="jar" name="package name" value="cryptacular"/>
+        </given>
+        <add>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="Virginia Tech" confidence="HIGHEST"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="vt" confidence="HIGHEST"/>
+        </add>
     </hint>  
 </hints>
