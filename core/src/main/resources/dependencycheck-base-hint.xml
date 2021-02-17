@@ -383,5 +383,13 @@
             <evidence type="vendor" source="hint analyzer" name="vendor" value="Virginia Tech" confidence="HIGHEST"/>
             <evidence type="vendor" source="hint analyzer" name="vendor" value="vt" confidence="HIGHEST"/>
         </add>
+    </hint>
+        <hint>
+        <given>
+            <evidence type="vendor" source="pom" name="url" value="https://www.bouncycastle.org/fips-java"/>
+        </given>
+        <add>
+            <evidence type="product" source="hint analyzer" name="product" value="legion-of-the-bouncy-castle-fips-java" confidence="HIGHEST"/>
+        </add>
     </hint>  
 </hints>
