@@ -133,19 +133,6 @@ public class NodeAuditSearch {
         return submitPackage(packageJson, key, 0);
     }
 
-    private String parseErrorMessage(HttpURLConnection conn) {
-        try (InputStream in = new BufferedInputStream(conn.getErrorStream());
-             JsonReader jsonReader = Json.createReader(in)) {
-            final JSONObject jsonResponse = new JSONObject(jsonReader.readObject().toString());
-            if (jsonResponse.has("message")) {
-                return (String) jsonResponse.get("message");
-            }
-        } catch (Exception ex) {
-            LOGGER.debug("Error parsing error message from Node Audit API. Error: {}", ex.getMessage());
-        }
-        return null;
-    }
-
     /**
      * Submits the package.json file to the Node Audit API and returns a list of
      * zero or more Advisories.
@@ -219,13 +206,7 @@ public class NodeAuditSearch {
                 case 400:
                     LOGGER.debug("Invalid payload submitted to Node Audit API. Received response code: {} {}",
                             conn.getResponseCode(), conn.getResponseMessage());
-
-                    String errorMessage = parseErrorMessage(conn);
-                    if (errorMessage == null) {
-                        errorMessage = "Invalid payload submitted to Node Audit API.";
-                    }
-
-                    throw new SearchException("Could not perform Node Audit analysis. " + errorMessage);
+                    throw new SearchException("Could not perform Node Audit analysis. Invalid payload submitted to Node Audit API.");
                 default:
                     LOGGER.debug("Could not connect to Node Audit API. Received response code: {} {}",
                             conn.getResponseCode(), conn.getResponseMessage());
