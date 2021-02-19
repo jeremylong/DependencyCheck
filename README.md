@@ -209,6 +209,15 @@ To build dependency-check run the command:
 mvn -s settings.xml install
 ```
 
+Building The Docker Image
+-------------
+To build dependency-check docker image run the command:
+
+```
+mvn -s settings.xml install
+./build-docker.sh
+```
+
 Mailing List
 ------------
 
