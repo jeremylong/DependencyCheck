@@ -17,9 +17,11 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import com.google.common.io.Resources;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
@@ -340,10 +342,10 @@ public final class ConnectionFactory {
     private String getResource(String resource) throws IOException {
         String dbStructure;
         try {
-            LOGGER.debug("Attempting to find " + resource);
-            dbStructure = IOUtils.resourceToString(resource, StandardCharsets.UTF_8);
-        } catch (IOException ex) {
-            LOGGER.debug("IOUtils.resourceToString(String) failed to find the DB Structure Resource", ex);
+            final URL url = Resources.getResource(resource);
+            dbStructure = Resources.toString(url, StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException ex) {
+            LOGGER.debug("Resources.getResource(String) failed to find the DB Structure Resource", ex);
             try (InputStream is = FileUtils.getResourceAsStream(resource)) {
                 dbStructure = IOUtils.toString(is, StandardCharsets.UTF_8);
             }
