@@ -157,12 +157,10 @@ public final class FileUtils {
      */
     @Nullable
     public static InputStream getResourceAsStream(@NotNull String resource) {
-        final InputStream inputStream = Thread.currentThread()
-                .getContextClassLoader().getResourceAsStream(resource);
-//        final ClassLoader classLoader = FileUtils.class.getClassLoader();
-//        final InputStream inputStream = classLoader != null
-//                ? classLoader.getResourceAsStream(resource)
-//                : ClassLoader.getSystemResourceAsStream(resource);
+        final ClassLoader classLoader = FileUtils.class.getClassLoader();
+        final InputStream inputStream = classLoader != null
+                ? classLoader.getResourceAsStream(resource)
+                : ClassLoader.getSystemResourceAsStream(resource);
 
         if (inputStream == null) {
             try {
