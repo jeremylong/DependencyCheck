@@ -122,7 +122,7 @@ public final class CveDB implements AutoCloseable {
      * Utility to extract information from
      * {@linkplain org.owasp.dependencycheck.data.nvd.json.DefCveItem}.
      */
-    private final CveItemOperator cveItemConverter = new CveItemOperator();
+    private final CveItemOperator cveItemConverter;
     /**
      * Flag indicating if the database is Oracle.
      */
@@ -237,7 +237,8 @@ public final class CveDB implements AutoCloseable {
      */
     public CveDB(Settings settings) throws DatabaseException {
         this.settings = settings;
-        this.cpeStartsWithFilter = this.settings.getString(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER, "cpe:2.3:a:");
+        this.cpeStartsWithFilter = settings.getString(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER, "cpe:2.3:a:");
+        this.cveItemConverter = new CveItemOperator(cpeStartsWithFilter);
         connectionFactory = new ConnectionFactory(settings);
         open();
     }
@@ -852,13 +853,15 @@ public final class CveDB implements AutoCloseable {
             if (cveItemConverter.isRejected(description)) {
                 deleteVulnerability(cveId);
             } else {
-                final int vulnerabilityId = updateOrInsertVulnerability(cve, description);
-                updateVulnerabilityInsertCwe(vulnerabilityId, cve);
-                updateVulnerabilityInsertReferences(vulnerabilityId, cve);
+                if (cveItemConverter.testCveCpeStartWithFilter(cve)) {
+                    final int vulnerabilityId = updateOrInsertVulnerability(cve, description);
+                    updateVulnerabilityInsertCwe(vulnerabilityId, cve);
+                    updateVulnerabilityInsertReferences(vulnerabilityId, cve);
 
-                //parse the CPEs outside of a synchronized method
-                final List<VulnerableSoftware> software = parseCpes(cve);
-                updateVulnerabilityInsertSoftware(vulnerabilityId, cveId, software, baseEcosystem);
+                    //parse the CPEs outside of a synchronized method
+                    final List<VulnerableSoftware> software = parseCpes(cve);
+                    updateVulnerabilityInsertSoftware(vulnerabilityId, cveId, software, baseEcosystem);
+                }
             }
 
         } catch (SQLException ex) {

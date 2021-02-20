@@ -39,6 +39,7 @@ import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
 import org.owasp.dependencycheck.data.nvd.ecosystem.CveEcosystemMapper;
 import org.owasp.dependencycheck.data.nvd.json.CpeMatchStreamCollector;
 import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
+import org.owasp.dependencycheck.data.nvdcve.CveItemOperator;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -58,10 +59,9 @@ public final class NvdCveParser {
      */
     private final CveDB cveDB;
     /**
-     * The filter for 2.3 CPEs in the CVEs - we don't import unless we get a
-     * match.
+     * A reference to the ODC settings.
      */
-    private final String cpeStartsWithFilter;
+    private final Settings settings;
 
     /**
      * Creates a new NVD CVE JSON Parser.
@@ -70,7 +70,7 @@ public final class NvdCveParser {
      * @param db a reference to the database
      */
     public NvdCveParser(Settings settings, CveDB db) {
-        this.cpeStartsWithFilter = settings.getString(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER, "cpe:2.3:a:");
+        this.settings = settings;
         this.cveDB = db;
     }
 
@@ -91,15 +91,13 @@ public final class NvdCveParser {
         try (InputStream fin = new FileInputStream(file);
                 InputStream in = new GZIPInputStream(fin);
                 InputStreamReader isr = new InputStreamReader(in, UTF_8);
-                JsonParser parser = objectReader.getFactory().createParser(in)) {
+                JsonParser parser = objectReader.getFactory().createParser(isr)) {
 
             final CveEcosystemMapper mapper = new CveEcosystemMapper();
             init(parser);
             while (parser.nextToken() == JsonToken.START_OBJECT) {
                 final DefCveItem cve = objectReader.readValue(parser);
-                if (testCveCpeStartWithFilter(cve)) {
-                    cveDB.updateVulnerability(cve, mapper.getEcosystem(cve));
-                }
+                cveDB.updateVulnerability(cve, mapper.getEcosystem(cve));
             }
         } catch (FileNotFoundException ex) {
             LOGGER.error(ex.getMessage());
@@ -131,21 +129,5 @@ public final class NvdCveParser {
                 }
             }
         } while (true);
-    }
-
-    /**
-     * Tests the CVE's CPE entries against the starts with filter. In general
-     * this limits the CVEs imported to just application level vulnerabilities.
-     *
-     * @param cve the CVE entry to examine
-     * @return <code>true</code> if the CVE affects CPEs identified by the
-     * configured CPE Starts with filter
-     */
-    protected boolean testCveCpeStartWithFilter(final DefCveItem cve) {
-        //cycle through to see if this is a CPE we care about (use the CPE filters
-        return cve.getConfigurations().getNodes().stream()
-                .collect(NodeFlatteningCollector.getInstance())
-                .collect(CpeMatchStreamCollector.getInstance())
-                .anyMatch(cpe -> cpe.getCpe23Uri().startsWith(cpeStartsWithFilter));
     }
 }
