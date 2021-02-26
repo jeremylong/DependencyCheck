@@ -59,12 +59,9 @@
       "results": [
         #set($needsComma=0)
         #foreach($dependency in $dependencies)
-        #if($foreach.count > 1)
-            #set($needsComma=1)
-        #end
         #set($depIndex=$foreach.count - 1)
-          #foreach($vuln in $dependency.getVulnerabilities(true))#if($needsComma==1 || $foreach.count > 1),#end {
-          #set($needsComma=0)
+          #foreach($vuln in $dependency.getVulnerabilities(true))#if($needsComma==1),#end {
+          #set($needsComma=1)
           "ruleId": "$enc.json($vuln.name)",
           "message": {
             "text": "$enc.json($vuln.name)#if($vuln.description) - $enc.json($vuln.description)#end"
