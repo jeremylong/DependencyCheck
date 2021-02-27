@@ -1,4 +1,4 @@
-FROM golang:1.14-alpine AS go
+FROM golang:1.16-alpine AS go
 
 FROM azul/zulu-openjdk-alpine:14 AS jlink
 
@@ -7,8 +7,8 @@ RUN "$JAVA_HOME/bin/jlink" --compress=2 --module-path /opt/java/openjdk/jmods --
 FROM mcr.microsoft.com/dotnet/core/runtime:3.1-alpine
 
 ARG VERSION
-ARG POSTGRES_DRIVER_VERSION=42.2.6
-ARG MYSQL_DRIVER_VERSION=8.0.17
+ARG POSTGRES_DRIVER_VERSION=42.2.19
+ARG MYSQL_DRIVER_VERSION=8.0.23
 ARG UID=1000
 ARG GID=1000
 
