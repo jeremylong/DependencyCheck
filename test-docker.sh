@@ -47,6 +47,9 @@ fi
 if [ -f "$HOME/OWASP-Dependency-Check/reports/dependency-check-report.json" ]; then
     rm "$HOME/OWASP-Dependency-Check/reports/dependency-check-report.json"
 fi
+if [ -f "$HOME/OWASP-Dependency-Check/reports/odc.log" ]; then
+    rm "$HOME/OWASP-Dependency-Check/reports/odc.log"
+fi
 
 # Make sure we are using the latest version
 # docker pull owasp/dependency-check
@@ -61,7 +64,8 @@ docker run --rm \
     --scan /src \
     --format "JSON" \
     --project "test scan" \
-    --out /report
+    --out /report \
+    --log /report/odc.log
 
 # return to original working directory
 cd -
