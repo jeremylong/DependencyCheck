@@ -156,7 +156,7 @@ Copyright (c) 2012 - Jeremy Long
         <aho-corasick-double-array-trie.version>1.2.2</aho-corasick-double-array-trie.version>
         <junit.version>4.13.2</junit.version>
         <hamcrest-core.version>2.2</hamcrest-core.version>
-        <jackson.version>2.12.1</jackson.version>
+        <jackson.version>2.12.2</jackson.version>
         <jmockit.version>1.49</jmockit.version>
         <mockito-core.version>3.8.0</mockito-core.version>
         <jsoup.version>1.13.1</jsoup.version>
