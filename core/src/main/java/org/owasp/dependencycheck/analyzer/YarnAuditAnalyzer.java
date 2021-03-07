@@ -82,6 +82,15 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
      * The path to the `yarn` executable.
      */
     private String yarnPath;
+
+    /**
+     * Analyzes the yarn lock file to determine vulnerable dependencies. Uses
+     * yarn audit --offline to generate the payload to be sent to the NPM API.
+     *
+     * @param dependency the yarn lock file
+     * @param engine the analysis engine
+     * @throws AnalysisException thrown if there is an error analyzing the file
+     */
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         if (dependency.getDisplayFileName().equals(dependency.getFileName())) {
@@ -166,6 +175,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
             throw new InitializationException("Unable to read yarn audit output.", ex);
         }
     }
+
     /**
      * Attempts to determine the path to `yarn`.
      *
@@ -190,6 +200,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
         }
         return yarnPath;
     }
+
     private JsonObject fetchYarnAuditJson(Dependency dependency, boolean skipDevDependencies) throws AnalysisException {
         final File folder = dependency.getActualFile().getParentFile();
         if (!folder.isDirectory()) {
