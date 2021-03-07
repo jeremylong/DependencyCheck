@@ -137,6 +137,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * property to its original value.
      */
     private String accessExternalSchema;
+
     /**
      * Creates a new {@link Mode#STANDALONE} Engine.
      *
@@ -602,7 +603,11 @@ public class Engine implements FileFilter, AutoCloseable {
                 + "acceptance for use in an AS IS condition, and there are NO warranties, implied or otherwise, with regard to the analysis "
                 + "or its use. Any use of the tool and the reporting provided is at the user’s risk. In no event shall the copyright holder "
                 + "or OWASP be held liable for any damages whatsoever arising out of or in connection with the use of this tool, the analysis "
-                + "performed, or the resulting report.\n\n");
+                + "performed, or the resulting report.\n\n\n"
+                + "   About ODC: https://jeremylong.github.io/DependencyCheck/general/internals.html\n"
+                + "   False Positives: https://jeremylong.github.io/DependencyCheck/general/suppression.html\n"
+                + "\n"
+                + "💖 Sponsor: https://github.com/sponsors/jeremylong\n\n");
         LOGGER.debug("\n----------------------------------------------------\nBEGIN ANALYSIS\n----------------------------------------------------");
         LOGGER.info("Analysis Started");
         final long analysisStart = System.currentTimeMillis();
@@ -1077,7 +1082,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * during analysis
      */
     private void throwFatalExceptionCollection(String message, @NotNull final Throwable throwable,
-                                               @NotNull final List<Throwable> exceptions) throws ExceptionCollection {
+            @NotNull final List<Throwable> exceptions) throws ExceptionCollection {
         LOGGER.error(message);
         LOGGER.debug("", throwable);
         exceptions.add(throwable);
@@ -1101,7 +1106,6 @@ public class Engine implements FileFilter, AutoCloseable {
     }
 
     //CSOFF: LineLength
-
     /**
      * Writes the report to the given output directory.
      *
@@ -1134,13 +1138,12 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     @Deprecated
     public synchronized void writeReports(String applicationName, @Nullable final String groupId,
-                                          @Nullable final String artifactId, @Nullable final String version,
-                                          @NotNull final File outputDir, String format) throws ReportException {
+            @Nullable final String artifactId, @Nullable final String version,
+            @NotNull final File outputDir, String format) throws ReportException {
         writeReports(applicationName, groupId, artifactId, version, outputDir, format, null);
     }
 
     //CSOFF: LineLength
-
     /**
      * Writes the report to the given output directory.
      *
@@ -1156,8 +1159,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * @throws ReportException thrown if there is an error generating the report
      */
     public synchronized void writeReports(String applicationName, @Nullable final String groupId,
-                                          @Nullable final String artifactId, @Nullable final String version,
-                                          @NotNull final File outputDir, String format, ExceptionCollection exceptions) throws ReportException {
+            @Nullable final String artifactId, @Nullable final String version,
+            @NotNull final File outputDir, String format, ExceptionCollection exceptions) throws ReportException {
         if (mode == Mode.EVIDENCE_COLLECTION) {
             throw new UnsupportedOperationException("Cannot generate report in evidence collection mode.");
         }
