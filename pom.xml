@@ -166,7 +166,7 @@ Copyright (c) 2012 - Jeremy Long
         <maven-plugin-annotations.version>3.6.0</maven-plugin-annotations.version>
         <maven-reporting-api.version>3.0</maven-reporting-api.version>
         <commons-collections.version>3.2.2</commons-collections.version>
-        <org.apache.velocity.version>2.2</org.apache.velocity.version>
+        <org.apache.velocity.version>2.3</org.apache.velocity.version>
         <plexus-sec-dispatcher.version>1.4</plexus-sec-dispatcher.version>
         <maven-dependency-tree.version>3.0.1</maven-dependency-tree.version>
         <org.glassfish.javax.json.version>1.1.4</org.glassfish.javax.json.version>
