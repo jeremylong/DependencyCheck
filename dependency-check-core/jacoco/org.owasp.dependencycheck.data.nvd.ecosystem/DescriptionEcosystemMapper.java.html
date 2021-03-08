@@ -161,7 +161,7 @@ public class DescriptionEcosystemMapper {
 <span class="fc" id="L161">                return false;</span>
             }
 <span class="fc bfc" id="L163" title="All 2 branches covered.">            if (c.charAt(pos) == ':') {</span>
-<span class="pc bpc" id="L164" title="2 of 4 branches missed.">                return c.charAt(pos + 1) == '/' &amp;&amp; c.charAt(pos + 2) == '/';</span>
+<span class="pc bpc" id="L164" title="1 of 4 branches missed.">                return c.charAt(pos + 1) == '/' &amp;&amp; c.charAt(pos + 2) == '/';</span>
             }
         }
 
@@ -238,8 +238,8 @@ public class DescriptionEcosystemMapper {
 
 <span class="fc" id="L239">                final String ecosystem = value.getEcosystem();</span>
 <span class="fc bfc" id="L240" title="All 2 branches covered.">                if (Ecosystem.NATIVE.equals(ecosystem)) { // TODO could be checked afterwards</span>
-<span class="pc bpc" id="L241" title="1 of 2 branches missed.">                    if (StringUtils.contains(c, &quot;android&quot;)) {</span>
-<span class="nc" id="L242">                        return;</span>
+<span class="fc bfc" id="L241" title="All 2 branches covered.">                    if (StringUtils.contains(c, &quot;android&quot;)) {</span>
+<span class="fc" id="L242">                        return;</span>
                     }
                 }
             }

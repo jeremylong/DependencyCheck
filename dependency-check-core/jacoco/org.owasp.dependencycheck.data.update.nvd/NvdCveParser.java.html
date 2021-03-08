@@ -39,6 +39,7 @@ import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
 import org.owasp.dependencycheck.data.nvd.ecosystem.CveEcosystemMapper;
 import org.owasp.dependencycheck.data.nvd.json.CpeMatchStreamCollector;
 import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
+import org.owasp.dependencycheck.data.nvdcve.CveItemOperator;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -52,16 +53,15 @@ public final class NvdCveParser {
     /**
      * The logger.
      */
-<span class="fc" id="L55">    private static final Logger LOGGER = LoggerFactory.getLogger(NvdCveParser.class);</span>
+<span class="fc" id="L56">    private static final Logger LOGGER = LoggerFactory.getLogger(NvdCveParser.class);</span>
     /**
      * A reference to the CVE DB.
      */
     private final CveDB cveDB;
     /**
-     * The filter for 2.3 CPEs in the CVEs - we don't import unless we get a
-     * match.
+     * A reference to the ODC settings.
      */
-    private final String cpeStartsWithFilter;
+    private final Settings settings;
 
     /**
      * Creates a new NVD CVE JSON Parser.
@@ -70,7 +70,7 @@ public final class NvdCveParser {
      * @param db a reference to the database
      */
 <span class="fc" id="L72">    public NvdCveParser(Settings settings, CveDB db) {</span>
-<span class="fc" id="L73">        this.cpeStartsWithFilter = settings.getString(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER, &quot;cpe:2.3:a:&quot;);</span>
+<span class="fc" id="L73">        this.settings = settings;</span>
 <span class="fc" id="L74">        this.cveDB = db;</span>
 <span class="fc" id="L75">    }</span>
 
@@ -91,62 +91,44 @@ public final class NvdCveParser {
 <span class="fc" id="L91">        try (InputStream fin = new FileInputStream(file);</span>
 <span class="fc" id="L92">                InputStream in = new GZIPInputStream(fin);</span>
 <span class="fc" id="L93">                InputStreamReader isr = new InputStreamReader(in, UTF_8);</span>
-<span class="fc" id="L94">                JsonParser parser = objectReader.getFactory().createParser(in)) {</span>
+<span class="fc" id="L94">                JsonParser parser = objectReader.getFactory().createParser(isr)) {</span>
 
 <span class="fc" id="L96">            final CveEcosystemMapper mapper = new CveEcosystemMapper();</span>
 <span class="fc" id="L97">            init(parser);</span>
 <span class="fc bfc" id="L98" title="All 2 branches covered.">            while (parser.nextToken() == JsonToken.START_OBJECT) {</span>
 <span class="fc" id="L99">                final DefCveItem cve = objectReader.readValue(parser);</span>
-<span class="fc bfc" id="L100" title="All 2 branches covered.">                if (testCveCpeStartWithFilter(cve)) {</span>
-<span class="fc" id="L101">                    cveDB.updateVulnerability(cve, mapper.getEcosystem(cve));</span>
-                }
-<span class="fc" id="L103">            }</span>
-<span class="nc" id="L104">        } catch (FileNotFoundException ex) {</span>
-<span class="nc" id="L105">            LOGGER.error(ex.getMessage());</span>
-<span class="nc" id="L106">            throw new UpdateException(&quot;Unable to find the NVD CVE file, `&quot; + file + &quot;`, to parse&quot;, ex);</span>
-<span class="nc" id="L107">        } catch (IOException ex) {</span>
-<span class="nc" id="L108">            LOGGER.error(&quot;Error reading NVD JSON data: {}&quot;, file);</span>
-<span class="nc" id="L109">            LOGGER.debug(&quot;Error extracting the NVD JSON data from: &quot; + file.toString(), ex);</span>
-<span class="nc" id="L110">            throw new UpdateException(&quot;Unable to find the NVD CVE file to parse&quot;, ex);</span>
-<span class="fc" id="L111">        }</span>
-<span class="fc" id="L112">    }</span>
+<span class="fc" id="L100">                cveDB.updateVulnerability(cve, mapper.getEcosystem(cve));</span>
+<span class="fc" id="L101">            }</span>
+<span class="nc" id="L102">        } catch (FileNotFoundException ex) {</span>
+<span class="nc" id="L103">            LOGGER.error(ex.getMessage());</span>
+<span class="nc" id="L104">            throw new UpdateException(&quot;Unable to find the NVD CVE file, `&quot; + file + &quot;`, to parse&quot;, ex);</span>
+<span class="nc" id="L105">        } catch (IOException ex) {</span>
+<span class="nc" id="L106">            LOGGER.error(&quot;Error reading NVD JSON data: {}&quot;, file);</span>
+<span class="nc" id="L107">            LOGGER.debug(&quot;Error extracting the NVD JSON data from: &quot; + file.toString(), ex);</span>
+<span class="nc" id="L108">            throw new UpdateException(&quot;Unable to find the NVD CVE file to parse&quot;, ex);</span>
+<span class="fc" id="L109">        }</span>
+<span class="fc" id="L110">    }</span>
 
     protected void init(JsonParser parser) throws IOException {
-<span class="fc" id="L115">        JsonToken nextToken = parser.nextToken();</span>
-<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        if (nextToken != JsonToken.START_OBJECT) {</span>
-<span class="nc" id="L117">            throw new IOException(&quot;Expected &quot; + JsonToken.START_OBJECT + &quot;, got &quot; + nextToken);</span>
+<span class="fc" id="L113">        JsonToken nextToken = parser.nextToken();</span>
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">        if (nextToken != JsonToken.START_OBJECT) {</span>
+<span class="nc" id="L115">            throw new IOException(&quot;Expected &quot; + JsonToken.START_OBJECT + &quot;, got &quot; + nextToken);</span>
         }
 
         do {
-<span class="fc" id="L121">            nextToken = parser.nextToken();</span>
-<span class="pc bpc" id="L122" title="1 of 2 branches missed.">            if (nextToken == null) {</span>
-<span class="nc" id="L123">                break;</span>
+<span class="fc" id="L119">            nextToken = parser.nextToken();</span>
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">            if (nextToken == null) {</span>
+<span class="nc" id="L121">                break;</span>
             }
 
-<span class="fc bfc" id="L126" title="All 2 branches covered.">            if (nextToken.isStructStart()) {</span>
-<span class="pc bpc" id="L127" title="1 of 2 branches missed.">                if (nextToken == JsonToken.START_ARRAY) {</span>
-<span class="fc" id="L128">                    break;</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">            if (nextToken.isStructStart()) {</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">                if (nextToken == JsonToken.START_ARRAY) {</span>
+<span class="fc" id="L126">                    break;</span>
                 } else {
-<span class="nc" id="L130">                    parser.skipChildren();</span>
+<span class="nc" id="L128">                    parser.skipChildren();</span>
                 }
             }
         } while (true);
-<span class="fc" id="L134">    }</span>
-
-    /**
-     * Tests the CVE's CPE entries against the starts with filter. In general
-     * this limits the CVEs imported to just application level vulnerabilities.
-     *
-     * @param cve the CVE entry to examine
-     * @return &lt;code&gt;true&lt;/code&gt; if the CVE affects CPEs identified by the
-     * configured CPE Starts with filter
-     */
-    protected boolean testCveCpeStartWithFilter(final DefCveItem cve) {
-        //cycle through to see if this is a CPE we care about (use the CPE filters
-<span class="fc" id="L146">        return cve.getConfigurations().getNodes().stream()</span>
-<span class="fc" id="L147">                .collect(NodeFlatteningCollector.getInstance())</span>
-<span class="fc" id="L148">                .collect(CpeMatchStreamCollector.getInstance())</span>
-<span class="fc" id="L149">                .anyMatch(cpe -&gt; cpe.getCpe23Uri().startsWith(cpeStartsWithFilter));</span>
-    }
+<span class="fc" id="L132">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

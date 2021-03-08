@@ -25,7 +25,7 @@ under the License.
     <language>en-us</language>
     <copyright>&#169;2013 - 2021 OWASP</copyright>
     <item>
-      <title>File: 79,
+      <title>File: 80,
              Errors: 2,
              Warnings: 0,
              Infos: 0
@@ -971,6 +971,20 @@ under the License.
                           <tr>
                 <td>
                   <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#target.it.1751-use-child-repositories.1751-child-one.target.maven-archiver.pom.properties">target/it/1751-use-child-repositories/1751-child-one/target/maven-archiver/pom.properties</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven/checkstyle.html#target.local-repo.com.google.guava.guava.resolver-status.properties">target/local-repo/com/google/guava/guava/resolver-status.properties</a>
                 </td>
                 <td>
                   0
