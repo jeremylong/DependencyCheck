@@ -2,6 +2,17 @@
 
 Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
 
+## [Version 6.1.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.1.2) (2021-03-08)
+
+### Changes
+
+- Fixed a bug in the Sarif report generation.
+- Fixed a bug with the Ant task not being able to read the dependency-check properties file in 6.1.1.
+- Added a new CPE matching strategy to reduce false negatives.
+- CLI and Ant task will no longer be published to bintray.
+- Several minor bug fixes.
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/22?closed=1).
+
 ## [Version 6.1.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.1.1) (2021-02-13)
 
 ### Changes

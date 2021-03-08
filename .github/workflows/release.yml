@@ -193,9 +193,12 @@ jobs:
           release_name: Version ${{ env.VERSION }}
           body: |
             Changes in this Release
-            - Added missing configuration options for yarn and msbuild.
-            - Several bug fixes.
-            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/21?closed=1).
+            - Fixed a bug in the Sarif report generation.
+            - Fixed a bug with the Ant task not being able to read the dependency-check properties file in 6.1.1.
+            - Added a new CPE matching strategy to reduce false negatives.
+            - CLI and Ant task will no longer be published to bintray.
+            - Several minor bug fixes.
+            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/22?closed=1).
           draft: false
           prerelease: false
       - name: Upload CLI
@@ -261,65 +264,6 @@ jobs:
         with:
           branch: gh-pages
           folder: target/staging
-
-  bintray:
-    name: Publish to bintray
-    runs-on: ubuntu-latest
-    needs: release
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          ref: release
-      - name: Get version
-        id: get-version
-        run: |
-          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-      - name: Download release build
-        uses: actions/download-artifact@v2
-        with:
-          name: archive-release
-      - uses: reznikmm/upload-bintray-action@v4
-        with:
-          subject: jeremy-long
-          repository: owasp
-          package: dependency-check
-          version: ${{ env.VERSION }}
-          sourcePath: 'cli/target/dependency-check-${{env.VERSION}}-release.zip'
-          override: 1
-          username: jeremy-long
-          apiKey: ${{secrets.BINTRAY_API_KEY}}
-      - uses: reznikmm/upload-bintray-action@v4
-        with:
-          subject: jeremy-long
-          repository: owasp
-          package: dependency-check
-          version: ${{ env.VERSION }}
-          sourcePath: 'cli/target/dependency-check-${{env.VERSION}}-release.zip.asc'
-          override: 1
-          username: jeremy-long
-          apiKey: ${{secrets.BINTRAY_API_KEY}}
-      - uses: reznikmm/upload-bintray-action@v4
-        with:
-          subject: jeremy-long
-          repository: owasp
-          package: dependency-check-ant
-          version: ${{ env.VERSION }}
-          sourcePath: 'ant/target/dependency-check-ant-${{env.VERSION}}-release.zip'
-          override: 1
-          username: jeremy-long
-          apiKey: ${{secrets.BINTRAY_API_KEY}}
-      - uses: reznikmm/upload-bintray-action@v4
-        with:
-          subject: jeremy-long
-          repository: owasp
-          package: dependency-check-ant
-          version: ${{ env.VERSION }}
-          sourcePath: 'ant/target/dependency-check-ant-${{env.VERSION}}-release.zip.asc'
-          override: 1
-          username: jeremy-long
-          apiKey: ${{secrets.BINTRAY_API_KEY}}
           
   bumpversion:
     name: Bump Development Version
