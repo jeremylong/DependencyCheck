@@ -33,6 +33,7 @@ import java.sql.Statement;
 import javax.annotation.concurrent.ThreadSafe;
 import org.anarres.jdiagnostics.DefaultQuery;
 import org.apache.commons.io.IOUtils;
+import org.h2.jdbcx.JdbcConnectionPool;
 import org.owasp.dependencycheck.utils.DBUtils;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
@@ -50,12 +51,12 @@ import org.slf4j.LoggerFactory;
  * @author Jeremy Long
  */
 @ThreadSafe
-public final class ConnectionFactory {
+public final class DatabaseManager {
 
     /**
      * The Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseManager.class);
     /**
      * Resource location for SQL file used to create the database schema.
      */
@@ -94,13 +95,21 @@ public final class ConnectionFactory {
      */
     private final Settings settings;
 
+    private boolean isH2;
+    private boolean isOracle;
+    private String databaseProductName;
+    private JdbcConnectionPool h2ConnectionPool;
+
     /**
      * Private constructor for this factory class; no instance is ever needed.
      *
      * @param settings the configured settings
+     * @throws DatabaseException thrown if we are unable to connect to the
+     * database
      */
-    public ConnectionFactory(Settings settings) {
+    public DatabaseManager(Settings settings) throws DatabaseException {
         this.settings = settings;
+        initialize();
     }
 
     /**
@@ -110,11 +119,7 @@ public final class ConnectionFactory {
      * @throws DatabaseException thrown if we are unable to connect to the
      * database
      */
-    public synchronized void initialize() throws DatabaseException {
-        //this only needs to be called once.
-        if (connectionString != null) {
-            return;
-        }
+    private void initialize() throws DatabaseException {
         final boolean autoUpdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);
         Connection conn = null;
         try {
@@ -144,9 +149,10 @@ public final class ConnectionFactory {
                 LOGGER.debug("Unable to retrieve the database connection string", ex);
                 throw new DatabaseException("Unable to retrieve the database connection string", ex);
             }
+            isH2 = isH2Connection(connectionString);
             boolean shouldCreateSchema = false;
             try {
-                if (autoUpdate && connectionString.startsWith("jdbc:h2:file:")) { //H2
+                if (autoUpdate && isH2) {
                     shouldCreateSchema = !h2DataFileExists();
                     LOGGER.debug("Need to create DB Structure: {}", shouldCreateSchema);
                 }
@@ -181,6 +187,8 @@ public final class ConnectionFactory {
                     throw new DatabaseException("Unable to connect to the database", ex);
                 }
             }
+            databaseProductName = determineDatabaseProductName(conn);
+            isOracle = "oracle".equals(databaseProductName);
             if (shouldCreateSchema) {
                 try {
                     createTables(conn);
@@ -207,12 +215,29 @@ public final class ConnectionFactory {
     }
 
     /**
+     * Tries to determine the product name of the database.
+     *
+     * @param conn the database connection
+     * @return the product name of the database if successful, {@code null} else
+     */
+    private String determineDatabaseProductName(Connection conn) {
+        try {
+            final String databaseProductName = conn.getMetaData().getDatabaseProductName().toLowerCase();
+            LOGGER.debug("Database product: {}", databaseProductName);
+            return databaseProductName;
+        } catch (SQLException se) {
+            LOGGER.warn("Problem determining database product!", se);
+            return null;
+        }
+    }
+
+    /**
      * Cleans up resources and unloads any registered database drivers. This
      * needs to be called to ensure the driver is unregistered prior to the
      * finalize method being called as during shutdown the class loader used to
      * load the driver may be unloaded prior to the driver being de-registered.
      */
-    public synchronized void cleanup() {
+    public void cleanup() {
         if (driver != null) {
             DriverLoader.cleanup(driver);
             driver = null;
@@ -231,15 +256,14 @@ public final class ConnectionFactory {
      * database connection
      */
     public synchronized Connection getConnection() throws DatabaseException {
-        initialize();
-        final Connection conn;
-        try {
-            conn = DriverManager.getConnection(connectionString, userName, password);
-        } catch (SQLException ex) {
-            LOGGER.debug("", ex);
-            throw new DatabaseException("Unable to connect to the database", ex);
+        if (isH2) {
+            try {
+                return h2ConnectionPool.getConnection();
+            } catch (SQLException ex) {
+                throw new DatabaseException("Error connecting to the database", ex);
+            }
         }
-        return conn;
+        return null;
     }
 
     /**
@@ -282,12 +306,30 @@ public final class ConnectionFactory {
     }
 
     /**
+     * Returns the database product name.
+     *
+     * @return the database product name
+     */
+    public String getDatabaseProductName() {
+        return databaseProductName;
+    }
+
+    /**
      * Determines if the connection string is for an H2 database.
      *
      * @return true if the connection string is for an H2 database
      */
     public boolean isH2Connection() {
-        return isH2Connection(settings);
+        return isH2;
+    }
+
+    /**
+     * Determines if the connection string is for an Oracle database.
+     *
+     * @return true if the connection string is for an Oracle database
+     */
+    public boolean isOracle() {
+        return isOracle;
     }
 
     /**
@@ -306,7 +348,17 @@ public final class ConnectionFactory {
             LOGGER.debug("Unable to get connectionn string", ex);
             return false;
         }
-        return connStr.startsWith("jdbc:h2:file:");
+        return isH2Connection(connStr);
+    }
+
+    /**
+     * Determines if the connection string is for an H2 database.
+     *
+     * @param connectionString the connection string
+     * @return true if the connection string is for an H2 database
+     */
+    public static boolean isH2Connection(String connectionString) {
+        return connectionString.startsWith("jdbc:h2:file:");
     }
 
     /**
@@ -462,4 +514,25 @@ public final class ConnectionFactory {
             DBUtils.closeStatement(ps);
         }
     }
+
+    public void open() {
+        if (isH2 && h2ConnectionPool == null) {
+            h2ConnectionPool = JdbcConnectionPool.create(connectionString, userName, password);
+        }
+    }
+
+    public void close() {
+        if (isH2 && h2ConnectionPool != null) {
+            h2ConnectionPool.dispose();
+            h2ConnectionPool = null;
+        }
+    }
+
+    boolean isOpen() {
+        if (isH2) {
+            return h2ConnectionPool != null;
+        }
+        return false;
+    }
+
 }
