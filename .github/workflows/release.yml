@@ -273,7 +273,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          ref: release
+          ref: main
       - name: Configure Git user
         run: |
           git config user.email "actions@github.com"
@@ -284,8 +284,5 @@ jobs:
         run: |
           mvn --batch-mode release:update-versions
           git commit -am 'snapshot version'
-          git fetch origin main
-          git checkout main
-          git merge release
           git push origin main
           git push origin --delete release
