@@ -256,9 +256,17 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     protected void determineCPE(Dependency dependency) throws CorruptIndexException, IOException, ParseException, AnalysisException {
         boolean identifierAdded;
 
-        if (simpleSearch(dependency)) {
-            return;
-        }
+        Set<String> majorVersions = dependency.getSoftwareIdentifiers()
+                .stream()
+                .filter(i -> i instanceof PurlIdentifier)
+                .map(i -> {
+                    PurlIdentifier p = (PurlIdentifier) i;
+                    DependencyVersion depVersion = DependencyVersionUtil.parseVersion(p.getVersion(), false);
+                    if (depVersion != null) {
+                        return depVersion.getVersionParts().get(0);
+                    }
+                    return null;
+                }).collect(Collectors.toSet());
 
         final Map<String, MutableInt> vendors = new HashMap<>();
         final Map<String, MutableInt> products = new HashMap<>();
@@ -268,6 +276,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             collectTerms(vendors, dependency.getIterator(EvidenceType.VENDOR, confidence));
             LOGGER.debug("vendor search: {}", vendors);
             collectTerms(products, dependency.getIterator(EvidenceType.PRODUCT, confidence));
+            addMajorVersionToTerms(majorVersions, products);
             LOGGER.debug("product search: {}", products);
             if (!vendors.isEmpty() && !products.isEmpty()) {
                 final List<IndexEntry> entries = searchCPE(vendors, products,
@@ -283,7 +292,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                         continue;
                     }
                     previouslyFound.add(e.getDocumentId());
-                    if (verifyEntry(e, dependency)) {
+                    if (verifyEntry(e, dependency, majorVersions)) {
                         final String vendor = e.getVendor();
                         final String product = e.getProduct();
                         LOGGER.debug("identified vendor/product: {}/{}", vendor, product);
@@ -310,6 +319,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * @param evidence an iterable set of evidence to concatenate
      */
     @SuppressWarnings("null")
+
     protected void collectTerms(Map<String, MutableInt> terms, Iterable<Evidence> evidence) {
         for (Evidence e : evidence) {
             String value = cleanseText(e.getValue());
@@ -357,12 +367,38 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                     value = value.substring(0, 1000);
                 }
             }
-            final MutableInt count = terms.get(value);
-            if (count == null) {
-                terms.put(value, new MutableInt(1));
-            } else {
-                count.add(1);
-            }
+            addTerm(terms, value);
+        }
+    }
+
+    private void addMajorVersionToTerms(Set<String> majorVersions, Map<String, MutableInt> products) {
+        Map<String, MutableInt> temp = new HashMap<>();
+        products.entrySet().stream()
+                .filter(term -> term.getKey() != null)
+                .forEach(term -> {
+                    majorVersions.stream()
+                            .filter(version -> (!term.getKey().endsWith(version)
+                            && !Character.isDigit(term.getKey().charAt(term.getKey().length() - 1))
+                            && !products.containsKey(term.getKey() + version)))
+                            .forEach(version -> {
+                                addTerm(temp, term.getKey() + version);
+                            });
+                });
+        products.putAll(temp);
+    }
+
+    /**
+     * Adds a term to the map of terms.
+     *
+     * @param terms the map of terms
+     * @param value the value of the term to add
+     */
+    private void addTerm(Map<String, MutableInt> terms, String value) {
+        final MutableInt count = terms.get(value);
+        if (count == null) {
+            terms.put(value, new MutableInt(1));
+        } else {
+            count.add(1);
         }
     }
 
@@ -587,7 +623,8 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * @param dependency the dependency that the CPE entries could be for.
      * @return whether or not the entry is valid.
      */
-    private boolean verifyEntry(final IndexEntry entry, final Dependency dependency) {
+    private boolean verifyEntry(final IndexEntry entry, final Dependency dependency, 
+            final Set<String> majorVersions) {
         boolean isValid = false;
         //TODO - does this nullify some of the fuzzy matching that happens in the lucene search?
         // for instance CPE some-component and in the evidence we have SomeComponent.
@@ -602,9 +639,15 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                     }
                 }
             }
-        } else if (collectionContainsString(dependency.getEvidence(EvidenceType.PRODUCT), entry.getProduct())
-                && collectionContainsString(dependency.getEvidence(EvidenceType.VENDOR), entry.getVendor())) {
-            isValid = true;
+        } else if (collectionContainsString(dependency.getEvidence(EvidenceType.VENDOR), entry.getVendor())) {
+            if (collectionContainsString(dependency.getEvidence(EvidenceType.PRODUCT), entry.getProduct())) {
+                isValid = true;
+            } else {
+                isValid = majorVersions.stream().filter(version->entry.getProduct().endsWith(version) && entry.getProduct().length()>version.length())
+                        .anyMatch(version ->
+                            collectionContainsString(dependency.getEvidence(EvidenceType.PRODUCT), entry.getProduct().substring(0, entry.getProduct().length()-version.length()))
+                );
+            }
         }
         return isValid;
     }
@@ -993,56 +1036,12 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Performs a simplistic search for CPE entries based on the vendor and
-     * product from a Purl identifier.
+     * Add the given version to the CpeBuilder - this method attempts to parse
+     * out the update from the version and correctly set the value in the CPE.
      *
-     * @param dependency the dependency to perform the search for a CPE
-     * @return <code>true</code> if an identifier is found; otherwise
-     * <code>false</code>
+     * @param depVersion the version to add
+     * @param cpeBuilder a reference to the CPE Builder
      */
-    private boolean simpleSearch(Dependency dependency) {
-        return dependency.getSoftwareIdentifiers()
-                .stream()
-                .filter(i -> i instanceof PurlIdentifier)
-                .map(i -> {
-                    PurlIdentifier p = (PurlIdentifier) i;
-                    String vendor = p.getNamespace();
-                    if (vendor == null) {
-                        vendor = p.getName();
-                    }
-                    String product = p.getName();
-                    DependencyVersion depVersion = DependencyVersionUtil.parseVersion(p.getVersion(), false);
-                    boolean identifierAdded = false;
-                    if (depVersion != null) {
-                        String majorVersion = depVersion.getVersionParts().get(0);
-
-                        Set<Pair<String, String>> simpleMatches = cve.simpleCPESearch(vendor, product, majorVersion);
-                        for (Pair<String, String> match : simpleMatches) {
-                            final Set<CpePlus> cpePlusEntries = cve.getCPEs(vendor, product);
-                            final Set<Cpe> cpes = filterEcosystem(dependency.getEcosystem(), cpePlusEntries);
-                            if (cpes == null || cpes.isEmpty()) {
-                                continue;
-                            }
-
-                            final CpeBuilder cpeBuilder = new CpeBuilder();
-                            cpeBuilder.part(Part.APPLICATION).vendor(match.getLeft()).product(match.getRight());
-                            addVersionAndUpdate(depVersion, cpeBuilder);
-                            try {
-                                final Cpe cpeId = cpeBuilder.build();
-                                final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(cpeId.getVendor(), UTF8),
-                                        URLEncoder.encode(cpeId.getProduct(), UTF8), URLEncoder.encode(cpeId.getVersion(), UTF8));
-                                CpeIdentifier identifier = new CpeIdentifier(cpeId, url, Confidence.HIGHEST);
-                                dependency.addVulnerableSoftwareIdentifier(identifier);
-                                identifierAdded = true;
-                            } catch (CpeValidationException | UnsupportedEncodingException ex) {
-                                LOGGER.debug("Error building CPE ", ex);
-                            }
-                        }
-                    }
-                    return identifierAdded;
-                }).anyMatch(p -> p);
-    }
-
     private void addVersionAndUpdate(DependencyVersion depVersion, final CpeBuilder cpeBuilder) {
         final int idx = depVersion.getVersionParts().size() - 1;
         if (idx > 0 && depVersion.getVersionParts().get(idx)
