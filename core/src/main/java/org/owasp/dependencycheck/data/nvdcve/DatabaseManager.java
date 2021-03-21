@@ -32,6 +32,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.concurrent.ThreadSafe;
 import org.anarres.jdiagnostics.DefaultQuery;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.io.IOUtils;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.owasp.dependencycheck.utils.DBUtils;
@@ -94,11 +95,22 @@ public final class DatabaseManager {
      * The configured settings.
      */
     private final Settings settings;
-
+    /**
+     * Flag indicating if the database connection is for an H2 database.
+     */
     private boolean isH2;
+    /**
+     * Flag indicating if the database connection is for an Oracle database.
+     */
     private boolean isOracle;
+    /**
+     * The database product name.
+     */
     private String databaseProductName;
-    private JdbcConnectionPool h2ConnectionPool;
+    /**
+     * The database connection pool.
+     */
+    private BasicDataSource connectionPool;
 
     /**
      * Private constructor for this factory class; no instance is ever needed.
@@ -125,18 +137,20 @@ public final class DatabaseManager {
         try {
             //load the driver if necessary
             final String driverName = settings.getString(Settings.KEYS.DB_DRIVER_NAME, "");
-            final String driverPath = settings.getString(Settings.KEYS.DB_DRIVER_PATH, "");
-            LOGGER.debug("Loading driver '{}'", driverName);
-            try {
-                if (!driverPath.isEmpty()) {
-                    LOGGER.debug("Loading driver from: {}", driverPath);
-                    driver = DriverLoader.load(driverName, driverPath);
-                } else {
-                    driver = DriverLoader.load(driverName);
+            if (!driverName.isEmpty()) {
+                final String driverPath = settings.getString(Settings.KEYS.DB_DRIVER_PATH, "");
+                LOGGER.debug("Loading driver '{}'", driverName);
+                try {
+                    if (!driverPath.isEmpty()) {
+                        LOGGER.debug("Loading driver from: {}", driverPath);
+                        driver = DriverLoader.load(driverName, driverPath);
+                    } else {
+                        driver = DriverLoader.load(driverName);
+                    }
+                } catch (DriverLoadException ex) {
+                    LOGGER.debug("Unable to load database driver", ex);
+                    throw new DatabaseException("Unable to load database driver", ex);
                 }
-            } catch (DriverLoadException ex) {
-                LOGGER.debug("Unable to load database driver", ex);
-                throw new DatabaseException("Unable to load database driver", ex);
             }
             userName = settings.getString(Settings.KEYS.DB_USER, "dcuser");
             //yes, yes - hard-coded password - only if there isn't one in the properties file.
@@ -245,25 +259,6 @@ public final class DatabaseManager {
         connectionString = null;
         userName = null;
         password = null;
-    }
-
-    /**
-     * Constructs a new database connection object per the database
-     * configuration.
-     *
-     * @return a database connection object
-     * @throws DatabaseException thrown if there is an exception loading the
-     * database connection
-     */
-    public synchronized Connection getConnection() throws DatabaseException {
-        if (isH2) {
-            try {
-                return h2ConnectionPool.getConnection();
-            } catch (SQLException ex) {
-                throw new DatabaseException("Error connecting to the database", ex);
-            }
-        }
-        return null;
     }
 
     /**
@@ -515,24 +510,52 @@ public final class DatabaseManager {
         }
     }
 
+    /**
+     * Opens the database connection pool
+     */
     public void open() {
-        if (isH2 && h2ConnectionPool == null) {
-            h2ConnectionPool = JdbcConnectionPool.create(connectionString, userName, password);
-        }
+            connectionPool = new BasicDataSource();
+            final String driverName = settings.getString(Settings.KEYS.DB_DRIVER_NAME, "");
+            if (!driverName.isEmpty() && !"org.h2.Driver".equals(driverName)) {
+                connectionPool.setDriverClassName(driverName);
+            }
+            connectionPool.setUrl(connectionString);
+            connectionPool.setUsername(userName);
+            connectionPool.setPassword(password);
     }
-
+    /**
+     * Closes the database connection pool.
+     */
     public void close() {
-        if (isH2 && h2ConnectionPool != null) {
-            h2ConnectionPool.dispose();
-            h2ConnectionPool = null;
-        }
+            try {
+                connectionPool.close();
+            } catch (SQLException ex) {
+                LOGGER.debug("Error closing the connection pool", ex);
+            }
+            connectionPool = null;
     }
 
-    boolean isOpen() {
-        if (isH2) {
-            return h2ConnectionPool != null;
-        }
-        return false;
+    /**
+     * Returns if the connection pool is open.
+     * @return if the connection pool is open
+     */
+    public boolean isOpen() {
+        return connectionPool != null;
     }
 
+    /**
+     * Constructs a new database connection object per the database
+     * configuration.
+     *
+     * @return a database connection object
+     * @throws DatabaseException thrown if there is an exception obtaining the
+     * database connection
+     */
+    public Connection getConnection() throws DatabaseException {
+        try {
+            return connectionPool.getConnection();
+        } catch (SQLException ex) {
+            throw new DatabaseException("Error connecting to the database", ex);
+        }
+    }
 }
