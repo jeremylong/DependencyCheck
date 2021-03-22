@@ -168,8 +168,8 @@ public class DependencyVersion implements Iterable&lt;String&gt;, Comparable&lt;
         }
 
 <span class="fc bfc" id="L170" title="All 2 branches covered.">        if (other.versionParts.size() &gt; minVersionMatchLength) {</span>
-<span class="pc bpc" id="L171" title="1 of 2 branches missed.">            for (int i = minVersionMatchLength; i &lt; other.versionParts.size(); i++) {</span>
-<span class="pc bpc" id="L172" title="1 of 2 branches missed.">                if (!&quot;0&quot;.equals(other.versionParts.get(i))) {</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">            for (int i = minVersionMatchLength; i &lt; other.versionParts.size(); i++) {</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">                if (!&quot;0&quot;.equals(other.versionParts.get(i))) {</span>
 <span class="fc" id="L173">                    return false;</span>
                 }
             }

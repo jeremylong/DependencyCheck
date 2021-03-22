@@ -131,9 +131,9 @@ import us.springett.parsers.cpe.exceptions.CpeValidationException;
         }
 <span class="fc" id="L132">        final File packageLock = dependency.getActualFile();</span>
 <span class="fc" id="L133">        final File shrinkwrap = new File(packageLock.getParentFile(), SHRINKWRAP_JSON);</span>
-<span class="fc bfc" id="L134" title="All 4 branches covered.">        if (PACKAGE_LOCK_JSON.equals(dependency.getFileName()) &amp;&amp; shrinkwrap.isFile()) {</span>
-<span class="fc" id="L135">            LOGGER.debug(&quot;Skipping {} because shrinkwrap lock file exists&quot;, dependency.getFilePath());</span>
-<span class="fc" id="L136">            return;</span>
+<span class="pc bpc" id="L134" title="1 of 4 branches missed.">        if (PACKAGE_LOCK_JSON.equals(dependency.getFileName()) &amp;&amp; shrinkwrap.isFile()) {</span>
+<span class="nc" id="L135">            LOGGER.debug(&quot;Skipping {} because shrinkwrap lock file exists&quot;, dependency.getFilePath());</span>
+<span class="nc" id="L136">            return;</span>
         }
 <span class="pc bpc" id="L138" title="1 of 6 branches missed.">        if (!packageLock.isFile() || packageLock.length() == 0 || !shouldProcess(packageLock)) {</span>
 <span class="fc" id="L139">            return;</span>
@@ -199,16 +199,16 @@ import us.springett.parsers.cpe.exceptions.CpeValidationException;
 <span class="nc" id="L199">        } catch (JsonException e) {</span>
 <span class="nc" id="L200">            throw new AnalysisException(String.format(&quot;Failed to parse %s file from the NPM Audit API &quot;</span>
 <span class="nc" id="L201">                    + &quot;(NodeAuditAnalyzer).&quot;, lockFile.getPath()), e);</span>
-<span class="nc" id="L202">        } catch (SearchException ex) {</span>
+<span class="nc" id="L202">        } catch (SearchException e) {</span>
 <span class="nc" id="L203">            final File yarnCheck = new File(lockFile.getParentFile(), &quot;yarn.lock&quot;);</span>
 <span class="nc bnc" id="L204" title="All 2 branches missed.">            if (yarnCheck.exists()) {</span>
-<span class="nc" id="L205">                final String msg = &quot;NodeAuditAnalyzer filed on &quot; + dependency.getActualFilePath()</span>
-                        + &quot; - yarn.lock was identified if generated using synp the lock file may not be in the correct format.&quot;;
+<span class="nc" id="L205">                final String msg = &quot;NodeAuditAnalyzer failed on &quot; + dependency.getActualFilePath()</span>
+                        + &quot; - yarn.lock was found; if package-lock.json was generated using synp, it may not be in the correct format.&quot;;
 <span class="nc" id="L207">                LOGGER.error(msg);</span>
-<span class="nc" id="L208">                throw new AnalysisException(&quot;msg&quot;, ex);</span>
+<span class="nc" id="L208">                throw new AnalysisException(msg, e);</span>
             }
 <span class="nc" id="L210">            LOGGER.error(&quot;NodeAuditAnalyzer failed on {}&quot;, dependency.getActualFilePath());</span>
-<span class="nc" id="L211">            throw ex;</span>
+<span class="nc" id="L211">            throw e;</span>
         }
     }
 

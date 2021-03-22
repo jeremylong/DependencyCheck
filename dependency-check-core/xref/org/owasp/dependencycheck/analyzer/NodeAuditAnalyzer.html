@@ -207,16 +207,16 @@
 <a class="jxr_linenumber" name="L199" href="#L199">199</a>         } <strong class="jxr_keyword">catch</strong> (JsonException e) {
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(String.format(<span class="jxr_string">"Failed to parse %s file from the NPM Audit API "</span>
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>                     + <span class="jxr_string">"(NodeAuditAnalyzer)."</span>, lockFile.getPath()), e);
-<a class="jxr_linenumber" name="L202" href="#L202">202</a>         } <strong class="jxr_keyword">catch</strong> (SearchException ex) {
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>         } <strong class="jxr_keyword">catch</strong> (SearchException e) {
 <a class="jxr_linenumber" name="L203" href="#L203">203</a>             <strong class="jxr_keyword">final</strong> File yarnCheck = <strong class="jxr_keyword">new</strong> File(lockFile.getParentFile(), <span class="jxr_string">"yarn.lock"</span>);
 <a class="jxr_linenumber" name="L204" href="#L204">204</a>             <strong class="jxr_keyword">if</strong> (yarnCheck.exists()) {
-<a class="jxr_linenumber" name="L205" href="#L205">205</a>                 <strong class="jxr_keyword">final</strong> String msg = <span class="jxr_string">"NodeAuditAnalyzer filed on "</span> + dependency.getActualFilePath()
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>                         + <span class="jxr_string">" - yarn.lock was identified if generated using synp the lock file may not be in the correct format."</span>;
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>                 <strong class="jxr_keyword">final</strong> String msg = <span class="jxr_string">"NodeAuditAnalyzer failed on "</span> + dependency.getActualFilePath()
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>                         + <span class="jxr_string">" - yarn.lock was found; if package-lock.json was generated using synp, it may not be in the correct format."</span>;
 <a class="jxr_linenumber" name="L207" href="#L207">207</a>                 LOGGER.error(msg);
-<a class="jxr_linenumber" name="L208" href="#L208">208</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(<span class="jxr_string">"msg"</span>, ex);
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(msg, e);
 <a class="jxr_linenumber" name="L209" href="#L209">209</a>             }
 <a class="jxr_linenumber" name="L210" href="#L210">210</a>             LOGGER.error(<span class="jxr_string">"NodeAuditAnalyzer failed on {}"</span>, dependency.getActualFilePath());
-<a class="jxr_linenumber" name="L211" href="#L211">211</a>             <strong class="jxr_keyword">throw</strong> ex;
+<a class="jxr_linenumber" name="L211" href="#L211">211</a>             <strong class="jxr_keyword">throw</strong> e;
 <a class="jxr_linenumber" name="L212" href="#L212">212</a>         }
 <a class="jxr_linenumber" name="L213" href="#L213">213</a>     }
 <a class="jxr_linenumber" name="L214" href="#L214">214</a> 

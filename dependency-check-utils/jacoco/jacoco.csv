@@ -10,8 +10,8 @@ Dependency-Check Utils,org.owasp.dependencycheck.utils,InvalidSettingException,1
 Dependency-Check Utils,org.owasp.dependencycheck.utils,URLConnectionFactory.new Authenticator() {...},52,0,6,0,7,0,5,0,2,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,URLConnectionFailureException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,URLConnectionFactory,270,97,47,7,59,29,27,8,2,6
-Dependency-Check Utils,org.owasp.dependencycheck.utils,Downloader,120,55,3,1,25,16,6,4,4,4
 Dependency-Check Utils,org.owasp.dependencycheck.utils,ResourceNotFoundException,16,0,0,0,8,0,4,0,4,0
+Dependency-Check Utils,org.owasp.dependencycheck.utils,Downloader,120,55,3,1,25,16,6,4,4,4
 Dependency-Check Utils,org.owasp.dependencycheck.utils,ExtractionException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,TooManyRequestsException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,DownloadFailedException,16,0,0,0,8,0,4,0,4,0
