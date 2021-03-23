@@ -1335,6 +1335,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #3216
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.batch/spring\-batch\-integration@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:spring_integration</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2031
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.wildfly/wildfly\-microprofile\-config\-implementation@.*$</packageUrl>
