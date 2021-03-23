@@ -4208,4 +4208,11 @@
         <cpe>cpe:/a:hawt.io:hawtio</cpe>
         <cpe>cpe:/a:redhat:wildfly</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+         false positive per #3170 ant-contrib is not the Tasks Android app
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/ant\-contrib/ant\-contrib@.*$</packageUrl>
+        <cpe>cpe:/a:tasks:tasks</cpe>
+    </suppress>
 </suppressions>
