@@ -4215,4 +4215,11 @@
         <packageUrl regex="true">^pkg:maven/ant\-contrib/ant\-contrib@.*$</packageUrl>
         <cpe>cpe:/a:tasks:tasks</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+        false positive per #3151
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.camel/camel\-hazelcast@.*$</packageUrl>
+        <cpe>cpe:/a:hazelcast:hazelcast</cpe>
+    </suppress>
 </suppressions>
