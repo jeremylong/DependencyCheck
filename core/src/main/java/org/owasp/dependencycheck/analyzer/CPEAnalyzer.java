@@ -377,7 +377,8 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 .filter(term -> term.getKey() != null)
                 .forEach(term -> {
                     majorVersions.stream()
-                            .filter(version -> (!term.getKey().endsWith(version)
+                            .filter(version -> version != null
+                            && (!term.getKey().endsWith(version)
                             && !Character.isDigit(term.getKey().charAt(term.getKey().length() - 1))
                             && !products.containsKey(term.getKey() + version)))
                             .forEach(version -> {
@@ -623,7 +624,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * @param dependency the dependency that the CPE entries could be for.
      * @return whether or not the entry is valid.
      */
-    private boolean verifyEntry(final IndexEntry entry, final Dependency dependency, 
+    private boolean verifyEntry(final IndexEntry entry, final Dependency dependency,
             final Set<String> majorVersions) {
         boolean isValid = false;
         //TODO - does this nullify some of the fuzzy matching that happens in the lucene search?
@@ -643,10 +644,10 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             if (collectionContainsString(dependency.getEvidence(EvidenceType.PRODUCT), entry.getProduct())) {
                 isValid = true;
             } else {
-                isValid = majorVersions.stream().filter(version->entry.getProduct().endsWith(version) && entry.getProduct().length()>version.length())
-                        .anyMatch(version ->
-                            collectionContainsString(dependency.getEvidence(EvidenceType.PRODUCT), entry.getProduct().substring(0, entry.getProduct().length()-version.length()))
-                );
+                isValid = majorVersions.stream().filter(version -> entry.getProduct().endsWith(version) && entry.getProduct().length() > version.length())
+                        .anyMatch(version
+                                -> collectionContainsString(dependency.getEvidence(EvidenceType.PRODUCT), entry.getProduct().substring(0, entry.getProduct().length() - version.length()))
+                        );
             }
         }
         return isValid;
