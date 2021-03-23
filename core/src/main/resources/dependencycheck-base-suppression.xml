@@ -529,6 +529,7 @@
             11. JAR files should not be identified as github
             12. <cpe>cpe:/a:data-tools_project:data_tools</cpe> is a python project #1961
             13. flow_project reports an Ethereum token issue
+            14. ghost CMS is a node.js package (#3203)
         ]]></notes>
         <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)$</filePath>
         <cpe>cpe:/a:dash:dash</cpe>
@@ -546,6 +547,7 @@
         <cpe>cpe:/a:github:github</cpe>
         <cpe>cpe:/a:data-tools_project:data_tools</cpe>
         <cpe>cpe:/a:flow_project:flow</cpe>
+        <cpe>cpe:/a:ghost:ghost</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
