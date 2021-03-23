@@ -28,6 +28,17 @@
     </hint>
     <hint>
         <given>
+            <evidence regex="true" type="vendor" source="pom" name="groupid" value="org\.springframework\.amqp" confidence="HIGHEST"/>
+        </given>
+        <add>
+            <evidence type="product" source="hint analyzer" name="product" value="spring_advanced_message_queuing_protocol" confidence="HIGHEST"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="SpringSource" confidence="HIGHEST"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="vmware" confidence="HIGHEST"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="pivotal software" confidence="HIGHEST"/>
+        </add>
+    </hint>
+    <hint>
+        <given>
             <evidence regex="true" type="vendor" source="pom" name="groupid" value="org\.springframework.*" confidence="HIGHEST"/>
         </given>
         <add>
