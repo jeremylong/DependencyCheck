@@ -728,6 +728,15 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        Suppresses false positives per issue #3219.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-rsa.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
+        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Suppresses false positives per issue 2246
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.ehcache/ehcache@.*$</packageUrl>
