@@ -63,7 +63,10 @@ jobs:
         run: |
           mvn -s settings.xml release:prepare --no-transfer-progress --batch-mode
           git reset --hard HEAD~1
-          git push origin release --tags
+          git push origin release
+          git checkout main
+          git merge release
+          git push origin main --tags
       - name: Get version
         run: |
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
