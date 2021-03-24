@@ -4222,4 +4222,12 @@
         <packageUrl regex="true">^pkg:maven/org\.apache\.camel/camel\-hazelcast@.*$</packageUrl>
         <cpe>cpe:/a:hazelcast:hazelcast</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+        false positive per #3185 spotify docker-client library is neither docker nor spotify
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.spotify/docker\-client@.*$</packageUrl>
+        <cpe>cpe:/a:docker:docker</cpe>
+        <cpe>cpe:/a:spotify:spotify</cpe>
+    </suppress>
 </suppressions>
