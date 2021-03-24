@@ -1875,7 +1875,7 @@
         <gav regex="true">^(javax\.json|org\.glassfish):javax\.json(-api)?:.*$</gav>
         <cpe>cpe:/a:processing:processing</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         https://github.com/processing/processing is not related to glassfish
         ]]></notes>
@@ -4209,21 +4209,21 @@
         <cpe>cpe:/a:hawt.io:hawtio</cpe>
         <cpe>cpe:/a:redhat:wildfly</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
          false positive per #3170 ant-contrib is not the Tasks Android app
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/ant\-contrib/ant\-contrib@.*$</packageUrl>
         <cpe>cpe:/a:tasks:tasks</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         false positive per #3151
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.camel/camel\-hazelcast@.*$</packageUrl>
         <cpe>cpe:/a:hazelcast:hazelcast</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         false positive per #3185 spotify docker-client library is neither docker nor spotify
         ]]></notes>
@@ -4231,7 +4231,7 @@
         <cpe>cpe:/a:docker:docker</cpe>
         <cpe>cpe:/a:spotify:spotify</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         false positive per #3132 Play WS Standalone (https://github.com/playframework/play-ws)  is not the Play framework (https://github.com/playframework/playframework)
         ]]></notes>
