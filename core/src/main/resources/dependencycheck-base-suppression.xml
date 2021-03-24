@@ -4230,4 +4230,11 @@
         <cpe>cpe:/a:docker:docker</cpe>
         <cpe>cpe:/a:spotify:spotify</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+        false positive per #3132 Play WS Standalone (https://github.com/playframework/play-ws)  is not the Play framework (https://github.com/playframework/playframework)
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.typesafe\.play/play\-.*ws\-standalone.*@.*$</packageUrl>
+        <cpe>cpe:/a:playframework:play_framework</cpe>
+    </suppress>
 </suppressions>
