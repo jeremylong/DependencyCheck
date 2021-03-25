@@ -55,6 +55,7 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
         expResult.add("tgz");
         expResult.add("bz2");
         expResult.add("tbz2");
+        expResult.add("rpm");
         for (String ext : expResult) {
             assertTrue(ext, instance.accept(new File("test." + ext)));
         }

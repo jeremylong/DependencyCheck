@@ -391,7 +391,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
             returnVal = true;
         } else if (!left.isVirtual() && right.isVirtual()) {
             returnVal = false;
-        } else if ((!rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+") && leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+"))
+        } else if ((!rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war|rpm).+") && leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war|rpm).+"))
                 || (rightName.contains("core") && !leftName.contains("core"))
                 || (rightName.contains("kernel") && !leftName.contains("kernel"))
                 || (rightName.contains("server") && !leftName.contains("server"))
@@ -400,7 +400,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
                 || (rightName.contains("akka-stream") && !leftName.contains("akka-stream"))
                 || (rightName.contains("netty-transport") && !leftName.contains("netty-transport"))) {
             returnVal = false;
-        } else if ((rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+") && !leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+"))
+        } else if ((rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war|rpm).+") && !leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war|rpm).+"))
                 || (!rightName.contains("core") && leftName.contains("core"))
                 || (!rightName.contains("kernel") && leftName.contains("kernel"))
                 || (!rightName.contains("server") && leftName.contains("server"))
