@@ -199,16 +199,16 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
         } catch (JsonException e) {
             throw new AnalysisException(String.format("Failed to parse %s file from the NPM Audit API "
                     + "(NodeAuditAnalyzer).", lockFile.getPath()), e);
-        } catch (SearchException ex) {
+        } catch (SearchException e) {
             final File yarnCheck = new File(lockFile.getParentFile(), "yarn.lock");
             if (yarnCheck.exists()) {
-                final String msg = "NodeAuditAnalyzer filed on " + dependency.getActualFilePath()
-                        + " - yarn.lock was identified if generated using synp the lock file may not be in the correct format.";
+                final String msg = "NodeAuditAnalyzer failed on " + dependency.getActualFilePath()
+                        + " - yarn.lock was found; if package-lock.json was generated using synp, it may not be in the correct format.";
                 LOGGER.error(msg);
-                throw new AnalysisException("msg", ex);
+                throw new AnalysisException(msg, e);
             }
             LOGGER.error("NodeAuditAnalyzer failed on {}", dependency.getActualFilePath());
-            throw ex;
+            throw e;
         }
     }
 

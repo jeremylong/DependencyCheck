@@ -1,6 +1,12 @@
 # Release Notes
 
-Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
+## [Version 6.1.3](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.1.3) (2021-03-22)
+
+### Changes
+
+- Modified the new CPE matching strategy to be more performant (#3207)
+- Upgraded a vulnerable dependency (velocity-engine-core/CVE-2020-13936) (#3205)
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/23?closed=1).
 
 ## [Version 6.1.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.1.2) (2021-03-08)
 
@@ -506,3 +512,4 @@ Please see the [dependency-check google group](https://groups.google.com/forum/#
 - If show summary is disabled and vulnerable libraries are found that fail the build details are no longer displayed in the console – only that vulnerable libraries were identified
 - Resolved issues with threading and multiple connections to the embedded H2 database
   - This allows the Jenkins pipeline, Maven Plugin, etc. to safely run parallel executions of dependency-check
+

@@ -38,6 +38,8 @@ CREATE TABLE cweEntry (cveid INT, cwe VARCHAR(20),
 
 CREATE TABLE cpeEcosystemCache (vendor VARCHAR(255), product VARCHAR(255), ecosystem VARCHAR(255), PRIMARY KEY (vendor, product));
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('apache', 'zookeeper', 'MULTIPLE');
+INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('tensorflow', 'tensorflow', 'MULTIPLE');
+INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('scikit-learn', 'scikit-learn', 'MULTIPLE');
 
 CREATE INDEX idxCwe ON cweEntry(cveid);
 CREATE INDEX idxVulnerability ON vulnerability(cve);
@@ -51,4 +53,4 @@ CREATE ALIAS update_vulnerability FOR "org.owasp.dependencycheck.data.nvdcve.H2F
 CREATE ALIAS insert_software FOR "org.owasp.dependencycheck.data.nvdcve.H2Functions.insertSoftware";
 
 CREATE TABLE properties (id varchar(50) PRIMARY KEY, value varchar(500));
-INSERT INTO properties(id, value) VALUES ('version', '5.0');
+INSERT INTO properties(id, value) VALUES ('version', '5.1');

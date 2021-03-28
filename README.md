@@ -218,26 +218,14 @@ mvn -s settings.xml install
 ./build-docker.sh
 ```
 
-Mailing List
-------------
-
-Subscribe: [dependency-check+subscribe@googlegroups.com] [subscribe]
-
-Post: [dependency-check@googlegroups.com] [post]
-
-Archive: [google group](https://groups.google.com/forum/#!forum/dependency-check)
-
-Copyright & License
--
-
-Dependency-Check is Copyright (c) 2012-2020 Jeremy Long. All Rights Reserved.
+License
+-------
 
 Permission to modify and redistribute is granted under the terms of the Apache 2.0 license. See the [LICENSE.txt](https://raw.githubusercontent.com/jeremylong/DependencyCheck/master/LICENSE.txt) file for the full license.
 
 Dependency-Check makes use of several other open source libraries. Please see the [NOTICE.txt][notices] file for more information.
 
+Copyright (c) 2012-2021 Jeremy Long. All Rights Reserved.
 
   [wiki]: https://github.com/jeremylong/DependencyCheck/wiki
-  [subscribe]: mailto:dependency-check+subscribe@googlegroups.com
-  [post]: mailto:dependency-check@googlegroups.com
   [notices]: https://github.com/jeremylong/DependencyCheck/blob/master/NOTICE.txt

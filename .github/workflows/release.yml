@@ -63,7 +63,10 @@ jobs:
         run: |
           mvn -s settings.xml release:prepare --no-transfer-progress --batch-mode
           git reset --hard HEAD~1
-          git push origin release --tags
+          git push origin release
+          git checkout main
+          git merge release
+          git push origin main --tags
       - name: Get version
         run: |
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
@@ -193,12 +196,9 @@ jobs:
           release_name: Version ${{ env.VERSION }}
           body: |
             Changes in this Release
-            - Fixed a bug in the Sarif report generation.
-            - Fixed a bug with the Ant task not being able to read the dependency-check properties file in 6.1.1.
-            - Added a new CPE matching strategy to reduce false negatives.
-            - CLI and Ant task will no longer be published to bintray.
-            - Several minor bug fixes.
-            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/22?closed=1).
+            - Modified the new CPE matching strategy to be more performant (#3207)
+            - Upgraded a vulnerable dependency (velocity-engine-core/CVE-2020-13936) (#3205)
+            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/23?closed=1).
           draft: false
           prerelease: false
       - name: Upload CLI
@@ -273,7 +273,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          ref: release
+          ref: main
       - name: Configure Git user
         run: |
           git config user.email "actions@github.com"
@@ -284,8 +284,5 @@ jobs:
         run: |
           mvn --batch-mode release:update-versions
           git commit -am 'snapshot version'
-          git fetch origin main
-          git checkout main
-          git merge release
           git push origin main
           git push origin --delete release

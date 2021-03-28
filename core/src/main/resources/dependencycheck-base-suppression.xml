@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
-    <suppress base="true">
+   <suppress base="true">
+        <notes><![CDATA[
+        FP per #3230
+        ]]></notes>
+      <packageUrl regex="true">^pkg:maven/io\.github\.x\-stream/mxparser@.*$</packageUrl>
+      <cpe>cpe:/a:xstream_project:xstream</cpe>
+      <cpe>cpe:/a:oracle:jdk</cpe>
+   </suppress>
+   <suppress base="true">
         <notes><![CDATA[
         FP per #3073
         ]]></notes>
@@ -342,6 +350,7 @@
         <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cve>CVE-2018-1258</cve>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -529,6 +538,7 @@
             11. JAR files should not be identified as github
             12. <cpe>cpe:/a:data-tools_project:data_tools</cpe> is a python project #1961
             13. flow_project reports an Ethereum token issue
+            14. ghost CMS is a node.js package (#3203)
         ]]></notes>
         <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)$</filePath>
         <cpe>cpe:/a:dash:dash</cpe>
@@ -546,6 +556,7 @@
         <cpe>cpe:/a:github:github</cpe>
         <cpe>cpe:/a:data-tools_project:data_tools</cpe>
         <cpe>cpe:/a:flow_project:flow</cpe>
+        <cpe>cpe:/a:ghost:ghost</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -719,6 +730,15 @@
         Suppresses false positives per issue #2235.
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.kerberos/spring-security-kerberos.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
+        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #3219.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-rsa.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
         <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
         <cpe>cpe:/a:security-framework_project:security-framework</cpe>
@@ -1335,6 +1355,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #3216
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.batch/spring\-batch\-integration@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:spring_integration</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2031
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.wildfly/wildfly\-microprofile\-config\-implementation@.*$</packageUrl>
@@ -1865,7 +1892,7 @@
         <gav regex="true">^(javax\.json|org\.glassfish):javax\.json(-api)?:.*$</gav>
         <cpe>cpe:/a:processing:processing</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         https://github.com/processing/processing is not related to glassfish
         ]]></notes>
@@ -4199,14 +4226,43 @@
         <cpe>cpe:/a:hawt.io:hawtio</cpe>
         <cpe>cpe:/a:redhat:wildfly</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+         false positive per #3170 ant-contrib is not the Tasks Android app
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/ant\-contrib/ant\-contrib@.*$</packageUrl>
+        <cpe>cpe:/a:tasks:tasks</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3151
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.camel/camel\-hazelcast@.*$</packageUrl>
+        <cpe>cpe:/a:hazelcast:hazelcast</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3185 spotify docker-client library is neither docker nor spotify
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.spotify/docker\-client@.*$</packageUrl>
+        <cpe>cpe:/a:docker:docker</cpe>
+        <cpe>cpe:/a:spotify:spotify</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3132 Play WS Standalone (https://github.com/playframework/play-ws)  is not the Play framework (https://github.com/playframework/playframework)
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.typesafe\.play/play\-.*ws\-standalone.*@.*$</packageUrl>
+        <cpe>cpe:/a:playframework:play_framework</cpe>
+    </suppress>
+        <suppress base="true">
         <notes><![CDATA[
         false positive per #3066 on mybatis-spring-boot-starter
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.mybatis\.spring\.boot/mybatis\-spring\-boot\-starter@.*$</packageUrl>
         <cve>CVE-2020-26945</cve>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         false positive per #3066 on mybatis-spring-boot-autoconfigure
         ]]></notes>
