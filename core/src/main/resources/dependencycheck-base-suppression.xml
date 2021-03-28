@@ -4199,4 +4199,18 @@
         <cpe>cpe:/a:hawt.io:hawtio</cpe>
         <cpe>cpe:/a:redhat:wildfly</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+        false positive per #3066 on mybatis-spring-boot-starter
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.mybatis\.spring\.boot/mybatis\-spring\-boot\-starter@.*$</packageUrl>
+        <cve>CVE-2020-26945</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+        false positive per #3066 on mybatis-spring-boot-autoconfigure
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.mybatis\.spring\.boot/mybatis\-spring\-boot\-autoconfigure@.*$</packageUrl>
+        <cve>CVE-2020-26945</cve>
+    </suppress>
 </suppressions>
