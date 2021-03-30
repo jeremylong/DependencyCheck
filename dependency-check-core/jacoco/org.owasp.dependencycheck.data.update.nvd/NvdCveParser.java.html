@@ -37,9 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
 import org.owasp.dependencycheck.data.nvd.ecosystem.CveEcosystemMapper;
-import org.owasp.dependencycheck.data.nvd.json.CpeMatchStreamCollector;
-import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
-import org.owasp.dependencycheck.data.nvdcve.CveItemOperator;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -53,7 +50,7 @@ public final class NvdCveParser {
     /**
      * The logger.
      */
-<span class="fc" id="L56">    private static final Logger LOGGER = LoggerFactory.getLogger(NvdCveParser.class);</span>
+<span class="fc" id="L53">    private static final Logger LOGGER = LoggerFactory.getLogger(NvdCveParser.class);</span>
     /**
      * A reference to the CVE DB.
      */
@@ -69,10 +66,10 @@ public final class NvdCveParser {
      * @param settings the dependency-check settings
      * @param db a reference to the database
      */
-<span class="fc" id="L72">    public NvdCveParser(Settings settings, CveDB db) {</span>
-<span class="fc" id="L73">        this.settings = settings;</span>
-<span class="fc" id="L74">        this.cveDB = db;</span>
-<span class="fc" id="L75">    }</span>
+<span class="fc" id="L69">    public NvdCveParser(Settings settings, CveDB db) {</span>
+<span class="fc" id="L70">        this.settings = settings;</span>
+<span class="fc" id="L71">        this.cveDB = db;</span>
+<span class="fc" id="L72">    }</span>
 
     /**
      * Parses the NVD JSON file and inserts/updates data into the database.
@@ -81,54 +78,54 @@ public final class NvdCveParser {
      * @throws UpdateException thrown if the file could not be read
      */
     public void parse(File file) throws UpdateException {
-<span class="fc" id="L84">        LOGGER.debug(&quot;Parsing &quot; + file.getName());</span>
+<span class="fc" id="L81">        LOGGER.debug(&quot;Parsing &quot; + file.getName());</span>
 
-<span class="fc" id="L86">        final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);</span>
-<span class="fc" id="L87">        objectMapper.registerModule(new AfterburnerModule());</span>
+<span class="fc" id="L83">        final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);</span>
+<span class="fc" id="L84">        objectMapper.registerModule(new AfterburnerModule());</span>
 
-<span class="fc" id="L89">        final ObjectReader objectReader = objectMapper.readerFor(DefCveItem.class);</span>
+<span class="fc" id="L86">        final ObjectReader objectReader = objectMapper.readerFor(DefCveItem.class);</span>
 
-<span class="fc" id="L91">        try (InputStream fin = new FileInputStream(file);</span>
-<span class="fc" id="L92">                InputStream in = new GZIPInputStream(fin);</span>
-<span class="fc" id="L93">                InputStreamReader isr = new InputStreamReader(in, UTF_8);</span>
-<span class="fc" id="L94">                JsonParser parser = objectReader.getFactory().createParser(isr)) {</span>
+<span class="fc" id="L88">        try (InputStream fin = new FileInputStream(file);</span>
+<span class="fc" id="L89">                InputStream in = new GZIPInputStream(fin);</span>
+<span class="fc" id="L90">                InputStreamReader isr = new InputStreamReader(in, UTF_8);</span>
+<span class="fc" id="L91">                JsonParser parser = objectReader.getFactory().createParser(isr)) {</span>
 
-<span class="fc" id="L96">            final CveEcosystemMapper mapper = new CveEcosystemMapper();</span>
-<span class="fc" id="L97">            init(parser);</span>
-<span class="fc bfc" id="L98" title="All 2 branches covered.">            while (parser.nextToken() == JsonToken.START_OBJECT) {</span>
-<span class="fc" id="L99">                final DefCveItem cve = objectReader.readValue(parser);</span>
-<span class="fc" id="L100">                cveDB.updateVulnerability(cve, mapper.getEcosystem(cve));</span>
-<span class="fc" id="L101">            }</span>
-<span class="nc" id="L102">        } catch (FileNotFoundException ex) {</span>
-<span class="nc" id="L103">            LOGGER.error(ex.getMessage());</span>
-<span class="nc" id="L104">            throw new UpdateException(&quot;Unable to find the NVD CVE file, `&quot; + file + &quot;`, to parse&quot;, ex);</span>
-<span class="nc" id="L105">        } catch (IOException ex) {</span>
-<span class="nc" id="L106">            LOGGER.error(&quot;Error reading NVD JSON data: {}&quot;, file);</span>
-<span class="nc" id="L107">            LOGGER.debug(&quot;Error extracting the NVD JSON data from: &quot; + file.toString(), ex);</span>
-<span class="nc" id="L108">            throw new UpdateException(&quot;Unable to find the NVD CVE file to parse&quot;, ex);</span>
-<span class="fc" id="L109">        }</span>
-<span class="fc" id="L110">    }</span>
+<span class="fc" id="L93">            final CveEcosystemMapper mapper = new CveEcosystemMapper();</span>
+<span class="fc" id="L94">            init(parser);</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">            while (parser.nextToken() == JsonToken.START_OBJECT) {</span>
+<span class="fc" id="L96">                final DefCveItem cve = objectReader.readValue(parser);</span>
+<span class="fc" id="L97">                cveDB.updateVulnerability(cve, mapper.getEcosystem(cve));</span>
+<span class="fc" id="L98">            }</span>
+<span class="nc" id="L99">        } catch (FileNotFoundException ex) {</span>
+<span class="nc" id="L100">            LOGGER.error(ex.getMessage());</span>
+<span class="nc" id="L101">            throw new UpdateException(&quot;Unable to find the NVD CVE file, `&quot; + file + &quot;`, to parse&quot;, ex);</span>
+<span class="nc" id="L102">        } catch (IOException ex) {</span>
+<span class="nc" id="L103">            LOGGER.error(&quot;Error reading NVD JSON data: {}&quot;, file);</span>
+<span class="nc" id="L104">            LOGGER.debug(&quot;Error extracting the NVD JSON data from: &quot; + file.toString(), ex);</span>
+<span class="nc" id="L105">            throw new UpdateException(&quot;Unable to find the NVD CVE file to parse&quot;, ex);</span>
+<span class="fc" id="L106">        }</span>
+<span class="fc" id="L107">    }</span>
 
     protected void init(JsonParser parser) throws IOException {
-<span class="fc" id="L113">        JsonToken nextToken = parser.nextToken();</span>
-<span class="pc bpc" id="L114" title="1 of 2 branches missed.">        if (nextToken != JsonToken.START_OBJECT) {</span>
-<span class="nc" id="L115">            throw new IOException(&quot;Expected &quot; + JsonToken.START_OBJECT + &quot;, got &quot; + nextToken);</span>
+<span class="fc" id="L110">        JsonToken nextToken = parser.nextToken();</span>
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">        if (nextToken != JsonToken.START_OBJECT) {</span>
+<span class="nc" id="L112">            throw new IOException(&quot;Expected &quot; + JsonToken.START_OBJECT + &quot;, got &quot; + nextToken);</span>
         }
 
         do {
-<span class="fc" id="L119">            nextToken = parser.nextToken();</span>
-<span class="pc bpc" id="L120" title="1 of 2 branches missed.">            if (nextToken == null) {</span>
-<span class="nc" id="L121">                break;</span>
+<span class="fc" id="L116">            nextToken = parser.nextToken();</span>
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">            if (nextToken == null) {</span>
+<span class="nc" id="L118">                break;</span>
             }
 
-<span class="fc bfc" id="L124" title="All 2 branches covered.">            if (nextToken.isStructStart()) {</span>
-<span class="pc bpc" id="L125" title="1 of 2 branches missed.">                if (nextToken == JsonToken.START_ARRAY) {</span>
-<span class="fc" id="L126">                    break;</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">            if (nextToken.isStructStart()) {</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">                if (nextToken == JsonToken.START_ARRAY) {</span>
+<span class="fc" id="L123">                    break;</span>
                 } else {
-<span class="nc" id="L128">                    parser.skipChildren();</span>
+<span class="nc" id="L125">                    parser.skipChildren();</span>
                 }
             }
         } while (true);
-<span class="fc" id="L132">    }</span>
+<span class="fc" id="L129">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

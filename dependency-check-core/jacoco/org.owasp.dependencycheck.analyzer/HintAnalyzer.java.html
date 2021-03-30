@@ -292,53 +292,51 @@ import org.xml.sax.SAXException;
 <span class="fc" id="L292">                    file = new File(filePath);</span>
 <span class="pc bpc" id="L293" title="1 of 2 branches missed.">                    if (!file.exists()) {</span>
 <span class="nc" id="L294">                        try (InputStream fromClasspath = FileUtils.getResourceAsStream(filePath)) {</span>
-<span class="nc bnc" id="L295" title="All 2 branches missed.">                            if (fromClasspath != null) {</span>
-<span class="nc" id="L296">                                deleteTempFile = true;</span>
-<span class="nc" id="L297">                                file = getSettings().getTempFile(&quot;hint&quot;, &quot;xml&quot;);</span>
-                                try {
-<span class="nc" id="L299">                                    org.apache.commons.io.FileUtils.copyInputStreamToFile(fromClasspath, file);</span>
-<span class="nc" id="L300">                                } catch (IOException ex) {</span>
-<span class="nc" id="L301">                                    throw new HintParseException(&quot;Unable to locate hints file in classpath&quot;, ex);</span>
-<span class="nc" id="L302">                                }</span>
-                            }
+<span class="nc" id="L295">                            deleteTempFile = true;</span>
+<span class="nc" id="L296">                            file = getSettings().getTempFile(&quot;hint&quot;, &quot;xml&quot;);</span>
+                            try {
+<span class="nc" id="L298">                                org.apache.commons.io.FileUtils.copyInputStreamToFile(fromClasspath, file);</span>
+<span class="nc" id="L299">                            } catch (IOException ex) {</span>
+<span class="nc" id="L300">                                throw new HintParseException(&quot;Unable to locate hints file in classpath&quot;, ex);</span>
+<span class="nc" id="L301">                            }</span>
                         }
                     }
                 }
 
-<span class="pc bpc" id="L308" title="1 of 2 branches missed.">                if (file == null) {</span>
-<span class="nc" id="L309">                    throw new HintParseException(&quot;Unable to locate hints file:&quot; + filePath);</span>
+<span class="pc bpc" id="L306" title="1 of 2 branches missed.">                if (file == null) {</span>
+<span class="nc" id="L307">                    throw new HintParseException(&quot;Unable to locate hints file:&quot; + filePath);</span>
                 } else {
                     try {
-<span class="fc" id="L312">                        parser.parseHints(file);</span>
-<span class="pc bpc" id="L313" title="2 of 4 branches missed.">                        if (parser.getHintRules() != null &amp;&amp; !parser.getHintRules().isEmpty()) {</span>
-<span class="fc" id="L314">                            localHints.addAll(parser.getHintRules());</span>
+<span class="fc" id="L310">                        parser.parseHints(file);</span>
+<span class="pc bpc" id="L311" title="2 of 4 branches missed.">                        if (parser.getHintRules() != null &amp;&amp; !parser.getHintRules().isEmpty()) {</span>
+<span class="fc" id="L312">                            localHints.addAll(parser.getHintRules());</span>
                         }
-<span class="pc bpc" id="L316" title="2 of 4 branches missed.">                        if (parser.getVendorDuplicatingHintRules() != null &amp;&amp; !parser.getVendorDuplicatingHintRules().isEmpty()) {</span>
-<span class="nc" id="L317">                            localVendorHints.addAll(parser.getVendorDuplicatingHintRules());</span>
+<span class="pc bpc" id="L314" title="2 of 4 branches missed.">                        if (parser.getVendorDuplicatingHintRules() != null &amp;&amp; !parser.getVendorDuplicatingHintRules().isEmpty()) {</span>
+<span class="nc" id="L315">                            localVendorHints.addAll(parser.getVendorDuplicatingHintRules());</span>
                         }
-<span class="nc" id="L319">                    } catch (HintParseException ex) {</span>
-<span class="nc" id="L320">                        LOGGER.warn(&quot;Unable to parse hint rule xml file '{}'&quot;, file.getPath());</span>
-<span class="nc" id="L321">                        LOGGER.warn(ex.getMessage());</span>
-<span class="nc" id="L322">                        LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="nc" id="L323">                        throw ex;</span>
-<span class="fc" id="L324">                    }</span>
+<span class="nc" id="L317">                    } catch (HintParseException ex) {</span>
+<span class="nc" id="L318">                        LOGGER.warn(&quot;Unable to parse hint rule xml file '{}'&quot;, file.getPath());</span>
+<span class="nc" id="L319">                        LOGGER.warn(ex.getMessage());</span>
+<span class="nc" id="L320">                        LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L321">                        throw ex;</span>
+<span class="fc" id="L322">                    }</span>
                 }
-<span class="nc" id="L326">            } catch (DownloadFailedException ex) {</span>
-<span class="nc" id="L327">                throw new HintParseException(&quot;Unable to fetch the configured hint file&quot;, ex);</span>
-<span class="nc" id="L328">            } catch (MalformedURLException ex) {</span>
-<span class="nc" id="L329">                throw new HintParseException(&quot;Configured hint file has an invalid URL&quot;, ex);</span>
-<span class="nc" id="L330">            } catch (IOException ex) {</span>
-<span class="nc" id="L331">                throw new HintParseException(&quot;Unable to create temp file for hints&quot;, ex);</span>
+<span class="nc" id="L324">            } catch (DownloadFailedException ex) {</span>
+<span class="nc" id="L325">                throw new HintParseException(&quot;Unable to fetch the configured hint file&quot;, ex);</span>
+<span class="nc" id="L326">            } catch (MalformedURLException ex) {</span>
+<span class="nc" id="L327">                throw new HintParseException(&quot;Configured hint file has an invalid URL&quot;, ex);</span>
+<span class="nc" id="L328">            } catch (IOException ex) {</span>
+<span class="nc" id="L329">                throw new HintParseException(&quot;Unable to create temp file for hints&quot;, ex);</span>
             } finally {
-<span class="pc bpc" id="L333" title="3 of 4 branches missed.">                if (deleteTempFile &amp;&amp; file != null) {</span>
-<span class="nc" id="L334">                    FileUtils.delete(file);</span>
+<span class="pc bpc" id="L331" title="3 of 4 branches missed.">                if (deleteTempFile &amp;&amp; file != null) {</span>
+<span class="nc" id="L332">                    FileUtils.delete(file);</span>
                 }
             }
         }
-<span class="fc" id="L338">        hints = localHints.toArray(new HintRule[0]);</span>
-<span class="fc" id="L339">        vendorHints = localVendorHints.toArray(new VendorDuplicatingHintRule[0]);</span>
-<span class="fc" id="L340">        LOGGER.debug(&quot;{} hint rules were loaded.&quot;, hints.length);</span>
-<span class="fc" id="L341">        LOGGER.debug(&quot;{} duplicating hint rules were loaded.&quot;, vendorHints.length);</span>
-<span class="fc" id="L342">    }</span>
+<span class="fc" id="L336">        hints = localHints.toArray(new HintRule[0]);</span>
+<span class="fc" id="L337">        vendorHints = localVendorHints.toArray(new VendorDuplicatingHintRule[0]);</span>
+<span class="fc" id="L338">        LOGGER.debug(&quot;{} hint rules were loaded.&quot;, hints.length);</span>
+<span class="fc" id="L339">        LOGGER.debug(&quot;{} duplicating hint rules were loaded.&quot;, vendorHints.length);</span>
+<span class="fc" id="L340">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -216,46 +216,44 @@ import org.xml.sax.SAXException;
 
 <span class="fc bfc" id="L217" title="All 2 branches covered.">                if (!file.exists()) {</span>
 <span class="fc" id="L218">                    try (InputStream suppressionFromClasspath = FileUtils.getResourceAsStream(suppressionFilePath)) {</span>
-<span class="fc bfc" id="L219" title="All 2 branches covered.">                        if (suppressionFromClasspath != null) {</span>
-<span class="fc" id="L220">                            deleteTempFile = true;</span>
-<span class="fc" id="L221">                            file = getSettings().getTempFile(&quot;suppression&quot;, &quot;xml&quot;);</span>
-                            try {
-<span class="fc" id="L223">                                org.apache.commons.io.FileUtils.copyInputStreamToFile(suppressionFromClasspath, file);</span>
-<span class="nc" id="L224">                            } catch (IOException ex) {</span>
-<span class="nc" id="L225">                                throwSuppressionParseException(&quot;Unable to locate suppression file in classpath&quot;, ex, suppressionFilePath);</span>
-<span class="fc" id="L226">                            }</span>
-                        }
+<span class="fc" id="L219">                        deleteTempFile = true;</span>
+<span class="fc" id="L220">                        file = getSettings().getTempFile(&quot;suppression&quot;, &quot;xml&quot;);</span>
+                        try {
+<span class="fc" id="L222">                            org.apache.commons.io.FileUtils.copyInputStreamToFile(suppressionFromClasspath, file);</span>
+<span class="nc" id="L223">                        } catch (IOException ex) {</span>
+<span class="nc" id="L224">                            throwSuppressionParseException(&quot;Unable to locate suppression file in classpath&quot;, ex, suppressionFilePath);</span>
+<span class="fc" id="L225">                        }</span>
                     }
                 }
             }
-<span class="pc bpc" id="L231" title="1 of 2 branches missed.">            if (file != null) {</span>
-<span class="fc bfc" id="L232" title="All 2 branches covered.">                if (!file.exists()) {</span>
-<span class="fc" id="L233">                    final String msg = String.format(&quot;Suppression file '%s' does not exist&quot;, file.getPath());</span>
-<span class="fc" id="L234">                    LOGGER.warn(msg);</span>
-<span class="fc" id="L235">                    throw new SuppressionParseException(msg);</span>
+<span class="pc bpc" id="L229" title="1 of 2 branches missed.">            if (file != null) {</span>
+<span class="pc bpc" id="L230" title="1 of 2 branches missed.">                if (!file.exists()) {</span>
+<span class="nc" id="L231">                    final String msg = String.format(&quot;Suppression file '%s' does not exist&quot;, file.getPath());</span>
+<span class="nc" id="L232">                    LOGGER.warn(msg);</span>
+<span class="nc" id="L233">                    throw new SuppressionParseException(msg);</span>
                 }
                 try {
-<span class="fc" id="L238">                    list.addAll(parser.parseSuppressionRules(file));</span>
-<span class="nc" id="L239">                } catch (SuppressionParseException ex) {</span>
-<span class="nc" id="L240">                    LOGGER.warn(&quot;Unable to parse suppression xml file '{}'&quot;, file.getPath());</span>
-<span class="nc" id="L241">                    LOGGER.warn(ex.getMessage());</span>
-<span class="nc" id="L242">                    throw ex;</span>
-<span class="fc" id="L243">                }</span>
+<span class="fc" id="L236">                    list.addAll(parser.parseSuppressionRules(file));</span>
+<span class="fc" id="L237">                } catch (SuppressionParseException ex) {</span>
+<span class="fc" id="L238">                    LOGGER.warn(&quot;Unable to parse suppression xml file '{}'&quot;, file.getPath());</span>
+<span class="fc" id="L239">                    LOGGER.warn(ex.getMessage());</span>
+<span class="fc" id="L240">                    throw ex;</span>
+<span class="fc" id="L241">                }</span>
             }
-<span class="nc" id="L245">        } catch (DownloadFailedException ex) {</span>
-<span class="nc" id="L246">            throwSuppressionParseException(&quot;Unable to fetch the configured suppression file&quot;, ex, suppressionFilePath);</span>
-<span class="nc" id="L247">        } catch (MalformedURLException ex) {</span>
-<span class="nc" id="L248">            throwSuppressionParseException(&quot;Configured suppression file has an invalid URL&quot;, ex, suppressionFilePath);</span>
-<span class="fc" id="L249">        } catch (SuppressionParseException ex) {</span>
-<span class="fc" id="L250">            throw ex;</span>
-<span class="nc" id="L251">        } catch (IOException ex) {</span>
-<span class="nc" id="L252">            throwSuppressionParseException(&quot;Unable to create temp file for suppression file&quot;, ex, suppressionFilePath);</span>
+<span class="nc" id="L243">        } catch (DownloadFailedException ex) {</span>
+<span class="nc" id="L244">            throwSuppressionParseException(&quot;Unable to fetch the configured suppression file&quot;, ex, suppressionFilePath);</span>
+<span class="nc" id="L245">        } catch (MalformedURLException ex) {</span>
+<span class="nc" id="L246">            throwSuppressionParseException(&quot;Configured suppression file has an invalid URL&quot;, ex, suppressionFilePath);</span>
+<span class="fc" id="L247">        } catch (SuppressionParseException ex) {</span>
+<span class="fc" id="L248">            throw ex;</span>
+<span class="nc" id="L249">        } catch (IOException ex) {</span>
+<span class="nc" id="L250">            throwSuppressionParseException(&quot;Unable to create temp file for suppression file&quot;, ex, suppressionFilePath);</span>
         } finally {
-<span class="pc bpc" id="L254" title="1 of 4 branches missed.">            if (deleteTempFile &amp;&amp; file != null) {</span>
-<span class="fc" id="L255">                FileUtils.delete(file);</span>
+<span class="pc bpc" id="L252" title="1 of 4 branches missed.">            if (deleteTempFile &amp;&amp; file != null) {</span>
+<span class="fc" id="L253">                FileUtils.delete(file);</span>
             }
         }
-<span class="fc" id="L258">        return list;</span>
+<span class="fc" id="L256">        return list;</span>
     }
 
     /**
@@ -268,9 +266,9 @@ import org.xml.sax.SAXException;
      * SuppressionParseException
      */
     private void throwSuppressionParseException(String message, Exception exception, String suppressionFilePath) throws SuppressionParseException {
-<span class="nc" id="L271">        LOGGER.warn(String.format(message + &quot;'%s'&quot;, suppressionFilePath));</span>
-<span class="nc" id="L272">        LOGGER.debug(&quot;&quot;, exception);</span>
-<span class="nc" id="L273">        throw new SuppressionParseException(message, exception);</span>
+<span class="nc" id="L269">        LOGGER.warn(String.format(message + &quot;'%s'&quot;, suppressionFilePath));</span>
+<span class="nc" id="L270">        LOGGER.debug(&quot;&quot;, exception);</span>
+<span class="nc" id="L271">        throw new SuppressionParseException(message, exception);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

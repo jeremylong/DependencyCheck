@@ -24,7 +24,6 @@ import org.owasp.dependencycheck.data.nvd.json.CpeMatchStreamCollector;
 import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
 import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
-import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
@@ -43,6 +42,7 @@ public class CveItemOperator {
 
     /**
      * Constructs a new CVE Item Operator utility.
+     *
      * @param cpeStartsWithFilter the filter to use for CPE entries
      */
 <span class="fc" id="L48">    public CveItemOperator(String cpeStartsWithFilter) {</span>
@@ -78,7 +78,7 @@ public class CveItemOperator {
         // Note that these all have 'bindings' in the description of a vulnerability in more than
         // one case these were related to language bindings; as such the list need to be reviewed and refined.
 <span class="pc bpc" id="L80" title="3 of 4 branches missed.">        if ((&quot;mysql&quot;.equals(vendor) &amp;&amp; &quot;mysql&quot;.equals(product))</span>
-<span class="fc bfc" id="L81" title="All 4 branches covered.">                || (&quot;postgresql&quot;.equals(vendor) &amp;&amp; &quot;postgresql&quot;.equals(product))</span>
+<span class="pc bpc" id="L81" title="1 of 4 branches missed.">                || (&quot;postgresql&quot;.equals(vendor) &amp;&amp; &quot;postgresql&quot;.equals(product))</span>
 <span class="pc bpc" id="L82" title="3 of 4 branches missed.">                || (&quot;picketlink&quot;.equals(vendor) &amp;&amp; &quot;picketlink&quot;.equals(product))</span>
 <span class="pc bpc" id="L83" title="3 of 4 branches missed.">                || (&quot;libxl_project&quot;.equals(vendor) &amp;&amp; &quot;libxl&quot;.equals(product))</span>
 <span class="pc bpc" id="L84" title="3 of 4 branches missed.">                || (&quot;ocaml&quot;.equals(vendor) &amp;&amp; &quot;postgresql-ocaml&quot;.equals(product))</span>
@@ -86,16 +86,16 @@ public class CveItemOperator {
 <span class="pc bpc" id="L86" title="3 of 4 branches missed.">                || (&quot;dalekjs&quot;.equals(vendor) &amp;&amp; &quot;dalekjs&quot;.equals(product))</span>
 <span class="fc bfc" id="L87" title="All 4 branches covered.">                || (&quot;microsoft&quot;.equals(vendor) &amp;&amp; &quot;internet_explorer&quot;.equals(product))</span>
 <span class="pc bpc" id="L88" title="1 of 4 branches missed.">                || (&quot;jenkins&quot;.equals(vendor) &amp;&amp; &quot;ssh_credentials&quot;.equals(product))</span>
-<span class="pc bpc" id="L89" title="3 of 4 branches missed.">                || (&quot;kubernetes&quot;.equals(vendor) &amp;&amp; &quot;kubernetes&quot;.equals(product))</span>
+<span class="pc bpc" id="L89" title="1 of 4 branches missed.">                || (&quot;kubernetes&quot;.equals(vendor) &amp;&amp; &quot;kubernetes&quot;.equals(product))</span>
 <span class="pc bpc" id="L90" title="1 of 4 branches missed.">                || (&quot;gnome&quot;.equals(vendor) &amp;&amp; &quot;nautilus-python&quot;.equals(product))</span>
 <span class="pc bpc" id="L91" title="1 of 4 branches missed.">                || (&quot;apache&quot;.equals(vendor) &amp;&amp; &quot;qpid_proton&quot;.equals(product))</span>
 <span class="pc bpc" id="L92" title="3 of 4 branches missed.">                || (&quot;mysql-ocaml&quot;.equals(vendor) &amp;&amp; &quot;mysql-ocaml&quot;.equals(product))</span>
 <span class="fc bfc" id="L93" title="All 4 branches covered.">                || (&quot;google&quot;.equals(vendor) &amp;&amp; &quot;chrome&quot;.equals(product))</span>
 <span class="pc bpc" id="L94" title="1 of 4 branches missed.">                || (&quot;canonical&quot;.equals(vendor) &amp;&amp; &quot;ltsp_display_manager&quot;.equals(product))</span>
 <span class="pc bpc" id="L95" title="1 of 4 branches missed.">                || (&quot;gnome&quot;.equals(vendor) &amp;&amp; &quot;vala&quot;.equals(product))</span>
-<span class="pc bpc" id="L96" title="3 of 4 branches missed.">                || (&quot;apple&quot;.equals(vendor) &amp;&amp; &quot;safari&quot;.equals(product))</span>
+<span class="fc bfc" id="L96" title="All 4 branches covered.">                || (&quot;apple&quot;.equals(vendor) &amp;&amp; &quot;safari&quot;.equals(product))</span>
 <span class="pc bpc" id="L97" title="3 of 4 branches missed.">                || (&quot;mapbox&quot;.equals(vendor) &amp;&amp; &quot;npm-test-sqlite3-trunk&quot;.equals(product))</span>
-<span class="pc bpc" id="L98" title="3 of 4 branches missed.">                || (&quot;apple&quot;.equals(vendor) &amp;&amp; &quot;webkit&quot;.equals(product))</span>
+<span class="pc bpc" id="L98" title="1 of 4 branches missed.">                || (&quot;apple&quot;.equals(vendor) &amp;&amp; &quot;webkit&quot;.equals(product))</span>
 <span class="fc bfc" id="L99" title="All 4 branches covered.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;firefox&quot;.equals(product))</span>
 <span class="fc bfc" id="L100" title="All 4 branches covered.">                || (&quot;apache&quot;.equals(vendor) &amp;&amp; &quot;thrift&quot;.equals(product))</span>
 <span class="pc bpc" id="L101" title="1 of 4 branches missed.">                || (&quot;apache&quot;.equals(vendor) &amp;&amp; &quot;qpid&quot;.equals(product))</span>

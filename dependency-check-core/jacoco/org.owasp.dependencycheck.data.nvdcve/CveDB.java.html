@@ -1398,19 +1398,17 @@ public final class CveDB implements AutoCloseable {
 <span class="pc bpc" id="L1398" title="1 of 2 branches missed.">        if (ConnectionFactory.isH2Connection(settings)) {</span>
 <span class="fc" id="L1399">            final long start = System.currentTimeMillis();</span>
 <span class="fc" id="L1400">            try (CallableStatement psCompaxt = connection.prepareCall(&quot;SHUTDOWN DEFRAG&quot;)) {</span>
-<span class="pc bpc" id="L1401" title="1 of 2 branches missed.">                if (psCompaxt != null) {</span>
-<span class="fc" id="L1402">                    LOGGER.info(&quot;Begin database defrag&quot;);</span>
-<span class="fc" id="L1403">                    psCompaxt.execute();</span>
-<span class="fc" id="L1404">                    final long millis = System.currentTimeMillis() - start;</span>
-                    //final long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
-<span class="fc" id="L1406">                    LOGGER.info(&quot;End database defrag ({} ms)&quot;, millis);</span>
-                }
-<span class="nc" id="L1408">            } catch (SQLException ex) {</span>
-<span class="nc" id="L1409">                LOGGER.error(&quot;An unexpected SQL Exception occurred compacting the database; please see the verbose log for more details.&quot;);</span>
-<span class="nc" id="L1410">                LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="fc" id="L1411">            }</span>
+<span class="fc" id="L1401">                LOGGER.info(&quot;Begin database defrag&quot;);</span>
+<span class="fc" id="L1402">                psCompaxt.execute();</span>
+<span class="fc" id="L1403">                final long millis = System.currentTimeMillis() - start;</span>
+                //final long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+<span class="fc" id="L1405">                LOGGER.info(&quot;End database defrag ({} ms)&quot;, millis);</span>
+<span class="nc" id="L1406">            } catch (SQLException ex) {</span>
+<span class="nc" id="L1407">                LOGGER.error(&quot;An unexpected SQL Exception occurred compacting the database; please see the verbose log for more details.&quot;);</span>
+<span class="nc" id="L1408">                LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="fc" id="L1409">            }</span>
         }
-<span class="fc" id="L1413">    }</span>
+<span class="fc" id="L1411">    }</span>
 
     /**
      * Determines if the given identifiedVersion is affected by the given cpeId
@@ -1423,19 +1421,19 @@ public final class CveDB implements AutoCloseable {
      * @return true if the identified version is affected, otherwise false
      */
     protected VulnerableSoftware getMatchingSoftware(Cpe cpe, Set&lt;VulnerableSoftware&gt; vulnerableSoftware) {
-<span class="fc" id="L1426">        VulnerableSoftware matched = null;</span>
-<span class="fc bfc" id="L1427" title="All 2 branches covered.">        for (VulnerableSoftware vs : vulnerableSoftware) {</span>
-<span class="fc bfc" id="L1428" title="All 2 branches covered.">            if (vs.matches(cpe)) {</span>
-<span class="fc bfc" id="L1429" title="All 2 branches covered.">                if (matched == null) {</span>
-<span class="fc" id="L1430">                    matched = vs;</span>
+<span class="fc" id="L1424">        VulnerableSoftware matched = null;</span>
+<span class="fc bfc" id="L1425" title="All 2 branches covered.">        for (VulnerableSoftware vs : vulnerableSoftware) {</span>
+<span class="fc bfc" id="L1426" title="All 2 branches covered.">            if (vs.matches(cpe)) {</span>
+<span class="fc bfc" id="L1427" title="All 2 branches covered.">                if (matched == null) {</span>
+<span class="fc" id="L1428">                    matched = vs;</span>
                 } else {
-<span class="fc bfc" id="L1432" title="All 4 branches covered.">                    if (&quot;*&quot;.equals(vs.getWellFormedUpdate()) &amp;&amp; !&quot;*&quot;.equals(matched.getWellFormedUpdate())) {</span>
-<span class="fc" id="L1433">                        matched = vs;</span>
+<span class="fc bfc" id="L1430" title="All 4 branches covered.">                    if (&quot;*&quot;.equals(vs.getWellFormedUpdate()) &amp;&amp; !&quot;*&quot;.equals(matched.getWellFormedUpdate())) {</span>
+<span class="fc" id="L1431">                        matched = vs;</span>
                     }
                 }
             }
-<span class="fc" id="L1437">        }</span>
-<span class="fc" id="L1438">        return matched;</span>
+<span class="fc" id="L1435">        }</span>
+<span class="fc" id="L1436">        return matched;</span>
 //        final boolean isVersionTwoADifferentProduct = &quot;apache&quot;.equals(cpe.getVendor()) &amp;&amp; &quot;struts&quot;.equals(cpe.getProduct());
 //        final Set&lt;String&gt; majorVersionsAffectingAllPrevious = new HashSet&lt;&gt;();
 //        final boolean matchesAnyPrevious = identifiedVersion == null || &quot;-&quot;.equals(identifiedVersion.toString());
@@ -1501,17 +1499,17 @@ public final class CveDB implements AutoCloseable {
      * &lt;/p&gt;
      */
     public synchronized void deleteUnusedCpe() {
-<span class="nc" id="L1504">        clearCache();</span>
-<span class="nc" id="L1505">        PreparedStatement ps = null;</span>
+<span class="nc" id="L1502">        clearCache();</span>
+<span class="nc" id="L1503">        PreparedStatement ps = null;</span>
         try {
-<span class="nc" id="L1507">            ps = connection.prepareStatement(statementBundle.getString(&quot;DELETE_UNUSED_DICT_CPE&quot;));</span>
-<span class="nc" id="L1508">            ps.executeUpdate();</span>
-<span class="nc" id="L1509">        } catch (SQLException ex) {</span>
-<span class="nc" id="L1510">            LOGGER.error(&quot;Unable to delete CPE dictionary entries&quot;, ex);</span>
+<span class="nc" id="L1505">            ps = connection.prepareStatement(statementBundle.getString(&quot;DELETE_UNUSED_DICT_CPE&quot;));</span>
+<span class="nc" id="L1506">            ps.executeUpdate();</span>
+<span class="nc" id="L1507">        } catch (SQLException ex) {</span>
+<span class="nc" id="L1508">            LOGGER.error(&quot;Unable to delete CPE dictionary entries&quot;, ex);</span>
         } finally {
-<span class="nc" id="L1512">            DBUtils.closeStatement(ps);</span>
+<span class="nc" id="L1510">            DBUtils.closeStatement(ps);</span>
         }
-<span class="nc" id="L1514">    }</span>
+<span class="nc" id="L1512">    }</span>
 
     /**
      * This method is only referenced in unused code and will likely break on
@@ -1525,20 +1523,20 @@ public final class CveDB implements AutoCloseable {
      * @param product the CPE product
      */
     public synchronized void addCpe(String cpe, String vendor, String product) {
-<span class="nc" id="L1528">        clearCache();</span>
-<span class="nc" id="L1529">        PreparedStatement ps = null;</span>
+<span class="nc" id="L1526">        clearCache();</span>
+<span class="nc" id="L1527">        PreparedStatement ps = null;</span>
         try {
-<span class="nc" id="L1531">            ps = connection.prepareStatement(statementBundle.getString(&quot;ADD_DICT_CPE&quot;));</span>
-<span class="nc" id="L1532">            ps.setString(1, cpe);</span>
-<span class="nc" id="L1533">            ps.setString(2, vendor);</span>
-<span class="nc" id="L1534">            ps.setString(3, product);</span>
-<span class="nc" id="L1535">            ps.executeUpdate();</span>
-<span class="nc" id="L1536">        } catch (SQLException ex) {</span>
-<span class="nc" id="L1537">            LOGGER.error(&quot;Unable to add CPE dictionary entry&quot;, ex);</span>
+<span class="nc" id="L1529">            ps = connection.prepareStatement(statementBundle.getString(&quot;ADD_DICT_CPE&quot;));</span>
+<span class="nc" id="L1530">            ps.setString(1, cpe);</span>
+<span class="nc" id="L1531">            ps.setString(2, vendor);</span>
+<span class="nc" id="L1532">            ps.setString(3, product);</span>
+<span class="nc" id="L1533">            ps.executeUpdate();</span>
+<span class="nc" id="L1534">        } catch (SQLException ex) {</span>
+<span class="nc" id="L1535">            LOGGER.error(&quot;Unable to add CPE dictionary entry&quot;, ex);</span>
         } finally {
-<span class="nc" id="L1539">            DBUtils.closeStatement(ps);</span>
+<span class="nc" id="L1537">            DBUtils.closeStatement(ps);</span>
         }
-<span class="nc" id="L1541">    }</span>
+<span class="nc" id="L1539">    }</span>
 
     /**
      * Helper method to add a nullable string parameter.
@@ -1549,12 +1547,12 @@ public final class CveDB implements AutoCloseable {
      * @throws SQLException thrown if there is an error setting the parameter.
      */
     private void addNullableStringParameter(PreparedStatement ps, int pos, String value) throws SQLException {
-<span class="pc bpc" id="L1552" title="1 of 4 branches missed.">        if (value == null || value.isEmpty()) {</span>
-<span class="fc" id="L1553">            ps.setNull(pos, java.sql.Types.VARCHAR);</span>
+<span class="pc bpc" id="L1550" title="1 of 4 branches missed.">        if (value == null || value.isEmpty()) {</span>
+<span class="fc" id="L1551">            ps.setNull(pos, java.sql.Types.VARCHAR);</span>
         } else {
-<span class="fc" id="L1555">            ps.setString(pos, value);</span>
+<span class="fc" id="L1553">            ps.setString(pos, value);</span>
         }
-<span class="fc" id="L1557">    }</span>
+<span class="fc" id="L1555">    }</span>
 
     /**
      * Sets the float parameter on a prepared statement from a properties map.
@@ -1566,16 +1564,16 @@ public final class CveDB implements AutoCloseable {
      * @throws SQLException thrown if there is an error adding the property
      */
     private void setFloatValue(PreparedStatement ps, int i, Map&lt;String, Object&gt; props, String key) throws SQLException {
-<span class="pc bpc" id="L1569" title="2 of 4 branches missed.">        if (props != null &amp;&amp; props.containsKey(key)) {</span>
+<span class="pc bpc" id="L1567" title="2 of 4 branches missed.">        if (props != null &amp;&amp; props.containsKey(key)) {</span>
             try {
-<span class="fc" id="L1571">                ps.setFloat(i, Float.parseFloat(props.get(key).toString()));</span>
-<span class="nc" id="L1572">            } catch (NumberFormatException nfe) {</span>
-<span class="nc" id="L1573">                ps.setNull(i, java.sql.Types.NULL);</span>
-<span class="pc" id="L1574">            }</span>
+<span class="fc" id="L1569">                ps.setFloat(i, Float.parseFloat(props.get(key).toString()));</span>
+<span class="nc" id="L1570">            } catch (NumberFormatException nfe) {</span>
+<span class="nc" id="L1571">                ps.setNull(i, java.sql.Types.NULL);</span>
+<span class="pc" id="L1572">            }</span>
         } else {
-<span class="nc" id="L1576">            ps.setNull(i, java.sql.Types.NULL);</span>
+<span class="nc" id="L1574">            ps.setNull(i, java.sql.Types.NULL);</span>
         }
-<span class="fc" id="L1578">    }</span>
+<span class="fc" id="L1576">    }</span>
 
     /**
      * Sets the string parameter on a prepared statement from a properties map.
@@ -1587,12 +1585,12 @@ public final class CveDB implements AutoCloseable {
      * @throws SQLException thrown if there is an error adding the property
      */
     private void setStringValue(PreparedStatement ps, int i, Map&lt;String, Object&gt; props, String key) throws SQLException {
-<span class="pc bpc" id="L1590" title="2 of 4 branches missed.">        if (props != null &amp;&amp; props.containsKey(key)) {</span>
-<span class="fc" id="L1591">            ps.setString(i, props.get(key).toString());</span>
+<span class="pc bpc" id="L1588" title="2 of 4 branches missed.">        if (props != null &amp;&amp; props.containsKey(key)) {</span>
+<span class="fc" id="L1589">            ps.setString(i, props.get(key).toString());</span>
         } else {
-<span class="nc" id="L1593">            ps.setNull(i, java.sql.Types.NULL);</span>
+<span class="nc" id="L1591">            ps.setNull(i, java.sql.Types.NULL);</span>
         }
-<span class="fc" id="L1595">    }</span>
+<span class="fc" id="L1593">    }</span>
 
     /**
      * Sets the boolean parameter on a prepared statement from a properties map.
@@ -1604,12 +1602,12 @@ public final class CveDB implements AutoCloseable {
      * @throws SQLException thrown if there is an error adding the property
      */
     private void setBooleanValue(PreparedStatement ps, int i, Map&lt;String, Object&gt; props, String key) throws SQLException {
-<span class="pc bpc" id="L1607" title="1 of 4 branches missed.">        if (props != null &amp;&amp; props.containsKey(key)) {</span>
-<span class="fc" id="L1608">            ps.setBoolean(i, Boolean.valueOf(props.get(key).toString()));</span>
+<span class="pc bpc" id="L1605" title="1 of 4 branches missed.">        if (props != null &amp;&amp; props.containsKey(key)) {</span>
+<span class="fc" id="L1606">            ps.setBoolean(i, Boolean.valueOf(props.get(key).toString()));</span>
         } else {
-<span class="fc" id="L1610">            ps.setNull(i, java.sql.Types.NULL);</span>
+<span class="fc" id="L1608">            ps.setNull(i, java.sql.Types.NULL);</span>
         }
-<span class="fc" id="L1612">    }</span>
+<span class="fc" id="L1610">    }</span>
 
     /**
      * Returns the Boolean value for the given index; if the value is null then
@@ -1622,10 +1620,10 @@ public final class CveDB implements AutoCloseable {
      */
     @SuppressFBWarnings(&quot;NP_BOOLEAN_RETURN_NULL&quot;)
     private Boolean getBooleanValue(ResultSet rs, int index) throws SQLException {
-<span class="fc bfc" id="L1625" title="All 2 branches covered.">        if (rs.getObject(index) == null) {</span>
-<span class="fc" id="L1626">            return null;</span>
+<span class="pc bpc" id="L1623" title="1 of 2 branches missed.">        if (rs.getObject(index) == null) {</span>
+<span class="fc" id="L1624">            return null;</span>
         }
-<span class="fc" id="L1628">        return rs.getBoolean(index);</span>
+<span class="nc" id="L1626">        return rs.getBoolean(index);</span>
     }
 
     /**
@@ -1638,10 +1636,10 @@ public final class CveDB implements AutoCloseable {
      * @throws SQLException thrown if there is an error obtaining the value
      */
     private Float getFloatValue(ResultSet rs, int index) throws SQLException {
-<span class="fc bfc" id="L1641" title="All 2 branches covered.">        if (rs.getObject(index) == null) {</span>
-<span class="fc" id="L1642">            return null;</span>
+<span class="pc bpc" id="L1639" title="1 of 2 branches missed.">        if (rs.getObject(index) == null) {</span>
+<span class="fc" id="L1640">            return null;</span>
         }
-<span class="fc" id="L1644">        return rs.getFloat(index);</span>
+<span class="nc" id="L1642">        return rs.getFloat(index);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

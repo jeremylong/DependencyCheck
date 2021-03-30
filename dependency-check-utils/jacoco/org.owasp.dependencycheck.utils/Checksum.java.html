@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +50,7 @@ public final class Checksum {
     /**
      * The logger.
      */
-<span class="fc" id="L54">    private static final Logger LOGGER = LoggerFactory.getLogger(Checksum.class);</span>
+<span class="fc" id="L53">    private static final Logger LOGGER = LoggerFactory.getLogger(Checksum.class);</span>
     /**
      * MD5 constant.
      */
@@ -67,13 +66,13 @@ public final class Checksum {
     /**
      * Cached file checksums for each supported algorithm.
      */
-<span class="fc" id="L70">    private static final Map&lt;String, Map&lt;File, String&gt;&gt; CHECKSUM_CACHES = new HashMap&lt;&gt;(3);</span>
+<span class="fc" id="L69">    private static final Map&lt;String, Map&lt;File, String&gt;&gt; CHECKSUM_CACHES = new HashMap&lt;&gt;(3);</span>
 
     static {
-<span class="fc" id="L73">        CHECKSUM_CACHES.put(MD5, new ConcurrentHashMap&lt;&gt;());</span>
-<span class="fc" id="L74">        CHECKSUM_CACHES.put(SHA256, new ConcurrentHashMap&lt;&gt;());</span>
-<span class="fc" id="L75">        CHECKSUM_CACHES.put(SHA1, new ConcurrentHashMap&lt;&gt;());</span>
-<span class="fc" id="L76">    }</span>
+<span class="fc" id="L72">        CHECKSUM_CACHES.put(MD5, new ConcurrentHashMap&lt;&gt;());</span>
+<span class="fc" id="L73">        CHECKSUM_CACHES.put(SHA256, new ConcurrentHashMap&lt;&gt;());</span>
+<span class="fc" id="L74">        CHECKSUM_CACHES.put(SHA1, new ConcurrentHashMap&lt;&gt;());</span>
+<span class="fc" id="L75">    }</span>
 
     /**
      * Private constructor for a utility class.
@@ -94,30 +93,30 @@ public final class Checksum {
      * specified that does not exist
      */
     public static String getChecksum(String algorithm, File file) throws NoSuchAlgorithmException, IOException {
-<span class="fc" id="L97">        final Map&lt;File, String&gt; checksumCache = CHECKSUM_CACHES.get(algorithm.toUpperCase());</span>
-<span class="fc bfc" id="L98" title="All 2 branches covered.">        if (checksumCache == null) {</span>
-<span class="fc" id="L99">            throw new NoSuchAlgorithmException(algorithm);</span>
+<span class="fc" id="L96">        final Map&lt;File, String&gt; checksumCache = CHECKSUM_CACHES.get(algorithm.toUpperCase());</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        if (checksumCache == null) {</span>
+<span class="fc" id="L98">            throw new NoSuchAlgorithmException(algorithm);</span>
         }
-<span class="fc" id="L101">        String checksum = checksumCache.get(file);</span>
-<span class="fc" id="L102">        try (InputStream stream = new FileInputStream(file)) {</span>
-<span class="fc bfc" id="L103" title="All 2 branches covered.">            if (checksum == null) {</span>
-<span class="pc bpc" id="L104" title="2 of 4 branches missed.">                switch (algorithm.toUpperCase()) {</span>
+<span class="fc" id="L100">        String checksum = checksumCache.get(file);</span>
+<span class="fc" id="L101">        try (InputStream stream = new FileInputStream(file)) {</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">            if (checksum == null) {</span>
+<span class="pc bpc" id="L103" title="2 of 4 branches missed.">                switch (algorithm.toUpperCase()) {</span>
                     case MD5:
-<span class="fc" id="L106">                        checksum = DigestUtils.md5Hex(stream);</span>
-<span class="fc" id="L107">                        break;</span>
+<span class="fc" id="L105">                        checksum = DigestUtils.md5Hex(stream);</span>
+<span class="fc" id="L106">                        break;</span>
                     case SHA1:
-<span class="fc" id="L109">                        checksum = DigestUtils.sha1Hex(stream);</span>
-<span class="fc" id="L110">                        break;</span>
+<span class="fc" id="L108">                        checksum = DigestUtils.sha1Hex(stream);</span>
+<span class="fc" id="L109">                        break;</span>
                     case SHA256:
-<span class="nc" id="L112">                        checksum = DigestUtils.sha256Hex(stream);</span>
-<span class="nc" id="L113">                        break;</span>
+<span class="nc" id="L111">                        checksum = DigestUtils.sha256Hex(stream);</span>
+<span class="nc" id="L112">                        break;</span>
                     default:
-<span class="nc" id="L115">                        throw new NoSuchAlgorithmException(algorithm);</span>
+<span class="nc" id="L114">                        throw new NoSuchAlgorithmException(algorithm);</span>
                 }
-<span class="fc" id="L117">                checksumCache.put(file, checksum);</span>
+<span class="fc" id="L116">                checksumCache.put(file, checksum);</span>
             }
         }
-<span class="fc" id="L120">        return checksum;</span>
+<span class="fc" id="L119">        return checksum;</span>
     }
 
     /**
@@ -130,7 +129,7 @@ public final class Checksum {
      * not available
      */
     public static String getMD5Checksum(File file) throws IOException, NoSuchAlgorithmException {
-<span class="fc" id="L133">        return getChecksum(MD5, file);</span>
+<span class="fc" id="L132">        return getChecksum(MD5, file);</span>
     }
 
     /**
@@ -143,7 +142,7 @@ public final class Checksum {
      * not available
      */
     public static String getSHA1Checksum(File file) throws IOException, NoSuchAlgorithmException {
-<span class="fc" id="L146">        return getChecksum(SHA1, file);</span>
+<span class="fc" id="L145">        return getChecksum(SHA1, file);</span>
     }
 
     /**
@@ -156,7 +155,7 @@ public final class Checksum {
      * not available
      */
     public static String getSHA256Checksum(File file) throws IOException, NoSuchAlgorithmException {
-<span class="nc" id="L159">        return getChecksum(SHA256, file);</span>
+<span class="nc" id="L158">        return getChecksum(SHA256, file);</span>
     }
 
     /**
@@ -168,15 +167,16 @@ public final class Checksum {
      * @return the hex representation of the MD5 hash
      */
     public static String getChecksum(String algorithm, byte[] bytes) {
-<span class="pc bpc" id="L171" title="3 of 4 branches missed.">        switch (algorithm.toUpperCase()) {</span>
+<span class="pc bpc" id="L170" title="3 of 4 branches missed.">        switch (algorithm.toUpperCase()) {</span>
             case MD5:
-<span class="nc" id="L173">                return DigestUtils.md5Hex(bytes);</span>
+<span class="nc" id="L172">                return DigestUtils.md5Hex(bytes);</span>
             case SHA1:
-<span class="fc" id="L175">                return DigestUtils.sha1Hex(bytes);</span>
+<span class="fc" id="L174">                return DigestUtils.sha1Hex(bytes);</span>
             case SHA256:
-<span class="nc" id="L177">                return DigestUtils.sha256Hex(bytes);</span>
+<span class="nc" id="L176">                return DigestUtils.sha256Hex(bytes);</span>
+            default:
+<span class="nc" id="L178">                return null;</span>
         }
-<span class="nc" id="L179">        return null;</span>
     }
 
     /**

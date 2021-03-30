@@ -86,9 +86,10 @@ public final class Downloader {
      * @throws TooManyRequestsException thrown when a 429 is received
      * @throws ResourceNotFoundException thrown when a 404 is received
      */
-    public void fetchFile(URL url, File outputPath, String userKey, String passwordKey) throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
-<span class="nc" id="L90">        fetchFile(url, outputPath, true, userKey, passwordKey);</span>
-<span class="nc" id="L91">    }</span>
+    public void fetchFile(URL url, File outputPath, String userKey, String passwordKey)
+            throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
+<span class="nc" id="L91">        fetchFile(url, outputPath, true, userKey, passwordKey);</span>
+<span class="nc" id="L92">    }</span>
 
     /**
      * Retrieves a file from a given URL and saves it to the outputPath.
@@ -104,8 +105,8 @@ public final class Downloader {
      */
     public void fetchFile(URL url, File outputPath, boolean useProxy) throws DownloadFailedException,
             TooManyRequestsException, ResourceNotFoundException {
-<span class="nc" id="L107">        fetchFile(url, outputPath, useProxy, null, null);</span>
-<span class="nc" id="L108">    }</span>
+<span class="nc" id="L108">        fetchFile(url, outputPath, useProxy, null, null);</span>
+<span class="nc" id="L109">    }</span>
 
     /**
      * Retrieves a file from a given URL and saves it to the outputPath.
@@ -123,25 +124,25 @@ public final class Downloader {
      */
     public void fetchFile(URL url, File outputPath, boolean useProxy, String userKey, String passwordKey) throws DownloadFailedException,
             TooManyRequestsException, ResourceNotFoundException {
-<span class="fc" id="L126">        InputStream in = null;</span>
-<span class="fc" id="L127">        try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy, userKey, passwordKey);</span>
-<span class="fc" id="L128">                OutputStream out = new FileOutputStream(outputPath)) {</span>
-<span class="fc" id="L129">            in = conn.fetch(url);</span>
-<span class="fc" id="L130">            IOUtils.copy(in, out);</span>
-<span class="nc" id="L131">        } catch (IOException ex) {</span>
-<span class="nc" id="L132">            final String msg = format(&quot;Download failed, unable to copy '%s' to '%s'; %s&quot;,</span>
-<span class="nc" id="L133">                    url.toString(), outputPath.getAbsolutePath(), ex.getMessage());</span>
-<span class="nc" id="L134">            throw new DownloadFailedException(msg, ex);</span>
+<span class="fc" id="L127">        InputStream in = null;</span>
+<span class="fc" id="L128">        try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy, userKey, passwordKey);</span>
+<span class="fc" id="L129">                OutputStream out = new FileOutputStream(outputPath)) {</span>
+<span class="fc" id="L130">            in = conn.fetch(url);</span>
+<span class="fc" id="L131">            IOUtils.copy(in, out);</span>
+<span class="nc" id="L132">        } catch (IOException ex) {</span>
+<span class="nc" id="L133">            final String msg = format(&quot;Download failed, unable to copy '%s' to '%s'; %s&quot;,</span>
+<span class="nc" id="L134">                    url.toString(), outputPath.getAbsolutePath(), ex.getMessage());</span>
+<span class="nc" id="L135">            throw new DownloadFailedException(msg, ex);</span>
         } finally {
-<span class="pc bpc" id="L136" title="1 of 2 branches missed.">            if (in != null) {</span>
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">            if (in != null) {</span>
                 try {
-<span class="fc" id="L138">                    in.close();</span>
-<span class="nc" id="L139">                } catch (IOException ex) {</span>
-<span class="nc" id="L140">                    LOGGER.trace(&quot;Ignorable error&quot;, ex);</span>
-<span class="fc" id="L141">                }</span>
+<span class="fc" id="L139">                    in.close();</span>
+<span class="nc" id="L140">                } catch (IOException ex) {</span>
+<span class="nc" id="L141">                    LOGGER.trace(&quot;Ignorable error&quot;, ex);</span>
+<span class="fc" id="L142">                }</span>
             }
         }
-<span class="fc" id="L144">    }</span>
+<span class="fc" id="L145">    }</span>
 
     /**
      * Retrieves a file from a given URL and returns the contents.
@@ -156,7 +157,7 @@ public final class Downloader {
      * @throws ResourceNotFoundException thrown when a 404 is received
      */
     public String fetchContent(URL url, boolean useProxy) throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
-<span class="nc" id="L159">        return fetchContent(url, useProxy, null, null);</span>
+<span class="nc" id="L160">        return fetchContent(url, useProxy, null, null);</span>
     }
 
     /**
@@ -173,23 +174,24 @@ public final class Downloader {
      * @throws TooManyRequestsException thrown when a 429 is received
      * @throws ResourceNotFoundException thrown when a 404 is received
      */
-    public String fetchContent(URL url, boolean useProxy, String userKey, String passwordKey) throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
-<span class="nc" id="L177">        InputStream in = null;</span>
-<span class="nc" id="L178">        try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy, userKey, passwordKey);</span>
-<span class="nc" id="L179">                ByteArrayOutputStream out = new ByteArrayOutputStream()) {</span>
-<span class="nc" id="L180">            in = conn.fetch(url);</span>
-<span class="nc" id="L181">            IOUtils.copy(in, out);</span>
-<span class="nc" id="L182">            return out.toString(UTF8);</span>
-<span class="nc" id="L183">        } catch (IOException ex) {</span>
-<span class="nc" id="L184">            final String msg = format(&quot;Download failed, unable to retrieve '%s'; %s&quot;, url.toString(), ex.getMessage());</span>
-<span class="nc" id="L185">            throw new DownloadFailedException(msg, ex);</span>
+    public String fetchContent(URL url, boolean useProxy, String userKey, String passwordKey)
+            throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
+<span class="nc" id="L179">        InputStream in = null;</span>
+<span class="nc" id="L180">        try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy, userKey, passwordKey);</span>
+<span class="nc" id="L181">                ByteArrayOutputStream out = new ByteArrayOutputStream()) {</span>
+<span class="nc" id="L182">            in = conn.fetch(url);</span>
+<span class="nc" id="L183">            IOUtils.copy(in, out);</span>
+<span class="nc" id="L184">            return out.toString(UTF8);</span>
+<span class="nc" id="L185">        } catch (IOException ex) {</span>
+<span class="nc" id="L186">            final String msg = format(&quot;Download failed, unable to retrieve '%s'; %s&quot;, url.toString(), ex.getMessage());</span>
+<span class="nc" id="L187">            throw new DownloadFailedException(msg, ex);</span>
         } finally {
-<span class="nc bnc" id="L187" title="All 2 branches missed.">            if (in != null) {</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">            if (in != null) {</span>
                 try {
-<span class="nc" id="L189">                    in.close();</span>
-<span class="nc" id="L190">                } catch (IOException ex) {</span>
-<span class="nc" id="L191">                    LOGGER.trace(&quot;Ignorable error&quot;, ex);</span>
-<span class="nc" id="L192">                }</span>
+<span class="nc" id="L191">                    in.close();</span>
+<span class="nc" id="L192">                } catch (IOException ex) {</span>
+<span class="nc" id="L193">                    LOGGER.trace(&quot;Ignorable error&quot;, ex);</span>
+<span class="nc" id="L194">                }</span>
             }
         }
     }
