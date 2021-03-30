@@ -64,6 +64,7 @@ jobs:
           mvn -s settings.xml release:prepare --no-transfer-progress --batch-mode
           git reset --hard HEAD~1
           git push origin release
+          git fetch origin main
           git checkout main
           git merge release
           git push origin main --tags
