@@ -1,5 +1,12 @@
 # Release Notes
 
+## [Version 6.1.4](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.1.4) (2021-03-30)
+
+### Changes
+
+- Fixed an NPE introduced in 6.1.3 (see #3212)
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/24?closed=1).
+
 ## [Version 6.1.3](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.1.3) (2021-03-22)
 
 ### Changes
