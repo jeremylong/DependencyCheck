@@ -24,7 +24,6 @@ import org.owasp.dependencycheck.data.nvd.json.CpeMatchStreamCollector;
 import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
 import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
-import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
@@ -43,6 +42,7 @@ public class CveItemOperator {
 
     /**
      * Constructs a new CVE Item Operator utility.
+     *
      * @param cpeStartsWithFilter the filter to use for CPE entries
      */
     public CveItemOperator(String cpeStartsWithFilter) {

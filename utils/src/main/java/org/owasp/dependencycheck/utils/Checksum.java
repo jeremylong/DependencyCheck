@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -175,8 +174,9 @@ public final class Checksum {
                 return DigestUtils.sha1Hex(bytes);
             case SHA256:
                 return DigestUtils.sha256Hex(bytes);
+            default:
+                return null;
         }
-        return null;
     }
 
     /**

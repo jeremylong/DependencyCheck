@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import com.fasterxml.jackson.core.util.VersionUtil;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -72,7 +71,6 @@ import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
-import org.owasp.dependencycheck.utils.Pair;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -256,12 +254,12 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     protected void determineCPE(Dependency dependency) throws CorruptIndexException, IOException, ParseException, AnalysisException {
         boolean identifierAdded;
 
-        Set<String> majorVersions = dependency.getSoftwareIdentifiers()
+        final Set<String> majorVersions = dependency.getSoftwareIdentifiers()
                 .stream()
                 .filter(i -> i instanceof PurlIdentifier)
                 .map(i -> {
-                    PurlIdentifier p = (PurlIdentifier) i;
-                    DependencyVersion depVersion = DependencyVersionUtil.parseVersion(p.getVersion(), false);
+                    final PurlIdentifier p = (PurlIdentifier) i;
+                    final DependencyVersion depVersion = DependencyVersionUtil.parseVersion(p.getVersion(), false);
                     if (depVersion != null) {
                         return depVersion.getVersionParts().get(0);
                     }
@@ -372,7 +370,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     }
 
     private void addMajorVersionToTerms(Set<String> majorVersions, Map<String, MutableInt> products) {
-        Map<String, MutableInt> temp = new HashMap<>();
+        final Map<String, MutableInt> temp = new HashMap<>();
         products.entrySet().stream()
                 .filter(term -> term.getKey() != null)
                 .forEach(term -> {
@@ -620,8 +618,9 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * that the product, vendor, and version information for the CPE are
      * contained within the dependencies evidence.
      *
-     * @param entry a CPE entry.
-     * @param dependency the dependency that the CPE entries could be for.
+     * @param entry a CPE entry
+     * @param dependency the dependency that the CPE entries could be for
+     * @param majorVersions the major versions detected for the dependency
      * @return whether or not the entry is valid.
      */
     private boolean verifyEntry(final IndexEntry entry, final Dependency dependency,
@@ -644,9 +643,11 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             if (collectionContainsString(dependency.getEvidence(EvidenceType.PRODUCT), entry.getProduct())) {
                 isValid = true;
             } else {
-                isValid = majorVersions.stream().filter(version -> entry.getProduct().endsWith(version) && entry.getProduct().length() > version.length())
+                isValid = majorVersions.stream().filter(version
+                        -> entry.getProduct().endsWith(version) && entry.getProduct().length() > version.length())
                         .anyMatch(version
-                                -> collectionContainsString(dependency.getEvidence(EvidenceType.PRODUCT), entry.getProduct().substring(0, entry.getProduct().length() - version.length()))
+                                -> collectionContainsString(dependency.getEvidence(EvidenceType.PRODUCT),
+                                entry.getProduct().substring(0, entry.getProduct().length() - version.length()))
                         );
             }
         }

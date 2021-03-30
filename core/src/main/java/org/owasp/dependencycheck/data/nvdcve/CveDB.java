@@ -1398,13 +1398,11 @@ public final class CveDB implements AutoCloseable {
         if (ConnectionFactory.isH2Connection(settings)) {
             final long start = System.currentTimeMillis();
             try (CallableStatement psCompaxt = connection.prepareCall("SHUTDOWN DEFRAG")) {
-                if (psCompaxt != null) {
-                    LOGGER.info("Begin database defrag");
-                    psCompaxt.execute();
-                    final long millis = System.currentTimeMillis() - start;
-                    //final long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
-                    LOGGER.info("End database defrag ({} ms)", millis);
-                }
+                LOGGER.info("Begin database defrag");
+                psCompaxt.execute();
+                final long millis = System.currentTimeMillis() - start;
+                //final long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+                LOGGER.info("End database defrag ({} ms)", millis);
             } catch (SQLException ex) {
                 LOGGER.error("An unexpected SQL Exception occurred compacting the database; please see the verbose log for more details.");
                 LOGGER.debug("", ex);

@@ -368,7 +368,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
      * @return the manifest entries
      */
     private static Properties getManifestProperties(File manifest) {
-        Properties prop = new Properties();
+        final Properties prop = new Properties();
         if (null == manifest) {
             LOGGER.debug("Manifest file not found.");
         } else {

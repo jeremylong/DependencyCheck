@@ -86,7 +86,8 @@ public final class Downloader {
      * @throws TooManyRequestsException thrown when a 429 is received
      * @throws ResourceNotFoundException thrown when a 404 is received
      */
-    public void fetchFile(URL url, File outputPath, String userKey, String passwordKey) throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
+    public void fetchFile(URL url, File outputPath, String userKey, String passwordKey)
+            throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
         fetchFile(url, outputPath, true, userKey, passwordKey);
     }
 
@@ -173,7 +174,8 @@ public final class Downloader {
      * @throws TooManyRequestsException thrown when a 429 is received
      * @throws ResourceNotFoundException thrown when a 404 is received
      */
-    public String fetchContent(URL url, boolean useProxy, String userKey, String passwordKey) throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
+    public String fetchContent(URL url, boolean useProxy, String userKey, String passwordKey)
+            throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
         InputStream in = null;
         try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy, userKey, passwordKey);
                 ByteArrayOutputStream out = new ByteArrayOutputStream()) {

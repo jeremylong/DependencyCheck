@@ -739,17 +739,20 @@ Copyright (c) 2012 - Jeremy Long
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven-javadoc-plugin.version}</version>
-                <configuration>
-                    <failOnError>false</failOnError>
-                    <bottom>Copyright© 2012-19 Jeremy Long. All Rights Reserved.</bottom>
-                    <excludes>**/generated-sources/java/**/*.java</excludes>
-                </configuration>
                 <reportSets>
                     <reportSet>
                         <id>default</id>
                         <reports>
                             <report>javadoc</report>
                         </reports>
+                        <configuration>
+                            <failOnError>false</failOnError>
+                            <bottom>Copyright© 2012-21 Jeremy Long. All Rights Reserved.</bottom>
+                            <sourceFileExcludes>
+                                <exclude>**/generated-sources/**/*.java</exclude>
+                            </sourceFileExcludes>
+                            <source>8</source>
+                        </configuration>
                     </reportSet>
                 </reportSets>
             </plugin>
