@@ -4255,4 +4255,11 @@
         <packageUrl regex="true">^pkg:maven/com\.typesafe\.play/play\-.*ws\-standalone.*@.*$</packageUrl>
         <cpe>cpe:/a:playframework:play_framework</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3066 on mybatis-spring-boot-starter
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.mybatis\.spring\.boot/mybatis\-spring\-boot.*$</packageUrl>
+        <cpe>cpe:/a:mybatis:mybatis</cpe>
+    </suppress>
 </suppressions>
