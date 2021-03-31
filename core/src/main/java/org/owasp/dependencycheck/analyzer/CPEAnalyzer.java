@@ -644,7 +644,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 isValid = true;
             } else {
                 isValid = majorVersions.stream().filter(version
-                        -> entry.getProduct().endsWith(version) && entry.getProduct().length() > version.length())
+                        -> version != null && entry.getProduct().endsWith(version) && entry.getProduct().length() > version.length())
                         .anyMatch(version
                                 -> collectionContainsString(dependency.getEvidence(EvidenceType.PRODUCT),
                                 entry.getProduct().substring(0, entry.getProduct().length() - version.length()))
