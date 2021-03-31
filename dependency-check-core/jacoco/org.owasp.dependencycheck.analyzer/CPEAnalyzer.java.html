@@ -644,7 +644,7 @@ import us.springett.parsers.cpe.values.Part;
 <span class="fc" id="L644">                isValid = true;</span>
             } else {
 <span class="fc" id="L646">                isValid = majorVersions.stream().filter(version</span>
-<span class="pc bpc" id="L647" title="3 of 4 branches missed.">                        -&gt; entry.getProduct().endsWith(version) &amp;&amp; entry.getProduct().length() &gt; version.length())</span>
+<span class="pc bpc" id="L647" title="4 of 6 branches missed.">                        -&gt; version != null &amp;&amp; entry.getProduct().endsWith(version) &amp;&amp; entry.getProduct().length() &gt; version.length())</span>
 <span class="fc" id="L648">                        .anyMatch(version</span>
 <span class="nc" id="L649">                                -&gt; collectionContainsString(dependency.getEvidence(EvidenceType.PRODUCT),</span>
 <span class="nc" id="L650">                                entry.getProduct().substring(0, entry.getProduct().length() - version.length()))</span>

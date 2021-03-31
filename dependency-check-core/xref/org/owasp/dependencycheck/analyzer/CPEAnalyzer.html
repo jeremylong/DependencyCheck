@@ -652,7 +652,7 @@
 <a class="jxr_linenumber" name="L644" href="#L644">644</a>                 isValid = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="L645" href="#L645">645</a>             } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L646" href="#L646">646</a>                 isValid = majorVersions.stream().filter(version
-<a class="jxr_linenumber" name="L647" href="#L647">647</a>                         -&gt; entry.getProduct().endsWith(version) &amp;&amp; entry.getProduct().length() &gt; version.length())
+<a class="jxr_linenumber" name="L647" href="#L647">647</a>                         -&gt; version != <strong class="jxr_keyword">null</strong> &amp;&amp; entry.getProduct().endsWith(version) &amp;&amp; entry.getProduct().length() &gt; version.length())
 <a class="jxr_linenumber" name="L648" href="#L648">648</a>                         .anyMatch(version
 <a class="jxr_linenumber" name="L649" href="#L649">649</a>                                 -&gt; collectionContainsString(dependency.getEvidence(EvidenceType.PRODUCT),
 <a class="jxr_linenumber" name="L650" href="#L650">650</a>                                 entry.getProduct().substring(0, entry.getProduct().length() - version.length()))

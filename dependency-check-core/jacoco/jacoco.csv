@@ -154,14 +154,14 @@ Dependency-Check Core,org.owasp.dependencycheck.analyzer,AbstractNpmAnalyzer,346
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,AssemblyAnalyzer,321,739,85,81,84,158,70,28,0,15
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,AbstractSuppressionAnalyzer,196,296,7,19,36,75,8,17,1,11
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,PipfileAnalyzer,31,211,5,7,6,48,5,10,0,9
-Dependency-Check Core,org.owasp.dependencycheck.analyzer,CentralAnalyzer,300,161,35,9,86,46,19,16,0,13
+Dependency-Check Core,org.owasp.dependencycheck.analyzer,CentralAnalyzer,301,160,36,8,87,45,20,15,0,13
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,NodeAuditAnalyzer,185,128,10,10,46,29,8,11,1,8
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,AnalysisPhase,0,134,0,0,0,14,0,1,0,1
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,RubyGemspecAnalyzer.new FilenameFilter() {...},10,0,0,0,2,0,2,0,2,0
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,CMakeAnalyzer,115,483,8,34,18,122,7,24,0,10
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,RetireJsAnalyzer,386,504,25,46,70,108,22,29,2,12
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,YarnAuditAnalyzer,160,302,14,13,42,75,13,13,0,12
-Dependency-Check Core,org.owasp.dependencycheck.analyzer,CPEAnalyzer,512,1826,77,219,102,397,68,125,5,40
+Dependency-Check Core,org.owasp.dependencycheck.analyzer,CPEAnalyzer,512,1828,78,220,102,397,69,125,5,40
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,ArchiveAnalyzer,520,766,69,81,109,164,61,40,6,20
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,DependencyBundlingAnalyzer,660,550,187,117,152,112,129,56,13,20
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,AnalyzerService,1,84,1,11,1,22,1,10,0,5
