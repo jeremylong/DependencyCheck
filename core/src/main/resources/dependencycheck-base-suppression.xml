@@ -2,6 +2,15 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
    <suppress base="true">
         <notes><![CDATA[
+	    FP per #3241
+	    ]]></notes>
+        <gav regex="true">^io\.awspring\.cloud:spring-cloud-.*$</gav>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cpe>cpe:/a:context_project:context</cpe>
+   </suppress>
+   <suppress base="true">
+        <notes><![CDATA[
         FP per #3230
         ]]></notes>
       <packageUrl regex="true">^pkg:maven/io\.github\.x\-stream/mxparser@.*$</packageUrl>
