@@ -125,8 +125,8 @@ public class BundlerAuditProcessor extends Processor<InputStream> {
         try (InputStreamReader ir = new InputStreamReader(getInput(), StandardCharsets.UTF_8);
                 BufferedReader br = new BufferedReader(ir)) {
 
-            while (br.ready()) {
-                final String nextLine = br.readLine();
+            String nextLine;
+            while ((nextLine = br.readLine()) != null) {
                 if (null == nextLine) {
                     break;
                 } else if (nextLine.startsWith(NAME)) {
