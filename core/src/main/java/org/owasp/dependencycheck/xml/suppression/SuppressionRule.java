@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.concurrent.NotThreadSafe;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
@@ -636,7 +637,8 @@ public class SuppressionRule {
         final StringBuilder sb = new StringBuilder(64);
         sb.append("SuppressionRule{");
         if (until != null) {
-            sb.append("until=").append(until).append(',');
+            String dt = DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(until);
+            sb.append("until=").append(dt).append(',');
         }
         if (filePath != null) {
             sb.append("filePath=").append(filePath).append(',');
