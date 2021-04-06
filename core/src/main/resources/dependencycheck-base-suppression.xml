@@ -4271,4 +4271,12 @@
         <packageUrl regex="true">^pkg:maven/org\.mybatis\.spring\.boot/mybatis\-spring\-boot.*$</packageUrl>
         <cpe>cpe:/a:mybatis:mybatis</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3068 on spring-session-hazelcast
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.session/spring\-session\-hazelcast@.*$</packageUrl>
+        <cpe>cpe:/a:hazelcast:hazelcast</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+    </suppress>
 </suppressions>
