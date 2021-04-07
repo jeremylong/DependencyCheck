@@ -304,9 +304,11 @@ public class NvdCveUpdater implements CachedWebDataSource {
             final Future<ProcessTask> task;
             try {
                 task = modified.get();
-                final ProcessTask last = task.get();
-                if (last.getException() != null) {
-                    throw last.getException();
+                if (task != null) {
+                    final ProcessTask last = task.get();
+                    if (last.getException() != null) {
+                        throw last.getException();
+                    }
                 }
             } catch (InterruptedException ex) {
                 LOGGER.debug("Thread was interrupted during download", ex);
