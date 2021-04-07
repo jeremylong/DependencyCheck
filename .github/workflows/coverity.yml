@@ -10,9 +10,10 @@ jobs:
       - uses: actions/checkout@v2
       - name: Set up JDK 1.8
         id: jdk-8
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
-          java-version: 1.8 
+          java-version: 8
+          distribution: 'zulu'
       - name: Get coverity cli
         run: |
           wget https://scan.coverity.com/download/linux64 --no-verbose --post-data "token=${{ secrets.COVERITY_TOKEN }}&project=jeremylong%2FDependencyCheck" -O coverity_tool.tgz
