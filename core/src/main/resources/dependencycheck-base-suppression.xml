@@ -4279,4 +4279,11 @@
         <cpe>cpe:/a:hazelcast:hazelcast</cpe>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3271 on org.apache.sis.storage
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.sis\.storage/sis\-.*$</packageUrl>
+        <cpe>cpe:/a:storage_project:storage</cpe>
+    </suppress>
 </suppressions>
