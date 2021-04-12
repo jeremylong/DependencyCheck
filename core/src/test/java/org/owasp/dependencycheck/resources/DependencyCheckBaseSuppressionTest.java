@@ -2,6 +2,7 @@ package org.owasp.dependencycheck.resources;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -22,7 +23,7 @@ public class DependencyCheckBaseSuppressionTest {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
-        Path path = Path.of("src", "main", "resources", "dependencycheck-base-suppression.xml");
+        Path path = Paths.get("src", "main", "resources", "dependencycheck-base-suppression.xml");
         Document document = factory.newDocumentBuilder().parse(path.toFile());
         document.getDocumentElement().normalize();
 
