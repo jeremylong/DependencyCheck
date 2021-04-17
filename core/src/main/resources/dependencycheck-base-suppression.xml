@@ -4301,4 +4301,11 @@
         <cpe>cpe:/a:kubernetes:java</cpe>
         <cpe>cpe:/a:kubernetes:kubernetes</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3284 on com.amazonaws:aws-java-sdk-storagegateway
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.amazonaws/aws\-java\-sdk\-storagegateway@.*$</packageUrl>
+        <cpe>cpe:/a:storage_project:storage</cpe>
+    </suppress>
 </suppressions>
