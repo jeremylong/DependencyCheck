@@ -4308,4 +4308,11 @@
         <packageUrl regex="true">^pkg:maven/com\.amazonaws/aws\-java\-sdk\-storagegateway@.*$</packageUrl>
         <cpe>cpe:/a:storage_project:storage</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3283 on com.amazonaws:aws-java-sdk-sagemakerruntime
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.amazonaws/aws\-java\-sdk\-sagemakerruntime@.*$</packageUrl>
+        <cpe>cpe:/a:sage:sage</cpe>
+    </suppress>
 </suppressions>
