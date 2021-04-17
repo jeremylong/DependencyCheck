@@ -89,8 +89,8 @@ Development Prerequisites
 -------------
 
 For installation to pass, you must have the following components installed:
-* Java: `java --version` 1.8.0 and higher
-* Maven: `mvn --version` 3.5.0 and higher
+* Java: `java -version` 1.8
+* Maven: `mvn -version` 3.5.0 and higher
 
 Tests cases require:
 * dotnet core version 3.1
@@ -203,7 +203,7 @@ docker run --rm ^
 
 Building From Source
 -------------
-To build dependency-check run the command:
+To build dependency-check (using Java 8) run the command:
 
 ```
 mvn -s settings.xml install
