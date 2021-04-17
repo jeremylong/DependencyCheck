@@ -4315,4 +4315,11 @@
         <packageUrl regex="true">^pkg:maven/com\.amazonaws/aws\-java\-sdk\-sagemakerruntime@.*$</packageUrl>
         <cpe>cpe:/a:sage:sage</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3282 on org.mybatis.generator:mybatis-generator-core
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.mybatis\.generator/mybatis\-generator\-core@.*$</packageUrl>
+        <cpe>cpe:/a:mybatis:mybatis</cpe>
+    </suppress>
 </suppressions>
