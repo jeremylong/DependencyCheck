@@ -4293,4 +4293,12 @@
         <packageUrl regex="true">^pkg:maven/org\.apache\.sis\.storage/sis\-.*$</packageUrl>
         <cpe>cpe:/a:storage_project:storage</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3285 on com.amazonaws:aws-java-sdk-eks
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.amazonaws/aws\-java\-sdk\-eks@.*$</packageUrl>
+        <cpe>cpe:/a:kubernetes:java</cpe>
+        <cpe>cpe:/a:kubernetes:kubernetes</cpe>
+    </suppress>
 </suppressions>
