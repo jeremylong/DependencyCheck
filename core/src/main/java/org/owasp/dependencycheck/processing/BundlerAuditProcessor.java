@@ -33,6 +33,7 @@ import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.ADVISORY;
 import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.CRITICALITY;
+import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.CVE;
 import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
 import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.NAME;
 import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.VERSION;
@@ -139,13 +140,13 @@ public class BundlerAuditProcessor extends Processor<InputStream> {
                     LOGGER.debug("bundle-audit ({}): {}", parentName, nextLine);
                 } else if (nextLine.startsWith(VERSION)) {
                     vulnerability = createVulnerability(parentName, dependency, gem, nextLine);
-                } else if (nextLine.startsWith(ADVISORY)) {
+                } else if (nextLine.startsWith(ADVISORY) || nextLine.startsWith(CVE)) {
                     setVulnerabilityName(parentName, dependency, vulnerability, nextLine);
                 } else if (nextLine.startsWith(CRITICALITY)) {
                     addCriticalityToVulnerability(parentName, vulnerability, nextLine);
                 } else if (nextLine.startsWith("URL: ")) {
                     addReferenceToVulnerability(parentName, vulnerability, nextLine);
-                } else if (nextLine.startsWith("Description:")) {
+                } else if (nextLine.startsWith("Description:") || nextLine.startsWith("Title:")) {
                     appendToDescription = true;
                     if (null != vulnerability) {
                         vulnerability.setDescription("*** Vulnerability obtained from bundle-audit verbose report. "
@@ -172,7 +173,12 @@ public class BundlerAuditProcessor extends Processor<InputStream> {
      * @param nextLine the line to parse
      */
     private void setVulnerabilityName(String parentName, Dependency dependency, Vulnerability vulnerability, String nextLine) {
-        final String advisory = nextLine.substring(ADVISORY.length());
+        String advisory;
+        if (nextLine.startsWith(CVE)) {
+            advisory = nextLine.substring(CVE.length());
+        } else {
+            advisory = nextLine.substring(ADVISORY.length());
+        }
         if (null != vulnerability) {
             vulnerability.setName(advisory);
         }

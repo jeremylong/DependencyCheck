@@ -87,6 +87,10 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      */
     public static final String ADVISORY = "Advisory: ";
     /**
+     * CVE.
+     */
+    public static final String CVE = "CVE: ";
+    /**
      * Criticality.
      */
     public static final String CRITICALITY = "Criticality: ";
