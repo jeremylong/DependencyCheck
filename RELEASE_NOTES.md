@@ -1,6 +1,70 @@
 # Release Notes
 
-Please see the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check) for the release notes on versions not listed below.
+## [Version 6.1.5](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.1.5) (2021-03-31)
+
+### Changes
+
+- Fixed a second NPE introduced in 6.1.3 (see #3246)
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/25?closed=1).
+
+## [Version 6.1.4](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.1.4) (2021-03-30)
+
+### Changes
+
+- Fixed an NPE introduced in 6.1.3 (see #3212)
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/24?closed=1).
+
+## [Version 6.1.3](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.1.3) (2021-03-22)
+
+### Changes
+
+- Modified the new CPE matching strategy to be more performant (#3207)
+- Upgraded a vulnerable dependency (velocity-engine-core/CVE-2020-13936) (#3205)
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/23?closed=1).
+
+## [Version 6.1.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.1.2) (2021-03-08)
+
+### Changes
+
+- Fixed a bug in the Sarif report generation.
+- Fixed a bug with the Ant task not being able to read the dependency-check properties file in 6.1.1.
+- Added a new CPE matching strategy to reduce false negatives.
+- CLI and Ant task will no longer be published to bintray.
+- Several minor bug fixes.
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/22?closed=1).
+
+## [Version 6.1.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.1.1) (2021-02-13)
+
+### Changes
+
+- Added missing configuration options for yarn and msbuild.
+- Several bug fixes.
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/21?closed=1).
+
+## [Version 6.1.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.1.0) (2021-01-27)
+
+### Changes
+
+- Added SARIF file format per [#3081](https://github.com/jeremylong/DependencyCheck/issues/3081).
+- Added support for Yarn per [#3063](https://github.com/jeremylong/DependencyCheck/pull/3063).
+- False positive reduction and minor bug fixes.
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/20?closed=1).
+
+## [Version 6.0.5](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.0.5) (2021-01-07)
+
+### Changes
+
+- Added missing command line arguments per #3028 and #3035.
+- False positive reduction and minor bug fixes.
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/19?closed=1).
+
+## [Version 6.0.4](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.0.4) (2020-12-31)
+
+### Changes
+
+- Minor bug fixes and reduction of false positives. 
+- See the full listing of 
+  [changes](https://github.com/jeremylong/DependencyCheck/milestone/18?closed=1).
 
 ## [Version 6.0.3](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.0.3) (2020-11-03)
 
@@ -462,3 +526,4 @@ Please see the [dependency-check google group](https://groups.google.com/forum/#
 - If show summary is disabled and vulnerable libraries are found that fail the build details are no longer displayed in the console – only that vulnerable libraries were identified
 - Resolved issues with threading and multiple connections to the embedded H2 database
   - This allows the Jenkins pipeline, Maven Plugin, etc. to safely run parallel executions of dependency-check
+

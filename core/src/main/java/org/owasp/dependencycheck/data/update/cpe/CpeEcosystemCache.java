@@ -17,9 +17,9 @@
  */
 package org.owasp.dependencycheck.data.update.cpe;
 
-import com.google.common.base.Strings;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.data.update.nvd.NvdCveParser;
 import org.owasp.dependencycheck.utils.Pair;
 import org.slf4j.Logger;
@@ -69,7 +69,7 @@ public final class CpeEcosystemCache {
         final String current = cache.get(key);
         String result = null;
         if (current == null) {
-            if (!Strings.isNullOrEmpty(identifiedEcosystem)) {
+            if (!StringUtils.isBlank(identifiedEcosystem)) {
                 cache.put(key, identifiedEcosystem);
                 changed.put(key, identifiedEcosystem);
                 result = identifiedEcosystem;

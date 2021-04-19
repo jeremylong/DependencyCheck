@@ -1,5 +1,111 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+   <suppress base="true">
+        <notes><![CDATA[
+      	nio-stream-storage is not 'github.com/containers/storage'. see #3273
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.synchronoss\.cloud/nio\-stream\-storage@.*$</packageUrl>
+        <cpe>cpe:/a:storage_project:storage</cpe>
+   </suppress>
+   <suppress base="true">
+        <notes><![CDATA[
+	    FP per #3241
+	    ]]></notes>
+        <gav regex="true">^io\.awspring\.cloud:spring-cloud-.*$</gav>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cpe>cpe:/a:context_project:context</cpe>
+   </suppress>
+   <suppress base="true">
+        <notes><![CDATA[
+        FP per #3230
+        ]]></notes>
+      <packageUrl regex="true">^pkg:maven/io\.github\.x\-stream/mxparser@.*$</packageUrl>
+      <cpe>cpe:/a:xstream_project:xstream</cpe>
+      <cpe>cpe:/a:oracle:jdk</cpe>
+   </suppress>
+   <suppress base="true">
+        <notes><![CDATA[
+        FP per #3073
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.pivotal\.cfenv/java\-cfenv\-boot\-pivotal\-scs@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #3053
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.seleniumhq\.selenium/selenium\-opera\-driver@.*$</packageUrl>
+        <cpe>cpe:/a:opera:opera</cpe>
+        <cpe>cpe:/a:opera_software:opera</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #3000
+        ]]></notes>
+        <packageUrl regex="true">^pkg:(generic|nuget)/(ProcessSnapshotCleanup|QTAgent.{0,10}|QTDCAgent|QTDCAgent32|TDEnvCleanup|UiaComWrapper|VSTestVideoRecorder|VisualStudioDatastoreConfigurationProvider|msdia140typelib_clr0200)@.*$</packageUrl>
+        <cpe>cpe:/a:microsoft:visual_studio</cpe>
+    </suppress>
+    <suppress base="true"> 
+        <notes><![CDATA[
+        FP per #3000
+        ]]></notes>
+        <packageUrl regex="true">^pkg:(generic|nuget)/(Microsoft\.)?(IntelliTrace|TestPlatform|VisualStudio\.).*$</packageUrl>
+        <cpe>cpe:/a:microsoft:visual_studio</cpe>
+        <cpe>cpe:/a:microsoft:ie</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #3000
+        ]]></notes>
+        <filePath regex="true">.*\.TestTools\..*\.dll</filePath>
+        <cpe>cpe:/a:microsoft:visual_studio</cpe>
+        <cpe>cpe:/a:microsoft:ie</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #3000
+        ]]></notes>
+        <packageUrl regex="true">^pkg:(generic|nuget)/Microsoft\.Dia.*$</packageUrl>
+        <cpe>cpe:/a:dia:dia</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #3021
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.helidon\.microprofile\.server/helidon\-microprofile\-server@.*$</packageUrl>
+        <cpe>cpe:/a:oracle:http_server</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #3015 & #3016
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/co\.elastic\.apm/apm\-.*$</packageUrl>
+        <cpe>cpe:/a:grpc:grpc</cpe>
+        <cpe>cpe:/a:apache:httpclient</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #3005
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.google\.apis/google\-api\-services\-sqladmin@.*$</packageUrl>
+        <cpe>cpe:/a:www-sql_project:www-sql</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #3005
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.google\.cloud\.sql/jdbc\-socket\-factory\-core@.*$</packageUrl>
+        <cpe>cpe:/a:www-sql_project:www-sql</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #3004
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.r2dbc/r2dbc\-postgresql@.*$</packageUrl>
+        <cpe>cpe:/a:postgresql:postgresql</cpe>
+    </suppress>
     <suppress base="true">
         <notes><![CDATA[
         FP per #3002
@@ -9,10 +115,30 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per #3002, CVE is for grpc-js
+        FP per #3002, CVE is for grpc-js and c
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.grpc/grpc\-.*$</packageUrl>
         <cve>CVE-2020-7768</cve>
+        <cve>CVE-2017-7861</cve>
+        <cve>CVE-2017-8359</cve>
+        <cve>CVE-2017-9431</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #3002, CVE is for grpc-js and c
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.google\.api\.grpc/grpc\-google\-common\-protos@.*$</packageUrl>
+        <cve>CVE-2020-7768</cve>
+        <cve>CVE-2017-7861</cve>
+        <cve>CVE-2017-8359</cve>
+        <cve>CVE-2017-9431</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #3002, CVE is for grpc-js
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.lightstep\.tracer/.*$</packageUrl>
+        <cpe>cpe:/a:grpc:grpc</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -240,6 +366,7 @@
         <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cve>CVE-2018-1258</cve>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -352,6 +479,7 @@
             47. DeleGate is a C-language application #2435
             48. thread_project - etherium token (https://nvd.nist.gov/vuln/detail/CVE-2018-13752) #1718
             49. data_tools is a python library #1667
+            50. tag project is a GO implemention #3047 & #3043
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -406,6 +534,7 @@
         <cpe>cpe:/a:delegate:delegate</cpe>
         <cpe>cpe:/a:thread_project:thread</cpe>
         <cpe>cpe:/a:data_tools_project:data_tools</cpe>
+        <cpe>cpe:/a:tag_project:tag</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -425,6 +554,7 @@
             11. JAR files should not be identified as github
             12. <cpe>cpe:/a:data-tools_project:data_tools</cpe> is a python project #1961
             13. flow_project reports an Ethereum token issue
+            14. ghost CMS is a node.js package (#3203)
         ]]></notes>
         <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)$</filePath>
         <cpe>cpe:/a:dash:dash</cpe>
@@ -442,6 +572,7 @@
         <cpe>cpe:/a:github:github</cpe>
         <cpe>cpe:/a:data-tools_project:data_tools</cpe>
         <cpe>cpe:/a:flow_project:flow</cpe>
+        <cpe>cpe:/a:ghost:ghost</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -615,6 +746,15 @@
         Suppresses false positives per issue #2235.
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.kerberos/spring-security-kerberos.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
+        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #3219.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-rsa.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
         <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
         <cpe>cpe:/a:security-framework_project:security-framework</cpe>
@@ -1231,6 +1371,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #3216
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.batch/spring\-batch\-integration@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:spring_integration</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2031
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.wildfly/wildfly\-microprofile\-config\-implementation@.*$</packageUrl>
@@ -1756,9 +1903,16 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-       https://github.com/processing/processing is not javax
-       ]]></notes>
+        https://github.com/processing/processing is not javax
+        ]]></notes>
         <gav regex="true">^(javax\.json|org\.glassfish):javax\.json(-api)?:.*$</gav>
+        <cpe>cpe:/a:processing:processing</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        https://github.com/processing/processing is not related to glassfish
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.glassfish.*$</packageUrl>
         <cpe>cpe:/a:processing:processing</cpe>
     </suppress>
     <suppress base="true">
@@ -2981,6 +3135,14 @@
 
     <suppress base="true">
         <notes><![CDATA[
+        FP per issue #3041
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/mysql/mysql\-connector\-java@.*$</packageUrl>
+        <cpe>cpe:/a:oracle:connector%2fj</cpe>
+        <cpe>cpe:/a:oracle:jdbc</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per issue #952 - instead of suppressing the whole thing, we will just
             suppress specific CVE that are for the server
         ]]></notes>
@@ -4077,19 +4239,87 @@
        ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.hawt/hawtio\-wildfly@.*$</packageUrl>
         <cpe>cpe:/a:hawt:hawtio</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        false positive per #3026 on io.hawtio.hawtio-wildfly
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.hawt/hawtio\-wildfly@.*$</packageUrl>
         <cpe>cpe:/a:hawt.io:hawtio</cpe>
+        <cpe>cpe:/a:redhat:wildfly</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        false positive per #3026 on io.hawtio.hawtio-wildfly
+         false positive per #3170 ant-contrib is not the Tasks Android app
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.hawt/hawtio\-wildfly@.*$</packageUrl>
-        <cpe>cpe:/a:redhat:wildfly</cpe>
+        <packageUrl regex="true">^pkg:maven/ant\-contrib/ant\-contrib@.*$</packageUrl>
+        <cpe>cpe:/a:tasks:tasks</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3151
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.camel/camel\-hazelcast@.*$</packageUrl>
+        <cpe>cpe:/a:hazelcast:hazelcast</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3185 spotify docker-client library is neither docker nor spotify
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.spotify/docker\-client@.*$</packageUrl>
+        <cpe>cpe:/a:docker:docker</cpe>
+        <cpe>cpe:/a:spotify:spotify</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3132 Play WS Standalone (https://github.com/playframework/play-ws)  is not the Play framework (https://github.com/playframework/playframework)
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.typesafe\.play/play\-.*ws\-standalone.*@.*$</packageUrl>
+        <cpe>cpe:/a:playframework:play_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3066 on mybatis-spring-boot-starter
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.mybatis\.spring\.boot/mybatis\-spring\-boot.*$</packageUrl>
+        <cpe>cpe:/a:mybatis:mybatis</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3068 on spring-session-hazelcast
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.session/spring\-session\-hazelcast@.*$</packageUrl>
+        <cpe>cpe:/a:hazelcast:hazelcast</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3271 on org.apache.sis.storage
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.sis\.storage/sis\-.*$</packageUrl>
+        <cpe>cpe:/a:storage_project:storage</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3285 on com.amazonaws:aws-java-sdk-eks
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.amazonaws/aws\-java\-sdk\-eks@.*$</packageUrl>
+        <cpe>cpe:/a:kubernetes:java</cpe>
+        <cpe>cpe:/a:kubernetes:kubernetes</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3284 on com.amazonaws:aws-java-sdk-storagegateway
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.amazonaws/aws\-java\-sdk\-storagegateway@.*$</packageUrl>
+        <cpe>cpe:/a:storage_project:storage</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3283 on com.amazonaws:aws-java-sdk-sagemakerruntime
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.amazonaws/aws\-java\-sdk\-sagemakerruntime@.*$</packageUrl>
+        <cpe>cpe:/a:sage:sage</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3282 on org.mybatis.generator:mybatis-generator-core
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.mybatis\.generator/mybatis\-generator\-core@.*$</packageUrl>
+        <cpe>cpe:/a:mybatis:mybatis</cpe>
     </suppress>
 </suppressions>

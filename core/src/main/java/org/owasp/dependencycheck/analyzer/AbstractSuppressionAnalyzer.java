@@ -189,12 +189,12 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                 final URL url = new URL(suppressionFilePath);
                 final Downloader downloader = new Downloader(getSettings());
                 try {
-                    downloader.fetchFile(url, file, false);
+                    downloader.fetchFile(url, file, false, Settings.KEYS.SUPPRESSION_FILE_USER, Settings.KEYS.SUPPRESSION_FILE_PASSWORD);
                 } catch (DownloadFailedException ex) {
                     LOGGER.trace("Failed download suppression file - first attempt", ex);
                     try {
                         Thread.sleep(500);
-                        downloader.fetchFile(url, file, true);
+                        downloader.fetchFile(url, file, true, Settings.KEYS.SUPPRESSION_FILE_USER, Settings.KEYS.SUPPRESSION_FILE_PASSWORD);
                     } catch (TooManyRequestsException ex1) {
                         throw new SuppressionParseException("Unable to download supression file `" + file
                                 + "`; received 429 - too many requests", ex1);
@@ -216,14 +216,12 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
 
                 if (!file.exists()) {
                     try (InputStream suppressionFromClasspath = FileUtils.getResourceAsStream(suppressionFilePath)) {
-                        if (suppressionFromClasspath != null) {
-                            deleteTempFile = true;
-                            file = getSettings().getTempFile("suppression", "xml");
-                            try {
-                                org.apache.commons.io.FileUtils.copyInputStreamToFile(suppressionFromClasspath, file);
-                            } catch (IOException ex) {
-                                throwSuppressionParseException("Unable to locate suppression file in classpath", ex, suppressionFilePath);
-                            }
+                        deleteTempFile = true;
+                        file = getSettings().getTempFile("suppression", "xml");
+                        try {
+                            org.apache.commons.io.FileUtils.copyInputStreamToFile(suppressionFromClasspath, file);
+                        } catch (IOException ex) {
+                            throwSuppressionParseException("Unable to locate suppression file in classpath", ex, suppressionFilePath);
                         }
                     }
                 }

@@ -128,6 +128,8 @@ CREATE TABLE cweEntry (cveid INT, cwe VARCHAR(20),
 
 CREATE TABLE cpeEcosystemCache (vendor VARCHAR(255), product VARCHAR(255), ecosystem VARCHAR(255), PRIMARY KEY (vendor, product));
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('apache', 'zookeeper', 'MULTIPLE');
+INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('tensorflow', 'tensorflow', 'MULTIPLE');
+INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('scikit-learn', 'scikit-learn', 'MULTIPLE');
 
 -- CREATE INDEX idxCwe ON cweEntry(cveid); -- PK automatically receives index
 -- CREATE INDEX idxVulnerability ON vulnerability(cve); -- PK automatically receives index
@@ -392,4 +394,4 @@ CREATE OR REPLACE VIEW v_update_ecosystems AS
     ON c.vendor=e.vendor
         AND c.product=e.product;
 
-INSERT INTO properties(id,value) VALUES ('version','5.0');
+INSERT INTO properties(id,value) VALUES ('version','5.1');

@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import com.google.common.base.Strings;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FileFilter;
@@ -33,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.processing.GoModProcessor;
 import org.owasp.dependencycheck.utils.processing.ProcessReader;
@@ -175,37 +175,7 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Launches `go list -json -m all` in the given folder.
-     *
-     * @param folder the working folder
-     * @return a reference to the launched process
-     * @throws AnalysisException thrown if there is an issue launching `go mod`
-     */
-    private Process launchGoListAll(File folder) throws AnalysisException {
-        if (!folder.isDirectory()) {
-            throw new AnalysisException(String.format("%s should have been a directory.", folder.getAbsolutePath()));
-        }
-
-        final List<String> args = new ArrayList<>();
-        args.add(getGo());
-        args.add("list");
-        args.add("-json");
-        args.add("-m");
-        args.add("all");
-
-        final ProcessBuilder builder = new ProcessBuilder(args);
-        builder.directory(folder);
-        try {
-            LOGGER.debug("Launching: {} from {}", args, folder);
-            return builder.start();
-        } catch (IOException ioe) {
-            throw new AnalysisException("go initialization failure; this error can be ignored if you are not analyzing Go. "
-                    + "Otherwise ensure that go is installed and the path to go is correctly specified", ioe);
-        }
-    }
-
-    /**
-     * Launches `go list -json -m readonly` in the given folder.
+     * Launches `go list -json -m -mod=readonly all` in the given folder.
      *
      * @param folder the working folder
      * @return a reference to the launched process
@@ -221,7 +191,8 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
         args.add("list");
         args.add("-json");
         args.add("-m");
-        args.add("readonly");
+        args.add("-mod=readonly");
+        args.add("all");
 
         final ProcessBuilder builder = new ProcessBuilder(args);
         builder.directory(folder);
@@ -270,13 +241,13 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
                         throw new InitializationException(String.format("Go executable not found. Disabling %s: %s", ANALYZER_NAME, exitValue));
                     case possiblyGoTooOldExitValue:
                         final String error = processReader.getError();
-                        if (Strings.isNullOrEmpty(error)) {
+                        if (!StringUtils.isBlank(error)) {
+                            if (error.contains("unknown subcommand \"mod\"")) {
+                                LOGGER.warn("Your version of `go` does not support modules. Disabling {}. Error: `{}`", ANALYZER_NAME, error);
+                                throw new InitializationException("Go version does not support modules.");
+                            }
                             LOGGER.warn("An error occurred calling `go` - no output could be read. Disabling {}.", ANALYZER_NAME);
                             throw new InitializationException("Error calling `go` - no output could be read.");
-                        }
-                        if (error.contains("unknown subcommand \"mod\"")) {
-                            LOGGER.warn("Your version of `go` does not support modules. Disabling {}. Error: `{}`", ANALYZER_NAME, error);
-                            throw new InitializationException("Go version does not support modules.");
                         }
                     // fall through
                     default:
@@ -306,43 +277,17 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        analyzeDependency(dependency, engine, false);
-    }
-
-    /**
-     * Analyzes go packages and adds evidence to the dependency.
-     *
-     * @param dependency the dependency being analyzed
-     * @param engine the engine being used to perform the scan
-     * @param readOnly flag indicating whether `launchGoListReadonly()` or
-     * `launchGoListAll()` should be called
-     * @throws AnalysisException thrown if there is an unrecoverable error
-     * analyzing the dependency
-     */
-    private void analyzeDependency(Dependency dependency, Engine engine, boolean readOnly) throws AnalysisException {
         //engine.removeDependency(dependency);
 
         final int exitValue;
         final File parentFile = dependency.getActualFile().getParentFile();
-        final Process process;
-        //TODO - can we just use launchGoListReadonly?
-        if (readOnly) {
-            process = launchGoListReadonly(parentFile);
-        } else {
-            process = launchGoListAll(parentFile);
-        }
+        final Process process = launchGoListReadonly(parentFile);
         try (GoModProcessor processor = new GoModProcessor(dependency, engine);
                 ProcessReader processReader = new ProcessReader(process, processor)) {
             processReader.readAll();
             final String error = processReader.getError();
-            if (error != null) {
-                LOGGER.warn("Warnings from go {}", error);
-                if (error.contains("can't compute 'all' using the vendor directory")) {
-                    LOGGER.warn("Switching to `go list -json -m readonly`");
-                    process.destroy();
-                    analyzeDependency(dependency, engine, true);
-                    return;
-                }
+            if (!StringUtils.isBlank(error)) {
+                LOGGER.warn("Warnings from `go`: {}", error);
             }
             exitValue = process.exitValue();
             if (exitValue < 0 || exitValue > 1) {

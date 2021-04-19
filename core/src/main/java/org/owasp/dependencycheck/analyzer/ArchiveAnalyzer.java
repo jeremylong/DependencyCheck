@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import com.google.common.io.ByteStreams;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -45,6 +44,7 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2Utils;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
+import org.apache.commons.compress.utils.IOUtils;
 
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -580,7 +580,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             throw new AnalysisException(msg);
         }
         try (FileOutputStream fos = new FileOutputStream(file)) {
-            ByteStreams.copy(input, fos);
+            IOUtils.copy(input, fos);
         } catch (FileNotFoundException ex) {
             LOGGER.debug("", ex);
             final String msg = String.format("Unable to find file '%s'.", file.getName());
@@ -603,7 +603,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     private void decompressFile(CompressorInputStream inputStream, File outputFile) throws ArchiveExtractionException {
         LOGGER.debug("Decompressing '{}'", outputFile.getPath());
         try (FileOutputStream out = new FileOutputStream(outputFile)) {
-            ByteStreams.copy(inputStream, out);
+            IOUtils.copy(inputStream, out);
         } catch (IOException ex) {
             LOGGER.debug("", ex);
             throw new ArchiveExtractionException(ex);

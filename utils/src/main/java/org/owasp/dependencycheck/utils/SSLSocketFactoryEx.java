@@ -1,6 +1,5 @@
 package org.owasp.dependencycheck.utils;
 
-import com.google.common.base.Strings;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -22,6 +21,7 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import org.apache.commons.lang3.StringUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -315,7 +315,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
         final String ksType = System.getProperty("javax.net.ssl.keyStoreType");
         final String ksPass = System.getProperty("javax.net.ssl.keyStorePassword");
 
-        if (!Strings.isNullOrEmpty(ksPath) && !Strings.isNullOrEmpty(ksType) && !Strings.isNullOrEmpty(ksPass)) {
+        if (!StringUtils.isAnyEmpty(ksPath, ksType, ksPass)) {
             try (FileInputStream fis = new FileInputStream(ksPath)) {
                 final KeyStore ks = KeyStore.getInstance(ksType);
                 ks.load(fis, ksPass.toCharArray());
@@ -335,7 +335,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
         final String tsPath = System.getProperty("javax.net.ssl.trustStore");
         final String tsPass = System.getProperty("javax.net.ssl.trustStorePassword");
 
-        if (!Strings.isNullOrEmpty(tsPath) && !Strings.isNullOrEmpty(ksType) && !Strings.isNullOrEmpty(tsPass)) {
+        if (!StringUtils.isAnyEmpty(tsPath, ksType, tsPass)) {
             try (FileInputStream fis = new FileInputStream(tsPath)) {
                 final KeyStore ts = KeyStore.getInstance(ksType);
                 ts.load(fis, tsPass.toCharArray());

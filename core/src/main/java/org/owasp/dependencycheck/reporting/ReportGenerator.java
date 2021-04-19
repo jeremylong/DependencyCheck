@@ -113,6 +113,10 @@ public class ReportGenerator {
          */
         CSV,
         /**
+         * Generate Sarif report.
+         */
+        SARIF,
+        /**
          * Generate JUNIT report.
          */
         JUNIT
@@ -338,7 +342,7 @@ public class ReportGenerator {
             final String templateName = format.toString().toLowerCase() + "Report";
             processTemplate(templateName, out);
             if (settings.getBoolean(Settings.KEYS.PRETTY_PRINT, false)) {
-                if (format == Format.JSON) {
+                if (format == Format.JSON  || format == Format.SARIF) {
                     pretifyJson(out.getPath());
                 } else if (format == Format.XML || format == Format.JUNIT) {
                     pretifyXml(out.getPath());
@@ -379,6 +383,9 @@ public class ReportGenerator {
         if (format == Format.JUNIT && !pathToCheck.endsWith(".xml")) {
             return new File(outFile, "dependency-check-junit.xml");
         }
+        if (format == Format.SARIF && !pathToCheck.endsWith(".sarif")) {
+            return new File(outFile, "dependency-check-report.sarif");
+        }
         return outFile;
     }
 
@@ -395,6 +402,7 @@ public class ReportGenerator {
     @SuppressFBWarnings(justification = "try with resources will clean up the output stream", value = {"OBL_UNSATISFIED_OBLIGATION"})
     protected void processTemplate(String template, File file) throws ReportException {
         ensureParentDirectoryExists(file);
+        LOGGER.info("Writing report to: " + file.getAbsolutePath());
         try (OutputStream output = new FileOutputStream(file)) {
             processTemplate(template, output);
         } catch (IOException ex) {
@@ -527,6 +535,7 @@ public class ReportGenerator {
      * @throws ReportException thrown if the given JSON file is malformed
      */
     private void pretifyJson(String pathToJson) throws ReportException {
+        LOGGER.debug("pretify json: {}", pathToJson);
         final String outputPath = pathToJson + ".pretty";
         final File in = new File(pathToJson);
         final File out = new File(outputPath);

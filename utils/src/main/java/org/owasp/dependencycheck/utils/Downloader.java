@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.utils;
 
-import com.google.common.io.ByteStreams;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,6 +26,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import static java.lang.String.format;
 import java.nio.charset.StandardCharsets;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +86,8 @@ public final class Downloader {
      * @throws TooManyRequestsException thrown when a 429 is received
      * @throws ResourceNotFoundException thrown when a 404 is received
      */
-    public void fetchFile(URL url, File outputPath, String userKey, String passwordKey) throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
+    public void fetchFile(URL url, File outputPath, String userKey, String passwordKey)
+            throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
         fetchFile(url, outputPath, true, userKey, passwordKey);
     }
 
@@ -127,7 +128,7 @@ public final class Downloader {
         try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy, userKey, passwordKey);
                 OutputStream out = new FileOutputStream(outputPath)) {
             in = conn.fetch(url);
-            ByteStreams.copy(in, out);
+            IOUtils.copy(in, out);
         } catch (IOException ex) {
             final String msg = format("Download failed, unable to copy '%s' to '%s'; %s",
                     url.toString(), outputPath.getAbsolutePath(), ex.getMessage());
@@ -173,12 +174,13 @@ public final class Downloader {
      * @throws TooManyRequestsException thrown when a 429 is received
      * @throws ResourceNotFoundException thrown when a 404 is received
      */
-    public String fetchContent(URL url, boolean useProxy, String userKey, String passwordKey) throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
+    public String fetchContent(URL url, boolean useProxy, String userKey, String passwordKey)
+            throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
         InputStream in = null;
         try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy, userKey, passwordKey);
                 ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             in = conn.fetch(url);
-            ByteStreams.copy(in, out);
+            IOUtils.copy(in, out);
             return out.toString(UTF8);
         } catch (IOException ex) {
             final String msg = format("Download failed, unable to retrieve '%s'; %s", url.toString(), ex.getMessage());

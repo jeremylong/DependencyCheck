@@ -252,14 +252,20 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "pathToGo")
     private String pathToGo;
     /**
+     * Sets the path to `yarn`.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "pathToYarn")
+    private String pathToYarn;
+    /**
      * Use pom dependency information for snapshot dependencies that are part of
      * the Maven reactor while aggregate scanning a multi-module project.
      */
     @Parameter(property = "dependency-check.virtualSnapshotsFromReactor", defaultValue = "true")
     private Boolean virtualSnapshotsFromReactor;
     /**
-     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, ALL).
-     * Multiple formats can be selected using a comma delineated list.
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF,
+     * ALL). Multiple formats can be selected using a comma delineated list.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "format", defaultValue = "HTML", required = true)
@@ -272,8 +278,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "prettyPrint")
     private Boolean prettyPrint;
     /**
-     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, ALL).
-     * Multiple formats can be selected using a comma delineated list.
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF,
+     * ALL). Multiple formats can be selected using a comma delineated list.
      */
     @Parameter(property = "formats", required = true)
     private String[] formats;
@@ -322,6 +328,23 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "suppressionFile")
     private String suppressionFile;
+    /**
+     * The username used when connecting to the suppressionFiles.
+     */
+    @Parameter(property = "suppressionFileUser")
+    private String suppressionFileUser;
+    /**
+     * The password used when connecting to the suppressionFiles.
+     */
+    @Parameter(property = "suppressionFilePassword")
+    private String suppressionFilePassword;
+    /**
+     * The server id in the settings.xml; used to retrieve encrypted passwords
+     * from the settings.xml for suppressionFile(s).
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "suppressionFileServerId")
+    private String suppressionFileServerId;
     /**
      * The path to the hints file.
      */
@@ -414,6 +437,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nodeAuditAnalyzerEnabled")
     private Boolean nodeAuditAnalyzerEnabled;
+
+    /**
+     * Sets whether or not the Yarn Audit Analyzer should be used.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "yarnAuditAnalyzerEnabled")
+    private Boolean yarnAuditAnalyzerEnabled;
+
     /**
      * Sets whether or not the Node Audit Analyzer should use a local cache.
      */
@@ -450,6 +481,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     @Parameter(property = "assemblyAnalyzerEnabled")
     private Boolean assemblyAnalyzerEnabled;
+    /**
+     * Whether or not the MS Build Analyzer is enabled.
+     */
+    @Parameter(property = "msbuildAnalyzerEnabled")
+    private Boolean msbuildAnalyzerEnabled;
     /**
      * Whether or not the .NET Nuspec Analyzer is enabled.
      */
@@ -1838,6 +1874,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED, golangDepEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED, golangModEnabled);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH, pathToGo);
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_YARN_PATH, pathToYarn);
 
         final Proxy proxy = getMavenProxy();
         if (proxy != null) {
@@ -1873,6 +1910,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED, artifactoryAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_MSBUILD_PROJECT_ENABLED, msbuildAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
         settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH, pathToCore);
@@ -1906,6 +1944,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, nodeAuditAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, nodeAuditAnalyzerUseCache);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, nodeAuditSkipDevDependencies);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, yarnAuditAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, retireJsUrl);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, retireJsForceUpdate);
@@ -1950,6 +1989,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         } else {
             settings.setStringIfNotEmpty(Settings.KEYS.CVE_USER, cveUser);
             settings.setStringIfNotEmpty(Settings.KEYS.CVE_PASSWORD, cvePassword);
+        }
+        if (suppressionFileUser == null && suppressionFilePassword == null && suppressionFileServerId != null) {
+            configureServerCredentials(suppressionFileServerId, Settings.KEYS.SUPPRESSION_FILE_USER, Settings.KEYS.SUPPRESSION_FILE_PASSWORD);
+        } else {
+            settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE_USER, suppressionFileUser);
+            settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE_PASSWORD, suppressionFilePassword);
         }
     }
 

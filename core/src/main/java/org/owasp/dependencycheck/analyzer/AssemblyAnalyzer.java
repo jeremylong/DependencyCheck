@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.analyzer;
 
 import com.github.packageurl.MalformedPackageURLException;
-import com.google.common.base.Strings;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -106,7 +105,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     protected List<String> buildArgumentList() {
         // Use file.separator as a wild guess as to whether this is Windows
         final List<String> args = new ArrayList<>();
-        if (!StringUtils.isEmpty(getSettings().getString(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH))) {
+        if (!StringUtils.isBlank(getSettings().getString(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH))) {
             args.add(getSettings().getString(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH));
         } else if (isDotnetPath()) {
             args.add("dotnet");
@@ -150,7 +149,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 processReader.readAll();
 
                 final String errorOutput = processReader.getError();
-                if (Strings.isNullOrEmpty(errorOutput)) {
+                if (!StringUtils.isBlank(errorOutput)) {
                     LOGGER.warn("Error from GrokAssembly: {}", errorOutput);
                 }
                 final int exitValue = proc.exitValue();
@@ -172,7 +171,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 throw new AnalysisException(error);
             }
             if (data.getWarning() != null) {
-                LOGGER.debug("Grok Assembly - could not get namespace on dependency `{}` - ()", dependency.getActualFilePath(), data.getWarning());
+                LOGGER.debug("Grok Assembly - could not get namespace on dependency `{}` - {}", dependency.getActualFilePath(), data.getWarning());
             }
             updateDependency(data, dependency);
         } catch (GrokParseException saxe) {
@@ -196,22 +195,22 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private void updateDependency(final AssemblyData data, Dependency dependency) {
         final StringBuilder sb = new StringBuilder();
-        if (!StringUtils.isEmpty(data.getFileDescription())) {
+        if (!StringUtils.isBlank(data.getFileDescription())) {
             sb.append(data.getFileDescription());
         }
-        if (!StringUtils.isEmpty(data.getComments())) {
+        if (!StringUtils.isBlank(data.getComments())) {
             if (sb.length() > 0) {
                 sb.append("\n\n");
             }
             sb.append(data.getComments());
         }
-        if (!StringUtils.isEmpty(data.getLegalCopyright())) {
+        if (!StringUtils.isBlank(data.getLegalCopyright())) {
             if (sb.length() > 0) {
                 sb.append("\n\n");
             }
             sb.append(data.getLegalCopyright());
         }
-        if (!StringUtils.isEmpty(data.getLegalTrademarks())) {
+        if (!StringUtils.isBlank(data.getLegalTrademarks())) {
             if (sb.length() > 0) {
                 sb.append("\n");
             }
@@ -224,10 +223,10 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             addMatchingValues(data.getNamespaces(), description, dependency, EvidenceType.PRODUCT);
         }
 
-        if (!StringUtils.isEmpty(data.getProductVersion())) {
+        if (!StringUtils.isBlank(data.getProductVersion())) {
             dependency.addEvidence(EvidenceType.VERSION, "grokassembly", "ProductVersion", data.getProductVersion(), Confidence.HIGHEST);
         }
-        if (!StringUtils.isEmpty(data.getFileVersion())) {
+        if (!StringUtils.isBlank(data.getFileVersion())) {
             dependency.addEvidence(EvidenceType.VERSION, "grokassembly", "FileVersion", data.getFileVersion(), Confidence.HIGH);
         }
 
@@ -283,21 +282,21 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             }
         }
 
-        if (!StringUtils.isEmpty(data.getCompanyName())) {
+        if (!StringUtils.isBlank(data.getCompanyName())) {
             dependency.addEvidence(EvidenceType.VENDOR, "grokassembly", "CompanyName", data.getCompanyName(), Confidence.HIGHEST);
             addMatchingValues(data.getNamespaces(), data.getCompanyName(), dependency, EvidenceType.VENDOR);
         }
-        if (!StringUtils.isEmpty(data.getProductName())) {
+        if (!StringUtils.isBlank(data.getProductName())) {
             dependency.addEvidence(EvidenceType.PRODUCT, "grokassembly", "ProductName", data.getProductName(), Confidence.HIGHEST);
             addMatchingValues(data.getNamespaces(), data.getProductName(), dependency, EvidenceType.PRODUCT);
         }
-        if (!StringUtils.isEmpty(data.getFileDescription())) {
+        if (!StringUtils.isBlank(data.getFileDescription())) {
             dependency.addEvidence(EvidenceType.PRODUCT, "grokassembly", "FileDescription", data.getFileDescription(), Confidence.HIGH);
             addMatchingValues(data.getNamespaces(), data.getFileDescription(), dependency, EvidenceType.PRODUCT);
         }
 
         final String internalName = data.getInternalName();
-        if (!StringUtils.isEmpty(internalName)) {
+        if (!StringUtils.isBlank(internalName)) {
             dependency.addEvidence(EvidenceType.PRODUCT, "grokassembly", "InternalName", internalName, Confidence.MEDIUM);
             addMatchingValues(data.getNamespaces(), internalName, dependency, EvidenceType.PRODUCT);
             addMatchingValues(data.getNamespaces(), internalName, dependency, EvidenceType.VENDOR);
@@ -312,7 +311,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         final String originalFilename = data.getOriginalFilename();
-        if (!StringUtils.isEmpty(originalFilename)) {
+        if (!StringUtils.isBlank(originalFilename)) {
             dependency.addEvidence(EvidenceType.PRODUCT, "grokassembly", "OriginalFilename", originalFilename, Confidence.MEDIUM);
             addMatchingValues(data.getNamespaces(), originalFilename, dependency, EvidenceType.PRODUCT);
             if (dependency.getName() == null && StringUtils.containsIgnoreCase(dependency.getActualFile().getName(), originalFilename)) {
@@ -365,7 +364,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             try (ProcessReader processReader = new ProcessReader(p)) {
                 processReader.readAll();
                 final String error = processReader.getError();
-                if (p.exitValue() != 1 || !Strings.isNullOrEmpty(error)) {
+                if (p.exitValue() != 1 || !StringUtils.isBlank(error)) {
                     LOGGER.warn("An error occurred with the .NET AssemblyAnalyzer, please see the log for more details.");
                     LOGGER.debug("GrokAssembly.dll is not working properly");
                     grokAssembly = null;

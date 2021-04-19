@@ -19,8 +19,10 @@ package org.owasp.dependencycheck.data.nvdcve;
 
 import java.util.stream.Collectors;
 import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
+import org.owasp.dependencycheck.data.nvd.json.CpeMatchStreamCollector;
 
 import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
+import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 
 /**
@@ -31,6 +33,21 @@ import org.owasp.dependencycheck.dependency.VulnerableSoftware;
  * @author skjolber
  */
 public class CveItemOperator {
+
+    /**
+     * The filter for 2.3 CPEs in the CVEs - we don't import unless we get a
+     * match.
+     */
+    private final String cpeStartsWithFilter;
+
+    /**
+     * Constructs a new CVE Item Operator utility.
+     *
+     * @param cpeStartsWithFilter the filter to use for CPE entries
+     */
+    public CveItemOperator(String cpeStartsWithFilter) {
+        this.cpeStartsWithFilter = cpeStartsWithFilter;
+    }
 
     /**
      * Extracts the english description from the CVE object.
@@ -188,5 +205,21 @@ public class CveItemOperator {
      */
     public boolean isRejected(String description) {
         return description.startsWith("** REJECT **");
+    }
+
+    /**
+     * Tests the CVE's CPE entries against the starts with filter. In general
+     * this limits the CVEs imported to just application level vulnerabilities.
+     *
+     * @param cve the CVE entry to examine
+     * @return <code>true</code> if the CVE affects CPEs identified by the
+     * configured CPE Starts with filter
+     */
+    protected boolean testCveCpeStartWithFilter(final DefCveItem cve) {
+        //cycle through to see if this is a CPE we care about (use the CPE filters
+        return cve.getConfigurations().getNodes().stream()
+                .collect(NodeFlatteningCollector.getInstance())
+                .collect(CpeMatchStreamCollector.getInstance())
+                .anyMatch(cpe -> cpe.getCpe23Uri().startsWith(cpeStartsWithFilter));
     }
 }

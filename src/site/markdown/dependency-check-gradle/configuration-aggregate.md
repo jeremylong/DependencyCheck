@@ -30,8 +30,8 @@ Property             | Description                                              
 autoUpdate           | Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false. | true
 analyzedTypes        | The default artifact types that will be analyzed.                                                                  | ['jar', 'aar', 'js', 'war', 'ear', 'zip']
 cveValidForHours     | Sets the number of hours to wait before checking for new updates from the NVD.                                     | 4
-format               | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, ALL).                                              | HTML
-formats              | A list of report formats to be generated (HTML, XML, CSV, JSON, JUNIT, ALL).                                       | &nbsp;
+format               | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, SARIF, ALL).                                              | HTML
+formats              | A list of report formats to be generated (HTML, XML, CSV, JSON, JUNIT, SARIF, ALL).                                       | &nbsp;
 junitFailOnCVSS      | If using the JUNIT report format the junitFailOnCVSS sets the CVSS score threshold that is considered a failure.   | 0
 failBuildOnCVSS      | Specifies if the build should be failed if a CVSS score equal to or above a specified level is identified. The default is 11; since the CVSS scores are 0-10, by default the build will never fail. | 11
 failOnError          | Fails the build if an error occurs during the dependency-check analysis.                                           | true
@@ -126,6 +126,7 @@ analyzers    | opensslEnabled        | Sets whether or not the openssl Analyzer 
 analyzers    | nuspecEnabled         | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.                                                  | true
 analyzers    | nugetconfEnabled      | Sets whether or not the [experimental](../analyzers/index.html) .NET Nuget packages.config Analyzer will be used. | true
 analyzers    | assemblyEnabled       | Sets whether or not the .NET Assembly Analyzer should be used.                                                    | true
+analyzers    | msbuildEnabled        | Sets whether or not the MS Build Analyzer should be used.                                                         | true
 analyzers    | pathToDotnet          | The path to dotnet core - needed on some systems to analyze .net assemblies.                                      | &nbsp;
 analyzers    | cmakeEnabled          | Sets whether or not the [experimental](../analyzers/index.html) CMake Analyzer should be used.                    | true
 analyzers    | autoconfEnabled       | Sets whether or not the [experimental](../analyzers/index.html) autoconf Analyzer should be used.                 | true
@@ -153,6 +154,8 @@ artifactory  | bearerToken           | The bearer token to connect to Artifactor
 nodeAudit    | enabled               | Sets whether the Node Audit Analyzer should be used. This analyzer requires an internet connection.               | true
 nodeAudit    | useCache              | Sets whether the Node Audit Analyzer should cache results locally.                                                | true
 nodeAudit    | skipDevDependencies   | Sets whether the Node Audit Analyzer should skip devDependencies.                                                 | false
+nodeAudit    | yarnEnabled           | Sets whether the Yarn Audit Analyzer should be used. This analyzer requires yarn and an internet connection.      | true
+nodeAudit    | yarnPath              | Sets the path to the `yarn` executable.                                                                           | &nbsp;
 retirejs     | enabled               | Sets whether the RetireJS Analyzer should be used.                                                                | true
 retirejs     | forceupdate           | Sets whether the RetireJS Analyzer should update regardless of the `autoupdate` setting.                          | false
 retirejs     | retireJsUrl           | The URL to the Retire JS repository.                                                                              | https://raw.githubusercontent.com/Retirejs/retire.js/master/repository/jsrepository.json

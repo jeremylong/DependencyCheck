@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.owasp.dependencycheck.analyzer.GolangModAnalyzer.DEPENDENCY_ECOSYSTEM;
 import static org.owasp.dependencycheck.analyzer.GolangModAnalyzer.GO_MOD;
+import org.owasp.dependencycheck.utils.Checksum;
 
 /**
  * Represents a Go module dependency.
@@ -127,7 +128,8 @@ public class GoModDependency {
         }
 
         final String filePath = String.format("%s:%s/%s/%s", parentDependency.getFilePath(), packageNamespace, moduleName, version);
-
+        //virtual dep need a sha1 for the html report
+        dep.setSha1sum(Checksum.getSHA1Checksum(filePath));
         packageURLBuilder.withName(moduleName);
         packageURLBuilder.withNamespace(packageNamespace);
         if (StringUtils.isNotBlank(version)) {

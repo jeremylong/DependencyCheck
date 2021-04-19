@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.data.nvdcve;
 //CSOFF: AvoidStarImport
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.collections.map.ReferenceMap;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
@@ -121,7 +122,7 @@ public final class CveDB implements AutoCloseable {
      * Utility to extract information from
      * {@linkplain org.owasp.dependencycheck.data.nvd.json.DefCveItem}.
      */
-    private final CveItemOperator cveItemConverter = new CveItemOperator();
+    private final CveItemOperator cveItemConverter;
     /**
      * Flag indicating if the database is Oracle.
      */
@@ -236,7 +237,8 @@ public final class CveDB implements AutoCloseable {
      */
     public CveDB(Settings settings) throws DatabaseException {
         this.settings = settings;
-        this.cpeStartsWithFilter = this.settings.getString(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER, "cpe:2.3:a:");
+        this.cpeStartsWithFilter = settings.getString(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER, "cpe:2.3:a:");
+        this.cveItemConverter = new CveItemOperator(cpeStartsWithFilter);
         connectionFactory = new ConnectionFactory(settings);
         open();
     }
@@ -851,13 +853,15 @@ public final class CveDB implements AutoCloseable {
             if (cveItemConverter.isRejected(description)) {
                 deleteVulnerability(cveId);
             } else {
-                final int vulnerabilityId = updateOrInsertVulnerability(cve, description);
-                updateVulnerabilityInsertCwe(vulnerabilityId, cve);
-                updateVulnerabilityInsertReferences(vulnerabilityId, cve);
+                if (cveItemConverter.testCveCpeStartWithFilter(cve)) {
+                    final int vulnerabilityId = updateOrInsertVulnerability(cve, description);
+                    updateVulnerabilityInsertCwe(vulnerabilityId, cve);
+                    updateVulnerabilityInsertReferences(vulnerabilityId, cve);
 
-                //parse the CPEs outside of a synchronized method
-                final List<VulnerableSoftware> software = parseCpes(cve);
-                updateVulnerabilityInsertSoftware(vulnerabilityId, cveId, software, baseEcosystem);
+                    //parse the CPEs outside of a synchronized method
+                    final List<VulnerableSoftware> software = parseCpes(cve);
+                    updateVulnerabilityInsertSoftware(vulnerabilityId, cveId, software, baseEcosystem);
+                }
             }
 
         } catch (SQLException ex) {
@@ -1394,13 +1398,11 @@ public final class CveDB implements AutoCloseable {
         if (ConnectionFactory.isH2Connection(settings)) {
             final long start = System.currentTimeMillis();
             try (CallableStatement psCompaxt = connection.prepareCall("SHUTDOWN DEFRAG")) {
-                if (psCompaxt != null) {
-                    LOGGER.info("Begin database defrag");
-                    psCompaxt.execute();
-                    final long millis = System.currentTimeMillis() - start;
-                    //final long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
-                    LOGGER.info("End database defrag ({} ms)", millis);
-                }
+                LOGGER.info("Begin database defrag");
+                psCompaxt.execute();
+                final long millis = System.currentTimeMillis() - start;
+                //final long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+                LOGGER.info("End database defrag ({} ms)", millis);
             } catch (SQLException ex) {
                 LOGGER.error("An unexpected SQL Exception occurred compacting the database; please see the verbose log for more details.");
                 LOGGER.debug("", ex);
@@ -1616,6 +1618,7 @@ public final class CveDB implements AutoCloseable {
      * @return the Boolean value; or null
      * @throws SQLException thrown if there is an error obtaining the value
      */
+    @SuppressFBWarnings("NP_BOOLEAN_RETURN_NULL")
     private Boolean getBooleanValue(ResultSet rs, int index) throws SQLException {
         if (rs.getObject(index) == null) {
             return null;

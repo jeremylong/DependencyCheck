@@ -17,14 +17,15 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
+import org.apache.commons.lang3.StringUtils;
 
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -85,6 +86,10 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      * Advisory.
      */
     public static final String ADVISORY = "Advisory: ";
+    /**
+     * CVE.
+     */
+    public static final String CVE = "CVE: ";
     /**
      * Criticality.
      */
@@ -204,7 +209,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         }
         String bundleAuditVersionDetails = null;
         try {
-            final List<String> bundleAuditArgs = ImmutableList.of("version");
+            final List<String> bundleAuditArgs = Arrays.asList("version");
             final Process process = launchBundleAudit(getSettings().getTempDirectory(), bundleAuditArgs);
             try (ProcessReader processReader = new ProcessReader(process)) {
                 processReader.readAll();
@@ -269,13 +274,10 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                     failed = false;
                 }
             }
-            if (failed) {
-                LOGGER.warn("Did not find {}.", className);
-            }
             needToDisableGemspecAnalyzer = false;
         }
         final File parentFile = dependency.getActualFile().getParentFile();
-        final List<String> bundleAuditArgs = ImmutableList.of("check", "--verbose");
+        final List<String> bundleAuditArgs = Arrays.asList("check", "--verbose");
 
         final Process process = launchBundleAudit(parentFile, bundleAuditArgs);
         try (BundlerAuditProcessor processor = new BundlerAuditProcessor(dependency, engine);
@@ -283,7 +285,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
 
             processReader.readAll();
             final String error = processReader.getError();
-            if (error != null) {
+            if (StringUtils.isNoneBlank(error)) {
                 LOGGER.warn("Warnings from bundle-audit {}", error);
             }
             final int exitValue = process.exitValue();

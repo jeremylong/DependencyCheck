@@ -1,14 +1,9 @@
 #/usr/bin/env bash
 
-pattern="^.*completion-for-dependency-check.sh$";
-if [[ "$0" =~ $pattern ]]; then 
-    echo
-    echo "To use completion for dependency-check you must run:"
-    echo
-    echo "         source completion-for-dependency-check.sh"
-    echo
-    exit
-fi
+# To use completion for dependency-check you must run:
+#
+#         source completion-for-dependency-check.sh
+#
 
 _odc_completions()
 {
@@ -27,6 +22,8 @@ _odc_completions()
             --cveUrlBase
             --cveUrlModified
             --cveValidForHours
+            --cveUser <user>
+            --cvePassword <password>
         -d --data
             --dbDriverName
             --dbDriverPath
@@ -45,6 +42,8 @@ _odc_completions()
             --disableGolangMod
             --disableJar
             --disableMixAudit
+            --disableMSBuild
+            --disableYarnAudit
             --disableNodeAudit
             --disableNodeAuditCache
             --disableNodeJS
@@ -100,6 +99,7 @@ _odc_completions()
             --symLink <depth>
             --updateonly
         -v --version
+            --yarn
             --zipExtensions <extensions>      
     "
 
@@ -111,7 +111,7 @@ _odc_completions()
 
 
     case "${prev}" in
-        -s|--scan|-o|--out|-d|--data|--bundleAudit|--bundleAuditWorkingDirectory|--dbDriverPath|--dotnet|--go|-P|--propertyfile|--suppression|--hint|-l|--log)
+        -s|--scan|-o|--out|-d|--data|--bundleAudit|--bundleAuditWorkingDirectory|--dbDriverPath|--dotnet|--go|-P|--propertyfile|--suppression|--hint|-l|--log|--yarn)
             COMPREPLY=( $(compgen -f -o default -- ${cur}) )
             return 0
             ;;
@@ -120,7 +120,7 @@ _odc_completions()
             return 0
             ;;
         -f|--format)
-            COMPREPLY=( $(compgen -W "HTML XML CSV JSON JUNIT ALL" ${cur}) )
+            COMPREPLY=( $(compgen -W "HTML XML CSV JSON JUNIT SARIF ALL" ${cur}) )
             return 0
             ;;
     esac

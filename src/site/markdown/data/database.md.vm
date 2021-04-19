@@ -18,7 +18,10 @@ see the note about Central [here](./index.html).
 To setup a centralized database the following generalized steps can be used:
 
 <ol><li>Create the database and tables using either <a href="https://github.com/jeremylong/DependencyCheck/blob/main/core/src/main/resources/data/initialize.sql">initialize.sql</a>
-   or one of the other initialization scripts <a href="https://github.com/jeremylong/DependencyCheck/tree/main/core/src/main/resources/data">found here</a>.</li>
+   or one of the other initialization scripts <a href="https://github.com/jeremylong/DependencyCheck/tree/main/core/src/main/resources/data">found here</a>. <b>Note that some of the
+   scripts may need to be updated to correctly create the database and/or add users.</b>
+    <ul><li>If you are using H2 in server mode, as of version 6.0.0, the dependency-check-core JAR file needs to be available in the H2 path due to how functions/stored procedures work in H2.</li></ul>
+</li>
 <li>The account that the clients will connect using must have select granted on the tables.
      <ul><li>Note, the clients performing the scans should run with the noupdate setting. A single
        instance of the dependency-check client should be setup with updates enabled and the account
@@ -31,9 +34,9 @@ To setup a centralized database the following generalized steps can be used:
        <li>The connection string, database user name, and the database user's password will also need to be configured.</li>
    </ul>
 </li></ol>
-Depending on the database being used, you may need to customize the [dbStatements.properties](https://github.com/jeremylong/DependencyCheck/blob/main/core/src/main/resources/data/dbStatements.properties).
+Depending on the database being used, you may need to customize the <a href="https://github.com/jeremylong/DependencyCheck/blob/main/core/src/main/resources/data/dbStatements.properties">dbStatements.properties</a>.
 Alternatively to modifying the dbStatements.properties it is possible to use a dialect file to support other databases.
-See [dbStatements_h2.properties](https://github.com/jeremylong/DependencyCheck/blob/main/core/src/main/resources/data/dbStatements_h2.properties)
+See <a href="https://github.com/jeremylong/DependencyCheck/blob/main/core/src/main/resources/data/dbStatements_h2.properties">dbStatements_h2.properties</a>
 as an example.
 
 Also, if using an external database you will need to manually upgrade the schema. See [database upgrades](./upgrade.html) for more information.
@@ -82,5 +85,4 @@ The following example shows how to use the Maven plugin with MariaDB:
 
 Support
 -------
-As always, feel free to open an [issue](https://github.com/jeremylong/DependencyCheck/issues)
-or post a question to the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check).
+As always, feel free to open an [issue](https://github.com/jeremylong/DependencyCheck/issues).

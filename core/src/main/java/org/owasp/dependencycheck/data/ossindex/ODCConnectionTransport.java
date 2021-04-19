@@ -17,8 +17,6 @@
  */
 package org.owasp.dependencycheck.data.ossindex;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.net.HttpHeaders.AUTHORIZATION;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -37,6 +35,10 @@ import org.sonatype.ossindex.service.client.transport.UserAgentSupplier;
  */
 public class ODCConnectionTransport extends HttpUrlConnectionTransport {
 
+    /**
+     * The authorization header.
+     */
+    private static final String AUTHORIZATION = "Authorization";
     /**
      * The OSS Index client configuration.
      */
@@ -59,8 +61,8 @@ public class ODCConnectionTransport extends HttpUrlConnectionTransport {
      */
     public ODCConnectionTransport(Settings settings, OssindexClientConfiguration config, UserAgentSupplier userAgent) {
         super(userAgent);
-        this.userAgent = checkNotNull(userAgent);
-        this.configuration = checkNotNull(config);
+        this.userAgent = userAgent;
+        this.configuration = config;
         connectionFactory = new URLConnectionFactory(settings);
     }
 

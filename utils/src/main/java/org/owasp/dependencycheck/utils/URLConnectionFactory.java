@@ -194,15 +194,15 @@ public final class URLConnectionFactory {
                     final String nonProxyHostPrefix = nonProxyHost.substring(0, pos);
                     final String nonProxyHostSuffix = nonProxyHost.substring(pos + 1);
                     // prefix*
-                    if (!StringUtils.isEmpty(nonProxyHostPrefix) && host.startsWith(nonProxyHostPrefix) && StringUtils.isEmpty(nonProxyHostSuffix)) {
+                    if (!StringUtils.isBlank(nonProxyHostPrefix) && host.startsWith(nonProxyHostPrefix) && StringUtils.isBlank(nonProxyHostSuffix)) {
                         return true;
                     }
                     // *suffix
-                    if (StringUtils.isEmpty(nonProxyHostPrefix) && !StringUtils.isEmpty(nonProxyHostSuffix) && host.endsWith(nonProxyHostSuffix)) {
+                    if (StringUtils.isBlank(nonProxyHostPrefix) && !StringUtils.isBlank(nonProxyHostSuffix) && host.endsWith(nonProxyHostSuffix)) {
                         return true;
                     }
                     // prefix*suffix
-                    if (!StringUtils.isEmpty(nonProxyHostPrefix) && host.startsWith(nonProxyHostPrefix) && !StringUtils.isEmpty(nonProxyHostSuffix)
+                    if (!StringUtils.isBlank(nonProxyHostPrefix) && host.startsWith(nonProxyHostPrefix) && !StringUtils.isBlank(nonProxyHostSuffix)
                             && host.endsWith(nonProxyHostSuffix)) {
                         return true;
                     }

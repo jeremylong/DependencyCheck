@@ -19,6 +19,7 @@ public class NodeAuditAnalyzerTest extends BaseTest {
         NodeAuditAnalyzer analyzer = new NodeAuditAnalyzer();
         assertThat(analyzer.accept(new File("package-lock.json")), is(true));
         assertThat(analyzer.accept(new File("npm-shrinkwrap.json")), is(true));
+        assertThat(analyzer.accept(new File("yarn.lock")), is(false));
         assertThat(analyzer.accept(new File("package.json")), is(false));
     }
 }

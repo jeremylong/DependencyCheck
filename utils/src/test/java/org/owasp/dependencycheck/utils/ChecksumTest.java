@@ -35,20 +35,6 @@ import org.junit.Test;
 public class ChecksumTest {
 
     /**
-     * Test of getChecksum method, of class Checksum.
-     *
-     * @throws Exception thrown when an exception occurs.
-     */
-    @Test
-    public void testGetChecksum() throws Exception {
-        String algorithm = "MD5";
-        File file = new File(this.getClass().getClassLoader().getResource("checkSumTest.file").toURI().getPath());
-        byte[] expResult = {-16, -111, 92, 95, 70, -72, -49, -94, -125, -27, -83, 103, -96, -101, 55, -109};
-        byte[] result = Checksum.getChecksum(algorithm, file);
-        assertArrayEquals(expResult, result);
-    }
-
-    /**
      * Test of getChecksum method, of class Checksum. This checks that an
      * exception is thrown when an invalid path is specified.
      *
@@ -127,9 +113,12 @@ public class ChecksumTest {
     public void testGetChecksum_String_File() throws Exception {
         String algorithm = "MD5";
         File file = new File(this.getClass().getClassLoader().getResource("checkSumTest.file").toURI().getPath());
-        byte[] expResult = {-16, -111, 92, 95, 70, -72, -49, -94, -125, -27, -83, 103, -96, -101, 55, -109};
-        byte[] result = Checksum.getChecksum(algorithm, file);
-        assertArrayEquals(expResult, result);
+        String expResult = "f0915c5f46b8cfa283e5ad67a09b3793";
+        String result = Checksum.getChecksum(algorithm, file);
+        assertEquals(expResult, result);
+        //get checksum from cache on 2nd call
+        result = Checksum.getChecksum(algorithm, file);
+        assertEquals(expResult, result);
     }
 
     /**

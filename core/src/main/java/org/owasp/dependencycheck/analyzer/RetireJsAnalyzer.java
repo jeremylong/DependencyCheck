@@ -20,7 +20,6 @@ package org.owasp.dependencycheck.analyzer;
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
-import com.google.common.io.ByteStreams;
 import com.h3xstream.retirejs.repo.JsLibrary;
 import com.h3xstream.retirejs.repo.JsLibraryResult;
 import com.h3xstream.retirejs.repo.JsVulnerability;
@@ -64,6 +63,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.io.IOUtils;
 
 /**
  * The RetireJS analyzer uses the manually curated list of vulnerabilities from
@@ -276,7 +276,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         try (InputStream fis = new FileInputStream(dependency.getActualFile())) {
-            final byte[] fileContent = ByteStreams.toByteArray(fis);
+            final byte[] fileContent = IOUtils.toByteArray(fis);
             final ScannerFacade scanner = new ScannerFacade(jsRepository);
             final List<JsLibraryResult> results;
             try {
@@ -415,7 +415,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
                             }
                             // CSON: NeedBraces
                         }
-                        if (StringUtils.isEmpty(individualVuln.getName())) {
+                        if (StringUtils.isBlank(individualVuln.getName())) {
                             individualVuln.setName("Vulnerability in " + libraryResult.getLibrary().getName());
                         }
                         individualVuln.setSource(Vulnerability.Source.RETIREJS);

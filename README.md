@@ -1,4 +1,4 @@
-[![Maven Central](https://img.shields.io/maven-central/v/org.owasp/dependency-check-maven.svg)](https://mvnrepository.com/artifact/org.owasp/dependency-check-maven) [![Build Status](https://travis-ci.org/jeremylong/DependencyCheck.svg?branch=master)](https://travis-ci.org/jeremylong/DependencyCheck) [![Coverity Scan Build Status](https://img.shields.io/coverity/scan/1654.svg)](https://scan.coverity.com/projects/dependencycheck) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6b6021d481dc41a888c5da0d9ecf9494)](https://www.codacy.com/app/jeremylong/DependencyCheck?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jeremylong/DependencyCheck&amp;utm_campaign=Badge_Grade) [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/843/badge)](https://bestpractices.coreinfrastructure.org/projects/843) [![Apache 2.0 License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.txt)
+[![Maven Central](https://img.shields.io/maven-central/v/org.owasp/dependency-check-maven.svg)](https://mvnrepository.com/artifact/org.owasp/dependency-check-maven) ![Build and Deploy](https://github.com/jeremylong/DependencyCheck/workflows/Build%20and%20Deploy/badge.svg?branch=main) [![Coverity Scan Build Status](https://img.shields.io/coverity/scan/1654.svg)](https://scan.coverity.com/projects/dependencycheck) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6b6021d481dc41a888c5da0d9ecf9494)](https://www.codacy.com/app/jeremylong/DependencyCheck?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jeremylong/DependencyCheck&amp;utm_campaign=Badge_Grade) [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/843/badge)](https://bestpractices.coreinfrastructure.org/projects/843) [![Apache 2.0 License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
 [![Black Hat Arsenal](https://raw.githubusercontent.com/toolswatch/badges/master/arsenal/usa/2018.svg?sanitize=true)](http://www.toolswatch.org/2018/05/black-hat-arsenal-usa-2018-the-w0w-lineup/) [![Black Hat Arsenal](https://www.toolswatch.org/badges/arsenal/2015.svg)](https://www.toolswatch.org/2015/06/black-hat-arsenal-usa-2015-speakers-lineup/) [![Black Hat Arsenal](https://www.toolswatch.org/badges/arsenal/2014.svg)](https://www.toolswatch.org/2014/06/black-hat-usa-2014-arsenal-tools-speaker-list/) [![Black Hat Arsenal](https://www.toolswatch.org/badges/arsenal/2013.svg)](https://www.toolswatch.org/2013/06/announcement-blackhat-arsenal-usa-2013-selected-tools/)
 
@@ -84,6 +84,19 @@ The dependency-check plugin can be configured using the following:
 ### Ant Task
 
 For instructions on the use of the Ant Task, please see the [dependency-check-ant github page](http://jeremylong.github.io/DependencyCheck/dependency-check-ant).
+
+Development Prerequisites
+-------------
+
+For installation to pass, you must have the following components installed:
+* Java: `java -version` 1.8
+* Maven: `mvn -version` 3.5.0 and higher
+
+Tests cases require:
+* dotnet core version 3.1
+* Go: `go version` 1.12 and higher
+* Ruby [bundler-audit](https://github.com/rubysec/bundler-audit#install)
+* [Yarn](https://classic.yarnpkg.com/en/docs/install/)
 
 Development Usage
 -------------
@@ -190,32 +203,29 @@ docker run --rm ^
 
 Building From Source
 -------------
-To build dependency-check run the command:
+To build dependency-check (using Java 8) run the command:
 
 ```
 mvn -s settings.xml install
 ```
 
-Mailing List
-------------
+Building The Docker Image
+-------------
+To build dependency-check docker image run the command:
 
-Subscribe: [dependency-check+subscribe@googlegroups.com] [subscribe]
+```
+mvn -s settings.xml install
+./build-docker.sh
+```
 
-Post: [dependency-check@googlegroups.com] [post]
-
-Archive: [google group](https://groups.google.com/forum/#!forum/dependency-check)
-
-Copyright & License
--
-
-Dependency-Check is Copyright (c) 2012-2020 Jeremy Long. All Rights Reserved.
+License
+-------
 
 Permission to modify and redistribute is granted under the terms of the Apache 2.0 license. See the [LICENSE.txt](https://raw.githubusercontent.com/jeremylong/DependencyCheck/master/LICENSE.txt) file for the full license.
 
 Dependency-Check makes use of several other open source libraries. Please see the [NOTICE.txt][notices] file for more information.
 
+Copyright (c) 2012-2021 Jeremy Long. All Rights Reserved.
 
   [wiki]: https://github.com/jeremylong/DependencyCheck/wiki
-  [subscribe]: mailto:dependency-check+subscribe@googlegroups.com
-  [post]: mailto:dependency-check@googlegroups.com
   [notices]: https://github.com/jeremylong/DependencyCheck/blob/master/NOTICE.txt

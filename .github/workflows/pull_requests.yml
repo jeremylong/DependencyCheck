@@ -1,0 +1,48 @@
+name: Pull Requests
+
+on: 
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.txt'
+
+jobs:
+  build:
+    name: Build dependency-check
+    runs-on: ubuntu-latest 
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check Maven Cache
+        id: maven-cache
+        uses: actions/cache@v2.1.5
+        with:
+          path: ~/.m2/repository/
+          key: mvn-repo
+      - name: Set up JDK 1.8
+        id: jdk-8
+        uses: actions/setup-java@v2
+        with:
+          java-version: 8
+          distribution: 'zulu'
+      - name: Build with Maven
+        id: build
+        run: mvn -s settings.xml clean package verify -DreleaseTesting --no-transfer-progress --batch-mode
+      - name: Archive IT test logs
+        id: archive-logs
+        uses: actions/upload-artifact@v2
+        with:
+          name: it-test-logs
+          retention-days: 7
+          path: maven/target/it/**/build.log
+  semgrep:
+    runs-on: ubuntu-latest
+    name: Check
+    steps:
+      - uses: actions/checkout@v1
+      - name: Semgrep
+        id: semgrep
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: p/r2c
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

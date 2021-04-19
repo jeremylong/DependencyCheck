@@ -16,8 +16,8 @@ Property                    | Description                        | Default Value
 ----------------------------|------------------------------------|------------------
 autoUpdate                  | Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false. | true
 cveValidForHours            | Sets the number of hours to wait before checking for new updates from the NVD.                                     | 4
-format                      | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, ALL). This configuration is ignored if `formats` is defined. This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | HTML
-formats                     | A list of report formats to be generated (HTML, XML, CSV, JSON, JUNIT, ALL). This configuration overrides the value from `format`. This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | &nbsp;
+format                      | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, SARIF, ALL). This configuration is ignored if `formats` is defined. This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | HTML
+formats                     | A list of report formats to be generated (HTML, XML, CSV, JSON, JUNIT, SARIF, ALL). This configuration overrides the value from `format`. This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | &nbsp;
 junitFailOnCVSS             | If using the JUNIT report format the junitFailOnCVSS sets the CVSS score threshold that is considered a failure.   | 0
 prettyPrint                 | Whether the XML and JSON formatted reports should be pretty printed.                                               | false
 failBuildOnCVSS             | Specifies if the build should be failed if a CVSS score equal to or above a specified level is identified. The default is 11 which means since the CVSS scores are 0-10, by default the build will never fail. | 11
@@ -80,6 +80,8 @@ autoconfAnalyzerEnabled             | Sets whether the [experimental](../analyze
 pipAnalyzerEnabled                  | Sets whether the [experimental](../analyzers/index.html) pip Analyzer should be used.                                                               | true
 pipfileAnalyzerEnabled              | Sets whether the [experimental](../analyzers/index.html) Pipfile Analyzer should be used.                                                           | true
 composerAnalyzerEnabled             | Sets whether the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.                                            | true
+yarnAuditAnalyzerEnabled            | Sets whether the Yarn Audit Analyzer should be used. This analyzer requires yarn and an internet connection.  Use `nodeAuditSkipDevDependencies` to skip dev dependencies. | true
+pathToYarn                          | The path to `yarn`.                                                                                                                                 | &nbsp;
 nodeAnalyzerEnabled                 | Sets whether the [retired](../analyzers/index.html) Node.js Analyzer should be used.                                                                | true
 nodeAuditAnalyzerEnabled            | Sets whether the Node Audit Analyzer should be used. This analyzer requires an internet connection.                                                 | true
 nodeAuditAnalyzerUseCache           | Sets whether the Node Audit Analyzer will cache results. Cached results expire after 24 hours.                                                      | true
@@ -94,6 +96,7 @@ bundleAuditAnalyzerEnabled          | Sets whether the [experimental](../analyze
 bundleAuditPath                     | Sets the path to the bundle audit executable; only used if bundle audit analyzer is enabled and experimental analyzers are enabled.                 | &nbsp;
 swiftPackageManagerAnalyzerEnabled  | Sets whether the [experimental](../analyzers/index.html) Swift Package Analyzer should be used.                                                     | true
 assemblyAnalyzerEnabled             | Sets whether the .NET Assembly Analyzer should be used.                                                                                             | true
+msbuildAnalyzerEnabled              | Sets whether the MSBuild Analyzer should be used.                                                                                                   | true
 pathToCore                          | The path to dotnet core .NET assembly analysis on non-windows systems.                                                                              | &nbsp;
 golangDepEnabled                    | Sets whether or not the [experimental](../analyzers/index.html) Golang Dependency Analyzer should be used.                                          | true
 golangModEnabled                    | Sets whether or not the [experimental](../analyzers/index.html) Goland Module Analyzer should be used; requires `go` to be installed.               | true
@@ -124,21 +127,24 @@ Advanced Configuration
 The following properties can be configured in the plugin. However, they are less frequently changed. One exception
 may be the cveUrl properties, which can be used to host a mirror of the NVD within an enterprise environment.
 
-Property             | Description                                                                                                          | Default Value                                                       |
----------------------|----------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
-cveUrlModified       | URL for the modified CVE JSON data feed.  When mirroring the NVD you must mirror the *.json.gz and the *.meta files. | https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz |
-cveUrlBase           | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.                                  | https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-%d.json.gz       |
-cveServerId          | The id of a server defined in the settings.xml that configures the credentials (username and password) for accessing the cveUrl. | &nbsp; |
-cveUser              | The username used when connecting to the cveUrl. Must be empty if cveServerId is specified and should be used. | &nbsp; |
-cvePassword          | The password used when connecting to the cveUrl. Must be empty if cveServerId is specified and should be used. | &nbsp; |
-connectionTimeout    | Sets the URL Connection Timeout used when downloading external data.                                                 | &nbsp;                                                              |
-dataDirectory        | Sets the data directory to hold SQL CVEs contents. This should generally not be changed.                             | ~/.m2/repository/org/owasp/dependency-check-data/                   |
-databaseDriverName   | The name of the database driver. Example: org.h2.Driver.                                                             | &nbsp;                                                              |
-databaseDriverPath   | The path to the database driver JAR file; only used if the driver is not in the class path.                          | &nbsp;                                                              |
-connectionString     | The connection string used to connect to the database.   See using a [database server](../data/database.html).       | &nbsp;                                                              |
-serverId             | The id of a server defined in the settings.xml; this can be used to encrypt the database password. See [password encryption](http://maven.apache.org/guides/mini/guide-encryption.html) for more information. | &nbsp; |
-databaseUser         | The username used when connecting to the database.                                                                   | &nbsp;                                                              |
-databasePassword     | The password used when connecting to the database.                                                                   | &nbsp;                                                              |
+Property                 | Description                                                                                                                                | Default Value                                                       |
+-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
+cveUrlModified           | URL for the modified CVE JSON data feed.  When mirroring the NVD you must mirror the *.json.gz and the *.meta files.                       | https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz |
+cveUrlBase               | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.                                                        | https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-%d.json.gz       |
+cveServerId              | The id of a server defined in the settings.xml that configures the credentials (username and password) for accessing the cveUrl.           | &nbsp;                                                              |
+cveUser                  | The username used when connecting to the cveUrl. Must be empty if cveServerId is specified and should be used.                             | &nbsp;                                                              |
+cvePassword              | The password used when connecting to the cveUrl. Must be empty if cveServerId is specified and should be used.                             | &nbsp;                                                              |
+suppressionFileServerId  | The id of a server defined in the settings.xml that configures the credentials (username and password) for accessing the suppressionFiles. | &nbsp;                                                              |
+suppressionFileUser      | The username used when connecting to the suppressionFiles. Must be empty if suppressionFileServerId is specified and should be used.       | &nbsp;                                                              |
+suppressionFilePassword  | The password used when connecting to the suppressionFiles. Must be empty if suppressionFileServerId is specified and should be used.       | &nbsp;                                                              |
+connectionTimeout        | Sets the URL Connection Timeout used when downloading external data.                                                                       | &nbsp;                                                              |
+dataDirectory            | Sets the data directory to hold SQL CVEs contents. This should generally not be changed.                                                   | ~/.m2/repository/org/owasp/dependency-check-data/                   |
+databaseDriverName       | The name of the database driver. Example: org.h2.Driver.                                                                                   | &nbsp;                                                              |
+databaseDriverPath       | The path to the database driver JAR file; only used if the driver is not in the class path.                                                | &nbsp;                                                              |
+connectionString         | The connection string used to connect to the database.   See using a [database server](../data/database.html).                             | &nbsp;                                                              |
+serverId                 | The id of a server defined in the settings.xml; this can be used to encrypt the database password. See [password encryption](http://maven.apache.org/guides/mini/guide-encryption.html) for more information. | &nbsp; |
+databaseUser             | The username used when connecting to the database.                                                                                         | &nbsp;                                                              |
+databasePassword         | The password used when connecting to the database.                                                                                         | &nbsp;                                                              |
 
 Proxy Configuration
 ====================

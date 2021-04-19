@@ -39,7 +39,7 @@ failBuildOnCVSS       | Specifies if the build should be failed if a CVSS score 
 junitFailOnCVSS       | If using the JUNIT report format the junitFailOnCVSS sets the CVSS score threshold that is considered a failure.                                                                                               | 0
 prettyPrint           | Whether the XML and JSON formatted reports should be pretty printed.                                                                                                                                           | false
 projectName           | The name of the project being scanned.                                                                                                                                                                         | Dependency-Check
-reportFormat          | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, ALL).                                                                                                                                          | HTML
+reportFormat          | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, SARIF, ALL).                                                                                                                                          | HTML
 reportOutputDirectory | The location to write the report(s). Note, this is not used if generating the report as part of a `mvn site` build                                                                                             | 'target'
 hintsFile             | The file path to the XML hints file \- used to resolve [false negatives](../general/hints.html)                                                                                                                | &nbsp;
 proxyServer           | The Proxy Server; see the [proxy configuration](../data/proxy.html) page for more information.                                                                                                                 | &nbsp;
@@ -58,7 +58,7 @@ The following nested elements can be set on the dependency-check task.
 Element           | Property | Description                                                                                                                                                                                        | Default Value
 ------------------|----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------
 suppressionFile   | path     | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html). Element can be specified multiple times. The parameter value can be a local file path, a URL to a suppression file, or even a reference to a file on the class path (see https://github.com/jeremylong/DependencyCheck/issues/1878#issuecomment-487533799) | &nbsp;| &nbsp;
-reportFormat      | format   | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, ALL). Element can be specified multiple times.                                                                                     | &nbsp;
+reportFormat      | format   | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, SARIF, ALL). Element can be specified multiple times.                                                                                     | &nbsp;
 
 
 Analyzer Configuration
@@ -105,6 +105,8 @@ nodeAnalyzerEnabled                 | Sets whether the [retired](../analyzers/in
 nodeAuditAnalyzerEnabled            | Sets whether the Node Audit Analyzer should be used. This analyzer requires an internet connection.        | true
 nodeAuditAnalyzerUseCache           | Sets whether the Node Audit Analyzer will cache results. Cached results expire after 24 hours.             | true
 nodeAuditSkipDevDependencies        | Sets whether the Node Audit Analyzer will skip devDependencies.                                            | false
+yarnAuditAnalyzerEnabled            | Sets whether the Yarn Audit Analyzer should be used. This analyzer requires yarn and an internet connection. Use `nodeAuditSkipDevDependencies` to skip dev dependencies. | true
+pathToYarn                          | The path to `yarn`.                                                                                        | &nbsp;
 retireJsAnalyzerEnabled             | Sets whether the RetireJS Analyzer should be used.                                                         | true
 retirejsForceupdate                 | Sets whether the RetireJS Analyzer should update regardless of the `autoupdate` setting.                   | false
 retirejsFilterNonVulnerable         | Configures the RetireJS Analyzer to remove non-vulnerable JS dependencies from the report.                 | false
@@ -119,6 +121,7 @@ bundleAuditAnalyzerEnabled          | Sets whether the [experimental](../analyze
 bundleAuditPath                     | Sets the path to the bundle audit executable; only used if bundle audit analyzer is enabled and experimental analyzers are enabled.  | &nbsp;
 swiftPackageManagerAnalyzerEnabled  | Sets whether the [experimental](../analyzers/index.html) Switft Package Analyzer should be used.           | true
 assemblyAnalyzerEnabled             | Sets whether the .NET Assembly Analyzer should be used.                                                    | true
+msbuildAnalyzerEnabled              | Sets whether the MSBuild Analyzer should be used.                                                          | true
 pathToCore                          | The path to dotnet core .NET assembly analysis on non-windows systems.                                     | &nbsp;
 golangDepEnabled                    | Sets whether or not the [experimental](../analyzers/index.html) Golang Dependency Analyzer should be used. | true
 golangModEnabled                    | Sets whether or not the [experimental](../analyzers/index.html) Goland Module Analyzer should be used; requires `go` to be installed. | true

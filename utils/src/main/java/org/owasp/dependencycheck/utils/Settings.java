@@ -258,6 +258,14 @@ public final class Settings {
          */
         public static final String SUPPRESSION_FILE = "suppression.file";
         /**
+         * The username used when connecting to the suppressionFiles.
+         */
+        public static final String SUPPRESSION_FILE_USER = "suppression.file.user";
+        /**
+         * The password used when connecting to the suppressionFiles.
+         */
+        public static final String SUPPRESSION_FILE_PASSWORD = "suppression.file.password";
+        /**
          * The key for the hint file.
          */
         public static final String HINTS_FILE = "hints.file";
@@ -292,6 +300,10 @@ public final class Settings {
          * The properties key for whether the Node Audit analyzer is enabled.
          */
         public static final String ANALYZER_NODE_AUDIT_ENABLED = "analyzer.node.audit.enabled";
+        /**
+         * The properties key for whether the Yarn Audit analyzer is enabled.
+         */
+        public static final String ANALYZER_YARN_AUDIT_ENABLED = "analyzer.yarn.audit.enabled";
         /**
          * The properties key for supplying the URL to the Node Audit API.
          */
@@ -366,6 +378,10 @@ public final class Settings {
          * The path to go, if available.
          */
         public static final String ANALYZER_GOLANG_PATH = "analyzer.golang.path";
+        /**
+         * The path to go, if available.
+         */
+        public static final String ANALYZER_YARN_PATH = "analyzer.yarn.path";
         /**
          * The properties key for whether the Golang Dep analyzer is enabled.
          */

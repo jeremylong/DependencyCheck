@@ -64,7 +64,7 @@ public final class CliParser {
     /**
      * The supported reported formats.
      */
-    private static final String SUPPORTED_FORMATS = "HTML, XML, CSV, JSON, JUNIT, or ALL";
+    private static final String SUPPORTED_FORMATS = "HTML, XML, CSV, JSON, JUNIT, SARIF, or ALL";
 
     /**
      * Constructs a new CLI Parser object with the configured settings.
@@ -307,6 +307,10 @@ public final class CliParser {
                         "Base URL for each year’s CVE files (json.gz), the %d will be replaced with the year."))
                 .addOption(newOptionWithArg(ARGUMENT.CVE_MODIFIED_URL, "url",
                         "URL for the modified CVE (json.gz)."))
+                .addOption(newOptionWithArg(ARGUMENT.CVE_USER, "user",
+                        "Credentials for basic authentication to the CVE data."))
+                .addOption(newOptionWithArg(ARGUMENT.CVE_PASSWORD, "password",
+                        "Credentials for basic authentication to the CVE data."))
                 .addOption(newOptionWithArg(ARGUMENT.PROXY_PORT, "port",
                         "The proxy port to use when downloading resources."))
                 .addOption(newOptionWithArg(ARGUMENT.PROXY_SERVER, "server",
@@ -366,6 +370,8 @@ public final class CliParser {
                         "The Artifactory URL."))
                 .addOption(newOptionWithArg(ARGUMENT.PATH_TO_GO, "path",
                         "The path to the `go` executable."))
+                .addOption(newOptionWithArg(ARGUMENT.PATH_TO_YARN, "path",
+                        "The path to the `yarn` executable."))
                 .addOption(newOptionWithArg(ARGUMENT.CVE_VALID_FOR_HOURS, "hours",
                         "The number of hours to wait before checking for new updates from the NVD."))
                 .addOption(newOptionWithArg(ARGUMENT.RETIREJS_FILTERS, "pattern",
@@ -391,6 +397,7 @@ public final class CliParser {
                 .addOption(newOptionWithArg(ARGUMENT.PATH_TO_CORE, "path", "The path to dotnet core."))
                 .addOption(newOptionWithArg(ARGUMENT.HINTS_FILE, "file", "The file path to the hints XML file."))
                 .addOption(newOption(ARGUMENT.RETIRED, "Enables the retired analyzers."))
+                .addOption(newOption(ARGUMENT.DISABLE_MSBUILD, "Disable the MS Build Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_JAR, "Disable the Jar Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_ARCHIVE, "Disable the Archive Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_ASSEMBLY, "Disable the .NET Assembly Analyzer."))
@@ -418,6 +425,7 @@ public final class CliParser {
                 .addOption(newOption(ARGUMENT.DISABLE_GO_DEP, "Disable the Golang Package Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_NODE_JS, "Disable the Node.js Package Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_NODE_AUDIT, "Disable the Node Audit Analyzer."))
+                .addOption(newOption(ARGUMENT.DISABLE_YARN_AUDIT, "Disable the Yarn Audit Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_NODE_AUDIT_CACHE, "Disallow the Node Audit Analyzer from caching results"))
                 .addOption(newOption(ARGUMENT.DISABLE_NODE_AUDIT_SKIPDEV, "Configures the Node Audit Analyzer to skip devDependencies"))
                 .addOption(newOption(ARGUMENT.DISABLE_RETIRE_JS, "Disable the RetireJS Analyzer."))
@@ -527,6 +535,16 @@ public final class CliParser {
     }
 
     /**
+     * Returns true if the disableYarnAudit command line argument was specified.
+     *
+     * @return true if the disableYarnAudit command line argument was specified;
+     * otherwise false
+     */
+    public boolean isYarnAuditDisabled() {
+        return hasDisableOption(ARGUMENT.DISABLE_YARN_AUDIT, Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED);
+    }
+
+    /**
      * Returns true if the Nexus Analyzer should use the configured proxy to
      * connect to Nexus; otherwise false is returned.
      *
@@ -572,7 +590,24 @@ public final class CliParser {
      * @return the value of the argument
      */
     public String getStringArgument(String option) {
+        return getStringArgument(option, null);
+    }
+
+    /**
+     * Returns the argument value for the given option.
+     *
+     * @param option the option
+     * @param key the dependency-check settings key for the option.
+     * @return the value of the argument
+     */
+    public String getStringArgument(String option, String key) {
         if (line != null && line.hasOption(option)) {
+            if (key != null && (option.toLowerCase().endsWith("password")
+                    || option.toLowerCase().endsWith("pass"))) {
+                LOGGER.warn("{} used on the command line, consider moving the password "
+                        + "to a properties file using the key `{}` and using the "
+                        + "--propertyfile argument instead", option, key);
+            }
             return line.getOptionValue(option);
         }
         return null;
@@ -1041,9 +1076,21 @@ public final class CliParser {
          */
         public static final String CVE_VALID_FOR_HOURS = "cveValidForHours";
         /**
+         * The username for basic auth to the CVE data.
+         */
+        public static final String CVE_USER = "cveUser";
+        /**
+         * The password for basic auth to the CVE data.
+         */
+        public static final String CVE_PASSWORD = "cvePassword";
+        /**
          * Disables the Jar Analyzer.
          */
         public static final String DISABLE_JAR = "disableJar";
+        /**
+         * Disable the MS Build Analyzer.
+         */
+        public static final String DISABLE_MSBUILD = "disableMSBuild";
         /**
          * Disables the Archive Analyzer.
          */
@@ -1076,6 +1123,10 @@ public final class CliParser {
          * The CLI argument name for setting the path to `go`.
          */
         public static final String PATH_TO_GO = "go";
+        /**
+         * The CLI argument name for setting the path to `yarn`.
+         */
+        public static final String PATH_TO_YARN = "yarn";
         /**
          * Disables the Ruby Gemspec Analyzer.
          */
@@ -1161,6 +1212,10 @@ public final class CliParser {
          * Disables the Node Audit Analyzer.
          */
         public static final String DISABLE_NODE_AUDIT = "disableNodeAudit";
+        /**
+         * Disables the Yarn Audit Analyzer.
+         */
+        public static final String DISABLE_YARN_AUDIT = "disableYarnAudit";
         /**
          * Disables the Node Audit Analyzer's ability to cache results locally.
          */
