@@ -4322,4 +4322,13 @@
         <packageUrl regex="true">^pkg:maven/org\.mybatis\.generator/mybatis\-generator\-core@.*$</packageUrl>
         <cpe>cpe:/a:mybatis:mybatis</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3298 on org.wildfly.core:wildfly-protocol-15.0.0.Final
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.wildfly\.core/wildfly\-protocol@.*$</packageUrl>
+        <cpe>cpe:/a:redhat:wildfly</cpe>
+        <cpe>cpe:/a:redhat:wildfly_core</cpe>
+        <cpe>cpe:/a:wildfly:wildfly</cpe>
+    </suppress>
 </suppressions>
