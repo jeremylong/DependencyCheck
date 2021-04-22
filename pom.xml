@@ -125,7 +125,7 @@ Copyright (c) 2012 - Jeremy Long
         <github.global.server>github</github.global.server>
         
         <apache.lucene.version>8.8.2</apache.lucene.version>
-        <apache.ant.version>1.10.9</apache.ant.version>
+        <apache.ant.version>1.10.10</apache.ant.version>
         <slf4j.version>1.7.30</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <!-- Note that Maven will use classes from the distro, ignoring declared dependencies for Maven core... -->
