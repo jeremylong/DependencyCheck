@@ -220,6 +220,7 @@ public class CveItemOperator {
         return cve.getConfigurations().getNodes().stream()
                 .collect(NodeFlatteningCollector.getInstance())
                 .collect(CpeMatchStreamCollector.getInstance())
+                .filter(cpe -> cpe.getCpe23Uri() != null)
                 .anyMatch(cpe -> cpe.getCpe23Uri().startsWith(cpeStartsWithFilter));
     }
 }
