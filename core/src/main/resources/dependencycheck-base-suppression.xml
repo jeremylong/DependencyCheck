@@ -4324,6 +4324,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        false positive per #3274 on org.jetbrains.kotlinx:atomicfu
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlinx/atomicfu@.*$</packageUrl>
+        <cpe>cpe:/a:jetbrains:kotlin</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         false positive per #3298 on org.wildfly.core:wildfly-protocol-15.0.0.Final
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.wildfly\.core/wildfly\-protocol@.*$</packageUrl>
