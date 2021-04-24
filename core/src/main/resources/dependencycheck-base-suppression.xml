@@ -4335,14 +4335,7 @@
         <notes><![CDATA[
         false positive per #3301 on org.owasp:csrfguard-jsp-tags.4.0.0
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.owasp/csrfguard\-jsp\-tags@.*$</packageUrl>
-        <cpe>cpe:/a:php:com_extensions</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        false positive per #3301 on org.owasp:csrfguard-extension-session.4.0.0
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.owasp/csrfguard\-extension\-session@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/org\.owasp/csrfguard\-.*$</packageUrl>
         <cpe>cpe:/a:php:com_extensions</cpe>
     </suppress>
 </suppressions>
