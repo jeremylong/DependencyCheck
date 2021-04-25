@@ -120,73 +120,73 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
 
     @Test
     public void should_newDependency_get_pom_from_base_dir() {
-      // Given
-      BaseDependencyCheckMojo instance = new BaseDependencyCheckMojoImpl();
+        // Given
+        BaseDependencyCheckMojo instance = new BaseDependencyCheckMojoImpl();
 
-      new MockUp<MavenProject>() {
-        @Mock
-        public File getBasedir() {
-          return new File("src/test/resources/maven_project_base_dir");
-        }
-      };
+        new MockUp<MavenProject>() {
+            @Mock
+            public File getBasedir() {
+                return new File("src/test/resources/maven_project_base_dir");
+            }
+        };
 
-      String expectOutput = "pom.xml";
+        String expectOutput = "pom.xml";
 
-      // When
-      String output = instance.newDependency(project).getFileName();
+        // When
+        String output = instance.newDependency(project).getFileName();
 
-      // Then
-      assertEquals(expectOutput, output);
+        // Then
+        assertEquals(expectOutput, output);
     }
 
     @Test
     public void should_newDependency_get_default_virtual_dependency() {
-      // Given
-      BaseDependencyCheckMojo instance = new BaseDependencyCheckMojoImpl();
+        // Given
+        BaseDependencyCheckMojo instance = new BaseDependencyCheckMojoImpl();
 
-      new MockUp<MavenProject>() {
-        @Mock
-        public File getBasedir() {
-          return new File("src/test/resources/dir_without_pom");
-        }
+        new MockUp<MavenProject>() {
+            @Mock
+            public File getBasedir() {
+                return new File("src/test/resources/dir_without_pom");
+            }
 
-        @Mock
-        public File getFile() {
-          return new File("src/test/resources/dir_without_pom");
-        }
-      };
+            @Mock
+            public File getFile() {
+                return new File("src/test/resources/dir_without_pom");
+            }
+        };
 
-      // When
-      String output = instance.newDependency(project).getFileName();
+        // When
+        String output = instance.newDependency(project).getFileName();
 
-      // Then
-      assertNull(output);
+        // Then
+        assertNull(output);
     }
 
     @Test
     public void should_newDependency_get_pom_declared_as_module() {
-      // Given
-      BaseDependencyCheckMojo instance = new BaseDependencyCheckMojoImpl();
+        // Given
+        BaseDependencyCheckMojo instance = new BaseDependencyCheckMojoImpl();
 
-      new MockUp<MavenProject>() {
-        @Mock
-        public File getBasedir() {
-          return new File("src/test/resources/dir_containing_maven_poms_declared_as_modules_in_another_pom");
-        }
+        new MockUp<MavenProject>() {
+            @Mock
+            public File getBasedir() {
+                return new File("src/test/resources/dir_containing_maven_poms_declared_as_modules_in_another_pom");
+            }
 
-        @Mock
-        public File getFile() {
-          return new File("src/test/resources/dir_containing_maven_poms_declared_as_modules_in_another_pom/serverlibs.pom");
-        }
-      };
+            @Mock
+            public File getFile() {
+                return new File("src/test/resources/dir_containing_maven_poms_declared_as_modules_in_another_pom/serverlibs.pom");
+            }
+        };
 
-      String expectOutput = "serverlibs.pom";
+        String expectOutput = "serverlibs.pom";
 
-      // When
-      String output = instance.newDependency(project).getFileName();
+        // When
+        String output = instance.newDependency(project).getFileName();
 
-      // Then
-      assertEquals(expectOutput, output);
+        // Then
+        assertEquals(expectOutput, output);
     }
 
     /**
