@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import mockit.Mock;
 import mockit.MockUp;
 import mockit.Tested;
@@ -32,6 +33,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 import org.apache.maven.project.MavenProject;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -113,6 +116,51 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
                 assertFalse(engine.getDependencies().length == 0);
             }
         }
+    }
+
+    @Test
+    public void should_newDependency_get_pom_from_base_dir() {
+      // Given
+      BaseDependencyCheckMojo instance = new BaseDependencyCheckMojoImpl();
+
+      new MockUp<MavenProject>() {
+        @Mock
+        public File getBasedir() {
+          return new File("src/test/resources/maven_project_base_dir");
+        }
+      };
+
+      String expectOutput = "pom.xml";
+
+      // When
+      String output = instance.newDependency(project).getFileName();
+
+      // Then
+      assertEquals(expectOutput, output);
+    }
+
+    @Test
+    public void should_newDependency_get_default_virtual_dependency() {
+      // Given
+      BaseDependencyCheckMojo instance = new BaseDependencyCheckMojoImpl();
+
+      new MockUp<MavenProject>() {
+        @Mock
+        public File getBasedir() {
+          return new File("src/test/resources/dir_without_pom");
+        }
+
+        @Mock
+        public File getFile() {
+          return new File("src/test/resources/dir_without_pom");
+        }
+      };
+
+      // When
+      String output = instance.newDependency(project).getFileName();
+
+      // Then
+      assertNull(output);
     }
 
     /**
