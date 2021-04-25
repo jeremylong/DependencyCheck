@@ -163,6 +163,32 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
       assertNull(output);
     }
 
+    @Test
+    public void should_newDependency_get_pom_declared_as_module() {
+      // Given
+      BaseDependencyCheckMojo instance = new BaseDependencyCheckMojoImpl();
+
+      new MockUp<MavenProject>() {
+        @Mock
+        public File getBasedir() {
+          return new File("src/test/resources/dir_containing_maven_poms_declared_as_modules_in_another_pom");
+        }
+
+        @Mock
+        public File getFile() {
+          return new File("src/test/resources/dir_containing_maven_poms_declared_as_modules_in_another_pom/serverlibs.pom");
+        }
+      };
+
+      String expectOutput = "serverlibs.pom";
+
+      // When
+      String output = instance.newDependency(project).getFileName();
+
+      // Then
+      assertEquals(expectOutput, output);
+    }
+
     /**
      * Implementation of ODC Mojo for testing.
      */

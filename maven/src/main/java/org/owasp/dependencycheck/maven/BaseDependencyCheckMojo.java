@@ -1612,6 +1612,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
       if (pom.isFile()) {
           getLog().debug("Adding virtual dependency from pom.xml");
           d = new Dependency(pom, true);
+      } else if (prj.getFile().isFile()) {
+          getLog().debug("Adding virtual dependency from file");
+          d = new Dependency(prj.getFile(), true);
       } else {
           d = new Dependency(true);
       }
