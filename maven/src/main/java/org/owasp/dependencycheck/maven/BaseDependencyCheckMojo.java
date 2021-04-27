@@ -1555,14 +1555,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         prj.getGroupId(), prj.getArtifactId(), prj.getVersion());
                 getLog().info(String.format(infoLogTemplate,
                         displayName));
-                final File pom = new File(prj.getBasedir(), "pom.xml");
-                final Dependency d;
-                if (pom.isFile()) {
-                    getLog().debug("Adding virtual dependency from pom.xml");
-                    d = new Dependency(pom, true);
-                } else {
-                    d = new Dependency(true);
-                }
+                final Dependency d = newDependency(prj);
                 final String key = String.format("%s:%s:%s", prj.getGroupId(), prj.getArtifactId(), prj.getVersion());
                 d.setSha1sum(Checksum.getSHA1Checksum(key));
                 d.setSha256sum(Checksum.getSHA256Checksum(key));
@@ -1611,6 +1604,20 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
         }
         return false;
+    }
+
+    Dependency newDependency(MavenProject prj) {
+      final File pom = new File(prj.getBasedir(), "pom.xml");
+
+      if (pom.isFile()) {
+          getLog().debug("Adding virtual dependency from pom.xml");
+          return new Dependency(pom, true);
+      } else if (prj.getFile().isFile()) {
+          getLog().debug("Adding virtual dependency from file");
+          return new Dependency(prj.getFile(), true);
+      } else {
+          return new Dependency(true);
+      }
     }
 
     /**
