@@ -104,15 +104,6 @@ Copyright (c) 2012 - Jeremy Long
         <system>travis-ci</system>
         <url>https://travis-ci.org/jeremylong/DependencyCheck</url>
     </ciManagement>
-    <mailingLists>
-        <mailingList>
-            <name>Dependency Check</name>
-            <subscribe>dependency-check+subscribe@googlegroups.com</subscribe>
-            <unsubscribe>dependency-check+unsubscribe@googlegroups.com</unsubscribe>
-            <post>dependency-check@googlegroups.com</post>
-            <archive>https://groups.google.com/forum/?fromgroups#!forum/dependency-check</archive>
-        </mailingList>
-    </mailingLists>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -784,7 +775,6 @@ Copyright (c) 2012 - Jeremy Long
                         <reports>
                             <report>summary</report>
                             <report>issue-management </report>
-                            <report>mailing-lists</report>
                             <report>modules</report>
                             <report>team</report>
                             <report>scm</report>
