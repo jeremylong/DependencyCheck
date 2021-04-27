@@ -1,6 +1,7 @@
 package org.owasp.dependencycheck.data.nvd.ecosystem;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 import org.owasp.dependencycheck.analyzer.PythonPackageAnalyzer;
@@ -35,5 +36,22 @@ public class UrlEcosystemMapperTest {
         defCveItem.setCve(cve);
         
         return defCveItem;
+    }
+
+    @Test
+    public void testGetEcosystemMustHandleNullCveReferences() {
+        // Given
+        UrlEcosystemMapper mapper = new UrlEcosystemMapper();
+
+        CVEJSON40Min11 cve = new CVEJSON40Min11();
+
+        DefCveItem cveItem = new DefCveItem();
+        cveItem.setCve(cve);
+
+        // When
+        String output = mapper.getEcosystem(cveItem);
+
+        // Then
+        assertNull(output);
     }
 }
