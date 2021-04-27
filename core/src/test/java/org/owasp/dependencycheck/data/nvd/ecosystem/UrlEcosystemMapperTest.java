@@ -54,4 +54,30 @@ public class UrlEcosystemMapperTest {
         // Then
         assertNull(output);
     }
+
+    @Test
+    public void testGetEcosystemMustHandleNullCve() {
+        // Given
+        UrlEcosystemMapper mapper = new UrlEcosystemMapper();
+
+        DefCveItem cveItem = new DefCveItem();
+
+        // When
+        String output = mapper.getEcosystem(cveItem);
+
+        // Then
+        assertNull(output);
+    }
+
+    @Test
+    public void testGetEcosystemMustHandleNullCveItem() {
+        // Given
+        UrlEcosystemMapper mapper = new UrlEcosystemMapper();
+
+        // When
+        String output = mapper.getEcosystem(null);
+
+        // Then
+        assertNull(output);
+    }
 }
