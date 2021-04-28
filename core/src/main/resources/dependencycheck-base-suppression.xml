@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
-   <suppress base="true">
+    <suppress base="true">
+        <notes><![CDATA[
+	    FP per #3331
+	    ]]></notes>
+        <packageUrl regex="true">^pkg:npm/%40babel%2Fcli@.*$</packageUrl>
+        <cve>CVE-2017-16060</cve>
+    </suppress>
+    <suppress base="true">
         <notes><![CDATA[
       	nio-stream-storage is not 'github.com/containers/storage'. see #3273
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.synchronoss\.cloud/nio\-stream\-storage@.*$</packageUrl>
         <cpe>cpe:/a:storage_project:storage</cpe>
-   </suppress>
-   <suppress base="true">
+    </suppress>
+    <suppress base="true">
         <notes><![CDATA[
 	    FP per #3241
 	    ]]></notes>
@@ -15,16 +22,16 @@
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
         <cpe>cpe:/a:context_project:context</cpe>
-   </suppress>
-   <suppress base="true">
+    </suppress>
+    <suppress base="true">
         <notes><![CDATA[
         FP per #3230
         ]]></notes>
-      <packageUrl regex="true">^pkg:maven/io\.github\.x\-stream/mxparser@.*$</packageUrl>
-      <cpe>cpe:/a:xstream_project:xstream</cpe>
-      <cpe>cpe:/a:oracle:jdk</cpe>
-   </suppress>
-   <suppress base="true">
+        <packageUrl regex="true">^pkg:maven/io\.github\.x\-stream/mxparser@.*$</packageUrl>
+        <cpe>cpe:/a:xstream_project:xstream</cpe>
+        <cpe>cpe:/a:oracle:jdk</cpe>
+    </suppress>
+    <suppress base="true">
         <notes><![CDATA[
         FP per #3073
         ]]></notes>
