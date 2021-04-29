@@ -20,7 +20,7 @@ Copyright (c) 2012 - Jeremy Long
 
     <groupId>org.owasp</groupId>
     <artifactId>dependency-check-parent</artifactId>
-    <version>6.1.6-SNAPSHOT</version>
+    <version>6.1.6</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -94,7 +94,7 @@ Copyright (c) 2012 - Jeremy Long
         <connection>scm:git:https://github.com/jeremylong/DependencyCheck.git</connection>
         <url>https://github.com/jeremylong/DependencyCheck</url>
         <developerConnection>scm:git:https://github.com/jeremylong/DependencyCheck.git</developerConnection>
-        <tag>v6.1.5</tag>
+        <tag>v6.1.6</tag>
     </scm>
     <issueManagement>
         <system>github</system>
