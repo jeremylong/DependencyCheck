@@ -1,5 +1,14 @@
 # Release Notes
 
+## [Version 6.1.6](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.1.6) (2021-04-29)
+
+### Changes
+
+- Resolved issue with Sarif report (#3243)
+- Resolved issue with Ruby Bundle Audit (#3256)
+- Several minor bug fixes and updates to reduce false positives
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/26?closed=1).
+
 ## [Version 6.1.5](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.1.5) (2021-03-31)
 
 ### Changes
