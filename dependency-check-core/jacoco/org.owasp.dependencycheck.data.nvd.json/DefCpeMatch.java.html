@@ -3,6 +3,7 @@ package org.owasp.dependencycheck.data.nvd.json;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -25,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     &quot;versionEndExcluding&quot;,
     &quot;versionEndIncluding&quot;
 })
-<span class="fc" id="L28">public class DefCpeMatch {</span>
+@Generated(&quot;jsonschema2pojo&quot;)
+<span class="fc" id="L30">public class DefCpeMatch {</span>
 
     /**
      * 
@@ -51,7 +53,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     private String versionEndExcluding;
     @JsonProperty(&quot;versionEndIncluding&quot;)
     private String versionEndIncluding;
-<span class="fc" id="L54">    @JsonIgnore</span>
+<span class="fc" id="L56">    @JsonIgnore</span>
     private Map&lt;String, Object&gt; additionalProperties = new HashMap&lt;String, Object&gt;();
 
     /**
@@ -61,7 +63,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
      */
     @JsonProperty(&quot;vulnerable&quot;)
     public Boolean getVulnerable() {
-<span class="fc" id="L64">        return vulnerable;</span>
+<span class="fc" id="L66">        return vulnerable;</span>
     }
 
     /**
@@ -71,18 +73,18 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
      */
     @JsonProperty(&quot;vulnerable&quot;)
     public void setVulnerable(Boolean vulnerable) {
-<span class="fc" id="L74">        this.vulnerable = vulnerable;</span>
-<span class="fc" id="L75">    }</span>
+<span class="fc" id="L76">        this.vulnerable = vulnerable;</span>
+<span class="fc" id="L77">    }</span>
 
     @JsonProperty(&quot;cpe22Uri&quot;)
     public String getCpe22Uri() {
-<span class="nc" id="L79">        return cpe22Uri;</span>
+<span class="nc" id="L81">        return cpe22Uri;</span>
     }
 
     @JsonProperty(&quot;cpe22Uri&quot;)
     public void setCpe22Uri(String cpe22Uri) {
-<span class="nc" id="L84">        this.cpe22Uri = cpe22Uri;</span>
-<span class="nc" id="L85">    }</span>
+<span class="nc" id="L86">        this.cpe22Uri = cpe22Uri;</span>
+<span class="nc" id="L87">    }</span>
 
     /**
      * 
@@ -91,7 +93,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
      */
     @JsonProperty(&quot;cpe23Uri&quot;)
     public String getCpe23Uri() {
-<span class="fc" id="L94">        return cpe23Uri;</span>
+<span class="fc" id="L96">        return cpe23Uri;</span>
     }
 
     /**
@@ -101,127 +103,127 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
      */
     @JsonProperty(&quot;cpe23Uri&quot;)
     public void setCpe23Uri(String cpe23Uri) {
-<span class="fc" id="L104">        this.cpe23Uri = cpe23Uri;</span>
-<span class="fc" id="L105">    }</span>
+<span class="fc" id="L106">        this.cpe23Uri = cpe23Uri;</span>
+<span class="fc" id="L107">    }</span>
 
     @JsonProperty(&quot;versionStartExcluding&quot;)
     public String getVersionStartExcluding() {
-<span class="fc" id="L109">        return versionStartExcluding;</span>
+<span class="fc" id="L111">        return versionStartExcluding;</span>
     }
 
     @JsonProperty(&quot;versionStartExcluding&quot;)
     public void setVersionStartExcluding(String versionStartExcluding) {
-<span class="fc" id="L114">        this.versionStartExcluding = versionStartExcluding;</span>
-<span class="fc" id="L115">    }</span>
+<span class="fc" id="L116">        this.versionStartExcluding = versionStartExcluding;</span>
+<span class="fc" id="L117">    }</span>
 
     @JsonProperty(&quot;versionStartIncluding&quot;)
     public String getVersionStartIncluding() {
-<span class="fc" id="L119">        return versionStartIncluding;</span>
+<span class="fc" id="L121">        return versionStartIncluding;</span>
     }
 
     @JsonProperty(&quot;versionStartIncluding&quot;)
     public void setVersionStartIncluding(String versionStartIncluding) {
-<span class="fc" id="L124">        this.versionStartIncluding = versionStartIncluding;</span>
-<span class="fc" id="L125">    }</span>
+<span class="fc" id="L126">        this.versionStartIncluding = versionStartIncluding;</span>
+<span class="fc" id="L127">    }</span>
 
     @JsonProperty(&quot;versionEndExcluding&quot;)
     public String getVersionEndExcluding() {
-<span class="fc" id="L129">        return versionEndExcluding;</span>
+<span class="fc" id="L131">        return versionEndExcluding;</span>
     }
 
     @JsonProperty(&quot;versionEndExcluding&quot;)
     public void setVersionEndExcluding(String versionEndExcluding) {
-<span class="fc" id="L134">        this.versionEndExcluding = versionEndExcluding;</span>
-<span class="fc" id="L135">    }</span>
+<span class="fc" id="L136">        this.versionEndExcluding = versionEndExcluding;</span>
+<span class="fc" id="L137">    }</span>
 
     @JsonProperty(&quot;versionEndIncluding&quot;)
     public String getVersionEndIncluding() {
-<span class="fc" id="L139">        return versionEndIncluding;</span>
+<span class="fc" id="L141">        return versionEndIncluding;</span>
     }
 
     @JsonProperty(&quot;versionEndIncluding&quot;)
     public void setVersionEndIncluding(String versionEndIncluding) {
-<span class="fc" id="L144">        this.versionEndIncluding = versionEndIncluding;</span>
-<span class="fc" id="L145">    }</span>
+<span class="fc" id="L146">        this.versionEndIncluding = versionEndIncluding;</span>
+<span class="fc" id="L147">    }</span>
 
     @JsonAnyGetter
     public Map&lt;String, Object&gt; getAdditionalProperties() {
-<span class="nc" id="L149">        return this.additionalProperties;</span>
+<span class="nc" id="L151">        return this.additionalProperties;</span>
     }
 
     @JsonAnySetter
     public void setAdditionalProperty(String name, Object value) {
-<span class="nc" id="L154">        this.additionalProperties.put(name, value);</span>
-<span class="nc" id="L155">    }</span>
+<span class="fc" id="L156">        this.additionalProperties.put(name, value);</span>
+<span class="fc" id="L157">    }</span>
 
     @Override
     public String toString() {
-<span class="nc" id="L159">        StringBuilder sb = new StringBuilder();</span>
-<span class="nc" id="L160">        sb.append(DefCpeMatch.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');</span>
-<span class="nc" id="L161">        sb.append(&quot;vulnerable&quot;);</span>
-<span class="nc" id="L162">        sb.append('=');</span>
-<span class="nc bnc" id="L163" title="All 2 branches missed.">        sb.append(((this.vulnerable == null)?&quot;&lt;null&gt;&quot;:this.vulnerable));</span>
-<span class="nc" id="L164">        sb.append(',');</span>
-<span class="nc" id="L165">        sb.append(&quot;cpe22Uri&quot;);</span>
-<span class="nc" id="L166">        sb.append('=');</span>
-<span class="nc bnc" id="L167" title="All 2 branches missed.">        sb.append(((this.cpe22Uri == null)?&quot;&lt;null&gt;&quot;:this.cpe22Uri));</span>
-<span class="nc" id="L168">        sb.append(',');</span>
-<span class="nc" id="L169">        sb.append(&quot;cpe23Uri&quot;);</span>
-<span class="nc" id="L170">        sb.append('=');</span>
-<span class="nc bnc" id="L171" title="All 2 branches missed.">        sb.append(((this.cpe23Uri == null)?&quot;&lt;null&gt;&quot;:this.cpe23Uri));</span>
-<span class="nc" id="L172">        sb.append(',');</span>
-<span class="nc" id="L173">        sb.append(&quot;versionStartExcluding&quot;);</span>
-<span class="nc" id="L174">        sb.append('=');</span>
-<span class="nc bnc" id="L175" title="All 2 branches missed.">        sb.append(((this.versionStartExcluding == null)?&quot;&lt;null&gt;&quot;:this.versionStartExcluding));</span>
-<span class="nc" id="L176">        sb.append(',');</span>
-<span class="nc" id="L177">        sb.append(&quot;versionStartIncluding&quot;);</span>
-<span class="nc" id="L178">        sb.append('=');</span>
-<span class="nc bnc" id="L179" title="All 2 branches missed.">        sb.append(((this.versionStartIncluding == null)?&quot;&lt;null&gt;&quot;:this.versionStartIncluding));</span>
-<span class="nc" id="L180">        sb.append(',');</span>
-<span class="nc" id="L181">        sb.append(&quot;versionEndExcluding&quot;);</span>
-<span class="nc" id="L182">        sb.append('=');</span>
-<span class="nc bnc" id="L183" title="All 2 branches missed.">        sb.append(((this.versionEndExcluding == null)?&quot;&lt;null&gt;&quot;:this.versionEndExcluding));</span>
-<span class="nc" id="L184">        sb.append(',');</span>
-<span class="nc" id="L185">        sb.append(&quot;versionEndIncluding&quot;);</span>
-<span class="nc" id="L186">        sb.append('=');</span>
-<span class="nc bnc" id="L187" title="All 2 branches missed.">        sb.append(((this.versionEndIncluding == null)?&quot;&lt;null&gt;&quot;:this.versionEndIncluding));</span>
-<span class="nc" id="L188">        sb.append(',');</span>
-<span class="nc" id="L189">        sb.append(&quot;additionalProperties&quot;);</span>
-<span class="nc" id="L190">        sb.append('=');</span>
-<span class="nc bnc" id="L191" title="All 2 branches missed.">        sb.append(((this.additionalProperties == null)?&quot;&lt;null&gt;&quot;:this.additionalProperties));</span>
-<span class="nc" id="L192">        sb.append(',');</span>
-<span class="nc bnc" id="L193" title="All 2 branches missed.">        if (sb.charAt((sb.length()- 1)) == ',') {</span>
-<span class="nc" id="L194">            sb.setCharAt((sb.length()- 1), ']');</span>
+<span class="nc" id="L161">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L162">        sb.append(DefCpeMatch.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');</span>
+<span class="nc" id="L163">        sb.append(&quot;vulnerable&quot;);</span>
+<span class="nc" id="L164">        sb.append('=');</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">        sb.append(((this.vulnerable == null)?&quot;&lt;null&gt;&quot;:this.vulnerable));</span>
+<span class="nc" id="L166">        sb.append(',');</span>
+<span class="nc" id="L167">        sb.append(&quot;cpe22Uri&quot;);</span>
+<span class="nc" id="L168">        sb.append('=');</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">        sb.append(((this.cpe22Uri == null)?&quot;&lt;null&gt;&quot;:this.cpe22Uri));</span>
+<span class="nc" id="L170">        sb.append(',');</span>
+<span class="nc" id="L171">        sb.append(&quot;cpe23Uri&quot;);</span>
+<span class="nc" id="L172">        sb.append('=');</span>
+<span class="nc bnc" id="L173" title="All 2 branches missed.">        sb.append(((this.cpe23Uri == null)?&quot;&lt;null&gt;&quot;:this.cpe23Uri));</span>
+<span class="nc" id="L174">        sb.append(',');</span>
+<span class="nc" id="L175">        sb.append(&quot;versionStartExcluding&quot;);</span>
+<span class="nc" id="L176">        sb.append('=');</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">        sb.append(((this.versionStartExcluding == null)?&quot;&lt;null&gt;&quot;:this.versionStartExcluding));</span>
+<span class="nc" id="L178">        sb.append(',');</span>
+<span class="nc" id="L179">        sb.append(&quot;versionStartIncluding&quot;);</span>
+<span class="nc" id="L180">        sb.append('=');</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">        sb.append(((this.versionStartIncluding == null)?&quot;&lt;null&gt;&quot;:this.versionStartIncluding));</span>
+<span class="nc" id="L182">        sb.append(',');</span>
+<span class="nc" id="L183">        sb.append(&quot;versionEndExcluding&quot;);</span>
+<span class="nc" id="L184">        sb.append('=');</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">        sb.append(((this.versionEndExcluding == null)?&quot;&lt;null&gt;&quot;:this.versionEndExcluding));</span>
+<span class="nc" id="L186">        sb.append(',');</span>
+<span class="nc" id="L187">        sb.append(&quot;versionEndIncluding&quot;);</span>
+<span class="nc" id="L188">        sb.append('=');</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">        sb.append(((this.versionEndIncluding == null)?&quot;&lt;null&gt;&quot;:this.versionEndIncluding));</span>
+<span class="nc" id="L190">        sb.append(',');</span>
+<span class="nc" id="L191">        sb.append(&quot;additionalProperties&quot;);</span>
+<span class="nc" id="L192">        sb.append('=');</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        sb.append(((this.additionalProperties == null)?&quot;&lt;null&gt;&quot;:this.additionalProperties));</span>
+<span class="nc" id="L194">        sb.append(',');</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">        if (sb.charAt((sb.length()- 1)) == ',') {</span>
+<span class="nc" id="L196">            sb.setCharAt((sb.length()- 1), ']');</span>
         } else {
-<span class="nc" id="L196">            sb.append(']');</span>
+<span class="nc" id="L198">            sb.append(']');</span>
         }
-<span class="nc" id="L198">        return sb.toString();</span>
+<span class="nc" id="L200">        return sb.toString();</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L203">        int result = 1;</span>
-<span class="nc bnc" id="L204" title="All 2 branches missed.">        result = ((result* 31)+((this.vulnerable == null)? 0 :this.vulnerable.hashCode()));</span>
-<span class="nc bnc" id="L205" title="All 2 branches missed.">        result = ((result* 31)+((this.cpe23Uri == null)? 0 :this.cpe23Uri.hashCode()));</span>
-<span class="nc bnc" id="L206" title="All 2 branches missed.">        result = ((result* 31)+((this.versionStartExcluding == null)? 0 :this.versionStartExcluding.hashCode()));</span>
-<span class="nc bnc" id="L207" title="All 2 branches missed.">        result = ((result* 31)+((this.cpe22Uri == null)? 0 :this.cpe22Uri.hashCode()));</span>
-<span class="nc bnc" id="L208" title="All 2 branches missed.">        result = ((result* 31)+((this.versionEndExcluding == null)? 0 :this.versionEndExcluding.hashCode()));</span>
-<span class="nc bnc" id="L209" title="All 2 branches missed.">        result = ((result* 31)+((this.versionEndIncluding == null)? 0 :this.versionEndIncluding.hashCode()));</span>
-<span class="nc bnc" id="L210" title="All 2 branches missed.">        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));</span>
-<span class="nc bnc" id="L211" title="All 2 branches missed.">        result = ((result* 31)+((this.versionStartIncluding == null)? 0 :this.versionStartIncluding.hashCode()));</span>
-<span class="nc" id="L212">        return result;</span>
+<span class="nc" id="L205">        int result = 1;</span>
+<span class="nc bnc" id="L206" title="All 2 branches missed.">        result = ((result* 31)+((this.vulnerable == null)? 0 :this.vulnerable.hashCode()));</span>
+<span class="nc bnc" id="L207" title="All 2 branches missed.">        result = ((result* 31)+((this.cpe23Uri == null)? 0 :this.cpe23Uri.hashCode()));</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">        result = ((result* 31)+((this.versionStartExcluding == null)? 0 :this.versionStartExcluding.hashCode()));</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">        result = ((result* 31)+((this.cpe22Uri == null)? 0 :this.cpe22Uri.hashCode()));</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">        result = ((result* 31)+((this.versionEndExcluding == null)? 0 :this.versionEndExcluding.hashCode()));</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">        result = ((result* 31)+((this.versionEndIncluding == null)? 0 :this.versionEndIncluding.hashCode()));</span>
+<span class="nc bnc" id="L212" title="All 2 branches missed.">        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));</span>
+<span class="nc bnc" id="L213" title="All 2 branches missed.">        result = ((result* 31)+((this.versionStartIncluding == null)? 0 :this.versionStartIncluding.hashCode()));</span>
+<span class="nc" id="L214">        return result;</span>
     }
 
     @Override
     public boolean equals(Object other) {
-<span class="nc bnc" id="L217" title="All 2 branches missed.">        if (other == this) {</span>
-<span class="nc" id="L218">            return true;</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">        if (other == this) {</span>
+<span class="nc" id="L220">            return true;</span>
         }
-<span class="nc bnc" id="L220" title="All 2 branches missed.">        if ((other instanceof DefCpeMatch) == false) {</span>
-<span class="nc" id="L221">            return false;</span>
+<span class="nc bnc" id="L222" title="All 2 branches missed.">        if ((other instanceof DefCpeMatch) == false) {</span>
+<span class="nc" id="L223">            return false;</span>
         }
-<span class="nc" id="L223">        DefCpeMatch rhs = ((DefCpeMatch) other);</span>
-<span class="nc bnc" id="L224" title="All 48 branches missed.">        return (((((((((this.vulnerable == rhs.vulnerable)||((this.vulnerable!= null)&amp;&amp;this.vulnerable.equals(rhs.vulnerable)))&amp;&amp;((this.cpe23Uri == rhs.cpe23Uri)||((this.cpe23Uri!= null)&amp;&amp;this.cpe23Uri.equals(rhs.cpe23Uri))))&amp;&amp;((this.versionStartExcluding == rhs.versionStartExcluding)||((this.versionStartExcluding!= null)&amp;&amp;this.versionStartExcluding.equals(rhs.versionStartExcluding))))&amp;&amp;((this.cpe22Uri == rhs.cpe22Uri)||((this.cpe22Uri!= null)&amp;&amp;this.cpe22Uri.equals(rhs.cpe22Uri))))&amp;&amp;((this.versionEndExcluding == rhs.versionEndExcluding)||((this.versionEndExcluding!= null)&amp;&amp;this.versionEndExcluding.equals(rhs.versionEndExcluding))))&amp;&amp;((this.versionEndIncluding == rhs.versionEndIncluding)||((this.versionEndIncluding!= null)&amp;&amp;this.versionEndIncluding.equals(rhs.versionEndIncluding))))&amp;&amp;((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&amp;&amp;this.additionalProperties.equals(rhs.additionalProperties))))&amp;&amp;((this.versionStartIncluding == rhs.versionStartIncluding)||((this.versionStartIncluding!= null)&amp;&amp;this.versionStartIncluding.equals(rhs.versionStartIncluding))));</span>
+<span class="nc" id="L225">        DefCpeMatch rhs = ((DefCpeMatch) other);</span>
+<span class="nc bnc" id="L226" title="All 48 branches missed.">        return (((((((((this.vulnerable == rhs.vulnerable)||((this.vulnerable!= null)&amp;&amp;this.vulnerable.equals(rhs.vulnerable)))&amp;&amp;((this.cpe23Uri == rhs.cpe23Uri)||((this.cpe23Uri!= null)&amp;&amp;this.cpe23Uri.equals(rhs.cpe23Uri))))&amp;&amp;((this.versionStartExcluding == rhs.versionStartExcluding)||((this.versionStartExcluding!= null)&amp;&amp;this.versionStartExcluding.equals(rhs.versionStartExcluding))))&amp;&amp;((this.cpe22Uri == rhs.cpe22Uri)||((this.cpe22Uri!= null)&amp;&amp;this.cpe22Uri.equals(rhs.cpe22Uri))))&amp;&amp;((this.versionEndExcluding == rhs.versionEndExcluding)||((this.versionEndExcluding!= null)&amp;&amp;this.versionEndExcluding.equals(rhs.versionEndExcluding))))&amp;&amp;((this.versionEndIncluding == rhs.versionEndIncluding)||((this.versionEndIncluding!= null)&amp;&amp;this.versionEndIncluding.equals(rhs.versionEndIncluding))))&amp;&amp;((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&amp;&amp;this.additionalProperties.equals(rhs.additionalProperties))))&amp;&amp;((this.versionStartIncluding == rhs.versionStartIncluding)||((this.versionStartIncluding!= null)&amp;&amp;this.versionStartIncluding.equals(rhs.versionStartIncluding))));</span>
     }
 
 }

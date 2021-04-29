@@ -3,6 +3,7 @@ package org.owasp.dependencycheck.data.nvd.json;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -16,7 +17,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     &quot;name&quot;,
     &quot;refsource&quot;
 })
-<span class="fc" id="L19">public class Reference {</span>
+@Generated(&quot;jsonschema2pojo&quot;)
+<span class="fc" id="L21">public class Reference {</span>
 
     /**
      * 
@@ -29,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     private String name;
     @JsonProperty(&quot;refsource&quot;)
     private String refsource;
-<span class="fc" id="L32">    @JsonIgnore</span>
+<span class="fc" id="L34">    @JsonIgnore</span>
     private Map&lt;String, Object&gt; additionalProperties = new HashMap&lt;String, Object&gt;();
 
     /**
@@ -39,7 +41,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
      */
     @JsonProperty(&quot;url&quot;)
     public String getUrl() {
-<span class="fc" id="L42">        return url;</span>
+<span class="fc" id="L44">        return url;</span>
     }
 
     /**
@@ -49,87 +51,87 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
      */
     @JsonProperty(&quot;url&quot;)
     public void setUrl(String url) {
-<span class="fc" id="L52">        this.url = url;</span>
-<span class="fc" id="L53">    }</span>
+<span class="fc" id="L54">        this.url = url;</span>
+<span class="fc" id="L55">    }</span>
 
     @JsonProperty(&quot;name&quot;)
     public String getName() {
-<span class="fc" id="L57">        return name;</span>
+<span class="fc" id="L59">        return name;</span>
     }
 
     @JsonProperty(&quot;name&quot;)
     public void setName(String name) {
-<span class="fc" id="L62">        this.name = name;</span>
-<span class="fc" id="L63">    }</span>
+<span class="fc" id="L64">        this.name = name;</span>
+<span class="fc" id="L65">    }</span>
 
     @JsonProperty(&quot;refsource&quot;)
     public String getRefsource() {
-<span class="fc" id="L67">        return refsource;</span>
+<span class="fc" id="L69">        return refsource;</span>
     }
 
     @JsonProperty(&quot;refsource&quot;)
     public void setRefsource(String refsource) {
-<span class="fc" id="L72">        this.refsource = refsource;</span>
-<span class="fc" id="L73">    }</span>
+<span class="fc" id="L74">        this.refsource = refsource;</span>
+<span class="fc" id="L75">    }</span>
 
     @JsonAnyGetter
     public Map&lt;String, Object&gt; getAdditionalProperties() {
-<span class="nc" id="L77">        return this.additionalProperties;</span>
+<span class="nc" id="L79">        return this.additionalProperties;</span>
     }
 
     @JsonAnySetter
     public void setAdditionalProperty(String name, Object value) {
-<span class="fc" id="L82">        this.additionalProperties.put(name, value);</span>
-<span class="fc" id="L83">    }</span>
+<span class="fc" id="L84">        this.additionalProperties.put(name, value);</span>
+<span class="fc" id="L85">    }</span>
 
     @Override
     public String toString() {
-<span class="nc" id="L87">        StringBuilder sb = new StringBuilder();</span>
-<span class="nc" id="L88">        sb.append(Reference.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');</span>
-<span class="nc" id="L89">        sb.append(&quot;url&quot;);</span>
-<span class="nc" id="L90">        sb.append('=');</span>
-<span class="nc bnc" id="L91" title="All 2 branches missed.">        sb.append(((this.url == null)?&quot;&lt;null&gt;&quot;:this.url));</span>
-<span class="nc" id="L92">        sb.append(',');</span>
-<span class="nc" id="L93">        sb.append(&quot;name&quot;);</span>
-<span class="nc" id="L94">        sb.append('=');</span>
-<span class="nc bnc" id="L95" title="All 2 branches missed.">        sb.append(((this.name == null)?&quot;&lt;null&gt;&quot;:this.name));</span>
-<span class="nc" id="L96">        sb.append(',');</span>
-<span class="nc" id="L97">        sb.append(&quot;refsource&quot;);</span>
-<span class="nc" id="L98">        sb.append('=');</span>
-<span class="nc bnc" id="L99" title="All 2 branches missed.">        sb.append(((this.refsource == null)?&quot;&lt;null&gt;&quot;:this.refsource));</span>
-<span class="nc" id="L100">        sb.append(',');</span>
-<span class="nc" id="L101">        sb.append(&quot;additionalProperties&quot;);</span>
-<span class="nc" id="L102">        sb.append('=');</span>
-<span class="nc bnc" id="L103" title="All 2 branches missed.">        sb.append(((this.additionalProperties == null)?&quot;&lt;null&gt;&quot;:this.additionalProperties));</span>
-<span class="nc" id="L104">        sb.append(',');</span>
-<span class="nc bnc" id="L105" title="All 2 branches missed.">        if (sb.charAt((sb.length()- 1)) == ',') {</span>
-<span class="nc" id="L106">            sb.setCharAt((sb.length()- 1), ']');</span>
+<span class="nc" id="L89">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L90">        sb.append(Reference.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');</span>
+<span class="nc" id="L91">        sb.append(&quot;url&quot;);</span>
+<span class="nc" id="L92">        sb.append('=');</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        sb.append(((this.url == null)?&quot;&lt;null&gt;&quot;:this.url));</span>
+<span class="nc" id="L94">        sb.append(',');</span>
+<span class="nc" id="L95">        sb.append(&quot;name&quot;);</span>
+<span class="nc" id="L96">        sb.append('=');</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        sb.append(((this.name == null)?&quot;&lt;null&gt;&quot;:this.name));</span>
+<span class="nc" id="L98">        sb.append(',');</span>
+<span class="nc" id="L99">        sb.append(&quot;refsource&quot;);</span>
+<span class="nc" id="L100">        sb.append('=');</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        sb.append(((this.refsource == null)?&quot;&lt;null&gt;&quot;:this.refsource));</span>
+<span class="nc" id="L102">        sb.append(',');</span>
+<span class="nc" id="L103">        sb.append(&quot;additionalProperties&quot;);</span>
+<span class="nc" id="L104">        sb.append('=');</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">        sb.append(((this.additionalProperties == null)?&quot;&lt;null&gt;&quot;:this.additionalProperties));</span>
+<span class="nc" id="L106">        sb.append(',');</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        if (sb.charAt((sb.length()- 1)) == ',') {</span>
+<span class="nc" id="L108">            sb.setCharAt((sb.length()- 1), ']');</span>
         } else {
-<span class="nc" id="L108">            sb.append(']');</span>
+<span class="nc" id="L110">            sb.append(']');</span>
         }
-<span class="nc" id="L110">        return sb.toString();</span>
+<span class="nc" id="L112">        return sb.toString();</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L115">        int result = 1;</span>
-<span class="nc bnc" id="L116" title="All 2 branches missed.">        result = ((result* 31)+((this.name == null)? 0 :this.name.hashCode()));</span>
-<span class="nc bnc" id="L117" title="All 2 branches missed.">        result = ((result* 31)+((this.refsource == null)? 0 :this.refsource.hashCode()));</span>
-<span class="nc bnc" id="L118" title="All 2 branches missed.">        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));</span>
-<span class="nc bnc" id="L119" title="All 2 branches missed.">        result = ((result* 31)+((this.url == null)? 0 :this.url.hashCode()));</span>
-<span class="nc" id="L120">        return result;</span>
+<span class="nc" id="L117">        int result = 1;</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">        result = ((result* 31)+((this.name == null)? 0 :this.name.hashCode()));</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        result = ((result* 31)+((this.refsource == null)? 0 :this.refsource.hashCode()));</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        result = ((result* 31)+((this.url == null)? 0 :this.url.hashCode()));</span>
+<span class="nc" id="L122">        return result;</span>
     }
 
     @Override
     public boolean equals(Object other) {
-<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (other == this) {</span>
-<span class="nc" id="L126">            return true;</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        if (other == this) {</span>
+<span class="nc" id="L128">            return true;</span>
         }
-<span class="nc bnc" id="L128" title="All 2 branches missed.">        if ((other instanceof Reference) == false) {</span>
-<span class="nc" id="L129">            return false;</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if ((other instanceof Reference) == false) {</span>
+<span class="nc" id="L131">            return false;</span>
         }
-<span class="nc" id="L131">        Reference rhs = ((Reference) other);</span>
-<span class="nc bnc" id="L132" title="All 24 branches missed.">        return (((((this.name == rhs.name)||((this.name!= null)&amp;&amp;this.name.equals(rhs.name)))&amp;&amp;((this.refsource == rhs.refsource)||((this.refsource!= null)&amp;&amp;this.refsource.equals(rhs.refsource))))&amp;&amp;((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&amp;&amp;this.additionalProperties.equals(rhs.additionalProperties))))&amp;&amp;((this.url == rhs.url)||((this.url!= null)&amp;&amp;this.url.equals(rhs.url))));</span>
+<span class="nc" id="L133">        Reference rhs = ((Reference) other);</span>
+<span class="nc bnc" id="L134" title="All 24 branches missed.">        return (((((this.name == rhs.name)||((this.name!= null)&amp;&amp;this.name.equals(rhs.name)))&amp;&amp;((this.refsource == rhs.refsource)||((this.refsource!= null)&amp;&amp;this.refsource.equals(rhs.refsource))))&amp;&amp;((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&amp;&amp;this.additionalProperties.equals(rhs.additionalProperties))))&amp;&amp;((this.url == rhs.url)||((this.url!= null)&amp;&amp;this.url.equals(rhs.url))));</span>
     }
 
 }

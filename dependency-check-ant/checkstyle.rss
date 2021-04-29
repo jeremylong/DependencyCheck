@@ -46,7 +46,7 @@ under the License.
           <tbody>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-ant/checkstyle.html#org.owasp.dependencycheck.taskdefs.Purge.java">org/owasp/dependencycheck/taskdefs/Purge.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-ant/checkstyle.html#org.owasp.dependencycheck.taskdefs.Update.java">org/owasp/dependencycheck/taskdefs/Update.java</a>
                 </td>
                 <td>
                   0
@@ -60,7 +60,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-ant/checkstyle.html#org.owasp.dependencycheck.taskdefs.Update.java">org/owasp/dependencycheck/taskdefs/Update.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-ant/checkstyle.html#org.owasp.dependencycheck.taskdefs.Purge.java">org/owasp/dependencycheck/taskdefs/Purge.java</a>
                 </td>
                 <td>
                   0

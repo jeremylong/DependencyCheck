@@ -86,7 +86,7 @@ public class CveItemOperator {
 <span class="pc bpc" id="L86" title="3 of 4 branches missed.">                || (&quot;dalekjs&quot;.equals(vendor) &amp;&amp; &quot;dalekjs&quot;.equals(product))</span>
 <span class="fc bfc" id="L87" title="All 4 branches covered.">                || (&quot;microsoft&quot;.equals(vendor) &amp;&amp; &quot;internet_explorer&quot;.equals(product))</span>
 <span class="pc bpc" id="L88" title="1 of 4 branches missed.">                || (&quot;jenkins&quot;.equals(vendor) &amp;&amp; &quot;ssh_credentials&quot;.equals(product))</span>
-<span class="pc bpc" id="L89" title="1 of 4 branches missed.">                || (&quot;kubernetes&quot;.equals(vendor) &amp;&amp; &quot;kubernetes&quot;.equals(product))</span>
+<span class="pc bpc" id="L89" title="3 of 4 branches missed.">                || (&quot;kubernetes&quot;.equals(vendor) &amp;&amp; &quot;kubernetes&quot;.equals(product))</span>
 <span class="pc bpc" id="L90" title="1 of 4 branches missed.">                || (&quot;gnome&quot;.equals(vendor) &amp;&amp; &quot;nautilus-python&quot;.equals(product))</span>
 <span class="pc bpc" id="L91" title="1 of 4 branches missed.">                || (&quot;apache&quot;.equals(vendor) &amp;&amp; &quot;qpid_proton&quot;.equals(product))</span>
 <span class="pc bpc" id="L92" title="3 of 4 branches missed.">                || (&quot;mysql-ocaml&quot;.equals(vendor) &amp;&amp; &quot;mysql-ocaml&quot;.equals(product))</span>
@@ -107,10 +107,10 @@ public class CveItemOperator {
 <span class="pc bpc" id="L107" title="1 of 4 branches missed.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;thunderbird_esr&quot;.equals(product))</span>
 <span class="pc bpc" id="L108" title="3 of 4 branches missed.">                || (&quot;mnet_soft_factory&quot;.equals(vendor) &amp;&amp; &quot;nodemanager_professional&quot;.equals(product))</span>
 <span class="pc bpc" id="L109" title="1 of 4 branches missed.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;mozilla_suite&quot;.equals(product))</span>
-<span class="pc bpc" id="L110" title="3 of 4 branches missed.">                || (&quot;theforeman&quot;.equals(vendor) &amp;&amp; &quot;hammer_cli&quot;.equals(product))</span>
+<span class="pc bpc" id="L110" title="1 of 4 branches missed.">                || (&quot;theforeman&quot;.equals(vendor) &amp;&amp; &quot;hammer_cli&quot;.equals(product))</span>
 <span class="fc bfc" id="L111" title="All 4 branches covered.">                || (&quot;ibm&quot;.equals(vendor) &amp;&amp; &quot;websphere_application_server&quot;.equals(product))</span>
 <span class="pc bpc" id="L112" title="1 of 4 branches missed.">                || (&quot;sap&quot;.equals(vendor) &amp;&amp; &quot;hana_extend_application_services&quot;.equals(product))</span>
-<span class="pc bpc" id="L113" title="1 of 4 branches missed.">                || (&quot;apache&quot;.equals(vendor) &amp;&amp; &quot;zookeeper&quot;.equals(product))) {</span>
+<span class="fc bfc" id="L113" title="All 4 branches covered.">                || (&quot;apache&quot;.equals(vendor) &amp;&amp; &quot;zookeeper&quot;.equals(product))) {</span>
 <span class="fc" id="L114">            return null;</span>
         }
 
@@ -123,7 +123,7 @@ public class CveItemOperator {
 <span class="pc bpc" id="L123" title="1 of 2 branches missed.">                &amp;&amp; &quot;vm&quot;.equals(product)) {</span>
 <span class="nc" id="L124">            return Ecosystem.NATIVE;</span>
         }
-<span class="pc bpc" id="L126" title="4 of 12 branches missed.">        switch (targetSw) {</span>
+<span class="pc bpc" id="L126" title="3 of 12 branches missed.">        switch (targetSw) {</span>
             case &quot;asp.net&quot;://.net
             case &quot;c#&quot;://.net
             case &quot;.net&quot;://.net
@@ -156,7 +156,7 @@ public class CveItemOperator {
             case &quot;nodejs&quot;://node.js
 <span class="fc" id="L157">                return Ecosystem.NODEJS;</span>
             case &quot;perl&quot;://perl
-<span class="nc" id="L159">                return Ecosystem.PERL;</span>
+<span class="fc" id="L159">                return Ecosystem.PERL;</span>
             case &quot;joomla!&quot;://php
             case &quot;joomla&quot;://php
             case &quot;mybb&quot;://php
@@ -220,7 +220,8 @@ public class CveItemOperator {
 <span class="fc" id="L220">        return cve.getConfigurations().getNodes().stream()</span>
 <span class="fc" id="L221">                .collect(NodeFlatteningCollector.getInstance())</span>
 <span class="fc" id="L222">                .collect(CpeMatchStreamCollector.getInstance())</span>
-<span class="fc" id="L223">                .anyMatch(cpe -&gt; cpe.getCpe23Uri().startsWith(cpeStartsWithFilter));</span>
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">                .filter(cpe -&gt; cpe.getCpe23Uri() != null)</span>
+<span class="fc" id="L224">                .anyMatch(cpe -&gt; cpe.getCpe23Uri().startsWith(cpeStartsWithFilter));</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -652,10 +652,10 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L652">        final Set&lt;String&gt; extensions = new HashSet&lt;&gt;(EXTENSIONS);</span>
 <span class="fc" id="L653">        extensions.addAll(KNOWN_ZIP_EXT);</span>
 <span class="fc" id="L654">        final String additionalZipExt = getSettings().getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);</span>
-<span class="fc bfc" id="L655" title="All 2 branches covered.">        if (additionalZipExt != null) {</span>
-<span class="fc" id="L656">            final String[] ext = additionalZipExt.split(&quot;\\s*,\\s*&quot;);</span>
-<span class="fc" id="L657">            Collections.addAll(extensions, ext);</span>
-<span class="fc" id="L658">            Collections.addAll(ADDITIONAL_ZIP_EXT, ext);</span>
+<span class="pc bpc" id="L655" title="1 of 2 branches missed.">        if (additionalZipExt != null) {</span>
+<span class="nc" id="L656">            final String[] ext = additionalZipExt.split(&quot;\\s*,\\s*&quot;);</span>
+<span class="nc" id="L657">            Collections.addAll(extensions, ext);</span>
+<span class="nc" id="L658">            Collections.addAll(ADDITIONAL_ZIP_EXT, ext);</span>
         }
 <span class="fc" id="L660">        fileFilter = FileFilterBuilder.newInstance().addExtensions(extensions).build();</span>
 <span class="fc" id="L661">    }</span>

@@ -3,6 +3,7 @@ package org.owasp.dependencycheck.data.nvd.json;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -21,7 +22,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     &quot;baseMetricV3&quot;,
     &quot;baseMetricV2&quot;
 })
-<span class="fc" id="L24">public class DefImpact {</span>
+@Generated(&quot;jsonschema2pojo&quot;)
+<span class="fc" id="L26">public class DefImpact {</span>
 
     /**
      * CVSS V3.x score.
@@ -37,7 +39,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     @JsonProperty(&quot;baseMetricV2&quot;)
     @JsonPropertyDescription(&quot;CVSS V2.0 score.&quot;)
     private BaseMetricV2 baseMetricV2;
-<span class="fc" id="L40">    @JsonIgnore</span>
+<span class="fc" id="L42">    @JsonIgnore</span>
     private Map&lt;String, Object&gt; additionalProperties = new HashMap&lt;String, Object&gt;();
 
     /**
@@ -46,7 +48,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
      */
     @JsonProperty(&quot;baseMetricV3&quot;)
     public BaseMetricV3 getBaseMetricV3() {
-<span class="fc" id="L49">        return baseMetricV3;</span>
+<span class="fc" id="L51">        return baseMetricV3;</span>
     }
 
     /**
@@ -55,8 +57,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
      */
     @JsonProperty(&quot;baseMetricV3&quot;)
     public void setBaseMetricV3(BaseMetricV3 baseMetricV3) {
-<span class="fc" id="L58">        this.baseMetricV3 = baseMetricV3;</span>
-<span class="fc" id="L59">    }</span>
+<span class="fc" id="L60">        this.baseMetricV3 = baseMetricV3;</span>
+<span class="fc" id="L61">    }</span>
 
     /**
      * CVSS V2.0 score.
@@ -64,7 +66,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
      */
     @JsonProperty(&quot;baseMetricV2&quot;)
     public BaseMetricV2 getBaseMetricV2() {
-<span class="fc" id="L67">        return baseMetricV2;</span>
+<span class="fc" id="L69">        return baseMetricV2;</span>
     }
 
     /**
@@ -73,62 +75,62 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
      */
     @JsonProperty(&quot;baseMetricV2&quot;)
     public void setBaseMetricV2(BaseMetricV2 baseMetricV2) {
-<span class="fc" id="L76">        this.baseMetricV2 = baseMetricV2;</span>
-<span class="fc" id="L77">    }</span>
+<span class="fc" id="L78">        this.baseMetricV2 = baseMetricV2;</span>
+<span class="fc" id="L79">    }</span>
 
     @JsonAnyGetter
     public Map&lt;String, Object&gt; getAdditionalProperties() {
-<span class="nc" id="L81">        return this.additionalProperties;</span>
+<span class="nc" id="L83">        return this.additionalProperties;</span>
     }
 
     @JsonAnySetter
     public void setAdditionalProperty(String name, Object value) {
-<span class="nc" id="L86">        this.additionalProperties.put(name, value);</span>
-<span class="nc" id="L87">    }</span>
+<span class="nc" id="L88">        this.additionalProperties.put(name, value);</span>
+<span class="nc" id="L89">    }</span>
 
     @Override
     public String toString() {
-<span class="nc" id="L91">        StringBuilder sb = new StringBuilder();</span>
-<span class="nc" id="L92">        sb.append(DefImpact.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');</span>
-<span class="nc" id="L93">        sb.append(&quot;baseMetricV3&quot;);</span>
-<span class="nc" id="L94">        sb.append('=');</span>
-<span class="nc bnc" id="L95" title="All 2 branches missed.">        sb.append(((this.baseMetricV3 == null)?&quot;&lt;null&gt;&quot;:this.baseMetricV3));</span>
-<span class="nc" id="L96">        sb.append(',');</span>
-<span class="nc" id="L97">        sb.append(&quot;baseMetricV2&quot;);</span>
-<span class="nc" id="L98">        sb.append('=');</span>
-<span class="nc bnc" id="L99" title="All 2 branches missed.">        sb.append(((this.baseMetricV2 == null)?&quot;&lt;null&gt;&quot;:this.baseMetricV2));</span>
-<span class="nc" id="L100">        sb.append(',');</span>
-<span class="nc" id="L101">        sb.append(&quot;additionalProperties&quot;);</span>
-<span class="nc" id="L102">        sb.append('=');</span>
-<span class="nc bnc" id="L103" title="All 2 branches missed.">        sb.append(((this.additionalProperties == null)?&quot;&lt;null&gt;&quot;:this.additionalProperties));</span>
-<span class="nc" id="L104">        sb.append(',');</span>
-<span class="nc bnc" id="L105" title="All 2 branches missed.">        if (sb.charAt((sb.length()- 1)) == ',') {</span>
-<span class="nc" id="L106">            sb.setCharAt((sb.length()- 1), ']');</span>
+<span class="nc" id="L93">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L94">        sb.append(DefImpact.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');</span>
+<span class="nc" id="L95">        sb.append(&quot;baseMetricV3&quot;);</span>
+<span class="nc" id="L96">        sb.append('=');</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        sb.append(((this.baseMetricV3 == null)?&quot;&lt;null&gt;&quot;:this.baseMetricV3));</span>
+<span class="nc" id="L98">        sb.append(',');</span>
+<span class="nc" id="L99">        sb.append(&quot;baseMetricV2&quot;);</span>
+<span class="nc" id="L100">        sb.append('=');</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        sb.append(((this.baseMetricV2 == null)?&quot;&lt;null&gt;&quot;:this.baseMetricV2));</span>
+<span class="nc" id="L102">        sb.append(',');</span>
+<span class="nc" id="L103">        sb.append(&quot;additionalProperties&quot;);</span>
+<span class="nc" id="L104">        sb.append('=');</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">        sb.append(((this.additionalProperties == null)?&quot;&lt;null&gt;&quot;:this.additionalProperties));</span>
+<span class="nc" id="L106">        sb.append(',');</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        if (sb.charAt((sb.length()- 1)) == ',') {</span>
+<span class="nc" id="L108">            sb.setCharAt((sb.length()- 1), ']');</span>
         } else {
-<span class="nc" id="L108">            sb.append(']');</span>
+<span class="nc" id="L110">            sb.append(']');</span>
         }
-<span class="nc" id="L110">        return sb.toString();</span>
+<span class="nc" id="L112">        return sb.toString();</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L115">        int result = 1;</span>
-<span class="nc bnc" id="L116" title="All 2 branches missed.">        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));</span>
-<span class="nc bnc" id="L117" title="All 2 branches missed.">        result = ((result* 31)+((this.baseMetricV2 == null)? 0 :this.baseMetricV2 .hashCode()));</span>
-<span class="nc bnc" id="L118" title="All 2 branches missed.">        result = ((result* 31)+((this.baseMetricV3 == null)? 0 :this.baseMetricV3 .hashCode()));</span>
-<span class="nc" id="L119">        return result;</span>
+<span class="nc" id="L117">        int result = 1;</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        result = ((result* 31)+((this.baseMetricV2 == null)? 0 :this.baseMetricV2 .hashCode()));</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        result = ((result* 31)+((this.baseMetricV3 == null)? 0 :this.baseMetricV3 .hashCode()));</span>
+<span class="nc" id="L121">        return result;</span>
     }
 
     @Override
     public boolean equals(Object other) {
-<span class="nc bnc" id="L124" title="All 2 branches missed.">        if (other == this) {</span>
-<span class="nc" id="L125">            return true;</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        if (other == this) {</span>
+<span class="nc" id="L127">            return true;</span>
         }
-<span class="nc bnc" id="L127" title="All 2 branches missed.">        if ((other instanceof DefImpact) == false) {</span>
-<span class="nc" id="L128">            return false;</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">        if ((other instanceof DefImpact) == false) {</span>
+<span class="nc" id="L130">            return false;</span>
         }
-<span class="nc" id="L130">        DefImpact rhs = ((DefImpact) other);</span>
-<span class="nc bnc" id="L131" title="All 18 branches missed.">        return ((((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&amp;&amp;this.additionalProperties.equals(rhs.additionalProperties)))&amp;&amp;((this.baseMetricV2 == rhs.baseMetricV2)||((this.baseMetricV2 != null)&amp;&amp;this.baseMetricV2 .equals(rhs.baseMetricV2))))&amp;&amp;((this.baseMetricV3 == rhs.baseMetricV3)||((this.baseMetricV3 != null)&amp;&amp;this.baseMetricV3 .equals(rhs.baseMetricV3))));</span>
+<span class="nc" id="L132">        DefImpact rhs = ((DefImpact) other);</span>
+<span class="nc bnc" id="L133" title="All 18 branches missed.">        return ((((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&amp;&amp;this.additionalProperties.equals(rhs.additionalProperties)))&amp;&amp;((this.baseMetricV2 == rhs.baseMetricV2)||((this.baseMetricV2 != null)&amp;&amp;this.baseMetricV2 .equals(rhs.baseMetricV2))))&amp;&amp;((this.baseMetricV3 == rhs.baseMetricV3)||((this.baseMetricV3 != null)&amp;&amp;this.baseMetricV3 .equals(rhs.baseMetricV3))));</span>
     }
 
 }

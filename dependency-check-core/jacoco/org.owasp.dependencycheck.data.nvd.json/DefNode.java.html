@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -23,105 +24,106 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     &quot;children&quot;,
     &quot;cpe_match&quot;
 })
-<span class="fc" id="L26">public class DefNode {</span>
+@Generated(&quot;jsonschema2pojo&quot;)
+<span class="fc" id="L28">public class DefNode {</span>
 
     @JsonProperty(&quot;operator&quot;)
     private String operator;
-<span class="fc" id="L30">    @JsonProperty(&quot;children&quot;)</span>
+<span class="fc" id="L32">    @JsonProperty(&quot;children&quot;)</span>
     private List&lt;DefNode&gt; children = new ArrayList&lt;DefNode&gt;();
-<span class="fc" id="L32">    @JsonProperty(&quot;cpe_match&quot;)</span>
+<span class="fc" id="L34">    @JsonProperty(&quot;cpe_match&quot;)</span>
     private List&lt;DefCpeMatch&gt; cpeMatch = new ArrayList&lt;DefCpeMatch&gt;();
-<span class="fc" id="L34">    @JsonIgnore</span>
+<span class="fc" id="L36">    @JsonIgnore</span>
     private Map&lt;String, Object&gt; additionalProperties = new HashMap&lt;String, Object&gt;();
 
     @JsonProperty(&quot;operator&quot;)
     public String getOperator() {
-<span class="fc" id="L39">        return operator;</span>
+<span class="fc" id="L41">        return operator;</span>
     }
 
     @JsonProperty(&quot;operator&quot;)
     public void setOperator(String operator) {
-<span class="fc" id="L44">        this.operator = operator;</span>
-<span class="fc" id="L45">    }</span>
+<span class="fc" id="L46">        this.operator = operator;</span>
+<span class="fc" id="L47">    }</span>
 
     @JsonProperty(&quot;children&quot;)
     public List&lt;DefNode&gt; getChildren() {
-<span class="fc" id="L49">        return children;</span>
+<span class="fc" id="L51">        return children;</span>
     }
 
     @JsonProperty(&quot;children&quot;)
     public void setChildren(List&lt;DefNode&gt; children) {
-<span class="fc" id="L54">        this.children = children;</span>
-<span class="fc" id="L55">    }</span>
+<span class="fc" id="L56">        this.children = children;</span>
+<span class="fc" id="L57">    }</span>
 
     @JsonProperty(&quot;cpe_match&quot;)
     public List&lt;DefCpeMatch&gt; getCpeMatch() {
-<span class="fc" id="L59">        return cpeMatch;</span>
+<span class="fc" id="L61">        return cpeMatch;</span>
     }
 
     @JsonProperty(&quot;cpe_match&quot;)
     public void setCpeMatch(List&lt;DefCpeMatch&gt; cpeMatch) {
-<span class="fc" id="L64">        this.cpeMatch = cpeMatch;</span>
-<span class="fc" id="L65">    }</span>
+<span class="fc" id="L66">        this.cpeMatch = cpeMatch;</span>
+<span class="fc" id="L67">    }</span>
 
     @JsonAnyGetter
     public Map&lt;String, Object&gt; getAdditionalProperties() {
-<span class="nc" id="L69">        return this.additionalProperties;</span>
+<span class="nc" id="L71">        return this.additionalProperties;</span>
     }
 
     @JsonAnySetter
     public void setAdditionalProperty(String name, Object value) {
-<span class="nc" id="L74">        this.additionalProperties.put(name, value);</span>
-<span class="nc" id="L75">    }</span>
+<span class="nc" id="L76">        this.additionalProperties.put(name, value);</span>
+<span class="nc" id="L77">    }</span>
 
     @Override
     public String toString() {
-<span class="nc" id="L79">        StringBuilder sb = new StringBuilder();</span>
-<span class="nc" id="L80">        sb.append(DefNode.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');</span>
-<span class="nc" id="L81">        sb.append(&quot;operator&quot;);</span>
-<span class="nc" id="L82">        sb.append('=');</span>
-<span class="nc bnc" id="L83" title="All 2 branches missed.">        sb.append(((this.operator == null)?&quot;&lt;null&gt;&quot;:this.operator));</span>
-<span class="nc" id="L84">        sb.append(',');</span>
-<span class="nc" id="L85">        sb.append(&quot;children&quot;);</span>
-<span class="nc" id="L86">        sb.append('=');</span>
-<span class="nc bnc" id="L87" title="All 2 branches missed.">        sb.append(((this.children == null)?&quot;&lt;null&gt;&quot;:this.children));</span>
-<span class="nc" id="L88">        sb.append(',');</span>
-<span class="nc" id="L89">        sb.append(&quot;cpeMatch&quot;);</span>
-<span class="nc" id="L90">        sb.append('=');</span>
-<span class="nc bnc" id="L91" title="All 2 branches missed.">        sb.append(((this.cpeMatch == null)?&quot;&lt;null&gt;&quot;:this.cpeMatch));</span>
-<span class="nc" id="L92">        sb.append(',');</span>
-<span class="nc" id="L93">        sb.append(&quot;additionalProperties&quot;);</span>
-<span class="nc" id="L94">        sb.append('=');</span>
-<span class="nc bnc" id="L95" title="All 2 branches missed.">        sb.append(((this.additionalProperties == null)?&quot;&lt;null&gt;&quot;:this.additionalProperties));</span>
-<span class="nc" id="L96">        sb.append(',');</span>
-<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (sb.charAt((sb.length()- 1)) == ',') {</span>
-<span class="nc" id="L98">            sb.setCharAt((sb.length()- 1), ']');</span>
+<span class="nc" id="L81">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L82">        sb.append(DefNode.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');</span>
+<span class="nc" id="L83">        sb.append(&quot;operator&quot;);</span>
+<span class="nc" id="L84">        sb.append('=');</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        sb.append(((this.operator == null)?&quot;&lt;null&gt;&quot;:this.operator));</span>
+<span class="nc" id="L86">        sb.append(',');</span>
+<span class="nc" id="L87">        sb.append(&quot;children&quot;);</span>
+<span class="nc" id="L88">        sb.append('=');</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">        sb.append(((this.children == null)?&quot;&lt;null&gt;&quot;:this.children));</span>
+<span class="nc" id="L90">        sb.append(',');</span>
+<span class="nc" id="L91">        sb.append(&quot;cpeMatch&quot;);</span>
+<span class="nc" id="L92">        sb.append('=');</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        sb.append(((this.cpeMatch == null)?&quot;&lt;null&gt;&quot;:this.cpeMatch));</span>
+<span class="nc" id="L94">        sb.append(',');</span>
+<span class="nc" id="L95">        sb.append(&quot;additionalProperties&quot;);</span>
+<span class="nc" id="L96">        sb.append('=');</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        sb.append(((this.additionalProperties == null)?&quot;&lt;null&gt;&quot;:this.additionalProperties));</span>
+<span class="nc" id="L98">        sb.append(',');</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        if (sb.charAt((sb.length()- 1)) == ',') {</span>
+<span class="nc" id="L100">            sb.setCharAt((sb.length()- 1), ']');</span>
         } else {
-<span class="nc" id="L100">            sb.append(']');</span>
+<span class="nc" id="L102">            sb.append(']');</span>
         }
-<span class="nc" id="L102">        return sb.toString();</span>
+<span class="nc" id="L104">        return sb.toString();</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L107">        int result = 1;</span>
-<span class="nc bnc" id="L108" title="All 2 branches missed.">        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));</span>
-<span class="nc bnc" id="L109" title="All 2 branches missed.">        result = ((result* 31)+((this.children == null)? 0 :this.children.hashCode()));</span>
-<span class="nc bnc" id="L110" title="All 2 branches missed.">        result = ((result* 31)+((this.operator == null)? 0 :this.operator.hashCode()));</span>
-<span class="nc bnc" id="L111" title="All 2 branches missed.">        result = ((result* 31)+((this.cpeMatch == null)? 0 :this.cpeMatch.hashCode()));</span>
-<span class="nc" id="L112">        return result;</span>
+<span class="nc" id="L109">        int result = 1;</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        result = ((result* 31)+((this.children == null)? 0 :this.children.hashCode()));</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        result = ((result* 31)+((this.operator == null)? 0 :this.operator.hashCode()));</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        result = ((result* 31)+((this.cpeMatch == null)? 0 :this.cpeMatch.hashCode()));</span>
+<span class="nc" id="L114">        return result;</span>
     }
 
     @Override
     public boolean equals(Object other) {
-<span class="nc bnc" id="L117" title="All 2 branches missed.">        if (other == this) {</span>
-<span class="nc" id="L118">            return true;</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (other == this) {</span>
+<span class="nc" id="L120">            return true;</span>
         }
-<span class="nc bnc" id="L120" title="All 2 branches missed.">        if ((other instanceof DefNode) == false) {</span>
-<span class="nc" id="L121">            return false;</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        if ((other instanceof DefNode) == false) {</span>
+<span class="nc" id="L123">            return false;</span>
         }
-<span class="nc" id="L123">        DefNode rhs = ((DefNode) other);</span>
-<span class="nc bnc" id="L124" title="All 24 branches missed.">        return (((((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&amp;&amp;this.additionalProperties.equals(rhs.additionalProperties)))&amp;&amp;((this.children == rhs.children)||((this.children!= null)&amp;&amp;this.children.equals(rhs.children))))&amp;&amp;((this.operator == rhs.operator)||((this.operator!= null)&amp;&amp;this.operator.equals(rhs.operator))))&amp;&amp;((this.cpeMatch == rhs.cpeMatch)||((this.cpeMatch!= null)&amp;&amp;this.cpeMatch.equals(rhs.cpeMatch))));</span>
+<span class="nc" id="L125">        DefNode rhs = ((DefNode) other);</span>
+<span class="nc bnc" id="L126" title="All 24 branches missed.">        return (((((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&amp;&amp;this.additionalProperties.equals(rhs.additionalProperties)))&amp;&amp;((this.children == rhs.children)||((this.children!= null)&amp;&amp;this.children.equals(rhs.children))))&amp;&amp;((this.operator == rhs.operator)||((this.operator!= null)&amp;&amp;this.operator.equals(rhs.operator))))&amp;&amp;((this.cpeMatch == rhs.cpeMatch)||((this.cpeMatch!= null)&amp;&amp;this.cpeMatch.equals(rhs.cpeMatch))));</span>
     }
 
 }

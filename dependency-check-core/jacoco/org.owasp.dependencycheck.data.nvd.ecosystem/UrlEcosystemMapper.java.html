@@ -17,12 +17,16 @@
  */
 package org.owasp.dependencycheck.data.nvd.ecosystem;
 
+import java.util.Objects;
+import java.util.Optional;
 import java.util.TreeMap;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
+import org.owasp.dependencycheck.data.nvd.json.CVEJSON40Min11;
 import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
 import org.owasp.dependencycheck.data.nvd.json.Reference;
+import org.owasp.dependencycheck.data.nvd.json.References;
 
 import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
 import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie.Hit;
@@ -41,22 +45,22 @@ public class UrlEcosystemMapper {
     private final AhoCorasickDoubleArrayTrie&lt;String&gt; search;
 
     static {
-<span class="fc" id="L44">        ECOSYSTEM_MAP = new TreeMap&lt;&gt;();</span>
-<span class="fc bfc" id="L45" title="All 2 branches covered.">        for (UrlHostHint urlHostHint : UrlHostHint.values()) {</span>
-<span class="fc" id="L46">            ECOSYSTEM_MAP.put(urlHostHint.getValue(), urlHostHint.getEcosystem());</span>
+<span class="fc" id="L48">        ECOSYSTEM_MAP = new TreeMap&lt;&gt;();</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        for (UrlHostHint urlHostHint : UrlHostHint.values()) {</span>
+<span class="fc" id="L50">            ECOSYSTEM_MAP.put(urlHostHint.getValue(), urlHostHint.getEcosystem());</span>
         }
-<span class="fc bfc" id="L48" title="All 2 branches covered.">        for (UrlPathHint urlPathHint : UrlPathHint.values()) {</span>
-<span class="fc" id="L49">            ECOSYSTEM_MAP.put(urlPathHint.getValue(), urlPathHint.getEcosystem());</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        for (UrlPathHint urlPathHint : UrlPathHint.values()) {</span>
+<span class="fc" id="L53">            ECOSYSTEM_MAP.put(urlPathHint.getValue(), urlPathHint.getEcosystem());</span>
         }
-<span class="fc" id="L51">    }</span>
+<span class="fc" id="L55">    }</span>
 
     /**
      * Constructs a new URL ecosystem mapper.
      */
-<span class="fc" id="L56">    public UrlEcosystemMapper() {</span>
-<span class="fc" id="L57">        search = new AhoCorasickDoubleArrayTrie&lt;&gt;();</span>
-<span class="fc" id="L58">        search.build(ECOSYSTEM_MAP);</span>
-<span class="fc" id="L59">    }</span>
+<span class="fc" id="L60">    public UrlEcosystemMapper() {</span>
+<span class="fc" id="L61">        search = new AhoCorasickDoubleArrayTrie&lt;&gt;();</span>
+<span class="fc" id="L62">        search.build(ECOSYSTEM_MAP);</span>
+<span class="fc" id="L63">    }</span>
 
     /**
      * Determines the ecosystem for the given CVE.
@@ -65,14 +69,21 @@ public class UrlEcosystemMapper {
      * @return the ecosystem
      */
     public String getEcosystem(DefCveItem cve) {
-<span class="fc bfc" id="L68" title="All 2 branches covered.">        for (Reference r : cve.getCve().getReferences().getReferenceData()) {</span>
+<span class="fc" id="L72">        References references = Optional.ofNullable(cve)</span>
+<span class="fc" id="L73">                .map(DefCveItem::getCve)</span>
+<span class="fc" id="L74">                .map(CVEJSON40Min11::getReferences)</span>
+<span class="fc" id="L75">                .orElse(null);</span>
 
-<span class="fc" id="L70">            final Hit&lt;String&gt; ecosystem = search.findFirst(r.getUrl());</span>
-<span class="fc bfc" id="L71" title="All 2 branches covered.">            if (ecosystem != null) {</span>
-<span class="fc" id="L72">                return ecosystem.value;</span>
-            }
-<span class="fc" id="L74">        }</span>
-<span class="fc" id="L75">        return null;</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        if (Objects.nonNull(references)) {</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">            for (Reference r : references.getReferenceData()) {</span>
+
+<span class="fc" id="L80">                final Hit&lt;String&gt; ecosystem = search.findFirst(r.getUrl());</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">                if (ecosystem != null) {</span>
+<span class="fc" id="L82">                    return ecosystem.value;</span>
+                }
+<span class="fc" id="L84">            }</span>
+        }
+<span class="fc" id="L86">        return null;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

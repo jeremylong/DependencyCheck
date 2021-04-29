@@ -3,6 +3,7 @@ package org.owasp.dependencycheck.data.nvd.json;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -14,7 +15,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
     &quot;ID&quot;
 })
-<span class="fc" id="L17">public class CVEDataMeta {</span>
+@Generated(&quot;jsonschema2pojo&quot;)
+<span class="fc" id="L19">public class CVEDataMeta {</span>
 
     /**
      * 
@@ -23,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
      */
     @JsonProperty(&quot;ID&quot;)
     private String id;
-<span class="fc" id="L26">    @JsonIgnore</span>
+<span class="fc" id="L28">    @JsonIgnore</span>
     private Map&lt;String, Object&gt; additionalProperties = new HashMap&lt;String, Object&gt;();
 
     /**
@@ -33,7 +35,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
      */
     @JsonProperty(&quot;ID&quot;)
     public String getId() {
-<span class="fc" id="L36">        return id;</span>
+<span class="fc" id="L38">        return id;</span>
     }
 
     /**
@@ -43,57 +45,57 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
      */
     @JsonProperty(&quot;ID&quot;)
     public void setId(String id) {
-<span class="fc" id="L46">        this.id = id;</span>
-<span class="fc" id="L47">    }</span>
+<span class="fc" id="L48">        this.id = id;</span>
+<span class="fc" id="L49">    }</span>
 
     @JsonAnyGetter
     public Map&lt;String, Object&gt; getAdditionalProperties() {
-<span class="nc" id="L51">        return this.additionalProperties;</span>
+<span class="nc" id="L53">        return this.additionalProperties;</span>
     }
 
     @JsonAnySetter
     public void setAdditionalProperty(String name, Object value) {
-<span class="fc" id="L56">        this.additionalProperties.put(name, value);</span>
-<span class="fc" id="L57">    }</span>
+<span class="fc" id="L58">        this.additionalProperties.put(name, value);</span>
+<span class="fc" id="L59">    }</span>
 
     @Override
     public String toString() {
-<span class="nc" id="L61">        StringBuilder sb = new StringBuilder();</span>
-<span class="nc" id="L62">        sb.append(CVEDataMeta.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');</span>
-<span class="nc" id="L63">        sb.append(&quot;id&quot;);</span>
-<span class="nc" id="L64">        sb.append('=');</span>
-<span class="nc bnc" id="L65" title="All 2 branches missed.">        sb.append(((this.id == null)?&quot;&lt;null&gt;&quot;:this.id));</span>
-<span class="nc" id="L66">        sb.append(',');</span>
-<span class="nc" id="L67">        sb.append(&quot;additionalProperties&quot;);</span>
-<span class="nc" id="L68">        sb.append('=');</span>
-<span class="nc bnc" id="L69" title="All 2 branches missed.">        sb.append(((this.additionalProperties == null)?&quot;&lt;null&gt;&quot;:this.additionalProperties));</span>
-<span class="nc" id="L70">        sb.append(',');</span>
-<span class="nc bnc" id="L71" title="All 2 branches missed.">        if (sb.charAt((sb.length()- 1)) == ',') {</span>
-<span class="nc" id="L72">            sb.setCharAt((sb.length()- 1), ']');</span>
+<span class="nc" id="L63">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L64">        sb.append(CVEDataMeta.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');</span>
+<span class="nc" id="L65">        sb.append(&quot;id&quot;);</span>
+<span class="nc" id="L66">        sb.append('=');</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        sb.append(((this.id == null)?&quot;&lt;null&gt;&quot;:this.id));</span>
+<span class="nc" id="L68">        sb.append(',');</span>
+<span class="nc" id="L69">        sb.append(&quot;additionalProperties&quot;);</span>
+<span class="nc" id="L70">        sb.append('=');</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        sb.append(((this.additionalProperties == null)?&quot;&lt;null&gt;&quot;:this.additionalProperties));</span>
+<span class="nc" id="L72">        sb.append(',');</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (sb.charAt((sb.length()- 1)) == ',') {</span>
+<span class="nc" id="L74">            sb.setCharAt((sb.length()- 1), ']');</span>
         } else {
-<span class="nc" id="L74">            sb.append(']');</span>
+<span class="nc" id="L76">            sb.append(']');</span>
         }
-<span class="nc" id="L76">        return sb.toString();</span>
+<span class="nc" id="L78">        return sb.toString();</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L81">        int result = 1;</span>
-<span class="nc bnc" id="L82" title="All 2 branches missed.">        result = ((result* 31)+((this.id == null)? 0 :this.id.hashCode()));</span>
-<span class="nc bnc" id="L83" title="All 2 branches missed.">        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));</span>
-<span class="nc" id="L84">        return result;</span>
+<span class="nc" id="L83">        int result = 1;</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        result = ((result* 31)+((this.id == null)? 0 :this.id.hashCode()));</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));</span>
+<span class="nc" id="L86">        return result;</span>
     }
 
     @Override
     public boolean equals(Object other) {
-<span class="nc bnc" id="L89" title="All 2 branches missed.">        if (other == this) {</span>
-<span class="nc" id="L90">            return true;</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (other == this) {</span>
+<span class="nc" id="L92">            return true;</span>
         }
-<span class="nc bnc" id="L92" title="All 2 branches missed.">        if ((other instanceof CVEDataMeta) == false) {</span>
-<span class="nc" id="L93">            return false;</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if ((other instanceof CVEDataMeta) == false) {</span>
+<span class="nc" id="L95">            return false;</span>
         }
-<span class="nc" id="L95">        CVEDataMeta rhs = ((CVEDataMeta) other);</span>
-<span class="nc bnc" id="L96" title="All 12 branches missed.">        return (((this.id == rhs.id)||((this.id!= null)&amp;&amp;this.id.equals(rhs.id)))&amp;&amp;((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&amp;&amp;this.additionalProperties.equals(rhs.additionalProperties))));</span>
+<span class="nc" id="L97">        CVEDataMeta rhs = ((CVEDataMeta) other);</span>
+<span class="nc bnc" id="L98" title="All 12 branches missed.">        return (((this.id == rhs.id)||((this.id!= null)&amp;&amp;this.id.equals(rhs.id)))&amp;&amp;((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&amp;&amp;this.additionalProperties.equals(rhs.additionalProperties))));</span>
     }
 
 }

@@ -820,11 +820,11 @@ import us.springett.parsers.cpe.values.Part;
 <span class="pc bpc" id="L820" title="1 of 4 branches missed.">            if (dependency.getName() != null &amp;&amp; !dependency.getName().isEmpty()) {</span>
 <span class="fc" id="L821">                final String name = dependency.getName();</span>
 <span class="fc bfc" id="L822" title="All 2 branches covered.">                for (String word : product.split(&quot;[^a-zA-Z0-9]&quot;)) {</span>
-<span class="pc bpc" id="L823" title="1 of 4 branches missed.">                    useDependencyVersion &amp;= name.contains(word) || stopWords.contains(word);</span>
+<span class="pc bpc" id="L823" title="3 of 4 branches missed.">                    useDependencyVersion &amp;= name.contains(word) || stopWords.contains(word);</span>
                 }
             }
 
-<span class="fc bfc" id="L827" title="All 2 branches covered.">            if (useDependencyVersion) {</span>
+<span class="pc bpc" id="L827" title="1 of 2 branches missed.">            if (useDependencyVersion) {</span>
                 //TODO - we need to filter this so that we only use this if something in the
                 //dependency.getName() matches the vendor/product in some way
 <span class="fc" id="L830">                final DependencyVersion depVersion = new DependencyVersion(dependency.getVersion());</span>
@@ -949,7 +949,7 @@ import us.springett.parsers.cpe.values.Part;
 <span class="nc" id="L949">        } catch (CpeValidationException ex) {</span>
 <span class="nc" id="L950">            throw new AnalysisException(String.format(&quot;Unable to create a CPE for %s:%s:%s&quot;, vendor, product, bestGuess.toString()));</span>
 <span class="fc" id="L951">        }</span>
-<span class="fc bfc" id="L952" title="All 2 branches covered.">        if (!&quot;-&quot;.equals(guessCpe.getVersion())) {</span>
+<span class="pc bpc" id="L952" title="1 of 2 branches missed.">        if (!&quot;-&quot;.equals(guessCpe.getVersion())) {</span>
 <span class="fc" id="L953">            String url = null;</span>
 <span class="fc bfc" id="L954" title="All 2 branches covered.">            if (bestGuessURL != null) {</span>
 <span class="fc" id="L955">                url = bestGuessURL;</span>
@@ -962,7 +962,7 @@ import us.springett.parsers.cpe.values.Part;
 <span class="fc" id="L962">            collected.add(match);</span>
         }
 <span class="fc" id="L964">        boolean identifierAdded = false;</span>
-<span class="fc bfc" id="L965" title="All 2 branches covered.">        if (!collected.isEmpty()) {</span>
+<span class="pc bpc" id="L965" title="1 of 2 branches missed.">        if (!collected.isEmpty()) {</span>
 <span class="fc" id="L966">            final List&lt;IdentifierMatch&gt; items = new ArrayList&lt;&gt;(collected);</span>
 
 <span class="fc" id="L968">            Collections.sort(items);</span>

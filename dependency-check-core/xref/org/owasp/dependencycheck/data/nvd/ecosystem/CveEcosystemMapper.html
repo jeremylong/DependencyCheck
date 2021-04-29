@@ -94,17 +94,18 @@
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>          <strong class="jxr_keyword">final</strong> List&lt;DefCpeMatch&gt; cpeEntries = cve.getConfigurations().getNodes().stream()
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>                  .collect(NodeFlatteningCollector.getInstance())
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>                  .collect(CpeMatchStreamCollector.getInstance())
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>                  .collect(Collectors.toList());
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">if</strong> (!cpeEntries.isEmpty() &amp;&amp; cpeEntries.size() &gt; 1) {
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>              <strong class="jxr_keyword">final</strong> DefCpeMatch firstMatch = cpeEntries.get(0);
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>              <strong class="jxr_keyword">final</strong> String uri = firstMatch.getCpe23Uri();
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>              <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> pos = uri.indexOf(<span class="jxr_string">":"</span>, uri.indexOf(<span class="jxr_string">":"</span>, 10) + 1);
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>              <strong class="jxr_keyword">final</strong> String match = uri.substring(0, pos + 1);
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>              <strong class="jxr_keyword">return</strong> !cpeEntries.stream().allMatch(e -&gt; e.getCpe23Uri().startsWith(match));
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>          }
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>          <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>      }
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>  }
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>                  .filter(defCpeMatch -&gt; defCpeMatch.getCpe23Uri() != <strong class="jxr_keyword">null</strong>)
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>                  .collect(Collectors.toList());
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>          <strong class="jxr_keyword">if</strong> (!cpeEntries.isEmpty() &amp;&amp; cpeEntries.size() &gt; 1) {
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>              <strong class="jxr_keyword">final</strong> DefCpeMatch firstMatch = cpeEntries.get(0);
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>              <strong class="jxr_keyword">final</strong> String uri = firstMatch.getCpe23Uri();
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>              <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> pos = uri.indexOf(<span class="jxr_string">":"</span>, uri.indexOf(<span class="jxr_string">":"</span>, 10) + 1);
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>              <strong class="jxr_keyword">final</strong> String match = uri.substring(0, pos + 1);
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>              <strong class="jxr_keyword">return</strong> !cpeEntries.stream().allMatch(e -&gt; e.getCpe23Uri().startsWith(match));
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>          }
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>          <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>      }
+<a class="jxr_linenumber" name="L100" href="#L100">100</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2021 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

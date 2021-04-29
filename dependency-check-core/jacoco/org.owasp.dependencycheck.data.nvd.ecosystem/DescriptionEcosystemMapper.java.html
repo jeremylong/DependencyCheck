@@ -225,8 +225,8 @@ public class DescriptionEcosystemMapper {
                 // check if full word, i.e. typically space first and then space or dot after
 <span class="fc bfc" id="L226" title="All 2 branches covered.">                if (begin != 0) {</span>
 <span class="fc" id="L227">                    final char startChar = c.charAt(begin - 1);</span>
-<span class="pc bpc" id="L228" title="2 of 4 branches missed.">                    if (startChar &gt;= keywordPrefixes.length || !keywordPrefixes[startChar]) {</span>
-<span class="nc" id="L229">                        return;</span>
+<span class="pc bpc" id="L228" title="1 of 4 branches missed.">                    if (startChar &gt;= keywordPrefixes.length || !keywordPrefixes[startChar]) {</span>
+<span class="fc" id="L229">                        return;</span>
                     }
                 }
 <span class="pc bpc" id="L232" title="1 of 2 branches missed.">                if (end != c.length()) {</span>
@@ -260,7 +260,7 @@ public class DescriptionEcosystemMapper {
 <span class="fc" id="L260">        int bestScore = -1;</span>
 <span class="fc bfc" id="L261" title="All 2 branches covered.">        for (int i = 0; i &lt; values.length; i++) {</span>
 <span class="fc bfc" id="L262" title="All 2 branches covered.">            if (values[i] &gt; 0) {</span>
-<span class="pc bpc" id="L263" title="1 of 2 branches missed.">                if (values[i] &gt; bestScore) {</span>
+<span class="fc bfc" id="L263" title="All 2 branches covered.">                if (values[i] &gt; bestScore) {</span>
 <span class="fc" id="L264">                    bestIndex = i;</span>
 <span class="fc" id="L265">                    bestScore = values[i];</span>
                 }

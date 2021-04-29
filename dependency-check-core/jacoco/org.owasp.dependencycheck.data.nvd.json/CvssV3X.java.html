@@ -3,6 +3,7 @@ package org.owasp.dependencycheck.data.nvd.json;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -32,7 +33,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
     &quot;baseScore&quot;,
     &quot;baseSeverity&quot;
 })
-<span class="fc" id="L35">public class CvssV3X {</span>
+@Generated(&quot;jsonschema2pojo&quot;)
+<span class="fc" id="L37">public class CvssV3X {</span>
 
     @JsonProperty(&quot;attackVector&quot;)
     private CvssV3X.AttackVectorType attackVector;
@@ -64,88 +66,88 @@ import com.fasterxml.jackson.annotation.JsonValue;
      */
     @JsonProperty(&quot;baseSeverity&quot;)
     private CvssV3X.SeverityType baseSeverity;
-<span class="fc" id="L67">    @JsonIgnore</span>
+<span class="fc" id="L69">    @JsonIgnore</span>
     private Map&lt;String, Object&gt; additionalProperties = new HashMap&lt;String, Object&gt;();
 
     @JsonProperty(&quot;attackVector&quot;)
     public CvssV3X.AttackVectorType getAttackVector() {
-<span class="fc" id="L72">        return attackVector;</span>
+<span class="fc" id="L74">        return attackVector;</span>
     }
 
     @JsonProperty(&quot;attackVector&quot;)
     public void setAttackVector(CvssV3X.AttackVectorType attackVector) {
-<span class="fc" id="L77">        this.attackVector = attackVector;</span>
-<span class="fc" id="L78">    }</span>
+<span class="fc" id="L79">        this.attackVector = attackVector;</span>
+<span class="fc" id="L80">    }</span>
 
     @JsonProperty(&quot;attackComplexity&quot;)
     public CvssV3X.AttackComplexityType getAttackComplexity() {
-<span class="fc" id="L82">        return attackComplexity;</span>
+<span class="fc" id="L84">        return attackComplexity;</span>
     }
 
     @JsonProperty(&quot;attackComplexity&quot;)
     public void setAttackComplexity(CvssV3X.AttackComplexityType attackComplexity) {
-<span class="fc" id="L87">        this.attackComplexity = attackComplexity;</span>
-<span class="fc" id="L88">    }</span>
+<span class="fc" id="L89">        this.attackComplexity = attackComplexity;</span>
+<span class="fc" id="L90">    }</span>
 
     @JsonProperty(&quot;privilegesRequired&quot;)
     public CvssV3X.PrivilegesRequiredType getPrivilegesRequired() {
-<span class="fc" id="L92">        return privilegesRequired;</span>
+<span class="fc" id="L94">        return privilegesRequired;</span>
     }
 
     @JsonProperty(&quot;privilegesRequired&quot;)
     public void setPrivilegesRequired(CvssV3X.PrivilegesRequiredType privilegesRequired) {
-<span class="fc" id="L97">        this.privilegesRequired = privilegesRequired;</span>
-<span class="fc" id="L98">    }</span>
+<span class="fc" id="L99">        this.privilegesRequired = privilegesRequired;</span>
+<span class="fc" id="L100">    }</span>
 
     @JsonProperty(&quot;userInteraction&quot;)
     public CvssV3X.UserInteractionType getUserInteraction() {
-<span class="fc" id="L102">        return userInteraction;</span>
+<span class="fc" id="L104">        return userInteraction;</span>
     }
 
     @JsonProperty(&quot;userInteraction&quot;)
     public void setUserInteraction(CvssV3X.UserInteractionType userInteraction) {
-<span class="fc" id="L107">        this.userInteraction = userInteraction;</span>
-<span class="fc" id="L108">    }</span>
+<span class="fc" id="L109">        this.userInteraction = userInteraction;</span>
+<span class="fc" id="L110">    }</span>
 
     @JsonProperty(&quot;scope&quot;)
     public CvssV3X.ScopeType getScope() {
-<span class="fc" id="L112">        return scope;</span>
+<span class="fc" id="L114">        return scope;</span>
     }
 
     @JsonProperty(&quot;scope&quot;)
     public void setScope(CvssV3X.ScopeType scope) {
-<span class="fc" id="L117">        this.scope = scope;</span>
-<span class="fc" id="L118">    }</span>
+<span class="fc" id="L119">        this.scope = scope;</span>
+<span class="fc" id="L120">    }</span>
 
     @JsonProperty(&quot;confidentialityImpact&quot;)
     public CvssV3X.CiaType getConfidentialityImpact() {
-<span class="fc" id="L122">        return confidentialityImpact;</span>
+<span class="fc" id="L124">        return confidentialityImpact;</span>
     }
 
     @JsonProperty(&quot;confidentialityImpact&quot;)
     public void setConfidentialityImpact(CvssV3X.CiaType confidentialityImpact) {
-<span class="fc" id="L127">        this.confidentialityImpact = confidentialityImpact;</span>
-<span class="fc" id="L128">    }</span>
+<span class="fc" id="L129">        this.confidentialityImpact = confidentialityImpact;</span>
+<span class="fc" id="L130">    }</span>
 
     @JsonProperty(&quot;integrityImpact&quot;)
     public CvssV3X.CiaType getIntegrityImpact() {
-<span class="fc" id="L132">        return integrityImpact;</span>
+<span class="fc" id="L134">        return integrityImpact;</span>
     }
 
     @JsonProperty(&quot;integrityImpact&quot;)
     public void setIntegrityImpact(CvssV3X.CiaType integrityImpact) {
-<span class="fc" id="L137">        this.integrityImpact = integrityImpact;</span>
-<span class="fc" id="L138">    }</span>
+<span class="fc" id="L139">        this.integrityImpact = integrityImpact;</span>
+<span class="fc" id="L140">    }</span>
 
     @JsonProperty(&quot;availabilityImpact&quot;)
     public CvssV3X.CiaType getAvailabilityImpact() {
-<span class="fc" id="L142">        return availabilityImpact;</span>
+<span class="fc" id="L144">        return availabilityImpact;</span>
     }
 
     @JsonProperty(&quot;availabilityImpact&quot;)
     public void setAvailabilityImpact(CvssV3X.CiaType availabilityImpact) {
-<span class="fc" id="L147">        this.availabilityImpact = availabilityImpact;</span>
-<span class="fc" id="L148">    }</span>
+<span class="fc" id="L149">        this.availabilityImpact = availabilityImpact;</span>
+<span class="fc" id="L150">    }</span>
 
     /**
      * 
@@ -154,7 +156,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
      */
     @JsonProperty(&quot;baseScore&quot;)
     public Double getBaseScore() {
-<span class="fc" id="L157">        return baseScore;</span>
+<span class="fc" id="L159">        return baseScore;</span>
     }
 
     /**
@@ -164,8 +166,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
      */
     @JsonProperty(&quot;baseScore&quot;)
     public void setBaseScore(Double baseScore) {
-<span class="fc" id="L167">        this.baseScore = baseScore;</span>
-<span class="fc" id="L168">    }</span>
+<span class="fc" id="L169">        this.baseScore = baseScore;</span>
+<span class="fc" id="L170">    }</span>
 
     /**
      * 
@@ -174,7 +176,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
      */
     @JsonProperty(&quot;baseSeverity&quot;)
     public CvssV3X.SeverityType getBaseSeverity() {
-<span class="fc" id="L177">        return baseSeverity;</span>
+<span class="fc" id="L179">        return baseSeverity;</span>
     }
 
     /**
@@ -184,379 +186,386 @@ import com.fasterxml.jackson.annotation.JsonValue;
      */
     @JsonProperty(&quot;baseSeverity&quot;)
     public void setBaseSeverity(CvssV3X.SeverityType baseSeverity) {
-<span class="fc" id="L187">        this.baseSeverity = baseSeverity;</span>
-<span class="fc" id="L188">    }</span>
+<span class="fc" id="L189">        this.baseSeverity = baseSeverity;</span>
+<span class="fc" id="L190">    }</span>
 
     @JsonAnyGetter
     public Map&lt;String, Object&gt; getAdditionalProperties() {
-<span class="fc" id="L192">        return this.additionalProperties;</span>
+<span class="fc" id="L194">        return this.additionalProperties;</span>
     }
 
     @JsonAnySetter
     public void setAdditionalProperty(String name, Object value) {
-<span class="fc" id="L197">        this.additionalProperties.put(name, value);</span>
-<span class="fc" id="L198">    }</span>
+<span class="fc" id="L199">        this.additionalProperties.put(name, value);</span>
+<span class="fc" id="L200">    }</span>
 
     @Override
     public String toString() {
-<span class="nc" id="L202">        StringBuilder sb = new StringBuilder();</span>
-<span class="nc" id="L203">        sb.append(CvssV3X.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');</span>
-<span class="nc" id="L204">        sb.append(&quot;attackVector&quot;);</span>
-<span class="nc" id="L205">        sb.append('=');</span>
-<span class="nc bnc" id="L206" title="All 2 branches missed.">        sb.append(((this.attackVector == null)?&quot;&lt;null&gt;&quot;:this.attackVector));</span>
-<span class="nc" id="L207">        sb.append(',');</span>
-<span class="nc" id="L208">        sb.append(&quot;attackComplexity&quot;);</span>
-<span class="nc" id="L209">        sb.append('=');</span>
-<span class="nc bnc" id="L210" title="All 2 branches missed.">        sb.append(((this.attackComplexity == null)?&quot;&lt;null&gt;&quot;:this.attackComplexity));</span>
-<span class="nc" id="L211">        sb.append(',');</span>
-<span class="nc" id="L212">        sb.append(&quot;privilegesRequired&quot;);</span>
-<span class="nc" id="L213">        sb.append('=');</span>
-<span class="nc bnc" id="L214" title="All 2 branches missed.">        sb.append(((this.privilegesRequired == null)?&quot;&lt;null&gt;&quot;:this.privilegesRequired));</span>
-<span class="nc" id="L215">        sb.append(',');</span>
-<span class="nc" id="L216">        sb.append(&quot;userInteraction&quot;);</span>
-<span class="nc" id="L217">        sb.append('=');</span>
-<span class="nc bnc" id="L218" title="All 2 branches missed.">        sb.append(((this.userInteraction == null)?&quot;&lt;null&gt;&quot;:this.userInteraction));</span>
-<span class="nc" id="L219">        sb.append(',');</span>
-<span class="nc" id="L220">        sb.append(&quot;scope&quot;);</span>
-<span class="nc" id="L221">        sb.append('=');</span>
-<span class="nc bnc" id="L222" title="All 2 branches missed.">        sb.append(((this.scope == null)?&quot;&lt;null&gt;&quot;:this.scope));</span>
-<span class="nc" id="L223">        sb.append(',');</span>
-<span class="nc" id="L224">        sb.append(&quot;confidentialityImpact&quot;);</span>
-<span class="nc" id="L225">        sb.append('=');</span>
-<span class="nc bnc" id="L226" title="All 2 branches missed.">        sb.append(((this.confidentialityImpact == null)?&quot;&lt;null&gt;&quot;:this.confidentialityImpact));</span>
-<span class="nc" id="L227">        sb.append(',');</span>
-<span class="nc" id="L228">        sb.append(&quot;integrityImpact&quot;);</span>
-<span class="nc" id="L229">        sb.append('=');</span>
-<span class="nc bnc" id="L230" title="All 2 branches missed.">        sb.append(((this.integrityImpact == null)?&quot;&lt;null&gt;&quot;:this.integrityImpact));</span>
-<span class="nc" id="L231">        sb.append(',');</span>
-<span class="nc" id="L232">        sb.append(&quot;availabilityImpact&quot;);</span>
-<span class="nc" id="L233">        sb.append('=');</span>
-<span class="nc bnc" id="L234" title="All 2 branches missed.">        sb.append(((this.availabilityImpact == null)?&quot;&lt;null&gt;&quot;:this.availabilityImpact));</span>
-<span class="nc" id="L235">        sb.append(',');</span>
-<span class="nc" id="L236">        sb.append(&quot;baseScore&quot;);</span>
-<span class="nc" id="L237">        sb.append('=');</span>
-<span class="nc bnc" id="L238" title="All 2 branches missed.">        sb.append(((this.baseScore == null)?&quot;&lt;null&gt;&quot;:this.baseScore));</span>
-<span class="nc" id="L239">        sb.append(',');</span>
-<span class="nc" id="L240">        sb.append(&quot;baseSeverity&quot;);</span>
-<span class="nc" id="L241">        sb.append('=');</span>
-<span class="nc bnc" id="L242" title="All 2 branches missed.">        sb.append(((this.baseSeverity == null)?&quot;&lt;null&gt;&quot;:this.baseSeverity));</span>
-<span class="nc" id="L243">        sb.append(',');</span>
-<span class="nc" id="L244">        sb.append(&quot;additionalProperties&quot;);</span>
-<span class="nc" id="L245">        sb.append('=');</span>
-<span class="nc bnc" id="L246" title="All 2 branches missed.">        sb.append(((this.additionalProperties == null)?&quot;&lt;null&gt;&quot;:this.additionalProperties));</span>
-<span class="nc" id="L247">        sb.append(',');</span>
-<span class="nc bnc" id="L248" title="All 2 branches missed.">        if (sb.charAt((sb.length()- 1)) == ',') {</span>
-<span class="nc" id="L249">            sb.setCharAt((sb.length()- 1), ']');</span>
+<span class="nc" id="L204">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L205">        sb.append(CvssV3X.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');</span>
+<span class="nc" id="L206">        sb.append(&quot;attackVector&quot;);</span>
+<span class="nc" id="L207">        sb.append('=');</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">        sb.append(((this.attackVector == null)?&quot;&lt;null&gt;&quot;:this.attackVector));</span>
+<span class="nc" id="L209">        sb.append(',');</span>
+<span class="nc" id="L210">        sb.append(&quot;attackComplexity&quot;);</span>
+<span class="nc" id="L211">        sb.append('=');</span>
+<span class="nc bnc" id="L212" title="All 2 branches missed.">        sb.append(((this.attackComplexity == null)?&quot;&lt;null&gt;&quot;:this.attackComplexity));</span>
+<span class="nc" id="L213">        sb.append(',');</span>
+<span class="nc" id="L214">        sb.append(&quot;privilegesRequired&quot;);</span>
+<span class="nc" id="L215">        sb.append('=');</span>
+<span class="nc bnc" id="L216" title="All 2 branches missed.">        sb.append(((this.privilegesRequired == null)?&quot;&lt;null&gt;&quot;:this.privilegesRequired));</span>
+<span class="nc" id="L217">        sb.append(',');</span>
+<span class="nc" id="L218">        sb.append(&quot;userInteraction&quot;);</span>
+<span class="nc" id="L219">        sb.append('=');</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">        sb.append(((this.userInteraction == null)?&quot;&lt;null&gt;&quot;:this.userInteraction));</span>
+<span class="nc" id="L221">        sb.append(',');</span>
+<span class="nc" id="L222">        sb.append(&quot;scope&quot;);</span>
+<span class="nc" id="L223">        sb.append('=');</span>
+<span class="nc bnc" id="L224" title="All 2 branches missed.">        sb.append(((this.scope == null)?&quot;&lt;null&gt;&quot;:this.scope));</span>
+<span class="nc" id="L225">        sb.append(',');</span>
+<span class="nc" id="L226">        sb.append(&quot;confidentialityImpact&quot;);</span>
+<span class="nc" id="L227">        sb.append('=');</span>
+<span class="nc bnc" id="L228" title="All 2 branches missed.">        sb.append(((this.confidentialityImpact == null)?&quot;&lt;null&gt;&quot;:this.confidentialityImpact));</span>
+<span class="nc" id="L229">        sb.append(',');</span>
+<span class="nc" id="L230">        sb.append(&quot;integrityImpact&quot;);</span>
+<span class="nc" id="L231">        sb.append('=');</span>
+<span class="nc bnc" id="L232" title="All 2 branches missed.">        sb.append(((this.integrityImpact == null)?&quot;&lt;null&gt;&quot;:this.integrityImpact));</span>
+<span class="nc" id="L233">        sb.append(',');</span>
+<span class="nc" id="L234">        sb.append(&quot;availabilityImpact&quot;);</span>
+<span class="nc" id="L235">        sb.append('=');</span>
+<span class="nc bnc" id="L236" title="All 2 branches missed.">        sb.append(((this.availabilityImpact == null)?&quot;&lt;null&gt;&quot;:this.availabilityImpact));</span>
+<span class="nc" id="L237">        sb.append(',');</span>
+<span class="nc" id="L238">        sb.append(&quot;baseScore&quot;);</span>
+<span class="nc" id="L239">        sb.append('=');</span>
+<span class="nc bnc" id="L240" title="All 2 branches missed.">        sb.append(((this.baseScore == null)?&quot;&lt;null&gt;&quot;:this.baseScore));</span>
+<span class="nc" id="L241">        sb.append(',');</span>
+<span class="nc" id="L242">        sb.append(&quot;baseSeverity&quot;);</span>
+<span class="nc" id="L243">        sb.append('=');</span>
+<span class="nc bnc" id="L244" title="All 2 branches missed.">        sb.append(((this.baseSeverity == null)?&quot;&lt;null&gt;&quot;:this.baseSeverity));</span>
+<span class="nc" id="L245">        sb.append(',');</span>
+<span class="nc" id="L246">        sb.append(&quot;additionalProperties&quot;);</span>
+<span class="nc" id="L247">        sb.append('=');</span>
+<span class="nc bnc" id="L248" title="All 2 branches missed.">        sb.append(((this.additionalProperties == null)?&quot;&lt;null&gt;&quot;:this.additionalProperties));</span>
+<span class="nc" id="L249">        sb.append(',');</span>
+<span class="nc bnc" id="L250" title="All 2 branches missed.">        if (sb.charAt((sb.length()- 1)) == ',') {</span>
+<span class="nc" id="L251">            sb.setCharAt((sb.length()- 1), ']');</span>
         } else {
-<span class="nc" id="L251">            sb.append(']');</span>
+<span class="nc" id="L253">            sb.append(']');</span>
         }
-<span class="nc" id="L253">        return sb.toString();</span>
+<span class="nc" id="L255">        return sb.toString();</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L258">        int result = 1;</span>
-<span class="nc bnc" id="L259" title="All 2 branches missed.">        result = ((result* 31)+((this.baseSeverity == null)? 0 :this.baseSeverity.hashCode()));</span>
-<span class="nc bnc" id="L260" title="All 2 branches missed.">        result = ((result* 31)+((this.confidentialityImpact == null)? 0 :this.confidentialityImpact.hashCode()));</span>
-<span class="nc bnc" id="L261" title="All 2 branches missed.">        result = ((result* 31)+((this.attackComplexity == null)? 0 :this.attackComplexity.hashCode()));</span>
-<span class="nc bnc" id="L262" title="All 2 branches missed.">        result = ((result* 31)+((this.scope == null)? 0 :this.scope.hashCode()));</span>
-<span class="nc bnc" id="L263" title="All 2 branches missed.">        result = ((result* 31)+((this.attackVector == null)? 0 :this.attackVector.hashCode()));</span>
-<span class="nc bnc" id="L264" title="All 2 branches missed.">        result = ((result* 31)+((this.availabilityImpact == null)? 0 :this.availabilityImpact.hashCode()));</span>
-<span class="nc bnc" id="L265" title="All 2 branches missed.">        result = ((result* 31)+((this.integrityImpact == null)? 0 :this.integrityImpact.hashCode()));</span>
-<span class="nc bnc" id="L266" title="All 2 branches missed.">        result = ((result* 31)+((this.privilegesRequired == null)? 0 :this.privilegesRequired.hashCode()));</span>
-<span class="nc bnc" id="L267" title="All 2 branches missed.">        result = ((result* 31)+((this.baseScore == null)? 0 :this.baseScore.hashCode()));</span>
-<span class="nc bnc" id="L268" title="All 2 branches missed.">        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));</span>
-<span class="nc bnc" id="L269" title="All 2 branches missed.">        result = ((result* 31)+((this.userInteraction == null)? 0 :this.userInteraction.hashCode()));</span>
-<span class="nc" id="L270">        return result;</span>
+<span class="nc" id="L260">        int result = 1;</span>
+<span class="nc bnc" id="L261" title="All 2 branches missed.">        result = ((result* 31)+((this.baseSeverity == null)? 0 :this.baseSeverity.hashCode()));</span>
+<span class="nc bnc" id="L262" title="All 2 branches missed.">        result = ((result* 31)+((this.confidentialityImpact == null)? 0 :this.confidentialityImpact.hashCode()));</span>
+<span class="nc bnc" id="L263" title="All 2 branches missed.">        result = ((result* 31)+((this.attackComplexity == null)? 0 :this.attackComplexity.hashCode()));</span>
+<span class="nc bnc" id="L264" title="All 2 branches missed.">        result = ((result* 31)+((this.scope == null)? 0 :this.scope.hashCode()));</span>
+<span class="nc bnc" id="L265" title="All 2 branches missed.">        result = ((result* 31)+((this.attackVector == null)? 0 :this.attackVector.hashCode()));</span>
+<span class="nc bnc" id="L266" title="All 2 branches missed.">        result = ((result* 31)+((this.availabilityImpact == null)? 0 :this.availabilityImpact.hashCode()));</span>
+<span class="nc bnc" id="L267" title="All 2 branches missed.">        result = ((result* 31)+((this.integrityImpact == null)? 0 :this.integrityImpact.hashCode()));</span>
+<span class="nc bnc" id="L268" title="All 2 branches missed.">        result = ((result* 31)+((this.privilegesRequired == null)? 0 :this.privilegesRequired.hashCode()));</span>
+<span class="nc bnc" id="L269" title="All 2 branches missed.">        result = ((result* 31)+((this.baseScore == null)? 0 :this.baseScore.hashCode()));</span>
+<span class="nc bnc" id="L270" title="All 2 branches missed.">        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));</span>
+<span class="nc bnc" id="L271" title="All 2 branches missed.">        result = ((result* 31)+((this.userInteraction == null)? 0 :this.userInteraction.hashCode()));</span>
+<span class="nc" id="L272">        return result;</span>
     }
 
     @Override
     public boolean equals(Object other) {
-<span class="nc bnc" id="L275" title="All 2 branches missed.">        if (other == this) {</span>
-<span class="nc" id="L276">            return true;</span>
+<span class="nc bnc" id="L277" title="All 2 branches missed.">        if (other == this) {</span>
+<span class="nc" id="L278">            return true;</span>
         }
-<span class="nc bnc" id="L278" title="All 2 branches missed.">        if ((other instanceof CvssV3X) == false) {</span>
-<span class="nc" id="L279">            return false;</span>
+<span class="nc bnc" id="L280" title="All 2 branches missed.">        if ((other instanceof CvssV3X) == false) {</span>
+<span class="nc" id="L281">            return false;</span>
         }
-<span class="nc" id="L281">        CvssV3X rhs = ((CvssV3X) other);</span>
-<span class="nc bnc" id="L282" title="All 66 branches missed.">        return ((((((((((((this.baseSeverity == rhs.baseSeverity)||((this.baseSeverity!= null)&amp;&amp;this.baseSeverity.equals(rhs.baseSeverity)))&amp;&amp;((this.confidentialityImpact == rhs.confidentialityImpact)||((this.confidentialityImpact!= null)&amp;&amp;this.confidentialityImpact.equals(rhs.confidentialityImpact))))&amp;&amp;((this.attackComplexity == rhs.attackComplexity)||((this.attackComplexity!= null)&amp;&amp;this.attackComplexity.equals(rhs.attackComplexity))))&amp;&amp;((this.scope == rhs.scope)||((this.scope!= null)&amp;&amp;this.scope.equals(rhs.scope))))&amp;&amp;((this.attackVector == rhs.attackVector)||((this.attackVector!= null)&amp;&amp;this.attackVector.equals(rhs.attackVector))))&amp;&amp;((this.availabilityImpact == rhs.availabilityImpact)||((this.availabilityImpact!= null)&amp;&amp;this.availabilityImpact.equals(rhs.availabilityImpact))))&amp;&amp;((this.integrityImpact == rhs.integrityImpact)||((this.integrityImpact!= null)&amp;&amp;this.integrityImpact.equals(rhs.integrityImpact))))&amp;&amp;((this.privilegesRequired == rhs.privilegesRequired)||((this.privilegesRequired!= null)&amp;&amp;this.privilegesRequired.equals(rhs.privilegesRequired))))&amp;&amp;((this.baseScore == rhs.baseScore)||((this.baseScore!= null)&amp;&amp;this.baseScore.equals(rhs.baseScore))))&amp;&amp;((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&amp;&amp;this.additionalProperties.equals(rhs.additionalProperties))))&amp;&amp;((this.userInteraction == rhs.userInteraction)||((this.userInteraction!= null)&amp;&amp;this.userInteraction.equals(rhs.userInteraction))));</span>
+<span class="nc" id="L283">        CvssV3X rhs = ((CvssV3X) other);</span>
+<span class="nc bnc" id="L284" title="All 66 branches missed.">        return ((((((((((((this.baseSeverity == rhs.baseSeverity)||((this.baseSeverity!= null)&amp;&amp;this.baseSeverity.equals(rhs.baseSeverity)))&amp;&amp;((this.confidentialityImpact == rhs.confidentialityImpact)||((this.confidentialityImpact!= null)&amp;&amp;this.confidentialityImpact.equals(rhs.confidentialityImpact))))&amp;&amp;((this.attackComplexity == rhs.attackComplexity)||((this.attackComplexity!= null)&amp;&amp;this.attackComplexity.equals(rhs.attackComplexity))))&amp;&amp;((this.scope == rhs.scope)||((this.scope!= null)&amp;&amp;this.scope.equals(rhs.scope))))&amp;&amp;((this.attackVector == rhs.attackVector)||((this.attackVector!= null)&amp;&amp;this.attackVector.equals(rhs.attackVector))))&amp;&amp;((this.availabilityImpact == rhs.availabilityImpact)||((this.availabilityImpact!= null)&amp;&amp;this.availabilityImpact.equals(rhs.availabilityImpact))))&amp;&amp;((this.integrityImpact == rhs.integrityImpact)||((this.integrityImpact!= null)&amp;&amp;this.integrityImpact.equals(rhs.integrityImpact))))&amp;&amp;((this.privilegesRequired == rhs.privilegesRequired)||((this.privilegesRequired!= null)&amp;&amp;this.privilegesRequired.equals(rhs.privilegesRequired))))&amp;&amp;((this.baseScore == rhs.baseScore)||((this.baseScore!= null)&amp;&amp;this.baseScore.equals(rhs.baseScore))))&amp;&amp;((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&amp;&amp;this.additionalProperties.equals(rhs.additionalProperties))))&amp;&amp;((this.userInteraction == rhs.userInteraction)||((this.userInteraction!= null)&amp;&amp;this.userInteraction.equals(rhs.userInteraction))));</span>
     }
 
-<span class="fc" id="L285">    public enum AttackComplexityType {</span>
+<span class="fc" id="L287">    @Generated(&quot;jsonschema2pojo&quot;)</span>
+    public enum AttackComplexityType {
 
-<span class="fc" id="L287">        HIGH(&quot;HIGH&quot;),</span>
-<span class="fc" id="L288">        LOW(&quot;LOW&quot;);</span>
+<span class="fc" id="L290">        HIGH(&quot;HIGH&quot;),</span>
+<span class="fc" id="L291">        LOW(&quot;LOW&quot;);</span>
         private final String value;
-<span class="fc" id="L290">        private final static Map&lt;String, CvssV3X.AttackComplexityType&gt; CONSTANTS = new HashMap&lt;String, CvssV3X.AttackComplexityType&gt;();</span>
+<span class="fc" id="L293">        private final static Map&lt;String, CvssV3X.AttackComplexityType&gt; CONSTANTS = new HashMap&lt;String, CvssV3X.AttackComplexityType&gt;();</span>
 
         static {
-<span class="fc bfc" id="L293" title="All 2 branches covered.">            for (CvssV3X.AttackComplexityType c: values()) {</span>
-<span class="fc" id="L294">                CONSTANTS.put(c.value, c);</span>
+<span class="fc bfc" id="L296" title="All 2 branches covered.">            for (CvssV3X.AttackComplexityType c: values()) {</span>
+<span class="fc" id="L297">                CONSTANTS.put(c.value, c);</span>
             }
-<span class="fc" id="L296">        }</span>
+<span class="fc" id="L299">        }</span>
 
-<span class="fc" id="L298">        private AttackComplexityType(String value) {</span>
-<span class="fc" id="L299">            this.value = value;</span>
-<span class="fc" id="L300">        }</span>
+<span class="fc" id="L301">        AttackComplexityType(String value) {</span>
+<span class="fc" id="L302">            this.value = value;</span>
+<span class="fc" id="L303">        }</span>
 
         @Override
         public String toString() {
-<span class="nc" id="L304">            return this.value;</span>
+<span class="nc" id="L307">            return this.value;</span>
         }
 
         @JsonValue
         public String value() {
-<span class="fc" id="L309">            return this.value;</span>
+<span class="fc" id="L312">            return this.value;</span>
         }
 
         @JsonCreator
         public static CvssV3X.AttackComplexityType fromValue(String value) {
-<span class="fc" id="L314">            CvssV3X.AttackComplexityType constant = CONSTANTS.get(value);</span>
-<span class="pc bpc" id="L315" title="1 of 2 branches missed.">            if (constant == null) {</span>
-<span class="nc" id="L316">                throw new IllegalArgumentException(value);</span>
+<span class="fc" id="L317">            CvssV3X.AttackComplexityType constant = CONSTANTS.get(value);</span>
+<span class="pc bpc" id="L318" title="1 of 2 branches missed.">            if (constant == null) {</span>
+<span class="nc" id="L319">                throw new IllegalArgumentException(value);</span>
             } else {
-<span class="fc" id="L318">                return constant;</span>
+<span class="fc" id="L321">                return constant;</span>
             }
         }
 
     }
 
-<span class="fc" id="L324">    public enum AttackVectorType {</span>
+<span class="fc" id="L327">    @Generated(&quot;jsonschema2pojo&quot;)</span>
+    public enum AttackVectorType {
 
-<span class="fc" id="L326">        NETWORK(&quot;NETWORK&quot;),</span>
-<span class="fc" id="L327">        ADJACENT_NETWORK(&quot;ADJACENT_NETWORK&quot;),</span>
-<span class="fc" id="L328">        LOCAL(&quot;LOCAL&quot;),</span>
-<span class="fc" id="L329">        PHYSICAL(&quot;PHYSICAL&quot;);</span>
+<span class="fc" id="L330">        NETWORK(&quot;NETWORK&quot;),</span>
+<span class="fc" id="L331">        ADJACENT_NETWORK(&quot;ADJACENT_NETWORK&quot;),</span>
+<span class="fc" id="L332">        LOCAL(&quot;LOCAL&quot;),</span>
+<span class="fc" id="L333">        PHYSICAL(&quot;PHYSICAL&quot;);</span>
         private final String value;
-<span class="fc" id="L331">        private final static Map&lt;String, CvssV3X.AttackVectorType&gt; CONSTANTS = new HashMap&lt;String, CvssV3X.AttackVectorType&gt;();</span>
+<span class="fc" id="L335">        private final static Map&lt;String, CvssV3X.AttackVectorType&gt; CONSTANTS = new HashMap&lt;String, CvssV3X.AttackVectorType&gt;();</span>
 
         static {
-<span class="fc bfc" id="L334" title="All 2 branches covered.">            for (CvssV3X.AttackVectorType c: values()) {</span>
-<span class="fc" id="L335">                CONSTANTS.put(c.value, c);</span>
+<span class="fc bfc" id="L338" title="All 2 branches covered.">            for (CvssV3X.AttackVectorType c: values()) {</span>
+<span class="fc" id="L339">                CONSTANTS.put(c.value, c);</span>
             }
-<span class="fc" id="L337">        }</span>
-
-<span class="fc" id="L339">        private AttackVectorType(String value) {</span>
-<span class="fc" id="L340">            this.value = value;</span>
 <span class="fc" id="L341">        }</span>
+
+<span class="fc" id="L343">        AttackVectorType(String value) {</span>
+<span class="fc" id="L344">            this.value = value;</span>
+<span class="fc" id="L345">        }</span>
 
         @Override
         public String toString() {
-<span class="nc" id="L345">            return this.value;</span>
+<span class="nc" id="L349">            return this.value;</span>
         }
 
         @JsonValue
         public String value() {
-<span class="fc" id="L350">            return this.value;</span>
+<span class="fc" id="L354">            return this.value;</span>
         }
 
         @JsonCreator
         public static CvssV3X.AttackVectorType fromValue(String value) {
-<span class="fc" id="L355">            CvssV3X.AttackVectorType constant = CONSTANTS.get(value);</span>
-<span class="pc bpc" id="L356" title="1 of 2 branches missed.">            if (constant == null) {</span>
-<span class="nc" id="L357">                throw new IllegalArgumentException(value);</span>
+<span class="fc" id="L359">            CvssV3X.AttackVectorType constant = CONSTANTS.get(value);</span>
+<span class="pc bpc" id="L360" title="1 of 2 branches missed.">            if (constant == null) {</span>
+<span class="nc" id="L361">                throw new IllegalArgumentException(value);</span>
             } else {
-<span class="fc" id="L359">                return constant;</span>
+<span class="fc" id="L363">                return constant;</span>
             }
         }
 
     }
 
-<span class="fc" id="L365">    public enum CiaType {</span>
+<span class="fc" id="L369">    @Generated(&quot;jsonschema2pojo&quot;)</span>
+    public enum CiaType {
 
-<span class="fc" id="L367">        NONE(&quot;NONE&quot;),</span>
-<span class="fc" id="L368">        LOW(&quot;LOW&quot;),</span>
-<span class="fc" id="L369">        HIGH(&quot;HIGH&quot;);</span>
+<span class="fc" id="L372">        NONE(&quot;NONE&quot;),</span>
+<span class="fc" id="L373">        LOW(&quot;LOW&quot;),</span>
+<span class="fc" id="L374">        HIGH(&quot;HIGH&quot;);</span>
         private final String value;
-<span class="fc" id="L371">        private final static Map&lt;String, CvssV3X.CiaType&gt; CONSTANTS = new HashMap&lt;String, CvssV3X.CiaType&gt;();</span>
+<span class="fc" id="L376">        private final static Map&lt;String, CvssV3X.CiaType&gt; CONSTANTS = new HashMap&lt;String, CvssV3X.CiaType&gt;();</span>
 
         static {
-<span class="fc bfc" id="L374" title="All 2 branches covered.">            for (CvssV3X.CiaType c: values()) {</span>
-<span class="fc" id="L375">                CONSTANTS.put(c.value, c);</span>
+<span class="fc bfc" id="L379" title="All 2 branches covered.">            for (CvssV3X.CiaType c: values()) {</span>
+<span class="fc" id="L380">                CONSTANTS.put(c.value, c);</span>
             }
-<span class="fc" id="L377">        }</span>
+<span class="fc" id="L382">        }</span>
 
-<span class="fc" id="L379">        private CiaType(String value) {</span>
-<span class="fc" id="L380">            this.value = value;</span>
-<span class="fc" id="L381">        }</span>
+<span class="fc" id="L384">        CiaType(String value) {</span>
+<span class="fc" id="L385">            this.value = value;</span>
+<span class="fc" id="L386">        }</span>
 
         @Override
         public String toString() {
-<span class="nc" id="L385">            return this.value;</span>
+<span class="nc" id="L390">            return this.value;</span>
         }
 
         @JsonValue
         public String value() {
-<span class="fc" id="L390">            return this.value;</span>
+<span class="fc" id="L395">            return this.value;</span>
         }
 
         @JsonCreator
         public static CvssV3X.CiaType fromValue(String value) {
-<span class="fc" id="L395">            CvssV3X.CiaType constant = CONSTANTS.get(value);</span>
-<span class="pc bpc" id="L396" title="1 of 2 branches missed.">            if (constant == null) {</span>
-<span class="nc" id="L397">                throw new IllegalArgumentException(value);</span>
+<span class="fc" id="L400">            CvssV3X.CiaType constant = CONSTANTS.get(value);</span>
+<span class="pc bpc" id="L401" title="1 of 2 branches missed.">            if (constant == null) {</span>
+<span class="nc" id="L402">                throw new IllegalArgumentException(value);</span>
             } else {
-<span class="fc" id="L399">                return constant;</span>
+<span class="fc" id="L404">                return constant;</span>
             }
         }
 
     }
 
-<span class="fc" id="L405">    public enum PrivilegesRequiredType {</span>
+<span class="fc" id="L410">    @Generated(&quot;jsonschema2pojo&quot;)</span>
+    public enum PrivilegesRequiredType {
 
-<span class="fc" id="L407">        HIGH(&quot;HIGH&quot;),</span>
-<span class="fc" id="L408">        LOW(&quot;LOW&quot;),</span>
-<span class="fc" id="L409">        NONE(&quot;NONE&quot;);</span>
+<span class="fc" id="L413">        HIGH(&quot;HIGH&quot;),</span>
+<span class="fc" id="L414">        LOW(&quot;LOW&quot;),</span>
+<span class="fc" id="L415">        NONE(&quot;NONE&quot;);</span>
         private final String value;
-<span class="fc" id="L411">        private final static Map&lt;String, CvssV3X.PrivilegesRequiredType&gt; CONSTANTS = new HashMap&lt;String, CvssV3X.PrivilegesRequiredType&gt;();</span>
+<span class="fc" id="L417">        private final static Map&lt;String, CvssV3X.PrivilegesRequiredType&gt; CONSTANTS = new HashMap&lt;String, CvssV3X.PrivilegesRequiredType&gt;();</span>
 
         static {
-<span class="fc bfc" id="L414" title="All 2 branches covered.">            for (CvssV3X.PrivilegesRequiredType c: values()) {</span>
-<span class="fc" id="L415">                CONSTANTS.put(c.value, c);</span>
+<span class="fc bfc" id="L420" title="All 2 branches covered.">            for (CvssV3X.PrivilegesRequiredType c: values()) {</span>
+<span class="fc" id="L421">                CONSTANTS.put(c.value, c);</span>
             }
-<span class="fc" id="L417">        }</span>
+<span class="fc" id="L423">        }</span>
 
-<span class="fc" id="L419">        private PrivilegesRequiredType(String value) {</span>
-<span class="fc" id="L420">            this.value = value;</span>
-<span class="fc" id="L421">        }</span>
+<span class="fc" id="L425">        PrivilegesRequiredType(String value) {</span>
+<span class="fc" id="L426">            this.value = value;</span>
+<span class="fc" id="L427">        }</span>
 
         @Override
         public String toString() {
-<span class="nc" id="L425">            return this.value;</span>
+<span class="nc" id="L431">            return this.value;</span>
         }
 
         @JsonValue
         public String value() {
-<span class="fc" id="L430">            return this.value;</span>
+<span class="fc" id="L436">            return this.value;</span>
         }
 
         @JsonCreator
         public static CvssV3X.PrivilegesRequiredType fromValue(String value) {
-<span class="fc" id="L435">            CvssV3X.PrivilegesRequiredType constant = CONSTANTS.get(value);</span>
-<span class="pc bpc" id="L436" title="1 of 2 branches missed.">            if (constant == null) {</span>
-<span class="nc" id="L437">                throw new IllegalArgumentException(value);</span>
+<span class="fc" id="L441">            CvssV3X.PrivilegesRequiredType constant = CONSTANTS.get(value);</span>
+<span class="pc bpc" id="L442" title="1 of 2 branches missed.">            if (constant == null) {</span>
+<span class="nc" id="L443">                throw new IllegalArgumentException(value);</span>
             } else {
-<span class="fc" id="L439">                return constant;</span>
+<span class="fc" id="L445">                return constant;</span>
             }
         }
 
     }
 
-<span class="fc" id="L445">    public enum ScopeType {</span>
+<span class="fc" id="L451">    @Generated(&quot;jsonschema2pojo&quot;)</span>
+    public enum ScopeType {
 
-<span class="fc" id="L447">        UNCHANGED(&quot;UNCHANGED&quot;),</span>
-<span class="fc" id="L448">        CHANGED(&quot;CHANGED&quot;);</span>
+<span class="fc" id="L454">        UNCHANGED(&quot;UNCHANGED&quot;),</span>
+<span class="fc" id="L455">        CHANGED(&quot;CHANGED&quot;);</span>
         private final String value;
-<span class="fc" id="L450">        private final static Map&lt;String, CvssV3X.ScopeType&gt; CONSTANTS = new HashMap&lt;String, CvssV3X.ScopeType&gt;();</span>
+<span class="fc" id="L457">        private final static Map&lt;String, CvssV3X.ScopeType&gt; CONSTANTS = new HashMap&lt;String, CvssV3X.ScopeType&gt;();</span>
 
         static {
-<span class="fc bfc" id="L453" title="All 2 branches covered.">            for (CvssV3X.ScopeType c: values()) {</span>
-<span class="fc" id="L454">                CONSTANTS.put(c.value, c);</span>
+<span class="fc bfc" id="L460" title="All 2 branches covered.">            for (CvssV3X.ScopeType c: values()) {</span>
+<span class="fc" id="L461">                CONSTANTS.put(c.value, c);</span>
             }
-<span class="fc" id="L456">        }</span>
+<span class="fc" id="L463">        }</span>
 
-<span class="fc" id="L458">        private ScopeType(String value) {</span>
-<span class="fc" id="L459">            this.value = value;</span>
-<span class="fc" id="L460">        }</span>
+<span class="fc" id="L465">        ScopeType(String value) {</span>
+<span class="fc" id="L466">            this.value = value;</span>
+<span class="fc" id="L467">        }</span>
 
         @Override
         public String toString() {
-<span class="nc" id="L464">            return this.value;</span>
+<span class="nc" id="L471">            return this.value;</span>
         }
 
         @JsonValue
         public String value() {
-<span class="fc" id="L469">            return this.value;</span>
+<span class="fc" id="L476">            return this.value;</span>
         }
 
         @JsonCreator
         public static CvssV3X.ScopeType fromValue(String value) {
-<span class="fc" id="L474">            CvssV3X.ScopeType constant = CONSTANTS.get(value);</span>
-<span class="pc bpc" id="L475" title="1 of 2 branches missed.">            if (constant == null) {</span>
-<span class="nc" id="L476">                throw new IllegalArgumentException(value);</span>
+<span class="fc" id="L481">            CvssV3X.ScopeType constant = CONSTANTS.get(value);</span>
+<span class="pc bpc" id="L482" title="1 of 2 branches missed.">            if (constant == null) {</span>
+<span class="nc" id="L483">                throw new IllegalArgumentException(value);</span>
             } else {
-<span class="fc" id="L478">                return constant;</span>
+<span class="fc" id="L485">                return constant;</span>
             }
         }
 
     }
 
-<span class="fc" id="L484">    public enum SeverityType {</span>
+<span class="fc" id="L491">    @Generated(&quot;jsonschema2pojo&quot;)</span>
+    public enum SeverityType {
 
-<span class="fc" id="L486">        NONE(&quot;NONE&quot;),</span>
-<span class="fc" id="L487">        LOW(&quot;LOW&quot;),</span>
-<span class="fc" id="L488">        MEDIUM(&quot;MEDIUM&quot;),</span>
-<span class="fc" id="L489">        HIGH(&quot;HIGH&quot;),</span>
-<span class="fc" id="L490">        CRITICAL(&quot;CRITICAL&quot;);</span>
+<span class="fc" id="L494">        NONE(&quot;NONE&quot;),</span>
+<span class="fc" id="L495">        LOW(&quot;LOW&quot;),</span>
+<span class="fc" id="L496">        MEDIUM(&quot;MEDIUM&quot;),</span>
+<span class="fc" id="L497">        HIGH(&quot;HIGH&quot;),</span>
+<span class="fc" id="L498">        CRITICAL(&quot;CRITICAL&quot;);</span>
         private final String value;
-<span class="fc" id="L492">        private final static Map&lt;String, CvssV3X.SeverityType&gt; CONSTANTS = new HashMap&lt;String, CvssV3X.SeverityType&gt;();</span>
+<span class="fc" id="L500">        private final static Map&lt;String, CvssV3X.SeverityType&gt; CONSTANTS = new HashMap&lt;String, CvssV3X.SeverityType&gt;();</span>
 
         static {
-<span class="fc bfc" id="L495" title="All 2 branches covered.">            for (CvssV3X.SeverityType c: values()) {</span>
-<span class="fc" id="L496">                CONSTANTS.put(c.value, c);</span>
+<span class="fc bfc" id="L503" title="All 2 branches covered.">            for (CvssV3X.SeverityType c: values()) {</span>
+<span class="fc" id="L504">                CONSTANTS.put(c.value, c);</span>
             }
-<span class="fc" id="L498">        }</span>
+<span class="fc" id="L506">        }</span>
 
-<span class="fc" id="L500">        private SeverityType(String value) {</span>
-<span class="fc" id="L501">            this.value = value;</span>
-<span class="fc" id="L502">        }</span>
+<span class="fc" id="L508">        SeverityType(String value) {</span>
+<span class="fc" id="L509">            this.value = value;</span>
+<span class="fc" id="L510">        }</span>
 
         @Override
         public String toString() {
-<span class="nc" id="L506">            return this.value;</span>
+<span class="nc" id="L514">            return this.value;</span>
         }
 
         @JsonValue
         public String value() {
-<span class="fc" id="L511">            return this.value;</span>
+<span class="fc" id="L519">            return this.value;</span>
         }
 
         @JsonCreator
         public static CvssV3X.SeverityType fromValue(String value) {
-<span class="fc" id="L516">            CvssV3X.SeverityType constant = CONSTANTS.get(value);</span>
-<span class="pc bpc" id="L517" title="1 of 2 branches missed.">            if (constant == null) {</span>
-<span class="nc" id="L518">                throw new IllegalArgumentException(value);</span>
+<span class="fc" id="L524">            CvssV3X.SeverityType constant = CONSTANTS.get(value);</span>
+<span class="pc bpc" id="L525" title="1 of 2 branches missed.">            if (constant == null) {</span>
+<span class="nc" id="L526">                throw new IllegalArgumentException(value);</span>
             } else {
-<span class="fc" id="L520">                return constant;</span>
+<span class="fc" id="L528">                return constant;</span>
             }
         }
 
     }
 
-<span class="fc" id="L526">    public enum UserInteractionType {</span>
+<span class="fc" id="L534">    @Generated(&quot;jsonschema2pojo&quot;)</span>
+    public enum UserInteractionType {
 
-<span class="fc" id="L528">        NONE(&quot;NONE&quot;),</span>
-<span class="fc" id="L529">        REQUIRED(&quot;REQUIRED&quot;);</span>
+<span class="fc" id="L537">        NONE(&quot;NONE&quot;),</span>
+<span class="fc" id="L538">        REQUIRED(&quot;REQUIRED&quot;);</span>
         private final String value;
-<span class="fc" id="L531">        private final static Map&lt;String, CvssV3X.UserInteractionType&gt; CONSTANTS = new HashMap&lt;String, CvssV3X.UserInteractionType&gt;();</span>
+<span class="fc" id="L540">        private final static Map&lt;String, CvssV3X.UserInteractionType&gt; CONSTANTS = new HashMap&lt;String, CvssV3X.UserInteractionType&gt;();</span>
 
         static {
-<span class="fc bfc" id="L534" title="All 2 branches covered.">            for (CvssV3X.UserInteractionType c: values()) {</span>
-<span class="fc" id="L535">                CONSTANTS.put(c.value, c);</span>
+<span class="fc bfc" id="L543" title="All 2 branches covered.">            for (CvssV3X.UserInteractionType c: values()) {</span>
+<span class="fc" id="L544">                CONSTANTS.put(c.value, c);</span>
             }
-<span class="fc" id="L537">        }</span>
+<span class="fc" id="L546">        }</span>
 
-<span class="fc" id="L539">        private UserInteractionType(String value) {</span>
-<span class="fc" id="L540">            this.value = value;</span>
-<span class="fc" id="L541">        }</span>
+<span class="fc" id="L548">        UserInteractionType(String value) {</span>
+<span class="fc" id="L549">            this.value = value;</span>
+<span class="fc" id="L550">        }</span>
 
         @Override
         public String toString() {
-<span class="nc" id="L545">            return this.value;</span>
+<span class="nc" id="L554">            return this.value;</span>
         }
 
         @JsonValue
         public String value() {
-<span class="fc" id="L550">            return this.value;</span>
+<span class="fc" id="L559">            return this.value;</span>
         }
 
         @JsonCreator
         public static CvssV3X.UserInteractionType fromValue(String value) {
-<span class="fc" id="L555">            CvssV3X.UserInteractionType constant = CONSTANTS.get(value);</span>
-<span class="pc bpc" id="L556" title="1 of 2 branches missed.">            if (constant == null) {</span>
-<span class="nc" id="L557">                throw new IllegalArgumentException(value);</span>
+<span class="fc" id="L564">            CvssV3X.UserInteractionType constant = CONSTANTS.get(value);</span>
+<span class="pc bpc" id="L565" title="1 of 2 branches missed.">            if (constant == null) {</span>
+<span class="nc" id="L566">                throw new IllegalArgumentException(value);</span>
             } else {
-<span class="fc" id="L559">                return constant;</span>
+<span class="fc" id="L568">                return constant;</span>
             }
         }
 

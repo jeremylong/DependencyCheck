@@ -228,9 +228,10 @@
 <a class="jxr_linenumber" name="L220" href="#L220">220</a>         <strong class="jxr_keyword">return</strong> cve.getConfigurations().getNodes().stream()
 <a class="jxr_linenumber" name="L221" href="#L221">221</a>                 .collect(NodeFlatteningCollector.getInstance())
 <a class="jxr_linenumber" name="L222" href="#L222">222</a>                 .collect(CpeMatchStreamCollector.getInstance())
-<a class="jxr_linenumber" name="L223" href="#L223">223</a>                 .anyMatch(cpe -&gt; cpe.getCpe23Uri().startsWith(cpeStartsWithFilter));
-<a class="jxr_linenumber" name="L224" href="#L224">224</a>     }
-<a class="jxr_linenumber" name="L225" href="#L225">225</a> }
+<a class="jxr_linenumber" name="L223" href="#L223">223</a>                 .filter(cpe -&gt; cpe.getCpe23Uri() != <strong class="jxr_keyword">null</strong>)
+<a class="jxr_linenumber" name="L224" href="#L224">224</a>                 .anyMatch(cpe -&gt; cpe.getCpe23Uri().startsWith(cpeStartsWithFilter));
+<a class="jxr_linenumber" name="L225" href="#L225">225</a>     }
+<a class="jxr_linenumber" name="L226" href="#L226">226</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2021 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

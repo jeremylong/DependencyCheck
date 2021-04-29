@@ -89,7 +89,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 <span class="fc bfc" id="L89" title="All 2 branches covered.">            if (dependencies.length &lt; 2) {</span>
 <span class="fc" id="L90">                return;</span>
             }
-<span class="fc" id="L92">            Arrays.sort(dependencies, (l, r) -&gt; l.getFileName().compareTo(r.getFileName()));</span>
+<span class="fc" id="L92">            Arrays.sort(dependencies, (l, r) -&gt; (l.getDisplayFileName() + l.getActualFilePath()).compareTo(r.getDisplayFileName() + r.getActualFilePath()));</span>
 <span class="fc bfc" id="L93" title="All 2 branches covered.">            for (int x = 0; x &lt; dependencies.length - 1; x++) {</span>
 <span class="fc" id="L94">                final Dependency dependency = dependencies[x];</span>
 <span class="pc bpc" id="L95" title="1 of 2 branches missed.">                if (!dependenciesToRemove.contains(dependency)) {</span>

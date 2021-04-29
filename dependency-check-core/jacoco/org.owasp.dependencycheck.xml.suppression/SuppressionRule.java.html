@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.concurrent.NotThreadSafe;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
@@ -39,12 +40,12 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
  * @author Jeremy Long
  */
 @NotThreadSafe
-<span class="fc" id="L42">public class SuppressionRule {</span>
+<span class="fc" id="L43">public class SuppressionRule {</span>
 
     /**
      * The Logger for use throughout the class.
      */
-<span class="fc" id="L47">    private static final Logger LOGGER = LoggerFactory.getLogger(SuppressionRule.class);</span>
+<span class="fc" id="L48">    private static final Logger LOGGER = LoggerFactory.getLogger(SuppressionRule.class);</span>
     /**
      * The file path for the suppression.
      */
@@ -57,31 +58,31 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
     /**
      * A list of CPEs to suppression
      */
-<span class="fc" id="L60">    private List&lt;PropertyType&gt; cpe = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L61">    private List&lt;PropertyType&gt; cpe = new ArrayList&lt;&gt;();</span>
     /**
      * The list of cvssBelow scores.
      */
-<span class="fc" id="L64">    private List&lt;Float&gt; cvssBelow = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L65">    private List&lt;Float&gt; cvssBelow = new ArrayList&lt;&gt;();</span>
     /**
      * The list of CWE entries to suppress.
      */
-<span class="fc" id="L68">    private List&lt;String&gt; cwe = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L69">    private List&lt;String&gt; cwe = new ArrayList&lt;&gt;();</span>
     /**
      * The list of CVE entries to suppress.
      */
-<span class="fc" id="L72">    private List&lt;String&gt; cve = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L73">    private List&lt;String&gt; cve = new ArrayList&lt;&gt;();</span>
     /**
      * The list of vulnerability name entries to suppress.
      */
-<span class="fc" id="L76">    private List&lt;PropertyType&gt; vulnerabilityNames = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L77">    private List&lt;PropertyType&gt; vulnerabilityNames = new ArrayList&lt;&gt;();</span>
     /**
      * A Maven GAV to suppression.
      */
-<span class="fc" id="L80">    private PropertyType gav = null;</span>
+<span class="fc" id="L81">    private PropertyType gav = null;</span>
     /**
      * The list of vulnerability name entries to suppress.
      */
-<span class="fc" id="L84">    private PropertyType packageUrl = null;</span>
+<span class="fc" id="L85">    private PropertyType packageUrl = null;</span>
     /**
      * The notes added in suppression file
      */
@@ -108,7 +109,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return the value of until
      */
     public Calendar getUntil() {
-<span class="fc" id="L111">        return until;</span>
+<span class="fc" id="L112">        return until;</span>
     }
 
     /**
@@ -117,8 +118,8 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @param until new value of until
      */
     public void setUntil(Calendar until) {
-<span class="fc" id="L120">        this.until = until;</span>
-<span class="fc" id="L121">    }</span>
+<span class="fc" id="L121">        this.until = until;</span>
+<span class="fc" id="L122">    }</span>
 
     /**
      * Get the value of filePath.
@@ -126,7 +127,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return the value of filePath
      */
     public PropertyType getFilePath() {
-<span class="fc" id="L129">        return filePath;</span>
+<span class="fc" id="L130">        return filePath;</span>
     }
 
     /**
@@ -135,8 +136,8 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @param filePath new value of filePath
      */
     public void setFilePath(PropertyType filePath) {
-<span class="fc" id="L138">        this.filePath = filePath;</span>
-<span class="fc" id="L139">    }</span>
+<span class="fc" id="L139">        this.filePath = filePath;</span>
+<span class="fc" id="L140">    }</span>
 
     /**
      * Get the value of sha1.
@@ -144,7 +145,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return the value of sha1
      */
     public String getSha1() {
-<span class="fc" id="L147">        return sha1;</span>
+<span class="fc" id="L148">        return sha1;</span>
     }
 
     /**
@@ -153,8 +154,8 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @param sha1 new value of SHA1
      */
     public void setSha1(String sha1) {
-<span class="fc" id="L156">        this.sha1 = sha1;</span>
-<span class="fc" id="L157">    }</span>
+<span class="fc" id="L157">        this.sha1 = sha1;</span>
+<span class="fc" id="L158">    }</span>
 
     /**
      * Get the value of CPE.
@@ -162,7 +163,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return the value of CPE
      */
     public List&lt;PropertyType&gt; getCpe() {
-<span class="fc" id="L165">        return cpe;</span>
+<span class="fc" id="L166">        return cpe;</span>
     }
 
     /**
@@ -171,8 +172,8 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @param cpe new value of CPE
      */
     public void setCpe(List&lt;PropertyType&gt; cpe) {
-<span class="fc" id="L174">        this.cpe = cpe;</span>
-<span class="fc" id="L175">    }</span>
+<span class="fc" id="L175">        this.cpe = cpe;</span>
+<span class="fc" id="L176">    }</span>
 
     /**
      * Adds the CPE to the CPE list.
@@ -180,8 +181,8 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @param cpe the CPE to add
      */
     public void addCpe(PropertyType cpe) {
-<span class="fc" id="L183">        this.cpe.add(cpe);</span>
-<span class="fc" id="L184">    }</span>
+<span class="fc" id="L184">        this.cpe.add(cpe);</span>
+<span class="fc" id="L185">    }</span>
 
     /**
      * Adds the CPE to the CPE list.
@@ -189,8 +190,8 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @param name the vulnerability name to add
      */
     public void addVulnerabilityName(PropertyType name) {
-<span class="fc" id="L192">        this.vulnerabilityNames.add(name);</span>
-<span class="fc" id="L193">    }</span>
+<span class="fc" id="L193">        this.vulnerabilityNames.add(name);</span>
+<span class="fc" id="L194">    }</span>
 
     /**
      * Returns whether or not this suppression rule as CPE entries.
@@ -198,7 +199,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return whether or not this suppression rule as CPE entries
      */
     public boolean hasCpe() {
-<span class="fc bfc" id="L201" title="All 2 branches covered.">        return !cpe.isEmpty();</span>
+<span class="fc bfc" id="L202" title="All 2 branches covered.">        return !cpe.isEmpty();</span>
     }
 
     /**
@@ -207,7 +208,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return the value of cvssBelow
      */
     public List&lt;Float&gt; getCvssBelow() {
-<span class="fc" id="L210">        return cvssBelow;</span>
+<span class="fc" id="L211">        return cvssBelow;</span>
     }
 
     /**
@@ -216,8 +217,8 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @param cvssBelow new value of cvssBelow
      */
     public void setCvssBelow(List&lt;Float&gt; cvssBelow) {
-<span class="fc" id="L219">        this.cvssBelow = cvssBelow;</span>
-<span class="fc" id="L220">    }</span>
+<span class="fc" id="L220">        this.cvssBelow = cvssBelow;</span>
+<span class="fc" id="L221">    }</span>
 
     /**
      * Adds the CVSS to the cvssBelow list.
@@ -225,8 +226,8 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @param cvss the CVSS to add
      */
     public void addCvssBelow(Float cvss) {
-<span class="fc" id="L228">        this.cvssBelow.add(cvss);</span>
-<span class="fc" id="L229">    }</span>
+<span class="fc" id="L229">        this.cvssBelow.add(cvss);</span>
+<span class="fc" id="L230">    }</span>
 
     /**
      * Returns whether or not this suppression rule has CVSS suppressions.
@@ -234,7 +235,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return whether or not this suppression rule has CVSS suppressions
      */
     public boolean hasCvssBelow() {
-<span class="fc bfc" id="L237" title="All 2 branches covered.">        return !cvssBelow.isEmpty();</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">        return !cvssBelow.isEmpty();</span>
     }
 
     /**
@@ -243,7 +244,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return the value of notes
      */
     public String getNotes() {
-<span class="nc" id="L246">        return notes;</span>
+<span class="nc" id="L247">        return notes;</span>
     }
 
     /**
@@ -252,8 +253,8 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @param notes new value of cve
      */
     public void setNotes(String notes) {
-<span class="nc" id="L255">        this.notes = notes;</span>
-<span class="nc" id="L256">    }</span>
+<span class="nc" id="L256">        this.notes = notes;</span>
+<span class="nc" id="L257">    }</span>
 
     /**
      * Adds the notes to the cve list.
@@ -261,8 +262,8 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @param notes the cve to add
      */
     public void addNotes(String notes) {
-<span class="fc" id="L264">        this.notes = notes;</span>
-<span class="fc" id="L265">    }</span>
+<span class="fc" id="L265">        this.notes = notes;</span>
+<span class="fc" id="L266">    }</span>
 
     /**
      * Returns whether this suppression rule has notes entries.
@@ -270,7 +271,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return whether this suppression rule has notes entries
      */
     public boolean hasNotes() {
-<span class="nc bnc" id="L273" title="All 2 branches missed.">        return !cve.isEmpty();</span>
+<span class="nc bnc" id="L274" title="All 2 branches missed.">        return !cve.isEmpty();</span>
     }
 
     /**
@@ -279,7 +280,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return the value of CWE
      */
     public List&lt;String&gt; getCwe() {
-<span class="fc" id="L282">        return cwe;</span>
+<span class="fc" id="L283">        return cwe;</span>
     }
 
     /**
@@ -288,8 +289,8 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @param cwe new value of CWE
      */
     public void setCwe(List&lt;String&gt; cwe) {
-<span class="fc" id="L291">        this.cwe = cwe;</span>
-<span class="fc" id="L292">    }</span>
+<span class="fc" id="L292">        this.cwe = cwe;</span>
+<span class="fc" id="L293">    }</span>
 
     /**
      * Adds the CWE to the CWE list.
@@ -297,8 +298,8 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @param cwe the CWE to add
      */
     public void addCwe(String cwe) {
-<span class="fc" id="L300">        this.cwe.add(cwe);</span>
-<span class="fc" id="L301">    }</span>
+<span class="fc" id="L301">        this.cwe.add(cwe);</span>
+<span class="fc" id="L302">    }</span>
 
     /**
      * Returns whether this suppression rule has CWE entries.
@@ -306,7 +307,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return whether this suppression rule has CWE entries
      */
     public boolean hasCwe() {
-<span class="fc bfc" id="L309" title="All 2 branches covered.">        return !cwe.isEmpty();</span>
+<span class="fc bfc" id="L310" title="All 2 branches covered.">        return !cwe.isEmpty();</span>
     }
 
     /**
@@ -315,7 +316,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return the value of CVE
      */
     public List&lt;String&gt; getCve() {
-<span class="fc" id="L318">        return cve;</span>
+<span class="fc" id="L319">        return cve;</span>
     }
 
     /**
@@ -324,8 +325,8 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @param cve new value of CVE
      */
     public void setCve(List&lt;String&gt; cve) {
-<span class="fc" id="L327">        this.cve = cve;</span>
-<span class="fc" id="L328">    }</span>
+<span class="fc" id="L328">        this.cve = cve;</span>
+<span class="fc" id="L329">    }</span>
 
     /**
      * Adds the CVE to the CVE list.
@@ -333,8 +334,8 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @param cve the CVE to add
      */
     public void addCve(String cve) {
-<span class="fc" id="L336">        this.cve.add(cve);</span>
-<span class="fc" id="L337">    }</span>
+<span class="fc" id="L337">        this.cve.add(cve);</span>
+<span class="fc" id="L338">    }</span>
 
     /**
      * Returns whether this suppression rule has CVE entries.
@@ -342,7 +343,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return whether this suppression rule has CVE entries
      */
     public boolean hasCve() {
-<span class="fc bfc" id="L345" title="All 2 branches covered.">        return !cve.isEmpty();</span>
+<span class="fc bfc" id="L346" title="All 2 branches covered.">        return !cve.isEmpty();</span>
     }
 
     /**
@@ -351,7 +352,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return whether this suppression rule has vulnerabilityName entries
      */
     public boolean hasVulnerabilityName() {
-<span class="fc bfc" id="L354" title="All 2 branches covered.">        return !vulnerabilityNames.isEmpty();</span>
+<span class="fc bfc" id="L355" title="All 2 branches covered.">        return !vulnerabilityNames.isEmpty();</span>
     }
 
     /**
@@ -360,7 +361,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return the value of GAV
      */
     public PropertyType getGav() {
-<span class="nc" id="L363">        return gav;</span>
+<span class="nc" id="L364">        return gav;</span>
     }
 
     /**
@@ -369,8 +370,8 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @param gav new value of Maven GAV
      */
     public void setGav(PropertyType gav) {
-<span class="fc" id="L372">        this.gav = gav;</span>
-<span class="fc" id="L373">    }</span>
+<span class="fc" id="L373">        this.gav = gav;</span>
+<span class="fc" id="L374">    }</span>
 
     /**
      * Returns whether or not this suppression rule as GAV entries.
@@ -378,7 +379,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return whether or not this suppression rule as GAV entries
      */
     public boolean hasGav() {
-<span class="fc bfc" id="L381" title="All 2 branches covered.">        return gav != null;</span>
+<span class="fc bfc" id="L382" title="All 2 branches covered.">        return gav != null;</span>
     }
 
     /**
@@ -387,8 +388,8 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @param purl new value of package URL
      */
     public void setPackageUrl(PropertyType purl) {
-<span class="fc" id="L390">        this.packageUrl = purl;</span>
-<span class="fc" id="L391">    }</span>
+<span class="fc" id="L391">        this.packageUrl = purl;</span>
+<span class="fc" id="L392">    }</span>
 
     /**
      * Returns whether or not this suppression rule as packageUrl entries.
@@ -396,7 +397,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return whether or not this suppression rule as packageUrl entries
      */
     public boolean hasPackageUrl() {
-<span class="fc bfc" id="L399" title="All 2 branches covered.">        return packageUrl != null;</span>
+<span class="fc bfc" id="L400" title="All 2 branches covered.">        return packageUrl != null;</span>
     }
 
     /**
@@ -405,7 +406,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return the value of base
      */
     public boolean isBase() {
-<span class="fc" id="L408">        return base;</span>
+<span class="fc" id="L409">        return base;</span>
     }
 
     /**
@@ -414,8 +415,8 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @param base new value of base
      */
     public void setBase(boolean base) {
-<span class="fc" id="L417">        this.base = base;</span>
-<span class="fc" id="L418">    }</span>
+<span class="fc" id="L418">        this.base = base;</span>
+<span class="fc" id="L419">    }</span>
 
     /**
      * Processes a given dependency to determine if any CPE, CVE, CWE, or CVSS
@@ -425,118 +426,118 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @param dependency a project dependency to analyze
      */
     public void process(Dependency dependency) {
-<span class="fc bfc" id="L428" title="All 4 branches covered.">        if (filePath != null &amp;&amp; !filePath.matches(dependency.getFilePath())) {</span>
-<span class="fc" id="L429">            return;</span>
+<span class="fc bfc" id="L429" title="All 4 branches covered.">        if (filePath != null &amp;&amp; !filePath.matches(dependency.getFilePath())) {</span>
+<span class="fc" id="L430">            return;</span>
         }
-<span class="fc bfc" id="L431" title="All 4 branches covered.">        if (sha1 != null &amp;&amp; !sha1.equalsIgnoreCase(dependency.getSha1sum())) {</span>
-<span class="fc" id="L432">            return;</span>
+<span class="fc bfc" id="L432" title="All 4 branches covered.">        if (sha1 != null &amp;&amp; !sha1.equalsIgnoreCase(dependency.getSha1sum())) {</span>
+<span class="fc" id="L433">            return;</span>
         }
-<span class="fc bfc" id="L434" title="All 2 branches covered.">        if (hasGav()) {</span>
-<span class="fc" id="L435">            final Iterator&lt;Identifier&gt; itr = dependency.getSoftwareIdentifiers().iterator();</span>
-<span class="fc" id="L436">            boolean found = false;</span>
-<span class="fc bfc" id="L437" title="All 2 branches covered.">            while (itr.hasNext()) {</span>
-<span class="fc" id="L438">                final Identifier i = itr.next();</span>
-<span class="fc bfc" id="L439" title="All 2 branches covered.">                if (identifierMatches(this.gav, i)) {</span>
-<span class="fc" id="L440">                    found = true;</span>
-<span class="fc" id="L441">                    break;</span>
+<span class="fc bfc" id="L435" title="All 2 branches covered.">        if (hasGav()) {</span>
+<span class="fc" id="L436">            final Iterator&lt;Identifier&gt; itr = dependency.getSoftwareIdentifiers().iterator();</span>
+<span class="fc" id="L437">            boolean found = false;</span>
+<span class="fc bfc" id="L438" title="All 2 branches covered.">            while (itr.hasNext()) {</span>
+<span class="fc" id="L439">                final Identifier i = itr.next();</span>
+<span class="fc bfc" id="L440" title="All 2 branches covered.">                if (identifierMatches(this.gav, i)) {</span>
+<span class="fc" id="L441">                    found = true;</span>
+<span class="fc" id="L442">                    break;</span>
                 }
-<span class="fc" id="L443">            }</span>
-<span class="fc bfc" id="L444" title="All 2 branches covered.">            if (!found) {</span>
-<span class="fc" id="L445">                return;</span>
+<span class="fc" id="L444">            }</span>
+<span class="fc bfc" id="L445" title="All 2 branches covered.">            if (!found) {</span>
+<span class="fc" id="L446">                return;</span>
             }
         }
-<span class="fc bfc" id="L448" title="All 2 branches covered.">        if (hasPackageUrl()) {</span>
-<span class="fc" id="L449">            final Iterator&lt;Identifier&gt; itr = dependency.getSoftwareIdentifiers().iterator();</span>
-<span class="fc" id="L450">            boolean found = false;</span>
-<span class="fc bfc" id="L451" title="All 2 branches covered.">            while (itr.hasNext()) {</span>
-<span class="fc" id="L452">                final Identifier i = itr.next();</span>
-<span class="fc bfc" id="L453" title="All 2 branches covered.">                if (purlMatches(this.packageUrl, i)) {</span>
-<span class="fc" id="L454">                    found = true;</span>
-<span class="fc" id="L455">                    break;</span>
+<span class="fc bfc" id="L449" title="All 2 branches covered.">        if (hasPackageUrl()) {</span>
+<span class="fc" id="L450">            final Iterator&lt;Identifier&gt; itr = dependency.getSoftwareIdentifiers().iterator();</span>
+<span class="fc" id="L451">            boolean found = false;</span>
+<span class="fc bfc" id="L452" title="All 2 branches covered.">            while (itr.hasNext()) {</span>
+<span class="fc" id="L453">                final Identifier i = itr.next();</span>
+<span class="fc bfc" id="L454" title="All 2 branches covered.">                if (purlMatches(this.packageUrl, i)) {</span>
+<span class="fc" id="L455">                    found = true;</span>
+<span class="fc" id="L456">                    break;</span>
                 }
-<span class="fc" id="L457">            }</span>
-<span class="fc bfc" id="L458" title="All 2 branches covered.">            if (!found) {</span>
-<span class="fc" id="L459">                return;</span>
+<span class="fc" id="L458">            }</span>
+<span class="fc bfc" id="L459" title="All 2 branches covered.">            if (!found) {</span>
+<span class="fc" id="L460">                return;</span>
             }
         }
 
-<span class="fc bfc" id="L463" title="All 2 branches covered.">        if (this.hasCpe()) {</span>
-<span class="fc" id="L464">            final Set&lt;Identifier&gt; removalList = new HashSet&lt;&gt;();</span>
-<span class="fc bfc" id="L465" title="All 2 branches covered.">            for (Identifier i : dependency.getVulnerableSoftwareIdentifiers()) {</span>
-<span class="fc bfc" id="L466" title="All 2 branches covered.">                for (PropertyType c : this.cpe) {</span>
-<span class="fc bfc" id="L467" title="All 2 branches covered.">                    if (identifierMatches(c, i)) {</span>
-<span class="fc bfc" id="L468" title="All 2 branches covered.">                        if (!isBase()) {</span>
-<span class="fc bfc" id="L469" title="All 2 branches covered.">                            if (this.notes != null) {</span>
-<span class="fc" id="L470">                                i.setNotes(this.notes);</span>
+<span class="fc bfc" id="L464" title="All 2 branches covered.">        if (this.hasCpe()) {</span>
+<span class="fc" id="L465">            final Set&lt;Identifier&gt; removalList = new HashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L466" title="All 2 branches covered.">            for (Identifier i : dependency.getVulnerableSoftwareIdentifiers()) {</span>
+<span class="fc bfc" id="L467" title="All 2 branches covered.">                for (PropertyType c : this.cpe) {</span>
+<span class="fc bfc" id="L468" title="All 2 branches covered.">                    if (identifierMatches(c, i)) {</span>
+<span class="fc bfc" id="L469" title="All 2 branches covered.">                        if (!isBase()) {</span>
+<span class="fc bfc" id="L470" title="All 2 branches covered.">                            if (this.notes != null) {</span>
+<span class="fc" id="L471">                                i.setNotes(this.notes);</span>
                             }
-<span class="fc" id="L472">                            dependency.addSuppressedIdentifier(i);</span>
+<span class="fc" id="L473">                            dependency.addSuppressedIdentifier(i);</span>
                         }
-<span class="fc" id="L474">                        removalList.add(i);</span>
-<span class="fc" id="L475">                        break;</span>
+<span class="fc" id="L475">                        removalList.add(i);</span>
+<span class="fc" id="L476">                        break;</span>
                     }
-<span class="fc" id="L477">                }</span>
-<span class="fc" id="L478">            }</span>
-<span class="fc" id="L479">            removalList.forEach((i) -&gt; dependency.removeVulnerableSoftwareIdentifier(i));</span>
+<span class="fc" id="L478">                }</span>
+<span class="fc" id="L479">            }</span>
+<span class="fc" id="L480">            removalList.forEach((i) -&gt; dependency.removeVulnerableSoftwareIdentifier(i));</span>
         }
-<span class="fc bfc" id="L481" title="All 8 branches covered.">        if (hasCve() || hasVulnerabilityName() || hasCwe() || hasCvssBelow()) {</span>
-<span class="fc" id="L482">            final Set&lt;Vulnerability&gt; removeVulns = new HashSet&lt;&gt;();</span>
-<span class="fc bfc" id="L483" title="All 2 branches covered.">            for (Vulnerability v : dependency.getVulnerabilities()) {</span>
-<span class="fc" id="L484">                boolean remove = false;</span>
-<span class="fc bfc" id="L485" title="All 2 branches covered.">                for (String entry : this.cve) {</span>
-<span class="fc bfc" id="L486" title="All 2 branches covered.">                    if (entry.equalsIgnoreCase(v.getName())) {</span>
-<span class="fc" id="L487">                        removeVulns.add(v);</span>
-<span class="fc" id="L488">                        remove = true;</span>
-<span class="fc" id="L489">                        break;</span>
+<span class="fc bfc" id="L482" title="All 8 branches covered.">        if (hasCve() || hasVulnerabilityName() || hasCwe() || hasCvssBelow()) {</span>
+<span class="fc" id="L483">            final Set&lt;Vulnerability&gt; removeVulns = new HashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L484" title="All 2 branches covered.">            for (Vulnerability v : dependency.getVulnerabilities()) {</span>
+<span class="fc" id="L485">                boolean remove = false;</span>
+<span class="fc bfc" id="L486" title="All 2 branches covered.">                for (String entry : this.cve) {</span>
+<span class="fc bfc" id="L487" title="All 2 branches covered.">                    if (entry.equalsIgnoreCase(v.getName())) {</span>
+<span class="fc" id="L488">                        removeVulns.add(v);</span>
+<span class="fc" id="L489">                        remove = true;</span>
+<span class="fc" id="L490">                        break;</span>
                     }
-<span class="fc" id="L491">                }</span>
-<span class="pc bpc" id="L492" title="1 of 6 branches missed.">                if (!remove &amp;&amp; this.cwe != null &amp;&amp; !v.getCwes().isEmpty()) {</span>
-<span class="fc bfc" id="L493" title="All 2 branches covered.">                    for (String entry : this.cwe) {</span>
-<span class="fc" id="L494">                        final String toMatch = String.format(&quot;CWE-%s&quot;, entry);</span>
-<span class="pc bpc" id="L495" title="1 of 2 branches missed.">                        if (v.getCwes().stream().anyMatch(toTest -&gt; toMatch.regionMatches(0, toTest, 0, toMatch.length()))) {</span>
-<span class="fc" id="L496">                            remove = true;</span>
-<span class="fc" id="L497">                            removeVulns.add(v);</span>
-<span class="fc" id="L498">                            break;</span>
+<span class="fc" id="L492">                }</span>
+<span class="pc bpc" id="L493" title="1 of 6 branches missed.">                if (!remove &amp;&amp; this.cwe != null &amp;&amp; !v.getCwes().isEmpty()) {</span>
+<span class="fc bfc" id="L494" title="All 2 branches covered.">                    for (String entry : this.cwe) {</span>
+<span class="fc" id="L495">                        final String toMatch = String.format(&quot;CWE-%s&quot;, entry);</span>
+<span class="pc bpc" id="L496" title="1 of 2 branches missed.">                        if (v.getCwes().stream().anyMatch(toTest -&gt; toMatch.regionMatches(0, toTest, 0, toMatch.length()))) {</span>
+<span class="fc" id="L497">                            remove = true;</span>
+<span class="fc" id="L498">                            removeVulns.add(v);</span>
+<span class="fc" id="L499">                            break;</span>
                         }
-<span class="nc" id="L500">                    }</span>
+<span class="nc" id="L501">                    }</span>
                 }
-<span class="pc bpc" id="L502" title="1 of 4 branches missed.">                if (!remove &amp;&amp; v.getName() != null) {</span>
-<span class="fc bfc" id="L503" title="All 2 branches covered.">                    for (PropertyType entry : this.vulnerabilityNames) {</span>
-<span class="fc bfc" id="L504" title="All 2 branches covered.">                        if (entry.matches(v.getName())) {</span>
-<span class="fc" id="L505">                            remove = true;</span>
-<span class="fc" id="L506">                            removeVulns.add(v);</span>
-<span class="fc" id="L507">                            break;</span>
+<span class="pc bpc" id="L503" title="1 of 4 branches missed.">                if (!remove &amp;&amp; v.getName() != null) {</span>
+<span class="fc bfc" id="L504" title="All 2 branches covered.">                    for (PropertyType entry : this.vulnerabilityNames) {</span>
+<span class="fc bfc" id="L505" title="All 2 branches covered.">                        if (entry.matches(v.getName())) {</span>
+<span class="fc" id="L506">                            remove = true;</span>
+<span class="fc" id="L507">                            removeVulns.add(v);</span>
+<span class="fc" id="L508">                            break;</span>
                         }
 
-<span class="fc" id="L510">                    }</span>
+<span class="fc" id="L511">                    }</span>
                 }
-<span class="fc bfc" id="L512" title="All 2 branches covered.">                if (!remove) {</span>
-<span class="fc bfc" id="L513" title="All 2 branches covered.">                    for (float cvss : this.cvssBelow) {</span>
-<span class="pc bpc" id="L514" title="1 of 4 branches missed.">                        if (v.getCvssV2() != null &amp;&amp; v.getCvssV2().getScore() &lt; cvss) {</span>
-<span class="fc" id="L515">                            remove = true;</span>
-<span class="fc" id="L516">                            removeVulns.add(v);</span>
-<span class="fc" id="L517">                            break;</span>
+<span class="fc bfc" id="L513" title="All 2 branches covered.">                if (!remove) {</span>
+<span class="fc bfc" id="L514" title="All 2 branches covered.">                    for (float cvss : this.cvssBelow) {</span>
+<span class="pc bpc" id="L515" title="1 of 4 branches missed.">                        if (v.getCvssV2() != null &amp;&amp; v.getCvssV2().getScore() &lt; cvss) {</span>
+<span class="fc" id="L516">                            remove = true;</span>
+<span class="fc" id="L517">                            removeVulns.add(v);</span>
+<span class="fc" id="L518">                            break;</span>
                         }
-<span class="pc bpc" id="L519" title="3 of 4 branches missed.">                        if (v.getCvssV3() != null &amp;&amp; v.getCvssV3().getBaseScore() &lt; cvss) {</span>
-<span class="nc" id="L520">                            remove = true;</span>
-<span class="nc" id="L521">                            removeVulns.add(v);</span>
-<span class="nc" id="L522">                            break;</span>
+<span class="pc bpc" id="L520" title="3 of 4 branches missed.">                        if (v.getCvssV3() != null &amp;&amp; v.getCvssV3().getBaseScore() &lt; cvss) {</span>
+<span class="nc" id="L521">                            remove = true;</span>
+<span class="nc" id="L522">                            removeVulns.add(v);</span>
+<span class="nc" id="L523">                            break;</span>
                         }
-<span class="fc" id="L524">                    }</span>
+<span class="fc" id="L525">                    }</span>
                 }
-<span class="fc bfc" id="L526" title="All 2 branches covered.">                if (remove) {</span>
-<span class="pc bpc" id="L527" title="1 of 2 branches missed.">                    if (!isBase()) {</span>
-<span class="fc bfc" id="L528" title="All 2 branches covered.">                        if (this.notes != null) {</span>
-<span class="fc" id="L529">                            v.setNotes(this.notes);</span>
+<span class="fc bfc" id="L527" title="All 2 branches covered.">                if (remove) {</span>
+<span class="pc bpc" id="L528" title="1 of 2 branches missed.">                    if (!isBase()) {</span>
+<span class="fc bfc" id="L529" title="All 2 branches covered.">                        if (this.notes != null) {</span>
+<span class="fc" id="L530">                            v.setNotes(this.notes);</span>
                         }
-<span class="fc" id="L531">                        dependency.addSuppressedVulnerability(v);</span>
+<span class="fc" id="L532">                        dependency.addSuppressedVulnerability(v);</span>
                     }
                 }
-<span class="fc" id="L534">            }</span>
-<span class="fc" id="L535">            removeVulns.forEach((v) -&gt; {</span>
-<span class="fc" id="L536">                dependency.removeVulnerability(v);</span>
-<span class="fc" id="L537">            });</span>
+<span class="fc" id="L535">            }</span>
+<span class="fc" id="L536">            removeVulns.forEach((v) -&gt; {</span>
+<span class="fc" id="L537">                dependency.removeVulnerability(v);</span>
+<span class="fc" id="L538">            });</span>
         }
-<span class="fc" id="L539">    }</span>
+<span class="fc" id="L540">    }</span>
 
     /**
      * Identifies if the cpe specified by the cpe suppression rule does not
@@ -547,7 +548,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * false
      */
     protected boolean cpeHasNoVersion(PropertyType c) {
-<span class="pc bpc" id="L550" title="1 of 4 branches missed.">        return !c.isRegex() &amp;&amp; countCharacter(c.getValue(), ':') &lt;= 3;</span>
+<span class="pc bpc" id="L551" title="1 of 4 branches missed.">        return !c.isRegex() &amp;&amp; countCharacter(c.getValue(), ':') &lt;= 3;</span>
     }
 
     /**
@@ -559,13 +560,13 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return the number of times the character is found in the string
      */
     private int countCharacter(String str, char c) {
-<span class="fc" id="L562">        int count = 0;</span>
-<span class="fc" id="L563">        int pos = str.indexOf(c) + 1;</span>
-<span class="fc bfc" id="L564" title="All 2 branches covered.">        while (pos &gt; 0) {</span>
-<span class="fc" id="L565">            count += 1;</span>
-<span class="fc" id="L566">            pos = str.indexOf(c, pos) + 1;</span>
+<span class="fc" id="L563">        int count = 0;</span>
+<span class="fc" id="L564">        int pos = str.indexOf(c) + 1;</span>
+<span class="fc bfc" id="L565" title="All 2 branches covered.">        while (pos &gt; 0) {</span>
+<span class="fc" id="L566">            count += 1;</span>
+<span class="fc" id="L567">            pos = str.indexOf(c, pos) + 1;</span>
         }
-<span class="fc" id="L568">        return count;</span>
+<span class="fc" id="L569">        return count;</span>
     }
 
     /**
@@ -577,11 +578,11 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return true if the entry matches; otherwise false
      */
     protected boolean purlMatches(PropertyType suppressionEntry, Identifier identifier) {
-<span class="pc bpc" id="L580" title="1 of 2 branches missed.">        if (identifier instanceof PurlIdentifier) {</span>
-<span class="fc" id="L581">            final PurlIdentifier purl = (PurlIdentifier) identifier;</span>
-<span class="fc" id="L582">            return suppressionEntry.matches(purl.toString());</span>
+<span class="pc bpc" id="L581" title="1 of 2 branches missed.">        if (identifier instanceof PurlIdentifier) {</span>
+<span class="fc" id="L582">            final PurlIdentifier purl = (PurlIdentifier) identifier;</span>
+<span class="fc" id="L583">            return suppressionEntry.matches(purl.toString());</span>
         }
-<span class="nc" id="L584">        return false;</span>
+<span class="nc" id="L585">        return false;</span>
     }
 
     /**
@@ -593,37 +594,37 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      * @return true if the entry matches; otherwise false
      */
     protected boolean identifierMatches(PropertyType suppressionEntry, Identifier identifier) {
-<span class="fc bfc" id="L596" title="All 2 branches covered.">        if (identifier instanceof PurlIdentifier) {</span>
-<span class="fc" id="L597">            final PurlIdentifier purl = (PurlIdentifier) identifier;</span>
-<span class="fc" id="L598">            return suppressionEntry.matches(purl.toGav());</span>
-<span class="pc bpc" id="L599" title="1 of 2 branches missed.">        } else if (identifier instanceof CpeIdentifier) {</span>
+<span class="fc bfc" id="L597" title="All 2 branches covered.">        if (identifier instanceof PurlIdentifier) {</span>
+<span class="fc" id="L598">            final PurlIdentifier purl = (PurlIdentifier) identifier;</span>
+<span class="fc" id="L599">            return suppressionEntry.matches(purl.toGav());</span>
+<span class="pc bpc" id="L600" title="1 of 2 branches missed.">        } else if (identifier instanceof CpeIdentifier) {</span>
             //TODO check for regex - not just type
-<span class="fc" id="L601">            final Cpe cpeId = ((CpeIdentifier) identifier).getCpe();</span>
-<span class="fc bfc" id="L602" title="All 2 branches covered.">            if (suppressionEntry.isRegex()) {</span>
+<span class="fc" id="L602">            final Cpe cpeId = ((CpeIdentifier) identifier).getCpe();</span>
+<span class="fc bfc" id="L603" title="All 2 branches covered.">            if (suppressionEntry.isRegex()) {</span>
                 try {
-<span class="fc" id="L604">                    return suppressionEntry.matches(cpeId.toCpe22Uri());</span>
-<span class="nc" id="L605">                } catch (CpeEncodingException ex) {</span>
-<span class="nc" id="L606">                    LOGGER.debug(&quot;Unable to convert CPE to 22 URI?&quot; + cpeId.toString());</span>
-<span class="nc" id="L607">                }</span>
-<span class="fc bfc" id="L608" title="All 2 branches covered.">            } else if (suppressionEntry.isCaseSensitive()) {</span>
+<span class="fc" id="L605">                    return suppressionEntry.matches(cpeId.toCpe22Uri());</span>
+<span class="nc" id="L606">                } catch (CpeEncodingException ex) {</span>
+<span class="nc" id="L607">                    LOGGER.debug(&quot;Unable to convert CPE to 22 URI?&quot; + cpeId.toString());</span>
+<span class="nc" id="L608">                }</span>
+<span class="fc bfc" id="L609" title="All 2 branches covered.">            } else if (suppressionEntry.isCaseSensitive()) {</span>
                 try {
-<span class="fc" id="L610">                    return cpeId.toCpe22Uri().startsWith(suppressionEntry.getValue());</span>
-<span class="nc" id="L611">                } catch (CpeEncodingException ex) {</span>
-<span class="nc" id="L612">                    LOGGER.debug(&quot;Unable to convert CPE to 22 URI?&quot; + cpeId.toString());</span>
-<span class="nc" id="L613">                }</span>
+<span class="fc" id="L611">                    return cpeId.toCpe22Uri().startsWith(suppressionEntry.getValue());</span>
+<span class="nc" id="L612">                } catch (CpeEncodingException ex) {</span>
+<span class="nc" id="L613">                    LOGGER.debug(&quot;Unable to convert CPE to 22 URI?&quot; + cpeId.toString());</span>
+<span class="nc" id="L614">                }</span>
             } else {
                 final String id;
                 try {
-<span class="fc" id="L617">                    id = cpeId.toCpe22Uri().toLowerCase();</span>
-<span class="nc" id="L618">                } catch (CpeEncodingException ex) {</span>
-<span class="nc" id="L619">                    LOGGER.debug(&quot;Unable to convert CPE to 22 URI?&quot; + cpeId.toString());</span>
-<span class="nc" id="L620">                    return false;</span>
-<span class="fc" id="L621">                }</span>
-<span class="fc" id="L622">                final String check = suppressionEntry.getValue().toLowerCase();</span>
-<span class="fc" id="L623">                return id.startsWith(check);</span>
+<span class="fc" id="L618">                    id = cpeId.toCpe22Uri().toLowerCase();</span>
+<span class="nc" id="L619">                } catch (CpeEncodingException ex) {</span>
+<span class="nc" id="L620">                    LOGGER.debug(&quot;Unable to convert CPE to 22 URI?&quot; + cpeId.toString());</span>
+<span class="nc" id="L621">                    return false;</span>
+<span class="fc" id="L622">                }</span>
+<span class="fc" id="L623">                final String check = suppressionEntry.getValue().toLowerCase();</span>
+<span class="fc" id="L624">                return id.startsWith(check);</span>
             }
         }
-<span class="nc" id="L626">        return suppressionEntry.matches(identifier.getValue());</span>
+<span class="nc" id="L627">        return suppressionEntry.matches(identifier.getValue());</span>
     }
 
     /**
@@ -633,57 +634,58 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
      */
     @Override
     public String toString() {
-<span class="fc" id="L636">        final StringBuilder sb = new StringBuilder(64);</span>
-<span class="fc" id="L637">        sb.append(&quot;SuppressionRule{&quot;);</span>
-<span class="pc bpc" id="L638" title="1 of 2 branches missed.">        if (until != null) {</span>
-<span class="fc" id="L639">            sb.append(&quot;until=&quot;).append(until).append(',');</span>
+<span class="fc" id="L637">        final StringBuilder sb = new StringBuilder(64);</span>
+<span class="fc" id="L638">        sb.append(&quot;SuppressionRule{&quot;);</span>
+<span class="pc bpc" id="L639" title="1 of 2 branches missed.">        if (until != null) {</span>
+<span class="fc" id="L640">            String dt = DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(until);</span>
+<span class="fc" id="L641">            sb.append(&quot;until=&quot;).append(dt).append(',');</span>
         }
-<span class="pc bpc" id="L641" title="1 of 2 branches missed.">        if (filePath != null) {</span>
-<span class="nc" id="L642">            sb.append(&quot;filePath=&quot;).append(filePath).append(',');</span>
+<span class="pc bpc" id="L643" title="1 of 2 branches missed.">        if (filePath != null) {</span>
+<span class="nc" id="L644">            sb.append(&quot;filePath=&quot;).append(filePath).append(',');</span>
         }
-<span class="pc bpc" id="L644" title="1 of 2 branches missed.">        if (sha1 != null) {</span>
-<span class="fc" id="L645">            sb.append(&quot;sha1=&quot;).append(sha1).append(',');</span>
+<span class="pc bpc" id="L646" title="1 of 2 branches missed.">        if (sha1 != null) {</span>
+<span class="fc" id="L647">            sb.append(&quot;sha1=&quot;).append(sha1).append(',');</span>
         }
-<span class="pc bpc" id="L647" title="1 of 2 branches missed.">        if (gav != null) {</span>
-<span class="nc" id="L648">            sb.append(&quot;gav=&quot;).append(gav).append(',');</span>
+<span class="pc bpc" id="L649" title="1 of 2 branches missed.">        if (gav != null) {</span>
+<span class="nc" id="L650">            sb.append(&quot;gav=&quot;).append(gav).append(',');</span>
         }
-<span class="pc bpc" id="L650" title="2 of 4 branches missed.">        if (cpe != null &amp;&amp; !cpe.isEmpty()) {</span>
-<span class="nc" id="L651">            sb.append(&quot;cpe={&quot;);</span>
-<span class="nc" id="L652">            cpe.forEach((pt) -&gt; {</span>
-<span class="nc" id="L653">                sb.append(pt).append(',');</span>
-<span class="nc" id="L654">            });</span>
-<span class="nc" id="L655">            sb.append('}');</span>
+<span class="pc bpc" id="L652" title="2 of 4 branches missed.">        if (cpe != null &amp;&amp; !cpe.isEmpty()) {</span>
+<span class="nc" id="L653">            sb.append(&quot;cpe={&quot;);</span>
+<span class="nc" id="L654">            cpe.forEach((pt) -&gt; {</span>
+<span class="nc" id="L655">                sb.append(pt).append(',');</span>
+<span class="nc" id="L656">            });</span>
+<span class="nc" id="L657">            sb.append('}');</span>
         }
-<span class="pc bpc" id="L657" title="2 of 4 branches missed.">        if (cwe != null &amp;&amp; !cwe.isEmpty()) {</span>
-<span class="nc" id="L658">            sb.append(&quot;cwe={&quot;);</span>
-<span class="nc" id="L659">            cwe.forEach((s) -&gt; {</span>
-<span class="nc" id="L660">                sb.append(s).append(',');</span>
-<span class="nc" id="L661">            });</span>
-<span class="nc" id="L662">            sb.append('}');</span>
+<span class="pc bpc" id="L659" title="2 of 4 branches missed.">        if (cwe != null &amp;&amp; !cwe.isEmpty()) {</span>
+<span class="nc" id="L660">            sb.append(&quot;cwe={&quot;);</span>
+<span class="nc" id="L661">            cwe.forEach((s) -&gt; {</span>
+<span class="nc" id="L662">                sb.append(s).append(',');</span>
+<span class="nc" id="L663">            });</span>
+<span class="nc" id="L664">            sb.append('}');</span>
         }
-<span class="pc bpc" id="L664" title="2 of 4 branches missed.">        if (cve != null &amp;&amp; !cve.isEmpty()) {</span>
-<span class="fc" id="L665">            sb.append(&quot;cve={&quot;);</span>
-<span class="fc" id="L666">            cve.forEach((s) -&gt; {</span>
-<span class="fc" id="L667">                sb.append(s).append(',');</span>
-<span class="fc" id="L668">            });</span>
-<span class="fc" id="L669">            sb.append('}');</span>
+<span class="pc bpc" id="L666" title="2 of 4 branches missed.">        if (cve != null &amp;&amp; !cve.isEmpty()) {</span>
+<span class="fc" id="L667">            sb.append(&quot;cve={&quot;);</span>
+<span class="fc" id="L668">            cve.forEach((s) -&gt; {</span>
+<span class="fc" id="L669">                sb.append(s).append(',');</span>
+<span class="fc" id="L670">            });</span>
+<span class="fc" id="L671">            sb.append('}');</span>
         }
-<span class="pc bpc" id="L671" title="2 of 4 branches missed.">        if (vulnerabilityNames != null &amp;&amp; !vulnerabilityNames.isEmpty()) {</span>
-<span class="nc" id="L672">            sb.append(&quot;vulnerabilityName={&quot;);</span>
-<span class="nc" id="L673">            vulnerabilityNames.forEach((pt) -&gt; {</span>
-<span class="nc" id="L674">                sb.append(pt).append(',');</span>
-<span class="nc" id="L675">            });</span>
-<span class="nc" id="L676">            sb.append('}');</span>
+<span class="pc bpc" id="L673" title="2 of 4 branches missed.">        if (vulnerabilityNames != null &amp;&amp; !vulnerabilityNames.isEmpty()) {</span>
+<span class="nc" id="L674">            sb.append(&quot;vulnerabilityName={&quot;);</span>
+<span class="nc" id="L675">            vulnerabilityNames.forEach((pt) -&gt; {</span>
+<span class="nc" id="L676">                sb.append(pt).append(',');</span>
+<span class="nc" id="L677">            });</span>
+<span class="nc" id="L678">            sb.append('}');</span>
         }
-<span class="pc bpc" id="L678" title="2 of 4 branches missed.">        if (cvssBelow != null &amp;&amp; !cvssBelow.isEmpty()) {</span>
-<span class="nc" id="L679">            sb.append(&quot;cvssBelow={&quot;);</span>
-<span class="nc" id="L680">            cvssBelow.forEach((s) -&gt; {</span>
-<span class="nc" id="L681">                sb.append(s).append(',');</span>
-<span class="nc" id="L682">            });</span>
-<span class="nc" id="L683">            sb.append('}');</span>
+<span class="pc bpc" id="L680" title="2 of 4 branches missed.">        if (cvssBelow != null &amp;&amp; !cvssBelow.isEmpty()) {</span>
+<span class="nc" id="L681">            sb.append(&quot;cvssBelow={&quot;);</span>
+<span class="nc" id="L682">            cvssBelow.forEach((s) -&gt; {</span>
+<span class="nc" id="L683">                sb.append(s).append(',');</span>
+<span class="nc" id="L684">            });</span>
+<span class="nc" id="L685">            sb.append('}');</span>
         }
-<span class="fc" id="L685">        sb.append('}');</span>
-<span class="fc" id="L686">        return sb.toString();</span>
+<span class="fc" id="L687">        sb.append('}');</span>
+<span class="fc" id="L688">        return sb.toString();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

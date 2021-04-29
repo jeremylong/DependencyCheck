@@ -86,15 +86,16 @@ import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
 <span class="fc" id="L86">        final List&lt;DefCpeMatch&gt; cpeEntries = cve.getConfigurations().getNodes().stream()</span>
 <span class="fc" id="L87">                .collect(NodeFlatteningCollector.getInstance())</span>
 <span class="fc" id="L88">                .collect(CpeMatchStreamCollector.getInstance())</span>
-<span class="fc" id="L89">                .collect(Collectors.toList());</span>
-<span class="fc bfc" id="L90" title="All 4 branches covered.">        if (!cpeEntries.isEmpty() &amp;&amp; cpeEntries.size() &gt; 1) {</span>
-<span class="fc" id="L91">            final DefCpeMatch firstMatch = cpeEntries.get(0);</span>
-<span class="fc" id="L92">            final String uri = firstMatch.getCpe23Uri();</span>
-<span class="fc" id="L93">            final int pos = uri.indexOf(&quot;:&quot;, uri.indexOf(&quot;:&quot;, 10) + 1);</span>
-<span class="fc" id="L94">            final String match = uri.substring(0, pos + 1);</span>
-<span class="fc bfc" id="L95" title="All 2 branches covered.">            return !cpeEntries.stream().allMatch(e -&gt; e.getCpe23Uri().startsWith(match));</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">                .filter(defCpeMatch -&gt; defCpeMatch.getCpe23Uri() != null)</span>
+<span class="fc" id="L90">                .collect(Collectors.toList());</span>
+<span class="fc bfc" id="L91" title="All 4 branches covered.">        if (!cpeEntries.isEmpty() &amp;&amp; cpeEntries.size() &gt; 1) {</span>
+<span class="fc" id="L92">            final DefCpeMatch firstMatch = cpeEntries.get(0);</span>
+<span class="fc" id="L93">            final String uri = firstMatch.getCpe23Uri();</span>
+<span class="fc" id="L94">            final int pos = uri.indexOf(&quot;:&quot;, uri.indexOf(&quot;:&quot;, 10) + 1);</span>
+<span class="fc" id="L95">            final String match = uri.substring(0, pos + 1);</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">            return !cpeEntries.stream().allMatch(e -&gt; e.getCpe23Uri().startsWith(match));</span>
         }
-<span class="fc" id="L97">        return false;</span>
+<span class="fc" id="L98">        return false;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -16,16 +17,17 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
     &quot;problemtype_data&quot;
 })
-<span class="fc" id="L19">public class Problemtype {</span>
+@Generated(&quot;jsonschema2pojo&quot;)
+<span class="fc" id="L21">public class Problemtype {</span>
 
     /**
      * 
      * (Required)
      * 
      */
-<span class="fc" id="L26">    @JsonProperty(&quot;problemtype_data&quot;)</span>
+<span class="fc" id="L28">    @JsonProperty(&quot;problemtype_data&quot;)</span>
     private List&lt;ProblemtypeDatum&gt; problemtypeData = new ArrayList&lt;ProblemtypeDatum&gt;();
-<span class="fc" id="L28">    @JsonIgnore</span>
+<span class="fc" id="L30">    @JsonIgnore</span>
     private Map&lt;String, Object&gt; additionalProperties = new HashMap&lt;String, Object&gt;();
 
     /**
@@ -35,7 +37,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
      */
     @JsonProperty(&quot;problemtype_data&quot;)
     public List&lt;ProblemtypeDatum&gt; getProblemtypeData() {
-<span class="fc" id="L38">        return problemtypeData;</span>
+<span class="fc" id="L40">        return problemtypeData;</span>
     }
 
     /**
@@ -45,57 +47,57 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
      */
     @JsonProperty(&quot;problemtype_data&quot;)
     public void setProblemtypeData(List&lt;ProblemtypeDatum&gt; problemtypeData) {
-<span class="fc" id="L48">        this.problemtypeData = problemtypeData;</span>
-<span class="fc" id="L49">    }</span>
+<span class="fc" id="L50">        this.problemtypeData = problemtypeData;</span>
+<span class="fc" id="L51">    }</span>
 
     @JsonAnyGetter
     public Map&lt;String, Object&gt; getAdditionalProperties() {
-<span class="nc" id="L53">        return this.additionalProperties;</span>
+<span class="nc" id="L55">        return this.additionalProperties;</span>
     }
 
     @JsonAnySetter
     public void setAdditionalProperty(String name, Object value) {
-<span class="nc" id="L58">        this.additionalProperties.put(name, value);</span>
-<span class="nc" id="L59">    }</span>
+<span class="nc" id="L60">        this.additionalProperties.put(name, value);</span>
+<span class="nc" id="L61">    }</span>
 
     @Override
     public String toString() {
-<span class="nc" id="L63">        StringBuilder sb = new StringBuilder();</span>
-<span class="nc" id="L64">        sb.append(Problemtype.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');</span>
-<span class="nc" id="L65">        sb.append(&quot;problemtypeData&quot;);</span>
-<span class="nc" id="L66">        sb.append('=');</span>
-<span class="nc bnc" id="L67" title="All 2 branches missed.">        sb.append(((this.problemtypeData == null)?&quot;&lt;null&gt;&quot;:this.problemtypeData));</span>
-<span class="nc" id="L68">        sb.append(',');</span>
-<span class="nc" id="L69">        sb.append(&quot;additionalProperties&quot;);</span>
-<span class="nc" id="L70">        sb.append('=');</span>
-<span class="nc bnc" id="L71" title="All 2 branches missed.">        sb.append(((this.additionalProperties == null)?&quot;&lt;null&gt;&quot;:this.additionalProperties));</span>
-<span class="nc" id="L72">        sb.append(',');</span>
-<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (sb.charAt((sb.length()- 1)) == ',') {</span>
-<span class="nc" id="L74">            sb.setCharAt((sb.length()- 1), ']');</span>
+<span class="nc" id="L65">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L66">        sb.append(Problemtype.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');</span>
+<span class="nc" id="L67">        sb.append(&quot;problemtypeData&quot;);</span>
+<span class="nc" id="L68">        sb.append('=');</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        sb.append(((this.problemtypeData == null)?&quot;&lt;null&gt;&quot;:this.problemtypeData));</span>
+<span class="nc" id="L70">        sb.append(',');</span>
+<span class="nc" id="L71">        sb.append(&quot;additionalProperties&quot;);</span>
+<span class="nc" id="L72">        sb.append('=');</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        sb.append(((this.additionalProperties == null)?&quot;&lt;null&gt;&quot;:this.additionalProperties));</span>
+<span class="nc" id="L74">        sb.append(',');</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        if (sb.charAt((sb.length()- 1)) == ',') {</span>
+<span class="nc" id="L76">            sb.setCharAt((sb.length()- 1), ']');</span>
         } else {
-<span class="nc" id="L76">            sb.append(']');</span>
+<span class="nc" id="L78">            sb.append(']');</span>
         }
-<span class="nc" id="L78">        return sb.toString();</span>
+<span class="nc" id="L80">        return sb.toString();</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L83">        int result = 1;</span>
-<span class="nc bnc" id="L84" title="All 2 branches missed.">        result = ((result* 31)+((this.problemtypeData == null)? 0 :this.problemtypeData.hashCode()));</span>
-<span class="nc bnc" id="L85" title="All 2 branches missed.">        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));</span>
-<span class="nc" id="L86">        return result;</span>
+<span class="nc" id="L85">        int result = 1;</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        result = ((result* 31)+((this.problemtypeData == null)? 0 :this.problemtypeData.hashCode()));</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));</span>
+<span class="nc" id="L88">        return result;</span>
     }
 
     @Override
     public boolean equals(Object other) {
-<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (other == this) {</span>
-<span class="nc" id="L92">            return true;</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        if (other == this) {</span>
+<span class="nc" id="L94">            return true;</span>
         }
-<span class="nc bnc" id="L94" title="All 2 branches missed.">        if ((other instanceof Problemtype) == false) {</span>
-<span class="nc" id="L95">            return false;</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        if ((other instanceof Problemtype) == false) {</span>
+<span class="nc" id="L97">            return false;</span>
         }
-<span class="nc" id="L97">        Problemtype rhs = ((Problemtype) other);</span>
-<span class="nc bnc" id="L98" title="All 12 branches missed.">        return (((this.problemtypeData == rhs.problemtypeData)||((this.problemtypeData!= null)&amp;&amp;this.problemtypeData.equals(rhs.problemtypeData)))&amp;&amp;((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&amp;&amp;this.additionalProperties.equals(rhs.additionalProperties))));</span>
+<span class="nc" id="L99">        Problemtype rhs = ((Problemtype) other);</span>
+<span class="nc bnc" id="L100" title="All 12 branches missed.">        return (((this.problemtypeData == rhs.problemtypeData)||((this.problemtypeData!= null)&amp;&amp;this.problemtypeData.equals(rhs.problemtypeData)))&amp;&amp;((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&amp;&amp;this.additionalProperties.equals(rhs.additionalProperties))));</span>
     }
 
 }
