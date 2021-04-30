@@ -983,7 +983,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                             #elseif ($vuln.getVulnerableSoftware().size()!=0)
                                 <p>Vulnerable Software &amp; Versions ($vuln.getSource().name()):
                                     <ul>
-                                    #foreach($vs in $vuln.getVulnerableSoftware())
+                                    #foreach($vs in $vuln.getVulnerableSoftware(true))
                                         <li class="vs$vsctr">$enc.html($vs.toString())</li>
                                     #end
                                     </ul>
@@ -1151,7 +1151,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                     #else
                                         <p>Vulnerable Software &amp; Versions ($vuln.getSource().name()):
                                             <ul>
-                                            #foreach($vs in $vuln.getVulnerableSoftware())
+                                            #foreach($vs in $vuln.getVulnerableSoftware(true))
                                                 <li class="vs$vsctr">$enc.html($vs.toString())</li>
                                             #end
                                             </ul>

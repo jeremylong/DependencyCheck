@@ -476,8 +476,10 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
 
     /**
      * Attempts to convert a given JavaScript identifier to a web jar CPE.
+     *
      * @param id a JavaScript CPE
-     * @return a Maven CPE for a web jar if conversion is possible; otherwise the original CPE is returned
+     * @return a Maven CPE for a web jar if conversion is possible; otherwise
+     * the original CPE is returned
      */
     private String identifierToWebJarForCompairson(Identifier id) {
         if (id instanceof PurlIdentifier) {
@@ -529,8 +531,8 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
      * @return <code>true</code> if the leftPath is the shortest; otherwise
      * <code>false</code>
      */
-    protected boolean firstPathIsShortest(String left, String right) {
-        if (left.contains("dctemp")) {
+    public static boolean firstPathIsShortest(String left, String right) {
+        if (left.contains("dctemp") && !right.contains("dctemp")) {
             return false;
         }
         final String leftPath = left.replace('\\', '/');
@@ -552,7 +554,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
      * @param c the character to count
      * @return the number of times the character is present in the string
      */
-    private int countChar(String string, char c) {
+    private static int countChar(String string, char c) {
         int count = 0;
         final int max = string.length();
         for (int i = 0; i < max; i++) {

@@ -80,6 +80,7 @@ import static org.owasp.dependencycheck.analyzer.AnalysisPhase.POST_INFORMATION_
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.PRE_FINDING_ANALYSIS;
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.PRE_IDENTIFIER_ANALYSIS;
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.PRE_INFORMATION_COLLECTION;
+import org.owasp.dependencycheck.analyzer.DependencyBundlingAnalyzer;
 
 /**
  * Scans files, directories, etc. for Dependencies. Analyzers are loaded and
@@ -553,9 +554,18 @@ public class Engine implements FileFilter, AutoCloseable {
                             }
                             if (existing.getActualFilePath() != null && dependency.getActualFilePath() != null
                                     && !existing.getActualFilePath().equals(dependency.getActualFilePath())) {
-                                existing.addRelatedDependency(dependency);
-                            } else {
-                                dependency = existing;
+
+                                if (DependencyBundlingAnalyzer.firstPathIsShortest(existing.getFilePath(), dependency.getFilePath())) {
+                                    DependencyBundlingAnalyzer.mergeDependencies(existing, dependency, null);
+                                    return null;
+                                } else {
+                                    //Merging dependency<-existing could be complicated. Instead analyze them seperately
+                                    //and possibly merge them at the end.
+                                    found = false;
+                                }
+
+                            } else { //somehow we scanned the same file twice?
+                                return null;
                             }
                             break;
                         }

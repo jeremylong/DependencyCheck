@@ -47,8 +47,10 @@ import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import org.apache.commons.compress.utils.IOUtils;
 
 import org.owasp.dependencycheck.Engine;
+import static org.owasp.dependencycheck.analyzer.AbstractNpmAnalyzer.shouldProcess;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
+import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
@@ -224,6 +226,30 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
         }
+    }
+
+    /**
+     * Determines if the file can be analyzed by the analyzer. If the npm
+     * analyzer are enabled the archive analyzer will skip the node_modules and
+     * bower_modules directories.
+     *
+     * @param pathname the path to the file
+     * @return true if the file can be analyzed by the given analyzer; otherwise
+     * false
+     */
+    @Override
+    public boolean accept(File pathname) {
+        boolean accept = super.accept(pathname);
+        boolean npmEnabled = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, false);
+        boolean yarnEnabled = getSettings().getBoolean(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, false);
+        if (accept && (npmEnabled || yarnEnabled)) {
+            try {
+                accept = shouldProcess(pathname);
+            } catch (AnalysisException ex) {
+                throw new UnexpectedAnalysisException(ex.getMessage(), ex.getCause());
+            }
+        }
+        return accept;
     }
 
     /**
@@ -469,10 +495,10 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Checks if the file being scanned is a JAR or WAR that begins with '#!/bin' which
-     * indicates it is a fully executable jar. If a fully executable JAR is
-     * identified the input stream will be advanced to the start of the actual
-     * JAR file ( skipping the script).
+     * Checks if the file being scanned is a JAR or WAR that begins with
+     * '#!/bin' which indicates it is a fully executable jar. If a fully
+     * executable JAR is identified the input stream will be advanced to the
+     * start of the actual JAR file ( skipping the script).
      *
      * @see
      * <a href="http://docs.spring.io/spring-boot/docs/1.3.0.BUILD-SNAPSHOT/reference/htmlsingle/#deployment-install">Installing
