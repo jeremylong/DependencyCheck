@@ -4352,4 +4352,11 @@
         <packageUrl regex="true">^pkg:maven/org\.owasp/csrfguard\-.*$</packageUrl>
         <cpe>cpe:/a:php:com_extensions</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        As per #3270 groupIds io.quarkus.security, io.quarkus.http and io.quarkus.gizmo have their own CPE and are not linked to the main quarkus:quarkus CPE
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.quarkus\.(security|gizmo|http)/.*$</packageUrl>
+        <cpe>cpe:/a:quarkus:quarkus</cpe>
+    </suppress>
 </suppressions>
