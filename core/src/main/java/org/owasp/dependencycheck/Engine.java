@@ -544,8 +544,9 @@ public class Engine implements FileFilter, AutoCloseable {
                 if (sha1 != null) {
                     for (Dependency existing : dependencies) {
                         if (sha1.equals(existing.getSha1sum())) {
-                            if (existing.getFileName().contains(": ") || dependency.getFileName().contains(": ")) {
-                                //TODO this won't be quite right 100% of the time. Its possible that the ": " would get added later
+                            if (existing.getDisplayFileName().contains(": ") 
+                                    || dependency.getDisplayFileName().contains(": ") 
+                                    || dependency.getActualFilePath().contains("dctemp")) {
                                 continue;
                             }
                             found = true;
@@ -1175,6 +1176,7 @@ public class Engine implements FileFilter, AutoCloseable {
             throw new UnsupportedOperationException("Cannot generate report in evidence collection mode.");
         }
         final DatabaseProperties prop = database.getDatabaseProperties();
+        
         final ReportGenerator r = new ReportGenerator(applicationName, groupId, artifactId, version,
                 dependencies, getAnalyzers(), prop, settings, exceptions);
         try {

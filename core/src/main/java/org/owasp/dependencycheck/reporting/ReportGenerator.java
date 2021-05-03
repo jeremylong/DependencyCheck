@@ -249,9 +249,7 @@ public class ReportGenerator {
 
         final VelocityContext ctxt = new VelocityContext();
         ctxt.put("applicationName", applicationName);
-        Collections.sort(dependencies, (d1, d2) -> {
-            return d1.getDisplayFileName().compareTo(d2.getDisplayFileName());
-        });
+        Collections.sort(dependencies, Dependency.NameComparator);
         ctxt.put("dependencies", dependencies);
         ctxt.put("analyzers", analyzers);
         ctxt.put("properties", properties);
