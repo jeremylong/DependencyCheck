@@ -46,6 +46,7 @@ import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
+import java.util.TreeSet;
 import org.owasp.dependencycheck.utils.SeverityUtil;
 
 /**
@@ -316,7 +317,7 @@ public class App {
      * @return returns the set of identified files
      */
     private Set<File> scanAntStylePaths(List<String> antStylePaths, int symLinkDepth, String[] excludes) {
-        final Set<File> paths = new HashSet<>();
+        final Set<File> paths = new TreeSet<>();
         for (String file : antStylePaths) {
             LOGGER.debug("Scanning {}", file);
             final DirectoryScanner scanner = new DirectoryScanner();
