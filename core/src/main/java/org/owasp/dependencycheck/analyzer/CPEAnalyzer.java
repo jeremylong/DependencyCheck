@@ -383,6 +383,19 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                                 addTerm(temp, term.getKey() + version);
                             });
                 });
+        products.entrySet().stream()
+                .filter(term -> term.getKey() != null)
+                .forEach(term -> {
+                    majorVersions.stream()
+                            .filter(version -> version != null)
+                            .map(version -> "v" + version)
+                            .filter(version -> (!term.getKey().endsWith(version)
+                            && !Character.isDigit(term.getKey().charAt(term.getKey().length() - 1))
+                            && !products.containsKey(term.getKey() + version)))
+                            .forEach(version -> {
+                                addTerm(temp, term.getKey() + version);
+                            });
+                });
         products.putAll(temp);
     }
 
@@ -644,6 +657,12 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 isValid = true;
             } else {
                 isValid = majorVersions.stream().filter(version
+                        -> version != null && entry.getProduct().endsWith("v" + version) && entry.getProduct().length() > version.length() + 1)
+                        .anyMatch(version
+                                -> collectionContainsString(dependency.getEvidence(EvidenceType.PRODUCT),
+                                entry.getProduct().substring(0, entry.getProduct().length() - version.length() - 1))
+                        );
+                isValid |= majorVersions.stream().filter(version
                         -> version != null && entry.getProduct().endsWith(version) && entry.getProduct().length() > version.length())
                         .anyMatch(version
                                 -> collectionContainsString(dependency.getEvidence(EvidenceType.PRODUCT),
