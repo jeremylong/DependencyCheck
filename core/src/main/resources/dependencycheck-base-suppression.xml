@@ -947,6 +947,14 @@
         <cpe>cpe:/a:atlassian:jira</cpe>
         <cpe>cpe:/a:atlassian:jira_core</cpe>
     </suppress>
+    <suppress  base="true">
+        <notes><![CDATA[
+        FP per #2859
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.atlassian\.jira/jira\-rest\-java\-client\-app@.*$</packageUrl>
+        <cpe>cpe:/a:atlassian:jira</cpe>
+        <cpe>cpe:/a:atlassian:jira_core</cpe>
+    </suppress>
     <suppress base="true">
         <notes><![CDATA[
         Suppresses false positives per issue #2298
