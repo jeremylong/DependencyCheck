@@ -302,6 +302,7 @@ public class App {
                         || (v.getUnscoredSeverity() != null && SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) >= cvssFailScore)
                         || (cvssFailScore <= 0.0f)) { //safety net to fail on any if for some reason the above misses on 0
                     retCode = 1;
+                    break;
                 }
             }
         }
