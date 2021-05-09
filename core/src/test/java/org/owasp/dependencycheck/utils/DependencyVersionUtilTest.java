@@ -75,6 +75,14 @@ public class DependencyVersionUtilTest extends BaseTest {
         expResult = DependencyVersionUtil.parseVersion("2.1.1.rc1");
         result = DependencyVersionUtil.parseVersion(text, firstMatchOnly);
         assertEquals(expResult, result);
+
+        result = DependencyVersionUtil.parseVersion("1.0.0-RC", firstMatchOnly);
+        assertEquals(4, result.getVersionParts().size());
+        assertEquals("rc", result.getVersionParts().get(3));
+
+        result = DependencyVersionUtil.parseVersion("1.0.0-RC2", firstMatchOnly);
+        assertEquals(4, result.getVersionParts().size());
+        assertEquals("rc2", result.getVersionParts().get(3));
     }
 
     /**

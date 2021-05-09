@@ -302,6 +302,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         || dependency.getFileName().toLowerCase().endsWith(".tar")
                         || dependency.getFileName().toLowerCase().endsWith(".gz")
                         || dependency.getFileName().toLowerCase().endsWith(".tgz")
+                        || dependency.getFileName().toLowerCase().endsWith(".rpm")
                         || dependency.getFileName().toLowerCase().endsWith(".ear")
                         || dependency.getFileName().toLowerCase().endsWith(".war"))) {
                     dependency.removeVulnerableSoftwareIdentifier(i);

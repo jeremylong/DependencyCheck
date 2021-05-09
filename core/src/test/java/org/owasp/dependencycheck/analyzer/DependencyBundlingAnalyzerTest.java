@@ -110,6 +110,13 @@ public class DependencyBundlingAnalyzerTest extends BaseTest {
         expResult = true;
         result = instance.isCore(left, right);
         assertEquals(expResult, result);
+
+        left.setFileName("struts-1.2.7.jar");
+        right.setFileName("struts-1.2.9-162.35.1.uyuni.noarch.rpm");
+
+        expResult = true;
+        result = instance.isCore(left, right);
+        assertEquals(expResult, result);
     }
 
     @Test

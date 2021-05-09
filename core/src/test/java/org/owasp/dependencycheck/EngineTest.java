@@ -53,7 +53,6 @@ public class EngineTest extends BaseDBTestCase {
             Dependency secondDwr = instance.scanFile(file);
 
             assertEquals(2, instance.getDependencies().length);
-            assertEquals(dwr, secondDwr);
         }
     }
 }

@@ -118,7 +118,7 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws AnalysisException thrown if the canonical path cannot be obtained
      * from the given file
      */
-    protected boolean shouldProcess(File pathname) throws AnalysisException {
+    public static boolean shouldProcess(File pathname) throws AnalysisException {
         try {
             // Do not scan the node_modules (or bower_components) directory
             final String canonicalPath = pathname.getCanonicalPath();

@@ -24,7 +24,6 @@ More information about dependency-check can be found here:
 
 * [How does dependency-check work](general/internals.html)
 * [How to read the report](general/thereport.html)
-* [The OWASP dependency-check mailing list](./mail-lists.html)
 
 OWASP dependency-check's core analysis engine can be used as:
 

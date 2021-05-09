@@ -20,6 +20,8 @@
           #end
           }
       },
+      #set($idCounter=1)
+      #set($vidCounter=1)
       "artifacts": [
         #foreach($dependency in $dependencies)#if($foreach.count > 1),#end{
           #if($dependency.description)
@@ -42,14 +44,16 @@
             #if($dependency.getSoftwareIdentifiers() && $dependency.getSoftwareIdentifiers().size()>0)
                 #foreach($id in $dependency.getSoftwareIdentifiers())
                     #if($needsComma==1 || $foreach.count > 1),#end
-                    "id$foreach.count": "$enc.json($id.value)"
+                    "id$idCounter": "$enc.json($id.value)"
+                    #set($idCounter=$idCounter+1)
                 #end
                 #set($needsComma=1)
             #end
             #if($dependency.getVulnerableSoftwareIdentifiers() && $dependency.getVulnerableSoftwareIdentifiers().size()>0)
                 #foreach($id in $dependency.getVulnerableSoftwareIdentifiers())
                     #if($needsComma==1 || $foreach.count > 1),#end
-                    "vid$foreach.count": "$enc.json($id.value)"
+                    "vid$vidCounter": "$enc.json($id.value)"
+                    #set($vidCounter=$vidCounter+1)
                 #end
             #end
           }

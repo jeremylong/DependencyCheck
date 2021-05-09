@@ -237,7 +237,7 @@
                     }#end
                 ],
                 "vulnerableSoftware": [
-                    #foreach($vs in $vuln.getVulnerableSoftware())
+                    #foreach($vs in $vuln.getVulnerableSoftware(true))
                         #if($foreach.count > 1),#end {
                         "software": { 
                             "id":"$enc.json($vs.toCpe23FS())"
@@ -314,7 +314,7 @@
                     }#end
                 ],
                 "vulnerableSoftware": [
-                    #foreach($vs in $vuln.getVulnerableSoftware())
+                    #foreach($vs in $vuln.getVulnerableSoftware(true))
                         #if($foreach.count > 1),#end {
                         "software": { 
                             "id":"$enc.json($vs.toCpe23FS())"

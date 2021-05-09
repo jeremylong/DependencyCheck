@@ -28,27 +28,28 @@ jobs:
       - uses: actions/checkout@v2
       - name: Check Maven Cache
         id: maven-cache
-        uses: actions/cache@v2.1.4
+        uses: actions/cache@v2.1.5
         with:
           path: ~/.m2/repository/
           key: mvn-repo
       - name: Check Local Maven Cache
         id: maven-it-cache
-        uses: actions/cache@v2.1.4
+        uses: actions/cache@v2.1.5
         with:
           path: maven/target/local-repo
           key: mvn-it-repo
       - name: Check ODC Data Cache
         id: odc-data-cache
-        uses: actions/cache@v2.1.4
+        uses: actions/cache@v2.1.5
         with:
           path: core/target/data
           key: odc-data
       - name: Set up JDK 1.8
         id: jdk-8
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
-          java-version: 1.8 
+          java-version: 8
+          distribution: 'zulu'
           server-id: ossrh
           server-username: ${{ secrets.OSSRH_USERNAME }}
           server-password: ${{ secrets.OSSRH_TOKEN }}
@@ -63,7 +64,11 @@ jobs:
         run: |
           mvn -s settings.xml release:prepare --no-transfer-progress --batch-mode
           git reset --hard HEAD~1
-          git push origin release --tags
+          git push origin release
+          git fetch origin main
+          git checkout main
+          git merge release
+          git push origin main --tags
       - name: Get version
         run: |
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
@@ -136,13 +141,13 @@ jobs:
     steps:
       - name: Check Maven Cache
         id: maven-cache
-        uses: actions/cache@v2.1.4
+        uses: actions/cache@v2.1.5
         with:
           path: ~/.m2/repository/
           key: mvn-repo
       - name: Check Docker ODC Cache
         id: docker-odc-cache
-        uses: actions/cache@v2.1.4
+        uses: actions/cache@v2.1.5
         with:
           path: ~/OWASP-Dependency-Check
           key: docker-repo
@@ -193,12 +198,10 @@ jobs:
           release_name: Version ${{ env.VERSION }}
           body: |
             Changes in this Release
-            - Fixed a bug in the Sarif report generation.
-            - Fixed a bug with the Ant task not being able to read the dependency-check properties file in 6.1.1.
-            - Added a new CPE matching strategy to reduce false negatives.
-            - CLI and Ant task will no longer be published to bintray.
-            - Several minor bug fixes.
-            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/22?closed=1).
+            - Resolved issue with Sarif report (#3243)
+            - Resolved issue with Ruby Bundle Audit (#3256)
+            - Several minor bug fixes and updates to reduce false positives
+            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/26?closed=1).
           draft: false
           prerelease: false
       - name: Upload CLI
@@ -260,7 +263,7 @@ jobs:
         run: ls -R
         working-directory: target
       - name: Deploy gh-pages
-        uses: JamesIves/github-pages-deploy-action@4.1.0
+        uses: JamesIves/github-pages-deploy-action@4.1.1
         with:
           branch: gh-pages
           folder: target/staging
@@ -273,7 +276,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          ref: release
+          ref: main
       - name: Configure Git user
         run: |
           git config user.email "actions@github.com"
@@ -284,8 +287,5 @@ jobs:
         run: |
           mvn --batch-mode release:update-versions
           git commit -am 'snapshot version'
-          git fetch origin main
-          git checkout main
-          git merge release
           git push origin main
           git push origin --delete release

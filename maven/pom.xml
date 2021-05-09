@@ -20,7 +20,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>6.1.3-SNAPSHOT</version>
+        <version>6.1.7-SNAPSHOT</version>
     </parent>
     <artifactId>dependency-check-maven</artifactId>
     <packaging>maven-plugin</packaging>
@@ -28,13 +28,13 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
     <description>dependency-check-maven is a Maven Plugin that uses dependency-check-core to detect publicly disclosed vulnerabilities associated with the project's dependencies. The plugin will generate a report listing the dependency, any identified Common Platform Enumeration (CPE) identifiers, and the associated Common Vulnerability and Exposure (CVE) entries.</description>
     <inceptionYear>2013</inceptionYear>
     <properties>
-        <version.maven-plugin-plugin>3.6.0</version.maven-plugin-plugin>
+        <version.maven-plugin-plugin>3.6.1</version.maven-plugin-plugin>
     </properties>
     <scm>
         <connection>scm:git:https://github.com/jeremylong/DependencyCheck.git</connection>
         <url>https://github.com/jeremylong/DependencyCheck/tree/master/maven</url>
         <developerConnection>scm:git:git@github.com:jeremylong/DependencyCheck.git</developerConnection>
-        <tag>v6.0.5</tag>
+        <tag>v6.1.6</tag>
     </scm>
     <prerequisites>
         <maven>${maven.api.version}</maven>

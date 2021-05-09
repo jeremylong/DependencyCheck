@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
+import org.apache.commons.lang3.StringUtils;
 
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -85,6 +86,10 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      * Advisory.
      */
     public static final String ADVISORY = "Advisory: ";
+    /**
+     * CVE.
+     */
+    public static final String CVE = "CVE: ";
     /**
      * Criticality.
      */
@@ -269,9 +274,6 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                     failed = false;
                 }
             }
-            if (failed) {
-                LOGGER.warn("Did not find {}.", className);
-            }
             needToDisableGemspecAnalyzer = false;
         }
         final File parentFile = dependency.getActualFile().getParentFile();
@@ -283,7 +285,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
 
             processReader.readAll();
             final String error = processReader.getError();
-            if (error != null) {
+            if (StringUtils.isNoneBlank(error)) {
                 LOGGER.warn("Warnings from bundle-audit {}", error);
             }
             final int exitValue = process.exitValue();

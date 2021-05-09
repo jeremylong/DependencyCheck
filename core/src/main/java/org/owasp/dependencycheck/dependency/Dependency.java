@@ -33,10 +33,12 @@ import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 import org.apache.commons.lang3.StringUtils;
 
@@ -99,7 +101,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
     /**
      * A collection of related dependencies.
      */
-    private final Set<Dependency> relatedDependencies = new HashSet<>();
+    private final SortedSet<Dependency> relatedDependencies = new TreeSet<>(Dependency.NameComparator);
     /**
      * A list of projects that reference this dependency.
      */
@@ -741,7 +743,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @return the unmodifiable set of relatedDependencies
      */
     public synchronized Set<Dependency> getRelatedDependencies() {
-        return Collections.unmodifiableSet(new HashSet<>(relatedDependencies));
+        return Collections.unmodifiableSet(new TreeSet<>(relatedDependencies));
     }
 
     /**
@@ -941,6 +943,14 @@ public class Dependency extends EvidenceCollection implements Serializable {
     public void setEcosystem(String ecosystem) {
         this.ecosystem = ecosystem;
     }
+
+    /**
+     * Simple sorting by display file name and actual file path.
+     */
+    public static Comparator<Dependency> NameComparator
+            = (Dependency d1, Dependency d2)
+            -> (d1.getDisplayFileName() + d1.getFilePath())
+                    .compareTo(d2.getDisplayFileName() + d2.getFilePath());
 
     /**
      * A hashing function shortcut.

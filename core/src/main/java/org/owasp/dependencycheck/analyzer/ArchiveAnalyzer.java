@@ -35,6 +35,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.cpio.CpioArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
@@ -45,10 +46,13 @@ import org.apache.commons.compress.compressors.bzip2.BZip2Utils;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import org.apache.commons.compress.utils.IOUtils;
-
+import org.eclipse.packager.rpm.RpmTag;
+import org.eclipse.packager.rpm.parse.RpmInputStream;
 import org.owasp.dependencycheck.Engine;
+import static org.owasp.dependencycheck.analyzer.AbstractNpmAnalyzer.shouldProcess;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
+import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
@@ -105,14 +109,14 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * in {@link #extractFiles(File, File, Engine)}.
      */
     private static final Set<String> EXTENSIONS = Collections.unmodifiableSet(
-            newHashSet("tar", "gz", "tgz", "bz2", "tbz2"));
+            newHashSet("tar", "gz", "tgz", "bz2", "tbz2", "rpm"));
 
     /**
      * Detects files with extensions to remove from the engine's collection of
      * dependencies.
      */
     private static final FileFilter REMOVE_FROM_ANALYSIS = FileFilterBuilder.newInstance()
-            .addExtensions("zip", "tar", "gz", "tgz", "bz2", "tbz2", "nupkg").build();
+            .addExtensions("zip", "tar", "gz", "tgz", "bz2", "tbz2", "nupkg", "rpm").build();
     /**
      * Detects files with .zip extension.
      */
@@ -224,6 +228,30 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
         }
+    }
+
+    /**
+     * Determines if the file can be analyzed by the analyzer. If the npm
+     * analyzer are enabled the archive analyzer will skip the node_modules and
+     * bower_modules directories.
+     *
+     * @param pathname the path to the file
+     * @return true if the file can be analyzed by the given analyzer; otherwise
+     * false
+     */
+    @Override
+    public boolean accept(File pathname) {
+        boolean accept = super.accept(pathname);
+        boolean npmEnabled = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, false);
+        boolean yarnEnabled = getSettings().getBoolean(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, false);
+        if (accept && (npmEnabled || yarnEnabled)) {
+            try {
+                accept = shouldProcess(pathname);
+            } catch (AnalysisException ex) {
+                throw new UnexpectedAnalysisException(ex.getMessage(), ex.getCause());
+            }
+        }
+        return accept;
     }
 
     /**
@@ -408,6 +436,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             TarArchiveInputStream tin = null;
             GzipCompressorInputStream gin = null;
             BZip2CompressorInputStream bzin = null;
+            RpmInputStream rin = null;
+            CpioArchiveInputStream cain = null;
             try {
                 if (KNOWN_ZIP_EXT.contains(archiveExt) || ADDITIONAL_ZIP_EXT.contains(archiveExt)) {
                     in = new BufferedInputStream(fis);
@@ -449,6 +479,12 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                         decompressFile(bzin, f);
                     }
                 }
+                else if ("rpm".equals(archiveExt)) {
+                    rin = new RpmInputStream(fis);
+                    String rpmName = (String) rin.getPayloadHeader().getTag(RpmTag.NAME);
+                    cain = new CpioArchiveInputStream(rin);
+                    extractArchive(cain, destination, engine);
+                }
             } catch (ArchiveExtractionException ex) {
                 LOGGER.warn("Exception extracting archive '{}'.", archive.getName());
                 LOGGER.debug("", ex);
@@ -469,10 +505,10 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Checks if the file being scanned is a JAR or WAR that begins with '#!/bin' which
-     * indicates it is a fully executable jar. If a fully executable JAR is
-     * identified the input stream will be advanced to the start of the actual
-     * JAR file ( skipping the script).
+     * Checks if the file being scanned is a JAR or WAR that begins with
+     * '#!/bin' which indicates it is a fully executable jar. If a fully
+     * executable JAR is identified the input stream will be advanced to the
+     * start of the actual JAR file ( skipping the script).
      *
      * @see
      * <a href="http://docs.spring.io/spring-boot/docs/1.3.0.BUILD-SNAPSHOT/reference/htmlsingle/#deployment-install">Installing

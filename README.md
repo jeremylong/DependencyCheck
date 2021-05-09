@@ -89,11 +89,11 @@ Development Prerequisites
 -------------
 
 For installation to pass, you must have the following components installed:
-* Java: `java --version` 1.8.0 and higher
-* Maven: `mvn --version` 3.5.0 and higher
+* Java: `java -version` 1.8
+* Maven: `mvn -version` 3.5.0 and higher
 
 Tests cases require:
-* dotnet core version 3.1 or higher
+* dotnet core version 3.1
 * Go: `go version` 1.12 and higher
 * Ruby [bundler-audit](https://github.com/rubysec/bundler-audit#install)
 * [Yarn](https://classic.yarnpkg.com/en/docs/install/)
@@ -203,7 +203,7 @@ docker run --rm ^
 
 Building From Source
 -------------
-To build dependency-check run the command:
+To build dependency-check (using Java 8) run the command:
 
 ```
 mvn -s settings.xml install
@@ -218,26 +218,14 @@ mvn -s settings.xml install
 ./build-docker.sh
 ```
 
-Mailing List
-------------
-
-Subscribe: [dependency-check+subscribe@googlegroups.com] [subscribe]
-
-Post: [dependency-check@googlegroups.com] [post]
-
-Archive: [google group](https://groups.google.com/forum/#!forum/dependency-check)
-
-Copyright & License
--
-
-Dependency-Check is Copyright (c) 2012-2020 Jeremy Long. All Rights Reserved.
+License
+-------
 
 Permission to modify and redistribute is granted under the terms of the Apache 2.0 license. See the [LICENSE.txt](https://raw.githubusercontent.com/jeremylong/DependencyCheck/master/LICENSE.txt) file for the full license.
 
 Dependency-Check makes use of several other open source libraries. Please see the [NOTICE.txt][notices] file for more information.
 
+Copyright (c) 2012-2021 Jeremy Long. All Rights Reserved.
 
   [wiki]: https://github.com/jeremylong/DependencyCheck/wiki
-  [subscribe]: mailto:dependency-check+subscribe@googlegroups.com
-  [post]: mailto:dependency-check@googlegroups.com
   [notices]: https://github.com/jeremylong/DependencyCheck/blob/master/NOTICE.txt

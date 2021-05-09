@@ -20,7 +20,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>6.1.3-SNAPSHOT</version>
+        <version>6.1.7-SNAPSHOT</version>
     </parent>
 
     <artifactId>dependency-check-core</artifactId>
@@ -32,7 +32,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         <connection>scm:git:https://github.com/jeremylong/DependencyCheck.git</connection>
         <url>https://github.com/jeremylong/DependencyCheck/tree/master/core</url>
         <developerConnection>scm:git:git@github.com:jeremylong/DependencyCheck.git</developerConnection>
-        <tag>v6.0.5</tag>
+        <tag>v6.1.6</tag>
     </scm>
     <build>
         <resources>
@@ -266,10 +266,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <artifactId>jsoup</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>mailapi</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
@@ -464,6 +460,11 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.packager</groupId>
+            <artifactId>packager-rpm</artifactId>
+            <version>0.17.0</version>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>
@@ -520,7 +521,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 <dependency>
                     <groupId>org.postgresql</groupId>
                     <artifactId>postgresql</artifactId>
-                    <version>42.2.19</version>
+                    <version>42.2.20</version>
                 </dependency>
             </dependencies>
             <build>

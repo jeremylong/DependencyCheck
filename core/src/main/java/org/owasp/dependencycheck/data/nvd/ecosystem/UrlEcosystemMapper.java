@@ -17,12 +17,16 @@
  */
 package org.owasp.dependencycheck.data.nvd.ecosystem;
 
+import java.util.Objects;
+import java.util.Optional;
 import java.util.TreeMap;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
+import org.owasp.dependencycheck.data.nvd.json.CVEJSON40Min11;
 import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
 import org.owasp.dependencycheck.data.nvd.json.Reference;
+import org.owasp.dependencycheck.data.nvd.json.References;
 
 import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
 import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie.Hit;
@@ -65,11 +69,18 @@ public class UrlEcosystemMapper {
      * @return the ecosystem
      */
     public String getEcosystem(DefCveItem cve) {
-        for (Reference r : cve.getCve().getReferences().getReferenceData()) {
+        References references = Optional.ofNullable(cve)
+                .map(DefCveItem::getCve)
+                .map(CVEJSON40Min11::getReferences)
+                .orElse(null);
 
-            final Hit<String> ecosystem = search.findFirst(r.getUrl());
-            if (ecosystem != null) {
-                return ecosystem.value;
+        if (Objects.nonNull(references)) {
+            for (Reference r : references.getReferenceData()) {
+
+                final Hit<String> ecosystem = search.findFirst(r.getUrl());
+                if (ecosystem != null) {
+                    return ecosystem.value;
+                }
             }
         }
         return null;

@@ -39,7 +39,6 @@ import java.util.stream.Collectors;
 
 import static org.apache.commons.collections.map.AbstractReferenceMap.HARD;
 import static org.apache.commons.collections.map.AbstractReferenceMap.SOFT;
-import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.analyzer.exception.LambdaExceptionWrapper;
 import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
 import org.owasp.dependencycheck.data.nvd.json.BaseMetricV2;
@@ -195,10 +194,6 @@ public final class CveDB implements AutoCloseable {
          * Key for SQL Statement.
          */
         SELECT_VENDOR_PRODUCT_LIST,
-        /**
-         * Key for SQL Statement.
-         */
-        SELECT_SIMPLE_CPE_SEARCH,
         /**
          * Key for SQL Statement.
          */
@@ -416,48 +411,6 @@ public final class CveDB implements AutoCloseable {
             DBUtils.closeResultSet(rs);
         }
         return cpe;
-    }
-
-    public Set<Pair<String, String>> simpleCPESearch(String vendor, String product, String majorVersion) {
-        final Set<Pair<String, String>> data = new HashSet<>();
-        ResultSet rs = null;
-        try (Connection conn = databaseManager.getConnection();
-                PreparedStatement ps = getPreparedStatement(conn, SELECT_SIMPLE_CPE_SEARCH)) {
-            if (ps == null) {
-                throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_VENDOR_PRODUCT_LIST);
-            }
-            String vendorSearch = vendor.replace("-", "_");
-            if (StringUtils.countMatches(vendorSearch, '.') > 1) {
-                String[] parts = vendorSearch.split("\\.");
-                if ("org".equals(parts[0]) || "com".equals(parts[0])) {
-                    vendorSearch = parts[1];
-                }
-            }
-            final String productSearch = product.replace("-", "_");
-
-            ps.setString(1, vendorSearch);
-            ps.setString(2, productSearch);
-
-            ps.setString(3, vendorSearch + "_project");
-            ps.setString(4, productSearch);
-
-            ps.setString(5, vendorSearch);
-            ps.setString(6, productSearch + majorVersion);
-
-            ps.setString(7, vendorSearch + "_project");
-            ps.setString(8, productSearch + majorVersion);
-
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                data.add(new Pair<>(rs.getString(1), rs.getString(2)));
-            }
-        } catch (SQLException ex) {
-            final String msg = "An unexpected SQL Exception occurred; please see the verbose log for more details.";
-            throw new DatabaseException(msg, ex);
-        } finally {
-            DBUtils.closeResultSet(rs);
-        }
-        return data;
     }
 
     /**
@@ -1135,15 +1088,17 @@ public final class CveDB implements AutoCloseable {
             if (insertReference == null) {
                 throw new SQLException("Database query does not exist in the resource bundle: " + INSERT_REFERENCE);
             }
-            for (Reference r : cve.getCve().getReferences().getReferenceData()) {
-                insertReference.setInt(1, vulnerabilityId);
-                insertReference.setString(2, r.getName());
-                insertReference.setString(3, r.getUrl());
-                insertReference.setString(4, r.getRefsource());
-                if (isBatchInsertEnabled()) {
-                    insertReference.addBatch();
-                } else {
-                    insertReference.execute();
+            if (cve.getCve().getReferences() != null) {
+                for (Reference r : cve.getCve().getReferences().getReferenceData()) {
+                    insertReference.setInt(1, vulnerabilityId);
+                    insertReference.setString(2, r.getName());
+                    insertReference.setString(3, r.getUrl());
+                    insertReference.setString(4, r.getRefsource());
+                    if (isBatchInsertEnabled()) {
+                        insertReference.addBatch();
+                    } else {
+                        insertReference.execute();
+                    }
                 }
             }
             if (isBatchInsertEnabled()) {
@@ -1165,6 +1120,7 @@ public final class CveDB implements AutoCloseable {
         final List<DefCpeMatch> cpeEntries = cve.getConfigurations().getNodes().stream()
                 .collect(NodeFlatteningCollector.getInstance())
                 .collect(CpeMatchStreamCollector.getInstance())
+                .filter(predicate -> predicate.getCpe23Uri() != null)
                 .filter(predicate -> predicate.getCpe23Uri().startsWith(cpeStartsWithFilter))
                 //this single CPE entry causes nearly 100% FP - so filtering it at the source.
                 .filter(entry -> !("CVE-2009-0754".equals(cve.getCve().getCVEDataMeta().getId())
