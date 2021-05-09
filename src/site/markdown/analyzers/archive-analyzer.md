@@ -5,7 +5,7 @@ OWASP dependency-check includes an analyzer an archive analyzer that will attemp
 to extract files from the archive that are supported by the other file type
 analyzers.
 
-Files Types Scanned: ZIP, EAR, WAR, JAR, SAR, APK, NUPKG, TAR, GZ, TGZ
+Files Types Scanned: ZIP, EAR, WAR, JAR, SAR, APK, NUPKG, TAR, GZ, TGZ, RPM
 
 Additional file extensions for ZIP archives can be added, see the configuration
 section in the Maven, Ant, or CLI interfaces for more information on configuration.

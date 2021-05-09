@@ -56,6 +56,17 @@ public class ArchiveAnalyzerTest extends BaseTest {
         assertFalse(instance.getFileFilter().accept(new File("c:/test.z4")));
     }
 
+    /**
+     * Test of analyzeDependency method, of class ArchiveAnalyzer.
+     */
+    @Test
+    public void testRpmExtension() throws Exception {
+        assumeFalse(isPreviouslyLoaded("org.owasp.dependencycheck.analyzer.ArchiveAnalyzer"));
+        ArchiveAnalyzer instance = new ArchiveAnalyzer();
+        instance.initialize(getSettings());
+        assertTrue(instance.getFileFilter().accept(new File("/srv/struts-1.2.9-162.35.1.uyuni.noarch.rpm")));
+    }
+
     private boolean isPreviouslyLoaded(String className) {
         try {
             Method m = ClassLoader.class.getDeclaredMethod("findLoadedClass", String.class);
