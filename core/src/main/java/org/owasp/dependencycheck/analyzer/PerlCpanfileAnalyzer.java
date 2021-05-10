@@ -55,9 +55,6 @@ import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
-import org.owasp.dependencycheck.data.nvdcve.ICveDBWrapper;
-import org.owasp.dependencycheck.data.nvdcve.CveDBWrapper;
-import org.owasp.dependencycheck.models.VulnerabilityDTO;
 
 import java.sql.ResultSet;
 
@@ -80,27 +77,14 @@ public class PerlCpanfileAnalyzer extends AbstractFileTypeAnalyzer {
     private static final FileFilter PACKAGE_FILTER = FileFilterBuilder.newInstance().addFilenames("cpanfile").build();
     private static final int REGEX_OPTIONS = Pattern.DOTALL | Pattern.CASE_INSENSITIVE;
     private static final Pattern DEPEND_PERL_CPAN_PATTERN = Pattern.compile("requires '(.*?)'.*?([0-9\\.]+).*", REGEX_OPTIONS);
-    private static List<VulnerabilityDTO> vulnerabileProductList;
-    private static ICveDBWrapper cveDatabase;
+
 
     public PerlCpanfileAnalyzer(){
-    }
-
-    public PerlCpanfileAnalyzer(List<VulnerabilityDTO> _vulnerabileProductList, ICveDBWrapper _cveDatabase){
-        vulnerabileProductList = _vulnerabileProductList;
-        cveDatabase = _cveDatabase;
     }
 
     @Override
     protected FileFilter getFileFilter() {
         return PACKAGE_FILTER;
-    }
-
-    @Override
-    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
-        engine.openDatabase();
-        cveDatabase = new CveDBWrapper(engine.getDatabase());
-        vulnerabileProductList = cveDatabase.getPerlVulnerabilities();
     }
 
     @Override
