@@ -49,6 +49,7 @@ import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.dependency.VulnerableSoftwareBuilder;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.processing.Processor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -325,6 +326,8 @@ public class BundlerAuditProcessor extends Processor<InputStream> {
         dependency.setDisplayFileName(displayFileName);
         dependency.setFileName(fileName);
         dependency.setFilePath(filePath);
+        //sha1sum is used for anchor links in the HtML report
+        dependency.setSha1sum(Checksum.getSHA1Checksum(displayFileName));
         engine.addDependency(dependency);
         return dependency;
     }

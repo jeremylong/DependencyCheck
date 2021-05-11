@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2015 Institute for Defense Analyses. All Rights Reserved.
+ * Copyright (c) 2021 The OWASP Foundation. All Rights Reserved.
  */
 package org.owasp.dependencycheck.analyzer;
 
@@ -32,31 +32,14 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
 import javax.annotation.concurrent.ThreadSafe;
-import javax.json.Json;
-import javax.json.JsonException;
-import javax.json.JsonObject;
-import javax.json.JsonString;
-import javax.json.JsonReader;
-import javax.json.JsonValue;
-import org.owasp.dependencycheck.Engine.Mode;
 import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.Checksum;
-import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.dependency.Vulnerability;
-import org.owasp.dependencycheck.data.nvdcve.CveDB;
-
-import java.sql.ResultSet;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,22 +47,33 @@ import java.nio.charset.Charset;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.Identifier;
 
 /**
- * Used to analyze perl cpan files
+ * <p>
+ * Used to analyze perl cpan files. The analyzer does not yet differentiate
+ * developer and test dependencies from required dependencies. Nor does the
+ * analyzer support `cpanfile.snapshot` files yet. Finally, version ranges are
+ * not yet correctly handled either.</p>
+ * <p>
+ * Future enhancements should include supporting the snapshot files (which
+ * should not have version ranges) and correctly parsing the cpanfile DSL so
+ * that one can differentiate developer and test dependencies - which one may
+ * not want to include in the analysis.</p>
  *
  * @author Harjit Sandhu
  */
 @ThreadSafe
+@Experimental
 public class PerlCpanfileAnalyzer extends AbstractFileTypeAnalyzer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PerlCpanfileAnalyzer.class);
     private static final FileFilter PACKAGE_FILTER = FileFilterBuilder.newInstance().addFilenames("cpanfile").build();
     private static final int REGEX_OPTIONS = Pattern.DOTALL | Pattern.CASE_INSENSITIVE;
-    private static final Pattern DEPEND_PERL_CPAN_PATTERN = Pattern.compile("requires '(.*?)'.*?([0-9\\.]+).*", REGEX_OPTIONS);
+    private static final Pattern DEPEND_PERL_CPAN_PATTERN = Pattern.compile("requires [\"'](.*?)[\"'].*?([0-9\\.]+).*", REGEX_OPTIONS);
 
-
-    public PerlCpanfileAnalyzer(){
+    public PerlCpanfileAnalyzer() {
     }
 
     @Override
@@ -103,21 +97,16 @@ public class PerlCpanfileAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     @Override
-    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        final File file = dependency.getActualFile();
-        final File parent = file.getParentFile();
-        final File[] fileList = parent.listFiles(this.getFileFilter());
-        if (fileList != null) {
-            for (final File sourceFile : fileList) {
-                analyzeFileContents(dependency, sourceFile);
-            }
-        }
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
+        //nothing to prepare
     }
 
-    private void analyzeFileContents(Dependency dependency, File file) throws AnalysisException {
-        final String contents = tryReadFile(file);
+    @Override
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+        engine.removeDependency(dependency);
+        final String contents = tryReadFile(dependency.getActualFile());
         if (!contents.isEmpty()) {
-            processFileContents(contents.split(";"), dependency);
+            processFileContents(contents.split(";"), dependency.getFilePath(), engine);
         }
     }
 
@@ -129,34 +118,66 @@ public class PerlCpanfileAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
-    protected void processFileContents(String[] fileLines, Dependency dependency) throws AnalysisException{
-        final List<Vulnerability> vulns = new ArrayList<>();
-        for(String fileLine:fileLines){  
+    protected void processFileContents(String[] fileLines, String filePath, Engine engine) throws AnalysisException {
+        for (String fileLine : fileLines) {
             Matcher matcher = DEPEND_PERL_CPAN_PATTERN.matcher(fileLine);
-            if (matcher == null){
-                System.out.println("Perl regex match was null:" + fileLine);
+            if (matcher == null) {
                 LOGGER.debug("Perl regex match was null:" + fileLine);
-            }
-            LOGGER.debug("perl scanning file:" + fileLine);
-            while(matcher.find()) {
-                int matcherGroupCount = matcher.groupCount();
-                if (matcherGroupCount >= 2){
-                    String dependencyName = matcher.group(1);
-                    String dependencyVersion = matcher.group(2);
-                    String productName = dependencyName.split(":")[0];
-                    LOGGER.debug("Name:" + dependencyName + " - Version:" + dependencyVersion);
-                    dependency.addEvidence(EvidenceType.PRODUCT, dependencyName, productName, dependencyVersion, Confidence.HIGHEST);                
-                    for(VulnerabilityDTO vp : vulnerabileProductList){
-                        if(vp.hasMatch(productName)){
-                            final Vulnerability individualVuln = cveDatabase.getVulnerability(vp.getCveReference());
-                            vulns.add(individualVuln);
+            } else {
+                LOGGER.debug("perl scanning file:" + fileLine);
+                while (matcher.find()) {
+                    final int matcherGroupCount = matcher.groupCount();
+                    if (matcherGroupCount >= 2) {
+                        final String fqName = matcher.group(1);
+                        final String version = matcher.group(2);
+                        final int pos = fqName.lastIndexOf("::");
+                        final String namespace;
+                        final String name;
+                        if (pos > 0) {
+                            namespace = fqName.substring(0, pos);
+                            name = fqName.substring(pos + 2);
+                        } else {
+                            namespace = null;
+                            name = fqName;
                         }
+
+                        Dependency dependency = new Dependency(true);
+                        File f = new File(filePath);
+                        dependency.setFileName(f.getName());
+                        dependency.setFilePath(filePath);
+                        dependency.setActualFilePath(filePath);
+                        dependency.setDisplayFileName("'" + fqName + "', '" + version + "'");
+                        dependency.setEcosystem(Ecosystem.PERL);
+                        dependency.addEvidence(EvidenceType.VENDOR, "cpanfile", "requires", fqName, Confidence.HIGHEST);
+                        dependency.addEvidence(EvidenceType.PRODUCT, "cpanfile", "requires", fqName, Confidence.HIGHEST);
+                        dependency.addEvidence(EvidenceType.VERSION, "cpanfile", "requires", version, Confidence.HIGHEST);
+
+                        Identifier id = null;
+                        try {
+                            //note - namespace might be null and that's okay.
+                            final PackageURL purl = PackageURLBuilder.aPackageURL()
+                                    .withType("cpan")
+                                    .withNamespace(namespace)
+                                    .withName(name)
+                                    .withVersion(version)
+                                    .build();
+                            id = new PurlIdentifier(purl, Confidence.HIGH);
+                        } catch (MalformedPackageURLException ex) {
+                            LOGGER.debug("Error building package url for " + fqName + "; using generic identifier instead.", ex);
+                            id = new GenericIdentifier("cpan:" + fqName + "::" + version, Confidence.HIGH);
+                        }
+                        dependency.setVersion(version);
+                        dependency.setName(fqName);
+                        dependency.addSoftwareIdentifier(id);
+                        //sha1sum is used for anchor links in the HtML report
+                        dependency.setSha1sum(Checksum.getSHA1Checksum(id.getValue()));
+                        engine.addDependency(dependency);
+                    } else {
+                        LOGGER.debug("Matcher didn't find have the correct number of groups : " + matcherGroupCount + ", in :" + fileLine);
                     }
-                }else{
-                    LOGGER.debug("Matcher didn't find have the correct number of groups : " + matcherGroupCount + ", in :" + fileLine);
                 }
             }
         }
-        dependency.addVulnerabilities(vulns);
     }
+
 }
