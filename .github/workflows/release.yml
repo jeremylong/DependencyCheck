@@ -206,7 +206,7 @@ jobs:
           prerelease: false
       - name: Upload CLI
         id: upload-release-cli
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -216,7 +216,7 @@ jobs:
           asset_content_type: application/zip
       - name: Upload CLI signature
         id: upload-release-cli-sig 
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -226,7 +226,7 @@ jobs:
           asset_content_type: text/plain
       - name: Upload ANT
         id: upload-release-ant 
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -236,7 +236,7 @@ jobs:
           asset_content_type: application/zip
       - name: Upload ANT signature
         id: upload-release-ant-sig
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
