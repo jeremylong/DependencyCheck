@@ -411,6 +411,7 @@ public final class CliParser {
                 .addOption(newOption(ARGUMENT.DISABLE_PIP, "Disable the pip Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_PIPFILE, "Disable the Pipfile Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_COMPOSER, "Disable the PHP Composer Analyzer."))
+                .addOption(newOption(ARGUMENT.DISABLE_CPAN, "Disable the Perl CPAN file Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_GOLANG_MOD, "Disable the Golang Mod Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_OPENSSL, "Disable the OpenSSL Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_NUSPEC, "Disable the Nuspec Analyzer."))
@@ -1112,9 +1113,13 @@ public final class CliParser {
          */
         public static final String DISABLE_GO_DEP = "disableGolangDep";
         /**
-         * Disables the Python Package Analyzer.
+         * Disables the PHP Composer Analyzer.
          */
         public static final String DISABLE_COMPOSER = "disableComposer";
+        /**
+         * Disables the Perl CPAN File Analyzer.
+         */
+        public static final String DISABLE_CPAN = "disableCpan";
         /**
          * Disables the Golang Mod Analyzer.
          */

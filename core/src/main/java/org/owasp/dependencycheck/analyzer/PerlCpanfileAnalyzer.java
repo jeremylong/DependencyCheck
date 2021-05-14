@@ -39,20 +39,21 @@ import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.Checksum;
-import org.owasp.dependencycheck.dependency.Vulnerability;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.nio.charset.Charset;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import static java.util.stream.Collectors.toCollection;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.Identifier;
 
 /**
  * <p>
- * Used to analyze perl cpan files. The analyzer does not yet differentiate
+ * Used to analyze Perl CPAN files. The analyzer does not yet differentiate
  * developer and test dependencies from required dependencies. Nor does the
  * analyzer support `cpanfile.snapshot` files yet. Finally, version ranges are
  * not yet correctly handled either.</p>
@@ -63,17 +64,30 @@ import org.owasp.dependencycheck.dependency.naming.Identifier;
  * not want to include in the analysis.</p>
  *
  * @author Harjit Sandhu
+ * @author Jeremy Long
  */
 @ThreadSafe
 @Experimental
 public class PerlCpanfileAnalyzer extends AbstractFileTypeAnalyzer {
 
+    /**
+     * The logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(PerlCpanfileAnalyzer.class);
+    /**
+     * The filter used to identify CPAN files.
+     */
     private static final FileFilter PACKAGE_FILTER = FileFilterBuilder.newInstance().addFilenames("cpanfile").build();
-    private static final int REGEX_OPTIONS = Pattern.DOTALL | Pattern.CASE_INSENSITIVE;
-    private static final Pattern DEPEND_PERL_CPAN_PATTERN = Pattern.compile("requires [\"'](.*?)[\"'].*?([0-9\\.]+).*", REGEX_OPTIONS);
+    /**
+     * The pattern to extract version numbers from CPAN files.
+     */
+    private static final Pattern VERSION_PATTERN = Pattern.compile("([0-9\\.]+)");
 
+    /**
+     * Create a new Perl CPAN File Analyzer.
+     */
     public PerlCpanfileAnalyzer() {
+        //empty constructor
     }
 
     @Override
@@ -93,7 +107,7 @@ public class PerlCpanfileAnalyzer extends AbstractFileTypeAnalyzer {
 
     @Override
     protected String getAnalyzerEnabledSettingKey() {
-        return Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED;
+        return Settings.KEYS.ANALYZER_CPANFILE_ENABLED;
     }
 
     @Override
@@ -105,8 +119,9 @@ public class PerlCpanfileAnalyzer extends AbstractFileTypeAnalyzer {
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         engine.removeDependency(dependency);
         final String contents = tryReadFile(dependency.getActualFile());
-        if (!contents.isEmpty()) {
-            processFileContents(contents.split(";"), dependency.getFilePath(), engine);
+        final List<String> requires = prepareContents(contents);
+        if (requires != null && !requires.isEmpty()) {
+            processFileContents(requires, dependency.getFilePath(), engine);
         }
     }
 
@@ -118,66 +133,79 @@ public class PerlCpanfileAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
-    protected void processFileContents(String[] fileLines, String filePath, Engine engine) throws AnalysisException {
-        for (String fileLine : fileLines) {
-            Matcher matcher = DEPEND_PERL_CPAN_PATTERN.matcher(fileLine);
-            if (matcher == null) {
-                LOGGER.debug("Perl regex match was null:" + fileLine);
-            } else {
-                LOGGER.debug("perl scanning file:" + fileLine);
-                while (matcher.find()) {
-                    final int matcherGroupCount = matcher.groupCount();
-                    if (matcherGroupCount >= 2) {
-                        final String fqName = matcher.group(1);
-                        final String version = matcher.group(2);
-                        final int pos = fqName.lastIndexOf("::");
-                        final String namespace;
-                        final String name;
-                        if (pos > 0) {
-                            namespace = fqName.substring(0, pos);
-                            name = fqName.substring(pos + 2);
-                        } else {
-                            namespace = null;
-                            name = fqName;
-                        }
+    protected List<String> prepareContents(String contents) {
+        final Pattern pattern = Pattern.compile(";");
+        return Arrays.stream(contents.split("\n"))
+                .map(r -> r.indexOf("#") > 0 ? r.substring(0, r.indexOf("#")) : r)
+                .flatMap(r -> pattern.splitAsStream(r))
+                .map(r -> r.trim())
+                .filter(r -> r.startsWith("requires"))
+                .collect(toCollection(ArrayList::new));
+    }
 
-                        Dependency dependency = new Dependency(true);
-                        File f = new File(filePath);
-                        dependency.setFileName(f.getName());
-                        dependency.setFilePath(filePath);
-                        dependency.setActualFilePath(filePath);
-                        dependency.setDisplayFileName("'" + fqName + "', '" + version + "'");
-                        dependency.setEcosystem(Ecosystem.PERL);
-                        dependency.addEvidence(EvidenceType.VENDOR, "cpanfile", "requires", fqName, Confidence.HIGHEST);
-                        dependency.addEvidence(EvidenceType.PRODUCT, "cpanfile", "requires", fqName, Confidence.HIGHEST);
-                        dependency.addEvidence(EvidenceType.VERSION, "cpanfile", "requires", version, Confidence.HIGHEST);
-
-                        Identifier id = null;
-                        try {
-                            //note - namespace might be null and that's okay.
-                            final PackageURL purl = PackageURLBuilder.aPackageURL()
-                                    .withType("cpan")
-                                    .withNamespace(namespace)
-                                    .withName(name)
-                                    .withVersion(version)
-                                    .build();
-                            id = new PurlIdentifier(purl, Confidence.HIGH);
-                        } catch (MalformedPackageURLException ex) {
-                            LOGGER.debug("Error building package url for " + fqName + "; using generic identifier instead.", ex);
-                            id = new GenericIdentifier("cpan:" + fqName + "::" + version, Confidence.HIGH);
-                        }
-                        dependency.setVersion(version);
-                        dependency.setName(fqName);
-                        dependency.addSoftwareIdentifier(id);
-                        //sha1sum is used for anchor links in the HtML report
-                        dependency.setSha1sum(Checksum.getSHA1Checksum(id.getValue()));
-                        engine.addDependency(dependency);
+    protected void processFileContents(List<String> fileLines, String filePath, Engine engine) throws AnalysisException {
+        fileLines.stream()
+                .map(fileLine -> fileLine.split("(,|=>)"))
+                .map(requires -> {
+                    //LOGGER.debug("perl scanning file:" + fileLine);
+                    final String fqName = requires[0].substring(8)
+                            .replace("'", "")
+                            .replace("\"", "")
+                            .trim();
+                    final String version;
+                    if (requires.length == 1) {
+                        version = "0";
                     } else {
-                        LOGGER.debug("Matcher didn't find have the correct number of groups : " + matcherGroupCount + ", in :" + fileLine);
+                        final Matcher matcher = VERSION_PATTERN.matcher(requires[1]);
+                        if (matcher.find()) {
+                            version = matcher.group(1);
+                        } else {
+                            version = "0";
+                        }
                     }
-                }
-            }
-        }
+                    final int pos = fqName.lastIndexOf("::");
+                    final String namespace;
+                    final String name;
+                    if (pos > 0) {
+                        namespace = fqName.substring(0, pos);
+                        name = fqName.substring(pos + 2);
+                    } else {
+                        namespace = null;
+                        name = fqName;
+                    }
+                    final Dependency dependency = new Dependency(true);
+                    final File f = new File(filePath);
+                    dependency.setFileName(f.getName());
+                    dependency.setFilePath(filePath);
+                    dependency.setActualFilePath(filePath);
+                    dependency.setDisplayFileName("'" + fqName + "', '" + version + "'");
+                    dependency.setEcosystem(Ecosystem.PERL);
+                    dependency.addEvidence(EvidenceType.VENDOR, "cpanfile", "requires", fqName, Confidence.HIGHEST);
+                    dependency.addEvidence(EvidenceType.PRODUCT, "cpanfile", "requires", fqName, Confidence.HIGHEST);
+                    dependency.addEvidence(EvidenceType.VERSION, "cpanfile", "requires", version, Confidence.HIGHEST);
+                    Identifier id = null;
+                    try {
+                        //note - namespace might be null and that's okay.
+                        final PackageURL purl = PackageURLBuilder.aPackageURL()
+                                .withType("cpan")
+                                .withNamespace(namespace)
+                                .withName(name)
+                                .withVersion(version)
+                                .build();
+                        id = new PurlIdentifier(purl, Confidence.HIGH);
+                    } catch (MalformedPackageURLException ex) {
+                        LOGGER.debug("Error building package url for " + fqName + "; using generic identifier instead.", ex);
+                        id = new GenericIdentifier("cpan:" + fqName + "::" + version, Confidence.HIGH);
+                    }
+                    dependency.setVersion(version);
+                    dependency.setName(fqName);
+                    dependency.addSoftwareIdentifier(id);
+                    //sha1sum is used for anchor links in the HtML report
+                    dependency.setSha1sum(Checksum.getSHA1Checksum(id.getValue()));
+                    return dependency;
+                }).forEachOrdered(dependency -> {
+            engine.addDependency(dependency);
+        });
     }
 
 }

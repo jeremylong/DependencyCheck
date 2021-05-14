@@ -269,6 +269,10 @@ public class Check extends Update {
      * Whether or not the PHP Composer Analyzer is enabled.
      */
     private Boolean composerAnalyzerEnabled;
+    /**
+     * Whether or not the Perl CPAN File Analyzer is enabled.
+     */
+    private Boolean cpanfileAnalyzerEnabled;
 
     /**
      * Whether or not the .NET Assembly Analyzer is enabled.
@@ -812,6 +816,24 @@ public class Check extends Update {
      */
     public void setComposerAnalyzerEnabled(Boolean composerAnalyzerEnabled) {
         this.composerAnalyzerEnabled = composerAnalyzerEnabled;
+    }
+
+    /**
+     * Get the value of cpanfileAnalyzerEnabled.
+     *
+     * @return the value of cpanfileAnalyzerEnabled
+     */
+    public Boolean isCpanfileAnalyzerEnabled() {
+        return cpanfileAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of cpanfileAnalyzerEnabled.
+     *
+     * @param cpanfileAnalyzerEnabled new value of cpanfileAnalyzerEnabled
+     */
+    public void setCpanfileAnalyzerEnabled(Boolean cpanfileAnalyzerEnabled) {
+        this.cpanfileAnalyzerEnabled = cpanfileAnalyzerEnabled;
     }
 
     /**
@@ -1843,6 +1865,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_PIP_ENABLED, pipAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_PIPFILE_ENABLED, pipfileAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_CPANFILE_ENABLED, cpanfileAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, nodeAuditAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, yarnAuditAnalyzerEnabled);

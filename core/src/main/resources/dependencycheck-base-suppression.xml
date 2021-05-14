@@ -4376,6 +4376,13 @@
         ]]></notes>
         <packageUrl regex="true">^pkg:cpan/.*$</packageUrl>
         <cpe>cpe:/a:mysql:mysql</cpe>
+        <cpe>cpe:/a:next:next</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        broad suppressions for all cpan 
+        ]]></notes>
+        <packageUrl regex="true">^pkg:cpan/(?!perl@).*$</packageUrl>
         <cpe>cpe:/a:perl:perl</cpe>
     </suppress>
     <suppress base="true">
@@ -4404,7 +4411,7 @@
         <notes><![CDATA[
         file name: 'File::Spec', '0'
         ]]></notes>
-        <packageUrl regex="true">^pkg:cpan/File/.*$</packageUrl>
+        <packageUrl regex="true">^pkg:cpan/(IO%3A%3A)?File.*$</packageUrl>
         <cpe>cpe:/a:file_project:file</cpe>
     </suppress>
     <suppress base="true">
@@ -4420,6 +4427,28 @@
         ]]></notes>
         <packageUrl regex="true">^pkg:cpan/.*DateTime.*$</packageUrl>
         <cpe>cpe:/a:time_project:time</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: 'Dist::Zilla::Plugin::Git::NextVersion', '1.120370'
+        ]]></notes>
+        <packageUrl regex="true">^pkg:cpan/Dist%3A%3AZilla%3A%3APlugin%3A%3AGit.*$</packageUrl>
+        <cpe>cpe:/a:git_project:git</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: 'Net::SSH2', '0.70'
+        ]]></notes>
+        <packageUrl regex="true">^pkg:cpan/Net/SSH2@.*$</packageUrl>
+        <cpe>cpe:/a:ssh:ssh</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: 'Facebook::Graph', '0'
+        ]]></notes>
+        <packageUrl regex="true">^pkg:cpan/(Net%3A%3A)?Facebook.*$</packageUrl>
+        <cve>CVE-2008-0660</cve>
+        <cve>CVE-2014-6392</cve>
     </suppress>
     <!-- end cpan support -->
 </suppressions>

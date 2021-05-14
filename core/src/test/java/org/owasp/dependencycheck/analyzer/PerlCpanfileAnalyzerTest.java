@@ -17,43 +17,22 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import edu.emory.mathcs.backport.java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import org.apache.commons.lang3.mutable.MutableInt;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import mockit.Expectations;
-import mockit.Mocked;
-import mockit.Verifications;
-
-import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.BaseTest;
-import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
-import org.owasp.dependencycheck.data.nvdcve.CveDB;
-import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Evidence;
-import org.owasp.dependencycheck.dependency.EvidenceType;
-import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
-import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.Engine.Mode;
-import org.owasp.dependencycheck.exception.InitializationException;
-import org.owasp.dependencycheck.utils.Checksum;
-import org.owasp.dependencycheck.utils.FileFilterBuilder;
-import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
  * @author jeremy long
  */
+@SuppressWarnings("unchecked")
 public class PerlCpanfileAnalyzerTest extends BaseTest {
 
     /**
@@ -93,16 +72,14 @@ public class PerlCpanfileAnalyzerTest extends BaseTest {
     @Test
     public void testProcessFileContents() throws AnalysisException {
         Dependency d = new Dependency();
-        String[] dependencyLines = {
-            "requires 'Plack', '1.0'; # 1.0 or newer",
-            "requires 'JSON', '>= 2.00, < 2.80';",
-            "requires 'Mojolicious::Plugin::ZAPI' => '>= 2.015;",
-            "requires 'Hash::MoreUtils' => '>= 0.05;",
-            "requires 'JSON::MaybeXS' => '>= 1.002004'; # is_bool",
-            "# requires 'JSON::MaybeXS' => '>= 1.002004';",
-            "comment about something",
-            "requires 'Test::MockModule';"
-        };
+        List<String> dependencyLines = Arrays.asList(new String[]{
+            "requires 'Plack', '1.0'",
+            "requires 'JSON', '>= 2.00, < 2.80'",
+            "requires 'Mojolicious::Plugin::ZAPI' => '>= 2.015",
+            "requires 'Hash::MoreUtils' => '>= 0.05",
+            "requires 'JSON::MaybeXS' => '>= 1.002004'",
+            "requires 'Test::MockModule'"
+        });
         PerlCpanfileAnalyzer instance = new PerlCpanfileAnalyzer();
         Engine engine = new Engine(getSettings());
         instance.processFileContents(dependencyLines, "./cpanfile", engine);
@@ -113,8 +90,8 @@ public class PerlCpanfileAnalyzerTest extends BaseTest {
     @Test
     public void testProcessSingleFileContents() throws AnalysisException {
         Dependency d = new Dependency();
-        String[] dependencyLines = {
-            "requires 'JSON', '>= 2.00, < 2.80';",};
+        List<String> dependencyLines = Arrays.asList(new String[]{
+            "requires 'JSON', '>= 2.00, < 2.80'",});
         PerlCpanfileAnalyzer instance = new PerlCpanfileAnalyzer();
         Engine engine = new Engine(getSettings());
         instance.processFileContents(dependencyLines, "./cpanfile", engine);
@@ -125,20 +102,44 @@ public class PerlCpanfileAnalyzerTest extends BaseTest {
         assertEquals("2.00", dep.getVersion());
         assertEquals("pkg:cpan/JSON@2.00", dep.getSoftwareIdentifiers().iterator().next().getValue());
     }
-    
-       @Test
-    public void testProcess() throws AnalysisException {
-        getSettings().setBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, true);
-        Engine engine = new Engine(getSettings());
-        List<Dependency> d = engine.scan("/Users/jeremy/Projects/samples/cpan/opencloset/cpanfile");
+
+    @Test
+    public void testProcessDefaultZero() throws AnalysisException {
+        Dependency d = new Dependency();
+        List<String> dependencyLines = Arrays.asList(new String[]{
+            "requires 'JSON'",});
         PerlCpanfileAnalyzer instance = new PerlCpanfileAnalyzer();
-        
-        instance.analyzeDependency(d.get(0), engine);
+        Engine engine = new Engine(getSettings());
+        instance.processFileContents(dependencyLines, "./cpanfile", engine);
 
         assertEquals(1, engine.getDependencies().length);
         Dependency dep = engine.getDependencies()[0];
-        assertEquals("'JSON', '2.00'", dep.getDisplayFileName());
-        assertEquals("2.00", dep.getVersion());
-        assertEquals("pkg:cpan/JSON@2.00", dep.getSoftwareIdentifiers().iterator().next().getValue());
+        assertEquals("'JSON', '0'", dep.getDisplayFileName());
+        assertEquals("0", dep.getVersion());
+        assertEquals("pkg:cpan/JSON@0", dep.getSoftwareIdentifiers().iterator().next().getValue());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testPrepareContent() {
+        PerlCpanfileAnalyzer instance = new PerlCpanfileAnalyzer();
+        String content = "requires 'JSON'; #any version";
+        List<String> expResult = Arrays.asList(new String[]{"requires 'JSON'"});
+        List<String> result = instance.prepareContents(content);
+        assertEquals(expResult, result);
+
+        content = "requires 'JSON'; requires 'XML';";
+        expResult = Arrays.asList(new String[]{"requires 'JSON'", "requires 'XML'"});
+        result = instance.prepareContents(content);
+        assertEquals(expResult, result);
+        content = "requires 'JSON';\n     requires 'XML';";
+        expResult = Arrays.asList(new String[]{"requires 'JSON'", "requires 'XML'"});
+        result = instance.prepareContents(content);
+        assertEquals(expResult, result);
+
+        content = "requires 'JSON';# requires 'XML';";
+        expResult = Arrays.asList(new String[]{"requires 'JSON'"});
+        result = instance.prepareContents(content);
+        assertEquals(expResult, result);
     }
 }
