@@ -25,7 +25,7 @@ jobs:
         run: |
           cat <(echo -e "${{ secrets.OSSRH_GPG_SECRET_KEY }}") | gpg --batch --import
           gpg --list-secret-keys --keyid-format LONG
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2.3.4
       - name: Check Maven Cache
         id: maven-cache
         uses: actions/cache@v2.1.5
@@ -152,7 +152,7 @@ jobs:
           path: ~/OWASP-Dependency-Check
           key: docker-repo
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
         with:
           ref: release
       - name: Download release build
@@ -176,7 +176,7 @@ jobs:
     needs: build
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
         with:
           ref: release
       - name: Get version
@@ -251,7 +251,7 @@ jobs:
     needs: build
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
         with:
           ref: release
       - name: Download Site
@@ -274,7 +274,7 @@ jobs:
     needs: [docker, publish, release]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
         with:
           ref: main
       - name: Configure Git user
