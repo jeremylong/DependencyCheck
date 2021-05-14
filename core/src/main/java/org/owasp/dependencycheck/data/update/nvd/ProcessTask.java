@@ -150,7 +150,6 @@ public class ProcessTask implements Callable<ProcessTask> {
         final long startProcessing = System.currentTimeMillis();
         try {
             importJSON(downloadTask.getFile());
-            cveDB.commit();
             properties.save(downloadTask.getNvdCveInfo());
         } catch (ParserConfigurationException | SQLException | DatabaseException | ClassNotFoundException | IOException ex) {
             throw new UpdateException(ex);

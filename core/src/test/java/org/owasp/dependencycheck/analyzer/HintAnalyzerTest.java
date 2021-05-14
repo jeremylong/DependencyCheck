@@ -74,7 +74,6 @@ public class HintAnalyzerTest extends BaseDBTestCase {
         getSettings().setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
         getSettings().setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
         try (Engine engine = new Engine(getSettings())) {
-
             engine.scan(guice);
             engine.scan(spring);
             engine.analyzeDependencies();
