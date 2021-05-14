@@ -490,6 +490,8 @@ public class App {
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_OPENSSL, Settings.KEYS.ANALYZER_OPENSSL_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_COMPOSER, Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_CPANFILE_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CPAN, Settings.KEYS.ANALYZER_CPANFILE_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_GO_DEP, Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED,

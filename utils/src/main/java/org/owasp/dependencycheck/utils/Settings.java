@@ -347,10 +347,15 @@ public final class Settings {
          */
         public static final String ANALYZER_RETIREJS_REPO_VALID_FOR_HOURS = "analyzer.retirejs.repo.validforhours";
         /**
-         * The properties key for whether the composer lock file analyzer is
+         * The properties key for whether the PHP composer lock file analyzer is
          * enabled.
          */
         public static final String ANALYZER_COMPOSER_LOCK_ENABLED = "analyzer.composer.lock.enabled";
+        /**
+         * The properties key for whether the Perl CPAN file file analyzer is
+         * enabled.
+         */
+        public static final String ANALYZER_CPANFILE_ENABLED = "analyzer.cpanfile.enabled";
         /**
          * The properties key for whether the Python Distribution analyzer is
          * enabled.

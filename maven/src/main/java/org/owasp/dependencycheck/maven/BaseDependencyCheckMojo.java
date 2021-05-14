@@ -426,6 +426,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "composerAnalyzerEnabled")
     private Boolean composerAnalyzerEnabled;
     /**
+     * Whether or not the Perl CPAN File Analyzer is enabled.
+     */
+    @Parameter(property = "cpanfileAnalyzerEnabled")
+    private Boolean cpanfileAnalyzerEnabled;
+    /**
      * Sets whether or not the Node.js Analyzer should be used.
      */
     @SuppressWarnings("CanBeFinal")
@@ -1607,17 +1612,17 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     Dependency newDependency(MavenProject prj) {
-      final File pom = new File(prj.getBasedir(), "pom.xml");
+        final File pom = new File(prj.getBasedir(), "pom.xml");
 
-      if (pom.isFile()) {
-          getLog().debug("Adding virtual dependency from pom.xml");
-          return new Dependency(pom, true);
-      } else if (prj.getFile().isFile()) {
-          getLog().debug("Adding virtual dependency from file");
-          return new Dependency(prj.getFile(), true);
-      } else {
-          return new Dependency(true);
-      }
+        if (pom.isFile()) {
+            getLog().debug("Adding virtual dependency from pom.xml");
+            return new Dependency(pom, true);
+        } else if (prj.getFile().isFile()) {
+            getLog().debug("Adding virtual dependency from file");
+            return new Dependency(prj.getFile(), true);
+        } else {
+            return new Dependency(true);
+        }
     }
 
     /**
@@ -1947,6 +1952,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PIP_ENABLED, pipAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PIPFILE_ENABLED, pipfileAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CPANFILE_ENABLED, cpanfileAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, nodeAuditAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, nodeAuditAnalyzerUseCache);
