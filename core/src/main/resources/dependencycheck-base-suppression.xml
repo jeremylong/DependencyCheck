@@ -4367,6 +4367,14 @@
         <packageUrl regex="true">^pkg:maven/io\.quarkus\.(security|gizmo|http)/.*$</packageUrl>
         <cpe>cpe:/a:quarkus:quarkus</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3350 on org.apache.xmlgraphics:batik-i18n.1.14 CVE is for C#
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.xmlgraphics/batik\-i18n@.*$</packageUrl>
+        <cpe>cpe:/a:apache:batik</cpe>
+        <cpe>cpe:/a:i18n_project:i18n</cpe>
+    </suppress>
     
     
     <!-- begin cpan support-->

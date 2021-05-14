@@ -52,6 +52,7 @@ public class CveDBIT extends BaseDBTestCase {
     public void setUp() throws Exception {
         super.setUp();
         instance = new CveDB(getSettings());
+        instance.open();
     }
 
     @After
@@ -61,18 +62,6 @@ public class CveDBIT extends BaseDBTestCase {
         super.tearDown();
     }
 
-    /**
-     * Pretty useless tests of open, commit, and close methods, of class CveDB.
-     */
-    @Test
-    public void testOpen() {
-
-        try {
-            instance.commit();
-        } catch (DatabaseException | SQLException ex) {
-            fail(ex.getMessage());
-        }
-    }
 
     /**
      * Test of getCPEs method, of class CveDB.

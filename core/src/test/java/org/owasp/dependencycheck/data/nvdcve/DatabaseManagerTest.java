@@ -26,20 +26,21 @@ import org.owasp.dependencycheck.BaseDBTestCase;
  *
  * @author jeremy long
  */
-public class ConnectionFactoryTest extends BaseDBTestCase {
+public class DatabaseManagerTest extends BaseDBTestCase {
 
     /**
-     * Test of initialize method, of class ConnectionFactory.
+     * Test of initialize method, of class DatabaseManager.
      *
      * @throws org.owasp.dependencycheck.data.nvdcve.DatabaseException
      */
     @Test
     public void testInitialize() throws DatabaseException, SQLException {
-        ConnectionFactory factory = new ConnectionFactory(getSettings());
-        factory.initialize();
+        DatabaseManager factory = new DatabaseManager(getSettings());
+        factory.open();
         try (Connection result = factory.getConnection()) {
             assertNotNull(result);
         }
+        factory.close();
         factory.cleanup();
     }
 }

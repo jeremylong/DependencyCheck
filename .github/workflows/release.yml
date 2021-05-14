@@ -25,7 +25,7 @@ jobs:
         run: |
           cat <(echo -e "${{ secrets.OSSRH_GPG_SECRET_KEY }}") | gpg --batch --import
           gpg --list-secret-keys --keyid-format LONG
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2.3.4
       - name: Check Maven Cache
         id: maven-cache
         uses: actions/cache@v2.1.5
@@ -152,7 +152,7 @@ jobs:
           path: ~/OWASP-Dependency-Check
           key: docker-repo
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
         with:
           ref: release
       - name: Download release build
@@ -176,7 +176,7 @@ jobs:
     needs: build
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
         with:
           ref: release
       - name: Get version
@@ -206,7 +206,7 @@ jobs:
           prerelease: false
       - name: Upload CLI
         id: upload-release-cli
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -216,7 +216,7 @@ jobs:
           asset_content_type: application/zip
       - name: Upload CLI signature
         id: upload-release-cli-sig 
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -226,7 +226,7 @@ jobs:
           asset_content_type: text/plain
       - name: Upload ANT
         id: upload-release-ant 
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -236,7 +236,7 @@ jobs:
           asset_content_type: application/zip
       - name: Upload ANT signature
         id: upload-release-ant-sig
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -251,7 +251,7 @@ jobs:
     needs: build
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
         with:
           ref: release
       - name: Download Site
@@ -263,7 +263,7 @@ jobs:
         run: ls -R
         working-directory: target
       - name: Deploy gh-pages
-        uses: JamesIves/github-pages-deploy-action@4.1.1
+        uses: JamesIves/github-pages-deploy-action@4.1.3
         with:
           branch: gh-pages
           folder: target/staging
@@ -274,7 +274,7 @@ jobs:
     needs: [docker, publish, release]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
         with:
           ref: main
       - name: Configure Git user

@@ -46,6 +46,7 @@ public class CveDBMySqlIT extends BaseTest {
     public void setUp() throws Exception {
         super.setUp();
         instance = new CveDB(getSettings());
+        instance.open();
     }
 
     @After
@@ -53,20 +54,7 @@ public class CveDBMySqlIT extends BaseTest {
     public void tearDown() throws Exception {
         instance.close();
         super.tearDown();
-    }
-
-    /**
-     * Pretty useless tests of open, commit, and close methods, of class CveDB.
-     */
-    @Test
-    public void testOpen() {
-        try {
-            instance.commit();
-        } catch (SQLException | DatabaseException ex) {
-            System.out.println("Unable to connect to the My SQL database; verify that the db server is running and that the schema has been generated");
-            fail(ex.getMessage());
-        }
-    }
+    }   
 
     /**
      * Test of getCPEs method, of class CveDB.
