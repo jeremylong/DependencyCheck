@@ -64,7 +64,7 @@ public class PerlCpanfileAnalyzerTest extends BaseTest {
     @Test
     public void testGetAnalyzerEnabledSettingKey() {
         PerlCpanfileAnalyzer instance = new PerlCpanfileAnalyzer();
-        String expResult = Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED;
+        String expResult = Settings.KEYS.ANALYZER_CPANFILE_ENABLED;
         String result = instance.getAnalyzerEnabledSettingKey();
         assertEquals(expResult, result);
     }
