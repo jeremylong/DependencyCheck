@@ -101,7 +101,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
     /**
      * A collection of related dependencies.
      */
-    private final SortedSet<Dependency> relatedDependencies = new TreeSet<>(Dependency.NameComparator);
+    private final SortedSet<Dependency> relatedDependencies = new TreeSet<>(Dependency.NAME_COMPARATOR);
     /**
      * A list of projects that reference this dependency.
      */
@@ -944,14 +944,16 @@ public class Dependency extends EvidenceCollection implements Serializable {
         this.ecosystem = ecosystem;
     }
 
+    //CSOFF: OperatorWrap
     /**
      * Simple sorting by display file name and actual file path.
      */
-    public static Comparator<Dependency> NameComparator
+    public static final Comparator<Dependency> NAME_COMPARATOR
             = (Dependency d1, Dependency d2)
             -> (d1.getDisplayFileName() + d1.getFilePath())
                     .compareTo(d2.getDisplayFileName() + d2.getFilePath());
 
+    //CSON: OperatorWrap
     /**
      * A hashing function shortcut.
      */

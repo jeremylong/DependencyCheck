@@ -129,9 +129,7 @@ public class BundlerAuditProcessor extends Processor<InputStream> {
 
             String nextLine;
             while ((nextLine = br.readLine()) != null) {
-                if (null == nextLine) {
-                    break;
-                } else if (nextLine.startsWith(NAME)) {
+                if (nextLine.startsWith(NAME)) {
                     appendToDescription = false;
                     gem = nextLine.substring(NAME.length());
                     if (!map.containsKey(gem)) {
@@ -174,7 +172,7 @@ public class BundlerAuditProcessor extends Processor<InputStream> {
      * @param nextLine the line to parse
      */
     private void setVulnerabilityName(String parentName, Dependency dependency, Vulnerability vulnerability, String nextLine) {
-        String advisory;
+        final String advisory;
         if (nextLine.startsWith(CVE)) {
             advisory = nextLine.substring(CVE.length());
         } else {

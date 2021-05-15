@@ -520,6 +520,7 @@ public class Engine implements FileFilter, AutoCloseable {
         return scanFile(file, null);
     }
 
+    //CSOFF: NestedIfDepth
     /**
      * Scans a specified file. If a dependency is identified it is added to the
      * dependency collection.
@@ -544,8 +545,8 @@ public class Engine implements FileFilter, AutoCloseable {
                 if (sha1 != null) {
                     for (Dependency existing : dependencies) {
                         if (sha1.equals(existing.getSha1sum())) {
-                            if (existing.getDisplayFileName().contains(": ") 
-                                    || dependency.getDisplayFileName().contains(": ") 
+                            if (existing.getDisplayFileName().contains(": ")
+                                    || dependency.getDisplayFileName().contains(": ")
                                     || dependency.getActualFilePath().contains("dctemp")) {
                                 continue;
                             }
@@ -582,6 +583,7 @@ public class Engine implements FileFilter, AutoCloseable {
         }
         return dependency;
     }
+    //CSON: NestedIfDepth
 
     /**
      * Runs the analyzers against all of the dependencies. Since the mutable
@@ -1177,7 +1179,7 @@ public class Engine implements FileFilter, AutoCloseable {
             throw new UnsupportedOperationException("Cannot generate report in evidence collection mode.");
         }
         final DatabaseProperties prop = database.getDatabaseProperties();
-        
+
         final ReportGenerator r = new ReportGenerator(applicationName, groupId, artifactId, version,
                 dependencies, getAnalyzers(), prop, settings, exceptions);
         try {

@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
 import java.util.Set;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.utils.FileUtils;
@@ -278,16 +279,14 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
     protected Dependency getMainDotnetDependency(Dependency dependency1, Dependency dependency2) {
         if (dependency1.getName() != null && dependency1.getVersion() != null
                 && dependency2.getName() != null && dependency2.getVersion() != null
-                && (AssemblyAnalyzer.DEPENDENCY_ECOSYSTEM.equals(dependency1.getEcosystem())
-                || NugetconfAnalyzer.DEPENDENCY_ECOSYSTEM.equals(dependency1.getEcosystem()))
-                && (AssemblyAnalyzer.DEPENDENCY_ECOSYSTEM.equals(dependency2.getEcosystem())
-                || NugetconfAnalyzer.DEPENDENCY_ECOSYSTEM.equals(dependency2.getEcosystem()))) {
-            if (dependency1.getName().equals(dependency2.getName()) && dependency1.getVersion().equals(dependency2.getVersion())) {
-                if (dependency2.isVirtual()) {
-                    return dependency2;
-                }
-                return dependency1;
+                && Ecosystem.DOTNET.equals(dependency1.getEcosystem())
+                && Ecosystem.DOTNET.equals(dependency2.getEcosystem())
+                && dependency1.getName().equals(dependency2.getName())
+                && dependency1.getVersion().equals(dependency2.getVersion())) {
+            if (dependency1.isVirtual()) {
+                return dependency2;
             }
+            return dependency1;
         }
         return null;
     }

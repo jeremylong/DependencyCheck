@@ -248,12 +248,13 @@ public final class CveDB implements AutoCloseable {
     }
 
     /**
-     * Opens the database connection pool.s
+     * Opens the database connection pool.
      */
     public void open() {
         databaseManager.open();
         databaseProperties = new DatabaseProperties(this);
     }
+
     /**
      * Closes the database connection. Close should be called on this object
      * when it is done being used.
@@ -424,7 +425,7 @@ public final class CveDB implements AutoCloseable {
         final Set<Pair<String, String>> data = new HashSet<>();
         ResultSet rs = null;
         try (Connection conn = databaseManager.getConnection();
-            PreparedStatement ps = getPreparedStatement(conn, SELECT_VENDOR_PRODUCT_LIST)){
+                PreparedStatement ps = getPreparedStatement(conn, SELECT_VENDOR_PRODUCT_LIST)) {
             if (ps == null) {
                 throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_VENDOR_PRODUCT_LIST);
             }
@@ -1243,10 +1244,6 @@ public final class CveDB implements AutoCloseable {
         ResultSet rs = null;
         try (Connection conn = databaseManager.getConnection();
                 PreparedStatement cs = getPreparedStatement(conn, COUNT_CPE)) {
-            if (cs == null) {
-                LOGGER.error("Unable to validate if data exists in the database");
-                return false;
-            }
             rs = cs.executeQuery();
             if (rs.next() && rs.getInt(1) > 0) {
                 return true;
@@ -1321,13 +1318,11 @@ public final class CveDB implements AutoCloseable {
             final long start = System.currentTimeMillis();
             try (Connection conn = databaseManager.getConnection();
                     CallableStatement psCompaxt = conn.prepareCall("SHUTDOWN DEFRAG")) {
-                if (psCompaxt != null) {
-                    LOGGER.info("Begin database defrag");
-                    psCompaxt.execute();
-                    final long millis = System.currentTimeMillis() - start;
-                    //final long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
-                    LOGGER.info("End database defrag ({} ms)", millis);
-                }
+                LOGGER.info("Begin database defrag");
+                psCompaxt.execute();
+                final long millis = System.currentTimeMillis() - start;
+                //final long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+                LOGGER.info("End database defrag ({} ms)", millis);
             } catch (SQLException ex) {
                 LOGGER.error("An unexpected SQL Exception occurred compacting the database; please see the verbose log for more details.");
                 LOGGER.debug("", ex);

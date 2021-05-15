@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -389,7 +388,7 @@ public class App {
             engine.doUpdates();
         }
     }
-
+    //CSOFF: MethodLength
     /**
      * Updates the global Settings.
      *
@@ -584,7 +583,7 @@ public class App {
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_PASSWORD,
                 cli.getStringArgument(CliParser.ARGUMENT.CVE_PASSWORD, Settings.KEYS.CVE_PASSWORD));
     }
-
+    //CSON: MethodLength
     /**
      * Creates a file appender and adds it to logback.
      *

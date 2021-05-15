@@ -242,8 +242,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public boolean accept(File pathname) {
         boolean accept = super.accept(pathname);
-        boolean npmEnabled = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, false);
-        boolean yarnEnabled = getSettings().getBoolean(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, false);
+        final boolean npmEnabled = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, false);
+        final boolean yarnEnabled = getSettings().getBoolean(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, false);
         if (accept && (npmEnabled || yarnEnabled)) {
             try {
                 accept = shouldProcess(pathname);
@@ -478,10 +478,11 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                         bzin = new BZip2CompressorInputStream(in);
                         decompressFile(bzin, f);
                     }
-                }
-                else if ("rpm".equals(archiveExt)) {
+                } else if ("rpm".equals(archiveExt)) {
                     rin = new RpmInputStream(fis);
-                    String rpmName = (String) rin.getPayloadHeader().getTag(RpmTag.NAME);
+                    //return of getTag is not used - but the call is a
+                    //necassary step in reading from the stream
+                    rin.getPayloadHeader().getTag(RpmTag.NAME);
                     cain = new CpioArchiveInputStream(rin);
                     extractArchive(cain, destination, engine);
                 }

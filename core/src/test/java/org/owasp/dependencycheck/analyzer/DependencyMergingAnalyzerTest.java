@@ -222,7 +222,7 @@ public class DependencyMergingAnalyzerTest extends BaseTest {
         try (Engine engine = new Engine(Engine.Mode.EVIDENCE_COLLECTION, getSettings())) {
             Dependency dependency1 = new Dependency(BaseTest.getResourceAsFile(this, "aar-1.0.0.aar"));
             aa = new ArchiveAnalyzer();
-            
+
             aa.initialize(getSettings());
             aa.accept(dependency1.getActualFile());
             aa.prepareAnalyzer(engine);
@@ -266,8 +266,10 @@ public class DependencyMergingAnalyzerTest extends BaseTest {
         Dependency result = instance.getMainDotnetDependency(dependency1, dependency2);
         assertEquals(expResult, result);
         dependency2.setName("log4net");
-        expResult = dependency2;
+        expResult = dependency1;
         result = instance.getMainDotnetDependency(dependency1, dependency2);
+        assertEquals(expResult, result);
+        result = instance.getMainDotnetDependency(dependency2, dependency1);
         assertEquals(expResult, result);
     }
 

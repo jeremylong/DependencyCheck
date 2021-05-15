@@ -637,7 +637,7 @@ public class SuppressionRule {
         final StringBuilder sb = new StringBuilder(64);
         sb.append("SuppressionRule{");
         if (until != null) {
-            String dt = DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(until);
+            final String dt = DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(until);
             sb.append("until=").append(dt).append(',');
         }
         if (filePath != null) {

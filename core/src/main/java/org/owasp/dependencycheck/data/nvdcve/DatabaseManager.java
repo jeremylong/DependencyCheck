@@ -34,7 +34,6 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.anarres.jdiagnostics.DefaultQuery;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.io.IOUtils;
-import org.h2.jdbcx.JdbcConnectionPool;
 import org.owasp.dependencycheck.utils.DBUtils;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
@@ -511,32 +510,34 @@ public final class DatabaseManager {
     }
 
     /**
-     * Opens the database connection pool
+     * Opens the database connection pool.
      */
     public void open() {
-            connectionPool = new BasicDataSource();
-            final String driverName = settings.getString(Settings.KEYS.DB_DRIVER_NAME, "");
-            if (!driverName.isEmpty() && !"org.h2.Driver".equals(driverName)) {
-                connectionPool.setDriverClassName(driverName);
-            }
-            connectionPool.setUrl(connectionString);
-            connectionPool.setUsername(userName);
-            connectionPool.setPassword(password);
+        connectionPool = new BasicDataSource();
+        final String driverName = settings.getString(Settings.KEYS.DB_DRIVER_NAME, "");
+        if (!driverName.isEmpty() && !"org.h2.Driver".equals(driverName)) {
+            connectionPool.setDriverClassName(driverName);
+        }
+        connectionPool.setUrl(connectionString);
+        connectionPool.setUsername(userName);
+        connectionPool.setPassword(password);
     }
+
     /**
      * Closes the database connection pool.
      */
     public void close() {
-            try {
-                connectionPool.close();
-            } catch (SQLException ex) {
-                LOGGER.debug("Error closing the connection pool", ex);
-            }
-            connectionPool = null;
+        try {
+            connectionPool.close();
+        } catch (SQLException ex) {
+            LOGGER.debug("Error closing the connection pool", ex);
+        }
+        connectionPool = null;
     }
 
     /**
      * Returns if the connection pool is open.
+     *
      * @return if the connection pool is open
      */
     public boolean isOpen() {
