@@ -348,7 +348,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
         }
         String localRepo = getSettings().getString(Settings.KEYS.MAVEN_LOCAL_REPO);
         final Pattern p;
-        if (localRepo != null) {
+        if (localRepo == null) {
             p = Pattern.compile(".*[/\\\\](?<repo>repository|local-repo)[/\\\\].*");
         } else {
             final File f = new File(localRepo);
