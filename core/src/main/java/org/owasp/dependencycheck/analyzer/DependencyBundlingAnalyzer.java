@@ -228,24 +228,16 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
      * @param path the path to trim
      * @return a string representing the base path.
      */
-    private String getBaseRepoPath(final String path) {
-        int pos;
-        if (path.contains("local-repo")) {
-            pos = path.indexOf("local-repo" + File.separator) + 11;
-        } else {
-            pos = path.indexOf("repository" + File.separator) + 11;
-        }
-        if (pos < 0) {
+    private String getBaseRepoPath(final String path, final String repo) {
+        int pos = path.indexOf(repo + File.separator) + repo.length() + 1;
+        if (pos < repo.length() + 1) {
             return path;
         }
         int tmp = path.indexOf(File.separator, pos);
         if (tmp <= 0) {
             return path;
         }
-        //below is always true
-        //if (tmp > 0) {
         pos = tmp + 1;
-        //}
         tmp = path.indexOf(File.separator, pos);
         if (tmp > 0) {
             pos = tmp + 1;
@@ -354,11 +346,22 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
         if (left.equalsIgnoreCase(right)) {
             return true;
         }
-
-        if (left.matches(".*[/\\\\](repository|local-repo)[/\\\\].*") && right.matches(".*[/\\\\](repository|local-repo)[/\\\\].*")) {
-            left = getBaseRepoPath(left);
-            right = getBaseRepoPath(right);
+        String localRepo = getSettings().getString(Settings.KEYS.MAVEN_LOCAL_REPO);
+        final Pattern p;
+        if (localRepo != null) {
+            p = Pattern.compile(".*[/\\\\](?<repo>repository|local-repo)[/\\\\].*");
+        } else {
+            final File f = new File(localRepo);
+            final String dir = f.getName();
+            p = Pattern.compile(".*[/\\\\](?<repo>repository|local-repo|" + Pattern.quote(dir) + ")[/\\\\].*");
         }
+        Matcher mleft = p.matcher(left);
+        Matcher mright = p.matcher(right);
+        if (mleft.find() && mright.find()) {
+            left = getBaseRepoPath(left, mleft.group("repo"));
+            right = getBaseRepoPath(right, mright.group("repo"));
+        }
+
         if (left.equalsIgnoreCase(right)) {
             return true;
         }

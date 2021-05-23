@@ -493,6 +493,10 @@ public final class Settings {
          */
         public static final String ANALYZER_CENTRAL_ENABLED = "analyzer.central.enabled";
         /**
+         * Key for the path to the local Maven repository.
+         */
+        public static final String MAVEN_LOCAL_REPO= "odc.maven.local.repo";
+        /**
          * Key for the URL to obtain content from Maven Central.
          */
         public static final String CENTRAL_CONTENT_URL = "central.content.url";
