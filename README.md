@@ -209,6 +209,15 @@ To build dependency-check (using Java 8) run the command:
 mvn -s settings.xml install
 ```
 
+Building the documentation
+--------------------------
+
+The documentation on the [github pages](http://jeremylong.github.io/DependencyCheck/) is generated from this repository:
+
+    mvn -s settings.xml site
+
+Once done, point your browser to `.../target/site/index.html`.
+
 Building The Docker Image
 -------------
 To build dependency-check docker image run the command:
