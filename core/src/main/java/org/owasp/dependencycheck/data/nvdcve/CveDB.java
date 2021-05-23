@@ -91,11 +91,6 @@ public final class CveDB implements AutoCloseable {
      * table.
      */
     private DatabaseProperties databaseProperties;
-
-    /**
-     * A reference to the vulnerable software builder.
-     */
-    private final VulnerableSoftwareBuilder vulnerableSoftwareBuilder = new VulnerableSoftwareBuilder();
     /**
      * The filter for 2.3 CPEs in the CVEs - we don't import unless we get a
      * match.
@@ -575,8 +570,8 @@ public final class CveDB implements AutoCloseable {
             ps.setString(2, cpe.getProduct());
             rs = ps.executeQuery();
             String currentCVE = "";
-
             final Set<VulnerableSoftware> vulnSoftware = new HashSet<>();
+            final VulnerableSoftwareBuilder vulnerableSoftwareBuilder = new VulnerableSoftwareBuilder();
             while (rs.next()) {
                 final String cveId = rs.getString(1);
                 if (currentCVE.isEmpty()) {
@@ -645,7 +640,7 @@ public final class CveDB implements AutoCloseable {
         ResultSet rsR = null;
         ResultSet rsS = null;
         Vulnerability vuln = null;
-
+        final VulnerableSoftwareBuilder vulnerableSoftwareBuilder = new VulnerableSoftwareBuilder();
         try (Connection conn = databaseManager.getConnection();
                 PreparedStatement psV = getPreparedStatement(conn, SELECT_VULNERABILITY)) {
             if (psV == null) {
