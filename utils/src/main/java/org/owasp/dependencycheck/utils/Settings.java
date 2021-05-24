@@ -495,7 +495,7 @@ public final class Settings {
         /**
          * Key for the path to the local Maven repository.
          */
-        public static final String MAVEN_LOCAL_REPO= "odc.maven.local.repo";
+        public static final String MAVEN_LOCAL_REPO = "odc.maven.local.repo";
         /**
          * Key for the URL to obtain content from Maven Central.
          */

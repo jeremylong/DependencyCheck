@@ -832,36 +832,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         String bestGuessURL = null;
         final Set<IdentifierMatch> collected = new HashSet<>();
 
-        if (dependency.getVersion() != null && !dependency.getVersion().isEmpty()) {
-            //we shouldn't always use the dependency version - in some cases this causes FP
-            boolean useDependencyVersion = true;
-            final CharArraySet stopWords = SearchFieldAnalyzer.getStopWords();
-            if (dependency.getName() != null && !dependency.getName().isEmpty()) {
-                final String name = dependency.getName();
-                for (String word : product.split("[^a-zA-Z0-9]")) {
-                    useDependencyVersion &= name.contains(word) || stopWords.contains(word);
-                }
-            }
-
-            if (useDependencyVersion) {
-                //TODO - we need to filter this so that we only use this if something in the
-                //dependency.getName() matches the vendor/product in some way
-                final DependencyVersion depVersion = new DependencyVersion(dependency.getVersion());
-                if (depVersion.getVersionParts().size() > 0) {
-                    cpeBuilder.part(Part.APPLICATION).vendor(vendor).product(product);
-                    addVersionAndUpdate(depVersion, cpeBuilder);
-                    try {
-                        final Cpe depCpe = cpeBuilder.build();
-                        final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(vendor, UTF8),
-                                URLEncoder.encode(product, UTF8), URLEncoder.encode(depCpe.getVersion(), UTF8));
-                        final IdentifierMatch match = new IdentifierMatch(depCpe, url, IdentifierConfidence.EXACT_MATCH, currentConfidence);
-                        collected.add(match);
-                    } catch (CpeValidationException ex) {
-                        throw new AnalysisException(String.format("Unable to create a CPE for %s:%s:%s", vendor, product, bestGuess.toString()));
-                    }
-                }
-            }
-        }
+        considerDependencyVersion(dependency, vendor, product, currentConfidence, collected, bestGuess);
 
         //TODO the following algorithm incorrectly identifies things as a lower version
         // if there lower confidence evidence when the current (highest) version number
@@ -1021,6 +992,59 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             }
         }
         return identifierAdded;
+    }
+
+    /**
+     * Evaluates whether or not to use the `version` of the dependency instead
+     * of the version evidence. The dependency should not always be used as it
+     * can cause FP.
+     *
+     * @param dependency the dependency being analyzed
+     * @param product the product name
+     * @param vendor the vendor name
+     * @param confidence the current confidence level
+     * @param collected a reference to the identifiers matched
+     * @param bestGuess the current best guess as to the dependency version
+     * @throws AnalysisException thrown if aliens attacked and valid input could
+     * not be used to construct a CPE
+     * @throws UnsupportedEncodingException thrown if run on a system that
+     * doesn't support UTF-8
+     */
+    private void considerDependencyVersion(Dependency dependency,
+            String vendor, String product, Confidence confidence,
+            final Set<IdentifierMatch> collected, DependencyVersion bestGuess)
+            throws AnalysisException, UnsupportedEncodingException {
+
+        if (dependency.getVersion() != null && !dependency.getVersion().isEmpty()) {
+            final CpeBuilder cpeBuilder = new CpeBuilder();
+            boolean useDependencyVersion = true;
+            final CharArraySet stopWords = SearchFieldAnalyzer.getStopWords();
+            if (dependency.getName() != null && !dependency.getName().isEmpty()) {
+                final String name = dependency.getName();
+                for (String word : product.split("[^a-zA-Z0-9]")) {
+                    useDependencyVersion &= name.contains(word) || stopWords.contains(word);
+                }
+            }
+
+            if (useDependencyVersion) {
+                //TODO - we need to filter this so that we only use this if something in the
+                //dependency.getName() matches the vendor/product in some way
+                final DependencyVersion depVersion = new DependencyVersion(dependency.getVersion());
+                if (depVersion.getVersionParts().size() > 0) {
+                    cpeBuilder.part(Part.APPLICATION).vendor(vendor).product(product);
+                    addVersionAndUpdate(depVersion, cpeBuilder);
+                    try {
+                        final Cpe depCpe = cpeBuilder.build();
+                        final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(vendor, UTF8),
+                                URLEncoder.encode(product, UTF8), URLEncoder.encode(depCpe.getVersion(), UTF8));
+                        final IdentifierMatch match = new IdentifierMatch(depCpe, url, IdentifierConfidence.EXACT_MATCH, confidence);
+                        collected.add(match);
+                    } catch (CpeValidationException ex) {
+                        throw new AnalysisException(String.format("Unable to create a CPE for %s:%s:%s", vendor, product, bestGuess.toString()));
+                    }
+                }
+            }
+        }
     }
 
     /**

@@ -226,6 +226,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
      * [drive]\[repo_location]\repository\[path1]\[path2].
      *
      * @param path the path to trim
+     * @param repo the name of the local maven repository
      * @return a string representing the base path.
      */
     private String getBaseRepoPath(final String path, final String repo) {
@@ -346,7 +347,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
         if (left.equalsIgnoreCase(right)) {
             return true;
         }
-        String localRepo = getSettings().getString(Settings.KEYS.MAVEN_LOCAL_REPO);
+        final String localRepo = getSettings().getString(Settings.KEYS.MAVEN_LOCAL_REPO);
         final Pattern p;
         if (localRepo == null) {
             p = Pattern.compile(".*[/\\\\](?<repo>repository|local-repo)[/\\\\].*");
@@ -355,8 +356,8 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
             final String dir = f.getName();
             p = Pattern.compile(".*[/\\\\](?<repo>repository|local-repo|" + Pattern.quote(dir) + ")[/\\\\].*");
         }
-        Matcher mleft = p.matcher(left);
-        Matcher mright = p.matcher(right);
+        final Matcher mleft = p.matcher(left);
+        final Matcher mright = p.matcher(right);
         if (mleft.find() && mright.find()) {
             left = getBaseRepoPath(left, mleft.group("repo"));
             right = getBaseRepoPath(right, mright.group("repo"));
