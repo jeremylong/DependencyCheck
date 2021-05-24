@@ -418,21 +418,15 @@ public final class CveDB implements AutoCloseable {
      */
     public Set<Pair<String, String>> getVendorProductList() throws DatabaseException {
         final Set<Pair<String, String>> data = new HashSet<>();
-        ResultSet rs = null;
         try (Connection conn = databaseManager.getConnection();
-                PreparedStatement ps = getPreparedStatement(conn, SELECT_VENDOR_PRODUCT_LIST)) {
-            if (ps == null) {
-                throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_VENDOR_PRODUCT_LIST);
-            }
-            rs = ps.executeQuery();
+                PreparedStatement ps = getPreparedStatement(conn, SELECT_VENDOR_PRODUCT_LIST);
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 data.add(new Pair<>(rs.getString(1), rs.getString(2)));
             }
         } catch (SQLException ex) {
             final String msg = "An unexpected SQL Exception occurred; please see the verbose log for more details.";
             throw new DatabaseException(msg, ex);
-        } finally {
-            DBUtils.closeResultSet(rs);
         }
         return data;
     }
@@ -448,21 +442,15 @@ public final class CveDB implements AutoCloseable {
      */
     public Set<Pair<String, String>> getVendorProductListForNode() throws DatabaseException {
         final Set<Pair<String, String>> data = new HashSet<>();
-        ResultSet rs = null;
         try (Connection conn = databaseManager.getConnection();
-                PreparedStatement ps = getPreparedStatement(conn, SELECT_VENDOR_PRODUCT_LIST_FOR_NODE)) {
-            if (ps == null) {
-                throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_VENDOR_PRODUCT_LIST_FOR_NODE);
-            }
-            rs = ps.executeQuery();
+                PreparedStatement ps = getPreparedStatement(conn, SELECT_VENDOR_PRODUCT_LIST_FOR_NODE);
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 data.add(new Pair<>(rs.getString(1), rs.getString(2)));
             }
         } catch (SQLException ex) {
             final String msg = "An unexpected SQL Exception occurred; please see the verbose log for more details.";
             throw new DatabaseException(msg, ex);
-        } finally {
-            DBUtils.closeResultSet(rs);
         }
         return data;
     }
@@ -474,21 +462,15 @@ public final class CveDB implements AutoCloseable {
      */
     public Properties getProperties() {
         final Properties prop = new Properties();
-        ResultSet rs = null;
         try (Connection conn = databaseManager.getConnection();
-                PreparedStatement ps = getPreparedStatement(conn, SELECT_PROPERTIES)) {
-            if (ps == null) {
-                throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_PROPERTIES);
-            }
-            rs = ps.executeQuery();
+                PreparedStatement ps = getPreparedStatement(conn, SELECT_PROPERTIES);
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 prop.setProperty(rs.getString(1), rs.getString(2));
             }
         } catch (SQLException ex) {
             LOGGER.error("An unexpected SQL Exception occurred; please see the verbose log for more details.");
             LOGGER.debug("", ex);
-        } finally {
-            DBUtils.closeResultSet(rs);
         }
         return prop;
     }
@@ -784,10 +766,9 @@ public final class CveDB implements AutoCloseable {
 
     private void loadCpeEcosystemCache() {
         final Map<Pair<String, String>, String> map = new HashMap<>();
-        ResultSet rs = null;
         try (Connection conn = databaseManager.getConnection();
-                PreparedStatement ps = getPreparedStatement(conn, SELECT_CPE_ECOSYSTEM)) {
-            rs = ps.executeQuery();
+                PreparedStatement ps = getPreparedStatement(conn, SELECT_CPE_ECOSYSTEM);
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 final Pair<String, String> key = new Pair<>(rs.getString(1), rs.getString(2));
                 final String value = rs.getString(3);
@@ -797,10 +778,7 @@ public final class CveDB implements AutoCloseable {
             final String msg = String.format("Error loading the Cpe Ecosystem Cache: %s", ex.getMessage());
             LOGGER.debug(msg, ex);
             throw new DatabaseException(msg, ex);
-        } finally {
-            DBUtils.closeResultSet(rs);
         }
-
         CpeEcosystemCache.setCache(map);
     }
 
@@ -1236,10 +1214,9 @@ public final class CveDB implements AutoCloseable {
      * @return <code>true</code> if data exists; otherwise <code>false</code>
      */
     public boolean dataExists() {
-        ResultSet rs = null;
         try (Connection conn = databaseManager.getConnection();
-                PreparedStatement cs = getPreparedStatement(conn, COUNT_CPE)) {
-            rs = cs.executeQuery();
+                PreparedStatement cs = getPreparedStatement(conn, COUNT_CPE);
+                ResultSet rs = cs.executeQuery()) {
             if (rs.next() && rs.getInt(1) > 0) {
                 return true;
             }
@@ -1256,8 +1233,6 @@ public final class CveDB implements AutoCloseable {
                     + "https://github.com/jeremylong/DependencyCheck/issues and include the log file.\n\n",
                     dd, dd, settings.getString(Settings.KEYS.APPLICATION_NAME));
             LOGGER.debug("", ex);
-        } finally {
-            DBUtils.closeResultSet(rs);
         }
         return false;
     }

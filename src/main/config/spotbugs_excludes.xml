@@ -7,6 +7,15 @@
         <Class name="org.owasp.dependencycheck.maven.HelpMojo" />
     </Match>
     <Match>
-        <Package name="org.owasp.dependencycheck.data.nvd.json"/>
+        <Package name="org.owasp.dependencycheck.data.nvd.json" />
+    </Match>
+    <Match>
+        <Class name="org.owasp.dependencycheck.data.nvd.ecosystem.StringAhoCorasickDoubleArrayTrie" />
+    </Match>
+    <Match>
+        <Class name="org.owasp.dependencycheck.data.artifactory.FileImpl" />
+    </Match>
+    <Match>
+        <Class name="org.owasp.dependencycheck.data.artifactory.ItemImpl" />
     </Match>
 </FindBugsFilter>

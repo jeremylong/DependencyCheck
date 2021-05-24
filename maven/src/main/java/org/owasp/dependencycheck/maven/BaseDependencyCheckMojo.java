@@ -105,6 +105,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.spi.LocationAwareLogger;
 
+//CSOFF: FileLength
 /**
  * @author Jeremy Long
  */
@@ -2040,7 +2041,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
     }
 
-    //CSOFF: LineLength
     /**
      * Decrypts a password from the Maven settings if it needs to be decrypted.
      * If it's not encrypted the input password will be returned unchanged.
@@ -2051,7 +2051,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * password
      */
     private String decryptPasswordFromSettings(String password) throws SecDispatcherException {
-
         //The following fix was copied from:
         //   https://github.com/bsorrentino/maven-confluence-plugin/blob/master/maven-confluence-reporting-plugin/src/main/java/org/bsc/maven/confluence/plugin/AbstractBaseConfluenceMojo.java
         //
@@ -2065,7 +2064,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
         return securityDispatcher.decrypt(password);
     }
-    //CSON: LineLength
 
     /**
      * Handles a SecDispatcherException that was thrown at an attempt to decrypt
@@ -2322,3 +2320,4 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
     //</editor-fold>
 }
+//CSON: FileLength
