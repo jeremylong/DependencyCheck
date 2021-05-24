@@ -30,11 +30,12 @@ several teams have found them useful in their current state.
 | [Autoconf](./autoconf.html) | Autoconf project configuration files (configure, configure.in, configure.ac) | [Regex](https://en.wikipedia.org/wiki/Regular_expression) scan for AC_INIT metadata, including in generated configuration script. |
 | [CMake](./cmake.html) | CMake project files (CMakeLists.txt) and scripts (\*.cmake) | Regex scan for project initialization and version setting commands. |
 | [CocoaPods](./cocoapods.html) | CocoaPods `.podspec` files | Extracts dependency information from specification file. |
-| [Composer Lock](./composer-lock.html) | PHP [Composer](http://getcomposer.org) Lock files (composer.lock) | Parses PHP [Composer](http://getcomposer.org) lock files for exact versions of dependencies. | 
-| [CPAN File](./cpanfile.html) | Perl [cpanfile](https://metacpan.org/pod/distribution/Module-CPANfile/lib/cpanfile.pod) Lock files (composer.lock) | Parses Perl [cpanfile](https://metacpan.org/pod/distribution/Module-CPANfile/lib/cpanfile.pod) files for dependencies. | 
+| [Composer Lock](./composer-lock.html) | PHP [Composer](http://getcomposer.org) Lock files (composer.lock) | Parses PHP [Composer](http://getcomposer.org) lock files for exact versions of dependencies. |
+| [CPAN File](./cpanfile.html) | Perl [cpanfile](https://metacpan.org/pod/distribution/Module-CPANfile/lib/cpanfile.pod) Lock files (composer.lock) | Parses Perl [cpanfile](https://metacpan.org/pod/distribution/Module-CPANfile/lib/cpanfile.pod) files for dependencies. |
 | [Go lang mod](./golang-mod.html) | `go.mod`| Uses `go mod` to determine exactly which dependencies are used. |
-| [Go lang dep](./golang-dep.html) | `Gopkg.lock` | Analyzes the lock file directly to parse dependency information. | 
-| [PE Analyzer](./pe-analyzer.html) | `PE DLL and EXE` | Analyzes the PE Headers to obtain dependency information. | 
+| [Go lang dep](./golang-dep.html) | `Gopkg.lock` | Analyzes the lock file directly to parse dependency information. |
+| [PE Analyzer](./pe-analyzer.html) | `PE DLL and EXE` | Analyzes the PE Headers to obtain dependency information. |
 | [Python](./python.html) | Python source files (\*.py); Package metadata files (PKG-INFO, METADATA); Package Distribution Files (\*.whl, \*.egg, \*.zip) | Regex scan of Python source files for setuptools metadata; Parse RFC822 header format for metadata in all other artifacts. |
+| [Pip](./pip.html) | Python Pip requirements.txt files | Regex scan of requirements.txt. |
 | [Ruby Gemspec](./ruby-gemspec.html) | Ruby makefiles (Rakefile); Ruby Gemspec files (\*.gemspec) | Regex scan Gemspec initialization blocks for metadata. |
 | [SWIFT](./swift.html) | SWIFT Package Manager's `Package.swift` | Extracts dependency information from swift package file. |
