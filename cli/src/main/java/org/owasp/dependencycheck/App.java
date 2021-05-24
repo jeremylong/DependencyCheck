@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.cli.ParseException;
@@ -573,12 +575,26 @@ public class App {
                 cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_CORE));
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON,
                 cli.getStringArgument(CliParser.ARGUMENT.CVE_BASE_URL));
+
+        String cveModifiedJson = Optional.ofNullable(cli.getStringArgument(CliParser.ARGUMENT.CVE_MODIFIED_URL))
+            .orElseGet(() -> getDefaultCveUrlModified(cli));
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON,
-                cli.getStringArgument(CliParser.ARGUMENT.CVE_MODIFIED_URL));
+                cveModifiedJson);
+
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_USER,
                 cli.getStringArgument(CliParser.ARGUMENT.CVE_USER));
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_PASSWORD,
                 cli.getStringArgument(CliParser.ARGUMENT.CVE_PASSWORD, Settings.KEYS.CVE_PASSWORD));
+    }
+
+    private String getDefaultCveUrlModified(CliParser cli) {
+      String baseUrl = cli.getStringArgument(CliParser.ARGUMENT.CVE_BASE_URL);
+      String defaultBaseUrlEnd = "/nvdcve-1.1-%d.json.gz";
+      if (Objects.nonNull(baseUrl) && baseUrl.endsWith(defaultBaseUrlEnd)) {
+        String defaultModifiedUrlEnd = "/nvdcve-1.1-modified.json.gz";
+        return baseUrl.substring(0, baseUrl.length() - defaultBaseUrlEnd.length()) + defaultModifiedUrlEnd;
+      }
+      return null;
     }
 
     /**
