@@ -31,7 +31,6 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.UnrecognizedOptionException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
