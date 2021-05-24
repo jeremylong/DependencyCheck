@@ -214,9 +214,9 @@ Building the documentation
 
 The documentation on the [github pages](http://jeremylong.github.io/DependencyCheck/) is generated from this repository:
 
-    mvn -s settings.xml site
+    mvn -s settings.xml site  site:staging
 
-Once done, point your browser to `.../target/site/index.html`.
+Once done, point your browser to `./target/staging/index.html`.
 
 Building The Docker Image
 -------------
