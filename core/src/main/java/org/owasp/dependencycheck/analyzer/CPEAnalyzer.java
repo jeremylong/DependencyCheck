@@ -868,26 +868,8 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                                 URLEncoder.encode(vs.getProduct(), UTF8));
                         final IdentifierMatch match = new IdentifierMatch(vs, url, IdentifierConfidence.BROAD_MATCH, conf);
                         collected.add(match);
-                    } else if (evVer.equals(dbVer)) { //yeah! exact match
-                        final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(vs.getVendor(), UTF8),
-                                URLEncoder.encode(vs.getProduct(), UTF8), URLEncoder.encode(vs.getVersion(), UTF8));
-                        Cpe useCpe;
-                        if (evBaseVerUpdate != null && "*".equals(vs.getUpdate())) {
-                            try {
-                                useCpe = cpeBuilder.part(vs.getPart()).wfVendor(vs.getWellFormedVendor())
-                                        .wfProduct(vs.getWellFormedProduct()).wfVersion(vs.getWellFormedVersion())
-                                        .wfEdition(vs.getWellFormedEdition()).wfLanguage(vs.getWellFormedLanguage())
-                                        .wfOther(vs.getWellFormedOther()).wfSwEdition(vs.getWellFormedSwEdition())
-                                        .update(evBaseVerUpdate).build();
-                            } catch (CpeValidationException ex) {
-                                LOGGER.debug("Error building cpe with update:" + evBaseVerUpdate, ex);
-                                useCpe = vs;
-                            }
-                        } else {
-                            useCpe = vs;
-                        }
-                        final IdentifierMatch match = new IdentifierMatch(useCpe, url, IdentifierConfidence.EXACT_MATCH, conf);
-                        collected.add(match);
+                    } else if (evVer.equals(dbVer)) {
+                        addExactMatch(vs, evBaseVerUpdate, conf, collected);
                     } else if (evBaseVer != null && evBaseVer.equals(dbVer)
                             && (bestGuessConf == null || bestGuessConf.compareTo(conf) > 0)) {
                         bestGuessConf = conf;
@@ -992,6 +974,40 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             }
         }
         return identifierAdded;
+    }
+
+    /**
+     * Adds a new CPE to the identifier match collection.
+     *
+     * @param vs a reference to the vulnerable software
+     * @param updateVersion the update version
+     * @param conf the current confidence
+     * @param collected a reference to the collected identifiers
+     * @throws UnsupportedEncodingException thrown if UTF-8 is not supported
+     */
+    private void addExactMatch(Cpe vs, String updateVersion, Confidence conf,
+            final Set<IdentifierMatch> collected) throws UnsupportedEncodingException {
+
+        final CpeBuilder cpeBuilder = new CpeBuilder();
+        final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(vs.getVendor(), UTF8),
+                URLEncoder.encode(vs.getProduct(), UTF8), URLEncoder.encode(vs.getVersion(), UTF8));
+        Cpe useCpe;
+        if (updateVersion != null && "*".equals(vs.getUpdate())) {
+            try {
+                useCpe = cpeBuilder.part(vs.getPart()).wfVendor(vs.getWellFormedVendor())
+                        .wfProduct(vs.getWellFormedProduct()).wfVersion(vs.getWellFormedVersion())
+                        .wfEdition(vs.getWellFormedEdition()).wfLanguage(vs.getWellFormedLanguage())
+                        .wfOther(vs.getWellFormedOther()).wfSwEdition(vs.getWellFormedSwEdition())
+                        .update(updateVersion).build();
+            } catch (CpeValidationException ex) {
+                LOGGER.debug("Error building cpe with update:" + updateVersion, ex);
+                useCpe = vs;
+            }
+        } else {
+            useCpe = vs;
+        }
+        final IdentifierMatch match = new IdentifierMatch(useCpe, url, IdentifierConfidence.EXACT_MATCH, conf);
+        collected.add(match);
     }
 
     /**
