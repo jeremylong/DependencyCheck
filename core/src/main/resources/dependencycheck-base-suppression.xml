@@ -962,6 +962,13 @@
         <cpe>cpe:/a:openid:openid_connect</cpe>
     </suppress>
     <suppress base="true">
+       <notes><![CDATA[
+       Suppresses false positives per issue #3345
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/com\.azure/azure\-core\-http\-netty@.*$</packageUrl>
+       <cpe>cpe:/a:netty:netty</cpe>
+    </suppress>
+    <suppress base="true">
         <notes><![CDATA[
         Suppresses fp identified while testing #2686
         ]]></notes>
