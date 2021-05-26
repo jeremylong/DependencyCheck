@@ -662,6 +662,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+            Suppress false positives per #3400
+            ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-security@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
             Suppresses false positives per #1566.
             ]]></notes>
         <gav regex="true">^org\.springframework\.security\.oauth\.boot:spring-security-oauth2-autoconfigure:.*$</gav>
