@@ -334,11 +334,6 @@ Copyright (c) 2012 - Jeremy Long
                         </dependency>
                     </dependencies>
                 </plugin>
-                <plugin>
-                    <groupId>se.bjurr.violations</groupId>
-                    <artifactId>violation-comments-to-github-maven-plugin</artifactId>
-                    <version>1.65</version>
-                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -721,44 +716,6 @@ Copyright (c) 2012 - Jeremy Long
                     <nexusurl>https://oss.sonatype.org/</nexusurl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>se.bjurr.violations</groupId>
-                <artifactId>violation-comments-to-github-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>ViolationCommentsToGitHub</id>
-                        <goals>
-                            <goal>violation-comments</goal>
-                        </goals>
-                        <configuration>
-                            <oAuth2Token>${GITHUB_OAUTH2TOKEN}</oAuth2Token>
-                            <pullRequestId>${GITHUB_PULLREQUESTID}</pullRequestId>
-                            <repositoryOwner>jeremylong</repositoryOwner>
-                            <repositoryName>DependencyCheck</repositoryName>
-                            <gitHubUrl>https://api.github.com/</gitHubUrl>
-                            <createCommentWithAllSingleFileComments>false</createCommentWithAllSingleFileComments>
-                            <createSingleFileComments>true</createSingleFileComments>
-                            <commentOnlyChangedContent>true</commentOnlyChangedContent>
-                            <!-- INFO, WARN, ERROR //-->
-                            <minSeverity>INFO</minSeverity>
-                            <violations>
-                                <violation>
-                                    <parser>FINDBUGS</parser>
-                                    <reporter>Findbugs</reporter>
-                                    <folder>.</folder>
-                                    <pattern>.*/spotbugsXml.xml$</pattern>
-                                </violation>
-                                <violation>
-                                    <parser>CHECKSTYLE</parser>
-                                    <reporter>Checkstyle</reporter>
-                                    <folder>.</folder>
-                                    <pattern>.*/checkstyle-result.xml$</pattern>
-                                </violation>
-                            </violations>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
