@@ -26,7 +26,9 @@ jobs:
           distribution: 'zulu'
       - name: Build with Maven
         id: build
-        run: mvn -s settings.xml clean package verify site -DreleaseTesting --no-transfer-progress --batch-mode
+        run: |
+            mvn -s settings.xml clean package verify site -DreleaseTesting --no-transfer-progress --batch-mode
+            mvn se.bjurr.violations:violation-comments-to-github-maven-plugin:violation-comments --no-transfer-progress --batch-mode -DpullRequestId=${{ github.event.pull_request.number }} -DoAuth2Token=${{ secrets.GITHUB_TOKEN }}
       - name: Archive IT test logs
         id: archive-logs
         uses: actions/upload-artifact@v2

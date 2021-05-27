@@ -334,6 +334,11 @@ Copyright (c) 2012 - Jeremy Long
                         </dependency>
                     </dependencies>
                 </plugin>
+                <plugin>
+                    <groupId>se.bjurr.violations</groupId>
+                    <artifactId>violation-comments-to-github-maven-plugin</artifactId>
+                    <version>1.65</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -715,6 +720,34 @@ Copyright (c) 2012 - Jeremy Long
                     <serverId>ossrh</serverId>
                     <nexusurl>https://oss.sonatype.org/</nexusurl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>se.bjurr.violations</groupId>
+                <artifactId>violation-comments-to-github-maven-plugin</artifactId>
+                <configuration>
+                    <repositoryOwner>jeremylong</repositoryOwner>
+                    <repositoryName>DependencyCheck</repositoryName>
+                    <gitHubUrl>https://api.github.com/</gitHubUrl>
+                    <createCommentWithAllSingleFileComments>false</createCommentWithAllSingleFileComments>
+                    <createSingleFileComments>true</createSingleFileComments>
+                    <commentOnlyChangedContent>true</commentOnlyChangedContent>
+                    <!-- INFO, WARN, ERROR //-->
+                    <minSeverity>INFO</minSeverity>
+                    <violations>
+                        <violation>
+                            <parser>FINDBUGS</parser>
+                            <reporter>Spotbugs</reporter>
+                            <folder>.</folder>
+                            <pattern>.*/spotbugsXml.xml$</pattern>
+                        </violation>
+                        <violation>
+                            <parser>CHECKSTYLE</parser>
+                            <reporter>Checkstyle</reporter>
+                            <folder>.</folder>
+                            <pattern>.*/checkstyle-result.xml$</pattern>
+                        </violation>
+                    </violations>
                 </configuration>
             </plugin>
         </plugins>
