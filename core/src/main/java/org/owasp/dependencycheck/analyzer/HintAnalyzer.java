@@ -294,11 +294,9 @@ public class HintAnalyzer extends AbstractAnalyzer {
                         try (InputStream fromClasspath = FileUtils.getResourceAsStream(filePath)) {
                             deleteTempFile = true;
                             file = getSettings().getTempFile("hint", "xml");
-                            try {
-                                org.apache.commons.io.FileUtils.copyInputStreamToFile(fromClasspath, file);
-                            } catch (IOException ex) {
-                                throw new HintParseException("Unable to locate hints file in classpath", ex);
-                            }
+                            org.apache.commons.io.FileUtils.copyInputStreamToFile(fromClasspath, file);
+                        } catch (IOException ex) {
+                            throw new HintParseException("Unable to locate hints file in classpath", ex);
                         }
                     }
                 }
