@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.json.stream.JsonParsingException;
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.processing.GoModProcessor;
@@ -282,10 +283,11 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
         final int exitValue;
         final File parentFile = dependency.getActualFile().getParentFile();
         final Process process = launchGoListReadonly(parentFile);
+        String error = null;
         try (GoModProcessor processor = new GoModProcessor(dependency, engine);
                 ProcessReader processReader = new ProcessReader(process, processor)) {
             processReader.readAll();
-            final String error = processReader.getError();
+            error = processReader.getError();
             if (!StringUtils.isBlank(error)) {
                 LOGGER.warn("Warnings from `go`: {}", error);
             }
@@ -299,6 +301,14 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
             throw new AnalysisException("go process interrupted", ie);
         } catch (IOException ex) {
             throw new AnalysisException("Error closing the go process", ex);
+        } catch (JsonParsingException ex) {
+            final String msg;
+            if (error != null) {
+                msg = "Unable to process output from `go list -json -m -mod=readonly all`; the command reported the following errors: " + error;
+            } else {
+                msg = "Unable to process output from `go list -json -m -mod=readonly all`; please validate that the command runs without errors.";
+            }
+            throw new AnalysisException(msg, ex);
         }
     }
 }
