@@ -340,7 +340,7 @@ public class ReportGenerator {
             final String templateName = format.toString().toLowerCase() + "Report";
             processTemplate(templateName, out);
             if (settings.getBoolean(Settings.KEYS.PRETTY_PRINT, false)) {
-                if (format == Format.JSON  || format == Format.SARIF) {
+                if (format == Format.JSON || format == Format.SARIF) {
                     pretifyJson(out.getPath());
                 } else if (format == Format.XML || format == Format.JUNIT) {
                     pretifyXml(out.getPath());
@@ -450,9 +450,9 @@ public class ReportGenerator {
                 writer.flush();
             } catch (UnsupportedEncodingException ex) {
                 throw new ReportException("Unable to generate the report using UTF-8", ex);
-            } catch (IOException ex) {
-                throw new ReportException("Unable to write the report", ex);
             }
+        } catch (IOException ex) {
+            throw new ReportException("Unable to write the report", ex);
         } finally {
             if (input != null) {
                 try {
