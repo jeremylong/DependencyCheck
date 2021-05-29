@@ -263,7 +263,7 @@ import org.slf4j.LoggerFactory;
 
             try {
 <span class="fc" id="L265">                final PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType(&quot;pypi&quot;).withName(dependency.getName());</span>
-<span class="fc bfc" id="L266" title="All 2 branches covered.">                if (dependency.getVersion() != null) {</span>
+<span class="pc bpc" id="L266" title="1 of 2 branches missed.">                if (dependency.getVersion() != null) {</span>
 <span class="fc" id="L267">                    builder.withVersion(dependency.getVersion());</span>
                 }
 <span class="fc" id="L269">                final PackageURL purl = builder.build();</span>
@@ -349,4 +349,4 @@ import org.slf4j.LoggerFactory;
         }
 <span class="fc" id="L350">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

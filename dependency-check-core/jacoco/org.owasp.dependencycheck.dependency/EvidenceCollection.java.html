@@ -19,8 +19,8 @@ package org.owasp.dependencycheck.dependency;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -41,23 +41,23 @@ import org.owasp.dependencycheck.utils.Filter;
     /**
      * A collection of vendor evidence.
      */
-<span class="fc" id="L44">    private final Set&lt;Evidence&gt; vendors = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L44">    private final Set&lt;Evidence&gt; vendors = new TreeSet&lt;&gt;();</span>
     /**
      * A collection of strings used to adjust Lucene's vendor term weighting.
      */
-<span class="fc" id="L48">    private final Set&lt;String&gt; vendorWeightings = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L48">    private final Set&lt;String&gt; vendorWeightings = new TreeSet&lt;&gt;();</span>
     /**
      * A collection of product evidence.
      */
-<span class="fc" id="L52">    private final Set&lt;Evidence&gt; products = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L52">    private final Set&lt;Evidence&gt; products = new TreeSet&lt;&gt;();</span>
     /**
      * A collection of strings used to adjust Lucene's product term weighting.
      */
-<span class="fc" id="L56">    private final Set&lt;String&gt; productWeightings = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L56">    private final Set&lt;String&gt; productWeightings = new TreeSet&lt;&gt;();</span>
     /**
      * A collection of version evidence.
      */
-<span class="fc" id="L60">    private final Set&lt;Evidence&gt; versions = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L60">    private final Set&lt;Evidence&gt; versions = new TreeSet&lt;&gt;();</span>
 
     /**
      * Used to iterate over highest confidence evidence contained in the
@@ -113,13 +113,13 @@ import org.owasp.dependencycheck.utils.Filter;
 
 <span class="pc bpc" id="L114" title="1 of 4 branches missed.">            switch (type) {</span>
                 case VENDOR:
-<span class="fc" id="L116">                    list = Collections.unmodifiableSet(new HashSet&lt;&gt;(vendors));</span>
+<span class="fc" id="L116">                    list = Collections.unmodifiableSet(new TreeSet&lt;&gt;(vendors));</span>
 <span class="fc" id="L117">                    break;</span>
                 case PRODUCT:
-<span class="fc" id="L119">                    list = Collections.unmodifiableSet(new HashSet&lt;&gt;(products));</span>
+<span class="fc" id="L119">                    list = Collections.unmodifiableSet(new TreeSet&lt;&gt;(products));</span>
 <span class="fc" id="L120">                    break;</span>
                 case VERSION:
-<span class="fc" id="L122">                    list = Collections.unmodifiableSet(new HashSet&lt;&gt;(versions));</span>
+<span class="fc" id="L122">                    list = Collections.unmodifiableSet(new TreeSet&lt;&gt;(versions));</span>
 <span class="fc" id="L123">                    break;</span>
                 default:
 <span class="nc" id="L125">                    return null;</span>
@@ -248,7 +248,7 @@ import org.owasp.dependencycheck.utils.Filter;
      * @return an unmodifiable set of vendor weighting strings
      */
     public synchronized Set&lt;String&gt; getVendorWeightings() {
-<span class="fc" id="L251">        return Collections.unmodifiableSet(new HashSet&lt;&gt;(vendorWeightings));</span>
+<span class="fc" id="L251">        return Collections.unmodifiableSet(new TreeSet&lt;&gt;(vendorWeightings));</span>
     }
 
     /**
@@ -259,7 +259,7 @@ import org.owasp.dependencycheck.utils.Filter;
      * @return an unmodifiable set of vendor weighting strings
      */
     public synchronized Set&lt;String&gt; getProductWeightings() {
-<span class="fc" id="L262">        return Collections.unmodifiableSet(new HashSet&lt;&gt;(productWeightings));</span>
+<span class="fc" id="L262">        return Collections.unmodifiableSet(new TreeSet&lt;&gt;(productWeightings));</span>
     }
 
     /**
@@ -272,11 +272,11 @@ import org.owasp.dependencycheck.utils.Filter;
 <span class="pc bpc" id="L272" title="1 of 2 branches missed.">        if (null != type) {</span>
 <span class="pc bpc" id="L273" title="1 of 4 branches missed.">            switch (type) {</span>
                 case VENDOR:
-<span class="fc" id="L275">                    return Collections.unmodifiableSet(new HashSet&lt;&gt;(vendors));</span>
+<span class="fc" id="L275">                    return Collections.unmodifiableSet(new TreeSet&lt;&gt;(vendors));</span>
                 case PRODUCT:
-<span class="fc" id="L277">                    return Collections.unmodifiableSet(new HashSet&lt;&gt;(products));</span>
+<span class="fc" id="L277">                    return Collections.unmodifiableSet(new TreeSet&lt;&gt;(products));</span>
                 case VERSION:
-<span class="fc" id="L279">                    return Collections.unmodifiableSet(new HashSet&lt;&gt;(versions));</span>
+<span class="fc" id="L279">                    return Collections.unmodifiableSet(new TreeSet&lt;&gt;(versions));</span>
                 default:
                     break;
             }
@@ -290,7 +290,7 @@ import org.owasp.dependencycheck.utils.Filter;
      * @return the unmodifiable set of evidence
      */
     public synchronized Set&lt;Evidence&gt; getEvidence() {
-<span class="fc" id="L293">        final Set&lt;Evidence&gt; e = new HashSet&lt;&gt;(vendors);</span>
+<span class="fc" id="L293">        final Set&lt;Evidence&gt; e = new TreeSet&lt;&gt;(vendors);</span>
 <span class="fc" id="L294">        e.addAll(products);</span>
 <span class="fc" id="L295">        e.addAll(versions);</span>
 <span class="fc" id="L296">        return Collections.unmodifiableSet(e);</span>
@@ -415,4 +415,4 @@ import org.owasp.dependencycheck.utils.Filter;
 <span class="fc" id="L415">                .isEquals();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

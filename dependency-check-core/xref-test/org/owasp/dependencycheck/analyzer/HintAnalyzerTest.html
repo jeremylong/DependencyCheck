@@ -82,68 +82,67 @@
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>          getSettings().setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>          getSettings().setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>          <strong class="jxr_keyword">try</strong> (Engine engine = <strong class="jxr_keyword">new</strong> Engine(getSettings())) {
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>  
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>              engine.scan(guice);
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>              engine.scan(spring);
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>              engine.analyzeDependencies();
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>              Dependency gdep = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>              Dependency sdep = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>              <strong class="jxr_keyword">for</strong> (Dependency d : engine.getDependencies()) {
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>                  <strong class="jxr_keyword">if</strong> (d.getActualFile().equals(guice)) {
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>                      gdep = d;
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>                  } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (d.getActualFile().equals(spring)) {
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>                      sdep = d;
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>                  }
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>              }
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>              <strong class="jxr_keyword">final</strong> Evidence springTest1 = <strong class="jxr_keyword">new</strong> Evidence(<span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"product"</span>, <span class="jxr_string">"springsource_spring_framework"</span>, Confidence.HIGHEST);
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>              <strong class="jxr_keyword">final</strong> Evidence springTest2 = <strong class="jxr_keyword">new</strong> Evidence(<span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"vendor"</span>, <span class="jxr_string">"SpringSource"</span>, Confidence.HIGHEST);
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>              <strong class="jxr_keyword">final</strong> Evidence springTest3 = <strong class="jxr_keyword">new</strong> Evidence(<span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"vendor"</span>, <span class="jxr_string">"vmware"</span>, Confidence.HIGHEST);
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>              <strong class="jxr_keyword">final</strong> Evidence springTest4 = <strong class="jxr_keyword">new</strong> Evidence(<span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"product"</span>, <span class="jxr_string">"springsource_spring_framework"</span>, Confidence.HIGHEST);
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>              <strong class="jxr_keyword">final</strong> Evidence springTest5 = <strong class="jxr_keyword">new</strong> Evidence(<span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"vendor"</span>, <span class="jxr_string">"vmware"</span>, Confidence.HIGHEST);
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>  
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>              assertFalse(gdep.contains(EvidenceType.PRODUCT, springTest1));
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>              assertFalse(gdep.contains(EvidenceType.VENDOR, springTest2));
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>              assertFalse(gdep.contains(EvidenceType.VENDOR, springTest3));
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>              assertFalse(gdep.contains(EvidenceType.PRODUCT, springTest4));
-<a class="jxr_linenumber" name="L100" href="#L100">100</a>             assertFalse(gdep.contains(EvidenceType.VENDOR, springTest5));
-<a class="jxr_linenumber" name="L101" href="#L101">101</a> 
-<a class="jxr_linenumber" name="L102" href="#L102">102</a>             assertTrue(sdep.contains(EvidenceType.PRODUCT, springTest1));
-<a class="jxr_linenumber" name="L103" href="#L103">103</a>             assertTrue(sdep.contains(EvidenceType.VENDOR, springTest2));
-<a class="jxr_linenumber" name="L104" href="#L104">104</a>             assertTrue(sdep.contains(EvidenceType.VENDOR, springTest3));
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>             <em class="jxr_comment">//assertTrue(evidence.contains(springTest4));</em>
-<a class="jxr_linenumber" name="L106" href="#L106">106</a>             <em class="jxr_comment">//assertTrue(evidence.contains(springTest5));</em>
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>         }
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>     }
-<a class="jxr_linenumber" name="L109" href="#L109">109</a> 
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L111" href="#L111">111</a> <em class="jxr_javadoccomment">     * Test of analyze method, of class HintAnalyzer.</em>
-<a class="jxr_linenumber" name="L112" href="#L112">112</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>     @Test
-<a class="jxr_linenumber" name="L114" href="#L114">114</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testAnalyze_1() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>         File path = BaseTest.getResourceAsFile(<strong class="jxr_keyword">this</strong>, <span class="jxr_string">"hints_12.xml"</span>);
-<a class="jxr_linenumber" name="L116" href="#L116">116</a>         getSettings().setString(Settings.KEYS.HINTS_FILE, path.getPath());
-<a class="jxr_linenumber" name="L117" href="#L117">117</a>         HintAnalyzer instance = <strong class="jxr_keyword">new</strong> HintAnalyzer();
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>         instance.initialize(getSettings());
-<a class="jxr_linenumber" name="L119" href="#L119">119</a>         instance.prepare(<strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L120" href="#L120">120</a>         Dependency d = <strong class="jxr_keyword">new</strong> Dependency();
-<a class="jxr_linenumber" name="L121" href="#L121">121</a>         d.addEvidence(EvidenceType.VERSION, <span class="jxr_string">"version source"</span>, <span class="jxr_string">"given version name"</span>, <span class="jxr_string">"1.2.3"</span>, Confidence.HIGH);
-<a class="jxr_linenumber" name="L122" href="#L122">122</a>         d.addEvidence(EvidenceType.VERSION, <span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"remove version name"</span>, <span class="jxr_string">"value"</span>, Confidence.HIGH);
-<a class="jxr_linenumber" name="L123" href="#L123">123</a>         d.addEvidence(EvidenceType.VENDOR, <span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"remove vendor name"</span>, <span class="jxr_string">"vendor"</span>, Confidence.HIGH);
-<a class="jxr_linenumber" name="L124" href="#L124">124</a>         d.addEvidence(EvidenceType.PRODUCT, <span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"remove product name"</span>, <span class="jxr_string">"product"</span>, Confidence.HIGH);
-<a class="jxr_linenumber" name="L125" href="#L125">125</a>         d.addEvidence(EvidenceType.VERSION, <span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"other version name"</span>, <span class="jxr_string">"value"</span>, Confidence.HIGH);
-<a class="jxr_linenumber" name="L126" href="#L126">126</a>         d.addEvidence(EvidenceType.VENDOR, <span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"other vendor name"</span>, <span class="jxr_string">"vendor"</span>, Confidence.HIGH);
-<a class="jxr_linenumber" name="L127" href="#L127">127</a>         d.addEvidence(EvidenceType.PRODUCT, <span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"other product name"</span>, <span class="jxr_string">"product"</span>, Confidence.HIGH);
-<a class="jxr_linenumber" name="L128" href="#L128">128</a> 
-<a class="jxr_linenumber" name="L129" href="#L129">129</a>         assertEquals(<span class="jxr_string">"vendor evidence mismatch"</span>, 2, d.getEvidence(EvidenceType.VENDOR).size());
-<a class="jxr_linenumber" name="L130" href="#L130">130</a>         assertEquals(<span class="jxr_string">"product evidence mismatch"</span>, 2, d.getEvidence(EvidenceType.PRODUCT).size());
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>         assertEquals(<span class="jxr_string">"version evidence mismatch"</span>, 3, d.getEvidence(EvidenceType.VERSION).size());
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>         instance.analyze(d, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>         assertEquals(<span class="jxr_string">"vendor evidence mismatch"</span>, 1, d.getEvidence(EvidenceType.VENDOR).size());
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>         assertEquals(<span class="jxr_string">"product evidence mismatch"</span>, 1, d.getEvidence(EvidenceType.PRODUCT).size());
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>         assertEquals(<span class="jxr_string">"version evidence mismatch"</span>, 2, d.getEvidence(EvidenceType.VERSION).size());
-<a class="jxr_linenumber" name="L136" href="#L136">136</a> 
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>     }
-<a class="jxr_linenumber" name="L138" href="#L138">138</a> }
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>              engine.scan(guice);
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>              engine.scan(spring);
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>              engine.analyzeDependencies();
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>              Dependency gdep = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>              Dependency sdep = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>              <strong class="jxr_keyword">for</strong> (Dependency d : engine.getDependencies()) {
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>                  <strong class="jxr_keyword">if</strong> (d.getActualFile().equals(guice)) {
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>                      gdep = d;
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>                  } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (d.getActualFile().equals(spring)) {
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>                      sdep = d;
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>                  }
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>              }
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>              <strong class="jxr_keyword">final</strong> Evidence springTest1 = <strong class="jxr_keyword">new</strong> Evidence(<span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"product"</span>, <span class="jxr_string">"springsource_spring_framework"</span>, Confidence.HIGHEST);
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>              <strong class="jxr_keyword">final</strong> Evidence springTest2 = <strong class="jxr_keyword">new</strong> Evidence(<span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"vendor"</span>, <span class="jxr_string">"SpringSource"</span>, Confidence.HIGHEST);
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>              <strong class="jxr_keyword">final</strong> Evidence springTest3 = <strong class="jxr_keyword">new</strong> Evidence(<span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"vendor"</span>, <span class="jxr_string">"vmware"</span>, Confidence.HIGHEST);
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>              <strong class="jxr_keyword">final</strong> Evidence springTest4 = <strong class="jxr_keyword">new</strong> Evidence(<span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"product"</span>, <span class="jxr_string">"springsource_spring_framework"</span>, Confidence.HIGHEST);
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>              <strong class="jxr_keyword">final</strong> Evidence springTest5 = <strong class="jxr_keyword">new</strong> Evidence(<span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"vendor"</span>, <span class="jxr_string">"vmware"</span>, Confidence.HIGHEST);
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>  
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>              assertFalse(gdep.contains(EvidenceType.PRODUCT, springTest1));
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>              assertFalse(gdep.contains(EvidenceType.VENDOR, springTest2));
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>              assertFalse(gdep.contains(EvidenceType.VENDOR, springTest3));
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>              assertFalse(gdep.contains(EvidenceType.PRODUCT, springTest4));
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>              assertFalse(gdep.contains(EvidenceType.VENDOR, springTest5));
+<a class="jxr_linenumber" name="L100" href="#L100">100</a> 
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>             assertTrue(sdep.contains(EvidenceType.PRODUCT, springTest1));
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>             assertTrue(sdep.contains(EvidenceType.VENDOR, springTest2));
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>             assertTrue(sdep.contains(EvidenceType.VENDOR, springTest3));
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>             <em class="jxr_comment">//assertTrue(evidence.contains(springTest4));</em>
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>             <em class="jxr_comment">//assertTrue(evidence.contains(springTest5));</em>
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>         }
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>     }
+<a class="jxr_linenumber" name="L108" href="#L108">108</a> 
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L110" href="#L110">110</a> <em class="jxr_javadoccomment">     * Test of analyze method, of class HintAnalyzer.</em>
+<a class="jxr_linenumber" name="L111" href="#L111">111</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>     @Test
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testAnalyze_1() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>         File path = BaseTest.getResourceAsFile(<strong class="jxr_keyword">this</strong>, <span class="jxr_string">"hints_12.xml"</span>);
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>         getSettings().setString(Settings.KEYS.HINTS_FILE, path.getPath());
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>         HintAnalyzer instance = <strong class="jxr_keyword">new</strong> HintAnalyzer();
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>         instance.initialize(getSettings());
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>         instance.prepare(<strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>         Dependency d = <strong class="jxr_keyword">new</strong> Dependency();
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>         d.addEvidence(EvidenceType.VERSION, <span class="jxr_string">"version source"</span>, <span class="jxr_string">"given version name"</span>, <span class="jxr_string">"1.2.3"</span>, Confidence.HIGH);
+<a class="jxr_linenumber" name="L121" href="#L121">121</a>         d.addEvidence(EvidenceType.VERSION, <span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"remove version name"</span>, <span class="jxr_string">"value"</span>, Confidence.HIGH);
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>         d.addEvidence(EvidenceType.VENDOR, <span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"remove vendor name"</span>, <span class="jxr_string">"vendor"</span>, Confidence.HIGH);
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>         d.addEvidence(EvidenceType.PRODUCT, <span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"remove product name"</span>, <span class="jxr_string">"product"</span>, Confidence.HIGH);
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>         d.addEvidence(EvidenceType.VERSION, <span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"other version name"</span>, <span class="jxr_string">"value"</span>, Confidence.HIGH);
+<a class="jxr_linenumber" name="L125" href="#L125">125</a>         d.addEvidence(EvidenceType.VENDOR, <span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"other vendor name"</span>, <span class="jxr_string">"vendor"</span>, Confidence.HIGH);
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>         d.addEvidence(EvidenceType.PRODUCT, <span class="jxr_string">"hint analyzer"</span>, <span class="jxr_string">"other product name"</span>, <span class="jxr_string">"product"</span>, Confidence.HIGH);
+<a class="jxr_linenumber" name="L127" href="#L127">127</a> 
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>         assertEquals(<span class="jxr_string">"vendor evidence mismatch"</span>, 2, d.getEvidence(EvidenceType.VENDOR).size());
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>         assertEquals(<span class="jxr_string">"product evidence mismatch"</span>, 2, d.getEvidence(EvidenceType.PRODUCT).size());
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>         assertEquals(<span class="jxr_string">"version evidence mismatch"</span>, 3, d.getEvidence(EvidenceType.VERSION).size());
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>         instance.analyze(d, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>         assertEquals(<span class="jxr_string">"vendor evidence mismatch"</span>, 1, d.getEvidence(EvidenceType.VENDOR).size());
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>         assertEquals(<span class="jxr_string">"product evidence mismatch"</span>, 1, d.getEvidence(EvidenceType.PRODUCT).size());
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>         assertEquals(<span class="jxr_string">"version evidence mismatch"</span>, 2, d.getEvidence(EvidenceType.VERSION).size());
+<a class="jxr_linenumber" name="L135" href="#L135">135</a> 
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>     }
+<a class="jxr_linenumber" name="L137" href="#L137">137</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2021 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

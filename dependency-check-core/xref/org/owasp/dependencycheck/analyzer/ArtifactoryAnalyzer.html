@@ -243,7 +243,7 @@
 <a class="jxr_linenumber" name="L235" href="#L235">235</a>             LOGGER.debug(<span class="jxr_string">"Downloading {}"</span>, ma.getPomUrl());
 <a class="jxr_linenumber" name="L236" href="#L236">236</a>             <em class="jxr_comment">//TODO add caching</em>
 <a class="jxr_linenumber" name="L237" href="#L237">237</a>             <strong class="jxr_keyword">final</strong> Downloader downloader = <strong class="jxr_keyword">new</strong> Downloader(getSettings());
-<a class="jxr_linenumber" name="L238" href="#L238">238</a>             downloader.fetchFile(<strong class="jxr_keyword">new</strong> URL(ma.getPomUrl()), pomFile);
+<a class="jxr_linenumber" name="L238" href="#L238">238</a>             downloader.fetchFile(<strong class="jxr_keyword">new</strong> URL(ma.getPomUrl()), pomFile, Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME, Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN);
 <a class="jxr_linenumber" name="L239" href="#L239">239</a>             PomUtils.analyzePOM(dependency, pomFile);
 <a class="jxr_linenumber" name="L240" href="#L240">240</a> 
 <a class="jxr_linenumber" name="L241" href="#L241">241</a>         } <strong class="jxr_keyword">catch</strong> (DownloadFailedException ex) {

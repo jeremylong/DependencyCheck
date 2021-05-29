@@ -235,7 +235,7 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
 <span class="nc" id="L235">            LOGGER.debug(&quot;Downloading {}&quot;, ma.getPomUrl());</span>
             //TODO add caching
 <span class="nc" id="L237">            final Downloader downloader = new Downloader(getSettings());</span>
-<span class="nc" id="L238">            downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);</span>
+<span class="nc" id="L238">            downloader.fetchFile(new URL(ma.getPomUrl()), pomFile, Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME, Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN);</span>
 <span class="nc" id="L239">            PomUtils.analyzePOM(dependency, pomFile);</span>
 
 <span class="nc" id="L241">        } catch (DownloadFailedException ex) {</span>
@@ -257,4 +257,4 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
 <span class="nc" id="L257">    }</span>
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

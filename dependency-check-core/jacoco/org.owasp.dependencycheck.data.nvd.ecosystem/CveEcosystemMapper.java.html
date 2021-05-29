@@ -68,10 +68,10 @@ import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
 <span class="fc" id="L68">            return null;</span>
         }
 <span class="fc" id="L70">        final String ecosystem = descriptionEcosystemMapper.getEcosystem(cve);</span>
-<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (ecosystem != null) {</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        if (ecosystem != null) {</span>
 <span class="fc" id="L72">            return ecosystem;</span>
         }
-<span class="fc" id="L74">        return urlEcosystemMapper.getEcosystem(cve);</span>
+<span class="nc" id="L74">        return urlEcosystemMapper.getEcosystem(cve);</span>
     }
 
     /**
@@ -88,14 +88,14 @@ import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
 <span class="fc" id="L88">                .collect(CpeMatchStreamCollector.getInstance())</span>
 <span class="pc bpc" id="L89" title="1 of 2 branches missed.">                .filter(defCpeMatch -&gt; defCpeMatch.getCpe23Uri() != null)</span>
 <span class="fc" id="L90">                .collect(Collectors.toList());</span>
-<span class="fc bfc" id="L91" title="All 4 branches covered.">        if (!cpeEntries.isEmpty() &amp;&amp; cpeEntries.size() &gt; 1) {</span>
+<span class="pc bpc" id="L91" title="1 of 4 branches missed.">        if (!cpeEntries.isEmpty() &amp;&amp; cpeEntries.size() &gt; 1) {</span>
 <span class="fc" id="L92">            final DefCpeMatch firstMatch = cpeEntries.get(0);</span>
 <span class="fc" id="L93">            final String uri = firstMatch.getCpe23Uri();</span>
 <span class="fc" id="L94">            final int pos = uri.indexOf(&quot;:&quot;, uri.indexOf(&quot;:&quot;, 10) + 1);</span>
 <span class="fc" id="L95">            final String match = uri.substring(0, pos + 1);</span>
-<span class="fc bfc" id="L96" title="All 2 branches covered.">            return !cpeEntries.stream().allMatch(e -&gt; e.getCpe23Uri().startsWith(match));</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">            return !cpeEntries.stream().allMatch(e -&gt; e.getCpe23Uri().startsWith(match));</span>
         }
 <span class="fc" id="L98">        return false;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

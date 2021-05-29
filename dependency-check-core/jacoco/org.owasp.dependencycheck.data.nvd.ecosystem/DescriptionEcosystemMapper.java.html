@@ -154,18 +154,18 @@ public class DescriptionEcosystemMapper {
     public static boolean isURL(String c, int begin) {
 <span class="fc" id="L155">        int pos = begin - 2;</span>
 
-<span class="fc bfc" id="L157" title="All 2 branches covered.">        while (pos &gt; 2) {</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">        while (pos &gt; 2) {</span>
 <span class="fc" id="L158">            pos--;</span>
 
 <span class="fc bfc" id="L160" title="All 2 branches covered.">            if (c.charAt(pos) == ' ') {</span>
 <span class="fc" id="L161">                return false;</span>
             }
 <span class="fc bfc" id="L163" title="All 2 branches covered.">            if (c.charAt(pos) == ':') {</span>
-<span class="pc bpc" id="L164" title="1 of 4 branches missed.">                return c.charAt(pos + 1) == '/' &amp;&amp; c.charAt(pos + 2) == '/';</span>
+<span class="pc bpc" id="L164" title="2 of 4 branches missed.">                return c.charAt(pos + 1) == '/' &amp;&amp; c.charAt(pos + 2) == '/';</span>
             }
         }
 
-<span class="fc" id="L168">        return false;</span>
+<span class="nc" id="L168">        return false;</span>
     }
 
     protected void increment(int i, int[] ecosystemMap) {
@@ -225,8 +225,8 @@ public class DescriptionEcosystemMapper {
                 // check if full word, i.e. typically space first and then space or dot after
 <span class="fc bfc" id="L226" title="All 2 branches covered.">                if (begin != 0) {</span>
 <span class="fc" id="L227">                    final char startChar = c.charAt(begin - 1);</span>
-<span class="pc bpc" id="L228" title="1 of 4 branches missed.">                    if (startChar &gt;= keywordPrefixes.length || !keywordPrefixes[startChar]) {</span>
-<span class="fc" id="L229">                        return;</span>
+<span class="pc bpc" id="L228" title="2 of 4 branches missed.">                    if (startChar &gt;= keywordPrefixes.length || !keywordPrefixes[startChar]) {</span>
+<span class="nc" id="L229">                        return;</span>
                     }
                 }
 <span class="pc bpc" id="L232" title="1 of 2 branches missed.">                if (end != c.length()) {</span>
@@ -238,8 +238,8 @@ public class DescriptionEcosystemMapper {
 
 <span class="fc" id="L239">                final String ecosystem = value.getEcosystem();</span>
 <span class="fc bfc" id="L240" title="All 2 branches covered.">                if (Ecosystem.NATIVE.equals(ecosystem)) { // TODO could be checked afterwards</span>
-<span class="fc bfc" id="L241" title="All 2 branches covered.">                    if (StringUtils.contains(c, &quot;android&quot;)) {</span>
-<span class="fc" id="L242">                        return;</span>
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">                    if (StringUtils.contains(c, &quot;android&quot;)) {</span>
+<span class="nc" id="L242">                        return;</span>
                     }
                 }
             }
@@ -260,7 +260,7 @@ public class DescriptionEcosystemMapper {
 <span class="fc" id="L260">        int bestScore = -1;</span>
 <span class="fc bfc" id="L261" title="All 2 branches covered.">        for (int i = 0; i &lt; values.length; i++) {</span>
 <span class="fc bfc" id="L262" title="All 2 branches covered.">            if (values[i] &gt; 0) {</span>
-<span class="fc bfc" id="L263" title="All 2 branches covered.">                if (values[i] &gt; bestScore) {</span>
+<span class="pc bpc" id="L263" title="1 of 2 branches missed.">                if (values[i] &gt; bestScore) {</span>
 <span class="fc" id="L264">                    bestIndex = i;</span>
 <span class="fc" id="L265">                    bestScore = values[i];</span>
                 }
@@ -270,4 +270,4 @@ public class DescriptionEcosystemMapper {
 <span class="fc" id="L270">        return bestIndex;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

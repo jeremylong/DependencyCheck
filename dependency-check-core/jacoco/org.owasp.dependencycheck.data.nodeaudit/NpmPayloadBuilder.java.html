@@ -220,7 +220,7 @@ public final class NpmPayloadBuilder {
 <span class="fc" id="L220">        depBuilder.add(&quot;version&quot;, dep.getString(&quot;version&quot;));</span>
 
         //not installed package (like, dependency of an optional dependency) doesn't contains integrity
-<span class="pc bpc" id="L223" title="1 of 2 branches missed.">        if (dep.containsKey(&quot;integrity&quot;)) {</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">        if (dep.containsKey(&quot;integrity&quot;)) {</span>
 <span class="fc" id="L224">            depBuilder.add(&quot;integrity&quot;, dep.getString(&quot;integrity&quot;));</span>
         }
 <span class="fc bfc" id="L226" title="All 2 branches covered.">        if (dep.containsKey(&quot;requires&quot;)) {</span>
@@ -238,4 +238,4 @@ public final class NpmPayloadBuilder {
 <span class="fc" id="L238">        return depBuilder.build();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

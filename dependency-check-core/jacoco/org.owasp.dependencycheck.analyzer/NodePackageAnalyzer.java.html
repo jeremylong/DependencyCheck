@@ -235,8 +235,8 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
             }
 <span class="fc bfc" id="L236" title="All 2 branches covered.">        } else if (PACKAGE_LOCK_JSON.equals(dependency.getFileName())) {</span>
 <span class="fc" id="L237">            final File shrinkwrap = new File(baseDir, SHRINKWRAP_JSON);</span>
-<span class="fc bfc" id="L238" title="All 2 branches covered.">            if (shrinkwrap.exists()) {</span>
-<span class="fc" id="L239">                return;</span>
+<span class="pc bpc" id="L238" title="1 of 2 branches missed.">            if (shrinkwrap.exists()) {</span>
+<span class="nc" id="L239">                return;</span>
             }
         }
 <span class="fc" id="L242">        final File nodeModules = new File(baseDir, &quot;node_modules&quot;);</span>
@@ -418,4 +418,4 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
         }
 <span class="fc" id="L419">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -201,8 +201,8 @@ public class Evidence implements Serializable, Comparable&lt;Evidence&gt; {
     public int compareTo(@NotNull Evidence o) {
 <span class="pc bpc" id="L202" title="1 of 2 branches missed.">        return new CompareToBuilder()</span>
 <span class="pc bpc" id="L203" title="2 of 4 branches missed.">                .append(this.source == null ? null : this.source.toLowerCase(), o.source == null ? null : o.source.toLowerCase())</span>
-<span class="pc bpc" id="L204" title="2 of 4 branches missed.">                .append(this.name == null ? null : this.name.toLowerCase(), o.name == null ? null : o.name.toLowerCase())</span>
-<span class="pc bpc" id="L205" title="1 of 2 branches missed.">                .append(this.value == null ? null : this.value.toLowerCase(), o.value == null ? null : o.value.toLowerCase())</span>
+<span class="pc bpc" id="L204" title="1 of 4 branches missed.">                .append(this.name == null ? null : this.name.toLowerCase(), o.name == null ? null : o.name.toLowerCase())</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">                .append(this.value == null ? null : this.value.toLowerCase(), o.value == null ? null : o.value.toLowerCase())</span>
 <span class="fc" id="L206">                .append(this.confidence, o.getConfidence())</span>
 <span class="fc" id="L207">                .toComparison();</span>
     }
@@ -217,4 +217,4 @@ public class Evidence implements Serializable, Comparable&lt;Evidence&gt; {
 <span class="fc" id="L217">        return &quot;Evidence{&quot; + &quot;name=&quot; + name + &quot;, source=&quot; + source + &quot;, value=&quot; + value + &quot;, confidence=&quot; + confidence + '}';</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -96,7 +96,7 @@ public class DownloadTask implements Callable&lt;Future&lt;ProcessTask&gt;&gt; {
      * @return the value of nvdCveInfo
      */
     public NvdCveInfo getNvdCveInfo() {
-<span class="fc" id="L99">        return nvdCveInfo;</span>
+<span class="nc" id="L99">        return nvdCveInfo;</span>
     }
 
     /**
@@ -114,7 +114,7 @@ public class DownloadTask implements Callable&lt;Future&lt;ProcessTask&gt;&gt; {
      * @return the value of file
      */
     public File getFile() {
-<span class="fc" id="L117">        return file;</span>
+<span class="nc" id="L117">        return file;</span>
     }
 
     @Override
@@ -138,11 +138,11 @@ public class DownloadTask implements Callable&lt;Future&lt;ProcessTask&gt;&gt; {
 
 <span class="fc" id="L139">            LOGGER.info(&quot;Download Complete for NVD CVE - {}  ({} ms)&quot;, nvdCveInfo.getId(),</span>
 <span class="fc" id="L140">                    System.currentTimeMillis() - startDownload);</span>
-<span class="fc bfc" id="L141" title="All 2 branches covered.">            if (this.processorService == null) {</span>
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">            if (this.processorService == null) {</span>
 <span class="fc" id="L142">                return null;</span>
             }
-<span class="fc" id="L144">            final ProcessTask task = new ProcessTask(cveDB, this, settings);</span>
-<span class="fc" id="L145">            return this.processorService.submit(task);</span>
+<span class="nc" id="L144">            final ProcessTask task = new ProcessTask(cveDB, this, settings);</span>
+<span class="nc" id="L145">            return this.processorService.submit(task);</span>
 
 <span class="nc" id="L147">        } catch (Throwable ex) {</span>
 <span class="nc" id="L148">            LOGGER.error(&quot;An exception occurred downloading NVD CVE - {}\nSome CVEs may not be reported. Reason: {}&quot;,</span>
@@ -158,11 +158,11 @@ public class DownloadTask implements Callable&lt;Future&lt;ProcessTask&gt;&gt; {
      * Attempts to delete the files that were downloaded.
      */
     public void cleanup() {
-<span class="pc bpc" id="L161" title="3 of 6 branches missed.">        if (file != null &amp;&amp; file.exists() &amp;&amp; !file.delete()) {</span>
+<span class="nc bnc" id="L161" title="All 6 branches missed.">        if (file != null &amp;&amp; file.exists() &amp;&amp; !file.delete()) {</span>
 <span class="nc" id="L162">            LOGGER.debug(&quot;Failed to delete first temporary file {}&quot;, file.toString());</span>
 <span class="nc" id="L163">            file.deleteOnExit();</span>
         }
-<span class="fc" id="L165">    }</span>
+<span class="nc" id="L165">    }</span>
 
     /**
      * Returns true if the process task is for the modified json file from the
@@ -172,7 +172,7 @@ public class DownloadTask implements Callable&lt;Future&lt;ProcessTask&gt;&gt; {
      * otherwise &lt;code&gt;false&lt;/code&gt;
      */
     public boolean isModified() {
-<span class="fc" id="L175">        return StringUtils.containsIgnoreCase(file.toString(), &quot;modified&quot;);</span>
+<span class="nc" id="L175">        return StringUtils.containsIgnoreCase(file.toString(), &quot;modified&quot;);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

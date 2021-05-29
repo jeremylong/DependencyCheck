@@ -69,21 +69,21 @@ public class UrlEcosystemMapper {
      * @return the ecosystem
      */
     public String getEcosystem(DefCveItem cve) {
-<span class="fc" id="L72">        References references = Optional.ofNullable(cve)</span>
+<span class="fc" id="L72">        final References references = Optional.ofNullable(cve)</span>
 <span class="fc" id="L73">                .map(DefCveItem::getCve)</span>
 <span class="fc" id="L74">                .map(CVEJSON40Min11::getReferences)</span>
 <span class="fc" id="L75">                .orElse(null);</span>
 
 <span class="fc bfc" id="L77" title="All 2 branches covered.">        if (Objects.nonNull(references)) {</span>
-<span class="fc bfc" id="L78" title="All 2 branches covered.">            for (Reference r : references.getReferenceData()) {</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">            for (Reference r : references.getReferenceData()) {</span>
 
 <span class="fc" id="L80">                final Hit&lt;String&gt; ecosystem = search.findFirst(r.getUrl());</span>
-<span class="fc bfc" id="L81" title="All 2 branches covered.">                if (ecosystem != null) {</span>
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">                if (ecosystem != null) {</span>
 <span class="fc" id="L82">                    return ecosystem.value;</span>
                 }
-<span class="fc" id="L84">            }</span>
+<span class="nc" id="L84">            }</span>
         }
 <span class="fc" id="L86">        return null;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

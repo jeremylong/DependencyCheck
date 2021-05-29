@@ -97,7 +97,7 @@
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>              <strong class="jxr_keyword">if</strong> (dependencies.length &lt; 2) {
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>                  <strong class="jxr_keyword">return</strong>;
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>              }
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>              Arrays.sort(dependencies, (l, r) -&gt; (l.getDisplayFileName() + l.getActualFilePath()).compareTo(r.getDisplayFileName() + r.getActualFilePath()));
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>              Arrays.sort(dependencies, Dependency.NAME_COMPARATOR);
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>              <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> x = 0; x &lt; dependencies.length - 1; x++) {
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>                  <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> dependency = dependencies[x];
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>                  <strong class="jxr_keyword">if</strong> (!dependenciesToRemove.contains(dependency)) {

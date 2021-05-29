@@ -54,15 +54,15 @@ public final class DriverLoader {
      */
     public static void cleanup(Driver driver) {
         try {
-<span class="fc" id="L57">            LOGGER.debug(&quot;Begin deregister driver&quot;);</span>
-<span class="fc" id="L58">            DriverManager.deregisterDriver(driver);</span>
-<span class="fc" id="L59">            LOGGER.debug(&quot;End deregister driver&quot;);</span>
+<span class="nc" id="L57">            LOGGER.debug(&quot;Begin deregister driver&quot;);</span>
+<span class="nc" id="L58">            DriverManager.deregisterDriver(driver);</span>
+<span class="nc" id="L59">            LOGGER.debug(&quot;End deregister driver&quot;);</span>
 <span class="nc" id="L60">        } catch (SQLException ex) {</span>
 <span class="nc" id="L61">            LOGGER.debug(&quot;An error occurred unloading the database driver&quot;, ex);</span>
 <span class="nc" id="L62">        } catch (Throwable unexpected) {</span>
 <span class="nc" id="L63">            LOGGER.debug(&quot;An unexpected throwable occurred unloading the database driver&quot;, unexpected);</span>
-<span class="pc" id="L64">        }</span>
-<span class="fc" id="L65">    }</span>
+<span class="nc" id="L64">        }</span>
+<span class="nc" id="L65">    }</span>
 
     /**
      * Private constructor for a utility class.
@@ -166,4 +166,4 @@ public final class DriverLoader {
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

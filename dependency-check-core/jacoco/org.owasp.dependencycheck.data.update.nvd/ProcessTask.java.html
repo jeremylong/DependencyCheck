@@ -43,11 +43,11 @@ public class ProcessTask implements Callable&lt;ProcessTask&gt; {
     /**
      * The logger.
      */
-<span class="fc" id="L46">    private static final Logger LOGGER = LoggerFactory.getLogger(ProcessTask.class);</span>
+<span class="nc" id="L46">    private static final Logger LOGGER = LoggerFactory.getLogger(ProcessTask.class);</span>
     /**
      * A field to store any update exceptions that occur during the &quot;call&quot;.
      */
-<span class="fc" id="L50">    private UpdateException exception = null;</span>
+<span class="nc" id="L50">    private UpdateException exception = null;</span>
     /**
      * A reference to the CveDB.
      */
@@ -71,7 +71,7 @@ public class ProcessTask implements Callable&lt;ProcessTask&gt; {
      * @return the value of exception
      */
     public UpdateException getException() {
-<span class="fc" id="L74">        return exception;</span>
+<span class="nc" id="L74">        return exception;</span>
     }
 
     /**
@@ -93,12 +93,12 @@ public class ProcessTask implements Callable&lt;ProcessTask&gt; {
      * necessary so that when the thread is started the dependencies have a
      * correct reference to the global settings.
      */
-<span class="fc" id="L96">    public ProcessTask(final CveDB cveDB, final DownloadTask downloadTask, Settings settings) {</span>
-<span class="fc" id="L97">        this.cveDB = cveDB;</span>
-<span class="fc" id="L98">        this.downloadTask = downloadTask;</span>
-<span class="fc" id="L99">        this.properties = cveDB.getDatabaseProperties();</span>
-<span class="fc" id="L100">        this.settings = settings;</span>
-<span class="fc" id="L101">    }</span>
+<span class="nc" id="L96">    public ProcessTask(final CveDB cveDB, final DownloadTask downloadTask, Settings settings) {</span>
+<span class="nc" id="L97">        this.cveDB = cveDB;</span>
+<span class="nc" id="L98">        this.downloadTask = downloadTask;</span>
+<span class="nc" id="L99">        this.properties = cveDB.getDatabaseProperties();</span>
+<span class="nc" id="L100">        this.settings = settings;</span>
+<span class="nc" id="L101">    }</span>
 
     /**
      * Implements the callable interface.
@@ -110,13 +110,13 @@ public class ProcessTask implements Callable&lt;ProcessTask&gt; {
     @Override
     public ProcessTask call() throws Exception {
         try {
-<span class="fc" id="L113">            processFiles();</span>
+<span class="nc" id="L113">            processFiles();</span>
 <span class="nc" id="L114">        } catch (UpdateException ex) {</span>
 <span class="nc" id="L115">            this.exception = ex;</span>
         } finally {
-<span class="fc" id="L117">            settings.cleanup(false);</span>
+<span class="nc" id="L117">            settings.cleanup(false);</span>
         }
-<span class="fc" id="L119">        return this;</span>
+<span class="nc" id="L119">        return this;</span>
     }
 
     /**
@@ -135,9 +135,9 @@ public class ProcessTask implements Callable&lt;ProcessTask&gt; {
     protected void importJSON(File file) throws ParserConfigurationException,
             IOException, SQLException, DatabaseException, ClassNotFoundException, UpdateException {
 
-<span class="fc" id="L138">        final NvdCveParser parser = new NvdCveParser(settings, cveDB);</span>
-<span class="fc" id="L139">        parser.parse(file);</span>
-<span class="fc" id="L140">    }</span>
+<span class="nc" id="L138">        final NvdCveParser parser = new NvdCveParser(settings, cveDB);</span>
+<span class="nc" id="L139">        parser.parse(file);</span>
+<span class="nc" id="L140">    }</span>
 
     /**
      * Processes the NVD CVE XML file and imports the data into the DB.
@@ -146,19 +146,18 @@ public class ProcessTask implements Callable&lt;ProcessTask&gt; {
      * the database
      */
     private void processFiles() throws UpdateException {
-<span class="fc" id="L149">        LOGGER.info(&quot;Processing Started for NVD CVE - {}&quot;, downloadTask.getNvdCveInfo().getId());</span>
-<span class="fc" id="L150">        final long startProcessing = System.currentTimeMillis();</span>
+<span class="nc" id="L149">        LOGGER.info(&quot;Processing Started for NVD CVE - {}&quot;, downloadTask.getNvdCveInfo().getId());</span>
+<span class="nc" id="L150">        final long startProcessing = System.currentTimeMillis();</span>
         try {
-<span class="fc" id="L152">            importJSON(downloadTask.getFile());</span>
-<span class="fc" id="L153">            cveDB.commit();</span>
-<span class="fc" id="L154">            properties.save(downloadTask.getNvdCveInfo());</span>
-<span class="nc" id="L155">        } catch (ParserConfigurationException | SQLException | DatabaseException | ClassNotFoundException | IOException ex) {</span>
-<span class="nc" id="L156">            throw new UpdateException(ex);</span>
+<span class="nc" id="L152">            importJSON(downloadTask.getFile());</span>
+<span class="nc" id="L153">            properties.save(downloadTask.getNvdCveInfo());</span>
+<span class="nc" id="L154">        } catch (ParserConfigurationException | SQLException | DatabaseException | ClassNotFoundException | IOException ex) {</span>
+<span class="nc" id="L155">            throw new UpdateException(ex);</span>
         } finally {
-<span class="fc" id="L158">            downloadTask.cleanup();</span>
+<span class="nc" id="L157">            downloadTask.cleanup();</span>
         }
-<span class="fc" id="L160">        LOGGER.info(&quot;Processing Complete for NVD CVE - {}  ({} ms)&quot;, downloadTask.getNvdCveInfo().getId(),</span>
-<span class="fc" id="L161">                System.currentTimeMillis() - startProcessing);</span>
-<span class="fc" id="L162">    }</span>
+<span class="nc" id="L159">        LOGGER.info(&quot;Processing Complete for NVD CVE - {}  ({} ms)&quot;, downloadTask.getNvdCveInfo().getId(),</span>
+<span class="nc" id="L160">                System.currentTimeMillis() - startProcessing);</span>
+<span class="nc" id="L161">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

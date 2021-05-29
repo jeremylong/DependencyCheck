@@ -118,7 +118,7 @@ import us.springett.parsers.cpe.values.Part;
      * @throws AnalysisException thrown if the canonical path cannot be obtained
      * from the given file
      */
-    protected boolean shouldProcess(File pathname) throws AnalysisException {
+    public static boolean shouldProcess(File pathname) throws AnalysisException {
         try {
             // Do not scan the node_modules (or bower_components) directory
 <span class="fc" id="L124">            final String canonicalPath = pathname.getCanonicalPath();</span>
@@ -510,4 +510,4 @@ import us.springett.parsers.cpe.values.Part;
 <span class="fc" id="L510">        return searcher;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

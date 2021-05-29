@@ -137,7 +137,7 @@ import org.owasp.dependencycheck.xml.pom.Model;
      */
     @Override
     public boolean supportsParallelProcessing() {
-<span class="fc" id="L140">        return getSettings().getBoolean(Settings.KEYS.ANALYZER_CENTRAL_PARALLEL_ANALYSIS, true);</span>
+<span class="nc" id="L140">        return getSettings().getBoolean(Settings.KEYS.ANALYZER_CENTRAL_PARALLEL_ANALYSIS, true);</span>
     }
 
     /**
@@ -163,17 +163,17 @@ import org.owasp.dependencycheck.xml.pom.Model;
      */
     @Override
     public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
-<span class="fc" id="L166">        LOGGER.debug(&quot;Initializing Central analyzer&quot;);</span>
-<span class="fc" id="L167">        LOGGER.debug(&quot;Central analyzer enabled: {}&quot;, isEnabled());</span>
-<span class="pc bpc" id="L168" title="1 of 2 branches missed.">        if (isEnabled()) {</span>
+<span class="nc" id="L166">        LOGGER.debug(&quot;Initializing Central analyzer&quot;);</span>
+<span class="nc" id="L167">        LOGGER.debug(&quot;Central analyzer enabled: {}&quot;, isEnabled());</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">        if (isEnabled()) {</span>
             try {
-<span class="fc" id="L170">                searcher = new CentralSearch(getSettings());</span>
+<span class="nc" id="L170">                searcher = new CentralSearch(getSettings());</span>
 <span class="nc" id="L171">            } catch (MalformedURLException ex) {</span>
 <span class="nc" id="L172">                setEnabled(false);</span>
 <span class="nc" id="L173">                throw new InitializationException(&quot;The configured URL to Maven Central is malformed&quot;, ex);</span>
-<span class="fc" id="L174">            }</span>
+<span class="nc" id="L174">            }</span>
         }
-<span class="fc" id="L176">    }</span>
+<span class="nc" id="L176">    }</span>
 
     /**
      * Returns the analyzer's name.
@@ -220,9 +220,9 @@ import org.owasp.dependencycheck.xml.pom.Model;
      */
     @Override
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-<span class="pc bpc" id="L223" title="1 of 2 branches missed.">        for (Evidence e : dependency.getEvidence(EvidenceType.VENDOR)) {</span>
-<span class="pc bpc" id="L224" title="1 of 2 branches missed.">            if (&quot;pom&quot;.equals(e.getSource())) {</span>
-<span class="fc" id="L225">                return;</span>
+<span class="nc bnc" id="L223" title="All 2 branches missed.">        for (Evidence e : dependency.getEvidence(EvidenceType.VENDOR)) {</span>
+<span class="nc bnc" id="L224" title="All 2 branches missed.">            if (&quot;pom&quot;.equals(e.getSource())) {</span>
+<span class="nc" id="L225">                return;</span>
             }
 <span class="nc" id="L227">        }</span>
         try {
@@ -373,4 +373,4 @@ import org.owasp.dependencycheck.xml.pom.Model;
 <span class="fc" id="L373">        this.searcher = searcher;</span>
 <span class="fc" id="L374">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

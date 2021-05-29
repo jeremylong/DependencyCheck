@@ -94,12 +94,12 @@ import us.springett.parsers.cpe.values.Part;
      * @return a reference to the builder
      */
     public VulnerableSoftwareBuilder cpe(Cpe cpe) {
-<span class="fc" id="L97">        this.part(cpe.getPart()).wfVendor(cpe.getWellFormedVendor()).wfProduct(cpe.getWellFormedProduct())</span>
-<span class="fc" id="L98">                .wfVersion(cpe.getWellFormedVersion()).wfUpdate(cpe.getWellFormedUpdate())</span>
-<span class="fc" id="L99">                .wfEdition(cpe.getWellFormedEdition()).wfLanguage(cpe.getWellFormedLanguage())</span>
-<span class="fc" id="L100">                .wfSwEdition(cpe.getWellFormedSwEdition()).wfTargetSw(cpe.getWellFormedTargetSw())</span>
-<span class="fc" id="L101">                .wfTargetHw(cpe.getWellFormedTargetHw()).wfOther(cpe.getWellFormedOther());</span>
-<span class="fc" id="L102">        return this;</span>
+<span class="nc" id="L97">        this.part(cpe.getPart()).wfVendor(cpe.getWellFormedVendor()).wfProduct(cpe.getWellFormedProduct())</span>
+<span class="nc" id="L98">                .wfVersion(cpe.getWellFormedVersion()).wfUpdate(cpe.getWellFormedUpdate())</span>
+<span class="nc" id="L99">                .wfEdition(cpe.getWellFormedEdition()).wfLanguage(cpe.getWellFormedLanguage())</span>
+<span class="nc" id="L100">                .wfSwEdition(cpe.getWellFormedSwEdition()).wfTargetSw(cpe.getWellFormedTargetSw())</span>
+<span class="nc" id="L101">                .wfTargetHw(cpe.getWellFormedTargetHw()).wfOther(cpe.getWellFormedOther());</span>
+<span class="nc" id="L102">        return this;</span>
     }
 
     /**
@@ -165,52 +165,52 @@ import us.springett.parsers.cpe.values.Part;
     //&lt;editor-fold defaultstate=&quot;collapsed&quot; desc=&quot;Overrides for builder functions from parent so that the correct type can be returned&quot;&gt;
     @Override
     public VulnerableSoftwareBuilder wfOther(String other) {
-<span class="fc" id="L168">        return (VulnerableSoftwareBuilder) super.wfOther(other); //To change body of generated methods, choose Tools | Templates.</span>
+<span class="nc" id="L168">        return (VulnerableSoftwareBuilder) super.wfOther(other); //To change body of generated methods, choose Tools | Templates.</span>
     }
 
     @Override
     public VulnerableSoftwareBuilder wfTargetHw(String targetHw) {
-<span class="fc" id="L173">        return (VulnerableSoftwareBuilder) super.wfTargetHw(targetHw); //To change body of generated methods, choose Tools | Templates.</span>
+<span class="nc" id="L173">        return (VulnerableSoftwareBuilder) super.wfTargetHw(targetHw); //To change body of generated methods, choose Tools | Templates.</span>
     }
 
     @Override
     public VulnerableSoftwareBuilder wfTargetSw(String targetSw) {
-<span class="fc" id="L178">        return (VulnerableSoftwareBuilder) super.wfTargetSw(targetSw); //To change body of generated methods, choose Tools | Templates.</span>
+<span class="nc" id="L178">        return (VulnerableSoftwareBuilder) super.wfTargetSw(targetSw); //To change body of generated methods, choose Tools | Templates.</span>
     }
 
     @Override
     public VulnerableSoftwareBuilder wfSwEdition(String swEdition) {
-<span class="fc" id="L183">        return (VulnerableSoftwareBuilder) super.wfSwEdition(swEdition); //To change body of generated methods, choose Tools | Templates.</span>
+<span class="nc" id="L183">        return (VulnerableSoftwareBuilder) super.wfSwEdition(swEdition); //To change body of generated methods, choose Tools | Templates.</span>
     }
 
     @Override
     public VulnerableSoftwareBuilder wfLanguage(String language) {
-<span class="fc" id="L188">        return (VulnerableSoftwareBuilder) super.wfLanguage(language); //To change body of generated methods, choose Tools | Templates.</span>
+<span class="nc" id="L188">        return (VulnerableSoftwareBuilder) super.wfLanguage(language); //To change body of generated methods, choose Tools | Templates.</span>
     }
 
     @Override
     public VulnerableSoftwareBuilder wfEdition(String edition) {
-<span class="fc" id="L193">        return (VulnerableSoftwareBuilder) super.wfEdition(edition); //To change body of generated methods, choose Tools | Templates.</span>
+<span class="nc" id="L193">        return (VulnerableSoftwareBuilder) super.wfEdition(edition); //To change body of generated methods, choose Tools | Templates.</span>
     }
 
     @Override
     public VulnerableSoftwareBuilder wfUpdate(String update) {
-<span class="fc" id="L198">        return (VulnerableSoftwareBuilder) super.wfUpdate(update); //To change body of generated methods, choose Tools | Templates.</span>
+<span class="nc" id="L198">        return (VulnerableSoftwareBuilder) super.wfUpdate(update); //To change body of generated methods, choose Tools | Templates.</span>
     }
 
     @Override
     public VulnerableSoftwareBuilder wfVersion(String version) {
-<span class="fc" id="L203">        return (VulnerableSoftwareBuilder) super.wfVersion(version); //To change body of generated methods, choose Tools | Templates.</span>
+<span class="nc" id="L203">        return (VulnerableSoftwareBuilder) super.wfVersion(version); //To change body of generated methods, choose Tools | Templates.</span>
     }
 
     @Override
     public VulnerableSoftwareBuilder wfProduct(String product) {
-<span class="fc" id="L208">        return (VulnerableSoftwareBuilder) super.wfProduct(product); //To change body of generated methods, choose Tools | Templates.</span>
+<span class="nc" id="L208">        return (VulnerableSoftwareBuilder) super.wfProduct(product); //To change body of generated methods, choose Tools | Templates.</span>
     }
 
     @Override
     public VulnerableSoftwareBuilder wfVendor(String vendor) {
-<span class="fc" id="L213">        return (VulnerableSoftwareBuilder) super.wfVendor(vendor); //To change body of generated methods, choose Tools | Templates.</span>
+<span class="nc" id="L213">        return (VulnerableSoftwareBuilder) super.wfVendor(vendor); //To change body of generated methods, choose Tools | Templates.</span>
     }
 
     @Override
@@ -325,4 +325,4 @@ import us.springett.parsers.cpe.values.Part;
 //&lt;/editor-fold&gt;
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -645,7 +645,7 @@
 <a class="jxr_linenumber" name="L637" href="#L637">637</a>         <strong class="jxr_keyword">final</strong> StringBuilder sb = <strong class="jxr_keyword">new</strong> StringBuilder(64);
 <a class="jxr_linenumber" name="L638" href="#L638">638</a>         sb.append(<span class="jxr_string">"SuppressionRule{"</span>);
 <a class="jxr_linenumber" name="L639" href="#L639">639</a>         <strong class="jxr_keyword">if</strong> (until != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L640" href="#L640">640</a>             String dt = DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(until);
+<a class="jxr_linenumber" name="L640" href="#L640">640</a>             <strong class="jxr_keyword">final</strong> String dt = DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(until);
 <a class="jxr_linenumber" name="L641" href="#L641">641</a>             sb.append(<span class="jxr_string">"until="</span>).append(dt).append(',');
 <a class="jxr_linenumber" name="L642" href="#L642">642</a>         }
 <a class="jxr_linenumber" name="L643" href="#L643">643</a>         <strong class="jxr_keyword">if</strong> (filePath != <strong class="jxr_keyword">null</strong>) {

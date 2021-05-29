@@ -35,6 +35,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.cpio.CpioArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
@@ -45,10 +46,13 @@ import org.apache.commons.compress.compressors.bzip2.BZip2Utils;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import org.apache.commons.compress.utils.IOUtils;
-
+import org.eclipse.packager.rpm.RpmTag;
+import org.eclipse.packager.rpm.parse.RpmInputStream;
 import org.owasp.dependencycheck.Engine;
+import static org.owasp.dependencycheck.analyzer.AbstractNpmAnalyzer.shouldProcess;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
+import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
@@ -66,21 +70,21 @@ import org.slf4j.LoggerFactory;
  * @author Jeremy Long
  */
 @ThreadSafe
-<span class="fc" id="L69">public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {</span>
+<span class="fc" id="L73">public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {</span>
 
     /**
      * The logger.
      */
-<span class="fc" id="L74">    private static final Logger LOGGER = LoggerFactory.getLogger(ArchiveAnalyzer.class);</span>
+<span class="fc" id="L78">    private static final Logger LOGGER = LoggerFactory.getLogger(ArchiveAnalyzer.class);</span>
     /**
      * The count of directories created during analysis. This is used for
      * creating temporary directories.
      */
-<span class="fc" id="L79">    private static final AtomicInteger DIRECTORY_COUNT = new AtomicInteger(0);</span>
+<span class="fc" id="L83">    private static final AtomicInteger DIRECTORY_COUNT = new AtomicInteger(0);</span>
     /**
      * The parent directory for the individual directories per archive.
      */
-<span class="fc" id="L83">    private File tempFileLocation = null;</span>
+<span class="fc" id="L87">    private File tempFileLocation = null;</span>
     /**
      * The max scan depth that the analyzer will recursively extract nested
      * archives.
@@ -89,34 +93,34 @@ import org.slf4j.LoggerFactory;
     /**
      * The file filter used to filter supported files.
      */
-<span class="fc" id="L92">    private FileFilter fileFilter = null;</span>
+<span class="fc" id="L96">    private FileFilter fileFilter = null;</span>
     /**
      * The set of things we can handle with Zip methods
      */
-<span class="fc" id="L96">    private static final Set&lt;String&gt; KNOWN_ZIP_EXT = Collections.unmodifiableSet(</span>
-<span class="fc" id="L97">            newHashSet(&quot;zip&quot;, &quot;ear&quot;, &quot;war&quot;, &quot;jar&quot;, &quot;sar&quot;, &quot;apk&quot;, &quot;nupkg&quot;, &quot;aar&quot;));</span>
+<span class="fc" id="L100">    private static final Set&lt;String&gt; KNOWN_ZIP_EXT = Collections.unmodifiableSet(</span>
+<span class="fc" id="L101">            newHashSet(&quot;zip&quot;, &quot;ear&quot;, &quot;war&quot;, &quot;jar&quot;, &quot;sar&quot;, &quot;apk&quot;, &quot;nupkg&quot;, &quot;aar&quot;));</span>
     /**
      * The set of additional extensions we can handle with Zip methods
      */
-<span class="fc" id="L101">    private static final Set&lt;String&gt; ADDITIONAL_ZIP_EXT = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L105">    private static final Set&lt;String&gt; ADDITIONAL_ZIP_EXT = new HashSet&lt;&gt;();</span>
     /**
      * The set of file extensions supported by this analyzer. Note for
      * developers, any additions to this list will need to be explicitly handled
      * in {@link #extractFiles(File, File, Engine)}.
      */
-<span class="fc" id="L107">    private static final Set&lt;String&gt; EXTENSIONS = Collections.unmodifiableSet(</span>
-<span class="fc" id="L108">            newHashSet(&quot;tar&quot;, &quot;gz&quot;, &quot;tgz&quot;, &quot;bz2&quot;, &quot;tbz2&quot;));</span>
+<span class="fc" id="L111">    private static final Set&lt;String&gt; EXTENSIONS = Collections.unmodifiableSet(</span>
+<span class="fc" id="L112">            newHashSet(&quot;tar&quot;, &quot;gz&quot;, &quot;tgz&quot;, &quot;bz2&quot;, &quot;tbz2&quot;, &quot;rpm&quot;));</span>
 
     /**
      * Detects files with extensions to remove from the engine's collection of
      * dependencies.
      */
-<span class="fc" id="L114">    private static final FileFilter REMOVE_FROM_ANALYSIS = FileFilterBuilder.newInstance()</span>
-<span class="fc" id="L115">            .addExtensions(&quot;zip&quot;, &quot;tar&quot;, &quot;gz&quot;, &quot;tgz&quot;, &quot;bz2&quot;, &quot;tbz2&quot;, &quot;nupkg&quot;).build();</span>
+<span class="fc" id="L118">    private static final FileFilter REMOVE_FROM_ANALYSIS = FileFilterBuilder.newInstance()</span>
+<span class="fc" id="L119">            .addExtensions(&quot;zip&quot;, &quot;tar&quot;, &quot;gz&quot;, &quot;tgz&quot;, &quot;bz2&quot;, &quot;tbz2&quot;, &quot;nupkg&quot;, &quot;rpm&quot;).build();</span>
     /**
      * Detects files with .zip extension.
      */
-<span class="fc" id="L119">    private static final FileFilter ZIP_FILTER = FileFilterBuilder.newInstance().addExtensions(&quot;zip&quot;).build();</span>
+<span class="fc" id="L123">    private static final FileFilter ZIP_FILTER = FileFilterBuilder.newInstance().addExtensions(&quot;zip&quot;).build();</span>
 
     //&lt;editor-fold defaultstate=&quot;collapsed&quot; desc=&quot;All standard implementation details of Analyzer&quot;&gt;
     /**
@@ -126,7 +130,7 @@ import org.slf4j.LoggerFactory;
     /**
      * The phase that this analyzer is intended to run in.
      */
-<span class="fc" id="L129">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INITIAL;</span>
+<span class="fc" id="L133">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INITIAL;</span>
 
     /**
      * Initializes the analyzer with the configured settings.
@@ -135,13 +139,13 @@ import org.slf4j.LoggerFactory;
      */
     @Override
     public void initialize(Settings settings) {
-<span class="fc" id="L138">        super.initialize(settings);</span>
-<span class="fc" id="L139">        initializeSettings();</span>
-<span class="fc" id="L140">    }</span>
+<span class="fc" id="L142">        super.initialize(settings);</span>
+<span class="fc" id="L143">        initializeSettings();</span>
+<span class="fc" id="L144">    }</span>
 
     @Override
     protected FileFilter getFileFilter() {
-<span class="fc" id="L144">        return fileFilter;</span>
+<span class="fc" id="L148">        return fileFilter;</span>
     }
 
     /**
@@ -151,7 +155,7 @@ import org.slf4j.LoggerFactory;
      */
     @Override
     public String getName() {
-<span class="fc" id="L154">        return ANALYZER_NAME;</span>
+<span class="fc" id="L158">        return ANALYZER_NAME;</span>
     }
 
     /**
@@ -161,7 +165,7 @@ import org.slf4j.LoggerFactory;
      */
     @Override
     public AnalysisPhase getAnalysisPhase() {
-<span class="fc" id="L164">        return ANALYSIS_PHASE;</span>
+<span class="fc" id="L168">        return ANALYSIS_PHASE;</span>
     }
     //&lt;/editor-fold&gt;
 
@@ -173,7 +177,7 @@ import org.slf4j.LoggerFactory;
      */
     @Override
     protected String getAnalyzerEnabledSettingKey() {
-<span class="fc" id="L176">        return Settings.KEYS.ANALYZER_ARCHIVE_ENABLED;</span>
+<span class="fc" id="L180">        return Settings.KEYS.ANALYZER_ARCHIVE_ENABLED;</span>
     }
 
     /**
@@ -186,23 +190,23 @@ import org.slf4j.LoggerFactory;
     @Override
     public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         try {
-<span class="fc" id="L189">            final File baseDir = getSettings().getTempDirectory();</span>
-<span class="fc" id="L190">            tempFileLocation = File.createTempFile(&quot;check&quot;, &quot;tmp&quot;, baseDir);</span>
-<span class="pc bpc" id="L191" title="1 of 2 branches missed.">            if (!tempFileLocation.delete()) {</span>
-<span class="nc" id="L192">                setEnabled(false);</span>
-<span class="nc" id="L193">                final String msg = String.format(&quot;Unable to delete temporary file '%s'.&quot;, tempFileLocation.getAbsolutePath());</span>
-<span class="nc" id="L194">                throw new InitializationException(msg);</span>
+<span class="fc" id="L193">            final File baseDir = getSettings().getTempDirectory();</span>
+<span class="fc" id="L194">            tempFileLocation = File.createTempFile(&quot;check&quot;, &quot;tmp&quot;, baseDir);</span>
+<span class="pc bpc" id="L195" title="1 of 2 branches missed.">            if (!tempFileLocation.delete()) {</span>
+<span class="nc" id="L196">                setEnabled(false);</span>
+<span class="nc" id="L197">                final String msg = String.format(&quot;Unable to delete temporary file '%s'.&quot;, tempFileLocation.getAbsolutePath());</span>
+<span class="nc" id="L198">                throw new InitializationException(msg);</span>
             }
-<span class="pc bpc" id="L196" title="1 of 2 branches missed.">            if (!tempFileLocation.mkdirs()) {</span>
-<span class="nc" id="L197">                setEnabled(false);</span>
-<span class="nc" id="L198">                final String msg = String.format(&quot;Unable to create directory '%s'.&quot;, tempFileLocation.getAbsolutePath());</span>
-<span class="nc" id="L199">                throw new InitializationException(msg);</span>
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">            if (!tempFileLocation.mkdirs()) {</span>
+<span class="nc" id="L201">                setEnabled(false);</span>
+<span class="nc" id="L202">                final String msg = String.format(&quot;Unable to create directory '%s'.&quot;, tempFileLocation.getAbsolutePath());</span>
+<span class="nc" id="L203">                throw new InitializationException(msg);</span>
             }
-<span class="nc" id="L201">        } catch (IOException ex) {</span>
-<span class="nc" id="L202">            setEnabled(false);</span>
-<span class="nc" id="L203">            throw new InitializationException(&quot;Unable to create a temporary file&quot;, ex);</span>
-<span class="fc" id="L204">        }</span>
-<span class="fc" id="L205">    }</span>
+<span class="nc" id="L205">        } catch (IOException ex) {</span>
+<span class="nc" id="L206">            setEnabled(false);</span>
+<span class="nc" id="L207">            throw new InitializationException(&quot;Unable to create a temporary file&quot;, ex);</span>
+<span class="fc" id="L208">        }</span>
+<span class="fc" id="L209">    }</span>
 
     /**
      * The close method deletes any temporary files and directories created
@@ -213,18 +217,42 @@ import org.slf4j.LoggerFactory;
      */
     @Override
     public void closeAnalyzer() throws Exception {
-<span class="pc bpc" id="L216" title="2 of 4 branches missed.">        if (tempFileLocation != null &amp;&amp; tempFileLocation.exists()) {</span>
-<span class="fc" id="L217">            LOGGER.debug(&quot;Attempting to delete temporary files from `{}`&quot;, tempFileLocation.toString());</span>
-<span class="fc" id="L218">            final boolean success = FileUtils.delete(tempFileLocation);</span>
-<span class="pc bpc" id="L219" title="3 of 4 branches missed.">            if (!success &amp;&amp; tempFileLocation.exists()) {</span>
-<span class="nc" id="L220">                final String[] l = tempFileLocation.list();</span>
-<span class="nc bnc" id="L221" title="All 4 branches missed.">                if (l != null &amp;&amp; l.length &gt; 0) {</span>
-<span class="nc" id="L222">                    LOGGER.warn(&quot;Failed to delete the Archive Analyzer's temporary files from `{}`, &quot;</span>
-<span class="nc" id="L223">                            + &quot;see the log for more details&quot;, tempFileLocation.toString());</span>
+<span class="pc bpc" id="L220" title="2 of 4 branches missed.">        if (tempFileLocation != null &amp;&amp; tempFileLocation.exists()) {</span>
+<span class="fc" id="L221">            LOGGER.debug(&quot;Attempting to delete temporary files from `{}`&quot;, tempFileLocation.toString());</span>
+<span class="fc" id="L222">            final boolean success = FileUtils.delete(tempFileLocation);</span>
+<span class="pc bpc" id="L223" title="3 of 4 branches missed.">            if (!success &amp;&amp; tempFileLocation.exists()) {</span>
+<span class="nc" id="L224">                final String[] l = tempFileLocation.list();</span>
+<span class="nc bnc" id="L225" title="All 4 branches missed.">                if (l != null &amp;&amp; l.length &gt; 0) {</span>
+<span class="nc" id="L226">                    LOGGER.warn(&quot;Failed to delete the Archive Analyzer's temporary files from `{}`, &quot;</span>
+<span class="nc" id="L227">                            + &quot;see the log for more details&quot;, tempFileLocation.toString());</span>
                 }
             }
         }
-<span class="fc" id="L227">    }</span>
+<span class="fc" id="L231">    }</span>
+
+    /**
+     * Determines if the file can be analyzed by the analyzer. If the npm
+     * analyzer are enabled the archive analyzer will skip the node_modules and
+     * bower_modules directories.
+     *
+     * @param pathname the path to the file
+     * @return true if the file can be analyzed by the given analyzer; otherwise
+     * false
+     */
+    @Override
+    public boolean accept(File pathname) {
+<span class="fc" id="L244">        boolean accept = super.accept(pathname);</span>
+<span class="fc" id="L245">        final boolean npmEnabled = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, false);</span>
+<span class="fc" id="L246">        final boolean yarnEnabled = getSettings().getBoolean(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, false);</span>
+<span class="pc bpc" id="L247" title="1 of 6 branches missed.">        if (accept &amp;&amp; (npmEnabled || yarnEnabled)) {</span>
+            try {
+<span class="fc" id="L249">                accept = shouldProcess(pathname);</span>
+<span class="nc" id="L250">            } catch (AnalysisException ex) {</span>
+<span class="nc" id="L251">                throw new UnexpectedAnalysisException(ex.getMessage(), ex.getCause());</span>
+<span class="fc" id="L252">            }</span>
+        }
+<span class="fc" id="L254">        return accept;</span>
+    }
 
     /**
      * Analyzes a given dependency. If the dependency is an archive, such as a
@@ -237,9 +265,9 @@ import org.slf4j.LoggerFactory;
      */
     @Override
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-<span class="fc" id="L240">        extractAndAnalyze(dependency, engine, 0);</span>
-<span class="fc" id="L241">        engine.sortDependencies();</span>
-<span class="fc" id="L242">    }</span>
+<span class="fc" id="L268">        extractAndAnalyze(dependency, engine, 0);</span>
+<span class="fc" id="L269">        engine.sortDependencies();</span>
+<span class="fc" id="L270">    }</span>
 
     /**
      * Extracts the contents of the archive dependency and scans for additional
@@ -253,51 +281,51 @@ import org.slf4j.LoggerFactory;
      * dependencies
      */
     private void extractAndAnalyze(Dependency dependency, Engine engine, int scanDepth) throws AnalysisException {
-<span class="fc" id="L256">        final File f = new File(dependency.getActualFilePath());</span>
-<span class="fc" id="L257">        final File tmpDir = getNextTempDirectory();</span>
-<span class="fc" id="L258">        extractFiles(f, tmpDir, engine);</span>
+<span class="fc" id="L284">        final File f = new File(dependency.getActualFilePath());</span>
+<span class="fc" id="L285">        final File tmpDir = getNextTempDirectory();</span>
+<span class="fc" id="L286">        extractFiles(f, tmpDir, engine);</span>
 
         //make a copy
-<span class="fc" id="L261">        final List&lt;Dependency&gt; dependencySet = findMoreDependencies(engine, tmpDir);</span>
+<span class="fc" id="L289">        final List&lt;Dependency&gt; dependencySet = findMoreDependencies(engine, tmpDir);</span>
 
-<span class="pc bpc" id="L263" title="1 of 4 branches missed.">        if (dependencySet != null &amp;&amp; !dependencySet.isEmpty()) {</span>
-<span class="fc bfc" id="L264" title="All 2 branches covered.">            for (Dependency d : dependencySet) {</span>
-<span class="pc bpc" id="L265" title="1 of 2 branches missed.">                if (d.getFilePath().startsWith(tmpDir.getAbsolutePath())) {</span>
+<span class="pc bpc" id="L291" title="1 of 4 branches missed.">        if (dependencySet != null &amp;&amp; !dependencySet.isEmpty()) {</span>
+<span class="fc bfc" id="L292" title="All 2 branches covered.">            for (Dependency d : dependencySet) {</span>
+<span class="pc bpc" id="L293" title="1 of 2 branches missed.">                if (d.getFilePath().startsWith(tmpDir.getAbsolutePath())) {</span>
                     //fix the dependency's display name and path
-<span class="fc" id="L267">                    final String displayPath = String.format(&quot;%s%s&quot;,</span>
-<span class="fc" id="L268">                            dependency.getFilePath(),</span>
-<span class="fc" id="L269">                            d.getActualFilePath().substring(tmpDir.getAbsolutePath().length()));</span>
-<span class="fc" id="L270">                    final String displayName = String.format(&quot;%s: %s&quot;,</span>
-<span class="fc" id="L271">                            dependency.getFileName(),</span>
-<span class="fc" id="L272">                            d.getFileName());</span>
-<span class="fc" id="L273">                    d.setFilePath(displayPath);</span>
-<span class="fc" id="L274">                    d.setFileName(displayName);</span>
-<span class="fc" id="L275">                    d.addAllProjectReferences(dependency.getProjectReferences());</span>
+<span class="fc" id="L295">                    final String displayPath = String.format(&quot;%s%s&quot;,</span>
+<span class="fc" id="L296">                            dependency.getFilePath(),</span>
+<span class="fc" id="L297">                            d.getActualFilePath().substring(tmpDir.getAbsolutePath().length()));</span>
+<span class="fc" id="L298">                    final String displayName = String.format(&quot;%s: %s&quot;,</span>
+<span class="fc" id="L299">                            dependency.getFileName(),</span>
+<span class="fc" id="L300">                            d.getFileName());</span>
+<span class="fc" id="L301">                    d.setFilePath(displayPath);</span>
+<span class="fc" id="L302">                    d.setFileName(displayName);</span>
+<span class="fc" id="L303">                    d.addAllProjectReferences(dependency.getProjectReferences());</span>
 
                     //TODO - can we get more evidence from the parent? EAR contains module name, etc.
                     //analyze the dependency (i.e. extract files) if it is a supported type.
-<span class="pc bpc" id="L279" title="1 of 4 branches missed.">                    if (this.accept(d.getActualFile()) &amp;&amp; scanDepth &lt; maxScanDepth) {</span>
-<span class="fc" id="L280">                        extractAndAnalyze(d, engine, scanDepth + 1);</span>
+<span class="pc bpc" id="L307" title="1 of 4 branches missed.">                    if (this.accept(d.getActualFile()) &amp;&amp; scanDepth &lt; maxScanDepth) {</span>
+<span class="fc" id="L308">                        extractAndAnalyze(d, engine, scanDepth + 1);</span>
                     }
-<span class="fc" id="L282">                } else {</span>
-<span class="nc" id="L283">                    dependencySet.stream().filter((sub) -&gt; sub.getFilePath().startsWith(tmpDir.getAbsolutePath())).forEach((sub) -&gt; {</span>
-<span class="nc" id="L284">                        final String displayPath = String.format(&quot;%s%s&quot;,</span>
-<span class="nc" id="L285">                                dependency.getFilePath(),</span>
-<span class="nc" id="L286">                                sub.getActualFilePath().substring(tmpDir.getAbsolutePath().length()));</span>
-<span class="nc" id="L287">                        final String displayName = String.format(&quot;%s: %s&quot;,</span>
-<span class="nc" id="L288">                                dependency.getFileName(),</span>
-<span class="nc" id="L289">                                sub.getFileName());</span>
-<span class="nc" id="L290">                        sub.setFilePath(displayPath);</span>
-<span class="nc" id="L291">                        sub.setFileName(displayName);</span>
-<span class="nc" id="L292">                    });</span>
+<span class="fc" id="L310">                } else {</span>
+<span class="nc" id="L311">                    dependencySet.stream().filter((sub) -&gt; sub.getFilePath().startsWith(tmpDir.getAbsolutePath())).forEach((sub) -&gt; {</span>
+<span class="nc" id="L312">                        final String displayPath = String.format(&quot;%s%s&quot;,</span>
+<span class="nc" id="L313">                                dependency.getFilePath(),</span>
+<span class="nc" id="L314">                                sub.getActualFilePath().substring(tmpDir.getAbsolutePath().length()));</span>
+<span class="nc" id="L315">                        final String displayName = String.format(&quot;%s: %s&quot;,</span>
+<span class="nc" id="L316">                                dependency.getFileName(),</span>
+<span class="nc" id="L317">                                sub.getFileName());</span>
+<span class="nc" id="L318">                        sub.setFilePath(displayPath);</span>
+<span class="nc" id="L319">                        sub.setFileName(displayName);</span>
+<span class="nc" id="L320">                    });</span>
                 }
-<span class="fc" id="L294">            }</span>
+<span class="fc" id="L322">            }</span>
         }
-<span class="fc bfc" id="L296" title="All 2 branches covered.">        if (REMOVE_FROM_ANALYSIS.accept(dependency.getActualFile())) {</span>
-<span class="fc" id="L297">            addDisguisedJarsToDependencies(dependency, engine);</span>
-<span class="fc" id="L298">            engine.removeDependency(dependency);</span>
+<span class="fc bfc" id="L324" title="All 2 branches covered.">        if (REMOVE_FROM_ANALYSIS.accept(dependency.getActualFile())) {</span>
+<span class="fc" id="L325">            addDisguisedJarsToDependencies(dependency, engine);</span>
+<span class="fc" id="L326">            engine.removeDependency(dependency);</span>
         }
-<span class="fc" id="L300">    }</span>
+<span class="fc" id="L328">    }</span>
 
     /**
      * If a zip file was identified as a possible JAR, this method will add the
@@ -308,46 +336,46 @@ import org.slf4j.LoggerFactory;
      * @throws AnalysisException thrown if there is an issue
      */
     private void addDisguisedJarsToDependencies(Dependency dependency, Engine engine) throws AnalysisException {
-<span class="pc bpc" id="L311" title="3 of 4 branches missed.">        if (ZIP_FILTER.accept(dependency.getActualFile()) &amp;&amp; isZipFileActuallyJarFile(dependency)) {</span>
-<span class="nc" id="L312">            final File tempDir = getNextTempDirectory();</span>
-<span class="nc" id="L313">            final String fileName = dependency.getFileName();</span>
+<span class="pc bpc" id="L339" title="3 of 4 branches missed.">        if (ZIP_FILTER.accept(dependency.getActualFile()) &amp;&amp; isZipFileActuallyJarFile(dependency)) {</span>
+<span class="nc" id="L340">            final File tempDir = getNextTempDirectory();</span>
+<span class="nc" id="L341">            final String fileName = dependency.getFileName();</span>
 
-<span class="nc" id="L315">            LOGGER.info(&quot;The zip file '{}' appears to be a JAR file, making a copy and analyzing it as a JAR.&quot;, fileName);</span>
-<span class="nc" id="L316">            final File tmpLoc = new File(tempDir, fileName.substring(0, fileName.length() - 3) + &quot;jar&quot;);</span>
+<span class="nc" id="L343">            LOGGER.info(&quot;The zip file '{}' appears to be a JAR file, making a copy and analyzing it as a JAR.&quot;, fileName);</span>
+<span class="nc" id="L344">            final File tmpLoc = new File(tempDir, fileName.substring(0, fileName.length() - 3) + &quot;jar&quot;);</span>
             //store the archives sha1 and change it so that the engine doesn't think the zip and jar file are the same
             // and add it is a related dependency.
-<span class="nc" id="L319">            final String archiveMd5 = dependency.getMd5sum();</span>
-<span class="nc" id="L320">            final String archiveSha1 = dependency.getSha1sum();</span>
-<span class="nc" id="L321">            final String archiveSha256 = dependency.getSha256sum();</span>
+<span class="nc" id="L347">            final String archiveMd5 = dependency.getMd5sum();</span>
+<span class="nc" id="L348">            final String archiveSha1 = dependency.getSha1sum();</span>
+<span class="nc" id="L349">            final String archiveSha256 = dependency.getSha256sum();</span>
             try {
-<span class="nc" id="L323">                dependency.setMd5sum(&quot;&quot;);</span>
-<span class="nc" id="L324">                dependency.setSha1sum(&quot;&quot;);</span>
-<span class="nc" id="L325">                dependency.setSha256sum(&quot;&quot;);</span>
-<span class="nc" id="L326">                org.apache.commons.io.FileUtils.copyFile(dependency.getActualFile(), tmpLoc);</span>
-<span class="nc" id="L327">                final List&lt;Dependency&gt; dependencySet = findMoreDependencies(engine, tmpLoc);</span>
-<span class="nc bnc" id="L328" title="All 4 branches missed.">                if (dependencySet != null &amp;&amp; !dependencySet.isEmpty()) {</span>
-<span class="nc" id="L329">                    dependencySet.forEach((d) -&gt; {</span>
+<span class="nc" id="L351">                dependency.setMd5sum(&quot;&quot;);</span>
+<span class="nc" id="L352">                dependency.setSha1sum(&quot;&quot;);</span>
+<span class="nc" id="L353">                dependency.setSha256sum(&quot;&quot;);</span>
+<span class="nc" id="L354">                org.apache.commons.io.FileUtils.copyFile(dependency.getActualFile(), tmpLoc);</span>
+<span class="nc" id="L355">                final List&lt;Dependency&gt; dependencySet = findMoreDependencies(engine, tmpLoc);</span>
+<span class="nc bnc" id="L356" title="All 4 branches missed.">                if (dependencySet != null &amp;&amp; !dependencySet.isEmpty()) {</span>
+<span class="nc" id="L357">                    dependencySet.forEach((d) -&gt; {</span>
                         //fix the dependency's display name and path
-<span class="nc bnc" id="L331" title="All 2 branches missed.">                        if (d.getActualFile().equals(tmpLoc)) {</span>
-<span class="nc" id="L332">                            d.setFilePath(dependency.getFilePath());</span>
-<span class="nc" id="L333">                            d.setDisplayFileName(dependency.getFileName());</span>
+<span class="nc bnc" id="L359" title="All 2 branches missed.">                        if (d.getActualFile().equals(tmpLoc)) {</span>
+<span class="nc" id="L360">                            d.setFilePath(dependency.getFilePath());</span>
+<span class="nc" id="L361">                            d.setDisplayFileName(dependency.getFileName());</span>
                         } else {
-<span class="nc" id="L335">                            d.getRelatedDependencies().stream().filter((rel) -&gt; rel.getActualFile().equals(tmpLoc)).forEach((rel) -&gt; {</span>
-<span class="nc" id="L336">                                rel.setFilePath(dependency.getFilePath());</span>
-<span class="nc" id="L337">                                rel.setDisplayFileName(dependency.getFileName());</span>
-<span class="nc" id="L338">                            });</span>
+<span class="nc" id="L363">                            d.getRelatedDependencies().stream().filter((rel) -&gt; rel.getActualFile().equals(tmpLoc)).forEach((rel) -&gt; {</span>
+<span class="nc" id="L364">                                rel.setFilePath(dependency.getFilePath());</span>
+<span class="nc" id="L365">                                rel.setDisplayFileName(dependency.getFileName());</span>
+<span class="nc" id="L366">                            });</span>
                         }
-<span class="nc" id="L340">                    });</span>
+<span class="nc" id="L368">                    });</span>
                 }
-<span class="nc" id="L342">            } catch (IOException ex) {</span>
-<span class="nc" id="L343">                LOGGER.debug(&quot;Unable to perform deep copy on '{}'&quot;, dependency.getActualFile().getPath(), ex);</span>
+<span class="nc" id="L370">            } catch (IOException ex) {</span>
+<span class="nc" id="L371">                LOGGER.debug(&quot;Unable to perform deep copy on '{}'&quot;, dependency.getActualFile().getPath(), ex);</span>
             } finally {
-<span class="nc" id="L345">                dependency.setMd5sum(archiveMd5);</span>
-<span class="nc" id="L346">                dependency.setSha1sum(archiveSha1);</span>
-<span class="nc" id="L347">                dependency.setSha256sum(archiveSha256);</span>
+<span class="nc" id="L373">                dependency.setMd5sum(archiveMd5);</span>
+<span class="nc" id="L374">                dependency.setSha1sum(archiveSha1);</span>
+<span class="nc" id="L375">                dependency.setSha256sum(archiveSha256);</span>
             }
         }
-<span class="fc" id="L350">    }</span>
+<span class="fc" id="L378">    }</span>
 
     /**
      * Scan the given file/folder, and return any new dependencies found.
@@ -357,7 +385,7 @@ import org.slf4j.LoggerFactory;
      * @return any dependencies that weren't known to the engine before
      */
     private static List&lt;Dependency&gt; findMoreDependencies(Engine engine, File file) {
-<span class="fc" id="L360">        return engine.scan(file);</span>
+<span class="fc" id="L388">        return engine.scan(file);</span>
     }
 
     /**
@@ -367,16 +395,16 @@ import org.slf4j.LoggerFactory;
      * @throws AnalysisException thrown if unable to create temporary directory
      */
     private File getNextTempDirectory() throws AnalysisException {
-<span class="fc" id="L370">        final File directory = new File(tempFileLocation, String.valueOf(DIRECTORY_COUNT.incrementAndGet()));</span>
+<span class="fc" id="L398">        final File directory = new File(tempFileLocation, String.valueOf(DIRECTORY_COUNT.incrementAndGet()));</span>
         //getting an exception for some directories not being able to be created; might be because the directory already exists?
-<span class="pc bpc" id="L372" title="1 of 2 branches missed.">        if (directory.exists()) {</span>
-<span class="nc" id="L373">            return getNextTempDirectory();</span>
+<span class="pc bpc" id="L400" title="1 of 2 branches missed.">        if (directory.exists()) {</span>
+<span class="nc" id="L401">            return getNextTempDirectory();</span>
         }
-<span class="pc bpc" id="L375" title="1 of 2 branches missed.">        if (!directory.mkdirs()) {</span>
-<span class="nc" id="L376">            final String msg = String.format(&quot;Unable to create temp directory '%s'.&quot;, directory.getAbsolutePath());</span>
-<span class="nc" id="L377">            throw new AnalysisException(msg);</span>
+<span class="pc bpc" id="L403" title="1 of 2 branches missed.">        if (!directory.mkdirs()) {</span>
+<span class="nc" id="L404">            final String msg = String.format(&quot;Unable to create temp directory '%s'.&quot;, directory.getAbsolutePath());</span>
+<span class="nc" id="L405">            throw new AnalysisException(msg);</span>
         }
-<span class="fc" id="L379">        return directory;</span>
+<span class="fc" id="L407">        return directory;</span>
     }
 
     /**
@@ -388,91 +416,100 @@ import org.slf4j.LoggerFactory;
      * @throws AnalysisException thrown if the archive is not found
      */
     private void extractFiles(File archive, File destination, Engine engine) throws AnalysisException {
-<span class="pc bpc" id="L391" title="2 of 4 branches missed.">        if (archive != null &amp;&amp; destination != null) {</span>
-<span class="fc" id="L392">            String archiveExt = FileUtils.getFileExtension(archive.getName());</span>
-<span class="pc bpc" id="L393" title="1 of 2 branches missed.">            if (archiveExt == null) {</span>
-<span class="nc" id="L394">                return;</span>
+<span class="pc bpc" id="L419" title="2 of 4 branches missed.">        if (archive != null &amp;&amp; destination != null) {</span>
+<span class="fc" id="L420">            String archiveExt = FileUtils.getFileExtension(archive.getName());</span>
+<span class="pc bpc" id="L421" title="1 of 2 branches missed.">            if (archiveExt == null) {</span>
+<span class="nc" id="L422">                return;</span>
             }
-<span class="fc" id="L396">            archiveExt = archiveExt.toLowerCase();</span>
+<span class="fc" id="L424">            archiveExt = archiveExt.toLowerCase();</span>
 
             final FileInputStream fis;
             try {
-<span class="fc" id="L400">                fis = new FileInputStream(archive);</span>
-<span class="nc" id="L401">            } catch (FileNotFoundException ex) {</span>
-<span class="nc" id="L402">                final String msg = String.format(&quot;Error extracting file `%s`: %s&quot;, archive.getAbsolutePath(), ex.getMessage());</span>
-<span class="nc" id="L403">                LOGGER.debug(msg, ex);</span>
-<span class="nc" id="L404">                throw new AnalysisException(msg);</span>
-<span class="fc" id="L405">            }</span>
-<span class="fc" id="L406">            BufferedInputStream in = null;</span>
-<span class="fc" id="L407">            ZipArchiveInputStream zin = null;</span>
-<span class="fc" id="L408">            TarArchiveInputStream tin = null;</span>
-<span class="fc" id="L409">            GzipCompressorInputStream gin = null;</span>
-<span class="fc" id="L410">            BZip2CompressorInputStream bzin = null;</span>
+<span class="fc" id="L428">                fis = new FileInputStream(archive);</span>
+<span class="nc" id="L429">            } catch (FileNotFoundException ex) {</span>
+<span class="nc" id="L430">                final String msg = String.format(&quot;Error extracting file `%s`: %s&quot;, archive.getAbsolutePath(), ex.getMessage());</span>
+<span class="nc" id="L431">                LOGGER.debug(msg, ex);</span>
+<span class="nc" id="L432">                throw new AnalysisException(msg);</span>
+<span class="fc" id="L433">            }</span>
+<span class="fc" id="L434">            BufferedInputStream in = null;</span>
+<span class="fc" id="L435">            ZipArchiveInputStream zin = null;</span>
+<span class="fc" id="L436">            TarArchiveInputStream tin = null;</span>
+<span class="fc" id="L437">            GzipCompressorInputStream gin = null;</span>
+<span class="fc" id="L438">            BZip2CompressorInputStream bzin = null;</span>
+<span class="fc" id="L439">            RpmInputStream rin = null;</span>
+<span class="fc" id="L440">            CpioArchiveInputStream cain = null;</span>
             try {
-<span class="pc bpc" id="L412" title="1 of 4 branches missed.">                if (KNOWN_ZIP_EXT.contains(archiveExt) || ADDITIONAL_ZIP_EXT.contains(archiveExt)) {</span>
-<span class="fc" id="L413">                    in = new BufferedInputStream(fis);</span>
-<span class="fc" id="L414">                    ensureReadableJar(archiveExt, in);</span>
-<span class="fc" id="L415">                    zin = new ZipArchiveInputStream(in);</span>
-<span class="fc" id="L416">                    extractArchive(zin, destination, engine);</span>
-<span class="fc bfc" id="L417" title="All 2 branches covered.">                } else if (&quot;tar&quot;.equals(archiveExt)) {</span>
-<span class="fc" id="L418">                    in = new BufferedInputStream(fis);</span>
-<span class="fc" id="L419">                    tin = new TarArchiveInputStream(in);</span>
-<span class="fc" id="L420">                    extractArchive(tin, destination, engine);</span>
-<span class="fc bfc" id="L421" title="All 4 branches covered.">                } else if (&quot;gz&quot;.equals(archiveExt) || &quot;tgz&quot;.equals(archiveExt)) {</span>
-<span class="fc" id="L422">                    final String uncompressedName = GzipUtils.getUncompressedFilename(archive.getName());</span>
-<span class="fc" id="L423">                    final File f = new File(destination, uncompressedName);</span>
-<span class="pc bpc" id="L424" title="1 of 2 branches missed.">                    if (engine.accept(f)) {</span>
-<span class="fc" id="L425">                        final String destPath = destination.getCanonicalPath();</span>
-<span class="pc bpc" id="L426" title="1 of 2 branches missed.">                        if (!f.getCanonicalPath().startsWith(destPath)) {</span>
-<span class="nc" id="L427">                            final String msg = String.format(</span>
+<span class="pc bpc" id="L442" title="1 of 4 branches missed.">                if (KNOWN_ZIP_EXT.contains(archiveExt) || ADDITIONAL_ZIP_EXT.contains(archiveExt)) {</span>
+<span class="fc" id="L443">                    in = new BufferedInputStream(fis);</span>
+<span class="fc" id="L444">                    ensureReadableJar(archiveExt, in);</span>
+<span class="fc" id="L445">                    zin = new ZipArchiveInputStream(in);</span>
+<span class="fc" id="L446">                    extractArchive(zin, destination, engine);</span>
+<span class="fc bfc" id="L447" title="All 2 branches covered.">                } else if (&quot;tar&quot;.equals(archiveExt)) {</span>
+<span class="fc" id="L448">                    in = new BufferedInputStream(fis);</span>
+<span class="fc" id="L449">                    tin = new TarArchiveInputStream(in);</span>
+<span class="fc" id="L450">                    extractArchive(tin, destination, engine);</span>
+<span class="fc bfc" id="L451" title="All 4 branches covered.">                } else if (&quot;gz&quot;.equals(archiveExt) || &quot;tgz&quot;.equals(archiveExt)) {</span>
+<span class="fc" id="L452">                    final String uncompressedName = GzipUtils.getUncompressedFilename(archive.getName());</span>
+<span class="fc" id="L453">                    final File f = new File(destination, uncompressedName);</span>
+<span class="pc bpc" id="L454" title="1 of 2 branches missed.">                    if (engine.accept(f)) {</span>
+<span class="fc" id="L455">                        final String destPath = destination.getCanonicalPath();</span>
+<span class="pc bpc" id="L456" title="1 of 2 branches missed.">                        if (!f.getCanonicalPath().startsWith(destPath)) {</span>
+<span class="nc" id="L457">                            final String msg = String.format(</span>
                                     &quot;Archive (%s) contains a file that would be written outside of the destination directory&quot;,
-<span class="nc" id="L429">                                    archive.getPath());</span>
-<span class="nc" id="L430">                            throw new AnalysisException(msg);</span>
+<span class="nc" id="L459">                                    archive.getPath());</span>
+<span class="nc" id="L460">                            throw new AnalysisException(msg);</span>
                         }
-<span class="fc" id="L432">                        in = new BufferedInputStream(fis);</span>
-<span class="fc" id="L433">                        gin = new GzipCompressorInputStream(in);</span>
-<span class="fc" id="L434">                        decompressFile(gin, f);</span>
+<span class="fc" id="L462">                        in = new BufferedInputStream(fis);</span>
+<span class="fc" id="L463">                        gin = new GzipCompressorInputStream(in);</span>
+<span class="fc" id="L464">                        decompressFile(gin, f);</span>
                     }
-<span class="pc bpc" id="L436" title="1 of 4 branches missed.">                } else if (&quot;bz2&quot;.equals(archiveExt) || &quot;tbz2&quot;.equals(archiveExt)) {</span>
-<span class="fc" id="L437">                    final String uncompressedName = BZip2Utils.getUncompressedFilename(archive.getName());</span>
-<span class="fc" id="L438">                    final File f = new File(destination, uncompressedName);</span>
-<span class="pc bpc" id="L439" title="1 of 2 branches missed.">                    if (engine.accept(f)) {</span>
-<span class="fc" id="L440">                        final String destPath = destination.getCanonicalPath();</span>
-<span class="pc bpc" id="L441" title="1 of 2 branches missed.">                        if (!f.getCanonicalPath().startsWith(destPath)) {</span>
-<span class="nc" id="L442">                            final String msg = String.format(</span>
+<span class="fc bfc" id="L466" title="All 4 branches covered.">                } else if (&quot;bz2&quot;.equals(archiveExt) || &quot;tbz2&quot;.equals(archiveExt)) {</span>
+<span class="fc" id="L467">                    final String uncompressedName = BZip2Utils.getUncompressedFilename(archive.getName());</span>
+<span class="fc" id="L468">                    final File f = new File(destination, uncompressedName);</span>
+<span class="pc bpc" id="L469" title="1 of 2 branches missed.">                    if (engine.accept(f)) {</span>
+<span class="fc" id="L470">                        final String destPath = destination.getCanonicalPath();</span>
+<span class="pc bpc" id="L471" title="1 of 2 branches missed.">                        if (!f.getCanonicalPath().startsWith(destPath)) {</span>
+<span class="nc" id="L472">                            final String msg = String.format(</span>
                                     &quot;Archive (%s) contains a file that would be written outside of the destination directory&quot;,
-<span class="nc" id="L444">                                    archive.getPath());</span>
-<span class="nc" id="L445">                            throw new AnalysisException(msg);</span>
+<span class="nc" id="L474">                                    archive.getPath());</span>
+<span class="nc" id="L475">                            throw new AnalysisException(msg);</span>
                         }
-<span class="fc" id="L447">                        in = new BufferedInputStream(fis);</span>
-<span class="fc" id="L448">                        bzin = new BZip2CompressorInputStream(in);</span>
-<span class="fc" id="L449">                        decompressFile(bzin, f);</span>
+<span class="fc" id="L477">                        in = new BufferedInputStream(fis);</span>
+<span class="fc" id="L478">                        bzin = new BZip2CompressorInputStream(in);</span>
+<span class="fc" id="L479">                        decompressFile(bzin, f);</span>
                     }
+<span class="pc bpc" id="L481" title="1 of 2 branches missed.">                } else if (&quot;rpm&quot;.equals(archiveExt)) {</span>
+<span class="fc" id="L482">                    rin = new RpmInputStream(fis);</span>
+                    //return of getTag is not used - but the call is a
+                    //necassary step in reading from the stream
+<span class="fc" id="L485">                    rin.getPayloadHeader().getTag(RpmTag.NAME);</span>
+<span class="fc" id="L486">                    cain = new CpioArchiveInputStream(rin);</span>
+<span class="fc" id="L487">                    extractArchive(cain, destination, engine);</span>
                 }
-<span class="nc" id="L452">            } catch (ArchiveExtractionException ex) {</span>
-<span class="nc" id="L453">                LOGGER.warn(&quot;Exception extracting archive '{}'.&quot;, archive.getName());</span>
-<span class="nc" id="L454">                LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="nc" id="L455">            } catch (IOException ex) {</span>
-<span class="nc" id="L456">                LOGGER.warn(&quot;Exception reading archive '{}'.&quot;, archive.getName());</span>
-<span class="nc" id="L457">                LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L489">            } catch (ArchiveExtractionException ex) {</span>
+<span class="nc" id="L490">                LOGGER.warn(&quot;Exception extracting archive '{}'.&quot;, archive.getName());</span>
+<span class="nc" id="L491">                LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L492">            } catch (IOException ex) {</span>
+<span class="nc" id="L493">                LOGGER.warn(&quot;Exception reading archive '{}'.&quot;, archive.getName());</span>
+<span class="nc" id="L494">                LOGGER.debug(&quot;&quot;, ex);</span>
             } finally {
                 //overly verbose and not needed... but keeping it anyway due to
                 //having issue with file handles being left open
-<span class="fc" id="L461">                FileUtils.close(fis);</span>
-<span class="fc" id="L462">                FileUtils.close(in);</span>
-<span class="fc" id="L463">                FileUtils.close(zin);</span>
-<span class="fc" id="L464">                FileUtils.close(tin);</span>
-<span class="fc" id="L465">                FileUtils.close(gin);</span>
-<span class="fc" id="L466">                FileUtils.close(bzin);</span>
+<span class="fc" id="L498">                FileUtils.close(fis);</span>
+<span class="fc" id="L499">                FileUtils.close(in);</span>
+<span class="fc" id="L500">                FileUtils.close(zin);</span>
+<span class="fc" id="L501">                FileUtils.close(tin);</span>
+<span class="fc" id="L502">                FileUtils.close(gin);</span>
+<span class="fc" id="L503">                FileUtils.close(bzin);</span>
             }
         }
-<span class="fc" id="L469">    }</span>
+<span class="fc" id="L506">    }</span>
 
     /**
-     * Checks if the file being scanned is a JAR or WAR that begins with '#!/bin' which
-     * indicates it is a fully executable jar. If a fully executable JAR is
-     * identified the input stream will be advanced to the start of the actual
-     * JAR file ( skipping the script).
+     * Checks if the file being scanned is a JAR or WAR that begins with
+     * '#!/bin' which indicates it is a fully executable jar. If a fully
+     * executable JAR is identified the input stream will be advanced to the
+     * start of the actual JAR file ( skipping the script).
      *
      * @see
      * &lt;a href=&quot;http://docs.spring.io/spring-boot/docs/1.3.0.BUILD-SNAPSHOT/reference/htmlsingle/#deployment-install&quot;&gt;Installing
@@ -482,11 +519,11 @@ import org.slf4j.LoggerFactory;
      * @throws IOException thrown if there is an error reading the stream
      */
     private void ensureReadableJar(final String archiveExt, BufferedInputStream in) throws IOException {
-<span class="pc bpc" id="L485" title="1 of 6 branches missed.">        if ((&quot;war&quot;.equals(archiveExt) || &quot;jar&quot;.equals(archiveExt)) &amp;&amp; in.markSupported()) {</span>
-<span class="fc" id="L486">            in.mark(7);</span>
-<span class="fc" id="L487">            final byte[] b = new byte[7];</span>
-<span class="fc" id="L488">            final int read = in.read(b);</span>
-<span class="pc bpc" id="L489" title="7 of 16 branches missed.">            if (read == 7</span>
+<span class="pc bpc" id="L522" title="1 of 6 branches missed.">        if ((&quot;war&quot;.equals(archiveExt) || &quot;jar&quot;.equals(archiveExt)) &amp;&amp; in.markSupported()) {</span>
+<span class="fc" id="L523">            in.mark(7);</span>
+<span class="fc" id="L524">            final byte[] b = new byte[7];</span>
+<span class="fc" id="L525">            final int read = in.read(b);</span>
+<span class="pc bpc" id="L526" title="7 of 16 branches missed.">            if (read == 7</span>
                     &amp;&amp; b[0] == '#'
                     &amp;&amp; b[1] == '!'
                     &amp;&amp; b[2] == '/'
@@ -494,21 +531,21 @@ import org.slf4j.LoggerFactory;
                     &amp;&amp; b[4] == 'i'
                     &amp;&amp; b[5] == 'n'
                     &amp;&amp; b[6] == '/') {
-<span class="fc" id="L497">                boolean stillLooking = true;</span>
+<span class="fc" id="L534">                boolean stillLooking = true;</span>
                 int chr;
                 int nxtChr;
                 //CSOFF: InnerAssignment
                 //CSOFF: NestedIfDepth
-<span class="pc bpc" id="L502" title="1 of 4 branches missed.">                while (stillLooking &amp;&amp; (chr = in.read()) != -1) {</span>
-<span class="pc bpc" id="L503" title="1 of 4 branches missed.">                    if (chr == '\n' || chr == '\r') {</span>
-<span class="fc" id="L504">                        in.mark(4);</span>
-<span class="pc bpc" id="L505" title="1 of 2 branches missed.">                        if ((chr = in.read()) != -1) {</span>
-<span class="pc bpc" id="L506" title="1 of 4 branches missed.">                            if (chr == 'P' &amp;&amp; (chr = in.read()) != -1) {</span>
-<span class="pc bpc" id="L507" title="2 of 4 branches missed.">                                if (chr == 'K' &amp;&amp; (chr = in.read()) != -1) {</span>
-<span class="pc bpc" id="L508" title="6 of 8 branches missed.">                                    if ((chr == 3 || chr == 5 || chr == 7) &amp;&amp; (nxtChr = in.read()) != -1) {</span>
-<span class="pc bpc" id="L509" title="1 of 2 branches missed.">                                        if (nxtChr == chr + 1) {</span>
-<span class="fc" id="L510">                                            stillLooking = false;</span>
-<span class="fc" id="L511">                                            in.reset();</span>
+<span class="pc bpc" id="L539" title="1 of 4 branches missed.">                while (stillLooking &amp;&amp; (chr = in.read()) != -1) {</span>
+<span class="pc bpc" id="L540" title="1 of 4 branches missed.">                    if (chr == '\n' || chr == '\r') {</span>
+<span class="fc" id="L541">                        in.mark(4);</span>
+<span class="pc bpc" id="L542" title="1 of 2 branches missed.">                        if ((chr = in.read()) != -1) {</span>
+<span class="pc bpc" id="L543" title="1 of 4 branches missed.">                            if (chr == 'P' &amp;&amp; (chr = in.read()) != -1) {</span>
+<span class="pc bpc" id="L544" title="2 of 4 branches missed.">                                if (chr == 'K' &amp;&amp; (chr = in.read()) != -1) {</span>
+<span class="pc bpc" id="L545" title="6 of 8 branches missed.">                                    if ((chr == 3 || chr == 5 || chr == 7) &amp;&amp; (nxtChr = in.read()) != -1) {</span>
+<span class="pc bpc" id="L546" title="1 of 2 branches missed.">                                        if (nxtChr == chr + 1) {</span>
+<span class="fc" id="L547">                                            stillLooking = false;</span>
+<span class="fc" id="L548">                                            in.reset();</span>
                                         }
                                     }
                                 }
@@ -518,11 +555,11 @@ import org.slf4j.LoggerFactory;
                 }
                 //CSON: InnerAssignment
                 //CSON: NestedIfDepth
-<span class="fc" id="L521">            } else {</span>
-<span class="fc" id="L522">                in.reset();</span>
+<span class="fc" id="L558">            } else {</span>
+<span class="fc" id="L559">                in.reset();</span>
             }
         }
-<span class="fc" id="L525">    }</span>
+<span class="fc" id="L562">    }</span>
 
     /**
      * Extracts files from an archive.
@@ -537,33 +574,33 @@ import org.slf4j.LoggerFactory;
         ArchiveEntry entry;
         try {
             //final String destPath = destination.getCanonicalPath();
-<span class="fc" id="L540">            final Path d = destination.toPath();</span>
-<span class="fc bfc" id="L541" title="All 2 branches covered.">            while ((entry = input.getNextEntry()) != null) {</span>
+<span class="fc" id="L577">            final Path d = destination.toPath();</span>
+<span class="fc bfc" id="L578" title="All 2 branches covered.">            while ((entry = input.getNextEntry()) != null) {</span>
                 //final File file = new File(destination, entry.getName());
-<span class="fc" id="L543">                final Path f = d.resolve(entry.getName()).normalize();</span>
-<span class="pc bpc" id="L544" title="1 of 2 branches missed.">                if (!f.startsWith(d)) {</span>
-<span class="nc" id="L545">                    LOGGER.debug(&quot;ZipSlip detected\n-Destination: &quot; + d.toString() + &quot;\n-Path: &quot; + f.toString());</span>
-<span class="nc" id="L546">                    final String msg = String.format(</span>
+<span class="fc" id="L580">                final Path f = d.resolve(entry.getName()).normalize();</span>
+<span class="pc bpc" id="L581" title="1 of 2 branches missed.">                if (!f.startsWith(d)) {</span>
+<span class="nc" id="L582">                    LOGGER.debug(&quot;ZipSlip detected\n-Destination: &quot; + d.toString() + &quot;\n-Path: &quot; + f.toString());</span>
+<span class="nc" id="L583">                    final String msg = String.format(</span>
                             &quot;Archive contains a file (%s) that would be extracted outside of the target directory.&quot;,
-<span class="nc" id="L548">                            entry.getName());</span>
-<span class="nc" id="L549">                    throw new ArchiveExtractionException(msg);</span>
+<span class="nc" id="L585">                            entry.getName());</span>
+<span class="nc" id="L586">                    throw new ArchiveExtractionException(msg);</span>
                 }
-<span class="fc" id="L551">                final File file = f.toFile();</span>
-<span class="fc bfc" id="L552" title="All 2 branches covered.">                if (entry.isDirectory()) {</span>
-<span class="pc bpc" id="L553" title="2 of 4 branches missed.">                    if (!file.exists() &amp;&amp; !file.mkdirs()) {</span>
-<span class="nc" id="L554">                        final String msg = String.format(&quot;Unable to create directory '%s'.&quot;, file.getAbsolutePath());</span>
-<span class="nc" id="L555">                        throw new AnalysisException(msg);</span>
+<span class="fc" id="L588">                final File file = f.toFile();</span>
+<span class="fc bfc" id="L589" title="All 2 branches covered.">                if (entry.isDirectory()) {</span>
+<span class="pc bpc" id="L590" title="2 of 4 branches missed.">                    if (!file.exists() &amp;&amp; !file.mkdirs()) {</span>
+<span class="nc" id="L591">                        final String msg = String.format(&quot;Unable to create directory '%s'.&quot;, file.getAbsolutePath());</span>
+<span class="nc" id="L592">                        throw new AnalysisException(msg);</span>
                     }
-<span class="fc bfc" id="L557" title="All 2 branches covered.">                } else if (engine.accept(file)) {</span>
-<span class="fc" id="L558">                    extractAcceptedFile(input, file);</span>
+<span class="fc bfc" id="L594" title="All 2 branches covered.">                } else if (engine.accept(file)) {</span>
+<span class="fc" id="L595">                    extractAcceptedFile(input, file);</span>
                 }
-<span class="fc" id="L560">            }</span>
-<span class="nc" id="L561">        } catch (IOException | AnalysisException ex) {</span>
-<span class="nc" id="L562">            throw new ArchiveExtractionException(ex);</span>
+<span class="fc" id="L597">            }</span>
+<span class="nc" id="L598">        } catch (IOException | AnalysisException ex) {</span>
+<span class="nc" id="L599">            throw new ArchiveExtractionException(ex);</span>
         } finally {
-<span class="fc" id="L564">            FileUtils.close(input);</span>
+<span class="fc" id="L601">            FileUtils.close(input);</span>
         }
-<span class="fc" id="L566">    }</span>
+<span class="fc" id="L603">    }</span>
 
     /**
      * Extracts a file from an archive.
@@ -573,24 +610,24 @@ import org.slf4j.LoggerFactory;
      * @throws AnalysisException thrown if there is an error
      */
     private static void extractAcceptedFile(ArchiveInputStream input, File file) throws AnalysisException {
-<span class="fc" id="L576">        LOGGER.debug(&quot;Extracting '{}'&quot;, file.getPath());</span>
-<span class="fc" id="L577">        final File parent = file.getParentFile();</span>
-<span class="pc bpc" id="L578" title="1 of 4 branches missed.">        if (!parent.isDirectory() &amp;&amp; !parent.mkdirs()) {</span>
-<span class="nc" id="L579">            final String msg = String.format(&quot;Unable to build directory '%s'.&quot;, parent.getAbsolutePath());</span>
-<span class="nc" id="L580">            throw new AnalysisException(msg);</span>
+<span class="fc" id="L613">        LOGGER.debug(&quot;Extracting '{}'&quot;, file.getPath());</span>
+<span class="fc" id="L614">        final File parent = file.getParentFile();</span>
+<span class="pc bpc" id="L615" title="1 of 4 branches missed.">        if (!parent.isDirectory() &amp;&amp; !parent.mkdirs()) {</span>
+<span class="nc" id="L616">            final String msg = String.format(&quot;Unable to build directory '%s'.&quot;, parent.getAbsolutePath());</span>
+<span class="nc" id="L617">            throw new AnalysisException(msg);</span>
         }
-<span class="fc" id="L582">        try (FileOutputStream fos = new FileOutputStream(file)) {</span>
-<span class="fc" id="L583">            IOUtils.copy(input, fos);</span>
-<span class="nc" id="L584">        } catch (FileNotFoundException ex) {</span>
-<span class="nc" id="L585">            LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="nc" id="L586">            final String msg = String.format(&quot;Unable to find file '%s'.&quot;, file.getName());</span>
-<span class="nc" id="L587">            throw new AnalysisException(msg, ex);</span>
-<span class="nc" id="L588">        } catch (IOException ex) {</span>
-<span class="nc" id="L589">            LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="nc" id="L590">            final String msg = String.format(&quot;IO Exception while parsing file '%s'.&quot;, file.getName());</span>
-<span class="nc" id="L591">            throw new AnalysisException(msg, ex);</span>
-<span class="fc" id="L592">        }</span>
-<span class="fc" id="L593">    }</span>
+<span class="fc" id="L619">        try (FileOutputStream fos = new FileOutputStream(file)) {</span>
+<span class="fc" id="L620">            IOUtils.copy(input, fos);</span>
+<span class="nc" id="L621">        } catch (FileNotFoundException ex) {</span>
+<span class="nc" id="L622">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L623">            final String msg = String.format(&quot;Unable to find file '%s'.&quot;, file.getName());</span>
+<span class="nc" id="L624">            throw new AnalysisException(msg, ex);</span>
+<span class="nc" id="L625">        } catch (IOException ex) {</span>
+<span class="nc" id="L626">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L627">            final String msg = String.format(&quot;IO Exception while parsing file '%s'.&quot;, file.getName());</span>
+<span class="nc" id="L628">            throw new AnalysisException(msg, ex);</span>
+<span class="fc" id="L629">        }</span>
+<span class="fc" id="L630">    }</span>
 
     /**
      * Decompresses a file.
@@ -601,14 +638,14 @@ import org.slf4j.LoggerFactory;
      * decompressing the file
      */
     private void decompressFile(CompressorInputStream inputStream, File outputFile) throws ArchiveExtractionException {
-<span class="fc" id="L604">        LOGGER.debug(&quot;Decompressing '{}'&quot;, outputFile.getPath());</span>
-<span class="fc" id="L605">        try (FileOutputStream out = new FileOutputStream(outputFile)) {</span>
-<span class="fc" id="L606">            IOUtils.copy(inputStream, out);</span>
-<span class="nc" id="L607">        } catch (IOException ex) {</span>
-<span class="nc" id="L608">            LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="nc" id="L609">            throw new ArchiveExtractionException(ex);</span>
-<span class="fc" id="L610">        }</span>
-<span class="fc" id="L611">    }</span>
+<span class="fc" id="L641">        LOGGER.debug(&quot;Decompressing '{}'&quot;, outputFile.getPath());</span>
+<span class="fc" id="L642">        try (FileOutputStream out = new FileOutputStream(outputFile)) {</span>
+<span class="fc" id="L643">            IOUtils.copy(inputStream, out);</span>
+<span class="nc" id="L644">        } catch (IOException ex) {</span>
+<span class="nc" id="L645">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L646">            throw new ArchiveExtractionException(ex);</span>
+<span class="fc" id="L647">        }</span>
+<span class="fc" id="L648">    }</span>
 
     /**
      * Attempts to determine if a zip file is actually a JAR file.
@@ -617,30 +654,30 @@ import org.slf4j.LoggerFactory;
      * @return true if the dependency appears to be a JAR file; otherwise false
      */
     private boolean isZipFileActuallyJarFile(Dependency dependency) {
-<span class="nc" id="L620">        boolean isJar = false;</span>
-<span class="nc" id="L621">        ZipFile zip = null;</span>
+<span class="nc" id="L657">        boolean isJar = false;</span>
+<span class="nc" id="L658">        ZipFile zip = null;</span>
         try {
-<span class="nc" id="L623">            zip = new ZipFile(dependency.getActualFilePath());</span>
-<span class="nc bnc" id="L624" title="All 2 branches missed.">            if (zip.getEntry(&quot;META-INF/MANIFEST.MF&quot;) != null</span>
-<span class="nc bnc" id="L625" title="All 2 branches missed.">                    || zip.getEntry(&quot;META-INF/maven&quot;) != null) {</span>
-<span class="nc" id="L626">                final Enumeration&lt;ZipArchiveEntry&gt; entries = zip.getEntries();</span>
-<span class="nc bnc" id="L627" title="All 2 branches missed.">                while (entries.hasMoreElements()) {</span>
-<span class="nc" id="L628">                    final ZipArchiveEntry entry = entries.nextElement();</span>
-<span class="nc bnc" id="L629" title="All 2 branches missed.">                    if (!entry.isDirectory()) {</span>
-<span class="nc" id="L630">                        final String name = entry.getName().toLowerCase();</span>
-<span class="nc bnc" id="L631" title="All 2 branches missed.">                        if (name.endsWith(&quot;.class&quot;)) {</span>
-<span class="nc" id="L632">                            isJar = true;</span>
-<span class="nc" id="L633">                            break;</span>
+<span class="nc" id="L660">            zip = new ZipFile(dependency.getActualFilePath());</span>
+<span class="nc bnc" id="L661" title="All 2 branches missed.">            if (zip.getEntry(&quot;META-INF/MANIFEST.MF&quot;) != null</span>
+<span class="nc bnc" id="L662" title="All 2 branches missed.">                    || zip.getEntry(&quot;META-INF/maven&quot;) != null) {</span>
+<span class="nc" id="L663">                final Enumeration&lt;ZipArchiveEntry&gt; entries = zip.getEntries();</span>
+<span class="nc bnc" id="L664" title="All 2 branches missed.">                while (entries.hasMoreElements()) {</span>
+<span class="nc" id="L665">                    final ZipArchiveEntry entry = entries.nextElement();</span>
+<span class="nc bnc" id="L666" title="All 2 branches missed.">                    if (!entry.isDirectory()) {</span>
+<span class="nc" id="L667">                        final String name = entry.getName().toLowerCase();</span>
+<span class="nc bnc" id="L668" title="All 2 branches missed.">                        if (name.endsWith(&quot;.class&quot;)) {</span>
+<span class="nc" id="L669">                            isJar = true;</span>
+<span class="nc" id="L670">                            break;</span>
                         }
                     }
-<span class="nc" id="L636">                }</span>
+<span class="nc" id="L673">                }</span>
             }
-<span class="nc" id="L638">        } catch (IOException ex) {</span>
-<span class="nc" id="L639">            LOGGER.debug(&quot;Unable to unzip zip file '{}'&quot;, dependency.getFilePath(), ex);</span>
+<span class="nc" id="L675">        } catch (IOException ex) {</span>
+<span class="nc" id="L676">            LOGGER.debug(&quot;Unable to unzip zip file '{}'&quot;, dependency.getFilePath(), ex);</span>
         } finally {
-<span class="nc" id="L641">            ZipFile.closeQuietly(zip);</span>
+<span class="nc" id="L678">            ZipFile.closeQuietly(zip);</span>
         }
-<span class="nc" id="L643">        return isJar;</span>
+<span class="nc" id="L680">        return isJar;</span>
     }
 
     /**
@@ -648,16 +685,16 @@ import org.slf4j.LoggerFactory;
      * analyzer.
      */
     private void initializeSettings() {
-<span class="fc" id="L651">        maxScanDepth = getSettings().getInt(&quot;archive.scan.depth&quot;, 3);</span>
-<span class="fc" id="L652">        final Set&lt;String&gt; extensions = new HashSet&lt;&gt;(EXTENSIONS);</span>
-<span class="fc" id="L653">        extensions.addAll(KNOWN_ZIP_EXT);</span>
-<span class="fc" id="L654">        final String additionalZipExt = getSettings().getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);</span>
-<span class="pc bpc" id="L655" title="1 of 2 branches missed.">        if (additionalZipExt != null) {</span>
-<span class="nc" id="L656">            final String[] ext = additionalZipExt.split(&quot;\\s*,\\s*&quot;);</span>
-<span class="nc" id="L657">            Collections.addAll(extensions, ext);</span>
-<span class="nc" id="L658">            Collections.addAll(ADDITIONAL_ZIP_EXT, ext);</span>
+<span class="fc" id="L688">        maxScanDepth = getSettings().getInt(&quot;archive.scan.depth&quot;, 3);</span>
+<span class="fc" id="L689">        final Set&lt;String&gt; extensions = new HashSet&lt;&gt;(EXTENSIONS);</span>
+<span class="fc" id="L690">        extensions.addAll(KNOWN_ZIP_EXT);</span>
+<span class="fc" id="L691">        final String additionalZipExt = getSettings().getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);</span>
+<span class="pc bpc" id="L692" title="1 of 2 branches missed.">        if (additionalZipExt != null) {</span>
+<span class="nc" id="L693">            final String[] ext = additionalZipExt.split(&quot;\\s*,\\s*&quot;);</span>
+<span class="nc" id="L694">            Collections.addAll(extensions, ext);</span>
+<span class="nc" id="L695">            Collections.addAll(ADDITIONAL_ZIP_EXT, ext);</span>
         }
-<span class="fc" id="L660">        fileFilter = FileFilterBuilder.newInstance().addExtensions(extensions).build();</span>
-<span class="fc" id="L661">    }</span>
+<span class="fc" id="L697">        fileFilter = FileFilterBuilder.newInstance().addExtensions(extensions).build();</span>
+<span class="fc" id="L698">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

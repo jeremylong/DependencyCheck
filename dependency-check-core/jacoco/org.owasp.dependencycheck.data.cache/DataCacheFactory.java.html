@@ -91,7 +91,7 @@ public class DataCacheFactory {
 <span class="nc" id="L91">                } catch (IOException ex) {</span>
 <span class="nc" id="L92">                    throw new CacheException(&quot;Unable to obtain disk cache directory path&quot;, ex);</span>
 <span class="fc" id="L93">                }</span>
-<span class="pc bpc" id="L94" title="1 of 4 branches missed.">                if (!cacheDirectory.isDirectory() &amp;&amp; !cacheDirectory.mkdirs()) {</span>
+<span class="pc bpc" id="L94" title="2 of 4 branches missed.">                if (!cacheDirectory.isDirectory() &amp;&amp; !cacheDirectory.mkdirs()) {</span>
 <span class="nc" id="L95">                    throw new CacheException(&quot;Unable to create disk cache: &quot; + cacheDirectory.toString());</span>
                 }
 <span class="fc" id="L97">                try (InputStream in = FileUtils.getResourceAsStream(CACHE_PROPERTIES)) {</span>
@@ -191,4 +191,4 @@ public class DataCacheFactory {
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

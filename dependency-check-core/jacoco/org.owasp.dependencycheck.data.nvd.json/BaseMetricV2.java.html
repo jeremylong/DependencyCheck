@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     &quot;severity&quot;
 })
 @Generated(&quot;jsonschema2pojo&quot;)
-<span class="fc" id="L25">public class BaseMetricV2 {</span>
+<span class="nc" id="L25">public class BaseMetricV2 {</span>
 
     /**
      * JSON Schema for Common Vulnerability Scoring System version 2.0
@@ -34,7 +34,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     private CvssV20 cvssV2;
     @JsonProperty(&quot;severity&quot;)
     private String severity;
-<span class="fc" id="L37">    @JsonIgnore</span>
+<span class="nc" id="L37">    @JsonIgnore</span>
     private Map&lt;String, Object&gt; additionalProperties = new HashMap&lt;String, Object&gt;();
 
     /**
@@ -45,7 +45,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
      */
     @JsonProperty(&quot;cvssV2&quot;)
     public CvssV20 getCvssV2() {
-<span class="fc" id="L48">        return cvssV2;</span>
+<span class="nc" id="L48">        return cvssV2;</span>
     }
 
     /**
@@ -56,28 +56,28 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
      */
     @JsonProperty(&quot;cvssV2&quot;)
     public void setCvssV2(CvssV20 cvssV2) {
-<span class="fc" id="L59">        this.cvssV2 = cvssV2;</span>
-<span class="fc" id="L60">    }</span>
+<span class="nc" id="L59">        this.cvssV2 = cvssV2;</span>
+<span class="nc" id="L60">    }</span>
 
     @JsonProperty(&quot;severity&quot;)
     public String getSeverity() {
-<span class="fc" id="L64">        return severity;</span>
+<span class="nc" id="L64">        return severity;</span>
     }
 
     @JsonProperty(&quot;severity&quot;)
     public void setSeverity(String severity) {
-<span class="fc" id="L69">        this.severity = severity;</span>
-<span class="fc" id="L70">    }</span>
+<span class="nc" id="L69">        this.severity = severity;</span>
+<span class="nc" id="L70">    }</span>
 
     @JsonAnyGetter
     public Map&lt;String, Object&gt; getAdditionalProperties() {
-<span class="fc" id="L74">        return this.additionalProperties;</span>
+<span class="nc" id="L74">        return this.additionalProperties;</span>
     }
 
     @JsonAnySetter
     public void setAdditionalProperty(String name, Object value) {
-<span class="fc" id="L79">        this.additionalProperties.put(name, value);</span>
-<span class="fc" id="L80">    }</span>
+<span class="nc" id="L79">        this.additionalProperties.put(name, value);</span>
+<span class="nc" id="L80">    }</span>
 
     @Override
     public String toString() {
@@ -125,4 +125,4 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

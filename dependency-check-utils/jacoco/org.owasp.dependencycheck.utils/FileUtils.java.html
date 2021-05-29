@@ -154,22 +154,19 @@ public final class FileUtils {
      *
      * @param resource path
      * @return the input stream for the given resource
+     * @throws FileNotFoundException if the file could not be found
      */
     @Nullable
-    public static InputStream getResourceAsStream(@NotNull String resource) {
-<span class="fc" id="L160">        final ClassLoader classLoader = FileUtils.class.getClassLoader();</span>
-<span class="pc bpc" id="L161" title="1 of 2 branches missed.">        final InputStream inputStream = classLoader != null</span>
-<span class="pc" id="L162">                ? classLoader.getResourceAsStream(resource)</span>
-<span class="pc" id="L163">                : ClassLoader.getSystemResourceAsStream(resource);</span>
+    public static InputStream getResourceAsStream(@NotNull String resource) throws FileNotFoundException {
+<span class="fc" id="L161">        final ClassLoader classLoader = FileUtils.class.getClassLoader();</span>
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">        final InputStream inputStream = classLoader != null</span>
+<span class="pc" id="L163">                ? classLoader.getResourceAsStream(resource)</span>
+<span class="pc" id="L164">                : ClassLoader.getSystemResourceAsStream(resource);</span>
 
-<span class="pc bpc" id="L165" title="1 of 2 branches missed.">        if (inputStream == null) {</span>
-            try {
-<span class="nc" id="L167">                return new FileInputStream(resource);</span>
-<span class="nc" id="L168">            } catch (final FileNotFoundException e) {</span>
-<span class="nc" id="L169">                LOGGER.error(&quot;Unable to create an Input Stream for &quot; + resource, e);</span>
-            }
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">        if (inputStream == null) {</span>
+<span class="nc" id="L167">            return new FileInputStream(resource);</span>
         }
-<span class="fc" id="L172">        return inputStream;</span>
+<span class="fc" id="L169">        return inputStream;</span>
     }
 
     /**
@@ -180,21 +177,21 @@ public final class FileUtils {
      * @return the file reference for the resource
      */
     public static File getResourceAsFile(final String resource) {
-<span class="nc" id="L183">        final ClassLoader classLoader = FileUtils.class.getClassLoader();</span>
-<span class="nc" id="L184">        String path = null;</span>
-<span class="nc bnc" id="L185" title="All 2 branches missed.">        if (classLoader != null) {</span>
-<span class="nc" id="L186">            final URL url = classLoader.getResource(resource);</span>
-<span class="nc bnc" id="L187" title="All 2 branches missed.">            if (url != null) {</span>
-<span class="nc" id="L188">                path = url.getFile();</span>
+<span class="nc" id="L180">        final ClassLoader classLoader = FileUtils.class.getClassLoader();</span>
+<span class="nc" id="L181">        String path = null;</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">        if (classLoader != null) {</span>
+<span class="nc" id="L183">            final URL url = classLoader.getResource(resource);</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">            if (url != null) {</span>
+<span class="nc" id="L185">                path = url.getFile();</span>
             }
-<span class="nc" id="L190">        } else {</span>
-<span class="nc" id="L191">            path = ClassLoader.getSystemResource(resource).getFile();</span>
+<span class="nc" id="L187">        } else {</span>
+<span class="nc" id="L188">            path = ClassLoader.getSystemResource(resource).getFile();</span>
         }
 
-<span class="nc bnc" id="L194" title="All 2 branches missed.">        if (path == null) {</span>
-<span class="nc" id="L195">            return new File(resource);</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">        if (path == null) {</span>
+<span class="nc" id="L192">            return new File(resource);</span>
         }
-<span class="nc" id="L197">        return new File(path);</span>
+<span class="nc" id="L194">        return new File(path);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

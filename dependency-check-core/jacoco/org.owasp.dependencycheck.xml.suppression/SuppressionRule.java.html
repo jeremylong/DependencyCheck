@@ -637,7 +637,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
 <span class="fc" id="L637">        final StringBuilder sb = new StringBuilder(64);</span>
 <span class="fc" id="L638">        sb.append(&quot;SuppressionRule{&quot;);</span>
 <span class="pc bpc" id="L639" title="1 of 2 branches missed.">        if (until != null) {</span>
-<span class="fc" id="L640">            String dt = DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(until);</span>
+<span class="fc" id="L640">            final String dt = DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(until);</span>
 <span class="fc" id="L641">            sb.append(&quot;until=&quot;).append(dt).append(',');</span>
         }
 <span class="pc bpc" id="L643" title="1 of 2 branches missed.">        if (filePath != null) {</span>
@@ -688,4 +688,4 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
 <span class="fc" id="L688">        return sb.toString();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
