@@ -565,7 +565,9 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 if (boostTerm != null) {
                     sb.append("^").append(weighting + WEIGHTING_BOOST);
                     if (!boostTerm.equals(word)) {
-                        boostedTerms.append(" ").append(boostTerm).append("^").append(weighting + WEIGHTING_BOOST);
+                        boostedTerms.append(" ");
+                        LuceneUtils.appendEscapedLuceneQuery(boostedTerms, boostTerm);
+                        boostedTerms.append("^").append(weighting + WEIGHTING_BOOST);
                     }
                 } else if (weighting > 1) {
                     sb.append("^").append(weighting);
