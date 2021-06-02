@@ -1,10 +1,16 @@
+# When using this script - please review it for the creation of dcuser
+# the rights granted to the user. You may only want DC user to have SELECT
+# rights on the tables and have a different user capable of running the update
+# then clients can select data in readonly mode and you can have a single
+# client that is run to update the data.
 
-#DROP USER 'dcuser';
-#DROP database dependencycheck;
-
-#CREATE database dependencycheck;
+DROP database IF EXISTS dependencycheck;
+CREATE database dependencycheck;
 
 USE dependencycheck;
+
+DROP USER IF EXISTS 'dcuser';
+CREATE USER 'dcuser' IDENTIFIED BY 'DC-Pass1337!';
 
 DROP PROCEDURE IF EXISTS dependencycheck.save_property;
 DROP PROCEDURE IF EXISTS dependencycheck.update_ecosystems;
@@ -256,5 +262,7 @@ END //
 DELIMITER ;
 
 GRANT EXECUTE ON PROCEDURE dependencycheck.update_ecosystems2 TO 'dcuser';
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON dependencycheck.* TO 'dcuser';
 
 INSERT INTO properties(id, value) VALUES ('version', '5.1');
