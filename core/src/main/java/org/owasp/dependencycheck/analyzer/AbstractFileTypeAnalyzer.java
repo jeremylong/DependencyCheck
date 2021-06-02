@@ -79,7 +79,7 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
      */
     @Override
     protected final void prepareAnalyzer(Engine engine) throws InitializationException {
-        if (filesMatched) {
+        if (filesMatched && this.isEnabled()) {
             prepareFileTypeAnalyzer(engine);
         } else {
             this.setEnabled(false);
