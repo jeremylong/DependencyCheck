@@ -514,9 +514,8 @@ public final class DatabaseManager {
      */
     public void open() {
         connectionPool = new BasicDataSource();
-        final String driverName = settings.getString(Settings.KEYS.DB_DRIVER_NAME, "");
-        if (!driverName.isEmpty() && !"org.h2.Driver".equals(driverName)) {
-            connectionPool.setDriverClassName(driverName);
+        if (driver != null) {
+            connectionPool.setDriver(driver);
         }
         connectionPool.setUrl(connectionString);
         connectionPool.setUsername(userName);
