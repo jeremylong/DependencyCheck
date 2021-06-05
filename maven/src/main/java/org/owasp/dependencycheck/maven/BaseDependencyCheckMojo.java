@@ -132,6 +132,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * The configured settings.
      */
     private Settings settings = null;
+    /**
+     * The list of files that have been scanned.
+     */
+    private List<File> scannedFiles = new ArrayList<>();
     //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Maven bound parameters and components">
     /**
@@ -1325,6 +1329,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 final List<Dependency> deps = engine.scan(artifactFile.getAbsoluteFile(),
                         createProjectReferenceName(project, dependencyNode));
                 if (deps != null) {
+                    scannedFiles.add(artifactFile);
                     Dependency d = null;
                     if (deps.size() == 1) {
                         d = deps.get(0);
@@ -1370,9 +1375,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         getLog().debug("Error reading pom " + artifactFile.getAbsoluteFile(), ex);
                     }
                 } else {
-                    final String msg = String.format("No analyzer could be found for '%s:%s' in project %s",
-                            dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
-                    getLog().warn(msg);
+                    if (!scannedFiles.contains(artifactFile)) {
+                        final String msg = String.format("No analyzer could be found or the artifact has been scanned twice for '%s:%s' in project %s",
+                                dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
+                        getLog().warn(msg);
+                    }
                 }
             } else {
                 final String msg = String.format("Unable to resolve '%s' in project %s",
