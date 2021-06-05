@@ -372,7 +372,6 @@ public final class CveDB implements AutoCloseable {
      */
     public Set<CpePlus> getCPEs(String vendor, String product) {
         final Set<CpePlus> cpe = new HashSet<>();
-        ResultSet rs = null;
         try (Connection conn = databaseManager.getConnection();
                 PreparedStatement ps = getPreparedStatement(conn, SELECT_CPE_ENTRIES)) {
             if (ps == null) {
@@ -382,29 +381,28 @@ public final class CveDB implements AutoCloseable {
             //lang, sw_edition, target_sw, target_hw, other, ecosystem
             ps.setString(1, vendor);
             ps.setString(2, product);
-            rs = ps.executeQuery();
-            final CpeBuilder builder = new CpeBuilder();
-            while (rs.next()) {
-                final Cpe entry = builder
-                        .part(rs.getString(1))
-                        .vendor(rs.getString(2))
-                        .product(rs.getString(3))
-                        .version(rs.getString(4))
-                        .update(rs.getString(5))
-                        .edition(rs.getString(6))
-                        .language(rs.getString(7))
-                        .swEdition(rs.getString(8))
-                        .targetSw(rs.getString(9))
-                        .targetHw(rs.getString(10))
-                        .other(rs.getString(11)).build();
-                final CpePlus plus = new CpePlus(entry, rs.getString(12));
-                cpe.add(plus);
+            try (ResultSet rs = ps.executeQuery()) {
+                final CpeBuilder builder = new CpeBuilder();
+                while (rs.next()) {
+                    final Cpe entry = builder
+                            .part(rs.getString(1))
+                            .vendor(rs.getString(2))
+                            .product(rs.getString(3))
+                            .version(rs.getString(4))
+                            .update(rs.getString(5))
+                            .edition(rs.getString(6))
+                            .language(rs.getString(7))
+                            .swEdition(rs.getString(8))
+                            .targetSw(rs.getString(9))
+                            .targetHw(rs.getString(10))
+                            .other(rs.getString(11)).build();
+                    final CpePlus plus = new CpePlus(entry, rs.getString(12));
+                    cpe.add(plus);
+                }
             }
         } catch (SQLException | CpeParsingException | CpeValidationException ex) {
             LOGGER.error("An unexpected SQL Exception occurred; please see the verbose log for more details.");
             LOGGER.debug("", ex);
-        } finally {
-            DBUtils.closeResultSet(rs);
         }
         return cpe;
     }
@@ -545,65 +543,64 @@ public final class CveDB implements AutoCloseable {
         }
 
         final List<Vulnerability> vulnerabilities = new ArrayList<>();
-        ResultSet rs = null;
         try (Connection conn = databaseManager.getConnection();
                 PreparedStatement ps = getPreparedStatement(conn, SELECT_CVE_FROM_SOFTWARE)) {
             ps.setString(1, cpe.getVendor());
             ps.setString(2, cpe.getProduct());
-            rs = ps.executeQuery();
-            String currentCVE = "";
-            final Set<VulnerableSoftware> vulnSoftware = new HashSet<>();
-            final VulnerableSoftwareBuilder vulnerableSoftwareBuilder = new VulnerableSoftwareBuilder();
-            while (rs.next()) {
-                final String cveId = rs.getString(1);
-                if (currentCVE.isEmpty()) {
-                    //first loop we don't have the cveId
-                    currentCVE = cveId;
-                }
-                if (!vulnSoftware.isEmpty() && !currentCVE.equals(cveId)) { //check for match and add
-                    final VulnerableSoftware matchedCPE = getMatchingSoftware(cpe, vulnSoftware);
-                    if (matchedCPE != null) {
-                        final Vulnerability v = getVulnerability(currentCVE);
-                        if (v != null) {
-                            v.setMatchedVulnerableSoftware(matchedCPE);
-                            v.setSource(Vulnerability.Source.NVD);
-                            vulnerabilities.add(v);
-                        }
+            try (ResultSet rs = ps.executeQuery()) {
+                String currentCVE = "";
+                final Set<VulnerableSoftware> vulnSoftware = new HashSet<>();
+                final VulnerableSoftwareBuilder vulnerableSoftwareBuilder = new VulnerableSoftwareBuilder();
+                while (rs.next()) {
+                    final String cveId = rs.getString(1);
+                    if (currentCVE.isEmpty()) {
+                        //first loop we don't have the cveId
+                        currentCVE = cveId;
                     }
-                    vulnSoftware.clear();
-                    currentCVE = cveId;
+                    if (!vulnSoftware.isEmpty() && !currentCVE.equals(cveId)) { //check for match and add
+                        final VulnerableSoftware matchedCPE = getMatchingSoftware(cpe, vulnSoftware);
+                        if (matchedCPE != null) {
+                            final Vulnerability v = getVulnerability(currentCVE);
+                            if (v != null) {
+                                v.setMatchedVulnerableSoftware(matchedCPE);
+                                v.setSource(Vulnerability.Source.NVD);
+                                vulnerabilities.add(v);
+                            }
+                        }
+                        vulnSoftware.clear();
+                        currentCVE = cveId;
+                    }
+                    // 1 cve, 2 part, 3 vendor, 4 product, 5 version, 6 update_version, 7 edition,
+                    // 8 lang, 9 sw_edition, 10 target_sw, 11 target_hw, 12 other, 13 versionEndExcluding,
+                    //14 versionEndIncluding, 15 versionStartExcluding, 16 versionStartIncluding, 17 vulnerable
+                    final VulnerableSoftware vs;
+                    try {
+                        vs = vulnerableSoftwareBuilder.part(rs.getString(2)).vendor(rs.getString(3))
+                                .product(rs.getString(4)).version(rs.getString(5)).update(rs.getString(6))
+                                .edition(rs.getString(7)).language(rs.getString(8)).swEdition(rs.getString(9))
+                                .targetSw(rs.getString(10)).targetHw(rs.getString(11)).other(rs.getString(12))
+                                .versionEndExcluding(rs.getString(13)).versionEndIncluding(rs.getString(14))
+                                .versionStartExcluding(rs.getString(15)).versionStartIncluding(rs.getString(16))
+                                .vulnerable(rs.getBoolean(17)).build();
+                    } catch (CpeParsingException | CpeValidationException ex) {
+                        throw new DatabaseException("Database contains an invalid Vulnerable Software Entry", ex);
+                    }
+                    vulnSoftware.add(vs);
                 }
-                // 1 cve, 2 part, 3 vendor, 4 product, 5 version, 6 update_version, 7 edition,
-                // 8 lang, 9 sw_edition, 10 target_sw, 11 target_hw, 12 other, 13 versionEndExcluding,
-                //14 versionEndIncluding, 15 versionStartExcluding, 16 versionStartIncluding, 17 vulnerable
-                final VulnerableSoftware vs;
-                try {
-                    vs = vulnerableSoftwareBuilder.part(rs.getString(2)).vendor(rs.getString(3))
-                            .product(rs.getString(4)).version(rs.getString(5)).update(rs.getString(6))
-                            .edition(rs.getString(7)).language(rs.getString(8)).swEdition(rs.getString(9))
-                            .targetSw(rs.getString(10)).targetHw(rs.getString(11)).other(rs.getString(12))
-                            .versionEndExcluding(rs.getString(13)).versionEndIncluding(rs.getString(14))
-                            .versionStartExcluding(rs.getString(15)).versionStartIncluding(rs.getString(16))
-                            .vulnerable(rs.getBoolean(17)).build();
-                } catch (CpeParsingException | CpeValidationException ex) {
-                    throw new DatabaseException("Database contains an invalid Vulnerable Software Entry", ex);
-                }
-                vulnSoftware.add(vs);
-            }
-            //remember to process the last set of CVE/CPE entries
-            final VulnerableSoftware matchedCPE = getMatchingSoftware(cpe, vulnSoftware);
-            if (matchedCPE != null) {
-                final Vulnerability v = getVulnerability(currentCVE);
-                if (v != null) {
-                    v.setMatchedVulnerableSoftware(matchedCPE);
-                    v.setSource(Vulnerability.Source.NVD);
-                    vulnerabilities.add(v);
+
+                //remember to process the last set of CVE/CPE entries
+                final VulnerableSoftware matchedCPE = getMatchingSoftware(cpe, vulnSoftware);
+                if (matchedCPE != null) {
+                    final Vulnerability v = getVulnerability(currentCVE);
+                    if (v != null) {
+                        v.setMatchedVulnerableSoftware(matchedCPE);
+                        v.setSource(Vulnerability.Source.NVD);
+                        vulnerabilities.add(v);
+                    }
                 }
             }
         } catch (SQLException ex) {
             throw new DatabaseException("Exception retrieving vulnerability for " + cpe.toCpe23FS(), ex);
-        } finally {
-            DBUtils.closeResultSet(rs);
         }
         vulnerabilitiesForCpeCache.put(cpe.toCpe23FS(), vulnerabilities);
         return vulnerabilities;
@@ -617,110 +614,100 @@ public final class CveDB implements AutoCloseable {
      * @throws DatabaseException if an exception occurs
      */
     public Vulnerability getVulnerability(String cve) throws DatabaseException {
-        ResultSet rsV = null;
-        ResultSet rsC = null;
-        ResultSet rsR = null;
-        ResultSet rsS = null;
         Vulnerability vuln = null;
         final VulnerableSoftwareBuilder vulnerableSoftwareBuilder = new VulnerableSoftwareBuilder();
         try (Connection conn = databaseManager.getConnection();
-                PreparedStatement psV = getPreparedStatement(conn, SELECT_VULNERABILITY)) {
+                PreparedStatement psV = getPreparedStatement(conn, SELECT_VULNERABILITY);
+                PreparedStatement psCWE = getPreparedStatement(conn, SELECT_VULNERABILITY_CWE);
+                PreparedStatement psR = getPreparedStatement(conn, SELECT_REFERENCES);
+                PreparedStatement psS = getPreparedStatement(conn, SELECT_SOFTWARE)) {
             if (psV == null) {
                 throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_VULNERABILITY);
             }
             psV.setString(1, cve);
-            rsV = psV.executeQuery();
-            if (rsV.next()) {
-                //1.id, 2.description,
-                final int cveId = rsV.getInt(1);
-                vuln = new Vulnerability();
-                vuln.setSource(Vulnerability.Source.NVD);
-                vuln.setName(cve);
-                vuln.setDescription(rsV.getString(2));
+            final int cveId;
+            try (ResultSet rsV = psV.executeQuery()) {
+                if (rsV.next()) {
+                    //1.id, 2.description,
+                    cveId = rsV.getInt(1);
+                    vuln = new Vulnerability();
+                    vuln.setSource(Vulnerability.Source.NVD);
+                    vuln.setName(cve);
+                    vuln.setDescription(rsV.getString(2));
 
-                //3.v2Severity, 4.v2ExploitabilityScore, 5.v2ImpactScore, 6.v2AcInsufInfo, 7.v2ObtainAllPrivilege,
-                //8.v2ObtainUserPrivilege, 9.v2ObtainOtherPrivilege, 10.v2UserInteractionRequired, 11.v2Score,
-                //12.v2AccessVector, 13.v2AccessComplexity, 14.v2Authentication, 15.v2ConfidentialityImpact,
-                //16.v2IntegrityImpact, 17.v2AvailabilityImpact, 18.v2Version,
-                if (rsV.getObject(11) != null) {
-                    final CvssV2 cvss = new CvssV2(rsV.getFloat(11), rsV.getString(12),
-                            rsV.getString(13), rsV.getString(14), rsV.getString(15),
-                            rsV.getString(16), rsV.getString(17), rsV.getString(3),
-                            getFloatValue(rsV, 4), getFloatValue(rsV, 5),
-                            getBooleanValue(rsV, 6), getBooleanValue(rsV, 7), getBooleanValue(rsV, 8),
-                            getBooleanValue(rsV, 9), getBooleanValue(rsV, 10), rsV.getString(18));
-                    vuln.setCvssV2(cvss);
+                    //3.v2Severity, 4.v2ExploitabilityScore, 5.v2ImpactScore, 6.v2AcInsufInfo, 7.v2ObtainAllPrivilege,
+                    //8.v2ObtainUserPrivilege, 9.v2ObtainOtherPrivilege, 10.v2UserInteractionRequired, 11.v2Score,
+                    //12.v2AccessVector, 13.v2AccessComplexity, 14.v2Authentication, 15.v2ConfidentialityImpact,
+                    //16.v2IntegrityImpact, 17.v2AvailabilityImpact, 18.v2Version,
+                    if (rsV.getObject(11) != null) {
+                        final CvssV2 cvss = new CvssV2(rsV.getFloat(11), rsV.getString(12),
+                                rsV.getString(13), rsV.getString(14), rsV.getString(15),
+                                rsV.getString(16), rsV.getString(17), rsV.getString(3),
+                                getFloatValue(rsV, 4), getFloatValue(rsV, 5),
+                                getBooleanValue(rsV, 6), getBooleanValue(rsV, 7), getBooleanValue(rsV, 8),
+                                getBooleanValue(rsV, 9), getBooleanValue(rsV, 10), rsV.getString(18));
+                        vuln.setCvssV2(cvss);
+                    }
+                    //19.v3ExploitabilityScore, 20.v3ImpactScore, 21.v3AttackVector, 22.v3AttackComplexity, 23.v3PrivilegesRequired,
+                    //24.v3UserInteraction, 25.v3Scope, 26.v3ConfidentialityImpact, 27.v3IntegrityImpact, 28.v3AvailabilityImpact,
+                    //29.v3BaseScore, 30.v3BaseSeverity, 21.v3Version
+                    if (rsV.getObject(21) != null) {
+                        final CvssV3 cvss = new CvssV3(rsV.getString(21), rsV.getString(22),
+                                rsV.getString(23), rsV.getString(24), rsV.getString(25),
+                                rsV.getString(26), rsV.getString(27), rsV.getString(28),
+                                rsV.getFloat(29), rsV.getString(30), getFloatValue(rsV, 19),
+                                getFloatValue(rsV, 20), rsV.getString(31));
+                        vuln.setCvssV3(cvss);
+                    }
+                } else {
+                    LOGGER.debug(cve + " does not exist in the database");
+                    return null;
                 }
-                //19.v3ExploitabilityScore, 20.v3ImpactScore, 21.v3AttackVector, 22.v3AttackComplexity, 23.v3PrivilegesRequired,
-                //24.v3UserInteraction, 25.v3Scope, 26.v3ConfidentialityImpact, 27.v3IntegrityImpact, 28.v3AvailabilityImpact,
-                //29.v3BaseScore, 30.v3BaseSeverity, 21.v3Version
-                if (rsV.getObject(21) != null) {
-                    final CvssV3 cvss = new CvssV3(rsV.getString(21), rsV.getString(22),
-                            rsV.getString(23), rsV.getString(24), rsV.getString(25),
-                            rsV.getString(26), rsV.getString(27), rsV.getString(28),
-                            rsV.getFloat(29), rsV.getString(30), getFloatValue(rsV, 19),
-                            getFloatValue(rsV, 20), rsV.getString(31));
-                    vuln.setCvssV3(cvss);
+            }
+            psCWE.setInt(1, cveId);
+            try (ResultSet rsC = psCWE.executeQuery()) {
+                while (rsC.next()) {
+                    vuln.addCwe(rsC.getString(1));
                 }
-                try (PreparedStatement psCWE = getPreparedStatement(conn, SELECT_VULNERABILITY_CWE)) {
-                    if (psCWE == null) {
-                        throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_VULNERABILITY_CWE);
-                    }
-                    psCWE.setInt(1, cveId);
-                    rsC = psCWE.executeQuery();
-                    while (rsC.next()) {
-                        vuln.addCwe(rsC.getString(1));
-                    }
+                if (psR == null) {
+                    throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_REFERENCES);
                 }
-                try (PreparedStatement psR = getPreparedStatement(conn, SELECT_REFERENCES)) {
-                    if (psR == null) {
-                        throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_REFERENCES);
-                    }
-                    psR.setInt(1, cveId);
-                    rsR = psR.executeQuery();
-                    while (rsR.next()) {
-                        vuln.addReference(rsR.getString(1), rsR.getString(2), rsR.getString(3));
-                    }
+            }
+            psR.setInt(1, cveId);
+            try (ResultSet rsR = psR.executeQuery()) {
+                while (rsR.next()) {
+                    vuln.addReference(rsR.getString(1), rsR.getString(2), rsR.getString(3));
                 }
-                try (PreparedStatement psS = getPreparedStatement(conn, SELECT_SOFTWARE)) {
-                    if (psS == null) {
-                        throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_SOFTWARE);
-                    }
-                    //1 part, 2 vendor, 3 product, 4 version, 5 update_version, 6 edition, 7 lang,
-                    //8 sw_edition, 9 target_sw, 10 target_hw, 11 other, 12 versionEndExcluding,
-                    //13 versionEndIncluding, 14 versionStartExcluding, 15 versionStartIncluding, 16 vulnerable
-                    psS.setInt(1, cveId);
-                    rsS = psS.executeQuery();
-                    while (rsS.next()) {
-                        vulnerableSoftwareBuilder.part(rsS.getString(1))
-                                .vendor(rsS.getString(2))
-                                .product(rsS.getString(3))
-                                .version(rsS.getString(4))
-                                .update(rsS.getString(5))
-                                .edition(rsS.getString(6))
-                                .language(rsS.getString(7))
-                                .swEdition(rsS.getString(8))
-                                .targetSw(rsS.getString(9))
-                                .targetHw(rsS.getString(10))
-                                .other(rsS.getString(11))
-                                .versionEndExcluding(rsS.getString(12))
-                                .versionEndIncluding(rsS.getString(13))
-                                .versionStartExcluding(rsS.getString(14))
-                                .versionStartIncluding(rsS.getString(15))
-                                .vulnerable(rsS.getBoolean(16));
-                        vuln.addVulnerableSoftware(vulnerableSoftwareBuilder.build());
-                    }
+            }
+            //1 part, 2 vendor, 3 product, 4 version, 5 update_version, 6 edition, 7 lang,
+            //8 sw_edition, 9 target_sw, 10 target_hw, 11 other, 12 versionEndExcluding,
+            //13 versionEndIncluding, 14 versionStartExcluding, 15 versionStartIncluding, 16 vulnerable
+            psS.setInt(1, cveId);
+            try (ResultSet rsS = psS.executeQuery()) {
+                while (rsS.next()) {
+                    vulnerableSoftwareBuilder.part(rsS.getString(1))
+                            .vendor(rsS.getString(2))
+                            .product(rsS.getString(3))
+                            .version(rsS.getString(4))
+                            .update(rsS.getString(5))
+                            .edition(rsS.getString(6))
+                            .language(rsS.getString(7))
+                            .swEdition(rsS.getString(8))
+                            .targetSw(rsS.getString(9))
+                            .targetHw(rsS.getString(10))
+                            .other(rsS.getString(11))
+                            .versionEndExcluding(rsS.getString(12))
+                            .versionEndIncluding(rsS.getString(13))
+                            .versionStartExcluding(rsS.getString(14))
+                            .versionStartIncluding(rsS.getString(15))
+                            .vulnerable(rsS.getBoolean(16));
+                    vuln.addVulnerableSoftware(vulnerableSoftwareBuilder.build());
                 }
             }
         } catch (SQLException ex) {
             throw new DatabaseException("Error retrieving " + cve, ex);
         } catch (CpeParsingException | CpeValidationException ex) {
             throw new DatabaseException("The database contains an invalid Vulnerable Software Entry", ex);
-        } finally {
-            DBUtils.closeResultSet(rsV);
-            DBUtils.closeResultSet(rsC);
-            DBUtils.closeResultSet(rsR);
-            DBUtils.closeResultSet(rsS);
         }
         return vuln;
     }
