@@ -522,52 +522,51 @@
 <a class="jxr_linenumber" name="L514" href="#L514">514</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L515" href="#L515">515</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> open() {
 <a class="jxr_linenumber" name="L516" href="#L516">516</a>         connectionPool = <strong class="jxr_keyword">new</strong> BasicDataSource();
-<a class="jxr_linenumber" name="L517" href="#L517">517</a>         <strong class="jxr_keyword">final</strong> String driverName = settings.getString(Settings.KEYS.DB_DRIVER_NAME, <span class="jxr_string">""</span>);
-<a class="jxr_linenumber" name="L518" href="#L518">518</a>         <strong class="jxr_keyword">if</strong> (!driverName.isEmpty() &amp;&amp; !<span class="jxr_string">"org.h2.Driver"</span>.equals(driverName)) {
-<a class="jxr_linenumber" name="L519" href="#L519">519</a>             connectionPool.setDriverClassName(driverName);
-<a class="jxr_linenumber" name="L520" href="#L520">520</a>         }
-<a class="jxr_linenumber" name="L521" href="#L521">521</a>         connectionPool.setUrl(connectionString);
-<a class="jxr_linenumber" name="L522" href="#L522">522</a>         connectionPool.setUsername(userName);
-<a class="jxr_linenumber" name="L523" href="#L523">523</a>         connectionPool.setPassword(password);
-<a class="jxr_linenumber" name="L524" href="#L524">524</a>     }
-<a class="jxr_linenumber" name="L525" href="#L525">525</a> 
-<a class="jxr_linenumber" name="L526" href="#L526">526</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L527" href="#L527">527</a> <em class="jxr_javadoccomment">     * Closes the database connection pool.</em>
-<a class="jxr_linenumber" name="L528" href="#L528">528</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L529" href="#L529">529</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> close() {
-<a class="jxr_linenumber" name="L530" href="#L530">530</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L531" href="#L531">531</a>             connectionPool.close();
-<a class="jxr_linenumber" name="L532" href="#L532">532</a>         } <strong class="jxr_keyword">catch</strong> (SQLException ex) {
-<a class="jxr_linenumber" name="L533" href="#L533">533</a>             LOGGER.debug(<span class="jxr_string">"Error closing the connection pool"</span>, ex);
-<a class="jxr_linenumber" name="L534" href="#L534">534</a>         }
-<a class="jxr_linenumber" name="L535" href="#L535">535</a>         connectionPool = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L536" href="#L536">536</a>     }
-<a class="jxr_linenumber" name="L537" href="#L537">537</a> 
-<a class="jxr_linenumber" name="L538" href="#L538">538</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L539" href="#L539">539</a> <em class="jxr_javadoccomment">     * Returns if the connection pool is open.</em>
-<a class="jxr_linenumber" name="L540" href="#L540">540</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L541" href="#L541">541</a> <em class="jxr_javadoccomment">     * @return if the connection pool is open</em>
-<a class="jxr_linenumber" name="L542" href="#L542">542</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L543" href="#L543">543</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isOpen() {
-<a class="jxr_linenumber" name="L544" href="#L544">544</a>         <strong class="jxr_keyword">return</strong> connectionPool != <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L545" href="#L545">545</a>     }
-<a class="jxr_linenumber" name="L546" href="#L546">546</a> 
-<a class="jxr_linenumber" name="L547" href="#L547">547</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L548" href="#L548">548</a> <em class="jxr_javadoccomment">     * Constructs a new database connection object per the database</em>
-<a class="jxr_linenumber" name="L549" href="#L549">549</a> <em class="jxr_javadoccomment">     * configuration.</em>
-<a class="jxr_linenumber" name="L550" href="#L550">550</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L551" href="#L551">551</a> <em class="jxr_javadoccomment">     * @return a database connection object</em>
-<a class="jxr_linenumber" name="L552" href="#L552">552</a> <em class="jxr_javadoccomment">     * @throws DatabaseException thrown if there is an exception obtaining the</em>
-<a class="jxr_linenumber" name="L553" href="#L553">553</a> <em class="jxr_javadoccomment">     * database connection</em>
-<a class="jxr_linenumber" name="L554" href="#L554">554</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L555" href="#L555">555</a>     <strong class="jxr_keyword">public</strong> Connection getConnection() <strong class="jxr_keyword">throws</strong> DatabaseException {
-<a class="jxr_linenumber" name="L556" href="#L556">556</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L557" href="#L557">557</a>             <strong class="jxr_keyword">return</strong> connectionPool.getConnection();
-<a class="jxr_linenumber" name="L558" href="#L558">558</a>         } <strong class="jxr_keyword">catch</strong> (SQLException ex) {
-<a class="jxr_linenumber" name="L559" href="#L559">559</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/owasp/dependencycheck/data/nvdcve/DatabaseException.html">DatabaseException</a>(<span class="jxr_string">"Error connecting to the database"</span>, ex);
-<a class="jxr_linenumber" name="L560" href="#L560">560</a>         }
-<a class="jxr_linenumber" name="L561" href="#L561">561</a>     }
-<a class="jxr_linenumber" name="L562" href="#L562">562</a> }
+<a class="jxr_linenumber" name="L517" href="#L517">517</a>         <strong class="jxr_keyword">if</strong> (driver != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L518" href="#L518">518</a>             connectionPool.setDriver(driver);
+<a class="jxr_linenumber" name="L519" href="#L519">519</a>         }
+<a class="jxr_linenumber" name="L520" href="#L520">520</a>         connectionPool.setUrl(connectionString);
+<a class="jxr_linenumber" name="L521" href="#L521">521</a>         connectionPool.setUsername(userName);
+<a class="jxr_linenumber" name="L522" href="#L522">522</a>         connectionPool.setPassword(password);
+<a class="jxr_linenumber" name="L523" href="#L523">523</a>     }
+<a class="jxr_linenumber" name="L524" href="#L524">524</a> 
+<a class="jxr_linenumber" name="L525" href="#L525">525</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L526" href="#L526">526</a> <em class="jxr_javadoccomment">     * Closes the database connection pool.</em>
+<a class="jxr_linenumber" name="L527" href="#L527">527</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L528" href="#L528">528</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> close() {
+<a class="jxr_linenumber" name="L529" href="#L529">529</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L530" href="#L530">530</a>             connectionPool.close();
+<a class="jxr_linenumber" name="L531" href="#L531">531</a>         } <strong class="jxr_keyword">catch</strong> (SQLException ex) {
+<a class="jxr_linenumber" name="L532" href="#L532">532</a>             LOGGER.debug(<span class="jxr_string">"Error closing the connection pool"</span>, ex);
+<a class="jxr_linenumber" name="L533" href="#L533">533</a>         }
+<a class="jxr_linenumber" name="L534" href="#L534">534</a>         connectionPool = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L535" href="#L535">535</a>     }
+<a class="jxr_linenumber" name="L536" href="#L536">536</a> 
+<a class="jxr_linenumber" name="L537" href="#L537">537</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L538" href="#L538">538</a> <em class="jxr_javadoccomment">     * Returns if the connection pool is open.</em>
+<a class="jxr_linenumber" name="L539" href="#L539">539</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L540" href="#L540">540</a> <em class="jxr_javadoccomment">     * @return if the connection pool is open</em>
+<a class="jxr_linenumber" name="L541" href="#L541">541</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L542" href="#L542">542</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isOpen() {
+<a class="jxr_linenumber" name="L543" href="#L543">543</a>         <strong class="jxr_keyword">return</strong> connectionPool != <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L544" href="#L544">544</a>     }
+<a class="jxr_linenumber" name="L545" href="#L545">545</a> 
+<a class="jxr_linenumber" name="L546" href="#L546">546</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L547" href="#L547">547</a> <em class="jxr_javadoccomment">     * Constructs a new database connection object per the database</em>
+<a class="jxr_linenumber" name="L548" href="#L548">548</a> <em class="jxr_javadoccomment">     * configuration.</em>
+<a class="jxr_linenumber" name="L549" href="#L549">549</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L550" href="#L550">550</a> <em class="jxr_javadoccomment">     * @return a database connection object</em>
+<a class="jxr_linenumber" name="L551" href="#L551">551</a> <em class="jxr_javadoccomment">     * @throws DatabaseException thrown if there is an exception obtaining the</em>
+<a class="jxr_linenumber" name="L552" href="#L552">552</a> <em class="jxr_javadoccomment">     * database connection</em>
+<a class="jxr_linenumber" name="L553" href="#L553">553</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L554" href="#L554">554</a>     <strong class="jxr_keyword">public</strong> Connection getConnection() <strong class="jxr_keyword">throws</strong> DatabaseException {
+<a class="jxr_linenumber" name="L555" href="#L555">555</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L556" href="#L556">556</a>             <strong class="jxr_keyword">return</strong> connectionPool.getConnection();
+<a class="jxr_linenumber" name="L557" href="#L557">557</a>         } <strong class="jxr_keyword">catch</strong> (SQLException ex) {
+<a class="jxr_linenumber" name="L558" href="#L558">558</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/owasp/dependencycheck/data/nvdcve/DatabaseException.html">DatabaseException</a>(<span class="jxr_string">"Error connecting to the database"</span>, ex);
+<a class="jxr_linenumber" name="L559" href="#L559">559</a>         }
+<a class="jxr_linenumber" name="L560" href="#L560">560</a>     }
+<a class="jxr_linenumber" name="L561" href="#L561">561</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2021 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

@@ -514,26 +514,25 @@ public final class DatabaseManager {
      */
     public void open() {
 <span class="fc" id="L516">        connectionPool = new BasicDataSource();</span>
-<span class="fc" id="L517">        final String driverName = settings.getString(Settings.KEYS.DB_DRIVER_NAME, &quot;&quot;);</span>
-<span class="pc bpc" id="L518" title="3 of 4 branches missed.">        if (!driverName.isEmpty() &amp;&amp; !&quot;org.h2.Driver&quot;.equals(driverName)) {</span>
-<span class="nc" id="L519">            connectionPool.setDriverClassName(driverName);</span>
+<span class="pc bpc" id="L517" title="1 of 2 branches missed.">        if (driver != null) {</span>
+<span class="nc" id="L518">            connectionPool.setDriver(driver);</span>
         }
-<span class="fc" id="L521">        connectionPool.setUrl(connectionString);</span>
-<span class="fc" id="L522">        connectionPool.setUsername(userName);</span>
-<span class="fc" id="L523">        connectionPool.setPassword(password);</span>
-<span class="fc" id="L524">    }</span>
+<span class="fc" id="L520">        connectionPool.setUrl(connectionString);</span>
+<span class="fc" id="L521">        connectionPool.setUsername(userName);</span>
+<span class="fc" id="L522">        connectionPool.setPassword(password);</span>
+<span class="fc" id="L523">    }</span>
 
     /**
      * Closes the database connection pool.
      */
     public void close() {
         try {
-<span class="fc" id="L531">            connectionPool.close();</span>
-<span class="nc" id="L532">        } catch (SQLException ex) {</span>
-<span class="nc" id="L533">            LOGGER.debug(&quot;Error closing the connection pool&quot;, ex);</span>
-<span class="fc" id="L534">        }</span>
-<span class="fc" id="L535">        connectionPool = null;</span>
-<span class="fc" id="L536">    }</span>
+<span class="fc" id="L530">            connectionPool.close();</span>
+<span class="nc" id="L531">        } catch (SQLException ex) {</span>
+<span class="nc" id="L532">            LOGGER.debug(&quot;Error closing the connection pool&quot;, ex);</span>
+<span class="fc" id="L533">        }</span>
+<span class="fc" id="L534">        connectionPool = null;</span>
+<span class="fc" id="L535">    }</span>
 
     /**
      * Returns if the connection pool is open.
@@ -541,7 +540,7 @@ public final class DatabaseManager {
      * @return if the connection pool is open
      */
     public boolean isOpen() {
-<span class="fc bfc" id="L544" title="All 2 branches covered.">        return connectionPool != null;</span>
+<span class="fc bfc" id="L543" title="All 2 branches covered.">        return connectionPool != null;</span>
     }
 
     /**
@@ -554,9 +553,9 @@ public final class DatabaseManager {
      */
     public Connection getConnection() throws DatabaseException {
         try {
-<span class="fc" id="L557">            return connectionPool.getConnection();</span>
-<span class="nc" id="L558">        } catch (SQLException ex) {</span>
-<span class="nc" id="L559">            throw new DatabaseException(&quot;Error connecting to the database&quot;, ex);</span>
+<span class="fc" id="L556">            return connectionPool.getConnection();</span>
+<span class="nc" id="L557">        } catch (SQLException ex) {</span>
+<span class="nc" id="L558">            throw new DatabaseException(&quot;Error connecting to the database&quot;, ex);</span>
         }
     }
 }

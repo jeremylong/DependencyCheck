@@ -102,10 +102,12 @@ public class SearchFieldAnalyzer extends Analyzer {
      * Resets the analyzer. This must be manually called between searching and
      * indexing.
      *
-     * @throws IOException thrown if there is an error reseting the tokenizer
+     * @throws IOException thrown if there is an error resetting the tokenizer
      */
     public void reset() throws IOException {
-<span class="fc" id="L108">        concatenatingFilter.clear();</span>
-<span class="fc" id="L109">    }</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        if (concatenatingFilter != null) {</span>
+<span class="fc" id="L109">            concatenatingFilter.clear();</span>
+        }
+<span class="fc" id="L111">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
