@@ -627,7 +627,7 @@ public final class CveDB implements AutoCloseable {
                 //remember to process the last set of CVE/CPE entries
                 final VulnerableSoftware matchedCPE = getMatchingSoftware(cpe, vulnSoftware);
                 if (matchedCPE != null) {
-                    final Vulnerability v = getVulnerability(currentCVE);
+                    final Vulnerability v = getVulnerability(currentCVE, conn);
                     if (v != null) {
                         v.setMatchedVulnerableSoftware(matchedCPE);
                         v.setSource(Vulnerability.Source.NVD);
