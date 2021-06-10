@@ -1,6 +1,13 @@
 # Release Notes
 
-## [Version 6.2.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.2.0) (2021-06-08)
+## [Version 6.2.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.2.2) (2021-06-10)
+
+### Changes
+
+- Resolved issue with database connections introduced in 6.2.0 (see https://github.com/jeremylong/DependencyCheck/issues/3432).
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/30?closed=1).
+
+## [Version 6.2.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.2.1) (2021-06-08)
 
 ### Changes
 

@@ -198,8 +198,8 @@ jobs:
           release_name: Version ${{ env.VERSION }}
           body: |
             Changes in this Release
-            - Resolved issue with database connections introduced in 6.2.0 (see https://github.com/jeremylong/DependencyCheck/issues/3416).
-            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/29?closed=1).
+            - Resolved issue with database connections introduced in 6.2.0 (see https://github.com/jeremylong/DependencyCheck/issues/3432).
+            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/30?closed=1).
           draft: false
           prerelease: false
       - name: Upload CLI
