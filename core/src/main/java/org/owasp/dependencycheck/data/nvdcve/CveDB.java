@@ -560,7 +560,7 @@ public final class CveDB implements AutoCloseable {
                     if (!vulnSoftware.isEmpty() && !currentCVE.equals(cveId)) { //check for match and add
                         final VulnerableSoftware matchedCPE = getMatchingSoftware(cpe, vulnSoftware);
                         if (matchedCPE != null) {
-                            final Vulnerability v = getVulnerability(currentCVE);
+                            final Vulnerability v = getVulnerability(currentCVE, conn);
                             if (v != null) {
                                 v.setMatchedVulnerableSoftware(matchedCPE);
                                 v.setSource(Vulnerability.Source.NVD);
@@ -605,7 +605,7 @@ public final class CveDB implements AutoCloseable {
         vulnerabilitiesForCpeCache.put(cpe.toCpe23FS(), vulnerabilities);
         return vulnerabilities;
     }
-
+    
     /**
      * Gets a vulnerability for the provided CVE.
      *
@@ -614,10 +614,25 @@ public final class CveDB implements AutoCloseable {
      * @throws DatabaseException if an exception occurs
      */
     public Vulnerability getVulnerability(String cve) throws DatabaseException {
+        try (Connection conn = databaseManager.getConnection()) {
+            return getVulnerability(cve, conn);
+        } catch (SQLException ex) {
+            throw new DatabaseException("Error retrieving " + cve, ex);
+        }
+    }
+
+    /**
+     * Gets a vulnerability for the provided CVE.
+     *
+     * @param cve the CVE to lookup
+     * @param conn already active database connection
+     * @return a vulnerability object
+     * @throws DatabaseException if an exception occurs
+     */
+    public Vulnerability getVulnerability(String cve, Connection conn) throws DatabaseException {
         Vulnerability vuln = null;
         final VulnerableSoftwareBuilder vulnerableSoftwareBuilder = new VulnerableSoftwareBuilder();
-        try (Connection conn = databaseManager.getConnection();
-                PreparedStatement psV = getPreparedStatement(conn, SELECT_VULNERABILITY);
+        try (PreparedStatement psV = getPreparedStatement(conn, SELECT_VULNERABILITY);
                 PreparedStatement psCWE = getPreparedStatement(conn, SELECT_VULNERABILITY_CWE);
                 PreparedStatement psR = getPreparedStatement(conn, SELECT_REFERENCES);
                 PreparedStatement psS = getPreparedStatement(conn, SELECT_SOFTWARE)) {
