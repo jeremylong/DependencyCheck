@@ -3144,6 +3144,14 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        file name: spring-boot-starter-amqp-2.5.0.jar
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring\-boot\-starter\-amqp@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:rabbitmq</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
        spring ldap cleanup per issue #1060
        ]]></notes>
         <gav regex="true">^org\.springframework\.ldap:spring-ldap-core:.*$</gav>
