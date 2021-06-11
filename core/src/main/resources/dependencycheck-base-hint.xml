@@ -307,6 +307,7 @@
         </given>
         <add>
             <evidence type="product" source="hint analyzer" name="product" value="legion-of-the-bouncy-castle-java-crytography-api" confidence="HIGH"/>
+            <evidence type="product" source="hint analyzer" name="product" value="the_bouncy_castle_crypto_package_for_java" confidence="HIGH"/>
         </add>
     </hint>
     <hint>
