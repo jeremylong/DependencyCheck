@@ -1194,6 +1194,21 @@ Copyright (c) 2012 - Jeremy Long
                 <artifactId>aho-corasick-double-array-trie</artifactId>
                 <version>${aho-corasick-double-array-trie.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.eclipse.packager</groupId>
+                <artifactId>packager-rpm</artifactId>
+                <version>0.17.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcprov-jdk15on</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcpg-jdk15on</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>

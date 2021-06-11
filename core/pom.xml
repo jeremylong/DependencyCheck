@@ -463,7 +463,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         <dependency>
             <groupId>org.eclipse.packager</groupId>
             <artifactId>packager-rpm</artifactId>
-            <version>0.17.0</version>
         </dependency>
     </dependencies>
     <profiles>
