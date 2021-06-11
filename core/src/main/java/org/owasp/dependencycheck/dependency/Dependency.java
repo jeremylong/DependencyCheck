@@ -534,7 +534,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
                                 && mavenArtifact.getGroupId().equals(id.getNamespace())) {
                             found = true;
                             i.setConfidence(Confidence.HIGHEST);
-                            final String url = "http://search.maven.org/#search|ga|1|1%3A%22" + this.getSha1sum() + "%22";
+                            final String url = "https://search.maven.org/search?q=1:" + this.getSha1sum();
                             i.setUrl(url);
                             //i.setUrl(mavenArtifact.getArtifactUrl());
                             LOGGER.debug("Already found identifier {}. Confidence set to highest", i.getValue());
