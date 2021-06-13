@@ -17,9 +17,10 @@ import java.io.File;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
- * Unit tests for CocoaPodsAnalyzer.
+ * Unit tests for CocoaPodsAnalyzer and SwiftPackageManagerAnalyzer.
  *
  * @author Bianca Jiang
+ * @author Jorge Mendes
  */
 public class SwiftAnalyzersTest extends BaseTest {
 
@@ -97,6 +98,7 @@ public class SwiftAnalyzersTest extends BaseTest {
     @Test
     public void testSPMSupportsFiles() {
         assertThat(spmAnalyzer.accept(new File("Package.swift")), is(true));
+        assertThat(spmAnalyzer.accept(new File("Package.resolved")), is(true));
     }
 
     /**
@@ -166,5 +168,22 @@ public class SwiftAnalyzersTest extends BaseTest {
         //TODO: when version processing is added, update the expected name.
         assertThat(result.getDisplayFileName(), equalTo("Gloss"));
         assertThat(result.getEcosystem(), equalTo(SwiftPackageManagerAnalyzer.DEPENDENCY_ECOSYSTEM));
+    }
+
+
+    @Test
+    public void testSPMResolvedAnalyzer() throws AnalysisException {
+        final Engine engine = new Engine(getSettings());
+        final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
+                "swift/spm/Package.resolved"));
+        spmAnalyzer.analyze(result, engine);
+
+        assertThat(engine.getDependencies().length, equalTo(3));
+        assertThat(engine.getDependencies()[0].getName(), equalTo("Alamofire"));
+        assertThat(engine.getDependencies()[0].getVersion(), equalTo("5.4.3"));
+        assertThat(engine.getDependencies()[1].getName(), equalTo("AlamofireImage"));
+        assertThat(engine.getDependencies()[1].getVersion(), equalTo("4.2.0"));
+        assertThat(engine.getDependencies()[2].getName(), equalTo("Facebook"));
+        assertThat(engine.getDependencies()[2].getVersion(), equalTo("9.3.0"));
     }
 }
