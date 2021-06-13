@@ -423,6 +423,7 @@ public final class CliParser {
                 .addOption(newOption(ARGUMENT.DISABLE_OSSINDEX_CACHE, "Disallow the OSS Index Analyzer from caching results"))
                 .addOption(newOption(ARGUMENT.DISABLE_COCOAPODS, "Disable the CocoaPods Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_SWIFT, "Disable the swift package Analyzer."))
+                .addOption(newOption(ARGUMENT.DISABLE_SWIFT_RESOLVED, "Disable the swift package resolved Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_GO_DEP, "Disable the Golang Package Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_NODE_JS, "Disable the Node.js Package Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_NODE_AUDIT, "Disable the Node Audit Analyzer."))
@@ -1160,6 +1161,10 @@ public final class CliParser {
          * Disables the swift package manager analyzer.
          */
         public static final String DISABLE_SWIFT = "disableSwiftPackageManagerAnalyzer";
+                /**
+         * Disables the swift package resolved analyzer.
+         */
+        public static final String DISABLE_SWIFT_RESOLVED = "disableSwiftPackageResolvedAnalyzer";
         /**
          * Disables the Assembly Analyzer.
          */

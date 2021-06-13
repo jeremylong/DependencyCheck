@@ -29,6 +29,7 @@ public class SwiftAnalyzersTest extends BaseTest {
      */
     private CocoaPodsAnalyzer podsAnalyzer;
     private SwiftPackageManagerAnalyzer spmAnalyzer;
+    private SwiftPackageResolvedAnalyzer sprAnalyzer;
 
     /**
      * Correctly setup the analyzer for testing.
@@ -48,6 +49,11 @@ public class SwiftAnalyzersTest extends BaseTest {
         spmAnalyzer.initialize(getSettings());
         spmAnalyzer.setFilesMatched(true);
         spmAnalyzer.prepare(null);
+
+        sprAnalyzer = new SwiftPackageResolvedAnalyzer();
+        sprAnalyzer.initialize(getSettings());
+        sprAnalyzer.setFilesMatched(true);
+        sprAnalyzer.prepare(null);
     }
 
     /**
@@ -98,7 +104,7 @@ public class SwiftAnalyzersTest extends BaseTest {
     @Test
     public void testSPMSupportsFiles() {
         assertThat(spmAnalyzer.accept(new File("Package.swift")), is(true));
-        assertThat(spmAnalyzer.accept(new File("Package.resolved")), is(true));
+        assertThat(sprAnalyzer.accept(new File("Package.resolved")), is(true));
     }
 
     /**
@@ -170,13 +176,12 @@ public class SwiftAnalyzersTest extends BaseTest {
         assertThat(result.getEcosystem(), equalTo(SwiftPackageManagerAnalyzer.DEPENDENCY_ECOSYSTEM));
     }
 
-
     @Test
     public void testSPMResolvedAnalyzer() throws AnalysisException {
         final Engine engine = new Engine(getSettings());
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
                 "swift/spm/Package.resolved"));
-        spmAnalyzer.analyze(result, engine);
+        sprAnalyzer.analyze(result, engine);
 
         assertThat(engine.getDependencies().length, equalTo(3));
         assertThat(engine.getDependencies()[0].getName(), equalTo("Alamofire"));

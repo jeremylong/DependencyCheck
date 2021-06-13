@@ -37,7 +37,6 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
-import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -49,7 +48,6 @@ import org.slf4j.LoggerFactory;
  * from Package.swift files.
  *
  * @author Bianca Jiang (https://twitter.com/biancajiang)
- * @author Jorge Mendes (https://twitter.com/Jorzze)
  */
 @Experimental
 @ThreadSafe
@@ -58,7 +56,7 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(RubyGemspecAnalyzer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SwiftPackageManagerAnalyzer.class);
 
     /**
      * A descriptor for the type of dependencies processed or added by this
@@ -82,26 +80,15 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
     public static final String SPM_FILE_NAME = "Package.swift";
 
     /**
-     * The file name to scan.
-     */
-    public static final String SPM_RESOLVED_FILE_NAME = "Package.resolved";
-
-    /**
      * Filter that detects files named "Package.swift".
      */
-    private static final FileFilter SPM_FILE_FILTER = FileFilterBuilder.newInstance().addFilenames(SPM_FILE_NAME).addFilenames(SPM_RESOLVED_FILE_NAME).build();
+    private static final FileFilter SPM_FILE_FILTER = FileFilterBuilder.newInstance().addFilenames(SPM_FILE_NAME).build();
 
     /**
      * The capture group #1 is the block variable. e.g. "import
      * PackageDescription let package = Package( name: "Gloss" )"
      */
     private static final Pattern SPM_BLOCK_PATTERN = Pattern.compile("let[^=]+=\\s*Package\\s*\\(\\s*([^)]*)\\s*\\)", Pattern.DOTALL);
-
-    /**
-     * The capture group #1 is the package name. e.g. "import
-     * PackageDescription let package = Package( name: "Gloss" )"
-     */
-    private static final Pattern SPM_RESOLVED_BLOCK_PATTERN = Pattern.compile("\\s*\"package\":\\s(.*),\\n\\s*\"repositoryURL\":\\s.*,\\n.*\\n\\s*\"branch\":\\s.*,\\n\\s*\"revision\":\\s.*,\\n\\s*\"version\":\\s(.*)\\n");
 
     /**
      * Returns the FileFilter
@@ -150,14 +137,13 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     @Override
-    protected void analyzeDependency(Dependency dependency, Engine engine)
-            throws AnalysisException {
-        if (SPM_FILE_NAME.equals(dependency.getFileName())) {
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+        try {
             analyzeSpmFileDependency(dependency);
-        }
 
-        if (SPM_RESOLVED_FILE_NAME.equals(dependency.getFileName())) {
-            analyzeSpmResolvedDependencies(dependency, engine);
+        } catch (IOException ex) {
+            throw new AnalysisException(
+                    "Problem occurred while reading dependency file: " + dependency.getActualFilePath(), ex);
         }
     }
 
@@ -165,20 +151,15 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
      * Analyzes the SPM file and adds the evidence to the dependency.
      *
      * @param dependency the dependency
-     * @throws AnalysisException thrown if there is an error analyzing the
-     * podspec
+     * @throws IOException thrown if there is an error analyzing the `podspec`
+     * file
      */
     private void analyzeSpmFileDependency(Dependency dependency)
-            throws AnalysisException {
+            throws AnalysisException, IOException {
         dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
 
-        final String contents;
-        try {
-            contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());
-        } catch (IOException e) {
-            throw new AnalysisException(
-                    "Problem occurred while reading dependency file.", e);
-        }
+        final String contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());
+
         final Matcher matcher = SPM_BLOCK_PATTERN.matcher(contents);
         if (matcher.find()) {
             final String packageDescription = matcher.group(1);
@@ -224,48 +205,6 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
             }
         }
         setPackagePath(dependency);
-    }
-
-    /**
-     * Analyzes the Package.resolved file to extract evidence for the dependency.
-     *
-     * @param spmResolved the dependency to analyze
-     * @param engine the analysis engine
-     * @throws AnalysisException thrown if there is an error analyzing the
-     * dependency
-     */
-    private void analyzeSpmResolvedDependencies(Dependency spmResolved, Engine engine)
-            throws AnalysisException {
-        engine.removeDependency(spmResolved);
-
-        final String contents;
-        try {
-            contents = FileUtils.readFileToString(spmResolved.getActualFile(), Charset.defaultCharset());
-        } catch (IOException e) {
-            throw new AnalysisException(
-                    "Problem occurred while reading dependency file.", e);
-        }
-
-        final Matcher matcher = SPM_RESOLVED_BLOCK_PATTERN.matcher(contents);
-        while (matcher.find()) {
-            final String name = matcher.group(1).replaceAll("^\"|\"$", "");
-            final String version = matcher.group(2).replaceAll("^\"|\"$", "");
-
-            final Dependency dependency = new Dependency(spmResolved.getActualFile(), true);
-            dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
-            dependency.setName(name);
-            dependency.setVersion(version);
-            final String packagePath = String.format("%s:%s", name, version);
-            dependency.setPackagePath(packagePath);
-            dependency.setDisplayFileName(packagePath);
-            dependency.setSha1sum(Checksum.getSHA1Checksum(packagePath));
-            dependency.setSha256sum(Checksum.getSHA256Checksum(packagePath));
-            dependency.setMd5sum(Checksum.getMD5Checksum(packagePath));
-            dependency.addEvidence(EvidenceType.VENDOR, SPM_RESOLVED_FILE_NAME, "name", name, Confidence.HIGHEST);
-            dependency.addEvidence(EvidenceType.PRODUCT, SPM_RESOLVED_FILE_NAME, "name", name, Confidence.HIGHEST);
-            dependency.addEvidence(EvidenceType.VERSION, SPM_RESOLVED_FILE_NAME, "version", version, Confidence.HIGHEST);
-            engine.addDependency(dependency);
-        }
     }
 
     /**
