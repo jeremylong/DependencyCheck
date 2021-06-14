@@ -161,7 +161,7 @@ public class SwiftPackageResolvedAnalyzer extends AbstractFileTypeAnalyzer {
             if (object == null) {
                 return;
             }
-            JsonArray pins = object.getJsonArray("pins");
+            final JsonArray pins = object.getJsonArray("pins");
             if (pins == null) {
                 return;
             }
@@ -174,7 +174,7 @@ public class SwiftPackageResolvedAnalyzer extends AbstractFileTypeAnalyzer {
                 if (state != null) {
                     version = state.getString("version");
                 }
-                Dependency dependency = createDependency(spmResolved, SPM_RESOLVED_FILE_NAME, name, version, repo);
+                final Dependency dependency = createDependency(spmResolved, SPM_RESOLVED_FILE_NAME, name, version, repo);
                 engine.addDependency(dependency);
             });
         }
