@@ -703,7 +703,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                         <th class="sortable" data-sort="string" title="The name of the dependency">Dependency</th>
                         <th class="sortable" data-sort="string" title="The Common Platform Enumeration">Vulnerability&nbsp;IDs</th>
                         <th class="sortable" data-sort="string" title="The Build Coordinates">Package</th>
-                        <th class="sortable" data-sort="int"    title="The highest CVE Severity">Highest&nbsp;Severity</th>
+                        <th class="sortable" data-sort="float"    title="The highest CVE Severity">Highest&nbsp;Severity</th>
                         <th class="sortable" data-sort="int"    title="The number of Common Vulnerability and Exposure (CVE) entries">CVE&nbsp;Count</th>
                         <th class="sortable" data-sort="string" title="The confidence rating dependency-check has for the identified CPE">Confidence</th>
                         <th class="sortable" data-sort="int"    title="The count of evidence collected to identify the CPE">Evidence&nbsp;Count</th>
