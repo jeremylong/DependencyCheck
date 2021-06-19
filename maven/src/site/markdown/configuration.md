@@ -96,6 +96,7 @@ cocoapodsAnalyzerEnabled            | Sets whether the [experimental](../analyze
 bundleAuditAnalyzerEnabled          | Sets whether the [experimental](../analyzers/index.html) Bundle Audit Analyzer should be used.                                                      | true
 bundleAuditPath                     | Sets the path to the bundle audit executable; only used if bundle audit analyzer is enabled and experimental analyzers are enabled.                 | &nbsp;
 swiftPackageManagerAnalyzerEnabled  | Sets whether the [experimental](../analyzers/index.html) Swift Package Analyzer should be used.                                                     | true
+swiftPackageResolvedAnalyzerEnabled | Sets whether the [experimental](../analyzers/index.html) Swift Package Resolved should be used.                                                     | true
 assemblyAnalyzerEnabled             | Sets whether the .NET Assembly Analyzer should be used.                                                                                             | true
 msbuildAnalyzerEnabled              | Sets whether the MSBuild Analyzer should be used.                                                                                                   | true
 pathToCore                          | The path to dotnet core .NET assembly analysis on non-windows systems.                                                                              | &nbsp;

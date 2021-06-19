@@ -655,7 +655,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "swiftPackageManagerAnalyzerEnabled")
     private Boolean swiftPackageManagerAnalyzerEnabled;
-
+    /**
+     * Whether or not the Swift package resolved Analyzer is enabled.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "swiftPackageResolvedAnalyzerEnabled")
+    private Boolean swiftPackageResolvedAnalyzerEnabled;
     /**
      * The URL of a Nexus server's REST API end point
      * (http://domain/nexus/service/local).
@@ -1977,6 +1982,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_WORKING_DIRECTORY, bundleAuditWorkingDirectory);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, cocoapodsAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, swiftPackageManagerAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_RESOLVED_ENABLED, swiftPackageResolvedAnalyzerEnabled);
+
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, ossindexAnalyzerEnabled);
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_URL, ossindexAnalyzerUrl);
         configureServerCredentials(ossIndexServerId, Settings.KEYS.ANALYZER_OSSINDEX_USER, Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD);

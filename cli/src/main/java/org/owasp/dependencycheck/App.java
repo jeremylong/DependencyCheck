@@ -508,6 +508,8 @@ public class App {
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_RETIRE_JS, Settings.KEYS.ANALYZER_RETIREJS_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_SWIFT, Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_RESOLVED_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_SWIFT_RESOLVED, Settings.KEYS.ANALYZER_SWIFT_PACKAGE_RESOLVED_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_COCOAPODS, Settings.KEYS.ANALYZER_COCOAPODS_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED,

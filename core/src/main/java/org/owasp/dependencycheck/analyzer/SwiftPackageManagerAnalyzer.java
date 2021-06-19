@@ -56,7 +56,7 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(RubyGemspecAnalyzer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SwiftPackageManagerAnalyzer.class);
 
     /**
      * A descriptor for the type of dependencies processed or added by this
@@ -137,18 +137,29 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     @Override
-    protected void analyzeDependency(Dependency dependency, Engine engine)
-            throws AnalysisException {
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+        try {
+            analyzeSpmFileDependency(dependency);
 
+        } catch (IOException ex) {
+            throw new AnalysisException(
+                    "Problem occurred while reading dependency file: " + dependency.getActualFilePath(), ex);
+        }
+    }
+
+    /**
+     * Analyzes the SPM file and adds the evidence to the dependency.
+     *
+     * @param dependency the dependency
+     * @throws IOException thrown if there is an error analyzing the `podspec`
+     * file
+     */
+    private void analyzeSpmFileDependency(Dependency dependency)
+            throws AnalysisException, IOException {
         dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
 
-        final String contents;
-        try {
-            contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());
-        } catch (IOException e) {
-            throw new AnalysisException(
-                    "Problem occurred while reading dependency file.", e);
-        }
+        final String contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());
+
         final Matcher matcher = SPM_BLOCK_PATTERN.matcher(contents);
         if (matcher.find()) {
             final String packageDescription = matcher.group(1);

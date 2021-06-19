@@ -135,6 +135,7 @@ analyzers    | cpanEnabled           | Sets whether or not the [experimental](..
 analyzers    | nodeEnabled           | Sets whether or not the Node.js Analyzer should be used.                                                          | true
 analyzers    | cocoapodsEnabled      | Sets whether or not the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used.                | true
 analyzers    | swiftEnabled          | Sets whether or not the [experimental](../analyzers/index.html) Swift Package Manager Analyzer should be used.    | true
+analyzers    | swiftPackageResolvedEnabled | Sets whether or not the [experimental](../analyzers/index.html) Swift Package Resolved Analyzer should be used. | true
 analyzers    | bundleAuditEnabled    | Sets whether or not the [experimental](../analyzers/index.html) Ruby Bundle Audit Analyzer should be used.        | true
 analyzers    | pathToBundleAudit     | The path to bundle audit.                                                                                         | &nbsp;
 analyzers    | golangDepEnabled      | Sets whether or not the [experimental](../analyzers/index.html) Golang Dependency Analyzer should be used.        | true

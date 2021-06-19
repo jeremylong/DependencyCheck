@@ -59,6 +59,7 @@ _odc_completions()
             --disableRetireJS
             --disableRubygems
             --disableSwiftPackageManagerAnalyzer
+            --disableSwiftPackageResolvedAnalyzer
             --dotnet
             --enableArtifactory
             --enableExperimental

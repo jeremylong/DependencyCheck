@@ -316,6 +316,10 @@ public class Check extends Update {
      * Whether or not the Swift package Analyzer is enabled.
      */
     private Boolean swiftPackageManagerAnalyzerEnabled;
+    /**
+     * Whether or not the Swift package Analyzer is enabled.
+     */
+    private Boolean swiftPackageResolvedAnalyzerEnabled;
 
     /**
      * Whether or not the Sonatype OSS Index analyzer is enabled.
@@ -984,6 +988,24 @@ public class Check extends Update {
      */
     public void setSwiftPackageManagerAnalyzerEnabled(Boolean swiftPackageManagerAnalyzerEnabled) {
         this.swiftPackageManagerAnalyzerEnabled = swiftPackageManagerAnalyzerEnabled;
+    }
+    /**
+     * Returns whether or not the Swift package resolved Analyzer is enabled.
+     *
+     * @return whether or not the Swift package resolved Analyzer is enabled
+     */
+    public Boolean isSwiftPackageResolvedAnalyzerEnabled() {
+        return swiftPackageResolvedAnalyzerEnabled;
+    }
+
+    /**
+     * Sets the enabled state of the swift package manager analyzer.
+     *
+     * @param swiftPackageResolvedAnalyzerEnabled the enabled state of the swift
+     * package resolved analyzer
+     */
+    public void setSwiftPackageResolvedAnalyzerEnabled(Boolean swiftPackageResolvedAnalyzerEnabled) {
+        this.swiftPackageResolvedAnalyzerEnabled = swiftPackageResolvedAnalyzerEnabled;
     }
 
     /**
@@ -1857,6 +1879,7 @@ public class Check extends Update {
         getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_BEARER_TOKEN, artifactoryAnalyzerBearerToken);
 
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, swiftPackageManagerAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_RESOLVED_ENABLED, swiftPackageResolvedAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, cocoapodsAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, bundleAuditAnalyzerEnabled);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, bundleAuditPath);
