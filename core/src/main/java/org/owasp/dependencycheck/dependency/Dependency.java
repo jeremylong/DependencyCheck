@@ -85,7 +85,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
     /**
      * A list of Identifiers.
      */
-    private final Set<Identifier> vulnerabileSoftwareIdentifiers = new TreeSet<>();
+    private final Set<Identifier> vulnerableSoftwareIdentifiers = new TreeSet<>();
     /**
      * A set of identifiers that have been suppressed.
      */
@@ -434,7 +434,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @return an unmodifiable set of vulnerability identifiers
      */
     public synchronized Set<Identifier> getVulnerableSoftwareIdentifiers() {
-        return Collections.unmodifiableSet(new TreeSet<>(this.vulnerabileSoftwareIdentifiers));
+        return Collections.unmodifiableSet(new TreeSet<>(this.vulnerableSoftwareIdentifiers));
     }
 
     /**
@@ -454,7 +454,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @param identifiers A set of Identifiers
      */
     protected synchronized void addVulnerableSoftwareIdentifiers(Set<Identifier> identifiers) {
-        this.vulnerabileSoftwareIdentifiers.addAll(identifiers);
+        this.vulnerableSoftwareIdentifiers.addAll(identifiers);
     }
 
     /**
@@ -495,7 +495,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @param identifier a reference to the identifier to add
      */
     public synchronized void addVulnerableSoftwareIdentifier(Identifier identifier) {
-        this.vulnerabileSoftwareIdentifiers.add(identifier);
+        this.vulnerableSoftwareIdentifiers.add(identifier);
     }
 
     /**
@@ -504,7 +504,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @param i the identifier to remove
      */
     public synchronized void removeVulnerableSoftwareIdentifier(Identifier i) {
-        this.vulnerabileSoftwareIdentifiers.remove(i);
+        this.vulnerableSoftwareIdentifiers.remove(i);
     }
 
     /**
@@ -854,7 +854,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
                 .append(this.sha1sum, other.sha1sum)
                 .append(this.sha256sum, other.sha256sum)
                 .append(this.softwareIdentifiers, other.softwareIdentifiers)
-                .append(this.vulnerabileSoftwareIdentifiers, other.vulnerabileSoftwareIdentifiers)
+                .append(this.vulnerableSoftwareIdentifiers, other.vulnerableSoftwareIdentifiers)
                 .append(this.suppressedIdentifiers, other.suppressedIdentifiers)
                 .append(this.description, other.description)
                 .append(this.license, other.license)
@@ -883,7 +883,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
                 .append(sha1sum)
                 .append(sha256sum)
                 .append(softwareIdentifiers)
-                .append(vulnerabileSoftwareIdentifiers)
+                .append(vulnerableSoftwareIdentifiers)
                 .append(suppressedIdentifiers)
                 .append(description)
                 .append(license)
