@@ -425,7 +425,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @return an unmodifiable set of software identifiers
      */
     public synchronized Set<Identifier> getSoftwareIdentifiers() {
-        return Collections.unmodifiableSet(new TreeSet<>(softwareIdentifiers));
+        return Collections.unmodifiableSet(softwareIdentifiers);
     }
 
     /**
@@ -434,7 +434,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @return an unmodifiable set of vulnerability identifiers
      */
     public synchronized Set<Identifier> getVulnerableSoftwareIdentifiers() {
-        return Collections.unmodifiableSet(new TreeSet<>(this.vulnerableSoftwareIdentifiers));
+        return Collections.unmodifiableSet(this.vulnerableSoftwareIdentifiers);
     }
 
     /**
@@ -564,7 +564,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @return the value of suppressedIdentifiers
      */
     public synchronized Set<Identifier> getSuppressedIdentifiers() {
-        return Collections.unmodifiableSet(new TreeSet<>(this.suppressedIdentifiers));
+        return Collections.unmodifiableSet(this.suppressedIdentifiers);
     }
 
     /**
@@ -743,7 +743,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @return the unmodifiable set of relatedDependencies
      */
     public synchronized Set<Dependency> getRelatedDependencies() {
-        return Collections.unmodifiableSet(new TreeSet<>(relatedDependencies));
+        return Collections.unmodifiableSet(relatedDependencies);
     }
 
     /**
