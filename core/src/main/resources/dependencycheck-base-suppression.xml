@@ -1249,6 +1249,7 @@
         <cpe>cpe:/a:jetty:jetty</cpe>
         <cpe>cpe:/a:eclipse:jetty</cpe>
         <cpe>cpe:/a:mortbay_jetty:jetty</cpe>
+        <cpe>cpe:/a:mortbay:jetty</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -1258,6 +1259,7 @@
         <cpe>cpe:/a:jetty:jetty</cpe>
         <cpe>cpe:/a:eclipse:jetty</cpe>
         <cpe>cpe:/a:mortbay_jetty:jetty</cpe>
+        <cpe>cpe:/a:mortbay:jetty</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
