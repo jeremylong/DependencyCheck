@@ -1243,7 +1243,7 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per #2553
+        FP per #2554
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty\.alpn/alpn\-api@.*$</packageUrl>
         <cpe>cpe:/a:jetty:jetty</cpe>
@@ -1253,7 +1253,7 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per #2554
+        FP per #2553
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty/jetty\-reactive\-httpclient@.*$</packageUrl>
         <cpe>cpe:/a:jetty:jetty</cpe>
