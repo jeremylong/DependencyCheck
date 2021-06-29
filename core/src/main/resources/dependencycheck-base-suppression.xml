@@ -2,6 +2,13 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
+        FP per #3471
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.core/jackson\-annotations@.*$</packageUrl>
+        <cpe>cpe:/a:fasterxml:jackson-modules-java8</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
 	    FP per #3331
 	    ]]></notes>
         <packageUrl regex="true">^pkg:npm/%40babel%2Fcli@.*$</packageUrl>
