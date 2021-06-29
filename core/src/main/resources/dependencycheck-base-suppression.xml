@@ -4397,6 +4397,13 @@
         <cpe>cpe:/a:apache:batik</cpe>
         <cpe>cpe:/a:i18n_project:i18n</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Library related to prometheus is being flagged as prometheus itself (#3470)
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven\/com\.github\.anti-social[.\/]prometheus-kt.*$</packageUrl>
+        <cpe>cpe:/a:prometheus:prometheus</cpe>
+    </suppress>
     
     
     <!-- begin cpan support-->
