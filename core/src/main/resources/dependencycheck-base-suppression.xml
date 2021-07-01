@@ -2,6 +2,13 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
+        FP per #3471
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.core/jackson\-annotations@.*$</packageUrl>
+        <cpe>cpe:/a:fasterxml:jackson-modules-java8</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
 	    FP per #3331
 	    ]]></notes>
         <packageUrl regex="true">^pkg:npm/%40babel%2Fcli@.*$</packageUrl>
@@ -1243,21 +1250,23 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per #2553
+        FP per #2554
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty\.alpn/alpn\-api@.*$</packageUrl>
         <cpe>cpe:/a:jetty:jetty</cpe>
         <cpe>cpe:/a:eclipse:jetty</cpe>
         <cpe>cpe:/a:mortbay_jetty:jetty</cpe>
+        <cpe>cpe:/a:mortbay:jetty</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per #2554
+        FP per #2553
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty/jetty\-reactive\-httpclient@.*$</packageUrl>
         <cpe>cpe:/a:jetty:jetty</cpe>
         <cpe>cpe:/a:eclipse:jetty</cpe>
         <cpe>cpe:/a:mortbay_jetty:jetty</cpe>
+        <cpe>cpe:/a:mortbay:jetty</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -4396,6 +4405,13 @@
         <packageUrl regex="true">^pkg:maven/org\.apache\.xmlgraphics/batik\-i18n@.*$</packageUrl>
         <cpe>cpe:/a:apache:batik</cpe>
         <cpe>cpe:/a:i18n_project:i18n</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Library related to prometheus is being flagged as prometheus itself (#3470)
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven\/com\.github\.anti-social[.\/]prometheus-kt.*$</packageUrl>
+        <cpe>cpe:/a:prometheus:prometheus</cpe>
     </suppress>
     
     
