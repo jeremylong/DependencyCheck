@@ -117,7 +117,7 @@ Copyright (c) 2012 - Jeremy Long
         
         <apache.lucene.version>8.9.0</apache.lucene.version>
         <apache.ant.version>1.10.10</apache.ant.version>
-        <slf4j.version>1.7.30</slf4j.version>
+        <slf4j.version>1.7.31</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <!-- Note that Maven will use classes from the distro, ignoring declared dependencies for Maven core... -->
         <maven.api.version>3.1.0</maven.api.version>
@@ -148,7 +148,7 @@ Copyright (c) 2012 - Jeremy Long
         <hamcrest-core.version>2.2</hamcrest-core.version>
         <jackson.version>2.12.3</jackson.version>
         <jmockit.version>1.49</jmockit.version>
-        <mockito-core.version>3.11.1</mockito-core.version>
+        <mockito-core.version>3.11.2</mockito-core.version>
         <jsoup.version>1.13.1</jsoup.version>
         <commons-compress.version>1.20</commons-compress.version>
         <org.apache.maven.shared.file-management.version>3.0.0</org.apache.maven.shared.file-management.version>
@@ -163,7 +163,7 @@ Copyright (c) 2012 - Jeremy Long
         <maven-artifact-transfer.version>0.13.1</maven-artifact-transfer.version>
         <groovy-all.version>2.4.21</groovy-all.version>
         <gmavenplus-plugin.version>1.12.1</gmavenplus-plugin.version>
-        <com.h3xstream.retirejs.core.version>3.0.2</com.h3xstream.retirejs.core.version>
+        <com.h3xstream.retirejs.core.version>3.0.3</com.h3xstream.retirejs.core.version>
         
         <!--necassary for some IDEs to be able to execute test cases (Netbeans)-->
         <surefireArgLine />
