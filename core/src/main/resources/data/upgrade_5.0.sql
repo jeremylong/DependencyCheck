@@ -2,4 +2,4 @@ UPDATE cpeecosystemcache SET ecosystem='MULTIPLE' WHERE vendor='tensorflow' AND 
 
 UPDATE cpeecosystemcache SET ecosystem='MULTIPLE' WHERE vendor='scikit-learn' AND product='scikit-learn';
 
-UPDATE Properties SET value='5.2' WHERE ID='version';
+UPDATE Properties SET value='5.1' WHERE ID='version';
