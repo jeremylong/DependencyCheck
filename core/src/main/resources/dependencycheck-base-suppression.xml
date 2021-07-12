@@ -3191,8 +3191,10 @@
         <notes><![CDATA[
         FP per issue #952 - instead of suppressing the whole thing, we will just
             suppress specific CVE that are for the server
+            Added additional CVE per #3509.
         ]]></notes>
         <gav regex="true">^(mysql:mysql-connector-java|org\.drizzle\.jdbc:drizzle-jdbc):.*$</gav>
+        <cve>CVE-2017-15945</cve>
         <cve>CVE-2018-3081</cve>
         <cve>CVE-2018-3137</cve>
         <cve>CVE-2018-3145</cve>
