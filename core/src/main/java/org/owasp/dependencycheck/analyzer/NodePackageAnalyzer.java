@@ -337,6 +337,12 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                 final String name = entry.getKey();
                 final String version;
                 boolean optional = false;
+                boolean skipDev = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, false);
+                boolean isDev = entry.getValue().asJsonObject().getBoolean("dev", false);
+
+                if (isDev && skipDev) {
+                    return;
+                }
 
                 final File base = Paths.get(baseDir.getPath(), "node_modules", name).toFile();
                 final File f = new File(base, PACKAGE_JSON);
