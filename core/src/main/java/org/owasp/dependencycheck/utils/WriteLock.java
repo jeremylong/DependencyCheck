@@ -196,7 +196,7 @@ public class WriteLock implements AutoCloseable {
                 }
             } while (++ctr < MAX_SLEEP_COUNT && (lock == null || !lock.isValid()));
             if (lock == null || !lock.isValid()) {
-                throw new WriteLockException("Unable to obtain the update lock, skipping the database update. Skippinig the database update.");
+                throw new WriteLockException("Unable to obtain the update lock, skipping the database update. Skipping the database update.");
             }
         } catch (IOException ex) {
             throw new WriteLockException(ex.getMessage(), ex);
