@@ -37,7 +37,7 @@ _odc_completions()
             --disableCentralCache
             --disableCmake
             --disableCocoapodsAnalyzer
-            --disableComposer 
+            --disableComposer
             --disableGolangDep
             --disableGolangMod
             --disableJar
@@ -65,31 +65,32 @@ _odc_completions()
             --enableExperimental
             --enableNexus
             --enableRetired
-            --exclude <pattern> 
-        -f --format <format> 
+            --exclude <pattern>
+        -f --format <format>
             --failOnCVSS <score>
             --go
-        -h --help 
+        -h --help
             --hints
-            --junitFailOnCVSS <score> 
+            --junitFailOnCVSS <score>
         -l --log
-        -n --noupdate                 
-            --nexus <url>        
-            --nexusPass <password>   
+        -n --noupdate
+            --nexus <url>
+            --nexusPass <password>
             --nexusUser <username>
             --nexusUsesProxy
-            --nodeAuditSkipDevDependencies  
-            --nonProxyHosts <list>    
+            --nodeAuditSkipDevDependencies
+            --nodePackageSkipDevDependencies
+            --nonProxyHosts <list>
         -o --out
-            --ossIndexPassword <password>   
-            --ossIndexUsername <username> 
+            --ossIndexPassword <password>
+            --ossIndexUsername <username>
         -P --propertyfile
             --prettyPrint
-            --project <name> 
+            --project <name>
             --proxypass <pass>
             --proxyport <port>
             --proxyserver <server>
-            --proxyuser <user> 
+            --proxyuser <user>
             --purge
             --retirejsFilter <pattern>
             --retirejsFilterNonVulnerable
@@ -101,7 +102,7 @@ _odc_completions()
             --updateonly
         -v --version
             --yarn
-            --zipExtensions <extensions>      
+            --zipExtensions <extensions>
     "
 
 
