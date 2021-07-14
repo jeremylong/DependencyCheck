@@ -333,11 +333,11 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
             String parentPackage, Engine engine) throws AnalysisException {
         if (json.containsKey("dependencies")) {
             final JsonObject deps = json.getJsonObject("dependencies");
+            boolean skipDev = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, false);
             for (Map.Entry<String, JsonValue> entry : deps.entrySet()) {
                 final String name = entry.getKey();
                 final String version;
                 boolean optional = false;
-                boolean skipDev = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, false);
                 boolean isDev = entry.getValue().asJsonObject().getBoolean("dev", false);
 
                 if (isDev && skipDev) {
