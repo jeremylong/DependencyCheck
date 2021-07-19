@@ -6,12 +6,6 @@
                 ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty\.toolchain/jetty\-jakarta\-servlet\-api@.*$</packageUrl>
         <cpe>cpe:/a:eclipse:jetty</cpe>
-    </suppress>	
-    <suppress base="true">
-        <notes><![CDATA[
-                FP in jetty as jetty-jakarta-servlet-api is identified as a low version jetty
-                ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty\.toolchain/jetty\-jakarta\-servlet\-api@.*$</packageUrl>
         <cpe>cpe:/a:jetty:jetty</cpe>
     </suppress>
     <suppress base="true">
