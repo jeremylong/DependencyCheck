@@ -139,7 +139,7 @@ Copyright (c) 2012 - Jeremy Long
 
         <com.h2database.version>1.4.199</com.h2database.version>
         <commons-cli.version>1.4</commons-cli.version>
-        <commons-io.version>2.10.0</commons-io.version>
+        <commons-io.version>2.11.0</commons-io.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <commons-text.version>1.9</commons-text.version>
         <commons-jcs-core.version>2.2.1</commons-jcs-core.version>
@@ -150,7 +150,7 @@ Copyright (c) 2012 - Jeremy Long
         <jmockit.version>1.49</jmockit.version>
         <mockito-core.version>3.11.2</mockito-core.version>
         <jsoup.version>1.14.1</jsoup.version>
-        <commons-compress.version>1.20</commons-compress.version>
+        <commons-compress.version>1.21</commons-compress.version>
         <org.apache.maven.shared.file-management.version>3.0.0</org.apache.maven.shared.file-management.version>
         <maven-plugin-testing-harness.version>3.3.0</maven-plugin-testing-harness.version>
         <maven-plugin-annotations.version>3.6.1</maven-plugin-annotations.version>
