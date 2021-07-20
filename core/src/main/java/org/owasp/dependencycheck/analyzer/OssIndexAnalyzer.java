@@ -50,6 +50,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -135,6 +136,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
         synchronized (FETCH_MUTIX) {
             if (!failed && reports == null) {
                 try {
+                    requestDelay();
                     reports = requestReports(engine.getDependencies());
                 } catch (TransportException ex) {
                     failed = true;
@@ -154,6 +156,17 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
         // skip enrichment if we failed to fetch reports
         if (!failed) {
             enrich(dependency);
+        }
+    }
+
+    /**
+     * Delays each request (thread) by the configured amount of seconds, if the configuration is present.
+     */
+    private void requestDelay() throws InterruptedException {
+        final int delay = getSettings().getInt(Settings.KEYS.ANALYZER_OSSINDEX_REQUEST_DELAY,0);
+        if(delay > 0) {
+            LOG.debug("Request delay: " + delay);
+            TimeUnit.SECONDS.sleep(delay);
         }
     }
 

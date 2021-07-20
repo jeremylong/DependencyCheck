@@ -682,6 +682,15 @@ public final class Settings {
          */
         public static final String ANALYZER_OSSINDEX_PASSWORD = "analyzer.ossindex.password";
         /**
+         * The properties key for the Sonatype OSS batch-size.
+         */
+        public static final String ANALYZER_OSSINDEX_BATCH_SIZE = "analyzer.ossindex.batch.size";
+        /**
+         * The properties key for the Sonatype OSS Request Delay.
+         * Amount of time in seconds to wait before executing a request against the Sonatype OSS Rest API
+         */
+        public static final String ANALYZER_OSSINDEX_REQUEST_DELAY = "analyzer.ossindex.request.delay";
+        /**
          * The properties key setting whether or not the JSON and XML reports
          * will be pretty printed.
          */
