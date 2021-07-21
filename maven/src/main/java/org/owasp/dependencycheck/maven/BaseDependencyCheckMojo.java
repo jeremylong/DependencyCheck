@@ -183,7 +183,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * The output directory. This generally maps to "target".
      */
     @SuppressWarnings("CanBeFinal")
-    @Parameter(defaultValue = "${project.build.directory}", required = true)
+    @Parameter(defaultValue = "${project.build.directory}", required = true, property = "outputDirectory")
     private File outputDirectory;
     /**
      * This is a reference to the &gt;reporting&lt; sections
