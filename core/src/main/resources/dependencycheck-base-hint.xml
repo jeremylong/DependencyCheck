@@ -115,17 +115,6 @@
     </hint>
     <hint>
         <given>
-            <evidence type="product" source="Manifest" name="Bundle-Name" value="Spring Security Core" confidence="MEDIUM"/>
-            <evidence type="product" source="pom" name="artifactid" value="spring-security-core" confidence="HIGH"/>	
-        </given>
-        <add>
-            <evidence type="product" source="hint analyzer" name="product" value="springsource_spring_framework" confidence="HIGHEST"/>
-            <evidence type="vendor" source="hint analyzer" name="vendor" value="SpringSource" confidence="HIGHEST"/>
-            <evidence type="vendor" source="hint analyzer" name="vendor" value="vmware" confidence="HIGHEST"/>
-        </add>
-    </hint>
-    <hint>
-        <given>
             <evidence type="vendor" source="composer.lock" name="vendor" value="symfony" confidence="HIGHEST"/>
         </given>
         <add>
