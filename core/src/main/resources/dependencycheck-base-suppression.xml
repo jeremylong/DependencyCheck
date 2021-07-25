@@ -417,6 +417,16 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+            This suppresses false positives identified on spring projects that are separate projects side-by-side with the Spring Framework
+            project that have springframework in the groupid where NVD is known to have separate products in the CPE dictionary.
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.(amqp|batch|boot|cloud|data|integration|ldap|security|social|webflow|ws).*$</gav>
+        <cpe>cpe:/a:vmware:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cpe>cpe:/a:springsource:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
        Don't flag specific CVEs for spring framework related components (i.e. org.springframework.data).
        ]]></notes>
         <gav regex="true">^org\.springframework\..*$</gav>
