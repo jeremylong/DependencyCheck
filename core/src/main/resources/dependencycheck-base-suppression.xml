@@ -2353,6 +2353,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        jackson-dataformat-avro/cbor/ion/protobuf/smile are cpe:/a:fasterxml:jackson-dataformat-binary
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.dataformat/jackson\-dataformat\-(ion|cbor|avro|protobuf|smile)@.*$</packageUrl>
+        <cpe>cpe:/a:fasterxml:jackson-dataformat-xml</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
             These CVE only affects jackson-dataformat-xml. See issue #517.
         ]]></notes>
         <gav regex="true">com\.fasterxml\.jackson\.dataformat:jackson(?!\-dataformat\-xml).*</gav>
