@@ -2360,6 +2360,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+           These only apply to the jackson-dataformat-cbor sub-module
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.dataformat/jackson\-dataformat(?!\-cbor).*@.*$</packageUrl>
+        <cve>CVE-2020-28491</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
             These CVE only affects jackson-dataformat-xml. See issue #517.
         ]]></notes>
         <gav regex="true">com\.fasterxml\.jackson\.dataformat:jackson(?!\-dataformat\-xml).*</gav>
