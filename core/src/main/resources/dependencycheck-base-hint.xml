@@ -5,7 +5,7 @@
             <evidence type="product" source="Manifest" name="Implementation-Title" value="Spring Framework" confidence="HIGH"/>
             <evidence type="product" source="Manifest" name="Implementation-Title" value="org.springframework.core" confidence="HIGH"/>
             <evidence type="product" source="Manifest" name="Implementation-Title" value="spring-core" confidence="HIGH"/>
-            <evidence type="vendor"  source="pom"      name="groupid"              value="springframework" confidence="HIGHEST"/>
+            <evidence type="vendor"  source="pom"      name="groupid"              value="org\.springframework" confidence="HIGHEST"/>
         </given>
         <add>
             <evidence type="product" source="hint analyzer" name="product" value="springsource_spring_framework" confidence="HIGHEST"/>
@@ -67,7 +67,7 @@
     </hint>
     <hint>
         <given>
-            <evidence regex="true" type="vendor" source="pom" name="groupid" value="hibernate" />
+            <evidence regex="true" type="vendor" source="pom" name="groupid" value="org\.hibernate" />
         </given>
         <add>
             <evidence type="product" source="hint analyzer" name="product" value="orm" confidence="HIGHEST"/>
@@ -286,7 +286,7 @@
     <hint>
         <given>
             <evidence type="vendor" source="Manifest" name="Implementation-Vendor-Id" value="org.primefaces" confidence="MEDIUM"/>
-            <evidence type="vendor" source="pom" name="groupid" value="primefaces" confidence="HIGHEST"/>
+            <evidence type="vendor" source="pom" name="groupid" value="org.primefaces" confidence="HIGHEST"/>
         </given>
         <add>
             <evidence type="vendor" source="hint analyzer" name="vendor" value="primetek" confidence="HIGHEST"/>
@@ -329,7 +329,8 @@
     </hint>
     <hint>
         <given>
-            <evidence type="vendor" source="pom" name="groupid" value="zeroturnaround"/>
+            <evidence type="vendor" source="pom" name="groupid" value="com.zeroturnaround"/>
+            <evidence type="vendor" source="pom" name="groupid" value="org.zeroturnaround"/>
         </given>
         <add>
             <evidence type="vendor" source="hint analyzer" name="vendor" value="jrebel" confidence="HIGHEST"/>
@@ -345,7 +346,7 @@
     </hint>
     <hint>
         <given>
-            <evidence type="vendor" source="pom" name="groupid" value="datomic"/>
+            <evidence type="vendor" source="pom" name="groupid" value="com.datomic"/>
         </given>
         <add>
             <evidence type="vendor" source="hint analyzer" name="vendor" value="cognitect" confidence="HIGHEST"/>
@@ -372,7 +373,7 @@
     </hint>
     <hint>
         <given>
-            <evidence type="vendor" source="pom" name="groupid" value="quartz-scheduler"/>
+            <evidence type="vendor" source="pom" name="groupid" value="org.quartz-scheduler"/>
         </given>
         <add>
             <evidence type="vendor" source="hint analyzer" name="vendor" value="softwareag" confidence="HIGHEST"/>
@@ -380,7 +381,7 @@
     </hint>  
     <hint>
         <given>
-            <evidence type="product" source="pom" name="groupid" value="fasterxml.jackson.core"/>
+            <evidence type="product" source="pom" name="groupid" value="com.fasterxml.jackson.core"/>
         </given>
         <add>
             <evidence type="product" source="hint analyzer" name="product" value="modules" confidence="HIGHEST"/>
