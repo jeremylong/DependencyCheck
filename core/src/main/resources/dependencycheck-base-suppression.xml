@@ -502,6 +502,7 @@
             48. thread_project - etherium token (https://nvd.nist.gov/vuln/detail/CVE-2018-13752) #1718
             49. data_tools is a python library #1667
             50. tag project is a GO implemention #3047 & #3043
+            51. kubernetes:kubernetes is a GO implementation #1035 & #1056 & #1880 & #3529 & #3530 &
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -557,6 +558,7 @@
         <cpe>cpe:/a:thread_project:thread</cpe>
         <cpe>cpe:/a:data_tools_project:data_tools</cpe>
         <cpe>cpe:/a:tag_project:tag</cpe>
+        <cpe>cpe:/a:kubernetes:kubernetes</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -2650,13 +2652,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        Suppresses false positives per #1880.
-        ]]></notes>
-        <gav regex="true">^com\.hazelcast:hazelcast-kubernetes:.*$</gav>
-        <cpe>cpe:/a:kubernetes:kubernetes</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
         FP per #1398
         ]]></notes>
         <gav regex="true">^net\.lingala\.zip4j:zip4j:.*$</gav>
@@ -4236,20 +4231,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        false positive in io.vertx:vertx-config-kubernetes-configmap
-        ]]></notes>
-        <gav regex="true">^io\.vertx:vertx-config-kubernetes-configmap:.*$</gav>
-        <cpe>cpe:/a:kubernetes:kubernetes</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        false positive per #1056
-        ]]></notes>
-        <gav regex="true">^io\.fabric8:kubernetes-model:.*$</gav>
-        <cpe>cpe:/a:kubernetes:kubernetes</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
         false positive on io.gitlab.arturbosch caused by cpe:/a:gitlab
         ]]></notes>
         <gav regex="true">^io\.gitlab\.arturbosch\.detekt:detekt-.+:.*$</gav>
@@ -4352,10 +4333,10 @@
     <suppress base="true">
         <notes><![CDATA[
         false positive per #3285 on com.amazonaws:aws-java-sdk-eks
+        generalized for #3531: if it's not in the io.kubernetes maven group it's not the kubernetes java client
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/com\.amazonaws/aws\-java\-sdk\-eks@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/(?!io.kubernetes).*/.*@.*$</packageUrl>
         <cpe>cpe:/a:kubernetes:java</cpe>
-        <cpe>cpe:/a:kubernetes:kubernetes</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
