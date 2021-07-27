@@ -4338,6 +4338,21 @@
         <packageUrl regex="true">^pkg:maven/(?!io.kubernetes).*/.*@.*$</packageUrl>
         <cpe>cpe:/a:kubernetes:java</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+            file name: openshift-model-clusterautoscaling-5.5.0.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.fabric8/openshift\-model\-clusterautoscaling@.*$</packageUrl>
+        <cpe>cpe:/a:redhat:cluster_project</cpe>
+        <cpe>cpe:/a:redhat:mod_cluster</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+        file name: openshift-model-machineconfig-5.5.0.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.fabric8/openshift\-model\-machineconfig@.*$</packageUrl>
+        <cpe>cpe:/a:redhat:machine-config-operator</cpe>
+    </suppress>
     <suppress base="true">
         <notes><![CDATA[
         false positive per #3284 on com.amazonaws:aws-java-sdk-storagegateway
