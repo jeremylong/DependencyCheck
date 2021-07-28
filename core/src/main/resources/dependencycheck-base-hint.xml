@@ -258,6 +258,14 @@
     </hint>
     <hint>
         <given>
+            <fileName contains="jenkins.*\.war" regex="true"/>
+        </given>
+        <remove>
+            <evidence type="version" name="hudson-version" value=".*" regex="true"/>
+        </remove>
+    </hint>
+    <hint>
+        <given>
             <fileName contains="htmlcleaner-.*" regex="true"/>
         </given>
         <add>
