@@ -506,6 +506,7 @@
             49. data_tools is a python library #1667
             50. tag project is a GO implemention #3047 & #3043
             51. kubernetes:kubernetes is a GO implementation #1035 & #1056 & #1880 & #3529 & #3530 &
+            52. aaugustin websockets is a python library #3460
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -562,6 +563,7 @@
         <cpe>cpe:/a:data_tools_project:data_tools</cpe>
         <cpe>cpe:/a:tag_project:tag</cpe>
         <cpe>cpe:/a:kubernetes:kubernetes</cpe>
+        <cpe>cpe:/a:websockets_project:websockets</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
