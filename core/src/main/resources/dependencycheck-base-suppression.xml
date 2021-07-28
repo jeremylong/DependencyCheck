@@ -472,6 +472,7 @@
             18. hub_project is a ruby library (#1130)
             19. views_project is a drupal plugin (#1077)
             20. restful_web_services_project:restful_web_services is a drupal plugin (#1077)
+            21. php (the language) is not a Java/.NET/NodeJS library
             22. font_project is a php library (#1166)
             23. amazon_aws_project is a drupal utility (#1290)
             24. google android should not be flagged for the base library
@@ -480,7 +481,6 @@
             27. finder is drupal plugin (#1626)
             28. archiver project is a golang module (#1627)
             29. r_project is the r programming language
-            27. r_project is the r programming language
             30. cpe:/a:jwt_project:jwt is a php library (#1697)
             31. remove FP on git
             32. remove FP on git
