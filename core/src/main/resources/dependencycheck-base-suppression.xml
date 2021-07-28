@@ -4460,6 +4460,13 @@
         <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   See issue #3384
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.qameta\.allure/allure\-httpclient@.*$</packageUrl>
+        <cpe>cpe:/a:apache:httpclient</cpe>
+    </suppress>
 
     <!-- begin cpan support-->
     <suppress base="true">
