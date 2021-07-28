@@ -4419,8 +4419,31 @@
         <packageUrl regex="true">^pkg:maven\/com\.github\.anti-social[.\/]prometheus-kt.*$</packageUrl>
         <cpe>cpe:/a:prometheus:prometheus</cpe>
     </suppress>
-    
-    
+    <suppress base="true">
+        <notes><![CDATA[
+        Oracle JDBC drivers are not the database server
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.oracle\.database\.jdbc/.*@.*$</packageUrl>
+        <cpe>cpe:/a:oracle:database</cpe>
+        <cpe>cpe:/a:oracle:oracle_database</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Oracle JDBC drivers are not the database server
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.oracle\.database\.security/.*@.*$</packageUrl>
+        <cpe>cpe:/a:oracle:database</cpe>
+        <cpe>cpe:/a:oracle:oracle_database</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Oracle JDBC drivers are not the database server
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.oracle\.database\.ha/.*@.*$</packageUrl>
+        <cpe>cpe:/a:oracle:database</cpe>
+        <cpe>cpe:/a:oracle:oracle_database</cpe>
+    </suppress>
+
     <!-- begin cpan support-->
     <suppress base="true">
         <notes><![CDATA[
