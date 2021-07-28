@@ -583,6 +583,7 @@
             13. flow_project reports an Ethereum token issue
             14. ghost CMS is a node.js package (#3203)
             15. ws_project is a node websocket client (#1535)
+            15. i18n_project is a node.js i18n module (#3350) (#3352) (#3353)
         ]]></notes>
         <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)$</filePath>
         <cpe>cpe:/a:dash:dash</cpe>
@@ -602,6 +603,7 @@
         <cpe>cpe:/a:flow_project:flow</cpe>
         <cpe>cpe:/a:ghost:ghost</cpe>
         <cpe>cpe:/a:ws_project:ws</cpe>
+        <cpe>cpe:/a:i18n_project:i18n</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -4419,7 +4421,6 @@
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.xmlgraphics/batik\-i18n@.*$</packageUrl>
         <cpe>cpe:/a:apache:batik</cpe>
-        <cpe>cpe:/a:i18n_project:i18n</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
