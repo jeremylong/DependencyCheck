@@ -4452,7 +4452,7 @@
         <cpe>cpe:/a:oracle:database</cpe>
         <cpe>cpe:/a:oracle:oracle_database</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         Suppresses all artifacts of Pivotal java-cfenv modules #3480
    ]]></notes>
