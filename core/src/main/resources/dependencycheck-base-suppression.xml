@@ -457,55 +457,55 @@
         <notes><![CDATA[
             1. Sandbox is a php blog platform and should not be flagged as a CPE for java or .net dependencies.
             2. Open media is php and won't be in a jar, dll, etc. See issue #814.
-            3. file and file_project are not assembiles or java libraries
-            4. Shim is *nix and is not an assembly or java lib. 
-            5. date_project is a drupal library
-            6. net dns is a php module
-            7. Even if a node.js package exists - we aren't flagging the entire node.js
-            8. Context project is drupal plugin
-            9. mail_project is ruby library
-            10. ldap_project is part of type3 written in php
-            11. user import project is used in drupal (i.e. php)
-            12. root is a c++ project https://github.com/root-project/root/
-            13. xml_sec is a C library for XML security
-            14. rest easy project is ruby library
-            15. hub_project is a ruby library (#1130)
-            16. views_project is a drupal plugin (#1077)
-            17. restful_web_services_project:restful_web_services is a drupal plugin (#1077)
-            18. font_project is a php library (#1166)
-            19. amazon_aws_project is a drupal utility (#1290)
-            20. google android should not be flagged for the base library
-            22. first_project first is an Ethereum smart contract (#1588)
-            23. interact is a php project (#1609)
-            24. finder is drupal plugin (#1626)
-            25. archiver project is a golang module (#1627)
-            26. r_project is the r programming language
+            3. / 4. file and file_project are not assembiles or java libraries
+            5. / 6. Shim is *nix and is not an assembly or java lib.
+            7. date_project is a drupal library
+            8. net dns is a php module
+            9. / 10. Even if a node.js package exists - we aren't flagging the entire node.js
+            11. Context project is drupal plugin
+            12. mail_project is ruby library
+            13. ldap_project is part of type3 written in php
+            14. user import project is used in drupal (i.e. php)
+            15. root is a c++ project https://github.com/root-project/root/
+            16. xml_sec is a C library for XML security
+            17. rest easy project is ruby library
+            18. hub_project is a ruby library (#1130)
+            19. views_project is a drupal plugin (#1077)
+            20. restful_web_services_project:restful_web_services is a drupal plugin (#1077)
+            22. font_project is a php library (#1166)
+            23. amazon_aws_project is a drupal utility (#1290)
+            24. google android should not be flagged for the base library
+            25. first_project first is an Ethereum smart contract (#1588)
+            26. interact is a php project (#1609)
+            27. finder is drupal plugin (#1626)
+            28. archiver project is a golang module (#1627)
+            29. r_project is the r programming language
             27. r_project is the r programming language
-            28. cpe:/a:jwt_project:jwt is a php library (#1697)
-            29. remove FP on git
-            30. remove FP on git
+            30. cpe:/a:jwt_project:jwt is a php library (#1697)
             31. remove FP on git
-            32. Suppresses false positives on .NET mono
-            33. Suppresses false positives on .NET mono
+            32. remove FP on git
+            33. remove FP on git
             34. Suppresses false positives on .NET mono
-            35. app_project is an electron project. #1549
-            36. <cpe>cpe:/a:json-jwt_project:json-jwt</cpe> is a ruby lib #1791
-            37. <cpe>cpe:/a:zip_project:zip</cpe> is an etherium related project #1788
-            38. <cpe>cpe:/a:echo_project:echo</cpe> is a php media wiki project #1786
-            39. <cpe>cpe:/a:util-linux_project:util-linux</cpe> c util on linux #2069
-            40. <cpe>cpe:/a:bitmap_project:bitmap</cpe> is a C library #1961
-            41. <cpe>cpe:/a:security-framework_project:security-framework</cpe> is a rust library
-            42. <cpe>cpe:/a:next:next</cpe> is NeXT system.
-            43. <cpe>cpe:/a:property_pro:property_pro</cpe> is classic ASP
-            44. <cve>CVE-2020-10663</cve> is a ruby vulnerability
-            45. Facebook is not a dependency
-            46. gitlab is not a depenency #2567 and is built using ruby
-            47. DeleGate is a C-language application #2435
-            48. thread_project - etherium token (https://nvd.nist.gov/vuln/detail/CVE-2018-13752) #1718
-            49. data_tools is a python library #1667
-            50. tag project is a GO implemention #3047 & #3043
-            51. kubernetes:kubernetes is a GO implementation #1035 & #1056 & #1880 & #3529 & #3530 &
-            52. aaugustin websockets is a python library #3460
+            35. Suppresses false positives on .NET mono
+            36. Suppresses false positives on .NET mono
+            37. app_project is an electron project. #1549
+            38. <cpe>cpe:/a:json-jwt_project:json-jwt</cpe> is a ruby lib #1791
+            39. <cpe>cpe:/a:zip_project:zip</cpe> is an etherium related project #1788
+            40. <cpe>cpe:/a:echo_project:echo</cpe> is a php media wiki project #1786
+            41. <cpe>cpe:/a:util-linux_project:util-linux</cpe> c util on linux #2069
+            42. <cpe>cpe:/a:bitmap_project:bitmap</cpe> is a C library #1961
+            43. <cpe>cpe:/a:security-framework_project:security-framework</cpe> is a rust library
+            44. <cpe>cpe:/a:next:next</cpe> is NeXT system.
+            45. <cpe>cpe:/a:property_pro:property_pro</cpe> is classic ASP
+            46. <cve>CVE-2020-10663</cve> is a ruby vulnerability
+            47. Facebook is not a dependency
+            48. gitlab is not a depenency #2567 and is built using ruby
+            49. DeleGate is a C-language application #2435
+            50. thread_project - etherium token (https://nvd.nist.gov/vuln/detail/CVE-2018-13752) #1718
+            51. data_tools is a python library #1667
+            52. tag project is a GO implemention #3047 & #3043
+            53. kubernetes:kubernetes is a GO implementation #1035 & #1056 & #1880 & #3529 & #3530 &
+            54. aaugustin websockets is a python library #3460
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
