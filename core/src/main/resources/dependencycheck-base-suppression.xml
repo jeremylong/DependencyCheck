@@ -4468,6 +4468,13 @@
         <packageUrl regex="true">^pkg:maven/io\.qameta\.allure/allure\-httpclient@.*$</packageUrl>
         <cpe>cpe:/a:apache:httpclient</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   file name: google-http-client-apache-v2-1.39.2.jar Issue #3348
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.google\.http\-client/google\-http\-client\-apache\-v2@.*$</packageUrl>
+        <cpe>cpe:/a:apache:httpclient</cpe>
+    </suppress>
 
     <!-- begin cpan support-->
     <suppress base="true">
