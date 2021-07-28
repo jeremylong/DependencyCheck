@@ -475,7 +475,6 @@
             18. font_project is a php library (#1166)
             19. amazon_aws_project is a drupal utility (#1290)
             20. google android should not be flagged for the base library
-            21. ws_project is a node websocket client (#1535)
             22. first_project first is an Ethereum smart contract (#1588)
             23. interact is a php project (#1609)
             24. finder is drupal plugin (#1626)
@@ -533,7 +532,6 @@
         <cpe>cpe:/a:font_project:font</cpe>
         <cpe>cpe:/a:amazon_aws_project:amazon_aws</cpe>
         <cpe>cpe:/a:google:android</cpe>
-        <cpe>cpe:/a:ws_project:ws</cpe>
         <cpe>cpe:/a:first_project:first</cpe>
         <cpe>cpe:/a:interact:interact</cpe>
         <cpe>cpe:/a:finder_project:finder</cpe>
@@ -584,6 +582,7 @@
             12. <cpe>cpe:/a:data-tools_project:data_tools</cpe> is a python project #1961
             13. flow_project reports an Ethereum token issue
             14. ghost CMS is a node.js package (#3203)
+            15. ws_project is a node websocket client (#1535)
         ]]></notes>
         <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)$</filePath>
         <cpe>cpe:/a:dash:dash</cpe>
@@ -602,6 +601,7 @@
         <cpe>cpe:/a:data-tools_project:data_tools</cpe>
         <cpe>cpe:/a:flow_project:flow</cpe>
         <cpe>cpe:/a:ghost:ghost</cpe>
+        <cpe>cpe:/a:ws_project:ws</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
