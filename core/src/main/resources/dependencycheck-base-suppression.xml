@@ -4450,6 +4450,14 @@
         <cpe>cpe:/a:oracle:database</cpe>
         <cpe>cpe:/a:oracle:oracle_database</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+        Suppresses all artifacts of Pivotal java-cfenv modules #3480
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.pivotal\.cfenv/.*@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+    </suppress>
 
     <!-- begin cpan support-->
     <suppress base="true">
