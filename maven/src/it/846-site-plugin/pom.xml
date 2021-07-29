@@ -56,7 +56,7 @@ Copyright (c) 2017 The OWASP Foundation. All Rights Reserved.
         <plugins>
             <plugin>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.6</version>
+                <version>3.7</version>
                 <configuration>
                     <reportPlugins>
                         <plugin>
