@@ -17,16 +17,27 @@
  */
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.w3c.dom.NodeList;
+
 import java.nio.charset.Charset;
+import javax.xml.xpath.*
+import javax.xml.parsers.DocumentBuilderFactory
 
+// Check to see if jackson-databind-2.5.3.jar was identified with a known CVE - using CVE-2018-7489.
 
-// Check to see if jackson-dataformat-xml-2.4.5.jar was identified.
-//TODO change this to xpath and check for CVE-2016-3720
+def countMatches(String xml, String xpathQuery) {
+    def xpath = XPathFactory.newInstance().newXPath()
+    def builder     = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+    def inputStream = new ByteArrayInputStream( xml.bytes )
+    def records     = builder.parse(inputStream).documentElement
+    NodeList nodes       = xpath.evaluate( xpathQuery, records, XPathConstants.NODESET ) as NodeList
+    nodes.getLength();
+}
+
 String log = FileUtils.readFileToString(new File(basedir, "target/dependency-check-report.xml"), Charset.defaultCharset().name());
-int count = StringUtils.countMatches(log, "<name>CVE-2018-1000873</name>");
-if (count == 0){
-    System.out.println(String.format("jackson-dataformat-xml was not identified", count));
+int count = countMatches(log,"/analysis/dependencies/dependency[./fileName = 'jackson-databind-2.5.3.jar']/vulnerabilities/vulnerability[./name = 'CVE-2018-7489']");
+if (count != 1){
+    System.out.println(String.format("jackson-databind CVE-2018-7489 was identified %s times, expected 1", count));
     return false;
 }
 return true;

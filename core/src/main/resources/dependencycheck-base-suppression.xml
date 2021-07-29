@@ -10,13 +10,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per #3471
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.core/jackson\-annotations@.*$</packageUrl>
-        <cpe>cpe:/a:fasterxml:jackson-modules-java8</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
 	    FP per #3331
 	    ]]></notes>
         <packageUrl regex="true">^pkg:npm/%40babel%2Fcli@.*$</packageUrl>
@@ -2350,6 +2343,20 @@
         ]]></notes>
         <gav regex="true">^com\.github\.docker-java:docker-java:.*$</gav>
         <cve>CVE-2017-7297</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        jackson-dataformat-avro/cbor/ion/protobuf/smile are cpe:/a:fasterxml:jackson-dataformat-binary
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.dataformat/jackson\-dataformat\-(ion|cbor|avro|protobuf|smile)@.*$</packageUrl>
+        <cpe>cpe:/a:fasterxml:jackson-dataformat-xml</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+           These only apply to the jackson-dataformat-cbor sub-module
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.dataformat/jackson\-dataformat(?!\-cbor).*@.*$</packageUrl>
+        <cve>CVE-2020-28491</cve>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[

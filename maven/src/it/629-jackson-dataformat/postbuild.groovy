@@ -16,22 +16,39 @@
  * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
  */
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.io.FileUtils
+import org.w3c.dom.NodeList;
+
 import java.nio.charset.Charset;
+import javax.xml.xpath.*
+import javax.xml.parsers.DocumentBuilderFactory
 
+def countMatches(String xml, String xpathQuery) {
+    def xpath = XPathFactory.newInstance().newXPath()
+    def builder     = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+    def inputStream = new ByteArrayInputStream( xml.bytes )
+    def records     = builder.parse(inputStream).documentElement
+    NodeList nodes       = xpath.evaluate( xpathQuery, records, XPathConstants.NODESET ) as NodeList
+    nodes.getLength();
+}
 
-// Check to see if jackson-dataformat-xml-2.4.5.jar was identified.
-//TODO change this to xpath and check for CVE-2018-1000873 and CVE-2018-11307
+// Check to see if jackson-dataformat-cbor-2.10.0.jar was identified with issue while suppressing it for jackson-dataformat-ion-2.10.0.jar
+// both of which map to cpe:2.3:a:fasterxml:jackson-dataformats-binary
+//
 String log = FileUtils.readFileToString(new File(basedir, "target/dependency-check-report.xml"), Charset.defaultCharset().name());
-int count = StringUtils.countMatches(log, "<name>CVE-2018-1000873</name>");
-if (count == 0){
-    System.out.println(String.format("jackson-dataformat-xml was identified %s times, expected 1", count));
+int count = countMatches(log,"/analysis/dependencies/dependency[./fileName = 'jackson-dataformat-cbor-2.10.0.jar']/vulnerabilities/vulnerability[./name = 'CVE-2020-28491']");
+if (count != 1){
+    System.out.println(String.format("jackson-dataformat-cbor CVE-2020-28491 was identified %s times, expected 1", count));
     return false;
 }
-count = StringUtils.countMatches(log, "<name>CVE-2018-11307</name>");
-if (count == 0){
-    System.out.println(String.format("jackson-dataformat-xml was identified %s times, expected 1", count));
+count = countMatches(log,"/analysis/dependencies/dependency[./fileName = 'jackson-dataformat-ion-2.10.0.jar']/vulnerabilities/vulnerability[./name = 'CVE-2020-28491']");
+if (count != 0){
+    System.out.println(String.format("jackson-dataformat-ion CVE-2020-28491 was identified %s times, expected 0", count));
+    return false;
+}
+count = countMatches(log,"/analysis/dependencies/dependency[./fileName = 'jackson-dataformat-ion-2.10.0.jar']");
+if (count != 1){
+    System.out.println(String.format("jackson-dataformat-ion dependency was identified %s times, expected 1", count));
     return false;
 }
 return true;
