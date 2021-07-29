@@ -192,7 +192,9 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
      * analysis
      */
     protected Dependency getMainGemspecDependency(Dependency dependency1, Dependency dependency2) {
-        if (isSameRubyGem(dependency1, dependency2)) {
+        if (Ecosystem.RUBY.equals(dependency1.getEcosystem())
+                && Ecosystem.RUBY.equals(dependency2.getEcosystem())
+                && isSameRubyGem(dependency1, dependency2)) {
             final File lFile = dependency1.getActualFile();
             final File left = lFile.getParentFile();
             if (left != null && left.getName().equalsIgnoreCase("specifications")) {
@@ -234,7 +236,9 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
      * @return the primary swift dependency
      */
     protected Dependency getMainSwiftDependency(Dependency dependency1, Dependency dependency2) {
-        if (isSameSwiftPackage(dependency1, dependency2)) {
+        if (Ecosystem.IOS.equals(dependency1.getEcosystem())
+                && Ecosystem.IOS.equals(dependency2.getEcosystem())
+                && isSameSwiftPackage(dependency1, dependency2)) {
             if (dependency1.getFileName().endsWith(".podspec")) {
                 return dependency1;
             }
@@ -252,18 +256,22 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
      * @return the primary swift dependency
      */
     protected Dependency getMainAndroidDependency(Dependency dependency1, Dependency dependency2) {
-        if (dependency1.isVirtual() || dependency2.isVirtual()) {
-            return null;
-        }
-        if ("classes.jar".equals(dependency2.getActualFile().getName())
-                && "aar".equals(FileUtils.getFileExtension(dependency1.getActualFile().getName()))
-                && dependency2.getFileName().contains(dependency1.getActualFile().getName())) {
-            return dependency1;
-        }
-        if ("classes.jar".equals(dependency1.getActualFile().getName())
-                && "aar".equals(FileUtils.getFileExtension(dependency2.getActualFile().getName()))
-                && dependency1.getFileName().contains(dependency2.getActualFile().getName())) {
-            return dependency2;
+        if (!dependency1.isVirtual()
+                && !dependency2.isVirtual()
+                && Ecosystem.JAVA.equals(dependency1.getEcosystem())
+                && Ecosystem.JAVA.equals(dependency1.getEcosystem())) {
+            String name1 = dependency1.getActualFile().getName();
+            String name2 = dependency2.getActualFile().getName();
+            if ("classes.jar".equals(name2)
+                    && "aar".equals(FileUtils.getFileExtension(name1))
+                    && dependency2.getFileName().contains(name1)) {
+                return dependency1;
+            }
+            if ("classes.jar".equals(name1)
+                    && "aar".equals(FileUtils.getFileExtension(name2))
+                    && dependency1.getFileName().contains(name2)) {
+                return dependency2;
+            }
         }
         return null;
     }
