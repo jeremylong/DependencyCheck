@@ -297,6 +297,11 @@ public final class Settings {
          */
         public static final String ANALYZER_NODE_PACKAGE_ENABLED = "analyzer.node.package.enabled";
         /**
+         * The properties key for configure whether the Node Package analyzer
+         * should skip devDependencies.
+         */
+        public static final String ANALYZER_NODE_PACKAGE_SKIPDEV = "analyzer.node.package.skipdev";
+        /**
          * The properties key for whether the Node Audit analyzer is enabled.
          */
         public static final String ANALYZER_NODE_AUDIT_ENABLED = "analyzer.node.audit.enabled";

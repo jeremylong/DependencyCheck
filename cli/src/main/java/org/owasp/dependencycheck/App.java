@@ -523,6 +523,8 @@ public class App {
         settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_OSSINDEX_CACHE, Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE));
 
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV,
+                cli.hasOption(CliParser.ARGUMENT.NODE_PACKAGE_SKIP_DEV_DEPENDENCIES));
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV,
                 cli.hasOption(CliParser.ARGUMENT.DISABLE_NODE_AUDIT_SKIPDEV));
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED,

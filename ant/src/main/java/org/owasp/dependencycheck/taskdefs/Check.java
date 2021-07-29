@@ -77,6 +77,10 @@ public class Check extends Update {
      */
     private Boolean nodeAuditAnalyzerUseCache;
     /**
+     * Sets whether or not the Node Package Analyzer should skip dev dependencies.
+     */
+    private Boolean nodePackageSkipDevDependencies;
+    /**
      * Sets whether or not the Node Audit Analyzer should use a local cache.
      */
     private Boolean nodeAuditSkipDevDependencies;
@@ -1099,6 +1103,25 @@ public class Check extends Update {
     }
 
     /**
+     * Get the value of nodePackageSkipDevDependencies.
+     *
+     * @return the value of nodePackageSkipDevDependencies
+     */
+    public Boolean isNodePackageAnalyzerSkipDevDependencies() {
+        return nodePackageSkipDevDependencies;
+    }
+
+    /**
+     * Set the value of nodePackageSkipDevDependencies.
+     *
+     * @param nodePackageSkipDevDependencies new value of
+     * nodePackageSkipDevDependencies
+     */
+    public void setNodePackageSkipDevDependencies(Boolean nodePackageSkipDevDependencies) {
+        this.nodePackageSkipDevDependencies = nodePackageSkipDevDependencies;
+    }
+
+    /**
      * Get the value of nodeAuditSkipDevDependencies.
      *
      * @return the value of nodeAuditSkipDevDependencies
@@ -1890,6 +1913,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_CPANFILE_ENABLED, cpanfileAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, nodePackageSkipDevDependencies);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, nodeAuditAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, yarnAuditAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, nodeAuditAnalyzerUseCache);
