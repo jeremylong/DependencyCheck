@@ -275,6 +275,15 @@
     </hint>
     <hint>
         <given>
+            <evidence type="product" source="Manifest" name="bundle-symbolicname" value="cq.quickstart.quickstart.jar.global.apis" />
+        </given>
+        <add>
+            <evidence type="product" source="hint analyzer" name="product" value="experience manager" confidence="HIGHEST"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="adobe" confidence="HIGHEST"/>
+        </add>
+    </hint>
+    <hint>
+        <given>
             <fileName contains="not-yet-commons-ssl-.*" regex="true"/>
         </given>
         <add>

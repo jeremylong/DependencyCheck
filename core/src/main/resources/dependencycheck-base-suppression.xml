@@ -4475,6 +4475,13 @@
         <packageUrl regex="true">^pkg:maven/com\.google\.http\-client/google\-http\-client\-apache\-v2@.*$</packageUrl>
         <cpe>cpe:/a:apache:httpclient</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+      FP CPE match triggered by the hint for issue #3337
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.adobe\.aem/uber\-jar@.*$</packageUrl>
+        <cpe>cpe:/a:adobe:experience_manager_forms</cpe>
+    </suppress>
 
     <!-- begin cpan support-->
     <suppress base="true">
