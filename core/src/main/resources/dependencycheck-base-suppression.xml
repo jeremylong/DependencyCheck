@@ -4482,6 +4482,13 @@
         <packageUrl regex="true">^pkg:maven/com\.adobe\.aem/uber\-jar@.*$</packageUrl>
         <cpe>cpe:/a:adobe:experience_manager_forms</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+      suppress false CPE for mssql-on-azure backend for django #3500
+      ]]></notes>
+        <packageUrl regex="true">^pkg:pypi/mssql\-django@.*$</packageUrl>
+        <cpe>cpe:/a:django_project:django</cpe>
+    </suppress>
 
     <!-- begin cpan support-->
     <suppress base="true">
