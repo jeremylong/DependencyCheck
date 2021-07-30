@@ -4498,6 +4498,13 @@
         <packageUrl regex="true">^pkg:maven/com\.eatthepath/fast\-uuid@.*$</packageUrl>
         <cpe>cpe:/a:fast_ber_project:fast_ber</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   file name: logback-elasticsearch-appender-1.6.jar #3549
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.internetitem/logback\-elasticsearch\-appender@.*$</packageUrl>
+        <cpe>cpe:/a:elasticsearch:elasticsearch</cpe>
+    </suppress>
 
     <!-- begin cpan support-->
     <suppress base="true">
