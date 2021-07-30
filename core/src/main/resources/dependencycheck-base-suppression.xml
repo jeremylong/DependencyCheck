@@ -2619,9 +2619,10 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        false positives per issue #915
+        false positives per issue #915 and #3268
+        xjc-utils is a sub-project of cxf and would get its own CPE assigned just like CXF Fediz subproject for e.g. CVE-2018-8038
         ]]></notes>
-        <gav regex="true">^org\.apache\.cxf\.xjc-utils:cxf-xjc-runtime:.*$</gav>
+        <gav regex="true">^org\.apache\.cxf\.xjc-utils:.*:.*$</gav>
         <cpe>cpe:/a:apache:cxf</cpe>
     </suppress> 
     <suppress base="true">
