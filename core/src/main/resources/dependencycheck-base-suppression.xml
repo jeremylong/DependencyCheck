@@ -4489,6 +4489,13 @@
         <packageUrl regex="true">^pkg:pypi/mssql\-django@.*$</packageUrl>
         <cpe>cpe:/a:django_project:django</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   file name: fast-uuid-0.1.jar #3336
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.eatthepath/fast\-uuid@.*$</packageUrl>
+        <cpe>cpe:/a:fast_ber_project:fast_ber</cpe>
+    </suppress>
 
     <!-- begin cpan support-->
     <suppress base="true">
