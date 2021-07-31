@@ -4506,6 +4506,13 @@
         <packageUrl regex="true">^pkg:maven/com\.internetitem/logback\-elasticsearch\-appender@.*$</packageUrl>
         <cpe>cpe:/a:elasticsearch:elasticsearch</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       xercesImpl-2.12.1.jar as matched by Central Search in the CLI hits a FP CPE match #3253
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.exist\-db\.thirdparty\.xerces/xercesImpl@.*$</packageUrl>
+        <cpe>cpe:/a:exist-db:exist</cpe>
+    </suppress>
 
     <!-- begin cpan support-->
     <suppress base="true">
