@@ -4352,7 +4352,7 @@
         <packageUrl regex="true">^pkg:maven/(?!io.kubernetes).*/.*@.*$</packageUrl>
         <cpe>cpe:/a:kubernetes:java</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
             file name: openshift-model-clusterautoscaling-5.5.0.jar
    ]]></notes>
@@ -4360,7 +4360,7 @@
         <cpe>cpe:/a:redhat:cluster_project</cpe>
         <cpe>cpe:/a:redhat:mod_cluster</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         file name: openshift-model-machineconfig-5.5.0.jar
    ]]></notes>
