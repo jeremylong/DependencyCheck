@@ -4513,6 +4513,14 @@
         <packageUrl regex="true">^pkg:maven/org\.exist\-db\.thirdparty\.xerces/xercesImpl@.*$</packageUrl>
         <cpe>cpe:/a:exist-db:exist</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       python-json-logger hits a FP CPE match #3233
+   ]]></notes>
+        <packageUrl regex="true">^pkg:pypi/python\-json\-logger@.*$</packageUrl>
+        <cpe>cpe:/a:python:python</cpe>
+        <cpe>cpe:/a:python_software_foundation:python</cpe>
+    </suppress>
 
     <!-- begin cpan support-->
     <suppress base="true">
