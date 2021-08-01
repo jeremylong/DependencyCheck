@@ -4507,11 +4507,19 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-       python-json-logger hits a FP CPE match #3233
+       several python-* PyPI packages hit a FP CPE match #3233 & #3017
+       as Python itself is not a PyPI package suppress it with a broad regex
    ]]></notes>
-        <packageUrl regex="true">^pkg:pypi/python\-json\-logger@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:pypi/python\-.*$</packageUrl>
         <cpe>cpe:/a:python:python</cpe>
         <cpe>cpe:/a:python_software_foundation:python</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        python-keycloak gets mistaken for the keycloak cpe #3017
+        ]]></notes>
+        <packageUrl regex="true">^pkg:pypi/python\-keycloak@.*$</packageUrl>
+        <cpe>cpe:/a:keycloak:keycloak</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
