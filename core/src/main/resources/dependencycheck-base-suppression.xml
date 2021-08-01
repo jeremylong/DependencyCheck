@@ -4535,6 +4535,13 @@
         <packageUrl regex="true">^pkg:maven/org\.sonarsource\.java/.*$</packageUrl>
         <cpe>cpe:/a:sonarsource:sonarqube</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       Struts annotations is not the struts framework, but a separately versions annotations API library #3088
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.struts/struts\-annotations@.*$</packageUrl>
+        <cpe>cpe:/a:apache:struts</cpe>
+    </suppress>
 
     <!-- begin cpan support-->
     <suppress base="true">
