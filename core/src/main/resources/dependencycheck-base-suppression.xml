@@ -1808,14 +1808,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        false positive per issue #796
-        ]]></notes>
-        <gav regex="true">^org\.eclipse\.jetty:jetty-io:.*$</gav>
-        <cpe>cpe:/a:jetty:jetty</cpe>
-        <cpe>cpe:/a:eclipse:jetty</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
         drop wizard false positives
         ]]></notes>
         <gav regex="true">org\.eclipse\.jetty\.http2:http2-hpack:.*</gav>
