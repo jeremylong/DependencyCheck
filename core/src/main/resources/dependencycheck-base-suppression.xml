@@ -4528,6 +4528,13 @@
         <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-kubernetes\-fabric8\-autoconfig@.*$</packageUrl>
         <cpe>cpe:/a:vmware:spring_cloud_config</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            The sonar java analyzer is a separate project from the SonarQube server project #3086
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.sonarsource\.java/.*$</packageUrl>
+        <cpe>cpe:/a:sonarsource:sonarqube</cpe>
+    </suppress>
 
     <!-- begin cpan support-->
     <suppress base="true">
