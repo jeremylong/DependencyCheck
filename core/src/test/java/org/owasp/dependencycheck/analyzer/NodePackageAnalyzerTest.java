@@ -264,8 +264,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
         engine.addDependency(packageJson);
         analyzer.analyze(packageJson, engine);
 
-        final boolean isMac = System.getProperty("os.name").toLowerCase().indexOf("mac") < 0;
-
+        //final boolean isMac = !System.getProperty("os.name").toLowerCase().contains("mac");
         assertEquals("Expected 1 dependencies", 1, engine.getDependencies().length);
     }
 }

@@ -297,6 +297,11 @@ public final class Settings {
          */
         public static final String ANALYZER_NODE_PACKAGE_ENABLED = "analyzer.node.package.enabled";
         /**
+         * The properties key for configure whether the Node Package analyzer
+         * should skip devDependencies.
+         */
+        public static final String ANALYZER_NODE_PACKAGE_SKIPDEV = "analyzer.node.package.skipdev";
+        /**
          * The properties key for whether the Node Audit analyzer is enabled.
          */
         public static final String ANALYZER_NODE_AUDIT_ENABLED = "analyzer.node.audit.enabled";
@@ -681,6 +686,15 @@ public final class Settings {
          * The properties key for the Sonatype OSS Index password.
          */
         public static final String ANALYZER_OSSINDEX_PASSWORD = "analyzer.ossindex.password";
+        /**
+         * The properties key for the Sonatype OSS batch-size.
+         */
+        public static final String ANALYZER_OSSINDEX_BATCH_SIZE = "analyzer.ossindex.batch.size";
+        /**
+         * The properties key for the Sonatype OSS Request Delay.
+         * Amount of time in seconds to wait before executing a request against the Sonatype OSS Rest API
+         */
+        public static final String ANALYZER_OSSINDEX_REQUEST_DELAY = "analyzer.ossindex.request.delay";
         /**
          * The properties key setting whether or not the JSON and XML reports
          * will be pretty printed.

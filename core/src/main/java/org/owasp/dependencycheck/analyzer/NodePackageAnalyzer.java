@@ -306,7 +306,8 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
 
     /**
      * Checks if the given dependency should be skipped.
-     *  @see NodePackageAnalyzer#shouldSkipDependency(java.lang.String,
+     *
+     * @see NodePackageAnalyzer#shouldSkipDependency(java.lang.String,
      * java.lang.String, boolean, boolean)
      * @param name the name of the dependency to test
      * @param version the version of the dependency to test
@@ -333,10 +334,12 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
             String parentPackage, Engine engine) throws AnalysisException {
         if (json.containsKey("dependencies")) {
             final JsonObject deps = json.getJsonObject("dependencies");
+            boolean skipDev = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, false);
             for (Map.Entry<String, JsonValue> entry : deps.entrySet()) {
                 final String name = entry.getKey();
                 final String version;
                 boolean optional = false;
+                boolean isDev = false;
 
                 final File base = Paths.get(baseDir.getPath(), "node_modules", name).toFile();
                 final File f = new File(base, PACKAGE_JSON);
@@ -346,11 +349,12 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                     jo = (JsonObject) entry.getValue();
                     version = jo.getString("version");
                     optional = jo.getBoolean("optional", false);
+                    isDev = jo.getBoolean("dev", false);
                 } else {
                     version = ((JsonString) entry.getValue()).getString();
                 }
 
-                if (shouldSkipDependency(name, version, optional, f.exists())) {
+                if ((isDev && skipDev) || shouldSkipDependency(name, version, optional, f.exists())) {
                     continue;
                 }
 
