@@ -199,7 +199,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
         relatedDependency.getRelatedDependencies().stream()
                 .forEach(dependency::addRelatedDependency);
         relatedDependency.clearRelatedDependencies();
-        
+
         if (copyVulnsAndIds) {
             relatedDependency.getSoftwareIdentifiers()
                     .forEach(dependency::addSoftwareIdentifier);
