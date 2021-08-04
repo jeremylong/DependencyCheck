@@ -257,11 +257,28 @@
     </hint>
     <hint>
         <given>
+            <fileName contains="jenkins.*\.war" regex="true"/>
+        </given>
+        <remove>
+            <evidence type="version" name="hudson-version" value=".*" regex="true"/>
+        </remove>
+    </hint>
+    <hint>
+        <given>
             <fileName contains="htmlcleaner-.*" regex="true"/>
         </given>
         <add>
             <evidence type="product" source="hint analyzer" name="product" value="htmlcleaner" confidence="HIGHEST"/>
             <evidence type="vendor" source="hint analyzer" name="vendor" value="htmlcleaner_project" confidence="HIGHEST"/>
+        </add>
+    </hint>
+    <hint>
+        <given>
+            <evidence type="product" source="Manifest" name="bundle-symbolicname" value="cq.quickstart.quickstart.jar.global.apis" />
+        </given>
+        <add>
+            <evidence type="product" source="hint analyzer" name="product" value="experience manager" confidence="HIGHEST"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="adobe" confidence="HIGHEST"/>
         </add>
     </hint>
     <hint>
