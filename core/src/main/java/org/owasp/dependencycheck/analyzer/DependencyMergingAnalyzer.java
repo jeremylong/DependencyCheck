@@ -192,7 +192,8 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
      * analysis
      */
     protected Dependency getMainGemspecDependency(Dependency dependency1, Dependency dependency2) {
-        if (Ecosystem.RUBY.equals(dependency1.getEcosystem())
+        if (dependency1 != null || dependency2 != null
+                && Ecosystem.RUBY.equals(dependency1.getEcosystem())
                 && Ecosystem.RUBY.equals(dependency2.getEcosystem())
                 && isSameRubyGem(dependency1, dependency2)) {
             final File lFile = dependency1.getActualFile();
@@ -236,7 +237,8 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
      * @return the primary swift dependency
      */
     protected Dependency getMainSwiftDependency(Dependency dependency1, Dependency dependency2) {
-        if (Ecosystem.IOS.equals(dependency1.getEcosystem())
+        if (dependency1 != null && dependency2 != null
+                && Ecosystem.IOS.equals(dependency1.getEcosystem())
                 && Ecosystem.IOS.equals(dependency2.getEcosystem())
                 && isSameSwiftPackage(dependency1, dependency2)) {
             if (dependency1.getFileName().endsWith(".podspec")) {
