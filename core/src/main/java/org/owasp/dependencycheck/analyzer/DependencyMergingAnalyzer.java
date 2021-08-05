@@ -192,7 +192,7 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
      * analysis
      */
     protected Dependency getMainGemspecDependency(Dependency dependency1, Dependency dependency2) {
-        if (dependency1 != null || dependency2 != null
+        if (dependency1 != null && dependency2 != null
                 && Ecosystem.RUBY.equals(dependency1.getEcosystem())
                 && Ecosystem.RUBY.equals(dependency2.getEcosystem())
                 && isSameRubyGem(dependency1, dependency2)) {
