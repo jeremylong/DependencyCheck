@@ -145,8 +145,8 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
         relatedDependency.getEvidence(EvidenceType.VERSION).forEach((e) -> dependency.addEvidence(EvidenceType.VERSION, e));
 
         relatedDependency.getRelatedDependencies().stream()
-                .peek(dependency::addRelatedDependency)
-                .forEach((d) -> relatedDependency.removeRelatedDependencies(d));
+                .forEach(dependency::addRelatedDependency);
+        relatedDependency.clearRelatedDependencies();
         dependency.addAllProjectReferences(relatedDependency.getProjectReferences());
         if (dependenciesToRemove != null) {
             dependenciesToRemove.add(relatedDependency);

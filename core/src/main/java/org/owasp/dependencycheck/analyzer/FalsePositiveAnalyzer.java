@@ -170,7 +170,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                     removalSet.add(i);
                 }
             }
-            removalSet.forEach((i) -> dependency.removeVulnerableSoftwareIdentifier(i));
+            removalSet.forEach(dependency::removeVulnerableSoftwareIdentifier);
         }
     }
 
@@ -271,6 +271,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      */
     protected void removeBadMatches(Dependency dependency) {
 
+        final Set<Identifier> toRemove = new HashSet<>();
         /* TODO - can we utilize the pom's groupid and artifactId to filter??? most of
          * these are due to low quality data.  Other idea would be to say any CPE
          * found based on LOW confidence evidence should have a different CPE type? (this
@@ -305,7 +306,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         || dependency.getFileName().toLowerCase().endsWith(".rpm")
                         || dependency.getFileName().toLowerCase().endsWith(".ear")
                         || dependency.getFileName().toLowerCase().endsWith(".war"))) {
-                    dependency.removeVulnerableSoftwareIdentifier(i);
+                    toRemove.add(i);
                 } else if ((("jquery".equals(cpe.getVendor()) && "jquery".equals(cpe.getProduct()))
                         || ("prototypejs".equals(cpe.getVendor()) && "prototype".equals(cpe.getProduct()))
                         || ("yahoo".equals(cpe.getVendor()) && "yui".equals(cpe.getProduct())))
@@ -313,7 +314,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         || dependency.getFileName().toLowerCase().endsWith("pom.xml")
                         || dependency.getFileName().toLowerCase().endsWith(".dll")
                         || dependency.getFileName().toLowerCase().endsWith(".exe"))) {
-                    dependency.removeVulnerableSoftwareIdentifier(i);
+                    toRemove.add(i);
                 } else if ((("microsoft".equals(cpe.getVendor()) && "excel".equals(cpe.getProduct()))
                         || ("microsoft".equals(cpe.getVendor()) && "word".equals(cpe.getProduct()))
                         || ("microsoft".equals(cpe.getVendor()) && "visio".equals(cpe.getProduct()))
@@ -324,10 +325,10 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         || dependency.getFileName().toLowerCase().endsWith(".ear")
                         || dependency.getFileName().toLowerCase().endsWith(".war")
                         || dependency.getFileName().toLowerCase().endsWith("pom.xml"))) {
-                    dependency.removeVulnerableSoftwareIdentifier(i);
+                    toRemove.add(i);
                 } else if (("apache".equals(cpe.getVendor()) && "maven".equals(cpe.getProduct()))
                         && !dependency.getFileName().toLowerCase().matches("maven-core-[\\d.]+\\.jar")) {
-                    dependency.removeVulnerableSoftwareIdentifier(i);
+                    toRemove.add(i);
                 } else if (("m-core".equals(cpe.getVendor()) && "m-core".equals(cpe.getProduct()))) {
                     boolean found = false;
                     for (Evidence e : dependency.getEvidence(EvidenceType.PRODUCT)) {
@@ -345,11 +346,11 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         }
                     }
                     if (!found) {
-                        dependency.removeVulnerableSoftwareIdentifier(i);
+                        toRemove.add(i);
                     }
                 } else if (("jboss".equals(cpe.getVendor()) && "jboss".equals(cpe.getProduct()))
                         && !dependency.getFileName().toLowerCase().matches("jboss-?[\\d.-]+(GA)?\\.jar")) {
-                    dependency.removeVulnerableSoftwareIdentifier(i);
+                    toRemove.add(i);
                 } else if ("java-websocket_project".equals(cpe.getVendor())
                         && "java-websocket".equals(cpe.getProduct())) {
                     boolean found = false;
@@ -360,11 +361,12 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         }
                     }
                     if (!found) {
-                        dependency.removeVulnerableSoftwareIdentifier(i);
+                        toRemove.add(i);
                     }
                 }
             }
         }
+        toRemove.stream().forEach(dependency::removeVulnerableSoftwareIdentifier);
     }
 
     /**
@@ -397,7 +399,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         }
                     });
         }
-        identifiersToRemove.forEach((i) -> dependency.removeVulnerableSoftwareIdentifier(i));
+        identifiersToRemove.forEach(dependency::removeVulnerableSoftwareIdentifier);
     }
 
     /**

@@ -747,6 +747,13 @@ public class Dependency extends EvidenceCollection implements Serializable {
     }
 
     /**
+     * Clears the {@link #relatedDependencies}.
+     */
+    public synchronized void clearRelatedDependencies() {
+        relatedDependencies.clear();
+    }
+
+    /**
      * Get the unmodifiable set of projectReferences.
      *
      * @return the unmodifiable set of projectReferences

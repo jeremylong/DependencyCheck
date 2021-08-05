@@ -196,20 +196,17 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
             final Dependency relatedDependency, final Set<Dependency> dependenciesToRemove,
             final boolean copyVulnsAndIds) {
         dependency.addRelatedDependency(relatedDependency);
-        relatedDependency.getRelatedDependencies().stream().forEach(d -> {
-            dependency.addRelatedDependency(d);
-            relatedDependency.removeRelatedDependencies(d);
-        });
+        relatedDependency.getRelatedDependencies().stream()
+                .forEach(dependency::addRelatedDependency);
+        relatedDependency.clearRelatedDependencies();
+
         if (copyVulnsAndIds) {
-            relatedDependency.getSoftwareIdentifiers().forEach((id) -> {
-                dependency.addSoftwareIdentifier(id);
-            });
-            relatedDependency.getVulnerableSoftwareIdentifiers().forEach((id) -> {
-                dependency.addVulnerableSoftwareIdentifier(id);
-            });
-            relatedDependency.getVulnerabilities().forEach((v) -> {
-                dependency.addVulnerability(v);
-            });
+            relatedDependency.getSoftwareIdentifiers()
+                    .forEach(dependency::addSoftwareIdentifier);
+            relatedDependency.getVulnerableSoftwareIdentifiers()
+                    .forEach(dependency::addVulnerableSoftwareIdentifier);
+            relatedDependency.getVulnerabilities()
+                    .forEach(dependency::addVulnerability);
         }
         //TODO this null check was added for #1296 - but I believe this to be related to virtual dependencies
         //  we may want to merge project references on virtual dependencies...
