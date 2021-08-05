@@ -271,7 +271,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      */
     protected void removeBadMatches(Dependency dependency) {
 
-        Set<Identifier> toRemove = new HashSet<>();
+        final Set<Identifier> toRemove = new HashSet<>();
         /* TODO - can we utilize the pom's groupid and artifactId to filter??? most of
          * these are due to low quality data.  Other idea would be to say any CPE
          * found based on LOW confidence evidence should have a different CPE type? (this
