@@ -261,9 +261,9 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
         if (!dependency1.isVirtual()
                 && !dependency2.isVirtual()
                 && Ecosystem.JAVA.equals(dependency1.getEcosystem())
-                && Ecosystem.JAVA.equals(dependency1.getEcosystem())) {
-            String name1 = dependency1.getActualFile().getName();
-            String name2 = dependency2.getActualFile().getName();
+                && Ecosystem.JAVA.equals(dependency2.getEcosystem())) {
+            final String name1 = dependency1.getActualFile().getName();
+            final String name2 = dependency2.getActualFile().getName();
             if ("classes.jar".equals(name2)
                     && "aar".equals(FileUtils.getFileExtension(name1))
                     && dependency2.getFileName().contains(name1)) {
