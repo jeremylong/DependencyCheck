@@ -154,7 +154,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             "today",
             "tstamp",
             "dstamp",
-            "eclipse-sourcereferences");
+            "eclipse-sourcereferences",
+            "kotlin-version");
     /**
      * Deprecated Jar manifest attribute, that is, nonetheless, useful for
      * analysis.
