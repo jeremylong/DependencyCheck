@@ -158,7 +158,7 @@ Copyright (c) 2012 - Jeremy Long
         <commons-collections.version>3.2.2</commons-collections.version>
         <org.apache.velocity.version>2.3</org.apache.velocity.version>
         <plexus-sec-dispatcher.version>1.4</plexus-sec-dispatcher.version>
-        <maven-dependency-tree.version>3.0.1</maven-dependency-tree.version>
+        <maven-dependency-tree.version>3.1.0</maven-dependency-tree.version>
         <org.glassfish.javax.json.version>1.1.4</org.glassfish.javax.json.version>
         <maven-artifact-transfer.version>0.13.1</maven-artifact-transfer.version>
         <groovy-all.version>2.4.21</groovy-all.version>
