@@ -245,8 +245,8 @@ public class DependencyMergingAnalyzerTest extends BaseTest {
                     break;
                 }
             }
-            dependency2.setEcosystem(Ecosystem.JAVA);
             assertNotNull("classes.jar was not found", dependency2);
+            dependency2.setEcosystem(Ecosystem.JAVA);
             DependencyMergingAnalyzer instance = new DependencyMergingAnalyzer();
             Dependency expResult = dependency1;
             Dependency result = instance.getMainAndroidDependency(dependency1, dependency2);
