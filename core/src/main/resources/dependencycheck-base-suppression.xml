@@ -720,10 +720,11 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        Suppresses false positives per #1566.
+        Suppresses false positives per #1566 and #3580.
         ]]></notes>
-        <gav regex="true">^org\.springframework\.boot:spring-boot:.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/.*$</packageUrl>
         <cpe>cpe:/a:springsource:spring_framework</cpe>
+        <cpe>cpe:/a:vmware:spring_integration</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
