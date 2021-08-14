@@ -4548,6 +4548,14 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+     spring-cloud-deployer-* false CPE matches discovered in handling #3579
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-deployer\-.*$</packageUrl>
+        <cpe>cpe:/a:vmware:spring_cloud_config</cpe>
+        <cpe>cpe:/a:vmware:spring_cloud_data_flow</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
             The sonar java analyzer is a separate project from the SonarQube server project #3086
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.sonarsource\.java/.*$</packageUrl>
