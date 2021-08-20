@@ -38,6 +38,7 @@ _odc_completions()
             --disableCmake
             --disableCocoapodsAnalyzer
             --disableComposer
+            --disableFileName
             --disableGolangDep
             --disableGolangMod
             --disableJar
