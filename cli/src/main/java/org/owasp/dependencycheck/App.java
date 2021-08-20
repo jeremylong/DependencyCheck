@@ -483,6 +483,8 @@ public class App {
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_ASSEMBLY, Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_BUNDLE_AUDIT, Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_FILE_NAME_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_FILENAME, Settings.KEYS.ANALYZER_FILE_NAME_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_MIX_AUDIT, Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_OPENSSL_ENABLED,
