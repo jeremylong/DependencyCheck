@@ -159,8 +159,14 @@ public class JsonArrayFixingInputStream extends InputStream {
                         //the stream was advanced - so check if buffer[0] has a comma
                         if (!hasTrailingComma(-1)) {
                             //this only works because the output always
-                            // has a \n following a closing brace...
-                            buffer[bufferStart] = ',';
+                            // has a \n following a closing/open brace...
+                            if (buffer[bufferStart] == 10 || buffer[bufferStart] == 13) {
+                                buffer[bufferStart] = ',';
+                            } else if (buffer[bufferStart]=='{' &&
+                                    (buffer[bufferStart+1] == 10 || buffer[bufferStart+1] == 13)) {
+                                buffer[bufferStart] = ',';
+                                buffer[bufferStart+1] = '{';
+                            }
                         }
                     } else if (needsTrailingBrace) {
                         needsTrailingBrace = false;

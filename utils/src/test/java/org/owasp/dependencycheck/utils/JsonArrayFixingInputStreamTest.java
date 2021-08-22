@@ -300,11 +300,11 @@ public class JsonArrayFixingInputStreamTest {
     @Test
     public void testIsWhiteSpace() throws Exception {
         JsonArrayFixingInputStream instance = new JsonArrayFixingInputStream(null);
-        assertFalse(instance.isWhiteSpace((byte)'a'));
-        assertTrue(instance.isWhiteSpace((byte)'\n'));
-        assertTrue(instance.isWhiteSpace((byte)'\t'));
-        assertTrue(instance.isWhiteSpace((byte)'\r'));
-        assertTrue(instance.isWhiteSpace((byte)' '));
+        assertFalse(instance.isWhiteSpace((byte) 'a'));
+        assertTrue(instance.isWhiteSpace((byte) '\n'));
+        assertTrue(instance.isWhiteSpace((byte) '\t'));
+        assertTrue(instance.isWhiteSpace((byte) '\r'));
+        assertTrue(instance.isWhiteSpace((byte) ' '));
     }
 
 }
