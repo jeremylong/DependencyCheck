@@ -4651,5 +4651,12 @@
         <cve>CVE-2008-0660</cve>
         <cve>CVE-2014-6392</cve>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive as per #3594
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.nimbusds/lang\-tag@.*$</packageUrl>
+        <cpe>cpe:/a:nim-lang:nim-lang</cpe>
+    </suppress>
     <!-- end cpan support -->
 </suppressions>
