@@ -119,21 +119,7 @@ public class JsonArrayFixingInputStream extends InputStream {
         return bufferAvailable > 0;
     }
 
-    /**
-     * Searches for the offset from the buffer start for the next closing curly
-     * brace.
-     *
-     * @return the offset if found; otherwise <code>-1</code>
-     */
-    private int getClosingBraceOffset() {
-        for (int pos = bufferStart; pos < BUFFER_SIZE && pos < (bufferStart + bufferAvailable); pos++) {
-            if (buffer[pos] == '}') {
-                return pos - bufferStart;
-            }
-        }
-        return -1;
-    }
-
+    //CSOFF: NestedIfDepth
     /**
      * Increments the buffer start and appropriately inserts any necessary
      * needed curly braces or commas.
@@ -159,8 +145,14 @@ public class JsonArrayFixingInputStream extends InputStream {
                         //the stream was advanced - so check if buffer[0] has a comma
                         if (!hasTrailingComma(-1)) {
                             //this only works because the output always
-                            // has a \n following a closing brace...
-                            buffer[bufferStart] = ',';
+                            // has a \n following a closing/open brace...
+                            if (buffer[bufferStart] == 10 || buffer[bufferStart] == 13) {
+                                buffer[bufferStart] = ',';
+                            } else if (buffer[bufferStart] == '{'
+                                    && (buffer[bufferStart + 1] == 10 || buffer[bufferStart + 1] == 13)) {
+                                buffer[bufferStart] = ',';
+                                buffer[bufferStart + 1] = '{';
+                            }
                         }
                     } else if (needsTrailingBrace) {
                         needsTrailingBrace = false;
@@ -173,6 +165,22 @@ public class JsonArrayFixingInputStream extends InputStream {
             bufferStart += 1;
             bufferAvailable -= 1;
         }
+    }
+    //CSON: NestedIfDepth
+
+    /**
+     * Searches for the offset from the buffer start for the next closing curly
+     * brace.
+     *
+     * @return the offset if found; otherwise <code>-1</code>
+     */
+    private int getClosingBraceOffset() {
+        for (int pos = bufferStart; pos < BUFFER_SIZE && pos < (bufferStart + bufferAvailable); pos++) {
+            if (buffer[pos] == '}') {
+                return pos - bufferStart;
+            }
+        }
+        return -1;
     }
 
     @Override
@@ -235,9 +243,12 @@ public class JsonArrayFixingInputStream extends InputStream {
     }
 
     /**
-     * Tests if the buffer has a trailing comma after having just output a closing curly brace.
+     * Tests if the buffer has a trailing comma after having just output a
+     * closing curly brace.
+     *
      * @param start the position to start checking the buffer from
-     * @return <code>true</code> if there is a trailing comma; otherwise <code>false</code>
+     * @return <code>true</code> if there is a trailing comma; otherwise
+     * <code>false</code>
      */
     private boolean hasTrailingComma(int start) {
         return (bufferAvailable >= 1 && buffer[start + 1] == ',')
@@ -246,8 +257,10 @@ public class JsonArrayFixingInputStream extends InputStream {
 
     /**
      * Tests if the byte passed in is a white space character.
+     *
      * @param c the byte representing the character to test
-     * @return <code>true</code> if the byte is white space; otherwise <code>false</code>
+     * @return <code>true</code> if the byte is white space; otherwise
+     * <code>false</code>
      */
     protected boolean isWhiteSpace(byte c) {
         switch (c) {
