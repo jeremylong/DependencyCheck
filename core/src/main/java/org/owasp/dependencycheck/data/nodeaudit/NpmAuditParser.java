@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.json.JSONException;
 
 /**
  * Parser for NPM Audit API response. This parser is derived from:
@@ -43,8 +44,10 @@ public class NpmAuditParser {
      *
      * @param jsonResponse the JSON node to parse
      * @return an AdvisoryResults object
+     * @throws org.json.JSONException thrown if the JSON is not of the expected
+     * schema
      */
-    public List<Advisory> parse(JSONObject jsonResponse) {
+    public List<Advisory> parse(JSONObject jsonResponse) throws JSONException {
         LOGGER.debug("Parsing JSON node");
         final List<Advisory> advisories = new ArrayList<>();
         final JSONObject jsonAdvisories = jsonResponse.getJSONObject("advisories");
@@ -62,8 +65,10 @@ public class NpmAuditParser {
      *
      * @param object the JSON object containing the advisory
      * @return the Advisory object
+     * @throws org.json.JSONException thrown if the JSON is not of the expected
+     * schema
      */
-    private Advisory parseAdvisory(JSONObject object) {
+    private Advisory parseAdvisory(JSONObject object) throws JSONException {
         final Advisory advisory = new Advisory();
         advisory.setId(object.getInt("id"));
         advisory.setOverview(object.optString("overview", null));

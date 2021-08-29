@@ -43,6 +43,10 @@ public class WriteLock implements AutoCloseable {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(WriteLock.class);
     /**
+     * Secure random number generator.
+     */
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    /**
      * How long to sleep waiting for the lock.
      */
     public static final int SLEEP_DURATION = 10000;
@@ -78,7 +82,6 @@ public class WriteLock implements AutoCloseable {
      * The name of the lock file.
      */
     private final String lockFileName;
-
     /**
      * The shutdown hook used to remove the lock file in case of an unexpected
      * shutdown.
@@ -124,8 +127,7 @@ public class WriteLock implements AutoCloseable {
     public WriteLock(Settings settings, boolean isLockable, String lockFileName) throws WriteLockException {
         this.settings = settings;
         final byte[] random = new byte[16];
-        final SecureRandom gen = new SecureRandom();
-        gen.nextBytes(random);
+        SECURE_RANDOM.nextBytes(random);
         magic = Checksum.getHex(random);
         this.isLockable = isLockable;
         this.lockFileName = lockFileName;
@@ -194,7 +196,7 @@ public class WriteLock implements AutoCloseable {
                 }
             } while (++ctr < MAX_SLEEP_COUNT && (lock == null || !lock.isValid()));
             if (lock == null || !lock.isValid()) {
-                throw new WriteLockException("Unable to obtain the update lock, skipping the database update. Skippinig the database update.");
+                throw new WriteLockException("Unable to obtain the update lock, skipping the database update. Skipping the database update.");
             }
         } catch (IOException ex) {
             throw new WriteLockException(ex.getMessage(), ex);

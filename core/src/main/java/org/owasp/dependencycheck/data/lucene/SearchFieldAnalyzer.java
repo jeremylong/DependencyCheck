@@ -102,9 +102,11 @@ public class SearchFieldAnalyzer extends Analyzer {
      * Resets the analyzer. This must be manually called between searching and
      * indexing.
      *
-     * @throws IOException thrown if there is an error reseting the tokenizer
+     * @throws IOException thrown if there is an error resetting the tokenizer
      */
     public void reset() throws IOException {
-        concatenatingFilter.clear();
+        if (concatenatingFilter != null) {
+            concatenatingFilter.clear();
+        }
     }
 }

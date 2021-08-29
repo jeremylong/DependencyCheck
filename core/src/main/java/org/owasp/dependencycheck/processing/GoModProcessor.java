@@ -63,7 +63,8 @@ public class GoModProcessor extends Processor<InputStream> {
                     -> engine.addDependency(goDep.toDependency(goDependency))
             );
         } catch (AnalysisException ex) {
-            analysisException = ex;
+            analysisException = new AnalysisException("Error analyzing '" + goDependency.getFilePath()
+                    + "'; " + ex.getMessage(), ex.getCause());
         }
     }
 

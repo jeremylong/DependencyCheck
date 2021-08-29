@@ -154,20 +154,17 @@ public final class FileUtils {
      *
      * @param resource path
      * @return the input stream for the given resource
+     * @throws FileNotFoundException if the file could not be found
      */
     @Nullable
-    public static InputStream getResourceAsStream(@NotNull String resource) {
+    public static InputStream getResourceAsStream(@NotNull String resource) throws FileNotFoundException {
         final ClassLoader classLoader = FileUtils.class.getClassLoader();
         final InputStream inputStream = classLoader != null
                 ? classLoader.getResourceAsStream(resource)
                 : ClassLoader.getSystemResourceAsStream(resource);
 
         if (inputStream == null) {
-            try {
-                return new FileInputStream(resource);
-            } catch (final FileNotFoundException e) {
-                LOGGER.error("Unable to create an Input Stream for " + resource, e);
-            }
+            return new FileInputStream(resource);
         }
         return inputStream;
     }

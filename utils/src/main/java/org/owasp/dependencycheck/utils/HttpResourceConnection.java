@@ -237,7 +237,7 @@ public class HttpResourceConnection implements AutoCloseable {
                 } finally {
                     conn = null;
                 }
-                throw new TooManyRequestsException("Download fialed - too many connection requests");
+                throw new TooManyRequestsException("Download failed - too many connection requests");
             } else if (status != 200) {
                 try {
                     conn.disconnect();

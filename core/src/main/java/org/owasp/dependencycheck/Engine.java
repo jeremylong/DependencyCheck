@@ -26,7 +26,7 @@ import org.owasp.dependencycheck.analyzer.AnalysisPhase;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.AnalyzerService;
 import org.owasp.dependencycheck.analyzer.FileTypeAnalyzer;
-import org.owasp.dependencycheck.data.nvdcve.ConnectionFactory;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseManager;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
@@ -80,6 +80,7 @@ import static org.owasp.dependencycheck.analyzer.AnalysisPhase.POST_INFORMATION_
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.PRE_FINDING_ANALYSIS;
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.PRE_IDENTIFIER_ANALYSIS;
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.PRE_INFORMATION_COLLECTION;
+import org.owasp.dependencycheck.analyzer.DependencyBundlingAnalyzer;
 
 /**
  * Scans files, directories, etc. for Dependencies. Analyzers are loaded and
@@ -519,6 +520,7 @@ public class Engine implements FileFilter, AutoCloseable {
         return scanFile(file, null);
     }
 
+    //CSOFF: NestedIfDepth
     /**
      * Scans a specified file. If a dependency is identified it is added to the
      * dependency collection.
@@ -543,8 +545,9 @@ public class Engine implements FileFilter, AutoCloseable {
                 if (sha1 != null) {
                     for (Dependency existing : dependencies) {
                         if (sha1.equals(existing.getSha1sum())) {
-                            if (existing.getFileName().contains(": ") || dependency.getFileName().contains(": ")) {
-                                //TODO this won't be quite right 100% of the time. Its possible that the ": " would get added later
+                            if (existing.getDisplayFileName().contains(": ")
+                                    || dependency.getDisplayFileName().contains(": ")
+                                    || dependency.getActualFilePath().contains("dctemp")) {
                                 continue;
                             }
                             found = true;
@@ -553,9 +556,18 @@ public class Engine implements FileFilter, AutoCloseable {
                             }
                             if (existing.getActualFilePath() != null && dependency.getActualFilePath() != null
                                     && !existing.getActualFilePath().equals(dependency.getActualFilePath())) {
-                                existing.addRelatedDependency(dependency);
-                            } else {
-                                dependency = existing;
+
+                                if (DependencyBundlingAnalyzer.firstPathIsShortest(existing.getFilePath(), dependency.getFilePath())) {
+                                    DependencyBundlingAnalyzer.mergeDependencies(existing, dependency, null);
+                                    return null;
+                                } else {
+                                    //Merging dependency<-existing could be complicated. Instead analyze them seperately
+                                    //and possibly merge them at the end.
+                                    found = false;
+                                }
+
+                            } else { //somehow we scanned the same file twice?
+                                return null;
                             }
                             break;
                         }
@@ -571,6 +583,7 @@ public class Engine implements FileFilter, AutoCloseable {
         }
         return dependency;
     }
+    //CSON: NestedIfDepth
 
     /**
      * Runs the analyzers against all of the dependencies. Since the mutable
@@ -675,7 +688,7 @@ public class Engine implements FileFilter, AutoCloseable {
             }
         } else {
             try {
-                if (ConnectionFactory.isH2Connection(settings) && !ConnectionFactory.h2DataFileExists(settings)) {
+                if (DatabaseManager.isH2Connection(settings) && !DatabaseManager.h2DataFileExists(settings)) {
                     throw new ExceptionCollection(new NoDataException("Autoupdate is disabled and the database does not exist"), true);
                 } else {
                     openDatabase(true, true);
@@ -698,7 +711,7 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     private void throwFatalDatabaseException(DatabaseException ex, final List<Throwable> exceptions) throws ExceptionCollection {
         final String msg;
-        if (ex.getMessage().contains("Unable to connect") && ConnectionFactory.isH2Connection(settings)) {
+        if (ex.getMessage().contains("Unable to connect") && DatabaseManager.isH2Connection(settings)) {
             msg = "Unable to connect to the database - if this error persists it may be "
                     + "due to a corrupt database. Consider running `purge` to delete the existing database";
         } else {
@@ -722,7 +735,7 @@ public class Engine implements FileFilter, AutoCloseable {
         final ExecutorService executorService = getExecutorService(analyzer);
 
         try {
-            final int timeout = settings.getInt(Settings.KEYS.ANALYSIS_TIMEOUT, 20);
+            final int timeout = settings.getInt(Settings.KEYS.ANALYSIS_TIMEOUT, 180);
             final List<Future<Void>> results = executorService.invokeAll(analysisTasks, timeout, TimeUnit.MINUTES);
 
             // ensure there was no exception during execution
@@ -845,7 +858,7 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     public void doUpdates(boolean remainOpen) throws UpdateException, DatabaseException {
         if (mode.isDatabaseRequired()) {
-            try (WriteLock dblock = new WriteLock(getSettings(), ConnectionFactory.isH2Connection(getSettings()))) {
+            try (WriteLock dblock = new WriteLock(getSettings(), DatabaseManager.isH2Connection(getSettings()))) {
                 //lock is not needed as we already have the lock held
                 openDatabase(false, false);
                 LOGGER.info("Checking for updates");
@@ -951,11 +964,11 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     public void openDatabase(boolean readOnly, boolean lockRequired) throws DatabaseException {
         if (mode.isDatabaseRequired() && database == null) {
-            try (WriteLock dblock = new WriteLock(getSettings(), lockRequired && ConnectionFactory.isH2Connection(settings))) {
+            try (WriteLock dblock = new WriteLock(getSettings(), lockRequired && DatabaseManager.isH2Connection(settings))) {
                 if (readOnly
-                        && ConnectionFactory.isH2Connection(settings)
+                        && DatabaseManager.isH2Connection(settings)
                         && settings.getString(Settings.KEYS.DB_CONNECTION_STRING).contains("file:%s")) {
-                    final File db = ConnectionFactory.getH2DataFile(settings);
+                    final File db = DatabaseManager.getH2DataFile(settings);
                     if (db.isFile()) {
                         final File temp = settings.getTempDirectory();
                         final File tempDB = new File(temp, db.getName());
@@ -978,6 +991,7 @@ public class Engine implements FileFilter, AutoCloseable {
             } catch (WriteLockException ex) {
                 throw new DatabaseException("Failed to obtain lock - unable to open database", ex);
             }
+            database.open();
         }
     }
 
@@ -1165,6 +1179,7 @@ public class Engine implements FileFilter, AutoCloseable {
             throw new UnsupportedOperationException("Cannot generate report in evidence collection mode.");
         }
         final DatabaseProperties prop = database.getDatabaseProperties();
+
         final ReportGenerator r = new ReportGenerator(applicationName, groupId, artifactId, version,
                 dependencies, getAnalyzers(), prop, settings, exceptions);
         try {

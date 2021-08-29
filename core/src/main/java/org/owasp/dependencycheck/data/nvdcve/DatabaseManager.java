@@ -32,6 +32,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.concurrent.ThreadSafe;
 import org.anarres.jdiagnostics.DefaultQuery;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.utils.DBUtils;
 import org.owasp.dependencycheck.utils.DependencyVersion;
@@ -50,12 +51,12 @@ import org.slf4j.LoggerFactory;
  * @author Jeremy Long
  */
 @ThreadSafe
-public final class ConnectionFactory {
+public final class DatabaseManager {
 
     /**
      * The Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseManager.class);
     /**
      * Resource location for SQL file used to create the database schema.
      */
@@ -93,14 +94,33 @@ public final class ConnectionFactory {
      * The configured settings.
      */
     private final Settings settings;
+    /**
+     * Flag indicating if the database connection is for an H2 database.
+     */
+    private boolean isH2;
+    /**
+     * Flag indicating if the database connection is for an Oracle database.
+     */
+    private boolean isOracle;
+    /**
+     * The database product name.
+     */
+    private String databaseProductName;
+    /**
+     * The database connection pool.
+     */
+    private BasicDataSource connectionPool;
 
     /**
      * Private constructor for this factory class; no instance is ever needed.
      *
      * @param settings the configured settings
+     * @throws DatabaseException thrown if we are unable to connect to the
+     * database
      */
-    public ConnectionFactory(Settings settings) {
+    public DatabaseManager(Settings settings) throws DatabaseException {
         this.settings = settings;
+        initialize();
     }
 
     /**
@@ -110,28 +130,26 @@ public final class ConnectionFactory {
      * @throws DatabaseException thrown if we are unable to connect to the
      * database
      */
-    public synchronized void initialize() throws DatabaseException {
-        //this only needs to be called once.
-        if (connectionString != null) {
-            return;
-        }
+    private void initialize() throws DatabaseException {
         final boolean autoUpdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);
         Connection conn = null;
         try {
             //load the driver if necessary
             final String driverName = settings.getString(Settings.KEYS.DB_DRIVER_NAME, "");
-            final String driverPath = settings.getString(Settings.KEYS.DB_DRIVER_PATH, "");
-            LOGGER.debug("Loading driver '{}'", driverName);
-            try {
-                if (!driverPath.isEmpty()) {
-                    LOGGER.debug("Loading driver from: {}", driverPath);
-                    driver = DriverLoader.load(driverName, driverPath);
-                } else {
-                    driver = DriverLoader.load(driverName);
+            if (!driverName.isEmpty()) {
+                final String driverPath = settings.getString(Settings.KEYS.DB_DRIVER_PATH, "");
+                LOGGER.debug("Loading driver '{}'", driverName);
+                try {
+                    if (!driverPath.isEmpty()) {
+                        LOGGER.debug("Loading driver from: {}", driverPath);
+                        driver = DriverLoader.load(driverName, driverPath);
+                    } else {
+                        driver = DriverLoader.load(driverName);
+                    }
+                } catch (DriverLoadException ex) {
+                    LOGGER.debug("Unable to load database driver", ex);
+                    throw new DatabaseException("Unable to load database driver", ex);
                 }
-            } catch (DriverLoadException ex) {
-                LOGGER.debug("Unable to load database driver", ex);
-                throw new DatabaseException("Unable to load database driver", ex);
             }
             userName = settings.getString(Settings.KEYS.DB_USER, "dcuser");
             //yes, yes - hard-coded password - only if there isn't one in the properties file.
@@ -144,9 +162,10 @@ public final class ConnectionFactory {
                 LOGGER.debug("Unable to retrieve the database connection string", ex);
                 throw new DatabaseException("Unable to retrieve the database connection string", ex);
             }
+            isH2 = isH2Connection(connectionString);
             boolean shouldCreateSchema = false;
             try {
-                if (autoUpdate && connectionString.startsWith("jdbc:h2:file:")) { //H2
+                if (autoUpdate && isH2) {
                     shouldCreateSchema = !h2DataFileExists();
                     LOGGER.debug("Need to create DB Structure: {}", shouldCreateSchema);
                 }
@@ -181,6 +200,8 @@ public final class ConnectionFactory {
                     throw new DatabaseException("Unable to connect to the database", ex);
                 }
             }
+            databaseProductName = determineDatabaseProductName(conn);
+            isOracle = "oracle".equals(databaseProductName);
             if (shouldCreateSchema) {
                 try {
                     createTables(conn);
@@ -207,12 +228,29 @@ public final class ConnectionFactory {
     }
 
     /**
+     * Tries to determine the product name of the database.
+     *
+     * @param conn the database connection
+     * @return the product name of the database if successful, {@code null} else
+     */
+    private String determineDatabaseProductName(Connection conn) {
+        try {
+            final String databaseProductName = conn.getMetaData().getDatabaseProductName().toLowerCase();
+            LOGGER.debug("Database product: {}", databaseProductName);
+            return databaseProductName;
+        } catch (SQLException se) {
+            LOGGER.warn("Problem determining database product!", se);
+            return null;
+        }
+    }
+
+    /**
      * Cleans up resources and unloads any registered database drivers. This
      * needs to be called to ensure the driver is unregistered prior to the
      * finalize method being called as during shutdown the class loader used to
      * load the driver may be unloaded prior to the driver being de-registered.
      */
-    public synchronized void cleanup() {
+    public void cleanup() {
         if (driver != null) {
             DriverLoader.cleanup(driver);
             driver = null;
@@ -220,26 +258,6 @@ public final class ConnectionFactory {
         connectionString = null;
         userName = null;
         password = null;
-    }
-
-    /**
-     * Constructs a new database connection object per the database
-     * configuration.
-     *
-     * @return a database connection object
-     * @throws DatabaseException thrown if there is an exception loading the
-     * database connection
-     */
-    public synchronized Connection getConnection() throws DatabaseException {
-        initialize();
-        final Connection conn;
-        try {
-            conn = DriverManager.getConnection(connectionString, userName, password);
-        } catch (SQLException ex) {
-            LOGGER.debug("", ex);
-            throw new DatabaseException("Unable to connect to the database", ex);
-        }
-        return conn;
     }
 
     /**
@@ -282,12 +300,30 @@ public final class ConnectionFactory {
     }
 
     /**
+     * Returns the database product name.
+     *
+     * @return the database product name
+     */
+    public String getDatabaseProductName() {
+        return databaseProductName;
+    }
+
+    /**
      * Determines if the connection string is for an H2 database.
      *
      * @return true if the connection string is for an H2 database
      */
     public boolean isH2Connection() {
-        return isH2Connection(settings);
+        return isH2;
+    }
+
+    /**
+     * Determines if the connection string is for an Oracle database.
+     *
+     * @return true if the connection string is for an Oracle database
+     */
+    public boolean isOracle() {
+        return isOracle;
     }
 
     /**
@@ -306,7 +342,17 @@ public final class ConnectionFactory {
             LOGGER.debug("Unable to get connectionn string", ex);
             return false;
         }
-        return connStr.startsWith("jdbc:h2:file:");
+        return isH2Connection(connStr);
+    }
+
+    /**
+     * Determines if the connection string is for an H2 database.
+     *
+     * @param connectionString the connection string
+     * @return true if the connection string is for an H2 database
+     */
+    public static boolean isH2Connection(String connectionString) {
+        return connectionString.startsWith("jdbc:h2:file:");
     }
 
     /**
@@ -460,6 +506,56 @@ public final class ConnectionFactory {
         } finally {
             DBUtils.closeResultSet(rs);
             DBUtils.closeStatement(ps);
+        }
+    }
+
+    /**
+     * Opens the database connection pool.
+     */
+    public void open() {
+        connectionPool = new BasicDataSource();
+        if (driver != null) {
+            connectionPool.setDriver(driver);
+        }
+        connectionPool.setUrl(connectionString);
+        connectionPool.setUsername(userName);
+        connectionPool.setPassword(password);
+    }
+
+    /**
+     * Closes the database connection pool.
+     */
+    public void close() {
+        try {
+            connectionPool.close();
+        } catch (SQLException ex) {
+            LOGGER.debug("Error closing the connection pool", ex);
+        }
+        connectionPool = null;
+    }
+
+    /**
+     * Returns if the connection pool is open.
+     *
+     * @return if the connection pool is open
+     */
+    public boolean isOpen() {
+        return connectionPool != null;
+    }
+
+    /**
+     * Constructs a new database connection object per the database
+     * configuration.
+     *
+     * @return a database connection object
+     * @throws DatabaseException thrown if there is an exception obtaining the
+     * database connection
+     */
+    public Connection getConnection() throws DatabaseException {
+        try {
+            return connectionPool.getConnection();
+        } catch (SQLException ex) {
+            throw new DatabaseException("Error connecting to the database", ex);
         }
     }
 }

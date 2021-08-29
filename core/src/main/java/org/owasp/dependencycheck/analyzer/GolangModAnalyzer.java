@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.json.stream.JsonParsingException;
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.processing.GoModProcessor;
@@ -282,23 +283,35 @@ public class GolangModAnalyzer extends AbstractFileTypeAnalyzer {
         final int exitValue;
         final File parentFile = dependency.getActualFile().getParentFile();
         final Process process = launchGoListReadonly(parentFile);
+        String error = null;
         try (GoModProcessor processor = new GoModProcessor(dependency, engine);
                 ProcessReader processReader = new ProcessReader(process, processor)) {
             processReader.readAll();
-            final String error = processReader.getError();
+            error = processReader.getError();
             if (!StringUtils.isBlank(error)) {
-                LOGGER.warn("Warnings from `go`: {}", error);
+                LOGGER.warn("While analyzing `{}` `go` generated the following warnings:\n{}", dependency.getFilePath(), error);
             }
             exitValue = process.exitValue();
             if (exitValue < 0 || exitValue > 1) {
-                final String msg = String.format("Unexpected exit code from go process; exit code: %s", exitValue);
+                final String msg = String.format("Error analyzing '%s'; Unexpected exit code from go process; exit code: %s",
+                        dependency.getFilePath(), exitValue);
                 throw new AnalysisException(msg);
             }
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
-            throw new AnalysisException("go process interrupted", ie);
+            throw new AnalysisException("go process interrupted while analyzing '" + dependency.getFilePath() + "'", ie);
         } catch (IOException ex) {
-            throw new AnalysisException("Error closing the go process", ex);
+            throw new AnalysisException("Error closing the go process while analyzing '" + dependency.getFilePath() + "'", ex);
+        } catch (JsonParsingException ex) {
+            final String msg;
+            if (error != null) {
+                msg = String.format("Error analyzing '%s'; Unable to process output from `go list -json -m -mod=readonly all`; "
+                        + "the command reported the following errors: %s", dependency.getFilePath(), error);
+            } else {
+                msg = String.format("Error analyzing '%s'; Unable to process output from `go list -json -m -mod=readonly all`; "
+                        + "please validate that the command runs without errors.", dependency.getFilePath());
+            }
+            throw new AnalysisException(msg, ex);
         }
     }
 }

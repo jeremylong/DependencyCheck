@@ -69,7 +69,7 @@ public class UrlEcosystemMapper {
      * @return the ecosystem
      */
     public String getEcosystem(DefCveItem cve) {
-        References references = Optional.ofNullable(cve)
+        final References references = Optional.ofNullable(cve)
                 .map(DefCveItem::getCve)
                 .map(CVEJSON40Min11::getReferences)
                 .orElse(null);

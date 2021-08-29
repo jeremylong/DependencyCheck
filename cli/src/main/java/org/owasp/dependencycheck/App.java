@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -48,6 +47,7 @@ import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
+import java.util.TreeSet;
 import org.owasp.dependencycheck.utils.SeverityUtil;
 
 /**
@@ -303,6 +303,7 @@ public class App {
                         || (v.getUnscoredSeverity() != null && SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) >= cvssFailScore)
                         || (cvssFailScore <= 0.0f)) { //safety net to fail on any if for some reason the above misses on 0
                     retCode = 1;
+                    break;
                 }
             }
         }
@@ -318,7 +319,7 @@ public class App {
      * @return returns the set of identified files
      */
     private Set<File> scanAntStylePaths(List<String> antStylePaths, int symLinkDepth, String[] excludes) {
-        final Set<File> paths = new HashSet<>();
+        final Set<File> paths = new TreeSet<>();
         for (String file : antStylePaths) {
             LOGGER.debug("Scanning {}", file);
             final DirectoryScanner scanner = new DirectoryScanner();
@@ -389,7 +390,7 @@ public class App {
             engine.doUpdates();
         }
     }
-
+    //CSOFF: MethodLength
     /**
      * Updates the global Settings.
      *
@@ -484,12 +485,16 @@ public class App {
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_ASSEMBLY, Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_BUNDLE_AUDIT, Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_FILE_NAME_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_FILENAME, Settings.KEYS.ANALYZER_FILE_NAME_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_MIX_AUDIT, Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_OPENSSL_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_OPENSSL, Settings.KEYS.ANALYZER_OPENSSL_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_COMPOSER, Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_CPANFILE_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CPAN, Settings.KEYS.ANALYZER_CPANFILE_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_GO_DEP, Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED,
@@ -507,6 +512,8 @@ public class App {
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_RETIRE_JS, Settings.KEYS.ANALYZER_RETIREJS_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_SWIFT, Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_RESOLVED_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_SWIFT_RESOLVED, Settings.KEYS.ANALYZER_SWIFT_PACKAGE_RESOLVED_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_COCOAPODS, Settings.KEYS.ANALYZER_COCOAPODS_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED,
@@ -520,6 +527,8 @@ public class App {
         settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_OSSINDEX_CACHE, Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE));
 
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV,
+                cli.hasOption(CliParser.ARGUMENT.NODE_PACKAGE_SKIP_DEV_DEPENDENCIES));
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV,
                 cli.hasOption(CliParser.ARGUMENT.DISABLE_NODE_AUDIT_SKIPDEV));
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED,
@@ -597,6 +606,7 @@ public class App {
       return null;
     }
 
+    //CSON: MethodLength
     /**
      * Creates a file appender and adds it to logback.
      *

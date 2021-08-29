@@ -24,6 +24,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceType;
@@ -144,15 +145,19 @@ public class DependencyMergingAnalyzerTest extends BaseTest {
 
         dependency1 = new Dependency(new File("specifications/some.gemspec"), true);
         dependency1.setPackagePath("path");
+        dependency1.setEcosystem(Ecosystem.RUBY);
         dependency2 = new Dependency(new File("another.gemspec"), true);
+        dependency2.setEcosystem(Ecosystem.RUBY);
         dependency2.setPackagePath("path");
         expResult = dependency1;
         result = instance.getMainGemspecDependency(dependency1, dependency2);
         assertEquals(expResult, result);
 
         dependency1 = new Dependency(new File("some.gemspec"), true);
+        dependency1.setEcosystem(Ecosystem.RUBY);
         dependency1.setPackagePath("path");
         dependency2 = new Dependency(new File("specifications/another.gemspec"), true);
+        dependency2.setEcosystem(Ecosystem.RUBY);
         dependency2.setPackagePath("path");
         expResult = dependency2;
         result = instance.getMainGemspecDependency(dependency1, dependency2);
@@ -194,16 +199,20 @@ public class DependencyMergingAnalyzerTest extends BaseTest {
         assertEquals(expResult, result);
 
         dependency1 = new Dependency(new File("some.podspec"), true);
+        dependency1.setEcosystem(Ecosystem.IOS);
         dependency1.setPackagePath("path");
         dependency2 = new Dependency(new File("Package.swift"), true);
+        dependency2.setEcosystem(Ecosystem.IOS);
         dependency2.setPackagePath("path");
         expResult = dependency1;
         result = instance.getMainSwiftDependency(dependency1, dependency2);
         assertEquals(expResult, result);
 
         dependency1 = new Dependency(new File("Package.swift"), true);
+        dependency1.setEcosystem(Ecosystem.IOS);
         dependency1.setPackagePath("path");
         dependency2 = new Dependency(new File("some.podspec"), true);
+        dependency2.setEcosystem(Ecosystem.IOS);
         dependency2.setPackagePath("path");
         expResult = dependency2;
         result = instance.getMainSwiftDependency(dependency1, dependency2);
@@ -221,8 +230,9 @@ public class DependencyMergingAnalyzerTest extends BaseTest {
         ArchiveAnalyzer aa = null;
         try (Engine engine = new Engine(Engine.Mode.EVIDENCE_COLLECTION, getSettings())) {
             Dependency dependency1 = new Dependency(BaseTest.getResourceAsFile(this, "aar-1.0.0.aar"));
+            dependency1.setEcosystem(Ecosystem.JAVA);
             aa = new ArchiveAnalyzer();
-            
+
             aa.initialize(getSettings());
             aa.accept(dependency1.getActualFile());
             aa.prepareAnalyzer(engine);
@@ -236,6 +246,7 @@ public class DependencyMergingAnalyzerTest extends BaseTest {
                 }
             }
             assertNotNull("classes.jar was not found", dependency2);
+            dependency2.setEcosystem(Ecosystem.JAVA);
             DependencyMergingAnalyzer instance = new DependencyMergingAnalyzer();
             Dependency expResult = dependency1;
             Dependency result = instance.getMainAndroidDependency(dependency1, dependency2);
@@ -266,8 +277,10 @@ public class DependencyMergingAnalyzerTest extends BaseTest {
         Dependency result = instance.getMainDotnetDependency(dependency1, dependency2);
         assertEquals(expResult, result);
         dependency2.setName("log4net");
-        expResult = dependency2;
+        expResult = dependency1;
         result = instance.getMainDotnetDependency(dependency1, dependency2);
+        assertEquals(expResult, result);
+        result = instance.getMainDotnetDependency(dependency2, dependency1);
         assertEquals(expResult, result);
     }
 

@@ -182,6 +182,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
      * @return the path to `yarn`
      */
     private String getYarn() {
+        final String value;
         synchronized (this) {
             if (yarnPath == null) {
                 final String path = getSettings().getString(Settings.KEYS.ANALYZER_YARN_PATH);
@@ -197,8 +198,9 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
                     }
                 }
             }
+            value = yarnPath;
         }
-        return yarnPath;
+        return value;
     }
 
     private JsonObject fetchYarnAuditJson(Dependency dependency, boolean skipDevDependencies) throws AnalysisException {

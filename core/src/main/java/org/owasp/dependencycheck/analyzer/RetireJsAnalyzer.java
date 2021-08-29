@@ -187,7 +187,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
             final File filepath = new File(url.getPath());
             repoFile = new File(getSettings().getDataDirectory(), filepath.getName());
             if (!repoFile.isFile() || repoFile.length() <= 1L) {
-                    LOGGER.warn("Retire JS repository is empty or missing - attempting to force the update");
+                LOGGER.warn("Retire JS repository is empty or missing - attempting to force the update");
                 repoEmpty = true;
                 getSettings().setBoolean(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, true);
             }
@@ -275,6 +275,9 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+        if (dependency.isVirtual()) {
+            return;
+        }
         try (InputStream fis = new FileInputStream(dependency.getActualFile())) {
             final byte[] fileContent = IOUtils.toByteArray(fis);
             final ScannerFacade scanner = new ScannerFacade(jsRepository);

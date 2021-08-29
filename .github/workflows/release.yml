@@ -25,22 +25,22 @@ jobs:
         run: |
           cat <(echo -e "${{ secrets.OSSRH_GPG_SECRET_KEY }}") | gpg --batch --import
           gpg --list-secret-keys --keyid-format LONG
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2.3.4
       - name: Check Maven Cache
         id: maven-cache
-        uses: actions/cache@v2.1.5
+        uses: actions/cache@v2.1.6
         with:
           path: ~/.m2/repository/
           key: mvn-repo
       - name: Check Local Maven Cache
         id: maven-it-cache
-        uses: actions/cache@v2.1.5
+        uses: actions/cache@v2.1.6
         with:
           path: maven/target/local-repo
           key: mvn-it-repo
       - name: Check ODC Data Cache
         id: odc-data-cache
-        uses: actions/cache@v2.1.5
+        uses: actions/cache@v2.1.6
         with:
           path: core/target/data
           key: odc-data
@@ -141,18 +141,18 @@ jobs:
     steps:
       - name: Check Maven Cache
         id: maven-cache
-        uses: actions/cache@v2.1.5
+        uses: actions/cache@v2.1.6
         with:
           path: ~/.m2/repository/
           key: mvn-repo
       - name: Check Docker ODC Cache
         id: docker-odc-cache
-        uses: actions/cache@v2.1.5
+        uses: actions/cache@v2.1.6
         with:
           path: ~/OWASP-Dependency-Check
           key: docker-repo
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
         with:
           ref: release
       - name: Download release build
@@ -176,7 +176,7 @@ jobs:
     needs: build
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
         with:
           ref: release
       - name: Get version
@@ -190,7 +190,7 @@ jobs:
           name: archive-release
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/create-release@v1.1.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -198,15 +198,13 @@ jobs:
           release_name: Version ${{ env.VERSION }}
           body: |
             Changes in this Release
-            - Resolved issue with Sarif report (#3243)
-            - Resolved issue with Ruby Bundle Audit (#3256)
-            - Several minor bug fixes and updates to reduce false positives
-            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/26?closed=1).
+            - Resolved issue with database connections introduced in 6.2.0 (see https://github.com/jeremylong/DependencyCheck/issues/3432).
+            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/30?closed=1).
           draft: false
           prerelease: false
       - name: Upload CLI
         id: upload-release-cli
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -216,7 +214,7 @@ jobs:
           asset_content_type: application/zip
       - name: Upload CLI signature
         id: upload-release-cli-sig 
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -226,7 +224,7 @@ jobs:
           asset_content_type: text/plain
       - name: Upload ANT
         id: upload-release-ant 
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -236,7 +234,7 @@ jobs:
           asset_content_type: application/zip
       - name: Upload ANT signature
         id: upload-release-ant-sig
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -251,7 +249,7 @@ jobs:
     needs: build
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
         with:
           ref: release
       - name: Download Site
@@ -263,7 +261,7 @@ jobs:
         run: ls -R
         working-directory: target
       - name: Deploy gh-pages
-        uses: JamesIves/github-pages-deploy-action@4.1.1
+        uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
           branch: gh-pages
           folder: target/staging
@@ -274,7 +272,7 @@ jobs:
     needs: [docker, publish, release]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
         with:
           ref: main
       - name: Configure Git user

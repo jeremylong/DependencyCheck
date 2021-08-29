@@ -78,13 +78,10 @@ public final class CveDB implements AutoCloseable {
     private static final Logger LOGGER = LoggerFactory.getLogger(CveDB.class);
 
     /**
-     * The database connection factory.
+     * The database connection manager.
      */
-    private final ConnectionFactory connectionFactory;
-    /**
-     * Database connection
-     */
-    private Connection connection;
+    private final DatabaseManager databaseManager;
+
     /**
      * The bundle of statements used when accessing the database.
      */
@@ -94,15 +91,6 @@ public final class CveDB implements AutoCloseable {
      * table.
      */
     private DatabaseProperties databaseProperties;
-    /**
-     * The prepared statements.
-     */
-    private final EnumMap<PreparedStatementCveDb, PreparedStatement> preparedStatements = new EnumMap<>(PreparedStatementCveDb.class);
-
-    /**
-     * A reference to the vulnerable software builder.
-     */
-    private final VulnerableSoftwareBuilder vulnerableSoftwareBuilder = new VulnerableSoftwareBuilder();
     /**
      * The filter for 2.3 CPEs in the CVEs - we don't import unless we get a
      * match.
@@ -224,7 +212,15 @@ public final class CveDB implements AutoCloseable {
         /**
          * Key for SQL Statement.
          */
-        MERGE_CPE_ECOSYSTEM
+        MERGE_CPE_ECOSYSTEM,
+        /**
+         * Key for SQL Statement.
+         */
+        DELETE_UNUSED_DICT_CPE,
+        /**
+         * Key for SQL Statement.
+         */
+        ADD_DICT_CPE
     }
 
     /**
@@ -239,50 +235,19 @@ public final class CveDB implements AutoCloseable {
         this.settings = settings;
         this.cpeStartsWithFilter = settings.getString(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER, "cpe:2.3:a:");
         this.cveItemConverter = new CveItemOperator(cpeStartsWithFilter);
-        connectionFactory = new ConnectionFactory(settings);
-        open();
+        databaseManager = new DatabaseManager(settings);
+        statementBundle = databaseManager.getDatabaseProductName() != null
+                ? ResourceBundle.getBundle("data/dbStatements", new Locale(databaseManager.getDatabaseProductName()))
+                : ResourceBundle.getBundle("data/dbStatements");
+        isOracle = databaseManager.isOracle();
     }
 
     /**
-     * Tries to determine the product name of the database.
-     *
-     * @param conn the database connection
-     * @return the product name of the database if successful, {@code null} else
+     * Opens the database connection pool.
      */
-    private String determineDatabaseProductName(Connection conn) {
-        try {
-            final String databaseProductName = conn.getMetaData().getDatabaseProductName().toLowerCase();
-            LOGGER.debug("Database product: {}", databaseProductName);
-            return databaseProductName;
-        } catch (SQLException se) {
-            LOGGER.warn("Problem determining database product!", se);
-            return null;
-        }
-    }
-
-    /**
-     * Opens the database connection. If the database does not exist, it will
-     * create a new one.
-     *
-     * @throws DatabaseException thrown if there is an error opening the
-     * database connection
-     */
-    private synchronized void open() throws DatabaseException {
-        try {
-            if (!isOpen()) {
-                connection = connectionFactory.getConnection();
-                final String databaseProductName = determineDatabaseProductName(this.connection);
-                isOracle = "oracle".equals(databaseProductName);
-                statementBundle = databaseProductName != null
-                        ? ResourceBundle.getBundle("data/dbStatements", new Locale(databaseProductName))
-                        : ResourceBundle.getBundle("data/dbStatements");
-                prepareStatements();
-                databaseProperties = new DatabaseProperties(this);
-            }
-        } catch (DatabaseException e) {
-            releaseResources();
-            throw e;
-        }
+    public void open() {
+        databaseManager.open();
+        databaseProperties = new DatabaseProperties(this);
     }
 
     /**
@@ -290,37 +255,30 @@ public final class CveDB implements AutoCloseable {
      * when it is done being used.
      */
     @Override
-    public synchronized void close() {
+    public void close() {
         if (isOpen()) {
             LOGGER.debug("Closing database");
             clearCache();
             LOGGER.debug("Cache cleared");
-            closeStatements();
-            LOGGER.debug("Statments closed");
             try {
-                connection.close();
+                databaseManager.close();
                 LOGGER.debug("Connection closed");
-            } catch (SQLException ex) {
-                LOGGER.error("There was an error attempting to close the CveDB, see the log for more details.");
-                LOGGER.debug("", ex);
             } catch (Throwable ex) {
                 LOGGER.error("There was an exception attempting to close the CveDB, see the log for more details.");
                 LOGGER.debug("", ex);
             }
             releaseResources();
             LOGGER.debug("Resources released");
-            connectionFactory.cleanup();
+            databaseManager.cleanup();
         }
     }
 
     /**
      * Releases the resources used by CveDB.
      */
-    private synchronized void releaseResources() {
+    private void releaseResources() {
         statementBundle = null;
-        preparedStatements.clear();
         databaseProperties = null;
-        connection = null;
     }
 
     /**
@@ -328,45 +286,66 @@ public final class CveDB implements AutoCloseable {
      *
      * @return whether the database connection is open or closed
      */
-    protected synchronized boolean isOpen() {
-        return connection != null;
-    }
-
-    /**
-     * Prepares all statements to be used.
-     *
-     * @throws DatabaseException thrown if there is an error preparing the
-     * statements
-     */
-    private void prepareStatements() throws DatabaseException {
-        for (PreparedStatementCveDb key : values()) {
-            final PreparedStatement preparedStatement = prepareStatement(key);
-            if (preparedStatement != null) {
-                preparedStatements.put(key, preparedStatement);
-            }
-        }
+    public boolean isOpen() {
+        return databaseManager.isOpen();
     }
 
     /**
      * Creates a prepared statement from the given key. The SQL is stored in a
      * properties file and the key is used to lookup the specific query.
      *
+     * @param connection the database connection
+     * @param key the key to select the prepared statement from the properties
+     * file
+     * @param parameter the first parameter to pass into the statement
+     * @return the prepared statement
+     * @throws DatabaseException throw if there is an error generating the
+     * prepared statement
+     */
+    private PreparedStatement getPreparedStatement(Connection connection, PreparedStatementCveDb key, String parameter) throws DatabaseException, SQLException {
+        PreparedStatement preparedStatement = getPreparedStatement(connection, key);
+        preparedStatement.setString(1, parameter);
+        return preparedStatement;
+    }
+
+    /**
+     * Creates a prepared statement from the given key. The SQL is stored in a
+     * properties file and the key is used to lookup the specific query.
+     *
+     * @param connection the database connection
+     * @param key the key to select the prepared statement from the properties
+     * file
+     * @param parameter the first parameter to pass into the statement
+     * @return the prepared statement
+     * @throws DatabaseException throw if there is an error generating the
+     * prepared statement
+     */
+    private PreparedStatement getPreparedStatement(Connection connection, PreparedStatementCveDb key, int parameter) throws DatabaseException, SQLException {
+        PreparedStatement preparedStatement = getPreparedStatement(connection, key);
+        preparedStatement.setInt(1, parameter);
+        return preparedStatement;
+    }
+
+    /**
+     * Creates a prepared statement from the given key. The SQL is stored in a
+     * properties file and the key is used to lookup the specific query.
+     *
+     * @param connection the database connection
      * @param key the key to select the prepared statement from the properties
      * file
      * @return the prepared statement
      * @throws DatabaseException throw if there is an error generating the
      * prepared statement
      */
-    private PreparedStatement prepareStatement(PreparedStatementCveDb key) throws DatabaseException {
+    private PreparedStatement getPreparedStatement(Connection connection, PreparedStatementCveDb key) throws DatabaseException {
         PreparedStatement preparedStatement = null;
         try {
             final String statementString = statementBundle.getString(key.name());
-//            if (key == INSERT_CPE) {
-//                final String[] returnedColumns = {"id"};
-//                preparedStatement = connection.prepareStatement(statementString, returnedColumns);
-//            } else {
             if (isOracle && key == UPDATE_VULNERABILITY) {
                 preparedStatement = connection.prepareCall(statementString);
+//            } else if (key == INSERT_CPE) {
+//                final String[] returnedColumns = {"id"};
+//                preparedStatement = connection.prepareStatement(statementString, returnedColumns);
             } else {
                 preparedStatement = connection.prepareStatement(statementString);
             }
@@ -375,7 +354,6 @@ public final class CveDB implements AutoCloseable {
                 // resultset at the client https://venkatsadasivam.com/2009/02/01/jdbc-performance-tuning-with-optimal-fetch-size/
                 preparedStatement.setFetchSize(10_000);
             }
-//            }
         } catch (SQLException ex) {
             throw new DatabaseException(ex);
         } catch (MissingResourceException ex) {
@@ -384,43 +362,6 @@ public final class CveDB implements AutoCloseable {
             }
         }
         return preparedStatement;
-    }
-
-    /**
-     * Closes all prepared statements.
-     */
-    private synchronized void closeStatements() {
-        preparedStatements.values().forEach((preparedStatement) -> DBUtils.closeStatement(preparedStatement));
-    }
-
-    /**
-     * Returns the specified prepared statement.
-     *
-     * @param key the prepared statement from {@link PreparedStatementCveDb} to
-     * return
-     * @return the prepared statement
-     * @throws SQLException thrown if a SQL Exception occurs
-     */
-    private synchronized PreparedStatement getPreparedStatement(PreparedStatementCveDb key) throws SQLException {
-        if (!preparedStatements.containsKey(key)) {
-            return null;
-        }
-        final PreparedStatement preparedStatement = preparedStatements.get(key);
-        preparedStatement.clearParameters();
-        return preparedStatement;
-    }
-
-    /**
-     * Commits all completed transactions.
-     *
-     * @throws SQLException thrown if a SQL Exception occurs
-     */
-    @SuppressWarnings("EmptyMethod")
-    public synchronized void commit() throws SQLException {
-        //temporarily remove this as autocommit is on.
-        //if (isOpen()) {
-        //    connection.commit();
-        //}
     }
 
     /**
@@ -441,7 +382,7 @@ public final class CveDB implements AutoCloseable {
      *
      * @return the value of databaseProperties
      */
-    public synchronized DatabaseProperties getDatabaseProperties() {
+    public DatabaseProperties getDatabaseProperties() {
         return databaseProperties;
     }
 
@@ -450,7 +391,7 @@ public final class CveDB implements AutoCloseable {
      *
      * @return the database properties
      */
-    protected synchronized DatabaseProperties reloadProperties() {
+    protected DatabaseProperties reloadProperties() {
         databaseProperties = new DatabaseProperties(this);
         return databaseProperties;
     }
@@ -465,11 +406,10 @@ public final class CveDB implements AutoCloseable {
      * analyzed
      * @return a set of vulnerable software
      */
-    public synchronized Set<CpePlus> getCPEs(String vendor, String product) {
+    public Set<CpePlus> getCPEs(String vendor, String product) {
         final Set<CpePlus> cpe = new HashSet<>();
-        ResultSet rs = null;
-        try {
-            final PreparedStatement ps = getPreparedStatement(SELECT_CPE_ENTRIES);
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement ps = getPreparedStatement(conn, SELECT_CPE_ENTRIES)) {
             if (ps == null) {
                 throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_CPE_ENTRIES);
             }
@@ -477,29 +417,28 @@ public final class CveDB implements AutoCloseable {
             //lang, sw_edition, target_sw, target_hw, other, ecosystem
             ps.setString(1, vendor);
             ps.setString(2, product);
-            rs = ps.executeQuery();
-            final CpeBuilder builder = new CpeBuilder();
-            while (rs.next()) {
-                final Cpe entry = builder
-                        .part(rs.getString(1))
-                        .vendor(rs.getString(2))
-                        .product(rs.getString(3))
-                        .version(rs.getString(4))
-                        .update(rs.getString(5))
-                        .edition(rs.getString(6))
-                        .language(rs.getString(7))
-                        .swEdition(rs.getString(8))
-                        .targetSw(rs.getString(9))
-                        .targetHw(rs.getString(10))
-                        .other(rs.getString(11)).build();
-                final CpePlus plus = new CpePlus(entry, rs.getString(12));
-                cpe.add(plus);
+            try (ResultSet rs = ps.executeQuery()) {
+                final CpeBuilder builder = new CpeBuilder();
+                while (rs.next()) {
+                    final Cpe entry = builder
+                            .part(rs.getString(1))
+                            .vendor(rs.getString(2))
+                            .product(rs.getString(3))
+                            .version(rs.getString(4))
+                            .update(rs.getString(5))
+                            .edition(rs.getString(6))
+                            .language(rs.getString(7))
+                            .swEdition(rs.getString(8))
+                            .targetSw(rs.getString(9))
+                            .targetHw(rs.getString(10))
+                            .other(rs.getString(11)).build();
+                    final CpePlus plus = new CpePlus(entry, rs.getString(12));
+                    cpe.add(plus);
+                }
             }
         } catch (SQLException | CpeParsingException | CpeValidationException ex) {
             LOGGER.error("An unexpected SQL Exception occurred; please see the verbose log for more details.");
             LOGGER.debug("", ex);
-        } finally {
-            DBUtils.closeResultSet(rs);
         }
         return cpe;
     }
@@ -511,23 +450,17 @@ public final class CveDB implements AutoCloseable {
      * @throws DatabaseException thrown when there is an error retrieving the
      * data from the DB
      */
-    public synchronized Set<Pair<String, String>> getVendorProductList() throws DatabaseException {
+    public Set<Pair<String, String>> getVendorProductList() throws DatabaseException {
         final Set<Pair<String, String>> data = new HashSet<>();
-        ResultSet rs = null;
-        try {
-            final PreparedStatement ps = getPreparedStatement(SELECT_VENDOR_PRODUCT_LIST);
-            if (ps == null) {
-                throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_VENDOR_PRODUCT_LIST);
-            }
-            rs = ps.executeQuery();
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement ps = getPreparedStatement(conn, SELECT_VENDOR_PRODUCT_LIST);
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 data.add(new Pair<>(rs.getString(1), rs.getString(2)));
             }
         } catch (SQLException ex) {
             final String msg = "An unexpected SQL Exception occurred; please see the verbose log for more details.";
             throw new DatabaseException(msg, ex);
-        } finally {
-            DBUtils.closeResultSet(rs);
         }
         return data;
     }
@@ -541,23 +474,17 @@ public final class CveDB implements AutoCloseable {
      * @throws DatabaseException thrown when there is an error retrieving the
      * data from the DB
      */
-    public synchronized Set<Pair<String, String>> getVendorProductListForNode() throws DatabaseException {
+    public Set<Pair<String, String>> getVendorProductListForNode() throws DatabaseException {
         final Set<Pair<String, String>> data = new HashSet<>();
-        ResultSet rs = null;
-        try {
-            final PreparedStatement ps = getPreparedStatement(SELECT_VENDOR_PRODUCT_LIST_FOR_NODE);
-            if (ps == null) {
-                throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_VENDOR_PRODUCT_LIST_FOR_NODE);
-            }
-            rs = ps.executeQuery();
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement ps = getPreparedStatement(conn, SELECT_VENDOR_PRODUCT_LIST_FOR_NODE);
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 data.add(new Pair<>(rs.getString(1), rs.getString(2)));
             }
         } catch (SQLException ex) {
             final String msg = "An unexpected SQL Exception occurred; please see the verbose log for more details.";
             throw new DatabaseException(msg, ex);
-        } finally {
-            DBUtils.closeResultSet(rs);
         }
         return data;
     }
@@ -567,23 +494,17 @@ public final class CveDB implements AutoCloseable {
      *
      * @return the properties from the database
      */
-    public synchronized Properties getProperties() {
+    public Properties getProperties() {
         final Properties prop = new Properties();
-        ResultSet rs = null;
-        try {
-            final PreparedStatement ps = getPreparedStatement(SELECT_PROPERTIES);
-            if (ps == null) {
-                throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_PROPERTIES);
-            }
-            rs = ps.executeQuery();
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement ps = getPreparedStatement(conn, SELECT_PROPERTIES);
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 prop.setProperty(rs.getString(1), rs.getString(2));
             }
         } catch (SQLException ex) {
             LOGGER.error("An unexpected SQL Exception occurred; please see the verbose log for more details.");
             LOGGER.debug("", ex);
-        } finally {
-            DBUtils.closeResultSet(rs);
         }
         return prop;
     }
@@ -594,30 +515,32 @@ public final class CveDB implements AutoCloseable {
      * @param key the property key
      * @param value the property value
      */
-    public synchronized void saveProperty(String key, String value) {
+    public void saveProperty(String key, String value) {
         clearCache();
-        try {
-            final PreparedStatement mergeProperty = getPreparedStatement(MERGE_PROPERTY);
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement mergeProperty = getPreparedStatement(conn, MERGE_PROPERTY)) {
             if (mergeProperty != null) {
                 mergeProperty.setString(1, key);
                 mergeProperty.setString(2, value);
                 mergeProperty.execute();
             } else {
                 // No Merge statement, so doing an Update/Insert...
-                final PreparedStatement updateProperty = getPreparedStatement(UPDATE_PROPERTY);
-                if (updateProperty == null) {
-                    throw new SQLException("Database query does not exist in the resource bundle: " + UPDATE_PROPERTY);
-                }
-                updateProperty.setString(1, value);
-                updateProperty.setString(2, key);
-                if (updateProperty.executeUpdate() == 0) {
-                    final PreparedStatement insertProperty = getPreparedStatement(INSERT_PROPERTY);
-                    if (insertProperty == null) {
-                        throw new SQLException("Database query does not exist in the resource bundle: " + INSERT_PROPERTY);
+                try (PreparedStatement updateProperty = getPreparedStatement(conn, UPDATE_PROPERTY)) {
+                    if (updateProperty == null) {
+                        throw new SQLException("Database query does not exist in the resource bundle: " + UPDATE_PROPERTY);
                     }
-                    insertProperty.setString(1, key);
-                    insertProperty.setString(2, value);
-                    insertProperty.executeUpdate();
+                    updateProperty.setString(1, value);
+                    updateProperty.setString(2, key);
+                    if (updateProperty.executeUpdate() == 0) {
+                        try (PreparedStatement insertProperty = getPreparedStatement(conn, INSERT_PROPERTY)) {
+                            if (insertProperty == null) {
+                                throw new SQLException("Database query does not exist in the resource bundle: " + INSERT_PROPERTY);
+                            }
+                            insertProperty.setString(1, key);
+                            insertProperty.setString(2, value);
+                            insertProperty.executeUpdate();
+                        }
+                    }
                 }
             }
         } catch (SQLException ex) {
@@ -635,7 +558,7 @@ public final class CveDB implements AutoCloseable {
      * It should be also called when DB is closed.
      * </p>
      */
-    private synchronized void clearCache() {
+    private void clearCache() {
         vulnerabilitiesForCpeCache.clear();
     }
 
@@ -646,7 +569,7 @@ public final class CveDB implements AutoCloseable {
      * @return a list of Vulnerabilities
      * @throws DatabaseException thrown if there is an exception retrieving data
      */
-    public synchronized List<Vulnerability> getVulnerabilities(Cpe cpe) throws DatabaseException {
+    public List<Vulnerability> getVulnerabilities(Cpe cpe) throws DatabaseException {
         final List<Vulnerability> cachedVulnerabilities = vulnerabilitiesForCpeCache.get(cpe.toCpe23FS());
         if (cachedVulnerabilities != null) {
             LOGGER.debug("Cache hit for {}", cpe.toCpe23FS());
@@ -656,65 +579,64 @@ public final class CveDB implements AutoCloseable {
         }
 
         final List<Vulnerability> vulnerabilities = new ArrayList<>();
-        ResultSet rs = null;
-        try {
-            final PreparedStatement ps = getPreparedStatement(SELECT_CVE_FROM_SOFTWARE);
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement ps = getPreparedStatement(conn, SELECT_CVE_FROM_SOFTWARE)) {
             ps.setString(1, cpe.getVendor());
             ps.setString(2, cpe.getProduct());
-            rs = ps.executeQuery();
-            String currentCVE = "";
-
-            final Set<VulnerableSoftware> vulnSoftware = new HashSet<>();
-            while (rs.next()) {
-                final String cveId = rs.getString(1);
-                if (currentCVE.isEmpty()) {
-                    //first loop we don't have the cveId
-                    currentCVE = cveId;
-                }
-                if (!vulnSoftware.isEmpty() && !currentCVE.equals(cveId)) { //check for match and add
-                    final VulnerableSoftware matchedCPE = getMatchingSoftware(cpe, vulnSoftware);
-                    if (matchedCPE != null) {
-                        final Vulnerability v = getVulnerability(currentCVE);
-                        if (v != null) {
-                            v.setMatchedVulnerableSoftware(matchedCPE);
-                            v.setSource(Vulnerability.Source.NVD);
-                            vulnerabilities.add(v);
-                        }
+            try (ResultSet rs = ps.executeQuery()) {
+                String currentCVE = "";
+                final Set<VulnerableSoftware> vulnSoftware = new HashSet<>();
+                final VulnerableSoftwareBuilder vulnerableSoftwareBuilder = new VulnerableSoftwareBuilder();
+                while (rs.next()) {
+                    final String cveId = rs.getString(1);
+                    if (currentCVE.isEmpty()) {
+                        //first loop we don't have the cveId
+                        currentCVE = cveId;
                     }
-                    vulnSoftware.clear();
-                    currentCVE = cveId;
+                    if (!vulnSoftware.isEmpty() && !currentCVE.equals(cveId)) { //check for match and add
+                        final VulnerableSoftware matchedCPE = getMatchingSoftware(cpe, vulnSoftware);
+                        if (matchedCPE != null) {
+                            final Vulnerability v = getVulnerability(currentCVE, conn);
+                            if (v != null) {
+                                v.setMatchedVulnerableSoftware(matchedCPE);
+                                v.setSource(Vulnerability.Source.NVD);
+                                vulnerabilities.add(v);
+                            }
+                        }
+                        vulnSoftware.clear();
+                        currentCVE = cveId;
+                    }
+                    // 1 cve, 2 part, 3 vendor, 4 product, 5 version, 6 update_version, 7 edition,
+                    // 8 lang, 9 sw_edition, 10 target_sw, 11 target_hw, 12 other, 13 versionEndExcluding,
+                    //14 versionEndIncluding, 15 versionStartExcluding, 16 versionStartIncluding, 17 vulnerable
+                    final VulnerableSoftware vs;
+                    try {
+                        vs = vulnerableSoftwareBuilder.part(rs.getString(2)).vendor(rs.getString(3))
+                                .product(rs.getString(4)).version(rs.getString(5)).update(rs.getString(6))
+                                .edition(rs.getString(7)).language(rs.getString(8)).swEdition(rs.getString(9))
+                                .targetSw(rs.getString(10)).targetHw(rs.getString(11)).other(rs.getString(12))
+                                .versionEndExcluding(rs.getString(13)).versionEndIncluding(rs.getString(14))
+                                .versionStartExcluding(rs.getString(15)).versionStartIncluding(rs.getString(16))
+                                .vulnerable(rs.getBoolean(17)).build();
+                    } catch (CpeParsingException | CpeValidationException ex) {
+                        throw new DatabaseException("Database contains an invalid Vulnerable Software Entry", ex);
+                    }
+                    vulnSoftware.add(vs);
                 }
-                // 1 cve, 2 part, 3 vendor, 4 product, 5 version, 6 update_version, 7 edition,
-                // 8 lang, 9 sw_edition, 10 target_sw, 11 target_hw, 12 other, 13 versionEndExcluding,
-                //14 versionEndIncluding, 15 versionStartExcluding, 16 versionStartIncluding, 17 vulnerable
-                final VulnerableSoftware vs;
-                try {
-                    vs = vulnerableSoftwareBuilder.part(rs.getString(2)).vendor(rs.getString(3))
-                            .product(rs.getString(4)).version(rs.getString(5)).update(rs.getString(6))
-                            .edition(rs.getString(7)).language(rs.getString(8)).swEdition(rs.getString(9))
-                            .targetSw(rs.getString(10)).targetHw(rs.getString(11)).other(rs.getString(12))
-                            .versionEndExcluding(rs.getString(13)).versionEndIncluding(rs.getString(14))
-                            .versionStartExcluding(rs.getString(15)).versionStartIncluding(rs.getString(16))
-                            .vulnerable(rs.getBoolean(17)).build();
-                } catch (CpeParsingException | CpeValidationException ex) {
-                    throw new DatabaseException("Database contains an invalid Vulnerable Software Entry", ex);
-                }
-                vulnSoftware.add(vs);
-            }
-            //remember to process the last set of CVE/CPE entries
-            final VulnerableSoftware matchedCPE = getMatchingSoftware(cpe, vulnSoftware);
-            if (matchedCPE != null) {
-                final Vulnerability v = getVulnerability(currentCVE);
-                if (v != null) {
-                    v.setMatchedVulnerableSoftware(matchedCPE);
-                    v.setSource(Vulnerability.Source.NVD);
-                    vulnerabilities.add(v);
+
+                //remember to process the last set of CVE/CPE entries
+                final VulnerableSoftware matchedCPE = getMatchingSoftware(cpe, vulnSoftware);
+                if (matchedCPE != null) {
+                    final Vulnerability v = getVulnerability(currentCVE, conn);
+                    if (v != null) {
+                        v.setMatchedVulnerableSoftware(matchedCPE);
+                        v.setSource(Vulnerability.Source.NVD);
+                        vulnerabilities.add(v);
+                    }
                 }
             }
         } catch (SQLException ex) {
             throw new DatabaseException("Exception retrieving vulnerability for " + cpe.toCpe23FS(), ex);
-        } finally {
-            DBUtils.closeResultSet(rs);
         }
         vulnerabilitiesForCpeCache.put(cpe.toCpe23FS(), vulnerabilities);
         return vulnerabilities;
@@ -727,81 +649,83 @@ public final class CveDB implements AutoCloseable {
      * @return a vulnerability object
      * @throws DatabaseException if an exception occurs
      */
-    public synchronized Vulnerability getVulnerability(String cve) throws DatabaseException {
-        ResultSet rsV = null;
-        ResultSet rsC = null;
-        ResultSet rsR = null;
-        ResultSet rsS = null;
+    public Vulnerability getVulnerability(String cve) throws DatabaseException {
+        try (Connection conn = databaseManager.getConnection()) {
+            return getVulnerability(cve, conn);
+        } catch (SQLException ex) {
+            throw new DatabaseException("Error retrieving " + cve, ex);
+        }
+    }
+
+    /**
+     * Gets a vulnerability for the provided CVE.
+     *
+     * @param cve the CVE to lookup
+     * @param conn already active database connection
+     * @return a vulnerability object
+     * @throws DatabaseException if an exception occurs
+     */
+    public Vulnerability getVulnerability(String cve, Connection conn) throws DatabaseException {
+        final int cveId;
+        final VulnerableSoftwareBuilder vulnerableSoftwareBuilder = new VulnerableSoftwareBuilder();
         Vulnerability vuln = null;
-
         try {
-            final PreparedStatement psV = getPreparedStatement(SELECT_VULNERABILITY);
-            if (psV == null) {
-                throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_VULNERABILITY);
-            }
-            psV.setString(1, cve);
-            rsV = psV.executeQuery();
-            if (rsV.next()) {
-                //1.id, 2.description,
-                final int cveId = rsV.getInt(1);
-                vuln = new Vulnerability();
-                vuln.setSource(Vulnerability.Source.NVD);
-                vuln.setName(cve);
-                vuln.setDescription(rsV.getString(2));
+            try (PreparedStatement psV = getPreparedStatement(conn, SELECT_VULNERABILITY, cve);
+                    ResultSet rsV = psV.executeQuery()) {
+                if (rsV.next()) {
+                    //1.id, 2.description,
+                    cveId = rsV.getInt(1);
+                    vuln = new Vulnerability();
+                    vuln.setSource(Vulnerability.Source.NVD);
+                    vuln.setName(cve);
+                    vuln.setDescription(rsV.getString(2));
 
-                //3.v2Severity, 4.v2ExploitabilityScore, 5.v2ImpactScore, 6.v2AcInsufInfo, 7.v2ObtainAllPrivilege,
-                //8.v2ObtainUserPrivilege, 9.v2ObtainOtherPrivilege, 10.v2UserInteractionRequired, 11.v2Score,
-                //12.v2AccessVector, 13.v2AccessComplexity, 14.v2Authentication, 15.v2ConfidentialityImpact,
-                //16.v2IntegrityImpact, 17.v2AvailabilityImpact, 18.v2Version,
-                if (rsV.getObject(11) != null) {
-                    final CvssV2 cvss = new CvssV2(rsV.getFloat(11), rsV.getString(12),
-                            rsV.getString(13), rsV.getString(14), rsV.getString(15),
-                            rsV.getString(16), rsV.getString(17), rsV.getString(3),
-                            getFloatValue(rsV, 4), getFloatValue(rsV, 5),
-                            getBooleanValue(rsV, 6), getBooleanValue(rsV, 7), getBooleanValue(rsV, 8),
-                            getBooleanValue(rsV, 9), getBooleanValue(rsV, 10), rsV.getString(18));
-                    vuln.setCvssV2(cvss);
+                    //3.v2Severity, 4.v2ExploitabilityScore, 5.v2ImpactScore, 6.v2AcInsufInfo, 7.v2ObtainAllPrivilege,
+                    //8.v2ObtainUserPrivilege, 9.v2ObtainOtherPrivilege, 10.v2UserInteractionRequired, 11.v2Score,
+                    //12.v2AccessVector, 13.v2AccessComplexity, 14.v2Authentication, 15.v2ConfidentialityImpact,
+                    //16.v2IntegrityImpact, 17.v2AvailabilityImpact, 18.v2Version,
+                    if (rsV.getObject(11) != null) {
+                        final CvssV2 cvss = new CvssV2(rsV.getFloat(11), rsV.getString(12),
+                                rsV.getString(13), rsV.getString(14), rsV.getString(15),
+                                rsV.getString(16), rsV.getString(17), rsV.getString(3),
+                                getFloatValue(rsV, 4), getFloatValue(rsV, 5),
+                                getBooleanValue(rsV, 6), getBooleanValue(rsV, 7), getBooleanValue(rsV, 8),
+                                getBooleanValue(rsV, 9), getBooleanValue(rsV, 10), rsV.getString(18));
+                        vuln.setCvssV2(cvss);
+                    }
+                    //19.v3ExploitabilityScore, 20.v3ImpactScore, 21.v3AttackVector, 22.v3AttackComplexity, 23.v3PrivilegesRequired,
+                    //24.v3UserInteraction, 25.v3Scope, 26.v3ConfidentialityImpact, 27.v3IntegrityImpact, 28.v3AvailabilityImpact,
+                    //29.v3BaseScore, 30.v3BaseSeverity, 21.v3Version
+                    if (rsV.getObject(21) != null) {
+                        final CvssV3 cvss = new CvssV3(rsV.getString(21), rsV.getString(22),
+                                rsV.getString(23), rsV.getString(24), rsV.getString(25),
+                                rsV.getString(26), rsV.getString(27), rsV.getString(28),
+                                rsV.getFloat(29), rsV.getString(30), getFloatValue(rsV, 19),
+                                getFloatValue(rsV, 20), rsV.getString(31));
+                        vuln.setCvssV3(cvss);
+                    }
+                } else {
+                    LOGGER.debug(cve + " does not exist in the database");
+                    return null;
                 }
-                //19.v3ExploitabilityScore, 20.v3ImpactScore, 21.v3AttackVector, 22.v3AttackComplexity, 23.v3PrivilegesRequired,
-                //24.v3UserInteraction, 25.v3Scope, 26.v3ConfidentialityImpact, 27.v3IntegrityImpact, 28.v3AvailabilityImpact,
-                //29.v3BaseScore, 30.v3BaseSeverity, 21.v3Version
-                if (rsV.getObject(21) != null) {
-                    final CvssV3 cvss = new CvssV3(rsV.getString(21), rsV.getString(22),
-                            rsV.getString(23), rsV.getString(24), rsV.getString(25),
-                            rsV.getString(26), rsV.getString(27), rsV.getString(28),
-                            rsV.getFloat(29), rsV.getString(30), getFloatValue(rsV, 19),
-                            getFloatValue(rsV, 20), rsV.getString(31));
-                    vuln.setCvssV3(cvss);
-                }
-                final PreparedStatement psCWE = getPreparedStatement(SELECT_VULNERABILITY_CWE);
-                if (psCWE == null) {
-                    throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_VULNERABILITY_CWE);
-                }
-                psCWE.setInt(1, cveId);
-                rsC = psCWE.executeQuery();
+            }
+            try (PreparedStatement psCWE = getPreparedStatement(conn, SELECT_VULNERABILITY_CWE, cveId);
+                    ResultSet rsC = psCWE.executeQuery()) {
                 while (rsC.next()) {
                     vuln.addCwe(rsC.getString(1));
                 }
-
-                final PreparedStatement psR = getPreparedStatement(SELECT_REFERENCES);
-                if (psR == null) {
-                    throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_REFERENCES);
-                }
-                psR.setInt(1, cveId);
-                rsR = psR.executeQuery();
+            }
+            try (PreparedStatement psR = getPreparedStatement(conn, SELECT_REFERENCES, cveId);
+                    ResultSet rsR = psR.executeQuery()) {
                 while (rsR.next()) {
                     vuln.addReference(rsR.getString(1), rsR.getString(2), rsR.getString(3));
                 }
-
-                final PreparedStatement psS = getPreparedStatement(SELECT_SOFTWARE);
-                if (psS == null) {
-                    throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_SOFTWARE);
-                }
+            }
+            try (PreparedStatement psS = getPreparedStatement(conn, SELECT_SOFTWARE, cveId);
+                    ResultSet rsS = psS.executeQuery()) {
                 //1 part, 2 vendor, 3 product, 4 version, 5 update_version, 6 edition, 7 lang,
                 //8 sw_edition, 9 target_sw, 10 target_hw, 11 other, 12 versionEndExcluding,
                 //13 versionEndIncluding, 14 versionStartExcluding, 15 versionStartIncluding, 16 vulnerable
-                psS.setInt(1, cveId);
-                rsS = psS.executeQuery();
                 while (rsS.next()) {
                     vulnerableSoftwareBuilder.part(rsS.getString(1))
                             .vendor(rsS.getString(2))
@@ -826,11 +750,6 @@ public final class CveDB implements AutoCloseable {
             throw new DatabaseException("Error retrieving " + cve, ex);
         } catch (CpeParsingException | CpeValidationException ex) {
             throw new DatabaseException("The database contains an invalid Vulnerable Software Entry", ex);
-        } finally {
-            DBUtils.closeResultSet(rsV);
-            DBUtils.closeResultSet(rsC);
-            DBUtils.closeResultSet(rsR);
-            DBUtils.closeResultSet(rsS);
         }
         return vuln;
     }
@@ -858,7 +777,6 @@ public final class CveDB implements AutoCloseable {
                     updateVulnerabilityInsertCwe(vulnerabilityId, cve);
                     updateVulnerabilityInsertReferences(vulnerabilityId, cve);
 
-                    //parse the CPEs outside of a synchronized method
                     final List<VulnerableSoftware> software = parseCpes(cve);
                     updateVulnerabilityInsertSoftware(vulnerabilityId, cveId, software, baseEcosystem);
                 }
@@ -877,9 +795,9 @@ public final class CveDB implements AutoCloseable {
 
     private void loadCpeEcosystemCache() {
         final Map<Pair<String, String>, String> map = new HashMap<>();
-        ResultSet rs = null;
-        try (PreparedStatement ps = prepareStatement(SELECT_CPE_ECOSYSTEM)) {
-            rs = ps.executeQuery();
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement ps = getPreparedStatement(conn, SELECT_CPE_ECOSYSTEM);
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 final Pair<String, String> key = new Pair<>(rs.getString(1), rs.getString(2));
                 final String value = rs.getString(3);
@@ -889,17 +807,15 @@ public final class CveDB implements AutoCloseable {
             final String msg = String.format("Error loading the Cpe Ecosystem Cache: %s", ex.getMessage());
             LOGGER.debug(msg, ex);
             throw new DatabaseException(msg, ex);
-        } finally {
-            DBUtils.closeResultSet(rs);
         }
-
         CpeEcosystemCache.setCache(map);
     }
 
     private void saveCpeEcosystemCache() {
         final Map<Pair<String, String>, String> map = CpeEcosystemCache.getChanged();
         if (map != null && !map.isEmpty()) {
-            try (PreparedStatement ps = prepareStatement(MERGE_CPE_ECOSYSTEM)) {
+            try (Connection conn = databaseManager.getConnection();
+                    PreparedStatement ps = getPreparedStatement(conn, MERGE_CPE_ECOSYSTEM)) {
                 for (Map.Entry<Pair<String, String>, String> entry : map.entrySet()) {
                     ps.setString(1, entry.getKey().getLeft());
                     ps.setString(2, entry.getKey().getRight());
@@ -929,12 +845,13 @@ public final class CveDB implements AutoCloseable {
      * @param description the description of the CVE entry
      * @return the vulnerability ID
      */
-    private synchronized int updateOrInsertVulnerability(DefCveItem cve, String description) {
+    private int updateOrInsertVulnerability(DefCveItem cve, String description) {
         if (CpeEcosystemCache.isEmpty()) {
             loadCpeEcosystemCache();
         }
         final int vulnerabilityId;
-        try (PreparedStatement callUpdate = prepareStatement(UPDATE_VULNERABILITY)) {
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement callUpdate = getPreparedStatement(conn, UPDATE_VULNERABILITY)) {
             if (callUpdate == null) {
                 throw new SQLException("Database query does not exist in the resource bundle: " + UPDATE_VULNERABILITY);
             }
@@ -1054,12 +971,12 @@ public final class CveDB implements AutoCloseable {
      * @param cve the CVE entry that contains the CWE entries to insert
      * @throws SQLException thrown if there is an error inserting the data
      */
-    private synchronized void updateVulnerabilityInsertCwe(int vulnerabilityId, DefCveItem cve) throws SQLException {
-        try (PreparedStatement insertCWE = prepareStatement(INSERT_CWE)) {
+    private void updateVulnerabilityInsertCwe(int vulnerabilityId, DefCveItem cve) throws SQLException {
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement insertCWE = getPreparedStatement(conn, INSERT_CWE, vulnerabilityId)) {
             if (insertCWE == null) {
                 throw new SQLException("Database query does not exist in the resource bundle: " + INSERT_CWE);
             }
-            insertCWE.setInt(1, vulnerabilityId);
 
             for (ProblemtypeDatum datum : cve.getCve().getProblemtype().getProblemtypeData()) {
                 for (LangString desc : datum.getDescription()) {
@@ -1087,9 +1004,9 @@ public final class CveDB implements AutoCloseable {
      * @throws SQLException thrown if there is an error deleting the
      * vulnerability
      */
-    private synchronized void deleteVulnerability(String cve) throws SQLException {
-        try (PreparedStatement deleteVulnerability = prepareStatement(DELETE_VULNERABILITY)) {
-            deleteVulnerability.setString(1, cve);
+    private void deleteVulnerability(String cve) throws SQLException {
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement deleteVulnerability = getPreparedStatement(conn, DELETE_VULNERABILITY, cve)) {
             deleteVulnerability.executeUpdate();
         }
     }
@@ -1106,10 +1023,11 @@ public final class CveDB implements AutoCloseable {
      * @throws DatabaseException thrown if there is an error inserting the data
      * @throws SQLException thrown if there is an error inserting the data
      */
-    private synchronized void updateVulnerabilityInsertSoftware(int vulnerabilityId, String cveId,
+    private void updateVulnerabilityInsertSoftware(int vulnerabilityId, String cveId,
             List<VulnerableSoftware> software, String baseEcosystem)
             throws DatabaseException, SQLException {
-        try (PreparedStatement insertSoftware = prepareStatement(INSERT_SOFTWARE)) {
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement insertSoftware = getPreparedStatement(conn, INSERT_SOFTWARE)) {
             if (insertSoftware == null) {
                 throw new SQLException("Database query does not exist in the resource bundle: " + INSERT_SOFTWARE);
             }
@@ -1165,8 +1083,9 @@ public final class CveDB implements AutoCloseable {
      * @param cve the CVE entry that contains the list of references
      * @throws SQLException thrown if there is an error inserting the data
      */
-    private synchronized void updateVulnerabilityInsertReferences(int vulnerabilityId, DefCveItem cve) throws SQLException {
-        try (PreparedStatement insertReference = prepareStatement(INSERT_REFERENCE)) {
+    private void updateVulnerabilityInsertReferences(int vulnerabilityId, DefCveItem cve) throws SQLException {
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement insertReference = getPreparedStatement(conn, INSERT_REFERENCE)) {
             if (insertReference == null) {
                 throw new SQLException("Database query does not exist in the resource bundle: " + INSERT_REFERENCE);
             }
@@ -1321,15 +1240,10 @@ public final class CveDB implements AutoCloseable {
      *
      * @return <code>true</code> if data exists; otherwise <code>false</code>
      */
-    public synchronized boolean dataExists() {
-        ResultSet rs = null;
-        try {
-            final PreparedStatement cs = getPreparedStatement(COUNT_CPE);
-            if (cs == null) {
-                LOGGER.error("Unable to validate if data exists in the database");
-                return false;
-            }
-            rs = cs.executeQuery();
+    public boolean dataExists() {
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement cs = getPreparedStatement(conn, COUNT_CPE);
+                ResultSet rs = cs.executeQuery()) {
             if (rs.next() && rs.getInt(1) > 0) {
                 return true;
             }
@@ -1346,8 +1260,6 @@ public final class CveDB implements AutoCloseable {
                     + "https://github.com/jeremylong/DependencyCheck/issues and include the log file.\n\n",
                     dd, dd, settings.getString(Settings.KEYS.APPLICATION_NAME));
             LOGGER.debug("", ex);
-        } finally {
-            DBUtils.closeResultSet(rs);
         }
         return false;
     }
@@ -1357,14 +1269,15 @@ public final class CveDB implements AutoCloseable {
      * updates. This should be called after all updates have been completed to
      * ensure orphan entries are removed.
      */
-    public synchronized void cleanupDatabase() {
+    public void cleanupDatabase() {
         LOGGER.info("Begin database maintenance");
         final long start = System.currentTimeMillis();
         saveCpeEcosystemCache();
         clearCache();
-        try (PreparedStatement psOrphans = getPreparedStatement(CLEANUP_ORPHANS);
-                PreparedStatement psEcosystem = getPreparedStatement(UPDATE_ECOSYSTEM);
-                PreparedStatement psEcosystem2 = getPreparedStatement(UPDATE_ECOSYSTEM2)) {
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement psOrphans = getPreparedStatement(conn, CLEANUP_ORPHANS);
+                PreparedStatement psEcosystem = getPreparedStatement(conn, UPDATE_ECOSYSTEM);
+                PreparedStatement psEcosystem2 = getPreparedStatement(conn, UPDATE_ECOSYSTEM2)) {
             if (psEcosystem != null) {
                 final int count = psEcosystem.executeUpdate();
                 if (count > 0) {
@@ -1397,10 +1310,11 @@ public final class CveDB implements AutoCloseable {
      * If the database is using an H2 file based database calling
      * <code>defrag()</code> will de-fragment the database.
      */
-    public synchronized void defrag() {
-        if (ConnectionFactory.isH2Connection(settings)) {
+    public void defrag() {
+        if (databaseManager.isH2Connection()) {
             final long start = System.currentTimeMillis();
-            try (CallableStatement psCompaxt = connection.prepareCall("SHUTDOWN DEFRAG")) {
+            try (Connection conn = databaseManager.getConnection();
+                    CallableStatement psCompaxt = conn.prepareCall("SHUTDOWN DEFRAG")) {
                 LOGGER.info("Begin database defrag");
                 psCompaxt.execute();
                 final long millis = System.currentTimeMillis() - start;
@@ -1501,16 +1415,13 @@ public final class CveDB implements AutoCloseable {
      * Deletes unused dictionary entries from the database.
      * </p>
      */
-    public synchronized void deleteUnusedCpe() {
+    public void deleteUnusedCpe() {
         clearCache();
-        PreparedStatement ps = null;
-        try {
-            ps = connection.prepareStatement(statementBundle.getString("DELETE_UNUSED_DICT_CPE"));
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement ps = getPreparedStatement(conn, DELETE_UNUSED_DICT_CPE)) {
             ps.executeUpdate();
         } catch (SQLException ex) {
             LOGGER.error("Unable to delete CPE dictionary entries", ex);
-        } finally {
-            DBUtils.closeStatement(ps);
         }
     }
 
@@ -1525,19 +1436,16 @@ public final class CveDB implements AutoCloseable {
      * @param vendor the CPE vendor
      * @param product the CPE product
      */
-    public synchronized void addCpe(String cpe, String vendor, String product) {
+    public void addCpe(String cpe, String vendor, String product) {
         clearCache();
-        PreparedStatement ps = null;
-        try {
-            ps = connection.prepareStatement(statementBundle.getString("ADD_DICT_CPE"));
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement ps = getPreparedStatement(conn, ADD_DICT_CPE)) {
             ps.setString(1, cpe);
             ps.setString(2, vendor);
             ps.setString(3, product);
             ps.executeUpdate();
         } catch (SQLException ex) {
             LOGGER.error("Unable to add CPE dictionary entry", ex);
-        } finally {
-            DBUtils.closeStatement(ps);
         }
     }
 

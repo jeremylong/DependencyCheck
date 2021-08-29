@@ -63,8 +63,17 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
      */
     public boolean canRun() {
         String version = System.getProperty("java.version");
-        int length = version.indexOf('.', version.indexOf('.') + 1);
-        version = version.substring(0, length);
+        int firstDot = version.indexOf('.');
+        if (firstDot < 0) {
+            // new java.version format, so Java 9 or above
+            return false;
+        }
+        int secondDot = version.indexOf('.', firstDot+1);
+        if (secondDot < 0) {
+            // new java.version format, so Java 9 or above
+            return false;
+        }
+        version = version.substring(0, secondDot);
 
         double v = Double.parseDouble(version);
         return v == 1.7;

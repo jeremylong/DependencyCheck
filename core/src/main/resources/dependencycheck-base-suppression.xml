@@ -2,6 +2,14 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
+                FP in jetty as jetty-jakarta-servlet-api is identified as a low version jetty
+                ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty\.toolchain/jetty\-jakarta\-servlet\-api@.*$</packageUrl>
+        <cpe>cpe:/a:eclipse:jetty</cpe>
+        <cpe>cpe:/a:jetty:jetty</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
 	    FP per #3331
 	    ]]></notes>
         <packageUrl regex="true">^pkg:npm/%40babel%2Fcli@.*$</packageUrl>
@@ -219,6 +227,7 @@
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/ch\.qos\.logback\.contrib/.*$</packageUrl>
         <cpe>cpe:/a:logback:logback</cpe>
+        <cpe>cpe:/a:qos:logback</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -226,6 +235,7 @@
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/be\.sysa\.log\-sanitizer/log\-sanitizer\-logback@.*$</packageUrl>
         <cpe>cpe:/a:logback:logback</cpe>
+        <cpe>cpe:/a:qos:logback</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -333,6 +343,7 @@
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.dropwizard\.logback/logback\-throttling\-appender@.*$</packageUrl>
         <cpe>cpe:/a:logback:logback</cpe>
+        <cpe>cpe:/a:qos:logback</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -402,6 +413,16 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+            This suppresses false positives identified on spring projects that are separate projects side-by-side with the Spring Framework
+            project that have springframework in the groupid where NVD is known to have separate products in the CPE dictionary.
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.(amqp|batch|boot|cloud|data|integration|ldap|security|social|webflow|ws).*$</gav>
+        <cpe>cpe:/a:vmware:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cpe>cpe:/a:springsource:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
        Don't flag specific CVEs for spring framework related components (i.e. org.springframework.data).
        ]]></notes>
         <gav regex="true">^org\.springframework\..*$</gav>
@@ -439,54 +460,56 @@
         <notes><![CDATA[
             1. Sandbox is a php blog platform and should not be flagged as a CPE for java or .net dependencies.
             2. Open media is php and won't be in a jar, dll, etc. See issue #814.
-            3. file and file_project are not assembiles or java libraries
-            4. Shim is *nix and is not an assembly or java lib. 
-            5. date_project is a drupal library
-            6. net dns is a php module
-            7. Even if a node.js package exists - we aren't flagging the entire node.js
-            8. Context project is drupal plugin
-            9. mail_project is ruby library
-            10. ldap_project is part of type3 written in php
-            11. user import project is used in drupal (i.e. php)
-            12. root is a c++ project https://github.com/root-project/root/
-            13. xml_sec is a C library for XML security
-            14. rest easy project is ruby library
-            15. hub_project is a ruby library (#1130)
-            16. views_project is a drupal plugin (#1077)
-            17. restful_web_services_project:restful_web_services is a drupal plugin (#1077)
-            18. font_project is a php library (#1166)
-            19. amazon_aws_project is a drupal utility (#1290)
-            20. google android should not be flagged for the base library
-            21. ws_project is a node websocket client (#1535)
-            22. first_project first is an Ethereum smart contract (#1588)
-            23. interact is a php project (#1609)
-            24. finder is drupal plugin (#1626)
-            25. archiver project is a golang module (#1627)
-            26. r_project is the r programming language
-            27. r_project is the r programming language
-            28. cpe:/a:jwt_project:jwt is a php library (#1697)
-            29. remove FP on git
-            30. remove FP on git
+            3. / 4. file and file_project are not assembiles or java libraries
+            5. / 6. Shim is *nix and is not an assembly or java lib.
+            7. date_project is a drupal library
+            8. net dns is a php module
+            9. / 10. Even if a node.js package exists - we aren't flagging the entire node.js
+            11. Context project is drupal plugin
+            12. mail_project is ruby library
+            13. ldap_project is part of type3 written in php
+            14. user import project is used in drupal (i.e. php)
+            15. root is a c++ project https://github.com/root-project/root/
+            16. xml_sec is a C library for XML security
+            17. rest easy project is ruby library
+            18. hub_project is a ruby library (#1130)
+            19. views_project is a drupal plugin (#1077)
+            20. restful_web_services_project:restful_web_services is a drupal plugin (#1077)
+            21. php (the language) is not a Java/.NET/NodeJS library
+            22. font_project is a php library (#1166)
+            23. amazon_aws_project is a drupal utility (#1290)
+            24. google android should not be flagged for the base library
+            25. first_project first is an Ethereum smart contract (#1588)
+            26. interact is a php project (#1609)
+            27. finder is drupal plugin (#1626)
+            28. archiver project is a golang module (#1627)
+            29. r_project is the r programming language
+            30. cpe:/a:jwt_project:jwt is a php library (#1697)
             31. remove FP on git
-            32. Suppresses false positives on .NET mono
-            33. Suppresses false positives on .NET mono
+            32. remove FP on git
+            33. remove FP on git
             34. Suppresses false positives on .NET mono
-            35. app_project is an electron project. #1549
-            36. <cpe>cpe:/a:json-jwt_project:json-jwt</cpe> is a ruby lib #1791
-            37. <cpe>cpe:/a:zip_project:zip</cpe> is an etherium related project #1788
-            38. <cpe>cpe:/a:echo_project:echo</cpe> is a php media wiki project #1786
-            39. <cpe>cpe:/a:util-linux_project:util-linux</cpe> c util on linux #2069
-            40. <cpe>cpe:/a:bitmap_project:bitmap</cpe> is a C library #1961
-            41. <cpe>cpe:/a:security-framework_project:security-framework</cpe> is a rust library
-            42. <cpe>cpe:/a:next:next</cpe> is NeXT system.
-            43. <cpe>cpe:/a:property_pro:property_pro</cpe> is classic ASP
-            44. <cve>CVE-2020-10663</cve> is a ruby vulnerability
-            45. Facebook is not a dependency
-            46. gitlab is not a depenency #2567 and is built using ruby
-            47. DeleGate is a C-language application #2435
-            48. thread_project - etherium token (https://nvd.nist.gov/vuln/detail/CVE-2018-13752) #1718
-            49. data_tools is a python library #1667
-            50. tag project is a GO implemention #3047 & #3043
+            35. Suppresses false positives on .NET mono
+            36. Suppresses false positives on .NET mono
+            37. app_project is an electron project. #1549
+            38. <cpe>cpe:/a:json-jwt_project:json-jwt</cpe> is a ruby lib #1791
+            39. <cpe>cpe:/a:zip_project:zip</cpe> is an etherium related project #1788
+            40. <cpe>cpe:/a:echo_project:echo</cpe> is a php media wiki project #1786
+            41. <cpe>cpe:/a:util-linux_project:util-linux</cpe> c util on linux #2069
+            42. <cpe>cpe:/a:bitmap_project:bitmap</cpe> is a C library #1961
+            43. <cpe>cpe:/a:security-framework_project:security-framework</cpe> is a rust library
+            44. <cpe>cpe:/a:next:next</cpe> is NeXT system.
+            45. <cpe>cpe:/a:property_pro:property_pro</cpe> is classic ASP
+            46. <cve>CVE-2020-10663</cve> is a ruby vulnerability
+            47. Facebook is not a dependency
+            48. gitlab is not a depenency #2567 and is built using ruby
+            49. DeleGate is a C-language application #2435
+            50. thread_project - etherium token (https://nvd.nist.gov/vuln/detail/CVE-2018-13752) #1718
+            51. data_tools is a python library #1667
+            52. tag project is a GO implemention #3047 & #3043
+            53. kubernetes:kubernetes is a GO implementation #1035 & #1056 & #1880 & #3529 & #3530 &
+            54. aaugustin websockets is a python library #3460
+            54. cron_project:cron is a linux C application #3548
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -513,7 +536,6 @@
         <cpe>cpe:/a:font_project:font</cpe>
         <cpe>cpe:/a:amazon_aws_project:amazon_aws</cpe>
         <cpe>cpe:/a:google:android</cpe>
-        <cpe>cpe:/a:ws_project:ws</cpe>
         <cpe>cpe:/a:first_project:first</cpe>
         <cpe>cpe:/a:interact:interact</cpe>
         <cpe>cpe:/a:finder_project:finder</cpe>
@@ -542,6 +564,9 @@
         <cpe>cpe:/a:thread_project:thread</cpe>
         <cpe>cpe:/a:data_tools_project:data_tools</cpe>
         <cpe>cpe:/a:tag_project:tag</cpe>
+        <cpe>cpe:/a:kubernetes:kubernetes</cpe>
+        <cpe>cpe:/a:websockets_project:websockets</cpe>
+        <cpe>cpe:/a:cron_project:cron</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -562,6 +587,8 @@
             12. <cpe>cpe:/a:data-tools_project:data_tools</cpe> is a python project #1961
             13. flow_project reports an Ethereum token issue
             14. ghost CMS is a node.js package (#3203)
+            15. ws_project is a node websocket client (#1535)
+            15. i18n_project is a node.js i18n module (#3350) (#3352) (#3353)
         ]]></notes>
         <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)$</filePath>
         <cpe>cpe:/a:dash:dash</cpe>
@@ -580,6 +607,8 @@
         <cpe>cpe:/a:data-tools_project:data_tools</cpe>
         <cpe>cpe:/a:flow_project:flow</cpe>
         <cpe>cpe:/a:ghost:ghost</cpe>
+        <cpe>cpe:/a:ws_project:ws</cpe>
+        <cpe>cpe:/a:i18n_project:i18n</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -647,9 +676,9 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        Suppresses false positives per #2882
+        Suppresses false positives per #2882 and #3562
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus\-mutiny@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/(io\.quarkus/quarkus\-|io\.smallrye\.reactive/)mutiny.*@.*$</packageUrl>
         <cpe>cpe:/a:mutiny:mutiny</cpe>
     </suppress>
     <suppress base="true">
@@ -665,6 +694,7 @@
         ]]></notes>
         <gav regex="true">^de\.siegmar:logback-gelf:.*$</gav>
         <cpe>cpe:/a:logback:logback</cpe>
+        <cpe>cpe:/a:qos:logback</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -686,13 +716,15 @@
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.prometheus/simpleclient_logback@.*$</packageUrl>
         <cpe>cpe:/a:logback:logback</cpe>
+        <cpe>cpe:/a:qos:logback</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        Suppresses false positives per #1566.
+        Suppresses false positives per #1566 and #3580.
         ]]></notes>
-        <gav regex="true">^org\.springframework\.boot:spring-boot:.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/.*$</packageUrl>
         <cpe>cpe:/a:springsource:spring_framework</cpe>
+        <cpe>cpe:/a:vmware:spring_integration</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -700,6 +732,13 @@
             ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring\-security\-rsa@.*$</packageUrl>
         <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            Suppress false positives per #3400
+            ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-security@.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
     </suppress>
     <suppress base="true">
@@ -866,6 +905,7 @@
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/co\.elastic\.logging/logback\-ecs\-encoder@.*$</packageUrl>
         <cpe>cpe:/a:logback:logback</cpe>
+        <cpe>cpe:/a:qos:logback</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -947,6 +987,14 @@
         <cpe>cpe:/a:atlassian:jira</cpe>
         <cpe>cpe:/a:atlassian:jira_core</cpe>
     </suppress>
+    <suppress  base="true">
+        <notes><![CDATA[
+        FP per #2859
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.atlassian\.jira/jira\-rest\-java\-client\-app@.*$</packageUrl>
+        <cpe>cpe:/a:atlassian:jira</cpe>
+        <cpe>cpe:/a:atlassian:jira_core</cpe>
+    </suppress>
     <suppress base="true">
         <notes><![CDATA[
         Suppresses false positives per issue #2298
@@ -1011,6 +1059,13 @@
         <packageUrl regex="true">^pkg:maven/com\.nimbusds/oauth2\-oidc\-sdk@.*$</packageUrl>
         <cpe>cpe:/a:openid:openid</cpe>
         <cpe>cpe:/a:openid:openid_connect</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       Suppresses false positives per issue #3345
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/com\.azure/azure\-core\-http\-netty@.*$</packageUrl>
+       <cpe>cpe:/a:netty:netty</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -1211,6 +1266,7 @@
         ]]></notes>
         <gav regex="true">^com\.github\.danielwegener:logback-kafka-appender:.*$</gav>
         <cpe>cpe:/a:logback:logback</cpe>
+        <cpe>cpe:/a:qos:logback</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -1221,21 +1277,23 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per #2553
+        FP per #2554
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty\.alpn/alpn\-api@.*$</packageUrl>
         <cpe>cpe:/a:jetty:jetty</cpe>
         <cpe>cpe:/a:eclipse:jetty</cpe>
         <cpe>cpe:/a:mortbay_jetty:jetty</cpe>
+        <cpe>cpe:/a:mortbay:jetty</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per #2554
+        FP per #2553
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty/jetty\-reactive\-httpclient@.*$</packageUrl>
         <cpe>cpe:/a:jetty:jetty</cpe>
         <cpe>cpe:/a:eclipse:jetty</cpe>
         <cpe>cpe:/a:mortbay_jetty:jetty</cpe>
+        <cpe>cpe:/a:mortbay:jetty</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -1749,14 +1807,6 @@
         drop wizard false positives. Updated per issue #796.
         ]]></notes>
         <gav regex="true">org\.eclipse\.jetty\.toolchain\.setuid:jetty-setuid-java:.*</gav>
-        <cpe>cpe:/a:jetty:jetty</cpe>
-        <cpe>cpe:/a:eclipse:jetty</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        false positive per issue #796
-        ]]></notes>
-        <gav regex="true">^org\.eclipse\.jetty:jetty-io:.*$</gav>
         <cpe>cpe:/a:jetty:jetty</cpe>
         <cpe>cpe:/a:eclipse:jetty</cpe>
     </suppress>
@@ -2314,6 +2364,20 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        jackson-dataformat-avro/cbor/ion/protobuf/smile are cpe:/a:fasterxml:jackson-dataformat-binary
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.dataformat/jackson\-dataformat\-(ion|cbor|avro|protobuf|smile)@.*$</packageUrl>
+        <cpe>cpe:/a:fasterxml:jackson-dataformat-xml</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+           These only apply to the jackson-dataformat-cbor sub-module
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.dataformat/jackson\-dataformat(?!\-cbor).*@.*$</packageUrl>
+        <cve>CVE-2020-28491</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
             These CVE only affects jackson-dataformat-xml. See issue #517.
         ]]></notes>
         <gav regex="true">com\.fasterxml\.jackson\.dataformat:jackson(?!\-dataformat\-xml).*</gav>
@@ -2468,12 +2532,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        False positive per issue #700
+        False positive per issue #700 and #3579
         ]]></notes>
         <gav regex="true">^org\.springframework\.cloud:spring-cloud-.*$</gav>
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
         <cpe>cpe:/a:context_project:context</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_batch</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -2565,9 +2630,10 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        false positives per issue #915
+        false positives per issue #915 and #3268
+        xjc-utils is a sub-project of cxf and would get its own CPE assigned just like CXF Fediz subproject for e.g. CVE-2018-8038
         ]]></notes>
-        <gav regex="true">^org\.apache\.cxf\.xjc-utils:cxf-xjc-runtime:.*$</gav>
+        <gav regex="true">^org\.apache\.cxf\.xjc-utils:.*:.*$</gav>
         <cpe>cpe:/a:apache:cxf</cpe>
     </suppress> 
     <suppress base="true">
@@ -2608,13 +2674,6 @@
         ]]></notes>
         <gav regex="true">^org\.springframework\.boot:spring-boot-starter-security:.*$</gav>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        Suppresses false positives per #1880.
-        ]]></notes>
-        <gav regex="true">^com\.hazelcast:hazelcast-kubernetes:.*$</gav>
-        <cpe>cpe:/a:kubernetes:kubernetes</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -3122,6 +3181,14 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        file name: spring-boot-starter-amqp-2.5.0.jar
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring\-boot\-starter\-amqp@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:rabbitmq</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
        spring ldap cleanup per issue #1060
        ]]></notes>
         <gav regex="true">^org\.springframework\.ldap:spring-ldap-core:.*$</gav>
@@ -3152,8 +3219,10 @@
         <notes><![CDATA[
         FP per issue #952 - instead of suppressing the whole thing, we will just
             suppress specific CVE that are for the server
+            Added additional CVE per #3509.
         ]]></notes>
         <gav regex="true">^(mysql:mysql-connector-java|org\.drizzle\.jdbc:drizzle-jdbc):.*$</gav>
+        <cve>CVE-2017-15945</cve>
         <cve>CVE-2018-3081</cve>
         <cve>CVE-2018-3137</cve>
         <cve>CVE-2018-3145</cve>
@@ -4187,20 +4256,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        false positive in io.vertx:vertx-config-kubernetes-configmap
-        ]]></notes>
-        <gav regex="true">^io\.vertx:vertx-config-kubernetes-configmap:.*$</gav>
-        <cpe>cpe:/a:kubernetes:kubernetes</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        false positive per #1056
-        ]]></notes>
-        <gav regex="true">^io\.fabric8:kubernetes-model:.*$</gav>
-        <cpe>cpe:/a:kubernetes:kubernetes</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
         false positive on io.gitlab.arturbosch caused by cpe:/a:gitlab
         ]]></notes>
         <gav regex="true">^io\.gitlab\.arturbosch\.detekt:detekt-.+:.*$</gav>
@@ -4303,10 +4358,25 @@
     <suppress base="true">
         <notes><![CDATA[
         false positive per #3285 on com.amazonaws:aws-java-sdk-eks
+        generalized for #3531: if it's not in the io.kubernetes maven group it's not the kubernetes java client
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/com\.amazonaws/aws\-java\-sdk\-eks@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/(?!io.kubernetes).*/.*@.*$</packageUrl>
         <cpe>cpe:/a:kubernetes:java</cpe>
-        <cpe>cpe:/a:kubernetes:kubernetes</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            file name: openshift-model-clusterautoscaling-5.5.0.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.fabric8/openshift\-model\-clusterautoscaling@.*$</packageUrl>
+        <cpe>cpe:/a:redhat:cluster_project</cpe>
+        <cpe>cpe:/a:redhat:mod_cluster</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: openshift-model-machineconfig-5.5.0.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.fabric8/openshift\-model\-machineconfig@.*$</packageUrl>
+        <cpe>cpe:/a:redhat:machine-config-operator</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -4359,4 +4429,234 @@
         <packageUrl regex="true">^pkg:maven/io\.quarkus\.(security|gizmo|http)/.*$</packageUrl>
         <cpe>cpe:/a:quarkus:quarkus</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3350 on org.apache.xmlgraphics:batik-i18n.1.14 CVE is for C#
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.xmlgraphics/batik\-i18n@.*$</packageUrl>
+        <cpe>cpe:/a:apache:batik</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Library related to prometheus is being flagged as prometheus itself (#3470)
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven\/com\.github\.anti-social[.\/]prometheus-kt.*$</packageUrl>
+        <cpe>cpe:/a:prometheus:prometheus</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Oracle JDBC drivers are not the database server
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.oracle\.database\.jdbc/.*@.*$</packageUrl>
+        <cpe>cpe:/a:oracle:database</cpe>
+        <cpe>cpe:/a:oracle:oracle_database</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Oracle JDBC drivers are not the database server
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.oracle\.database\.security/.*@.*$</packageUrl>
+        <cpe>cpe:/a:oracle:database</cpe>
+        <cpe>cpe:/a:oracle:oracle_database</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Oracle JDBC drivers are not the database server
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.oracle\.database\.ha/.*@.*$</packageUrl>
+        <cpe>cpe:/a:oracle:database</cpe>
+        <cpe>cpe:/a:oracle:oracle_database</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses all artifacts of Pivotal java-cfenv modules #3480
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.pivotal\.cfenv/.*@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   See issue #3384
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.qameta\.allure/allure\-httpclient@.*$</packageUrl>
+        <cpe>cpe:/a:apache:httpclient</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   file name: google-http-client-apache-v2-1.39.2.jar Issue #3348
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.google\.http\-client/google\-http\-client\-apache\-v2@.*$</packageUrl>
+        <cpe>cpe:/a:apache:httpclient</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+      FP CPE match triggered by the hint for issue #3337
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.adobe\.aem/uber\-jar@.*$</packageUrl>
+        <cpe>cpe:/a:adobe:experience_manager_forms</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+      suppress false CPE for mssql-on-azure backend for django #3500
+      ]]></notes>
+        <packageUrl regex="true">^pkg:pypi/mssql\-django@.*$</packageUrl>
+        <cpe>cpe:/a:django_project:django</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   file name: fast-uuid-0.1.jar #3336
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.eatthepath/fast\-uuid@.*$</packageUrl>
+        <cpe>cpe:/a:fast_ber_project:fast_ber</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   file name: logback-elasticsearch-appender-1.6.jar #3549
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.internetitem/logback\-elasticsearch\-appender@.*$</packageUrl>
+        <cpe>cpe:/a:elasticsearch:elasticsearch</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       xercesImpl-2.12.1.jar as matched by Central Search in the CLI hits a FP CPE match #3253
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.exist\-db\.thirdparty\.xerces/xercesImpl@.*$</packageUrl>
+        <cpe>cpe:/a:exist-db:exist</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       several python-* PyPI packages hit a FP CPE match #3233 & #3017
+       as Python itself is not a PyPI package suppress it with a broad regex
+   ]]></notes>
+        <packageUrl regex="true">^pkg:pypi/python\-.*$</packageUrl>
+        <cpe>cpe:/a:python:python</cpe>
+        <cpe>cpe:/a:python_software_foundation:python</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        python-keycloak gets mistaken for the keycloak cpe #3017
+        ]]></notes>
+        <packageUrl regex="true">^pkg:pypi/python\-keycloak@.*$</packageUrl>
+        <cpe>cpe:/a:keycloak:keycloak</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+     spring-cloud-kubernetes-fabric8-autoconfig is part of spring cloud kubernetes, not spring cloud config #3098
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-kubernetes\-fabric8\-autoconfig@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:spring_cloud_config</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+     spring-cloud-deployer-* false CPE matches discovered in handling #3579
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-deployer\-.*$</packageUrl>
+        <cpe>cpe:/a:vmware:spring_cloud_config</cpe>
+        <cpe>cpe:/a:vmware:spring_cloud_data_flow</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            The sonar java analyzer is a separate project from the SonarQube server project #3086
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.sonarsource\.java/.*$</packageUrl>
+        <cpe>cpe:/a:sonarsource:sonarqube</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       Struts annotations is not the struts framework, but a separately versions annotations API library #3088
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.struts/struts\-annotations@.*$</packageUrl>
+        <cpe>cpe:/a:apache:struts</cpe>
+    </suppress>
+
+    <!-- begin cpan support-->
+    <suppress base="true">
+        <notes><![CDATA[
+        broad suppressions for all cpan 
+        ]]></notes>
+        <packageUrl regex="true">^pkg:cpan/.*$</packageUrl>
+        <cpe>cpe:/a:mysql:mysql</cpe>
+        <cpe>cpe:/a:next:next</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        broad suppressions for all cpan 
+        ]]></notes>
+        <packageUrl regex="true">^pkg:cpan/(?!perl@).*$</packageUrl>
+        <cpe>cpe:/a:perl:perl</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: 'Catmandu::Store::ElasticSearch', '0.0507'
+        ]]></notes>
+        <packageUrl regex="true">^pkg:cpan/Catmandu%3A%3AStore/ElasticSearch@.*$</packageUrl>
+        <cpe>cpe:/a:elastic:elasticsearch</cpe>
+        <cpe>cpe:/a:elasticsearch:elasticsearch</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: 'DateTime::Format::MySQL', '0.04'
+        ]]></notes>
+        <packageUrl regex="true">^pkg:cpan/DateTime%3A%3AFormat/MySQL@.*$</packageUrl>
+        <cpe>cpe:/a:www-sql_project:www-sql</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: 'MARC::File::XML', '1.0.1'
+        ]]></notes>
+        <packageUrl regex="true">^pkg:cpan/MARC%3A%3AFile.*$</packageUrl>
+        <cpe>cpe:/a:file_project:file</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: 'File::Spec', '0'
+        ]]></notes>
+        <packageUrl regex="true">^pkg:cpan/(IO%3A%3A)?File.*$</packageUrl>
+        <cpe>cpe:/a:file_project:file</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: 'SQL::Abstract', '0'
+        ]]></notes>
+        <packageUrl regex="true">^pkg:cpan/SQL/.*$</packageUrl>
+        <cpe>cpe:/a:www-sql_project:www-sql</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: 'DBIx::Class::InflateColumn::DateTime', '0'
+        ]]></notes>
+        <packageUrl regex="true">^pkg:cpan/.*DateTime.*$</packageUrl>
+        <cpe>cpe:/a:time_project:time</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: 'Dist::Zilla::Plugin::Git::NextVersion', '1.120370'
+        ]]></notes>
+        <packageUrl regex="true">^pkg:cpan/Dist%3A%3AZilla%3A%3APlugin%3A%3AGit.*$</packageUrl>
+        <cpe>cpe:/a:git_project:git</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: 'Net::SSH2', '0.70'
+        ]]></notes>
+        <packageUrl regex="true">^pkg:cpan/Net/SSH2@.*$</packageUrl>
+        <cpe>cpe:/a:ssh:ssh</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: 'Facebook::Graph', '0'
+        ]]></notes>
+        <packageUrl regex="true">^pkg:cpan/(Net%3A%3A)?Facebook.*$</packageUrl>
+        <cve>CVE-2008-0660</cve>
+        <cve>CVE-2014-6392</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive as per #3594
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.nimbusds/lang\-tag@.*$</packageUrl>
+        <cpe>cpe:/a:nim-lang:nim-lang</cpe>
+    </suppress>
+    <!-- end cpan support -->
 </suppressions>

@@ -297,6 +297,11 @@ public final class Settings {
          */
         public static final String ANALYZER_NODE_PACKAGE_ENABLED = "analyzer.node.package.enabled";
         /**
+         * The properties key for configure whether the Node Package analyzer
+         * should skip devDependencies.
+         */
+        public static final String ANALYZER_NODE_PACKAGE_SKIPDEV = "analyzer.node.package.skipdev";
+        /**
          * The properties key for whether the Node Audit analyzer is enabled.
          */
         public static final String ANALYZER_NODE_AUDIT_ENABLED = "analyzer.node.audit.enabled";
@@ -347,10 +352,15 @@ public final class Settings {
          */
         public static final String ANALYZER_RETIREJS_REPO_VALID_FOR_HOURS = "analyzer.retirejs.repo.validforhours";
         /**
-         * The properties key for whether the composer lock file analyzer is
+         * The properties key for whether the PHP composer lock file analyzer is
          * enabled.
          */
         public static final String ANALYZER_COMPOSER_LOCK_ENABLED = "analyzer.composer.lock.enabled";
+        /**
+         * The properties key for whether the Perl CPAN file file analyzer is
+         * enabled.
+         */
+        public static final String ANALYZER_CPANFILE_ENABLED = "analyzer.cpanfile.enabled";
         /**
          * The properties key for whether the Python Distribution analyzer is
          * enabled.
@@ -488,6 +498,10 @@ public final class Settings {
          */
         public static final String ANALYZER_CENTRAL_ENABLED = "analyzer.central.enabled";
         /**
+         * Key for the path to the local Maven repository.
+         */
+        public static final String MAVEN_LOCAL_REPO = "odc.maven.local.repo";
+        /**
          * Key for the URL to obtain content from Maven Central.
          */
         public static final String CENTRAL_CONTENT_URL = "central.content.url";
@@ -514,6 +528,11 @@ public final class Settings {
          * enabled.
          */
         public static final String ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED = "analyzer.swift.package.manager.enabled";
+        /**
+         * The properties key for whether the SWIFT package resolved analyzer is
+         * enabled.
+         */
+        public static final String ANALYZER_SWIFT_PACKAGE_RESOLVED_ENABLED = "analyzer.swift.package.resolved.enabled";
         /**
          * The properties key for the Central search URL.
          */
@@ -667,6 +686,15 @@ public final class Settings {
          * The properties key for the Sonatype OSS Index password.
          */
         public static final String ANALYZER_OSSINDEX_PASSWORD = "analyzer.ossindex.password";
+        /**
+         * The properties key for the Sonatype OSS batch-size.
+         */
+        public static final String ANALYZER_OSSINDEX_BATCH_SIZE = "analyzer.ossindex.batch.size";
+        /**
+         * The properties key for the Sonatype OSS Request Delay.
+         * Amount of time in seconds to wait before executing a request against the Sonatype OSS Rest API
+         */
+        public static final String ANALYZER_OSSINDEX_REQUEST_DELAY = "analyzer.ossindex.request.delay";
         /**
          * The properties key setting whether or not the JSON and XML reports
          * will be pretty printed.

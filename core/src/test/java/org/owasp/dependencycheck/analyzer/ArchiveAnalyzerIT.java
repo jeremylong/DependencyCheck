@@ -55,6 +55,7 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
         expResult.add("tgz");
         expResult.add("bz2");
         expResult.add("tbz2");
+        expResult.add("rpm");
         for (String ext : expResult) {
             assertTrue(ext, instance.accept(new File("test." + ext)));
         }
@@ -355,6 +356,36 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
             int initial_size = engine.getDependencies().length;
             engine.scan(file);
             engine.analyzeDependencies();
+            int ending_size = engine.getDependencies().length;
+            assertTrue(initial_size < ending_size);
+        } finally {
+            instance.close();
+        }
+    }
+
+    /**
+     * Test of analyze method, of class ArchiveAnalyzer.
+     */
+    @Test
+    public void testAnalyzeRpm() throws Exception {
+        Settings settings = getSettings();
+        settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+        settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
+        settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
+        settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, false);
+
+        ArchiveAnalyzer instance = new ArchiveAnalyzer();
+        instance.initialize(settings);
+        //trick the analyzer into thinking it is active so that it will prepare
+        instance.accept(new File("struts-1.2.9-162.35.1.uyuni.noarch.rpm"));
+        try (Engine engine = new Engine(settings)) {
+            instance.prepare(null);
+            
+            File file = BaseTest.getResourceAsFile(this, "xmlsec-2.0.7-3.7.uyuni.noarch.rpm");
+            Dependency dependency = new Dependency(file);
+
+            int initial_size = engine.getDependencies().length;
+            instance.analyze(dependency, engine);
             int ending_size = engine.getDependencies().length;
             assertTrue(initial_size < ending_size);
         } finally {

@@ -33,10 +33,12 @@ import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 import org.apache.commons.lang3.StringUtils;
 
@@ -83,7 +85,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
     /**
      * A list of Identifiers.
      */
-    private final Set<Identifier> vulnerabileSoftwareIdentifiers = new TreeSet<>();
+    private final Set<Identifier> vulnerableSoftwareIdentifiers = new TreeSet<>();
     /**
      * A set of identifiers that have been suppressed.
      */
@@ -99,7 +101,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
     /**
      * A collection of related dependencies.
      */
-    private final Set<Dependency> relatedDependencies = new HashSet<>();
+    private final SortedSet<Dependency> relatedDependencies = new TreeSet<>(Dependency.NAME_COMPARATOR);
     /**
      * A list of projects that reference this dependency.
      */
@@ -423,7 +425,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @return an unmodifiable set of software identifiers
      */
     public synchronized Set<Identifier> getSoftwareIdentifiers() {
-        return Collections.unmodifiableSet(new TreeSet<>(softwareIdentifiers));
+        return Collections.unmodifiableSet(softwareIdentifiers);
     }
 
     /**
@@ -432,7 +434,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @return an unmodifiable set of vulnerability identifiers
      */
     public synchronized Set<Identifier> getVulnerableSoftwareIdentifiers() {
-        return Collections.unmodifiableSet(new TreeSet<>(this.vulnerabileSoftwareIdentifiers));
+        return Collections.unmodifiableSet(this.vulnerableSoftwareIdentifiers);
     }
 
     /**
@@ -452,7 +454,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @param identifiers A set of Identifiers
      */
     protected synchronized void addVulnerableSoftwareIdentifiers(Set<Identifier> identifiers) {
-        this.vulnerabileSoftwareIdentifiers.addAll(identifiers);
+        this.vulnerableSoftwareIdentifiers.addAll(identifiers);
     }
 
     /**
@@ -493,7 +495,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @param identifier a reference to the identifier to add
      */
     public synchronized void addVulnerableSoftwareIdentifier(Identifier identifier) {
-        this.vulnerabileSoftwareIdentifiers.add(identifier);
+        this.vulnerableSoftwareIdentifiers.add(identifier);
     }
 
     /**
@@ -502,7 +504,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @param i the identifier to remove
      */
     public synchronized void removeVulnerableSoftwareIdentifier(Identifier i) {
-        this.vulnerabileSoftwareIdentifiers.remove(i);
+        this.vulnerableSoftwareIdentifiers.remove(i);
     }
 
     /**
@@ -532,7 +534,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
                                 && mavenArtifact.getGroupId().equals(id.getNamespace())) {
                             found = true;
                             i.setConfidence(Confidence.HIGHEST);
-                            final String url = "http://search.maven.org/#search|ga|1|1%3A%22" + this.getSha1sum() + "%22";
+                            final String url = "https://search.maven.org/search?q=1:" + this.getSha1sum();
                             i.setUrl(url);
                             //i.setUrl(mavenArtifact.getArtifactUrl());
                             LOGGER.debug("Already found identifier {}. Confidence set to highest", i.getValue());
@@ -562,7 +564,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @return the value of suppressedIdentifiers
      */
     public synchronized Set<Identifier> getSuppressedIdentifiers() {
-        return Collections.unmodifiableSet(new TreeSet<>(this.suppressedIdentifiers));
+        return Collections.unmodifiableSet(this.suppressedIdentifiers);
     }
 
     /**
@@ -741,7 +743,14 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @return the unmodifiable set of relatedDependencies
      */
     public synchronized Set<Dependency> getRelatedDependencies() {
-        return Collections.unmodifiableSet(new HashSet<>(relatedDependencies));
+        return Collections.unmodifiableSet(relatedDependencies);
+    }
+
+    /**
+     * Clears the {@link #relatedDependencies}.
+     */
+    public synchronized void clearRelatedDependencies() {
+        relatedDependencies.clear();
     }
 
     /**
@@ -852,7 +861,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
                 .append(this.sha1sum, other.sha1sum)
                 .append(this.sha256sum, other.sha256sum)
                 .append(this.softwareIdentifiers, other.softwareIdentifiers)
-                .append(this.vulnerabileSoftwareIdentifiers, other.vulnerabileSoftwareIdentifiers)
+                .append(this.vulnerableSoftwareIdentifiers, other.vulnerableSoftwareIdentifiers)
                 .append(this.suppressedIdentifiers, other.suppressedIdentifiers)
                 .append(this.description, other.description)
                 .append(this.license, other.license)
@@ -881,7 +890,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
                 .append(sha1sum)
                 .append(sha256sum)
                 .append(softwareIdentifiers)
-                .append(vulnerabileSoftwareIdentifiers)
+                .append(vulnerableSoftwareIdentifiers)
                 .append(suppressedIdentifiers)
                 .append(description)
                 .append(license)
@@ -942,6 +951,16 @@ public class Dependency extends EvidenceCollection implements Serializable {
         this.ecosystem = ecosystem;
     }
 
+    //CSOFF: OperatorWrap
+    /**
+     * Simple sorting by display file name and actual file path.
+     */
+    public static final Comparator<Dependency> NAME_COMPARATOR
+            = (Dependency d1, Dependency d2)
+            -> (d1.getDisplayFileName() + d1.getFilePath())
+                    .compareTo(d2.getDisplayFileName() + d2.getFilePath());
+
+    //CSON: OperatorWrap
     /**
      * A hashing function shortcut.
      */

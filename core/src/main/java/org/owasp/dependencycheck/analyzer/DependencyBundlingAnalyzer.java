@@ -196,20 +196,17 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
             final Dependency relatedDependency, final Set<Dependency> dependenciesToRemove,
             final boolean copyVulnsAndIds) {
         dependency.addRelatedDependency(relatedDependency);
-        relatedDependency.getRelatedDependencies().stream().forEach(d -> {
-            dependency.addRelatedDependency(d);
-            relatedDependency.removeRelatedDependencies(d);
-        });
+        relatedDependency.getRelatedDependencies().stream()
+                .forEach(dependency::addRelatedDependency);
+        relatedDependency.clearRelatedDependencies();
+
         if (copyVulnsAndIds) {
-            relatedDependency.getSoftwareIdentifiers().forEach((id) -> {
-                dependency.addSoftwareIdentifier(id);
-            });
-            relatedDependency.getVulnerableSoftwareIdentifiers().forEach((id) -> {
-                dependency.addVulnerableSoftwareIdentifier(id);
-            });
-            relatedDependency.getVulnerabilities().forEach((v) -> {
-                dependency.addVulnerability(v);
-            });
+            relatedDependency.getSoftwareIdentifiers()
+                    .forEach(dependency::addSoftwareIdentifier);
+            relatedDependency.getVulnerableSoftwareIdentifiers()
+                    .forEach(dependency::addVulnerableSoftwareIdentifier);
+            relatedDependency.getVulnerabilities()
+                    .forEach(dependency::addVulnerability);
         }
         //TODO this null check was added for #1296 - but I believe this to be related to virtual dependencies
         //  we may want to merge project references on virtual dependencies...
@@ -226,26 +223,19 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
      * [drive]\[repo_location]\repository\[path1]\[path2].
      *
      * @param path the path to trim
+     * @param repo the name of the local maven repository
      * @return a string representing the base path.
      */
-    private String getBaseRepoPath(final String path) {
-        int pos;
-        if (path.contains("local-repo")) {
-            pos = path.indexOf("local-repo" + File.separator) + 11;
-        } else {
-            pos = path.indexOf("repository" + File.separator) + 11;
-        }
-        if (pos < 0) {
+    private String getBaseRepoPath(final String path, final String repo) {
+        int pos = path.indexOf(repo + File.separator) + repo.length() + 1;
+        if (pos < repo.length() + 1) {
             return path;
         }
         int tmp = path.indexOf(File.separator, pos);
         if (tmp <= 0) {
             return path;
         }
-        //below is always true
-        //if (tmp > 0) {
         pos = tmp + 1;
-        //}
         tmp = path.indexOf(File.separator, pos);
         if (tmp > 0) {
             pos = tmp + 1;
@@ -354,11 +344,22 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
         if (left.equalsIgnoreCase(right)) {
             return true;
         }
-
-        if (left.matches(".*[/\\\\](repository|local-repo)[/\\\\].*") && right.matches(".*[/\\\\](repository|local-repo)[/\\\\].*")) {
-            left = getBaseRepoPath(left);
-            right = getBaseRepoPath(right);
+        final String localRepo = getSettings().getString(Settings.KEYS.MAVEN_LOCAL_REPO);
+        final Pattern p;
+        if (localRepo == null) {
+            p = Pattern.compile(".*[/\\\\](?<repo>repository|local-repo)[/\\\\].*");
+        } else {
+            final File f = new File(localRepo);
+            final String dir = f.getName();
+            p = Pattern.compile(".*[/\\\\](?<repo>repository|local-repo|" + Pattern.quote(dir) + ")[/\\\\].*");
         }
+        final Matcher mleft = p.matcher(left);
+        final Matcher mright = p.matcher(right);
+        if (mleft.find() && mright.find()) {
+            left = getBaseRepoPath(left, mleft.group("repo"));
+            right = getBaseRepoPath(right, mright.group("repo"));
+        }
+
         if (left.equalsIgnoreCase(right)) {
             return true;
         }
@@ -391,7 +392,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
             returnVal = true;
         } else if (!left.isVirtual() && right.isVirtual()) {
             returnVal = false;
-        } else if ((!rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+") && leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+"))
+        } else if ((!rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war|rpm).+") && leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war|rpm).+"))
                 || (rightName.contains("core") && !leftName.contains("core"))
                 || (rightName.contains("kernel") && !leftName.contains("kernel"))
                 || (rightName.contains("server") && !leftName.contains("server"))
@@ -400,7 +401,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
                 || (rightName.contains("akka-stream") && !leftName.contains("akka-stream"))
                 || (rightName.contains("netty-transport") && !leftName.contains("netty-transport"))) {
             returnVal = false;
-        } else if ((rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+") && !leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+"))
+        } else if ((rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war|rpm).+") && !leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war|rpm).+"))
                 || (!rightName.contains("core") && leftName.contains("core"))
                 || (!rightName.contains("kernel") && leftName.contains("kernel"))
                 || (!rightName.contains("server") && leftName.contains("server"))
@@ -476,8 +477,10 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
 
     /**
      * Attempts to convert a given JavaScript identifier to a web jar CPE.
+     *
      * @param id a JavaScript CPE
-     * @return a Maven CPE for a web jar if conversion is possible; otherwise the original CPE is returned
+     * @return a Maven CPE for a web jar if conversion is possible; otherwise
+     * the original CPE is returned
      */
     private String identifierToWebJarForCompairson(Identifier id) {
         if (id instanceof PurlIdentifier) {
@@ -529,8 +532,8 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
      * @return <code>true</code> if the leftPath is the shortest; otherwise
      * <code>false</code>
      */
-    protected boolean firstPathIsShortest(String left, String right) {
-        if (left.contains("dctemp")) {
+    public static boolean firstPathIsShortest(String left, String right) {
+        if (left.contains("dctemp") && !right.contains("dctemp")) {
             return false;
         }
         final String leftPath = left.replace('\\', '/');
@@ -552,7 +555,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
      * @param c the character to count
      * @return the number of times the character is present in the string
      */
-    private int countChar(String string, char c) {
+    private static int countChar(String string, char c) {
         int count = 0;
         final int max = string.length();
         for (int i = 0; i < max; i++) {

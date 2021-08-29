@@ -1,5 +1,31 @@
 # Release Notes
 
+## [Version 6.2.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.2.2) (2021-06-10)
+
+### Changes
+
+- Resolved issue with database connections introduced in 6.2.0 (see https://github.com/jeremylong/DependencyCheck/issues/3432).
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/30?closed=1).
+
+## [Version 6.2.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.2.1) (2021-06-08)
+
+### Changes
+
+- Resolved issue with database connections introduced in 6.2.0 (see https://github.com/jeremylong/DependencyCheck/issues/3416).
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/29?closed=1).
+
+## [Version 6.2.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.2.0) (2021-05-29)
+
+### Changes
+
+- Added an experimental Perl CPAN analyzer [#3378](https://github.com/jeremylong/DependencyCheck/pull/3378)
+  - Note that the full DSL of the CPAN is not yet supported so any required dependency is analyzed (i.e. there is no way to exclude development requirements)
+- Improved database performance [#3206](https://github.com/jeremylong/DependencyCheck/pull/3206)
+- The archive analyzer now extracts files from RPM archives [#3226](https://github.com/jeremylong/DependencyCheck/pull/3226)
+- Ensure ordered output in reports [#3243](https://github.com/jeremylong/DependencyCheck/pull/3343)
+- Several minor bug fixes and updates to reduce false positives
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/27?closed=1).
+
 ## [Version 6.1.6](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.1.6) (2021-04-29)
 
 ### Changes
@@ -71,9 +97,8 @@
 
 ### Changes
 
-- Minor bug fixes and reduction of false positives. 
-- See the full listing of 
-  [changes](https://github.com/jeremylong/DependencyCheck/milestone/18?closed=1).
+- Minor bug fixes and reduction of false positives.
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/18?closed=1).
 
 ## [Version 6.0.3](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.0.3) (2020-11-03)
 
@@ -90,10 +115,9 @@
   - If analyzing Node JS projects it is highly recommended to disable the Node JS Analyzer
     and solely rely on the Node Audit Analyzer. There are plans to rework Node JS analysis
     in a future release.
-- Support for external Oracle databases has been add for the 6.x releases (see #2899) 
+- Support for external Oracle databases has been add for the 6.x releases (see #2899)
 - Resolved several reported false positives.
-- Several other bug fixes have been implemented; see the full listing of 
-  [changes](https://github.com/jeremylong/DependencyCheck/milestone/17?closed=1).
+- Several other bug fixes have been implemented; see the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/17?closed=1).
 
 ## [Version 6.0.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.0.2) (2020-09-27)
 
@@ -123,15 +147,15 @@
 ### Changes
 
 - Updated database schema; this is a *breaking change* and anyone using an external database or those whom
-  specify the data directory will need recreate the database (including users of the docker image). The schema 
+  specify the data directory will need recreate the database (including users of the docker image). The schema
   changes were made to:
   - Improve the CVSS data, when available, per #2547
   - Improve the way that ecosystems are determined
   - Improve the update performance of external databases
-- Users with an **external Oracle** database will not be able to upgrade as https://github.com/jeremylong/DependencyCheck/issues/2755 
+- Users with an **external Oracle** database will not be able to upgrade as https://github.com/jeremylong/DependencyCheck/issues/2755
   has not been resolved - as such, version 6.0.0 does not support Oracle.
-- Users mirroring the NVD - ODC 6.0.0 requires the use of the version 1.1 data feeds - 
-  please ensure you are using 1.1 not the 1.0 data feed.
+- Users mirroring the NVD - ODC 6.0.0 requires the use of the version 1.1 data feeds
+  - please ensure you are using 1.1 not the 1.0 data feed.
   
 - Full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/14?closed=1).
 
@@ -157,9 +181,9 @@
 
 - Updated the JSON report to include a new field for unscored vulnerabilities (see #2392).
 - Updated the XML report to include a new attribute to flag unscored vulnerabilities (see #2392)
-    - see https://github.com/jeremylong/DependencyCheck/blob/master/core/src/main/resources/schema/dependency-check.2.3.xsd
+  - see https://github.com/jeremylong/DependencyCheck/blob/master/core/src/main/resources/schema/dependency-check.2.3.xsd
 - Added an experimental analyzer that will lookup Node libraries in the NVD data feeds (see #1249)
-    - `NpmCPEAnalyzer`, experimental analyzers must be enabled, controlled via property `analyzer.npm.cpe.enabled` which will be exposed as a configuration option in the next release.
+  - `NpmCPEAnalyzer`, experimental analyzers must be enabled, controlled via property `analyzer.npm.cpe.enabled` which will be exposed as a configuration option in the next release.
 - Full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/11?closed=1).
 
 ## [Version 5.2.4](https://github.com/jeremylong/DependencyCheck/releases/tag/v5.2.4) (2019-11-12)
@@ -175,7 +199,7 @@
 ### Changes
 
 - Updated to use the NVD JSON 1.1 schema (see [#2273](https://github.com/jeremylong/DependencyCheck/issues/2273)).
-    - This update is 100% backward compatible with the 1.0 schema if you are mirroring the 1.0 JSON files.
+  - This update is 100% backward compatible with the 1.0 schema if you are mirroring the 1.0 JSON files.
 - Added `nonProxyHosts` to the CLI and gradle plugin.
 - False positive corrections.
 - General code cleanup/bug fix.
@@ -323,7 +347,7 @@
 
 ### Bug Fixes
 
-- Updated fix for transitive dependencies with known vulnerabilities (guava and commons-collections) 
+- Updated fix for transitive dependencies with known vulnerabilities (guava and commons-collections)
   so that the upgrade occurs correctly in other integrations that utilize core; see
   [issue #1562](https://github.com/jeremylong/DependencyCheck/issues/1561#issuecomment-450112110).
 - Resolved several false positives
@@ -357,8 +381,8 @@
 ### Enhancements
 
 - Migrated the NSP Analyzer to use the Node Audit APIs instead; see [#1366](https://github.com/jeremylong/DependencyCheck/issues/1366).
-    - Note that the analyzer and configuration was changed to NodeAuditAnalyzer.
-    - Configurations for the NSP analyzer have been deprecated and will control the NodeAuditAnalyzer if used; note that the NSP configuration options will be removed in a future release.
+  - Note that the analyzer and configuration was changed to NodeAuditAnalyzer.
+  - Configurations for the NSP analyzer have been deprecated and will control the NodeAuditAnalyzer if used; note that the NSP configuration options will be removed in a future release.
 - The [dependency-check-gradle](https://github.com/jeremylong/dependency-check-gradle) plugin was updated to include a default scan set
   of ['src/main/resources','src/main/webapp'] and any dependencies contained in these directories will be analyzed. The purpose of this
   enhancement is to enable the RetireJS Analyzer to scan JavaScript files that may be included.
@@ -377,7 +401,6 @@
   [#1515](https://github.com/jeremylong/DependencyCheck/issues/1515), [#1529](https://github.com/jeremylong/DependencyCheck/issues/1529), [#1535](https://github.com/jeremylong/DependencyCheck/issues/1535),
   and [#1437](https://github.com/jeremylong/DependencyCheck/issues/1437).
 - Fixed copy/paste error in JavaDoc; see [#1509](https://github.com/jeremylong/DependencyCheck/issues/1509).
-
 
 ## [Version 3.3.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.3.2) (2018-09-14)
 
@@ -404,7 +427,6 @@
 
 - An Nuget Packages.config Analyzer was added; see [#1412](https://github.com/jeremylong/DependencyCheck/issues/1412).
 
-
 ## [Version 3.3.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.3.0) (2018-07-22)
 
 ### Bug Fixes
@@ -429,7 +451,6 @@
 - NuGet dependencies contained in MSBuild files are now included in the scan. See [Issue #1131](https://github.com/jeremylong/DependencyCheck/issues/1131) for more details.
 - Cocoapod's Podfile.lock is now analyzed when present. See [PR #1324](https://github.com/jeremylong/DependencyCheck/pull/1324) for more information.
 
-
 ## [Version 3.2.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.2.1) (2018-05-28)
 
 ### Bug Fixes
@@ -450,7 +471,7 @@
 
 - The dependency-check-maven plugin no longer uses the [Central Analyzer](https://jeremylong.github.io/DependencyCheck/analyzers/central-analyzer.html) by default
 - Updated dependency-check-maven so that it will not fail when your multi-module build has dependencies that have not yet been built in the reactor (See [#740](https://github.com/jeremylong/DependencyCheck/issues/740))
-  - Note if the required dependency has not yet been built in the reactor and the dependency is available in a configured repository dependency-check-maven, as expected, would pull the dependency from the repository for analysis. 
+  - Note if the required dependency has not yet been built in the reactor and the dependency is available in a configured repository dependency-check-maven, as expected, would pull the dependency from the repository for analysis.
 - Minor documentation updates
 - False positive reduction
 - Fixed the Gradle Plugin and Ant Task so that the temp directory is properly cleaned up after execution
@@ -477,7 +498,6 @@
 - The initial database creation time for H2 databases was improved
 - Changes made to decrease false positive and false negatives
 
-
 ## [Version 3.1.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.1.1) (2018-01-29)
 
 ### Bug fixes
@@ -486,7 +506,6 @@
 - Reverted change that broke Maven 3.1.0 compatability; Maven 3.1.0 and beyond is once again supported.
 - False positive reduction.
 - Minor documentation cleanup.
-
 
 ## [Version 3.1.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.1.0) (2018-01-02)
 
@@ -509,7 +528,7 @@
   skip the usage of the suppression analyzer.
 - Fixed bug in Lucene query where LARGE entries in the pom.xml or manifest caused
   the query to break.
-- General cleanup, false positive, and false negative reduction. 
+- General cleanup, false positive, and false negative reduction.
 
 ## [Version 3.0.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v3.0.2) (2017-11-13)
 
@@ -535,4 +554,3 @@
 - If show summary is disabled and vulnerable libraries are found that fail the build details are no longer displayed in the console – only that vulnerable libraries were identified
 - Resolved issues with threading and multiple connections to the embedded H2 database
   - This allows the Jenkins pipeline, Maven Plugin, etc. to safely run parallel executions of dependency-check
-

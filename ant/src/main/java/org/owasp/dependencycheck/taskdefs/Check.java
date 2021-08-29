@@ -77,6 +77,10 @@ public class Check extends Update {
      */
     private Boolean nodeAuditAnalyzerUseCache;
     /**
+     * Sets whether or not the Node Package Analyzer should skip dev dependencies.
+     */
+    private Boolean nodePackageSkipDevDependencies;
+    /**
      * Sets whether or not the Node Audit Analyzer should use a local cache.
      */
     private Boolean nodeAuditSkipDevDependencies;
@@ -269,6 +273,10 @@ public class Check extends Update {
      * Whether or not the PHP Composer Analyzer is enabled.
      */
     private Boolean composerAnalyzerEnabled;
+    /**
+     * Whether or not the Perl CPAN File Analyzer is enabled.
+     */
+    private Boolean cpanfileAnalyzerEnabled;
 
     /**
      * Whether or not the .NET Assembly Analyzer is enabled.
@@ -312,6 +320,10 @@ public class Check extends Update {
      * Whether or not the Swift package Analyzer is enabled.
      */
     private Boolean swiftPackageManagerAnalyzerEnabled;
+    /**
+     * Whether or not the Swift package Analyzer is enabled.
+     */
+    private Boolean swiftPackageResolvedAnalyzerEnabled;
 
     /**
      * Whether or not the Sonatype OSS Index analyzer is enabled.
@@ -815,6 +827,24 @@ public class Check extends Update {
     }
 
     /**
+     * Get the value of cpanfileAnalyzerEnabled.
+     *
+     * @return the value of cpanfileAnalyzerEnabled
+     */
+    public Boolean isCpanfileAnalyzerEnabled() {
+        return cpanfileAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of cpanfileAnalyzerEnabled.
+     *
+     * @param cpanfileAnalyzerEnabled new value of cpanfileAnalyzerEnabled
+     */
+    public void setCpanfileAnalyzerEnabled(Boolean cpanfileAnalyzerEnabled) {
+        this.cpanfileAnalyzerEnabled = cpanfileAnalyzerEnabled;
+    }
+
+    /**
      * Get the value of autoconfAnalyzerEnabled.
      *
      * @return the value of autoconfAnalyzerEnabled
@@ -963,6 +993,24 @@ public class Check extends Update {
     public void setSwiftPackageManagerAnalyzerEnabled(Boolean swiftPackageManagerAnalyzerEnabled) {
         this.swiftPackageManagerAnalyzerEnabled = swiftPackageManagerAnalyzerEnabled;
     }
+    /**
+     * Returns whether or not the Swift package resolved Analyzer is enabled.
+     *
+     * @return whether or not the Swift package resolved Analyzer is enabled
+     */
+    public Boolean isSwiftPackageResolvedAnalyzerEnabled() {
+        return swiftPackageResolvedAnalyzerEnabled;
+    }
+
+    /**
+     * Sets the enabled state of the swift package manager analyzer.
+     *
+     * @param swiftPackageResolvedAnalyzerEnabled the enabled state of the swift
+     * package resolved analyzer
+     */
+    public void setSwiftPackageResolvedAnalyzerEnabled(Boolean swiftPackageResolvedAnalyzerEnabled) {
+        this.swiftPackageResolvedAnalyzerEnabled = swiftPackageResolvedAnalyzerEnabled;
+    }
 
     /**
      * Get the value of opensslAnalyzerEnabled.
@@ -1052,6 +1100,25 @@ public class Check extends Update {
      */
     public void setNodeAuditAnalyzerUseCache(Boolean nodeAuditAnalyzerUseCache) {
         this.nodeAuditAnalyzerUseCache = nodeAuditAnalyzerUseCache;
+    }
+
+    /**
+     * Get the value of nodePackageSkipDevDependencies.
+     *
+     * @return the value of nodePackageSkipDevDependencies
+     */
+    public Boolean isNodePackageAnalyzerSkipDevDependencies() {
+        return nodePackageSkipDevDependencies;
+    }
+
+    /**
+     * Set the value of nodePackageSkipDevDependencies.
+     *
+     * @param nodePackageSkipDevDependencies new value of
+     * nodePackageSkipDevDependencies
+     */
+    public void setNodePackageSkipDevDependencies(Boolean nodePackageSkipDevDependencies) {
+        this.nodePackageSkipDevDependencies = nodePackageSkipDevDependencies;
     }
 
     /**
@@ -1835,6 +1902,7 @@ public class Check extends Update {
         getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_BEARER_TOKEN, artifactoryAnalyzerBearerToken);
 
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, swiftPackageManagerAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_RESOLVED_ENABLED, swiftPackageResolvedAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, cocoapodsAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, bundleAuditAnalyzerEnabled);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, bundleAuditPath);
@@ -1843,7 +1911,9 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_PIP_ENABLED, pipAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_PIPFILE_ENABLED, pipfileAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_CPANFILE_ENABLED, cpanfileAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, nodePackageSkipDevDependencies);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, nodeAuditAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, yarnAuditAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, nodeAuditAnalyzerUseCache);

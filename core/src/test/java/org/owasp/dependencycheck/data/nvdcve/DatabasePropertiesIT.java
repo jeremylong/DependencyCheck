@@ -40,6 +40,7 @@ public class DatabasePropertiesIT extends BaseDBTestCase {
     public void setUp() throws Exception {
         super.setUp();
         cveDb = new CveDB(getSettings());
+        cveDb.open();
     }
 
     @After

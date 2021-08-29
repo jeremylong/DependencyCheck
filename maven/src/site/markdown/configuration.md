@@ -24,7 +24,7 @@ failBuildOnCVSS             | Specifies if the build should be failed if a CVSS 
 failBuildOnAnyVulnerability | Specific that if any vulnerability is identified, the build will fail. | false
 failOnError                 | Whether the build should fail if there is an error executing the dependency-check analysis. | true
 name                        | The name of the report in the site. | dependency-check or dependency-check:aggregate
-outputDirectory             | The location to write the report(s). Note, this is not used if generating the report as part of a `mvn site` build. | 'target'
+outputDirectory             | The location to write the report(s). This can be specified on the command line via `-Dodc.outputDirectory`. Note, this is not used if generating the report as part of a `mvn site` build. | 'target'
 scanSet                     | An optional collection of file sets that specify additional files and/or directories to analyze as part of the scan. If not specified, defaults to standard Maven conventions. This cannot be configured via the command line parameters (e.g. `-DscanSet=./path`) - use the below `scanDirectory` instead. Note that the scan sets specified should be relative from the base directory - do not use Maven project variable substitution (e.g. `${project.basedir}/src/webpack`). Using Maven project variable substitution can cause directories to be missed especially when using an aggregate build. | ['src/main/resources', 'src/main/filters', 'src/main/webapp', './package.json', './package-lock.json', './npm-shrinkwrap.json', './Gopkg.lock', './go.mod']
 scanDirectory               | An optional collection of directories to include in the scan. This configuration should only be used via the command line - if configuring the scan directories within the `pom.xml` please consider using the above `scanSet`. | &nbsp;
 skip                        | Skips the dependency-check analysis.                       | false
@@ -80,6 +80,7 @@ autoconfAnalyzerEnabled             | Sets whether the [experimental](../analyze
 pipAnalyzerEnabled                  | Sets whether the [experimental](../analyzers/index.html) pip Analyzer should be used.                                                               | true
 pipfileAnalyzerEnabled              | Sets whether the [experimental](../analyzers/index.html) Pipfile Analyzer should be used.                                                           | true
 composerAnalyzerEnabled             | Sets whether the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.                                            | true
+cpanfileAnalyzerEnabled             | Sets whether the [experimental](../analyzers/index.html) Perl CPAN File Analyzer should be used.                                                    | true
 yarnAuditAnalyzerEnabled            | Sets whether the Yarn Audit Analyzer should be used. This analyzer requires yarn and an internet connection.  Use `nodeAuditSkipDevDependencies` to skip dev dependencies. | true
 pathToYarn                          | The path to `yarn`.                                                                                                                                 | &nbsp;
 nodeAnalyzerEnabled                 | Sets whether the [retired](../analyzers/index.html) Node.js Analyzer should be used.                                                                | true
@@ -95,6 +96,7 @@ cocoapodsAnalyzerEnabled            | Sets whether the [experimental](../analyze
 bundleAuditAnalyzerEnabled          | Sets whether the [experimental](../analyzers/index.html) Bundle Audit Analyzer should be used.                                                      | true
 bundleAuditPath                     | Sets the path to the bundle audit executable; only used if bundle audit analyzer is enabled and experimental analyzers are enabled.                 | &nbsp;
 swiftPackageManagerAnalyzerEnabled  | Sets whether the [experimental](../analyzers/index.html) Swift Package Analyzer should be used.                                                     | true
+swiftPackageResolvedAnalyzerEnabled | Sets whether the [experimental](../analyzers/index.html) Swift Package Resolved should be used.                                                     | true
 assemblyAnalyzerEnabled             | Sets whether the .NET Assembly Analyzer should be used.                                                                                             | true
 msbuildAnalyzerEnabled              | Sets whether the MSBuild Analyzer should be used.                                                                                                   | true
 pathToCore                          | The path to dotnet core .NET assembly analysis on non-windows systems.                                                                              | &nbsp;

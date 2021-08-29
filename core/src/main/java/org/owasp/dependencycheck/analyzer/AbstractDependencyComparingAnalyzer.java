@@ -89,7 +89,7 @@ public abstract class AbstractDependencyComparingAnalyzer extends AbstractAnalyz
             if (dependencies.length < 2) {
                 return;
             }
-            Arrays.sort(dependencies, (l, r) -> (l.getDisplayFileName() + l.getActualFilePath()).compareTo(r.getDisplayFileName() + r.getActualFilePath()));
+            Arrays.sort(dependencies, Dependency.NAME_COMPARATOR);
             for (int x = 0; x < dependencies.length - 1; x++) {
                 final Dependency dependency = dependencies[x];
                 if (!dependenciesToRemove.contains(dependency)) {

@@ -154,7 +154,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             "today",
             "tstamp",
             "dstamp",
-            "eclipse-sourcereferences");
+            "eclipse-sourcereferences",
+            "kotlin-version");
     /**
      * Deprecated Jar manifest attribute, that is, nonetheless, useful for
      * analysis.
@@ -606,9 +607,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         final String originalGroupID = groupid;
-        if (groupid != null && (groupid.startsWith("org.") || groupid.startsWith("com."))) {
-            groupid = groupid.substring(4);
-        }
 
         if ((artifactid == null || artifactid.isEmpty()) && parentArtifactId != null && !parentArtifactId.isEmpty()) {
             artifactid = parentArtifactId;

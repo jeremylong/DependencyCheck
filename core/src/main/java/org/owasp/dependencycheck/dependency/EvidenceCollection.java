@@ -19,8 +19,8 @@ package org.owasp.dependencycheck.dependency;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -41,23 +41,23 @@ class EvidenceCollection implements Serializable {
     /**
      * A collection of vendor evidence.
      */
-    private final Set<Evidence> vendors = new HashSet<>();
+    private final Set<Evidence> vendors = new TreeSet<>();
     /**
      * A collection of strings used to adjust Lucene's vendor term weighting.
      */
-    private final Set<String> vendorWeightings = new HashSet<>();
+    private final Set<String> vendorWeightings = new TreeSet<>();
     /**
      * A collection of product evidence.
      */
-    private final Set<Evidence> products = new HashSet<>();
+    private final Set<Evidence> products = new TreeSet<>();
     /**
      * A collection of strings used to adjust Lucene's product term weighting.
      */
-    private final Set<String> productWeightings = new HashSet<>();
+    private final Set<String> productWeightings = new TreeSet<>();
     /**
      * A collection of version evidence.
      */
-    private final Set<Evidence> versions = new HashSet<>();
+    private final Set<Evidence> versions = new TreeSet<>();
 
     /**
      * Used to iterate over highest confidence evidence contained in the
@@ -113,13 +113,13 @@ class EvidenceCollection implements Serializable {
 
             switch (type) {
                 case VENDOR:
-                    list = Collections.unmodifiableSet(new HashSet<>(vendors));
+                    list = Collections.unmodifiableSet(new TreeSet<>(vendors));
                     break;
                 case PRODUCT:
-                    list = Collections.unmodifiableSet(new HashSet<>(products));
+                    list = Collections.unmodifiableSet(new TreeSet<>(products));
                     break;
                 case VERSION:
-                    list = Collections.unmodifiableSet(new HashSet<>(versions));
+                    list = Collections.unmodifiableSet(new TreeSet<>(versions));
                     break;
                 default:
                     return null;
@@ -248,7 +248,7 @@ class EvidenceCollection implements Serializable {
      * @return an unmodifiable set of vendor weighting strings
      */
     public synchronized Set<String> getVendorWeightings() {
-        return Collections.unmodifiableSet(new HashSet<>(vendorWeightings));
+        return Collections.unmodifiableSet(new TreeSet<>(vendorWeightings));
     }
 
     /**
@@ -259,7 +259,7 @@ class EvidenceCollection implements Serializable {
      * @return an unmodifiable set of vendor weighting strings
      */
     public synchronized Set<String> getProductWeightings() {
-        return Collections.unmodifiableSet(new HashSet<>(productWeightings));
+        return Collections.unmodifiableSet(new TreeSet<>(productWeightings));
     }
 
     /**
@@ -272,11 +272,11 @@ class EvidenceCollection implements Serializable {
         if (null != type) {
             switch (type) {
                 case VENDOR:
-                    return Collections.unmodifiableSet(new HashSet<>(vendors));
+                    return Collections.unmodifiableSet(new TreeSet<>(vendors));
                 case PRODUCT:
-                    return Collections.unmodifiableSet(new HashSet<>(products));
+                    return Collections.unmodifiableSet(new TreeSet<>(products));
                 case VERSION:
-                    return Collections.unmodifiableSet(new HashSet<>(versions));
+                    return Collections.unmodifiableSet(new TreeSet<>(versions));
                 default:
                     break;
             }
@@ -290,7 +290,7 @@ class EvidenceCollection implements Serializable {
      * @return the unmodifiable set of evidence
      */
     public synchronized Set<Evidence> getEvidence() {
-        final Set<Evidence> e = new HashSet<>(vendors);
+        final Set<Evidence> e = new TreeSet<>(vendors);
         e.addAll(products);
         e.addAll(versions);
         return Collections.unmodifiableSet(e);

@@ -20,7 +20,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>6.1.7-SNAPSHOT</version>
+        <version>6.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>dependency-check-core</artifactId>
@@ -32,7 +32,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         <connection>scm:git:https://github.com/jeremylong/DependencyCheck.git</connection>
         <url>https://github.com/jeremylong/DependencyCheck/tree/master/core</url>
         <developerConnection>scm:git:git@github.com:jeremylong/DependencyCheck.git</developerConnection>
-        <tag>v6.1.6</tag>
+        <tag>v6.2.2</tag>
     </scm>
     <build>
         <resources>
@@ -231,6 +231,10 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
@@ -456,6 +460,10 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.packager</groupId>
+            <artifactId>packager-rpm</artifactId>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>
@@ -512,7 +520,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 <dependency>
                     <groupId>org.postgresql</groupId>
                     <artifactId>postgresql</artifactId>
-                    <version>42.2.20</version>
+                    <version>42.2.23</version>
                 </dependency>
             </dependencies>
             <build>
