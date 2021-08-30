@@ -176,6 +176,7 @@ public class AppTest extends BaseTest {
     @Test
     public void testPopulateSettingsShouldSetDefaultValueToCveUrlModified() throws Exception {
       // Given
+      System.clearProperty("cve.url.modified");
       final Settings settings = getSettings();
       final App app = new App(settings);
 
