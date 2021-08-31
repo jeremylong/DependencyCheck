@@ -414,7 +414,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     private void addFalseNegativeCPEs(Dependency dependency) {
         final CpeBuilder builder = new CpeBuilder();
         //TODO move this to the hint analyzer
-        List<Identifier> identifiersToAdd = new ArrayList<>();
+        final List<Identifier> identifiersToAdd = new ArrayList<>();
         dependency.getVulnerableSoftwareIdentifiers().stream()
                 .filter((i) -> (i instanceof CpeIdentifier))
                 .map(i -> (CpeIdentifier) i)
