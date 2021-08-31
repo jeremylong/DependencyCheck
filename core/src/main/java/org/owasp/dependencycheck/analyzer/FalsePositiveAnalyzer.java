@@ -414,7 +414,10 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     private void addFalseNegativeCPEs(Dependency dependency) {
         final CpeBuilder builder = new CpeBuilder();
         //TODO move this to the hint analyzer
-        dependency.getVulnerableSoftwareIdentifiers().stream()
+        // defensive copu for #3618 as I do not have access projects with opensso / opensso_enterprise
+        // to validate that a move of rules to the hint analyzer will result in the desired effects
+        List<Identifier> currentVulnSwIds = new ArrayList<>(dependency.getVulnerableSoftwareIdentifiers());
+        currentVulnSwIds.stream()
                 .filter((i) -> (i instanceof CpeIdentifier))
                 .map(i -> (CpeIdentifier) i)
                 .forEach((i) -> {
