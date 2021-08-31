@@ -297,29 +297,32 @@
 <a class="jxr_linenumber" name="L289" href="#L289">289</a>             processReader.readAll();
 <a class="jxr_linenumber" name="L290" href="#L290">290</a>             error = processReader.getError();
 <a class="jxr_linenumber" name="L291" href="#L291">291</a>             <strong class="jxr_keyword">if</strong> (!StringUtils.isBlank(error)) {
-<a class="jxr_linenumber" name="L292" href="#L292">292</a>                 LOGGER.warn(<span class="jxr_string">"Warnings from `go`: {}"</span>, error);
+<a class="jxr_linenumber" name="L292" href="#L292">292</a>                 LOGGER.warn(<span class="jxr_string">"While analyzing `{}` `go` generated the following warnings:\n{}"</span>, dependency.getFilePath(), error);
 <a class="jxr_linenumber" name="L293" href="#L293">293</a>             }
 <a class="jxr_linenumber" name="L294" href="#L294">294</a>             exitValue = process.exitValue();
 <a class="jxr_linenumber" name="L295" href="#L295">295</a>             <strong class="jxr_keyword">if</strong> (exitValue &lt; 0 || exitValue &gt; 1) {
-<a class="jxr_linenumber" name="L296" href="#L296">296</a>                 <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"Unexpected exit code from go process; exit code: %s"</span>, exitValue);
-<a class="jxr_linenumber" name="L297" href="#L297">297</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(msg);
-<a class="jxr_linenumber" name="L298" href="#L298">298</a>             }
-<a class="jxr_linenumber" name="L299" href="#L299">299</a>         } <strong class="jxr_keyword">catch</strong> (InterruptedException ie) {
-<a class="jxr_linenumber" name="L300" href="#L300">300</a>             Thread.currentThread().interrupt();
-<a class="jxr_linenumber" name="L301" href="#L301">301</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(<span class="jxr_string">"go process interrupted"</span>, ie);
-<a class="jxr_linenumber" name="L302" href="#L302">302</a>         } <strong class="jxr_keyword">catch</strong> (IOException ex) {
-<a class="jxr_linenumber" name="L303" href="#L303">303</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(<span class="jxr_string">"Error closing the go process"</span>, ex);
-<a class="jxr_linenumber" name="L304" href="#L304">304</a>         } <strong class="jxr_keyword">catch</strong> (JsonParsingException ex) {
-<a class="jxr_linenumber" name="L305" href="#L305">305</a>             <strong class="jxr_keyword">final</strong> String msg;
-<a class="jxr_linenumber" name="L306" href="#L306">306</a>             <strong class="jxr_keyword">if</strong> (error != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L307" href="#L307">307</a>                 msg = <span class="jxr_string">"Unable to process output from `go list -json -m -mod=readonly all`; the command reported the following errors: "</span> + error;
-<a class="jxr_linenumber" name="L308" href="#L308">308</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L309" href="#L309">309</a>                 msg = <span class="jxr_string">"Unable to process output from `go list -json -m -mod=readonly all`; please validate that the command runs without errors."</span>;
-<a class="jxr_linenumber" name="L310" href="#L310">310</a>             }
-<a class="jxr_linenumber" name="L311" href="#L311">311</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(msg, ex);
-<a class="jxr_linenumber" name="L312" href="#L312">312</a>         }
-<a class="jxr_linenumber" name="L313" href="#L313">313</a>     }
-<a class="jxr_linenumber" name="L314" href="#L314">314</a> }
+<a class="jxr_linenumber" name="L296" href="#L296">296</a>                 <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"Error analyzing '%s'; Unexpected exit code from go process; exit code: %s"</span>,
+<a class="jxr_linenumber" name="L297" href="#L297">297</a>                         dependency.getFilePath(), exitValue);
+<a class="jxr_linenumber" name="L298" href="#L298">298</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(msg);
+<a class="jxr_linenumber" name="L299" href="#L299">299</a>             }
+<a class="jxr_linenumber" name="L300" href="#L300">300</a>         } <strong class="jxr_keyword">catch</strong> (InterruptedException ie) {
+<a class="jxr_linenumber" name="L301" href="#L301">301</a>             Thread.currentThread().interrupt();
+<a class="jxr_linenumber" name="L302" href="#L302">302</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(<span class="jxr_string">"go process interrupted while analyzing '"</span> + dependency.getFilePath() + <span class="jxr_string">"'"</span>, ie);
+<a class="jxr_linenumber" name="L303" href="#L303">303</a>         } <strong class="jxr_keyword">catch</strong> (IOException ex) {
+<a class="jxr_linenumber" name="L304" href="#L304">304</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(<span class="jxr_string">"Error closing the go process while analyzing '"</span> + dependency.getFilePath() + <span class="jxr_string">"'"</span>, ex);
+<a class="jxr_linenumber" name="L305" href="#L305">305</a>         } <strong class="jxr_keyword">catch</strong> (JsonParsingException ex) {
+<a class="jxr_linenumber" name="L306" href="#L306">306</a>             <strong class="jxr_keyword">final</strong> String msg;
+<a class="jxr_linenumber" name="L307" href="#L307">307</a>             <strong class="jxr_keyword">if</strong> (error != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L308" href="#L308">308</a>                 msg = String.format(<span class="jxr_string">"Error analyzing '%s'; Unable to process output from `go list -json -m -mod=readonly all`; "</span>
+<a class="jxr_linenumber" name="L309" href="#L309">309</a>                         + <span class="jxr_string">"the command reported the following errors: %s"</span>, dependency.getFilePath(), error);
+<a class="jxr_linenumber" name="L310" href="#L310">310</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L311" href="#L311">311</a>                 msg = String.format(<span class="jxr_string">"Error analyzing '%s'; Unable to process output from `go list -json -m -mod=readonly all`; "</span>
+<a class="jxr_linenumber" name="L312" href="#L312">312</a>                         + <span class="jxr_string">"please validate that the command runs without errors."</span>, dependency.getFilePath());
+<a class="jxr_linenumber" name="L313" href="#L313">313</a>             }
+<a class="jxr_linenumber" name="L314" href="#L314">314</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(msg, ex);
+<a class="jxr_linenumber" name="L315" href="#L315">315</a>         }
+<a class="jxr_linenumber" name="L316" href="#L316">316</a>     }
+<a class="jxr_linenumber" name="L317" href="#L317">317</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2021 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

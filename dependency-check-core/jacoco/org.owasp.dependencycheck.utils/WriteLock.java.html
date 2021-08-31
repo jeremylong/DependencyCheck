@@ -196,7 +196,7 @@ public class WriteLock implements AutoCloseable {
                 }
 <span class="pc bpc" id="L197" title="3 of 6 branches missed.">            } while (++ctr &lt; MAX_SLEEP_COUNT &amp;&amp; (lock == null || !lock.isValid()));</span>
 <span class="pc bpc" id="L198" title="2 of 4 branches missed.">            if (lock == null || !lock.isValid()) {</span>
-<span class="nc" id="L199">                throw new WriteLockException(&quot;Unable to obtain the update lock, skipping the database update. Skippinig the database update.&quot;);</span>
+<span class="nc" id="L199">                throw new WriteLockException(&quot;Unable to obtain the update lock, skipping the database update. Skipping the database update.&quot;);</span>
             }
 <span class="nc" id="L201">        } catch (IOException ex) {</span>
 <span class="nc" id="L202">            throw new WriteLockException(ex.getMessage(), ex);</span>

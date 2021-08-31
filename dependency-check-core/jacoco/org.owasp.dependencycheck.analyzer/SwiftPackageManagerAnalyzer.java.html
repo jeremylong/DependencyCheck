@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
     /**
      * The logger.
      */
-<span class="fc" id="L59">    private static final Logger LOGGER = LoggerFactory.getLogger(RubyGemspecAnalyzer.class);</span>
+<span class="fc" id="L59">    private static final Logger LOGGER = LoggerFactory.getLogger(SwiftPackageManagerAnalyzer.class);</span>
 
     /**
      * A descriptor for the type of dependencies processed or added by this
@@ -137,64 +137,75 @@ import org.slf4j.LoggerFactory;
     }
 
     @Override
-    protected void analyzeDependency(Dependency dependency, Engine engine)
-            throws AnalysisException {
-
-<span class="fc" id="L143">        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
-
-        final String contents;
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         try {
-<span class="fc" id="L147">            contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());</span>
-<span class="nc" id="L148">        } catch (IOException e) {</span>
-<span class="nc" id="L149">            throw new AnalysisException(</span>
-                    &quot;Problem occurred while reading dependency file.&quot;, e);
-<span class="fc" id="L151">        }</span>
-<span class="fc" id="L152">        final Matcher matcher = SPM_BLOCK_PATTERN.matcher(contents);</span>
-<span class="pc bpc" id="L153" title="1 of 2 branches missed.">        if (matcher.find()) {</span>
-<span class="fc" id="L154">            final String packageDescription = matcher.group(1);</span>
-<span class="pc bpc" id="L155" title="1 of 2 branches missed.">            if (packageDescription.isEmpty()) {</span>
-<span class="nc" id="L156">                return;</span>
+<span class="fc" id="L142">            analyzeSpmFileDependency(dependency);</span>
+
+<span class="nc" id="L144">        } catch (IOException ex) {</span>
+<span class="nc" id="L145">            throw new AnalysisException(</span>
+<span class="nc" id="L146">                    &quot;Problem occurred while reading dependency file: &quot; + dependency.getActualFilePath(), ex);</span>
+<span class="fc" id="L147">        }</span>
+<span class="fc" id="L148">    }</span>
+
+    /**
+     * Analyzes the SPM file and adds the evidence to the dependency.
+     *
+     * @param dependency the dependency
+     * @throws IOException thrown if there is an error analyzing the `podspec`
+     * file
+     */
+    private void analyzeSpmFileDependency(Dependency dependency)
+            throws AnalysisException, IOException {
+<span class="fc" id="L159">        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+
+<span class="fc" id="L161">        final String contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());</span>
+
+<span class="fc" id="L163">        final Matcher matcher = SPM_BLOCK_PATTERN.matcher(contents);</span>
+<span class="pc bpc" id="L164" title="1 of 2 branches missed.">        if (matcher.find()) {</span>
+<span class="fc" id="L165">            final String packageDescription = matcher.group(1);</span>
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">            if (packageDescription.isEmpty()) {</span>
+<span class="nc" id="L167">                return;</span>
             }
 
             // TODO SPM is currently under development for SWIFT 3. Its current metadata includes
             // package name and dependencies.
             // Future interesting metadata: version, license, homepage, author, summary,
             // etc.
-<span class="fc" id="L163">            final String name = addStringEvidence(dependency, EvidenceType.PRODUCT, packageDescription, &quot;name&quot;, &quot;name&quot;, Confidence.HIGHEST);</span>
-<span class="pc bpc" id="L164" title="2 of 4 branches missed.">            if (name != null &amp;&amp; !name.isEmpty()) {</span>
-<span class="fc" id="L165">                dependency.addEvidence(EvidenceType.VENDOR, SPM_FILE_NAME, &quot;name_project&quot;, name, Confidence.HIGHEST);</span>
-<span class="fc" id="L166">                dependency.setName(name);</span>
+<span class="fc" id="L174">            final String name = addStringEvidence(dependency, EvidenceType.PRODUCT, packageDescription, &quot;name&quot;, &quot;name&quot;, Confidence.HIGHEST);</span>
+<span class="pc bpc" id="L175" title="2 of 4 branches missed.">            if (name != null &amp;&amp; !name.isEmpty()) {</span>
+<span class="fc" id="L176">                dependency.addEvidence(EvidenceType.VENDOR, SPM_FILE_NAME, &quot;name_project&quot;, name, Confidence.HIGHEST);</span>
+<span class="fc" id="L177">                dependency.setName(name);</span>
             } else {
                 // if we can't get the name from the meta, then assume the name is the name of
                 // the parent folder containing the package.swift file.
-<span class="nc" id="L170">                dependency.setName(dependency.getActualFile().getParentFile().getName());</span>
+<span class="nc" id="L181">                dependency.setName(dependency.getActualFile().getParentFile().getName());</span>
             }
-<span class="pc bpc" id="L172" title="3 of 4 branches missed.">            if (dependency.getVersion() != null &amp;&amp; !dependency.getVersion().isEmpty()) {</span>
-<span class="nc" id="L173">                dependency.setDisplayFileName(String.format(&quot;%s:%s&quot;, dependency.getName(), dependency.getVersion()));</span>
+<span class="pc bpc" id="L183" title="3 of 4 branches missed.">            if (dependency.getVersion() != null &amp;&amp; !dependency.getVersion().isEmpty()) {</span>
+<span class="nc" id="L184">                dependency.setDisplayFileName(String.format(&quot;%s:%s&quot;, dependency.getName(), dependency.getVersion()));</span>
             } else {
-<span class="fc" id="L175">                dependency.setDisplayFileName(dependency.getName());</span>
+<span class="fc" id="L186">                dependency.setDisplayFileName(dependency.getName());</span>
             }
 
             try {
-<span class="fc" id="L179">                final PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType(&quot;swift&quot;).withName(dependency.getName());</span>
-<span class="pc bpc" id="L180" title="1 of 2 branches missed.">                if (dependency.getVersion() != null) {</span>
-<span class="nc" id="L181">                    builder.withVersion(dependency.getVersion());</span>
+<span class="fc" id="L190">                final PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType(&quot;swift&quot;).withName(dependency.getName());</span>
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">                if (dependency.getVersion() != null) {</span>
+<span class="nc" id="L192">                    builder.withVersion(dependency.getVersion());</span>
                 }
-<span class="fc" id="L183">                final PackageURL purl = builder.build();</span>
-<span class="fc" id="L184">                dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
-<span class="nc" id="L185">            } catch (MalformedPackageURLException ex) {</span>
-<span class="nc" id="L186">                LOGGER.debug(&quot;Unable to build package url for python&quot;, ex);</span>
+<span class="fc" id="L194">                final PackageURL purl = builder.build();</span>
+<span class="fc" id="L195">                dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
+<span class="nc" id="L196">            } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L197">                LOGGER.debug(&quot;Unable to build package url for python&quot;, ex);</span>
                 final GenericIdentifier id;
-<span class="nc bnc" id="L188" title="All 2 branches missed.">                if (dependency.getVersion() != null) {</span>
-<span class="nc" id="L189">                    id = new GenericIdentifier(&quot;swift:&quot; + dependency.getName() + &quot;@&quot; + dependency.getVersion(), Confidence.HIGHEST);</span>
+<span class="nc bnc" id="L199" title="All 2 branches missed.">                if (dependency.getVersion() != null) {</span>
+<span class="nc" id="L200">                    id = new GenericIdentifier(&quot;swift:&quot; + dependency.getName() + &quot;@&quot; + dependency.getVersion(), Confidence.HIGHEST);</span>
                 } else {
-<span class="nc" id="L191">                    id = new GenericIdentifier(&quot;swift:&quot; + dependency.getName(), Confidence.HIGHEST);</span>
+<span class="nc" id="L202">                    id = new GenericIdentifier(&quot;swift:&quot; + dependency.getName(), Confidence.HIGHEST);</span>
                 }
-<span class="nc" id="L193">                dependency.addSoftwareIdentifier(id);</span>
-<span class="fc" id="L194">            }</span>
+<span class="nc" id="L204">                dependency.addSoftwareIdentifier(id);</span>
+<span class="fc" id="L205">            }</span>
         }
-<span class="fc" id="L196">        setPackagePath(dependency);</span>
-<span class="fc" id="L197">    }</span>
+<span class="fc" id="L207">        setPackagePath(dependency);</span>
+<span class="fc" id="L208">    }</span>
 
     /**
      * Extracts evidence from the package description and adds it to the given
@@ -210,21 +221,21 @@ import org.slf4j.LoggerFactory;
      */
     private String addStringEvidence(Dependency dependency, EvidenceType type,
             String packageDescription, String field, String fieldPattern, Confidence confidence) {
-<span class="fc" id="L213">        String value = &quot;&quot;;</span>
+<span class="fc" id="L224">        String value = &quot;&quot;;</span>
 
-<span class="fc" id="L215">        final Matcher matcher = Pattern.compile(</span>
-<span class="fc" id="L216">                String.format(&quot;%s *:\\s*\&quot;([^\&quot;]*)&quot;, fieldPattern), Pattern.DOTALL).matcher(packageDescription);</span>
-<span class="pc bpc" id="L217" title="1 of 2 branches missed.">        if (matcher.find()) {</span>
-<span class="fc" id="L218">            value = matcher.group(1);</span>
+<span class="fc" id="L226">        final Matcher matcher = Pattern.compile(</span>
+<span class="fc" id="L227">                String.format(&quot;%s *:\\s*\&quot;([^\&quot;]*)&quot;, fieldPattern), Pattern.DOTALL).matcher(packageDescription);</span>
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">        if (matcher.find()) {</span>
+<span class="fc" id="L229">            value = matcher.group(1);</span>
         }
 
-<span class="pc bpc" id="L221" title="1 of 2 branches missed.">        if (value != null) {</span>
-<span class="fc" id="L222">            value = value.trim();</span>
-<span class="pc bpc" id="L223" title="1 of 2 branches missed.">            if (value.length() &gt; 0) {</span>
-<span class="fc" id="L224">                dependency.addEvidence(type, SPM_FILE_NAME, field, value, confidence);</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">        if (value != null) {</span>
+<span class="fc" id="L233">            value = value.trim();</span>
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">            if (value.length() &gt; 0) {</span>
+<span class="fc" id="L235">                dependency.addEvidence(type, SPM_FILE_NAME, field, value, confidence);</span>
             }
         }
-<span class="fc" id="L227">        return value;</span>
+<span class="fc" id="L238">        return value;</span>
     }
 
     /**
@@ -233,11 +244,11 @@ import org.slf4j.LoggerFactory;
      * @param dep the dependency to update
      */
     private void setPackagePath(Dependency dep) {
-<span class="fc" id="L236">        final File file = new File(dep.getFilePath());</span>
-<span class="fc" id="L237">        final String parent = file.getParent();</span>
-<span class="pc bpc" id="L238" title="1 of 2 branches missed.">        if (parent != null) {</span>
-<span class="fc" id="L239">            dep.setPackagePath(parent);</span>
+<span class="fc" id="L247">        final File file = new File(dep.getFilePath());</span>
+<span class="fc" id="L248">        final String parent = file.getParent();</span>
+<span class="pc bpc" id="L249" title="1 of 2 branches missed.">        if (parent != null) {</span>
+<span class="fc" id="L250">            dep.setPackagePath(parent);</span>
         }
-<span class="fc" id="L241">    }</span>
+<span class="fc" id="L252">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -477,7 +477,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
                     }
 <span class="fc" id="L478">                }</span>
 <span class="fc" id="L479">            }</span>
-<span class="fc" id="L480">            removalList.forEach((i) -&gt; dependency.removeVulnerableSoftwareIdentifier(i));</span>
+<span class="fc" id="L480">            removalList.forEach(dependency::removeVulnerableSoftwareIdentifier);</span>
         }
 <span class="fc bfc" id="L482" title="All 8 branches covered.">        if (hasCve() || hasVulnerabilityName() || hasCwe() || hasCvssBelow()) {</span>
 <span class="fc" id="L483">            final Set&lt;Vulnerability&gt; removeVulns = new HashSet&lt;&gt;();</span>

@@ -485,7 +485,7 @@
 <a class="jxr_linenumber" name="L477" href="#L477">477</a>                     }
 <a class="jxr_linenumber" name="L478" href="#L478">478</a>                 }
 <a class="jxr_linenumber" name="L479" href="#L479">479</a>             }
-<a class="jxr_linenumber" name="L480" href="#L480">480</a>             removalList.forEach((i) -&gt; dependency.removeVulnerableSoftwareIdentifier(i));
+<a class="jxr_linenumber" name="L480" href="#L480">480</a>             removalList.forEach(dependency::removeVulnerableSoftwareIdentifier);
 <a class="jxr_linenumber" name="L481" href="#L481">481</a>         }
 <a class="jxr_linenumber" name="L482" href="#L482">482</a>         <strong class="jxr_keyword">if</strong> (hasCve() || hasVulnerabilityName() || hasCwe() || hasCvssBelow()) {
 <a class="jxr_linenumber" name="L483" href="#L483">483</a>             <strong class="jxr_keyword">final</strong> Set&lt;Vulnerability&gt; removeVulns = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;();

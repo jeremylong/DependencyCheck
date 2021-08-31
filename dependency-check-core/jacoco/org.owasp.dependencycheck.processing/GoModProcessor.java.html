@@ -63,9 +63,10 @@ public class GoModProcessor extends Processor&lt;InputStream&gt; {
 <span class="fc" id="L63">                    -&gt; engine.addDependency(goDep.toDependency(goDependency))</span>
             );
 <span class="nc" id="L65">        } catch (AnalysisException ex) {</span>
-<span class="nc" id="L66">            analysisException = ex;</span>
-<span class="fc" id="L67">        }</span>
-<span class="fc" id="L68">    }</span>
+<span class="nc" id="L66">            analysisException = new AnalysisException(&quot;Error analyzing '&quot; + goDependency.getFilePath()</span>
+<span class="nc" id="L67">                    + &quot;'; &quot; + ex.getMessage(), ex.getCause());</span>
+<span class="fc" id="L68">        }</span>
+<span class="fc" id="L69">    }</span>
 
     /**
      * Throws any exceptions that occurred during processing.
@@ -74,10 +75,10 @@ public class GoModProcessor extends Processor&lt;InputStream&gt; {
      */
     @Override
     public void close() throws AnalysisException {
-<span class="pc bpc" id="L77" title="1 of 2 branches missed.">        if (analysisException != null) {</span>
-<span class="nc" id="L78">            throw analysisException;</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">        if (analysisException != null) {</span>
+<span class="nc" id="L79">            throw analysisException;</span>
         }
-<span class="fc" id="L80">    }</span>
+<span class="fc" id="L81">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

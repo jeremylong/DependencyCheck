@@ -83,9 +83,9 @@ public final class GoModJsonParser {
 <span class="fc" id="L83">                });</span>
             }
 <span class="nc" id="L85">        } catch (JsonParsingException jsonpe) {</span>
-<span class="nc" id="L86">            throw new AnalysisException(&quot;Error parsing stream&quot;, jsonpe);</span>
+<span class="nc" id="L86">            throw new AnalysisException(&quot;Error parsing output from `go list -json -m all`&quot;, jsonpe);</span>
 <span class="nc" id="L87">        } catch (JsonException jsone) {</span>
-<span class="nc" id="L88">            throw new AnalysisException(&quot;Error reading stream&quot;, jsone);</span>
+<span class="nc" id="L88">            throw new AnalysisException(&quot;Error reading output from `go list -json -m all`&quot;, jsone);</span>
 <span class="nc" id="L89">        } catch (IllegalStateException ise) {</span>
 <span class="nc" id="L90">            throw new AnalysisException(&quot;Illegal state in go mod stream&quot;, ise);</span>
 <span class="nc" id="L91">        } catch (ClassCastException cce) {</span>

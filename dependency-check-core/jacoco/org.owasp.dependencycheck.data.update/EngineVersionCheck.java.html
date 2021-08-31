@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.data.update;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -51,7 +52,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
     /**
      * Static logger.
      */
-<span class="fc" id="L54">    private static final Logger LOGGER = LoggerFactory.getLogger(EngineVersionCheck.class);</span>
+<span class="fc" id="L55">    private static final Logger LOGGER = LoggerFactory.getLogger(EngineVersionCheck.class);</span>
     /**
      * The property key indicating when the last version check occurred.
      */
@@ -75,15 +76,15 @@ public class EngineVersionCheck implements CachedWebDataSource {
      *
      * @param settings the configured settings
      */
-<span class="fc" id="L78">    protected EngineVersionCheck(Settings settings) {</span>
-<span class="fc" id="L79">        this.settings = settings;</span>
-<span class="fc" id="L80">    }</span>
+<span class="fc" id="L79">    protected EngineVersionCheck(Settings settings) {</span>
+<span class="fc" id="L80">        this.settings = settings;</span>
+<span class="fc" id="L81">    }</span>
 
     /**
      * Constructs a new engine version check utility.
      */
-<span class="fc" id="L85">    public EngineVersionCheck() {</span>
-<span class="fc" id="L86">    }</span>
+<span class="fc" id="L86">    public EngineVersionCheck() {</span>
+<span class="fc" id="L87">    }</span>
 
     /**
      * Getter for updateToVersion - only used for testing. Represents the
@@ -92,7 +93,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
      * @return the version to test
      */
     protected String getUpdateToVersion() {
-<span class="nc" id="L95">        return updateToVersion;</span>
+<span class="nc" id="L96">        return updateToVersion;</span>
     }
 
     /**
@@ -102,8 +103,8 @@ public class EngineVersionCheck implements CachedWebDataSource {
      * @param version the version to test
      */
     protected void setUpdateToVersion(String version) {
-<span class="fc" id="L105">        updateToVersion = version;</span>
-<span class="fc" id="L106">    }</span>
+<span class="fc" id="L106">        updateToVersion = version;</span>
+<span class="fc" id="L107">    }</span>
 
     /**
      * Downloads the current released version number and compares it to the
@@ -117,41 +118,41 @@ public class EngineVersionCheck implements CachedWebDataSource {
      */
     @Override
     public boolean update(Engine engine) throws UpdateException {
-<span class="fc" id="L120">        this.settings = engine.getSettings();</span>
+<span class="fc" id="L121">        this.settings = engine.getSettings();</span>
         try {
-<span class="fc" id="L122">            final CveDB db = engine.getDatabase();</span>
-<span class="fc" id="L123">            final boolean autoupdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);</span>
-<span class="fc" id="L124">            final boolean enabled = settings.getBoolean(Settings.KEYS.UPDATE_VERSION_CHECK_ENABLED, true);</span>
-<span class="fc" id="L125">            final String original = settings.getString(Settings.KEYS.CVE_ORIGINAL_JSON);</span>
-<span class="fc" id="L126">            final String current = settings.getString(Settings.KEYS.CVE_MODIFIED_JSON);</span>
+<span class="fc" id="L123">            final CveDB db = engine.getDatabase();</span>
+<span class="fc" id="L124">            final boolean autoupdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);</span>
+<span class="fc" id="L125">            final boolean enabled = settings.getBoolean(Settings.KEYS.UPDATE_VERSION_CHECK_ENABLED, true);</span>
+<span class="fc" id="L126">            final String original = settings.getString(Settings.KEYS.CVE_ORIGINAL_JSON);</span>
+<span class="fc" id="L127">            final String current = settings.getString(Settings.KEYS.CVE_MODIFIED_JSON);</span>
             /*
              * Only update if auto-update is enabled, the engine check is
              * enabled, and the NVD CVE URLs have not been modified (i.e. the
              * user has not configured them to point to an internal source).
              */
-<span class="pc bpc" id="L132" title="6 of 8 branches missed.">            if (enabled &amp;&amp; autoupdate &amp;&amp; original != null &amp;&amp; original.equals(current)) {</span>
-<span class="nc" id="L133">                LOGGER.debug(&quot;Begin Engine Version Check&quot;);</span>
+<span class="pc bpc" id="L133" title="6 of 8 branches missed.">            if (enabled &amp;&amp; autoupdate &amp;&amp; original != null &amp;&amp; original.equals(current)) {</span>
+<span class="nc" id="L134">                LOGGER.debug(&quot;Begin Engine Version Check&quot;);</span>
 
-<span class="nc" id="L135">                final DatabaseProperties properties = db.getDatabaseProperties();</span>
+<span class="nc" id="L136">                final DatabaseProperties properties = db.getDatabaseProperties();</span>
 
-<span class="nc" id="L137">                final long lastChecked = DateUtil.getEpochValueInSeconds(properties.getProperty(ENGINE_VERSION_CHECKED_ON, &quot;0&quot;));</span>
-<span class="nc" id="L138">                final long now = System.currentTimeMillis() / 1000;</span>
-<span class="nc" id="L139">                updateToVersion = properties.getProperty(CURRENT_ENGINE_RELEASE, &quot;&quot;);</span>
-<span class="nc" id="L140">                final String currentVersion = settings.getString(Settings.KEYS.APPLICATION_VERSION, &quot;0.0.0&quot;);</span>
-<span class="nc" id="L141">                LOGGER.debug(&quot;Last checked: {}&quot;, lastChecked);</span>
-<span class="nc" id="L142">                LOGGER.debug(&quot;Now: {}&quot;, now);</span>
-<span class="nc" id="L143">                LOGGER.debug(&quot;Current version: {}&quot;, currentVersion);</span>
-<span class="nc" id="L144">                final boolean updateNeeded = shouldUpdate(lastChecked, now, properties, currentVersion);</span>
-<span class="nc bnc" id="L145" title="All 2 branches missed.">                if (updateNeeded) {</span>
-<span class="nc" id="L146">                    LOGGER.warn(&quot;A new version of dependency-check is available. Consider updating to version {}.&quot;,</span>
+<span class="nc" id="L138">                final long lastChecked = DateUtil.getEpochValueInSeconds(properties.getProperty(ENGINE_VERSION_CHECKED_ON, &quot;0&quot;));</span>
+<span class="nc" id="L139">                final long now = System.currentTimeMillis() / 1000;</span>
+<span class="nc" id="L140">                updateToVersion = properties.getProperty(CURRENT_ENGINE_RELEASE, &quot;&quot;);</span>
+<span class="nc" id="L141">                final String currentVersion = settings.getString(Settings.KEYS.APPLICATION_VERSION, &quot;0.0.0&quot;);</span>
+<span class="nc" id="L142">                LOGGER.debug(&quot;Last checked: {}&quot;, lastChecked);</span>
+<span class="nc" id="L143">                LOGGER.debug(&quot;Now: {}&quot;, now);</span>
+<span class="nc" id="L144">                LOGGER.debug(&quot;Current version: {}&quot;, currentVersion);</span>
+<span class="nc" id="L145">                final boolean updateNeeded = shouldUpdate(lastChecked, now, properties, currentVersion);</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">                if (updateNeeded) {</span>
+<span class="nc" id="L147">                    LOGGER.warn(&quot;A new version of dependency-check is available. Consider updating to version {}.&quot;,</span>
                             updateToVersion);
                 }
             }
-<span class="nc" id="L150">        } catch (DatabaseException ex) {</span>
-<span class="nc" id="L151">            LOGGER.debug(&quot;Database Exception opening databases to retrieve properties&quot;, ex);</span>
-<span class="nc" id="L152">            throw new UpdateException(&quot;Error occurred updating database properties.&quot;);</span>
-<span class="fc" id="L153">        }</span>
-<span class="fc" id="L154">        return false;</span>
+<span class="nc" id="L151">        } catch (DatabaseException ex) {</span>
+<span class="nc" id="L152">            LOGGER.debug(&quot;Database Exception opening databases to retrieve properties&quot;, ex);</span>
+<span class="nc" id="L153">            throw new UpdateException(&quot;Error occurred updating database properties.&quot;);</span>
+<span class="fc" id="L154">        }</span>
+<span class="fc" id="L155">        return false;</span>
     }
 
     /**
@@ -170,34 +171,34 @@ public class EngineVersionCheck implements CachedWebDataSource {
     protected boolean shouldUpdate(final long lastChecked, final long now, final DatabaseProperties properties,
             String currentVersion) throws UpdateException {
         //check every 30 days if we know there is an update, otherwise check every 7 days
-<span class="fc" id="L173">        final int checkRange = 30;</span>
-<span class="fc bfc" id="L174" title="All 2 branches covered.">        if (!DateUtil.withinDateRange(lastChecked, now, checkRange)) {</span>
-<span class="fc" id="L175">            LOGGER.debug(&quot;Checking web for new version.&quot;);</span>
-<span class="fc" id="L176">            final String currentRelease = getCurrentReleaseVersion();</span>
-<span class="pc bpc" id="L177" title="1 of 2 branches missed.">            if (currentRelease != null) {</span>
-<span class="fc" id="L178">                final DependencyVersion v = new DependencyVersion(currentRelease);</span>
-<span class="pc bpc" id="L179" title="2 of 4 branches missed.">                if (v.getVersionParts() != null &amp;&amp; v.getVersionParts().size() &gt;= 3) {</span>
-<span class="fc" id="L180">                    updateToVersion = v.toString();</span>
-<span class="pc bpc" id="L181" title="1 of 2 branches missed.">                    if (!currentRelease.equals(updateToVersion)) {</span>
-<span class="nc" id="L182">                        properties.save(CURRENT_ENGINE_RELEASE, updateToVersion);</span>
+<span class="fc" id="L174">        final int checkRange = 30;</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">        if (!DateUtil.withinDateRange(lastChecked, now, checkRange)) {</span>
+<span class="fc" id="L176">            LOGGER.debug(&quot;Checking web for new version.&quot;);</span>
+<span class="fc" id="L177">            final String currentRelease = getCurrentReleaseVersion();</span>
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">            if (currentRelease != null) {</span>
+<span class="fc" id="L179">                final DependencyVersion v = new DependencyVersion(currentRelease);</span>
+<span class="pc bpc" id="L180" title="2 of 4 branches missed.">                if (v.getVersionParts() != null &amp;&amp; v.getVersionParts().size() &gt;= 3) {</span>
+<span class="fc" id="L181">                    updateToVersion = v.toString();</span>
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">                    if (!currentRelease.equals(updateToVersion)) {</span>
+<span class="nc" id="L183">                        properties.save(CURRENT_ENGINE_RELEASE, updateToVersion);</span>
                     }
-<span class="fc" id="L184">                    properties.save(ENGINE_VERSION_CHECKED_ON, Long.toString(now));</span>
+<span class="fc" id="L185">                    properties.save(ENGINE_VERSION_CHECKED_ON, Long.toString(now));</span>
                 }
             }
-<span class="fc" id="L187">            LOGGER.debug(&quot;Current Release: {}&quot;, updateToVersion);</span>
+<span class="fc" id="L188">            LOGGER.debug(&quot;Current Release: {}&quot;, updateToVersion);</span>
         }
-<span class="pc bpc" id="L189" title="1 of 2 branches missed.">        if (updateToVersion == null) {</span>
-<span class="nc" id="L190">            LOGGER.debug(&quot;Unable to obtain current release&quot;);</span>
-<span class="nc" id="L191">            return false;</span>
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">        if (updateToVersion == null) {</span>
+<span class="nc" id="L191">            LOGGER.debug(&quot;Unable to obtain current release&quot;);</span>
+<span class="nc" id="L192">            return false;</span>
         }
-<span class="fc" id="L193">        final DependencyVersion running = new DependencyVersion(currentVersion);</span>
-<span class="fc" id="L194">        final DependencyVersion released = new DependencyVersion(updateToVersion);</span>
-<span class="fc bfc" id="L195" title="All 2 branches covered.">        if (running.compareTo(released) &lt; 0) {</span>
-<span class="fc" id="L196">            LOGGER.debug(&quot;Upgrade recommended&quot;);</span>
-<span class="fc" id="L197">            return true;</span>
+<span class="fc" id="L194">        final DependencyVersion running = new DependencyVersion(currentVersion);</span>
+<span class="fc" id="L195">        final DependencyVersion released = new DependencyVersion(updateToVersion);</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        if (running.compareTo(released) &lt; 0) {</span>
+<span class="fc" id="L197">            LOGGER.debug(&quot;Upgrade recommended&quot;);</span>
+<span class="fc" id="L198">            return true;</span>
         }
-<span class="fc" id="L199">        LOGGER.debug(&quot;Upgrade not needed&quot;);</span>
-<span class="fc" id="L200">        return false;</span>
+<span class="fc" id="L200">        LOGGER.debug(&quot;Upgrade not needed&quot;);</span>
+<span class="fc" id="L201">        return false;</span>
     }
 
     /**
@@ -207,35 +208,37 @@ public class EngineVersionCheck implements CachedWebDataSource {
      * @return the current released version number
      */
     protected String getCurrentReleaseVersion() {
-<span class="fc" id="L210">        HttpURLConnection conn = null;</span>
+<span class="fc" id="L211">        HttpURLConnection conn = null;</span>
         try {
-<span class="fc" id="L212">            final String str = settings.getString(Settings.KEYS.ENGINE_VERSION_CHECK_URL, &quot;http://jeremylong.github.io/DependencyCheck/current.txt&quot;);</span>
-<span class="fc" id="L213">            final URL url = new URL(str);</span>
-<span class="fc" id="L214">            final URLConnectionFactory factory = new URLConnectionFactory(settings);</span>
-<span class="fc" id="L215">            conn = factory.createHttpURLConnection(url);</span>
-<span class="fc" id="L216">            conn.connect();</span>
-<span class="pc bpc" id="L217" title="1 of 2 branches missed.">            if (conn.getResponseCode() != 200) {</span>
-<span class="nc" id="L218">                return null;</span>
+<span class="fc" id="L213">            final String str = settings.getString(Settings.KEYS.ENGINE_VERSION_CHECK_URL, &quot;http://jeremylong.github.io/DependencyCheck/current.txt&quot;);</span>
+<span class="fc" id="L214">            final URL url = new URL(str);</span>
+<span class="fc" id="L215">            final URLConnectionFactory factory = new URLConnectionFactory(settings);</span>
+<span class="fc" id="L216">            conn = factory.createHttpURLConnection(url);</span>
+<span class="fc" id="L217">            conn.connect();</span>
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">            if (conn.getResponseCode() != 200) {</span>
+<span class="nc" id="L219">                return null;</span>
             }
-<span class="fc" id="L220">            final String releaseVersion = new String(IOUtils.toByteArray(conn.getInputStream()), StandardCharsets.UTF_8);</span>
-<span class="fc" id="L221">            return releaseVersion.trim();</span>
-<span class="nc" id="L222">        } catch (MalformedURLException ex) {</span>
-<span class="nc" id="L223">            LOGGER.debug(&quot;Unable to retrieve current release version of dependency-check - malformed url?&quot;);</span>
-<span class="nc" id="L224">        } catch (URLConnectionFailureException ex) {</span>
-<span class="nc" id="L225">            LOGGER.debug(&quot;Unable to retrieve current release version of dependency-check - connection failed&quot;);</span>
-<span class="nc" id="L226">        } catch (IOException ex) {</span>
-<span class="nc" id="L227">            LOGGER.debug(&quot;Unable to retrieve current release version of dependency-check - i/o exception&quot;);</span>
+<span class="fc" id="L221">            try (InputStream is = conn.getInputStream()) {</span>
+<span class="fc" id="L222">                final String releaseVersion = new String(IOUtils.toByteArray(is), StandardCharsets.UTF_8);</span>
+<span class="fc" id="L223">                return releaseVersion.trim();</span>
+            }
+<span class="nc" id="L225">        } catch (MalformedURLException ex) {</span>
+<span class="nc" id="L226">            LOGGER.debug(&quot;Unable to retrieve current release version of dependency-check - malformed url?&quot;);</span>
+<span class="nc" id="L227">        } catch (URLConnectionFailureException ex) {</span>
+<span class="nc" id="L228">            LOGGER.debug(&quot;Unable to retrieve current release version of dependency-check - connection failed&quot;);</span>
+<span class="nc" id="L229">        } catch (IOException ex) {</span>
+<span class="nc" id="L230">            LOGGER.debug(&quot;Unable to retrieve current release version of dependency-check - i/o exception&quot;);</span>
         } finally {
-<span class="pc bpc" id="L229" title="1 of 2 branches missed.">            if (conn != null) {</span>
-<span class="fc" id="L230">                conn.disconnect();</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">            if (conn != null) {</span>
+<span class="fc" id="L233">                conn.disconnect();</span>
             }
         }
-<span class="nc" id="L233">        return null;</span>
+<span class="nc" id="L236">        return null;</span>
     }
 
     @Override
     public boolean purge(Engine engine) {
-<span class="nc" id="L238">        return true;</span>
+<span class="nc" id="L241">        return true;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

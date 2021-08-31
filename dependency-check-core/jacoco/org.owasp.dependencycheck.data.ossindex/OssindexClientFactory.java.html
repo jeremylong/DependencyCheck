@@ -82,41 +82,44 @@ public final class OssindexClientFactory {
 <span class="nc" id="L82">            config.setAuthConfiguration(auth);</span>
         }
 
+<span class="nc" id="L85">        final int batchSize = settings.getInt(Settings.KEYS.ANALYZER_OSSINDEX_BATCH_SIZE, OssindexClientConfiguration.DEFAULT_BATCH_SIZE);</span>
+<span class="nc" id="L86">        config.setBatchSize(batchSize);</span>
+
         // proxy likely does not need to be configured here as we are using the
         // URLConnectionFactory#createHttpURLConnection() which automatically configures
         // the proxy on the connection.
 //        ProxyConfiguration proxy = new ProxyConfiguration();
 //        settings.getString(Settings.KEYS.PROXY_PASSWORD);
 //        config.setProxyConfiguration(proxy);
-<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (settings.getBoolean(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE, true)) {</span>
-<span class="nc" id="L92">            final DirectoryCache.Configuration cache = new DirectoryCache.Configuration();</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if (settings.getBoolean(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE, true)) {</span>
+<span class="nc" id="L95">            final DirectoryCache.Configuration cache = new DirectoryCache.Configuration();</span>
             final File data;
             try {
-<span class="nc" id="L95">                data = settings.getDataDirectory();</span>
-<span class="nc" id="L96">                final File cacheDir = new File(data, &quot;oss_cache&quot;);</span>
-<span class="nc bnc" id="L97" title="All 4 branches missed.">                if (cacheDir.isDirectory() || cacheDir.mkdirs()) {</span>
-<span class="nc" id="L98">                    cache.setBaseDir(cacheDir.toPath());</span>
-<span class="nc" id="L99">                    cache.setExpireAfter(Duration.standardHours(24));</span>
-<span class="nc" id="L100">                    config.setCacheConfiguration(cache);</span>
-<span class="nc" id="L101">                    LOGGER.debug(&quot;OSS Index Cache: &quot; + cache.toString());</span>
+<span class="nc" id="L98">                data = settings.getDataDirectory();</span>
+<span class="nc" id="L99">                final File cacheDir = new File(data, &quot;oss_cache&quot;);</span>
+<span class="nc bnc" id="L100" title="All 4 branches missed.">                if (cacheDir.isDirectory() || cacheDir.mkdirs()) {</span>
+<span class="nc" id="L101">                    cache.setBaseDir(cacheDir.toPath());</span>
+<span class="nc" id="L102">                    cache.setExpireAfter(Duration.standardHours(24));</span>
+<span class="nc" id="L103">                    config.setCacheConfiguration(cache);</span>
+<span class="nc" id="L104">                    LOGGER.debug(&quot;OSS Index Cache: &quot; + cache.toString());</span>
                 } else {
-<span class="nc" id="L103">                    LOGGER.warn(&quot;Unable to use a cache for the OSS Index&quot;);</span>
+<span class="nc" id="L106">                    LOGGER.warn(&quot;Unable to use a cache for the OSS Index&quot;);</span>
                 }
-<span class="nc" id="L105">            } catch (IOException ex) {</span>
-<span class="nc" id="L106">                LOGGER.warn(&quot;Unable to use a cache for the OSS Index&quot;, ex);</span>
-<span class="nc" id="L107">            }</span>
+<span class="nc" id="L108">            } catch (IOException ex) {</span>
+<span class="nc" id="L109">                LOGGER.warn(&quot;Unable to use a cache for the OSS Index&quot;, ex);</span>
+<span class="nc" id="L110">            }</span>
         }
         // customize User-Agent for use with dependency-check
-<span class="nc" id="L110">        final UserAgentSupplier userAgent = new UserAgentSupplier(</span>
+<span class="nc" id="L113">        final UserAgentSupplier userAgent = new UserAgentSupplier(</span>
                 &quot;dependency-check&quot;,
-<span class="nc" id="L112">                settings.getString(Settings.KEYS.APPLICATION_VERSION, &quot;unknown&quot;)</span>
+<span class="nc" id="L115">                settings.getString(Settings.KEYS.APPLICATION_VERSION, &quot;unknown&quot;)</span>
         );
 
-<span class="nc" id="L115">        final Transport transport = new ODCConnectionTransport(settings, config, userAgent);</span>
+<span class="nc" id="L118">        final Transport transport = new ODCConnectionTransport(settings, config, userAgent);</span>
 
-<span class="nc" id="L117">        final Marshaller marshaller = new GsonMarshaller();</span>
+<span class="nc" id="L120">        final Marshaller marshaller = new GsonMarshaller();</span>
 
-<span class="nc" id="L119">        return new OssindexClientImpl(config, transport, marshaller);</span>
+<span class="nc" id="L122">        return new OssindexClientImpl(config, transport, marshaller);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

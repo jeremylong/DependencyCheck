@@ -289,27 +289,30 @@ import org.owasp.dependencycheck.utils.processing.ProcessReader;
 <span class="fc" id="L289">            processReader.readAll();</span>
 <span class="fc" id="L290">            error = processReader.getError();</span>
 <span class="pc bpc" id="L291" title="1 of 2 branches missed.">            if (!StringUtils.isBlank(error)) {</span>
-<span class="nc" id="L292">                LOGGER.warn(&quot;Warnings from `go`: {}&quot;, error);</span>
+<span class="nc" id="L292">                LOGGER.warn(&quot;While analyzing `{}` `go` generated the following warnings:\n{}&quot;, dependency.getFilePath(), error);</span>
             }
 <span class="fc" id="L294">            exitValue = process.exitValue();</span>
 <span class="pc bpc" id="L295" title="2 of 4 branches missed.">            if (exitValue &lt; 0 || exitValue &gt; 1) {</span>
-<span class="nc" id="L296">                final String msg = String.format(&quot;Unexpected exit code from go process; exit code: %s&quot;, exitValue);</span>
-<span class="nc" id="L297">                throw new AnalysisException(msg);</span>
+<span class="nc" id="L296">                final String msg = String.format(&quot;Error analyzing '%s'; Unexpected exit code from go process; exit code: %s&quot;,</span>
+<span class="nc" id="L297">                        dependency.getFilePath(), exitValue);</span>
+<span class="nc" id="L298">                throw new AnalysisException(msg);</span>
             }
-<span class="nc" id="L299">        } catch (InterruptedException ie) {</span>
-<span class="nc" id="L300">            Thread.currentThread().interrupt();</span>
-<span class="nc" id="L301">            throw new AnalysisException(&quot;go process interrupted&quot;, ie);</span>
-<span class="nc" id="L302">        } catch (IOException ex) {</span>
-<span class="nc" id="L303">            throw new AnalysisException(&quot;Error closing the go process&quot;, ex);</span>
-<span class="nc" id="L304">        } catch (JsonParsingException ex) {</span>
+<span class="nc" id="L300">        } catch (InterruptedException ie) {</span>
+<span class="nc" id="L301">            Thread.currentThread().interrupt();</span>
+<span class="nc" id="L302">            throw new AnalysisException(&quot;go process interrupted while analyzing '&quot; + dependency.getFilePath() + &quot;'&quot;, ie);</span>
+<span class="nc" id="L303">        } catch (IOException ex) {</span>
+<span class="nc" id="L304">            throw new AnalysisException(&quot;Error closing the go process while analyzing '&quot; + dependency.getFilePath() + &quot;'&quot;, ex);</span>
+<span class="nc" id="L305">        } catch (JsonParsingException ex) {</span>
             final String msg;
-<span class="nc bnc" id="L306" title="All 2 branches missed.">            if (error != null) {</span>
-<span class="nc" id="L307">                msg = &quot;Unable to process output from `go list -json -m -mod=readonly all`; the command reported the following errors: &quot; + error;</span>
+<span class="nc bnc" id="L307" title="All 2 branches missed.">            if (error != null) {</span>
+<span class="nc" id="L308">                msg = String.format(&quot;Error analyzing '%s'; Unable to process output from `go list -json -m -mod=readonly all`; &quot;</span>
+<span class="nc" id="L309">                        + &quot;the command reported the following errors: %s&quot;, dependency.getFilePath(), error);</span>
             } else {
-<span class="nc" id="L309">                msg = &quot;Unable to process output from `go list -json -m -mod=readonly all`; please validate that the command runs without errors.&quot;;</span>
+<span class="nc" id="L311">                msg = String.format(&quot;Error analyzing '%s'; Unable to process output from `go list -json -m -mod=readonly all`; &quot;</span>
+<span class="nc" id="L312">                        + &quot;please validate that the command runs without errors.&quot;, dependency.getFilePath());</span>
             }
-<span class="nc" id="L311">            throw new AnalysisException(msg, ex);</span>
-<span class="fc" id="L312">        }</span>
-<span class="fc" id="L313">    }</span>
+<span class="nc" id="L314">            throw new AnalysisException(msg, ex);</span>
+<span class="fc" id="L315">        }</span>
+<span class="fc" id="L316">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
