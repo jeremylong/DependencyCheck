@@ -1,5 +1,13 @@
 # Release Notes
 
+## [Version 6.3.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.2.2) (2021-08-31)
+
+### Changes
+
+- Many updates were made to improve performance on large scans, reduce false positives, and other bug fixes.
+- Increased the width of four columns in the database; if you use a an external database you should also update the width (see [upgrade_5.1.sql](https://github.com/jeremylong/DependencyCheck/blob/main/core/src/main/resources/data/upgrade_5.1.sql)).
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/31?closed=1).
+
 ## [Version 6.2.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.2.2) (2021-06-10)
 
 ### Changes

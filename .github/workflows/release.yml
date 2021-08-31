@@ -198,8 +198,9 @@ jobs:
           release_name: Version ${{ env.VERSION }}
           body: |
             Changes in this Release
-            - Resolved issue with database connections introduced in 6.2.0 (see https://github.com/jeremylong/DependencyCheck/issues/3432).
-            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/30?closed=1).
+            - Many updates were made to improve performance on large scans, reduce false positives, and other bug fixes.
+            - Increased the width of four columns in the database; if you use a an external database you should also update the width (see [upgrade_5.1.sql](https://github.com/jeremylong/DependencyCheck/blob/main/core/src/main/resources/data/upgrade_5.1.sql)).
+            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/31?closed=1).
           draft: false
           prerelease: false
       - name: Upload CLI
