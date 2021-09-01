@@ -586,6 +586,7 @@ public class App {
                 cli.getStringArgument(CliParser.ARGUMENT.CVE_BASE_URL));
 
         String cveModifiedJson = Optional.ofNullable(cli.getStringArgument(CliParser.ARGUMENT.CVE_MODIFIED_URL))
+            .filter(arg -> !arg.isEmpty())
             .orElseGet(() -> getDefaultCveUrlModified(cli));
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON,
                 cveModifiedJson);
