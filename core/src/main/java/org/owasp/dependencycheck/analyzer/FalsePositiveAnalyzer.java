@@ -414,6 +414,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     private void addFalseNegativeCPEs(Dependency dependency) {
         final CpeBuilder builder = new CpeBuilder();
         //TODO move this to the hint analyzer
+        final List<Identifier> identifiersToAdd = new ArrayList<>();
         dependency.getVulnerableSoftwareIdentifiers().stream()
                 .filter((i) -> (i instanceof CpeIdentifier))
                 .map(i -> (CpeIdentifier) i)
@@ -437,10 +438,10 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                             final CpeIdentifier newCpeId2 = new CpeIdentifier(newCpe2, i.getConfidence());
                             final CpeIdentifier newCpeId3 = new CpeIdentifier(newCpe3, i.getConfidence());
                             final CpeIdentifier newCpeId4 = new CpeIdentifier(newCpe4, i.getConfidence());
-                            dependency.addVulnerableSoftwareIdentifier(newCpeId1);
-                            dependency.addVulnerableSoftwareIdentifier(newCpeId2);
-                            dependency.addVulnerableSoftwareIdentifier(newCpeId3);
-                            dependency.addVulnerableSoftwareIdentifier(newCpeId4);
+                            identifiersToAdd.add(newCpeId1);
+                            identifiersToAdd.add(newCpeId2);
+                            identifiersToAdd.add(newCpeId3);
+                            identifiersToAdd.add(newCpeId4);
 
                         } catch (CpeValidationException ex) {
                             LOGGER.warn("Unable to add oracle and sun CPEs", ex);
@@ -451,12 +452,13 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                             final Cpe newCpe1 = builder.part(Part.APPLICATION).vendor("apache")
                                     .product("xml_security_for_java").version(cpe.getVersion()).build();
                             final CpeIdentifier newCpeId1 = new CpeIdentifier(newCpe1, i.getConfidence());
-                            dependency.addVulnerableSoftwareIdentifier(newCpeId1);
+                            identifiersToAdd.add(newCpeId1);
                         } catch (CpeValidationException ex) {
                             LOGGER.warn("Unable to add apache xml_security_for_java CPE", ex);
                         }
                     }
                 });
+        identifiersToAdd.forEach(dependency::addVulnerableSoftwareIdentifier);
     }
 
     /**
