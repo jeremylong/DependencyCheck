@@ -414,50 +414,52 @@ import us.springett.parsers.cpe.values.Part;
     private void addFalseNegativeCPEs(Dependency dependency) {
 <span class="fc" id="L415">        final CpeBuilder builder = new CpeBuilder();</span>
         //TODO move this to the hint analyzer
-<span class="fc" id="L417">        dependency.getVulnerableSoftwareIdentifiers().stream()</span>
-<span class="fc" id="L418">                .filter((i) -&gt; (i instanceof CpeIdentifier))</span>
-<span class="fc" id="L419">                .map(i -&gt; (CpeIdentifier) i)</span>
-<span class="fc" id="L420">                .forEach((i) -&gt; {</span>
-<span class="fc" id="L421">                    final Cpe cpe = i.getCpe();</span>
-<span class="pc bpc" id="L422" title="1 of 2 branches missed.">                    if (((&quot;oracle&quot;.equals(cpe.getVendor())</span>
-<span class="pc bnc" id="L423" title="All 4 branches missed.">                            &amp;&amp; (&quot;opensso&quot;.equals(cpe.getProduct()) || &quot;opensso_enterprise&quot;.equals(cpe.getProduct()))))</span>
-<span class="pc bpc" id="L424" title="1 of 2 branches missed.">                            || (&quot;sun&quot;.equals(cpe.getVendor())</span>
-<span class="nc bnc" id="L425" title="All 4 branches missed.">                            &amp;&amp; (&quot;opensso&quot;.equals(cpe.getProduct()) || &quot;opensso_enterprise&quot;.equals(cpe.getProduct())))) {</span>
+<span class="fc" id="L417">        final List&lt;Identifier&gt; identifiersToAdd = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L418">        dependency.getVulnerableSoftwareIdentifiers().stream()</span>
+<span class="fc" id="L419">                .filter((i) -&gt; (i instanceof CpeIdentifier))</span>
+<span class="fc" id="L420">                .map(i -&gt; (CpeIdentifier) i)</span>
+<span class="fc" id="L421">                .forEach((i) -&gt; {</span>
+<span class="fc" id="L422">                    final Cpe cpe = i.getCpe();</span>
+<span class="pc bpc" id="L423" title="1 of 2 branches missed.">                    if (((&quot;oracle&quot;.equals(cpe.getVendor())</span>
+<span class="pc bnc" id="L424" title="All 4 branches missed.">                            &amp;&amp; (&quot;opensso&quot;.equals(cpe.getProduct()) || &quot;opensso_enterprise&quot;.equals(cpe.getProduct()))))</span>
+<span class="pc bpc" id="L425" title="1 of 2 branches missed.">                            || (&quot;sun&quot;.equals(cpe.getVendor())</span>
+<span class="nc bnc" id="L426" title="All 4 branches missed.">                            &amp;&amp; (&quot;opensso&quot;.equals(cpe.getProduct()) || &quot;opensso_enterprise&quot;.equals(cpe.getProduct())))) {</span>
 
                         try {
-<span class="nc" id="L428">                            final Cpe newCpe1 = builder.part(Part.APPLICATION).vendor(&quot;sun&quot;)</span>
-<span class="nc" id="L429">                                    .product(&quot;opensso_enterprise&quot;).version(cpe.getVersion()).build();</span>
-<span class="nc" id="L430">                            final Cpe newCpe2 = builder.part(Part.APPLICATION).vendor(&quot;oracle&quot;)</span>
-<span class="nc" id="L431">                                    .product(&quot;opensso_enterprise&quot;).version(cpe.getVersion()).build();</span>
-<span class="nc" id="L432">                            final Cpe newCpe3 = builder.part(Part.APPLICATION).vendor(&quot;sun&quot;)</span>
-<span class="nc" id="L433">                                    .product(&quot;opensso&quot;).version(cpe.getVersion()).build();</span>
-<span class="nc" id="L434">                            final Cpe newCpe4 = builder.part(Part.APPLICATION).vendor(&quot;oracle&quot;)</span>
-<span class="nc" id="L435">                                    .product(&quot;opensso&quot;).version(cpe.getVersion()).build();</span>
-<span class="nc" id="L436">                            final CpeIdentifier newCpeId1 = new CpeIdentifier(newCpe1, i.getConfidence());</span>
-<span class="nc" id="L437">                            final CpeIdentifier newCpeId2 = new CpeIdentifier(newCpe2, i.getConfidence());</span>
-<span class="nc" id="L438">                            final CpeIdentifier newCpeId3 = new CpeIdentifier(newCpe3, i.getConfidence());</span>
-<span class="nc" id="L439">                            final CpeIdentifier newCpeId4 = new CpeIdentifier(newCpe4, i.getConfidence());</span>
-<span class="nc" id="L440">                            dependency.addVulnerableSoftwareIdentifier(newCpeId1);</span>
-<span class="nc" id="L441">                            dependency.addVulnerableSoftwareIdentifier(newCpeId2);</span>
-<span class="nc" id="L442">                            dependency.addVulnerableSoftwareIdentifier(newCpeId3);</span>
-<span class="nc" id="L443">                            dependency.addVulnerableSoftwareIdentifier(newCpeId4);</span>
+<span class="nc" id="L429">                            final Cpe newCpe1 = builder.part(Part.APPLICATION).vendor(&quot;sun&quot;)</span>
+<span class="nc" id="L430">                                    .product(&quot;opensso_enterprise&quot;).version(cpe.getVersion()).build();</span>
+<span class="nc" id="L431">                            final Cpe newCpe2 = builder.part(Part.APPLICATION).vendor(&quot;oracle&quot;)</span>
+<span class="nc" id="L432">                                    .product(&quot;opensso_enterprise&quot;).version(cpe.getVersion()).build();</span>
+<span class="nc" id="L433">                            final Cpe newCpe3 = builder.part(Part.APPLICATION).vendor(&quot;sun&quot;)</span>
+<span class="nc" id="L434">                                    .product(&quot;opensso&quot;).version(cpe.getVersion()).build();</span>
+<span class="nc" id="L435">                            final Cpe newCpe4 = builder.part(Part.APPLICATION).vendor(&quot;oracle&quot;)</span>
+<span class="nc" id="L436">                                    .product(&quot;opensso&quot;).version(cpe.getVersion()).build();</span>
+<span class="nc" id="L437">                            final CpeIdentifier newCpeId1 = new CpeIdentifier(newCpe1, i.getConfidence());</span>
+<span class="nc" id="L438">                            final CpeIdentifier newCpeId2 = new CpeIdentifier(newCpe2, i.getConfidence());</span>
+<span class="nc" id="L439">                            final CpeIdentifier newCpeId3 = new CpeIdentifier(newCpe3, i.getConfidence());</span>
+<span class="nc" id="L440">                            final CpeIdentifier newCpeId4 = new CpeIdentifier(newCpe4, i.getConfidence());</span>
+<span class="nc" id="L441">                            identifiersToAdd.add(newCpeId1);</span>
+<span class="nc" id="L442">                            identifiersToAdd.add(newCpeId2);</span>
+<span class="nc" id="L443">                            identifiersToAdd.add(newCpeId3);</span>
+<span class="nc" id="L444">                            identifiersToAdd.add(newCpeId4);</span>
 
-<span class="nc" id="L445">                        } catch (CpeValidationException ex) {</span>
-<span class="nc" id="L446">                            LOGGER.warn(&quot;Unable to add oracle and sun CPEs&quot;, ex);</span>
-<span class="nc" id="L447">                        }</span>
+<span class="nc" id="L446">                        } catch (CpeValidationException ex) {</span>
+<span class="nc" id="L447">                            LOGGER.warn(&quot;Unable to add oracle and sun CPEs&quot;, ex);</span>
+<span class="nc" id="L448">                        }</span>
                     }
-<span class="pc bpc" id="L449" title="1 of 4 branches missed.">                    if (&quot;apache&quot;.equals(cpe.getVendor()) &amp;&amp; &quot;santuario_xml_security_for_java&quot;.equals(cpe.getProduct())) {</span>
+<span class="pc bpc" id="L450" title="1 of 4 branches missed.">                    if (&quot;apache&quot;.equals(cpe.getVendor()) &amp;&amp; &quot;santuario_xml_security_for_java&quot;.equals(cpe.getProduct())) {</span>
                         try {
-<span class="nc" id="L451">                            final Cpe newCpe1 = builder.part(Part.APPLICATION).vendor(&quot;apache&quot;)</span>
-<span class="nc" id="L452">                                    .product(&quot;xml_security_for_java&quot;).version(cpe.getVersion()).build();</span>
-<span class="nc" id="L453">                            final CpeIdentifier newCpeId1 = new CpeIdentifier(newCpe1, i.getConfidence());</span>
-<span class="nc" id="L454">                            dependency.addVulnerableSoftwareIdentifier(newCpeId1);</span>
-<span class="nc" id="L455">                        } catch (CpeValidationException ex) {</span>
-<span class="nc" id="L456">                            LOGGER.warn(&quot;Unable to add apache xml_security_for_java CPE&quot;, ex);</span>
-<span class="nc" id="L457">                        }</span>
+<span class="nc" id="L452">                            final Cpe newCpe1 = builder.part(Part.APPLICATION).vendor(&quot;apache&quot;)</span>
+<span class="nc" id="L453">                                    .product(&quot;xml_security_for_java&quot;).version(cpe.getVersion()).build();</span>
+<span class="nc" id="L454">                            final CpeIdentifier newCpeId1 = new CpeIdentifier(newCpe1, i.getConfidence());</span>
+<span class="nc" id="L455">                            identifiersToAdd.add(newCpeId1);</span>
+<span class="nc" id="L456">                        } catch (CpeValidationException ex) {</span>
+<span class="nc" id="L457">                            LOGGER.warn(&quot;Unable to add apache xml_security_for_java CPE&quot;, ex);</span>
+<span class="nc" id="L458">                        }</span>
                     }
-<span class="fc" id="L459">                });</span>
-<span class="fc" id="L460">    }</span>
+<span class="fc" id="L460">                });</span>
+<span class="fc" id="L461">        identifiersToAdd.forEach(dependency::addVulnerableSoftwareIdentifier);</span>
+<span class="fc" id="L462">    }</span>
 
     /**
      * Removes duplicate entries identified that are contained within JAR files.
@@ -494,7 +496,7 @@ import us.springett.parsers.cpe.values.Part;
 //                }
 //            }
 //        }
-<span class="fc" id="L497">    }</span>
+<span class="fc" id="L499">    }</span>
 
     /**
      * Retrieves a given dependency, based on a given path, from a list of
@@ -505,12 +507,12 @@ import us.springett.parsers.cpe.values.Part;
      * @return the dependency object for the given path, otherwise null
      */
     private Dependency findDependency(String dependencyPath, Dependency[] dependencies) {
-<span class="nc bnc" id="L508" title="All 2 branches missed.">        for (Dependency d : dependencies) {</span>
-<span class="nc bnc" id="L509" title="All 2 branches missed.">            if (d.getFilePath().equalsIgnoreCase(dependencyPath)) {</span>
-<span class="nc" id="L510">                return d;</span>
+<span class="nc bnc" id="L510" title="All 2 branches missed.">        for (Dependency d : dependencies) {</span>
+<span class="nc bnc" id="L511" title="All 2 branches missed.">            if (d.getFilePath().equalsIgnoreCase(dependencyPath)) {</span>
+<span class="nc" id="L512">                return d;</span>
             }
         }
-<span class="nc" id="L513">        return null;</span>
+<span class="nc" id="L515">        return null;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
