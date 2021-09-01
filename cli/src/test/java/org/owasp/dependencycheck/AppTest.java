@@ -214,6 +214,26 @@ public class AppTest extends BaseTest {
     }
 
     @Test
+    public void testPopulateSettingsShouldNotSetDefaultValueToCveUrlModifiedWhenValueIsExplicitelySet() throws Exception {
+      // Given
+      System.clearProperty("cve.url.modified");
+      final Settings settings = getSettings();
+      final App app = new App(settings);
+
+      String[] args = {"--cveUrlBase", "https://my-custom-mirror-of-nvd/feeds/json/cve/1.1/some-unusual-file-name-%d.json.gz", "--cveUrlModified", "https://another-custom-mirror-of-nvd/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz"};
+      final CliParser parser = new CliParser(settings);
+      parser.parse(args);
+
+      // When
+      app.populateSettings(parser);
+
+      // Then
+      String output = settings.getString(Settings.KEYS.CVE_MODIFIED_JSON);
+      String expectedOutput = "https://another-custom-mirror-of-nvd/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz";
+      assertThat("cveUrlModified must be set to the specified value", output, is(expectedOutput));
+    }
+
+    @Test
     public void testPopulateSettingsShouldNotSetDefaultValueToCveUrlModifiedWhenUnknownValueIsSet() throws Exception {
       // Given
       final Settings settings = getSettings();
