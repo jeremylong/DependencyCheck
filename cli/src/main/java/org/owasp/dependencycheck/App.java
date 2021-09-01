@@ -22,7 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -35,6 +34,7 @@ import org.apache.tools.ant.types.LogLevel;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
+import org.owasp.dependencycheck.utils.CveUrlParser;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -598,13 +598,8 @@ public class App {
     }
 
     private String getDefaultCveUrlModified(CliParser cli) {
-      String baseUrl = cli.getStringArgument(CliParser.ARGUMENT.CVE_BASE_URL);
-      String defaultBaseUrlEnd = "/nvdcve-1.1-%d.json.gz";
-      if (Objects.nonNull(baseUrl) && baseUrl.endsWith(defaultBaseUrlEnd)) {
-        String defaultModifiedUrlEnd = "/nvdcve-1.1-modified.json.gz";
-        return baseUrl.substring(0, baseUrl.length() - defaultBaseUrlEnd.length()) + defaultModifiedUrlEnd;
-      }
-      return null;
+      return CveUrlParser.newInstance(settings)
+          .getDefaultCveUrlModified(cli.getStringArgument(CliParser.ARGUMENT.CVE_BASE_URL));
     }
 
     //CSON: MethodLength

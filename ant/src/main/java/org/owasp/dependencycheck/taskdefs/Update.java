@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.taskdefs;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.tools.ant.BuildException;
@@ -25,6 +24,7 @@ import org.apache.tools.ant.Project;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.utils.CveUrlParser;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.impl.StaticLoggerBinder;
 
@@ -428,12 +428,7 @@ public class Update extends Purge {
     }
 
     private String getDefaultCveUrlModified() {
-      String baseUrl = cveUrlBase;
-      String defaultBaseUrlEnd = "/nvdcve-1.1-%d.json.gz";
-      if (Objects.nonNull(baseUrl) && baseUrl.endsWith(defaultBaseUrlEnd)) {
-        String defaultModifiedUrlEnd = "/nvdcve-1.1-modified.json.gz";
-        return baseUrl.substring(0, baseUrl.length() - defaultBaseUrlEnd.length()) + defaultModifiedUrlEnd;
-      }
-      return null;
+      return CveUrlParser.newInstance(getSettings())
+          .getDefaultCveUrlModified(cveUrlBase);
     }
 }

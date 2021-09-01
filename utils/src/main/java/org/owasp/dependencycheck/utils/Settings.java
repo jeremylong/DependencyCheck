@@ -167,6 +167,10 @@ public final class Settings {
          */
         public static final String CVE_MODIFIED_JSON = "cve.url.modified";
         /**
+         * The properties key for the default filename of the CVE modified URL.
+         */
+        static final String CVE_MODIFIED_DEFAULT_FILENAME = "cve.url.modified.defaultFilename";
+        /**
          * The properties key for the original/modified URL to retrieve the
          * recently modified and added CVE entries (last 8 days). Note, this is
          * only used to compare against CVE_MODIFIED_JSON.
@@ -177,6 +181,10 @@ public final class Settings {
          * added CVE entries (last 8 days) using the JSON data feeds.
          */
         public static final String CVE_BASE_JSON = "cve.url.base";
+        /**
+         * The properties key for the default filename of the CVE base URL.
+         */
+        static final String CVE_BASE_DEFAULT_FILENAME = "cve.url.base.defaultFilename";
         /**
          * The username to use when connecting to the CVE-URL.
          */
