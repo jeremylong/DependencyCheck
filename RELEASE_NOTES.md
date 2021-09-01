@@ -1,6 +1,13 @@
 # Release Notes
 
-## [Version 6.3.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.2.2) (2021-08-31)
+## [Version 6.3.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.3.1) (2021-09-01)
+
+### Changes
+
+- Fixed [ConcurrentModificationException](https://github.com/jeremylong/DependencyCheck/issues/3618)
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/32?closed=1).
+
+## [Version 6.3.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.3.0) (2021-08-31)
 
 ### Changes
 
