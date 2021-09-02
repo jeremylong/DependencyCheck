@@ -235,6 +235,9 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
     @Test
     public void testPopulateSettingsShouldSetDefaultValueToCveUrlModified() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
       // Given
+      System.clearProperty(Settings.KEYS.CVE_MODIFIED_JSON);
+      System.clearProperty(Settings.KEYS.CVE_BASE_JSON);
+
       BaseDependencyCheckMojo instance = new BaseDependencyCheckMojoImpl();
 
       Field cveUrlModified = instance.getClass().getSuperclass().getDeclaredField("cveUrlModified");
@@ -262,6 +265,9 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
     @Test
     public void testPopulateSettingsShouldSetDefaultValueToCveUrlModifiedWhenCveUrlModifiedIsEmpty() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
       // Given
+      System.clearProperty(Settings.KEYS.CVE_MODIFIED_JSON);
+      System.clearProperty(Settings.KEYS.CVE_BASE_JSON);
+
       BaseDependencyCheckMojo instance = new BaseDependencyCheckMojoImpl();
 
       Field cveUrlModified = instance.getClass().getSuperclass().getDeclaredField("cveUrlModified");
@@ -289,6 +295,9 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
     @Test
     public void testPopulateSettingsShouldNotSetDefaultValueToCveUrlModifiedWhenValueIsExplicitelySet() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
       // Given
+      System.clearProperty(Settings.KEYS.CVE_MODIFIED_JSON);
+      System.clearProperty(Settings.KEYS.CVE_BASE_JSON);
+
       BaseDependencyCheckMojo instance = new BaseDependencyCheckMojoImpl();
 
       Field cveUrlModified = instance.getClass().getSuperclass().getDeclaredField("cveUrlModified");
@@ -316,6 +325,9 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
     @Test
     public void testPopulateSettingsShouldNotSetDefaultValueToCveUrlModifiedWhenUnknownValueIsSet() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
       // Given
+      System.clearProperty(Settings.KEYS.CVE_MODIFIED_JSON);
+      System.clearProperty(Settings.KEYS.CVE_BASE_JSON);
+
       BaseDependencyCheckMojo instance = new BaseDependencyCheckMojoImpl();
 
       Field cveUrlModified = instance.getClass().getSuperclass().getDeclaredField("cveUrlModified");
