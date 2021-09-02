@@ -176,7 +176,9 @@ public class AppTest extends BaseTest {
     @Test
     public void testPopulateSettingsShouldSetDefaultValueToCveUrlModified() throws Exception {
       // Given
-      System.clearProperty("cve.url.modified");
+      System.clearProperty(Settings.KEYS.CVE_MODIFIED_JSON);
+      System.clearProperty(Settings.KEYS.CVE_BASE_JSON);
+
       final Settings settings = getSettings();
       final App app = new App(settings);
 
@@ -196,7 +198,9 @@ public class AppTest extends BaseTest {
     @Test
     public void testPopulateSettingsShouldSetDefaultValueToCveUrlModifiedWhenCveUrlModifiedIsEmpty() throws Exception {
       // Given
-      System.clearProperty("cve.url.modified");
+      System.clearProperty(Settings.KEYS.CVE_MODIFIED_JSON);
+      System.clearProperty(Settings.KEYS.CVE_BASE_JSON);
+
       final Settings settings = getSettings();
       final App app = new App(settings);
 
@@ -216,7 +220,9 @@ public class AppTest extends BaseTest {
     @Test
     public void testPopulateSettingsShouldNotSetDefaultValueToCveUrlModifiedWhenValueIsExplicitelySet() throws Exception {
       // Given
-      System.clearProperty("cve.url.modified");
+      System.clearProperty(Settings.KEYS.CVE_MODIFIED_JSON);
+      System.clearProperty(Settings.KEYS.CVE_BASE_JSON);
+
       final Settings settings = getSettings();
       final App app = new App(settings);
 
@@ -236,6 +242,9 @@ public class AppTest extends BaseTest {
     @Test
     public void testPopulateSettingsShouldNotSetDefaultValueToCveUrlModifiedWhenUnknownValueIsSet() throws Exception {
       // Given
+      System.clearProperty(Settings.KEYS.CVE_MODIFIED_JSON);
+      System.clearProperty(Settings.KEYS.CVE_BASE_JSON);
+
       final Settings settings = getSettings();
       final App app = new App(settings);
 

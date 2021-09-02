@@ -12,8 +12,8 @@ public class UpdateTest extends BaseTest {
   @Test
   public void testPopulateSettingsShouldSetDefaultValueToCveUrlModified() throws Exception {
     // Given
-    System.clearProperty("cve.url.modified");
-    System.clearProperty("cve.url.base");
+    System.clearProperty(Settings.KEYS.CVE_MODIFIED_JSON);
+    System.clearProperty(Settings.KEYS.CVE_BASE_JSON);
 
     final Update update = new Update();
     update.setCveUrlModified(null);
@@ -31,8 +31,8 @@ public class UpdateTest extends BaseTest {
   @Test
   public void testPopulateSettingsShouldSetDefaultValueToCveUrlModifiedWhenCveUrlModifiedIsEmpty() throws Exception {
     // Given
-    System.clearProperty("cve.url.modified");
-    System.clearProperty("cve.url.base");
+    System.clearProperty(Settings.KEYS.CVE_MODIFIED_JSON);
+    System.clearProperty(Settings.KEYS.CVE_BASE_JSON);
 
     final Update update = new Update();
     update.setCveUrlModified("");
@@ -51,8 +51,8 @@ public class UpdateTest extends BaseTest {
   @Test
   public void testPopulateSettingsShouldNotSetDefaultValueToCveUrlModifiedWhenValueIsExplicitelySet() throws Exception {
     // Given
-    System.clearProperty("cve.url.modified");
-    System.clearProperty("cve.url.base");
+    System.clearProperty(Settings.KEYS.CVE_MODIFIED_JSON);
+    System.clearProperty(Settings.KEYS.CVE_BASE_JSON);
 
     final Update update = new Update();
     update.setCveUrlModified("https://another-custom-mirror-of-nvd/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz");
@@ -70,8 +70,8 @@ public class UpdateTest extends BaseTest {
   @Test
   public void testPopulateSettingsShouldNotSetDefaultValueToCveUrlModifiedWhenUnknownValueIsSet() throws Exception {
     // Given
-    System.clearProperty("cve.url.modified");
-    System.clearProperty("cve.url.base");
+    System.clearProperty(Settings.KEYS.CVE_MODIFIED_JSON);
+    System.clearProperty(Settings.KEYS.CVE_BASE_JSON);
 
     final Update update = new Update();
     update.setCveUrlModified(null);
