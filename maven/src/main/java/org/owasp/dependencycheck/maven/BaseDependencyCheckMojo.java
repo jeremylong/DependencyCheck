@@ -39,6 +39,7 @@ import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
 import org.apache.maven.shared.artifact.filter.resolve.PatternInclusionsFilter;
+import org.apache.maven.shared.artifact.filter.resolve.TransformableFilter;
 import org.apache.maven.shared.transfer.artifact.ArtifactCoordinate;
 import org.apache.maven.shared.transfer.artifact.DefaultArtifactCoordinate;
 import org.apache.maven.shared.transfer.artifact.TransferUtils;
@@ -1317,16 +1318,16 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 } else {
                     final ArtifactCoordinate coordinate = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
                     try {
-                        List<org.apache.maven.model.Dependency> dependencies = project.getDependencies();
-                        List<org.apache.maven.model.Dependency> managedDependencies = project.getDependencyManagement() == null?
-                                                                                      null:
-                                                                                      project.getDependencyManagement().getDependencies();
-                        Iterable<ArtifactResult> singleResult = dependencyResolver.resolveDependencies(buildingRequest,
-                                                                                                       dependencies,
-                                                                                                       managedDependencies,
-                                                                                                       new PatternInclusionsFilter(Collections.singletonList(TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact()).toString())));
+                        final List<org.apache.maven.model.Dependency> dependencies = project.getDependencies();
+                        final List<org.apache.maven.model.Dependency> managedDependencies =
+                                project.getDependencyManagement() == null ? null : project.getDependencyManagement().getDependencies();
+                        final TransformableFilter filter = new PatternInclusionsFilter(
+                                Collections.singletonList(TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact()).toString()));
+                        final Iterable<ArtifactResult> singleResult =
+                                dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies, filter);
+
                         if (singleResult.iterator().hasNext()) {
-                            ArtifactResult first = singleResult.iterator().next();
+                            final ArtifactResult first = singleResult.iterator().next();
                             result = first.getArtifact();
                         } else {
                             throw new DependencyNotFoundException(String.format("Failed to resolve dependency %s with "
