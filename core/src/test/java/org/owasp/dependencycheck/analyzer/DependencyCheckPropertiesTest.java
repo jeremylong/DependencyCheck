@@ -1,6 +1,5 @@
 package org.owasp.dependencycheck.analyzer;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -130,7 +129,6 @@ public class DependencyCheckPropertiesTest {
         return Collections.emptySet();
     }
 
-    @NotNull
     private Set<Class<?>> tryGetClasses(String packageName, BufferedReader reader) {
         return reader.lines()
                 .filter(line -> line.endsWith(".class"))
@@ -146,7 +144,6 @@ public class DependencyCheckPropertiesTest {
         }
     }
 
-    @NotNull
     private Class<?> tryGetClass(String className, String packageName) throws ClassNotFoundException {
         return Class.forName(packageName + "." + className.substring(0, className.lastIndexOf('.')));
     }
