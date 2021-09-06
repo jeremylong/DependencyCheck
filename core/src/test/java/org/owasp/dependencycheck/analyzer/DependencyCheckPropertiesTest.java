@@ -72,23 +72,11 @@ public class DependencyCheckPropertiesTest {
     }
 
     private boolean isAnalyzerImplementation(Class<?> clazz) {
-        if (isAnAbstractClass(clazz)) {
+        if (isAnAbstractClass(clazz) || isATestAnalyzer(clazz)) {
             return false;
         }
 
-        if (isATestAnalyzer(clazz)) {
-            return false;
-        }
-
-        Class<?> superclass = clazz.getSuperclass();
-        while (superclass != Object.class) {
-            if (extendsAbstractAnalyzer(superclass)) {
-                return true;
-            }
-            superclass = superclass.getSuperclass();
-        }
-
-        return false;
+        return AbstractAnalyzer.class.isAssignableFrom(clazz);
     }
 
     private boolean isAnAbstractClass(Class<?> clazz) {
@@ -97,10 +85,6 @@ public class DependencyCheckPropertiesTest {
 
     private boolean isATestAnalyzer(Class<?> clazz) {
         return clazz == AbstractSuppressionAnalyzerTest.AbstractSuppressionAnalyzerImpl.class;
-    }
-
-    private boolean extendsAbstractAnalyzer(Class<?> superclass) {
-        return superclass == AbstractAnalyzer.class;
     }
 
     public Set<Class<?>> findAllClasses(String packageName) throws IOException {
