@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.cli.ParseException;
@@ -33,6 +34,7 @@ import org.apache.tools.ant.types.LogLevel;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
+import org.owasp.dependencycheck.utils.CveUrlParser;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -582,13 +584,24 @@ public class App {
                 cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_CORE));
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON,
                 cli.getStringArgument(CliParser.ARGUMENT.CVE_BASE_URL));
+
+        String cveModifiedJson = Optional.ofNullable(cli.getStringArgument(CliParser.ARGUMENT.CVE_MODIFIED_URL))
+            .filter(arg -> !arg.isEmpty())
+            .orElseGet(() -> getDefaultCveUrlModified(cli));
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON,
-                cli.getStringArgument(CliParser.ARGUMENT.CVE_MODIFIED_URL));
+                cveModifiedJson);
+
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_USER,
                 cli.getStringArgument(CliParser.ARGUMENT.CVE_USER));
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_PASSWORD,
                 cli.getStringArgument(CliParser.ARGUMENT.CVE_PASSWORD, Settings.KEYS.CVE_PASSWORD));
     }
+
+    private String getDefaultCveUrlModified(CliParser cli) {
+      return CveUrlParser.newInstance(settings)
+          .getDefaultCveUrlModified(cli.getStringArgument(CliParser.ARGUMENT.CVE_BASE_URL));
+    }
+
     //CSON: MethodLength
     /**
      * Creates a file appender and adds it to logback.

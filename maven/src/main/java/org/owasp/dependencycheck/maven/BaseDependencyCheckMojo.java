@@ -64,6 +64,7 @@ import org.owasp.dependencycheck.exception.DependencyNotFoundException;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.utils.Checksum;
+import org.owasp.dependencycheck.utils.CveUrlParser;
 import org.owasp.dependencycheck.utils.Filter;
 import org.owasp.dependencycheck.utils.Settings;
 import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
@@ -2014,7 +2015,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         settings.setStringIfNotEmpty(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
         settings.setStringIfNotEmpty(Settings.KEYS.DB_FILE_NAME, dbFilename);
-        settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveUrlModified);
+
+        String cveModifiedJson = Optional.ofNullable(cveUrlModified)
+            .filter(arg -> !arg.isEmpty())
+            .orElseGet(this::getDefaultCveUrlModified);
+        settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveModifiedJson);
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON, cveUrlBase);
         settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
         settings.setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT, prettyPrint);
@@ -2337,6 +2342,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         if (showSummary) {
             DependencyCheckScanAgent.showSummary(mp.getName(), dependencies);
         }
+    }
+
+    private String getDefaultCveUrlModified() {
+      return CveUrlParser.newInstance(getSettings())
+          .getDefaultCveUrlModified(cveUrlBase);
     }
 
     //</editor-fold>
