@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -103,7 +104,7 @@ public class DependencyCheckPropertiesTest {
     private Set<Class<?>> getClasses(URL resource, String packageName) throws IOException {
         if (Objects.nonNull(resource)) {
             try (InputStream is = resource.openStream();
-                 InputStreamReader isr = new InputStreamReader(is);
+                 InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
                  BufferedReader reader = new BufferedReader(isr)) {
 
                 return tryGetClasses(packageName, reader);
