@@ -1168,7 +1168,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>org.sonatype.ossindex</groupId>
                 <artifactId>ossindex-service-client</artifactId>
-                <version>1.7.0</version>
+                <version>1.8.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.apache.httpcomponents</groupId>
