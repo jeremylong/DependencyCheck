@@ -17,11 +17,14 @@
  */
 package org.owasp.dependencycheck.taskdefs;
 
+import java.util.Optional;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.utils.CveUrlParser;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.impl.StaticLoggerBinder;
 
@@ -409,7 +412,11 @@ public class Update extends Purge {
         getSettings().setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
         getSettings().setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
         getSettings().setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
-        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveUrlModified);
+
+        String cveModifiedJson = Optional.ofNullable(cveUrlModified)
+          .filter(url -> !url.isEmpty())
+          .orElseGet(this::getDefaultCveUrlModified);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveModifiedJson);
         getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON, cveUrlBase);
         if (cveValidForHours != null) {
             if (cveValidForHours >= 0) {
@@ -418,5 +425,10 @@ public class Update extends Purge {
                 throw new BuildException("Invalid setting: `cpeValidForHours` must be 0 or greater");
             }
         }
+    }
+
+    private String getDefaultCveUrlModified() {
+      return CveUrlParser.newInstance(getSettings())
+          .getDefaultCveUrlModified(cveUrlBase);
     }
 }

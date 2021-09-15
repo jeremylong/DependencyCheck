@@ -119,27 +119,27 @@ analyzers    | centralEnabled        | Sets whether Central Analyzer will be use
 analyzers    | nexusEnabled          | Sets whether Nexus Analyzer will be used (requires Nexus Pro). This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
 analyzers    | nexusUrl              | Defines the Nexus Server's web service end point (example http://domain.enterprise/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
 analyzers    | nexusUsesProxy        | Whether or not the defined proxy should be used when connecting to Nexus.                                         | true
-analyzers    | pyDistributionEnabled | Sets whether the [experimental](../analyzers/index.html) Python Distribution Analyzer will be used.               | true
-analyzers    | pyPackageEnabled      | Sets whether the [experimental](../analyzers/index.html) Python Package Analyzer will be used.                    | true
-analyzers    | rubygemsEnabled       | Sets whether the [experimental](../analyzers/index.html) Ruby Gemspec Analyzer will be used.                      | true
+analyzers    | pyDistributionEnabled | Sets whether the [experimental](../analyzers/index.html) Python Distribution Analyzer will be used. `experimentalEnabled` must be set to true. | true
+analyzers    | pyPackageEnabled      | Sets whether the [experimental](../analyzers/index.html) Python Package Analyzer will be used. `experimentalEnabled` must be set to true. | true
+analyzers    | rubygemsEnabled       | Sets whether the [experimental](../analyzers/index.html) Ruby Gemspec Analyzer will be used. `experimentalEnabled` must be set to true. | true
 analyzers    | opensslEnabled        | Sets whether or not the openssl Analyzer should be used.                                                          | true
 analyzers    | nuspecEnabled         | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.                                                  | true
-analyzers    | nugetconfEnabled      | Sets whether or not the [experimental](../analyzers/index.html) .NET Nuget packages.config Analyzer will be used. | true
+analyzers    | nugetconfEnabled      | Sets whether or not the [experimental](../analyzers/index.html) .NET Nuget packages.config Analyzer will be used. `experimentalEnabled` must be set to true. | true
 analyzers    | assemblyEnabled       | Sets whether or not the .NET Assembly Analyzer should be used.                                                    | true
 analyzers    | msbuildEnabled        | Sets whether or not the MS Build Analyzer should be used.                                                         | true
 analyzers    | pathToDotnet          | The path to dotnet core - needed on some systems to analyze .net assemblies.                                      | &nbsp;
-analyzers    | cmakeEnabled          | Sets whether or not the [experimental](../analyzers/index.html) CMake Analyzer should be used.                    | true
-analyzers    | autoconfEnabled       | Sets whether or not the [experimental](../analyzers/index.html) autoconf Analyzer should be used.                 | true
-analyzers    | composerEnabled       | Sets whether or not the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.   | true
-analyzers    | cpanEnabled           | Sets whether or not the [experimental](../analyzers/index.html) Perl CPAN File Analyzer should be used.           | true
+analyzers    | cmakeEnabled          | Sets whether or not the [experimental](../analyzers/index.html) CMake Analyzer should be used. `experimentalEnabled` must be set to true. | true
+analyzers    | autoconfEnabled       | Sets whether or not the [experimental](../analyzers/index.html) autoconf Analyzer should be used. `experimentalEnabled` must be set to true. | true
+analyzers    | composerEnabled       | Sets whether or not the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used. `experimentalEnabled` must be set to true. | true
+analyzers    | cpanEnabled           | Sets whether or not the [experimental](../analyzers/index.html) Perl CPAN File Analyzer should be used. `experimentalEnabled` must be set to true. | true
 analyzers    | nodeEnabled           | Sets whether or not the Node.js Analyzer should be used.                                                          | true
-analyzers    | cocoapodsEnabled      | Sets whether or not the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used.                | true
-analyzers    | swiftEnabled          | Sets whether or not the [experimental](../analyzers/index.html) Swift Package Manager Analyzer should be used.    | true
-analyzers    | swiftPackageResolvedEnabled | Sets whether or not the [experimental](../analyzers/index.html) Swift Package Resolved Analyzer should be used. | true
-analyzers    | bundleAuditEnabled    | Sets whether or not the [experimental](../analyzers/index.html) Ruby Bundle Audit Analyzer should be used.        | true
+analyzers    | cocoapodsEnabled      | Sets whether or not the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used. `experimentalEnabled` must be set to true. | true
+analyzers    | swiftEnabled          | Sets whether or not the [experimental](../analyzers/index.html) Swift Package Manager Analyzer should be used. `experimentalEnabled` must be set to true. | true
+analyzers    | swiftPackageResolvedEnabled | Sets whether or not the [experimental](../analyzers/index.html) Swift Package Resolved Analyzer should be used. `experimentalEnabled` must be set to true. | true
+analyzers    | bundleAuditEnabled    | Sets whether or not the [experimental](../analyzers/index.html) Ruby Bundle Audit Analyzer should be used. `experimentalEnabled` must be set to true. | true
 analyzers    | pathToBundleAudit     | The path to bundle audit.                                                                                         | &nbsp;
-analyzers    | golangDepEnabled      | Sets whether or not the [experimental](../analyzers/index.html) Golang Dependency Analyzer should be used.        | true
-analyzers    | golangModEnabled      | Sets whether or not the [experimental](../analyzers/index.html) Goland Module Analyzer should be used; requies `go` to be installed. | true
+analyzers    | golangDepEnabled      | Sets whether or not the [experimental](../analyzers/index.html) Golang Dependency Analyzer should be used. `experimentalEnabled` must be set to true. | true
+analyzers    | golangModEnabled      | Sets whether or not the [experimental](../analyzers/index.html) Goland Module Analyzer should be used; requies `go` to be installed. `experimentalEnabled` must be set to true. | true
 analyzers    | pathToGo              | The path to `go`.                                                                                                 | &nbsp;
 
 #### Additional Configuration

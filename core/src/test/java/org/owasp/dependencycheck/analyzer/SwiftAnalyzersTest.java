@@ -12,6 +12,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import org.owasp.dependencycheck.dependency.EvidenceType;
@@ -190,5 +191,11 @@ public class SwiftAnalyzersTest extends BaseTest {
         assertThat(engine.getDependencies()[1].getVersion(), equalTo("4.2.0"));
         assertThat(engine.getDependencies()[2].getName(), equalTo("Facebook"));
         assertThat(engine.getDependencies()[2].getVersion(), equalTo("9.3.0"));
+    }
+
+    @Test
+    public void testIsEnabledIsTrueByDefault() {
+        assertTrue(spmAnalyzer.isEnabled());
+        assertTrue(sprAnalyzer.isEnabled());
     }
 }

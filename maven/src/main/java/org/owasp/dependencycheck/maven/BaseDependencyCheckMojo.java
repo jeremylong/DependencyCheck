@@ -38,11 +38,16 @@ import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
+import org.apache.maven.shared.artifact.filter.resolve.PatternInclusionsFilter;
+import org.apache.maven.shared.artifact.filter.resolve.TransformableFilter;
 import org.apache.maven.shared.transfer.artifact.ArtifactCoordinate;
 import org.apache.maven.shared.transfer.artifact.DefaultArtifactCoordinate;
 import org.apache.maven.shared.transfer.artifact.TransferUtils;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolverException;
+import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResult;
+import org.apache.maven.shared.transfer.dependencies.resolve.DependencyResolver;
+import org.apache.maven.shared.transfer.dependencies.resolve.DependencyResolverException;
 import org.eclipse.aether.artifact.ArtifactType;
 import org.apache.maven.shared.artifact.filter.PatternExcludesArtifactFilter;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
@@ -64,6 +69,7 @@ import org.owasp.dependencycheck.exception.DependencyNotFoundException;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.utils.Checksum;
+import org.owasp.dependencycheck.utils.CveUrlParser;
 import org.owasp.dependencycheck.utils.Filter;
 import org.owasp.dependencycheck.utils.Settings;
 import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
@@ -165,6 +171,16 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Component
     private ArtifactResolver artifactResolver;
+    /**
+     * The entry point towards a Maven version independent way of resolving
+     * dependencies (handles both Maven 3.0 Sonatype and Maven 3.1+ eclipse Aether
+     * implementations). Contrary to the ArtifactResolver this resolver also takes into
+     * account the additional repositories defined in the dependency-path towards transitive
+     * dependencies.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Component
+    private DependencyResolver dependencyResolver;
 
     /**
      * The Maven Session.
@@ -1303,8 +1319,22 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 } else {
                     final ArtifactCoordinate coordinate = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
                     try {
-                        result = artifactResolver.resolveArtifact(buildingRequest, coordinate).getArtifact();
-                    } catch (ArtifactResolverException ex) {
+                        final List<org.apache.maven.model.Dependency> dependencies = project.getDependencies();
+                        final List<org.apache.maven.model.Dependency> managedDependencies =
+                                project.getDependencyManagement() == null ? null : project.getDependencyManagement().getDependencies();
+                        final TransformableFilter filter = new PatternInclusionsFilter(
+                                Collections.singletonList(TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact()).toString()));
+                        final Iterable<ArtifactResult> singleResult =
+                                dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies, filter);
+
+                        if (singleResult.iterator().hasNext()) {
+                            final ArtifactResult first = singleResult.iterator().next();
+                            result = first.getArtifact();
+                        } else {
+                            throw new DependencyNotFoundException(String.format("Failed to resolve dependency %s with "
+                                                                                + "dependencyResolver", coordinate));
+                        }
+                    } catch (DependencyNotFoundException | DependencyResolverException ex) {
                         getLog().debug(String.format("Aggregate : %s", aggregate));
                         boolean addException = true;
                         //CSOFF: EmptyBlock
@@ -2014,7 +2044,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         settings.setStringIfNotEmpty(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
         settings.setStringIfNotEmpty(Settings.KEYS.DB_FILE_NAME, dbFilename);
-        settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveUrlModified);
+
+        String cveModifiedJson = Optional.ofNullable(cveUrlModified)
+            .filter(arg -> !arg.isEmpty())
+            .orElseGet(this::getDefaultCveUrlModified);
+        settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveModifiedJson);
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON, cveUrlBase);
         settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
         settings.setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT, prettyPrint);
@@ -2337,6 +2371,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         if (showSummary) {
             DependencyCheckScanAgent.showSummary(mp.getName(), dependencies);
         }
+    }
+
+    private String getDefaultCveUrlModified() {
+      return CveUrlParser.newInstance(getSettings())
+          .getDefaultCveUrlModified(cveUrlBase);
     }
 
     //</editor-fold>

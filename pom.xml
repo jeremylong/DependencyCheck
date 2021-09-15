@@ -118,14 +118,14 @@ Copyright (c) 2012 - Jeremy Long
         <apache.lucene.version>8.9.0</apache.lucene.version>
         <apache.ant.version>1.10.11</apache.ant.version>
         <slf4j.version>1.7.32</slf4j.version>
-        <logback.version>1.2.5</logback.version>
+        <logback.version>1.2.6</logback.version>
         <!-- Note that Maven will use classes from the distro, ignoring declared dependencies for Maven core... -->
         <maven.api.version>3.1.0</maven.api.version>
         <reporting.checkstyle-plugin.version>3.1.2</reporting.checkstyle-plugin.version>
         <doxia-module-markdown.version>1.9.1</doxia-module-markdown.version>
         <maven-antrun-plugin.version>3.0.0</maven-antrun-plugin.version>
         <maven-dependency-plugin.version>3.2.0</maven-dependency-plugin.version>
-        <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
         <!-- upgrading beyond 2.5 breaks maven site-->
         <maven-jxr-plugin.version>2.5</maven-jxr-plugin.version>
         <maven-project-info-reports-plugin.version>3.1.2</maven-project-info-reports-plugin.version>
@@ -230,7 +230,7 @@ Copyright (c) 2012 - Jeremy Long
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.0.0-M3</version>
+                    <version>3.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -448,7 +448,7 @@ Copyright (c) 2012 - Jeremy Long
                     <dependency>
                         <groupId>org.owasp.maven.enforcer</groupId>
                         <artifactId>class-file-format-rule</artifactId>
-                        <version>1.0.1</version>
+                        <version>2.0.0</version>
                     </dependency>
                 </dependencies>
                 <inherited>true</inherited>
@@ -899,7 +899,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>org.anarres.jdiagnostics</groupId>
                 <artifactId>jdiagnostics</artifactId>
-                <version>1.0.6</version>
+                <version>1.0.7</version>
             </dependency>
             <dependency>
                 <groupId>org.mock-server</groupId>
@@ -1168,7 +1168,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>org.sonatype.ossindex</groupId>
                 <artifactId>ossindex-service-client</artifactId>
-                <version>1.7.0</version>
+                <version>1.8.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.apache.httpcomponents</groupId>

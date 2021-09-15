@@ -34,7 +34,7 @@ may be the cvedUrl properties, which can be used to host a mirror of the NVD wit
 
 Property             | Description                                                                                                          | Default Value
 ---------------------|----------------------------------------------------------------------------------------------------------------------|------------------
-cveUrlModified       | URL for the modified CVE JSON data feed. When mirroring the NVD you must mirror the *.json.gz and the *.meta files.  | https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz
+cveUrlModified       | URL for the modified CVE JSON data feed. When mirroring the NVD you must mirror the *.json.gz and the *.meta files. Optional if your custom cveUrlBase is just a domain name change.  | https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz
 cveUrlBase           | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.                                  | https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-%d.json.gz
 dataDirectory        | Data directory that is used to store the local copy of the NVD. This should generally not be changed.                | data
 databaseDriverName   | The name of the database driver. Example: org.h2.Driver.                                                             | &nbsp;

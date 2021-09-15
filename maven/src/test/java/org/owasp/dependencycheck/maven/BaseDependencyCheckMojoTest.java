@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.maven;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Locale;
@@ -34,6 +35,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 import org.apache.maven.project.MavenProject;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -227,5 +230,125 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
         protected ExceptionCollection scanDependencies(Engine engine) throws MojoExecutionException {
             throw new UnsupportedOperationException("Operation not supported");
         }
+    }
+
+    @Test
+    public void testPopulateSettingsShouldSetDefaultValueToCveUrlModified() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+      // Given
+      System.clearProperty(Settings.KEYS.CVE_MODIFIED_JSON);
+      System.clearProperty(Settings.KEYS.CVE_BASE_JSON);
+
+      BaseDependencyCheckMojo instance = new BaseDependencyCheckMojoImpl();
+
+      Field cveUrlModified = instance.getClass().getSuperclass().getDeclaredField("cveUrlModified");
+      cveUrlModified.setAccessible(true);
+      cveUrlModified.set(instance, null);
+
+      Field cveUrlBase = instance.getClass().getSuperclass().getDeclaredField("cveUrlBase");
+      cveUrlBase.setAccessible(true);
+      cveUrlBase.set(instance, "https://my-custom-mirror-of-nvd/feeds/json/cve/1.1/nvdcve-1.1-%d.json.gz");
+
+      org.apache.maven.settings.Settings mavenSettings = new org.apache.maven.settings.Settings();
+      Field mavenSettingsField = instance.getClass().getSuperclass().getDeclaredField("mavenSettings");
+      mavenSettingsField.setAccessible(true);
+      mavenSettingsField.set(instance, mavenSettings);
+
+      // When
+      instance.populateSettings();
+
+      // Then
+      String output = instance.getSettings().getString(Settings.KEYS.CVE_MODIFIED_JSON);
+      String expectedOutput = "https://my-custom-mirror-of-nvd/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz";
+      assertThat("cveUrlModified must be set to a default of the same model", output, is(expectedOutput));
+    }
+
+    @Test
+    public void testPopulateSettingsShouldSetDefaultValueToCveUrlModifiedWhenCveUrlModifiedIsEmpty() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+      // Given
+      System.clearProperty(Settings.KEYS.CVE_MODIFIED_JSON);
+      System.clearProperty(Settings.KEYS.CVE_BASE_JSON);
+
+      BaseDependencyCheckMojo instance = new BaseDependencyCheckMojoImpl();
+
+      Field cveUrlModified = instance.getClass().getSuperclass().getDeclaredField("cveUrlModified");
+      cveUrlModified.setAccessible(true);
+      cveUrlModified.set(instance, "");
+
+      Field cveUrlBase = instance.getClass().getSuperclass().getDeclaredField("cveUrlBase");
+      cveUrlBase.setAccessible(true);
+      cveUrlBase.set(instance, "https://my-custom-mirror-of-nvd/feeds/json/cve/1.1/nvdcve-1.1-%d.json.gz");
+
+      org.apache.maven.settings.Settings mavenSettings = new org.apache.maven.settings.Settings();
+      Field mavenSettingsField = instance.getClass().getSuperclass().getDeclaredField("mavenSettings");
+      mavenSettingsField.setAccessible(true);
+      mavenSettingsField.set(instance, mavenSettings);
+
+      // When
+      instance.populateSettings();
+
+      // Then
+      String output = instance.getSettings().getString(Settings.KEYS.CVE_MODIFIED_JSON);
+      String expectedOutput = "https://my-custom-mirror-of-nvd/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz";
+      assertThat("cveUrlModified must be set to a default of the same model when arg is empty", output, is(expectedOutput));
+    }
+
+    @Test
+    public void testPopulateSettingsShouldNotSetDefaultValueToCveUrlModifiedWhenValueIsExplicitelySet() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+      // Given
+      System.clearProperty(Settings.KEYS.CVE_MODIFIED_JSON);
+      System.clearProperty(Settings.KEYS.CVE_BASE_JSON);
+
+      BaseDependencyCheckMojo instance = new BaseDependencyCheckMojoImpl();
+
+      Field cveUrlModified = instance.getClass().getSuperclass().getDeclaredField("cveUrlModified");
+      cveUrlModified.setAccessible(true);
+      cveUrlModified.set(instance, "https://another-custom-mirror-of-nvd/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz");
+
+      Field cveUrlBase = instance.getClass().getSuperclass().getDeclaredField("cveUrlBase");
+      cveUrlBase.setAccessible(true);
+      cveUrlBase.set(instance, "https://my-custom-mirror-of-nvd/feeds/json/cve/1.1/some-unusual-file-name-%d.json.gz");
+
+      org.apache.maven.settings.Settings mavenSettings = new org.apache.maven.settings.Settings();
+      Field mavenSettingsField = instance.getClass().getSuperclass().getDeclaredField("mavenSettings");
+      mavenSettingsField.setAccessible(true);
+      mavenSettingsField.set(instance, mavenSettings);
+
+      // When
+      instance.populateSettings();
+
+      // Then
+      String output = instance.getSettings().getString(Settings.KEYS.CVE_MODIFIED_JSON);
+      String expectedOutput = "https://another-custom-mirror-of-nvd/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz";
+      assertThat("cveUrlModified must be set to the specified value", output, is(expectedOutput));
+    }
+
+    @Test
+    public void testPopulateSettingsShouldNotSetDefaultValueToCveUrlModifiedWhenUnknownValueIsSet() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+      // Given
+      System.clearProperty(Settings.KEYS.CVE_MODIFIED_JSON);
+      System.clearProperty(Settings.KEYS.CVE_BASE_JSON);
+
+      BaseDependencyCheckMojo instance = new BaseDependencyCheckMojoImpl();
+
+      Field cveUrlModified = instance.getClass().getSuperclass().getDeclaredField("cveUrlModified");
+      cveUrlModified.setAccessible(true);
+      cveUrlModified.set(instance, null);
+
+      Field cveUrlBase = instance.getClass().getSuperclass().getDeclaredField("cveUrlBase");
+      cveUrlBase.setAccessible(true);
+      cveUrlBase.set(instance, "https://my-custom-mirror-of-nvd/feeds/json/cve/1.1/some-unusual-file-name-%d.json.gz");
+
+      org.apache.maven.settings.Settings mavenSettings = new org.apache.maven.settings.Settings();
+      Field mavenSettingsField = instance.getClass().getSuperclass().getDeclaredField("mavenSettings");
+      mavenSettingsField.setAccessible(true);
+      mavenSettingsField.set(instance, mavenSettings);
+
+      // When
+      instance.populateSettings();
+
+      // Then
+      String output = instance.getSettings().getString(Settings.KEYS.CVE_MODIFIED_JSON);
+      String expectedOutput = "https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz";
+      assertThat("cveUrlModified must not be set when name is not the same as from the nvd datasource", output, is(expectedOutput));
     }
 }

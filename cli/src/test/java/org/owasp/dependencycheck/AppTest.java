@@ -31,7 +31,6 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.UnrecognizedOptionException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
@@ -172,6 +171,94 @@ public class AppTest extends BaseTest {
 
         // THEN the suppression file is set in the settings for use in the application core
         assertThat("Expected the suppression files to be set in the Settings with a separator", getSettings().getString(KEYS.SUPPRESSION_FILE), is("[\"first-file.xml\",\"another-file.xml\"]"));
+    }
+
+    @Test
+    public void testPopulateSettingsShouldSetDefaultValueToCveUrlModified() throws Exception {
+      // Given
+      System.clearProperty(Settings.KEYS.CVE_MODIFIED_JSON);
+      System.clearProperty(Settings.KEYS.CVE_BASE_JSON);
+
+      final Settings settings = getSettings();
+      final App app = new App(settings);
+
+      String[] args = {"--cveUrlBase", "https://my-custom-mirror-of-nvd/feeds/json/cve/1.1/nvdcve-1.1-%d.json.gz"};
+      final CliParser parser = new CliParser(settings);
+      parser.parse(args);
+
+      // When
+      app.populateSettings(parser);
+
+      // Then
+      String output = settings.getString(Settings.KEYS.CVE_MODIFIED_JSON);
+      String expectedOutput = "https://my-custom-mirror-of-nvd/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz";
+      assertThat("cveUrlModified must be set to a default of the same model", output, is(expectedOutput));
+    }
+
+    @Test
+    public void testPopulateSettingsShouldSetDefaultValueToCveUrlModifiedWhenCveUrlModifiedIsEmpty() throws Exception {
+      // Given
+      System.clearProperty(Settings.KEYS.CVE_MODIFIED_JSON);
+      System.clearProperty(Settings.KEYS.CVE_BASE_JSON);
+
+      final Settings settings = getSettings();
+      final App app = new App(settings);
+
+      String[] args = {"--cveUrlBase", "https://my-custom-mirror-of-nvd/feeds/json/cve/1.1/nvdcve-1.1-%d.json.gz", "--cveUrlModified", ""};
+      final CliParser parser = new CliParser(settings);
+      parser.parse(args);
+
+      // When
+      app.populateSettings(parser);
+
+      // Then
+      String output = settings.getString(Settings.KEYS.CVE_MODIFIED_JSON);
+      String expectedOutput = "https://my-custom-mirror-of-nvd/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz";
+      assertThat("cveUrlModified must be set to a default of the same model when arg is empty", output, is(expectedOutput));
+    }
+
+    @Test
+    public void testPopulateSettingsShouldNotSetDefaultValueToCveUrlModifiedWhenValueIsExplicitelySet() throws Exception {
+      // Given
+      System.clearProperty(Settings.KEYS.CVE_MODIFIED_JSON);
+      System.clearProperty(Settings.KEYS.CVE_BASE_JSON);
+
+      final Settings settings = getSettings();
+      final App app = new App(settings);
+
+      String[] args = {"--cveUrlBase", "https://my-custom-mirror-of-nvd/feeds/json/cve/1.1/some-unusual-file-name-%d.json.gz", "--cveUrlModified", "https://another-custom-mirror-of-nvd/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz"};
+      final CliParser parser = new CliParser(settings);
+      parser.parse(args);
+
+      // When
+      app.populateSettings(parser);
+
+      // Then
+      String output = settings.getString(Settings.KEYS.CVE_MODIFIED_JSON);
+      String expectedOutput = "https://another-custom-mirror-of-nvd/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz";
+      assertThat("cveUrlModified must be set to the specified value", output, is(expectedOutput));
+    }
+
+    @Test
+    public void testPopulateSettingsShouldNotSetDefaultValueToCveUrlModifiedWhenUnknownValueIsSet() throws Exception {
+      // Given
+      System.clearProperty(Settings.KEYS.CVE_MODIFIED_JSON);
+      System.clearProperty(Settings.KEYS.CVE_BASE_JSON);
+
+      final Settings settings = getSettings();
+      final App app = new App(settings);
+
+      String[] args = {"--cveUrlBase", "https://my-custom-mirror-of-nvd/feeds/json/cve/1.1/some-unusual-file-name-%d.json.gz"};
+      final CliParser parser = new CliParser(settings);
+      parser.parse(args);
+
+      // When
+      app.populateSettings(parser);
+
+      // Then
+      String output = settings.getString(Settings.KEYS.CVE_MODIFIED_JSON);
+      String expectedOutput = "https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz";
+      assertThat("cveUrlModified must not be set when name is not the same as from the nvd datasource", output, is(expectedOutput));
     }
 
     private boolean testBooleanProperties(String[] args, Map<String, Boolean> expected) throws URISyntaxException, FileNotFoundException, ParseException, InvalidSettingException {
