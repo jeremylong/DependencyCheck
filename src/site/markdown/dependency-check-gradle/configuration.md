@@ -33,7 +33,7 @@ cveValidForHours     | Sets the number of hours to wait before checking for new 
 format               | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, ALL).                                                | HTML
 formats              | A list of report formats to be generated (HTML, XML, CSV, JSON, JUNIT, ALL).                                         | &nbsp;
 junitFailOnCVSS      | If using the JUNIT report format the junitFailOnCVSS sets the CVSS score threshold that is considered a failure.     | 0
-failBuildOnCVSS      | Specifies if the build should be failed if a CVSS score equal to or above a specified level is identified. The default is 11; since the CVSS scores are 0-10, by default the build will never fail. | 11
+failBuildOnCVSS      | Specifies if the build should be failed if a CVSS score equal to or above a specified level is identified. The default is 11; since the CVSS scores are 0-10, by default the build will never fail. More information on CVSS scores can be found at the [NVD](https://nvd.nist.gov/vuln-metrics/cvss) | 11
 failOnError          | Fails the build if an error occurs during the dependency-check analysis.                                             | true
 outputDirectory      | The location to write the report(s). This directory will be located in the build directory.                          | build/reports
 skipTestGroups       | When set to true (the default) all dependency groups that being with 'test' will be skipped.                         | true

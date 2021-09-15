@@ -20,7 +20,7 @@ format                      | The report format to be generated (HTML, XML, CSV,
 formats                     | A list of report formats to be generated (HTML, XML, CSV, JSON, JUNIT, SARIF, ALL). This configuration overrides the value from `format`. This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | &nbsp;
 junitFailOnCVSS             | If using the JUNIT report format the junitFailOnCVSS sets the CVSS score threshold that is considered a failure.   | 0
 prettyPrint                 | Whether the XML and JSON formatted reports should be pretty printed.                                               | false
-failBuildOnCVSS             | Specifies if the build should be failed if a CVSS score equal to or above a specified level is identified. The default is 11 which means since the CVSS scores are 0-10, by default the build will never fail. | 11
+failBuildOnCVSS             | Specifies if the build should be failed if a CVSS score equal to or above a specified level is identified. The default is 11 which means since the CVSS scores are 0-10, by default the build will never fail. More information on CVSS scores can be found at the [NVD](https://nvd.nist.gov/vuln-metrics/cvss) | 11
 failBuildOnAnyVulnerability | Specific that if any vulnerability is identified, the build will fail. | false
 failOnError                 | Whether the build should fail if there is an error executing the dependency-check analysis. | true
 name                        | The name of the report in the site. | dependency-check or dependency-check:aggregate
