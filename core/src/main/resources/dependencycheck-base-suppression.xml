@@ -1793,7 +1793,7 @@
         <notes><![CDATA[
         Suppresses false positives per #1961. spark-sketch is not sketch - an vector drawing tool.
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.apache\.spark/spark\-sketch_2\.10@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.spark/spark\-sketch_2\.\d+@.*$</packageUrl>
         <cpe>cpe:/a:sketch:sketch</cpe>
     </suppress>
     <suppress base="true">
