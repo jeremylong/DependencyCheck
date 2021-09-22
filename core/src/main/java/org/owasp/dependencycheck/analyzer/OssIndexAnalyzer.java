@@ -339,7 +339,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
 
         // generate references to other references reported by OSS Index
         for (final String externalReference : source.getExternalReferences()) {
-            result.addReference("OSSIndex", externalReference, externalReference);
+            result.addReference("OSSIndex", externalReference.toString(), externalReference.toString());
         }
 
         // attach vulnerable software details as best we can
