@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.net.URI;
 import org.sonatype.ossindex.service.api.componentreport.ComponentReport;
 import org.sonatype.ossindex.service.api.componentreport.ComponentReportVulnerability;
 import org.sonatype.ossindex.service.api.cvss.Cvss2Severity;
@@ -338,9 +339,9 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
         result.addReference(REFERENCE_TYPE, source.getTitle(), source.getReference().toString());
 
         // generate references to other references reported by OSS Index
-        for (final String externalReference : source.getExternalReferences()) {
+        source.getExternalReferences().forEach(externalReference -> {
             result.addReference("OSSIndex", externalReference.toString(), externalReference.toString());
-        }
+        });
 
         // attach vulnerable software details as best we can
         final PackageUrl purl = report.getCoordinates();
