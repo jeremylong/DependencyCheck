@@ -3194,6 +3194,7 @@
         <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring\-boot\-starter\-amqp@.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:rabbitmq</cpe>
         <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
+        <cpe>cpe:/a:vmware:rabbitmq</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
