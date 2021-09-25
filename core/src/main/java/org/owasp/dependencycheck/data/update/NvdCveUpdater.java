@@ -170,7 +170,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
      */
     protected void initializeExecutorServices() {
         final int downloadPoolSize;
-        final int max = settings.getInt(Settings.KEYS.MAX_DOWNLOAD_THREAD_POOL_SIZE, 3);
+        final int max = settings.getInt(Settings.KEYS.MAX_DOWNLOAD_THREAD_POOL_SIZE, 1);
         if (DOWNLOAD_THREAD_POOL_SIZE > max) {
             downloadPoolSize = max;
         } else {
@@ -340,6 +340,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
             final URL u = new URL(metaUrl);
             final Downloader d = new Downloader(settings);
             final String content = d.fetchContent(u, true, Settings.KEYS.CVE_USER, Settings.KEYS.CVE_PASSWORD);
+            Thread.sleep(2000);
             return new MetaProperties(content);
         } catch (MalformedURLException ex) {
             throw new UpdateException("Meta file url is invalid: " + metaUrl, ex);
@@ -351,6 +352,9 @@ public class NvdCveUpdater implements CachedWebDataSource {
             throw new UpdateException("Unable to download meta file: " + metaUrl + "; received 429 -- too many requests", ex);
         } catch (ResourceNotFoundException ex) {
             throw new UpdateException("Unable to download meta file: " + metaUrl + "; received 404 -- resource not found", ex);
+        } catch (InterruptedException ex) {
+            Thread.interrupted();
+            throw new UpdateException("The download of the meta file was interupted: " + metaUrl, ex);
         }
     }
 
