@@ -142,8 +142,8 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
                 return null;
             }
             final ProcessTask task = new ProcessTask(cveDB, this, settings);
-            Future<ProcessTask> val = this.processorService.submit(task);
-            
+            final Future<ProcessTask> val = this.processorService.submit(task);
+
             Thread.sleep(2000);
             return val;
 
