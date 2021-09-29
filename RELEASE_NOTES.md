@@ -1,5 +1,13 @@
 # Release Notes
 
+## [Version 6.3.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.3.1) (2021-09-29)
+
+### Changes
+
+- Reduced chance of rate limiting when download files from NVD (see [#2670](https://github.com/jeremylong/DependencyCheck/pull/3670)).
+- Fixed bug causing some transitive dependencies being skipped in the odc-maven-plugin (see [#3627](https://github.com/jeremylong/DependencyCheck/pull/3627)).
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/33?closed=1).
+
 ## [Version 6.3.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.3.1) (2021-09-01)
 
 ### Changes
