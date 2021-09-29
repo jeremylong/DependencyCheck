@@ -1,6 +1,6 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,ArtifactScopeExcluded,18,47,10,12,3,14,7,6,0,2
 Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,CheckMojo,33,12,4,0,10,3,5,2,3,2
+Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,ArtifactScopeExcluded,18,47,10,12,3,14,7,6,0,2
 Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,AggregateMojo,138,365,35,57,25,68,31,30,5,10
 Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,PurgeMojo,32,0,0,0,10,0,6,0,6,0
 Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,HelpMojo,856,0,108,0,153,0,70,0,16,0
@@ -8,4 +8,4 @@ Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,ArtifactTypeExclud
 Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,FilteringDependencyTransitiveNodeVisitor,10,35,2,2,4,10,4,3,2,3
 Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,Retirejs,0,9,0,0,0,3,0,3,0,3
 Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,UpdateMojo,63,20,7,1,19,7,8,2,4,2
-Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,BaseDependencyCheckMojo,1293,2189,223,129,275,423,168,61,18,35
+Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,BaseDependencyCheckMojo,1305,2247,223,135,276,438,168,66,18,37
