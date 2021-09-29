@@ -841,9 +841,10 @@ public class Engine implements FileFilter, AutoCloseable {
      * @throws UpdateException thrown if the operation fails
      * @throws DatabaseException if the operation fails due to a local database
      * failure
+     * @return Whether any updates actually happened
      */
-    public void doUpdates() throws UpdateException, DatabaseException {
-        doUpdates(false);
+    public boolean doUpdates() throws UpdateException, DatabaseException {
+        return doUpdates(false);
     }
 
     /**
@@ -855,8 +856,9 @@ public class Engine implements FileFilter, AutoCloseable {
      * @throws UpdateException thrown if the operation fails
      * @throws DatabaseException if the operation fails due to a local database
      * failure
+     * @return Whether any updates actually happened
      */
-    public void doUpdates(boolean remainOpen) throws UpdateException, DatabaseException {
+    public boolean doUpdates(boolean remainOpen) throws UpdateException, DatabaseException {
         if (mode.isDatabaseRequired()) {
             try (WriteLock dblock = new WriteLock(getSettings(), DatabaseManager.isH2Connection(getSettings()))) {
                 //lock is not needed as we already have the lock held
@@ -889,11 +891,14 @@ public class Engine implements FileFilter, AutoCloseable {
                     //lock is not needed as we already have the lock held
                     openDatabase(true, false);
                 }
+                
+                return dbUpdatesMade;
             } catch (WriteLockException ex) {
                 throw new UpdateException("Unable to obtain an exclusive lock on the H2 database to perform updates", ex);
             }
         } else {
             LOGGER.info("Skipping update check in evidence collection mode.");
+            return false;
         }
     }
 
