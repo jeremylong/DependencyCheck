@@ -340,7 +340,6 @@ public class NvdCveUpdater implements CachedWebDataSource {
             final URL u = new URL(metaUrl);
             final Downloader d = new Downloader(settings);
             final String content = d.fetchContent(u, true, Settings.KEYS.CVE_USER, Settings.KEYS.CVE_PASSWORD);
-            Thread.sleep(2000);
             return new MetaProperties(content);
         } catch (MalformedURLException ex) {
             throw new UpdateException("Meta file url is invalid: " + metaUrl, ex);
@@ -352,9 +351,6 @@ public class NvdCveUpdater implements CachedWebDataSource {
             throw new UpdateException("Unable to download meta file: " + metaUrl + "; received 429 -- too many requests", ex);
         } catch (ResourceNotFoundException ex) {
             throw new UpdateException("Unable to download meta file: " + metaUrl + "; received 404 -- resource not found", ex);
-        } catch (InterruptedException ex) {
-            Thread.interrupted();
-            throw new UpdateException("The download of the meta file was interupted: " + metaUrl, ex);
         }
     }
 
@@ -399,10 +395,12 @@ public class NvdCveUpdater implements CachedWebDataSource {
                         final int start = settings.getInt(Settings.KEYS.CVE_START_YEAR);
                         final int end = Calendar.getInstance().get(Calendar.YEAR);
                         final String baseUrl = settings.getString(Settings.KEYS.CVE_BASE_JSON);
+                        final long waitTime = settings.getInt(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, 4000);
                         for (int i = start; i <= end; i++) {
                             try {
                                 url = String.format(baseUrl, i);
                                 final MetaProperties meta = getMetaFile(url);
+                                Thread.sleep(waitTime);
                                 final long currentTimestamp = getPropertyInSeconds(DatabaseProperties.LAST_UPDATED_BASE + i);
 
                                 if (currentTimestamp < meta.getLastModifiedDate()) {
@@ -421,6 +419,9 @@ public class NvdCveUpdater implements CachedWebDataSource {
                                 } else {
                                     throw ex;
                                 }
+                            } catch (InterruptedException ex) {
+                                Thread.interrupted();
+                                throw new UpdateException("The download of the meta file was interupted: " + url, ex);
                             }
                         }
                     }

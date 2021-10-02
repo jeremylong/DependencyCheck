@@ -210,6 +210,11 @@ public final class Settings {
          */
         public static final String CVE_START_YEAR = "cve.startyear";
         /**
+         * A configurable sleep time between downloading the NVD CVE data. The
+         * time is in milliseconds.
+         */
+        public static final String CVE_DOWNLOAD_WAIT_TIME = "cve.download.waittime";
+        /**
          * The properties key that indicates how often the CPE data needs to be
          * updated.
          */
@@ -699,8 +704,9 @@ public final class Settings {
          */
         public static final String ANALYZER_OSSINDEX_BATCH_SIZE = "analyzer.ossindex.batch.size";
         /**
-         * The properties key for the Sonatype OSS Request Delay.
-         * Amount of time in seconds to wait before executing a request against the Sonatype OSS Rest API
+         * The properties key for the Sonatype OSS Request Delay. Amount of time
+         * in seconds to wait before executing a request against the Sonatype
+         * OSS Rest API
          */
         public static final String ANALYZER_OSSINDEX_REQUEST_DELAY = "analyzer.ossindex.request.delay";
         /**

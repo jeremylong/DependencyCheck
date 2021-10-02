@@ -143,8 +143,8 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
             }
             final ProcessTask task = new ProcessTask(cveDB, this, settings);
             final Future<ProcessTask> val = this.processorService.submit(task);
-
-            Thread.sleep(2000);
+            final long waitTime = settings.getInt(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, 4000);
+            Thread.sleep(waitTime);
             return val;
 
         } catch (Throwable ex) {
