@@ -83,6 +83,7 @@ public class XPathNuspecParser implements NuspecParser {
             nuspec.setOwners(getOrNull((Node) xpath.evaluate("/package/metadata/owners", d, XPathConstants.NODE)));
             nuspec.setLicenseUrl(getOrNull((Node) xpath.evaluate("/package/metadata/licenseUrl", d, XPathConstants.NODE)));
             nuspec.setTitle(getOrNull((Node) xpath.evaluate("/package/metadata/title", d, XPathConstants.NODE)));
+            nuspec.setDescription(xpath.evaluate("/package/metadata/description", d));
             return nuspec;
         } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException | NuspecParseException e) {
             throw new NuspecParseException("Unable to parse nuspec", e);
