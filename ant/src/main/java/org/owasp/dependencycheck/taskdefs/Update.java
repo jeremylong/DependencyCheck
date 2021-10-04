@@ -435,7 +435,7 @@ public class Update extends Purge {
         getSettings().setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
         getSettings().setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
 
-        String cveModifiedJson = Optional.ofNullable(cveUrlModified)
+        final String cveModifiedJson = Optional.ofNullable(cveUrlModified)
                 .filter(url -> !url.isEmpty())
                 .orElseGet(this::getDefaultCveUrlModified);
         getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveModifiedJson);
