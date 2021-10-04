@@ -93,6 +93,10 @@ public class Update extends Purge {
      */
     private String cveUrlBase;
     /**
+     * The wait time in milliseconds between downloads from the NVD.
+     */
+    private String cveWaitTime;
+    /**
      * The number of hours to wait before re-checking for updates.
      */
     private Integer cveValidForHours;
@@ -342,6 +346,24 @@ public class Update extends Purge {
     }
 
     /**
+     * Get the value of cveUrlBase.
+     *
+     * @return the value of cveUrlBase
+     */
+    public String getCveWaitTime() {
+        return cveWaitTime;
+    }
+
+    /**
+     * Set the value of cveWaitTime.
+     *
+     * @param cveWaitTime new value of cveWaitTime
+     */
+    public void setCveWaitTime(String cveWaitTime) {
+        this.cveWaitTime = cveWaitTime;
+    }
+
+    /**
      * Get the value of cveValidForHours.
      *
      * @return the value of cveValidForHours
@@ -413,11 +435,12 @@ public class Update extends Purge {
         getSettings().setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
         getSettings().setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
 
-        String cveModifiedJson = Optional.ofNullable(cveUrlModified)
-          .filter(url -> !url.isEmpty())
-          .orElseGet(this::getDefaultCveUrlModified);
+        final String cveModifiedJson = Optional.ofNullable(cveUrlModified)
+                .filter(url -> !url.isEmpty())
+                .orElseGet(this::getDefaultCveUrlModified);
         getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveModifiedJson);
         getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON, cveUrlBase);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, cveWaitTime);
         if (cveValidForHours != null) {
             if (cveValidForHours >= 0) {
                 getSettings().setInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
@@ -428,7 +451,7 @@ public class Update extends Purge {
     }
 
     private String getDefaultCveUrlModified() {
-      return CveUrlParser.newInstance(getSettings())
-          .getDefaultCveUrlModified(cveUrlBase);
+        return CveUrlParser.newInstance(getSettings())
+                .getDefaultCveUrlModified(cveUrlBase);
     }
 }

@@ -24,6 +24,7 @@ _odc_completions()
             --cveValidForHours
             --cveUser <user>
             --cvePassword <password>
+            --cveDownloadWait <milliseconds>
         -d --data
             --dbDriverName
             --dbDriverPath

@@ -307,6 +307,8 @@ public final class CliParser {
                         "Base URL for each year’s CVE files (json.gz), the %d will be replaced with the year."))
                 .addOption(newOptionWithArg(ARGUMENT.CVE_MODIFIED_URL, "url",
                         "URL for the modified CVE (json.gz)."))
+                .addOption(newOptionWithArg(ARGUMENT.CVE_DOWNLOAD_WAIT_TIME, "milliseconds",
+                        "Time in milliseconds to wait between downloading from the NVD."))
                 .addOption(newOptionWithArg(ARGUMENT.CVE_USER, "user",
                         "Credentials for basic authentication to the CVE data."))
                 .addOption(newOptionWithArg(ARGUMENT.CVE_PASSWORD, "password",
@@ -1047,6 +1049,10 @@ public final class CliParser {
          */
         public static final String CVE_BASE_URL = "cveUrlBase";
         /**
+         * The time in milliseconds to wait between downloading NVD CVE data.
+         */
+        public static final String CVE_DOWNLOAD_WAIT_TIME = "cveDownloadWait";
+        /**
          * The short CLI argument name for setting the location of the data
          * directory.
          */
@@ -1163,7 +1169,7 @@ public final class CliParser {
          * Disables the swift package manager analyzer.
          */
         public static final String DISABLE_SWIFT = "disableSwiftPackageManagerAnalyzer";
-                /**
+        /**
          * Disables the swift package resolved analyzer.
          */
         public static final String DISABLE_SWIFT_RESOLVED = "disableSwiftPackageResolvedAnalyzer";

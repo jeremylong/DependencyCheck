@@ -834,6 +834,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "cveUrlBase")
     private String cveUrlBase;
     /**
+     * The wait timeout between downloading from the NVD.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "cveWaitTime")
+    private String cveWaitTime;
+    /**
      * The username to use when connecting to the CVE-URL.
      */
     @Parameter(property = "cveUser")
@@ -2050,6 +2056,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             .orElseGet(this::getDefaultCveUrlModified);
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveModifiedJson);
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON, cveUrlBase);
+        settings.setStringIfNotEmpty(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, cveWaitTime);
         settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
         settings.setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT, prettyPrint);
         artifactScopeExcluded = new ArtifactScopeExcluded(skipTestScope, skipProvidedScope, skipSystemScope, skipRuntimeScope);
