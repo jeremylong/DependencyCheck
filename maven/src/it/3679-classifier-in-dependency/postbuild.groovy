@@ -35,7 +35,7 @@ def countMatches(String xml, String xpathQuery) {
 }
 
 String log = FileUtils.readFileToString(new File(basedir, "target/dependency-check-report.xml"), Charset.defaultCharset().name());
-int count = countMatches(log,"/analysis/dependencies/dependency[./fileName = 'guice-2.4.4-no_aop.jar']");
+int count = countMatches(log,"/analysis/dependencies/dependency[./fileName = 'guice-4.2.2-no_aop.jar']");
 if (count != 1){
     System.out.println(String.format("google guice no_aop was identified %s times, expected 1", count));
     return false;
