@@ -51,6 +51,11 @@ public class NugetPackage extends NugetPackageReference {
     private String licenseUrl;
 
     /**
+     * The description.
+     */
+    private String description;
+
+    /**
      * Sets the title.
      *
      * @param title the title
@@ -122,6 +127,24 @@ public class NugetPackage extends NugetPackageReference {
         return licenseUrl;
     }
 
+    /**
+     * Gets the description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the description.
+     *
+     * @param description the description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null || !(obj instanceof NugetPackage)) {
@@ -149,4 +172,5 @@ public class NugetPackage extends NugetPackageReference {
                 .append(licenseUrl)
                 .toHashCode();
     }
+
 }

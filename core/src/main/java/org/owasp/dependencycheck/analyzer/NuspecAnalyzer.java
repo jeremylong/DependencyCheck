@@ -159,6 +159,8 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
             dependency.addEvidence(EvidenceType.VENDOR, "nuspec", "authors", np.getAuthors(), Confidence.HIGH);
             dependency.addEvidence(EvidenceType.VERSION, "nuspec", "version", np.getVersion(), Confidence.HIGHEST);
             dependency.addEvidence(EvidenceType.PRODUCT, "nuspec", "id", np.getId(), Confidence.HIGHEST);
+            dependency.addEvidence(EvidenceType.VENDOR, "nuspec", "description", np.getDescription(), Confidence.LOW);;
+            dependency.addEvidence(EvidenceType.PRODUCT, "nuspec", "description", np.getDescription(), Confidence.LOW);;
             dependency.setName(np.getId());
             dependency.setVersion(np.getVersion());
             try {
