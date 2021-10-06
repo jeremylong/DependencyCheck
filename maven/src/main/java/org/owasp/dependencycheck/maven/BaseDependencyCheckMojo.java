@@ -1332,7 +1332,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         final ArtifactCoordinate theCoord = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
                         if (theCoord.getClassifier() != null) {
                             // This would trigger NPE when using the filter - MSHARED-998
-                            getLog().debug("Expensive lookup as workaround for MSHARED-998 for "+theCoord);
+                            getLog().debug("Expensive lookup as workaround for MSHARED-998 for " + theCoord);
                             final Iterable<ArtifactResult> allDeps =
                                     dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,
                                                                            null);
@@ -1453,7 +1453,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         return exCol;
     }
 
-    /** Utility method for a work-around to MSHARED-998 */
+    /**
+     * Utility method for a work-around to MSHARED-998
+     * @param allDeps The Iterable of the resolved artifacts for all dependencies
+     * @param theCoord The ArtifactCoordinate of the artifact-with-classifier we intended to resolve
+     * @return the resolved artifact matching with {@code theCoord}
+     * @throws DependencyNotFoundException Not expected to be thrown, but will be thrown if {@code theCoord} could not be
+     * found within {@code allDeps}
+     */
     private Artifact findClassifierArtifactInAllDeps(final Iterable<ArtifactResult> allDeps, final ArtifactCoordinate theCoord)
             throws DependencyNotFoundException {
         Artifact result = null;
@@ -1470,7 +1477,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         return result;
     }
 
-    /** Utility method for a work-around to MSHARED-998 */
+    /**
+     * Utility method for a work-around to MSHARED-998
+     * @param res A single ArtifactResult obtained from the DependencyResolver
+     * @param theCoord The coordinates of the Artifact that we try to find
+     * @return {@code true} when theCoord is non-null and matches with the artifact of res
+     */
     private boolean sameArtifact(final ArtifactResult res, final ArtifactCoordinate theCoord) {
         if (res == null || res.getArtifact() == null || theCoord == null) {
             return false;
