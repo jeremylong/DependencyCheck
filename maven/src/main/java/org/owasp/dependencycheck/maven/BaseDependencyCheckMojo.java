@@ -87,6 +87,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -1328,17 +1329,29 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         final List<org.apache.maven.model.Dependency> dependencies = project.getDependencies();
                         final List<org.apache.maven.model.Dependency> managedDependencies =
                                 project.getDependencyManagement() == null ? null : project.getDependencyManagement().getDependencies();
-                        final TransformableFilter filter = new PatternInclusionsFilter(
-                                Collections.singletonList(TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact()).toString()));
-                        final Iterable<ArtifactResult> singleResult =
-                                dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies, filter);
-
-                        if (singleResult.iterator().hasNext()) {
-                            final ArtifactResult first = singleResult.iterator().next();
-                            result = first.getArtifact();
+                        final ArtifactCoordinate theCoord = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
+                        if (theCoord.getClassifier() != null) {
+                            // This would trigger NPE when using the filter - MSHARED-998
+                            getLog().debug("Expensive lookup as workaround for MSHARED-998 for "+theCoord);
+                            final Iterable<ArtifactResult> allDeps =
+                                    dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,
+                                                                           null);
+                            result = findClassifierArtifactInAllDeps(allDeps, theCoord);
                         } else {
-                            throw new DependencyNotFoundException(String.format("Failed to resolve dependency %s with "
-                                                                                + "dependencyResolver", coordinate));
+                            final TransformableFilter filter = new PatternInclusionsFilter(
+                                    Collections.singletonList(
+                                            TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact()).toString()));
+                            final Iterable<ArtifactResult> singleResult =
+                                    dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,
+                                                                           filter);
+
+                            if (singleResult.iterator().hasNext()) {
+                                final ArtifactResult first = singleResult.iterator().next();
+                                result = first.getArtifact();
+                            } else {
+                                throw new DependencyNotFoundException(String.format("Failed to resolve dependency %s with "
+                                                                                    + "dependencyResolver", coordinate));
+                            }
                         }
                     } catch (DependencyNotFoundException | DependencyResolverException ex) {
                         getLog().debug(String.format("Aggregate : %s", aggregate));
@@ -1438,6 +1451,31 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
         }
         return exCol;
+    }
+
+    /** Utility method for a work-around to MSHARED-998 */
+    private Artifact findClassifierArtifactInAllDeps(final Iterable<ArtifactResult> allDeps, final ArtifactCoordinate theCoord) {
+        Artifact result = null;
+        for (final ArtifactResult res : allDeps) {
+            if (sameArtifact(res, theCoord)) {
+                result = res.getArtifact();
+                break;
+            }
+        }
+        return result;
+    }
+
+    /** Utility method for a work-around to MSHARED-998 */
+    private boolean sameArtifact(final ArtifactResult res, final ArtifactCoordinate theCoord) {
+        if (res == null || res.getArtifact() == null || theCoord == null) {
+            return false;
+        }
+        boolean result = Objects.equals(res.getArtifact().getGroupId(), theCoord.getGroupId());
+        result &= Objects.equals(res.getArtifact().getArtifactId(), theCoord.getArtifactId());
+        result &= Objects.equals(res.getArtifact().getVersion(), theCoord.getVersion());
+        result &= Objects.equals(res.getArtifact().getClassifier(), theCoord.getClassifier());
+        result &= Objects.equals(res.getArtifact().getType(), theCoord.getExtension());
+        return result;
     }
 
     /**
