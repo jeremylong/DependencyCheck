@@ -1454,13 +1454,18 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /** Utility method for a work-around to MSHARED-998 */
-    private Artifact findClassifierArtifactInAllDeps(final Iterable<ArtifactResult> allDeps, final ArtifactCoordinate theCoord) {
+    private Artifact findClassifierArtifactInAllDeps(final Iterable<ArtifactResult> allDeps, final ArtifactCoordinate theCoord)
+            throws DependencyNotFoundException {
         Artifact result = null;
         for (final ArtifactResult res : allDeps) {
             if (sameArtifact(res, theCoord)) {
                 result = res.getArtifact();
                 break;
             }
+        }
+        if (result == null) {
+            throw new DependencyNotFoundException(String.format("Expected dependency not found in resolved artifacts for "
+                                                                + "dependency %s", theCoord));
         }
         return result;
     }
