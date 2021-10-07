@@ -87,6 +87,7 @@ nodeAnalyzerEnabled                 | Sets whether the [retired](../analyzers/in
 nodeAuditAnalyzerEnabled            | Sets whether the Node Audit Analyzer should be used. This analyzer requires an internet connection.                                                 | true
 nodeAuditAnalyzerUseCache           | Sets whether the Node Audit Analyzer will cache results. Cached results expire after 24 hours.                                                      | true
 nodeAuditSkipDevDependencies        | Sets whether the Node Audit Analyzer will skip devDependencies.                                                                                     | false
+nodePackageSkipDevDependencies      | Sets whether the Node Package Analyzer will skip devDependencies.                                                                                   | false
 retireJsAnalyzerEnabled             | Sets whether the RetireJS Analyzer should be used.                                                                                                  | true
 retirejsForceupdate                 | Sets whether the RetireJS Analyzer should update regardless of the `autoupdate` setting.                                                            | false
 retireJsUrl                         | The URL to the Retire JS repository. **Note** the file name must be `jsrepository.json`.                                                            | https://raw.githubusercontent.com/Retirejs/retire.js/master/repository/jsrepository.json
