@@ -107,7 +107,9 @@ nodeAuditAnalyzerEnabled            | Sets whether the Node Audit Analyzer shoul
 nodeAuditAnalyzerUseCache           | Sets whether the Node Audit Analyzer will cache results. Cached results expire after 24 hours.             | true
 nodeAuditSkipDevDependencies        | Sets whether the Node Audit Analyzer will skip devDependencies.                                            | false
 yarnAuditAnalyzerEnabled            | Sets whether the Yarn Audit Analyzer should be used. This analyzer requires yarn and an internet connection. Use `nodeAuditSkipDevDependencies` to skip dev dependencies. | true
+pnpmAuditAnalyzerEnabled            | Sets whether the Pnpm Audit Analyzer should be used. This analyzer requires pnpm and an internet connection. Use `nodeAuditSkipDevDependencies` to skip dev dependencies. | true
 pathToYarn                          | The path to `yarn`.                                                                                        | &nbsp;
+pathToPnpm                          | The path to `pnpm`.                                                                                        | &nbsp;
 retireJsAnalyzerEnabled             | Sets whether the RetireJS Analyzer should be used.                                                         | true
 retirejsForceupdate                 | Sets whether the RetireJS Analyzer should update regardless of the `autoupdate` setting.                   | false
 retirejsFilterNonVulnerable         | Configures the RetireJS Analyzer to remove non-vulnerable JS dependencies from the report.                 | false
