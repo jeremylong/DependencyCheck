@@ -365,6 +365,8 @@ public class NvdCveUpdater implements CachedWebDataSource {
      * Downloads the NVD CVE Meta file properties.
      *
      * @param url the URL to the NVD CVE JSON file
+     * @param throwErrors if <code>true</code> and an error occurs, the error
+     * will be thrown; otherwise the error will be suppressed
      * @return the meta file properties
      * @throws UpdateException thrown if the meta file could not be downloaded
      */
