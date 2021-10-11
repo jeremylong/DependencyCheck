@@ -1,5 +1,12 @@
 # Release Notes
 
+## [Version 6.4.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.4.1) (2021-10-11)
+
+### Changes
+
+- Added download attempts with increasing wait time for `CVE meta` files from the NVD to prevent rate limiting issues (see [#3725](https://github.com/jeremylong/DependencyCheck/pull/3725)).
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/35?closed=1).
+
 ## [Version 6.4.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.4.0) (2021-10-11)
 
 ### Changes
