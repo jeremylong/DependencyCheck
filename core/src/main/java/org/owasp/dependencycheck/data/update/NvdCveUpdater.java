@@ -343,10 +343,10 @@ public class NvdCveUpdater implements CachedWebDataSource {
      */
     protected final MetaProperties getMetaFile(String url) throws UpdateException {
         final String metaUrl = url.substring(0, url.length() - 7) + "meta";
-        NvdCache cache = new NvdCache(settings);
+        final NvdCache cache = new NvdCache(settings);
         try {
             final URL u = new URL(metaUrl);
-            File tmp = settings.getTempFile("nvd", "meta");
+            final File tmp = settings.getTempFile("nvd", "meta");
             if (cache.notInCache(u, tmp)) {
                 final Downloader d = new Downloader(settings);
                 final String content = d.fetchContent(u, true, Settings.KEYS.CVE_USER, Settings.KEYS.CVE_PASSWORD);
@@ -357,7 +357,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
                 FileUtils.deleteQuietly(tmp);
                 return new MetaProperties(content);
             } else {
-                String content;
+                final String content;
                 try (BufferedReader reader = new BufferedReader(new FileReader(tmp))) {
                     content = reader.lines().collect(Collectors.joining("\n"));
                 }

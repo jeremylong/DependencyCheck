@@ -235,7 +235,9 @@ public class ArtifactoryAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.debug("Downloading {}", ma.getPomUrl());
             //TODO add caching
             final Downloader downloader = new Downloader(getSettings());
-            downloader.fetchFile(new URL(ma.getPomUrl()), pomFile, Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME, Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN);
+            downloader.fetchFile(new URL(ma.getPomUrl()), pomFile,
+                    Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME,
+                    Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN);
             PomUtils.analyzePOM(dependency, pomFile);
 
         } catch (DownloadFailedException ex) {

@@ -302,8 +302,9 @@ public final class CveDB implements AutoCloseable {
      * @throws DatabaseException throw if there is an error generating the
      * prepared statement
      */
-    private PreparedStatement getPreparedStatement(Connection connection, PreparedStatementCveDb key, String parameter) throws DatabaseException, SQLException {
-        PreparedStatement preparedStatement = getPreparedStatement(connection, key);
+    private PreparedStatement getPreparedStatement(Connection connection, PreparedStatementCveDb key, String parameter)
+            throws DatabaseException, SQLException {
+        final PreparedStatement preparedStatement = getPreparedStatement(connection, key);
         preparedStatement.setString(1, parameter);
         return preparedStatement;
     }
@@ -320,8 +321,9 @@ public final class CveDB implements AutoCloseable {
      * @throws DatabaseException throw if there is an error generating the
      * prepared statement
      */
-    private PreparedStatement getPreparedStatement(Connection connection, PreparedStatementCveDb key, int parameter) throws DatabaseException, SQLException {
-        PreparedStatement preparedStatement = getPreparedStatement(connection, key);
+    private PreparedStatement getPreparedStatement(Connection connection, PreparedStatementCveDb key, int parameter)
+            throws DatabaseException, SQLException {
+        final PreparedStatement preparedStatement = getPreparedStatement(connection, key);
         preparedStatement.setInt(1, parameter);
         return preparedStatement;
     }

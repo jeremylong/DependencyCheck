@@ -136,7 +136,7 @@ public final class CliParser {
                     throw new ParseException("Invalid Setting: cveStartYear must be a number greater than or equal to 2002.");
                 }
             }
-            
+
         }
         if (isRunScan()) {
             validatePathExists(getScanFiles(), ARGUMENT.SCAN);
@@ -1250,7 +1250,7 @@ public final class CliParser {
          */
         public static final String DISABLE_NODE_JS = "disableNodeJS";
         /**
-         * Skips dev dependencies in Node Package Analyzer
+         * Skips dev dependencies in Node Package Analyzer.
          */
         public static final String NODE_PACKAGE_SKIP_DEV_DEPENDENCIES = "nodePackageSkipDevDependencies";
         /**
