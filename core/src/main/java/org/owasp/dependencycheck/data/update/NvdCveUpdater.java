@@ -20,14 +20,19 @@ package org.owasp.dependencycheck.data.update;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -350,7 +355,9 @@ public class NvdCveUpdater implements CachedWebDataSource {
             if (cache.notInCache(u, tmp)) {
                 final Downloader d = new Downloader(settings);
                 final String content = d.fetchContent(u, true, Settings.KEYS.CVE_USER, Settings.KEYS.CVE_PASSWORD);
-                try (BufferedWriter writer = new BufferedWriter(new FileWriter(tmp, false))) {
+                try (FileOutputStream fos = new FileOutputStream(tmp);
+                        OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+                        BufferedWriter writer = new BufferedWriter(osw)) {
                     writer.write(content);
                 }
                 cache.storeInCache(u, tmp);
@@ -358,7 +365,9 @@ public class NvdCveUpdater implements CachedWebDataSource {
                 return new MetaProperties(content);
             } else {
                 final String content;
-                try (BufferedReader reader = new BufferedReader(new FileReader(tmp))) {
+                try (FileInputStream fis = new FileInputStream(tmp);
+                        InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+                        BufferedReader reader = new BufferedReader(isr)) {
                     content = reader.lines().collect(Collectors.joining("\n"));
                 }
                 FileUtils.deleteQuietly(tmp);
