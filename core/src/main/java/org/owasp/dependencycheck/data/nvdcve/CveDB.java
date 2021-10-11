@@ -302,8 +302,9 @@ public final class CveDB implements AutoCloseable {
      * @throws DatabaseException throw if there is an error generating the
      * prepared statement
      */
-    private PreparedStatement getPreparedStatement(Connection connection, PreparedStatementCveDb key, String parameter) throws DatabaseException, SQLException {
-        PreparedStatement preparedStatement = getPreparedStatement(connection, key);
+    private PreparedStatement getPreparedStatement(Connection connection, PreparedStatementCveDb key, String parameter)
+            throws DatabaseException, SQLException {
+        final PreparedStatement preparedStatement = getPreparedStatement(connection, key);
         preparedStatement.setString(1, parameter);
         return preparedStatement;
     }
@@ -320,8 +321,9 @@ public final class CveDB implements AutoCloseable {
      * @throws DatabaseException throw if there is an error generating the
      * prepared statement
      */
-    private PreparedStatement getPreparedStatement(Connection connection, PreparedStatementCveDb key, int parameter) throws DatabaseException, SQLException {
-        PreparedStatement preparedStatement = getPreparedStatement(connection, key);
+    private PreparedStatement getPreparedStatement(Connection connection, PreparedStatementCveDb key, int parameter)
+            throws DatabaseException, SQLException {
+        final PreparedStatement preparedStatement = getPreparedStatement(connection, key);
         preparedStatement.setInt(1, parameter);
         return preparedStatement;
     }
@@ -410,9 +412,6 @@ public final class CveDB implements AutoCloseable {
         final Set<CpePlus> cpe = new HashSet<>();
         try (Connection conn = databaseManager.getConnection();
                 PreparedStatement ps = getPreparedStatement(conn, SELECT_CPE_ENTRIES)) {
-            if (ps == null) {
-                throw new SQLException("Database query does not exist in the resource bundle: " + SELECT_CPE_ENTRIES);
-            }
             //part, vendor, product, version, update_version, edition,
             //lang, sw_edition, target_sw, target_hw, other, ecosystem
             ps.setString(1, vendor);
@@ -526,16 +525,10 @@ public final class CveDB implements AutoCloseable {
             } else {
                 // No Merge statement, so doing an Update/Insert...
                 try (PreparedStatement updateProperty = getPreparedStatement(conn, UPDATE_PROPERTY)) {
-                    if (updateProperty == null) {
-                        throw new SQLException("Database query does not exist in the resource bundle: " + UPDATE_PROPERTY);
-                    }
                     updateProperty.setString(1, value);
                     updateProperty.setString(2, key);
                     if (updateProperty.executeUpdate() == 0) {
                         try (PreparedStatement insertProperty = getPreparedStatement(conn, INSERT_PROPERTY)) {
-                            if (insertProperty == null) {
-                                throw new SQLException("Database query does not exist in the resource bundle: " + INSERT_PROPERTY);
-                            }
                             insertProperty.setString(1, key);
                             insertProperty.setString(2, value);
                             insertProperty.executeUpdate();
@@ -852,9 +845,6 @@ public final class CveDB implements AutoCloseable {
         final int vulnerabilityId;
         try (Connection conn = databaseManager.getConnection();
                 PreparedStatement callUpdate = getPreparedStatement(conn, UPDATE_VULNERABILITY)) {
-            if (callUpdate == null) {
-                throw new SQLException("Database query does not exist in the resource bundle: " + UPDATE_VULNERABILITY);
-            }
 //            String 1.cve, String 2.description, String 3.v2Severity, Float 4.v2ExploitabilityScore,
 //            Float 5.v2ImpactScore, Boolean 6.v2AcInsufInfo, Boolean 7.v2ObtainAllPrivilege,
 //            Boolean 8.v2ObtainUserPrivilege, Boolean 9.v2ObtainOtherPrivilege, Boolean 10.v2UserInteractionRequired,
@@ -974,10 +964,6 @@ public final class CveDB implements AutoCloseable {
     private void updateVulnerabilityInsertCwe(int vulnerabilityId, DefCveItem cve) throws SQLException {
         try (Connection conn = databaseManager.getConnection();
                 PreparedStatement insertCWE = getPreparedStatement(conn, INSERT_CWE, vulnerabilityId)) {
-            if (insertCWE == null) {
-                throw new SQLException("Database query does not exist in the resource bundle: " + INSERT_CWE);
-            }
-
             for (ProblemtypeDatum datum : cve.getCve().getProblemtype().getProblemtypeData()) {
                 for (LangString desc : datum.getDescription()) {
                     if ("en".equals(desc.getLang())) {
@@ -1028,9 +1014,6 @@ public final class CveDB implements AutoCloseable {
             throws DatabaseException, SQLException {
         try (Connection conn = databaseManager.getConnection();
                 PreparedStatement insertSoftware = getPreparedStatement(conn, INSERT_SOFTWARE)) {
-            if (insertSoftware == null) {
-                throw new SQLException("Database query does not exist in the resource bundle: " + INSERT_SOFTWARE);
-            }
             for (VulnerableSoftware parsedCpe : software) {
                 insertSoftware.setInt(1, vulnerabilityId);
                 insertSoftware.setString(2, parsedCpe.getPart().getAbbreviation());
@@ -1086,9 +1069,6 @@ public final class CveDB implements AutoCloseable {
     private void updateVulnerabilityInsertReferences(int vulnerabilityId, DefCveItem cve) throws SQLException {
         try (Connection conn = databaseManager.getConnection();
                 PreparedStatement insertReference = getPreparedStatement(conn, INSERT_REFERENCE)) {
-            if (insertReference == null) {
-                throw new SQLException("Database query does not exist in the resource bundle: " + INSERT_REFERENCE);
-            }
             if (cve.getCve().getReferences() != null) {
                 for (Reference r : cve.getCve().getReferences().getReferenceData()) {
                     insertReference.setInt(1, vulnerabilityId);
@@ -1351,62 +1331,6 @@ public final class CveDB implements AutoCloseable {
             }
         }
         return matched;
-//        final boolean isVersionTwoADifferentProduct = "apache".equals(cpe.getVendor()) && "struts".equals(cpe.getProduct());
-//        final Set<String> majorVersionsAffectingAllPrevious = new HashSet<>();
-//        final boolean matchesAnyPrevious = identifiedVersion == null || "-".equals(identifiedVersion.toString());
-//        String majorVersionMatch = null;
-//        for (Entry<String, Boolean> entry : vulnerableSoftware.entrySet()) {
-//            final DependencyVersion v = parseDependencyVersion(entry.getKey());
-//            if (v == null || "-".equals(v.toString())) { //all versions
-//                return entry;
-//            }
-//            if (entry.getValue()) {
-//                if (matchesAnyPrevious) {
-//                    return entry;
-//                }
-//                if (identifiedVersion != null && identifiedVersion.getVersionParts().get(0).equals(v.getVersionParts().get(0))) {
-//                    majorVersionMatch = v.getVersionParts().get(0);
-//                }
-//                majorVersionsAffectingAllPrevious.add(v.getVersionParts().get(0));
-//            }
-//        }
-//        if (matchesAnyPrevious) {
-//            return null;
-//        }
-//
-//        final boolean canSkipVersions = majorVersionMatch != null && majorVersionsAffectingAllPrevious.size() > 1;
-//        //yes, we are iterating over this twice. The first time we are skipping versions those that affect all versions
-//        //then later we process those that affect all versions. This could be done with sorting...
-//        for (Entry<String, Boolean> entry : vulnerableSoftware.entrySet()) {
-//            if (!entry.getValue()) {
-//                final DependencyVersion v = parseDependencyVersion(entry.getKey());
-//                //this can't dereference a null 'majorVersionMatch' as canSkipVersions accounts for this.
-//                if (canSkipVersions && majorVersionMatch != null && !majorVersionMatch.equals(v.getVersionParts().get(0))) {
-//                    continue;
-//                }
-//                //this can't dereference a null 'identifiedVersion' because if it was null we would have exited
-//                //in the above loop or just after loop (if matchesAnyPrevious return null).
-//                if (identifiedVersion != null && identifiedVersion.equals(v)) {
-//                    return entry;
-//                }
-//            }
-//        }
-//        for (Entry<String, Boolean> entry : vulnerableSoftware.entrySet()) {
-//            if (entry.getValue()) {
-//                final DependencyVersion v = parseDependencyVersion(entry.getKey());
-//                //this can't dereference a null 'majorVersionMatch' as canSkipVersions accounts for this.
-//                if (canSkipVersions && majorVersionMatch != null && !majorVersionMatch.equals(v.getVersionParts().get(0))) {
-//                    continue;
-//                }
-//                //this can't dereference a null 'identifiedVersion' because if it was null we would have exited
-//                //in the above loop or just after loop (if matchesAnyPrevious return null).
-//                if (entry.getValue() && identifiedVersion != null && identifiedVersion.compareTo(v) <= 0
-//                        && !(isVersionTwoADifferentProduct && !identifiedVersion.getVersionParts().get(0).equals(v.getVersionParts().get(0)))) {
-//                    return entry;
-//                }
-//            }
-//        }
-//        return null;
     }
 
     /**

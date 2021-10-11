@@ -1036,7 +1036,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             getLog().info("Skipping report generation " + getName(Locale.US));
             return;
         }
-        
+
         generatingSite = true;
         project.setContextValue("dependency-check-output-dir", getReportOutputDirectory());
         try {
@@ -1110,7 +1110,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             //For some reason the filter does not filter out the project being analyzed
             //if we pass in the filter below instead of null to the dependencyGraphBuilder
             final DependencyNode dn = dependencyGraphBuilder.buildDependencyGraph(buildingRequest, null, reactorProjects);
-            
+
             final CollectingDependencyNodeVisitor collectorVisitor = new CollectingDependencyNodeVisitor();
             // exclude artifact by pattern and its dependencies
             final DependencyNodeVisitor transitiveFilterVisitor = new FilteringDependencyTransitiveNodeVisitor(collectorVisitor,
@@ -1123,7 +1123,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
             //collect dependencies with the filter - see comment above.
             final List<DependencyNode> nodes = new ArrayList<>(collectorVisitor.getNodes());
-            
+
             return collectDependencies(engine, project, nodes, buildingRequest, aggregate);
         } catch (DependencyGraphBuilderException ex) {
             final String msg = String.format("Unable to build dependency graph on project %s", project.getName());
@@ -1145,9 +1145,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     private DependencyNode toDependencyNode(List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest,
             DependencyNode parent, org.apache.maven.model.Dependency dependency) throws ArtifactResolverException {
-        
+
         final DefaultArtifactCoordinate coordinate = new DefaultArtifactCoordinate();
-        
+
         coordinate.setGroupId(dependency.getGroupId());
         coordinate.setArtifactId(dependency.getArtifactId());
         String version = null;
@@ -1185,7 +1185,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             version = dependency.getVersion();
         }
         coordinate.setVersion(version);
-        
+
         final ArtifactType type = session.getRepositorySession().getArtifactTypeRegistry().get(dependency.getType());
         coordinate.setExtension(type.getExtension());
         coordinate.setClassifier((null == dependency.getClassifier() || dependency.getClassifier().isEmpty())
@@ -1231,7 +1231,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         if (skipDependencyManagement || project.getDependencyManagement() == null) {
             return null;
         }
-        
+
         ExceptionCollection exCol = null;
         for (org.apache.maven.model.Dependency dependency : project.getDependencyManagement().getDependencies()) {
             try {
@@ -1273,17 +1273,18 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @return a collection of exceptions that may have occurred while resolving
      * and scanning the dependencies
      */
+    //CSOFF: OperatorWrap
     private ExceptionCollection collectMavenDependencies(Engine engine, MavenProject project,
             List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
-        
+
         ExceptionCollection exCol = collectDependencyManagementDependencies(engine, buildingRequest, project, nodes, aggregate);
-        
+
         for (DependencyNode dependencyNode : nodes) {
             if (artifactScopeExcluded.passes(dependencyNode.getArtifact().getScope())
                     || artifactTypeExcluded.passes(dependencyNode.getArtifact().getType())) {
                 continue;
             }
-            
+
             boolean isResolved = false;
             File artifactFile = null;
             String artifactId = null;
@@ -1350,7 +1351,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                             final Iterable<ArtifactResult> singleResult
                                     = dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,
                                             filter);
-                            
+
                             if (singleResult.iterator().hasNext()) {
                                 final ArtifactResult first = singleResult.iterator().next();
                                 result = first.getArtifact();
@@ -1369,7 +1370,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                             // successfully resolved as a reactor dependency - swallow the exception
                             addException = false;
                         }
-                        //CSON: //CSOFF: EmptyBlock
                         if (addException) {
                             if (exCol == null) {
                                 exCol = new ExceptionCollection();
@@ -1427,7 +1427,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                             dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
                     getLog().debug(msg);
                 } else if ("pom".equals(dependencyNode.getArtifact().getType())) {
-                    
+
                     try {
                         final Dependency d = new Dependency(artifactFile.getAbsoluteFile());
                         final Model pom = PomUtils.readPom(artifactFile.getAbsoluteFile());
@@ -1458,6 +1458,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         return exCol;
     }
+    //CSON: OperatorWrap
 
     /**
      * Utility method for a work-around to MSHARED-998
@@ -1534,12 +1535,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     private ExceptionCollection collectDependencies(Engine engine, MavenProject project,
             List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
-        
+
         ExceptionCollection exCol;
         exCol = collectMavenDependencies(engine, project, nodes, buildingRequest, aggregate);
-        
+
         final List<FileSet> projectScan;
-        
+
         if (scanDirectory != null && !scanDirectory.isEmpty()) {
             if (scanSet == null) {
                 scanSet = new ArrayList<>();
@@ -1551,7 +1552,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 scanSet.add(fs);
             });
         }
-        
+
         if (scanSet == null || scanSet.isEmpty()) {
             // Define the default FileSets
             final FileSet resourcesSet = new FileSet();
@@ -1582,7 +1583,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             projectScan.add(filtersSet);
             projectScan.add(webappSet);
             projectScan.add(mixedLangSet);
-            
+
         } else if (aggregate) {
             projectScan = new ArrayList<>();
             for (FileSet copyFrom : scanSet) {
@@ -1662,21 +1663,21 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * <code>false</code>
      */
     private boolean addVirtualDependencyFromReactor(Engine engine, Artifact artifact, String infoLogTemplate) {
-        
+
         getLog().debug(String.format("Checking the reactor projects (%d) for %s:%s:%s",
                 reactorProjects.size(),
                 artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion()));
-        
+
         for (MavenProject prj : reactorProjects) {
-            
+
             getLog().debug(String.format("Comparing %s:%s:%s to %s:%s:%s",
                     artifact.getGroupId(), artifact.getArtifactId(), artifact.getBaseVersion(),
                     prj.getGroupId(), prj.getArtifactId(), prj.getVersion()));
-            
+
             if (prj.getArtifactId().equals(artifact.getArtifactId())
                     && prj.getGroupId().equals(artifact.getGroupId())
                     && prj.getVersion().equals(artifact.getBaseVersion())) {
-                
+
                 final String displayName = String.format("%s:%s:%s",
                         prj.getGroupId(), prj.getArtifactId(), prj.getVersion());
                 getLog().info(String.format(infoLogTemplate,
@@ -1688,10 +1689,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 d.setMd5sum(Checksum.getMD5Checksum(key));
                 d.setEcosystem(JarAnalyzer.DEPENDENCY_ECOSYSTEM);
                 d.setDisplayFileName(displayName);
-                
+
                 d.addEvidence(EvidenceType.PRODUCT, "project", "artifactid", prj.getArtifactId(), Confidence.HIGHEST);
                 d.addEvidence(EvidenceType.VENDOR, "project", "artifactid", prj.getArtifactId(), Confidence.LOW);
-                
+
                 d.addEvidence(EvidenceType.VENDOR, "project", "groupid", prj.getGroupId(), Confidence.HIGHEST);
                 d.addEvidence(EvidenceType.PRODUCT, "project", "groupid", prj.getGroupId(), Confidence.LOW);
                 d.setEcosystem(JarAnalyzer.DEPENDENCY_ECOSYSTEM);
@@ -1731,10 +1732,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         return false;
     }
-    
+
     Dependency newDependency(MavenProject prj) {
         final File pom = new File(prj.getBasedir(), "pom.xml");
-        
+
         if (pom.isFile()) {
             getLog().debug("Adding virtual dependency from pom.xml");
             return new Dependency(pom, true);
@@ -1795,7 +1796,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 exCol = handleAnalysisExceptions(exCol, ex);
             }
             if (exCol == null || !exCol.isFatal()) {
-                
+
                 File outputDir = getCorrectOutputDirectory(this.getProject());
                 if (outputDir == null) {
                     //in some regards we shouldn't be writing this, but we are anyway.
@@ -2009,7 +2010,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED, golangModEnabled);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH, pathToGo);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_YARN_PATH, pathToYarn);
-        
+
         final Proxy proxy = getMavenProxy();
         if (proxy != null) {
             settings.setString(Settings.KEYS.PROXY_SERVER, proxy.getHost());
@@ -2050,7 +2051,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH, pathToCore);
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
         configureServerCredentials(nexusServerId, Settings.KEYS.ANALYZER_NEXUS_USER, Settings.KEYS.ANALYZER_NEXUS_PASSWORD);
-        
+
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_URL, artifactoryAnalyzerUrl);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_USES_PROXY, artifactoryAnalyzerUseProxy);
@@ -2092,12 +2093,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, cocoapodsAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, swiftPackageManagerAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_RESOLVED_ENABLED, swiftPackageResolvedAnalyzerEnabled);
-        
+
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, ossindexAnalyzerEnabled);
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_URL, ossindexAnalyzerUrl);
         configureServerCredentials(ossIndexServerId, Settings.KEYS.ANALYZER_OSSINDEX_USER, Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE, ossindexAnalyzerUseCache);
-        
+
         if (retirejs != null) {
             settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, retirejs.getFilterNonVulnerable());
             settings.setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, retirejs.getFilters());
@@ -2107,7 +2108,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
         settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
         settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
-        
+
         if (databaseUser == null && databasePassword == null && serverId != null) {
             configureServerCredentials(serverId, Settings.KEYS.DB_USER, Settings.KEYS.DB_PASSWORD);
         } else {
@@ -2116,8 +2117,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         settings.setStringIfNotEmpty(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
         settings.setStringIfNotEmpty(Settings.KEYS.DB_FILE_NAME, dbFilename);
-        
-        String cveModifiedJson = Optional.ofNullable(cveUrlModified)
+
+        final String cveModifiedJson = Optional.ofNullable(cveUrlModified)
                 .filter(arg -> !arg.isEmpty())
                 .orElseGet(this::getDefaultCveUrlModified);
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveModifiedJson);
@@ -2194,7 +2195,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         if (securityDispatcher instanceof DefaultSecDispatcher) {
             ((DefaultSecDispatcher) securityDispatcher).setConfigurationFile("~/.m2/settings-security.xml");
         }
-        
+
         return securityDispatcher.decrypt(password);
     }
 
@@ -2450,7 +2451,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             DependencyCheckScanAgent.showSummary(mp.getName(), dependencies);
         }
     }
-    
+
     private String getDefaultCveUrlModified() {
         return CveUrlParser.newInstance(getSettings())
                 .getDefaultCveUrlModified(cveUrlBase);

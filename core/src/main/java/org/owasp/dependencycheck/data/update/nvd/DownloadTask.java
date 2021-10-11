@@ -20,12 +20,10 @@ package org.owasp.dependencycheck.data.update.nvd;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.time.Instant;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import javax.annotation.concurrent.ThreadSafe;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
@@ -136,7 +134,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
                 final int downloadAttempts = 4;
                 for (int x = 2; x <= downloadAttempts && !attemptDownload(url1, x == downloadAttempts); x++) {
                     LOGGER.info("Download Attemp {} for NVD CVE - {}", x, nvdCveInfo.getId());
-                    Thread.sleep(waitTime * (x/2));
+                    Thread.sleep(waitTime * (x / 2));
                 }
                 if (file.isFile() && file.length() > 0) {
                     LOGGER.info("Download Complete for NVD CVE - {}  ({} ms)", nvdCveInfo.getId(),

@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.net.URI;
 import org.sonatype.ossindex.service.api.componentreport.ComponentReport;
 import org.sonatype.ossindex.service.api.componentreport.ComponentReportVulnerability;
 import org.sonatype.ossindex.service.api.cvss.Cvss2Severity;
@@ -161,11 +160,12 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Delays each request (thread) by the configured amount of seconds, if the configuration is present.
+     * Delays each request (thread) by the configured amount of seconds, if the
+     * configuration is present.
      */
     private void requestDelay() throws InterruptedException {
-        final int delay = getSettings().getInt(Settings.KEYS.ANALYZER_OSSINDEX_REQUEST_DELAY,0);
-        if(delay > 0) {
+        final int delay = getSettings().getInt(Settings.KEYS.ANALYZER_OSSINDEX_REQUEST_DELAY, 0);
+        if (delay > 0) {
             LOG.debug("Request delay: " + delay);
             TimeUnit.SECONDS.sleep(delay);
         }

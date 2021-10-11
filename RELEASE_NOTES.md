@@ -11,7 +11,7 @@
 - Fixed NPE in the ODC maven plugin (see [#3702](https://github.com/jeremylong/DependencyCheck/pull/3702).
 - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/34?closed=1).
 
-## [Version 6.3.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.3.1) (2021-09-29)
+## [Version 6.3.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.3.2) (2021-09-29)
 
 ### Changes
 
