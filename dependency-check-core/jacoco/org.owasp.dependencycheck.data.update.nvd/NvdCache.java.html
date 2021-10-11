@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NvdCache.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.update.nvd</a> &gt; <span class="el_source">NvdCache.java</span></div><h1>NvdCache.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2021 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.update.nvd;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.time.Instant;
+import org.apache.commons.io.FileUtils;
+import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Simple four hour cache for files.
+ *
+ * @author Jeremy Long
+ */
+public class NvdCache {
+
+    /**
+     * The Logger.
+     */
+<span class="fc" id="L39">    private static final Logger LOGGER = LoggerFactory.getLogger(DownloadTask.class);</span>
+    /**
+     * The settings.
+     */
+    private final Settings settings;
+
+    /**
+     * Creates a new cache for the NVD files.
+     *
+     * @param settings ODC settings
+     */
+<span class="fc" id="L50">    public NvdCache(Settings settings) {</span>
+<span class="fc" id="L51">        this.settings = settings;</span>
+<span class="fc" id="L52">    }</span>
+
+    /**
+     * Checks if the file is in the cache and within four hours. If found and
+     * viable, the cached data will be copied to the given file.
+     *
+     * @param url the URL of the file cached
+     * @param file the path of the file to restore from the cache
+     * @return &lt;code&gt;true&lt;/code&gt; if the URL file is not in the cache; otherwise
+     * &lt;code&gt;false&lt;/code&gt;
+     */
+    public boolean notInCache(URL url, File file) {
+        try {
+            //valid for up to four hours.
+<span class="fc" id="L66">            final long validEpoch = Instant.now().toEpochMilli() - 14400000;</span>
+<span class="fc" id="L67">            final File tmp = new File(url.getPath());</span>
+<span class="fc" id="L68">            final String filename = tmp.getName();</span>
+<span class="fc" id="L69">            final File cache = new File(settings.getDataDirectory(), &quot;nvdcache&quot;);</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">            if (!cache.isDirectory()) {</span>
+<span class="fc" id="L71">                return true;</span>
+            }
+<span class="nc" id="L73">            final File nvdFile = new File(cache, filename);</span>
+<span class="nc bnc" id="L74" title="All 4 branches missed.">            if (nvdFile.isFile() &amp;&amp; nvdFile.lastModified() &gt; validEpoch) {</span>
+<span class="nc" id="L75">                LOGGER.debug(&quot;Copying {} from cache&quot;, url.toString());</span>
+<span class="nc" id="L76">                FileUtils.copyFile(nvdFile, file);</span>
+<span class="nc" id="L77">                return false;</span>
+            }
+<span class="nc" id="L79">            return true;</span>
+<span class="nc" id="L80">        } catch (IOException ex) {</span>
+<span class="nc" id="L81">            LOGGER.debug(&quot;Error checking for nvd file in cache&quot;, ex);</span>
+<span class="nc" id="L82">            return true;</span>
+        }
+    }
+
+    /**
+     * Stores a file in the cache.
+     *
+     * @param url the URL of the file to cache
+     * @param file the file to cache
+     */
+    public void storeInCache(URL url, File file) {
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">        if (file.isFile()) {</span>
+            try {
+<span class="fc" id="L95">                final File tmp = new File(url.getPath());</span>
+<span class="fc" id="L96">                final String filename = tmp.getName();</span>
+<span class="fc" id="L97">                final File cache = new File(settings.getDataDirectory(), &quot;nvdcache&quot;);</span>
+<span class="pc bpc" id="L98" title="2 of 4 branches missed.">                if (!cache.isDirectory() &amp;&amp; !cache.mkdir()) {</span>
+<span class="nc" id="L99">                    return;</span>
+                }
+<span class="fc" id="L101">                final File nvdFile = new File(cache, filename);</span>
+<span class="fc" id="L102">                FileUtils.copyFile(file, nvdFile);</span>
+<span class="fc" id="L103">                nvdFile.setLastModified(Instant.now().toEpochMilli());</span>
+<span class="nc" id="L104">            } catch (IOException ex) {</span>
+<span class="nc" id="L105">                LOGGER.debug(&quot;Error storing nvd file in cache&quot;, ex);</span>
+<span class="fc" id="L106">            }</span>
+        }
+<span class="fc" id="L108">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

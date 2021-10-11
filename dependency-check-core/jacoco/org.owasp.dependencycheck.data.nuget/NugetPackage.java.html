@@ -51,13 +51,18 @@ import javax.annotation.concurrent.ThreadSafe;
     private String licenseUrl;
 
     /**
+     * The description.
+     */
+    private String description;
+
+    /**
      * Sets the title.
      *
      * @param title the title
      */
     public void setTitle(String title) {
-<span class="fc" id="L59">        this.title = title;</span>
-<span class="fc" id="L60">    }</span>
+<span class="fc" id="L64">        this.title = title;</span>
+<span class="fc" id="L65">    }</span>
 
     /**
      * Gets the title.
@@ -65,7 +70,7 @@ import javax.annotation.concurrent.ThreadSafe;
      * @return the title
      */
     public String getTitle() {
-<span class="fc" id="L68">        return title;</span>
+<span class="fc" id="L73">        return title;</span>
     }
 
     /**
@@ -74,8 +79,8 @@ import javax.annotation.concurrent.ThreadSafe;
      * @param authors the authors
      */
     public void setAuthors(String authors) {
-<span class="fc" id="L77">        this.authors = authors;</span>
-<span class="fc" id="L78">    }</span>
+<span class="fc" id="L82">        this.authors = authors;</span>
+<span class="fc" id="L83">    }</span>
 
     /**
      * Gets the authors.
@@ -83,7 +88,7 @@ import javax.annotation.concurrent.ThreadSafe;
      * @return the authors
      */
     public String getAuthors() {
-<span class="fc" id="L86">        return authors;</span>
+<span class="fc" id="L91">        return authors;</span>
     }
 
     /**
@@ -92,8 +97,8 @@ import javax.annotation.concurrent.ThreadSafe;
      * @param owners the owners
      */
     public void setOwners(String owners) {
-<span class="fc" id="L95">        this.owners = owners;</span>
-<span class="fc" id="L96">    }</span>
+<span class="fc" id="L100">        this.owners = owners;</span>
+<span class="fc" id="L101">    }</span>
 
     /**
      * Gets the owners.
@@ -101,7 +106,7 @@ import javax.annotation.concurrent.ThreadSafe;
      * @return the owners
      */
     public String getOwners() {
-<span class="fc" id="L104">        return owners;</span>
+<span class="fc" id="L109">        return owners;</span>
     }
 
     /**
@@ -110,8 +115,8 @@ import javax.annotation.concurrent.ThreadSafe;
      * @param licenseUrl the licenseUrl
      */
     public void setLicenseUrl(String licenseUrl) {
-<span class="fc" id="L113">        this.licenseUrl = licenseUrl;</span>
-<span class="fc" id="L114">    }</span>
+<span class="fc" id="L118">        this.licenseUrl = licenseUrl;</span>
+<span class="fc" id="L119">    }</span>
 
     /**
      * Gets the licenseUrl.
@@ -119,35 +124,54 @@ import javax.annotation.concurrent.ThreadSafe;
      * @return the licenseUrl
      */
     public String getLicenseUrl() {
-<span class="fc" id="L122">        return licenseUrl;</span>
+<span class="fc" id="L127">        return licenseUrl;</span>
     }
+
+    /**
+     * Gets the description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+<span class="fc" id="L136">        return description;</span>
+    }
+
+    /**
+     * Sets the description.
+     *
+     * @param description the description
+     */
+    public void setDescription(String description) {
+<span class="fc" id="L145">        this.description = description;</span>
+<span class="fc" id="L146">    }</span>
 
     @Override
     public boolean equals(Object obj) {
-<span class="nc bnc" id="L127" title="All 4 branches missed.">        if (obj == null || !(obj instanceof NugetPackage)) {</span>
-<span class="nc" id="L128">            return false;</span>
+<span class="nc bnc" id="L150" title="All 4 branches missed.">        if (obj == null || !(obj instanceof NugetPackage)) {</span>
+<span class="nc" id="L151">            return false;</span>
         }
-<span class="nc bnc" id="L130" title="All 2 branches missed.">        if (this == obj) {</span>
-<span class="nc" id="L131">            return true;</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        if (this == obj) {</span>
+<span class="nc" id="L154">            return true;</span>
         }
-<span class="nc" id="L133">        final NugetPackage rhs = (NugetPackage) obj;</span>
-<span class="nc" id="L134">        return new EqualsBuilder()</span>
-<span class="nc" id="L135">                .appendSuper(super.equals(obj))</span>
-<span class="nc" id="L136">                .append(title, rhs.title)</span>
-<span class="nc" id="L137">                .append(authors, rhs.authors)</span>
-<span class="nc" id="L138">                .append(owners, rhs.owners)</span>
-<span class="nc" id="L139">                .append(licenseUrl, rhs.licenseUrl)</span>
-<span class="nc" id="L140">                .isEquals();</span>
+<span class="nc" id="L156">        final NugetPackage rhs = (NugetPackage) obj;</span>
+<span class="nc" id="L157">        return new EqualsBuilder()</span>
+<span class="nc" id="L158">                .appendSuper(super.equals(obj))</span>
+<span class="nc" id="L159">                .append(title, rhs.title)</span>
+<span class="nc" id="L160">                .append(authors, rhs.authors)</span>
+<span class="nc" id="L161">                .append(owners, rhs.owners)</span>
+<span class="nc" id="L162">                .append(licenseUrl, rhs.licenseUrl)</span>
+<span class="nc" id="L163">                .isEquals();</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L145">        return new HashCodeBuilder(33, 87)</span>
-<span class="nc" id="L146">                .append(title)</span>
-<span class="nc" id="L147">                .append(authors)</span>
-<span class="nc" id="L148">                .append(owners)</span>
-<span class="nc" id="L149">                .append(licenseUrl)</span>
-<span class="nc" id="L150">                .toHashCode();</span>
+<span class="nc" id="L168">        return new HashCodeBuilder(33, 87)</span>
+<span class="nc" id="L169">                .append(title)</span>
+<span class="nc" id="L170">                .append(authors)</span>
+<span class="nc" id="L171">                .append(owners)</span>
+<span class="nc" id="L172">                .append(licenseUrl)</span>
+<span class="nc" id="L173">                .toHashCode();</span>
     }
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

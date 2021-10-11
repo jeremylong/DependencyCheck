@@ -1,6 +1,6 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
 Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,Check,593,786,36,34,220,169,156,34,131,24
-Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,Update,155,121,7,3,55,28,31,7,27,6
+Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,Update,185,133,11,3,64,30,37,7,31,6
 Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,RetirejsFilter,0,10,0,0,0,4,0,3,0,3
 Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,Purge,57,66,3,1,17,17,7,3,5,3
 Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,SuppressionFile,0,10,0,0,0,4,0,3,0,3

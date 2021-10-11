@@ -398,314 +398,319 @@
 <a class="jxr_linenumber" name="L390" href="#L390">390</a>             engine.doUpdates();
 <a class="jxr_linenumber" name="L391" href="#L391">391</a>         }
 <a class="jxr_linenumber" name="L392" href="#L392">392</a>     }
-<a class="jxr_linenumber" name="L393" href="#L393">393</a>     <em class="jxr_comment">//CSOFF: MethodLength</em>
-<a class="jxr_linenumber" name="L394" href="#L394">394</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L395" href="#L395">395</a> <em class="jxr_javadoccomment">     * Updates the global Settings.</em>
-<a class="jxr_linenumber" name="L396" href="#L396">396</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L397" href="#L397">397</a> <em class="jxr_javadoccomment">     * @param cli a reference to the CLI Parser that contains the command line</em>
-<a class="jxr_linenumber" name="L398" href="#L398">398</a> <em class="jxr_javadoccomment">     * arguments used to set the corresponding settings in the core engine.</em>
-<a class="jxr_linenumber" name="L399" href="#L399">399</a> <em class="jxr_javadoccomment">     * @throws InvalidSettingException thrown when a user defined properties</em>
-<a class="jxr_linenumber" name="L400" href="#L400">400</a> <em class="jxr_javadoccomment">     * file is unable to be loaded.</em>
-<a class="jxr_linenumber" name="L401" href="#L401">401</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L402" href="#L402">402</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> populateSettings(<a href="../../../org/owasp/dependencycheck/CliParser.html">CliParser</a> cli) <strong class="jxr_keyword">throws</strong> InvalidSettingException {
-<a class="jxr_linenumber" name="L403" href="#L403">403</a>         <strong class="jxr_keyword">final</strong> File propertiesFile = cli.getFileArgument(CliParser.ARGUMENT.PROP);
-<a class="jxr_linenumber" name="L404" href="#L404">404</a>         <strong class="jxr_keyword">if</strong> (propertiesFile != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L405" href="#L405">405</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L406" href="#L406">406</a>                 settings.mergeProperties(propertiesFile);
-<a class="jxr_linenumber" name="L407" href="#L407">407</a>             } <strong class="jxr_keyword">catch</strong> (FileNotFoundException ex) {
-<a class="jxr_linenumber" name="L408" href="#L408">408</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InvalidSettingException(<span class="jxr_string">"Unable to find properties file '"</span> + propertiesFile.getPath() + <span class="jxr_string">"'"</span>, ex);
-<a class="jxr_linenumber" name="L409" href="#L409">409</a>             } <strong class="jxr_keyword">catch</strong> (IOException ex) {
-<a class="jxr_linenumber" name="L410" href="#L410">410</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InvalidSettingException(<span class="jxr_string">"Error reading properties file '"</span> + propertiesFile.getPath() + <span class="jxr_string">"'"</span>, ex);
-<a class="jxr_linenumber" name="L411" href="#L411">411</a>             }
-<a class="jxr_linenumber" name="L412" href="#L412">412</a>         }
-<a class="jxr_linenumber" name="L413" href="#L413">413</a>         <strong class="jxr_keyword">final</strong> String dataDirectory = cli.getStringArgument(CliParser.ARGUMENT.DATA_DIRECTORY);
-<a class="jxr_linenumber" name="L414" href="#L414">414</a>         <strong class="jxr_keyword">if</strong> (dataDirectory != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L415" href="#L415">415</a>             settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
-<a class="jxr_linenumber" name="L416" href="#L416">416</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (System.getProperty(<span class="jxr_string">"basedir"</span>) != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L417" href="#L417">417</a>             <strong class="jxr_keyword">final</strong> File dataDir = <strong class="jxr_keyword">new</strong> File(System.getProperty(<span class="jxr_string">"basedir"</span>), <span class="jxr_string">"data"</span>);
-<a class="jxr_linenumber" name="L418" href="#L418">418</a>             settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());
-<a class="jxr_linenumber" name="L419" href="#L419">419</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L420" href="#L420">420</a>             <strong class="jxr_keyword">final</strong> File jarPath = <strong class="jxr_keyword">new</strong> File(App.<strong class="jxr_keyword">class</strong>
-<a class="jxr_linenumber" name="L421" href="#L421">421</a>                     .getProtectionDomain().getCodeSource().getLocation().getPath());
-<a class="jxr_linenumber" name="L422" href="#L422">422</a>             <strong class="jxr_keyword">final</strong> File base = jarPath.getParentFile();
-<a class="jxr_linenumber" name="L423" href="#L423">423</a>             <strong class="jxr_keyword">final</strong> String sub = settings.getString(Settings.KEYS.DATA_DIRECTORY);
-<a class="jxr_linenumber" name="L424" href="#L424">424</a>             <strong class="jxr_keyword">final</strong> File dataDir = <strong class="jxr_keyword">new</strong> File(base, sub);
-<a class="jxr_linenumber" name="L425" href="#L425">425</a>             settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());
-<a class="jxr_linenumber" name="L426" href="#L426">426</a>         }
-<a class="jxr_linenumber" name="L427" href="#L427">427</a>         <strong class="jxr_keyword">final</strong> Boolean autoUpdate = cli.hasOption(CliParser.ARGUMENT.DISABLE_AUTO_UPDATE) != <strong class="jxr_keyword">null</strong> ? false : <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L428" href="#L428">428</a>         settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);
-<a class="jxr_linenumber" name="L429" href="#L429">429</a>         settings.setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER,
-<a class="jxr_linenumber" name="L430" href="#L430">430</a>                 cli.getStringArgument(CliParser.ARGUMENT.PROXY_SERVER));
-<a class="jxr_linenumber" name="L431" href="#L431">431</a>         settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PORT,
-<a class="jxr_linenumber" name="L432" href="#L432">432</a>                 cli.getStringArgument(CliParser.ARGUMENT.PROXY_PORT));
-<a class="jxr_linenumber" name="L433" href="#L433">433</a>         settings.setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME,
-<a class="jxr_linenumber" name="L434" href="#L434">434</a>                 cli.getStringArgument(CliParser.ARGUMENT.PROXY_USERNAME));
-<a class="jxr_linenumber" name="L435" href="#L435">435</a>         settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD,
-<a class="jxr_linenumber" name="L436" href="#L436">436</a>                 cli.getStringArgument(CliParser.ARGUMENT.PROXY_PASSWORD, Settings.KEYS.PROXY_PASSWORD));
-<a class="jxr_linenumber" name="L437" href="#L437">437</a>         settings.setStringIfNotEmpty(Settings.KEYS.PROXY_NON_PROXY_HOSTS,
-<a class="jxr_linenumber" name="L438" href="#L438">438</a>                 cli.getStringArgument(CliParser.ARGUMENT.NON_PROXY_HOSTS));
-<a class="jxr_linenumber" name="L439" href="#L439">439</a>         settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT,
-<a class="jxr_linenumber" name="L440" href="#L440">440</a>                 cli.getStringArgument(CliParser.ARGUMENT.CONNECTION_TIMEOUT));
-<a class="jxr_linenumber" name="L441" href="#L441">441</a>         settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE,
-<a class="jxr_linenumber" name="L442" href="#L442">442</a>                 cli.getStringArgument(CliParser.ARGUMENT.HINTS_FILE));
-<a class="jxr_linenumber" name="L443" href="#L443">443</a>         settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS,
-<a class="jxr_linenumber" name="L444" href="#L444">444</a>                 cli.getIntegerValue(CliParser.ARGUMENT.CVE_VALID_FOR_HOURS));
-<a class="jxr_linenumber" name="L445" href="#L445">445</a>         settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE,
-<a class="jxr_linenumber" name="L446" href="#L446">446</a>                 cli.getStringArguments(CliParser.ARGUMENT.SUPPRESSION_FILES));
-<a class="jxr_linenumber" name="L447" href="#L447">447</a>         <em class="jxr_comment">//File Type Analyzer Settings</em>
-<a class="jxr_linenumber" name="L448" href="#L448">448</a>         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED,
-<a class="jxr_linenumber" name="L449" href="#L449">449</a>                 cli.hasOption(CliParser.ARGUMENT.EXPERIMENTAL));
-<a class="jxr_linenumber" name="L450" href="#L450">450</a>         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIRED_ENABLED,
-<a class="jxr_linenumber" name="L451" href="#L451">451</a>                 cli.hasOption(CliParser.ARGUMENT.RETIRED));
-<a class="jxr_linenumber" name="L452" href="#L452">452</a>         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH,
-<a class="jxr_linenumber" name="L453" href="#L453">453</a>                 cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_GO));
-<a class="jxr_linenumber" name="L454" href="#L454">454</a>         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_YARN_PATH,
-<a class="jxr_linenumber" name="L455" href="#L455">455</a>                 cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_YARN));
-<a class="jxr_linenumber" name="L456" href="#L456">456</a>         settings.setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT,
-<a class="jxr_linenumber" name="L457" href="#L457">457</a>                 cli.hasOption(CliParser.ARGUMENT.PRETTY_PRINT));
-<a class="jxr_linenumber" name="L458" href="#L458">458</a>         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL,
-<a class="jxr_linenumber" name="L459" href="#L459">459</a>                 cli.getStringArgument(CliParser.ARGUMENT.RETIREJS_URL));
-<a class="jxr_linenumber" name="L460" href="#L460">460</a>         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE,
-<a class="jxr_linenumber" name="L461" href="#L461">461</a>                 cli.hasOption(CliParser.ARGUMENT.RETIRE_JS_FORCEUPDATE));
-<a class="jxr_linenumber" name="L462" href="#L462">462</a>         settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED,
-<a class="jxr_linenumber" name="L463" href="#L463">463</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_JAR, Settings.KEYS.ANALYZER_JAR_ENABLED));
-<a class="jxr_linenumber" name="L464" href="#L464">464</a>         settings.setBoolean(Settings.KEYS.ANALYZER_MSBUILD_PROJECT_ENABLED,
-<a class="jxr_linenumber" name="L465" href="#L465">465</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_MSBUILD, Settings.KEYS.ANALYZER_MSBUILD_PROJECT_ENABLED));
-<a class="jxr_linenumber" name="L466" href="#L466">466</a>         settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED,
-<a class="jxr_linenumber" name="L467" href="#L467">467</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_ARCHIVE, Settings.KEYS.ANALYZER_ARCHIVE_ENABLED));
-<a class="jxr_linenumber" name="L468" href="#L468">468</a>         settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED,
-<a class="jxr_linenumber" name="L469" href="#L469">469</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PY_DIST, Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED));
-<a class="jxr_linenumber" name="L470" href="#L470">470</a>         settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED,
-<a class="jxr_linenumber" name="L471" href="#L471">471</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PY_PKG, Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED));
-<a class="jxr_linenumber" name="L472" href="#L472">472</a>         settings.setBoolean(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED,
-<a class="jxr_linenumber" name="L473" href="#L473">473</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_AUTOCONF, Settings.KEYS.ANALYZER_AUTOCONF_ENABLED));
-<a class="jxr_linenumber" name="L474" href="#L474">474</a>         settings.setBoolean(Settings.KEYS.ANALYZER_PIP_ENABLED,
-<a class="jxr_linenumber" name="L475" href="#L475">475</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PIP, Settings.KEYS.ANALYZER_PIP_ENABLED));
-<a class="jxr_linenumber" name="L476" href="#L476">476</a>         settings.setBoolean(Settings.KEYS.ANALYZER_PIPFILE_ENABLED,
-<a class="jxr_linenumber" name="L477" href="#L477">477</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PIPFILE, Settings.KEYS.ANALYZER_PIPFILE_ENABLED));
-<a class="jxr_linenumber" name="L478" href="#L478">478</a>         settings.setBoolean(Settings.KEYS.ANALYZER_CMAKE_ENABLED,
-<a class="jxr_linenumber" name="L479" href="#L479">479</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CMAKE, Settings.KEYS.ANALYZER_CMAKE_ENABLED));
-<a class="jxr_linenumber" name="L480" href="#L480">480</a>         settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED,
-<a class="jxr_linenumber" name="L481" href="#L481">481</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NUSPEC, Settings.KEYS.ANALYZER_NUSPEC_ENABLED));
-<a class="jxr_linenumber" name="L482" href="#L482">482</a>         settings.setBoolean(Settings.KEYS.ANALYZER_NUGETCONF_ENABLED,
-<a class="jxr_linenumber" name="L483" href="#L483">483</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NUGETCONF, Settings.KEYS.ANALYZER_NUGETCONF_ENABLED));
-<a class="jxr_linenumber" name="L484" href="#L484">484</a>         settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED,
-<a class="jxr_linenumber" name="L485" href="#L485">485</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_ASSEMBLY, Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED));
-<a class="jxr_linenumber" name="L486" href="#L486">486</a>         settings.setBoolean(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED,
-<a class="jxr_linenumber" name="L487" href="#L487">487</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_BUNDLE_AUDIT, Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED));
-<a class="jxr_linenumber" name="L488" href="#L488">488</a>         settings.setBoolean(Settings.KEYS.ANALYZER_FILE_NAME_ENABLED,
-<a class="jxr_linenumber" name="L489" href="#L489">489</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_FILENAME, Settings.KEYS.ANALYZER_FILE_NAME_ENABLED));
-<a class="jxr_linenumber" name="L490" href="#L490">490</a>         settings.setBoolean(Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED,
-<a class="jxr_linenumber" name="L491" href="#L491">491</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_MIX_AUDIT, Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED));
-<a class="jxr_linenumber" name="L492" href="#L492">492</a>         settings.setBoolean(Settings.KEYS.ANALYZER_OPENSSL_ENABLED,
-<a class="jxr_linenumber" name="L493" href="#L493">493</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_OPENSSL, Settings.KEYS.ANALYZER_OPENSSL_ENABLED));
-<a class="jxr_linenumber" name="L494" href="#L494">494</a>         settings.setBoolean(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED,
-<a class="jxr_linenumber" name="L495" href="#L495">495</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_COMPOSER, Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED));
-<a class="jxr_linenumber" name="L496" href="#L496">496</a>         settings.setBoolean(Settings.KEYS.ANALYZER_CPANFILE_ENABLED,
-<a class="jxr_linenumber" name="L497" href="#L497">497</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CPAN, Settings.KEYS.ANALYZER_CPANFILE_ENABLED));
-<a class="jxr_linenumber" name="L498" href="#L498">498</a>         settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED,
-<a class="jxr_linenumber" name="L499" href="#L499">499</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_GO_DEP, Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED));
-<a class="jxr_linenumber" name="L500" href="#L500">500</a>         settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED,
-<a class="jxr_linenumber" name="L501" href="#L501">501</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_GOLANG_MOD, Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED));
-<a class="jxr_linenumber" name="L502" href="#L502">502</a>         settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED,
-<a class="jxr_linenumber" name="L503" href="#L503">503</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NODE_JS, Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED));
-<a class="jxr_linenumber" name="L504" href="#L504">504</a>         <em class="jxr_comment">//TODO next major - remove the deprecated check in isNodeAuditDisabled</em>
-<a class="jxr_linenumber" name="L505" href="#L505">505</a>         settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED,
-<a class="jxr_linenumber" name="L506" href="#L506">506</a>                 !cli.isNodeAuditDisabled());
-<a class="jxr_linenumber" name="L507" href="#L507">507</a>         settings.setBoolean(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED,
-<a class="jxr_linenumber" name="L508" href="#L508">508</a>                 !cli.isYarnAuditDisabled());
-<a class="jxr_linenumber" name="L509" href="#L509">509</a>         settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE,
-<a class="jxr_linenumber" name="L510" href="#L510">510</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NODE_AUDIT_CACHE, Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE));
-<a class="jxr_linenumber" name="L511" href="#L511">511</a>         settings.setBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED,
-<a class="jxr_linenumber" name="L512" href="#L512">512</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_RETIRE_JS, Settings.KEYS.ANALYZER_RETIREJS_ENABLED));
-<a class="jxr_linenumber" name="L513" href="#L513">513</a>         settings.setBoolean(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED,
-<a class="jxr_linenumber" name="L514" href="#L514">514</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_SWIFT, Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED));
-<a class="jxr_linenumber" name="L515" href="#L515">515</a>         settings.setBoolean(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_RESOLVED_ENABLED,
-<a class="jxr_linenumber" name="L516" href="#L516">516</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_SWIFT_RESOLVED, Settings.KEYS.ANALYZER_SWIFT_PACKAGE_RESOLVED_ENABLED));
-<a class="jxr_linenumber" name="L517" href="#L517">517</a>         settings.setBoolean(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED,
-<a class="jxr_linenumber" name="L518" href="#L518">518</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_COCOAPODS, Settings.KEYS.ANALYZER_COCOAPODS_ENABLED));
-<a class="jxr_linenumber" name="L519" href="#L519">519</a>         settings.setBoolean(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED,
-<a class="jxr_linenumber" name="L520" href="#L520">520</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_RUBYGEMS, Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED));
-<a class="jxr_linenumber" name="L521" href="#L521">521</a>         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED,
-<a class="jxr_linenumber" name="L522" href="#L522">522</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CENTRAL, Settings.KEYS.ANALYZER_CENTRAL_ENABLED));
-<a class="jxr_linenumber" name="L523" href="#L523">523</a>         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE,
-<a class="jxr_linenumber" name="L524" href="#L524">524</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CENTRAL_CACHE, Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE));
-<a class="jxr_linenumber" name="L525" href="#L525">525</a>         settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED,
-<a class="jxr_linenumber" name="L526" href="#L526">526</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_OSSINDEX, Settings.KEYS.ANALYZER_OSSINDEX_ENABLED));
-<a class="jxr_linenumber" name="L527" href="#L527">527</a>         settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE,
-<a class="jxr_linenumber" name="L528" href="#L528">528</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_OSSINDEX_CACHE, Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE));
-<a class="jxr_linenumber" name="L529" href="#L529">529</a> 
-<a class="jxr_linenumber" name="L530" href="#L530">530</a>         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV,
-<a class="jxr_linenumber" name="L531" href="#L531">531</a>                 cli.hasOption(CliParser.ARGUMENT.NODE_PACKAGE_SKIP_DEV_DEPENDENCIES));
-<a class="jxr_linenumber" name="L532" href="#L532">532</a>         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV,
-<a class="jxr_linenumber" name="L533" href="#L533">533</a>                 cli.hasOption(CliParser.ARGUMENT.DISABLE_NODE_AUDIT_SKIPDEV));
-<a class="jxr_linenumber" name="L534" href="#L534">534</a>         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED,
-<a class="jxr_linenumber" name="L535" href="#L535">535</a>                 cli.hasOption(CliParser.ARGUMENT.ENABLE_NEXUS));
-<a class="jxr_linenumber" name="L536" href="#L536">536</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_USER,
-<a class="jxr_linenumber" name="L537" href="#L537">537</a>                 cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_USERNAME));
-<a class="jxr_linenumber" name="L538" href="#L538">538</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD,
-<a class="jxr_linenumber" name="L539" href="#L539">539</a>                 cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_PASSWORD, Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD));
-<a class="jxr_linenumber" name="L540" href="#L540">540</a>         settings.setFloat(Settings.KEYS.JUNIT_FAIL_ON_CVSS,
-<a class="jxr_linenumber" name="L541" href="#L541">541</a>                 cli.getFloatArgument(CliParser.ARGUMENT.FAIL_JUNIT_ON_CVSS, 0));
-<a class="jxr_linenumber" name="L542" href="#L542">542</a>         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED,
-<a class="jxr_linenumber" name="L543" href="#L543">543</a>                 cli.hasOption(CliParser.ARGUMENT.ARTIFACTORY_ENABLED));
-<a class="jxr_linenumber" name="L544" href="#L544">544</a>         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_PARALLEL_ANALYSIS,
-<a class="jxr_linenumber" name="L545" href="#L545">545</a>                 cli.getBooleanArgument(CliParser.ARGUMENT.ARTIFACTORY_PARALLEL_ANALYSIS));
-<a class="jxr_linenumber" name="L546" href="#L546">546</a>         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_USES_PROXY,
-<a class="jxr_linenumber" name="L547" href="#L547">547</a>                 cli.getBooleanArgument(CliParser.ARGUMENT.ARTIFACTORY_USES_PROXY));
-<a class="jxr_linenumber" name="L548" href="#L548">548</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_URL,
-<a class="jxr_linenumber" name="L549" href="#L549">549</a>                 cli.getStringArgument(CliParser.ARGUMENT.ARTIFACTORY_URL));
-<a class="jxr_linenumber" name="L550" href="#L550">550</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME,
-<a class="jxr_linenumber" name="L551" href="#L551">551</a>                 cli.getStringArgument(CliParser.ARGUMENT.ARTIFACTORY_USERNAME));
-<a class="jxr_linenumber" name="L552" href="#L552">552</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN,
-<a class="jxr_linenumber" name="L553" href="#L553">553</a>                 cli.getStringArgument(CliParser.ARGUMENT.ARTIFACTORY_API_TOKEN));
-<a class="jxr_linenumber" name="L554" href="#L554">554</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_BEARER_TOKEN,
-<a class="jxr_linenumber" name="L555" href="#L555">555</a>                 cli.getStringArgument(CliParser.ARGUMENT.ARTIFACTORY_BEARER_TOKEN));
-<a class="jxr_linenumber" name="L556" href="#L556">556</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_MIX_AUDIT_PATH,
-<a class="jxr_linenumber" name="L557" href="#L557">557</a>                 cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_MIX_AUDIT));
-<a class="jxr_linenumber" name="L558" href="#L558">558</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH,
-<a class="jxr_linenumber" name="L559" href="#L559">559</a>                 cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_BUNDLE_AUDIT));
-<a class="jxr_linenumber" name="L560" href="#L560">560</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_WORKING_DIRECTORY,
-<a class="jxr_linenumber" name="L561" href="#L561">561</a>                 cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_BUNDLE_AUDIT_WORKING_DIRECTORY));
-<a class="jxr_linenumber" name="L562" href="#L562">562</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL,
-<a class="jxr_linenumber" name="L563" href="#L563">563</a>                 cli.getStringArgument(CliParser.ARGUMENT.NEXUS_URL));
-<a class="jxr_linenumber" name="L564" href="#L564">564</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_USER,
-<a class="jxr_linenumber" name="L565" href="#L565">565</a>                 cli.getStringArgument(CliParser.ARGUMENT.NEXUS_USERNAME));
-<a class="jxr_linenumber" name="L566" href="#L566">566</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_PASSWORD,
-<a class="jxr_linenumber" name="L567" href="#L567">567</a>                 cli.getStringArgument(CliParser.ARGUMENT.NEXUS_PASSWORD, Settings.KEYS.ANALYZER_NEXUS_PASSWORD));
-<a class="jxr_linenumber" name="L568" href="#L568">568</a>         <em class="jxr_comment">//TODO deprecate this in favor of non-proxy host</em>
-<a class="jxr_linenumber" name="L569" href="#L569">569</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> nexusUsesProxy = cli.isNexusUsesProxy();
-<a class="jxr_linenumber" name="L570" href="#L570">570</a>         settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
-<a class="jxr_linenumber" name="L571" href="#L571">571</a>         settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME,
-<a class="jxr_linenumber" name="L572" href="#L572">572</a>                 cli.getStringArgument(CliParser.ARGUMENT.DB_DRIVER));
-<a class="jxr_linenumber" name="L573" href="#L573">573</a>         settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH,
-<a class="jxr_linenumber" name="L574" href="#L574">574</a>                 cli.getStringArgument(CliParser.ARGUMENT.DB_DRIVER_PATH));
-<a class="jxr_linenumber" name="L575" href="#L575">575</a>         settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING,
-<a class="jxr_linenumber" name="L576" href="#L576">576</a>                 cli.getStringArgument(CliParser.ARGUMENT.CONNECTION_STRING));
-<a class="jxr_linenumber" name="L577" href="#L577">577</a>         settings.setStringIfNotEmpty(Settings.KEYS.DB_USER,
-<a class="jxr_linenumber" name="L578" href="#L578">578</a>                 cli.getStringArgument(CliParser.ARGUMENT.DB_NAME));
-<a class="jxr_linenumber" name="L579" href="#L579">579</a>         settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD,
-<a class="jxr_linenumber" name="L580" href="#L580">580</a>                 cli.getStringArgument(CliParser.ARGUMENT.DB_PASSWORD, Settings.KEYS.DB_PASSWORD));
-<a class="jxr_linenumber" name="L581" href="#L581">581</a>         settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS,
-<a class="jxr_linenumber" name="L582" href="#L582">582</a>                 cli.getStringArgument(CliParser.ARGUMENT.ADDITIONAL_ZIP_EXTENSIONS));
-<a class="jxr_linenumber" name="L583" href="#L583">583</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH,
-<a class="jxr_linenumber" name="L584" href="#L584">584</a>                 cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_CORE));
-<a class="jxr_linenumber" name="L585" href="#L585">585</a>         settings.setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON,
-<a class="jxr_linenumber" name="L586" href="#L586">586</a>                 cli.getStringArgument(CliParser.ARGUMENT.CVE_BASE_URL));
-<a class="jxr_linenumber" name="L587" href="#L587">587</a> 
-<a class="jxr_linenumber" name="L588" href="#L588">588</a>         String cveModifiedJson = Optional.ofNullable(cli.getStringArgument(CliParser.ARGUMENT.CVE_MODIFIED_URL))
-<a class="jxr_linenumber" name="L589" href="#L589">589</a>             .filter(arg -&gt; !arg.isEmpty())
-<a class="jxr_linenumber" name="L590" href="#L590">590</a>             .orElseGet(() -&gt; getDefaultCveUrlModified(cli));
-<a class="jxr_linenumber" name="L591" href="#L591">591</a>         settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON,
-<a class="jxr_linenumber" name="L592" href="#L592">592</a>                 cveModifiedJson);
-<a class="jxr_linenumber" name="L593" href="#L593">593</a> 
-<a class="jxr_linenumber" name="L594" href="#L594">594</a>         settings.setStringIfNotEmpty(Settings.KEYS.CVE_USER,
-<a class="jxr_linenumber" name="L595" href="#L595">595</a>                 cli.getStringArgument(CliParser.ARGUMENT.CVE_USER));
-<a class="jxr_linenumber" name="L596" href="#L596">596</a>         settings.setStringIfNotEmpty(Settings.KEYS.CVE_PASSWORD,
-<a class="jxr_linenumber" name="L597" href="#L597">597</a>                 cli.getStringArgument(CliParser.ARGUMENT.CVE_PASSWORD, Settings.KEYS.CVE_PASSWORD));
-<a class="jxr_linenumber" name="L598" href="#L598">598</a>     }
-<a class="jxr_linenumber" name="L599" href="#L599">599</a> 
-<a class="jxr_linenumber" name="L600" href="#L600">600</a>     <strong class="jxr_keyword">private</strong> String getDefaultCveUrlModified(<a href="../../../org/owasp/dependencycheck/CliParser.html">CliParser</a> cli) {
-<a class="jxr_linenumber" name="L601" href="#L601">601</a>       <strong class="jxr_keyword">return</strong> CveUrlParser.newInstance(settings)
-<a class="jxr_linenumber" name="L602" href="#L602">602</a>           .getDefaultCveUrlModified(cli.getStringArgument(CliParser.ARGUMENT.CVE_BASE_URL));
+<a class="jxr_linenumber" name="L393" href="#L393">393</a> 
+<a class="jxr_linenumber" name="L394" href="#L394">394</a>     <em class="jxr_comment">//CSOFF: MethodLength</em>
+<a class="jxr_linenumber" name="L395" href="#L395">395</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L396" href="#L396">396</a> <em class="jxr_javadoccomment">     * Updates the global Settings.</em>
+<a class="jxr_linenumber" name="L397" href="#L397">397</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L398" href="#L398">398</a> <em class="jxr_javadoccomment">     * @param cli a reference to the CLI Parser that contains the command line</em>
+<a class="jxr_linenumber" name="L399" href="#L399">399</a> <em class="jxr_javadoccomment">     * arguments used to set the corresponding settings in the core engine.</em>
+<a class="jxr_linenumber" name="L400" href="#L400">400</a> <em class="jxr_javadoccomment">     * @throws InvalidSettingException thrown when a user defined properties</em>
+<a class="jxr_linenumber" name="L401" href="#L401">401</a> <em class="jxr_javadoccomment">     * file is unable to be loaded.</em>
+<a class="jxr_linenumber" name="L402" href="#L402">402</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L403" href="#L403">403</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> populateSettings(<a href="../../../org/owasp/dependencycheck/CliParser.html">CliParser</a> cli) <strong class="jxr_keyword">throws</strong> InvalidSettingException {
+<a class="jxr_linenumber" name="L404" href="#L404">404</a>         <strong class="jxr_keyword">final</strong> File propertiesFile = cli.getFileArgument(CliParser.ARGUMENT.PROP);
+<a class="jxr_linenumber" name="L405" href="#L405">405</a>         <strong class="jxr_keyword">if</strong> (propertiesFile != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L406" href="#L406">406</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L407" href="#L407">407</a>                 settings.mergeProperties(propertiesFile);
+<a class="jxr_linenumber" name="L408" href="#L408">408</a>             } <strong class="jxr_keyword">catch</strong> (FileNotFoundException ex) {
+<a class="jxr_linenumber" name="L409" href="#L409">409</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InvalidSettingException(<span class="jxr_string">"Unable to find properties file '"</span> + propertiesFile.getPath() + <span class="jxr_string">"'"</span>, ex);
+<a class="jxr_linenumber" name="L410" href="#L410">410</a>             } <strong class="jxr_keyword">catch</strong> (IOException ex) {
+<a class="jxr_linenumber" name="L411" href="#L411">411</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InvalidSettingException(<span class="jxr_string">"Error reading properties file '"</span> + propertiesFile.getPath() + <span class="jxr_string">"'"</span>, ex);
+<a class="jxr_linenumber" name="L412" href="#L412">412</a>             }
+<a class="jxr_linenumber" name="L413" href="#L413">413</a>         }
+<a class="jxr_linenumber" name="L414" href="#L414">414</a>         <strong class="jxr_keyword">final</strong> String dataDirectory = cli.getStringArgument(CliParser.ARGUMENT.DATA_DIRECTORY);
+<a class="jxr_linenumber" name="L415" href="#L415">415</a>         <strong class="jxr_keyword">if</strong> (dataDirectory != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L416" href="#L416">416</a>             settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
+<a class="jxr_linenumber" name="L417" href="#L417">417</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (System.getProperty(<span class="jxr_string">"basedir"</span>) != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L418" href="#L418">418</a>             <strong class="jxr_keyword">final</strong> File dataDir = <strong class="jxr_keyword">new</strong> File(System.getProperty(<span class="jxr_string">"basedir"</span>), <span class="jxr_string">"data"</span>);
+<a class="jxr_linenumber" name="L419" href="#L419">419</a>             settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());
+<a class="jxr_linenumber" name="L420" href="#L420">420</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L421" href="#L421">421</a>             <strong class="jxr_keyword">final</strong> File jarPath = <strong class="jxr_keyword">new</strong> File(App.<strong class="jxr_keyword">class</strong>
+<a class="jxr_linenumber" name="L422" href="#L422">422</a>                     .getProtectionDomain().getCodeSource().getLocation().getPath());
+<a class="jxr_linenumber" name="L423" href="#L423">423</a>             <strong class="jxr_keyword">final</strong> File base = jarPath.getParentFile();
+<a class="jxr_linenumber" name="L424" href="#L424">424</a>             <strong class="jxr_keyword">final</strong> String sub = settings.getString(Settings.KEYS.DATA_DIRECTORY);
+<a class="jxr_linenumber" name="L425" href="#L425">425</a>             <strong class="jxr_keyword">final</strong> File dataDir = <strong class="jxr_keyword">new</strong> File(base, sub);
+<a class="jxr_linenumber" name="L426" href="#L426">426</a>             settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());
+<a class="jxr_linenumber" name="L427" href="#L427">427</a>         }
+<a class="jxr_linenumber" name="L428" href="#L428">428</a>         <strong class="jxr_keyword">final</strong> Boolean autoUpdate = cli.hasOption(CliParser.ARGUMENT.DISABLE_AUTO_UPDATE) != <strong class="jxr_keyword">null</strong> ? false : <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L429" href="#L429">429</a>         settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);
+<a class="jxr_linenumber" name="L430" href="#L430">430</a>         settings.setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER,
+<a class="jxr_linenumber" name="L431" href="#L431">431</a>                 cli.getStringArgument(CliParser.ARGUMENT.PROXY_SERVER));
+<a class="jxr_linenumber" name="L432" href="#L432">432</a>         settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PORT,
+<a class="jxr_linenumber" name="L433" href="#L433">433</a>                 cli.getStringArgument(CliParser.ARGUMENT.PROXY_PORT));
+<a class="jxr_linenumber" name="L434" href="#L434">434</a>         settings.setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME,
+<a class="jxr_linenumber" name="L435" href="#L435">435</a>                 cli.getStringArgument(CliParser.ARGUMENT.PROXY_USERNAME));
+<a class="jxr_linenumber" name="L436" href="#L436">436</a>         settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD,
+<a class="jxr_linenumber" name="L437" href="#L437">437</a>                 cli.getStringArgument(CliParser.ARGUMENT.PROXY_PASSWORD, Settings.KEYS.PROXY_PASSWORD));
+<a class="jxr_linenumber" name="L438" href="#L438">438</a>         settings.setStringIfNotEmpty(Settings.KEYS.PROXY_NON_PROXY_HOSTS,
+<a class="jxr_linenumber" name="L439" href="#L439">439</a>                 cli.getStringArgument(CliParser.ARGUMENT.NON_PROXY_HOSTS));
+<a class="jxr_linenumber" name="L440" href="#L440">440</a>         settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT,
+<a class="jxr_linenumber" name="L441" href="#L441">441</a>                 cli.getStringArgument(CliParser.ARGUMENT.CONNECTION_TIMEOUT));
+<a class="jxr_linenumber" name="L442" href="#L442">442</a>         settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE,
+<a class="jxr_linenumber" name="L443" href="#L443">443</a>                 cli.getStringArgument(CliParser.ARGUMENT.HINTS_FILE));
+<a class="jxr_linenumber" name="L444" href="#L444">444</a>         settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS,
+<a class="jxr_linenumber" name="L445" href="#L445">445</a>                 cli.getIntegerValue(CliParser.ARGUMENT.CVE_VALID_FOR_HOURS));
+<a class="jxr_linenumber" name="L446" href="#L446">446</a>         settings.setIntIfNotNull(Settings.KEYS.CVE_START_YEAR,
+<a class="jxr_linenumber" name="L447" href="#L447">447</a>                 cli.getIntegerValue(CliParser.ARGUMENT.CVE_START_YEAR));
+<a class="jxr_linenumber" name="L448" href="#L448">448</a>         settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE,
+<a class="jxr_linenumber" name="L449" href="#L449">449</a>                 cli.getStringArguments(CliParser.ARGUMENT.SUPPRESSION_FILES));
+<a class="jxr_linenumber" name="L450" href="#L450">450</a>         <em class="jxr_comment">//File Type Analyzer Settings</em>
+<a class="jxr_linenumber" name="L451" href="#L451">451</a>         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED,
+<a class="jxr_linenumber" name="L452" href="#L452">452</a>                 cli.hasOption(CliParser.ARGUMENT.EXPERIMENTAL));
+<a class="jxr_linenumber" name="L453" href="#L453">453</a>         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIRED_ENABLED,
+<a class="jxr_linenumber" name="L454" href="#L454">454</a>                 cli.hasOption(CliParser.ARGUMENT.RETIRED));
+<a class="jxr_linenumber" name="L455" href="#L455">455</a>         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH,
+<a class="jxr_linenumber" name="L456" href="#L456">456</a>                 cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_GO));
+<a class="jxr_linenumber" name="L457" href="#L457">457</a>         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_YARN_PATH,
+<a class="jxr_linenumber" name="L458" href="#L458">458</a>                 cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_YARN));
+<a class="jxr_linenumber" name="L459" href="#L459">459</a>         settings.setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT,
+<a class="jxr_linenumber" name="L460" href="#L460">460</a>                 cli.hasOption(CliParser.ARGUMENT.PRETTY_PRINT));
+<a class="jxr_linenumber" name="L461" href="#L461">461</a>         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL,
+<a class="jxr_linenumber" name="L462" href="#L462">462</a>                 cli.getStringArgument(CliParser.ARGUMENT.RETIREJS_URL));
+<a class="jxr_linenumber" name="L463" href="#L463">463</a>         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE,
+<a class="jxr_linenumber" name="L464" href="#L464">464</a>                 cli.hasOption(CliParser.ARGUMENT.RETIRE_JS_FORCEUPDATE));
+<a class="jxr_linenumber" name="L465" href="#L465">465</a>         settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED,
+<a class="jxr_linenumber" name="L466" href="#L466">466</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_JAR, Settings.KEYS.ANALYZER_JAR_ENABLED));
+<a class="jxr_linenumber" name="L467" href="#L467">467</a>         settings.setBoolean(Settings.KEYS.ANALYZER_MSBUILD_PROJECT_ENABLED,
+<a class="jxr_linenumber" name="L468" href="#L468">468</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_MSBUILD, Settings.KEYS.ANALYZER_MSBUILD_PROJECT_ENABLED));
+<a class="jxr_linenumber" name="L469" href="#L469">469</a>         settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED,
+<a class="jxr_linenumber" name="L470" href="#L470">470</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_ARCHIVE, Settings.KEYS.ANALYZER_ARCHIVE_ENABLED));
+<a class="jxr_linenumber" name="L471" href="#L471">471</a>         settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED,
+<a class="jxr_linenumber" name="L472" href="#L472">472</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PY_DIST, Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED));
+<a class="jxr_linenumber" name="L473" href="#L473">473</a>         settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED,
+<a class="jxr_linenumber" name="L474" href="#L474">474</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PY_PKG, Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED));
+<a class="jxr_linenumber" name="L475" href="#L475">475</a>         settings.setBoolean(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED,
+<a class="jxr_linenumber" name="L476" href="#L476">476</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_AUTOCONF, Settings.KEYS.ANALYZER_AUTOCONF_ENABLED));
+<a class="jxr_linenumber" name="L477" href="#L477">477</a>         settings.setBoolean(Settings.KEYS.ANALYZER_PIP_ENABLED,
+<a class="jxr_linenumber" name="L478" href="#L478">478</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PIP, Settings.KEYS.ANALYZER_PIP_ENABLED));
+<a class="jxr_linenumber" name="L479" href="#L479">479</a>         settings.setBoolean(Settings.KEYS.ANALYZER_PIPFILE_ENABLED,
+<a class="jxr_linenumber" name="L480" href="#L480">480</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PIPFILE, Settings.KEYS.ANALYZER_PIPFILE_ENABLED));
+<a class="jxr_linenumber" name="L481" href="#L481">481</a>         settings.setBoolean(Settings.KEYS.ANALYZER_CMAKE_ENABLED,
+<a class="jxr_linenumber" name="L482" href="#L482">482</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CMAKE, Settings.KEYS.ANALYZER_CMAKE_ENABLED));
+<a class="jxr_linenumber" name="L483" href="#L483">483</a>         settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED,
+<a class="jxr_linenumber" name="L484" href="#L484">484</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NUSPEC, Settings.KEYS.ANALYZER_NUSPEC_ENABLED));
+<a class="jxr_linenumber" name="L485" href="#L485">485</a>         settings.setBoolean(Settings.KEYS.ANALYZER_NUGETCONF_ENABLED,
+<a class="jxr_linenumber" name="L486" href="#L486">486</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NUGETCONF, Settings.KEYS.ANALYZER_NUGETCONF_ENABLED));
+<a class="jxr_linenumber" name="L487" href="#L487">487</a>         settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED,
+<a class="jxr_linenumber" name="L488" href="#L488">488</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_ASSEMBLY, Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED));
+<a class="jxr_linenumber" name="L489" href="#L489">489</a>         settings.setBoolean(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED,
+<a class="jxr_linenumber" name="L490" href="#L490">490</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_BUNDLE_AUDIT, Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED));
+<a class="jxr_linenumber" name="L491" href="#L491">491</a>         settings.setBoolean(Settings.KEYS.ANALYZER_FILE_NAME_ENABLED,
+<a class="jxr_linenumber" name="L492" href="#L492">492</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_FILENAME, Settings.KEYS.ANALYZER_FILE_NAME_ENABLED));
+<a class="jxr_linenumber" name="L493" href="#L493">493</a>         settings.setBoolean(Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED,
+<a class="jxr_linenumber" name="L494" href="#L494">494</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_MIX_AUDIT, Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED));
+<a class="jxr_linenumber" name="L495" href="#L495">495</a>         settings.setBoolean(Settings.KEYS.ANALYZER_OPENSSL_ENABLED,
+<a class="jxr_linenumber" name="L496" href="#L496">496</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_OPENSSL, Settings.KEYS.ANALYZER_OPENSSL_ENABLED));
+<a class="jxr_linenumber" name="L497" href="#L497">497</a>         settings.setBoolean(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED,
+<a class="jxr_linenumber" name="L498" href="#L498">498</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_COMPOSER, Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED));
+<a class="jxr_linenumber" name="L499" href="#L499">499</a>         settings.setBoolean(Settings.KEYS.ANALYZER_CPANFILE_ENABLED,
+<a class="jxr_linenumber" name="L500" href="#L500">500</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CPAN, Settings.KEYS.ANALYZER_CPANFILE_ENABLED));
+<a class="jxr_linenumber" name="L501" href="#L501">501</a>         settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED,
+<a class="jxr_linenumber" name="L502" href="#L502">502</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_GO_DEP, Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED));
+<a class="jxr_linenumber" name="L503" href="#L503">503</a>         settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED,
+<a class="jxr_linenumber" name="L504" href="#L504">504</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_GOLANG_MOD, Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED));
+<a class="jxr_linenumber" name="L505" href="#L505">505</a>         settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED,
+<a class="jxr_linenumber" name="L506" href="#L506">506</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NODE_JS, Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED));
+<a class="jxr_linenumber" name="L507" href="#L507">507</a>         <em class="jxr_comment">//TODO next major - remove the deprecated check in isNodeAuditDisabled</em>
+<a class="jxr_linenumber" name="L508" href="#L508">508</a>         settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED,
+<a class="jxr_linenumber" name="L509" href="#L509">509</a>                 !cli.isNodeAuditDisabled());
+<a class="jxr_linenumber" name="L510" href="#L510">510</a>         settings.setBoolean(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED,
+<a class="jxr_linenumber" name="L511" href="#L511">511</a>                 !cli.isYarnAuditDisabled());
+<a class="jxr_linenumber" name="L512" href="#L512">512</a>         settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE,
+<a class="jxr_linenumber" name="L513" href="#L513">513</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NODE_AUDIT_CACHE, Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE));
+<a class="jxr_linenumber" name="L514" href="#L514">514</a>         settings.setBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED,
+<a class="jxr_linenumber" name="L515" href="#L515">515</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_RETIRE_JS, Settings.KEYS.ANALYZER_RETIREJS_ENABLED));
+<a class="jxr_linenumber" name="L516" href="#L516">516</a>         settings.setBoolean(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED,
+<a class="jxr_linenumber" name="L517" href="#L517">517</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_SWIFT, Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED));
+<a class="jxr_linenumber" name="L518" href="#L518">518</a>         settings.setBoolean(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_RESOLVED_ENABLED,
+<a class="jxr_linenumber" name="L519" href="#L519">519</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_SWIFT_RESOLVED, Settings.KEYS.ANALYZER_SWIFT_PACKAGE_RESOLVED_ENABLED));
+<a class="jxr_linenumber" name="L520" href="#L520">520</a>         settings.setBoolean(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED,
+<a class="jxr_linenumber" name="L521" href="#L521">521</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_COCOAPODS, Settings.KEYS.ANALYZER_COCOAPODS_ENABLED));
+<a class="jxr_linenumber" name="L522" href="#L522">522</a>         settings.setBoolean(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED,
+<a class="jxr_linenumber" name="L523" href="#L523">523</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_RUBYGEMS, Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED));
+<a class="jxr_linenumber" name="L524" href="#L524">524</a>         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED,
+<a class="jxr_linenumber" name="L525" href="#L525">525</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CENTRAL, Settings.KEYS.ANALYZER_CENTRAL_ENABLED));
+<a class="jxr_linenumber" name="L526" href="#L526">526</a>         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE,
+<a class="jxr_linenumber" name="L527" href="#L527">527</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CENTRAL_CACHE, Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE));
+<a class="jxr_linenumber" name="L528" href="#L528">528</a>         settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED,
+<a class="jxr_linenumber" name="L529" href="#L529">529</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_OSSINDEX, Settings.KEYS.ANALYZER_OSSINDEX_ENABLED));
+<a class="jxr_linenumber" name="L530" href="#L530">530</a>         settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE,
+<a class="jxr_linenumber" name="L531" href="#L531">531</a>                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_OSSINDEX_CACHE, Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE));
+<a class="jxr_linenumber" name="L532" href="#L532">532</a> 
+<a class="jxr_linenumber" name="L533" href="#L533">533</a>         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV,
+<a class="jxr_linenumber" name="L534" href="#L534">534</a>                 cli.hasOption(CliParser.ARGUMENT.NODE_PACKAGE_SKIP_DEV_DEPENDENCIES));
+<a class="jxr_linenumber" name="L535" href="#L535">535</a>         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV,
+<a class="jxr_linenumber" name="L536" href="#L536">536</a>                 cli.hasOption(CliParser.ARGUMENT.DISABLE_NODE_AUDIT_SKIPDEV));
+<a class="jxr_linenumber" name="L537" href="#L537">537</a>         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED,
+<a class="jxr_linenumber" name="L538" href="#L538">538</a>                 cli.hasOption(CliParser.ARGUMENT.ENABLE_NEXUS));
+<a class="jxr_linenumber" name="L539" href="#L539">539</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_USER,
+<a class="jxr_linenumber" name="L540" href="#L540">540</a>                 cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_USERNAME));
+<a class="jxr_linenumber" name="L541" href="#L541">541</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD,
+<a class="jxr_linenumber" name="L542" href="#L542">542</a>                 cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_PASSWORD, Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD));
+<a class="jxr_linenumber" name="L543" href="#L543">543</a>         settings.setFloat(Settings.KEYS.JUNIT_FAIL_ON_CVSS,
+<a class="jxr_linenumber" name="L544" href="#L544">544</a>                 cli.getFloatArgument(CliParser.ARGUMENT.FAIL_JUNIT_ON_CVSS, 0));
+<a class="jxr_linenumber" name="L545" href="#L545">545</a>         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED,
+<a class="jxr_linenumber" name="L546" href="#L546">546</a>                 cli.hasOption(CliParser.ARGUMENT.ARTIFACTORY_ENABLED));
+<a class="jxr_linenumber" name="L547" href="#L547">547</a>         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_PARALLEL_ANALYSIS,
+<a class="jxr_linenumber" name="L548" href="#L548">548</a>                 cli.getBooleanArgument(CliParser.ARGUMENT.ARTIFACTORY_PARALLEL_ANALYSIS));
+<a class="jxr_linenumber" name="L549" href="#L549">549</a>         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_USES_PROXY,
+<a class="jxr_linenumber" name="L550" href="#L550">550</a>                 cli.getBooleanArgument(CliParser.ARGUMENT.ARTIFACTORY_USES_PROXY));
+<a class="jxr_linenumber" name="L551" href="#L551">551</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_URL,
+<a class="jxr_linenumber" name="L552" href="#L552">552</a>                 cli.getStringArgument(CliParser.ARGUMENT.ARTIFACTORY_URL));
+<a class="jxr_linenumber" name="L553" href="#L553">553</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME,
+<a class="jxr_linenumber" name="L554" href="#L554">554</a>                 cli.getStringArgument(CliParser.ARGUMENT.ARTIFACTORY_USERNAME));
+<a class="jxr_linenumber" name="L555" href="#L555">555</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN,
+<a class="jxr_linenumber" name="L556" href="#L556">556</a>                 cli.getStringArgument(CliParser.ARGUMENT.ARTIFACTORY_API_TOKEN));
+<a class="jxr_linenumber" name="L557" href="#L557">557</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_BEARER_TOKEN,
+<a class="jxr_linenumber" name="L558" href="#L558">558</a>                 cli.getStringArgument(CliParser.ARGUMENT.ARTIFACTORY_BEARER_TOKEN));
+<a class="jxr_linenumber" name="L559" href="#L559">559</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_MIX_AUDIT_PATH,
+<a class="jxr_linenumber" name="L560" href="#L560">560</a>                 cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_MIX_AUDIT));
+<a class="jxr_linenumber" name="L561" href="#L561">561</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH,
+<a class="jxr_linenumber" name="L562" href="#L562">562</a>                 cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_BUNDLE_AUDIT));
+<a class="jxr_linenumber" name="L563" href="#L563">563</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_WORKING_DIRECTORY,
+<a class="jxr_linenumber" name="L564" href="#L564">564</a>                 cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_BUNDLE_AUDIT_WORKING_DIRECTORY));
+<a class="jxr_linenumber" name="L565" href="#L565">565</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL,
+<a class="jxr_linenumber" name="L566" href="#L566">566</a>                 cli.getStringArgument(CliParser.ARGUMENT.NEXUS_URL));
+<a class="jxr_linenumber" name="L567" href="#L567">567</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_USER,
+<a class="jxr_linenumber" name="L568" href="#L568">568</a>                 cli.getStringArgument(CliParser.ARGUMENT.NEXUS_USERNAME));
+<a class="jxr_linenumber" name="L569" href="#L569">569</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_PASSWORD,
+<a class="jxr_linenumber" name="L570" href="#L570">570</a>                 cli.getStringArgument(CliParser.ARGUMENT.NEXUS_PASSWORD, Settings.KEYS.ANALYZER_NEXUS_PASSWORD));
+<a class="jxr_linenumber" name="L571" href="#L571">571</a>         <em class="jxr_comment">//TODO deprecate this in favor of non-proxy host</em>
+<a class="jxr_linenumber" name="L572" href="#L572">572</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> nexusUsesProxy = cli.isNexusUsesProxy();
+<a class="jxr_linenumber" name="L573" href="#L573">573</a>         settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
+<a class="jxr_linenumber" name="L574" href="#L574">574</a>         settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME,
+<a class="jxr_linenumber" name="L575" href="#L575">575</a>                 cli.getStringArgument(CliParser.ARGUMENT.DB_DRIVER));
+<a class="jxr_linenumber" name="L576" href="#L576">576</a>         settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH,
+<a class="jxr_linenumber" name="L577" href="#L577">577</a>                 cli.getStringArgument(CliParser.ARGUMENT.DB_DRIVER_PATH));
+<a class="jxr_linenumber" name="L578" href="#L578">578</a>         settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING,
+<a class="jxr_linenumber" name="L579" href="#L579">579</a>                 cli.getStringArgument(CliParser.ARGUMENT.CONNECTION_STRING));
+<a class="jxr_linenumber" name="L580" href="#L580">580</a>         settings.setStringIfNotEmpty(Settings.KEYS.DB_USER,
+<a class="jxr_linenumber" name="L581" href="#L581">581</a>                 cli.getStringArgument(CliParser.ARGUMENT.DB_NAME));
+<a class="jxr_linenumber" name="L582" href="#L582">582</a>         settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD,
+<a class="jxr_linenumber" name="L583" href="#L583">583</a>                 cli.getStringArgument(CliParser.ARGUMENT.DB_PASSWORD, Settings.KEYS.DB_PASSWORD));
+<a class="jxr_linenumber" name="L584" href="#L584">584</a>         settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS,
+<a class="jxr_linenumber" name="L585" href="#L585">585</a>                 cli.getStringArgument(CliParser.ARGUMENT.ADDITIONAL_ZIP_EXTENSIONS));
+<a class="jxr_linenumber" name="L586" href="#L586">586</a>         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH,
+<a class="jxr_linenumber" name="L587" href="#L587">587</a>                 cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_CORE));
+<a class="jxr_linenumber" name="L588" href="#L588">588</a>         settings.setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON,
+<a class="jxr_linenumber" name="L589" href="#L589">589</a>                 cli.getStringArgument(CliParser.ARGUMENT.CVE_BASE_URL));
+<a class="jxr_linenumber" name="L590" href="#L590">590</a>         settings.setStringIfNotEmpty(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME,
+<a class="jxr_linenumber" name="L591" href="#L591">591</a>                 cli.getStringArgument(CliParser.ARGUMENT.CVE_DOWNLOAD_WAIT_TIME));
+<a class="jxr_linenumber" name="L592" href="#L592">592</a> 
+<a class="jxr_linenumber" name="L593" href="#L593">593</a>         <strong class="jxr_keyword">final</strong> String cveModifiedJson = Optional.ofNullable(cli.getStringArgument(CliParser.ARGUMENT.CVE_MODIFIED_URL))
+<a class="jxr_linenumber" name="L594" href="#L594">594</a>                 .filter(arg -&gt; !arg.isEmpty())
+<a class="jxr_linenumber" name="L595" href="#L595">595</a>                 .orElseGet(() -&gt; getDefaultCveUrlModified(cli));
+<a class="jxr_linenumber" name="L596" href="#L596">596</a>         settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON,
+<a class="jxr_linenumber" name="L597" href="#L597">597</a>                 cveModifiedJson);
+<a class="jxr_linenumber" name="L598" href="#L598">598</a> 
+<a class="jxr_linenumber" name="L599" href="#L599">599</a>         settings.setStringIfNotEmpty(Settings.KEYS.CVE_USER,
+<a class="jxr_linenumber" name="L600" href="#L600">600</a>                 cli.getStringArgument(CliParser.ARGUMENT.CVE_USER));
+<a class="jxr_linenumber" name="L601" href="#L601">601</a>         settings.setStringIfNotEmpty(Settings.KEYS.CVE_PASSWORD,
+<a class="jxr_linenumber" name="L602" href="#L602">602</a>                 cli.getStringArgument(CliParser.ARGUMENT.CVE_PASSWORD, Settings.KEYS.CVE_PASSWORD));
 <a class="jxr_linenumber" name="L603" href="#L603">603</a>     }
 <a class="jxr_linenumber" name="L604" href="#L604">604</a> 
-<a class="jxr_linenumber" name="L605" href="#L605">605</a>     <em class="jxr_comment">//CSON: MethodLength</em>
-<a class="jxr_linenumber" name="L606" href="#L606">606</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L607" href="#L607">607</a> <em class="jxr_javadoccomment">     * Creates a file appender and adds it to logback.</em>
-<a class="jxr_linenumber" name="L608" href="#L608">608</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L609" href="#L609">609</a> <em class="jxr_javadoccomment">     * @param verboseLog the path to the verbose log file</em>
-<a class="jxr_linenumber" name="L610" href="#L610">610</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L611" href="#L611">611</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> prepareLogger(String verboseLog) {
-<a class="jxr_linenumber" name="L612" href="#L612">612</a>         <strong class="jxr_keyword">final</strong> StaticLoggerBinder loggerBinder = StaticLoggerBinder.getSingleton();
-<a class="jxr_linenumber" name="L613" href="#L613">613</a>         <strong class="jxr_keyword">final</strong> LoggerContext context = (LoggerContext) loggerBinder.getLoggerFactory();
-<a class="jxr_linenumber" name="L614" href="#L614">614</a> 
-<a class="jxr_linenumber" name="L615" href="#L615">615</a>         <strong class="jxr_keyword">final</strong> PatternLayoutEncoder encoder = <strong class="jxr_keyword">new</strong> PatternLayoutEncoder();
-<a class="jxr_linenumber" name="L616" href="#L616">616</a>         encoder.setPattern(<span class="jxr_string">"%d %C:%L%n%-5level - %msg%n"</span>);
-<a class="jxr_linenumber" name="L617" href="#L617">617</a>         encoder.setContext(context);
-<a class="jxr_linenumber" name="L618" href="#L618">618</a>         encoder.start();
-<a class="jxr_linenumber" name="L619" href="#L619">619</a>         <strong class="jxr_keyword">final</strong> FileAppender&lt;ILoggingEvent&gt; fa = <strong class="jxr_keyword">new</strong> FileAppender&lt;&gt;();
-<a class="jxr_linenumber" name="L620" href="#L620">620</a>         fa.setAppend(<strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L621" href="#L621">621</a>         fa.setEncoder(encoder);
-<a class="jxr_linenumber" name="L622" href="#L622">622</a>         fa.setContext(context);
-<a class="jxr_linenumber" name="L623" href="#L623">623</a>         fa.setFile(verboseLog);
-<a class="jxr_linenumber" name="L624" href="#L624">624</a>         <strong class="jxr_keyword">final</strong> File f = <strong class="jxr_keyword">new</strong> File(verboseLog);
-<a class="jxr_linenumber" name="L625" href="#L625">625</a>         String name = f.getName();
-<a class="jxr_linenumber" name="L626" href="#L626">626</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> i = name.lastIndexOf('.');
-<a class="jxr_linenumber" name="L627" href="#L627">627</a>         <strong class="jxr_keyword">if</strong> (i &gt; 1) {
-<a class="jxr_linenumber" name="L628" href="#L628">628</a>             name = name.substring(0, i);
-<a class="jxr_linenumber" name="L629" href="#L629">629</a>         }
-<a class="jxr_linenumber" name="L630" href="#L630">630</a>         fa.setName(name);
-<a class="jxr_linenumber" name="L631" href="#L631">631</a>         fa.start();
-<a class="jxr_linenumber" name="L632" href="#L632">632</a>         <strong class="jxr_keyword">final</strong> ch.qos.logback.classic.Logger rootLogger = context.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
-<a class="jxr_linenumber" name="L633" href="#L633">633</a>         rootLogger.setLevel(Level.DEBUG);
-<a class="jxr_linenumber" name="L634" href="#L634">634</a>         <strong class="jxr_keyword">final</strong> ThresholdFilter filter = <strong class="jxr_keyword">new</strong> ThresholdFilter();
-<a class="jxr_linenumber" name="L635" href="#L635">635</a>         filter.setLevel(LogLevel.INFO.getValue());
-<a class="jxr_linenumber" name="L636" href="#L636">636</a>         filter.setContext(context);
-<a class="jxr_linenumber" name="L637" href="#L637">637</a>         filter.start();
-<a class="jxr_linenumber" name="L638" href="#L638">638</a>         rootLogger.iteratorForAppenders().forEachRemaining(action -&gt; action.addFilter(filter));
-<a class="jxr_linenumber" name="L639" href="#L639">639</a>         rootLogger.addAppender(fa);
-<a class="jxr_linenumber" name="L640" href="#L640">640</a>     }
-<a class="jxr_linenumber" name="L641" href="#L641">641</a> 
-<a class="jxr_linenumber" name="L642" href="#L642">642</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L643" href="#L643">643</a> <em class="jxr_javadoccomment">     * Takes a path and resolves it to be a canonical &amp;amp; absolute path. The</em>
-<a class="jxr_linenumber" name="L644" href="#L644">644</a> <em class="jxr_javadoccomment">     * caveats are that this method will take an Ant style file selector path</em>
-<a class="jxr_linenumber" name="L645" href="#L645">645</a> <em class="jxr_javadoccomment">     * (../someDir/**\/*.jar) and convert it to an absolute/canonical path (at</em>
-<a class="jxr_linenumber" name="L646" href="#L646">646</a> <em class="jxr_javadoccomment">     * least to the left of the first * or ?).</em>
-<a class="jxr_linenumber" name="L647" href="#L647">647</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L648" href="#L648">648</a> <em class="jxr_javadoccomment">     * @param path the path to canonicalize</em>
-<a class="jxr_linenumber" name="L649" href="#L649">649</a> <em class="jxr_javadoccomment">     * @return the canonical path</em>
-<a class="jxr_linenumber" name="L650" href="#L650">650</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L651" href="#L651">651</a>     <strong class="jxr_keyword">protected</strong> String ensureCanonicalPath(String path) {
-<a class="jxr_linenumber" name="L652" href="#L652">652</a>         <strong class="jxr_keyword">final</strong> String basePath;
-<a class="jxr_linenumber" name="L653" href="#L653">653</a>         String wildCards = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L654" href="#L654">654</a>         <strong class="jxr_keyword">final</strong> String file = path.replace('&#92;&#92;', '/');
-<a class="jxr_linenumber" name="L655" href="#L655">655</a>         <strong class="jxr_keyword">if</strong> (file.contains(<span class="jxr_string">"*"</span>) || file.contains(<span class="jxr_string">"?"</span>)) {
-<a class="jxr_linenumber" name="L656" href="#L656">656</a> 
-<a class="jxr_linenumber" name="L657" href="#L657">657</a>             <strong class="jxr_keyword">int</strong> pos = getLastFileSeparator(file);
-<a class="jxr_linenumber" name="L658" href="#L658">658</a>             <strong class="jxr_keyword">if</strong> (pos &lt; 0) {
-<a class="jxr_linenumber" name="L659" href="#L659">659</a>                 <strong class="jxr_keyword">return</strong> file;
-<a class="jxr_linenumber" name="L660" href="#L660">660</a>             }
-<a class="jxr_linenumber" name="L661" href="#L661">661</a>             pos += 1;
-<a class="jxr_linenumber" name="L662" href="#L662">662</a>             basePath = file.substring(0, pos);
-<a class="jxr_linenumber" name="L663" href="#L663">663</a>             wildCards = file.substring(pos);
-<a class="jxr_linenumber" name="L664" href="#L664">664</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L665" href="#L665">665</a>             basePath = file;
-<a class="jxr_linenumber" name="L666" href="#L666">666</a>         }
-<a class="jxr_linenumber" name="L667" href="#L667">667</a> 
-<a class="jxr_linenumber" name="L668" href="#L668">668</a>         File f = <strong class="jxr_keyword">new</strong> File(basePath);
-<a class="jxr_linenumber" name="L669" href="#L669">669</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L670" href="#L670">670</a>             f = f.getCanonicalFile();
-<a class="jxr_linenumber" name="L671" href="#L671">671</a>             <strong class="jxr_keyword">if</strong> (wildCards != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L672" href="#L672">672</a>                 f = <strong class="jxr_keyword">new</strong> File(f, wildCards);
-<a class="jxr_linenumber" name="L673" href="#L673">673</a>             }
-<a class="jxr_linenumber" name="L674" href="#L674">674</a>         } <strong class="jxr_keyword">catch</strong> (IOException ex) {
-<a class="jxr_linenumber" name="L675" href="#L675">675</a>             LOGGER.warn(<span class="jxr_string">"Invalid path '{}' was provided."</span>, path);
-<a class="jxr_linenumber" name="L676" href="#L676">676</a>             LOGGER.debug(<span class="jxr_string">"Invalid path provided"</span>, ex);
-<a class="jxr_linenumber" name="L677" href="#L677">677</a>         }
-<a class="jxr_linenumber" name="L678" href="#L678">678</a>         <strong class="jxr_keyword">return</strong> f.getAbsolutePath().replace('&#92;&#92;', '/');
-<a class="jxr_linenumber" name="L679" href="#L679">679</a>     }
-<a class="jxr_linenumber" name="L680" href="#L680">680</a> 
-<a class="jxr_linenumber" name="L681" href="#L681">681</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L682" href="#L682">682</a> <em class="jxr_javadoccomment">     * Returns the position of the last file separator.</em>
-<a class="jxr_linenumber" name="L683" href="#L683">683</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L684" href="#L684">684</a> <em class="jxr_javadoccomment">     * @param file a file path</em>
-<a class="jxr_linenumber" name="L685" href="#L685">685</a> <em class="jxr_javadoccomment">     * @return the position of the last file separator</em>
-<a class="jxr_linenumber" name="L686" href="#L686">686</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L687" href="#L687">687</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> getLastFileSeparator(String file) {
-<a class="jxr_linenumber" name="L688" href="#L688">688</a>         <strong class="jxr_keyword">if</strong> (file.contains(<span class="jxr_string">"*"</span>) || file.contains(<span class="jxr_string">"?"</span>)) {
-<a class="jxr_linenumber" name="L689" href="#L689">689</a>             <strong class="jxr_keyword">int</strong> p1 = file.indexOf('*');
-<a class="jxr_linenumber" name="L690" href="#L690">690</a>             <strong class="jxr_keyword">int</strong> p2 = file.indexOf('?');
-<a class="jxr_linenumber" name="L691" href="#L691">691</a>             p1 = p1 &gt; 0 ? p1 : file.length();
-<a class="jxr_linenumber" name="L692" href="#L692">692</a>             p2 = p2 &gt; 0 ? p2 : file.length();
-<a class="jxr_linenumber" name="L693" href="#L693">693</a>             <strong class="jxr_keyword">int</strong> pos = p1 &lt; p2 ? p1 : p2;
-<a class="jxr_linenumber" name="L694" href="#L694">694</a>             pos = file.lastIndexOf('/', pos);
-<a class="jxr_linenumber" name="L695" href="#L695">695</a>             <strong class="jxr_keyword">return</strong> pos;
-<a class="jxr_linenumber" name="L696" href="#L696">696</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L697" href="#L697">697</a>             <strong class="jxr_keyword">return</strong> file.lastIndexOf('/');
-<a class="jxr_linenumber" name="L698" href="#L698">698</a>         }
-<a class="jxr_linenumber" name="L699" href="#L699">699</a>     }
-<a class="jxr_linenumber" name="L700" href="#L700">700</a> }
+<a class="jxr_linenumber" name="L605" href="#L605">605</a>     <strong class="jxr_keyword">private</strong> String getDefaultCveUrlModified(<a href="../../../org/owasp/dependencycheck/CliParser.html">CliParser</a> cli) {
+<a class="jxr_linenumber" name="L606" href="#L606">606</a>         <strong class="jxr_keyword">return</strong> CveUrlParser.newInstance(settings)
+<a class="jxr_linenumber" name="L607" href="#L607">607</a>                 .getDefaultCveUrlModified(cli.getStringArgument(CliParser.ARGUMENT.CVE_BASE_URL));
+<a class="jxr_linenumber" name="L608" href="#L608">608</a>     }
+<a class="jxr_linenumber" name="L609" href="#L609">609</a> 
+<a class="jxr_linenumber" name="L610" href="#L610">610</a>     <em class="jxr_comment">//CSON: MethodLength</em>
+<a class="jxr_linenumber" name="L611" href="#L611">611</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L612" href="#L612">612</a> <em class="jxr_javadoccomment">     * Creates a file appender and adds it to logback.</em>
+<a class="jxr_linenumber" name="L613" href="#L613">613</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L614" href="#L614">614</a> <em class="jxr_javadoccomment">     * @param verboseLog the path to the verbose log file</em>
+<a class="jxr_linenumber" name="L615" href="#L615">615</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L616" href="#L616">616</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> prepareLogger(String verboseLog) {
+<a class="jxr_linenumber" name="L617" href="#L617">617</a>         <strong class="jxr_keyword">final</strong> StaticLoggerBinder loggerBinder = StaticLoggerBinder.getSingleton();
+<a class="jxr_linenumber" name="L618" href="#L618">618</a>         <strong class="jxr_keyword">final</strong> LoggerContext context = (LoggerContext) loggerBinder.getLoggerFactory();
+<a class="jxr_linenumber" name="L619" href="#L619">619</a> 
+<a class="jxr_linenumber" name="L620" href="#L620">620</a>         <strong class="jxr_keyword">final</strong> PatternLayoutEncoder encoder = <strong class="jxr_keyword">new</strong> PatternLayoutEncoder();
+<a class="jxr_linenumber" name="L621" href="#L621">621</a>         encoder.setPattern(<span class="jxr_string">"%d %C:%L%n%-5level - %msg%n"</span>);
+<a class="jxr_linenumber" name="L622" href="#L622">622</a>         encoder.setContext(context);
+<a class="jxr_linenumber" name="L623" href="#L623">623</a>         encoder.start();
+<a class="jxr_linenumber" name="L624" href="#L624">624</a>         <strong class="jxr_keyword">final</strong> FileAppender&lt;ILoggingEvent&gt; fa = <strong class="jxr_keyword">new</strong> FileAppender&lt;&gt;();
+<a class="jxr_linenumber" name="L625" href="#L625">625</a>         fa.setAppend(<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L626" href="#L626">626</a>         fa.setEncoder(encoder);
+<a class="jxr_linenumber" name="L627" href="#L627">627</a>         fa.setContext(context);
+<a class="jxr_linenumber" name="L628" href="#L628">628</a>         fa.setFile(verboseLog);
+<a class="jxr_linenumber" name="L629" href="#L629">629</a>         <strong class="jxr_keyword">final</strong> File f = <strong class="jxr_keyword">new</strong> File(verboseLog);
+<a class="jxr_linenumber" name="L630" href="#L630">630</a>         String name = f.getName();
+<a class="jxr_linenumber" name="L631" href="#L631">631</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> i = name.lastIndexOf('.');
+<a class="jxr_linenumber" name="L632" href="#L632">632</a>         <strong class="jxr_keyword">if</strong> (i &gt; 1) {
+<a class="jxr_linenumber" name="L633" href="#L633">633</a>             name = name.substring(0, i);
+<a class="jxr_linenumber" name="L634" href="#L634">634</a>         }
+<a class="jxr_linenumber" name="L635" href="#L635">635</a>         fa.setName(name);
+<a class="jxr_linenumber" name="L636" href="#L636">636</a>         fa.start();
+<a class="jxr_linenumber" name="L637" href="#L637">637</a>         <strong class="jxr_keyword">final</strong> ch.qos.logback.classic.Logger rootLogger = context.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+<a class="jxr_linenumber" name="L638" href="#L638">638</a>         rootLogger.setLevel(Level.DEBUG);
+<a class="jxr_linenumber" name="L639" href="#L639">639</a>         <strong class="jxr_keyword">final</strong> ThresholdFilter filter = <strong class="jxr_keyword">new</strong> ThresholdFilter();
+<a class="jxr_linenumber" name="L640" href="#L640">640</a>         filter.setLevel(LogLevel.INFO.getValue());
+<a class="jxr_linenumber" name="L641" href="#L641">641</a>         filter.setContext(context);
+<a class="jxr_linenumber" name="L642" href="#L642">642</a>         filter.start();
+<a class="jxr_linenumber" name="L643" href="#L643">643</a>         rootLogger.iteratorForAppenders().forEachRemaining(action -&gt; action.addFilter(filter));
+<a class="jxr_linenumber" name="L644" href="#L644">644</a>         rootLogger.addAppender(fa);
+<a class="jxr_linenumber" name="L645" href="#L645">645</a>     }
+<a class="jxr_linenumber" name="L646" href="#L646">646</a> 
+<a class="jxr_linenumber" name="L647" href="#L647">647</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L648" href="#L648">648</a> <em class="jxr_javadoccomment">     * Takes a path and resolves it to be a canonical &amp;amp; absolute path. The</em>
+<a class="jxr_linenumber" name="L649" href="#L649">649</a> <em class="jxr_javadoccomment">     * caveats are that this method will take an Ant style file selector path</em>
+<a class="jxr_linenumber" name="L650" href="#L650">650</a> <em class="jxr_javadoccomment">     * (../someDir/**\/*.jar) and convert it to an absolute/canonical path (at</em>
+<a class="jxr_linenumber" name="L651" href="#L651">651</a> <em class="jxr_javadoccomment">     * least to the left of the first * or ?).</em>
+<a class="jxr_linenumber" name="L652" href="#L652">652</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L653" href="#L653">653</a> <em class="jxr_javadoccomment">     * @param path the path to canonicalize</em>
+<a class="jxr_linenumber" name="L654" href="#L654">654</a> <em class="jxr_javadoccomment">     * @return the canonical path</em>
+<a class="jxr_linenumber" name="L655" href="#L655">655</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L656" href="#L656">656</a>     <strong class="jxr_keyword">protected</strong> String ensureCanonicalPath(String path) {
+<a class="jxr_linenumber" name="L657" href="#L657">657</a>         <strong class="jxr_keyword">final</strong> String basePath;
+<a class="jxr_linenumber" name="L658" href="#L658">658</a>         String wildCards = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L659" href="#L659">659</a>         <strong class="jxr_keyword">final</strong> String file = path.replace('&#92;&#92;', '/');
+<a class="jxr_linenumber" name="L660" href="#L660">660</a>         <strong class="jxr_keyword">if</strong> (file.contains(<span class="jxr_string">"*"</span>) || file.contains(<span class="jxr_string">"?"</span>)) {
+<a class="jxr_linenumber" name="L661" href="#L661">661</a> 
+<a class="jxr_linenumber" name="L662" href="#L662">662</a>             <strong class="jxr_keyword">int</strong> pos = getLastFileSeparator(file);
+<a class="jxr_linenumber" name="L663" href="#L663">663</a>             <strong class="jxr_keyword">if</strong> (pos &lt; 0) {
+<a class="jxr_linenumber" name="L664" href="#L664">664</a>                 <strong class="jxr_keyword">return</strong> file;
+<a class="jxr_linenumber" name="L665" href="#L665">665</a>             }
+<a class="jxr_linenumber" name="L666" href="#L666">666</a>             pos += 1;
+<a class="jxr_linenumber" name="L667" href="#L667">667</a>             basePath = file.substring(0, pos);
+<a class="jxr_linenumber" name="L668" href="#L668">668</a>             wildCards = file.substring(pos);
+<a class="jxr_linenumber" name="L669" href="#L669">669</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L670" href="#L670">670</a>             basePath = file;
+<a class="jxr_linenumber" name="L671" href="#L671">671</a>         }
+<a class="jxr_linenumber" name="L672" href="#L672">672</a> 
+<a class="jxr_linenumber" name="L673" href="#L673">673</a>         File f = <strong class="jxr_keyword">new</strong> File(basePath);
+<a class="jxr_linenumber" name="L674" href="#L674">674</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L675" href="#L675">675</a>             f = f.getCanonicalFile();
+<a class="jxr_linenumber" name="L676" href="#L676">676</a>             <strong class="jxr_keyword">if</strong> (wildCards != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L677" href="#L677">677</a>                 f = <strong class="jxr_keyword">new</strong> File(f, wildCards);
+<a class="jxr_linenumber" name="L678" href="#L678">678</a>             }
+<a class="jxr_linenumber" name="L679" href="#L679">679</a>         } <strong class="jxr_keyword">catch</strong> (IOException ex) {
+<a class="jxr_linenumber" name="L680" href="#L680">680</a>             LOGGER.warn(<span class="jxr_string">"Invalid path '{}' was provided."</span>, path);
+<a class="jxr_linenumber" name="L681" href="#L681">681</a>             LOGGER.debug(<span class="jxr_string">"Invalid path provided"</span>, ex);
+<a class="jxr_linenumber" name="L682" href="#L682">682</a>         }
+<a class="jxr_linenumber" name="L683" href="#L683">683</a>         <strong class="jxr_keyword">return</strong> f.getAbsolutePath().replace('&#92;&#92;', '/');
+<a class="jxr_linenumber" name="L684" href="#L684">684</a>     }
+<a class="jxr_linenumber" name="L685" href="#L685">685</a> 
+<a class="jxr_linenumber" name="L686" href="#L686">686</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L687" href="#L687">687</a> <em class="jxr_javadoccomment">     * Returns the position of the last file separator.</em>
+<a class="jxr_linenumber" name="L688" href="#L688">688</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L689" href="#L689">689</a> <em class="jxr_javadoccomment">     * @param file a file path</em>
+<a class="jxr_linenumber" name="L690" href="#L690">690</a> <em class="jxr_javadoccomment">     * @return the position of the last file separator</em>
+<a class="jxr_linenumber" name="L691" href="#L691">691</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L692" href="#L692">692</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> getLastFileSeparator(String file) {
+<a class="jxr_linenumber" name="L693" href="#L693">693</a>         <strong class="jxr_keyword">if</strong> (file.contains(<span class="jxr_string">"*"</span>) || file.contains(<span class="jxr_string">"?"</span>)) {
+<a class="jxr_linenumber" name="L694" href="#L694">694</a>             <strong class="jxr_keyword">int</strong> p1 = file.indexOf('*');
+<a class="jxr_linenumber" name="L695" href="#L695">695</a>             <strong class="jxr_keyword">int</strong> p2 = file.indexOf('?');
+<a class="jxr_linenumber" name="L696" href="#L696">696</a>             p1 = p1 &gt; 0 ? p1 : file.length();
+<a class="jxr_linenumber" name="L697" href="#L697">697</a>             p2 = p2 &gt; 0 ? p2 : file.length();
+<a class="jxr_linenumber" name="L698" href="#L698">698</a>             <strong class="jxr_keyword">int</strong> pos = p1 &lt; p2 ? p1 : p2;
+<a class="jxr_linenumber" name="L699" href="#L699">699</a>             pos = file.lastIndexOf('/', pos);
+<a class="jxr_linenumber" name="L700" href="#L700">700</a>             <strong class="jxr_keyword">return</strong> pos;
+<a class="jxr_linenumber" name="L701" href="#L701">701</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L702" href="#L702">702</a>             <strong class="jxr_keyword">return</strong> file.lastIndexOf('/');
+<a class="jxr_linenumber" name="L703" href="#L703">703</a>         }
+<a class="jxr_linenumber" name="L704" href="#L704">704</a>     }
+<a class="jxr_linenumber" name="L705" href="#L705">705</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2021 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

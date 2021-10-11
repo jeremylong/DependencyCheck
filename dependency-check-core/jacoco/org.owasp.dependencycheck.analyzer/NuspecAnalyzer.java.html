@@ -159,28 +159,30 @@ import org.owasp.dependencycheck.exception.InitializationException;
 <span class="fc" id="L159">            dependency.addEvidence(EvidenceType.VENDOR, &quot;nuspec&quot;, &quot;authors&quot;, np.getAuthors(), Confidence.HIGH);</span>
 <span class="fc" id="L160">            dependency.addEvidence(EvidenceType.VERSION, &quot;nuspec&quot;, &quot;version&quot;, np.getVersion(), Confidence.HIGHEST);</span>
 <span class="fc" id="L161">            dependency.addEvidence(EvidenceType.PRODUCT, &quot;nuspec&quot;, &quot;id&quot;, np.getId(), Confidence.HIGHEST);</span>
-<span class="fc" id="L162">            dependency.setName(np.getId());</span>
-<span class="fc" id="L163">            dependency.setVersion(np.getVersion());</span>
+<span class="fc" id="L162">            dependency.addEvidence(EvidenceType.VENDOR, &quot;nuspec&quot;, &quot;description&quot;, np.getDescription(), Confidence.LOW);;</span>
+<span class="fc" id="L163">            dependency.addEvidence(EvidenceType.PRODUCT, &quot;nuspec&quot;, &quot;description&quot;, np.getDescription(), Confidence.LOW);;</span>
+<span class="fc" id="L164">            dependency.setName(np.getId());</span>
+<span class="fc" id="L165">            dependency.setVersion(np.getVersion());</span>
             try {
-<span class="fc" id="L165">                final PackageURL purl = PackageURLBuilder.aPackageURL().withType(&quot;nuget&quot;).withName(np.getId()).withVersion(np.getVersion()).build();</span>
-<span class="fc" id="L166">                dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
-<span class="nc" id="L167">            } catch (MalformedPackageURLException ex) {</span>
-<span class="nc" id="L168">                LOGGER.debug(&quot;Unable to build package url for nuspec&quot;, ex);</span>
-<span class="nc" id="L169">                final GenericIdentifier gid = new GenericIdentifier(&quot;nuspec:&quot; + np.getId() + &quot;@&quot; + np.getVersion(), Confidence.HIGHEST);</span>
-<span class="nc" id="L170">                dependency.addSoftwareIdentifier(gid);</span>
-<span class="fc" id="L171">            }</span>
-<span class="fc" id="L172">            final String packagePath = String.format(&quot;%s:%s&quot;, np.getId(), np.getVersion());</span>
-<span class="fc" id="L173">            dependency.setPackagePath(packagePath);</span>
-<span class="fc" id="L174">            dependency.setDisplayFileName(packagePath);</span>
-<span class="pc bpc" id="L175" title="3 of 4 branches missed.">            if (np.getLicenseUrl() != null &amp;&amp; !np.getLicenseUrl().isEmpty()) {</span>
-<span class="nc" id="L176">                dependency.setLicense(np.getLicenseUrl());</span>
+<span class="fc" id="L167">                final PackageURL purl = PackageURLBuilder.aPackageURL().withType(&quot;nuget&quot;).withName(np.getId()).withVersion(np.getVersion()).build();</span>
+<span class="fc" id="L168">                dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
+<span class="nc" id="L169">            } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L170">                LOGGER.debug(&quot;Unable to build package url for nuspec&quot;, ex);</span>
+<span class="nc" id="L171">                final GenericIdentifier gid = new GenericIdentifier(&quot;nuspec:&quot; + np.getId() + &quot;@&quot; + np.getVersion(), Confidence.HIGHEST);</span>
+<span class="nc" id="L172">                dependency.addSoftwareIdentifier(gid);</span>
+<span class="fc" id="L173">            }</span>
+<span class="fc" id="L174">            final String packagePath = String.format(&quot;%s:%s&quot;, np.getId(), np.getVersion());</span>
+<span class="fc" id="L175">            dependency.setPackagePath(packagePath);</span>
+<span class="fc" id="L176">            dependency.setDisplayFileName(packagePath);</span>
+<span class="pc bpc" id="L177" title="3 of 4 branches missed.">            if (np.getLicenseUrl() != null &amp;&amp; !np.getLicenseUrl().isEmpty()) {</span>
+<span class="nc" id="L178">                dependency.setLicense(np.getLicenseUrl());</span>
             }
-<span class="pc bpc" id="L178" title="1 of 2 branches missed.">            if (np.getTitle() != null) {</span>
-<span class="fc" id="L179">                dependency.addEvidence(EvidenceType.PRODUCT, &quot;nuspec&quot;, &quot;title&quot;, np.getTitle(), Confidence.MEDIUM);</span>
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">            if (np.getTitle() != null) {</span>
+<span class="fc" id="L181">                dependency.addEvidence(EvidenceType.PRODUCT, &quot;nuspec&quot;, &quot;title&quot;, np.getTitle(), Confidence.MEDIUM);</span>
             }
-<span class="nc" id="L181">        } catch (Throwable e) {</span>
-<span class="nc" id="L182">            throw new AnalysisException(e);</span>
-<span class="fc" id="L183">        }</span>
-<span class="fc" id="L184">    }</span>
+<span class="nc" id="L183">        } catch (Throwable e) {</span>
+<span class="nc" id="L184">            throw new AnalysisException(e);</span>
+<span class="fc" id="L185">        }</span>
+<span class="fc" id="L186">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

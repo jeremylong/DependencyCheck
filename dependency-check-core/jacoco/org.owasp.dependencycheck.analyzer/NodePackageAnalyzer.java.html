@@ -334,7 +334,7 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
             String parentPackage, Engine engine) throws AnalysisException {
 <span class="pc bpc" id="L335" title="1 of 2 branches missed.">        if (json.containsKey(&quot;dependencies&quot;)) {</span>
 <span class="fc" id="L336">            final JsonObject deps = json.getJsonObject(&quot;dependencies&quot;);</span>
-<span class="fc" id="L337">            boolean skipDev = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, false);</span>
+<span class="fc" id="L337">            final boolean skipDev = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, false);</span>
 <span class="fc bfc" id="L338" title="All 2 branches covered.">            for (Map.Entry&lt;String, JsonValue&gt; entry : deps.entrySet()) {</span>
 <span class="fc" id="L339">                final String name = entry.getKey();</span>
                 final String version;

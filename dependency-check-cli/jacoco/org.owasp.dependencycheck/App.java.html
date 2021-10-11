@@ -390,6 +390,7 @@ public class App {
 <span class="nc" id="L390">            engine.doUpdates();</span>
         }
 <span class="nc" id="L392">    }</span>
+
     //CSOFF: MethodLength
     /**
      * Updates the global Settings.
@@ -400,206 +401,210 @@ public class App {
      * file is unable to be loaded.
      */
     protected void populateSettings(CliParser cli) throws InvalidSettingException {
-<span class="fc" id="L403">        final File propertiesFile = cli.getFileArgument(CliParser.ARGUMENT.PROP);</span>
-<span class="fc bfc" id="L404" title="All 2 branches covered.">        if (propertiesFile != null) {</span>
+<span class="fc" id="L404">        final File propertiesFile = cli.getFileArgument(CliParser.ARGUMENT.PROP);</span>
+<span class="fc bfc" id="L405" title="All 2 branches covered.">        if (propertiesFile != null) {</span>
             try {
-<span class="fc" id="L406">                settings.mergeProperties(propertiesFile);</span>
-<span class="nc" id="L407">            } catch (FileNotFoundException ex) {</span>
-<span class="nc" id="L408">                throw new InvalidSettingException(&quot;Unable to find properties file '&quot; + propertiesFile.getPath() + &quot;'&quot;, ex);</span>
-<span class="nc" id="L409">            } catch (IOException ex) {</span>
-<span class="nc" id="L410">                throw new InvalidSettingException(&quot;Error reading properties file '&quot; + propertiesFile.getPath() + &quot;'&quot;, ex);</span>
-<span class="fc" id="L411">            }</span>
+<span class="fc" id="L407">                settings.mergeProperties(propertiesFile);</span>
+<span class="nc" id="L408">            } catch (FileNotFoundException ex) {</span>
+<span class="nc" id="L409">                throw new InvalidSettingException(&quot;Unable to find properties file '&quot; + propertiesFile.getPath() + &quot;'&quot;, ex);</span>
+<span class="nc" id="L410">            } catch (IOException ex) {</span>
+<span class="nc" id="L411">                throw new InvalidSettingException(&quot;Error reading properties file '&quot; + propertiesFile.getPath() + &quot;'&quot;, ex);</span>
+<span class="fc" id="L412">            }</span>
         }
-<span class="fc" id="L413">        final String dataDirectory = cli.getStringArgument(CliParser.ARGUMENT.DATA_DIRECTORY);</span>
-<span class="pc bpc" id="L414" title="1 of 2 branches missed.">        if (dataDirectory != null) {</span>
-<span class="nc" id="L415">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);</span>
-<span class="pc bpc" id="L416" title="1 of 2 branches missed.">        } else if (System.getProperty(&quot;basedir&quot;) != null) {</span>
-<span class="fc" id="L417">            final File dataDir = new File(System.getProperty(&quot;basedir&quot;), &quot;data&quot;);</span>
-<span class="fc" id="L418">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());</span>
-<span class="fc" id="L419">        } else {</span>
-<span class="nc" id="L420">            final File jarPath = new File(App.class</span>
-<span class="nc" id="L421">                    .getProtectionDomain().getCodeSource().getLocation().getPath());</span>
-<span class="nc" id="L422">            final File base = jarPath.getParentFile();</span>
-<span class="nc" id="L423">            final String sub = settings.getString(Settings.KEYS.DATA_DIRECTORY);</span>
-<span class="nc" id="L424">            final File dataDir = new File(base, sub);</span>
-<span class="nc" id="L425">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());</span>
+<span class="fc" id="L414">        final String dataDirectory = cli.getStringArgument(CliParser.ARGUMENT.DATA_DIRECTORY);</span>
+<span class="pc bpc" id="L415" title="1 of 2 branches missed.">        if (dataDirectory != null) {</span>
+<span class="nc" id="L416">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);</span>
+<span class="pc bpc" id="L417" title="1 of 2 branches missed.">        } else if (System.getProperty(&quot;basedir&quot;) != null) {</span>
+<span class="fc" id="L418">            final File dataDir = new File(System.getProperty(&quot;basedir&quot;), &quot;data&quot;);</span>
+<span class="fc" id="L419">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());</span>
+<span class="fc" id="L420">        } else {</span>
+<span class="nc" id="L421">            final File jarPath = new File(App.class</span>
+<span class="nc" id="L422">                    .getProtectionDomain().getCodeSource().getLocation().getPath());</span>
+<span class="nc" id="L423">            final File base = jarPath.getParentFile();</span>
+<span class="nc" id="L424">            final String sub = settings.getString(Settings.KEYS.DATA_DIRECTORY);</span>
+<span class="nc" id="L425">            final File dataDir = new File(base, sub);</span>
+<span class="nc" id="L426">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());</span>
         }
-<span class="fc bfc" id="L427" title="All 2 branches covered.">        final Boolean autoUpdate = cli.hasOption(CliParser.ARGUMENT.DISABLE_AUTO_UPDATE) != null ? false : null;</span>
-<span class="fc" id="L428">        settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);</span>
-<span class="fc" id="L429">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER,</span>
-<span class="fc" id="L430">                cli.getStringArgument(CliParser.ARGUMENT.PROXY_SERVER));</span>
-<span class="fc" id="L431">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PORT,</span>
-<span class="fc" id="L432">                cli.getStringArgument(CliParser.ARGUMENT.PROXY_PORT));</span>
-<span class="fc" id="L433">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME,</span>
-<span class="fc" id="L434">                cli.getStringArgument(CliParser.ARGUMENT.PROXY_USERNAME));</span>
-<span class="fc" id="L435">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD,</span>
-<span class="fc" id="L436">                cli.getStringArgument(CliParser.ARGUMENT.PROXY_PASSWORD, Settings.KEYS.PROXY_PASSWORD));</span>
-<span class="fc" id="L437">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_NON_PROXY_HOSTS,</span>
-<span class="fc" id="L438">                cli.getStringArgument(CliParser.ARGUMENT.NON_PROXY_HOSTS));</span>
-<span class="fc" id="L439">        settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT,</span>
-<span class="fc" id="L440">                cli.getStringArgument(CliParser.ARGUMENT.CONNECTION_TIMEOUT));</span>
-<span class="fc" id="L441">        settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE,</span>
-<span class="fc" id="L442">                cli.getStringArgument(CliParser.ARGUMENT.HINTS_FILE));</span>
-<span class="fc" id="L443">        settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS,</span>
-<span class="fc" id="L444">                cli.getIntegerValue(CliParser.ARGUMENT.CVE_VALID_FOR_HOURS));</span>
-<span class="fc" id="L445">        settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE,</span>
-<span class="fc" id="L446">                cli.getStringArguments(CliParser.ARGUMENT.SUPPRESSION_FILES));</span>
+<span class="fc bfc" id="L428" title="All 2 branches covered.">        final Boolean autoUpdate = cli.hasOption(CliParser.ARGUMENT.DISABLE_AUTO_UPDATE) != null ? false : null;</span>
+<span class="fc" id="L429">        settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);</span>
+<span class="fc" id="L430">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER,</span>
+<span class="fc" id="L431">                cli.getStringArgument(CliParser.ARGUMENT.PROXY_SERVER));</span>
+<span class="fc" id="L432">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PORT,</span>
+<span class="fc" id="L433">                cli.getStringArgument(CliParser.ARGUMENT.PROXY_PORT));</span>
+<span class="fc" id="L434">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME,</span>
+<span class="fc" id="L435">                cli.getStringArgument(CliParser.ARGUMENT.PROXY_USERNAME));</span>
+<span class="fc" id="L436">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD,</span>
+<span class="fc" id="L437">                cli.getStringArgument(CliParser.ARGUMENT.PROXY_PASSWORD, Settings.KEYS.PROXY_PASSWORD));</span>
+<span class="fc" id="L438">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_NON_PROXY_HOSTS,</span>
+<span class="fc" id="L439">                cli.getStringArgument(CliParser.ARGUMENT.NON_PROXY_HOSTS));</span>
+<span class="fc" id="L440">        settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT,</span>
+<span class="fc" id="L441">                cli.getStringArgument(CliParser.ARGUMENT.CONNECTION_TIMEOUT));</span>
+<span class="fc" id="L442">        settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE,</span>
+<span class="fc" id="L443">                cli.getStringArgument(CliParser.ARGUMENT.HINTS_FILE));</span>
+<span class="fc" id="L444">        settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS,</span>
+<span class="fc" id="L445">                cli.getIntegerValue(CliParser.ARGUMENT.CVE_VALID_FOR_HOURS));</span>
+<span class="fc" id="L446">        settings.setIntIfNotNull(Settings.KEYS.CVE_START_YEAR,</span>
+<span class="fc" id="L447">                cli.getIntegerValue(CliParser.ARGUMENT.CVE_START_YEAR));</span>
+<span class="fc" id="L448">        settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE,</span>
+<span class="fc" id="L449">                cli.getStringArguments(CliParser.ARGUMENT.SUPPRESSION_FILES));</span>
         //File Type Analyzer Settings
-<span class="fc" id="L448">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED,</span>
-<span class="fc" id="L449">                cli.hasOption(CliParser.ARGUMENT.EXPERIMENTAL));</span>
-<span class="fc" id="L450">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIRED_ENABLED,</span>
-<span class="fc" id="L451">                cli.hasOption(CliParser.ARGUMENT.RETIRED));</span>
-<span class="fc" id="L452">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH,</span>
-<span class="fc" id="L453">                cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_GO));</span>
-<span class="fc" id="L454">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_YARN_PATH,</span>
-<span class="fc" id="L455">                cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_YARN));</span>
-<span class="fc" id="L456">        settings.setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT,</span>
-<span class="fc" id="L457">                cli.hasOption(CliParser.ARGUMENT.PRETTY_PRINT));</span>
-<span class="fc" id="L458">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL,</span>
-<span class="fc" id="L459">                cli.getStringArgument(CliParser.ARGUMENT.RETIREJS_URL));</span>
-<span class="fc" id="L460">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE,</span>
-<span class="fc" id="L461">                cli.hasOption(CliParser.ARGUMENT.RETIRE_JS_FORCEUPDATE));</span>
-<span class="fc" id="L462">        settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED,</span>
-<span class="fc bfc" id="L463" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_JAR, Settings.KEYS.ANALYZER_JAR_ENABLED));</span>
-<span class="fc" id="L464">        settings.setBoolean(Settings.KEYS.ANALYZER_MSBUILD_PROJECT_ENABLED,</span>
-<span class="pc bpc" id="L465" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_MSBUILD, Settings.KEYS.ANALYZER_MSBUILD_PROJECT_ENABLED));</span>
-<span class="fc" id="L466">        settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED,</span>
-<span class="fc bfc" id="L467" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_ARCHIVE, Settings.KEYS.ANALYZER_ARCHIVE_ENABLED));</span>
-<span class="fc" id="L468">        settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED,</span>
-<span class="fc bfc" id="L469" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PY_DIST, Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED));</span>
-<span class="fc" id="L470">        settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED,</span>
-<span class="fc bfc" id="L471" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PY_PKG, Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED));</span>
-<span class="fc" id="L472">        settings.setBoolean(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED,</span>
-<span class="fc bfc" id="L473" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_AUTOCONF, Settings.KEYS.ANALYZER_AUTOCONF_ENABLED));</span>
-<span class="fc" id="L474">        settings.setBoolean(Settings.KEYS.ANALYZER_PIP_ENABLED,</span>
-<span class="fc bfc" id="L475" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PIP, Settings.KEYS.ANALYZER_PIP_ENABLED));</span>
-<span class="fc" id="L476">        settings.setBoolean(Settings.KEYS.ANALYZER_PIPFILE_ENABLED,</span>
-<span class="fc bfc" id="L477" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PIPFILE, Settings.KEYS.ANALYZER_PIPFILE_ENABLED));</span>
-<span class="fc" id="L478">        settings.setBoolean(Settings.KEYS.ANALYZER_CMAKE_ENABLED,</span>
-<span class="fc bfc" id="L479" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CMAKE, Settings.KEYS.ANALYZER_CMAKE_ENABLED));</span>
-<span class="fc" id="L480">        settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED,</span>
-<span class="fc bfc" id="L481" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NUSPEC, Settings.KEYS.ANALYZER_NUSPEC_ENABLED));</span>
-<span class="fc" id="L482">        settings.setBoolean(Settings.KEYS.ANALYZER_NUGETCONF_ENABLED,</span>
-<span class="fc bfc" id="L483" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NUGETCONF, Settings.KEYS.ANALYZER_NUGETCONF_ENABLED));</span>
-<span class="fc" id="L484">        settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED,</span>
-<span class="fc bfc" id="L485" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_ASSEMBLY, Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED));</span>
-<span class="fc" id="L486">        settings.setBoolean(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED,</span>
-<span class="pc bpc" id="L487" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_BUNDLE_AUDIT, Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED));</span>
-<span class="fc" id="L488">        settings.setBoolean(Settings.KEYS.ANALYZER_FILE_NAME_ENABLED,</span>
-<span class="fc bfc" id="L489" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_FILENAME, Settings.KEYS.ANALYZER_FILE_NAME_ENABLED));</span>
-<span class="fc" id="L490">        settings.setBoolean(Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED,</span>
-<span class="pc bpc" id="L491" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_MIX_AUDIT, Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED));</span>
-<span class="fc" id="L492">        settings.setBoolean(Settings.KEYS.ANALYZER_OPENSSL_ENABLED,</span>
-<span class="fc bfc" id="L493" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_OPENSSL, Settings.KEYS.ANALYZER_OPENSSL_ENABLED));</span>
-<span class="fc" id="L494">        settings.setBoolean(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED,</span>
-<span class="fc bfc" id="L495" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_COMPOSER, Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED));</span>
-<span class="fc" id="L496">        settings.setBoolean(Settings.KEYS.ANALYZER_CPANFILE_ENABLED,</span>
-<span class="pc bpc" id="L497" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CPAN, Settings.KEYS.ANALYZER_CPANFILE_ENABLED));</span>
-<span class="fc" id="L498">        settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED,</span>
-<span class="pc bpc" id="L499" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_GO_DEP, Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED));</span>
-<span class="fc" id="L500">        settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED,</span>
-<span class="pc bpc" id="L501" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_GOLANG_MOD, Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED));</span>
-<span class="fc" id="L502">        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED,</span>
-<span class="fc bfc" id="L503" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NODE_JS, Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED));</span>
+<span class="fc" id="L451">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED,</span>
+<span class="fc" id="L452">                cli.hasOption(CliParser.ARGUMENT.EXPERIMENTAL));</span>
+<span class="fc" id="L453">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIRED_ENABLED,</span>
+<span class="fc" id="L454">                cli.hasOption(CliParser.ARGUMENT.RETIRED));</span>
+<span class="fc" id="L455">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH,</span>
+<span class="fc" id="L456">                cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_GO));</span>
+<span class="fc" id="L457">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_YARN_PATH,</span>
+<span class="fc" id="L458">                cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_YARN));</span>
+<span class="fc" id="L459">        settings.setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT,</span>
+<span class="fc" id="L460">                cli.hasOption(CliParser.ARGUMENT.PRETTY_PRINT));</span>
+<span class="fc" id="L461">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL,</span>
+<span class="fc" id="L462">                cli.getStringArgument(CliParser.ARGUMENT.RETIREJS_URL));</span>
+<span class="fc" id="L463">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE,</span>
+<span class="fc" id="L464">                cli.hasOption(CliParser.ARGUMENT.RETIRE_JS_FORCEUPDATE));</span>
+<span class="fc" id="L465">        settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED,</span>
+<span class="fc bfc" id="L466" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_JAR, Settings.KEYS.ANALYZER_JAR_ENABLED));</span>
+<span class="fc" id="L467">        settings.setBoolean(Settings.KEYS.ANALYZER_MSBUILD_PROJECT_ENABLED,</span>
+<span class="pc bpc" id="L468" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_MSBUILD, Settings.KEYS.ANALYZER_MSBUILD_PROJECT_ENABLED));</span>
+<span class="fc" id="L469">        settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED,</span>
+<span class="fc bfc" id="L470" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_ARCHIVE, Settings.KEYS.ANALYZER_ARCHIVE_ENABLED));</span>
+<span class="fc" id="L471">        settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED,</span>
+<span class="fc bfc" id="L472" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PY_DIST, Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED));</span>
+<span class="fc" id="L473">        settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED,</span>
+<span class="fc bfc" id="L474" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PY_PKG, Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED));</span>
+<span class="fc" id="L475">        settings.setBoolean(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED,</span>
+<span class="fc bfc" id="L476" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_AUTOCONF, Settings.KEYS.ANALYZER_AUTOCONF_ENABLED));</span>
+<span class="fc" id="L477">        settings.setBoolean(Settings.KEYS.ANALYZER_PIP_ENABLED,</span>
+<span class="fc bfc" id="L478" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PIP, Settings.KEYS.ANALYZER_PIP_ENABLED));</span>
+<span class="fc" id="L479">        settings.setBoolean(Settings.KEYS.ANALYZER_PIPFILE_ENABLED,</span>
+<span class="fc bfc" id="L480" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PIPFILE, Settings.KEYS.ANALYZER_PIPFILE_ENABLED));</span>
+<span class="fc" id="L481">        settings.setBoolean(Settings.KEYS.ANALYZER_CMAKE_ENABLED,</span>
+<span class="fc bfc" id="L482" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CMAKE, Settings.KEYS.ANALYZER_CMAKE_ENABLED));</span>
+<span class="fc" id="L483">        settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED,</span>
+<span class="fc bfc" id="L484" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NUSPEC, Settings.KEYS.ANALYZER_NUSPEC_ENABLED));</span>
+<span class="fc" id="L485">        settings.setBoolean(Settings.KEYS.ANALYZER_NUGETCONF_ENABLED,</span>
+<span class="fc bfc" id="L486" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NUGETCONF, Settings.KEYS.ANALYZER_NUGETCONF_ENABLED));</span>
+<span class="fc" id="L487">        settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED,</span>
+<span class="fc bfc" id="L488" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_ASSEMBLY, Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED));</span>
+<span class="fc" id="L489">        settings.setBoolean(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED,</span>
+<span class="pc bpc" id="L490" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_BUNDLE_AUDIT, Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED));</span>
+<span class="fc" id="L491">        settings.setBoolean(Settings.KEYS.ANALYZER_FILE_NAME_ENABLED,</span>
+<span class="fc bfc" id="L492" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_FILENAME, Settings.KEYS.ANALYZER_FILE_NAME_ENABLED));</span>
+<span class="fc" id="L493">        settings.setBoolean(Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED,</span>
+<span class="pc bpc" id="L494" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_MIX_AUDIT, Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED));</span>
+<span class="fc" id="L495">        settings.setBoolean(Settings.KEYS.ANALYZER_OPENSSL_ENABLED,</span>
+<span class="fc bfc" id="L496" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_OPENSSL, Settings.KEYS.ANALYZER_OPENSSL_ENABLED));</span>
+<span class="fc" id="L497">        settings.setBoolean(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED,</span>
+<span class="fc bfc" id="L498" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_COMPOSER, Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED));</span>
+<span class="fc" id="L499">        settings.setBoolean(Settings.KEYS.ANALYZER_CPANFILE_ENABLED,</span>
+<span class="pc bpc" id="L500" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CPAN, Settings.KEYS.ANALYZER_CPANFILE_ENABLED));</span>
+<span class="fc" id="L501">        settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED,</span>
+<span class="pc bpc" id="L502" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_GO_DEP, Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED));</span>
+<span class="fc" id="L503">        settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED,</span>
+<span class="pc bpc" id="L504" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_GOLANG_MOD, Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED));</span>
+<span class="fc" id="L505">        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED,</span>
+<span class="fc bfc" id="L506" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NODE_JS, Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED));</span>
         //TODO next major - remove the deprecated check in isNodeAuditDisabled
-<span class="fc" id="L505">        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED,</span>
-<span class="pc bpc" id="L506" title="1 of 2 branches missed.">                !cli.isNodeAuditDisabled());</span>
-<span class="fc" id="L507">        settings.setBoolean(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED,</span>
-<span class="pc bpc" id="L508" title="1 of 2 branches missed.">                !cli.isYarnAuditDisabled());</span>
-<span class="fc" id="L509">        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE,</span>
-<span class="pc bpc" id="L510" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NODE_AUDIT_CACHE, Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE));</span>
-<span class="fc" id="L511">        settings.setBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED,</span>
-<span class="pc bpc" id="L512" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_RETIRE_JS, Settings.KEYS.ANALYZER_RETIREJS_ENABLED));</span>
-<span class="fc" id="L513">        settings.setBoolean(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED,</span>
-<span class="fc bfc" id="L514" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_SWIFT, Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED));</span>
-<span class="fc" id="L515">        settings.setBoolean(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_RESOLVED_ENABLED,</span>
-<span class="pc bpc" id="L516" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_SWIFT_RESOLVED, Settings.KEYS.ANALYZER_SWIFT_PACKAGE_RESOLVED_ENABLED));</span>
-<span class="fc" id="L517">        settings.setBoolean(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED,</span>
-<span class="fc bfc" id="L518" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_COCOAPODS, Settings.KEYS.ANALYZER_COCOAPODS_ENABLED));</span>
-<span class="fc" id="L519">        settings.setBoolean(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED,</span>
-<span class="fc bfc" id="L520" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_RUBYGEMS, Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED));</span>
-<span class="fc" id="L521">        settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED,</span>
-<span class="fc bfc" id="L522" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CENTRAL, Settings.KEYS.ANALYZER_CENTRAL_ENABLED));</span>
-<span class="fc" id="L523">        settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE,</span>
-<span class="pc bpc" id="L524" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CENTRAL_CACHE, Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE));</span>
-<span class="fc" id="L525">        settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED,</span>
-<span class="pc bpc" id="L526" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_OSSINDEX, Settings.KEYS.ANALYZER_OSSINDEX_ENABLED));</span>
-<span class="fc" id="L527">        settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE,</span>
-<span class="pc bpc" id="L528" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_OSSINDEX_CACHE, Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE));</span>
+<span class="fc" id="L508">        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED,</span>
+<span class="pc bpc" id="L509" title="1 of 2 branches missed.">                !cli.isNodeAuditDisabled());</span>
+<span class="fc" id="L510">        settings.setBoolean(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED,</span>
+<span class="pc bpc" id="L511" title="1 of 2 branches missed.">                !cli.isYarnAuditDisabled());</span>
+<span class="fc" id="L512">        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE,</span>
+<span class="pc bpc" id="L513" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NODE_AUDIT_CACHE, Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE));</span>
+<span class="fc" id="L514">        settings.setBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED,</span>
+<span class="pc bpc" id="L515" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_RETIRE_JS, Settings.KEYS.ANALYZER_RETIREJS_ENABLED));</span>
+<span class="fc" id="L516">        settings.setBoolean(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED,</span>
+<span class="fc bfc" id="L517" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_SWIFT, Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED));</span>
+<span class="fc" id="L518">        settings.setBoolean(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_RESOLVED_ENABLED,</span>
+<span class="pc bpc" id="L519" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_SWIFT_RESOLVED, Settings.KEYS.ANALYZER_SWIFT_PACKAGE_RESOLVED_ENABLED));</span>
+<span class="fc" id="L520">        settings.setBoolean(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED,</span>
+<span class="fc bfc" id="L521" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_COCOAPODS, Settings.KEYS.ANALYZER_COCOAPODS_ENABLED));</span>
+<span class="fc" id="L522">        settings.setBoolean(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED,</span>
+<span class="fc bfc" id="L523" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_RUBYGEMS, Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED));</span>
+<span class="fc" id="L524">        settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED,</span>
+<span class="fc bfc" id="L525" title="All 2 branches covered.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CENTRAL, Settings.KEYS.ANALYZER_CENTRAL_ENABLED));</span>
+<span class="fc" id="L526">        settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE,</span>
+<span class="pc bpc" id="L527" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CENTRAL_CACHE, Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE));</span>
+<span class="fc" id="L528">        settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED,</span>
+<span class="pc bpc" id="L529" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_OSSINDEX, Settings.KEYS.ANALYZER_OSSINDEX_ENABLED));</span>
+<span class="fc" id="L530">        settings.setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE,</span>
+<span class="pc bpc" id="L531" title="1 of 2 branches missed.">                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_OSSINDEX_CACHE, Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE));</span>
 
-<span class="fc" id="L530">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV,</span>
-<span class="fc" id="L531">                cli.hasOption(CliParser.ARGUMENT.NODE_PACKAGE_SKIP_DEV_DEPENDENCIES));</span>
-<span class="fc" id="L532">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV,</span>
-<span class="fc" id="L533">                cli.hasOption(CliParser.ARGUMENT.DISABLE_NODE_AUDIT_SKIPDEV));</span>
-<span class="fc" id="L534">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED,</span>
-<span class="fc" id="L535">                cli.hasOption(CliParser.ARGUMENT.ENABLE_NEXUS));</span>
-<span class="fc" id="L536">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_USER,</span>
-<span class="fc" id="L537">                cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_USERNAME));</span>
-<span class="fc" id="L538">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD,</span>
-<span class="fc" id="L539">                cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_PASSWORD, Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD));</span>
-<span class="fc" id="L540">        settings.setFloat(Settings.KEYS.JUNIT_FAIL_ON_CVSS,</span>
-<span class="fc" id="L541">                cli.getFloatArgument(CliParser.ARGUMENT.FAIL_JUNIT_ON_CVSS, 0));</span>
-<span class="fc" id="L542">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED,</span>
-<span class="fc" id="L543">                cli.hasOption(CliParser.ARGUMENT.ARTIFACTORY_ENABLED));</span>
-<span class="fc" id="L544">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_PARALLEL_ANALYSIS,</span>
-<span class="fc" id="L545">                cli.getBooleanArgument(CliParser.ARGUMENT.ARTIFACTORY_PARALLEL_ANALYSIS));</span>
-<span class="fc" id="L546">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_USES_PROXY,</span>
-<span class="fc" id="L547">                cli.getBooleanArgument(CliParser.ARGUMENT.ARTIFACTORY_USES_PROXY));</span>
-<span class="fc" id="L548">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_URL,</span>
-<span class="fc" id="L549">                cli.getStringArgument(CliParser.ARGUMENT.ARTIFACTORY_URL));</span>
-<span class="fc" id="L550">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME,</span>
-<span class="fc" id="L551">                cli.getStringArgument(CliParser.ARGUMENT.ARTIFACTORY_USERNAME));</span>
-<span class="fc" id="L552">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN,</span>
-<span class="fc" id="L553">                cli.getStringArgument(CliParser.ARGUMENT.ARTIFACTORY_API_TOKEN));</span>
-<span class="fc" id="L554">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_BEARER_TOKEN,</span>
-<span class="fc" id="L555">                cli.getStringArgument(CliParser.ARGUMENT.ARTIFACTORY_BEARER_TOKEN));</span>
-<span class="fc" id="L556">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_MIX_AUDIT_PATH,</span>
-<span class="fc" id="L557">                cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_MIX_AUDIT));</span>
-<span class="fc" id="L558">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH,</span>
-<span class="fc" id="L559">                cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_BUNDLE_AUDIT));</span>
-<span class="fc" id="L560">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_WORKING_DIRECTORY,</span>
-<span class="fc" id="L561">                cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_BUNDLE_AUDIT_WORKING_DIRECTORY));</span>
-<span class="fc" id="L562">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL,</span>
-<span class="fc" id="L563">                cli.getStringArgument(CliParser.ARGUMENT.NEXUS_URL));</span>
-<span class="fc" id="L564">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_USER,</span>
-<span class="fc" id="L565">                cli.getStringArgument(CliParser.ARGUMENT.NEXUS_USERNAME));</span>
-<span class="fc" id="L566">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_PASSWORD,</span>
-<span class="fc" id="L567">                cli.getStringArgument(CliParser.ARGUMENT.NEXUS_PASSWORD, Settings.KEYS.ANALYZER_NEXUS_PASSWORD));</span>
+<span class="fc" id="L533">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV,</span>
+<span class="fc" id="L534">                cli.hasOption(CliParser.ARGUMENT.NODE_PACKAGE_SKIP_DEV_DEPENDENCIES));</span>
+<span class="fc" id="L535">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV,</span>
+<span class="fc" id="L536">                cli.hasOption(CliParser.ARGUMENT.DISABLE_NODE_AUDIT_SKIPDEV));</span>
+<span class="fc" id="L537">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED,</span>
+<span class="fc" id="L538">                cli.hasOption(CliParser.ARGUMENT.ENABLE_NEXUS));</span>
+<span class="fc" id="L539">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_USER,</span>
+<span class="fc" id="L540">                cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_USERNAME));</span>
+<span class="fc" id="L541">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD,</span>
+<span class="fc" id="L542">                cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_PASSWORD, Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD));</span>
+<span class="fc" id="L543">        settings.setFloat(Settings.KEYS.JUNIT_FAIL_ON_CVSS,</span>
+<span class="fc" id="L544">                cli.getFloatArgument(CliParser.ARGUMENT.FAIL_JUNIT_ON_CVSS, 0));</span>
+<span class="fc" id="L545">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED,</span>
+<span class="fc" id="L546">                cli.hasOption(CliParser.ARGUMENT.ARTIFACTORY_ENABLED));</span>
+<span class="fc" id="L547">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_PARALLEL_ANALYSIS,</span>
+<span class="fc" id="L548">                cli.getBooleanArgument(CliParser.ARGUMENT.ARTIFACTORY_PARALLEL_ANALYSIS));</span>
+<span class="fc" id="L549">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_USES_PROXY,</span>
+<span class="fc" id="L550">                cli.getBooleanArgument(CliParser.ARGUMENT.ARTIFACTORY_USES_PROXY));</span>
+<span class="fc" id="L551">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_URL,</span>
+<span class="fc" id="L552">                cli.getStringArgument(CliParser.ARGUMENT.ARTIFACTORY_URL));</span>
+<span class="fc" id="L553">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME,</span>
+<span class="fc" id="L554">                cli.getStringArgument(CliParser.ARGUMENT.ARTIFACTORY_USERNAME));</span>
+<span class="fc" id="L555">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN,</span>
+<span class="fc" id="L556">                cli.getStringArgument(CliParser.ARGUMENT.ARTIFACTORY_API_TOKEN));</span>
+<span class="fc" id="L557">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ARTIFACTORY_BEARER_TOKEN,</span>
+<span class="fc" id="L558">                cli.getStringArgument(CliParser.ARGUMENT.ARTIFACTORY_BEARER_TOKEN));</span>
+<span class="fc" id="L559">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_MIX_AUDIT_PATH,</span>
+<span class="fc" id="L560">                cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_MIX_AUDIT));</span>
+<span class="fc" id="L561">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH,</span>
+<span class="fc" id="L562">                cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_BUNDLE_AUDIT));</span>
+<span class="fc" id="L563">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_WORKING_DIRECTORY,</span>
+<span class="fc" id="L564">                cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_BUNDLE_AUDIT_WORKING_DIRECTORY));</span>
+<span class="fc" id="L565">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL,</span>
+<span class="fc" id="L566">                cli.getStringArgument(CliParser.ARGUMENT.NEXUS_URL));</span>
+<span class="fc" id="L567">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_USER,</span>
+<span class="fc" id="L568">                cli.getStringArgument(CliParser.ARGUMENT.NEXUS_USERNAME));</span>
+<span class="fc" id="L569">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_PASSWORD,</span>
+<span class="fc" id="L570">                cli.getStringArgument(CliParser.ARGUMENT.NEXUS_PASSWORD, Settings.KEYS.ANALYZER_NEXUS_PASSWORD));</span>
         //TODO deprecate this in favor of non-proxy host
-<span class="fc" id="L569">        final boolean nexusUsesProxy = cli.isNexusUsesProxy();</span>
-<span class="fc" id="L570">        settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);</span>
-<span class="fc" id="L571">        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME,</span>
-<span class="fc" id="L572">                cli.getStringArgument(CliParser.ARGUMENT.DB_DRIVER));</span>
-<span class="fc" id="L573">        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH,</span>
-<span class="fc" id="L574">                cli.getStringArgument(CliParser.ARGUMENT.DB_DRIVER_PATH));</span>
-<span class="fc" id="L575">        settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING,</span>
-<span class="fc" id="L576">                cli.getStringArgument(CliParser.ARGUMENT.CONNECTION_STRING));</span>
-<span class="fc" id="L577">        settings.setStringIfNotEmpty(Settings.KEYS.DB_USER,</span>
-<span class="fc" id="L578">                cli.getStringArgument(CliParser.ARGUMENT.DB_NAME));</span>
-<span class="fc" id="L579">        settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD,</span>
-<span class="fc" id="L580">                cli.getStringArgument(CliParser.ARGUMENT.DB_PASSWORD, Settings.KEYS.DB_PASSWORD));</span>
-<span class="fc" id="L581">        settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS,</span>
-<span class="fc" id="L582">                cli.getStringArgument(CliParser.ARGUMENT.ADDITIONAL_ZIP_EXTENSIONS));</span>
-<span class="fc" id="L583">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH,</span>
-<span class="fc" id="L584">                cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_CORE));</span>
-<span class="fc" id="L585">        settings.setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON,</span>
-<span class="fc" id="L586">                cli.getStringArgument(CliParser.ARGUMENT.CVE_BASE_URL));</span>
+<span class="fc" id="L572">        final boolean nexusUsesProxy = cli.isNexusUsesProxy();</span>
+<span class="fc" id="L573">        settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);</span>
+<span class="fc" id="L574">        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME,</span>
+<span class="fc" id="L575">                cli.getStringArgument(CliParser.ARGUMENT.DB_DRIVER));</span>
+<span class="fc" id="L576">        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH,</span>
+<span class="fc" id="L577">                cli.getStringArgument(CliParser.ARGUMENT.DB_DRIVER_PATH));</span>
+<span class="fc" id="L578">        settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING,</span>
+<span class="fc" id="L579">                cli.getStringArgument(CliParser.ARGUMENT.CONNECTION_STRING));</span>
+<span class="fc" id="L580">        settings.setStringIfNotEmpty(Settings.KEYS.DB_USER,</span>
+<span class="fc" id="L581">                cli.getStringArgument(CliParser.ARGUMENT.DB_NAME));</span>
+<span class="fc" id="L582">        settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD,</span>
+<span class="fc" id="L583">                cli.getStringArgument(CliParser.ARGUMENT.DB_PASSWORD, Settings.KEYS.DB_PASSWORD));</span>
+<span class="fc" id="L584">        settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS,</span>
+<span class="fc" id="L585">                cli.getStringArgument(CliParser.ARGUMENT.ADDITIONAL_ZIP_EXTENSIONS));</span>
+<span class="fc" id="L586">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH,</span>
+<span class="fc" id="L587">                cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_CORE));</span>
+<span class="fc" id="L588">        settings.setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON,</span>
+<span class="fc" id="L589">                cli.getStringArgument(CliParser.ARGUMENT.CVE_BASE_URL));</span>
+<span class="fc" id="L590">        settings.setStringIfNotEmpty(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME,</span>
+<span class="fc" id="L591">                cli.getStringArgument(CliParser.ARGUMENT.CVE_DOWNLOAD_WAIT_TIME));</span>
 
-<span class="fc" id="L588">        String cveModifiedJson = Optional.ofNullable(cli.getStringArgument(CliParser.ARGUMENT.CVE_MODIFIED_URL))</span>
-<span class="fc bfc" id="L589" title="All 2 branches covered.">            .filter(arg -&gt; !arg.isEmpty())</span>
-<span class="fc" id="L590">            .orElseGet(() -&gt; getDefaultCveUrlModified(cli));</span>
-<span class="fc" id="L591">        settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON,</span>
+<span class="fc" id="L593">        final String cveModifiedJson = Optional.ofNullable(cli.getStringArgument(CliParser.ARGUMENT.CVE_MODIFIED_URL))</span>
+<span class="fc bfc" id="L594" title="All 2 branches covered.">                .filter(arg -&gt; !arg.isEmpty())</span>
+<span class="fc" id="L595">                .orElseGet(() -&gt; getDefaultCveUrlModified(cli));</span>
+<span class="fc" id="L596">        settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON,</span>
                 cveModifiedJson);
 
-<span class="fc" id="L594">        settings.setStringIfNotEmpty(Settings.KEYS.CVE_USER,</span>
-<span class="fc" id="L595">                cli.getStringArgument(CliParser.ARGUMENT.CVE_USER));</span>
-<span class="fc" id="L596">        settings.setStringIfNotEmpty(Settings.KEYS.CVE_PASSWORD,</span>
-<span class="fc" id="L597">                cli.getStringArgument(CliParser.ARGUMENT.CVE_PASSWORD, Settings.KEYS.CVE_PASSWORD));</span>
-<span class="fc" id="L598">    }</span>
+<span class="fc" id="L599">        settings.setStringIfNotEmpty(Settings.KEYS.CVE_USER,</span>
+<span class="fc" id="L600">                cli.getStringArgument(CliParser.ARGUMENT.CVE_USER));</span>
+<span class="fc" id="L601">        settings.setStringIfNotEmpty(Settings.KEYS.CVE_PASSWORD,</span>
+<span class="fc" id="L602">                cli.getStringArgument(CliParser.ARGUMENT.CVE_PASSWORD, Settings.KEYS.CVE_PASSWORD));</span>
+<span class="fc" id="L603">    }</span>
 
     private String getDefaultCveUrlModified(CliParser cli) {
-<span class="fc" id="L601">      return CveUrlParser.newInstance(settings)</span>
-<span class="fc" id="L602">          .getDefaultCveUrlModified(cli.getStringArgument(CliParser.ARGUMENT.CVE_BASE_URL));</span>
+<span class="fc" id="L606">        return CveUrlParser.newInstance(settings)</span>
+<span class="fc" id="L607">                .getDefaultCveUrlModified(cli.getStringArgument(CliParser.ARGUMENT.CVE_BASE_URL));</span>
     }
 
     //CSON: MethodLength
@@ -609,35 +614,35 @@ public class App {
      * @param verboseLog the path to the verbose log file
      */
     private void prepareLogger(String verboseLog) {
-<span class="nc" id="L612">        final StaticLoggerBinder loggerBinder = StaticLoggerBinder.getSingleton();</span>
-<span class="nc" id="L613">        final LoggerContext context = (LoggerContext) loggerBinder.getLoggerFactory();</span>
+<span class="nc" id="L617">        final StaticLoggerBinder loggerBinder = StaticLoggerBinder.getSingleton();</span>
+<span class="nc" id="L618">        final LoggerContext context = (LoggerContext) loggerBinder.getLoggerFactory();</span>
 
-<span class="nc" id="L615">        final PatternLayoutEncoder encoder = new PatternLayoutEncoder();</span>
-<span class="nc" id="L616">        encoder.setPattern(&quot;%d %C:%L%n%-5level - %msg%n&quot;);</span>
-<span class="nc" id="L617">        encoder.setContext(context);</span>
-<span class="nc" id="L618">        encoder.start();</span>
-<span class="nc" id="L619">        final FileAppender&lt;ILoggingEvent&gt; fa = new FileAppender&lt;&gt;();</span>
-<span class="nc" id="L620">        fa.setAppend(true);</span>
-<span class="nc" id="L621">        fa.setEncoder(encoder);</span>
-<span class="nc" id="L622">        fa.setContext(context);</span>
-<span class="nc" id="L623">        fa.setFile(verboseLog);</span>
-<span class="nc" id="L624">        final File f = new File(verboseLog);</span>
-<span class="nc" id="L625">        String name = f.getName();</span>
-<span class="nc" id="L626">        final int i = name.lastIndexOf('.');</span>
-<span class="nc bnc" id="L627" title="All 2 branches missed.">        if (i &gt; 1) {</span>
-<span class="nc" id="L628">            name = name.substring(0, i);</span>
+<span class="nc" id="L620">        final PatternLayoutEncoder encoder = new PatternLayoutEncoder();</span>
+<span class="nc" id="L621">        encoder.setPattern(&quot;%d %C:%L%n%-5level - %msg%n&quot;);</span>
+<span class="nc" id="L622">        encoder.setContext(context);</span>
+<span class="nc" id="L623">        encoder.start();</span>
+<span class="nc" id="L624">        final FileAppender&lt;ILoggingEvent&gt; fa = new FileAppender&lt;&gt;();</span>
+<span class="nc" id="L625">        fa.setAppend(true);</span>
+<span class="nc" id="L626">        fa.setEncoder(encoder);</span>
+<span class="nc" id="L627">        fa.setContext(context);</span>
+<span class="nc" id="L628">        fa.setFile(verboseLog);</span>
+<span class="nc" id="L629">        final File f = new File(verboseLog);</span>
+<span class="nc" id="L630">        String name = f.getName();</span>
+<span class="nc" id="L631">        final int i = name.lastIndexOf('.');</span>
+<span class="nc bnc" id="L632" title="All 2 branches missed.">        if (i &gt; 1) {</span>
+<span class="nc" id="L633">            name = name.substring(0, i);</span>
         }
-<span class="nc" id="L630">        fa.setName(name);</span>
-<span class="nc" id="L631">        fa.start();</span>
-<span class="nc" id="L632">        final ch.qos.logback.classic.Logger rootLogger = context.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);</span>
-<span class="nc" id="L633">        rootLogger.setLevel(Level.DEBUG);</span>
-<span class="nc" id="L634">        final ThresholdFilter filter = new ThresholdFilter();</span>
-<span class="nc" id="L635">        filter.setLevel(LogLevel.INFO.getValue());</span>
-<span class="nc" id="L636">        filter.setContext(context);</span>
-<span class="nc" id="L637">        filter.start();</span>
-<span class="nc" id="L638">        rootLogger.iteratorForAppenders().forEachRemaining(action -&gt; action.addFilter(filter));</span>
-<span class="nc" id="L639">        rootLogger.addAppender(fa);</span>
-<span class="nc" id="L640">    }</span>
+<span class="nc" id="L635">        fa.setName(name);</span>
+<span class="nc" id="L636">        fa.start();</span>
+<span class="nc" id="L637">        final ch.qos.logback.classic.Logger rootLogger = context.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);</span>
+<span class="nc" id="L638">        rootLogger.setLevel(Level.DEBUG);</span>
+<span class="nc" id="L639">        final ThresholdFilter filter = new ThresholdFilter();</span>
+<span class="nc" id="L640">        filter.setLevel(LogLevel.INFO.getValue());</span>
+<span class="nc" id="L641">        filter.setContext(context);</span>
+<span class="nc" id="L642">        filter.start();</span>
+<span class="nc" id="L643">        rootLogger.iteratorForAppenders().forEachRemaining(action -&gt; action.addFilter(filter));</span>
+<span class="nc" id="L644">        rootLogger.addAppender(fa);</span>
+<span class="nc" id="L645">    }</span>
 
     /**
      * Takes a path and resolves it to be a canonical &amp;amp; absolute path. The
@@ -650,32 +655,32 @@ public class App {
      */
     protected String ensureCanonicalPath(String path) {
         final String basePath;
-<span class="fc" id="L653">        String wildCards = null;</span>
-<span class="fc" id="L654">        final String file = path.replace('\\', '/');</span>
-<span class="pc bpc" id="L655" title="1 of 4 branches missed.">        if (file.contains(&quot;*&quot;) || file.contains(&quot;?&quot;)) {</span>
+<span class="fc" id="L658">        String wildCards = null;</span>
+<span class="fc" id="L659">        final String file = path.replace('\\', '/');</span>
+<span class="pc bpc" id="L660" title="1 of 4 branches missed.">        if (file.contains(&quot;*&quot;) || file.contains(&quot;?&quot;)) {</span>
 
-<span class="fc" id="L657">            int pos = getLastFileSeparator(file);</span>
-<span class="pc bpc" id="L658" title="1 of 2 branches missed.">            if (pos &lt; 0) {</span>
-<span class="nc" id="L659">                return file;</span>
+<span class="fc" id="L662">            int pos = getLastFileSeparator(file);</span>
+<span class="pc bpc" id="L663" title="1 of 2 branches missed.">            if (pos &lt; 0) {</span>
+<span class="nc" id="L664">                return file;</span>
             }
-<span class="fc" id="L661">            pos += 1;</span>
-<span class="fc" id="L662">            basePath = file.substring(0, pos);</span>
-<span class="fc" id="L663">            wildCards = file.substring(pos);</span>
-<span class="fc" id="L664">        } else {</span>
-<span class="fc" id="L665">            basePath = file;</span>
+<span class="fc" id="L666">            pos += 1;</span>
+<span class="fc" id="L667">            basePath = file.substring(0, pos);</span>
+<span class="fc" id="L668">            wildCards = file.substring(pos);</span>
+<span class="fc" id="L669">        } else {</span>
+<span class="fc" id="L670">            basePath = file;</span>
         }
 
-<span class="fc" id="L668">        File f = new File(basePath);</span>
+<span class="fc" id="L673">        File f = new File(basePath);</span>
         try {
-<span class="fc" id="L670">            f = f.getCanonicalFile();</span>
-<span class="fc bfc" id="L671" title="All 2 branches covered.">            if (wildCards != null) {</span>
-<span class="fc" id="L672">                f = new File(f, wildCards);</span>
+<span class="fc" id="L675">            f = f.getCanonicalFile();</span>
+<span class="fc bfc" id="L676" title="All 2 branches covered.">            if (wildCards != null) {</span>
+<span class="fc" id="L677">                f = new File(f, wildCards);</span>
             }
-<span class="nc" id="L674">        } catch (IOException ex) {</span>
-<span class="nc" id="L675">            LOGGER.warn(&quot;Invalid path '{}' was provided.&quot;, path);</span>
-<span class="nc" id="L676">            LOGGER.debug(&quot;Invalid path provided&quot;, ex);</span>
-<span class="fc" id="L677">        }</span>
-<span class="fc" id="L678">        return f.getAbsolutePath().replace('\\', '/');</span>
+<span class="nc" id="L679">        } catch (IOException ex) {</span>
+<span class="nc" id="L680">            LOGGER.warn(&quot;Invalid path '{}' was provided.&quot;, path);</span>
+<span class="nc" id="L681">            LOGGER.debug(&quot;Invalid path provided&quot;, ex);</span>
+<span class="fc" id="L682">        }</span>
+<span class="fc" id="L683">        return f.getAbsolutePath().replace('\\', '/');</span>
     }
 
     /**
@@ -685,16 +690,16 @@ public class App {
      * @return the position of the last file separator
      */
     private int getLastFileSeparator(String file) {
-<span class="pc bpc" id="L688" title="3 of 4 branches missed.">        if (file.contains(&quot;*&quot;) || file.contains(&quot;?&quot;)) {</span>
-<span class="fc" id="L689">            int p1 = file.indexOf('*');</span>
-<span class="fc" id="L690">            int p2 = file.indexOf('?');</span>
-<span class="pc bpc" id="L691" title="1 of 2 branches missed.">            p1 = p1 &gt; 0 ? p1 : file.length();</span>
-<span class="pc bpc" id="L692" title="1 of 2 branches missed.">            p2 = p2 &gt; 0 ? p2 : file.length();</span>
-<span class="pc bpc" id="L693" title="1 of 2 branches missed.">            int pos = p1 &lt; p2 ? p1 : p2;</span>
-<span class="fc" id="L694">            pos = file.lastIndexOf('/', pos);</span>
-<span class="fc" id="L695">            return pos;</span>
+<span class="pc bpc" id="L693" title="3 of 4 branches missed.">        if (file.contains(&quot;*&quot;) || file.contains(&quot;?&quot;)) {</span>
+<span class="fc" id="L694">            int p1 = file.indexOf('*');</span>
+<span class="fc" id="L695">            int p2 = file.indexOf('?');</span>
+<span class="pc bpc" id="L696" title="1 of 2 branches missed.">            p1 = p1 &gt; 0 ? p1 : file.length();</span>
+<span class="pc bpc" id="L697" title="1 of 2 branches missed.">            p2 = p2 &gt; 0 ? p2 : file.length();</span>
+<span class="pc bpc" id="L698" title="1 of 2 branches missed.">            int pos = p1 &lt; p2 ? p1 : p2;</span>
+<span class="fc" id="L699">            pos = file.lastIndexOf('/', pos);</span>
+<span class="fc" id="L700">            return pos;</span>
         } else {
-<span class="nc" id="L697">            return file.lastIndexOf('/');</span>
+<span class="nc" id="L702">            return file.lastIndexOf('/');</span>
         }
     }
 }

@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.net.URI;
 import org.sonatype.ossindex.service.api.componentreport.ComponentReport;
 import org.sonatype.ossindex.service.api.componentreport.ComponentReportVulnerability;
 import org.sonatype.ossindex.service.api.cvss.Cvss2Severity;
@@ -66,17 +65,17 @@ import org.sonatype.ossindex.service.client.transport.Transport.TransportExcepti
  * @author Jason Dillon
  * @since 5.0.0
  */
-<span class="fc" id="L69">public class OssIndexAnalyzer extends AbstractAnalyzer {</span>
+<span class="fc" id="L68">public class OssIndexAnalyzer extends AbstractAnalyzer {</span>
 
     /**
      * A reference to the logger.
      */
-<span class="fc" id="L74">    private static final Logger LOG = LoggerFactory.getLogger(OssIndexAnalyzer.class);</span>
+<span class="fc" id="L73">    private static final Logger LOG = LoggerFactory.getLogger(OssIndexAnalyzer.class);</span>
 
     /**
      * A pattern to match CVE identifiers.
      */
-<span class="fc" id="L79">    private static final Pattern CVE_PATTERN = Pattern.compile(&quot;\\bCVE-\\d{4}-\\d{4,10}\\b&quot;);</span>
+<span class="fc" id="L78">    private static final Pattern CVE_PATTERN = Pattern.compile(&quot;\\bCVE-\\d{4}-\\d{4,10}\\b&quot;);</span>
 
     /**
      * The reference type.
@@ -91,26 +90,26 @@ import org.sonatype.ossindex.service.client.transport.Transport.TransportExcepti
     /**
      * Flag to indicate if fetching reports failed.
      */
-<span class="fc" id="L94">    private static boolean failed = false;</span>
+<span class="fc" id="L93">    private static boolean failed = false;</span>
 
     /**
      * Lock to protect fetching state.
      */
-<span class="fc" id="L99">    private static final Object FETCH_MUTIX = new Object();</span>
+<span class="fc" id="L98">    private static final Object FETCH_MUTIX = new Object();</span>
 
     @Override
     public String getName() {
-<span class="fc" id="L103">        return &quot;Sonatype OSS Index Analyzer&quot;;</span>
+<span class="fc" id="L102">        return &quot;Sonatype OSS Index Analyzer&quot;;</span>
     }
 
     @Override
     public AnalysisPhase getAnalysisPhase() {
-<span class="fc" id="L108">        return AnalysisPhase.FINDING_ANALYSIS_PHASE2;</span>
+<span class="fc" id="L107">        return AnalysisPhase.FINDING_ANALYSIS_PHASE2;</span>
     }
 
     @Override
     protected String getAnalyzerEnabledSettingKey() {
-<span class="fc" id="L113">        return Settings.KEYS.ANALYZER_OSSINDEX_ENABLED;</span>
+<span class="fc" id="L112">        return Settings.KEYS.ANALYZER_OSSINDEX_ENABLED;</span>
     }
 
     /**
@@ -120,52 +119,53 @@ import org.sonatype.ossindex.service.client.transport.Transport.TransportExcepti
      */
     @Override
     public boolean supportsParallelProcessing() {
-<span class="nc" id="L123">        return true;</span>
+<span class="nc" id="L122">        return true;</span>
     }
 
     @Override
     protected void closeAnalyzer() throws Exception {
-<span class="nc" id="L128">        synchronized (FETCH_MUTIX) {</span>
-<span class="nc" id="L129">            reports = null;</span>
-<span class="nc" id="L130">            failed = false;</span>
-<span class="nc" id="L131">        }</span>
-<span class="nc" id="L132">    }</span>
+<span class="nc" id="L127">        synchronized (FETCH_MUTIX) {</span>
+<span class="nc" id="L128">            reports = null;</span>
+<span class="nc" id="L129">            failed = false;</span>
+<span class="nc" id="L130">        }</span>
+<span class="nc" id="L131">    }</span>
 
     @Override
     protected void analyzeDependency(final Dependency dependency, final Engine engine) throws AnalysisException {
         // batch request component-reports for all dependencies
-<span class="nc" id="L137">        synchronized (FETCH_MUTIX) {</span>
-<span class="nc bnc" id="L138" title="All 4 branches missed.">            if (!failed &amp;&amp; reports == null) {</span>
+<span class="nc" id="L136">        synchronized (FETCH_MUTIX) {</span>
+<span class="nc bnc" id="L137" title="All 4 branches missed.">            if (!failed &amp;&amp; reports == null) {</span>
                 try {
-<span class="nc" id="L140">                    requestDelay();</span>
-<span class="nc" id="L141">                    reports = requestReports(engine.getDependencies());</span>
-<span class="nc" id="L142">                } catch (TransportException ex) {</span>
-<span class="nc" id="L143">                    failed = true;</span>
-<span class="nc bnc" id="L144" title="All 4 branches missed.">                    if (ex.getMessage() != null &amp;&amp; ex.getMessage().endsWith(&quot;401&quot;)) {</span>
-<span class="nc" id="L145">                        throw new AnalysisException(&quot;Invalid credentails provided for OSS Index&quot;, ex);</span>
+<span class="nc" id="L139">                    requestDelay();</span>
+<span class="nc" id="L140">                    reports = requestReports(engine.getDependencies());</span>
+<span class="nc" id="L141">                } catch (TransportException ex) {</span>
+<span class="nc" id="L142">                    failed = true;</span>
+<span class="nc bnc" id="L143" title="All 4 branches missed.">                    if (ex.getMessage() != null &amp;&amp; ex.getMessage().endsWith(&quot;401&quot;)) {</span>
+<span class="nc" id="L144">                        throw new AnalysisException(&quot;Invalid credentails provided for OSS Index&quot;, ex);</span>
                     }
-<span class="nc" id="L147">                    LOG.debug(&quot;Error requesting component reports&quot;, ex);</span>
-<span class="nc" id="L148">                    throw new AnalysisException(&quot;Failed to request component-reports&quot;, ex);</span>
-<span class="nc" id="L149">                } catch (Exception e) {</span>
-<span class="nc" id="L150">                    LOG.debug(&quot;Error requesting component reports&quot;, e);</span>
-<span class="nc" id="L151">                    failed = true;</span>
-<span class="nc" id="L152">                    throw new AnalysisException(&quot;Failed to request component-reports&quot;, e);</span>
-<span class="nc" id="L153">                }</span>
+<span class="nc" id="L146">                    LOG.debug(&quot;Error requesting component reports&quot;, ex);</span>
+<span class="nc" id="L147">                    throw new AnalysisException(&quot;Failed to request component-reports&quot;, ex);</span>
+<span class="nc" id="L148">                } catch (Exception e) {</span>
+<span class="nc" id="L149">                    LOG.debug(&quot;Error requesting component reports&quot;, e);</span>
+<span class="nc" id="L150">                    failed = true;</span>
+<span class="nc" id="L151">                    throw new AnalysisException(&quot;Failed to request component-reports&quot;, e);</span>
+<span class="nc" id="L152">                }</span>
             }
-<span class="nc" id="L155">        }</span>
+<span class="nc" id="L154">        }</span>
 
         // skip enrichment if we failed to fetch reports
-<span class="nc bnc" id="L158" title="All 2 branches missed.">        if (!failed) {</span>
-<span class="nc" id="L159">            enrich(dependency);</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">        if (!failed) {</span>
+<span class="nc" id="L158">            enrich(dependency);</span>
         }
-<span class="nc" id="L161">    }</span>
+<span class="nc" id="L160">    }</span>
 
     /**
-     * Delays each request (thread) by the configured amount of seconds, if the configuration is present.
+     * Delays each request (thread) by the configured amount of seconds, if the
+     * configuration is present.
      */
     private void requestDelay() throws InterruptedException {
-<span class="nc" id="L167">        final int delay = getSettings().getInt(Settings.KEYS.ANALYZER_OSSINDEX_REQUEST_DELAY,0);</span>
-<span class="nc bnc" id="L168" title="All 2 branches missed.">        if(delay &gt; 0) {</span>
+<span class="nc" id="L167">        final int delay = getSettings().getInt(Settings.KEYS.ANALYZER_OSSINDEX_REQUEST_DELAY, 0);</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">        if (delay &gt; 0) {</span>
 <span class="nc" id="L169">            LOG.debug(&quot;Request delay: &quot; + delay);</span>
 <span class="nc" id="L170">            TimeUnit.SECONDS.sleep(delay);</span>
         }
