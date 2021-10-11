@@ -345,6 +345,30 @@ public class NvdCveUpdater implements CachedWebDataSource {
      * @throws UpdateException thrown if the meta file could not be downloaded
      */
     protected final MetaProperties getMetaFile(String url) throws UpdateException {
+        try {
+            final long waitTime = settings.getInt(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, 4000);
+            MetaProperties retVal = doMetaDownload(url, false);
+
+            final int downloadAttempts = 4;
+            for (int x = 2; retVal == null && x <= downloadAttempts; x++) {
+                Thread.sleep(waitTime * (x / 2));
+                retVal = doMetaDownload(url, x == downloadAttempts);
+            }
+            return retVal;
+        } catch (InterruptedException ex) {
+            Thread.interrupted();
+            throw new UpdateException("Download interupted", ex);
+        }
+    }
+
+    /**
+     * Downloads the NVD CVE Meta file properties.
+     *
+     * @param url the URL to the NVD CVE JSON file
+     * @return the meta file properties
+     * @throws UpdateException thrown if the meta file could not be downloaded
+     */
+    private MetaProperties doMetaDownload(String url, boolean throwErrors) throws UpdateException {
         final String metaUrl = url.substring(0, url.length() - 7) + "meta";
         final NvdCache cache = new NvdCache(settings);
         try {
@@ -372,18 +396,31 @@ public class NvdCveUpdater implements CachedWebDataSource {
                 return new MetaProperties(content);
             }
         } catch (MalformedURLException ex) {
-            throw new UpdateException("Meta file url is invalid: " + metaUrl, ex);
+            if (throwErrors) {
+                throw new UpdateException("Meta file url is invalid: " + metaUrl, ex);
+            }
         } catch (InvalidDataException ex) {
-            throw new UpdateException("Meta file content is invalid: " + metaUrl, ex);
+            if (throwErrors) {
+                throw new UpdateException("Meta file content is invalid: " + metaUrl, ex);
+            }
         } catch (DownloadFailedException ex) {
-            throw new UpdateException("Unable to download meta file: " + metaUrl, ex);
+            if (throwErrors) {
+                throw new UpdateException("Unable to download meta file: " + metaUrl, ex);
+            }
         } catch (TooManyRequestsException ex) {
-            throw new UpdateException("Unable to download meta file: " + metaUrl + "; received 429 -- too many requests", ex);
+            if (throwErrors) {
+                throw new UpdateException("Unable to download meta file: " + metaUrl + "; received 429 -- too many requests", ex);
+            }
         } catch (ResourceNotFoundException ex) {
-            throw new UpdateException("Unable to download meta file: " + metaUrl + "; received 404 -- resource not found", ex);
+            if (throwErrors) {
+                throw new UpdateException("Unable to download meta file: " + metaUrl + "; received 404 -- resource not found", ex);
+            }
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            if (throwErrors) {
+                throw new RuntimeException(ex);
+            }
         }
+        return null;
     }
 
     /**
