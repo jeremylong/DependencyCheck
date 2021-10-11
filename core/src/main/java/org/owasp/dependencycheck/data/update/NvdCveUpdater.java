@@ -17,7 +17,11 @@
  */
 package org.owasp.dependencycheck.data.update;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Calendar;
@@ -30,7 +34,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 import javax.annotation.concurrent.ThreadSafe;
+import org.apache.commons.io.FileUtils;
 
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvd.json.MetaProperties;
@@ -43,6 +49,7 @@ import static org.owasp.dependencycheck.data.nvdcve.DatabaseProperties.MODIFIED;
 import org.owasp.dependencycheck.data.update.exception.InvalidDataException;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.data.update.nvd.DownloadTask;
+import org.owasp.dependencycheck.data.update.nvd.NvdCache;
 import org.owasp.dependencycheck.data.update.nvd.NvdCveInfo;
 import org.owasp.dependencycheck.data.update.nvd.ProcessTask;
 import org.owasp.dependencycheck.utils.DateUtil;
@@ -336,11 +343,27 @@ public class NvdCveUpdater implements CachedWebDataSource {
      */
     protected final MetaProperties getMetaFile(String url) throws UpdateException {
         final String metaUrl = url.substring(0, url.length() - 7) + "meta";
+        NvdCache cache = new NvdCache(settings);
         try {
             final URL u = new URL(metaUrl);
-            final Downloader d = new Downloader(settings);
-            final String content = d.fetchContent(u, true, Settings.KEYS.CVE_USER, Settings.KEYS.CVE_PASSWORD);
-            return new MetaProperties(content);
+            File tmp = settings.getTempFile("nvd", "meta");
+            if (cache.notInCache(u, tmp)) {
+                final Downloader d = new Downloader(settings);
+                final String content = d.fetchContent(u, true, Settings.KEYS.CVE_USER, Settings.KEYS.CVE_PASSWORD);
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(tmp, false))) {
+                    writer.write(content);
+                }
+                cache.storeInCache(u, tmp);
+                FileUtils.deleteQuietly(tmp);
+                return new MetaProperties(content);
+            } else {
+                String content;
+                try (BufferedReader reader = new BufferedReader(new FileReader(tmp))) {
+                    content = reader.lines().collect(Collectors.joining("\n"));
+                }
+                FileUtils.deleteQuietly(tmp);
+                return new MetaProperties(content);
+            }
         } catch (MalformedURLException ex) {
             throw new UpdateException("Meta file url is invalid: " + metaUrl, ex);
         } catch (InvalidDataException ex) {
@@ -351,6 +374,8 @@ public class NvdCveUpdater implements CachedWebDataSource {
             throw new UpdateException("Unable to download meta file: " + metaUrl + "; received 429 -- too many requests", ex);
         } catch (ResourceNotFoundException ex) {
             throw new UpdateException("Unable to download meta file: " + metaUrl + "; received 404 -- resource not found", ex);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
@@ -389,18 +414,25 @@ public class NvdCveUpdater implements CachedWebDataSource {
                 if (!needsFullUpdate && lastUpdated == modified.getLastModifiedDate()) {
                     return updates;
                 } else {
+                    final int start = settings.getInt(Settings.KEYS.CVE_START_YEAR);
+                    final int end = Calendar.getInstance().get(Calendar.YEAR);
+                    final String baseUrl = settings.getString(Settings.KEYS.CVE_BASE_JSON);
                     final NvdCveInfo item = new NvdCveInfo(MODIFIED, url, modified.getLastModifiedDate());
                     updates.add(item);
-                    if (needsFullUpdate || !DateUtil.withinDateRange(lastUpdated, now, days)) {
-                        final int start = settings.getInt(Settings.KEYS.CVE_START_YEAR);
-                        final int end = Calendar.getInstance().get(Calendar.YEAR);
-                        final String baseUrl = settings.getString(Settings.KEYS.CVE_BASE_JSON);
+                    if (needsFullUpdate) {
+                        // no need to download each one, just use the modified timestamp
+                        for (int i = start; i <= end; i++) {
+                            url = String.format(baseUrl, i);
+                            final NvdCveInfo entry = new NvdCveInfo(Integer.toString(i), url, modified.getLastModifiedDate());
+                            updates.add(entry);
+                        }
+                    } else if (!DateUtil.withinDateRange(lastUpdated, now, days)) {
                         final long waitTime = settings.getInt(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, 4000);
                         for (int i = start; i <= end; i++) {
                             try {
                                 url = String.format(baseUrl, i);
-                                final MetaProperties meta = getMetaFile(url);
                                 Thread.sleep(waitTime);
+                                final MetaProperties meta = getMetaFile(url);
                                 final long currentTimestamp = getPropertyInSeconds(DatabaseProperties.LAST_UPDATED_BASE + i);
 
                                 if (currentTimestamp < meta.getLastModifiedDate()) {

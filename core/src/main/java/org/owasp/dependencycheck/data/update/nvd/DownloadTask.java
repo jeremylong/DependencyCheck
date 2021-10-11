@@ -20,16 +20,20 @@ package org.owasp.dependencycheck.data.update.nvd;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.time.Instant;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import javax.annotation.concurrent.ThreadSafe;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.ResourceNotFoundException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.TooManyRequestsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,32 +123,34 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
 
     @Override
     public Future<ProcessTask> call() throws Exception {
+        final long waitTime = settings.getInt(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, 4000);
+        long startDownload = 0;
+        final NvdCache cache = new NvdCache(settings);
         try {
             final URL url1 = new URL(nvdCveInfo.getUrl());
-            LOGGER.info("Download Started for NVD CVE - {}", nvdCveInfo.getId());
-            final long startDownload = System.currentTimeMillis();
-            try {
-                final Downloader downloader = new Downloader(settings);
-                downloader.fetchFile(url1, file, Settings.KEYS.CVE_USER, Settings.KEYS.CVE_PASSWORD);
-            } catch (DownloadFailedException ex) {
-                LOGGER.error("Download Failed for NVD CVE - {}\nSome CVEs may not be reported. Reason: {}",
-                        nvdCveInfo.getId(), ex.getMessage());
-                if (settings.getString(Settings.KEYS.PROXY_SERVER) == null) {
-                    LOGGER.error("If you are behind a proxy you may need to configure dependency-check to use the proxy.");
+            if (cache.notInCache(url1, file)) {
+                Thread.sleep(waitTime);
+                LOGGER.info("Download Started for NVD CVE - {}", nvdCveInfo.getId());
+                startDownload = System.currentTimeMillis();
+                //going from 2 to 4 to have 3 download attempts with easier info messages
+                final int downloadAttempts = 4;
+                for (int x = 2; x <= downloadAttempts && !attemptDownload(url1, x == downloadAttempts); x++) {
+                    LOGGER.info("Download Attemp {} for NVD CVE - {}", x, nvdCveInfo.getId());
+                    Thread.sleep(waitTime);
                 }
-                LOGGER.debug("", ex);
-                return null;
+                if (file.isFile() && file.length() > 0) {
+                    LOGGER.info("Download Complete for NVD CVE - {}  ({} ms)", nvdCveInfo.getId(),
+                            System.currentTimeMillis() - startDownload);
+                    cache.storeInCache(url1, file);
+                } else {
+                    throw new DownloadFailedException("Unable to download NVD CVE " + nvdCveInfo.getId());
+                }
             }
-
-            LOGGER.info("Download Complete for NVD CVE - {}  ({} ms)", nvdCveInfo.getId(),
-                    System.currentTimeMillis() - startDownload);
             if (this.processorService == null) {
                 return null;
             }
             final ProcessTask task = new ProcessTask(cveDB, this, settings);
             final Future<ProcessTask> val = this.processorService.submit(task);
-            final long waitTime = settings.getInt(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, 4000);
-            Thread.sleep(waitTime);
             return val;
 
         } catch (Throwable ex) {
@@ -155,6 +161,24 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
             settings.cleanup(false);
         }
         return null;
+    }
+
+    private boolean attemptDownload(final URL url1, boolean showLog) throws TooManyRequestsException, ResourceNotFoundException {
+        try {
+            final Downloader downloader = new Downloader(settings);
+            downloader.fetchFile(url1, file, Settings.KEYS.CVE_USER, Settings.KEYS.CVE_PASSWORD);
+        } catch (DownloadFailedException ex) {
+            if (showLog) {
+                LOGGER.error("Download Failed for NVD CVE - {}\nSome CVEs may not be reported. Reason: {}",
+                        nvdCveInfo.getId(), ex.getMessage());
+                if (settings.getString(Settings.KEYS.PROXY_SERVER) == null) {
+                    LOGGER.error("If you are behind a proxy you may need to configure dependency-check to use the proxy.");
+                }
+                LOGGER.debug("", ex);
+            }
+            return false;
+        }
+        return true;
     }
 
     /**
