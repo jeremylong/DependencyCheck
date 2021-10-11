@@ -174,10 +174,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private ArtifactResolver artifactResolver;
     /**
      * The entry point towards a Maven version independent way of resolving
-     * dependencies (handles both Maven 3.0 Sonatype and Maven 3.1+ eclipse Aether
-     * implementations). Contrary to the ArtifactResolver this resolver also takes into
-     * account the additional repositories defined in the dependency-path towards transitive
-     * dependencies.
+     * dependencies (handles both Maven 3.0 Sonatype and Maven 3.1+ eclipse
+     * Aether implementations). Contrary to the ArtifactResolver this resolver
+     * also takes into account the additional repositories defined in the
+     * dependency-path towards transitive dependencies.
      */
     @SuppressWarnings("CanBeFinal")
     @Component
@@ -858,13 +858,19 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "cveServerId")
     private String cveServerId;
     /**
-     * /**
      * Optionally skip excessive CVE update checks for a designated duration in
      * hours.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "cveValidForHours")
     private Integer cveValidForHours;
+
+    /**
+     * Specify the first year of NVD CVE data to download; default is 2002.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "cveStartYear")
+    private Integer cveStartYear;
 
     /**
      * The path to dotnet core.
@@ -1267,6 +1273,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @return a collection of exceptions that may have occurred while resolving
      * and scanning the dependencies
      */
+    //CSOFF: OperatorWrap
     private ExceptionCollection collectMavenDependencies(Engine engine, MavenProject project,
             List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
 
@@ -1327,30 +1334,30 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     final ArtifactCoordinate coordinate = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
                     try {
                         final List<org.apache.maven.model.Dependency> dependencies = project.getDependencies();
-                        final List<org.apache.maven.model.Dependency> managedDependencies =
-                                project.getDependencyManagement() == null ? null : project.getDependencyManagement().getDependencies();
+                        final List<org.apache.maven.model.Dependency> managedDependencies
+                                = project.getDependencyManagement() == null ? null : project.getDependencyManagement().getDependencies();
                         final ArtifactCoordinate theCoord = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
                         if (theCoord.getClassifier() != null) {
                             // This would trigger NPE when using the filter - MSHARED-998
                             getLog().debug("Expensive lookup as workaround for MSHARED-998 for " + theCoord);
-                            final Iterable<ArtifactResult> allDeps =
-                                    dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,
-                                                                           null);
+                            final Iterable<ArtifactResult> allDeps
+                                    = dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,
+                                            null);
                             result = findClassifierArtifactInAllDeps(allDeps, theCoord);
                         } else {
                             final TransformableFilter filter = new PatternInclusionsFilter(
                                     Collections.singletonList(
                                             TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact()).toString()));
-                            final Iterable<ArtifactResult> singleResult =
-                                    dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,
-                                                                           filter);
+                            final Iterable<ArtifactResult> singleResult
+                                    = dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,
+                                            filter);
 
                             if (singleResult.iterator().hasNext()) {
                                 final ArtifactResult first = singleResult.iterator().next();
                                 result = first.getArtifact();
                             } else {
                                 throw new DependencyNotFoundException(String.format("Failed to resolve dependency %s with "
-                                                                                    + "dependencyResolver", coordinate));
+                                        + "dependencyResolver", coordinate));
                             }
                         }
                     } catch (DependencyNotFoundException | DependencyResolverException ex) {
@@ -1363,7 +1370,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                             // successfully resolved as a reactor dependency - swallow the exception
                             addException = false;
                         }
-                        //CSON: //CSOFF: EmptyBlock
                         if (addException) {
                             if (exCol == null) {
                                 exCol = new ExceptionCollection();
@@ -1452,14 +1458,18 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         return exCol;
     }
+    //CSON: OperatorWrap
 
     /**
      * Utility method for a work-around to MSHARED-998
-     * @param allDeps The Iterable of the resolved artifacts for all dependencies
-     * @param theCoord The ArtifactCoordinate of the artifact-with-classifier we intended to resolve
+     *
+     * @param allDeps The Iterable of the resolved artifacts for all
+     * dependencies
+     * @param theCoord The ArtifactCoordinate of the artifact-with-classifier we
+     * intended to resolve
      * @return the resolved artifact matching with {@code theCoord}
-     * @throws DependencyNotFoundException Not expected to be thrown, but will be thrown if {@code theCoord} could not be
-     * found within {@code allDeps}
+     * @throws DependencyNotFoundException Not expected to be thrown, but will
+     * be thrown if {@code theCoord} could not be found within {@code allDeps}
      */
     private Artifact findClassifierArtifactInAllDeps(final Iterable<ArtifactResult> allDeps, final ArtifactCoordinate theCoord)
             throws DependencyNotFoundException {
@@ -1472,16 +1482,18 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         if (result == null) {
             throw new DependencyNotFoundException(String.format("Expected dependency not found in resolved artifacts for "
-                                                                + "dependency %s", theCoord));
+                    + "dependency %s", theCoord));
         }
         return result;
     }
 
     /**
      * Utility method for a work-around to MSHARED-998
+     *
      * @param res A single ArtifactResult obtained from the DependencyResolver
      * @param theCoord The coordinates of the Artifact that we try to find
-     * @return {@code true} when theCoord is non-null and matches with the artifact of res
+     * @return {@code true} when theCoord is non-null and matches with the
+     * artifact of res
      */
     private boolean sameArtifact(final ArtifactResult res, final ArtifactCoordinate theCoord) {
         if (res == null || res.getArtifact() == null || theCoord == null) {
@@ -2106,13 +2118,18 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setStringIfNotEmpty(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
         settings.setStringIfNotEmpty(Settings.KEYS.DB_FILE_NAME, dbFilename);
 
-        String cveModifiedJson = Optional.ofNullable(cveUrlModified)
-            .filter(arg -> !arg.isEmpty())
-            .orElseGet(this::getDefaultCveUrlModified);
+        final String cveModifiedJson = Optional.ofNullable(cveUrlModified)
+                .filter(arg -> !arg.isEmpty())
+                .orElseGet(this::getDefaultCveUrlModified);
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveModifiedJson);
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON, cveUrlBase);
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, cveWaitTime);
         settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
+        if (cveStartYear != null && cveStartYear < 2002) {
+            getLog().warn("Invalid configuration: cveStartYear must be 2002 or greater");
+            cveStartYear = 2002;
+        }
+        settings.setIntIfNotNull(Settings.KEYS.CVE_START_YEAR, cveStartYear);
         settings.setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT, prettyPrint);
         artifactScopeExcluded = new ArtifactScopeExcluded(skipTestScope, skipProvidedScope, skipSystemScope, skipRuntimeScope);
         artifactTypeExcluded = new ArtifactTypeExcluded(skipArtifactType);
@@ -2436,8 +2453,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     private String getDefaultCveUrlModified() {
-      return CveUrlParser.newInstance(getSettings())
-          .getDefaultCveUrlModified(cveUrlBase);
+        return CveUrlParser.newInstance(getSettings())
+                .getDefaultCveUrlModified(cveUrlBase);
     }
 
     //</editor-fold>

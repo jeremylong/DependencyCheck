@@ -443,6 +443,8 @@ public class App {
                 cli.getStringArgument(CliParser.ARGUMENT.HINTS_FILE));
         settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS,
                 cli.getIntegerValue(CliParser.ARGUMENT.CVE_VALID_FOR_HOURS));
+        settings.setIntIfNotNull(Settings.KEYS.CVE_START_YEAR,
+                cli.getIntegerValue(CliParser.ARGUMENT.CVE_START_YEAR));
         settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE,
                 cli.getStringArguments(CliParser.ARGUMENT.SUPPRESSION_FILES));
         //File Type Analyzer Settings

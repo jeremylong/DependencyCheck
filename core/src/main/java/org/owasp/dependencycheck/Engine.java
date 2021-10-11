@@ -891,7 +891,7 @@ public class Engine implements FileFilter, AutoCloseable {
                     //lock is not needed as we already have the lock held
                     openDatabase(true, false);
                 }
-                
+
                 return dbUpdatesMade;
             } catch (WriteLockException ex) {
                 throw new UpdateException("Unable to obtain an exclusive lock on the H2 database to perform updates", ex);
