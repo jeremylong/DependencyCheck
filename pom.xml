@@ -148,7 +148,7 @@ Copyright (c) 2012 - Jeremy Long
         <hamcrest-core.version>2.2</hamcrest-core.version>
         <jackson.version>2.13.0</jackson.version>
         <jmockit.version>1.49</jmockit.version>
-        <mockito-core.version>3.12.4</mockito-core.version>
+        <mockito-core.version>4.0.0</mockito-core.version>
         <jsoup.version>1.14.3</jsoup.version>
         <commons-compress.version>1.21</commons-compress.version>
         <org.apache.maven.shared.file-management.version>3.0.0</org.apache.maven.shared.file-management.version>
@@ -1168,7 +1168,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>org.sonatype.ossindex</groupId>
                 <artifactId>ossindex-service-client</artifactId>
-                <version>1.8.0</version>
+                <version>1.8.1</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.apache.httpcomponents</groupId>
