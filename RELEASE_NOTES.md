@@ -1,5 +1,16 @@
 # Release Notes
 
+## [Version 6.4.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.4.0) (2021-10-11)
+
+### Changes
+
+- Increased timeout between downloads from the NVD to prevent rate limiting issues (see [#3722](https://github.com/jeremylong/DependencyCheck/pull/3722)).
+  - `cveStartYear` is now configurable and can be set to any year from 2002 to present.
+  - `cveWaitTime` is a new configuration option to define how many milliseconds to wait between NVD downloads; default is 4000 ms (see [#3690](https://github.com/jeremylong/DependencyCheck/pull/3690)).
+  - The NVD CVE data files are now being cached for up to 4 hours in case a download fails, re-running ODC will use the cached version.
+- Fixed NPE in the ODC maven plugin (see [#3702](https://github.com/jeremylong/DependencyCheck/pull/3702).
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/34?closed=1).
+
 ## [Version 6.3.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.3.1) (2021-09-29)
 
 ### Changes
