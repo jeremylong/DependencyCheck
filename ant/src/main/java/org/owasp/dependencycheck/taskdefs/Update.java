@@ -100,6 +100,10 @@ public class Update extends Purge {
      * The number of hours to wait before re-checking for updates.
      */
     private Integer cveValidForHours;
+    /**
+     * Specify the first year of NVD CVE data to download; default is 2002.
+     */
+    private Integer cveStartYear;
 
     /**
      * Construct a new UpdateTask.
@@ -382,6 +386,29 @@ public class Update extends Purge {
     }
 
     /**
+     * Get the value of cveStartYear.
+     *
+     * @return the value of cveStartYear
+     */
+    public Integer getCveStartYear() {
+        return cveStartYear;
+    }
+
+    /**
+     * Set the value of cveStartYear.
+     *
+     * @param cveStartYear new value of cveStartYear
+     */
+    public void setCveStartYear(Integer cveStartYear) {
+        if (cveStartYear != null && cveStartYear < 2002) {
+            log("Invalid Configuration: cveStartYear must be 2002 or greater", Project.MSG_ERR);
+            this.cveStartYear = 2002;
+        } else {
+            this.cveStartYear = cveStartYear;
+        }
+    }
+
+    /**
      * Executes the update by initializing the settings, downloads the NVD XML
      * data, and then processes the data storing it in the local database.
      *
@@ -441,6 +468,7 @@ public class Update extends Purge {
         getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveModifiedJson);
         getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON, cveUrlBase);
         getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, cveWaitTime);
+        getSettings().setIntIfNotNull(Settings.KEYS.CVE_START_YEAR, cveStartYear);
         if (cveValidForHours != null) {
             if (cveValidForHours >= 0) {
                 getSettings().setInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
