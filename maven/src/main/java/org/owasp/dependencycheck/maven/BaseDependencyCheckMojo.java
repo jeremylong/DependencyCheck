@@ -90,6 +90,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
@@ -1340,8 +1341,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         if (theCoord.getClassifier() != null) {
                             // This would trigger NPE when using the filter - MSHARED-998
                             getLog().debug("Expensive lookup as workaround for MSHARED-998 for " + theCoord);
+                            final List<org.apache.maven.model.Dependency> nonReactorDependencies =
+                                    dependencies.stream().filter(this::isNonReactorDependency).collect(Collectors.toList());
                             final Iterable<ArtifactResult> allDeps
-                                    = dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,
+                                    = dependencyResolver.resolveDependencies(buildingRequest, nonReactorDependencies, managedDependencies,
                                             null);
                             result = findClassifierArtifactInAllDeps(allDeps, theCoord);
                         } else {
@@ -1459,6 +1462,21 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         return exCol;
     }
     //CSON: OperatorWrap
+    /**
+     * Utility method for a work-around to MSHARED-998
+     * @param d The dependency to check against reactorProjects
+     * @return {@code true} if the dependency's coordinates do not match any of the reactorProjects, false otherwise.
+     */
+    private boolean isNonReactorDependency(final org.apache.maven.model.Dependency d) {
+        for (MavenProject prj : reactorProjects) {
+            if (prj.getArtifactId().equals(d.getArtifactId())
+                && prj.getGroupId().equals(d.getGroupId())
+                && prj.getVersion().equals(d.getVersion())) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * Utility method for a work-around to MSHARED-998
