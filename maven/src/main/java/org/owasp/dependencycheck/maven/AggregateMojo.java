@@ -73,7 +73,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
             final ExceptionCollection ex = scanArtifacts(childProject, engine, true);
             if (ex != null) {
                 if (exCol == null) {
-                    exCol = ex;
+                    exCol = new ExceptionCollection();
                 }
                 exCol.getExceptions().addAll(ex.getExceptions());
                 if (ex.isFatal()) {
