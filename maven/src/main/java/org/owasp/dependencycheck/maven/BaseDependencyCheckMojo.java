@@ -1346,7 +1346,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                             final Iterable<ArtifactResult> allDeps
                                     = dependencyResolver.resolveDependencies(buildingRequest, nonReactorDependencies, managedDependencies,
                                             null);
-                            result = findClassifierArtifactInAllDeps(allDeps, theCoord);
+                            result = findClassifierArtifactInAllDeps(allDeps, theCoord, project);
                         } else {
                             final TransformableFilter filter = new PatternInclusionsFilter(
                                     Collections.singletonList(
@@ -1489,7 +1489,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @throws DependencyNotFoundException Not expected to be thrown, but will
      * be thrown if {@code theCoord} could not be found within {@code allDeps}
      */
-    private Artifact findClassifierArtifactInAllDeps(final Iterable<ArtifactResult> allDeps, final ArtifactCoordinate theCoord)
+    private Artifact findClassifierArtifactInAllDeps(final Iterable<ArtifactResult> allDeps, final ArtifactCoordinate theCoord,
+                                                     final MavenProject project)
             throws DependencyNotFoundException {
         Artifact result = null;
         for (final ArtifactResult res : allDeps) {
@@ -1500,7 +1501,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         if (result == null) {
             throw new DependencyNotFoundException(String.format("Expected dependency not found in resolved artifacts for "
-                    + "dependency %s", theCoord));
+                    + "dependency %s of project-artifact %s", theCoord, project.getArtifactId()));
         }
         return result;
     }
