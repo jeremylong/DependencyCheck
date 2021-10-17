@@ -25,4 +25,11 @@ Copyright (c) 2017 Jeremy Long. All Rights Reserved.
     </parent>
     <artifactId>3730-classifier-in-dependency-aggregate-childTwo</artifactId>
     <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <classifier>classes</classifier>
+        </dependency>
+    </dependencies>
 </project>

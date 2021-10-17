@@ -35,6 +35,12 @@ Copyright (c) 2017 Jeremy Long. All Rights Reserved.
                 <classifier>no_aop</classifier>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <classifier>classes</classifier>
+                <scope>provided</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
