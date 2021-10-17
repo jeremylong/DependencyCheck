@@ -1349,8 +1349,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                                 if (result == null) {
                                     throw new DependencyNotFoundException(
                                             String.format("Failed to resolve dependency %s with dependencyResolver for "
-                                                          + "project-artifact %s", coordinate, project.getArtifactId())
-                                            , dre);
+                                                          + "project-artifact %s", coordinate, project.getArtifactId()),
+                                            dre);
                                 }
                             }
                         } else {
