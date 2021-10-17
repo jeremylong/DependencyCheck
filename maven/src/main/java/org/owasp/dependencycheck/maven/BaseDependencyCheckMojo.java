@@ -1476,6 +1476,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * dependencies
      * @param theCoord The ArtifactCoordinate of the artifact-with-classifier we
      * intended to resolve
+     * @param project The project in whose context resolution was attempted
      * @return the resolved artifact matching with {@code theCoord}
      * @throws DependencyNotFoundException Not expected to be thrown, but will
      * be thrown if {@code theCoord} could not be found within {@code allDeps}
