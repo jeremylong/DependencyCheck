@@ -90,7 +90,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
@@ -1324,7 +1323,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 }
             } else {
                 final Artifact dependencyArtifact = dependencyNode.getArtifact();
-                final Artifact result;
+                Artifact result;
                 if (dependencyArtifact.isResolved()) {
                     //All transitive dependencies, excluding reactor and dependencyManagement artifacts should
                     //have been resolved by Maven prior to invoking the plugin - resolving the dependencies
@@ -1337,16 +1336,23 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         final List<org.apache.maven.model.Dependency> dependencies = project.getDependencies();
                         final List<org.apache.maven.model.Dependency> managedDependencies
                                 = project.getDependencyManagement() == null ? null : project.getDependencyManagement().getDependencies();
-                        final ArtifactCoordinate theCoord = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
-                        if (theCoord.getClassifier() != null) {
+                        if (coordinate.getClassifier() != null) {
                             // This would trigger NPE when using the filter - MSHARED-998
-                            getLog().debug("Expensive lookup as workaround for MSHARED-998 for " + theCoord);
-                            final List<org.apache.maven.model.Dependency> nonReactorDependencies =
-                                    dependencies.stream().filter(this::isNonReactorDependency).collect(Collectors.toList());
-                            final Iterable<ArtifactResult> allDeps
-                                    = dependencyResolver.resolveDependencies(buildingRequest, nonReactorDependencies, managedDependencies,
-                                            null);
-                            result = findClassifierArtifactInAllDeps(allDeps, theCoord, project);
+                            getLog().debug("Expensive lookup as workaround for MSHARED-998 for " + coordinate);
+                            try {
+                                final Iterable<ArtifactResult> allDeps
+                                        = dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,
+                                                                                 null);
+                                result = findClassifierArtifactInAllDeps(allDeps, coordinate, project);
+                            } catch (DependencyResolverException dre) {
+                                result = Mshared998Util.findArtifactInAetherDREResult(dre, coordinate);
+                                if (result == null) {
+                                    throw new DependencyNotFoundException(
+                                            String.format("Failed to resolve dependency %s with dependencyResolver for "
+                                                          + "project-artifact %s", coordinate, project.getArtifactId())
+                                            , dre);
+                                }
+                            }
                         } else {
                             final TransformableFilter filter = new PatternInclusionsFilter(
                                     Collections.singletonList(
@@ -1360,7 +1366,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                                 result = first.getArtifact();
                             } else {
                                 throw new DependencyNotFoundException(String.format("Failed to resolve dependency %s with "
-                                        + "dependencyResolver", coordinate));
+                                        + "dependencyResolver for project-artifact %s", coordinate, project.getArtifactId()));
                             }
                         }
                     } catch (DependencyNotFoundException | DependencyResolverException ex) {
@@ -1462,21 +1468,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         return exCol;
     }
     //CSON: OperatorWrap
-    /**
-     * Utility method for a work-around to MSHARED-998
-     * @param d The dependency to check against reactorProjects
-     * @return {@code true} if the dependency's coordinates do not match any of the reactorProjects, false otherwise.
-     */
-    private boolean isNonReactorDependency(final org.apache.maven.model.Dependency d) {
-        for (MavenProject prj : reactorProjects) {
-            if (prj.getArtifactId().equals(d.getArtifactId())
-                && prj.getGroupId().equals(d.getGroupId())
-                && prj.getVersion().equals(d.getVersion())) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     /**
      * Utility method for a work-around to MSHARED-998
