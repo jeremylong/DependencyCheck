@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -40,6 +41,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -204,11 +206,15 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
             }
             // pnpm audit returns a json compliant with NpmAuditParser
             args.add("--json");
+            // ensure we are using the right registry despite .npmrc
+            args.add("--registry");
+            args.add("https://registry.npmjs.org/");
             final ProcessBuilder builder = new ProcessBuilder(args);
             builder.directory(folder);
-            final Map<String, String> environment = builder.environment();
-            final String path = environment.getOrDefault("PATH", "");
-            environment.put("PATH", path + ":" + pnpmPath);
+            // Workaround 64k limitation of InputStream, redirect stdout to a file that we will read later
+            // instead of reading directly stdout from Process's InputStream which is topped at 64k
+            final File tmpFile = File.createTempFile("pnpm_audit",null);
+            builder.redirectOutput(tmpFile);
             LOGGER.debug("Launching: {}", args);
             final Process process = builder.start();
             try (ProcessReader processReader = new ProcessReader(process)) {
@@ -217,8 +223,13 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
                 if (!StringUtils.isBlank(errOutput)) {
                     LOGGER.error("Process error output: {}", errOutput);
                 }
-                final String verboseJson = processReader.getOutput();
-                LOGGER.info("Verbose json: {}", verboseJson);
+                String verboseJson = FileUtils.readFileToString(tmpFile, StandardCharsets.UTF_8);
+                // Workaround implicit creation of .pnpm-debug.log, see https://github.com/pnpm/pnpm/issues/3832
+                // affects usage of docker container to analyze mounted directories without privileges
+                if(verboseJson.contains("EACCES: permission denied, open 'node_modules/.pnpm-debug.log'")){
+                    verboseJson = verboseJson.substring(0, verboseJson.indexOf("EACCES: permission denied, open 'node_modules/.pnpm-debug.log'"));
+                }
+                LOGGER.debug("Audit report: {}", verboseJson);
                 return new JSONObject(verboseJson);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
@@ -226,6 +237,10 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
             } catch (JSONException e) {
                 Thread.currentThread().interrupt();
                 throw new AnalysisException("Pnpm audit returned an invalid response.", e);
+            }
+            finally
+            {
+                tmpFile.delete();
             }
         } catch (IOException ioe) {
             throw new AnalysisException("pnpm audit failure; this error can be ignored if you are not analyzing projects with a pnpm lockfile.", ioe);

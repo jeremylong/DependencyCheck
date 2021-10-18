@@ -27,15 +27,14 @@ public class PnpmAuditAnalyzerIT extends BaseTest {
             boolean found = false;
             assertTrue("More than 1 dependency should be identified", 1 < engine.getDependencies().length);
             for (Dependency result : engine.getDependencies()) {
-                if ("yarn.lock?uglify-js".equals(result.getFileName())) {
+                if ("pnpm-lock.yaml?dns-sync".equals(result.getFileName())) {
                     found = true;
-                    assertTrue(result.getEvidence(EvidenceType.VENDOR).toString().contains("uglify-js"));
-                    assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains("uglify-js"));
-                    assertTrue(result.getEvidence(EvidenceType.VERSION).toString().contains("3.12.4"));
+                    assertTrue(result.getEvidence(EvidenceType.VENDOR).toString().contains("dns-sync"));
+                    assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains("dns-sync"));
                     assertTrue(result.isVirtual());
                 }
             }
-            assertTrue("Uglify was not found", found);
+            assertTrue("dns-sync was not found", found);
         } catch (InitializationException ex) {
             //yarn is not installed - skip the test case.
             Assume.assumeNoException(ex);
