@@ -7,7 +7,7 @@ identifiers, and the associated Common Vulnerability and Exposure (CVE) entries.
 
 Installation & Usage
 ====================
-Import the GPG key used to sign all Dependency Check releases: `gpg --keyserver hkp://keys.gnupg.net --recv-keys F9514E84AE3708288374BBBE097586CFEA37F9A6`.
+Import the GPG key used to sign all Dependency Check releases: `gpg --keyserver hkp://keys.gnupg.net --recv-keys 259A55407DD6C00299E6607EFFDE55BE73A2D1ED`.
 Download the dependency-check command line tool the [GitHub Release](https://github.com/jeremylong/DependencyCheck/releases/download/v${project.version}/dependency-check-${project.version}-release.zip) and the associated GPG signature file from the [GitHub Release](https://github.com/jeremylong/DependencyCheck/releases/download/v${project.version}/dependency-check-${project.version}-release.zip.asc).
 Verify the cryptographic integrity of your download: `gpg --verify dependency-check-${project.version}-release.zip.asc`.
 Extract the zip file to a location on your computer and put the 'bin' directory into the
