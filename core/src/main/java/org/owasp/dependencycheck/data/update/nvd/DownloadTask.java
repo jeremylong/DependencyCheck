@@ -133,7 +133,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
                 //going from 2 to 4 to have 3 download attempts with easier info messages
                 final int downloadAttempts = 4;
                 for (int x = 2; x <= downloadAttempts && !attemptDownload(url1, x == downloadAttempts); x++) {
-                    LOGGER.info("Download Attemp {} for NVD CVE - {}", x, nvdCveInfo.getId());
+                    LOGGER.info("Download Attempt {} for NVD CVE - {}", x, nvdCveInfo.getId());
                     Thread.sleep(waitTime * (x / 2));
                 }
                 if (file.isFile() && file.length() > 0) {
