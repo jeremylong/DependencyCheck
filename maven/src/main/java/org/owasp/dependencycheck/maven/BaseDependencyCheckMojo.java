@@ -1346,7 +1346,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                             result = findClassifierArtifactInAllDeps(allDeps, theCoord);
                         } else {
                             final String versionlessFilter =
-                                    new StringBuilder(theCoord.getGroupId()).append(':').append(theCoord.getArtifactId()).append(':').append(theCoord.getExtension()).toString();
+                                    new StringBuilder(coordinate.getGroupId()).append(':').append(coordinate.getArtifactId()).append(':').append(coordinate.getExtension()).toString();
                             final TransformableFilter filter = new PatternInclusionsFilter(
                                     Collections.singletonList(versionlessFilter));
                             final Iterable<ArtifactResult> singleResult
