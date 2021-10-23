@@ -1323,7 +1323,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 }
             } else {
                 final Artifact dependencyArtifact = dependencyNode.getArtifact();
-                final Artifact result;
+                Artifact result;
                 if (dependencyArtifact.isResolved()) {
                     //All transitive dependencies, excluding reactor and dependencyManagement artifacts should
                     //have been resolved by Maven prior to invoking the plugin - resolving the dependencies
@@ -1336,14 +1336,23 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         final List<org.apache.maven.model.Dependency> dependencies = project.getDependencies();
                         final List<org.apache.maven.model.Dependency> managedDependencies
                                 = project.getDependencyManagement() == null ? null : project.getDependencyManagement().getDependencies();
-                        final ArtifactCoordinate theCoord = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
-                        if (theCoord.getClassifier() != null) {
+                        if (coordinate.getClassifier() != null) {
                             // This would trigger NPE when using the filter - MSHARED-998
-                            getLog().debug("Expensive lookup as workaround for MSHARED-998 for " + theCoord);
-                            final Iterable<ArtifactResult> allDeps
-                                    = dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,
-                                            null);
-                            result = findClassifierArtifactInAllDeps(allDeps, theCoord);
+                            getLog().debug("Expensive lookup as workaround for MSHARED-998 for " + coordinate);
+                            try {
+                                final Iterable<ArtifactResult> allDeps
+                                        = dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,
+                                                                                 null);
+                                result = findClassifierArtifactInAllDeps(allDeps, coordinate, project);
+                            } catch (DependencyResolverException dre) {
+                                result = Mshared998Util.findArtifactInAetherDREResult(dre, coordinate);
+                                if (result == null) {
+                                    throw new DependencyNotFoundException(
+                                            String.format("Failed to resolve dependency %s with dependencyResolver for "
+                                                          + "project-artifact %s", coordinate, project.getArtifactId()),
+                                            dre);
+                                }
+                            }
                         } else {
                             final TransformableFilter filter = new PatternInclusionsFilter(
                                     Collections.singletonList(
@@ -1357,7 +1366,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                                 result = first.getArtifact();
                             } else {
                                 throw new DependencyNotFoundException(String.format("Failed to resolve dependency %s with "
-                                        + "dependencyResolver", coordinate));
+                                        + "dependencyResolver for project-artifact %s", coordinate, project.getArtifactId()));
                             }
                         }
                     } catch (DependencyNotFoundException | DependencyResolverException ex) {
@@ -1467,11 +1476,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * dependencies
      * @param theCoord The ArtifactCoordinate of the artifact-with-classifier we
      * intended to resolve
+     * @param project The project in whose context resolution was attempted
      * @return the resolved artifact matching with {@code theCoord}
      * @throws DependencyNotFoundException Not expected to be thrown, but will
      * be thrown if {@code theCoord} could not be found within {@code allDeps}
      */
-    private Artifact findClassifierArtifactInAllDeps(final Iterable<ArtifactResult> allDeps, final ArtifactCoordinate theCoord)
+    private Artifact findClassifierArtifactInAllDeps(final Iterable<ArtifactResult> allDeps, final ArtifactCoordinate theCoord,
+                                                     final MavenProject project)
             throws DependencyNotFoundException {
         Artifact result = null;
         for (final ArtifactResult res : allDeps) {
@@ -1482,7 +1493,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         if (result == null) {
             throw new DependencyNotFoundException(String.format("Expected dependency not found in resolved artifacts for "
-                    + "dependency %s", theCoord));
+                    + "dependency %s of project-artifact %s", theCoord, project.getArtifactId()));
         }
         return result;
     }
