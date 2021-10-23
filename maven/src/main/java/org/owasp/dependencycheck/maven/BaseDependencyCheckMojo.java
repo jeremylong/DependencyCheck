@@ -1354,9 +1354,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                                 }
                             }
                         } else {
+                            final String versionlessFilter =
+                                    new StringBuilder(coordinate.getGroupId()).append(':').append(coordinate.getArtifactId()).append(':').append(coordinate.getExtension()).toString();
                             final TransformableFilter filter = new PatternInclusionsFilter(
-                                    Collections.singletonList(
-                                            TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact()).toString()));
+                                    Collections.singletonList(versionlessFilter));
                             final Iterable<ArtifactResult> singleResult
                                     = dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,
                                             filter);
