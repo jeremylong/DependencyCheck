@@ -29,7 +29,7 @@ import java.util.Objects;
 
 public final class Mshared998Util {
     /**
-     * Empty constructor to prevent instantiation of utility-class
+     * Empty constructor to prevent instantiation of utility-class.
      */
     private Mshared998Util() {
     }
