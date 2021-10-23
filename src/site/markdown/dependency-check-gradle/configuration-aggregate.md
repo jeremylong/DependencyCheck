@@ -158,6 +158,8 @@ artifactory  | bearerToken           | The bearer token to connect to Artifactor
 nodeAudit    | enabled               | Sets whether the Node Audit Analyzer should be used. This analyzer requires an internet connection.               | true
 nodeAudit    | useCache              | Sets whether the Node Audit Analyzer should cache results locally.                                                | true
 nodeAudit    | skipDevDependencies   | Sets whether the Node Audit Analyzer should skip devDependencies.                                                 | false
+nodeAudit    | pnpmEnabled           | Sets whether the Pnpm Audit Analyzer should be used. This analyzer requires yarn and an internet connection.      | true
+nodeAudit    | pnpmPath              | Sets the path to the `pnpm` executable.                                                                           | &nbsp;
 nodeAudit    | yarnEnabled           | Sets whether the Yarn Audit Analyzer should be used. This analyzer requires yarn and an internet connection.      | true
 nodeAudit    | yarnPath              | Sets the path to the `yarn` executable.                                                                           | &nbsp;
 retirejs     | enabled               | Sets whether the RetireJS Analyzer should be used.                                                                | true

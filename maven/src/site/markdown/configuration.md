@@ -82,7 +82,9 @@ pipfileAnalyzerEnabled              | Sets whether the [experimental](../analyze
 composerAnalyzerEnabled             | Sets whether the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used. `enableExperimental` must be set to true.  | true
 cpanfileAnalyzerEnabled             | Sets whether the [experimental](../analyzers/index.html) Perl CPAN File Analyzer should be used. `enableExperimental` must be set to true.          | true
 yarnAuditAnalyzerEnabled            | Sets whether the Yarn Audit Analyzer should be used. This analyzer requires yarn and an internet connection.  Use `nodeAuditSkipDevDependencies` to skip dev dependencies. | true
+pnpmAuditAnalyzerEnabled            | Sets whether the Pnpm Audit Analyzer should be used. This analyzer requires pnpm and an internet connection.  Use `nodeAuditSkipDevDependencies` to skip dev dependencies. | true
 pathToYarn                          | The path to `yarn`.                                                                                                                                 | &nbsp;
+pathToPnpm                          | The path to `pnpm`.                                                                                                                                 | &nbsp;
 nodeAnalyzerEnabled                 | Sets whether the [retired](../analyzers/index.html) Node.js Analyzer should be used.                                                                | true
 nodeAuditAnalyzerEnabled            | Sets whether the Node Audit Analyzer should be used. This analyzer requires an internet connection.                                                 | true
 nodeAuditAnalyzerUseCache           | Sets whether the Node Audit Analyzer will cache results. Cached results expire after 24 hours.                                                      | true

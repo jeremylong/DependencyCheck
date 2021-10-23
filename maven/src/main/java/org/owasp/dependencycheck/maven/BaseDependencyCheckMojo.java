@@ -280,6 +280,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "pathToYarn")
     private String pathToYarn;
     /**
+     * Sets the path to `pnpm`.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "pathToPnpm")
+    private String pathToPnpm;
+    /**
      * Use pom dependency information for snapshot dependencies that are part of
      * the Maven reactor while aggregate scanning a multi-module project.
      */
@@ -471,6 +477,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "yarnAuditAnalyzerEnabled")
     private Boolean yarnAuditAnalyzerEnabled;
+
+    /**
+     * Sets whether or not the Pnpm Audit Analyzer should be used.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "pnpmAuditAnalyzerEnabled")
+    private Boolean pnpmAuditAnalyzerEnabled;
 
     /**
      * Sets whether or not the Node Audit Analyzer should use a local cache.
@@ -2021,6 +2034,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED, golangModEnabled);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH, pathToGo);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_YARN_PATH, pathToYarn);
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_PNPM_PATH, pathToPnpm);
 
         final Proxy proxy = getMavenProxy();
         if (proxy != null) {
@@ -2093,6 +2107,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, nodePackageSkipDevDependencies);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, nodeAuditSkipDevDependencies);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, yarnAuditAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PNPM_AUDIT_ENABLED, pnpmAuditAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, retireJsUrl);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, retireJsForceUpdate);
