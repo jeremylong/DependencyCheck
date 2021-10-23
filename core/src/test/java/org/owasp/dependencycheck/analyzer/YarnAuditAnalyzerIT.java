@@ -9,9 +9,6 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
-import org.owasp.dependencycheck.utils.Settings;
-
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertTrue;
 
 public class YarnAuditAnalyzerIT extends BaseTest {
