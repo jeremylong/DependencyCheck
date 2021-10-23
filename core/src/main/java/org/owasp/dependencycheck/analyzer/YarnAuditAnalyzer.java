@@ -224,6 +224,11 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
             final ProcessBuilder builder = new ProcessBuilder(args);
             builder.directory(folder);
             LOGGER.debug("Launching: {}", args);
+            // Workaround 64k limitation of InputStream, redirect stdout to a file that we will read later
+            // instead of reading directly stdout from Process's InputStream which is topped at 64k
+            
+            final File tmpFile = getSettings().getTempFile("yarn_audit", "json");
+            builder.redirectOutput(tmpFile);
             final Process process = builder.start();
             try (ProcessReader processReader = new ProcessReader(process)) {
                 processReader.readAll();
@@ -233,15 +238,14 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
                     LOGGER.debug("Process Error Out: {}", errOutput);
                     LOGGER.debug("Process Out: {}", processReader.getOutput());
                 }
-
-                final String verboseJson = Arrays.stream(processReader.getOutput().split("\n"))
+                final String verboseJson = FileUtils.readFileToString(tmpFile, StandardCharsets.UTF_8);
+                final String auditRequestJson = Arrays.stream(verboseJson.split("\n"))
                         .filter(line -> line.contains("Audit Request"))
                         .findFirst().get();
                 String auditRequest;
-                try (JsonReader reader = Json.createReader(IOUtils.toInputStream(verboseJson, StandardCharsets.UTF_8))) {
+                try (JsonReader reader = Json.createReader(IOUtils.toInputStream(auditRequestJson, StandardCharsets.UTF_8))) {
                     final JsonObject jsonObject = reader.readObject();
                     auditRequest = jsonObject.getString("data");
-                    //auditRequest = auditRequest.replace("Audit Request: ", "");
                     auditRequest = auditRequest.substring(15);
                 }
                 LOGGER.debug("Audit Request: {}", auditRequest);
