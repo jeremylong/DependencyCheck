@@ -66,7 +66,6 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
     private static final FileFilter LOCK_FILE_FILTER = FileFilterBuilder.newInstance()
             .addFilenames(PNPM_PACKAGE_LOCK).build();
 
-
     /**
      * The path to the `pnpm` executable.
      */
@@ -98,22 +97,22 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
             throw new UnexpectedAnalysisException(ex);
         }
     }
-
+    
     @Override
     protected String getAnalyzerEnabledSettingKey() {
         return Settings.KEYS.ANALYZER_PNPM_AUDIT_ENABLED;
     }
-
+    
     @Override
     protected FileFilter getFileFilter() {
         return LOCK_FILE_FILTER;
     }
-
+    
     @Override
     public String getName() {
         return "Pnpm Audit Analyzer";
     }
-
+    
     @Override
     public AnalysisPhase getAnalysisPhase() {
         return AnalysisPhase.FINDING_ANALYSIS;
@@ -190,7 +189,7 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
         }
         return value;
     }
-
+    
     private JSONObject fetchPnpmAuditJson(Dependency dependency, boolean skipDevDependencies) throws AnalysisException {
         final File folder = dependency.getActualFile().getParentFile();
         if (!folder.isDirectory()) {
@@ -198,7 +197,7 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
         }
         try {
             final List<String> args = new ArrayList<>();
-
+            
             args.add(getPnpm());
             args.add("audit");
             if (skipDevDependencies) {
@@ -213,7 +212,7 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
             builder.directory(folder);
             // Workaround 64k limitation of InputStream, redirect stdout to a file that we will read later
             // instead of reading directly stdout from Process's InputStream which is topped at 64k
-            final File tmpFile = File.createTempFile("pnpm_audit",null);
+            final File tmpFile = File.createTempFile("pnpm_audit", null);
             builder.redirectOutput(tmpFile);
             LOGGER.debug("Launching: {}", args);
             final Process process = builder.start();
@@ -226,7 +225,7 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
                 String verboseJson = FileUtils.readFileToString(tmpFile, StandardCharsets.UTF_8);
                 // Workaround implicit creation of .pnpm-debug.log, see https://github.com/pnpm/pnpm/issues/3832
                 // affects usage of docker container to analyze mounted directories without privileges
-                if(verboseJson.contains("EACCES: permission denied, open 'node_modules/.pnpm-debug.log'")){
+                if (verboseJson.contains("EACCES: permission denied, open 'node_modules/.pnpm-debug.log'")) {
                     verboseJson = verboseJson.substring(0, verboseJson.indexOf("EACCES: permission denied, open 'node_modules/.pnpm-debug.log'"));
                 }
                 LOGGER.debug("Audit report: {}", verboseJson);
@@ -237,10 +236,10 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
             } catch (JSONException e) {
                 Thread.currentThread().interrupt();
                 throw new AnalysisException("Pnpm audit returned an invalid response.", e);
-            }
-            finally
-            {
-                tmpFile.delete();
+            } finally {
+                if (!tmpFile.delete()) {
+                    LOGGER.debug("Unable to delete temp file: {}", tmpFile.toString());
+                }
             }
         } catch (IOException ioe) {
             throw new AnalysisException("pnpm audit failure; this error can be ignored if you are not analyzing projects with a pnpm lockfile.", ioe);
@@ -253,7 +252,8 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
      * submitting the payload, and returning the identified advisories.
      *
      * @param lockFile a reference to the pnpm-lock.yaml
-     * @param dependency a reference to the dependency-object for the pnpm-lock.yaml
+     * @param dependency a reference to the dependency-object for the
+     * pnpm-lock.yaml
      * @return a list of advisories
      * @throws AnalysisException thrown when there is an error creating or
      * submitting the npm audit API payload
@@ -264,13 +264,12 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
         try {
             final Boolean skipDevDependencies = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false);
 
-
             // Use pnpm directly to fetch audit.json
             // Retrieves the contents of package-lock.json from the Dependency
             final JSONObject auditJson = fetchPnpmAuditJson(dependency, skipDevDependencies);
             // Submits the package payload to the nsp check service
             return getAuditParser().parse(auditJson);
-
+            
         } catch (JSONException e) {
             throw new AnalysisException(String.format("Failed to parse %s file from the NPM Audit API "
                     + "(PnpmAuditAnalyzer).", lockFile.getPath()), e);
@@ -279,10 +278,9 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
             throw ex;
         }
     }
-
+    
     @NotNull
-    private NpmAuditParser getAuditParser()
-    {
+    private NpmAuditParser getAuditParser() {
         return new NpmAuditParser();
     }
 }
