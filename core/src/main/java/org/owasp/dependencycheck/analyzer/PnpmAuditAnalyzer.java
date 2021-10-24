@@ -97,22 +97,22 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
             throw new UnexpectedAnalysisException(ex);
         }
     }
-    
+
     @Override
     protected String getAnalyzerEnabledSettingKey() {
         return Settings.KEYS.ANALYZER_PNPM_AUDIT_ENABLED;
     }
-    
+
     @Override
     protected FileFilter getFileFilter() {
         return LOCK_FILE_FILTER;
     }
-    
+
     @Override
     public String getName() {
         return "Pnpm Audit Analyzer";
     }
-    
+
     @Override
     public AnalysisPhase getAnalysisPhase() {
         return AnalysisPhase.FINDING_ANALYSIS;
@@ -189,7 +189,7 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
         }
         return value;
     }
-    
+
     private JSONObject fetchPnpmAuditJson(Dependency dependency, boolean skipDevDependencies) throws AnalysisException {
         final File folder = dependency.getActualFile().getParentFile();
         if (!folder.isDirectory()) {
@@ -197,7 +197,7 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
         }
         try {
             final List<String> args = new ArrayList<>();
-            
+
             args.add(getPnpm());
             args.add("audit");
             if (skipDevDependencies) {
@@ -269,7 +269,7 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
             final JSONObject auditJson = fetchPnpmAuditJson(dependency, skipDevDependencies);
             // Submits the package payload to the nsp check service
             return getAuditParser().parse(auditJson);
-            
+
         } catch (JSONException e) {
             throw new AnalysisException(String.format("Failed to parse %s file from the NPM Audit API "
                     + "(PnpmAuditAnalyzer).", lockFile.getPath()), e);
@@ -278,7 +278,7 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
             throw ex;
         }
     }
-    
+
     @NotNull
     private NpmAuditParser getAuditParser() {
         return new NpmAuditParser();
