@@ -29,7 +29,7 @@ public class PnpmAuditAnalyzerTest extends BaseTest
         NpmAuditParser npmAuditParser = new NpmAuditParser();
         JSONObject vulnsAuditJson = new JSONObject(IOUtils.toString(getResourceAsStream(this, "pnpmaudit/pnpm-audit.json"), "UTF-8"));
         List<Advisory> advisories = npmAuditParser.parse(vulnsAuditJson);
-        assertThat(advisories.size(), is(1));
+        assertThat(advisories.size(), is(2));
     }
 
     @Test
@@ -39,20 +39,5 @@ public class PnpmAuditAnalyzerTest extends BaseTest
         assertThat(analyzer.accept(new File("npm-shrinkwrap.json")), is(false));
         assertThat(analyzer.accept(new File("yarn.lock")), is(false));
         assertThat(analyzer.accept(new File("pnpm-lock.yaml")), is(true));
-    }
-
-    @Test
-    public void testDependencyCheck() throws AnalysisException
-    {
-        PnpmAuditAnalyzer analyzer = new PnpmAuditAnalyzer();
-        Dependency dependency = new Dependency(new File("src/test/resources/pnpmaudit/pnpm-lock.yaml"));
-
-        Properties properties = new Properties();
-        properties.setProperty(Settings.KEYS.ANALYZER_PNPM_AUDIT_ENABLED, "true");
-        final Settings settings = new Settings(properties);
-        final Engine engine = new Engine(settings);
-        analyzer.initialize(settings);
-        analyzer.analyzeDependency(dependency, engine);
-        assertThat(true, is(true));
     }
 }
