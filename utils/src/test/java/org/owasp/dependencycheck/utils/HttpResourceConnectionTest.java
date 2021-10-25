@@ -58,17 +58,6 @@ public class HttpResourceConnectionTest extends BaseTest {
     }
 
     /**
-     * Test of getLastModified method, of class HttpResourceConnection.
-     */
-    @Test
-    public void testGetLastModified() throws Exception {
-        URL url = new URL(getSettings().getString(Settings.KEYS.ENGINE_VERSION_CHECK_URL));
-        HttpResourceConnection instance = new HttpResourceConnection(getSettings());
-        long timestamp = instance.getLastModified(url);
-        assertTrue("timestamp equal to zero?", timestamp > 0);
-    }
-
-    /**
      * Test of isClosed method, of class HttpResourceConnection.
      */
     @Test
