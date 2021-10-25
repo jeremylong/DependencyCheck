@@ -244,7 +244,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         boolean accept = super.accept(pathname);
         final boolean npmEnabled = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, false);
         final boolean yarnEnabled = getSettings().getBoolean(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, false);
-        if (accept && (npmEnabled || yarnEnabled)) {
+        final boolean pnpmEnabled = getSettings().getBoolean(Settings.KEYS.ANALYZER_PNPM_AUDIT_ENABLED, false);
+        if (accept && (npmEnabled || yarnEnabled || pnpmEnabled)) {
             try {
                 accept = shouldProcess(pathname);
             } catch (AnalysisException ex) {

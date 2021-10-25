@@ -323,6 +323,10 @@ public final class Settings {
          */
         public static final String ANALYZER_YARN_AUDIT_ENABLED = "analyzer.yarn.audit.enabled";
         /**
+         * The properties key for whether the Pnpm Audit analyzer is enabled.
+         */
+        public static final String ANALYZER_PNPM_AUDIT_ENABLED = "analyzer.pnpm.audit.enabled";
+        /**
          * The properties key for supplying the URL to the Node Audit API.
          */
         public static final String ANALYZER_NODE_AUDIT_URL = "analyzer.node.audit.url";
@@ -405,6 +409,10 @@ public final class Settings {
          * The path to go, if available.
          */
         public static final String ANALYZER_YARN_PATH = "analyzer.yarn.path";
+        /**
+         * The path to pnpm, if available.
+         */
+        public static final String ANALYZER_PNPM_PATH = "analyzer.pnpm.path";
         /**
          * The properties key for whether the Golang Dep analyzer is enabled.
          */

@@ -185,7 +185,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
      */
     private boolean isNodeAuditEnabled(Engine engine) {
         for (Analyzer a : engine.getAnalyzers()) {
-            if (a instanceof NodeAuditAnalyzer || a instanceof YarnAuditAnalyzer) {
+            if (a instanceof NodeAuditAnalyzer || a instanceof YarnAuditAnalyzer || a instanceof PnpmAuditAnalyzer) {
                 if (a.isEnabled()) {
                     try {
                         ((AbstractNpmAnalyzer) a).prepareFileTypeAnalyzer(engine);

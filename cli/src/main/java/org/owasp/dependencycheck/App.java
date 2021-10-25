@@ -456,6 +456,8 @@ public class App {
                 cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_GO));
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_YARN_PATH,
                 cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_YARN));
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_PNPM_PATH,
+                cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_PNPM));
         settings.setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT,
                 cli.hasOption(CliParser.ARGUMENT.PRETTY_PRINT));
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL,
@@ -509,6 +511,8 @@ public class App {
                 !cli.isNodeAuditDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED,
                 !cli.isYarnAuditDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_PNPM_AUDIT_ENABLED,
+                !cli.isPnpmAuditDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NODE_AUDIT_CACHE, Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE));
         settings.setBoolean(Settings.KEYS.ANALYZER_RETIREJS_ENABLED,

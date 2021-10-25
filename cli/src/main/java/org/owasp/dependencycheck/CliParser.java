@@ -563,6 +563,15 @@ public final class CliParser {
     public boolean isYarnAuditDisabled() {
         return hasDisableOption(ARGUMENT.DISABLE_YARN_AUDIT, Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED);
     }
+    /**
+     * Returns true if the disablePnpmAudit command line argument was specified.
+     *
+     * @return true if the disablePnpmAudit command line argument was specified;
+     * otherwise false
+     */
+    public boolean isPnpmAuditDisabled() {
+        return hasDisableOption(ARGUMENT.DISABLE_PNPM_AUDIT, Settings.KEYS.ANALYZER_PNPM_AUDIT_ENABLED);
+    }
 
     /**
      * Returns true if the Nexus Analyzer should use the configured proxy to
@@ -1161,6 +1170,10 @@ public final class CliParser {
          */
         public static final String PATH_TO_YARN = "yarn";
         /**
+         * The CLI argument name for setting the path to `pnpm`.
+         */
+        public static final String PATH_TO_PNPM = "pnpm";
+        /**
          * Disables the Ruby Gemspec Analyzer.
          */
         public static final String DISABLE_RUBYGEMS = "disableRubygems";
@@ -1261,6 +1274,10 @@ public final class CliParser {
          * Disables the Yarn Audit Analyzer.
          */
         public static final String DISABLE_YARN_AUDIT = "disableYarnAudit";
+        /**
+         * Disables the Pnpm Audit Analyzer.
+         */
+        public static final String DISABLE_PNPM_AUDIT = "disablePnpmAudit";
         /**
          * Disables the Node Audit Analyzer's ability to cache results locally.
          */

@@ -47,6 +47,7 @@ _odc_completions()
             --disableMixAudit
             --disableMSBuild
             --disableYarnAudit
+            --disablePnpmAudit
             --disableNodeAudit
             --disableNodeAuditCache
             --disableNodeJS
@@ -94,6 +95,7 @@ _odc_completions()
             --proxyport <port>
             --proxyserver <server>
             --proxyuser <user>
+            --pnpm
             --purge
             --retirejsFilter <pattern>
             --retirejsFilterNonVulnerable

@@ -29,6 +29,7 @@ RUN apk update                                                                  
     mkdir /opt/yarn                                                                                  && \
     curl -Ls https://yarnpkg.com/latest.tar.gz | tar -xz --strip-components=1 --directory /opt/yarn  && \
     ln -s /opt/yarn/bin/yarn /usr/bin/yarn                                                           && \
+    npm install -g pnpm                                                                              && \
     unzip dependency-check-${VERSION}-release.zip -d /usr/share/                                     && \
     rm dependency-check-${VERSION}-release.zip                                                       && \
     cd /usr/share/dependency-check/plugins                                                           && \

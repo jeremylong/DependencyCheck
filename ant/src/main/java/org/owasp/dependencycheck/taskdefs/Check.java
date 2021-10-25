@@ -73,6 +73,10 @@ public class Check extends Update {
      */
     private Boolean yarnAuditAnalyzerEnabled;
     /**
+     * Whether or not the Pnpm Audit Analyzer is enabled.
+     */
+    private Boolean pnpmAuditAnalyzerEnabled;
+    /**
      * Sets whether or not the Node Audit Analyzer should use a local cache.
      */
     private Boolean nodeAuditAnalyzerUseCache;
@@ -179,6 +183,10 @@ public class Check extends Update {
      * The path to `yarn`.
      */
     private String pathToYarn;
+    /**
+     * The path to `pnpm`.
+     */
+    private String pathToPnpm;
     /**
      * Additional ZIP File extensions to add analyze. This should be a
      * comma-separated list of file extensions to treat like ZIP files.
@@ -1085,6 +1093,24 @@ public class Check extends Update {
     }
 
     /**
+     * Get the value of pnpmAuditAnalyzerEnabled.
+     *
+     * @return the value of pnpmAuditAnalyzerEnabled
+     */
+    public Boolean isPnpmAuditAnalyzerEnabled() {
+        return pnpmAuditAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of pnpmAuditAnalyzerEnabled.
+     *
+     * @param pnpmAuditAnalyzerEnabled new value of pnpmAuditAnalyzerEnabled
+     */
+    public void setPnpmAuditAnalyzerEnabled(Boolean pnpmAuditAnalyzerEnabled) {
+        this.pnpmAuditAnalyzerEnabled = pnpmAuditAnalyzerEnabled;
+    }
+
+    /**
      * Get the value of nodeAuditAnalyzerUseCache.
      *
      * @return the value of nodeAuditAnalyzerUseCache
@@ -1414,6 +1440,24 @@ public class Check extends Update {
      */
     public void setPathToYarn(String pathToYarn) {
         this.pathToYarn = pathToYarn;
+    }
+
+    /**
+     * Get the value of pathToPnpm.
+     *
+     * @return the value of pathToPnpm
+     */
+    public String getPathToPnpm() {
+        return pathToPnpm;
+    }
+
+    /**
+     * Set the value of pathToPnpm.
+     *
+     * @param pathToPnpm new value of pathToPnpm
+     */
+    public void setPathToPnpm(String pathToPnpm) {
+        this.pathToPnpm = pathToPnpm;
     }
 
     /**
@@ -1916,6 +1960,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, nodePackageSkipDevDependencies);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, nodeAuditAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, yarnAuditAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_PNPM_AUDIT_ENABLED, pnpmAuditAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, nodeAuditAnalyzerUseCache);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, nodeAuditSkipDevDependencies);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
@@ -1927,6 +1972,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED, golangModEnabled);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH, pathToGo);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_YARN_PATH, pathToYarn);
+        getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_PNPM_PATH, pathToPnpm);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED, mixAuditAnalyzerEnabled);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_MIX_AUDIT_PATH, mixAuditPath);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
