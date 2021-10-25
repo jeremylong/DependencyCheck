@@ -162,6 +162,8 @@ nodeAudit    | pnpmEnabled           | Sets whether the Pnpm Audit Analyzer shou
 nodeAudit    | pnpmPath              | Sets the path to the `pnpm` executable.                                                                           | &nbsp;
 nodeAudit    | yarnEnabled           | Sets whether the Yarn Audit Analyzer should be used. This analyzer requires yarn and an internet connection.      | true
 nodeAudit    | yarnPath              | Sets the path to the `yarn` executable.                                                                           | &nbsp;
+nodeAudit    | pnpmEnabled           | Sets whether the Pnpm Audit Analyzer should be used. This analyzer requires pnpm and an internet connection.      | true
+nodeAudit    | pnpmPath              | The path to `pnpm`.                                                                                               | &nbsp;
 retirejs     | enabled               | Sets whether the RetireJS Analyzer should be used.                                                                | true
 retirejs     | forceupdate           | Sets whether the RetireJS Analyzer should update regardless of the `autoupdate` setting.                          | false
 retirejs     | retireJsUrl           | The URL to the Retire JS repository.                                                                              | https://raw.githubusercontent.com/Retirejs/retire.js/master/repository/jsrepository.json
