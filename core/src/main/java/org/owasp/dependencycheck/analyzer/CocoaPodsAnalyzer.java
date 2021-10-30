@@ -95,7 +95,7 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The capture group #1 is the dependency name, #2 is dependency version
      */
-    private static final Pattern PODFILE_LOCK_DEPENDENCY_PATTERN = Pattern.compile("  - \"?(.*) \\((\\d+\\.\\d+\\.\\d+)\\)\"?");
+    private static final Pattern PODFILE_LOCK_DEPENDENCY_PATTERN = Pattern.compile("  - \"?(.*) \\((\\d+(\\.\\d+){0,4})\\)\"?");
 
     /**
      * Returns the FileFilter
