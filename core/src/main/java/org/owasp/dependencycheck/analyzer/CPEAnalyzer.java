@@ -1089,7 +1089,11 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             return null;
         }
         if (ecosystem != null) {
-            return entries.stream().filter(c -> c.getEcosystem() == null || c.getEcosystem().equals(ecosystem))
+            return entries.stream().filter(c
+                    -> c.getEcosystem() == null
+                    || c.getEcosystem().equals(ecosystem)
+                    //some ios CVE/CPEs are listed under native
+                    || (Ecosystem.IOS.equals(ecosystem) && Ecosystem.NATIVE.equals(c.getEcosystem())))
                     .map(c -> c.getCpe())
                     .collect(Collectors.toSet());
         }
