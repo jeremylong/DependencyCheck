@@ -185,7 +185,7 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
             dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
             dependency.setName(name);
             dependency.setVersion(version);
-            
+
             try {
                 final PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType("cocoapods").withName(dependency.getName());
                 if (dependency.getVersion() != null) {
@@ -203,7 +203,7 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
                 }
                 dependency.addSoftwareIdentifier(id);
             }
-            
+
             final String packagePath = String.format("%s:%s", name, version);
             dependency.setPackagePath(packagePath);
             dependency.setDisplayFileName(packagePath);
