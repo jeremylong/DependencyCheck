@@ -194,7 +194,7 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
                 final PackageURL purl = builder.build();
                 dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));
             } catch (MalformedPackageURLException ex) {
-                LOGGER.debug("Unable to build package url for python", ex);
+                LOGGER.debug("Unable to build package url for swift", ex);
                 final GenericIdentifier id;
                 if (dependency.getVersion() != null) {
                     id = new GenericIdentifier("swift:" + dependency.getName() + "@" + dependency.getVersion(), Confidence.HIGHEST);

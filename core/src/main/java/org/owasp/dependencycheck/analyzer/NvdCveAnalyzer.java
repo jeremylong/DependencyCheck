@@ -143,7 +143,8 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Filters the list of vulnerabilities for the given ecosystem.
+     * Filters the list of vulnerabilities for the given ecosystem compared to
+     * the target software from the NVD.
      *
      * @param ecosystem the dependency's ecosystem
      * @param vulnerabilities the list of vulnerabilities to filter

@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.analyzer;
 
 import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
 import java.io.File;
 import java.io.FileFilter;
@@ -95,7 +96,7 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The capture group #1 is the dependency name, #2 is dependency version
      */
-    private static final Pattern PODFILE_LOCK_DEPENDENCY_PATTERN = Pattern.compile("  - \"?(.*) \\((\\d+\\.\\d+\\.\\d+)\\)\"?");
+    private static final Pattern PODFILE_LOCK_DEPENDENCY_PATTERN = Pattern.compile("  - \"?(.*) \\((\\d+(\\.\\d+){0,4})\\)\"?");
 
     /**
      * Returns the FileFilter
@@ -184,6 +185,25 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
             dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
             dependency.setName(name);
             dependency.setVersion(version);
+
+            try {
+                final PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType("cocoapods").withName(dependency.getName());
+                if (dependency.getVersion() != null) {
+                    builder.withVersion(dependency.getVersion());
+                }
+                final PackageURL purl = builder.build();
+                dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));
+            } catch (MalformedPackageURLException ex) {
+                LOGGER.debug("Unable to build package url for cocoapods", ex);
+                final GenericIdentifier id;
+                if (dependency.getVersion() != null) {
+                    id = new GenericIdentifier("cocoapods:" + dependency.getName() + "@" + dependency.getVersion(), Confidence.HIGHEST);
+                } else {
+                    id = new GenericIdentifier("cocoapods:" + dependency.getName(), Confidence.HIGHEST);
+                }
+                dependency.addSoftwareIdentifier(id);
+            }
+
             final String packagePath = String.format("%s:%s", name, version);
             dependency.setPackagePath(packagePath);
             dependency.setDisplayFileName(packagePath);
