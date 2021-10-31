@@ -2,6 +2,13 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
+           swift-log is not swift...
+        ]]></notes>
+        <packageUrl regex="true">^pkg:swift/swift\-log@.*$</packageUrl>
+        <cpe>cpe:/a:apple:swift</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
                 FP in jetty as jetty-jakarta-servlet-api is identified as a low version jetty
                 ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty\.toolchain/jetty\-jakarta\-servlet\-api@.*$</packageUrl>
@@ -1069,11 +1076,11 @@
         <cpe>cpe:/a:openid:openid_connect</cpe>
     </suppress>
     <suppress base="true">
-       <notes><![CDATA[
+        <notes><![CDATA[
        Suppresses false positives per issue #3345
        ]]></notes>
-       <packageUrl regex="true">^pkg:maven/com\.azure/azure\-core\-http\-netty@.*$</packageUrl>
-       <cpe>cpe:/a:netty:netty</cpe>
+        <packageUrl regex="true">^pkg:maven/com\.azure/azure\-core\-http\-netty@.*$</packageUrl>
+        <cpe>cpe:/a:netty:netty</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
