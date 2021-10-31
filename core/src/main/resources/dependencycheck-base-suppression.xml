@@ -4300,8 +4300,9 @@
     <suppress base="true">
         <notes><![CDATA[
           false positive per #2977 on org.infinispan.protostream:protostream
+          false positive per #3766 on org.infinispan.protostream:protostream-types
           ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.infinispan\.protostream/protostream@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/org\.infinispan\.protostream/protostream.*$</packageUrl>
         <cpe>cpe:/a:infinispan:infinispan</cpe>
     </suppress>
     <suppress base="true">
