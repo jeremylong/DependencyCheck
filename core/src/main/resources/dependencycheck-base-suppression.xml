@@ -8,6 +8,12 @@
         <cpe>cpe:/a:i18n_project:i18n</cpe>
     </suppress>
     <suppress base="true">
+        swift-log is not swift...
+        ]]></notes>
+    <packageUrl regex="true">^pkg:swift/swift\-log@.*$</packageUrl>
+    <cpe>cpe:/a:apple:swift</cpe>
+    </suppress>
+    <suppress base="true">
         <notes><![CDATA[
                 FP in jetty as jetty-jakarta-servlet-api is identified as a low version jetty
                 ]]></notes>

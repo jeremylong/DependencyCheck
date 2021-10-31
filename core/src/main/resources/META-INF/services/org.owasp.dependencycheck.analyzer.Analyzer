@@ -38,6 +38,7 @@ org.owasp.dependencycheck.analyzer.ElixirMixAuditAnalyzer
 org.owasp.dependencycheck.analyzer.ComposerLockAnalyzer
 org.owasp.dependencycheck.analyzer.CocoaPodsAnalyzer
 org.owasp.dependencycheck.analyzer.SwiftPackageManagerAnalyzer
+org.owasp.dependencycheck.analyzer.SwiftPackageResolvedAnalyzer
 org.owasp.dependencycheck.analyzer.VersionFilterAnalyzer
 org.owasp.dependencycheck.analyzer.OssIndexAnalyzer
 org.owasp.dependencycheck.analyzer.PerlCpanfileAnalyzer
