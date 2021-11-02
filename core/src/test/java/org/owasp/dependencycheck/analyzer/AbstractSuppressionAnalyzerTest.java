@@ -33,6 +33,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.Settings.KEYS;
+import org.owasp.dependencycheck.xml.suppression.SuppressionRule;
 
 /**
  * @author Jeremy Long
@@ -170,6 +171,11 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
         @Override
         protected String getAnalyzerEnabledSettingKey() {
             return "unknown";
+        }
+
+        @Override
+        public boolean filter(SuppressionRule rule) {
+            return false;
         }
     }
     

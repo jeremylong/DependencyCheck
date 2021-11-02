@@ -18,7 +18,11 @@
 package org.owasp.dependencycheck.analyzer;
 
 import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.xml.suppression.SuppressionRule;
 
 /**
  * <p>
@@ -74,5 +78,17 @@ public class CpeSuppressionAnalyzer extends AbstractSuppressionAnalyzer {
     @Override
     protected String getAnalyzerEnabledSettingKey() {
         return Settings.KEYS.ANALYZER_CPE_SUPPRESSION_ENABLED;
+    }
+
+    @Override
+    public boolean filter(SuppressionRule rule) {
+        return !rule.hasCpe();
+    }
+
+    @Override
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+        if (dependency.getVulnerableSoftwareIdentifiersCount() > 0) {
+            super.analyzeDependency(dependency, engine);
+        }
     }
 }
