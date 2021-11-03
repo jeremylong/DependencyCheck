@@ -2,6 +2,14 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
+	    FP per #3776
+	    ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.seleniumhq\.selenium/selenium\-chromium\-driver@.*$</packageUrl>
+        <cpe>cpe:/a:chromium:chromium</cpe>
+        <cpe>cpe:/a:chromium_project:chromium</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
 	    FP per #3756
 	    ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.geronimo\.specs/geronimo\-ws\-metadata_2\.0_spec@.*$</packageUrl>
