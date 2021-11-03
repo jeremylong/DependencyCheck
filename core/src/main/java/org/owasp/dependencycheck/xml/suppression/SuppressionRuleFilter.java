@@ -31,7 +31,7 @@ public interface SuppressionRuleFilter {
      * @return <code>true</code> if the rule should be filtered; otherwise
      * <code>true</code>
      */
-    public boolean filter(SuppressionRule rule);
+   boolean filter(SuppressionRule rule);
 
     /**
      * Returns the name of the filter.
