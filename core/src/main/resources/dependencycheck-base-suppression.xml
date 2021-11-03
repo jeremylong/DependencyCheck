@@ -2,6 +2,13 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
+	    FP per #3131
+	    ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.typesafe\.akka/akka\-stream\-contrib_2\.13@.*$</packageUrl>
+        <cpe>cpe:/a:akka:akka</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
 	    FP per #3652
 	    ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.zalando/spring\-boot\-etcd@.*$</packageUrl>
