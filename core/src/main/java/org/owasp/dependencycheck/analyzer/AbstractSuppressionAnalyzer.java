@@ -43,6 +43,7 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
+import org.owasp.dependencycheck.xml.suppression.SuppressionRuleFilter;
 
 /**
  * Abstract base suppression analyzer that contains methods for parsing the
@@ -51,7 +52,7 @@ import org.xml.sax.SAXException;
  * @author Jeremy Long
  */
 @ThreadSafe
-public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
+public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer implements SuppressionRuleFilter {
 
     /**
      * The Logger for use throughout the class.
@@ -158,7 +159,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
             if (in == null) {
                 throw new SuppressionParseException("Suppression rules `" + BASE_SUPPRESSION_FILE + "` could not be found");
             }
-            ruleList = parser.parseSuppressionRules(in);
+            ruleList = parser.parseSuppressionRules(in, this);
         } catch (SAXException | IOException ex) {
             throw new SuppressionParseException("Unable to parse the base suppression data file", ex);
         }
@@ -233,7 +234,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                     throw new SuppressionParseException(msg);
                 }
                 try {
-                    list.addAll(parser.parseSuppressionRules(file));
+                    list.addAll(parser.parseSuppressionRules(file, this));
                 } catch (SuppressionParseException ex) {
                     LOGGER.warn("Unable to parse suppression xml file '{}'", file.getPath());
                     LOGGER.warn(ex.getMessage());

@@ -436,7 +436,14 @@ public class Dependency extends EvidenceCollection implements Serializable {
     public synchronized Set<Identifier> getVulnerableSoftwareIdentifiers() {
         return Collections.unmodifiableSet(this.vulnerableSoftwareIdentifiers);
     }
-
+    /**
+     * Returns the count of vulnerability identifiers.
+     *
+     * @return the count of vulnerability identifiers
+     */
+    public synchronized int getVulnerableSoftwareIdentifiersCount() {
+        return this.vulnerableSoftwareIdentifiers.size();
+    }
     /**
      * Adds a set of Identifiers to the current list of software identifiers.
      * Only used for testing.
@@ -599,6 +606,15 @@ public class Dependency extends EvidenceCollection implements Serializable {
             vulnerabilitySet = vulnerabilities;
         }
         return Collections.unmodifiableSet(vulnerabilitySet);
+    }
+
+    /**
+     * Get vulnerability count.
+     *
+     * @return the count of vulnerabilities
+     */
+    public synchronized int getVulnerabilitiesCount() {
+        return vulnerabilities.size();
     }
 
     /**
