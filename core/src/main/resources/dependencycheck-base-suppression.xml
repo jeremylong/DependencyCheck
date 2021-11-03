@@ -2,6 +2,20 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
+	    FP per #3685
+	    ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.geronimo\.config/geronimo\-config\-impl@.*$</packageUrl>
+        <cpe>cpe:/a:apache:geronimo</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+	    FP per #3749
+	    ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.reactivex/rxjava@.*$</packageUrl>
+        <cpe>cpe:/a:travis-ci:travis_ci</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
 	    FP per #3749
 	    ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.springframework\.kafka/spring\-kafka@.*$</packageUrl>
