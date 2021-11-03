@@ -2,7 +2,7 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
-	    FP per #3776
+	    FP per #3749
 	    ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.seleniumhq\.selenium/selenium\-chromium\-driver@.*$</packageUrl>
         <cpe>cpe:/a:chromium:chromium</cpe>
