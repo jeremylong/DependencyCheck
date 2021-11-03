@@ -2,6 +2,13 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
+	    FP per #3652
+	    ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.zalando/spring\-boot\-etcd@.*$</packageUrl>
+        <cpe>cpe:/a:etcd:etcd</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
 	    FP per #3678
 	    ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.salesforce\.servicelibs/reactive\-grpc.*$</packageUrl>
