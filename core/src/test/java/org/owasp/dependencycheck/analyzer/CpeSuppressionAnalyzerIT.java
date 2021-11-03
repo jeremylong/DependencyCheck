@@ -47,14 +47,13 @@ public class CpeSuppressionAnalyzerIT extends BaseDBTestCase {
     }
 
     /**
-     * Test of getAnalysisPhase method, of class
-     * CpeSuppressionAnalyzer.
+     * Test of getAnalysisPhase method, of class CpeSuppressionAnalyzer.
      */
     @Test
     public void testGetAnalysisPhase() {
         CpeSuppressionAnalyzer instance = new CpeSuppressionAnalyzer();
         instance.initialize(getSettings());
-        AnalysisPhase expResult = AnalysisPhase.POST_FINDING_ANALYSIS;
+        AnalysisPhase expResult = AnalysisPhase.POST_IDENTIFIER_ANALYSIS;
         AnalysisPhase result = instance.getAnalysisPhase();
         assertEquals(expResult, result);
     }
