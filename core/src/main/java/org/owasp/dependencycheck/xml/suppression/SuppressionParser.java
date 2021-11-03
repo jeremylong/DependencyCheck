@@ -101,7 +101,8 @@ public class SuppressionParser {
      * @throws SuppressionParseException thrown if the XML cannot be parsed
      * @throws SAXException thrown if the XML cannot be parsed
      */
-    public List<SuppressionRule> parseSuppressionRules(InputStream inputStream, SuppressionRuleFilter filter) throws SuppressionParseException, SAXException {
+    public List<SuppressionRule> parseSuppressionRules(InputStream inputStream, SuppressionRuleFilter filter)
+            throws SuppressionParseException, SAXException {
         try (
                 InputStream schemaStream13 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_3);
                 InputStream schemaStream12 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_2);

@@ -28,6 +28,7 @@ import org.eclipse.aether.resolution.DependencyResult;
 import java.util.Objects;
 
 public final class Mshared998Util {
+
     /**
      * Empty constructor to prevent instantiation of utility-class.
      */
@@ -35,14 +36,17 @@ public final class Mshared998Util {
     }
 
     /**
-     * Find the artifact for the given coordinate among the available succesfull resolution attempts contained within the
-     * DependencyResolverException
-     * @param dre The DependencyResolverException that might have embedded successful resolution results
+     * Find the artifact for the given coordinate among the available successful
+     * resolution attempts contained within the DependencyResolverException.
+     *
+     * @param dre The DependencyResolverException that might have embedded
+     * successful resolution results
      * @param coordinate The coordinates of the artifact we're interested in
-     * @return The resolved artifact matching {@code coordinate} or {@code null} if not found
+     * @return The resolved artifact matching {@code coordinate} or {@code null}
+     * if not found
      */
     public static Artifact findArtifactInAetherDREResult(final DependencyResolverException dre,
-                                                         final ArtifactCoordinate coordinate) {
+            final ArtifactCoordinate coordinate) {
         Artifact result = null;
         if (dre.getCause() instanceof DependencyResolutionException) {
             final DependencyResolutionException adre = (DependencyResolutionException) dre.getCause();
@@ -60,12 +64,15 @@ public final class Mshared998Util {
     }
 
     /**
-     * Checks whether the given ArtifactResult contains an artifact that matches the coordinate
+     * Checks whether the given ArtifactResult contains an artifact that matches
+     * the coordinate
+     *
      * @param artifactResult The ArtifactResult to inspect
      * @param coordinate The coordinate to match with
-     * @return {@code true} when the artifactresult contains an artifact that matches the coordinate on GAV_C_E,
-     * false otherwise.
-     */    private static boolean matchesCoordinate(final ArtifactResult artifactResult, final ArtifactCoordinate coordinate) {
+     * @return {@code true} when the artifactresult contains an artifact that
+     * matches the coordinate on GAV_C_E, false otherwise.
+     */
+    private static boolean matchesCoordinate(final ArtifactResult artifactResult, final ArtifactCoordinate coordinate) {
         if (artifactResult.getArtifact() == null) {
             return false;
         } else {

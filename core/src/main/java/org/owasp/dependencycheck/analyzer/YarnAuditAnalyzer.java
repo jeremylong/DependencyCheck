@@ -226,7 +226,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
             LOGGER.debug("Launching: {}", args);
             // Workaround 64k limitation of InputStream, redirect stdout to a file that we will read later
             // instead of reading directly stdout from Process's InputStream which is topped at 64k
-            
+
             final File tmpFile = getSettings().getTempFile("yarn_audit", "json");
             builder.redirectOutput(tmpFile);
             final Process process = builder.start();

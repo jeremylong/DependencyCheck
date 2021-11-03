@@ -117,6 +117,14 @@ public class SuppressionHandler extends DefaultHandler {
     public List<SuppressionRule> getSuppressionRules() {
         return suppressionRules;
     }
+
+    /**
+     * Constructs a Suppression Handler.
+     *
+     * @param filter The suppression rule filter used when loading the
+     * suppression rules. This is used to differentiate vulnerability
+     * suppression rules from CPE suppression rules.
+     */
     public SuppressionHandler(SuppressionRuleFilter filter) {
         this.filter = filter;
     }

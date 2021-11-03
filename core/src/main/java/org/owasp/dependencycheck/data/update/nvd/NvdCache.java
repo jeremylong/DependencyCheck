@@ -100,7 +100,9 @@ public class NvdCache {
                 }
                 final File nvdFile = new File(cache, filename);
                 FileUtils.copyFile(file, nvdFile);
-                nvdFile.setLastModified(Instant.now().toEpochMilli());
+                if (!nvdFile.setLastModified(Instant.now().toEpochMilli())) {
+                    LOGGER.debug("Unable to set last modified date on {}", nvdFile.toString());
+                }
             } catch (IOException ex) {
                 LOGGER.debug("Error storing nvd file in cache", ex);
             }
