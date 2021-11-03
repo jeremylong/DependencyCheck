@@ -117,7 +117,6 @@ public class SuppressionHandler extends DefaultHandler {
     public List<SuppressionRule> getSuppressionRules() {
         return suppressionRules;
     }
-    
     public SuppressionHandler(SuppressionRuleFilter filter) {
         this.filter = filter;
     }
