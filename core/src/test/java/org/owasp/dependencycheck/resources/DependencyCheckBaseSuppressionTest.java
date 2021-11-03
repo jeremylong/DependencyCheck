@@ -1,5 +1,6 @@
 package org.owasp.dependencycheck.resources;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,7 +25,9 @@ public class DependencyCheckBaseSuppressionTest {
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
         Path path = Paths.get("src", "main", "resources", "dependencycheck-base-suppression.xml");
-        Document document = factory.newDocumentBuilder().parse(path.toFile());
+        File file = path.toFile();
+        boolean e = file.exists();
+        Document document = factory.newDocumentBuilder().parse(file);
         document.getDocumentElement().normalize();
 
         NodeList nodes = document.getElementsByTagName("suppress");

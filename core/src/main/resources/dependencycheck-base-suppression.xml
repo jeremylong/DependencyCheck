@@ -19,14 +19,22 @@
         <notes><![CDATA[
 	    FP per #3572
 	    ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.spark\-project\.spark/unused@.*$</packageUrl>
+        <cpe>cpe:/a:apache:spark</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+	    FP per #3572
+	    ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.directory\.server/apacheds\-i18n@.*$</packageUrl>
         <cpe>cpe:/a:i18n_project:i18n</cpe>
     </suppress>
     <suppress base="true">
-        swift-log is not swift...
-        ]]></notes>
-    <packageUrl regex="true">^pkg:swift/swift\-log@.*$</packageUrl>
-    <cpe>cpe:/a:apple:swift</cpe>
+        <notes><![CDATA[
+            swift-log is not swift...
+            ]]></notes>
+        <packageUrl regex="true">^pkg:swift/swift\-log@.*$</packageUrl>
+        <cpe>cpe:/a:apple:swift</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[

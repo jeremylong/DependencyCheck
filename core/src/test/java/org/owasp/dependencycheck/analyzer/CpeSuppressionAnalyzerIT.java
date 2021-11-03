@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2021 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.analyzer;
 
@@ -28,39 +28,38 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Testing the vulnerability suppression analyzer.
+ * Testing the CPE suppression analyzer.
  *
  * @author Jeremy Long
  */
-public class VulnerabilitySuppressionAnalyzerIT extends BaseDBTestCase {
+public class CpeSuppressionAnalyzerIT extends BaseDBTestCase {
 
     /**
-     * Test of getName method, of class VulnerabilitySuppressionAnalyzer.
+     * Test of getName method, of class CpeSuppressionAnalyzer.
      */
     @Test
     public void testGetName() {
-        VulnerabilitySuppressionAnalyzer instance = new VulnerabilitySuppressionAnalyzer();
+        CpeSuppressionAnalyzer instance = new CpeSuppressionAnalyzer();
         instance.initialize(getSettings());
-        String expResult = "Vulnerability Suppression Analyzer";
+        String expResult = "Cpe Suppression Analyzer";
         String result = instance.getName();
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of getAnalysisPhase method, of class
-     * VulnerabilitySuppressionAnalyzer.
+     * Test of getAnalysisPhase method, of class CpeSuppressionAnalyzer.
      */
     @Test
     public void testGetAnalysisPhase() {
-        VulnerabilitySuppressionAnalyzer instance = new VulnerabilitySuppressionAnalyzer();
+        CpeSuppressionAnalyzer instance = new CpeSuppressionAnalyzer();
         instance.initialize(getSettings());
-        AnalysisPhase expResult = AnalysisPhase.POST_FINDING_ANALYSIS;
+        AnalysisPhase expResult = AnalysisPhase.POST_IDENTIFIER_ANALYSIS;
         AnalysisPhase result = instance.getAnalysisPhase();
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of analyze method, of class VulnerabilitySuppressionAnalyzer.
+     * Test of analyze method, of class CpeSuppressionAnalyzer.
      */
     @Test
     public void testAnalyze() throws Exception {
@@ -81,14 +80,14 @@ public class VulnerabilitySuppressionAnalyzerIT extends BaseDBTestCase {
             assertTrue(cveSize > 0);
             assertTrue(cpeSize > 0);
             getSettings().setString(Settings.KEYS.SUPPRESSION_FILE, suppression.getAbsolutePath());
-            VulnerabilitySuppressionAnalyzer instance = new VulnerabilitySuppressionAnalyzer();
+            CpeSuppressionAnalyzer instance = new CpeSuppressionAnalyzer();
             instance.initialize(getSettings());
             instance.prepare(engine);
             instance.analyze(dependency, engine);
-            cveSize -= 1;
-            //after adding filtering to the load - the vulnerability suppression
+            //after adding filtering to the load - the cpe suppression
             //analyzer no longer suppresses CPEs.
-            //cpeSize -= 1;
+            //cveSize -= 1;
+            cpeSize -= 1;
             assertEquals(cveSize, dependency.getVulnerabilities().size());
             assertEquals(cpeSize, dependency.getVulnerableSoftwareIdentifiers().size());
         }
