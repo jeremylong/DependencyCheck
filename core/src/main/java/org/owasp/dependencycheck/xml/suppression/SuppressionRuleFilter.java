@@ -38,5 +38,5 @@ public interface SuppressionRuleFilter {
      *
      * @return the name of the filters
      */
-    public String getName();
+   String getName();
 }
