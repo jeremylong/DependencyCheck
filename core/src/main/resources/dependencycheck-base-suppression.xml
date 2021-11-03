@@ -4,6 +4,13 @@
         <notes><![CDATA[
 	    FP per #3749
 	    ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.kafka/spring\-kafka@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+	    FP per #3776
+	    ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.seleniumhq\.selenium/selenium\-chromium\-driver@.*$</packageUrl>
         <cpe>cpe:/a:chromium:chromium</cpe>
         <cpe>cpe:/a:chromium_project:chromium</cpe>
