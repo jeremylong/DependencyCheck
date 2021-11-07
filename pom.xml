@@ -111,6 +111,8 @@ Copyright (c) 2012 - Jeremy Long
         </license>
     </licenses>
     <properties>
+        <!--reproducible build-->
+        <project.build.outputTimestamp>1</project.build.outputTimestamp>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <github.global.server>github</github.global.server>
@@ -226,6 +228,11 @@ Copyright (c) 2012 - Jeremy Long
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
                     <version>${maven-dependency-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-artifact-plugin</artifactId>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -439,6 +446,36 @@ Copyright (c) 2012 - Jeremy Long
                     <excludes>
                         <exclude>**/checkstyle*</exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-artifact-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>buildinfo</goal>
+                        </goals>
+                        <phase>verify</phase>
+                        <configuration>
+                            <reproducible>true</reproducible>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <configuration>
+                    <failOnError>false</failOnError>
+                    <bottom>Copyright© 2012-21 Jeremy Long. All Rights Reserved.</bottom>
+                    <sourceFileExcludes>
+                        <exclude>**/generated-sources/**/*.java</exclude>
+                    </sourceFileExcludes>
+                    <source>8</source>
+                    <detectJavaApiLink>false</detectJavaApiLink>
                 </configuration>
             </plugin>
             <plugin>
@@ -776,6 +813,7 @@ Copyright (c) 2012 - Jeremy Long
                                 <exclude>**/generated-sources/**/*.java</exclude>
                             </sourceFileExcludes>
                             <source>8</source>
+                            <detectJavaApiLink>false</detectJavaApiLink>
                         </configuration>
                     </reportSet>
                 </reportSets>
