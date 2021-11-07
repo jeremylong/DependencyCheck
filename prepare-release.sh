@@ -4,8 +4,7 @@ git checkout main
 git pull
 
 SNAPSHOT=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-
-RELEASE=$(echo $SNAPSHOT | sed s/-SNAPSHOT//)
+RELEASE=${SNAPSHOT/-SNAPSHOT/}
 
 git checkout -b "release-$RELEASE"
 
