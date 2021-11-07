@@ -2,18 +2,19 @@ name: Build and Deploy Release
 
 ##
 ## Automates the release process
-## Before invoking update the 'body:' below and the release_notes.md
-## invoke using: 
+## 1. Update the 'body:' below and the release_notes.md
+## 2. Run `./prepare-release.sh`
+## 3. Create PR, merge PR
+## 4. Run `git push origin main --tags`
 ##
-##      git push origin main:release
-##
-## A release workflow bug may create a tag for refs/heads/release
-## This can be deleted using $ git push --delete origin refs/tags/refs/heads/release
 
-on: 
+permissions:
+  contents: write
+  
+on:
   push:
-    branches:
-      - release
+    tags:
+      - v*
 
 jobs:
   build:
@@ -60,18 +61,6 @@ jobs:
         run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
-      - name: Prepare Release
-        id: prepare-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          mvn -s settings.xml release:prepare --no-transfer-progress --batch-mode
-          git reset --hard HEAD~1
-          git push origin release
-          git fetch origin main
-          git checkout main
-          git merge release
-          git push origin main --tags
       - name: Get version
         run: |
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
@@ -83,13 +72,6 @@ jobs:
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
         run: |
           mvn -s settings.xml -Prelease "-DnexusUrl=https://oss.sonatype.org/" clean package source:jar javadoc:jar gpg:sign deploy site site:stage -DreleaseTesting --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} 
-      - name: Archive IT test logs
-        id: archive-logs
-        uses: actions/upload-artifact@v2
-        with:
-          name: it-test-logs
-          retention-days: 7
-          path: maven/target/it/**/build.log
       - name: Archive code coverage results
         id: archive-coverage
         uses: actions/upload-artifact@v2
@@ -156,8 +138,6 @@ jobs:
           key: docker-repo
       - name: Checkout code
         uses: actions/checkout@v2.4.0
-        with:
-          ref: release
       - name: Download release build
         uses: actions/download-artifact@v2
         with:
@@ -180,8 +160,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2.4.0
-        with:
-          ref: release
       - name: Get version
         id: get-version
         run: |
@@ -253,8 +231,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2.4.0
-        with:
-          ref: release
       - name: Download Site
         uses: actions/download-artifact@v2
         with:
@@ -268,25 +244,3 @@ jobs:
         with:
           branch: gh-pages
           folder: target/staging
-          
-  bumpversion:
-    name: Bump Development Version
-    runs-on: ubuntu-latest
-    needs: [docker, publish, release]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2.4.0
-        with:
-          ref: main
-      - name: Configure Git user
-        run: |
-          git config user.email "actions@github.com"
-          git config user.name "GitHub Actions"
-      - name: Snapshot version
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          mvn --batch-mode release:update-versions
-          git commit -am 'snapshot version'
-          git push origin main
-          git push origin --delete release
