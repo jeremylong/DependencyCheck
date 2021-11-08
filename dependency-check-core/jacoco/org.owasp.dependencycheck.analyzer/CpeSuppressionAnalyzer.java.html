@@ -18,7 +18,11 @@
 package org.owasp.dependencycheck.analyzer;
 
 import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.xml.suppression.SuppressionRule;
 
 /**
  * &lt;p&gt;
@@ -34,7 +38,7 @@ import org.owasp.dependencycheck.utils.Settings;
  * @author Jeremy Long
  */
 @ThreadSafe
-<span class="fc" id="L37">public class CpeSuppressionAnalyzer extends AbstractSuppressionAnalyzer {</span>
+<span class="fc" id="L41">public class CpeSuppressionAnalyzer extends AbstractSuppressionAnalyzer {</span>
 
     /**
      * The name of the analyzer.
@@ -43,7 +47,7 @@ import org.owasp.dependencycheck.utils.Settings;
     /**
      * The phase that this analyzer is intended to run in.
      */
-<span class="fc" id="L46">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.POST_IDENTIFIER_ANALYSIS;</span>
+<span class="fc" id="L50">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.POST_IDENTIFIER_ANALYSIS;</span>
 
     /**
      * Returns the name of the analyzer.
@@ -52,7 +56,7 @@ import org.owasp.dependencycheck.utils.Settings;
      */
     @Override
     public String getName() {
-<span class="nc" id="L55">        return ANALYZER_NAME;</span>
+<span class="fc" id="L59">        return ANALYZER_NAME;</span>
     }
 
     /**
@@ -62,7 +66,7 @@ import org.owasp.dependencycheck.utils.Settings;
      */
     @Override
     public AnalysisPhase getAnalysisPhase() {
-<span class="nc" id="L65">        return ANALYSIS_PHASE;</span>
+<span class="fc" id="L69">        return ANALYSIS_PHASE;</span>
     }
 
     /**
@@ -73,7 +77,19 @@ import org.owasp.dependencycheck.utils.Settings;
      */
     @Override
     protected String getAnalyzerEnabledSettingKey() {
-<span class="fc" id="L76">        return Settings.KEYS.ANALYZER_CPE_SUPPRESSION_ENABLED;</span>
+<span class="fc" id="L80">        return Settings.KEYS.ANALYZER_CPE_SUPPRESSION_ENABLED;</span>
     }
+
+    @Override
+    public boolean filter(SuppressionRule rule) {
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        return !rule.hasCpe();</span>
+    }
+
+    @Override
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        if (dependency.getVulnerableSoftwareIdentifiersCount() &gt; 0) {</span>
+<span class="fc" id="L91">            super.analyzeDependency(dependency, engine);</span>
+        }
+<span class="fc" id="L93">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

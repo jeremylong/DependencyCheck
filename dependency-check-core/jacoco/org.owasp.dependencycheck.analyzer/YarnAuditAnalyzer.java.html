@@ -224,35 +224,39 @@ import us.springett.parsers.cpe.exceptions.CpeValidationException;
 <span class="fc" id="L224">            final ProcessBuilder builder = new ProcessBuilder(args);</span>
 <span class="fc" id="L225">            builder.directory(folder);</span>
 <span class="fc" id="L226">            LOGGER.debug(&quot;Launching: {}&quot;, args);</span>
-<span class="fc" id="L227">            final Process process = builder.start();</span>
-<span class="fc" id="L228">            try (ProcessReader processReader = new ProcessReader(process)) {</span>
-<span class="fc" id="L229">                processReader.readAll();</span>
-<span class="fc" id="L230">                final String errOutput = processReader.getError();</span>
+            // Workaround 64k limitation of InputStream, redirect stdout to a file that we will read later
+            // instead of reading directly stdout from Process's InputStream which is topped at 64k
 
-<span class="pc bpc" id="L232" title="2 of 4 branches missed.">                if (!StringUtils.isBlank(errOutput) &amp;&amp; !EXPECTED_ERROR.equals(errOutput)) {</span>
-<span class="nc" id="L233">                    LOGGER.debug(&quot;Process Error Out: {}&quot;, errOutput);</span>
-<span class="nc" id="L234">                    LOGGER.debug(&quot;Process Out: {}&quot;, processReader.getOutput());</span>
+<span class="fc" id="L230">            final File tmpFile = getSettings().getTempFile(&quot;yarn_audit&quot;, &quot;json&quot;);</span>
+<span class="fc" id="L231">            builder.redirectOutput(tmpFile);</span>
+<span class="fc" id="L232">            final Process process = builder.start();</span>
+<span class="fc" id="L233">            try (ProcessReader processReader = new ProcessReader(process)) {</span>
+<span class="fc" id="L234">                processReader.readAll();</span>
+<span class="fc" id="L235">                final String errOutput = processReader.getError();</span>
+
+<span class="pc bpc" id="L237" title="2 of 4 branches missed.">                if (!StringUtils.isBlank(errOutput) &amp;&amp; !EXPECTED_ERROR.equals(errOutput)) {</span>
+<span class="nc" id="L238">                    LOGGER.debug(&quot;Process Error Out: {}&quot;, errOutput);</span>
+<span class="nc" id="L239">                    LOGGER.debug(&quot;Process Out: {}&quot;, processReader.getOutput());</span>
                 }
-
-<span class="fc" id="L237">                final String verboseJson = Arrays.stream(processReader.getOutput().split(&quot;\n&quot;))</span>
-<span class="fc" id="L238">                        .filter(line -&gt; line.contains(&quot;Audit Request&quot;))</span>
-<span class="fc" id="L239">                        .findFirst().get();</span>
+<span class="fc" id="L241">                final String verboseJson = FileUtils.readFileToString(tmpFile, StandardCharsets.UTF_8);</span>
+<span class="fc" id="L242">                final String auditRequestJson = Arrays.stream(verboseJson.split(&quot;\n&quot;))</span>
+<span class="fc" id="L243">                        .filter(line -&gt; line.contains(&quot;Audit Request&quot;))</span>
+<span class="fc" id="L244">                        .findFirst().get();</span>
                 String auditRequest;
-<span class="fc" id="L241">                try (JsonReader reader = Json.createReader(IOUtils.toInputStream(verboseJson, StandardCharsets.UTF_8))) {</span>
-<span class="fc" id="L242">                    final JsonObject jsonObject = reader.readObject();</span>
-<span class="fc" id="L243">                    auditRequest = jsonObject.getString(&quot;data&quot;);</span>
-                    //auditRequest = auditRequest.replace(&quot;Audit Request: &quot;, &quot;&quot;);
-<span class="fc" id="L245">                    auditRequest = auditRequest.substring(15);</span>
+<span class="fc" id="L246">                try (JsonReader reader = Json.createReader(IOUtils.toInputStream(auditRequestJson, StandardCharsets.UTF_8))) {</span>
+<span class="fc" id="L247">                    final JsonObject jsonObject = reader.readObject();</span>
+<span class="fc" id="L248">                    auditRequest = jsonObject.getString(&quot;data&quot;);</span>
+<span class="fc" id="L249">                    auditRequest = auditRequest.substring(15);</span>
                 }
-<span class="fc" id="L247">                LOGGER.debug(&quot;Audit Request: {}&quot;, auditRequest);</span>
+<span class="fc" id="L251">                LOGGER.debug(&quot;Audit Request: {}&quot;, auditRequest);</span>
 
-<span class="fc" id="L249">                return Json.createReader(IOUtils.toInputStream(auditRequest, StandardCharsets.UTF_8)).readObject();</span>
-<span class="nc" id="L250">            } catch (InterruptedException ex) {</span>
-<span class="nc" id="L251">                Thread.currentThread().interrupt();</span>
-<span class="nc" id="L252">                throw new AnalysisException(&quot;Yarn audit process was interrupted.&quot;, ex);</span>
+<span class="fc" id="L253">                return Json.createReader(IOUtils.toInputStream(auditRequest, StandardCharsets.UTF_8)).readObject();</span>
+<span class="nc" id="L254">            } catch (InterruptedException ex) {</span>
+<span class="nc" id="L255">                Thread.currentThread().interrupt();</span>
+<span class="nc" id="L256">                throw new AnalysisException(&quot;Yarn audit process was interrupted.&quot;, ex);</span>
             }
-<span class="nc" id="L254">        } catch (IOException ioe) {</span>
-<span class="nc" id="L255">            throw new AnalysisException(&quot;yarn audit failure; this error can be ignored if you are not analyzing projects with a yarn lockfile.&quot;, ioe);</span>
+<span class="nc" id="L258">        } catch (IOException ioe) {</span>
+<span class="nc" id="L259">            throw new AnalysisException(&quot;yarn audit failure; this error can be ignored if you are not analyzing projects with a yarn lockfile.&quot;, ioe);</span>
         }
     }
 
@@ -275,34 +279,34 @@ import us.springett.parsers.cpe.exceptions.CpeValidationException;
             Dependency dependency, Map&lt;String, String&gt; dependencyMap)
             throws AnalysisException {
         try {
-<span class="fc" id="L278">            final Boolean skipDevDependencies = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false);</span>
+<span class="fc" id="L282">            final Boolean skipDevDependencies = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false);</span>
             // Retrieves the contents of package-lock.json from the Dependency
-<span class="fc" id="L280">            final JsonObject lockJson = fetchYarnAuditJson(dependency, skipDevDependencies);</span>
+<span class="fc" id="L284">            final JsonObject lockJson = fetchYarnAuditJson(dependency, skipDevDependencies);</span>
             // Retrieves the contents of package-lock.json from the Dependency
-<span class="fc" id="L282">            final JsonReader packageReader = Json.createReader(FileUtils.openInputStream(packageFile));</span>
-<span class="fc" id="L283">            final JsonObject packageJson = packageReader.readObject();</span>
+<span class="fc" id="L286">            final JsonReader packageReader = Json.createReader(FileUtils.openInputStream(packageFile));</span>
+<span class="fc" id="L287">            final JsonObject packageJson = packageReader.readObject();</span>
 
             // Modify the payload to meet the NPM Audit API requirements
-<span class="fc" id="L286">            final JsonObject payload = NpmPayloadBuilder.build(lockJson, packageJson, dependencyMap, skipDevDependencies);</span>
+<span class="fc" id="L290">            final JsonObject payload = NpmPayloadBuilder.build(lockJson, packageJson, dependencyMap, skipDevDependencies);</span>
 
             // Submits the package payload to the nsp check service
-<span class="fc" id="L289">            return getSearcher().submitPackage(payload);</span>
+<span class="fc" id="L293">            return getSearcher().submitPackage(payload);</span>
 
-<span class="nc" id="L291">        } catch (URLConnectionFailureException e) {</span>
-<span class="nc" id="L292">            this.setEnabled(false);</span>
-<span class="nc" id="L293">            throw new AnalysisException(&quot;Failed to connect to the NPM Audit API (YarnAuditAnalyzer); the analyzer &quot;</span>
+<span class="nc" id="L295">        } catch (URLConnectionFailureException e) {</span>
+<span class="nc" id="L296">            this.setEnabled(false);</span>
+<span class="nc" id="L297">            throw new AnalysisException(&quot;Failed to connect to the NPM Audit API (YarnAuditAnalyzer); the analyzer &quot;</span>
                     + &quot;is being disabled and may result in false negatives.&quot;, e);
-<span class="nc" id="L295">        } catch (IOException e) {</span>
-<span class="nc" id="L296">            LOGGER.debug(&quot;Error reading dependency or connecting to NPM Audit API&quot;, e);</span>
-<span class="nc" id="L297">            this.setEnabled(false);</span>
-<span class="nc" id="L298">            throw new AnalysisException(&quot;Failed to read results from the NPM Audit API (YarnAuditAnalyzer); &quot;</span>
+<span class="nc" id="L299">        } catch (IOException e) {</span>
+<span class="nc" id="L300">            LOGGER.debug(&quot;Error reading dependency or connecting to NPM Audit API&quot;, e);</span>
+<span class="nc" id="L301">            this.setEnabled(false);</span>
+<span class="nc" id="L302">            throw new AnalysisException(&quot;Failed to read results from the NPM Audit API (YarnAuditAnalyzer); &quot;</span>
                     + &quot;the analyzer is being disabled and may result in false negatives.&quot;, e);
-<span class="nc" id="L300">        } catch (JsonException e) {</span>
-<span class="nc" id="L301">            throw new AnalysisException(String.format(&quot;Failed to parse %s file from the NPM Audit API &quot;</span>
-<span class="nc" id="L302">                    + &quot;(YarnAuditAnalyzer).&quot;, lockFile.getPath()), e);</span>
-<span class="nc" id="L303">        } catch (SearchException ex) {</span>
-<span class="nc" id="L304">            LOGGER.error(&quot;YarnAuditAnalyzer failed on {}&quot;, dependency.getActualFilePath());</span>
-<span class="nc" id="L305">            throw ex;</span>
+<span class="nc" id="L304">        } catch (JsonException e) {</span>
+<span class="nc" id="L305">            throw new AnalysisException(String.format(&quot;Failed to parse %s file from the NPM Audit API &quot;</span>
+<span class="nc" id="L306">                    + &quot;(YarnAuditAnalyzer).&quot;, lockFile.getPath()), e);</span>
+<span class="nc" id="L307">        } catch (SearchException ex) {</span>
+<span class="nc" id="L308">            LOGGER.error(&quot;YarnAuditAnalyzer failed on {}&quot;, dependency.getActualFilePath());</span>
+<span class="nc" id="L309">            throw ex;</span>
         }
     }
 }

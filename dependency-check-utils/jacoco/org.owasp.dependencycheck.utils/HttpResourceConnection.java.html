@@ -270,109 +270,20 @@ public class HttpResourceConnection implements AutoCloseable {
     }
 
     /**
-     * Makes an HTTP Head request to retrieve the last modified date of the
-     * given URL. If the file:// protocol is specified, then the lastTimestamp
-     * of the file is returned.
-     *
-     * @param url the URL to retrieve the timestamp from
-     * @return an epoch timestamp
-     * @throws org.owasp.dependencycheck.utils.DownloadFailedException is thrown
-     * if an exception occurs making the HTTP request
-     * @deprecated this method is no longer used to check the last modified date
-     * of the NVD. This method will be removed in a future release.
-     */
-    @Deprecated
-    public long getLastModified(URL url) throws DownloadFailedException {
-<span class="fc" id="L286">        return getLastModified(url, false);</span>
-    }
-
-    /**
-     * Makes an HTTP Head request to retrieve the last modified date of the
-     * given URL. If the file:// protocol is specified, then the lastTimestamp
-     * of the file is returned.
-     *
-     * @param url the URL to retrieve the timestamp from
-     * @param isRetry indicates if this is a retry - to prevent endless loop and
-     * stack overflow
-     * @return an epoch timestamp
-     * @throws DownloadFailedException is thrown if an exception occurs making
-     * the HTTP request
-     * @deprecated this method is no longer used to check the last modified date
-     * of the NVD. This method will be removed in a future release.
-     */
-    @Deprecated
-    private long getLastModified(URL url, boolean isRetry) throws DownloadFailedException {
-        final long timestamp;
-        //TODO use the obtain connection instead of this mostly duplicated code
-<span class="pc bpc" id="L307" title="1 of 2 branches missed.">        if (&quot;file&quot;.equalsIgnoreCase(url.getProtocol())) {</span>
-            final File lastModifiedFile;
-            try {
-<span class="nc" id="L310">                lastModifiedFile = new File(url.toURI());</span>
-<span class="nc" id="L311">            } catch (URISyntaxException ex) {</span>
-<span class="nc" id="L312">                final String msg = format(&quot;Unable to locate '%s'&quot;, url.toString());</span>
-<span class="nc" id="L313">                throw new DownloadFailedException(msg, ex);</span>
-<span class="nc" id="L314">            }</span>
-<span class="nc" id="L315">            timestamp = lastModifiedFile.lastModified();</span>
-<span class="nc" id="L316">        } else {</span>
-<span class="fc" id="L317">            final String httpMethod = determineHttpMethod();</span>
-<span class="fc" id="L318">            HttpURLConnection conn = null;</span>
-            try {
-<span class="fc" id="L320">                conn = connFactory.createHttpURLConnection(url);</span>
-<span class="fc" id="L321">                conn.setRequestMethod(httpMethod);</span>
-<span class="fc" id="L322">                conn.connect();</span>
-<span class="fc" id="L323">                final int t = conn.getResponseCode();</span>
-<span class="pc bpc" id="L324" title="2 of 4 branches missed.">                if (t &gt;= 200 &amp;&amp; t &lt; 300) {</span>
-<span class="fc" id="L325">                    timestamp = conn.getLastModified();</span>
-                } else {
-<span class="nc" id="L327">                    throw new DownloadFailedException(format(&quot;%s request returned a non-200 status code: %s&quot;, httpMethod, url));</span>
-                }
-<span class="nc" id="L329">            } catch (URLConnectionFailureException ex) {</span>
-<span class="nc" id="L330">                throw new DownloadFailedException(format(&quot;Error creating URL Connection for HTTP %s request: %s&quot;, httpMethod, url), ex);</span>
-<span class="nc" id="L331">            } catch (IOException ex) {</span>
-<span class="nc" id="L332">                checkForCommonExceptionTypes(ex);</span>
-<span class="nc" id="L333">                LOGGER.error(format(&quot;IO Exception connecting to %s: %s&quot;, url, ex.getMessage()));</span>
-<span class="nc" id="L334">                LOGGER.debug(&quot;Exception details&quot;, ex);</span>
-<span class="nc bnc" id="L335" title="All 2 branches missed.">                if (ex.getCause() != null) {</span>
-<span class="nc" id="L336">                    LOGGER.debug(&quot;IO Exception cause: &quot; + ex.getCause().getMessage(), ex.getCause());</span>
-                }
-                try {
-                    //retry
-<span class="nc bnc" id="L340" title="All 4 branches missed.">                    if (!isRetry &amp;&amp; settings.getBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP)) {</span>
-<span class="nc" id="L341">                        settings.setBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP, false);</span>
-<span class="nc" id="L342">                        return getLastModified(url, true);</span>
-                    }
-<span class="nc" id="L344">                } catch (InvalidSettingException ex1) {</span>
-<span class="nc" id="L345">                    LOGGER.debug(&quot;invalid setting?&quot;, ex1);</span>
-<span class="nc" id="L346">                }</span>
-<span class="nc" id="L347">                throw new DownloadFailedException(format(&quot;Error making HTTP %s request to %s&quot;, httpMethod, url), ex);</span>
-            } finally {
-<span class="pc bpc" id="L349" title="1 of 2 branches missed.">                if (conn != null) {</span>
-                    try {
-<span class="fc" id="L351">                        conn.disconnect();</span>
-                    } finally {
-<span class="fc" id="L353">                        conn = null;</span>
-                    }
-                }
-            }
-        }
-<span class="fc" id="L358">        return timestamp;</span>
-    }
-
-    /**
      * {@inheritDoc}
      * &lt;p&gt;
      * Releases the underlying HTTP URL Connection.
      */
     @Override
     public void close() {
-<span class="fc bfc" id="L368" title="All 2 branches covered.">        if (connection != null) {</span>
+<span class="fc bfc" id="L279" title="All 2 branches covered.">        if (connection != null) {</span>
             try {
-<span class="fc" id="L370">                connection.disconnect();</span>
+<span class="fc" id="L281">                connection.disconnect();</span>
             } finally {
-<span class="fc" id="L372">                connection = null;</span>
+<span class="fc" id="L283">                connection = null;</span>
             }
         }
-<span class="fc" id="L375">    }</span>
+<span class="fc" id="L286">    }</span>
 
     /**
      * Returns whether or not the connection has been closed.
@@ -380,7 +291,7 @@ public class HttpResourceConnection implements AutoCloseable {
      * @return whether or not the connection has been closed
      */
     public boolean isClosed() {
-<span class="fc bfc" id="L383" title="All 2 branches covered.">        return connection == null;</span>
+<span class="fc bfc" id="L294" title="All 2 branches covered.">        return connection == null;</span>
     }
 
     /**
@@ -389,7 +300,7 @@ public class HttpResourceConnection implements AutoCloseable {
      * @return the HTTP method to use
      */
     private String determineHttpMethod() {
-<span class="pc bpc" id="L392" title="1 of 2 branches missed.">        return isQuickQuery() ? HEAD : GET;</span>
+<span class="nc bnc" id="L303" title="All 2 branches missed.">        return isQuickQuery() ? HEAD : GET;</span>
     }
 
     /**
@@ -399,7 +310,7 @@ public class HttpResourceConnection implements AutoCloseable {
      * @return true if configured to use HEAD requests
      */
     private boolean isQuickQuery() {
-<span class="fc" id="L402">        return settings.getBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP, true);</span>
+<span class="nc" id="L313">        return settings.getBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP, true);</span>
     }
 
     /**
@@ -413,26 +324,26 @@ public class HttpResourceConnection implements AutoCloseable {
      * exception that contains the original exception as the cause
      */
     public void checkForCommonExceptionTypes(IOException ex) throws DownloadFailedException {
-<span class="nc" id="L416">        Throwable cause = ex;</span>
-<span class="nc bnc" id="L417" title="All 2 branches missed.">        while (cause != null) {</span>
-<span class="nc bnc" id="L418" title="All 2 branches missed.">            if (cause instanceof java.net.UnknownHostException) {</span>
-<span class="nc" id="L419">                final String msg = format(&quot;Unable to resolve domain '%s'&quot;, cause.getMessage());</span>
-<span class="nc" id="L420">                LOGGER.error(msg);</span>
-<span class="nc" id="L421">                throw new DownloadFailedException(msg);</span>
+<span class="nc" id="L327">        Throwable cause = ex;</span>
+<span class="nc bnc" id="L328" title="All 2 branches missed.">        while (cause != null) {</span>
+<span class="nc bnc" id="L329" title="All 2 branches missed.">            if (cause instanceof java.net.UnknownHostException) {</span>
+<span class="nc" id="L330">                final String msg = format(&quot;Unable to resolve domain '%s'&quot;, cause.getMessage());</span>
+<span class="nc" id="L331">                LOGGER.error(msg);</span>
+<span class="nc" id="L332">                throw new DownloadFailedException(msg);</span>
             }
-<span class="nc bnc" id="L423" title="All 2 branches missed.">            if (cause instanceof InvalidAlgorithmParameterException) {</span>
-<span class="nc" id="L424">                final String keystore = System.getProperty(&quot;javax.net.ssl.keyStore&quot;);</span>
-<span class="nc" id="L425">                final String version = System.getProperty(&quot;java.version&quot;);</span>
-<span class="nc" id="L426">                final String vendor = System.getProperty(&quot;java.vendor&quot;);</span>
-<span class="nc" id="L427">                LOGGER.info(&quot;Error making HTTPS request - InvalidAlgorithmParameterException&quot;);</span>
-<span class="nc" id="L428">                LOGGER.info(&quot;There appears to be an issue with the installation of Java and the cacerts.&quot;</span>
+<span class="nc bnc" id="L334" title="All 2 branches missed.">            if (cause instanceof InvalidAlgorithmParameterException) {</span>
+<span class="nc" id="L335">                final String keystore = System.getProperty(&quot;javax.net.ssl.keyStore&quot;);</span>
+<span class="nc" id="L336">                final String version = System.getProperty(&quot;java.version&quot;);</span>
+<span class="nc" id="L337">                final String vendor = System.getProperty(&quot;java.vendor&quot;);</span>
+<span class="nc" id="L338">                LOGGER.info(&quot;Error making HTTPS request - InvalidAlgorithmParameterException&quot;);</span>
+<span class="nc" id="L339">                LOGGER.info(&quot;There appears to be an issue with the installation of Java and the cacerts.&quot;</span>
                         + &quot;See closed issue #177 here: https://github.com/jeremylong/DependencyCheck/issues/177&quot;);
-<span class="nc" id="L430">                LOGGER.info(&quot;Java Info:\njavax.net.ssl.keyStore='{}'\njava.version='{}'\njava.vendor='{}'&quot;,</span>
+<span class="nc" id="L341">                LOGGER.info(&quot;Java Info:\njavax.net.ssl.keyStore='{}'\njava.version='{}'\njava.vendor='{}'&quot;,</span>
                         keystore, version, vendor);
-<span class="nc" id="L432">                throw new DownloadFailedException(&quot;Error making HTTPS request. Please see the log for more details.&quot;);</span>
+<span class="nc" id="L343">                throw new DownloadFailedException(&quot;Error making HTTPS request. Please see the log for more details.&quot;);</span>
             }
-<span class="nc" id="L434">            cause = cause.getCause();</span>
+<span class="nc" id="L345">            cause = cause.getCause();</span>
         }
-<span class="nc" id="L436">    }</span>
+<span class="nc" id="L347">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

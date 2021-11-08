@@ -100,11 +100,13 @@ public class NvdCache {
                 }
 <span class="fc" id="L101">                final File nvdFile = new File(cache, filename);</span>
 <span class="fc" id="L102">                FileUtils.copyFile(file, nvdFile);</span>
-<span class="fc" id="L103">                nvdFile.setLastModified(Instant.now().toEpochMilli());</span>
-<span class="nc" id="L104">            } catch (IOException ex) {</span>
-<span class="nc" id="L105">                LOGGER.debug(&quot;Error storing nvd file in cache&quot;, ex);</span>
-<span class="fc" id="L106">            }</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">                if (!nvdFile.setLastModified(Instant.now().toEpochMilli())) {</span>
+<span class="nc" id="L104">                    LOGGER.debug(&quot;Unable to set last modified date on {}&quot;, nvdFile.toString());</span>
+                }
+<span class="nc" id="L106">            } catch (IOException ex) {</span>
+<span class="nc" id="L107">                LOGGER.debug(&quot;Error storing nvd file in cache&quot;, ex);</span>
+<span class="fc" id="L108">            }</span>
         }
-<span class="fc" id="L108">    }</span>
+<span class="fc" id="L110">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

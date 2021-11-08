@@ -1089,13 +1089,17 @@ import us.springett.parsers.cpe.values.Part;
 <span class="nc" id="L1089">            return null;</span>
         }
 <span class="fc bfc" id="L1091" title="All 2 branches covered.">        if (ecosystem != null) {</span>
-<span class="pc bpc" id="L1092" title="3 of 4 branches missed.">            return entries.stream().filter(c -&gt; c.getEcosystem() == null || c.getEcosystem().equals(ecosystem))</span>
-<span class="fc" id="L1093">                    .map(c -&gt; c.getCpe())</span>
-<span class="fc" id="L1094">                    .collect(Collectors.toSet());</span>
+<span class="fc" id="L1092">            return entries.stream().filter(c</span>
+<span class="pc bpc" id="L1093" title="1 of 2 branches missed.">                    -&gt; c.getEcosystem() == null</span>
+<span class="nc bnc" id="L1094" title="All 2 branches missed.">                    || c.getEcosystem().equals(ecosystem)</span>
+                    //some ios CVE/CPEs are listed under native
+<span class="pc bnc" id="L1096" title="All 4 branches missed.">                    || (Ecosystem.IOS.equals(ecosystem) &amp;&amp; Ecosystem.NATIVE.equals(c.getEcosystem())))</span>
+<span class="fc" id="L1097">                    .map(c -&gt; c.getCpe())</span>
+<span class="fc" id="L1098">                    .collect(Collectors.toSet());</span>
         }
-<span class="fc" id="L1096">        return entries.stream()</span>
-<span class="fc" id="L1097">                .map(c -&gt; c.getCpe())</span>
-<span class="fc" id="L1098">                .collect(Collectors.toSet());</span>
+<span class="fc" id="L1100">        return entries.stream()</span>
+<span class="fc" id="L1101">                .map(c -&gt; c.getCpe())</span>
+<span class="fc" id="L1102">                .collect(Collectors.toSet());</span>
     }
 
     /**
@@ -1106,40 +1110,40 @@ import us.springett.parsers.cpe.values.Part;
      * @param cpeBuilder a reference to the CPE Builder
      */
     private void addVersionAndUpdate(DependencyVersion depVersion, final CpeBuilder cpeBuilder) {
-<span class="fc" id="L1109">        final int idx = depVersion.getVersionParts().size() - 1;</span>
-<span class="pc bpc" id="L1110" title="1 of 2 branches missed.">        if (idx &gt; 0 &amp;&amp; depVersion.getVersionParts().get(idx)</span>
-<span class="fc bfc" id="L1111" title="All 2 branches covered.">                .matches(&quot;^(v|final|release|snapshot|r|b|beta|a|alpha|u|rc|sp|dev|revision|service|build|pre|p|patch|update|m|20\\d\\d).*$&quot;)) {</span>
-<span class="fc" id="L1112">            cpeBuilder.version(StringUtils.join(depVersion.getVersionParts().subList(0, idx), &quot;.&quot;));</span>
+<span class="fc" id="L1113">        final int idx = depVersion.getVersionParts().size() - 1;</span>
+<span class="pc bpc" id="L1114" title="1 of 2 branches missed.">        if (idx &gt; 0 &amp;&amp; depVersion.getVersionParts().get(idx)</span>
+<span class="fc bfc" id="L1115" title="All 2 branches covered.">                .matches(&quot;^(v|final|release|snapshot|r|b|beta|a|alpha|u|rc|sp|dev|revision|service|build|pre|p|patch|update|m|20\\d\\d).*$&quot;)) {</span>
+<span class="fc" id="L1116">            cpeBuilder.version(StringUtils.join(depVersion.getVersionParts().subList(0, idx), &quot;.&quot;));</span>
             //when written - no update versions in the NVD start with v### - they all strip the v off
-<span class="pc bpc" id="L1114" title="1 of 2 branches missed.">            if (depVersion.getVersionParts().get(idx).matches(&quot;^v\\d.*$&quot;)) {</span>
-<span class="nc" id="L1115">                cpeBuilder.update(depVersion.getVersionParts().get(idx).substring(1));</span>
+<span class="pc bpc" id="L1118" title="1 of 2 branches missed.">            if (depVersion.getVersionParts().get(idx).matches(&quot;^v\\d.*$&quot;)) {</span>
+<span class="nc" id="L1119">                cpeBuilder.update(depVersion.getVersionParts().get(idx).substring(1));</span>
             } else {
-<span class="fc" id="L1117">                cpeBuilder.update(depVersion.getVersionParts().get(idx));</span>
+<span class="fc" id="L1121">                cpeBuilder.update(depVersion.getVersionParts().get(idx));</span>
             }
         } else {
-<span class="fc" id="L1120">            cpeBuilder.version(depVersion.toString());</span>
+<span class="fc" id="L1124">            cpeBuilder.version(depVersion.toString());</span>
         }
-<span class="fc" id="L1122">    }</span>
+<span class="fc" id="L1126">    }</span>
 
     /**
      * The confidence whether the identifier is an exact match, or a best guess.
      */
-<span class="fc" id="L1127">    private enum IdentifierConfidence {</span>
+<span class="fc" id="L1131">    private enum IdentifierConfidence {</span>
 
         /**
          * An exact match for the CPE.
          */
-<span class="fc" id="L1132">        EXACT_MATCH,</span>
+<span class="fc" id="L1136">        EXACT_MATCH,</span>
         /**
          * A best guess for the CPE.
          */
-<span class="fc" id="L1136">        BEST_GUESS,</span>
+<span class="fc" id="L1140">        BEST_GUESS,</span>
         /**
          * The entire vendor/product group must be added (without a guess at
          * version) because there is a CVE with a VS that only specifies
          * vendor/product.
          */
-<span class="fc" id="L1142">        BROAD_MATCH</span>
+<span class="fc" id="L1146">        BROAD_MATCH</span>
     }
 
     /**
@@ -1167,10 +1171,10 @@ import us.springett.parsers.cpe.values.Part;
          * @param evidenceConfidence the confidence of the evidence used to find
          * the identifier
          */
-<span class="fc" id="L1170">        IdentifierMatch(Cpe cpe, String url, IdentifierConfidence identifierConfidence, Confidence evidenceConfidence) {</span>
-<span class="fc" id="L1171">            this.identifier = new CpeIdentifier(cpe, url, evidenceConfidence);</span>
-<span class="fc" id="L1172">            this.identifierConfidence = identifierConfidence;</span>
-<span class="fc" id="L1173">        }</span>
+<span class="fc" id="L1174">        IdentifierMatch(Cpe cpe, String url, IdentifierConfidence identifierConfidence, Confidence evidenceConfidence) {</span>
+<span class="fc" id="L1175">            this.identifier = new CpeIdentifier(cpe, url, evidenceConfidence);</span>
+<span class="fc" id="L1176">            this.identifierConfidence = identifierConfidence;</span>
+<span class="fc" id="L1177">        }</span>
 
         //&lt;editor-fold defaultstate=&quot;collapsed&quot; desc=&quot;Property implementations: evidenceConfidence, confidence, identifier&quot;&gt;
         /**
@@ -1179,7 +1183,7 @@ import us.springett.parsers.cpe.values.Part;
          * @return the value of evidenceConfidence
          */
         public Confidence getEvidenceConfidence() {
-<span class="fc" id="L1182">            return this.identifier.getConfidence();</span>
+<span class="fc" id="L1186">            return this.identifier.getConfidence();</span>
         }
 
         /**
@@ -1188,8 +1192,8 @@ import us.springett.parsers.cpe.values.Part;
          * @param evidenceConfidence new value of evidenceConfidence
          */
         public void setEvidenceConfidence(Confidence evidenceConfidence) {
-<span class="nc" id="L1191">            this.identifier.setConfidence(evidenceConfidence);</span>
-<span class="nc" id="L1192">        }</span>
+<span class="nc" id="L1195">            this.identifier.setConfidence(evidenceConfidence);</span>
+<span class="nc" id="L1196">        }</span>
 
         /**
          * Get the value of confidence.
@@ -1197,7 +1201,7 @@ import us.springett.parsers.cpe.values.Part;
          * @return the value of confidence
          */
         public IdentifierConfidence getIdentifierConfidence() {
-<span class="fc" id="L1200">            return identifierConfidence;</span>
+<span class="fc" id="L1204">            return identifierConfidence;</span>
         }
 
         /**
@@ -1206,8 +1210,8 @@ import us.springett.parsers.cpe.values.Part;
          * @param confidence new value of confidence
          */
         public void setIdentifierConfidence(IdentifierConfidence confidence) {
-<span class="nc" id="L1209">            this.identifierConfidence = confidence;</span>
-<span class="nc" id="L1210">        }</span>
+<span class="nc" id="L1213">            this.identifierConfidence = confidence;</span>
+<span class="nc" id="L1214">        }</span>
 
         /**
          * Get the value of identifier.
@@ -1215,7 +1219,7 @@ import us.springett.parsers.cpe.values.Part;
          * @return the value of identifier
          */
         public CpeIdentifier getIdentifier() {
-<span class="fc" id="L1218">            return identifier;</span>
+<span class="fc" id="L1222">            return identifier;</span>
         }
 
         /**
@@ -1224,8 +1228,8 @@ import us.springett.parsers.cpe.values.Part;
          * @param identifier new value of identifier
          */
         public void setIdentifier(CpeIdentifier identifier) {
-<span class="nc" id="L1227">            this.identifier = identifier;</span>
-<span class="nc" id="L1228">        }</span>
+<span class="nc" id="L1231">            this.identifier = identifier;</span>
+<span class="nc" id="L1232">        }</span>
         //&lt;/editor-fold&gt;
         //&lt;editor-fold defaultstate=&quot;collapsed&quot; desc=&quot;Standard implementations of toString, hashCode, and equals&quot;&gt;
 
@@ -1236,7 +1240,7 @@ import us.springett.parsers.cpe.values.Part;
          */
         @Override
         public String toString() {
-<span class="nc" id="L1239">            return &quot;IdentifierMatch{ IdentifierConfidence=&quot; + identifierConfidence + &quot;, identifier=&quot; + identifier + '}';</span>
+<span class="nc" id="L1243">            return &quot;IdentifierMatch{ IdentifierConfidence=&quot; + identifierConfidence + &quot;, identifier=&quot; + identifier + '}';</span>
         }
 
         /**
@@ -1246,10 +1250,10 @@ import us.springett.parsers.cpe.values.Part;
          */
         @Override
         public int hashCode() {
-<span class="fc" id="L1249">            return new HashCodeBuilder(115, 303)</span>
-<span class="fc" id="L1250">                    .append(identifierConfidence)</span>
-<span class="fc" id="L1251">                    .append(identifier)</span>
-<span class="fc" id="L1252">                    .toHashCode();</span>
+<span class="fc" id="L1253">            return new HashCodeBuilder(115, 303)</span>
+<span class="fc" id="L1254">                    .append(identifierConfidence)</span>
+<span class="fc" id="L1255">                    .append(identifier)</span>
+<span class="fc" id="L1256">                    .toHashCode();</span>
         }
 
         /**
@@ -1260,17 +1264,17 @@ import us.springett.parsers.cpe.values.Part;
          */
         @Override
         public boolean equals(Object obj) {
-<span class="pc bpc" id="L1263" title="2 of 4 branches missed.">            if (obj == null || !(obj instanceof IdentifierMatch)) {</span>
-<span class="nc" id="L1264">                return false;</span>
+<span class="pc bpc" id="L1267" title="2 of 4 branches missed.">            if (obj == null || !(obj instanceof IdentifierMatch)) {</span>
+<span class="nc" id="L1268">                return false;</span>
             }
-<span class="pc bpc" id="L1266" title="1 of 2 branches missed.">            if (this == obj) {</span>
-<span class="nc" id="L1267">                return true;</span>
+<span class="pc bpc" id="L1270" title="1 of 2 branches missed.">            if (this == obj) {</span>
+<span class="nc" id="L1271">                return true;</span>
             }
-<span class="fc" id="L1269">            final IdentifierMatch other = (IdentifierMatch) obj;</span>
-<span class="fc" id="L1270">            return new EqualsBuilder()</span>
-<span class="fc" id="L1271">                    .append(identifierConfidence, other.identifierConfidence)</span>
-<span class="fc" id="L1272">                    .append(identifier, other.identifier)</span>
-<span class="fc" id="L1273">                    .build();</span>
+<span class="fc" id="L1273">            final IdentifierMatch other = (IdentifierMatch) obj;</span>
+<span class="fc" id="L1274">            return new EqualsBuilder()</span>
+<span class="fc" id="L1275">                    .append(identifierConfidence, other.identifierConfidence)</span>
+<span class="fc" id="L1276">                    .append(identifier, other.identifier)</span>
+<span class="fc" id="L1277">                    .build();</span>
         }
         //&lt;/editor-fold&gt;
 
@@ -1283,10 +1287,10 @@ import us.springett.parsers.cpe.values.Part;
          */
         @Override
         public int compareTo(@NotNull IdentifierMatch o) {
-<span class="fc" id="L1286">            return new CompareToBuilder()</span>
-<span class="fc" id="L1287">                    .append(identifierConfidence, o.identifierConfidence)</span>
-<span class="fc" id="L1288">                    .append(identifier, o.identifier)</span>
-<span class="fc" id="L1289">                    .toComparison();</span>
+<span class="fc" id="L1290">            return new CompareToBuilder()</span>
+<span class="fc" id="L1291">                    .append(identifierConfidence, o.identifierConfidence)</span>
+<span class="fc" id="L1292">                    .append(identifier, o.identifier)</span>
+<span class="fc" id="L1293">                    .toComparison();</span>
         }
     }
 
@@ -1296,55 +1300,55 @@ import us.springett.parsers.cpe.values.Part;
      * @param args not used
      */
     public static void main(String[] args) {
-<span class="nc" id="L1299">        final Settings props = new Settings();</span>
-<span class="nc" id="L1300">        try (Engine en = new Engine(Engine.Mode.EVIDENCE_PROCESSING, props)) {</span>
-<span class="nc" id="L1301">            en.openDatabase(false, false);</span>
-<span class="nc" id="L1302">            final CPEAnalyzer analyzer = new CPEAnalyzer();</span>
-<span class="nc" id="L1303">            analyzer.initialize(props);</span>
-<span class="nc" id="L1304">            analyzer.prepareAnalyzer(en);</span>
-<span class="nc" id="L1305">            LOGGER.error(&quot;test&quot;);</span>
-<span class="nc" id="L1306">            System.out.println(&quot;Memory index query for ODC&quot;);</span>
-<span class="nc" id="L1307">            try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8))) {</span>
+<span class="nc" id="L1303">        final Settings props = new Settings();</span>
+<span class="nc" id="L1304">        try (Engine en = new Engine(Engine.Mode.EVIDENCE_PROCESSING, props)) {</span>
+<span class="nc" id="L1305">            en.openDatabase(false, false);</span>
+<span class="nc" id="L1306">            final CPEAnalyzer analyzer = new CPEAnalyzer();</span>
+<span class="nc" id="L1307">            analyzer.initialize(props);</span>
+<span class="nc" id="L1308">            analyzer.prepareAnalyzer(en);</span>
+<span class="nc" id="L1309">            LOGGER.error(&quot;test&quot;);</span>
+<span class="nc" id="L1310">            System.out.println(&quot;Memory index query for ODC&quot;);</span>
+<span class="nc" id="L1311">            try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8))) {</span>
                 while (true) {
 
-<span class="nc" id="L1310">                    final Map&lt;String, MutableInt&gt; vendor = new HashMap&lt;&gt;();</span>
-<span class="nc" id="L1311">                    final Map&lt;String, MutableInt&gt; product = new HashMap&lt;&gt;();</span>
-<span class="nc" id="L1312">                    System.out.print(&quot;Vendor: &quot;);</span>
-<span class="nc" id="L1313">                    String[] parts = br.readLine().split(&quot; &quot;);</span>
-<span class="nc bnc" id="L1314" title="All 2 branches missed.">                    for (String term : parts) {</span>
-<span class="nc" id="L1315">                        final MutableInt count = vendor.get(term);</span>
-<span class="nc bnc" id="L1316" title="All 2 branches missed.">                        if (count == null) {</span>
-<span class="nc" id="L1317">                            vendor.put(term, new MutableInt(0));</span>
+<span class="nc" id="L1314">                    final Map&lt;String, MutableInt&gt; vendor = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L1315">                    final Map&lt;String, MutableInt&gt; product = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L1316">                    System.out.print(&quot;Vendor: &quot;);</span>
+<span class="nc" id="L1317">                    String[] parts = br.readLine().split(&quot; &quot;);</span>
+<span class="nc bnc" id="L1318" title="All 2 branches missed.">                    for (String term : parts) {</span>
+<span class="nc" id="L1319">                        final MutableInt count = vendor.get(term);</span>
+<span class="nc bnc" id="L1320" title="All 2 branches missed.">                        if (count == null) {</span>
+<span class="nc" id="L1321">                            vendor.put(term, new MutableInt(0));</span>
                         } else {
-<span class="nc" id="L1319">                            count.add(1);</span>
+<span class="nc" id="L1323">                            count.add(1);</span>
                         }
                     }
-<span class="nc" id="L1322">                    System.out.print(&quot;Product: &quot;);</span>
-<span class="nc" id="L1323">                    parts = br.readLine().split(&quot; &quot;);</span>
-<span class="nc bnc" id="L1324" title="All 2 branches missed.">                    for (String term : parts) {</span>
-<span class="nc" id="L1325">                        final MutableInt count = product.get(term);</span>
-<span class="nc bnc" id="L1326" title="All 2 branches missed.">                        if (count == null) {</span>
-<span class="nc" id="L1327">                            product.put(term, new MutableInt(0));</span>
+<span class="nc" id="L1326">                    System.out.print(&quot;Product: &quot;);</span>
+<span class="nc" id="L1327">                    parts = br.readLine().split(&quot; &quot;);</span>
+<span class="nc bnc" id="L1328" title="All 2 branches missed.">                    for (String term : parts) {</span>
+<span class="nc" id="L1329">                        final MutableInt count = product.get(term);</span>
+<span class="nc bnc" id="L1330" title="All 2 branches missed.">                        if (count == null) {</span>
+<span class="nc" id="L1331">                            product.put(term, new MutableInt(0));</span>
                         } else {
-<span class="nc" id="L1329">                            count.add(1);</span>
+<span class="nc" id="L1333">                            count.add(1);</span>
                         }
                     }
-<span class="nc" id="L1332">                    final List&lt;IndexEntry&gt; list = analyzer.searchCPE(vendor, product, new HashSet&lt;&gt;(), new HashSet&lt;&gt;(), &quot;default&quot;);</span>
-<span class="nc bnc" id="L1333" title="All 4 branches missed.">                    if (list == null || list.isEmpty()) {</span>
-<span class="nc" id="L1334">                        System.out.println(&quot;No results found&quot;);</span>
+<span class="nc" id="L1336">                    final List&lt;IndexEntry&gt; list = analyzer.searchCPE(vendor, product, new HashSet&lt;&gt;(), new HashSet&lt;&gt;(), &quot;default&quot;);</span>
+<span class="nc bnc" id="L1337" title="All 4 branches missed.">                    if (list == null || list.isEmpty()) {</span>
+<span class="nc" id="L1338">                        System.out.println(&quot;No results found&quot;);</span>
                     } else {
-<span class="nc" id="L1336">                        list.forEach((e) -&gt; System.out.println(String.format(&quot;%s:%s (%f)&quot;, e.getVendor(), e.getProduct(),</span>
-<span class="nc" id="L1337">                                e.getSearchScore())));</span>
+<span class="nc" id="L1340">                        list.forEach((e) -&gt; System.out.println(String.format(&quot;%s:%s (%f)&quot;, e.getVendor(), e.getProduct(),</span>
+<span class="nc" id="L1341">                                e.getSearchScore())));</span>
                     }
-<span class="nc" id="L1339">                    System.out.println();</span>
-<span class="nc" id="L1340">                    System.out.println();</span>
-<span class="nc" id="L1341">                }</span>
-<span class="nc bnc" id="L1342" title="All 4 branches missed.">            }</span>
-<span class="nc bnc" id="L1343" title="All 4 branches missed.">        } catch (InitializationException | IOException ex) {</span>
-<span class="nc" id="L1344">            System.err.println(&quot;Lucene ODC search tool failed:&quot;);</span>
-<span class="nc" id="L1345">            System.err.println(ex.getMessage());</span>
+<span class="nc" id="L1343">                    System.out.println();</span>
+<span class="nc" id="L1344">                    System.out.println();</span>
+<span class="nc" id="L1345">                }</span>
+<span class="nc bnc" id="L1346" title="All 4 branches missed.">            }</span>
+<span class="nc bnc" id="L1347" title="All 4 branches missed.">        } catch (InitializationException | IOException ex) {</span>
+<span class="nc" id="L1348">            System.err.println(&quot;Lucene ODC search tool failed:&quot;);</span>
+<span class="nc" id="L1349">            System.err.println(ex.getMessage());</span>
         }
-<span class="nc" id="L1347">    }</span>
+<span class="nc" id="L1351">    }</span>
 
     /**
      * Sets the reference to the CveDB.
@@ -1352,8 +1356,8 @@ import us.springett.parsers.cpe.values.Part;
      * @param cveDb the CveDB
      */
     protected void setCveDB(CveDB cveDb) {
-<span class="fc" id="L1355">        this.cve = cveDb;</span>
-<span class="fc" id="L1356">    }</span>
+<span class="fc" id="L1359">        this.cve = cveDb;</span>
+<span class="fc" id="L1360">    }</span>
 
     /**
      * returns a reference to the CveDB.
@@ -1361,7 +1365,7 @@ import us.springett.parsers.cpe.values.Part;
      * @return a reference to the CveDB
      */
     protected CveDB getCveDB() {
-<span class="nc" id="L1364">        return this.cve;</span>
+<span class="nc" id="L1368">        return this.cve;</span>
     }
 
     /**
@@ -1370,8 +1374,8 @@ import us.springett.parsers.cpe.values.Part;
      * @param idx the memory index
      */
     protected void setMemoryIndex(MemoryIndex idx) {
-<span class="fc" id="L1373">        cpe = idx;</span>
-<span class="fc" id="L1374">    }</span>
+<span class="fc" id="L1377">        cpe = idx;</span>
+<span class="fc" id="L1378">    }</span>
 
     /**
      * Returns the memory index.
@@ -1379,7 +1383,7 @@ import us.springett.parsers.cpe.values.Part;
      * @return the memory index
      */
     protected MemoryIndex getMemoryIndex() {
-<span class="fc" id="L1382">        return cpe;</span>
+<span class="fc" id="L1386">        return cpe;</span>
     }
 
     /**
@@ -1388,7 +1392,7 @@ import us.springett.parsers.cpe.values.Part;
      * @param suppression the CPE Suppression Analyzer
      */
     protected void setCpeSuppressionAnalyzer(CpeSuppressionAnalyzer suppression) {
-<span class="nc" id="L1391">        this.suppression = suppression;</span>
-<span class="nc" id="L1392">    }</span>
+<span class="nc" id="L1395">        this.suppression = suppression;</span>
+<span class="nc" id="L1396">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -8,51 +8,54 @@
 <div id="overview"><a href="../../../../../testapidocs/org/owasp/dependencycheck/resources/DependencyCheckBaseSuppressionTest.html">View Javadoc</a></div><pre>
 <a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> org.owasp.dependencycheck.resources;
 <a class="jxr_linenumber" name="L2" href="#L2">2</a>   
-<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> java.io.IOException;
-<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> java.nio.file.Path;
-<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <strong class="jxr_keyword">import</strong> java.nio.file.Paths;
-<a class="jxr_linenumber" name="L6" href="#L6">6</a>   
-<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <strong class="jxr_keyword">import</strong> javax.xml.XMLConstants;
-<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <strong class="jxr_keyword">import</strong> javax.xml.parsers.DocumentBuilderFactory;
-<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <strong class="jxr_keyword">import</strong> javax.xml.parsers.ParserConfigurationException;
-<a class="jxr_linenumber" name="L10" href="#L10">10</a>  
-<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <strong class="jxr_keyword">import</strong> org.junit.Assert;
-<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
-<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.Document;
-<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.Element;
-<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.Node;
-<a class="jxr_linenumber" name="L16" href="#L16">16</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.NodeList;
-<a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">import</strong> org.xml.sax.SAXException;
-<a class="jxr_linenumber" name="L18" href="#L18">18</a>  
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/owasp/dependencycheck/resources/DependencyCheckBaseSuppressionTest.html">DependencyCheckBaseSuppressionTest</a> {
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>      @Test
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testAllSuppressionsHaveBaseAttribute() <strong class="jxr_keyword">throws</strong> ParserConfigurationException, SAXException, IOException {
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>          DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>          factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>          Path path = Paths.get(<span class="jxr_string">"src"</span>, <span class="jxr_string">"main"</span>, <span class="jxr_string">"resources"</span>, <span class="jxr_string">"dependencycheck-base-suppression.xml"</span>);
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>          Document document = factory.newDocumentBuilder().parse(path.toFile());
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>          document.getDocumentElement().normalize();
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>          NodeList nodes = document.getElementsByTagName(<span class="jxr_string">"suppress"</span>);
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>          <strong class="jxr_keyword">int</strong> numberOfSuppressTagsWithoutBaseTrueAttribute = 0;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; nodes.getLength(); i++) {
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>              Node node = nodes.item(i);
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>              <strong class="jxr_keyword">if</strong> (node.getNodeType() == Node.ELEMENT_NODE) {
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>                  Element element = (Element) node;
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> java.io.File;
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <strong class="jxr_keyword">import</strong> java.nio.file.Path;
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">import</strong> java.nio.file.Paths;
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <strong class="jxr_keyword">import</strong> javax.xml.XMLConstants;
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <strong class="jxr_keyword">import</strong> javax.xml.parsers.DocumentBuilderFactory;
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <strong class="jxr_keyword">import</strong> javax.xml.parsers.ParserConfigurationException;
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <strong class="jxr_keyword">import</strong> org.junit.Assert;
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.Document;
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.Element;
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.Node;
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.NodeList;
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  <strong class="jxr_keyword">import</strong> org.xml.sax.SAXException;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/owasp/dependencycheck/resources/DependencyCheckBaseSuppressionTest.html">DependencyCheckBaseSuppressionTest</a> {
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>      @Test
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testAllSuppressionsHaveBaseAttribute() <strong class="jxr_keyword">throws</strong> ParserConfigurationException, SAXException, IOException {
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>          DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>          factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>          Path path = Paths.get(<span class="jxr_string">"src"</span>, <span class="jxr_string">"main"</span>, <span class="jxr_string">"resources"</span>, <span class="jxr_string">"dependencycheck-base-suppression.xml"</span>);
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>          File file = path.toFile();
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>          <strong class="jxr_keyword">boolean</strong> e = file.exists();
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>          Document document = factory.newDocumentBuilder().parse(file);
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>          document.getDocumentElement().normalize();
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>          NodeList nodes = document.getElementsByTagName(<span class="jxr_string">"suppress"</span>);
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>          <strong class="jxr_keyword">int</strong> numberOfSuppressTagsWithoutBaseTrueAttribute = 0;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; nodes.getLength(); i++) {
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>              Node node = nodes.item(i);
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>                  <strong class="jxr_keyword">if</strong> (!<span class="jxr_string">"true"</span>.equalsIgnoreCase(element.getAttribute(<span class="jxr_string">"base"</span>))) {
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>                      numberOfSuppressTagsWithoutBaseTrueAttribute++;
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>                  }
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>              }
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>          }
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>  
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>          Assert.assertEquals(0, numberOfSuppressTagsWithoutBaseTrueAttribute);
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>      }
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>  }
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>              <strong class="jxr_keyword">if</strong> (node.getNodeType() == Node.ELEMENT_NODE) {
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>                  Element element = (Element) node;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>                  <strong class="jxr_keyword">if</strong> (!<span class="jxr_string">"true"</span>.equalsIgnoreCase(element.getAttribute(<span class="jxr_string">"base"</span>))) {
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>                      numberOfSuppressTagsWithoutBaseTrueAttribute++;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>                  }
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>              }
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>          }
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>          Assert.assertEquals(0, numberOfSuppressTagsWithoutBaseTrueAttribute);
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      }
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2021 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

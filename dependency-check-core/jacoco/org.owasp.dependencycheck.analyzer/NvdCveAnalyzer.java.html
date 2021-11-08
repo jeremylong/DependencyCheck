@@ -143,36 +143,37 @@ import org.owasp.dependencycheck.utils.Settings;
 <span class="fc" id="L143">    }</span>
 
     /**
-     * Filters the list of vulnerabilities for the given ecosystem.
+     * Filters the list of vulnerabilities for the given ecosystem compared to
+     * the target software from the NVD.
      *
      * @param ecosystem the dependency's ecosystem
      * @param vulnerabilities the list of vulnerabilities to filter
      * @return the filtered list of vulnerabilities
      */
     private List&lt;Vulnerability&gt; filterEcosystem(String ecosystem, List&lt;Vulnerability&gt; vulnerabilities) {
-<span class="fc" id="L153">        final List&lt;Vulnerability&gt; remove = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L154">        vulnerabilities.forEach((v) -&gt; {</span>
-<span class="fc" id="L155">            boolean found = false;</span>
-<span class="fc" id="L156">            final List&lt;VulnerableSoftware&gt; removeSoftare = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L157" title="All 2 branches covered.">            for (VulnerableSoftware s : v.getVulnerableSoftware()) {</span>
-<span class="pc bpc" id="L158" title="1 of 2 branches missed.">                if (ecosystemMatchesTargetSoftware(ecosystem, s.getTargetSw())) {</span>
-<span class="fc" id="L159">                    found = true;</span>
+<span class="fc" id="L154">        final List&lt;Vulnerability&gt; remove = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L155">        vulnerabilities.forEach((v) -&gt; {</span>
+<span class="fc" id="L156">            boolean found = false;</span>
+<span class="fc" id="L157">            final List&lt;VulnerableSoftware&gt; removeSoftare = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">            for (VulnerableSoftware s : v.getVulnerableSoftware()) {</span>
+<span class="pc bpc" id="L159" title="1 of 2 branches missed.">                if (ecosystemMatchesTargetSoftware(ecosystem, s.getTargetSw())) {</span>
+<span class="fc" id="L160">                    found = true;</span>
                 } else {
-<span class="nc" id="L161">                    removeSoftare.add(s);</span>
+<span class="nc" id="L162">                    removeSoftare.add(s);</span>
                 }
-<span class="fc" id="L163">            }</span>
-<span class="pc bpc" id="L164" title="1 of 2 branches missed.">            if (found) {</span>
-<span class="pc bpc" id="L165" title="1 of 2 branches missed.">                if (!removeSoftare.isEmpty()) {</span>
-<span class="nc" id="L166">                    v.getVulnerableSoftware().removeAll(removeSoftare);</span>
+<span class="fc" id="L164">            }</span>
+<span class="pc bpc" id="L165" title="1 of 2 branches missed.">            if (found) {</span>
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">                if (!removeSoftare.isEmpty()) {</span>
+<span class="nc" id="L167">                    v.getVulnerableSoftware().removeAll(removeSoftare);</span>
                 }
             } else {
-<span class="nc" id="L169">                remove.add(v);</span>
+<span class="nc" id="L170">                remove.add(v);</span>
             }
-<span class="fc" id="L171">        });</span>
-<span class="pc bpc" id="L172" title="1 of 2 branches missed.">        if (!remove.isEmpty()) {</span>
-<span class="nc" id="L173">            vulnerabilities.removeAll(remove);</span>
+<span class="fc" id="L172">        });</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">        if (!remove.isEmpty()) {</span>
+<span class="nc" id="L174">            vulnerabilities.removeAll(remove);</span>
         }
-<span class="fc" id="L175">        return vulnerabilities;</span>
+<span class="fc" id="L176">        return vulnerabilities;</span>
     }
 
     /**
@@ -186,27 +187,27 @@ import org.owasp.dependencycheck.utils.Settings;
      * &lt;code&gt;false&lt;/code&gt;
      */
     private boolean ecosystemMatchesTargetSoftware(String ecosystem, String targetSoftware) {
-<span class="pc bpc" id="L189" title="3 of 4 branches missed.">        if (&quot;*&quot;.equals(targetSoftware) || &quot;-&quot;.equals(targetSoftware)) {</span>
-<span class="fc" id="L190">            return true;</span>
+<span class="pc bpc" id="L190" title="3 of 4 branches missed.">        if (&quot;*&quot;.equals(targetSoftware) || &quot;-&quot;.equals(targetSoftware)) {</span>
+<span class="fc" id="L191">            return true;</span>
         }
-<span class="nc bnc" id="L192" title="All 2 branches missed.">        if (Ecosystem.NODEJS.equals(ecosystem)) {</span>
-<span class="nc bnc" id="L193" title="All 6 branches missed.">            switch (targetSoftware.toLowerCase()) {</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        if (Ecosystem.NODEJS.equals(ecosystem)) {</span>
+<span class="nc bnc" id="L194" title="All 6 branches missed.">            switch (targetSoftware.toLowerCase()) {</span>
                 case &quot;nodejs&quot;:
-<span class="nc" id="L195">                    return true;</span>
+<span class="nc" id="L196">                    return true;</span>
                 case &quot;node.js&quot;:
-<span class="nc" id="L197">                    return true;</span>
+<span class="nc" id="L198">                    return true;</span>
                 //not actually in NVD...just future proofing
                 case &quot;npm&quot;:
-<span class="nc" id="L200">                    return true;</span>
+<span class="nc" id="L201">                    return true;</span>
                 case &quot;node_js&quot;:
-<span class="nc" id="L202">                    return true;</span>
+<span class="nc" id="L203">                    return true;</span>
                 case &quot;node-js&quot;:
-<span class="nc" id="L204">                    return true;</span>
+<span class="nc" id="L205">                    return true;</span>
                 default:
-<span class="nc" id="L206">                    return false;</span>
+<span class="nc" id="L207">                    return false;</span>
             }
         }
-<span class="nc" id="L209">        return true;</span>
+<span class="nc" id="L210">        return true;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

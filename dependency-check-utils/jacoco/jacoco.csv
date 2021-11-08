@@ -2,7 +2,7 @@ GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_
 Dependency-Check Utils,org.owasp.dependencycheck.utils.search,FileContentSearch,0,74,0,6,0,10,0,6,0,3
 Dependency-Check Utils,org.owasp.dependencycheck.utils,FileUtils,98,68,15,7,28,18,13,6,3,5
 Dependency-Check Utils,org.owasp.dependencycheck.utils,JsonArrayFixingInputStream,71,382,23,51,7,78,17,34,0,14
-Dependency-Check Utils,org.owasp.dependencycheck.utils,HttpResourceConnection,508,215,42,20,96,61,30,14,1,12
+Dependency-Check Utils,org.owasp.dependencycheck.utils,HttpResourceConnection,376,157,33,15,75,45,25,10,3,8
 Dependency-Check Utils,org.owasp.dependencycheck.utils,Settings,482,436,57,41,108,104,55,38,14,30
 Dependency-Check Utils,org.owasp.dependencycheck.utils,ExpectedObjectInputStream,0,32,0,2,0,7,0,3,0,2
 Dependency-Check Utils,org.owasp.dependencycheck.utils,SSLSocketFactoryEx,239,181,9,7,58,45,18,8,11,7
@@ -12,8 +12,8 @@ Dependency-Check Utils,org.owasp.dependencycheck.utils,URLConnectionFailureExcep
 Dependency-Check Utils,org.owasp.dependencycheck.utils,URLConnectionFactory,270,97,47,7,59,29,27,8,2,6
 Dependency-Check Utils,org.owasp.dependencycheck.utils,Downloader,120,55,3,1,25,16,6,4,4,4
 Dependency-Check Utils,org.owasp.dependencycheck.utils,ResourceNotFoundException,16,0,0,0,8,0,4,0,4,0
-Dependency-Check Utils,org.owasp.dependencycheck.utils,ExtractionException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,CveUrlParser,5,0,0,0,1,0,1,0,1,0
+Dependency-Check Utils,org.owasp.dependencycheck.utils,ExtractionException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,TooManyRequestsException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,DefaultCveUrlModifiedParser,55,0,4,0,8,0,4,0,2,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,DownloadFailedException,16,0,0,0,8,0,4,0,4,0

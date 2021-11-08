@@ -636,25 +636,25 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
     public String toString() {
 <span class="fc" id="L637">        final StringBuilder sb = new StringBuilder(64);</span>
 <span class="fc" id="L638">        sb.append(&quot;SuppressionRule{&quot;);</span>
-<span class="pc bpc" id="L639" title="1 of 2 branches missed.">        if (until != null) {</span>
+<span class="fc bfc" id="L639" title="All 2 branches covered.">        if (until != null) {</span>
 <span class="fc" id="L640">            final String dt = DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(until);</span>
 <span class="fc" id="L641">            sb.append(&quot;until=&quot;).append(dt).append(',');</span>
         }
-<span class="pc bpc" id="L643" title="1 of 2 branches missed.">        if (filePath != null) {</span>
-<span class="nc" id="L644">            sb.append(&quot;filePath=&quot;).append(filePath).append(',');</span>
+<span class="fc bfc" id="L643" title="All 2 branches covered.">        if (filePath != null) {</span>
+<span class="fc" id="L644">            sb.append(&quot;filePath=&quot;).append(filePath).append(',');</span>
         }
-<span class="pc bpc" id="L646" title="1 of 2 branches missed.">        if (sha1 != null) {</span>
+<span class="fc bfc" id="L646" title="All 2 branches covered.">        if (sha1 != null) {</span>
 <span class="fc" id="L647">            sb.append(&quot;sha1=&quot;).append(sha1).append(',');</span>
         }
-<span class="pc bpc" id="L649" title="1 of 2 branches missed.">        if (gav != null) {</span>
-<span class="nc" id="L650">            sb.append(&quot;gav=&quot;).append(gav).append(',');</span>
+<span class="fc bfc" id="L649" title="All 2 branches covered.">        if (gav != null) {</span>
+<span class="fc" id="L650">            sb.append(&quot;gav=&quot;).append(gav).append(',');</span>
         }
-<span class="pc bpc" id="L652" title="2 of 4 branches missed.">        if (cpe != null &amp;&amp; !cpe.isEmpty()) {</span>
-<span class="nc" id="L653">            sb.append(&quot;cpe={&quot;);</span>
-<span class="nc" id="L654">            cpe.forEach((pt) -&gt; {</span>
-<span class="nc" id="L655">                sb.append(pt).append(',');</span>
-<span class="nc" id="L656">            });</span>
-<span class="nc" id="L657">            sb.append('}');</span>
+<span class="pc bpc" id="L652" title="1 of 4 branches missed.">        if (cpe != null &amp;&amp; !cpe.isEmpty()) {</span>
+<span class="fc" id="L653">            sb.append(&quot;cpe={&quot;);</span>
+<span class="fc" id="L654">            cpe.forEach((pt) -&gt; {</span>
+<span class="fc" id="L655">                sb.append(pt).append(',');</span>
+<span class="fc" id="L656">            });</span>
+<span class="fc" id="L657">            sb.append('}');</span>
         }
 <span class="pc bpc" id="L659" title="2 of 4 branches missed.">        if (cwe != null &amp;&amp; !cwe.isEmpty()) {</span>
 <span class="nc" id="L660">            sb.append(&quot;cwe={&quot;);</span>
@@ -663,19 +663,19 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
 <span class="nc" id="L663">            });</span>
 <span class="nc" id="L664">            sb.append('}');</span>
         }
-<span class="pc bpc" id="L666" title="2 of 4 branches missed.">        if (cve != null &amp;&amp; !cve.isEmpty()) {</span>
+<span class="pc bpc" id="L666" title="1 of 4 branches missed.">        if (cve != null &amp;&amp; !cve.isEmpty()) {</span>
 <span class="fc" id="L667">            sb.append(&quot;cve={&quot;);</span>
 <span class="fc" id="L668">            cve.forEach((s) -&gt; {</span>
 <span class="fc" id="L669">                sb.append(s).append(',');</span>
 <span class="fc" id="L670">            });</span>
 <span class="fc" id="L671">            sb.append('}');</span>
         }
-<span class="pc bpc" id="L673" title="2 of 4 branches missed.">        if (vulnerabilityNames != null &amp;&amp; !vulnerabilityNames.isEmpty()) {</span>
-<span class="nc" id="L674">            sb.append(&quot;vulnerabilityName={&quot;);</span>
-<span class="nc" id="L675">            vulnerabilityNames.forEach((pt) -&gt; {</span>
-<span class="nc" id="L676">                sb.append(pt).append(',');</span>
-<span class="nc" id="L677">            });</span>
-<span class="nc" id="L678">            sb.append('}');</span>
+<span class="pc bpc" id="L673" title="1 of 4 branches missed.">        if (vulnerabilityNames != null &amp;&amp; !vulnerabilityNames.isEmpty()) {</span>
+<span class="fc" id="L674">            sb.append(&quot;vulnerabilityName={&quot;);</span>
+<span class="fc" id="L675">            vulnerabilityNames.forEach((pt) -&gt; {</span>
+<span class="fc" id="L676">                sb.append(pt).append(',');</span>
+<span class="fc" id="L677">            });</span>
+<span class="fc" id="L678">            sb.append('}');</span>
         }
 <span class="pc bpc" id="L680" title="2 of 4 branches missed.">        if (cvssBelow != null &amp;&amp; !cvssBelow.isEmpty()) {</span>
 <span class="nc" id="L681">            sb.append(&quot;cvssBelow={&quot;);</span>

@@ -141,7 +141,7 @@
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>                 <em class="jxr_comment">//going from 2 to 4 to have 3 download attempts with easier info messages</em>
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> downloadAttempts = 4;
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>                 <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> x = 2; x &lt;= downloadAttempts &amp;&amp; !attemptDownload(url1, x == downloadAttempts); x++) {
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>                     LOGGER.info(<span class="jxr_string">"Download Attemp {} for NVD CVE - {}"</span>, x, nvdCveInfo.getId());
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>                     LOGGER.info(<span class="jxr_string">"Download Attempt {} for NVD CVE - {}"</span>, x, nvdCveInfo.getId());
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>                     Thread.sleep(waitTime * (x / 2));
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>                 }
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>                 <strong class="jxr_keyword">if</strong> (file.isFile() &amp;&amp; file.length() &gt; 0) {

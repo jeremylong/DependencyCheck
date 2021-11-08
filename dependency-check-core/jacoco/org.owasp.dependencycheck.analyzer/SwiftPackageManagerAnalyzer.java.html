@@ -194,7 +194,7 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L194">                final PackageURL purl = builder.build();</span>
 <span class="fc" id="L195">                dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
 <span class="nc" id="L196">            } catch (MalformedPackageURLException ex) {</span>
-<span class="nc" id="L197">                LOGGER.debug(&quot;Unable to build package url for python&quot;, ex);</span>
+<span class="nc" id="L197">                LOGGER.debug(&quot;Unable to build package url for swift&quot;, ex);</span>
                 final GenericIdentifier id;
 <span class="nc bnc" id="L199" title="All 2 branches missed.">                if (dependency.getVersion() != null) {</span>
 <span class="nc" id="L200">                    id = new GenericIdentifier(&quot;swift:&quot; + dependency.getName() + &quot;@&quot; + dependency.getVersion(), Confidence.HIGHEST);</span>

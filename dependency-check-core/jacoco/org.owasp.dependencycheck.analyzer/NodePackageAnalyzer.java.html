@@ -185,7 +185,7 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
      */
     private boolean isNodeAuditEnabled(Engine engine) {
 <span class="pc bpc" id="L187" title="1 of 2 branches missed.">        for (Analyzer a : engine.getAnalyzers()) {</span>
-<span class="pc bpc" id="L188" title="1 of 4 branches missed.">            if (a instanceof NodeAuditAnalyzer || a instanceof YarnAuditAnalyzer) {</span>
+<span class="pc bpc" id="L188" title="2 of 6 branches missed.">            if (a instanceof NodeAuditAnalyzer || a instanceof YarnAuditAnalyzer || a instanceof PnpmAuditAnalyzer) {</span>
 <span class="pc bpc" id="L189" title="1 of 2 branches missed.">                if (a.isEnabled()) {</span>
                     try {
 <span class="fc" id="L191">                        ((AbstractNpmAnalyzer) a).prepareFileTypeAnalyzer(engine);</span>

@@ -193,7 +193,7 @@
 <a class="jxr_linenumber" name="L185" href="#L185">185</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> isNodeAuditEnabled(<a href="../../../../org/owasp/dependencycheck/Engine.html">Engine</a> engine) {
 <a class="jxr_linenumber" name="L187" href="#L187">187</a>         <strong class="jxr_keyword">for</strong> (Analyzer a : engine.getAnalyzers()) {
-<a class="jxr_linenumber" name="L188" href="#L188">188</a>             <strong class="jxr_keyword">if</strong> (a instanceof NodeAuditAnalyzer || a instanceof YarnAuditAnalyzer) {
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>             <strong class="jxr_keyword">if</strong> (a instanceof NodeAuditAnalyzer || a instanceof YarnAuditAnalyzer || a instanceof PnpmAuditAnalyzer) {
 <a class="jxr_linenumber" name="L189" href="#L189">189</a>                 <strong class="jxr_keyword">if</strong> (a.isEnabled()) {
 <a class="jxr_linenumber" name="L190" href="#L190">190</a>                     <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L191" href="#L191">191</a>                         ((<a href="../../../../org/owasp/dependencycheck/analyzer/AbstractNpmAnalyzer.html">AbstractNpmAnalyzer</a>) a).prepareFileTypeAnalyzer(engine);

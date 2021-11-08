@@ -35,7 +35,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Jeremy Long
  */
 @NotThreadSafe
-<span class="fc" id="L38">public class SuppressionHandler extends DefaultHandler {</span>
+public class SuppressionHandler extends DefaultHandler {
 
     /**
      * The logger.
@@ -80,7 +80,7 @@ import org.xml.sax.helpers.DefaultHandler;
      * The GAV element name.
      */
     public static final String GAV = &quot;gav&quot;;
-        /**
+    /**
      * The Package URL element name.
      */
     public static final String PACKAGE_URL = &quot;packageUrl&quot;;
@@ -104,6 +104,10 @@ import org.xml.sax.helpers.DefaultHandler;
      * The current node text being extracted from the element.
      */
     private StringBuilder currentText;
+    /**
+     * The suppression rule filter.
+     */
+    private SuppressionRuleFilter filter;
 
     /**
      * Get the value of suppressionRules.
@@ -111,13 +115,24 @@ import org.xml.sax.helpers.DefaultHandler;
      * @return the value of suppressionRules
      */
     public List&lt;SuppressionRule&gt; getSuppressionRules() {
-<span class="fc" id="L114">        return suppressionRules;</span>
+<span class="fc" id="L118">        return suppressionRules;</span>
     }
+
+    /**
+     * Constructs a Suppression Handler.
+     *
+     * @param filter The suppression rule filter used when loading the
+     * suppression rules. This is used to differentiate vulnerability
+     * suppression rules from CPE suppression rules.
+     */
+<span class="fc" id="L128">    public SuppressionHandler(SuppressionRuleFilter filter) {</span>
+<span class="fc" id="L129">        this.filter = filter;</span>
+<span class="fc" id="L130">    }</span>
 
     /**
      * Handles the start element event.
      *
-     * @param uri the uri of the element being processed
+     * @param uri the URI of the element being processed
      * @param localName the local name of the element being processed
      * @param qName the qName of the element being processed
      * @param attributes the attributes of the element being processed
@@ -125,26 +140,26 @@ import org.xml.sax.helpers.DefaultHandler;
      */
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-<span class="fc" id="L128">        currentAttributes = attributes;</span>
-<span class="fc" id="L129">        currentText = new StringBuilder();</span>
-<span class="fc bfc" id="L130" title="All 2 branches covered.">        if (SUPPRESS.equals(qName)) {</span>
-<span class="fc" id="L131">            rule = new SuppressionRule();</span>
-<span class="fc" id="L132">            final String base = currentAttributes.getValue(&quot;base&quot;);</span>
-<span class="pc bpc" id="L133" title="1 of 2 branches missed.">            if (base != null) {</span>
-<span class="fc" id="L134">                rule.setBase(Boolean.parseBoolean(base));</span>
+<span class="fc" id="L143">        currentAttributes = attributes;</span>
+<span class="fc" id="L144">        currentText = new StringBuilder();</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">        if (SUPPRESS.equals(qName)) {</span>
+<span class="fc" id="L146">            rule = new SuppressionRule();</span>
+<span class="fc" id="L147">            final String base = currentAttributes.getValue(&quot;base&quot;);</span>
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">            if (base != null) {</span>
+<span class="fc" id="L149">                rule.setBase(Boolean.parseBoolean(base));</span>
             } else {
-<span class="nc" id="L136">                rule.setBase(false);</span>
+<span class="nc" id="L151">                rule.setBase(false);</span>
             }
-<span class="fc" id="L138">            final String until = currentAttributes.getValue(&quot;until&quot;);</span>
-<span class="fc bfc" id="L139" title="All 2 branches covered.">            if (until != null) {</span>
+<span class="fc" id="L153">            final String until = currentAttributes.getValue(&quot;until&quot;);</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">            if (until != null) {</span>
                 try {
-<span class="fc" id="L141">                    rule.setUntil(DateUtil.parseXmlDate(until));</span>
-<span class="nc" id="L142">                } catch (ParseException ex) {</span>
-<span class="nc" id="L143">                    throw new SAXException(&quot;Unable to parse until date in suppression file: &quot; + until, ex);</span>
-<span class="fc" id="L144">                }</span>
+<span class="fc" id="L156">                    rule.setUntil(DateUtil.parseXmlDate(until));</span>
+<span class="nc" id="L157">                } catch (ParseException ex) {</span>
+<span class="nc" id="L158">                    throw new SAXException(&quot;Unable to parse until date in suppression file: &quot; + until, ex);</span>
+<span class="fc" id="L159">                }</span>
             }
         }
-<span class="fc" id="L147">    }</span>
+<span class="fc" id="L162">    }</span>
 
     /**
      * Handles the end element event.
@@ -156,52 +171,54 @@ import org.xml.sax.helpers.DefaultHandler;
      */
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-<span class="pc bpc" id="L159" title="1 of 2 branches missed.">        if (null != qName) {</span>
-<span class="pc bpc" id="L160" title="1 of 12 branches missed.">            switch (qName) {</span>
+<span class="pc bpc" id="L174" title="1 of 2 branches missed.">        if (null != qName) {</span>
+<span class="pc bpc" id="L175" title="1 of 12 branches missed.">            switch (qName) {</span>
                 case SUPPRESS:
-<span class="fc bfc" id="L162" title="All 4 branches covered.">                    if (rule.getUntil() != null &amp;&amp; rule.getUntil().before(Calendar.getInstance())) {</span>
-<span class="fc" id="L163">                        LOGGER.info(&quot;Suppression is expired for rule: {}&quot;, rule);</span>
+<span class="fc bfc" id="L177" title="All 4 branches covered.">                    if (rule.getUntil() != null &amp;&amp; rule.getUntil().before(Calendar.getInstance())) {</span>
+<span class="fc" id="L178">                        LOGGER.info(&quot;Suppression is expired for rule: {}&quot;, rule);</span>
+<span class="fc bfc" id="L179" title="All 4 branches covered.">                    } else if (filter != null &amp;&amp; filter.filter(rule)) {</span>
+<span class="fc" id="L180">                        LOGGER.debug(&quot;Filtering {} for {}&quot;, rule.toString(), filter.getName());</span>
                     } else {
-<span class="fc" id="L165">                        suppressionRules.add(rule);</span>
+<span class="fc" id="L182">                        suppressionRules.add(rule);</span>
                     }
-<span class="fc" id="L167">                    rule = null;</span>
-<span class="fc" id="L168">                    break;</span>
+<span class="fc" id="L184">                    rule = null;</span>
+<span class="fc" id="L185">                    break;</span>
                 case FILE_PATH:
-<span class="fc" id="L170">                    rule.setFilePath(processPropertyType());</span>
-<span class="fc" id="L171">                    break;</span>
+<span class="fc" id="L187">                    rule.setFilePath(processPropertyType());</span>
+<span class="fc" id="L188">                    break;</span>
                 case SHA1:
-<span class="fc" id="L173">                    rule.setSha1(currentText.toString().trim());</span>
-<span class="fc" id="L174">                    break;</span>
+<span class="fc" id="L190">                    rule.setSha1(currentText.toString().trim());</span>
+<span class="fc" id="L191">                    break;</span>
                 case GAV:
-<span class="fc" id="L176">                    rule.setGav(processPropertyType());</span>
-<span class="fc" id="L177">                    break;</span>
+<span class="fc" id="L193">                    rule.setGav(processPropertyType());</span>
+<span class="fc" id="L194">                    break;</span>
                 case PACKAGE_URL:
-<span class="fc" id="L179">                    rule.setPackageUrl(processPropertyType());</span>
-<span class="fc" id="L180">                    break;</span>
+<span class="fc" id="L196">                    rule.setPackageUrl(processPropertyType());</span>
+<span class="fc" id="L197">                    break;</span>
                 case CPE:
-<span class="fc" id="L182">                    rule.addCpe(processPropertyType());</span>
-<span class="fc" id="L183">                    break;</span>
+<span class="fc" id="L199">                    rule.addCpe(processPropertyType());</span>
+<span class="fc" id="L200">                    break;</span>
                 case CWE:
-<span class="nc" id="L185">                    rule.addCwe(currentText.toString().trim());</span>
-<span class="nc" id="L186">                    break;</span>
+<span class="nc" id="L202">                    rule.addCwe(currentText.toString().trim());</span>
+<span class="nc" id="L203">                    break;</span>
                 case CVE:
-<span class="fc" id="L188">                    rule.addCve(currentText.toString().trim());</span>
-<span class="fc" id="L189">                    break;</span>
+<span class="fc" id="L205">                    rule.addCve(currentText.toString().trim());</span>
+<span class="fc" id="L206">                    break;</span>
                 case VULNERABILITY_NAME:
-<span class="fc" id="L191">                    rule.addVulnerabilityName(processPropertyType());</span>
-<span class="fc" id="L192">                    break;</span>
+<span class="fc" id="L208">                    rule.addVulnerabilityName(processPropertyType());</span>
+<span class="fc" id="L209">                    break;</span>
                 case NOTES:
-<span class="fc" id="L194">                    rule.addNotes(currentText.toString().trim());</span>
-<span class="fc" id="L195">                    break;</span>
+<span class="fc" id="L211">                    rule.addNotes(currentText.toString().trim());</span>
+<span class="fc" id="L212">                    break;</span>
                 case CVSS_BELOW:
-<span class="fc" id="L197">                    final float cvss = Float.parseFloat(currentText.toString().trim());</span>
-<span class="fc" id="L198">                    rule.addCvssBelow(cvss);</span>
-<span class="fc" id="L199">                    break;</span>
+<span class="fc" id="L214">                    final float cvss = Float.parseFloat(currentText.toString().trim());</span>
+<span class="fc" id="L215">                    rule.addCvssBelow(cvss);</span>
+<span class="fc" id="L216">                    break;</span>
                 default:
                     break;
             }
         }
-<span class="fc" id="L204">    }</span>
+<span class="fc" id="L221">    }</span>
 
     /**
      * Collects the body text of the node being processed.
@@ -213,8 +230,8 @@ import org.xml.sax.helpers.DefaultHandler;
      */
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
-<span class="fc" id="L216">        currentText.append(ch, start, length);</span>
-<span class="fc" id="L217">    }</span>
+<span class="fc" id="L233">        currentText.append(ch, start, length);</span>
+<span class="fc" id="L234">    }</span>
 
     /**
      * Processes field members that have been collected during the characters
@@ -223,19 +240,19 @@ import org.xml.sax.helpers.DefaultHandler;
      * @return a PropertyType object
      */
     private PropertyType processPropertyType() {
-<span class="fc" id="L226">        final PropertyType pt = new PropertyType();</span>
-<span class="fc" id="L227">        pt.setValue(currentText.toString().trim());</span>
-<span class="pc bpc" id="L228" title="2 of 4 branches missed.">        if (currentAttributes != null &amp;&amp; currentAttributes.getLength() &gt; 0) {</span>
-<span class="fc" id="L229">            final String regex = currentAttributes.getValue(&quot;regex&quot;);</span>
-<span class="pc bpc" id="L230" title="1 of 2 branches missed.">            if (regex != null) {</span>
-<span class="fc" id="L231">                pt.setRegex(Boolean.parseBoolean(regex));</span>
+<span class="fc" id="L243">        final PropertyType pt = new PropertyType();</span>
+<span class="fc" id="L244">        pt.setValue(currentText.toString().trim());</span>
+<span class="pc bpc" id="L245" title="2 of 4 branches missed.">        if (currentAttributes != null &amp;&amp; currentAttributes.getLength() &gt; 0) {</span>
+<span class="fc" id="L246">            final String regex = currentAttributes.getValue(&quot;regex&quot;);</span>
+<span class="pc bpc" id="L247" title="1 of 2 branches missed.">            if (regex != null) {</span>
+<span class="fc" id="L248">                pt.setRegex(Boolean.parseBoolean(regex));</span>
             }
-<span class="fc" id="L233">            final String caseSensitive = currentAttributes.getValue(&quot;caseSensitive&quot;);</span>
-<span class="pc bpc" id="L234" title="1 of 2 branches missed.">            if (caseSensitive != null) {</span>
-<span class="fc" id="L235">                pt.setCaseSensitive(Boolean.parseBoolean(caseSensitive));</span>
+<span class="fc" id="L250">            final String caseSensitive = currentAttributes.getValue(&quot;caseSensitive&quot;);</span>
+<span class="pc bpc" id="L251" title="1 of 2 branches missed.">            if (caseSensitive != null) {</span>
+<span class="fc" id="L252">                pt.setCaseSensitive(Boolean.parseBoolean(caseSensitive));</span>
             }
         }
-<span class="fc" id="L238">        return pt;</span>
+<span class="fc" id="L255">        return pt;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
