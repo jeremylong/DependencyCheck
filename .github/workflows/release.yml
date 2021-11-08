@@ -177,6 +177,8 @@ jobs:
         with:
           tag_name: v${{ env.VERSION }}
           release_name: Version ${{ env.VERSION }}
+          prerelease: false
+          draft: false
           body: |
             Changes in this Release
             - Updated build configuration to create [reproducible builds](https://reproducible-builds.org/).
@@ -187,7 +189,6 @@ jobs:
             - Added the a new pnpm Analyzer
             - Fixed issue with some npm and yarn analysis failing due to large audit output
             - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/36?closed=1).          draft: false
-          prerelease: false
       - name: Upload CLI
         id: upload-release-cli
         uses: actions/upload-release-asset@v1.0.2
