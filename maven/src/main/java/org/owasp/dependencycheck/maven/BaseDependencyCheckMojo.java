@@ -1526,7 +1526,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         boolean result = Objects.equals(res.getArtifact().getGroupId(), theCoord.getGroupId());
         result &= Objects.equals(res.getArtifact().getArtifactId(), theCoord.getArtifactId());
-        result &= Objects.equals(res.getArtifact().getVersion(), theCoord.getVersion());
+        result &= Objects.equals(res.getArtifact().getBaseVersion(), theCoord.getVersion());
         result &= Objects.equals(res.getArtifact().getClassifier(), theCoord.getClassifier());
         result &= Objects.equals(res.getArtifact().getType(), theCoord.getExtension());
         return result;
