@@ -4770,4 +4770,11 @@
         <cve>CVE-2020-13949</cve>
     </suppress>
     <!-- end cpan support -->
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive as per #3790
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.logging\.log4j/log4j\-api\-kotlin@.*$</packageUrl>
+        <cpe>cpe:/a:apache:log4j</cpe>
+    </suppress>
 </suppressions>
