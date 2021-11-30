@@ -174,6 +174,8 @@ public class SwiftPackageResolvedAnalyzer extends AbstractFileTypeAnalyzer {
                 if (state != null) {
                     if (!state.isNull("version")) {
                         version = state.getString("version");
+                    } else if (!state.isNull("branch")) {
+                        version = state.getString("branch");
                     }
                 }
                 final Dependency dependency = createDependency(spmResolved, SPM_RESOLVED_FILE_NAME, name, version, repo);
