@@ -768,7 +768,7 @@ Copyright (c) 2012 - Jeremy Long
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>ossrh</serverId>
-                    <nexusurl>https://oss.sonatype.org/</nexusurl>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
