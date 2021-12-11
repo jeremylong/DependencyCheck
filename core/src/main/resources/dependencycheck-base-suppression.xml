@@ -666,22 +666,22 @@
         Suppress false positives by technology:
             1. dash
             2. node.js modules (#1095)
-            3. active directorty (#1091)
-            4. active directorty (#1091)
-            5. active directorty (#1091)
-            5. snmp (#1248)
-            5. snmp (#1248)
-            6. python (#1055)
-            7. python (#1055)
-            8. CVE-2017-16046 is for the node.js npm mariadb client (#1364)
-            9. sqlserver_project is a node js module (#1388)
-            10. auth0 is a javascript library (#1925)
-            11. JAR files should not be identified as github
-            12. <cpe>cpe:/a:data-tools_project:data_tools</cpe> is a python project #1961
-            13. flow_project reports an Ethereum token issue
-            14. ghost CMS is a node.js package (#3203)
-            15. ws_project is a node websocket client (#1535)
-            15. i18n_project is a node.js i18n module (#3350) (#3352) (#3353)
+            3. active directory (#1091)
+            4. active directory (#1091)
+            5. active directory (#1091)
+            6. snmp (#1248)
+            7. snmp (#1248)
+            8. python (#1055)
+            9. python (#1055)
+            10. CVE-2017-16046 is for the node.js npm mariadb client (#1364)
+            11. sqlserver_project is a node js module (#1388)
+            12. auth0 is a javascript library (#1925)
+            13. JAR files should not be identified as github
+            14. <cpe>cpe:/a:data-tools_project:data_tools</cpe> is a python project #1961
+            15. flow_project reports an Ethereum token issue
+            16. ghost CMS is a node.js package (#3203)
+            17. ws_project is a node websocket client (#1535)
+            18. i18n_project is a node.js i18n module (#3350) (#3352) (#3353)
         ]]></notes>
         <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)$</filePath>
         <cpe>cpe:/a:dash:dash</cpe>
