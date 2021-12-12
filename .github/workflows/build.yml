@@ -54,7 +54,7 @@ jobs:
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-        run: mvn -s settings.xml -Prelease clean package verify source:jar javadoc:jar gpg:sign deploy -DreleaseTesting --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} -e
+        run: mvn -s settings.xml -Prelease clean package verify source:jar javadoc:jar gpg:sign deploy -DreleaseTesting --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} -e -X
       - name: Archive IT test logs
         id: archive-logs
         uses: actions/upload-artifact@v2
