@@ -4560,6 +4560,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        False positive per issue #3823 - broadened regex to match any groupId that's not in the io.quarkus space
+        ]]></notes>
+        <gav regex="true">^(?!(io\.quarkus)).*:.*quarkus.*$</gav>
+        <cpe>cpe:/a:quarkus:quarkus</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         As per #3824 quarkus-jdbc-postgesql wrongly detected as cpe postgreSQL
         Oracle and MySQL jdbc connector projects are affected by a similar problem
         ]]></notes>
