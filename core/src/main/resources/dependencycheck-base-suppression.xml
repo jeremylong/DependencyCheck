@@ -4847,4 +4847,11 @@
         <packageUrl regex="true">^pkg:maven/javax\.xml\.crypto/jsr105-api@.*$</packageUrl>
         <cpe>cpe:/a:apache:xml_security_for_java</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       FP per #3842 nginx-clojure is not part of the nginx project, but an external clojure module for it
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/nginx\-clojure/nginx\-clojure@.*$</packageUrl>
+        <cpe>cpe:/a:nginx:nginx</cpe>
+    </suppress>
 </suppressions>
