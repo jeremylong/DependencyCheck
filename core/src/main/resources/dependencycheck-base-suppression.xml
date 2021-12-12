@@ -4546,6 +4546,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+       false positive per #3825
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.hibernate/quarkus\-local\-cache@.*$</packageUrl>
+        <cpe>cpe:/a:hibernate:hibernate_orm</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         false positive per #3301 on org.owasp:csrfguard-jsp-tags.4.0.0
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.owasp/csrfguard\-.*$</packageUrl>
