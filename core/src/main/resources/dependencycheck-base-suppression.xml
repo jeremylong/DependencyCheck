@@ -776,6 +776,13 @@
         <packageUrl regex="true">^pkg:maven/(io\.quarkus/quarkus\-|io\.smallrye\.reactive/)mutiny.*@.*$</packageUrl>
         <cpe>cpe:/a:mutiny:mutiny</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+        Suppresses false positive per #3827 - this library is not the github.com/containers/storage project
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.smallrye/smallrye\-context\-propagation\-storage@.*$</packageUrl>
+        <cpe>cpe:/a:storage_project:storage</cpe>
+    </suppress>
     <suppress base="true">
         <notes><![CDATA[
         Suppresses false positives per #1396.
