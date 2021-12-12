@@ -2742,6 +2742,15 @@
     </suppress> 
     <suppress base="true">
         <notes><![CDATA[
+            false positives per issue #3820
+        xjc-utils is a sub-project of cxf and would get its own CPE assigned just like CXF Fediz subproject for e.g. CVE-2018-8038
+        besides the org.apache.xjc-utils groupId also the org.apache.cxf.xjcplugins groupId is part of this repository
+        ]]></notes>
+        <gav regex="true">^org\.apache\.cxf\.xjcplugins:.*:.*$</gav>
+        <cpe>cpe:/a:apache:cxf</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         false positives per issue #915
         ]]></notes>
         <gav regex="true">^javax\.validation:validation-api:.*$</gav>
