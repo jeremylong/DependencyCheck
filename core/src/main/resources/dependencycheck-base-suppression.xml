@@ -4546,6 +4546,16 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        As per #3824 quarkus-jdbc-postgesql wrongly detected as cpe postgreSQL
+        Oracle and MySQL jdbc connector projects are affected by a similar problem
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus-jdbc-.*$</packageUrl>
+        <cpe>cpe:/a:mysql:mysql</cpe>
+        <cpe>cpe:/a:oracle:jdbc</cpe>
+        <cpe>cpe:/a:postgresql:postgresql</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         false positive per #3350 on org.apache.xmlgraphics:batik-i18n.1.14 CVE is for C#
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.xmlgraphics/batik\-i18n@.*$</packageUrl>
