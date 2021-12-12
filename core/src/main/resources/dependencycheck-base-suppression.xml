@@ -2388,6 +2388,20 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #3829 the eclipse Microprofile projects are not the eclipse IDE
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.eclipse\.microprofile.*$</packageUrl>
+        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #3829 the eclipse Microprofile config file provider project is not the Jenkins config file provider plugin
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.eclipse\.microprofile\.config/.*@.*$</packageUrl>
+        <cpe>cpe:/a:config_file_provider_project:config_file_provider</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         file name: keycloak-dropwizard-1.1.1.jar
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/de\.ahus1\.keycloak\.dropwizard/keycloak\-dropwizard@.*$</packageUrl>
