@@ -771,9 +771,9 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        Suppresses false positives per #2882 and #3562
+        Suppresses false positives per #2882 and #3562 and #3828
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/(io\.quarkus/quarkus\-|io\.smallrye\.reactive/)mutiny.*@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/(io\.quarkus/quarkus\-|io\.smallrye\.reactive/).*mutiny.*@.*$</packageUrl>
         <cpe>cpe:/a:mutiny:mutiny</cpe>
     </suppress>
     <suppress base="true">
