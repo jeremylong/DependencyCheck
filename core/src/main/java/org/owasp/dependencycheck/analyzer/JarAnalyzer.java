@@ -131,6 +131,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             "importpackage",
             "import-template",
             "importtemplate",
+            "java-vendor",
             "export-template",
             "exporttemplate",
             "ignorepackage",
