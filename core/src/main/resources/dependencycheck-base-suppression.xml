@@ -666,22 +666,23 @@
         Suppress false positives by technology:
             1. dash
             2. node.js modules (#1095)
-            3. active directorty (#1091)
-            4. active directorty (#1091)
-            5. active directorty (#1091)
-            5. snmp (#1248)
-            5. snmp (#1248)
-            6. python (#1055)
-            7. python (#1055)
-            8. CVE-2017-16046 is for the node.js npm mariadb client (#1364)
-            9. sqlserver_project is a node js module (#1388)
-            10. auth0 is a javascript library (#1925)
-            11. JAR files should not be identified as github
-            12. <cpe>cpe:/a:data-tools_project:data_tools</cpe> is a python project #1961
-            13. flow_project reports an Ethereum token issue
-            14. ghost CMS is a node.js package (#3203)
-            15. ws_project is a node websocket client (#1535)
-            15. i18n_project is a node.js i18n module (#3350) (#3352) (#3353)
+            3. active directory (#1091)
+            4. active directory (#1091)
+            5. active directory (#1091)
+            6. snmp (#1248)
+            7. snmp (#1248)
+            8. python (#1055)
+            9. python (#1055)
+            10. CVE-2017-16046 is for the node.js npm mariadb client (#1364)
+            11. sqlserver_project is a node js module (#1388)
+            12. auth0 is a javascript library (#1925)
+            13. JAR files should not be identified as github
+            14. <cpe>cpe:/a:data-tools_project:data_tools</cpe> is a python project #1961
+            15. flow_project reports an Ethereum token issue
+            16. ghost CMS is a node.js package (#3203)
+            17. ws_project is a node websocket client (#1535)
+            18. i18n_project is a node.js i18n module (#3350) (#3352) (#3353)
+            19. redis:redis is a C project #3744, #3814, #3840, #3841
         ]]></notes>
         <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)$</filePath>
         <cpe>cpe:/a:dash:dash</cpe>
@@ -702,6 +703,7 @@
         <cpe>cpe:/a:ghost:ghost</cpe>
         <cpe>cpe:/a:ws_project:ws</cpe>
         <cpe>cpe:/a:i18n_project:i18n</cpe>
+        <cpe>cpe:/a:redis:redis</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -769,10 +771,17 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        Suppresses false positives per #2882 and #3562
+        Suppresses false positives per #2882 and #3562 and #3828
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/(io\.quarkus/quarkus\-|io\.smallrye\.reactive/)mutiny.*@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/(io\.quarkus/quarkus\-|io\.smallrye\.reactive/).*mutiny.*@.*$</packageUrl>
         <cpe>cpe:/a:mutiny:mutiny</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positive per #3827 - this library is not the github.com/containers/storage project
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.smallrye/smallrye\-context\-propagation\-storage@.*$</packageUrl>
+        <cpe>cpe:/a:storage_project:storage</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -2386,6 +2395,20 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #3829 the eclipse Microprofile projects are not the eclipse IDE
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.eclipse\.microprofile.*$</packageUrl>
+        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #3829 the eclipse Microprofile config file provider project is not the Jenkins config file provider plugin
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.eclipse\.microprofile\.config/.*@.*$</packageUrl>
+        <cpe>cpe:/a:config_file_provider_project:config_file_provider</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         file name: keycloak-dropwizard-1.1.1.jar
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/de\.ahus1\.keycloak\.dropwizard/keycloak\-dropwizard@.*$</packageUrl>
@@ -2738,6 +2761,15 @@
         <gav regex="true">^org\.apache\.cxf\.xjc-utils:.*:.*$</gav>
         <cpe>cpe:/a:apache:cxf</cpe>
     </suppress> 
+    <suppress base="true">
+        <notes><![CDATA[
+            false positives per issue #3820
+        xjc-utils is a sub-project of cxf and would get its own CPE assigned just like CXF Fediz subproject for e.g. CVE-2018-8038
+        besides the org.apache.xjc-utils groupId also the org.apache.cxf.xjcplugins groupId is part of this repository
+        ]]></notes>
+        <gav regex="true">^org\.apache\.cxf\.xjcplugins:.*:.*$</gav>
+        <cpe>cpe:/a:apache:cxf</cpe>
+    </suppress>
     <suppress base="true">
         <notes><![CDATA[
         false positives per issue #915
@@ -4521,6 +4553,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+       false positive per #3825
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.hibernate/quarkus\-local\-cache@.*$</packageUrl>
+        <cpe>cpe:/a:hibernate:hibernate_orm</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         false positive per #3301 on org.owasp:csrfguard-jsp-tags.4.0.0
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.owasp/csrfguard\-.*$</packageUrl>
@@ -4532,6 +4571,30 @@
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.quarkus\.(security|gizmo|http)/.*$</packageUrl>
         <cpe>cpe:/a:quarkus:quarkus</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #3823 - broadened regex to match any groupId that's not in the io.quarkus space
+        ]]></notes>
+        <gav regex="true">^(?!(io\.quarkus)).*:.*quarkus.*$</gav>
+        <cpe>cpe:/a:quarkus:quarkus</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        As per #3824 quarkus-jdbc-postgesql wrongly detected as cpe postgreSQL
+        Oracle and MySQL jdbc connector projects are affected by a similar problem
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus-jdbc-.*$</packageUrl>
+        <cpe>cpe:/a:mysql:mysql</cpe>
+        <cpe>cpe:/a:oracle:jdbc</cpe>
+        <cpe>cpe:/a:postgresql:postgresql</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       FP per 3826; quarkus component falsely flagged as redhat resteasy product
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.quarkus/.*resteasy.*@.*$</packageUrl>
+        <cpe>cpe:/a:redhat:resteasy</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -4776,5 +4839,19 @@
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.logging\.log4j/log4j\-api\-kotlin@.*$</packageUrl>
         <cpe>cpe:/a:apache:log4j</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive as per #3715
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/javax\.xml\.crypto/jsr105-api@.*$</packageUrl>
+        <cpe>cpe:/a:apache:xml_security_for_java</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       FP per #3842 nginx-clojure is not part of the nginx project, but an external clojure module for it
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/nginx\-clojure/nginx\-clojure@.*$</packageUrl>
+        <cpe>cpe:/a:nginx:nginx</cpe>
     </suppress>
 </suppressions>
