@@ -4854,4 +4854,18 @@
         <packageUrl regex="true">^pkg:maven/nginx\-clojure/nginx\-clojure@.*$</packageUrl>
         <cpe>cpe:/a:nginx:nginx</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive as per #3868
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.logging\.log4j/log4j\-api@.*$</packageUrl>
+        <cpe>cpe:/a:apache:log4j</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive as per #3868
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.logging\.log4j/log4j\-to\-slf4j@.*$</packageUrl>
+        <cpe>cpe:/a:apache:log4j</cpe>
+    </suppress>
 </suppressions>
