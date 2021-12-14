@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 git checkout main
-git pull
+git pull --rebase
 
 SNAPSHOT=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
 RELEASE=${SNAPSHOT/-SNAPSHOT/}
