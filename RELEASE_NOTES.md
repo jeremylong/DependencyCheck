@@ -1,5 +1,14 @@
 # Release Notes
 
+## [Version 6.5.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.5.0) (2021-11-08)
+
+### Changes
+
+ - Updated the dependency-check-maven plugin to correctly support SNAPSHOT version when a classifier is specified (#3787).
+ - Improved the analysis of Swift package manager (package.resolved - see #3813).
+ - General code maintenance and false positive reductions.
+ - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/37?closed=1).
+
 ## [Version 6.5.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.5.0) (2021-11-08)
 
 ### Changes
