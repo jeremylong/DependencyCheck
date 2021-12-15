@@ -1,6 +1,6 @@
 # Release Notes
 
-## [Version 6.5.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.5.0) (2021-11-08)
+## [Version 6.5.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.5.1) (2021-12-15)
 
 ### Changes
 
