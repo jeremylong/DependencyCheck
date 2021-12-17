@@ -67,6 +67,7 @@ jobs:
           echo "VERSION=$VERSION"
       - name: Build Release with Maven
         id: build-release
+        timeout-minutes: 120
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
