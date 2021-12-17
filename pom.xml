@@ -20,7 +20,7 @@ Copyright (c) 2012 - Jeremy Long
 
     <groupId>org.owasp</groupId>
     <artifactId>dependency-check-parent</artifactId>
-    <version>6.5.2-SNAPSHOT</version>
+    <version>6.5.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -29,8 +29,7 @@ Copyright (c) 2012 - Jeremy Long
         <module>cli</module>
         <module>ant</module>
         <module>maven</module>
-        <!-- test publishing without archtype -->
-        <!-- module>archetype</module -->
+        <module>archetype</module>
     </modules>
     <name>Dependency-Check</name>
     <url>https://github.com/jeremylong/DependencyCheck.git</url>
@@ -772,7 +771,7 @@ Copyright (c) 2012 - Jeremy Long
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                    <stagingProgressTimeoutMinutes>60</stagingProgressTimeoutMinutes>
+                    <stagingProgressTimeoutMinutes>120</stagingProgressTimeoutMinutes>
                 </configuration>
             </plugin>
             <plugin>
