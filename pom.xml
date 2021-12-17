@@ -29,7 +29,8 @@ Copyright (c) 2012 - Jeremy Long
         <module>cli</module>
         <module>ant</module>
         <module>maven</module>
-        <module>archetype</module>
+        <!-- test publishing without archtype -->
+        <!-- module>archetype</module -->
     </modules>
     <name>Dependency-Check</name>
     <url>https://github.com/jeremylong/DependencyCheck.git</url>
@@ -771,7 +772,7 @@ Copyright (c) 2012 - Jeremy Long
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                    <stagingProgressTimeoutMinutes>15</stagingProgressTimeoutMinutes>
+                    <stagingProgressTimeoutMinutes>60</stagingProgressTimeoutMinutes>
                 </configuration>
             </plugin>
             <plugin>
