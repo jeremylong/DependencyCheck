@@ -172,13 +172,17 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L172">                String version = null;</span>
 <span class="fc" id="L173">                final JsonObject state = pin.getJsonObject(&quot;state&quot;);</span>
 <span class="pc bpc" id="L174" title="1 of 2 branches missed.">                if (state != null) {</span>
-<span class="fc" id="L175">                    version = state.getString(&quot;version&quot;);</span>
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">                    if (!state.isNull(&quot;version&quot;)) {</span>
+<span class="fc" id="L176">                        version = state.getString(&quot;version&quot;);</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">                    } else if (!state.isNull(&quot;branch&quot;)) {</span>
+<span class="nc" id="L178">                        version = state.getString(&quot;branch&quot;);</span>
+                    }
                 }
-<span class="fc" id="L177">                final Dependency dependency = createDependency(spmResolved, SPM_RESOLVED_FILE_NAME, name, version, repo);</span>
-<span class="fc" id="L178">                engine.addDependency(dependency);</span>
-<span class="fc" id="L179">            });</span>
+<span class="fc" id="L181">                final Dependency dependency = createDependency(spmResolved, SPM_RESOLVED_FILE_NAME, name, version, repo);</span>
+<span class="fc" id="L182">                engine.addDependency(dependency);</span>
+<span class="fc" id="L183">            });</span>
         }
-<span class="fc" id="L181">    }</span>
+<span class="fc" id="L185">    }</span>
 
     /**
      * Creates a dependency object.
@@ -191,39 +195,39 @@ import org.slf4j.LoggerFactory;
      * @return the newly created dependency object
      */
     private Dependency createDependency(Dependency parent, String source, final String name, String version, String repo) {
-<span class="fc" id="L194">        final Dependency dependency = new Dependency(parent.getActualFile(), true);</span>
-<span class="fc" id="L195">        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
-<span class="fc" id="L196">        dependency.setName(name);</span>
-<span class="fc" id="L197">        dependency.setVersion(version);</span>
-<span class="fc" id="L198">        final String packagePath = String.format(&quot;%s:%s&quot;, name, version);</span>
-<span class="fc" id="L199">        dependency.setPackagePath(packagePath);</span>
-<span class="fc" id="L200">        dependency.setDisplayFileName(packagePath);</span>
-<span class="fc" id="L201">        dependency.setSha1sum(Checksum.getSHA1Checksum(packagePath));</span>
-<span class="fc" id="L202">        dependency.setSha256sum(Checksum.getSHA256Checksum(packagePath));</span>
-<span class="fc" id="L203">        dependency.setMd5sum(Checksum.getMD5Checksum(packagePath));</span>
-<span class="fc" id="L204">        dependency.addEvidence(EvidenceType.VENDOR, source, &quot;name&quot;, name, Confidence.HIGHEST);</span>
-<span class="fc" id="L205">        dependency.addEvidence(EvidenceType.PRODUCT, source, &quot;name&quot;, name, Confidence.HIGHEST);</span>
-<span class="fc" id="L206">        dependency.addEvidence(EvidenceType.VENDOR, source, &quot;repositoryUrl&quot;, repo, Confidence.HIGH);</span>
-<span class="fc" id="L207">        dependency.addEvidence(EvidenceType.PRODUCT, source, &quot;repositoryUrl&quot;, repo, Confidence.HIGH);</span>
-<span class="fc" id="L208">        dependency.addEvidence(EvidenceType.VERSION, source, &quot;version&quot;, version, Confidence.HIGHEST);</span>
+<span class="fc" id="L198">        final Dependency dependency = new Dependency(parent.getActualFile(), true);</span>
+<span class="fc" id="L199">        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc" id="L200">        dependency.setName(name);</span>
+<span class="fc" id="L201">        dependency.setVersion(version);</span>
+<span class="fc" id="L202">        final String packagePath = String.format(&quot;%s:%s&quot;, name, version);</span>
+<span class="fc" id="L203">        dependency.setPackagePath(packagePath);</span>
+<span class="fc" id="L204">        dependency.setDisplayFileName(packagePath);</span>
+<span class="fc" id="L205">        dependency.setSha1sum(Checksum.getSHA1Checksum(packagePath));</span>
+<span class="fc" id="L206">        dependency.setSha256sum(Checksum.getSHA256Checksum(packagePath));</span>
+<span class="fc" id="L207">        dependency.setMd5sum(Checksum.getMD5Checksum(packagePath));</span>
+<span class="fc" id="L208">        dependency.addEvidence(EvidenceType.VENDOR, source, &quot;name&quot;, name, Confidence.HIGHEST);</span>
+<span class="fc" id="L209">        dependency.addEvidence(EvidenceType.PRODUCT, source, &quot;name&quot;, name, Confidence.HIGHEST);</span>
+<span class="fc" id="L210">        dependency.addEvidence(EvidenceType.VENDOR, source, &quot;repositoryUrl&quot;, repo, Confidence.HIGH);</span>
+<span class="fc" id="L211">        dependency.addEvidence(EvidenceType.PRODUCT, source, &quot;repositoryUrl&quot;, repo, Confidence.HIGH);</span>
+<span class="fc" id="L212">        dependency.addEvidence(EvidenceType.VERSION, source, &quot;version&quot;, version, Confidence.HIGHEST);</span>
         try {
-<span class="fc" id="L210">            final PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType(&quot;swift&quot;).withName(dependency.getName());</span>
-<span class="pc bpc" id="L211" title="1 of 2 branches missed.">            if (dependency.getVersion() != null) {</span>
-<span class="fc" id="L212">                builder.withVersion(dependency.getVersion());</span>
+<span class="fc" id="L214">            final PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType(&quot;swift&quot;).withName(dependency.getName());</span>
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">            if (dependency.getVersion() != null) {</span>
+<span class="fc" id="L216">                builder.withVersion(dependency.getVersion());</span>
             }
-<span class="fc" id="L214">            final PackageURL purl = builder.build();</span>
-<span class="fc" id="L215">            dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
-<span class="nc" id="L216">        } catch (MalformedPackageURLException ex) {</span>
-<span class="nc" id="L217">            LOGGER.debug(&quot;Unable to build package url for swift dependency&quot;, ex);</span>
+<span class="fc" id="L218">            final PackageURL purl = builder.build();</span>
+<span class="fc" id="L219">            dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
+<span class="nc" id="L220">        } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L221">            LOGGER.debug(&quot;Unable to build package url for swift dependency&quot;, ex);</span>
             final GenericIdentifier id;
-<span class="nc bnc" id="L219" title="All 2 branches missed.">            if (dependency.getVersion() != null) {</span>
-<span class="nc" id="L220">                id = new GenericIdentifier(&quot;swift:&quot; + dependency.getName() + &quot;@&quot; + dependency.getVersion(), Confidence.HIGHEST);</span>
+<span class="nc bnc" id="L223" title="All 2 branches missed.">            if (dependency.getVersion() != null) {</span>
+<span class="nc" id="L224">                id = new GenericIdentifier(&quot;swift:&quot; + dependency.getName() + &quot;@&quot; + dependency.getVersion(), Confidence.HIGHEST);</span>
             } else {
-<span class="nc" id="L222">                id = new GenericIdentifier(&quot;swift:&quot; + dependency.getName(), Confidence.HIGHEST);</span>
+<span class="nc" id="L226">                id = new GenericIdentifier(&quot;swift:&quot; + dependency.getName(), Confidence.HIGHEST);</span>
             }
-<span class="nc" id="L224">            dependency.addSoftwareIdentifier(id);</span>
-<span class="fc" id="L225">        }</span>
-<span class="fc" id="L226">        return dependency;</span>
+<span class="nc" id="L228">            dependency.addSoftwareIdentifier(id);</span>
+<span class="fc" id="L229">        }</span>
+<span class="fc" id="L230">        return dependency;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

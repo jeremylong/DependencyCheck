@@ -1526,7 +1526,7 @@ import org.slf4j.spi.LocationAwareLogger;
         }
 <span class="fc" id="L1527">        boolean result = Objects.equals(res.getArtifact().getGroupId(), theCoord.getGroupId());</span>
 <span class="fc" id="L1528">        result &amp;= Objects.equals(res.getArtifact().getArtifactId(), theCoord.getArtifactId());</span>
-<span class="fc" id="L1529">        result &amp;= Objects.equals(res.getArtifact().getVersion(), theCoord.getVersion());</span>
+<span class="fc" id="L1529">        result &amp;= Objects.equals(res.getArtifact().getBaseVersion(), theCoord.getVersion());</span>
 <span class="fc" id="L1530">        result &amp;= Objects.equals(res.getArtifact().getClassifier(), theCoord.getClassifier());</span>
 <span class="fc" id="L1531">        result &amp;= Objects.equals(res.getArtifact().getType(), theCoord.getExtension());</span>
 <span class="fc" id="L1532">        return result;</span>
