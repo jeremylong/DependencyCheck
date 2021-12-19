@@ -152,7 +152,7 @@ Copyright (c) 2012 - Jeremy Long
         <hamcrest-core.version>2.2</hamcrest-core.version>
         <jackson.version>2.13.0</jackson.version>
         <jmockit.version>1.49</jmockit.version>
-        <mockito-core.version>4.1.0</mockito-core.version>
+        <mockito-core.version>4.2.0</mockito-core.version>
         <jsoup.version>1.14.3</jsoup.version>
         <commons-compress.version>1.21</commons-compress.version>
         <org.apache.maven.shared.file-management.version>3.0.0</org.apache.maven.shared.file-management.version>
