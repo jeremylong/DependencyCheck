@@ -61,38 +61,29 @@ public class AbstractNpmAnalyzerIT {
         availableVersions.add("7.1.0");
         availableVersions.add("3.0.0");
         availableVersions.add("2.0.0");
-        AbstractNpmAnalyzer instance = new AbstractNpmAnalyzerImpl();
         String expResult = "3.0.0";
-        String result = instance.determineVersionFromMap(versionRange, availableVersions);
+        String result = AbstractNpmAnalyzer.determineVersionFromMap(versionRange, availableVersions);
         assertEquals(expResult, result);
     }
-
-    public class AbstractNpmAnalyzerImpl extends AbstractNpmAnalyzer {
-
-        @Override
-        protected FileFilter getFileFilter() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        protected String getAnalyzerEnabledSettingKey() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public String getName() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public AnalysisPhase getAnalysisPhase() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+    
+    @Test
+    public void testDetermineVersionFromMap_1() {
+        String versionRange = ">2.1.1 <5.0.1";
+        Collection<String> availableVersions = new ArrayList<>();
+        availableVersions.add("10.1.0");
+        String expResult = "10.1.0";
+        String result = AbstractNpmAnalyzer.determineVersionFromMap(versionRange, availableVersions);
+        assertEquals(expResult, result);
     }
     
+    @Test
+    public void testDetermineVersionFromMap_2() {
+        String versionRange = ">2.1.1 <5.0.1";
+        Collection<String> availableVersions = new ArrayList<>();
+        availableVersions.add("2.0.2");
+        availableVersions.add("5.0.2");
+        String expResult = "2.0.2";
+        String result = AbstractNpmAnalyzer.determineVersionFromMap(versionRange, availableVersions);
+        assertEquals(expResult, result);
+    }
 }

@@ -513,7 +513,7 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
         return searcher;
     }
 
-    public String determineVersionFromMap(String versionRange, Collection<String> availableVersions) {
+    public static String determineVersionFromMap(String versionRange, Collection<String> availableVersions) {
         if (availableVersions.size()==1) {
             return availableVersions.iterator().next();
         }

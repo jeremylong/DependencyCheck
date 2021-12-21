@@ -31,7 +31,7 @@ public class YarnAuditAnalyzerIT extends BaseTest {
                     found = true;
                     assertTrue(result.getEvidence(EvidenceType.VENDOR).toString().contains("uglify-js"));
                     assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains("uglify-js"));
-                    assertTrue(result.getEvidence(EvidenceType.VERSION).toString().contains("3.12.4"));
+                    assertTrue("Unable to find version 2.4.24: " + result.getEvidence(EvidenceType.VERSION).toString(), result.getEvidence(EvidenceType.VERSION).toString().contains("2.4.24"));
                     assertTrue(result.isVirtual());
                 }
             }
