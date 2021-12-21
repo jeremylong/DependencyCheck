@@ -17,34 +17,16 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import org.apache.commons.collections4.MultiValuedMap;
-import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.data.nodeaudit.Advisory;
-import org.owasp.dependencycheck.data.nodeaudit.NodeAuditSearch;
-import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Vulnerability;
 
 /**
  *
  * @author jeremy long
  */
 public class AbstractNpmAnalyzerIT {
-    
 
     /**
      * Test of determineVersionFromMap method, of class AbstractNpmAnalyzer.
@@ -65,7 +47,7 @@ public class AbstractNpmAnalyzerIT {
         String result = AbstractNpmAnalyzer.determineVersionFromMap(versionRange, availableVersions);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testDetermineVersionFromMap_1() {
         String versionRange = ">2.1.1 <5.0.1";
@@ -75,7 +57,7 @@ public class AbstractNpmAnalyzerIT {
         String result = AbstractNpmAnalyzer.determineVersionFromMap(versionRange, availableVersions);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testDetermineVersionFromMap_2() {
         String versionRange = ">2.1.1 <5.0.1";

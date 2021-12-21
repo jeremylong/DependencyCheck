@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.data.nodeaudit;
 
-import com.esotericsoftware.minlog.Log;
 import org.owasp.dependencycheck.analyzer.NodePackageAnalyzer;
 
 import java.util.Map;

@@ -513,12 +513,21 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
         return searcher;
     }
 
+    /**
+     * Give an NPM version range and a collection of versions, this method
+     * attempts to select a specific version from the collection that is in the
+     * range.
+     *
+     * @param versionRange the version range to evaluate
+     * @param availableVersions the collection of possible versions to select
+     * @return
+     */
     public static String determineVersionFromMap(String versionRange, Collection<String> availableVersions) {
-        if (availableVersions.size()==1) {
+        if (availableVersions.size() == 1) {
             return availableVersions.iterator().next();
         }
-        for (String v : availableVersions){
-            Semver version = new Semver(v, SemverType.NPM);
+        for (String v : availableVersions) {
+            final Semver version = new Semver(v, SemverType.NPM);
             if (version.satisfies(versionRange)) {
                 return v;
             }
