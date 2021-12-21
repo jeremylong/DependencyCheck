@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.nodeaudit;
 
+import com.esotericsoftware.minlog.Log;
 import org.owasp.dependencycheck.analyzer.NodePackageAnalyzer;
 
 import java.util.Map;
@@ -28,6 +29,7 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import javax.annotation.concurrent.ThreadSafe;
+import org.apache.commons.collections4.MultiValuedMap;
 
 /**
  * Class used to create the payload to submit to the NPM Audit API service.
@@ -56,7 +58,7 @@ public final class NpmPayloadBuilder {
      * @return the npm audit API payload
      */
     public static JsonObject build(JsonObject lockJson, JsonObject packageJson,
-            Map<String, String> dependencyMap, boolean skipDevDependencies) {
+            MultiValuedMap<String, String> dependencyMap, boolean skipDevDependencies) {
         final JsonObjectBuilder payloadBuilder = Json.createObjectBuilder();
         addProjectInfo(packageJson, payloadBuilder);
 
@@ -132,7 +134,7 @@ public final class NpmPayloadBuilder {
      * populated while building the payload
      * @return the JSON payload for NPN Audit
      */
-    public static JsonObject build(JsonObject packageJson, Map<String, String> dependencyMap) {
+    public static JsonObject build(JsonObject packageJson, MultiValuedMap<String, String> dependencyMap) {
         final JsonObjectBuilder payloadBuilder = Json.createObjectBuilder();
         addProjectInfo(packageJson, payloadBuilder);
 
@@ -215,7 +217,7 @@ public final class NpmPayloadBuilder {
      * @param dependencyMap the collection of child dependencies
      * @return the dependencies structure needed for the npm audit API payload
      */
-    private static JsonObject buildDependencies(JsonObject dep, Map<String, String> dependencyMap) {
+    private static JsonObject buildDependencies(JsonObject dep, MultiValuedMap<String, String> dependencyMap) {
         final JsonObjectBuilder depBuilder = Json.createObjectBuilder();
         depBuilder.add("version", dep.getString("version"));
 

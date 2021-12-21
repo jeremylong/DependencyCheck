@@ -21,6 +21,8 @@ import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURL.StandardTypes;
 import com.github.packageurl.PackageURLBuilder;
+import com.vdurmont.semver4j.Semver;
+import com.vdurmont.semver4j.Semver.SemverType;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nodeaudit.Advisory;
 import org.owasp.dependencycheck.data.nodeaudit.NodeAuditSearch;
@@ -38,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.concurrent.ThreadSafe;
@@ -48,6 +51,7 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
+import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
@@ -440,7 +444,7 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws CpeValidationException thrown when a CPE cannot be created
      */
     protected void processResults(final List<Advisory> advisories, Engine engine,
-            Dependency dependency, Map<String, String> dependencyMap)
+            Dependency dependency, MultiValuedMap<String, String> dependencyMap)
             throws CpeValidationException {
         for (Advisory advisory : advisories) {
             //Create a new vulnerability out of the advisory returned by nsp.
@@ -464,9 +468,8 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
 
             String version = advisory.getVersion();
             if (version == null && dependencyMap.containsKey(advisory.getModuleName())) {
-                version = dependencyMap.get(advisory.getModuleName());
+                version = determineVersionFromMap(advisory.getVulnerableVersions(), dependencyMap.get(advisory.getModuleName()));
             }
-
             final Dependency existing = findDependency(engine, advisory.getModuleName(), version);
             if (existing == null) {
                 final Dependency nodeModule = createDependency(dependency, advisory.getModuleName(), version, "transitive");
@@ -508,5 +511,18 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
      */
     protected NodeAuditSearch getSearcher() {
         return searcher;
+    }
+
+    public String determineVersionFromMap(String versionRange, Collection<String> availableVersions) {
+        if (availableVersions.size()==1) {
+            return availableVersions.iterator().next();
+        }
+        for (String v : availableVersions){
+            Semver version = new Semver(v, SemverType.NPM);
+            if (version.satisfies(versionRange)) {
+                return v;
+            }
+        }
+        return availableVersions.iterator().next();
     }
 }
