@@ -520,7 +520,7 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @param versionRange the version range to evaluate
      * @param availableVersions the collection of possible versions to select
-     * @return
+     * @return the selected range from the versionRange
      */
     public static String determineVersionFromMap(String versionRange, Collection<String> availableVersions) {
         if (availableVersions.size() == 1) {
