@@ -386,6 +386,8 @@ public final class CliParser {
                         "The path to the `go` executable."))
                 .addOption(newOptionWithArg(ARGUMENT.PATH_TO_YARN, "path",
                         "The path to the `yarn` executable."))
+                .addOption(newOptionWithArg(ARGUMENT.PATH_TO_PNPM, "path",
+                        "The path to the `pnpm` executable."))
                 .addOption(newOptionWithArg(ARGUMENT.CVE_VALID_FOR_HOURS, "hours",
                         "The number of hours to wait before checking for new updates from the NVD."))
                 .addOption(newOptionWithArg(ARGUMENT.CVE_START_YEAR, "year",
