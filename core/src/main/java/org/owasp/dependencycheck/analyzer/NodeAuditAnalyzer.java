@@ -30,15 +30,15 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.concurrent.ThreadSafe;
 import javax.json.Json;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 import org.owasp.dependencycheck.analyzer.exception.SearchException;
 import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
 import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
@@ -140,7 +140,8 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
         }
         final File packageJson = new File(packageLock.getParentFile(), "package.json");
         final List<Advisory> advisories;
-        final Map<String, String> dependencyMap = new HashMap<>();
+        final MultiValuedMap<String, String> dependencyMap = new HashSetValuedHashMap<>();
+        //final Map<String, String> dependencyMap = new HashMap<>();
         if (packageJson.isFile()) {
             advisories = analyzePackage(packageLock, packageJson, dependency, dependencyMap);
         } else {
@@ -170,7 +171,7 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
      * submitting the npm audit API payload
      */
     private List<Advisory> analyzePackage(final File lockFile, final File packageFile,
-            Dependency dependency, Map<String, String> dependencyMap)
+            Dependency dependency, MultiValuedMap<String, String> dependencyMap)
             throws AnalysisException {
         try {
             final JsonReader packageReader = Json.createReader(FileUtils.openInputStream(packageFile));
@@ -227,7 +228,7 @@ public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {
      * @throws AnalysisException thrown when there is an error creating or
      * submitting the npm audit API payload
      */
-    private List<Advisory> legacyAnalysis(final File file, Dependency dependency, Map<String, String> dependencyMap)
+    private List<Advisory> legacyAnalysis(final File file, Dependency dependency, MultiValuedMap<String, String> dependencyMap)
             throws AnalysisException {
 
         try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {

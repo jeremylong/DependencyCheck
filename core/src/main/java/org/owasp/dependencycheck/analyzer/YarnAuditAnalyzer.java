@@ -23,15 +23,15 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.concurrent.ThreadSafe;
 import javax.json.Json;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -102,7 +102,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
         }
         final File packageJson = new File(packageLock.getParentFile(), "package.json");
         final List<Advisory> advisories;
-        final Map<String, String> dependencyMap = new HashMap<>();
+        final MultiValuedMap<String, String> dependencyMap = new HashSetValuedHashMap<>();
         advisories = analyzePackage(packageLock, packageJson, dependency, dependencyMap);
         try {
             processResults(advisories, engine, dependency, dependencyMap);
@@ -276,7 +276,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
      * submitting the npm audit API payload
      */
     private List<Advisory> analyzePackage(final File lockFile, final File packageFile,
-            Dependency dependency, Map<String, String> dependencyMap)
+            Dependency dependency, MultiValuedMap<String, String> dependencyMap)
             throws AnalysisException {
         try {
             final Boolean skipDevDependencies = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false);

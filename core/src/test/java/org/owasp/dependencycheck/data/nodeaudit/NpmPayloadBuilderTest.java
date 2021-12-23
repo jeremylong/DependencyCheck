@@ -28,6 +28,8 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 
 import org.owasp.dependencycheck.BaseTest;
 
@@ -53,7 +55,7 @@ public class NpmPayloadBuilderTest {
                 );
 
         JsonObject packageJson = builder.build();
-        Map<String, String> dependencyMap = new HashMap<>();
+        final MultiValuedMap<String, String> dependencyMap = new HashSetValuedHashMap<>();
         JsonObject sanitized = NpmPayloadBuilder.build(packageJson, dependencyMap);
 
         Assert.assertTrue(sanitized.containsKey("name"));
@@ -98,7 +100,7 @@ public class NpmPayloadBuilderTest {
                 );
 
         JsonObject packageJson = builder.build();
-        Map<String, String> dependencyMap = new HashMap<>();
+        final MultiValuedMap<String, String> dependencyMap = new HashSetValuedHashMap<>();
         JsonObject sanitized = NpmPayloadBuilder.build(packageJson, dependencyMap);
 
         Assert.assertTrue(sanitized.containsKey("name"));
@@ -121,7 +123,7 @@ public class NpmPayloadBuilderTest {
     @Test
     public void testSanitizePackage() {
         InputStream in = BaseTest.getResourceAsStream(this, "nodeaudit/package-lock.json");
-        Map<String, String> dependencyMap = new HashMap<>();
+        final MultiValuedMap<String, String> dependencyMap = new HashSetValuedHashMap<>();
         try (JsonReader jsonReader = Json.createReader(in)) {
             JsonObject packageJson = jsonReader.readObject();
             JsonObject sanitized = NpmPayloadBuilder.build(packageJson, dependencyMap);
@@ -144,7 +146,7 @@ public class NpmPayloadBuilderTest {
     public void testPayloadWithLockAndPackage() {
         InputStream lock = BaseTest.getResourceAsStream(this, "nodeaudit/package-lock.json");
         InputStream json = BaseTest.getResourceAsStream(this, "nodeaudit/package.json");
-        Map<String, String> dependencyMap = new HashMap<>();
+        final MultiValuedMap<String, String> dependencyMap = new HashSetValuedHashMap<>();
         try (JsonReader jsonReader = Json.createReader(json); JsonReader lockReader = Json.createReader(lock)) {
             JsonObject packageJson = jsonReader.readObject();
             JsonObject lockJson =    lockReader.readObject();
@@ -161,8 +163,6 @@ public class NpmPayloadBuilderTest {
 
             Assert.assertFalse(sanitized.containsKey("lockfileVersion"));
             Assert.assertFalse(sanitized.containsKey("random"));
-
-
 
             Assert.assertTrue(sanitized.containsKey("name"));
             Assert.assertTrue(sanitized.containsKey("version"));
