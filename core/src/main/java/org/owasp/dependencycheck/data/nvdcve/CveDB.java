@@ -934,7 +934,6 @@ public final class CveDB implements AutoCloseable {
                 callUpdate.setNull(30, java.sql.Types.NULL);
                 callUpdate.setNull(31, java.sql.Types.NULL);
             }
-
             if (isOracle) {
                 try {
                     final CallableStatement cs = (CallableStatement) callUpdate;
