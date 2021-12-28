@@ -31,4 +31,4 @@ UPDATE CPEENTRY SET ECOSYSTEM='native' WHERE ECOSYSTEM='visual_c++';
 UPDATE CPEENTRY SET ECOSYSTEM='native' WHERE ECOSYSTEM='gnu_c++';
 UPDATE CPEENTRY SET ECOSYSTEM=null WHERE ECOSYSTEM NOT IN ('ruby', 'dotnet', 'cmake', 'ios', 'php', 'golang', 'java', 'native', 'python', 'js', 'nodejs', 'rust', 'coldfusion', 'perl', 'exlixir');
 
-UPDATE Properties SET value='4.2' WHERE ID='version';
+UPDATE Properties SET `value`='4.2' WHERE ID='version';

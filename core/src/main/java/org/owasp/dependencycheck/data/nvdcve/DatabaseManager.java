@@ -471,7 +471,7 @@ public final class DatabaseManager {
         PreparedStatement ps = null;
         try {
             //TODO convert this to use DatabaseProperties
-            ps = conn.prepareStatement("SELECT value FROM properties WHERE id = 'version'");
+            ps = conn.prepareStatement("SELECT `value` FROM properties WHERE id = 'version'");
             rs = ps.executeQuery();
             if (rs.next()) {
                 final String dbSchemaVersion = settings.getString(Settings.KEYS.DB_VERSION);

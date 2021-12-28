@@ -52,4 +52,4 @@ ALTER TABLE software ADD  COLUMN vulnerable BOOLEAN;
 
 
 DELETE FROM properties WHERE ID like 'NVD CVE%';
-UPDATE Properties SET value='4.0' WHERE ID='version';
+UPDATE Properties SET `value`='4.0' WHERE ID='version';
