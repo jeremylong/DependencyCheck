@@ -1867,10 +1867,11 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        false positive per issue #1961
+        false positives per issue #1961 and #3918
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.gagravarr/vorbis\-java\-tika@.*$</packageUrl>
         <cpe>cpe:/a:apache:tika</cpe>
+        <cpe>cpe:/a:flac_project:flac</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
