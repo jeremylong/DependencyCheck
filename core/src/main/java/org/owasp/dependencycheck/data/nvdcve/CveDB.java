@@ -115,6 +115,9 @@ public final class CveDB implements AutoCloseable {
      * Flag indicating if the database is Oracle.
      */
     private boolean isOracle = false;
+    /**
+     * Flag indicating if the database is H2.
+     */
     private boolean isH2 = false;
 
     /**
@@ -931,11 +934,7 @@ public final class CveDB implements AutoCloseable {
                 callUpdate.setNull(30, java.sql.Types.NULL);
                 callUpdate.setNull(31, java.sql.Types.NULL);
             }
-            if (isH2) {
-                //makes no sense? possible bug in H2.
-                // function has 32 parameters but 1 is the SQL connection
-                callUpdate.setNull(32, java.sql.Types.NULL);
-            }
+
             if (isOracle) {
                 try {
                     final CallableStatement cs = (CallableStatement) callUpdate;
