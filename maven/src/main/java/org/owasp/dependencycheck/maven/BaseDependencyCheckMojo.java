@@ -1122,7 +1122,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             final ProjectBuildingRequest buildingRequest = newResolveArtifactProjectBuildingRequest(project);
             //For some reason the filter does not filter out the project being analyzed
             //if we pass in the filter below instead of null to the dependencyGraphBuilder
-            final DependencyNode dn = dependencyGraphBuilder.buildDependencyGraph(buildingRequest, null, reactorProjects);
+            final DependencyNode dn = dependencyGraphBuilder.buildDependencyGraph(buildingRequest, null);
 
             final CollectingDependencyNodeVisitor collectorVisitor = new CollectingDependencyNodeVisitor();
             // exclude artifact by pattern and its dependencies
