@@ -34,6 +34,7 @@ jobs:
             mvn se.bjurr.violations:violation-comments-to-github-maven-plugin:violation-comments --no-transfer-progress --batch-mode -DpullRequestId=${{ github.event.pull_request.number }} -DoAuth2Token=${{ secrets.GITHUB_TOKEN }}
       - name: Archive IT test logs
         id: archive-logs
+        if: always()
         uses: actions/upload-artifact@v2
         with:
           name: it-test-logs
