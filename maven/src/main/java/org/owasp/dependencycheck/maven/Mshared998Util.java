@@ -43,16 +43,23 @@ public final class Mshared998Util {
      */
     public static List<ArtifactResult> getResolutionResults(DependencyResolutionException adre) {
         final DependencyResult dependencyResult = adre.getResult();
-        List<ArtifactResult> results = new ArrayList<>();
+        final List<ArtifactResult> results = new ArrayList<>();
         if (dependencyResult != null) {
             for (org.eclipse.aether.resolution.ArtifactResult artifactResult : dependencyResult.getArtifactResults()) {
-                ArtifactResult transformed = new M31ArtifactResult(artifactResult);
-                results.add(transformed);
+                results.add(new M31ArtifactResult(artifactResult));
             }
         }
         return results;
     }
 
+    /**
+     * Our own implementation of ArtifactResult because MShared library does not expose the
+     * transformation from eclipse aether ArtifactResult to maven-shared ArtifactResult.
+     * So we cannot reuse Maven's own implementation in
+     * org.apache.maven.shared.transfer.artifact.resolve.internal
+     * This class is a copy of it, but then hard-bound to eclipse aether implementation
+     * as DependencyCheck is already not compatible with maven 3.0
+     */
     static class M31ArtifactResult implements ArtifactResult {
         private final org.eclipse.aether.resolution.ArtifactResult artifactResult;
 
