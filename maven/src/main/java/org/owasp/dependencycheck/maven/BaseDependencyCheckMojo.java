@@ -1289,7 +1289,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
 
         ExceptionCollection exCol = collectDependencyManagementDependencies(engine, buildingRequest, project, nodes, aggregate);
-        List<ArtifactResult> allResolvedDeps = new ArrayList<>();
+        final List<ArtifactResult> allResolvedDeps = new ArrayList<>();
 
         for (DependencyNode dependencyNode : nodes) {
             if (artifactScopeExcluded.passes(dependencyNode.getArtifact().getScope())
@@ -1357,7 +1357,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                                 allDeps.forEach(allResolvedDeps::add);
                             } catch (DependencyResolverException dre) {
                                 if (dre.getCause() instanceof org.eclipse.aether.resolution.DependencyResolutionException) {
-                                    List<ArtifactResult> successResults =
+                                    final List<ArtifactResult> successResults =
                                             Mshared998Util.getResolutionResults(
                                                     (org.eclipse.aether.resolution.DependencyResolutionException) dre.getCause());
                                     allResolvedDeps.addAll(successResults);
