@@ -57,6 +57,7 @@ jobs:
         run: mvn -s settings.xml -Prelease clean package verify source:jar javadoc:jar gpg:sign deploy -DreleaseTesting --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
       - name: Archive IT test logs
         id: archive-logs
+        if: always()
         uses: actions/upload-artifact@v2
         with:
           name: it-test-logs
