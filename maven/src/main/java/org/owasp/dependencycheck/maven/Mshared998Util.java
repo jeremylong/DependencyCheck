@@ -18,14 +18,12 @@
 package org.owasp.dependencycheck.maven;
 
 import org.apache.maven.RepositoryUtils;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.shared.transfer.artifact.ArtifactCoordinate;
-import org.apache.maven.shared.transfer.dependencies.resolve.DependencyResolverException;
-import org.eclipse.aether.resolution.ArtifactResult;
+import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResult;
 import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class Mshared998Util {
 
@@ -36,53 +34,39 @@ public final class Mshared998Util {
     }
 
     /**
-     * Find the artifact for the given coordinate among the available successful
-     * resolution attempts contained within the DependencyResolverException.
+     * Get the list of ArtifactResults from a resolution that ran into an exception.
      *
-     * @param dre The DependencyResolverException that might have embedded
-     * successful resolution results
-     * @param coordinate The coordinates of the artifact we're interested in
-     * @return The resolved artifact matching {@code coordinate} or {@code null}
-     * if not found
+     * @param adre
+     *         The DependencyResolutionException that might have embedded resolution results
+     *
+     * @return The list of ArtifactResults created from the dependencyResult of the exception.
      */
-    public static Artifact findArtifactInAetherDREResult(final DependencyResolverException dre,
-            final ArtifactCoordinate coordinate) {
-        Artifact result = null;
-        if (dre.getCause() instanceof DependencyResolutionException) {
-            final DependencyResolutionException adre = (DependencyResolutionException) dre.getCause();
-            final DependencyResult dependencyResult = adre.getResult();
-            if (dependencyResult != null) {
-                for (ArtifactResult artifactResult : dependencyResult.getArtifactResults()) {
-                    if (matchesCoordinate(artifactResult, coordinate)) {
-                        result = RepositoryUtils.toArtifact(artifactResult.getArtifact());
-                        break;
-                    }
-                }
+    public static List<ArtifactResult> getResolutionResults(DependencyResolutionException adre) {
+        final DependencyResult dependencyResult = adre.getResult();
+        List<ArtifactResult> results = new ArrayList<>();
+        if (dependencyResult != null) {
+            for (org.eclipse.aether.resolution.ArtifactResult artifactResult : dependencyResult.getArtifactResults()) {
+                ArtifactResult transformed = new M31ArtifactResult(artifactResult);
+                results.add(transformed);
             }
         }
-        return result;
+        return results;
     }
 
-    /**
-     * Checks whether the given ArtifactResult contains an artifact that matches
-     * the coordinate
-     *
-     * @param artifactResult The ArtifactResult to inspect
-     * @param coordinate The coordinate to match with
-     * @return {@code true} when the artifactresult contains an artifact that
-     * matches the coordinate on GAV_C_E, false otherwise.
-     */
-    private static boolean matchesCoordinate(final ArtifactResult artifactResult, final ArtifactCoordinate coordinate) {
-        if (artifactResult.getArtifact() == null) {
-            return false;
-        } else {
-            final org.eclipse.aether.artifact.Artifact artifact = artifactResult.getArtifact();
-            boolean result = Objects.equals(artifact.getGroupId(), coordinate.getGroupId());
-            result &= Objects.equals(artifact.getArtifactId(), coordinate.getArtifactId());
-            result &= Objects.equals(artifact.getVersion(), coordinate.getVersion());
-            result &= Objects.equals(artifact.getClassifier(), coordinate.getClassifier());
-            result &= Objects.equals(artifact.getExtension(), coordinate.getExtension());
-            return result;
+    static class M31ArtifactResult implements ArtifactResult {
+        private final org.eclipse.aether.resolution.ArtifactResult artifactResult;
+
+        /**
+         * @param artifactResult
+         *         {@link ArtifactResult}
+         */
+        M31ArtifactResult(org.eclipse.aether.resolution.ArtifactResult artifactResult) {
+            this.artifactResult = artifactResult;
+        }
+
+        @Override
+        public org.apache.maven.artifact.Artifact getArtifact() {
+            return RepositoryUtils.toArtifact(artifactResult.getArtifact());
         }
     }
 }

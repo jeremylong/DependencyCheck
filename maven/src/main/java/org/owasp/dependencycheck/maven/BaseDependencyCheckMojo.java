@@ -38,8 +38,6 @@ import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
-import org.apache.maven.shared.artifact.filter.resolve.PatternInclusionsFilter;
-import org.apache.maven.shared.artifact.filter.resolve.TransformableFilter;
 import org.apache.maven.shared.transfer.artifact.ArtifactCoordinate;
 import org.apache.maven.shared.transfer.artifact.DefaultArtifactCoordinate;
 import org.apache.maven.shared.transfer.artifact.TransferUtils;
@@ -1291,6 +1289,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
 
         ExceptionCollection exCol = collectDependencyManagementDependencies(engine, buildingRequest, project, nodes, aggregate);
+        List<ArtifactResult> allResolvedDeps = new ArrayList<>();
 
         for (DependencyNode dependencyNode : nodes) {
             if (artifactScopeExcluded.passes(dependencyNode.getArtifact().getScope())
@@ -1344,45 +1343,30 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     getLog().debug(String.format("Skipping artifact %s, already resolved", dependencyArtifact.getArtifactId()));
                     result = dependencyArtifact;
                 } else {
-                    final ArtifactCoordinate coordinate = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
                     try {
-                        final List<org.apache.maven.model.Dependency> dependencies = project.getDependencies();
-                        final List<org.apache.maven.model.Dependency> managedDependencies
-                                = project.getDependencyManagement() == null ? null : project.getDependencyManagement().getDependencies();
-                        if (coordinate.getClassifier() != null) {
-                            // This would trigger NPE when using the filter - MSHARED-998
-                            getLog().debug("Expensive lookup as workaround for MSHARED-998 for " + coordinate);
+                        final ArtifactCoordinate coordinate = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
+                        if (allResolvedDeps.isEmpty()) { // no (partially successful) resolution attempt done
                             try {
+                                final List<org.apache.maven.model.Dependency> dependencies = project.getDependencies();
+                                final List<org.apache.maven.model.Dependency> managedDependencies
+                                        = project.getDependencyManagement() == null ? null : project.getDependencyManagement()
+                                                                                                    .getDependencies();
                                 final Iterable<ArtifactResult> allDeps
                                         = dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,
                                                                                  null);
-                                result = findClassifierArtifactInAllDeps(allDeps, coordinate, project);
+                                allDeps.forEach(allResolvedDeps::add);
                             } catch (DependencyResolverException dre) {
-                                result = Mshared998Util.findArtifactInAetherDREResult(dre, coordinate);
-                                if (result == null) {
-                                    throw new DependencyNotFoundException(
-                                            String.format("Failed to resolve dependency %s with dependencyResolver for "
-                                                          + "project-artifact %s", coordinate, project.getArtifactId()),
-                                            dre);
+                                if (dre.getCause() instanceof org.eclipse.aether.resolution.DependencyResolutionException) {
+                                    List<ArtifactResult> successResults =
+                                            Mshared998Util.getResolutionResults(
+                                                    (org.eclipse.aether.resolution.DependencyResolutionException) dre.getCause());
+                                    allResolvedDeps.addAll(successResults);
+                                } else {
+                                    throw dre;
                                 }
                             }
-                        } else {
-                            final String versionlessFilter =
-                                    new StringBuilder(coordinate.getGroupId()).append(':').append(coordinate.getArtifactId()).append(':').append(coordinate.getExtension()).toString();
-                            final TransformableFilter filter = new PatternInclusionsFilter(
-                                    Collections.singletonList(versionlessFilter));
-                            final Iterable<ArtifactResult> singleResult
-                                    = dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,
-                                            filter);
-
-                            if (singleResult.iterator().hasNext()) {
-                                final ArtifactResult first = singleResult.iterator().next();
-                                result = first.getArtifact();
-                            } else {
-                                throw new DependencyNotFoundException(String.format("Failed to resolve dependency %s with "
-                                        + "dependencyResolver for project-artifact %s", coordinate, project.getArtifactId()));
-                            }
                         }
+                        result = findInAllDeps(allResolvedDeps, coordinate, project);
                     } catch (DependencyNotFoundException | DependencyResolverException ex) {
                         getLog().debug(String.format("Aggregate : %s", aggregate));
                         boolean addException = true;
@@ -1486,17 +1470,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * Utility method for a work-around to MSHARED-998
      *
-     * @param allDeps The Iterable of the resolved artifacts for all
-     * dependencies
-     * @param theCoord The ArtifactCoordinate of the artifact-with-classifier we
-     * intended to resolve
+     * @param allDeps The List of ArtifactResults for all dependencies
+     * @param theCoord The ArtifactCoordinate of the artifact we're looking for
      * @param project The project in whose context resolution was attempted
      * @return the resolved artifact matching with {@code theCoord}
-     * @throws DependencyNotFoundException Not expected to be thrown, but will
-     * be thrown if {@code theCoord} could not be found within {@code allDeps}
+     * @throws DependencyNotFoundException If {@code theCoord} could not be found within {@code allDeps}
      */
-    private Artifact findClassifierArtifactInAllDeps(final Iterable<ArtifactResult> allDeps, final ArtifactCoordinate theCoord,
-                                                     final MavenProject project)
+    private Artifact findInAllDeps(final List<ArtifactResult> allDeps, final ArtifactCoordinate theCoord,
+                                   final MavenProject project)
             throws DependencyNotFoundException {
         Artifact result = null;
         for (final ArtifactResult res : allDeps) {
