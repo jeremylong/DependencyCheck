@@ -61,6 +61,11 @@ public final class Mshared998Util {
      * as DependencyCheck is already not compatible with maven 3.0
      */
     static class M31ArtifactResult implements ArtifactResult {
+
+        /**
+         * The ArtifactResult of the Maven 3.1+ artifact resolution
+         * implementation library (Eclipse Aether) that is wrapped by this instance
+         */
         private final org.eclipse.aether.resolution.ArtifactResult artifactResult;
 
         /**
