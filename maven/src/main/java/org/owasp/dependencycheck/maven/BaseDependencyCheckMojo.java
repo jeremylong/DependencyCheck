@@ -38,9 +38,7 @@ import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
-import org.apache.maven.shared.transfer.artifact.ArtifactCoordinate;
 import org.apache.maven.shared.transfer.artifact.DefaultArtifactCoordinate;
-import org.apache.maven.shared.transfer.artifact.TransferUtils;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolverException;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResult;
@@ -1344,7 +1342,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     result = dependencyArtifact;
                 } else {
                     try {
-                        final ArtifactCoordinate coordinate = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
                         if (allResolvedDeps.isEmpty()) { // no (partially successful) resolution attempt done
                             try {
                                 final List<org.apache.maven.model.Dependency> dependencies = project.getDependencies();
@@ -1366,7 +1363,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                                 }
                             }
                         }
-                        result = findInAllDeps(allResolvedDeps, coordinate, project);
+                        result = findInAllDeps(allResolvedDeps, dependencyNode.getArtifact(), project);
                     } catch (DependencyNotFoundException | DependencyResolverException ex) {
                         getLog().debug(String.format("Aggregate : %s", aggregate));
                         boolean addException = true;
@@ -1471,24 +1468,24 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Utility method for a work-around to MSHARED-998
      *
      * @param allDeps The List of ArtifactResults for all dependencies
-     * @param theCoord The ArtifactCoordinate of the artifact we're looking for
+     * @param unresolvedArtifact The ArtifactCoordinate of the artifact we're looking for
      * @param project The project in whose context resolution was attempted
-     * @return the resolved artifact matching with {@code theCoord}
-     * @throws DependencyNotFoundException If {@code theCoord} could not be found within {@code allDeps}
+     * @return the resolved artifact matching with {@code unresolvedArtifact}
+     * @throws DependencyNotFoundException If {@code unresolvedArtifact} could not be found within {@code allDeps}
      */
-    private Artifact findInAllDeps(final List<ArtifactResult> allDeps, final ArtifactCoordinate theCoord,
+    private Artifact findInAllDeps(final List<ArtifactResult> allDeps, final Artifact unresolvedArtifact,
                                    final MavenProject project)
             throws DependencyNotFoundException {
         Artifact result = null;
         for (final ArtifactResult res : allDeps) {
-            if (sameArtifact(res, theCoord)) {
+            if (sameArtifact(res, unresolvedArtifact)) {
                 result = res.getArtifact();
                 break;
             }
         }
         if (result == null) {
             throw new DependencyNotFoundException(String.format("Expected dependency not found in resolved artifacts for "
-                    + "dependency %s of project-artifact %s", theCoord, project.getArtifactId()));
+                    + "dependency %s of project-artifact %s", unresolvedArtifact, project.getArtifactId()));
         }
         return result;
     }
@@ -1497,19 +1494,18 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Utility method for a work-around to MSHARED-998
      *
      * @param res A single ArtifactResult obtained from the DependencyResolver
-     * @param theCoord The coordinates of the Artifact that we try to find
-     * @return {@code true} when theCoord is non-null and matches with the
-     * artifact of res
+     * @param unresolvedArtifact The unresolved Artifact from the dependencyGraph that we try to find
+     * @return {@code true} when unresolvedArtifact is non-null and matches with the artifact of res
      */
-    private boolean sameArtifact(final ArtifactResult res, final ArtifactCoordinate theCoord) {
-        if (res == null || res.getArtifact() == null || theCoord == null) {
+    private boolean sameArtifact(final ArtifactResult res, final Artifact unresolvedArtifact) {
+        if (res == null || res.getArtifact() == null || unresolvedArtifact == null) {
             return false;
         }
-        boolean result = Objects.equals(res.getArtifact().getGroupId(), theCoord.getGroupId());
-        result &= Objects.equals(res.getArtifact().getArtifactId(), theCoord.getArtifactId());
-        result &= Objects.equals(res.getArtifact().getBaseVersion(), theCoord.getVersion());
-        result &= Objects.equals(res.getArtifact().getClassifier(), theCoord.getClassifier());
-        result &= Objects.equals(res.getArtifact().getType(), theCoord.getExtension());
+        boolean result = Objects.equals(res.getArtifact().getGroupId(), unresolvedArtifact.getGroupId());
+        result &= Objects.equals(res.getArtifact().getArtifactId(), unresolvedArtifact.getArtifactId());
+        result &= Objects.equals(res.getArtifact().getBaseVersion(), unresolvedArtifact.getBaseVersion());
+        result &= Objects.equals(res.getArtifact().getClassifier(), unresolvedArtifact.getClassifier());
+        result &= Objects.equals(res.getArtifact().getType(), unresolvedArtifact.getType());
         return result;
     }
 
