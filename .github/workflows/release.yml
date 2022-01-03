@@ -182,10 +182,11 @@ jobs:
           draft: false
           body: |
             Changes in this Release
-             - Updated the dependency-check-maven plugin to correctly support SNAPSHOT version when a classifier is specified (#3787).
-             - Improved the analysis of Swift package manager (package.resolved - see #3813).
+             - Fixed false positives around log4j-api and Log4j-web (#3910 & #3937).
+             - Bug fix when processing NPM lock files (#3893).
+             - Added missing `pnpm` argmument to the CLI (#3916).
              - General code maintenance and false positive reductions.
-             - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/37?closed=1).
+             - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/38?closed=1).
       - name: Upload CLI
         id: upload-release-cli
         uses: actions/upload-release-asset@v1.0.2
