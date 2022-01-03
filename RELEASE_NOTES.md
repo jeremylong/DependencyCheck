@@ -1,5 +1,15 @@
 # Release Notes
 
+## [Version 6.5.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.5.2) (2022-01-03)
+
+### Changes
+
+ - Fixed false positives around log4j-api and Log4j-web (#3910 & #3937).
+ - Bug fix when processing NPM lock files (#3893).
+ - Added missing `pnpm` argmument to the CLI (#3916).
+ - General code maintenance and false positive reductions.
+ - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/38?closed=1).
+
 ## [Version 6.5.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.5.1) (2021-12-17)
 
 ### Changes
