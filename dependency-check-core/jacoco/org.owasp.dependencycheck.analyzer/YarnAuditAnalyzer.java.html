@@ -23,15 +23,15 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.concurrent.ThreadSafe;
 import javax.json.Json;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -102,7 +102,7 @@ import us.springett.parsers.cpe.exceptions.CpeValidationException;
         }
 <span class="fc" id="L103">        final File packageJson = new File(packageLock.getParentFile(), &quot;package.json&quot;);</span>
         final List&lt;Advisory&gt; advisories;
-<span class="fc" id="L105">        final Map&lt;String, String&gt; dependencyMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L105">        final MultiValuedMap&lt;String, String&gt; dependencyMap = new HashSetValuedHashMap&lt;&gt;();</span>
 <span class="fc" id="L106">        advisories = analyzePackage(packageLock, packageJson, dependency, dependencyMap);</span>
         try {
 <span class="fc" id="L108">            processResults(advisories, engine, dependency, dependencyMap);</span>
@@ -276,7 +276,7 @@ import us.springett.parsers.cpe.exceptions.CpeValidationException;
      * submitting the npm audit API payload
      */
     private List&lt;Advisory&gt; analyzePackage(final File lockFile, final File packageFile,
-            Dependency dependency, Map&lt;String, String&gt; dependencyMap)
+            Dependency dependency, MultiValuedMap&lt;String, String&gt; dependencyMap)
             throws AnalysisException {
         try {
 <span class="fc" id="L282">            final Boolean skipDevDependencies = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false);</span>

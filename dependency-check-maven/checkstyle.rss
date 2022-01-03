@@ -23,7 +23,7 @@ under the License.
     <link>https://github.com/jeremylong/DependencyCheck.git/dependency-check-maven</link>
     <description>Dependency-Check Maven Plugin - Checkstyle report</description>
     <language>en-us</language>
-    <copyright>&#169;2013 - 2021 OWASP</copyright>
+    <copyright>&#169;2013 - 2022 OWASP</copyright>
     <item>
       <title>File: 85,
              Errors: 1,

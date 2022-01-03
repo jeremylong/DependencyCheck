@@ -23,7 +23,7 @@ under the License.
     <link>https://github.com/jeremylong/DependencyCheck.git/dependency-check-cli</link>
     <description>Dependency-Check Command Line - Checkstyle report</description>
     <language>en-us</language>
-    <copyright>&#169;2012 - 2021 OWASP</copyright>
+    <copyright>&#169;2012 - 2022 OWASP</copyright>
     <item>
       <title>File: 10,
              Errors: 0,

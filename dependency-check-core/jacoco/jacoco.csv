@@ -62,7 +62,7 @@ Dependency-Check Core,org.owasp.dependencycheck.data.update,UpdateService,0,12,0
 Dependency-Check Core,org.owasp.dependencycheck.data.update,EngineVersionCheck,105,178,15,13,28,48,14,9,2,7
 Dependency-Check Core,org.owasp.dependencycheck.data.update,RetireJSDataSource,108,170,9,13,23,35,8,9,1,5
 Dependency-Check Core,org.owasp.dependencycheck.data.update,NvdCveUpdater,1052,108,119,5,232,31,70,7,8,7
-Dependency-Check Core,org.owasp.dependencycheck.data.lucene,UrlTokenizingFilter,15,72,1,9,4,17,1,7,0,3
+Dependency-Check Core,org.owasp.dependencycheck.data.lucene,UrlTokenizingFilter,11,76,0,10,3,18,0,8,0,3
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,LuceneUtils,0,61,1,11,0,17,1,8,0,3
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,TokenPairConcatenatingFilter,59,99,6,10,17,28,5,8,2,3
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,AlphaNumericFilter,51,114,6,14,15,28,5,11,2,4
@@ -152,7 +152,7 @@ Dependency-Check Core,org.owasp.dependencycheck.analyzer,RubyBundlerAnalyzer.new
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,AbstractAnalyzer,0,64,0,6,0,24,0,15,0,12
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,NexusAnalyzer,235,66,28,4,66,20,18,10,3,9
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,JarAnalyzer.ClassNameInformation,10,68,1,7,3,17,2,6,1,3
-Dependency-Check Core,org.owasp.dependencycheck.analyzer,AbstractNpmAnalyzer,346,772,55,63,63,159,44,33,6,12
+Dependency-Check Core,org.owasp.dependencycheck.analyzer,AbstractNpmAnalyzer,346,811,54,70,63,167,43,38,6,13
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,AssemblyAnalyzer,321,739,85,81,84,158,70,28,0,15
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,PerlCpanfileAnalyzer,70,244,5,7,14,62,6,18,3,15
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,AbstractSuppressionAnalyzer,183,311,7,19,38,73,7,18,0,12
@@ -166,7 +166,7 @@ Dependency-Check Core,org.owasp.dependencycheck.analyzer,RetireJsAnalyzer,387,50
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,YarnAuditAnalyzer,160,316,14,13,42,79,13,13,0,12
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,CPEAnalyzer,551,1980,88,230,105,423,77,137,6,49
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,ArchiveAnalyzer,541,827,72,88,114,176,64,43,6,21
-Dependency-Check Core,org.owasp.dependencycheck.analyzer,DependencyBundlingAnalyzer,586,652,172,134,132,134,123,59,7,22
+Dependency-Check Core,org.owasp.dependencycheck.analyzer,DependencyBundlingAnalyzer,513,725,158,148,118,148,119,63,6,23
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,AnalyzerService,1,84,1,11,1,22,1,10,0,5
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,CocoaPodsAnalyzer,103,431,17,23,20,102,15,17,0,12
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,PythonPackageAnalyzer,55,312,6,18,9,71,5,20,0,13

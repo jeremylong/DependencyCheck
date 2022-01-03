@@ -43,9 +43,9 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 
 @ThreadSafe
 <span class="fc" id="L51">public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {</span>
@@ -89,7 +89,7 @@ import java.util.Map;
 <span class="nc" id="L89">            return;</span>
         }
         final List&lt;Advisory&gt; advisories;
-<span class="nc" id="L92">        final Map&lt;String, String&gt; dependencyMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L92">        final MultiValuedMap&lt;String, String&gt; dependencyMap = new HashSetValuedHashMap&lt;&gt;();</span>
 <span class="nc" id="L93">        advisories = analyzePackage(packageLock, dependency);</span>
         try {
 <span class="nc" id="L95">            processResults(advisories, engine, dependency, dependencyMap);</span>

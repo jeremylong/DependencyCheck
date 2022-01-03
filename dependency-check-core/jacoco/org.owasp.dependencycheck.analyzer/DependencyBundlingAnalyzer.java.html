@@ -152,8 +152,8 @@ import org.slf4j.LoggerFactory;
 <span class="nc" id="L152">                return true; //since we merged into the next dependency - skip forward to the next in mainIterator</span>
             }
 <span class="fc bfc" id="L154" title="All 2 branches covered.">        } else if (ecosystemIs(AbstractNpmAnalyzer.NPM_DEPENDENCY_ECOSYSTEM, dependency, nextDependency)</span>
-<span class="pc bpc" id="L155" title="1 of 2 branches missed.">                &amp;&amp; namesAreEqual(dependency, nextDependency)</span>
-<span class="nc bnc" id="L156" title="All 2 branches missed.">                &amp;&amp; npmVersionsMatch(dependency.getVersion(), nextDependency.getVersion())) {</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">                &amp;&amp; namesAreEqual(dependency, nextDependency)</span>
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">                &amp;&amp; npmVersionsMatch(dependency.getVersion(), nextDependency.getVersion())) {</span>
 
 <span class="nc bnc" id="L158" title="All 2 branches missed.">            if (!dependency.isVirtual()) {</span>
 <span class="nc" id="L159">                DependencyMergingAnalyzer.mergeDependencies(dependency, nextDependency, dependenciesToRemove);</span>
@@ -597,7 +597,7 @@ import org.slf4j.LoggerFactory;
      * @return true if the name is equal in both dependencies; otherwise false
      */
     private boolean namesAreEqual(Dependency dependency, Dependency nextDependency) {
-<span class="pc bpc" id="L600" title="2 of 4 branches missed.">        return dependency.getName() != null &amp;&amp; dependency.getName().equals(nextDependency.getName());</span>
+<span class="pc bpc" id="L600" title="1 of 4 branches missed.">        return dependency.getName() != null &amp;&amp; dependency.getName().equals(nextDependency.getName());</span>
     }
 
     /**
@@ -615,10 +615,10 @@ import org.slf4j.LoggerFactory;
 <span class="pc bpc" id="L615" title="2 of 4 branches missed.">        if (left == null || right == null) {</span>
 <span class="nc" id="L616">            return false;</span>
         }
-<span class="pc bpc" id="L618" title="5 of 6 branches missed.">        if (left.equals(right) || &quot;*&quot;.equals(left) || &quot;*&quot;.equals(right)) {</span>
+<span class="pc bpc" id="L618" title="2 of 6 branches missed.">        if (left.equals(right) || &quot;*&quot;.equals(left) || &quot;*&quot;.equals(right)) {</span>
 <span class="fc" id="L619">            return true;</span>
         }
-<span class="nc bnc" id="L621" title="All 2 branches missed.">        if (left.contains(&quot; &quot;)) { // we have a version string from package.json</span>
+<span class="pc bpc" id="L621" title="1 of 2 branches missed.">        if (left.contains(&quot; &quot;)) { // we have a version string from package.json</span>
 <span class="nc bnc" id="L622" title="All 2 branches missed.">            if (right.contains(&quot; &quot;)) { // we can't evaluate this &quot;&gt;=1.5.4 &lt;2.0.0&quot; vs &quot;2 || 3&quot;</span>
 <span class="nc" id="L623">                return false;</span>
             }
@@ -635,23 +635,23 @@ import org.slf4j.LoggerFactory;
 <span class="nc" id="L635">                LOGGER.trace(&quot;ignore&quot;, ex);</span>
 <span class="nc" id="L636">            }</span>
         } else {
-<span class="nc bnc" id="L638" title="All 2 branches missed.">            if (!left.matches(&quot;^\\d.*$&quot;)) {</span>
+<span class="pc bpc" id="L638" title="1 of 2 branches missed.">            if (!left.matches(&quot;^\\d.*$&quot;)) {</span>
 <span class="nc" id="L639">                left = stripLeadingNonNumeric(left);</span>
 <span class="nc bnc" id="L640" title="All 4 branches missed.">                if (left == null || left.isEmpty()) {</span>
 <span class="nc" id="L641">                    return false;</span>
                 }
             }
             try {
-<span class="nc" id="L645">                Semver v = new Semver(left, SemverType.NPM);</span>
-<span class="nc bnc" id="L646" title="All 4 branches missed.">                if (!right.isEmpty() &amp;&amp; v.satisfies(right)) {</span>
+<span class="fc" id="L645">                Semver v = new Semver(left, SemverType.NPM);</span>
+<span class="pc bpc" id="L646" title="2 of 4 branches missed.">                if (!right.isEmpty() &amp;&amp; v.satisfies(right)) {</span>
 <span class="nc" id="L647">                    return true;</span>
                 }
-<span class="nc bnc" id="L649" title="All 2 branches missed.">                if (!right.contains(&quot; &quot;)) {</span>
-<span class="nc" id="L650">                    left = current;</span>
-<span class="nc" id="L651">                    right = stripLeadingNonNumeric(right);</span>
-<span class="nc bnc" id="L652" title="All 2 branches missed.">                    if (right != null) {</span>
-<span class="nc" id="L653">                        v = new Semver(right, SemverType.NPM);</span>
-<span class="nc" id="L654">                        return v.satisfies(left);</span>
+<span class="pc bpc" id="L649" title="1 of 2 branches missed.">                if (!right.contains(&quot; &quot;)) {</span>
+<span class="fc" id="L650">                    left = current;</span>
+<span class="fc" id="L651">                    right = stripLeadingNonNumeric(right);</span>
+<span class="pc bpc" id="L652" title="1 of 2 branches missed.">                    if (right != null) {</span>
+<span class="fc" id="L653">                        v = new Semver(right, SemverType.NPM);</span>
+<span class="fc" id="L654">                        return v.satisfies(left);</span>
                     }
                 }
 <span class="nc" id="L657">            } catch (SemverException ex) {</span>
@@ -672,9 +672,9 @@ import org.slf4j.LoggerFactory;
      * @return the string without leading non-numeric characters
      */
     private static String stripLeadingNonNumeric(String str) {
-<span class="nc bnc" id="L675" title="All 2 branches missed.">        for (int x = 0; x &lt; str.length(); x++) {</span>
-<span class="nc bnc" id="L676" title="All 2 branches missed.">            if (Character.isDigit(str.codePointAt(x))) {</span>
-<span class="nc" id="L677">                return str.substring(x);</span>
+<span class="pc bpc" id="L675" title="1 of 2 branches missed.">        for (int x = 0; x &lt; str.length(); x++) {</span>
+<span class="pc bpc" id="L676" title="1 of 2 branches missed.">            if (Character.isDigit(str.codePointAt(x))) {</span>
+<span class="fc" id="L677">                return str.substring(x);</span>
             }
         }
 <span class="nc" id="L680">        return null;</span>
