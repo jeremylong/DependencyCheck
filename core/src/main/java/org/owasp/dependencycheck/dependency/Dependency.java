@@ -808,6 +808,11 @@ public class Dependency extends EvidenceCollection implements Serializable {
                     + "https://github.com/jeremylong/DependencyCheck/issues/172");
             LOGGER.debug("this: {}", this);
             LOGGER.debug("dependency: {}", dependency);
+        } else if (NAME_COMPARATOR.compare(this, dependency) == 0) {
+            LOGGER.debug("Attempted to add the same dependency as this, likely due to merging identical dependencies "
+                         + "obtained from different modules");
+            LOGGER.debug("this: {}", this);
+            LOGGER.debug("dependency: {}", dependency);
         } else if (!relatedDependencies.add(dependency)) {
             LOGGER.debug("Failed to add dependency, likely due to referencing the same file as another dependency in the set.");
             LOGGER.debug("this: {}", this);
