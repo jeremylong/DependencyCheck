@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.analyzer;
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
+import com.google.common.base.Strings;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FileFilter;
@@ -68,6 +69,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.xml.pom.Developer;
 import org.owasp.dependencycheck.xml.pom.License;
 import org.owasp.dependencycheck.xml.pom.Model;
 import org.owasp.dependencycheck.xml.pom.PomUtils;
@@ -754,6 +756,34 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             }
             dependency.addEvidence(EvidenceType.VENDOR, "pom", "url", projectURL, Confidence.HIGHEST);
 
+        }
+
+        if (pom.getDevelopers() != null && !pom.getDevelopers().isEmpty()) {
+            for (Developer dev : pom.getDevelopers()) {
+                if (!Strings.isNullOrEmpty(dev.getId())) {
+                    dependency.addEvidence(EvidenceType.VENDOR, "pom", "developer id", dev.getId(), Confidence.MEDIUM);
+                    dependency.addEvidence(EvidenceType.PRODUCT, "pom", "developer id", dev.getId(), Confidence.LOW);
+                }
+                if (!Strings.isNullOrEmpty(dev.getName())) {
+                    dependency.addEvidence(EvidenceType.VENDOR, "pom", "developer name", dev.getName(), Confidence.MEDIUM);
+                    dependency.addEvidence(EvidenceType.PRODUCT, "pom", "developer name", dev.getName(), Confidence.LOW);
+                }
+                if (!Strings.isNullOrEmpty(dev.getEmail())) {
+                    dependency.addEvidence(EvidenceType.VENDOR, "pom", "developer email", dev.getEmail(), Confidence.LOW);
+                    dependency.addEvidence(EvidenceType.PRODUCT, "pom", "developer email", dev.getEmail(), Confidence.LOW);
+                }
+                if (!Strings.isNullOrEmpty(dev.getOrganizationUrl())) {
+                    dependency.addEvidence(EvidenceType.VENDOR, "pom", "developer org URL", dev.getOrganizationUrl(), Confidence.MEDIUM);
+                    dependency.addEvidence(EvidenceType.PRODUCT, "pom", "developer org URL", dev.getOrganizationUrl(), Confidence.LOW);
+                }
+                String devOrg = dev.getOrganization();
+                if (!Strings.isNullOrEmpty(devOrg)) {
+                    dependency.addEvidence(EvidenceType.VENDOR, "pom", "developer org", devOrg, Confidence.MEDIUM);
+                    dependency.addEvidence(EvidenceType.PRODUCT, "pom", "developer org", devOrg, Confidence.LOW);
+                    addMatchingValues(classes, devOrg, dependency, EvidenceType.VENDOR);
+                    addMatchingValues(classes, devOrg, dependency, EvidenceType.PRODUCT);
+                }
+            }
         }
 
         extractLicense(pom, dependency);
