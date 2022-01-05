@@ -17,12 +17,22 @@
  */
 package org.owasp.dependencycheck.xml.pom;
 
+import java.io.Serializable;
+import java.util.Objects;
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * Represents the developer node within the pom.xml.
  *
  * @author Jeremy Long
  */
-public class Developer {
+@ThreadSafe
+public class Developer implements Serializable {
+
+    /**
+     * Generated UUID.
+     */
+    private static final long serialVersionUID = 7016253914202775026L;
 
     /**
      * The id of the developer.
@@ -133,6 +143,57 @@ public class Developer {
      */
     public void setOrganizationUrl(String organizationUrl) {
         this.organizationUrl = organizationUrl;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 61 * hash + Objects.hashCode(this.id);
+        hash = 61 * hash + Objects.hashCode(this.name);
+        hash = 61 * hash + Objects.hashCode(this.email);
+        hash = 61 * hash + Objects.hashCode(this.organization);
+        hash = 61 * hash + Objects.hashCode(this.organizationUrl);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Developer other = (Developer) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.email, other.email)) {
+            return false;
+        }
+        if (!Objects.equals(this.organization, other.organization)) {
+            return false;
+        }
+        if (!Objects.equals(this.organizationUrl, other.organizationUrl)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Developer{"
+                + "id=" + id
+                + ", name=" + name
+                + ", email=" + email
+                + ", organization=" + organization
+                + ", organizationUrl=" + organizationUrl + '}';
     }
 
 }
