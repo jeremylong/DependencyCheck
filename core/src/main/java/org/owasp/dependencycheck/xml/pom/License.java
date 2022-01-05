@@ -36,7 +36,7 @@ public class License implements Serializable {
     private static final long serialVersionUID = 7009115254312746992L;
 
     /**
-     * The url to the license.
+     * The URL to the license.
      */
     private String url;
     /**
@@ -54,7 +54,7 @@ public class License implements Serializable {
      * Constructs a new license.
      *
      * @param name the name of the license
-     * @param url the license url
+     * @param url the license URL
      */
     public License(String name, String url) {
         this.url = url;
@@ -63,18 +63,18 @@ public class License implements Serializable {
     }
 
     /**
-     * Get the value of url.
+     * Get the value of URL.
      *
-     * @return the value of url
+     * @return the value of URL
      */
     public String getUrl() {
         return url;
     }
 
     /**
-     * Set the value of url.
+     * Set the value of URL.
      *
-     * @param url new value of url
+     * @param url new value of URL
      */
     public void setUrl(String url) {
         this.url = url;

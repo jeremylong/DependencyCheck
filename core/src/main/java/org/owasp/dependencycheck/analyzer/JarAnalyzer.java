@@ -776,7 +776,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     dependency.addEvidence(EvidenceType.VENDOR, "pom", "developer org URL", dev.getOrganizationUrl(), Confidence.MEDIUM);
                     dependency.addEvidence(EvidenceType.PRODUCT, "pom", "developer org URL", dev.getOrganizationUrl(), Confidence.LOW);
                 }
-                String devOrg = dev.getOrganization();
+                final String devOrg = dev.getOrganization();
                 if (!Strings.isNullOrEmpty(devOrg)) {
                     dependency.addEvidence(EvidenceType.VENDOR, "pom", "developer org", devOrg, Confidence.MEDIUM);
                     dependency.addEvidence(EvidenceType.PRODUCT, "pom", "developer org", devOrg, Confidence.LOW);
