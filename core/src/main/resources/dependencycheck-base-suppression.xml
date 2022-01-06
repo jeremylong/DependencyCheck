@@ -2,6 +2,13 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
+            fp per #3945 & #3943
+            ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus\-hibernate\-orm.*$</packageUrl>
+        <cpe>cpe:/a:hibernate:hibernate_orm</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
             only log4j-core is vulnerable
             ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.logging\.log4j/log4j\-(api|web)@.*$</packageUrl>
