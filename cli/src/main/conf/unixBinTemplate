@@ -101,7 +101,15 @@ if $cygwin || $mingw; then
   [ -n "$REPO" ] && REPO=`cygpath --path --windows "$REPO"`
 fi
 
-exec "$JAVACMD" $JAVA_OPTS @EXTRA_JVM_ARGUMENTS@ \
+DEBUG=""
+for var in "$@"
+do
+if [ "$var" = "--debug" ]; then
+    DEBUG="-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"
+fi
+done
+
+exec "$JAVACMD" $JAVA_OPTS $DEBUG @EXTRA_JVM_ARGUMENTS@ \
   -classpath "$CLASSPATH" \
   -Dapp.name="@APP_NAME@" \
   -Dapp.pid="$$" \
