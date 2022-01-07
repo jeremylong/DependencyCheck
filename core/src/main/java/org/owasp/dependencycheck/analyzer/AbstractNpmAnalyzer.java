@@ -23,6 +23,7 @@ import com.github.packageurl.PackageURL.StandardTypes;
 import com.github.packageurl.PackageURLBuilder;
 import com.vdurmont.semver4j.Semver;
 import com.vdurmont.semver4j.Semver.SemverType;
+import com.vdurmont.semver4j.SemverException;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nodeaudit.Advisory;
 import org.owasp.dependencycheck.data.nodeaudit.NodeAuditSearch;
@@ -527,9 +528,13 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
             return availableVersions.iterator().next();
         }
         for (String v : availableVersions) {
-            final Semver version = new Semver(v, SemverType.NPM);
-            if (version.satisfies(versionRange)) {
-                return v;
+            try {
+                final Semver version = new Semver(v, SemverType.NPM);
+                if (version.satisfies(versionRange)) {
+                    return v;
+                }
+            } catch (SemverException ex) {
+                LOGGER.debug("invalid semver: " + v);
             }
         }
         return availableVersions.iterator().next();
