@@ -261,7 +261,7 @@ public final class CliParser {
         final Options options = new Options();
         addStandardOptions(options);
         addAdvancedOptions(options);
-//        addDeprecatedOptions(options);
+        addDeprecatedOptions(options);
         return options;
     }
 
@@ -457,18 +457,21 @@ public final class CliParser {
 
     }
 
-//    /**
-//     * Adds the deprecated command line options to the given options collection.
-//     * These are split out for purposes of not including them in the help
-//     * message. We need to add the deprecated options so as not to break
-//     * existing scripts.
-//     *
-//     * @param options a collection of command line arguments
-//     */
-//    @SuppressWarnings({"static-access", "deprecation"})
-//    private void addDeprecatedOptions(final Options options) {
-//        //all deprecated arguments have been removed (for now)
-//    }
+    /**
+     * Adds the deprecated command line options to the given options collection.
+     * These are split out for purposes of not including them in the help
+     * message. We need to add the deprecated options so as not to break
+     * existing scripts.
+     *
+     * @param options a collection of command line arguments
+     */
+    @SuppressWarnings({"static-access", "deprecation"})
+    private void addDeprecatedOptions(final Options options) {
+        //not a real option - but enables java debugging via the shell script
+        options.addOption(newOption("debug",
+                "Used to enable java debugging of the cli via dependency-check.sh."));
+    }
+
     /**
      * Determines if the 'version' command line argument was passed in.
      *
@@ -565,6 +568,7 @@ public final class CliParser {
     public boolean isYarnAuditDisabled() {
         return hasDisableOption(ARGUMENT.DISABLE_YARN_AUDIT, Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED);
     }
+
     /**
      * Returns true if the disablePnpmAudit command line argument was specified.
      *
