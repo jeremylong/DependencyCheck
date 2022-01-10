@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -363,16 +364,27 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                     processDependencies(jo, base, rootFile, subPackageName, engine);
                 }
 
-                final Dependency child;
-                if (f.exists()) {
-                    //TOOD - we should use the integrity value instead of calculating the SHA1/MD5
-                    child = new Dependency(f);
-                    child.setEcosystem(DEPENDENCY_ECOSYSTEM);
+                String ref = "";
+                final int slash = parentPackage.indexOf("/");
+                if (slash > 0) {
+                    ref = parentPackage.substring(slash + 1);
+                }
+                final Dependency child = new Dependency(new File(rootFile + "?" + ref + "/" + name + ":" + version), true);
+                child.addProjectReference(parentPackage);
+                child.setEcosystem(DEPENDENCY_ECOSYSTEM);
 
+                if (f.exists()) {
+                    try {
+                        //TODO - we should use the integrity value instead of calculating the SHA1/MD5
+                        child.setMd5sum(Checksum.getMD5Checksum(f));
+                        child.setSha1sum(Checksum.getSHA1Checksum(f));
+                        child.setSha256sum(Checksum.getSHA256Checksum(f));
+                    } catch (IOException | NoSuchAlgorithmException ex) {
+                        LOGGER.debug("Error setting hashes:" + ex.getMessage(), ex);
+                    }
                     try (JsonReader jr = Json.createReader(FileUtils.openInputStream(f))) {
                         final JsonObject childJson = jr.readObject();
                         gatherEvidence(childJson, child);
-
                     } catch (JsonException e) {
                         LOGGER.warn("Failed to parse package.json file from dependency.", e);
                     } catch (IOException e) {
@@ -380,9 +392,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                     }
                 } else {
                     LOGGER.warn("Unable to find node module: {}", f.toString());
-                    child = new Dependency(rootFile, true);
-                    child.setEcosystem(DEPENDENCY_ECOSYSTEM);
-                    //TOOD - we should use the integrity value instead of calculating the SHA1/MD5
+                    //TODO - we should use the integrity value instead of calculating the SHA1/MD5
                     child.setSha1sum(Checksum.getSHA1Checksum(String.format("%s:%s", name, version)));
                     child.setSha256sum(Checksum.getSHA256Checksum(String.format("%s:%s", name, version)));
                     child.setMd5sum(Checksum.getMD5Checksum(String.format("%s:%s", name, version)));
@@ -402,9 +412,6 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                         LOGGER.debug("Unable to build package url for `" + packagePath + "`", ex);
                     }
                 }
-
-                child.addProjectReference(parentPackage);
-                child.setEcosystem(DEPENDENCY_ECOSYSTEM);
 
                 final Dependency existing = findDependency(engine, name, version);
                 if (existing != null) {
