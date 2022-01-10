@@ -244,7 +244,7 @@ jobs:
         run: ls -R
         working-directory: target
       - name: Deploy gh-pages
-        uses: JamesIves/github-pages-deploy-action@4.2.0
+        uses: JamesIves/github-pages-deploy-action@4.2.1
         with:
           branch: gh-pages
           folder: target/staging
