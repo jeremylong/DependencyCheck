@@ -150,7 +150,7 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
      * @param vulnerabilities the list of vulnerabilities to filter
      * @return the filtered list of vulnerabilities
      */
-    private List<Vulnerability> filterEcosystem(String ecosystem, List<Vulnerability> vulnerabilities) {
+    private synchronized List<Vulnerability> filterEcosystem(String ecosystem, List<Vulnerability> vulnerabilities) {
         final List<Vulnerability> remove = new ArrayList<>();
         vulnerabilities.forEach((v) -> {
             boolean found = false;
