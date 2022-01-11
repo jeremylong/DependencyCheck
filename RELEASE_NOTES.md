@@ -1,5 +1,15 @@
 # Release Notes
 
+## [Version 6.5.3](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.5.3) (2022-01-12)
+
+### Changes
+
+ - Performance improvements for some Maven projects (see #3923 and #3931).
+ - Fixed bug in npm version handling introduced in 6.5.2 (see #3956).
+ - Improved the node package analyzer to correctly report the origin of a dependency (see #3970).
+ - General code maintenance and false positive reductions.
+ - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/39?closed=1).
+
 ## [Version 6.5.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.5.2) (2022-01-03)
 
 ### Changes
