@@ -2,6 +2,21 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
+            fp per #3938
+            ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus\-fs\-util@.*$</packageUrl>
+        <cpe>cpe:/a:quarkus:quarkus</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            fp per #3940
+            ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.james/apache\-mime4j\-storage@.*$</packageUrl>
+        <cpe>cpe:/a:storage_project:storage</cpe>
+        <cpe>cpe:/a:apache:james</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
             fp per #3945 & #3943
             ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus\-hibernate\-orm.*$</packageUrl>
