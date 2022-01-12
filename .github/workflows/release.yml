@@ -182,11 +182,11 @@ jobs:
           draft: false
           body: |
             Changes in this Release
-            - Performance improvements for some Maven projects (see #3923 and #3931).
-            - Fixed bug in npm version handling introduced in 6.5.2 (see #3956).
-            - Improved the node package analyzer to correctly report the origin of a dependency (see #3970).
-            - General code maintenance and false positive reductions.
-            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/39?closed=1).
+              - Performance improvements for some Maven projects (see #3923 and #3931).
+              - Fixed bug in npm version handling introduced in 6.5.2 (see #3956).
+              - Improved the node package analyzer to correctly report the origin of a dependency (see #3970).
+              - General code maintenance and false positive reductions.
+              - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/39?closed=1).
       - name: Upload CLI
         id: upload-release-cli
         uses: actions/upload-release-asset@v1.0.2
