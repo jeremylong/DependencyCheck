@@ -1333,7 +1333,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 }
             } else {
                 final Artifact dependencyArtifact = dependencyNode.getArtifact();
-                Artifact result;
+                final Artifact result;
                 if (dependencyArtifact.isResolved()) {
                     //All transitive dependencies, excluding reactor and dependencyManagement artifacts should
                     //have been resolved by Maven prior to invoking the plugin - resolving the dependencies
