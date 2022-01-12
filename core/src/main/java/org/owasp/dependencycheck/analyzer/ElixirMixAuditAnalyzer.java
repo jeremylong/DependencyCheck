@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.processing.MixAuditProcessor;
 import org.owasp.dependencycheck.utils.processing.ProcessReader;
 
@@ -51,7 +52,7 @@ public class ElixirMixAuditAnalyzer extends AbstractFileTypeAnalyzer {
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
-    public static final String DEPENDENCY_ECOSYSTEM = "elixir";
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.ELIXIR;
 
     /**
      * The name of the analyzer.
