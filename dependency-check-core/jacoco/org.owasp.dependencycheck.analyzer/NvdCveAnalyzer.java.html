@@ -150,7 +150,7 @@ import org.owasp.dependencycheck.utils.Settings;
      * @param vulnerabilities the list of vulnerabilities to filter
      * @return the filtered list of vulnerabilities
      */
-    private List&lt;Vulnerability&gt; filterEcosystem(String ecosystem, List&lt;Vulnerability&gt; vulnerabilities) {
+    private synchronized List&lt;Vulnerability&gt; filterEcosystem(String ecosystem, List&lt;Vulnerability&gt; vulnerabilities) {
 <span class="fc" id="L154">        final List&lt;Vulnerability&gt; remove = new ArrayList&lt;&gt;();</span>
 <span class="fc" id="L155">        vulnerabilities.forEach((v) -&gt; {</span>
 <span class="fc" id="L156">            boolean found = false;</span>

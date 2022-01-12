@@ -808,12 +808,17 @@ public class Dependency extends EvidenceCollection implements Serializable {
                     + &quot;https://github.com/jeremylong/DependencyCheck/issues/172&quot;);
 <span class="nc" id="L809">            LOGGER.debug(&quot;this: {}&quot;, this);</span>
 <span class="nc" id="L810">            LOGGER.debug(&quot;dependency: {}&quot;, dependency);</span>
-<span class="pc bpc" id="L811" title="1 of 2 branches missed.">        } else if (!relatedDependencies.add(dependency)) {</span>
-<span class="nc" id="L812">            LOGGER.debug(&quot;Failed to add dependency, likely due to referencing the same file as another dependency in the set.&quot;);</span>
-<span class="nc" id="L813">            LOGGER.debug(&quot;this: {}&quot;, this);</span>
-<span class="nc" id="L814">            LOGGER.debug(&quot;dependency: {}&quot;, dependency);</span>
+<span class="pc bpc" id="L811" title="1 of 2 branches missed.">        } else if (NAME_COMPARATOR.compare(this, dependency) == 0) {</span>
+<span class="nc" id="L812">            LOGGER.debug(&quot;Attempted to add the same dependency as this, likely due to merging identical dependencies &quot;</span>
+                         + &quot;obtained from different modules&quot;);
+<span class="nc" id="L814">            LOGGER.debug(&quot;this: {}&quot;, this);</span>
+<span class="nc" id="L815">            LOGGER.debug(&quot;dependency: {}&quot;, dependency);</span>
+<span class="pc bpc" id="L816" title="1 of 2 branches missed.">        } else if (!relatedDependencies.add(dependency)) {</span>
+<span class="nc" id="L817">            LOGGER.debug(&quot;Failed to add dependency, likely due to referencing the same file as another dependency in the set.&quot;);</span>
+<span class="nc" id="L818">            LOGGER.debug(&quot;this: {}&quot;, this);</span>
+<span class="nc" id="L819">            LOGGER.debug(&quot;dependency: {}&quot;, dependency);</span>
         }
-<span class="fc" id="L816">    }</span>
+<span class="fc" id="L821">    }</span>
 
     /**
      * Removes a related dependency.
@@ -821,8 +826,8 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @param dependency the dependency to remove
      */
     public synchronized void removeRelatedDependencies(Dependency dependency) {
-<span class="nc" id="L824">        this.relatedDependencies.remove(dependency);</span>
-<span class="nc" id="L825">    }</span>
+<span class="nc" id="L829">        this.relatedDependencies.remove(dependency);</span>
+<span class="nc" id="L830">    }</span>
 
     /**
      * Get the value of availableVersions.
@@ -830,7 +835,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @return the value of availableVersions
      */
     public synchronized List&lt;String&gt; getAvailableVersions() {
-<span class="nc" id="L833">        return Collections.unmodifiableList(new ArrayList&lt;&gt;(availableVersions));</span>
+<span class="nc" id="L838">        return Collections.unmodifiableList(new ArrayList&lt;&gt;(availableVersions));</span>
     }
 
     /**
@@ -839,8 +844,8 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @param version the version to add to the list
      */
     public synchronized void addAvailableVersion(String version) {
-<span class="nc" id="L842">        this.availableVersions.add(version);</span>
-<span class="nc" id="L843">    }</span>
+<span class="nc" id="L847">        this.availableVersions.add(version);</span>
+<span class="nc" id="L848">    }</span>
 
     /**
      * Returns whether or not this dependency is virtual or not. Virtual
@@ -849,7 +854,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @return true if Dependency is virtual, false if not
      */
     public boolean isVirtual() {
-<span class="fc" id="L852">        return isVirtual;</span>
+<span class="fc" id="L857">        return isVirtual;</span>
     }
 
     /**
@@ -860,33 +865,33 @@ public class Dependency extends EvidenceCollection implements Serializable {
      */
     @Override
     public boolean equals(Object obj) {
-<span class="pc bpc" id="L863" title="2 of 4 branches missed.">        if (obj == null || !(obj instanceof Dependency)) {</span>
-<span class="nc" id="L864">            return false;</span>
+<span class="pc bpc" id="L868" title="2 of 4 branches missed.">        if (obj == null || !(obj instanceof Dependency)) {</span>
+<span class="nc" id="L869">            return false;</span>
         }
-<span class="fc bfc" id="L866" title="All 2 branches covered.">        if (this == obj) {</span>
-<span class="fc" id="L867">            return true;</span>
+<span class="fc bfc" id="L871" title="All 2 branches covered.">        if (this == obj) {</span>
+<span class="fc" id="L872">            return true;</span>
         }
-<span class="fc" id="L869">        final Dependency other = (Dependency) obj;</span>
-<span class="fc" id="L870">        return new EqualsBuilder()</span>
-<span class="fc" id="L871">                .appendSuper(super.equals(obj))</span>
-<span class="fc" id="L872">                .append(this.actualFilePath, other.actualFilePath)</span>
-<span class="fc" id="L873">                .append(this.filePath, other.filePath)</span>
-<span class="fc" id="L874">                .append(this.fileName, other.fileName)</span>
-<span class="fc" id="L875">                .append(this.packagePath, other.packagePath)</span>
-<span class="fc" id="L876">                .append(this.md5sum, other.md5sum)</span>
-<span class="fc" id="L877">                .append(this.sha1sum, other.sha1sum)</span>
-<span class="fc" id="L878">                .append(this.sha256sum, other.sha256sum)</span>
-<span class="fc" id="L879">                .append(this.softwareIdentifiers, other.softwareIdentifiers)</span>
-<span class="fc" id="L880">                .append(this.vulnerableSoftwareIdentifiers, other.vulnerableSoftwareIdentifiers)</span>
-<span class="fc" id="L881">                .append(this.suppressedIdentifiers, other.suppressedIdentifiers)</span>
-<span class="fc" id="L882">                .append(this.description, other.description)</span>
-<span class="fc" id="L883">                .append(this.license, other.license)</span>
-<span class="fc" id="L884">                .append(this.vulnerabilities, other.vulnerabilities)</span>
-<span class="fc" id="L885">                .append(this.projectReferences, other.projectReferences)</span>
-<span class="fc" id="L886">                .append(this.availableVersions, other.availableVersions)</span>
-<span class="fc" id="L887">                .append(this.version, other.version)</span>
-<span class="fc" id="L888">                .append(this.ecosystem, other.ecosystem)</span>
-<span class="fc" id="L889">                .isEquals();</span>
+<span class="fc" id="L874">        final Dependency other = (Dependency) obj;</span>
+<span class="fc" id="L875">        return new EqualsBuilder()</span>
+<span class="fc" id="L876">                .appendSuper(super.equals(obj))</span>
+<span class="fc" id="L877">                .append(this.actualFilePath, other.actualFilePath)</span>
+<span class="fc" id="L878">                .append(this.filePath, other.filePath)</span>
+<span class="fc" id="L879">                .append(this.fileName, other.fileName)</span>
+<span class="fc" id="L880">                .append(this.packagePath, other.packagePath)</span>
+<span class="fc" id="L881">                .append(this.md5sum, other.md5sum)</span>
+<span class="fc" id="L882">                .append(this.sha1sum, other.sha1sum)</span>
+<span class="fc" id="L883">                .append(this.sha256sum, other.sha256sum)</span>
+<span class="fc" id="L884">                .append(this.softwareIdentifiers, other.softwareIdentifiers)</span>
+<span class="fc" id="L885">                .append(this.vulnerableSoftwareIdentifiers, other.vulnerableSoftwareIdentifiers)</span>
+<span class="fc" id="L886">                .append(this.suppressedIdentifiers, other.suppressedIdentifiers)</span>
+<span class="fc" id="L887">                .append(this.description, other.description)</span>
+<span class="fc" id="L888">                .append(this.license, other.license)</span>
+<span class="fc" id="L889">                .append(this.vulnerabilities, other.vulnerabilities)</span>
+<span class="fc" id="L890">                .append(this.projectReferences, other.projectReferences)</span>
+<span class="fc" id="L891">                .append(this.availableVersions, other.availableVersions)</span>
+<span class="fc" id="L892">                .append(this.version, other.version)</span>
+<span class="fc" id="L893">                .append(this.ecosystem, other.ecosystem)</span>
+<span class="fc" id="L894">                .isEquals();</span>
     }
 
     /**
@@ -896,26 +901,26 @@ public class Dependency extends EvidenceCollection implements Serializable {
      */
     @Override
     public int hashCode() {
-<span class="fc" id="L899">        return new HashCodeBuilder(3, 47)</span>
-<span class="fc" id="L900">                .appendSuper(super.hashCode())</span>
-<span class="fc" id="L901">                .append(actualFilePath)</span>
-<span class="fc" id="L902">                .append(filePath)</span>
-<span class="fc" id="L903">                .append(fileName)</span>
-<span class="fc" id="L904">                .append(packagePath)</span>
-<span class="fc" id="L905">                .append(md5sum)</span>
-<span class="fc" id="L906">                .append(sha1sum)</span>
-<span class="fc" id="L907">                .append(sha256sum)</span>
-<span class="fc" id="L908">                .append(softwareIdentifiers)</span>
-<span class="fc" id="L909">                .append(vulnerableSoftwareIdentifiers)</span>
-<span class="fc" id="L910">                .append(suppressedIdentifiers)</span>
-<span class="fc" id="L911">                .append(description)</span>
-<span class="fc" id="L912">                .append(license)</span>
-<span class="fc" id="L913">                .append(vulnerabilities)</span>
-<span class="fc" id="L914">                .append(projectReferences)</span>
-<span class="fc" id="L915">                .append(availableVersions)</span>
-<span class="fc" id="L916">                .append(version)</span>
-<span class="fc" id="L917">                .append(ecosystem)</span>
-<span class="fc" id="L918">                .toHashCode();</span>
+<span class="fc" id="L904">        return new HashCodeBuilder(3, 47)</span>
+<span class="fc" id="L905">                .appendSuper(super.hashCode())</span>
+<span class="fc" id="L906">                .append(actualFilePath)</span>
+<span class="fc" id="L907">                .append(filePath)</span>
+<span class="fc" id="L908">                .append(fileName)</span>
+<span class="fc" id="L909">                .append(packagePath)</span>
+<span class="fc" id="L910">                .append(md5sum)</span>
+<span class="fc" id="L911">                .append(sha1sum)</span>
+<span class="fc" id="L912">                .append(sha256sum)</span>
+<span class="fc" id="L913">                .append(softwareIdentifiers)</span>
+<span class="fc" id="L914">                .append(vulnerableSoftwareIdentifiers)</span>
+<span class="fc" id="L915">                .append(suppressedIdentifiers)</span>
+<span class="fc" id="L916">                .append(description)</span>
+<span class="fc" id="L917">                .append(license)</span>
+<span class="fc" id="L918">                .append(vulnerabilities)</span>
+<span class="fc" id="L919">                .append(projectReferences)</span>
+<span class="fc" id="L920">                .append(availableVersions)</span>
+<span class="fc" id="L921">                .append(version)</span>
+<span class="fc" id="L922">                .append(ecosystem)</span>
+<span class="fc" id="L923">                .toHashCode();</span>
     }
 
     /**
@@ -926,7 +931,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      */
     @Override
     public synchronized String toString() {
-<span class="fc" id="L929">        return &quot;Dependency{ fileName='&quot; + fileName + &quot;', actualFilePath='&quot; + actualFilePath</span>
+<span class="fc" id="L934">        return &quot;Dependency{ fileName='&quot; + fileName + &quot;', actualFilePath='&quot; + actualFilePath</span>
                 + &quot;', filePath='&quot; + filePath + &quot;', packagePath='&quot; + packagePath + &quot;'}&quot;;
     }
 
@@ -936,45 +941,45 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @param vulns the list of suppressed vulnerabilities to add
      */
     public synchronized void addSuppressedVulnerabilities(List&lt;Vulnerability&gt; vulns) {
-<span class="nc" id="L939">        this.suppressedVulnerabilities.addAll(vulns);</span>
-<span class="nc" id="L940">    }</span>
+<span class="nc" id="L944">        this.suppressedVulnerabilities.addAll(vulns);</span>
+<span class="nc" id="L945">    }</span>
 
     /**
      * @return the version
      */
     public String getVersion() {
-<span class="fc" id="L946">        return version;</span>
+<span class="fc" id="L951">        return version;</span>
     }
 
     /**
      * @param version the version to set
      */
     public void setVersion(String version) {
-<span class="fc" id="L953">        this.version = version;</span>
-<span class="fc" id="L954">    }</span>
+<span class="fc" id="L958">        this.version = version;</span>
+<span class="fc" id="L959">    }</span>
 
     /**
      * @return the ecosystem
      */
     public String getEcosystem() {
-<span class="fc" id="L960">        return ecosystem;</span>
+<span class="fc" id="L965">        return ecosystem;</span>
     }
 
     /**
      * @param ecosystem the ecosystem to set
      */
     public void setEcosystem(String ecosystem) {
-<span class="fc" id="L967">        this.ecosystem = ecosystem;</span>
-<span class="fc" id="L968">    }</span>
+<span class="fc" id="L972">        this.ecosystem = ecosystem;</span>
+<span class="fc" id="L973">    }</span>
 
     //CSOFF: OperatorWrap
     /**
      * Simple sorting by display file name and actual file path.
      */
-<span class="fc" id="L974">    public static final Comparator&lt;Dependency&gt; NAME_COMPARATOR</span>
+<span class="fc" id="L979">    public static final Comparator&lt;Dependency&gt; NAME_COMPARATOR</span>
             = (Dependency d1, Dependency d2)
-<span class="fc" id="L976">            -&gt; (d1.getDisplayFileName() + d1.getFilePath())</span>
-<span class="fc" id="L977">                    .compareTo(d2.getDisplayFileName() + d2.getFilePath());</span>
+<span class="fc" id="L981">            -&gt; (d1.getDisplayFileName() + d1.getFilePath())</span>
+<span class="fc" id="L982">                    .compareTo(d2.getDisplayFileName() + d2.getFilePath());</span>
 
     //CSON: OperatorWrap
     /**

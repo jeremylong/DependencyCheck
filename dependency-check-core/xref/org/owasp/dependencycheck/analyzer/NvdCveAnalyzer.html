@@ -158,7 +158,7 @@
 <a class="jxr_linenumber" name="L150" href="#L150">150</a> <em class="jxr_javadoccomment">     * @param vulnerabilities the list of vulnerabilities to filter</em>
 <a class="jxr_linenumber" name="L151" href="#L151">151</a> <em class="jxr_javadoccomment">     * @return the filtered list of vulnerabilities</em>
 <a class="jxr_linenumber" name="L152" href="#L152">152</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>     <strong class="jxr_keyword">private</strong> List&lt;Vulnerability&gt; filterEcosystem(String ecosystem, List&lt;Vulnerability&gt; vulnerabilities) {
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">synchronized</strong> List&lt;Vulnerability&gt; filterEcosystem(String ecosystem, List&lt;Vulnerability&gt; vulnerabilities) {
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>         <strong class="jxr_keyword">final</strong> List&lt;Vulnerability&gt; remove = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>         vulnerabilities.forEach((v) -&gt; {
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>             <strong class="jxr_keyword">boolean</strong> found = false;

@@ -36,22 +36,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.processing.MixAuditProcessor;
 import org.owasp.dependencycheck.utils.processing.ProcessReader;
 
 @Experimental
-<span class="fc" id="L43">public class ElixirMixAuditAnalyzer extends AbstractFileTypeAnalyzer {</span>
+<span class="fc" id="L44">public class ElixirMixAuditAnalyzer extends AbstractFileTypeAnalyzer {</span>
 
     /**
      * The logger.
      */
-<span class="fc" id="L48">    private static final Logger LOGGER = LoggerFactory.getLogger(ElixirMixAuditAnalyzer.class);</span>
+<span class="fc" id="L49">    private static final Logger LOGGER = LoggerFactory.getLogger(ElixirMixAuditAnalyzer.class);</span>
 
     /**
      * A descriptor for the type of dependencies processed or added by this
      * analyzer.
      */
-    public static final String DEPENDENCY_ECOSYSTEM = &quot;elixir&quot;;
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.ELIXIR;
 
     /**
      * The name of the analyzer.
@@ -61,11 +62,11 @@ import org.owasp.dependencycheck.utils.processing.ProcessReader;
     /**
      * The phase that this analyzer is intended to run in.
      */
-<span class="fc" id="L64">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.PRE_INFORMATION_COLLECTION;</span>
+<span class="fc" id="L65">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.PRE_INFORMATION_COLLECTION;</span>
     /**
      * The filter defining which files will be analyzed.
      */
-<span class="fc" id="L68">    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addFilenames(&quot;mix.lock&quot;).build();</span>
+<span class="fc" id="L69">    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addFilenames(&quot;mix.lock&quot;).build();</span>
     /**
      * Name.
      */
@@ -85,80 +86,80 @@ import org.owasp.dependencycheck.utils.processing.ProcessReader;
     /**
      * The DAL.
      */
-<span class="fc" id="L88">    private CveDB cvedb = null;</span>
+<span class="fc" id="L89">    private CveDB cvedb = null;</span>
 
     /**
      * @return a filter that accepts files named mix.lock
      */
     @Override
     protected FileFilter getFileFilter() {
-<span class="fc" id="L95">        return FILTER;</span>
+<span class="fc" id="L96">        return FILTER;</span>
     }
 
     @Override
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
-<span class="fc bfc" id="L100" title="All 2 branches covered.">        if (engine != null) {</span>
-<span class="fc" id="L101">            this.cvedb = engine.getDatabase();</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        if (engine != null) {</span>
+<span class="fc" id="L102">            this.cvedb = engine.getDatabase();</span>
         }
 
         // Here we check if mix_audit actually runs from this location. We do this by running the
         // `mix_audit --version` command and seeing whether or not it succeeds (if it returns with an exit value of 0)
         final Process process;
         try {
-<span class="fc" id="L108">            final List&lt;String&gt; mixAuditArgs = Arrays.asList(&quot;--version&quot;);</span>
-<span class="nc" id="L109">            process = launchMixAudit(getSettings().getTempDirectory(), mixAuditArgs);</span>
-<span class="fc" id="L110">        } catch (AnalysisException ae) {</span>
-<span class="fc" id="L111">            setEnabled(false);</span>
-<span class="fc" id="L112">            final String msg = String.format(&quot;Exception from mix_audit process: %s. Disabling %s&quot;, ae.getCause(), ANALYZER_NAME);</span>
-<span class="fc" id="L113">            throw new InitializationException(msg, ae);</span>
-<span class="nc" id="L114">        } catch (IOException ex) {</span>
-<span class="nc" id="L115">            setEnabled(false);</span>
-<span class="nc" id="L116">            throw new InitializationException(&quot;Unable to create temporary file, the Mix Audit Analyzer will be disabled&quot;, ex);</span>
-<span class="nc" id="L117">        }</span>
+<span class="fc" id="L109">            final List&lt;String&gt; mixAuditArgs = Arrays.asList(&quot;--version&quot;);</span>
+<span class="nc" id="L110">            process = launchMixAudit(getSettings().getTempDirectory(), mixAuditArgs);</span>
+<span class="fc" id="L111">        } catch (AnalysisException ae) {</span>
+<span class="fc" id="L112">            setEnabled(false);</span>
+<span class="fc" id="L113">            final String msg = String.format(&quot;Exception from mix_audit process: %s. Disabling %s&quot;, ae.getCause(), ANALYZER_NAME);</span>
+<span class="fc" id="L114">            throw new InitializationException(msg, ae);</span>
+<span class="nc" id="L115">        } catch (IOException ex) {</span>
+<span class="nc" id="L116">            setEnabled(false);</span>
+<span class="nc" id="L117">            throw new InitializationException(&quot;Unable to create temporary file, the Mix Audit Analyzer will be disabled&quot;, ex);</span>
+<span class="nc" id="L118">        }</span>
 
         final int exitValue;
         final String mixAuditVersionDetails;
-<span class="nc" id="L121">        try (ProcessReader processReader = new ProcessReader(process)) {</span>
-<span class="nc" id="L122">            processReader.readAll();</span>
-<span class="nc" id="L123">            exitValue = process.exitValue();</span>
+<span class="nc" id="L122">        try (ProcessReader processReader = new ProcessReader(process)) {</span>
+<span class="nc" id="L123">            processReader.readAll();</span>
+<span class="nc" id="L124">            exitValue = process.exitValue();</span>
 
-<span class="nc bnc" id="L125" title="All 2 branches missed.">            if (exitValue != 0) {</span>
-<span class="nc bnc" id="L126" title="All 2 branches missed.">                if (StringUtils.isBlank(processReader.getError())) {</span>
-<span class="nc" id="L127">                    LOGGER.warn(&quot;Unexpected exit value from mix_audit process and error stream unexpectedly not ready to capture error details. &quot;</span>
-<span class="nc" id="L128">                            + &quot;Disabling {}. Exit value was: {}&quot;, ANALYZER_NAME, exitValue);</span>
-<span class="nc" id="L129">                    setEnabled(false);</span>
-<span class="nc" id="L130">                    throw new InitializationException(&quot;mix_audit error stream unexpectedly not ready.&quot;);</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">            if (exitValue != 0) {</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">                if (StringUtils.isBlank(processReader.getError())) {</span>
+<span class="nc" id="L128">                    LOGGER.warn(&quot;Unexpected exit value from mix_audit process and error stream unexpectedly not ready to capture error details. &quot;</span>
+<span class="nc" id="L129">                            + &quot;Disabling {}. Exit value was: {}&quot;, ANALYZER_NAME, exitValue);</span>
+<span class="nc" id="L130">                    setEnabled(false);</span>
+<span class="nc" id="L131">                    throw new InitializationException(&quot;mix_audit error stream unexpectedly not ready.&quot;);</span>
                 } else {
-<span class="nc" id="L132">                    setEnabled(false);</span>
-<span class="nc" id="L133">                    LOGGER.warn(&quot;Unexpected exit value from mix_audit process. Disabling {}. Exit value was: {}. &quot;</span>
-<span class="nc" id="L134">                            + &quot;error stream output from mix_audit process was: {}&quot;, ANALYZER_NAME, exitValue, processReader.getError());</span>
-<span class="nc" id="L135">                    throw new InitializationException(&quot;Unexpected exit value from bundle-audit process.&quot;);</span>
+<span class="nc" id="L133">                    setEnabled(false);</span>
+<span class="nc" id="L134">                    LOGGER.warn(&quot;Unexpected exit value from mix_audit process. Disabling {}. Exit value was: {}. &quot;</span>
+<span class="nc" id="L135">                            + &quot;error stream output from mix_audit process was: {}&quot;, ANALYZER_NAME, exitValue, processReader.getError());</span>
+<span class="nc" id="L136">                    throw new InitializationException(&quot;Unexpected exit value from bundle-audit process.&quot;);</span>
                 }
             } else {
-<span class="nc bnc" id="L138" title="All 2 branches missed.">                if (StringUtils.isBlank(processReader.getOutput())) {</span>
-<span class="nc" id="L139">                    LOGGER.warn(&quot;mix_audit input stream unexpectedly not ready to capture version details. Disabling {}&quot;, ANALYZER_NAME);</span>
-<span class="nc" id="L140">                    setEnabled(false);</span>
-<span class="nc" id="L141">                    throw new InitializationException(&quot;mix_audit input stream unexpectedly not ready to capture version details.&quot;);</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">                if (StringUtils.isBlank(processReader.getOutput())) {</span>
+<span class="nc" id="L140">                    LOGGER.warn(&quot;mix_audit input stream unexpectedly not ready to capture version details. Disabling {}&quot;, ANALYZER_NAME);</span>
+<span class="nc" id="L141">                    setEnabled(false);</span>
+<span class="nc" id="L142">                    throw new InitializationException(&quot;mix_audit input stream unexpectedly not ready to capture version details.&quot;);</span>
                 } else {
-<span class="nc" id="L143">                    mixAuditVersionDetails = processReader.getOutput();</span>
+<span class="nc" id="L144">                    mixAuditVersionDetails = processReader.getOutput();</span>
                 }
             }
-<span class="nc" id="L146">        } catch (InterruptedException ex) {</span>
-<span class="nc" id="L147">            setEnabled(false);</span>
-<span class="nc" id="L148">            final String msg = String.format(&quot;mix_audit process was interrupted. Disabling %s&quot;, ANALYZER_NAME);</span>
-<span class="nc" id="L149">            Thread.currentThread().interrupt();</span>
-<span class="nc" id="L150">            throw new InitializationException(msg);</span>
-<span class="nc" id="L151">        } catch (IOException ex) {</span>
-<span class="nc" id="L152">            setEnabled(false);</span>
-<span class="nc" id="L153">            final String msg = String.format(&quot;IOException '%s' during mix_audit process was interrupted. Disabling %s&quot;,</span>
-<span class="nc" id="L154">                    ex.getMessage(), ANALYZER_NAME);</span>
-<span class="nc" id="L155">            throw new InitializationException(msg);</span>
-<span class="nc" id="L156">        }</span>
+<span class="nc" id="L147">        } catch (InterruptedException ex) {</span>
+<span class="nc" id="L148">            setEnabled(false);</span>
+<span class="nc" id="L149">            final String msg = String.format(&quot;mix_audit process was interrupted. Disabling %s&quot;, ANALYZER_NAME);</span>
+<span class="nc" id="L150">            Thread.currentThread().interrupt();</span>
+<span class="nc" id="L151">            throw new InitializationException(msg);</span>
+<span class="nc" id="L152">        } catch (IOException ex) {</span>
+<span class="nc" id="L153">            setEnabled(false);</span>
+<span class="nc" id="L154">            final String msg = String.format(&quot;IOException '%s' during mix_audit process was interrupted. Disabling %s&quot;,</span>
+<span class="nc" id="L155">                    ex.getMessage(), ANALYZER_NAME);</span>
+<span class="nc" id="L156">            throw new InitializationException(msg);</span>
+<span class="nc" id="L157">        }</span>
 
-<span class="nc bnc" id="L158" title="All 2 branches missed.">        if (isEnabled()) {</span>
-<span class="nc" id="L159">            LOGGER.debug(&quot;{} is enabled and is using mix_audit with version: {}.&quot;, ANALYZER_NAME, mixAuditVersionDetails);</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">        if (isEnabled()) {</span>
+<span class="nc" id="L160">            LOGGER.debug(&quot;{} is enabled and is using mix_audit with version: {}.&quot;, ANALYZER_NAME, mixAuditVersionDetails);</span>
         }
-<span class="nc" id="L161">    }</span>
+<span class="nc" id="L162">    }</span>
 
     /**
      * Returns the key used in the properties file to reference the analyzer's
@@ -168,7 +169,7 @@ import org.owasp.dependencycheck.utils.processing.ProcessReader;
      */
     @Override
     protected String getAnalyzerEnabledSettingKey() {
-<span class="fc" id="L171">        return Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED;</span>
+<span class="fc" id="L172">        return Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED;</span>
     }
 
     /**
@@ -178,7 +179,7 @@ import org.owasp.dependencycheck.utils.processing.ProcessReader;
      */
     @Override
     public String getName() {
-<span class="fc" id="L181">        return ANALYZER_NAME;</span>
+<span class="fc" id="L182">        return ANALYZER_NAME;</span>
     }
 
     /**
@@ -188,7 +189,7 @@ import org.owasp.dependencycheck.utils.processing.ProcessReader;
      */
     @Override
     public AnalysisPhase getAnalysisPhase() {
-<span class="fc" id="L191">        return ANALYSIS_PHASE;</span>
+<span class="fc" id="L192">        return ANALYSIS_PHASE;</span>
     }
 
     /**
@@ -201,36 +202,36 @@ import org.owasp.dependencycheck.utils.processing.ProcessReader;
      * audit
      */
     private Process launchMixAudit(File folder, List&lt;String&gt; mixAuditArgs) throws AnalysisException {
-<span class="pc bpc" id="L204" title="1 of 2 branches missed.">        if (!folder.isDirectory()) {</span>
-<span class="nc" id="L205">            throw new AnalysisException(String.format(&quot;%s should have been a directory.&quot;, folder.getAbsolutePath()));</span>
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">        if (!folder.isDirectory()) {</span>
+<span class="nc" id="L206">            throw new AnalysisException(String.format(&quot;%s should have been a directory.&quot;, folder.getAbsolutePath()));</span>
         }
 
-<span class="fc" id="L208">        final List&lt;String&gt; args = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L209">        final String mixAuditPath = getSettings().getString(Settings.KEYS.ANALYZER_MIX_AUDIT_PATH);</span>
-<span class="fc" id="L210">        File mixAudit = null;</span>
+<span class="fc" id="L209">        final List&lt;String&gt; args = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L210">        final String mixAuditPath = getSettings().getString(Settings.KEYS.ANALYZER_MIX_AUDIT_PATH);</span>
+<span class="fc" id="L211">        File mixAudit = null;</span>
 
-<span class="fc bfc" id="L212" title="All 2 branches covered.">        if (mixAuditPath != null) {</span>
-<span class="fc" id="L213">            mixAudit = new File(mixAuditPath);</span>
-<span class="pc bpc" id="L214" title="1 of 2 branches missed.">            if (!mixAudit.isFile()) {</span>
-<span class="nc" id="L215">                LOGGER.warn(&quot;Supplied `mixAudit` path is incorrect: {}&quot;, mixAuditPath);</span>
-<span class="nc" id="L216">                mixAudit = null;</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">        if (mixAuditPath != null) {</span>
+<span class="fc" id="L214">            mixAudit = new File(mixAuditPath);</span>
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">            if (!mixAudit.isFile()) {</span>
+<span class="nc" id="L216">                LOGGER.warn(&quot;Supplied `mixAudit` path is incorrect: {}&quot;, mixAuditPath);</span>
+<span class="nc" id="L217">                mixAudit = null;</span>
             }
         } else {
-<span class="fc" id="L219">            final Path homePath = Paths.get(System.getProperty(&quot;user.home&quot;));</span>
-<span class="fc" id="L220">            final Path escriptPath = Paths.get(homePath.toString(), &quot;.mix&quot;, &quot;escripts&quot;, &quot;mix_audit&quot;);</span>
-<span class="fc" id="L221">            mixAudit = escriptPath.toFile();</span>
+<span class="fc" id="L220">            final Path homePath = Paths.get(System.getProperty(&quot;user.home&quot;));</span>
+<span class="fc" id="L221">            final Path escriptPath = Paths.get(homePath.toString(), &quot;.mix&quot;, &quot;escripts&quot;, &quot;mix_audit&quot;);</span>
+<span class="fc" id="L222">            mixAudit = escriptPath.toFile();</span>
         }
 
-<span class="pc bpc" id="L224" title="1 of 2 branches missed.">        args.add(mixAudit != null ? mixAudit.getAbsolutePath() : &quot;mix_audit&quot;);</span>
-<span class="fc" id="L225">        args.addAll(mixAuditArgs);</span>
-<span class="fc" id="L226">        final ProcessBuilder builder = new ProcessBuilder(args);</span>
+<span class="pc bpc" id="L225" title="1 of 2 branches missed.">        args.add(mixAudit != null ? mixAudit.getAbsolutePath() : &quot;mix_audit&quot;);</span>
+<span class="fc" id="L226">        args.addAll(mixAuditArgs);</span>
+<span class="fc" id="L227">        final ProcessBuilder builder = new ProcessBuilder(args);</span>
 
-<span class="fc" id="L228">        builder.directory(folder);</span>
+<span class="fc" id="L229">        builder.directory(folder);</span>
         try {
-<span class="fc" id="L230">            LOGGER.info(&quot;Launching: {} from {}&quot;, args, folder);</span>
-<span class="nc" id="L231">            return builder.start();</span>
-<span class="fc" id="L232">        } catch (IOException ioe) {</span>
-<span class="fc" id="L233">            throw new AnalysisException(&quot;mix_audit initialization failure; this error can be ignored if you are not analyzing Elixir. &quot;</span>
+<span class="fc" id="L231">            LOGGER.info(&quot;Launching: {} from {}&quot;, args, folder);</span>
+<span class="nc" id="L232">            return builder.start();</span>
+<span class="fc" id="L233">        } catch (IOException ioe) {</span>
+<span class="fc" id="L234">            throw new AnalysisException(&quot;mix_audit initialization failure; this error can be ignored if you are not analyzing Elixir. &quot;</span>
                     + &quot;Otherwise ensure that mix_audit is installed and the path to mix_audit is correctly specified&quot;, ioe);
         }
     }
@@ -245,26 +246,26 @@ import org.owasp.dependencycheck.utils.processing.ProcessReader;
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
-<span class="nc" id="L248">        final File parentFile = dependency.getActualFile().getParentFile();</span>
-<span class="nc" id="L249">        final List&lt;String&gt; mixAuditArgs = Arrays.asList(&quot;--format&quot;, &quot;json&quot;);</span>
+<span class="nc" id="L249">        final File parentFile = dependency.getActualFile().getParentFile();</span>
+<span class="nc" id="L250">        final List&lt;String&gt; mixAuditArgs = Arrays.asList(&quot;--format&quot;, &quot;json&quot;);</span>
 
-<span class="nc" id="L251">        final Process process = launchMixAudit(parentFile, mixAuditArgs);</span>
+<span class="nc" id="L252">        final Process process = launchMixAudit(parentFile, mixAuditArgs);</span>
         final int exitValue;
-<span class="nc" id="L253">        try (MixAuditProcessor processor = new MixAuditProcessor(dependency, engine);</span>
-<span class="nc" id="L254">                ProcessReader processReader = new ProcessReader(process, processor)) {</span>
-<span class="nc" id="L255">            processReader.readAll();</span>
-<span class="nc" id="L256">            exitValue = process.exitValue();</span>
-<span class="nc bnc" id="L257" title="All 4 branches missed.">            if (exitValue &lt; 0 || exitValue &gt; 1) {</span>
-<span class="nc" id="L258">                final String msg = String.format(&quot;Unexpected exit code from mix_audit process; exit code: %s&quot;, exitValue);</span>
-<span class="nc" id="L259">                throw new AnalysisException(msg);</span>
+<span class="nc" id="L254">        try (MixAuditProcessor processor = new MixAuditProcessor(dependency, engine);</span>
+<span class="nc" id="L255">                ProcessReader processReader = new ProcessReader(process, processor)) {</span>
+<span class="nc" id="L256">            processReader.readAll();</span>
+<span class="nc" id="L257">            exitValue = process.exitValue();</span>
+<span class="nc bnc" id="L258" title="All 4 branches missed.">            if (exitValue &lt; 0 || exitValue &gt; 1) {</span>
+<span class="nc" id="L259">                final String msg = String.format(&quot;Unexpected exit code from mix_audit process; exit code: %s&quot;, exitValue);</span>
+<span class="nc" id="L260">                throw new AnalysisException(msg);</span>
             }
-<span class="nc" id="L261">        } catch (InterruptedException ie) {</span>
-<span class="nc" id="L262">            Thread.currentThread().interrupt();</span>
-<span class="nc" id="L263">            throw new AnalysisException(&quot;mix_audit process interrupted&quot;, ie);</span>
-<span class="nc" id="L264">        } catch (IOException | CpeValidationException ioe) {</span>
-<span class="nc" id="L265">            LOGGER.warn(&quot;mix_audit failure&quot;, ioe);</span>
-<span class="nc" id="L266">            throw new AnalysisException(&quot;mix_audit failure&quot;, ioe);</span>
-<span class="nc" id="L267">        }</span>
-<span class="nc" id="L268">    }</span>
+<span class="nc" id="L262">        } catch (InterruptedException ie) {</span>
+<span class="nc" id="L263">            Thread.currentThread().interrupt();</span>
+<span class="nc" id="L264">            throw new AnalysisException(&quot;mix_audit process interrupted&quot;, ie);</span>
+<span class="nc" id="L265">        } catch (IOException | CpeValidationException ioe) {</span>
+<span class="nc" id="L266">            LOGGER.warn(&quot;mix_audit failure&quot;, ioe);</span>
+<span class="nc" id="L267">            throw new AnalysisException(&quot;mix_audit failure&quot;, ioe);</span>
+<span class="nc" id="L268">        }</span>
+<span class="nc" id="L269">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

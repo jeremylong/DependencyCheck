@@ -564,9 +564,9 @@ public final class CveDB implements AutoCloseable {
      */
     public List&lt;Vulnerability&gt; getVulnerabilities(Cpe cpe) throws DatabaseException {
 <span class="fc" id="L566">        final List&lt;Vulnerability&gt; cachedVulnerabilities = vulnerabilitiesForCpeCache.get(cpe.toCpe23FS());</span>
-<span class="fc bfc" id="L567" title="All 2 branches covered.">        if (cachedVulnerabilities != null) {</span>
-<span class="fc" id="L568">            LOGGER.debug(&quot;Cache hit for {}&quot;, cpe.toCpe23FS());</span>
-<span class="fc" id="L569">            return cachedVulnerabilities;</span>
+<span class="pc bpc" id="L567" title="1 of 2 branches missed.">        if (cachedVulnerabilities != null) {</span>
+<span class="nc" id="L568">            LOGGER.debug(&quot;Cache hit for {}&quot;, cpe.toCpe23FS());</span>
+<span class="nc" id="L569">            return cachedVulnerabilities;</span>
         } else {
 <span class="fc" id="L571">            LOGGER.debug(&quot;Cache miss for {}&quot;, cpe.toCpe23FS());</span>
         }
