@@ -19,7 +19,6 @@ package org.owasp.dependencycheck.reporting;
 
 import org.owasp.dependencycheck.dependency.CvssV2;
 import org.owasp.dependencycheck.dependency.CvssV3;
-import org.owasp.dependencycheck.dependency.Vulnerability;
 
 /**
  *

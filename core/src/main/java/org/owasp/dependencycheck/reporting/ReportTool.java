@@ -93,7 +93,9 @@ public class ReportTool {
                     SarifRule r = new SarifRule(v.getName(),
                             buildShortDescription(d, v),
                             v.getDescription(),
-                            v.getSource().name(), v.getCvssV2(), v.getCvssV3());
+                            v.getSource().name(),
+                            v.getCvssV2(),
+                            v.getCvssV3());
                     rules.put(v.getName(), r);
                 }
             }
@@ -106,21 +108,46 @@ public class ReportTool {
             if ("0.0".equals(vuln.getUnscoredSeverity())) {
                 return "Unknown";
             } else {
-                return vuln.getUnscoredSeverity();
+                return normalizeSeverity(vuln.getUnscoredSeverity().toLowerCase());
             }
         } else if (vuln.getCvssV3() != null && vuln.getCvssV3().getBaseSeverity() != null) {
-            return vuln.getCvssV3().getBaseSeverity();
+            return normalizeSeverity(vuln.getCvssV3().getBaseSeverity().toLowerCase());
         } else if (vuln.getCvssV2() != null && vuln.getCvssV2().getSeverity() != null) {
-            return vuln.getCvssV2().getSeverity();
+            return normalizeSeverity(vuln.getCvssV2().getSeverity());
+        }
+        return "Unknown";
+    }
+
+    private String normalizeSeverity(String sev) {
+        switch (sev) {
+            case "critical":
+                return "Critical";
+            case "high":
+                return "High";
+            case "medium":
+                return "Medium";
+            case "moderate":
+                return "Medium";
+            case "low":
+                return "Low";
+            case "informational":
+                return "Low";
+            case "info":
+                return "Low";
         }
         return "Unknown";
     }
 
     public String buildShortDescription(Dependency d, Vulnerability vuln) {
         StringBuilder sb = new StringBuilder();
-        sb.append(determineScore(vuln)).append(" severity");
+        sb.append(determineScore(vuln))
+                .append(" severity - ")
+                .append(vuln.getName());
         if (vuln.getCwes() != null && !vuln.getCwes().isEmpty()) {
-            sb.append(" - ").append(vuln.getCwes().toString());
+            String cwe = vuln.getCwes().getFullCwes().values().iterator().next();
+            if (cwe != null && !"NVD-CWE-Other".equals(cwe) && !"NVD-CWE-noinfo".equals(cwe)) {
+                sb.append(" ").append(cwe);
+            }
         }
         sb.append(" vulnerability in ");
         if (d.getSoftwareIdentifiers() != null && !d.getSoftwareIdentifiers().isEmpty()) {
@@ -130,4 +157,5 @@ public class ReportTool {
         }
         return sb.toString();
     }
+
 }
