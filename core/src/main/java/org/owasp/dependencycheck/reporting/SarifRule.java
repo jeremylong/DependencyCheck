@@ -26,64 +26,133 @@ import org.owasp.dependencycheck.dependency.CvssV3;
  */
 public class SarifRule {
 
+    /**
+     * The rule id.
+     */
     private String id;
-
+    /**
+     * The short description.
+     */
     private String shortDescription;
-
+    /**
+     * The full description.
+     */
     private String fullDescription;
-
+    /**
+     * The name of the rule.
+     */
     private String name;
-
+    /**
+     * CVSS V2 field.
+     */
     private String cvssv2Score;
-
+    /**
+     * CVSS V2 field.
+     */
     private String cvssv2AccessVector;
-
+    /**
+     * CVSS V2 field.
+     */
     private String cvssv2AccessComplexity;
-
+    /**
+     * CVSS V2 field.
+     */
     private String cvssv2Authentication;
-
+    /**
+     * CVSS V2 field.
+     */
     private String cvssv2ConfidentialImpact;
-
+    /**
+     * CVSS V2 field.
+     */
     private String cvssv2IntegrityImpact;
-
+    /**
+     * CVSS V2 field.
+     */
     private String cvssv2AvailabilityImpact;
-
+    /**
+     * CVSS V2 field.
+     */
     private String cvssv2Severity;
-
+    /**
+     * CVSS V2 field.
+     */
     private String cvssv2Version;
-
+    /**
+     * CVSS V2 field.
+     */
     private String cvssv2ExploitabilityScore;
-
+    /**
+     * CVSS V2 field.
+     */
     private String cvssv2ImpactScore;
-
+    /**
+     * CVSS V3 field.
+     */
     private String cvssv3BaseScore;
-
+    /**
+     * CVSS V3 field.
+     */
     private String cvssv3AttackVector;
-
+    /**
+     * CVSS V3 field.
+     */
     private String cvssv3AttackComplexity;
-
+    /**
+     * CVSS V3 field.
+     */
     private String cvssv3PrivilegesRequired;
-
+    /**
+     * CVSS V3 field.
+     */
     private String cvssv3UserInteraction;
-
+    /**
+     * CVSS V3 field.
+     */
     private String cvssv3Scope;
-
+    /**
+     * CVSS V3 field.
+     */
     private String cvssv3ConfidentialityImpact;
-
+    /**
+     * CVSS V3 field.
+     */
     private String cvssv3IntegrityImpact;
-
+    /**
+     * CVSS V3 field.
+     */
     private String cvssv3AvailabilityImpact;
-
+    /**
+     * CVSS V3 field.
+     */
     private String cvssv3BaseSeverity;
-
+    /**
+     * CVSS V3 field.
+     */
     private String cvssv3ExploitabilityScore;
-
+    /**
+     * CVSS V3 field.
+     */
     private String cvssv3ImpactScore;
-
+    /**
+     * CVSS V3 field.
+     */
     private String cvssv3Version;
-
+    /**
+     * The source of the rule.
+     */
     private String source;
 
+    /**
+     * Constructs a new SARIF rule object.
+     *
+     * @param name the name of the rule
+     * @param shortDescription the short description
+     * @param fullDescription the full description
+     * @param source the source
+     * @param cvssV2 the CVSS v2 score
+     * @param cvssV3 the CVSS v3 score
+     */
     public SarifRule(String name, String shortDescription, String fullDescription,
             String source, CvssV2 cvssV2, CvssV3 cvssV3) {
         this.id = name;
