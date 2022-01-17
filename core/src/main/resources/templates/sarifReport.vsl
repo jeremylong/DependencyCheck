@@ -17,6 +17,17 @@
               "fullDescription": {
                 "text": "$enc.json($rule.fullDescription)"
               },
+              "help": {
+                "text": "",
+                "markdown": "#if($rule.getSource().equals("NVD"))For more information see [$enc.json($rule.name)](http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($rule.name)).\n
+#elseif($rule.getSource().equals("NPM"))For more information see [NPM-$enc.json($rule.name)](https://www.npmjs.com/advisories/$enc.url($rule.name))\n#end
+\n\n
+If this is a false positive - consider using the HTML report to generate a suppression file. 
+For more information see [How dependency-check works](https://jeremylong.github.io/DependencyCheck/general/internals.html), 
+[How to read the HTML report](https://jeremylong.github.io/DependencyCheck/general/thereport.html), and 
+[Suppressing false positives](https://jeremylong.github.io/DependencyCheck/general/suppression.html).
+"
+              },
               "properties": {
                 #if($rule.cvssv3BaseSeverity)
                     "cvssv2_score": $rule.cvssv2Score,
@@ -107,7 +118,7 @@
           #foreach($vuln in $dependency.getVulnerabilities(true))#if($needsComma==1),#end {
           #set($needsComma=1)
           "ruleId": "$enc.json($vuln.name)",
-          "level": "error",
+          "level": "warning",
           "message": {
             "text": "$enc.json($vuln.name)#if($vuln.description) - $enc.json($vuln.description)#end"
           },
@@ -119,6 +130,15 @@
                   ,"index": $depIndex
                 }
               }
+            #if($dependency.getSoftwareIdentifiers() && $dependency.getSoftwareIdentifiers().size()>0)
+                #set($id = $dependency.getSoftwareIdentifiers().iterator().next())
+                ,"logicalLocations": [
+                    {
+                    "fullyQualifiedName": "$enc.json($id.value)"
+                    }
+                ]
+            #end
+              
             }
           ]
           }#end
