@@ -17,6 +17,14 @@
  */
 package org.owasp.dependencycheck.reporting;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.Identifier;
@@ -75,5 +83,51 @@ public class ReportTool {
      */
     public float estimateSeverity(String severity) {
         return SeverityUtil.estimateCvssV2(severity);
+    }
+
+    public Collection<SarifRule> convertToSarifRules(List<Dependency> dependencies) {
+        Map<String, SarifRule> rules = new HashMap<>();
+        for (Dependency d : dependencies) {
+            for (Vulnerability v : d.getVulnerabilities()) {
+                if (!rules.containsKey(v.getName())) {
+                    SarifRule r = new SarifRule(v.getName(),
+                            buildShortDescription(d, v),
+                            v.getDescription(),
+                            v.getSource().name(), v.getCvssV2(), v.getCvssV3());
+                    rules.put(v.getName(), r);
+                }
+            }
+        }
+        return rules.values();
+    }
+
+    public String determineScore(Vulnerability vuln) {
+        if (vuln.getUnscoredSeverity() != null) {
+            if ("0.0".equals(vuln.getUnscoredSeverity())) {
+                return "Unknown";
+            } else {
+                return vuln.getUnscoredSeverity();
+            }
+        } else if (vuln.getCvssV3() != null && vuln.getCvssV3().getBaseSeverity() != null) {
+            return vuln.getCvssV3().getBaseSeverity();
+        } else if (vuln.getCvssV2() != null && vuln.getCvssV2().getSeverity() != null) {
+            return vuln.getCvssV2().getSeverity();
+        }
+        return "Unknown";
+    }
+
+    public String buildShortDescription(Dependency d, Vulnerability vuln) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(determineScore(vuln)).append(" severity");
+        if (vuln.getCwes() != null && !vuln.getCwes().isEmpty()) {
+            sb.append(" - ").append(vuln.getCwes().toString());
+        }
+        sb.append(" vulnerability in ");
+        if (d.getSoftwareIdentifiers() != null && !d.getSoftwareIdentifiers().isEmpty()) {
+            sb.append(d.getSoftwareIdentifiers().iterator().next());
+        } else {
+            sb.append(d.getDisplayFileName());
+        }
+        return sb.toString();
     }
 }
