@@ -90,7 +90,7 @@ public class ReportTool {
      * @return the list of SARIF rules
      */
     public Collection<SarifRule> convertToSarifRules(List<Dependency> dependencies) {
-        Map<String, SarifRule> rules = new HashMap<>();
+        final Map<String, SarifRule> rules = new HashMap<>();
         for (Dependency d : dependencies) {
             for (Vulnerability v : d.getVulnerabilities()) {
                 if (!rules.containsKey(v.getName())) {
@@ -151,7 +151,7 @@ public class ReportTool {
      * @return the short description
      */
     private String buildShortDescription(Dependency d, Vulnerability vuln) {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append(determineScore(vuln))
                 .append(" severity - ")
                 .append(vuln.getName());
