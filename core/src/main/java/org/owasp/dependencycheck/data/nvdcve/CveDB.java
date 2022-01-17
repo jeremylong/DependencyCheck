@@ -115,6 +115,10 @@ public final class CveDB implements AutoCloseable {
      * Flag indicating if the database is Oracle.
      */
     private boolean isOracle = false;
+    /**
+     * Flag indicating if the database is H2.
+     */
+    private boolean isH2 = false;
 
     /**
      * The enumeration value names must match the keys of the statements in the
@@ -240,6 +244,7 @@ public final class CveDB implements AutoCloseable {
                 ? ResourceBundle.getBundle("data/dbStatements", new Locale(databaseManager.getDatabaseProductName()))
                 : ResourceBundle.getBundle("data/dbStatements");
         isOracle = databaseManager.isOracle();
+        isH2 = databaseManager.isH2Connection();
     }
 
     /**
@@ -1291,7 +1296,7 @@ public final class CveDB implements AutoCloseable {
      * <code>defrag()</code> will de-fragment the database.
      */
     public void defrag() {
-        if (databaseManager.isH2Connection()) {
+        if (isH2) {
             final long start = System.currentTimeMillis();
             try (Connection conn = databaseManager.getConnection();
                     CallableStatement psCompaxt = conn.prepareCall("SHUTDOWN DEFRAG")) {

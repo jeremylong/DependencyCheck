@@ -20,7 +20,7 @@ Copyright (c) 2012 - Jeremy Long
 
     <groupId>org.owasp</groupId>
     <artifactId>dependency-check-parent</artifactId>
-    <version>6.5.4-SNAPSHOT</version>
+    <version>7.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -138,10 +138,8 @@ Copyright (c) 2012 - Jeremy Long
         <spotbugs.maven.plugin.version>4.5.3.0</spotbugs.maven.plugin.version>
         <taglist-maven-plugin.version>2.4</taglist-maven-plugin.version>
         <versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
-
         <jetbrains.annotations.version>23.0.0</jetbrains.annotations.version>
-
-        <com.h2database.version>1.4.199</com.h2database.version>
+        <com.h2database.version>2.0.206</com.h2database.version>
         <commons-cli.version>1.5.0</commons-cli.version>
         <commons-io.version>2.11.0</commons-io.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>

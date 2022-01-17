@@ -34,4 +34,4 @@ INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('apache', 'zo
 CREATE ALIAS update_vulnerability FOR "org.owasp.dependencycheck.data.nvdcve.H2Functions.updateVulnerability";
 CREATE ALIAS insert_software FOR "org.owasp.dependencycheck.data.nvdcve.H2Functions.insertSoftware";
 
-UPDATE Properties SET value='5.0' WHERE ID='version';
+UPDATE Properties SET `value`='5.0' WHERE ID='version';
