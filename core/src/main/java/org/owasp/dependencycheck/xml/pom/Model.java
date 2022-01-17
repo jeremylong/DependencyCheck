@@ -84,6 +84,10 @@ public class Model implements Serializable {
      */
     private final List<License> licenses = new ArrayList<>();
     /**
+     * The list of developers.
+     */
+    private final List<Developer> developers = new ArrayList<>();
+    /**
      * The project URL.
      */
     private String projectURL;
@@ -284,6 +288,24 @@ public class Model implements Serializable {
      */
     public void addLicense(License license) {
         licenses.add(license);
+    }
+
+    /**
+     * Returns the list of developers.
+     *
+     * @return the list of developers
+     */
+    public List<Developer> getDevelopers() {
+        return developers;
+    }
+
+    /**
+     * Adds a new developer to the list of developers.
+     *
+     * @param developer the developer to add
+     */
+    public void addDeveloper(Developer developer) {
+        developers.add(developer);
     }
 
     /**

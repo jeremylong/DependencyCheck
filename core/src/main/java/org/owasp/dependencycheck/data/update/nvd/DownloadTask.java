@@ -130,8 +130,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
                 Thread.sleep(waitTime);
                 LOGGER.info("Download Started for NVD CVE - {}", nvdCveInfo.getId());
                 startDownload = System.currentTimeMillis();
-                //going from 2 to 4 to have 3 download attempts with easier info messages
-                final int downloadAttempts = 4;
+                final int downloadAttempts = 5;
                 for (int x = 2; x <= downloadAttempts && !attemptDownload(url1, x == downloadAttempts); x++) {
                     LOGGER.info("Download Attempt {} for NVD CVE - {}", x, nvdCveInfo.getId());
                     Thread.sleep(waitTime * (x / 2));
