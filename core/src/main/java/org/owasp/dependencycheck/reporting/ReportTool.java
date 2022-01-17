@@ -19,10 +19,8 @@ package org.owasp.dependencycheck.reporting;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
@@ -85,12 +83,18 @@ public class ReportTool {
         return SeverityUtil.estimateCvssV2(severity);
     }
 
+    /**
+     * Creates a list of SARIF rules for the SARIF report.
+     *
+     * @param dependencies the list of dependencies to extract rules from
+     * @return the list of SARIF rules
+     */
     public Collection<SarifRule> convertToSarifRules(List<Dependency> dependencies) {
         Map<String, SarifRule> rules = new HashMap<>();
         for (Dependency d : dependencies) {
             for (Vulnerability v : d.getVulnerabilities()) {
                 if (!rules.containsKey(v.getName())) {
-                    SarifRule r = new SarifRule(v.getName(),
+                    final SarifRule r = new SarifRule(v.getName(),
                             buildShortDescription(d, v),
                             v.getDescription(),
                             v.getSource().name(),
@@ -103,7 +107,7 @@ public class ReportTool {
         return rules.values();
     }
 
-    public String determineScore(Vulnerability vuln) {
+    private String determineScore(Vulnerability vuln) {
         if (vuln.getUnscoredSeverity() != null) {
             if ("0.0".equals(vuln.getUnscoredSeverity())) {
                 return "Unknown";
@@ -134,17 +138,25 @@ public class ReportTool {
                 return "Low";
             case "info":
                 return "Low";
+            default:
+                return "Unknown";
         }
-        return "Unknown";
     }
 
-    public String buildShortDescription(Dependency d, Vulnerability vuln) {
+    /**
+     * Builds the short description for the Sarif format.
+     *
+     * @param d the dependency
+     * @param vuln the vulnerability
+     * @return the short description
+     */
+    private String buildShortDescription(Dependency d, Vulnerability vuln) {
         StringBuilder sb = new StringBuilder();
         sb.append(determineScore(vuln))
                 .append(" severity - ")
                 .append(vuln.getName());
         if (vuln.getCwes() != null && !vuln.getCwes().isEmpty()) {
-            String cwe = vuln.getCwes().getFullCwes().values().iterator().next();
+            final String cwe = vuln.getCwes().getFullCwes().values().iterator().next();
             if (cwe != null && !"NVD-CWE-Other".equals(cwe) && !"NVD-CWE-noinfo".equals(cwe)) {
                 sb.append(" ").append(cwe);
             }
