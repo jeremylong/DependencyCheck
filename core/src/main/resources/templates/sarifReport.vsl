@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0.json",
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
   "version": "2.1.0",
   "runs": [
     {
@@ -7,8 +7,58 @@
         "driver": {
           "name": "dependency-check",
           "version": "$version",
-          "informationUri": "https://jeremylong.github.io/DependencyCheck/"
-        },
+          "informationUri": "https://jeremylong.github.io/DependencyCheck/",
+        "rules": [
+            #foreach($rule in $rpt.convertToSarifRules($dependencies))#if($foreach.count > 1),#end{
+              "id": "$enc.json($rule.id)",
+              "shortDescription": {
+                 "text": "$enc.json($rule.shortDescription)"
+              },
+              "fullDescription": {
+                "text": "$enc.json($rule.fullDescription)"
+              },
+              "help": {
+                "text": "",
+                "markdown": "#if($rule.getSource().equals("NVD"))For more information see [$enc.json($rule.name)](http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($rule.name)).\n
+#elseif($rule.getSource().equals("NPM"))For more information see [NPM-$enc.json($rule.name)](https://www.npmjs.com/advisories/$enc.url($rule.name))\n#end
+\n\n
+If this is a false positive - consider using the HTML report to generate a suppression file. 
+For more information see [How dependency-check works](https://jeremylong.github.io/DependencyCheck/general/internals.html), 
+[How to read the HTML report](https://jeremylong.github.io/DependencyCheck/general/thereport.html), and 
+[Suppressing false positives](https://jeremylong.github.io/DependencyCheck/general/suppression.html).
+"
+              },
+              "properties": {
+                #if($rule.cvssv3BaseSeverity)
+                    "cvssv2_score": $rule.cvssv2Score,
+                    "cvssv2_accessVector": "$enc.json($rule.cvssv2AccessVector)",
+                    "cvssv2_accessComplexity": "$enc.json($rule.cvssv2AccessComplexity)",
+                    "cvssv2_authenticationr": "$enc.json($rule.cvssv2Authentication)",
+                    "cvssv2_confidentialImpact": "$enc.json($rule.cvssv2ConfidentialityImpact)",
+                    "cvssv2_integrityImpact": "$enc.json($rule.cvssv2IntegrityImpact)",
+                    "cvssv2_availabilityImpact": "$enc.json($rule.cvssv2AvailabilityImpact)",
+                    "cvssv2_severity": "$enc.json($rule.cvssv2Severity)",
+
+                #end
+                #if($rule.cvssv3BaseSeverity)
+                    "cvssv3_baseScore": $rule.cvssv3BaseScore,
+                    "cvssv3_attackVector": "$enc.json($rule.cvssv3AttackVector)",
+                    "cvssv3_attackComplexity": "$enc.json($rule.cvssv3AttackComplexity)",
+                    "cvssv3_privilegesRequired": "$enc.json($rule.cvssv3PrivilegesRequired)",
+                    "cvssv3_userInteraction": "$enc.json($rule.cvssv3UserInteraction)",
+                    "cvssv3_scope": "$enc.json($rule.cvssv3Scope)",
+                    "cvssv3_confidentialityImpact": "$enc.json($rule.cvssv3ConfidentialityImpact)",
+                    "cvssv3_integrityImpact": "$enc.json($rule.cvssv3IntegrityImpact)",
+                    "cvssv3_availabilityImpact": "$enc.json($rule.cvssv3AvailabilityImpact)",
+                    "cvssv3_baseSeverity": "$enc.json($rule.cvssv3BaseSeverity)",
+                    #if($rule.cvssv3ExploitabilityScore)"cvssv3_exploitabilityScore": "$enc.json($rule.cvssv3ExploitabilityScore)",#end
+                    #if($rule.cvssv3ImpactScore)"cvssv3_impactScore": "$enc.json($rule.cvssv3ImpactScore)",#end
+                    #if($rule.cvssv3Version)"cvssv3_version": "$enc.json($rule.cvssv3Version)",#end
+                #end
+                "source": "$enc.json($rule.getSource())"
+              }
+            }#end
+          ],
         "properties": {
           "disclaimer": "Dependency-Check is an open source tool performing a best effort analysis of 3rd party dependencies; false positives and false negatives may exist in the analysis performed by the tool. Use of the tool and the reporting provided constitutes acceptance for use in an AS IS condition, and there are NO warranties, implied or otherwise, with regard to the analysis or its use. Any use of the tool and the reporting provided is at the user's risk. In no event shall the copyright holder or OWASP be held liable for any damages whatsoever arising out of or in connection with the use of this tool, the analysis performed, or the resulting report.",
           "nvd": "This report contains data retrieved from the National Vulnerability Database: http://nvd.nist.gov",
@@ -19,6 +69,7 @@
             ,"$enc.json($prop.key)": "$enc.json($prop.value)"
           #end
           }
+        }
       },
       #set($idCounter=1)
       #set($vidCounter=1)
@@ -30,7 +81,7 @@
           },
           #end
           "location": {
-            "uri": "file:///$enc.json($dependency.FilePath)"
+            "uri": "$enc.json($dependency.FilePath)"
           },
           #if(!$dependency.isVirtual())
           "hashes": {
@@ -67,61 +118,29 @@
           #foreach($vuln in $dependency.getVulnerabilities(true))#if($needsComma==1),#end {
           #set($needsComma=1)
           "ruleId": "$enc.json($vuln.name)",
+          "level": "warning",
           "message": {
             "text": "$enc.json($vuln.name)#if($vuln.description) - $enc.json($vuln.description)#end"
           },
-          "level": "error",
           "locations": [
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "file:///$enc.json($dependency.FilePath)",
-                  "index": $depIndex
+                  "uri": "$enc.json($dependency.FilePath)"
+                  ,"index": $depIndex
                 }
               }
+            #if($dependency.getSoftwareIdentifiers() && $dependency.getSoftwareIdentifiers().size()>0)
+                #set($id = $dependency.getSoftwareIdentifiers().iterator().next())
+                ,"logicalLocations": [
+                    {
+                    "fullyQualifiedName": "$enc.json($id.value)"
+                    }
+                ]
+            #end
+              
             }
-          ],
-          "properties": {
-                #if($vuln.UnscoredSeverity)
-                "unscored": "true", 
-                "severity" : "#if($vuln.unscoredSeverity.equals("0.0"))Unknown#else$enc.json($vuln.unscoredSeverity)#end",
-                #end
-                #if($vuln.cvssV2)
-                    "cvssv2_score": $vuln.cvssV2.score,
-                    "cvssv2_accessVector": "$enc.json($vuln.cvssV2.accessVector)",
-                    "cvssv2_accessComplexity": "$enc.json($vuln.cvssV2.accessComplexity)",
-                    "cvssv2_authenticationr": "$enc.json($vuln.cvssV2.authentication)",
-                    "cvssv2_confidentialImpact": "$enc.json($vuln.cvssV2.confidentialityImpact)",
-                    "cvssv2_integrityImpact": "$enc.json($vuln.cvssV2.integrityImpact)",
-                    "cvssv2_availabilityImpact": "$enc.json($vuln.cvssV2.availabilityImpact)",
-                    "cvssv2_severity": "$enc.json($vuln.cvssV2.severity)",
-                    #if($vuln.cvssV2.version)"cvssv2_version": "$enc.json($vuln.cvssV2.version)",#end
-                    #if($vuln.cvssV2.exploitabilityScore)"cvssv2_exploitabilityScore": "$enc.json($vuln.cvssV2.exploitabilityScore)",#end
-                    #if($vuln.cvssV2.impactScore)"cvssv2_impactScore": "$enc.json($vuln.cvssV2.impactScore)",#end
-                    #if($vuln.cvssV2.acInsufInfo)"cvssv2_acInsufInfo": "$enc.json($vuln.cvssV2.acInsufInfo)",#end
-                    #if($vuln.cvssV2.obtainAllPrivilege)"cvssv2_obtainAllPrivilege": "$enc.json($vuln.cvssV2.obtainAllPrivilege)",#end
-                    #if($vuln.cvssV2.obtainUserPrivilege)"cvssv2_obtainUserPrivilege": "$enc.json($vuln.cvssV2.obtainUserPrivilege)",#end
-                    #if($vuln.cvssV2.obtainOtherPrivilege)"cvssv2_obtainOtherPrivilege": "$enc.json($vuln.cvssV2.obtainOtherPrivilege)",#end
-                    #if($vuln.cvssV2.userInteractionRequired)"cvssv2_userInteractionRequired": "$enc.json($vuln.cvssV2.userInteractionRequired)",#end
-
-                #end
-                #if($vuln.cvssV3)
-                    "cvssv3_baseScore": $vuln.cvssV3.baseScore,
-                    "cvssv3_attackVector": "$enc.json($vuln.cvssV3.attackVector)",
-                    "cvssv3_attackComplexity": "$enc.json($vuln.cvssV3.attackComplexity)",
-                    "cvssv3_privilegesRequired": "$enc.json($vuln.cvssV3.privilegesRequired)",
-                    "cvssv3_userInteraction": "$enc.json($vuln.cvssV3.userInteraction)",
-                    "cvssv3_scope": "$enc.json($vuln.cvssV3.scope)",
-                    "cvssv3_confidentialityImpact": "$enc.json($vuln.cvssV3.confidentialityImpact)",
-                    "cvssv3_integrityImpact": "$enc.json($vuln.cvssV3.integrityImpact)",
-                    "cvssv3_availabilityImpact": "$enc.json($vuln.cvssV3.availabilityImpact)",
-                    "cvssv3_baseSeverity": "$enc.json($vuln.cvssV3.baseSeverity)",
-                    #if($vuln.cvssV3.exploitabilityScore)"cvssv3_exploitabilityScore": "$enc.json($vuln.cvssV3.exploitabilityScore)",#end
-                    #if($vuln.cvssV3.impactScore)"cvssv3_impactScore": "$enc.json($vuln.cvssV3.impactScore)",#end
-                    #if($vuln.cvssV3.version)"cvssv3_version": "$enc.json($vuln.cvssV3.version)",#end
-                #end
-                "source": "$enc.json($vuln.getSource().name())"
-            }
+          ]
           }#end
         #end
       ]

@@ -17,6 +17,12 @@
  */
 package org.owasp.dependencycheck.reporting;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.Identifier;
@@ -76,4 +82,92 @@ public class ReportTool {
     public float estimateSeverity(String severity) {
         return SeverityUtil.estimateCvssV2(severity);
     }
+
+    /**
+     * Creates a list of SARIF rules for the SARIF report.
+     *
+     * @param dependencies the list of dependencies to extract rules from
+     * @return the list of SARIF rules
+     */
+    public Collection<SarifRule> convertToSarifRules(List<Dependency> dependencies) {
+        final Map<String, SarifRule> rules = new HashMap<>();
+        for (Dependency d : dependencies) {
+            for (Vulnerability v : d.getVulnerabilities()) {
+                if (!rules.containsKey(v.getName())) {
+                    final SarifRule r = new SarifRule(v.getName(),
+                            buildShortDescription(d, v),
+                            v.getDescription(),
+                            v.getSource().name(),
+                            v.getCvssV2(),
+                            v.getCvssV3());
+                    rules.put(v.getName(), r);
+                }
+            }
+        }
+        return rules.values();
+    }
+
+    private String determineScore(Vulnerability vuln) {
+        if (vuln.getUnscoredSeverity() != null) {
+            if ("0.0".equals(vuln.getUnscoredSeverity())) {
+                return "Unknown";
+            } else {
+                return normalizeSeverity(vuln.getUnscoredSeverity().toLowerCase());
+            }
+        } else if (vuln.getCvssV3() != null && vuln.getCvssV3().getBaseSeverity() != null) {
+            return normalizeSeverity(vuln.getCvssV3().getBaseSeverity().toLowerCase());
+        } else if (vuln.getCvssV2() != null && vuln.getCvssV2().getSeverity() != null) {
+            return normalizeSeverity(vuln.getCvssV2().getSeverity());
+        }
+        return "Unknown";
+    }
+
+    private String normalizeSeverity(String sev) {
+        switch (sev) {
+            case "critical":
+                return "Critical";
+            case "high":
+                return "High";
+            case "medium":
+                return "Medium";
+            case "moderate":
+                return "Medium";
+            case "low":
+                return "Low";
+            case "informational":
+                return "Low";
+            case "info":
+                return "Low";
+            default:
+                return "Unknown";
+        }
+    }
+
+    /**
+     * Builds the short description for the Sarif format.
+     *
+     * @param d the dependency
+     * @param vuln the vulnerability
+     * @return the short description
+     */
+    private String buildShortDescription(Dependency d, Vulnerability vuln) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(determineScore(vuln))
+                .append(" severity - ")
+                .append(vuln.getName());
+        if (vuln.getCwes() != null && !vuln.getCwes().isEmpty()) {
+            final String cwe = vuln.getCwes().getFullCwes().values().iterator().next();
+            if (cwe != null && !"NVD-CWE-Other".equals(cwe) && !"NVD-CWE-noinfo".equals(cwe)) {
+                sb.append(" ").append(cwe);
+            }
+        }
+        sb.append(" vulnerability in ");
+        if (d.getSoftwareIdentifiers() != null && !d.getSoftwareIdentifiers().isEmpty()) {
+            sb.append(d.getSoftwareIdentifiers().iterator().next());
+        } else {
+            sb.append(d.getDisplayFileName());
+        }
+        return sb.toString();
+    }
+
 }
