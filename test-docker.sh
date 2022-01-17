@@ -32,6 +32,9 @@ CACHE_DIRECTORY="$OWASPDC_DIRECTORY/data/cache"
 if [ ! -d "$DATA_DIRECTORY" ]; then
     echo "Initially creating persistent directory: $DATA_DIRECTORY"
     mkdir -p "$DATA_DIRECTORY"
+else #temporary else - to fix upgrade to 7.0
+    rm -rf "$DATA_DIRECTORY"
+    mkdir -p "$DATA_DIRECTORY"
 fi
 
 if [ ! -d "$REPORT_DIRECTORY" ]; then
