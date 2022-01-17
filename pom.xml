@@ -126,7 +126,6 @@ Copyright (c) 2012 - Jeremy Long
         <reporting.checkstyle-plugin.version>3.1.2</reporting.checkstyle-plugin.version>
         <reporting.checkstyle.tool.version>9.2.1</reporting.checkstyle.tool.version>
         <doxia-module-markdown.version>1.11.1</doxia-module-markdown.version>
-        
         <maven-antrun-plugin.version>3.0.0</maven-antrun-plugin.version>
         <maven-dependency-plugin.version>3.2.0</maven-dependency-plugin.version>
         <maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
