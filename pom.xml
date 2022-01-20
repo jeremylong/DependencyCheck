@@ -112,7 +112,7 @@ Copyright (c) 2012 - Jeremy Long
     </licenses>
     <properties>
         <!--reproducible build-->
-        <project.build.outputTimestamp>1</project.build.outputTimestamp>
+        <project.build.outputTimestamp>${git.commit.time}</project.build.outputTimestamp>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <github.global.server>github</github.global.server>
@@ -461,6 +461,36 @@ Copyright (c) 2012 - Jeremy Long
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>4.9.10</version>
+                <executions>
+                    <execution>
+                        <id>git-info</id>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                    <dateFormat>yyyy-MM-dd'T'HH:mm:ss'Z'</dateFormat>
+                    <dateFormatTimeZone>Zulu</dateFormatTimeZone>
+                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    <gitDescribe>
+                        <tags>true</tags>
+                    </gitDescribe>
+                    <commitIdGenerationMode>full</commitIdGenerationMode>
+                    <excludeProperties>
+                        <excludeProperty>git.build.time</excludeProperty>
+                        <excludeProperty>git.build.user.*</excludeProperty>
+                        <excludeProperty>git.build.host</excludeProperty>
+                        <excludeProperty>git.commit.user.*</excludeProperty>
+                    </excludeProperties>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-artifact-plugin</artifactId>
                 <version>3.2.0</version>
@@ -471,6 +501,7 @@ Copyright (c) 2012 - Jeremy Long
                         </goals>
                         <phase>verify</phase>
                         <configuration>
+                            <outputTimestamp>${git.commit.time}</outputTimestamp>
                             <reproducible>true</reproducible>
                         </configuration>
                     </execution>
