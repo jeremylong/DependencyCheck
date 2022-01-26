@@ -559,7 +559,9 @@ public class Engine implements FileFilter, AutoCloseable {
 
                                 if (DependencyBundlingAnalyzer.firstPathIsShortest(existing.getFilePath(), dependency.getFilePath())) {
                                     DependencyBundlingAnalyzer.mergeDependencies(existing, dependency, null);
-                                    return null;
+
+                                    //return null;
+                                    return existing;
                                 } else {
                                     //Merging dependency<-existing could be complicated. Instead analyze them seperately
                                     //and possibly merge them at the end.
@@ -567,7 +569,8 @@ public class Engine implements FileFilter, AutoCloseable {
                                 }
 
                             } else { //somehow we scanned the same file twice?
-                                return null;
+                                //return null;
+                                return existing;
                             }
                             break;
                         }
