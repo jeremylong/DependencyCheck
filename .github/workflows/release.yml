@@ -94,6 +94,7 @@ jobs:
             **/target/*.pom
             ant/target/*.zip
             cli/target/*.zip
+            target/*.buildinfo
       - name: Archive Site
         id: archive-site
         uses: actions/upload-artifact@v2
@@ -226,6 +227,16 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ant/target/dependency-check-ant-${{env.VERSION}}-release.zip.asc
           asset_name: dependency-check-ant-${{env.VERSION}}-release.zip.asc
+          asset_content_type: text/plain
+      - name: Upload buildinfo
+        id: upload-release-buildinfo
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: target/dependency-check-parent-${{env.VERSION}}.buildinfo
+          asset_name: dependency-check-parent-${{env.VERSION}}.buildinfo
           asset_content_type: text/plain
 
   publish:
