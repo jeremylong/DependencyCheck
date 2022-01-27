@@ -58,15 +58,6 @@ docker run --rm \
     --volume "$DATA_DIRECTORY":/usr/share/dependency-check/data:z \
     --volume "$REPORT_DIRECTORY":/report:z \
     owasp/dependency-check:$VERSION \
-    --purge
-
-docker run --rm \
-    -e user=$USER \
-    -u $(id -u ${USER}):$(id -g ${USER}) \
-    --volume $(pwd):/src:z \
-    --volume "$DATA_DIRECTORY":/usr/share/dependency-check/data:z \
-    --volume "$REPORT_DIRECTORY":/report:z \
-    owasp/dependency-check:$VERSION \
     --scan /src \
     --format "JSON" \
     --project "test scan" \
