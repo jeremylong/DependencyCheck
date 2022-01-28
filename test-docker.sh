@@ -64,7 +64,7 @@ docker run --rm \
     --out /report \
     --log /report/odc.log \
     --cveDownloadWait 20000 \
-    --cveStartYear 2020
+    --cveStartYear 2021
 
 # return to original working directory
 cd -
