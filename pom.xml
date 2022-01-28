@@ -136,7 +136,7 @@ Copyright (c) 2012 - Jeremy Long
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <spotbugs.version>4.5.3</spotbugs.version>
         <spotbugs.maven.plugin.version>4.5.3.0</spotbugs.maven.plugin.version>
-        <taglist-maven-plugin.version>2.4</taglist-maven-plugin.version>
+        <taglist-maven-plugin.version>3.0.0</taglist-maven-plugin.version>
         <versions-maven-plugin.version>2.9.0</versions-maven-plugin.version>
         <jetbrains.annotations.version>23.0.0</jetbrains.annotations.version>
         <com.h2database.version>2.1.210</com.h2database.version>
