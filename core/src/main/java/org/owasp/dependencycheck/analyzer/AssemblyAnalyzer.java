@@ -376,12 +376,14 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             LOGGER.warn("An error occurred with the .NET AssemblyAnalyzer;\n"
+                    + "dependency-check requires dotnet 6.0 core to be installed to analyze assemblies;\n"
                     + "this can be ignored unless you are scanning .NET DLLs. Please see the log for more details.");
             LOGGER.debug("Could not execute GrokAssembly {}", e.getMessage());
             setEnabled(false);
             throw new InitializationException("An error occurred with the .NET AssemblyAnalyzer", e);
         } catch (IOException e) {
             LOGGER.warn("An error occurred with the .NET AssemblyAnalyzer;\n"
+                    + "dependency-check requires dotnet 6.0 core to be installed to analyze assemblies;\n"
                     + "this can be ignored unless you are scanning .NET DLLs. Please see the log for more details.");
             LOGGER.debug("Could not execute GrokAssembly {}", e.getMessage());
             setEnabled(false);
