@@ -999,7 +999,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * {@link #generate(org.apache.maven.doxia.sink.Sink, java.util.Locale)}
      * instead.
      */
-    @Override
     @Deprecated
     public final void generate(@SuppressWarnings("deprecation") org.codehaus.doxia.sink.Sink sink, Locale locale) throws MavenReportException {
         generate((Sink) sink, locale);
