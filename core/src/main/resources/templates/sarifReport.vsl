@@ -29,7 +29,7 @@ For more information see [How dependency-check works](https://jeremylong.github.
 "
               },
               "properties": {
-                #if($rule.cvssv3BaseSeverity)
+                #if($rule.cvssv2Severity)
                     "cvssv2_score": $rule.cvssv2Score,
                     "cvssv2_accessVector": "$enc.json($rule.cvssv2AccessVector)",
                     "cvssv2_accessComplexity": "$enc.json($rule.cvssv2AccessComplexity)",
