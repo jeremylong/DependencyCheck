@@ -142,6 +142,8 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
                     failed = true;
                     if (ex.getMessage() != null && ex.getMessage().endsWith("401")) {
                         throw new AnalysisException("Invalid credentails provided for OSS Index", ex);
+                    } else if (ex.getMessage() != null && ex.getMessage().endsWith("429")) {
+                        throw new AnalysisException("OSS Index rate limit exceeded", ex);
                     }
                     LOG.debug("Error requesting component reports", ex);
                     throw new AnalysisException("Failed to request component-reports", ex);
