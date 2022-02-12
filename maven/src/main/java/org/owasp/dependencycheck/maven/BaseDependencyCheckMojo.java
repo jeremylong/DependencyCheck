@@ -2414,9 +2414,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         for (Dependency d : dependencies) {
             boolean addName = true;
             for (Vulnerability v : d.getVulnerabilities()) {
-            	final float cvssV2 = v.getCvssV2() != null ? v.getCvssV2().getScore() : -1;
-            	final float cvssV3 = v.getCvssV3() != null ? v.getCvssV3().getBaseScore() : -1;
-            	final float unscoredCvss = v.getUnscoredSeverity() != null ? SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) : -1;
+                final float cvssV2 = v.getCvssV2() != null ? v.getCvssV2().getScore() : -1;
+                final float cvssV3 = v.getCvssV3() != null ? v.getCvssV3().getBaseScore() : -1;
+                final float unscoredCvss = v.getUnscoredSeverity() != null ? SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) : -1;
 
                 if (failBuildOnAnyVulnerability || cvssV2 >= failBuildOnCVSS
                         || cvssV3 >= failBuildOnCVSS
@@ -2425,13 +2425,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         || (failBuildOnCVSS <= 0.0f)) {
                     String name = v.getName();
                     if (cvssV3 >= 0.0f) {
-                    	name += "(" + cvssV3 + ")";
+                        name += "(" + cvssV3 + ")";
                     } else if (cvssV2 >= 0.0f) {
-                    	name += "(" + cvssV2 + ")";
+                        name += "(" + cvssV2 + ")";
                     } else if (unscoredCvss >= 0.0f) {
-                    	name += "(" + unscoredCvss + ")";
+                        name += "(" + unscoredCvss + ")";
                     }
-					if (addName) {
+                    if (addName) {
                         addName = false;
                         ids.append(NEW_LINE).append(d.getFileName()).append(": ");
                         ids.append(name);
