@@ -151,6 +151,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             "bundle-vendor",
             "include-resource",
             "embed-dependency",
+            "embedded-artifacts",
             "ipojo-components",
             "ipojo-extension",
             "plugin-dependencies",
