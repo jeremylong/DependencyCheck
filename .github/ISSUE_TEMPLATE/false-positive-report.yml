@@ -19,8 +19,8 @@ body:
     id: cpe
     attributes:
       label: CPE
-      description: The Common Platform enumeration (CPE) as identified in the HTML Report.
-      placeholder: ex. cpe:2.3:a:apache:log4j:2.12.1:*:*:*:*:*:*:*  
+      description: The Common Platform enumeration (CPE) as identified in the HTML Report. Please put backtic characters around the CPE to ensure it displays correctly.
+      placeholder: ex. `cpe:2.3:a:apache:log4j:2.12.1:*:*:*:*:*:*:*`
     validations:
       required: true
   - type: input
@@ -51,7 +51,7 @@ body:
       description: The version of dependency-check used.
       placeholder: ex. 6.5.3
     validations:
-      required: false
+      required: true
   - type: textarea
     id: description
     attributes:

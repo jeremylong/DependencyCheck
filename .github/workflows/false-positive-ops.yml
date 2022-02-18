@@ -1,0 +1,13 @@
+name: false positive ops
+
+on:
+  issues:
+    types: [opened, edited, reopened]
+
+jobs:
+  issue:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'FP Report') 
+    steps:
+      - name: issue context
+        run: echo "$GITHUB_CONTEXT"
