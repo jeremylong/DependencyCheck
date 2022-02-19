@@ -133,6 +133,12 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INITIAL;
 
     /**
+     * Make java compiler happy
+     */
+    public ArchiveAnalyzer() {
+    }
+
+    /**
      * Initializes the analyzer with the configured settings.
      *
      * @param settings the configured settings to use

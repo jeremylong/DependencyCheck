@@ -112,34 +112,34 @@ Copyright (c) 2012 - Jeremy Long
     </licenses>
     <properties>
         <!--reproducible build-->
-        <project.build.outputTimestamp>1</project.build.outputTimestamp>
+        <project.build.outputTimestamp>${git.commit.time}</project.build.outputTimestamp>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <github.global.server>github</github.global.server>
         
         <apache.lucene.version>8.11.1</apache.lucene.version>
         <apache.ant.version>1.10.12</apache.ant.version>
-        <slf4j.version>1.7.33</slf4j.version>
+        <slf4j.version>1.7.36</slf4j.version>
         <logback.version>1.2.10</logback.version>
         <!-- Note that Maven will use classes from the distro, ignoring declared dependencies for Maven core... -->
         <maven.api.version>3.1.0</maven.api.version>
         <reporting.checkstyle-plugin.version>3.1.2</reporting.checkstyle-plugin.version>
-        <reporting.checkstyle.tool.version>9.2.1</reporting.checkstyle.tool.version>
+        <reporting.checkstyle.tool.version>9.3</reporting.checkstyle.tool.version>
         <doxia-module-markdown.version>1.11.1</doxia-module-markdown.version>
         <maven-antrun-plugin.version>3.0.0</maven-antrun-plugin.version>
         <maven-dependency-plugin.version>3.2.0</maven-dependency-plugin.version>
         <maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
         <!-- upgrading beyond 2.5 breaks maven site-->
         <maven-jxr-plugin.version>2.5</maven-jxr-plugin.version>
-        <maven-project-info-reports-plugin.version>3.1.2</maven-project-info-reports-plugin.version>
+        <maven-project-info-reports-plugin.version>3.2.1</maven-project-info-reports-plugin.version>
         <maven-surefire-report-plugin.version>2.22.2</maven-surefire-report-plugin.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <spotbugs.version>4.5.3</spotbugs.version>
         <spotbugs.maven.plugin.version>4.5.3.0</spotbugs.maven.plugin.version>
-        <taglist-maven-plugin.version>2.4</taglist-maven-plugin.version>
-        <versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
+        <taglist-maven-plugin.version>3.0.0</taglist-maven-plugin.version>
+        <versions-maven-plugin.version>2.9.0</versions-maven-plugin.version>
         <jetbrains.annotations.version>23.0.0</jetbrains.annotations.version>
-        <com.h2database.version>2.0.206</com.h2database.version>
+        <com.h2database.version>2.1.210</com.h2database.version>
         <commons-cli.version>1.5.0</commons-cli.version>
         <commons-io.version>2.11.0</commons-io.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
@@ -150,13 +150,13 @@ Copyright (c) 2012 - Jeremy Long
         <hamcrest-core.version>2.2</hamcrest-core.version>
         <jackson.version>2.13.1</jackson.version>
         <jmockit.version>1.49</jmockit.version>
-        <mockito-core.version>4.2.0</mockito-core.version>
+        <mockito-core.version>4.3.1</mockito-core.version>
         <jsoup.version>1.14.3</jsoup.version>
         <commons-compress.version>1.21</commons-compress.version>
         <org.apache.maven.shared.file-management.version>3.0.0</org.apache.maven.shared.file-management.version>
         <maven-plugin-testing-harness.version>3.3.0</maven-plugin-testing-harness.version>
-        <maven-plugin-annotations.version>3.6.2</maven-plugin-annotations.version>
-        <maven-reporting-api.version>3.0</maven-reporting-api.version>
+        <maven-plugin-annotations.version>3.6.4</maven-plugin-annotations.version>
+        <maven-reporting-api.version>3.1.0</maven-reporting-api.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <org.apache.velocity.version>2.3</org.apache.velocity.version>
         <plexus-sec-dispatcher.version>1.4</plexus-sec-dispatcher.version>
@@ -222,7 +222,7 @@ Copyright (c) 2012 - Jeremy Long
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.9.0</version>
+                    <version>3.10.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -242,7 +242,7 @@ Copyright (c) 2012 - Jeremy Long
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>animal-sniffer-maven-plugin</artifactId>
-                    <version>1.20</version>
+                    <version>1.21</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -277,7 +277,7 @@ Copyright (c) 2012 - Jeremy Long
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.8</version>
+                    <version>1.6.11</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -294,7 +294,7 @@ Copyright (c) 2012 - Jeremy Long
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.10.0</version>
+                    <version>3.11.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -461,6 +461,36 @@ Copyright (c) 2012 - Jeremy Long
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>4.9.10</version>
+                <executions>
+                    <execution>
+                        <id>git-info</id>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                    <dateFormat>yyyy-MM-dd'T'HH:mm:ss'Z'</dateFormat>
+                    <dateFormatTimeZone>Zulu</dateFormatTimeZone>
+                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    <gitDescribe>
+                        <tags>true</tags>
+                    </gitDescribe>
+                    <commitIdGenerationMode>full</commitIdGenerationMode>
+                    <excludeProperties>
+                        <excludeProperty>git.build.time</excludeProperty>
+                        <excludeProperty>git.build.user.*</excludeProperty>
+                        <excludeProperty>git.build.host</excludeProperty>
+                        <excludeProperty>git.commit.user.*</excludeProperty>
+                    </excludeProperties>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-artifact-plugin</artifactId>
                 <version>3.2.0</version>
@@ -471,6 +501,7 @@ Copyright (c) 2012 - Jeremy Long
                         </goals>
                         <phase>verify</phase>
                         <configuration>
+                            <outputTimestamp>${git.commit.time}</outputTimestamp>
                             <reproducible>true</reproducible>
                         </configuration>
                     </execution>
@@ -961,7 +992,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>org.mock-server</groupId>
                 <artifactId>mockserver-junit-rule</artifactId>
-                <version>5.11.2</version>
+                <version>5.12.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
