@@ -26,6 +26,13 @@
         <notes><![CDATA[
             only log4j-core is vulnerable
             ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.logging\.log4j/log4j\-slf4j\-impl@.*$</packageUrl>
+        <cpe>cpe:/a:apache:log4j</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            only log4j-core is vulnerable
+            ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.logging\.log4j/log4j\-(api|web)@.*$</packageUrl>
         <cve>CVE-2021-44228</cve>
         <cve>CVE-2021-44832</cve>
