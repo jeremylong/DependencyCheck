@@ -422,5 +422,14 @@
         <add>
             <evidence type="product" source="hint analyzer" name="product" value="legion-of-the-bouncy-castle-fips-java" confidence="HIGHEST"/>
         </add>
-    </hint>  
+    </hint>
+    <hint>
+        <given>
+            <evidence type="product" source="pom" name="name" value="PostgreSQL JDBC Driver"/>
+        </given>
+        <add>
+            <evidence type="product" source="hint analyzer" name="product" value="postgresql_jdbc_driver" confidence="HIGHEST"/>
+            <evidence type="product" source="hint analyzer" name="product" value="pgjdbc" confidence="HIGHEST"/>
+        </add>
+    </hint>
 </hints>
