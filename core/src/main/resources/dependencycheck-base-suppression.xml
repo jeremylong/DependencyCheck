@@ -4805,4 +4805,11 @@
         <packageUrl regex="true">^pkg:maven/org\.apache\.logging\.log4j/log4j\-to\-slf4j@.*$</packageUrl>
         <cpe>cpe:/a:apache:log4j</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive as per #4077
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.itextpdf/pdfrender@.*$</packageUrl>
+        <cpe>cpe:/a:itextpdf:itext</cpe>
+    </suppress>
 </suppressions>
