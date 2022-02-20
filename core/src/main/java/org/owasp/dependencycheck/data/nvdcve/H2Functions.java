@@ -195,8 +195,8 @@ public final class H2Functions {
 
         final SimpleResultSet ret = new SimpleResultSet();
         ret.addColumn("id", Types.INTEGER, 10, 0);
-        String url = conn.getMetaData().getURL();
-        if (url.equals("jdbc:columnlist:connection")) {
+        final String url = conn.getMetaData().getURL();
+        if ("jdbc:columnlist:connection".equals(url)) {
             // Virtual Table Functions get called multiple times by H2
             // JDBC URL jdbc:columnlist:connection indicates that H2 only wants to discover
             // the metadata (list of result columns) of the result and is not interested in the actual
