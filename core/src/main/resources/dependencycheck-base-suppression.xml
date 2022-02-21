@@ -24,6 +24,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+            fp per #4097
+            ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus\-hibernate\-validator@.*$</packageUrl>
+        <cpe>cpe:/a:redhat:hibernate_validator</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
             only log4j-core is vulnerable
             ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.logging\.log4j/log4j\-slf4j\-impl@.*$</packageUrl>
