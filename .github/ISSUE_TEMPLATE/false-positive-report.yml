@@ -1,0 +1,61 @@
+name: False Positive Report
+description: File a false positive report
+title: "[FP]: "
+labels: ["FP Report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        False Positive identified.
+  - type: input
+    id: purl
+    attributes:
+      label: Package URl
+      description: The identified package URL as identified in the HTML Report.
+      placeholder: ex. pkg:maven/org.apache.logging.log4j/log4j-slf4j-impl@2.12.1 
+    validations:
+      required: true
+  - type: input
+    id: cpe
+    attributes:
+      label: CPE
+      description: The Common Platform enumeration (CPE) as identified in the HTML Report. Please put backtic characters around the CPE to ensure it displays correctly.
+      placeholder: ex. `cpe:2.3:a:apache:log4j:2.12.1:*:*:*:*:*:*:*`
+    validations:
+      required: true
+  - type: input
+    id: cve
+    attributes:
+      label: CVE
+      description: The vulnerability name as identified in the HTML Report. This is optional and may not be needed as most FP reports are due to an incorrect CPE.
+      placeholder: ex. CVE-2021-44228
+    validations:
+      required: false
+  - type: dropdown
+    id: client
+    attributes:
+      label: ODC Integration
+      description: What ODC integration was used?
+      options:
+      - label: Maven Plugin
+      - label: Gradle Plugin
+      - label: Ant Task
+      - label: CLI
+      - label: Docker
+    validations:
+      required: false
+  - type: input
+    id: odc_version
+    attributes:
+      label: ODC Version
+      description: The version of dependency-check used.
+      placeholder: ex. 6.5.3
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Additional information regarding the false positive report.
+    validations:
+      required: false

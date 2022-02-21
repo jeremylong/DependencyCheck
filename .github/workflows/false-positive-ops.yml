@@ -1,0 +1,283 @@
+name: false positive ops
+
+on:
+  issues:
+    types: [opened, edited, reopened]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  issue:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'FP Report') 
+    steps:
+      - name: Remove Labels
+        if: contains(github.event.issue.labels.*.name, 'pending more information')
+        uses: actions/github-script@v6
+        with:
+          script: |
+              github.rest.issues.removeLabel({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: 'pending more information'
+              })
+      - uses: actions/checkout@v2
+        with:
+          path: odc
+      - name: Parse False Positive Issue
+        uses: stefanbuck/github-issue-parser@v2
+        id: issue-parser
+        with:
+          template-path: odc/.github/ISSUE_TEMPLATE/false-positive-report.yml
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - name: Initialize npm
+        run: |
+          npm init -y
+          npm install packageurl-js
+      - name: Parse Package URL
+        id: purl-parser
+        uses: actions/github-script@v6
+        env:
+          PURL: ${{ fromJSON(steps.issue-parser.outputs.jsonString).purl }}
+        with:
+          script: |
+            try {
+                const { PackageURL } = require('packageurl-js');
+                const pkg = PackageURL.fromString(process.env.PURL);
+                console.log(pkg);
+                return pkg;
+            } catch (ex) {
+              console.log(ex);
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: 'Error parsing package url: ' + ex + '\n\nPlease correct the package URL - consider copying the package url from the HTML report.'
+              })
+              github.rest.issues.addLabels({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                labels: ['pending more information']
+              })
+              throw new Error('Invalid package url');
+            }
+      - name: Setup maven fp-project
+        if: ${{ fromJSON(steps.purl-parser.outputs.result).type == 'maven' }}
+        env:
+          GROUPID: ${{ fromJSON(steps.purl-parser.outputs.result).namespace }}
+          ARTIFACTID: ${{ fromJSON(steps.purl-parser.outputs.result).name }}
+          VERSION: ${{ fromJSON(steps.purl-parser.outputs.result).version }}
+        run: |
+          ver=$(curl -s https://jeremylong.github.io/DependencyCheck/current.txt)
+          mkdir ./fp-project
+          cp ${{github.workspace}}/odc/.github/workflows/files/maven-pom.start ./fp-project/pom.xml
+          echo -n $ver >> ./fp-project/pom.xml
+          cat ${{github.workspace}}/odc/.github/workflows/files/maven-pom.middle >> ./fp-project/pom.xml
+          echo "<dependency>" >> ./fp-project/pom.xml
+          echo "   <groupId>$GROUPID</groupId>" >> ./fp-project/pom.xml
+          echo "   <artifactId>$ARTIFACTID</artifactId>" >> ./fp-project/pom.xml
+          echo "   <version>$VERSION</version>" >> ./fp-project/pom.xml
+          echo "</dependency>" >> ./fp-project/pom.xml
+          cat ${{github.workspace}}/odc/.github/workflows/files/maven-pom.end >> ./fp-project/pom.xml
+          cd ./fp-project
+          ## not ideal as verify would be better then using the docker image...
+          ##mvn verify
+          mvn dependency:copy-dependencies --no-transfer-progress --batch-mode 
+          cd ..
+      - name: Setup npm fp-project
+        if: ${{ fromJSON(steps.purl-parser.outputs.result).type == 'npm' }}
+        env:
+          PACKAGE: ${{ fromJSON(steps.purl-parser.outputs.result).name }}@${{ fromJSON(steps.purl-parser.outputs.result).version }}
+        run: |
+          mkdir ./fp-project
+          cd ./fp-project
+          npm init -y
+          npm install "$PACKAGE"
+          cd ..
+      - name: Setup dotnet
+        if: ${{ fromJSON(steps.purl-parser.outputs.result).type == 'nuget' }}
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+      - name: Setup dotnet fp-project
+        if: ${{ fromJSON(steps.purl-parser.outputs.result).type == 'nuget' }}
+        env:
+          PACKAGE: ${{ fromJSON(steps.purl-parser.outputs.result).name }}
+          VERSION: ${{ fromJSON(steps.purl-parser.outputs.result).version }}
+        run: |
+          dotnet new classlib --language C# --name fp-project --no-update-check 
+          cd fp-project
+          dotnet add package "$PACKAGE" --version "$VERSION"
+          dotnet publish
+          cd ..
+      - name: "Check for setup complete"
+        uses: andstor/file-existence-action@v1
+        id: check_files
+        with:
+          files: "./fp-project"
+      - name: Run ODC
+        if: steps.check_files.outputs.files_exists == 'true'
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'fp-test'
+          path: './fp-project'
+          format: 'HTML'  
+          args: >
+            --failOnCVSS 11
+            --enableExperimental
+      - name: Upload FP Report
+        if: steps.check_files.outputs.files_exists == 'true'
+        uses: actions/upload-artifact@master
+        with:
+           name: FP Report
+           path: ${{github.workspace}}/reports
+      - name: Comment on maven issue
+        if: ${{ fromJSON(steps.purl-parser.outputs.result).type == 'maven' }}
+        uses: actions/github-script@v6
+        env:
+          GROUPID: ${{ fromJSON(steps.purl-parser.outputs.result).namespace }}
+          ARTIFACTID: ${{ fromJSON(steps.purl-parser.outputs.result).name }}
+          VERSION: ${{ fromJSON(steps.purl-parser.outputs.result).version }}
+          TYPE: ${{ fromJSON(steps.purl-parser.outputs.result).type }}
+          CPE: ${{ fromJSON(steps.issue-parser.outputs.jsonString).cpe }}
+        with:
+          script: |
+            var namespace = process.env.GROUPID;
+            var name = process.env.ARTIFACTID;
+            var packageType = process.env.TYPE;
+            var purl = '^pkg:' + packageType;
+            if(namespace !== null && namespace !== '') {
+                purl += '/' + namespace.replaceAll('.','\\.');
+            }
+            if(name !== null && name !== '') {
+                purl += '/' + name.replaceAll('.','\\.');
+            }
+            purl += '@.*$';
+            var cpe = process.env.CPE.split(':');
+            var matchCpe;
+            if (cpe[1] == '2.3') {
+               matchcpe = 'cpe:/a:' + cpe[3] + ':' + cpe[4];
+            } else {
+               matchcpe = 'cpe:/a:' + cpe[2] + ':' + cpe[3];
+            }
+            
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Maven Coordinates\n\n```xml\n<dependency>\n   <groupId>' + process.env.GROUPID + '</groupId>\n   <artifactId>' + process.env.ARTIFACTID + '</artifactId>\n   <version>' + process.env.VERSION + '</version>\n</dependency>\n```\n\n' +
+                    'Suppression rule:\n```xml\n' +
+                    '<suppress base="true">\n' +
+                    '   <notes><![CDATA[\n' +
+                    '   FP per issue #' + context.issue.number + '\n' +
+                    '   ]]></notes>\n' +
+                    '   <packageUrl regex="true">' + purl + '</packageUrl>\n' +
+                    '   <cpe>' + matchcpe + '</cpe>\n' +
+                    '</suppress>\n```\n\n' +
+                    'Link to test results: ' + context.serverUrl + '/' + context.repo.owner + '/' + context.repo.repo + '/actions/runs/' + context.runId
+            })
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['maven']
+            })
+      - name: Comment on npm issue
+        if: ${{ fromJSON(steps.purl-parser.outputs.result).type == 'npm' }}
+        uses: actions/github-script@v6
+        env:
+          NAME: ${{ fromJSON(steps.purl-parser.outputs.result).name }}
+          VERSION: ${{ fromJSON(steps.purl-parser.outputs.result).version }}
+          TYPE: ${{ fromJSON(steps.purl-parser.outputs.result).type }}
+          CPE: ${{ fromJSON(steps.issue-parser.outputs.jsonString).cpe }}
+        with:
+          script: |
+            var name = process.env.NAME;
+            var packageType = process.env.TYPE;
+            var purl = '^pkg:' + packageType;
+            if(name !== null && name !== '') {
+                purl += '/' + name.replaceAll('.','\\.');
+            }
+            purl += '@.*$';
+            var cpe = process.env.CPE.split(':');
+            console.log(cpe);
+            var matchCpe;
+            if (cpe[1] == '2.3') {
+               matchcpe = 'cpe:/a:' + cpe[3] + ':' + cpe[4];
+            } else {
+               matchcpe = 'cpe:/a:' + cpe[2] + ':' + cpe[3];
+            }
+            
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Npm Coordinates\n\n```shell\nnpm -i ' + process.env.NAME + '@' + process.env.VERSION + '\n```\n\n' +
+                    'Suppression rule:\n```xml\n' +
+                    '<suppress base="true">\n' +
+                    '   <notes><![CDATA[\n' +
+                    '   FP per issue #' + context.issue.number + '\n' +
+                    '   ]]></notes>\n' +
+                    '   <packageUrl regex="true">' + purl + '</packageUrl>\n' +
+                    '   <cpe>' + matchcpe + '</cpe>\n' +
+                    '</suppress>\n```\n\n' +
+                    'Link to test results: ' + context.serverUrl + '/' + context.repo.owner + '/' + context.repo.repo + '/actions/runs/' + context.runId
+            })
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['npm']
+            })
+      - name: Comment on dotnet issue
+        if: ${{ fromJSON(steps.purl-parser.outputs.result).type == 'nuget' }}
+        uses: actions/github-script@v6
+        env:
+          NAME: ${{ fromJSON(steps.purl-parser.outputs.result).name }}
+          VERSION: ${{ fromJSON(steps.purl-parser.outputs.result).version }}
+          TYPE: ${{ fromJSON(steps.purl-parser.outputs.result).type }}
+          CPE: ${{ fromJSON(steps.issue-parser.outputs.jsonString).cpe }}
+        with:
+          script: |
+            var name = process.env.NAME;
+            var packageType = process.env.TYPE;
+            var purl = '^pkg:' + packageType;
+            if(name !== null && name !== '') {
+                purl += '/' + name.replaceAll('.','\\.');
+            }
+            purl += '@.*$';
+            var cpe = process.env.CPE.split(':');
+            var matchCpe;
+            if (cpe[1] == '2.3') {
+               matchcpe = 'cpe:/a:' + cpe[3] + ':' + cpe[4];
+            } else {
+               matchcpe = 'cpe:/a:' + cpe[2] + ':' + cpe[3];
+            }
+            
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Nuget Coordinates\n\n```shell\ndotnet add package ' + process.env.NAME + ' --version ' + process.env.VERSION + '\n```\n\n' +
+                    'Suppression rule:\n```xml\n' +
+                    '<suppress base="true">\n' +
+                    '   <notes><![CDATA[\n' +
+                    '   FP per issue #' + context.issue.number + '\n' +
+                    '   ]]></notes>\n' +
+                    '   <packageUrl regex="true">' + purl + '</packageUrl>\n' +
+                    '   <cpe>' + matchcpe + '</cpe>\n' +
+                    '</suppress>\n```\n\n' +
+                    'Link to test results: ' + context.serverUrl + '/' + context.repo.owner + '/' + context.repo.repo + '/actions/runs/' + context.runId
+            })
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['dotnet']
+            })
