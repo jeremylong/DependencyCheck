@@ -1,6 +1,6 @@
 package org.owasp.dependencycheck.analyzer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 import java.util.concurrent.ExecutorService;
@@ -39,14 +39,13 @@ public class OssIndexAnalyzerTest extends BaseTest {
 
         analyzer.initialize(settings);
 
-        String expectedOutput = "https://ossindex.sonatype.org/component/pkg:maven/test/test@1.0?" +
-                "utm_source=dependency-check&utm_medium=integration&utm_content=7.0.0-SNAPSHOT";
+        String expectedOutput = "https://ossindex.sonatype.org/component/pkg:maven/test/test@1.0";
 
         // When
         analyzer.analyzeDependency(dependency, engine);
 
         // Then
-        assertEquals(identifier.getUrl(), expectedOutput);
+        assertTrue(identifier.getUrl().startsWith(expectedOutput));
     }
 
     /*
