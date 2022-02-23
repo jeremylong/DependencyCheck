@@ -251,7 +251,7 @@ public class DependencyTest extends BaseTest {
         MavenArtifact mavenArtifact = new MavenArtifact("group", "artifact", "version", "url");
         instance.addAsEvidence("pom", mavenArtifact, Confidence.HIGH);
         assertTrue(instance.contains(EvidenceType.VENDOR, Confidence.HIGH));
-        assertEquals(3, instance.size());
+        assertEquals(4, instance.size());
         assertFalse(instance.getSoftwareIdentifiers().isEmpty());
     }
 
@@ -277,7 +277,7 @@ public class DependencyTest extends BaseTest {
         MavenArtifact mavenArtifact = new MavenArtifact("group", "artifact", "version", null);
         instance.addAsEvidence("pom", mavenArtifact, Confidence.HIGH);
         assertTrue(instance.getEvidence(EvidenceType.VENDOR).stream().anyMatch(e -> e.getConfidence() == Confidence.HIGH));
-        assertTrue(instance.size() == 3);
+        assertTrue(instance.size() == 4);
         assertFalse(instance.getSoftwareIdentifiers().isEmpty());
 
         instance.getSoftwareIdentifiers().forEach((i) -> {
@@ -287,7 +287,7 @@ public class DependencyTest extends BaseTest {
         mavenArtifact = new MavenArtifact("group", "artifact", "version", "url");
         instance.addAsEvidence("pom", mavenArtifact, Confidence.HIGH);
         assertTrue(instance.getEvidence(EvidenceType.VENDOR).stream().anyMatch(e -> e.getConfidence() == Confidence.HIGH));
-        assertTrue(instance.size() == 3);
+        assertTrue(instance.size() == 4);
         assertFalse(instance.getSoftwareIdentifiers().isEmpty());
 
         instance.getSoftwareIdentifiers().forEach((i) -> {

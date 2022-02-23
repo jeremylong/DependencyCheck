@@ -195,6 +195,14 @@ public final class H2Functions {
 
         final SimpleResultSet ret = new SimpleResultSet();
         ret.addColumn("id", Types.INTEGER, 10, 0);
+        final String url = conn.getMetaData().getURL();
+        if ("jdbc:columnlist:connection".equals(url)) {
+            // Virtual Table Functions get called multiple times by H2
+            // JDBC URL jdbc:columnlist:connection indicates that H2 only wants to discover
+            // the metadata (list of result columns) of the result and is not interested in the actual
+            // execution of the function, so we should exit early with an empty resultset.
+            return ret;
+        }
 
         int vulnerabilityId = 0;
         try (PreparedStatement selectVulnerabilityId = conn.prepareStatement("SELECT id FROM VULNERABILITY CVE WHERE cve=?")) {

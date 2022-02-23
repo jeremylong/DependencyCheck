@@ -1,0 +1,27 @@
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${plugins.odc.version}</version>
+                <configuration>
+                    <formats>
+                        <format>HTML</format>
+                        <format>SARIF</format>
+                    </formats>
+                    <prettyPrint>true</prettyPrint>
+                    <failBuildOnCVSS>11</failBuildOnCVSS>
+                    <enableExperimental>true</enableExperimental>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

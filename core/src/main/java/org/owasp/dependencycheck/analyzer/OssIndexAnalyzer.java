@@ -142,6 +142,8 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
                     failed = true;
                     if (ex.getMessage() != null && ex.getMessage().endsWith("401")) {
                         throw new AnalysisException("Invalid credentails provided for OSS Index", ex);
+                    } else if (ex.getMessage() != null && ex.getMessage().endsWith("429")) {
+                        throw new AnalysisException("OSS Index rate limit exceeded", ex);
                     }
                     LOG.debug("Error requesting component reports", ex);
                     throw new AnalysisException("Failed to request component-reports", ex);
@@ -151,12 +153,13 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
                     throw new AnalysisException("Failed to request component-reports", e);
                 }
             }
+
+            // skip enrichment if we failed to fetch reports
+            if (!failed) {
+                enrich(dependency);
+            }
         }
 
-        // skip enrichment if we failed to fetch reports
-        if (!failed) {
-            enrich(dependency);
-        }
     }
 
     /**
@@ -222,7 +225,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
      *
      * @param dependency the dependency to enrich
      */
-    private void enrich(final Dependency dependency) {
+    void enrich(final Dependency dependency) {
         LOG.debug("Enrich dependency: {}", dependency);
 
         for (Identifier id : dependency.getSoftwareIdentifiers()) {

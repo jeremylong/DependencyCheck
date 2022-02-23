@@ -527,6 +527,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
         }
         if (mavenArtifact.getArtifactId() != null && !mavenArtifact.getArtifactId().isEmpty()) {
             this.addEvidence(EvidenceType.PRODUCT, source, "artifactid", mavenArtifact.getArtifactId(), confidence);
+            this.addEvidence(EvidenceType.VENDOR, source, "artifactid", mavenArtifact.getArtifactId(), confidence);
         }
         if (mavenArtifact.getVersion() != null && !mavenArtifact.getVersion().isEmpty()) {
             this.addEvidence(EvidenceType.VERSION, source, "version", mavenArtifact.getVersion(), confidence);
