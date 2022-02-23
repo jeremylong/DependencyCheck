@@ -26,7 +26,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
-import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.net.URL;
@@ -441,7 +442,10 @@ public class NvdCveUpdater implements CachedWebDataSource {
         if (dbProperties != null && !dbProperties.isEmpty()) {
             try {
                 final int startYear = settings.getInt(Settings.KEYS.CVE_START_YEAR, 2002);
-                LocalDate today = LocalDate.now();
+                // for establishing the current year use the timezone where the new year starts first
+                // as from that moment on CNAs might start assigning CVEs with the new year depending
+                // on the CNA's timezone
+                ZonedDateTime today = ZonedDateTime.now().withZoneSameInstant(ZoneOffset.ofHours(14));
                 final int endYear = today.getYear();
                 final int dayOfEndYear = today.getDayOfYear();
                 boolean needsFullUpdate = false;
