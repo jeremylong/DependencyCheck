@@ -460,21 +460,19 @@ public class NvdCveUpdater implements CachedWebDataSource {
                 if (!needsFullUpdate && lastUpdated == modified.getLastModifiedDate()) {
                     return updates;
                 } else {
-                    final int start = settings.getInt(Settings.KEYS.CVE_START_YEAR);
-                    final int end = Calendar.getInstance().get(Calendar.YEAR);
                     final String baseUrl = settings.getString(Settings.KEYS.CVE_BASE_JSON);
                     final NvdCveInfo item = new NvdCveInfo(MODIFIED, url, modified.getLastModifiedDate());
                     updates.add(item);
                     if (needsFullUpdate) {
                         // no need to download each one, just use the modified timestamp
-                        for (int i = start; i <= end; i++) {
+                        for (int i = startYear; i <= endYear; i++) {
                             url = String.format(baseUrl, i);
                             final NvdCveInfo entry = new NvdCveInfo(Integer.toString(i), url, modified.getLastModifiedDate());
                             updates.add(entry);
                         }
                     } else if (!DateUtil.withinDateRange(lastUpdated, now, days)) {
                         final long waitTime = settings.getInt(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, 4000);
-                        for (int i = start; i <= end; i++) {
+                        for (int i = startYear; i <= endYear; i++) {
                             try {
                                 url = String.format(baseUrl, i);
                                 Thread.sleep(waitTime);
@@ -507,8 +505,6 @@ public class NvdCveUpdater implements CachedWebDataSource {
             } catch (NumberFormatException ex) {
                 LOGGER.warn("An invalid schema version or timestamp exists in the data.properties file.");
                 LOGGER.debug("", ex);
-            } catch (InvalidSettingException ex) {
-                throw new UpdateException("The NVD CVE start year property is set to an invalid value", ex);
             }
         }
         return updates;
