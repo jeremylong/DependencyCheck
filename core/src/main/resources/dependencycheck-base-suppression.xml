@@ -4834,4 +4834,12 @@
         <packageUrl regex="true">^pkg:maven/com\.itextpdf/pdfrender@.*$</packageUrl>
         <cpe>cpe:/a:itextpdf:itext</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat/annotations\-api@.*$</packageUrl>
+        <cpe>cpe:/a:apache:tomcat</cpe>
+        <cpe>cpe:/a:apache_tomcat:apache_tomcat</cpe>
+    </suppress>
 </suppressions>
