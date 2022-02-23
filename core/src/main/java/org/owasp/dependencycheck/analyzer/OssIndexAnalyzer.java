@@ -153,12 +153,13 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
                     throw new AnalysisException("Failed to request component-reports", e);
                 }
             }
+
+            // skip enrichment if we failed to fetch reports
+            if (!failed) {
+                enrich(dependency);
+            }
         }
 
-        // skip enrichment if we failed to fetch reports
-        if (!failed) {
-            enrich(dependency);
-        }
     }
 
     /**
@@ -224,7 +225,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
      *
      * @param dependency the dependency to enrich
      */
-    private void enrich(final Dependency dependency) {
+    void enrich(final Dependency dependency) {
         LOG.debug("Enrich dependency: {}", dependency);
 
         for (Identifier id : dependency.getSoftwareIdentifiers()) {
