@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import java.net.URL;
@@ -441,7 +441,9 @@ public class NvdCveUpdater implements CachedWebDataSource {
         if (dbProperties != null && !dbProperties.isEmpty()) {
             try {
                 final int startYear = settings.getInt(Settings.KEYS.CVE_START_YEAR, 2002);
-                final int endYear = Calendar.getInstance().get(Calendar.YEAR);
+                LocalDate today = LocalDate.now();
+                final int endYear = today.getYear();
+                final int dayOfEndYear = today.getDayOfYear();
                 boolean needsFullUpdate = false;
                 for (int y = startYear; y <= endYear; y++) {
                     final long val = Long.parseLong(dbProperties.getProperty(DatabaseProperties.LAST_UPDATED_BASE + y, "0"));
@@ -465,9 +467,26 @@ public class NvdCveUpdater implements CachedWebDataSource {
                     updates.add(item);
                     if (needsFullUpdate) {
                         // no need to download each one, just use the modified timestamp
-                        for (int i = startYear; i <= endYear; i++) {
+                        for (int i = startYear; i < endYear; i++) {
                             url = String.format(baseUrl, i);
                             final NvdCveInfo entry = new NvdCveInfo(Integer.toString(i), url, modified.getLastModifiedDate());
+                            updates.add(entry);
+                        }
+                        // for endyear check metadata availability to determine inclusion when still in grace period
+                        if (dayOfEndYear < settings.getInt(Settings.KEYS.NVD_NEW_YEAR_GRACE_PERIOD, 10)) {
+                            try {
+                                url = String.format(baseUrl, endYear);
+                                final MetaProperties meta = getMetaFile(url);
+                            } catch (UpdateException ue) {
+                                if (ue.getCause() instanceof ResourceNotFoundException) {
+                                    LOGGER.warn("NVD Data for {} has not been published yet.", endYear);
+                                } else {
+                                    throw ue;
+                                }
+                            }
+                        } else {
+                            url = String.format(baseUrl, endYear);
+                            final NvdCveInfo entry = new NvdCveInfo(Integer.toString(endYear), url, modified.getLastModifiedDate());
                             updates.add(entry);
                         }
                     } else if (!DateUtil.withinDateRange(lastUpdated, now, days)) {
@@ -484,14 +503,10 @@ public class NvdCveUpdater implements CachedWebDataSource {
                                     updates.add(entry);
                                 }
                             } catch (UpdateException ex) {
-                                final Calendar date = Calendar.getInstance();
-                                final int year = date.get(Calendar.YEAR);
-                                final int month = date.get(Calendar.MONTH);
-                                final int day = date.get(Calendar.DATE);
                                 final int grace = settings.getInt(Settings.KEYS.NVD_NEW_YEAR_GRACE_PERIOD, 10);
-                                if (ex.getMessage().contains("Unable to download meta file")
-                                        && i == year && month == 0 && day < grace) {
-                                    LOGGER.warn("NVD Data for {} has not been published yet.", year);
+                                if (ex.getCause() instanceof ResourceNotFoundException
+                                        && i == endYear && dayOfEndYear < grace) {
+                                    LOGGER.warn("NVD Data for {} has not been published yet.", endYear);
                                 } else {
                                     throw ex;
                                 }
