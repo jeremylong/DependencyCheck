@@ -445,7 +445,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
                 // for establishing the current year use the timezone where the new year starts first
                 // as from that moment on CNAs might start assigning CVEs with the new year depending
                 // on the CNA's timezone
-                ZonedDateTime today = ZonedDateTime.now().withZoneSameInstant(ZoneOffset.ofHours(14));
+                final ZonedDateTime today = ZonedDateTime.now().withZoneSameInstant(ZoneOffset.ofHours(14));
                 final int endYear = today.getYear();
                 final int dayOfEndYear = today.getDayOfYear();
                 boolean needsFullUpdate = false;
