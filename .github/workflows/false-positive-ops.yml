@@ -57,7 +57,7 @@ jobs:
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: 'Error parsing package url: ' + ex + '\n\nPlease correct the package URL - consider copying the package url from the HTML report.'
+                body: 'Error parsing package url: ' + process.env.PURL + '.\n\nError: ' + ex + '\n\nPlease correct the package URL - consider copying the package url from the HTML report.'
               })
               github.rest.issues.addLabels({
                 issue_number: context.issue.number,
