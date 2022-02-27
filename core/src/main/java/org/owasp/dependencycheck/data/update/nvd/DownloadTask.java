@@ -151,13 +151,11 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
             return val;
 
         } catch (Throwable ex) {
-            LOGGER.error("An exception occurred downloading NVD CVE - {}\nSome CVEs may not be reported. Reason: {}",
-                    nvdCveInfo.getId(), ex.getMessage());
-            LOGGER.debug("Download Task Failed", ex);
+            LOGGER.error("Error downloading NVD CVE - {} Reason: {}", nvdCveInfo.getId(), ex.getMessage());
+            throw ex;
         } finally {
             settings.cleanup(false);
         }
-        return null;
     }
 
     private boolean attemptDownload(final URL url1, boolean showLog) throws TooManyRequestsException, ResourceNotFoundException {
