@@ -130,64 +130,61 @@ public class DownloadTask implements Callable&lt;Future&lt;ProcessTask&gt;&gt; {
 <span class="fc" id="L130">                Thread.sleep(waitTime);</span>
 <span class="fc" id="L131">                LOGGER.info(&quot;Download Started for NVD CVE - {}&quot;, nvdCveInfo.getId());</span>
 <span class="fc" id="L132">                startDownload = System.currentTimeMillis();</span>
-                //going from 2 to 4 to have 3 download attempts with easier info messages
-<span class="fc" id="L134">                final int downloadAttempts = 4;</span>
-<span class="pc bpc" id="L135" title="3 of 6 branches missed.">                for (int x = 2; x &lt;= downloadAttempts &amp;&amp; !attemptDownload(url1, x == downloadAttempts); x++) {</span>
-<span class="nc" id="L136">                    LOGGER.info(&quot;Download Attempt {} for NVD CVE - {}&quot;, x, nvdCveInfo.getId());</span>
-<span class="nc" id="L137">                    Thread.sleep(waitTime * (x / 2));</span>
+<span class="fc" id="L133">                final int downloadAttempts = 5;</span>
+<span class="pc bpc" id="L134" title="3 of 6 branches missed.">                for (int x = 2; x &lt;= downloadAttempts &amp;&amp; !attemptDownload(url1, x == downloadAttempts); x++) {</span>
+<span class="nc" id="L135">                    LOGGER.info(&quot;Download Attempt {} for NVD CVE - {}&quot;, x, nvdCveInfo.getId());</span>
+<span class="nc" id="L136">                    Thread.sleep(waitTime * (x / 2));</span>
                 }
-<span class="pc bpc" id="L139" title="2 of 4 branches missed.">                if (file.isFile() &amp;&amp; file.length() &gt; 0) {</span>
-<span class="fc" id="L140">                    LOGGER.info(&quot;Download Complete for NVD CVE - {}  ({} ms)&quot;, nvdCveInfo.getId(),</span>
-<span class="fc" id="L141">                            System.currentTimeMillis() - startDownload);</span>
-<span class="fc" id="L142">                    cache.storeInCache(url1, file);</span>
+<span class="pc bpc" id="L138" title="2 of 4 branches missed.">                if (file.isFile() &amp;&amp; file.length() &gt; 0) {</span>
+<span class="fc" id="L139">                    LOGGER.info(&quot;Download Complete for NVD CVE - {}  ({} ms)&quot;, nvdCveInfo.getId(),</span>
+<span class="fc" id="L140">                            System.currentTimeMillis() - startDownload);</span>
+<span class="fc" id="L141">                    cache.storeInCache(url1, file);</span>
                 } else {
-<span class="nc" id="L144">                    throw new DownloadFailedException(&quot;Unable to download NVD CVE &quot; + nvdCveInfo.getId());</span>
+<span class="nc" id="L143">                    throw new DownloadFailedException(&quot;Unable to download NVD CVE &quot; + nvdCveInfo.getId());</span>
                 }
             }
-<span class="pc bpc" id="L147" title="1 of 2 branches missed.">            if (this.processorService == null) {</span>
-<span class="fc" id="L148">                return null;</span>
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">            if (this.processorService == null) {</span>
+<span class="fc" id="L147">                return null;</span>
             }
-<span class="nc" id="L150">            final ProcessTask task = new ProcessTask(cveDB, this, settings);</span>
-<span class="nc" id="L151">            final Future&lt;ProcessTask&gt; val = this.processorService.submit(task);</span>
-<span class="nc" id="L152">            return val;</span>
+<span class="nc" id="L149">            final ProcessTask task = new ProcessTask(cveDB, this, settings);</span>
+<span class="nc" id="L150">            final Future&lt;ProcessTask&gt; val = this.processorService.submit(task);</span>
+<span class="nc" id="L151">            return val;</span>
 
-<span class="nc" id="L154">        } catch (Throwable ex) {</span>
-<span class="nc" id="L155">            LOGGER.error(&quot;An exception occurred downloading NVD CVE - {}\nSome CVEs may not be reported. Reason: {}&quot;,</span>
-<span class="nc" id="L156">                    nvdCveInfo.getId(), ex.getMessage());</span>
-<span class="nc" id="L157">            LOGGER.debug(&quot;Download Task Failed&quot;, ex);</span>
+<span class="nc" id="L153">        } catch (Throwable ex) {</span>
+<span class="nc" id="L154">            LOGGER.error(&quot;Error downloading NVD CVE - {} Reason: {}&quot;, nvdCveInfo.getId(), ex.getMessage());</span>
+<span class="nc" id="L155">            throw ex;</span>
         } finally {
-<span class="fc" id="L159">            settings.cleanup(false);</span>
+<span class="fc" id="L157">            settings.cleanup(false);</span>
         }
-<span class="nc" id="L161">        return null;</span>
     }
 
     private boolean attemptDownload(final URL url1, boolean showLog) throws TooManyRequestsException, ResourceNotFoundException {
         try {
-<span class="fc" id="L166">            final Downloader downloader = new Downloader(settings);</span>
-<span class="fc" id="L167">            downloader.fetchFile(url1, file, Settings.KEYS.CVE_USER, Settings.KEYS.CVE_PASSWORD);</span>
-<span class="nc" id="L168">        } catch (DownloadFailedException ex) {</span>
-<span class="nc bnc" id="L169" title="All 2 branches missed.">            if (showLog) {</span>
-<span class="nc" id="L170">                LOGGER.error(&quot;Download Failed for NVD CVE - {}\nSome CVEs may not be reported. Reason: {}&quot;,</span>
-<span class="nc" id="L171">                        nvdCveInfo.getId(), ex.getMessage());</span>
-<span class="nc bnc" id="L172" title="All 2 branches missed.">                if (settings.getString(Settings.KEYS.PROXY_SERVER) == null) {</span>
-<span class="nc" id="L173">                    LOGGER.error(&quot;If you are behind a proxy you may need to configure dependency-check to use the proxy.&quot;);</span>
+<span class="fc" id="L163">            final Downloader downloader = new Downloader(settings);</span>
+<span class="fc" id="L164">            downloader.fetchFile(url1, file, Settings.KEYS.CVE_USER, Settings.KEYS.CVE_PASSWORD);</span>
+<span class="nc" id="L165">        } catch (DownloadFailedException ex) {</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">            if (showLog) {</span>
+<span class="nc" id="L167">                LOGGER.error(&quot;Download Failed for NVD CVE - {}\nSome CVEs may not be reported. Reason: {}&quot;,</span>
+<span class="nc" id="L168">                        nvdCveInfo.getId(), ex.getMessage());</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">                if (settings.getString(Settings.KEYS.PROXY_SERVER) == null) {</span>
+<span class="nc" id="L170">                    LOGGER.error(&quot;If you are behind a proxy you may need to configure dependency-check to use the proxy.&quot;);</span>
                 }
-<span class="nc" id="L175">                LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L172">                LOGGER.debug(&quot;&quot;, ex);</span>
             }
-<span class="nc" id="L177">            return false;</span>
-<span class="fc" id="L178">        }</span>
-<span class="fc" id="L179">        return true;</span>
+<span class="nc" id="L174">            return false;</span>
+<span class="fc" id="L175">        }</span>
+<span class="fc" id="L176">        return true;</span>
     }
 
     /**
      * Attempts to delete the files that were downloaded.
      */
     public void cleanup() {
-<span class="nc bnc" id="L186" title="All 6 branches missed.">        if (file != null &amp;&amp; file.exists() &amp;&amp; !file.delete()) {</span>
-<span class="nc" id="L187">            LOGGER.debug(&quot;Failed to delete first temporary file {}&quot;, file.toString());</span>
-<span class="nc" id="L188">            file.deleteOnExit();</span>
+<span class="nc bnc" id="L183" title="All 6 branches missed.">        if (file != null &amp;&amp; file.exists() &amp;&amp; !file.delete()) {</span>
+<span class="nc" id="L184">            LOGGER.debug(&quot;Failed to delete first temporary file {}&quot;, file.toString());</span>
+<span class="nc" id="L185">            file.deleteOnExit();</span>
         }
-<span class="nc" id="L190">    }</span>
+<span class="nc" id="L187">    }</span>
 
     /**
      * Returns true if the process task is for the modified json file from the
@@ -197,7 +194,7 @@ public class DownloadTask implements Callable&lt;Future&lt;ProcessTask&gt;&gt; {
      * otherwise &lt;code&gt;false&lt;/code&gt;
      */
     public boolean isModified() {
-<span class="nc" id="L200">        return StringUtils.containsIgnoreCase(file.toString(), &quot;modified&quot;);</span>
+<span class="nc" id="L197">        return StringUtils.containsIgnoreCase(file.toString(), &quot;modified&quot;);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

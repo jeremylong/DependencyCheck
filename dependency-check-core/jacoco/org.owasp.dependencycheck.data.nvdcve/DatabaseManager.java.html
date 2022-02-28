@@ -314,7 +314,7 @@ public final class DatabaseManager {
      * @return true if the connection string is for an H2 database
      */
     public boolean isH2Connection() {
-<span class="nc" id="L317">        return isH2;</span>
+<span class="fc" id="L317">        return isH2;</span>
     }
 
     /**
@@ -471,7 +471,7 @@ public final class DatabaseManager {
 <span class="fc" id="L471">        PreparedStatement ps = null;</span>
         try {
             //TODO convert this to use DatabaseProperties
-<span class="fc" id="L474">            ps = conn.prepareStatement(&quot;SELECT value FROM properties WHERE id = 'version'&quot;);</span>
+<span class="fc" id="L474">            ps = conn.prepareStatement(&quot;SELECT `value` FROM properties WHERE id = 'version'&quot;);</span>
 <span class="fc" id="L475">            rs = ps.executeQuery();</span>
 <span class="pc bpc" id="L476" title="1 of 2 branches missed.">            if (rs.next()) {</span>
 <span class="fc" id="L477">                final String dbSchemaVersion = settings.getString(Settings.KEYS.DB_VERSION);</span>

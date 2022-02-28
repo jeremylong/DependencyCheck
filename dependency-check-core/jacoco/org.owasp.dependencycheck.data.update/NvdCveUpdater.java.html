@@ -26,7 +26,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
-import java.util.Calendar;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.net.URL;
@@ -71,29 +72,29 @@ import org.slf4j.LoggerFactory;
  * @author Jeremy Long
  */
 @ThreadSafe
-<span class="fc" id="L74">public class NvdCveUpdater implements CachedWebDataSource {</span>
+<span class="fc" id="L75">public class NvdCveUpdater implements CachedWebDataSource {</span>
 
     /**
      * The logger.
      */
-<span class="fc" id="L79">    private static final Logger LOGGER = LoggerFactory.getLogger(NvdCveUpdater.class);</span>
+<span class="fc" id="L80">    private static final Logger LOGGER = LoggerFactory.getLogger(NvdCveUpdater.class);</span>
     /**
      * The thread pool size to use for CPU-intense tasks.
      */
-<span class="fc" id="L83">    private static final int PROCESSING_THREAD_POOL_SIZE = Runtime.getRuntime().availableProcessors();</span>
+<span class="fc" id="L84">    private static final int PROCESSING_THREAD_POOL_SIZE = Runtime.getRuntime().availableProcessors();</span>
     /**
      * The thread pool size to use when downloading files.
      */
-<span class="fc" id="L87">    private static final int DOWNLOAD_THREAD_POOL_SIZE = Math.round(1.5f * Runtime.getRuntime().availableProcessors());</span>
+<span class="fc" id="L88">    private static final int DOWNLOAD_THREAD_POOL_SIZE = Math.round(1.5f * Runtime.getRuntime().availableProcessors());</span>
     /**
      * ExecutorService for CPU-intense processing tasks.
      */
-<span class="fc" id="L91">    private ExecutorService processingExecutorService = null;</span>
+<span class="fc" id="L92">    private ExecutorService processingExecutorService = null;</span>
     /**
      * ExecutorService for tasks that involve blocking activities and are not
      * very CPU-intense, e.g. downloading files.
      */
-<span class="fc" id="L96">    private ExecutorService downloadExecutorService = null;</span>
+<span class="fc" id="L97">    private ExecutorService downloadExecutorService = null;</span>
     /**
      * The configured settings.
      */
@@ -101,11 +102,11 @@ import org.slf4j.LoggerFactory;
     /**
      * Reference to the DAO.
      */
-<span class="fc" id="L104">    private CveDB cveDb = null;</span>
+<span class="fc" id="L105">    private CveDB cveDb = null;</span>
     /**
      * The properties obtained from the database.
      */
-<span class="fc" id="L108">    private DatabaseProperties dbProperties = null;</span>
+<span class="fc" id="L109">    private DatabaseProperties dbProperties = null;</span>
 
     /**
      * Downloads the latest NVD CVE XML file from the web and imports it into
@@ -120,39 +121,39 @@ import org.slf4j.LoggerFactory;
      */
     @Override
     public synchronized boolean update(Engine engine) throws UpdateException {
-<span class="fc" id="L123">        this.settings = engine.getSettings();</span>
-<span class="fc" id="L124">        this.cveDb = engine.getDatabase();</span>
-<span class="pc bpc" id="L125" title="1 of 2 branches missed.">        if (isUpdateConfiguredFalse()) {</span>
-<span class="fc" id="L126">            return false;</span>
+<span class="fc" id="L124">        this.settings = engine.getSettings();</span>
+<span class="fc" id="L125">        this.cveDb = engine.getDatabase();</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">        if (isUpdateConfiguredFalse()) {</span>
+<span class="fc" id="L127">            return false;</span>
         }
-<span class="nc" id="L128">        boolean updatesMade = false;</span>
+<span class="nc" id="L129">        boolean updatesMade = false;</span>
         try {
-<span class="nc" id="L130">            dbProperties = cveDb.getDatabaseProperties();</span>
-<span class="nc bnc" id="L131" title="All 2 branches missed.">            if (checkUpdate()) {</span>
-<span class="nc" id="L132">                final List&lt;NvdCveInfo&gt; updateable = getUpdatesNeeded();</span>
-<span class="nc bnc" id="L133" title="All 2 branches missed.">                if (!updateable.isEmpty()) {</span>
-<span class="nc" id="L134">                    initializeExecutorServices();</span>
-<span class="nc" id="L135">                    performUpdate(updateable);</span>
-<span class="nc" id="L136">                    updatesMade = true;</span>
+<span class="nc" id="L131">            dbProperties = cveDb.getDatabaseProperties();</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">            if (checkUpdate()) {</span>
+<span class="nc" id="L133">                final List&lt;NvdCveInfo&gt; updateable = getUpdatesNeeded();</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">                if (!updateable.isEmpty()) {</span>
+<span class="nc" id="L135">                    initializeExecutorServices();</span>
+<span class="nc" id="L136">                    performUpdate(updateable);</span>
+<span class="nc" id="L137">                    updatesMade = true;</span>
                 }
                 //all dates in the db are now stored in seconds as opposed to previously milliseconds.
-<span class="nc" id="L139">                dbProperties.save(DatabaseProperties.LAST_CHECKED, Long.toString(System.currentTimeMillis() / 1000));</span>
+<span class="nc" id="L140">                dbProperties.save(DatabaseProperties.LAST_CHECKED, Long.toString(System.currentTimeMillis() / 1000));</span>
             }
-<span class="nc" id="L141">        } catch (UpdateException ex) {</span>
-<span class="nc bnc" id="L142" title="All 4 branches missed.">            if (ex.getCause() != null &amp;&amp; ex.getCause() instanceof DownloadFailedException) {</span>
-<span class="nc" id="L143">                final String jre = System.getProperty(&quot;java.version&quot;);</span>
-<span class="nc bnc" id="L144" title="All 10 branches missed.">                if (jre == null || jre.startsWith(&quot;1.4&quot;) || jre.startsWith(&quot;1.5&quot;) || jre.startsWith(&quot;1.6&quot;) || jre.startsWith(&quot;1.7&quot;)) {</span>
-<span class="nc" id="L145">                    LOGGER.error(&quot;An old JRE is being used ({} {}), and likely does not have the correct root certificates or algorithms &quot;</span>
-<span class="nc" id="L146">                            + &quot;to connect to the NVD - consider upgrading your JRE.&quot;, System.getProperty(&quot;java.vendor&quot;), jre);</span>
+<span class="nc" id="L142">        } catch (UpdateException ex) {</span>
+<span class="nc bnc" id="L143" title="All 4 branches missed.">            if (ex.getCause() != null &amp;&amp; ex.getCause() instanceof DownloadFailedException) {</span>
+<span class="nc" id="L144">                final String jre = System.getProperty(&quot;java.version&quot;);</span>
+<span class="nc bnc" id="L145" title="All 10 branches missed.">                if (jre == null || jre.startsWith(&quot;1.4&quot;) || jre.startsWith(&quot;1.5&quot;) || jre.startsWith(&quot;1.6&quot;) || jre.startsWith(&quot;1.7&quot;)) {</span>
+<span class="nc" id="L146">                    LOGGER.error(&quot;An old JRE is being used ({} {}), and likely does not have the correct root certificates or algorithms &quot;</span>
+<span class="nc" id="L147">                            + &quot;to connect to the NVD - consider upgrading your JRE.&quot;, System.getProperty(&quot;java.vendor&quot;), jre);</span>
                 }
             }
-<span class="nc" id="L149">            throw ex;</span>
-<span class="nc" id="L150">        } catch (DatabaseException ex) {</span>
-<span class="nc" id="L151">            throw new UpdateException(&quot;Database Exception, unable to update the data to use the most current data.&quot;, ex);</span>
+<span class="nc" id="L150">            throw ex;</span>
+<span class="nc" id="L151">        } catch (DatabaseException ex) {</span>
+<span class="nc" id="L152">            throw new UpdateException(&quot;Database Exception, unable to update the data to use the most current data.&quot;, ex);</span>
         } finally {
-<span class="nc" id="L153">            shutdownExecutorServices();</span>
+<span class="nc" id="L154">            shutdownExecutorServices();</span>
         }
-<span class="nc" id="L155">        return updatesMade;</span>
+<span class="nc" id="L156">        return updatesMade;</span>
     }
 
     /**
@@ -162,16 +163,16 @@ import org.slf4j.LoggerFactory;
      * true
      */
     private boolean isUpdateConfiguredFalse() {
-<span class="pc bpc" id="L165" title="1 of 2 branches missed.">        if (!settings.getBoolean(Settings.KEYS.UPDATE_NVDCVE_ENABLED, true)) {</span>
-<span class="nc" id="L166">            return true;</span>
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">        if (!settings.getBoolean(Settings.KEYS.UPDATE_NVDCVE_ENABLED, true)) {</span>
+<span class="nc" id="L167">            return true;</span>
         }
-<span class="fc" id="L168">        boolean autoUpdate = true;</span>
+<span class="fc" id="L169">        boolean autoUpdate = true;</span>
         try {
-<span class="fc" id="L170">            autoUpdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE);</span>
-<span class="nc" id="L171">        } catch (InvalidSettingException ex) {</span>
-<span class="nc" id="L172">            LOGGER.debug(&quot;Invalid setting for auto-update; using true.&quot;);</span>
-<span class="fc" id="L173">        }</span>
-<span class="pc bpc" id="L174" title="1 of 2 branches missed.">        return !autoUpdate;</span>
+<span class="fc" id="L171">            autoUpdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE);</span>
+<span class="nc" id="L172">        } catch (InvalidSettingException ex) {</span>
+<span class="nc" id="L173">            LOGGER.debug(&quot;Invalid setting for auto-update; using true.&quot;);</span>
+<span class="fc" id="L174">        }</span>
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">        return !autoUpdate;</span>
     }
 
     /**
@@ -180,29 +181,29 @@ import org.slf4j.LoggerFactory;
      */
     protected void initializeExecutorServices() {
         final int downloadPoolSize;
-<span class="fc" id="L183">        final int max = settings.getInt(Settings.KEYS.MAX_DOWNLOAD_THREAD_POOL_SIZE, 1);</span>
-<span class="pc bpc" id="L184" title="1 of 2 branches missed.">        if (DOWNLOAD_THREAD_POOL_SIZE &gt; max) {</span>
-<span class="fc" id="L185">            downloadPoolSize = max;</span>
+<span class="fc" id="L184">        final int max = settings.getInt(Settings.KEYS.MAX_DOWNLOAD_THREAD_POOL_SIZE, 1);</span>
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">        if (DOWNLOAD_THREAD_POOL_SIZE &gt; max) {</span>
+<span class="fc" id="L186">            downloadPoolSize = max;</span>
         } else {
-<span class="nc" id="L187">            downloadPoolSize = DOWNLOAD_THREAD_POOL_SIZE;</span>
+<span class="nc" id="L188">            downloadPoolSize = DOWNLOAD_THREAD_POOL_SIZE;</span>
         }
-<span class="fc" id="L189">        downloadExecutorService = Executors.newFixedThreadPool(downloadPoolSize);</span>
-<span class="fc" id="L190">        processingExecutorService = Executors.newFixedThreadPool(PROCESSING_THREAD_POOL_SIZE);</span>
-<span class="fc" id="L191">        LOGGER.debug(&quot;#download   threads: {}&quot;, downloadPoolSize);</span>
-<span class="fc" id="L192">        LOGGER.debug(&quot;#processing threads: {}&quot;, PROCESSING_THREAD_POOL_SIZE);</span>
-<span class="fc" id="L193">    }</span>
+<span class="fc" id="L190">        downloadExecutorService = Executors.newFixedThreadPool(downloadPoolSize);</span>
+<span class="fc" id="L191">        processingExecutorService = Executors.newFixedThreadPool(PROCESSING_THREAD_POOL_SIZE);</span>
+<span class="fc" id="L192">        LOGGER.debug(&quot;#download   threads: {}&quot;, downloadPoolSize);</span>
+<span class="fc" id="L193">        LOGGER.debug(&quot;#processing threads: {}&quot;, PROCESSING_THREAD_POOL_SIZE);</span>
+<span class="fc" id="L194">    }</span>
 
     /**
      * Shutdown and cleanup of resources used by the executor services.
      */
     private void shutdownExecutorServices() {
-<span class="nc bnc" id="L199" title="All 2 branches missed.">        if (processingExecutorService != null) {</span>
-<span class="nc" id="L200">            processingExecutorService.shutdownNow();</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">        if (processingExecutorService != null) {</span>
+<span class="nc" id="L201">            processingExecutorService.shutdownNow();</span>
         }
-<span class="nc bnc" id="L202" title="All 2 branches missed.">        if (downloadExecutorService != null) {</span>
-<span class="nc" id="L203">            downloadExecutorService.shutdownNow();</span>
+<span class="nc bnc" id="L203" title="All 2 branches missed.">        if (downloadExecutorService != null) {</span>
+<span class="nc" id="L204">            downloadExecutorService.shutdownNow();</span>
         }
-<span class="nc" id="L205">    }</span>
+<span class="nc" id="L206">    }</span>
 
     /**
      * Checks if the NVD CVE XML files were last checked recently. As an
@@ -216,21 +217,21 @@ import org.slf4j.LoggerFactory;
      * updates
      */
     private boolean checkUpdate() throws UpdateException {
-<span class="nc" id="L219">        boolean proceed = true;</span>
+<span class="nc" id="L220">        boolean proceed = true;</span>
         // If the valid setting has not been specified, then we proceed to check...
-<span class="nc" id="L221">        final int validForHours = settings.getInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, 0);</span>
-<span class="nc bnc" id="L222" title="All 4 branches missed.">        if (dataExists() &amp;&amp; 0 &lt; validForHours) {</span>
+<span class="nc" id="L222">        final int validForHours = settings.getInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, 0);</span>
+<span class="nc bnc" id="L223" title="All 4 branches missed.">        if (dataExists() &amp;&amp; 0 &lt; validForHours) {</span>
             // ms Valid = valid (hours) x 60 min/hour x 60 sec/min x 1000 ms/sec
-<span class="nc" id="L224">            final long validForSeconds = validForHours * 60L * 60L;</span>
-<span class="nc" id="L225">            final long lastChecked = getPropertyInSeconds(DatabaseProperties.LAST_CHECKED);</span>
-<span class="nc" id="L226">            final long now = System.currentTimeMillis() / 1000;</span>
-<span class="nc bnc" id="L227" title="All 2 branches missed.">            proceed = (now - lastChecked) &gt; validForSeconds;</span>
-<span class="nc bnc" id="L228" title="All 2 branches missed.">            if (!proceed) {</span>
-<span class="nc" id="L229">                LOGGER.info(&quot;Skipping NVD check since last check was within {} hours.&quot;, validForHours);</span>
-<span class="nc" id="L230">                LOGGER.debug(&quot;Last NVD was at {}, and now {} is within {} s.&quot;, lastChecked, now, validForSeconds);</span>
+<span class="nc" id="L225">            final long validForSeconds = validForHours * 60L * 60L;</span>
+<span class="nc" id="L226">            final long lastChecked = getPropertyInSeconds(DatabaseProperties.LAST_CHECKED);</span>
+<span class="nc" id="L227">            final long now = System.currentTimeMillis() / 1000;</span>
+<span class="nc bnc" id="L228" title="All 2 branches missed.">            proceed = (now - lastChecked) &gt; validForSeconds;</span>
+<span class="nc bnc" id="L229" title="All 2 branches missed.">            if (!proceed) {</span>
+<span class="nc" id="L230">                LOGGER.info(&quot;Skipping NVD check since last check was within {} hours.&quot;, validForHours);</span>
+<span class="nc" id="L231">                LOGGER.debug(&quot;Last NVD was at {}, and now {} is within {} s.&quot;, lastChecked, now, validForSeconds);</span>
             }
         }
-<span class="nc" id="L233">        return proceed;</span>
+<span class="nc" id="L234">        return proceed;</span>
     }
 
     /**
@@ -239,7 +240,7 @@ import org.slf4j.LoggerFactory;
      * @return true if the database contains data
      */
     private boolean dataExists() {
-<span class="nc" id="L242">        return cveDb.dataExists();</span>
+<span class="nc" id="L243">        return cveDb.dataExists();</span>
     }
 
     /**
@@ -253,89 +254,89 @@ import org.slf4j.LoggerFactory;
      */
     @SuppressWarnings(&quot;FutureReturnValueIgnored&quot;)
     private void performUpdate(List&lt;NvdCveInfo&gt; updateable) throws UpdateException {
-<span class="nc bnc" id="L256" title="All 2 branches missed.">        if (updateable.isEmpty()) {</span>
-<span class="nc" id="L257">            return;</span>
+<span class="nc bnc" id="L257" title="All 2 branches missed.">        if (updateable.isEmpty()) {</span>
+<span class="nc" id="L258">            return;</span>
         }
-<span class="nc bnc" id="L259" title="All 2 branches missed.">        if (updateable.size() &gt; 3) {</span>
-<span class="nc" id="L260">            LOGGER.info(&quot;NVD CVE requires several updates; this could take a couple of minutes.&quot;);</span>
+<span class="nc bnc" id="L260" title="All 2 branches missed.">        if (updateable.size() &gt; 3) {</span>
+<span class="nc" id="L261">            LOGGER.info(&quot;NVD CVE requires several updates; this could take a couple of minutes.&quot;);</span>
         }
 
-<span class="nc" id="L263">        DownloadTask runLast = null;</span>
-<span class="nc" id="L264">        final Set&lt;Future&lt;Future&lt;ProcessTask&gt;&gt;&gt; downloadFutures = new HashSet&lt;&gt;(updateable.size());</span>
-<span class="nc bnc" id="L265" title="All 2 branches missed.">        for (NvdCveInfo cve : updateable) {</span>
-<span class="nc" id="L266">            final DownloadTask call = new DownloadTask(cve, processingExecutorService, cveDb, settings);</span>
-<span class="nc bnc" id="L267" title="All 2 branches missed.">            if (call.isModified()) {</span>
-<span class="nc" id="L268">                runLast = call;</span>
+<span class="nc" id="L264">        DownloadTask runLast = null;</span>
+<span class="nc" id="L265">        final Set&lt;Future&lt;Future&lt;ProcessTask&gt;&gt;&gt; downloadFutures = new HashSet&lt;&gt;(updateable.size());</span>
+<span class="nc bnc" id="L266" title="All 2 branches missed.">        for (NvdCveInfo cve : updateable) {</span>
+<span class="nc" id="L267">            final DownloadTask call = new DownloadTask(cve, processingExecutorService, cveDb, settings);</span>
+<span class="nc bnc" id="L268" title="All 2 branches missed.">            if (call.isModified()) {</span>
+<span class="nc" id="L269">                runLast = call;</span>
             } else {
-<span class="nc" id="L270">                final boolean added = downloadFutures.add(downloadExecutorService.submit(call));</span>
-<span class="nc bnc" id="L271" title="All 2 branches missed.">                if (!added) {</span>
-<span class="nc" id="L272">                    throw new UpdateException(&quot;Unable to add the download task for &quot; + cve.getId());</span>
+<span class="nc" id="L271">                final boolean added = downloadFutures.add(downloadExecutorService.submit(call));</span>
+<span class="nc bnc" id="L272" title="All 2 branches missed.">                if (!added) {</span>
+<span class="nc" id="L273">                    throw new UpdateException(&quot;Unable to add the download task for &quot; + cve.getId());</span>
                 }
             }
-<span class="nc" id="L275">        }</span>
+<span class="nc" id="L276">        }</span>
 
         //next, move the future future processTasks to just future processTasks and check for errors.
-<span class="nc" id="L278">        final Set&lt;Future&lt;ProcessTask&gt;&gt; processFutures = new HashSet&lt;&gt;(updateable.size());</span>
-<span class="nc bnc" id="L279" title="All 2 branches missed.">        for (Future&lt;Future&lt;ProcessTask&gt;&gt; future : downloadFutures) {</span>
+<span class="nc" id="L279">        final Set&lt;Future&lt;ProcessTask&gt;&gt; processFutures = new HashSet&lt;&gt;(updateable.size());</span>
+<span class="nc bnc" id="L280" title="All 2 branches missed.">        for (Future&lt;Future&lt;ProcessTask&gt;&gt; future : downloadFutures) {</span>
             final Future&lt;ProcessTask&gt; task;
             try {
-<span class="nc" id="L282">                task = future.get();</span>
-<span class="nc bnc" id="L283" title="All 2 branches missed.">                if (task != null) {</span>
-<span class="nc" id="L284">                    processFutures.add(task);</span>
+<span class="nc" id="L283">                task = future.get();</span>
+<span class="nc bnc" id="L284" title="All 2 branches missed.">                if (task != null) {</span>
+<span class="nc" id="L285">                    processFutures.add(task);</span>
                 }
-<span class="nc" id="L286">            } catch (InterruptedException ex) {</span>
-<span class="nc" id="L287">                LOGGER.debug(&quot;Thread was interrupted during download&quot;, ex);</span>
-<span class="nc" id="L288">                Thread.currentThread().interrupt();</span>
-<span class="nc" id="L289">                throw new UpdateException(&quot;The download was interrupted&quot;, ex);</span>
-<span class="nc" id="L290">            } catch (ExecutionException ex) {</span>
-<span class="nc" id="L291">                LOGGER.debug(&quot;Thread was interrupted during download execution&quot;, ex);</span>
-<span class="nc" id="L292">                throw new UpdateException(&quot;The execution of the download was interrupted&quot;, ex);</span>
-<span class="nc" id="L293">            }</span>
-<span class="nc" id="L294">        }</span>
+<span class="nc" id="L287">            } catch (InterruptedException ex) {</span>
+<span class="nc" id="L288">                LOGGER.debug(&quot;Thread was interrupted during download&quot;, ex);</span>
+<span class="nc" id="L289">                Thread.currentThread().interrupt();</span>
+<span class="nc" id="L290">                throw new UpdateException(&quot;The download was interrupted&quot;, ex);</span>
+<span class="nc" id="L291">            } catch (ExecutionException ex) {</span>
+<span class="nc" id="L292">                LOGGER.debug(&quot;Thread was interrupted during download execution&quot;, ex);</span>
+<span class="nc" id="L293">                throw new UpdateException(&quot;The execution of the download was interrupted&quot;, ex);</span>
+<span class="nc" id="L294">            }</span>
+<span class="nc" id="L295">        }</span>
 
-<span class="nc bnc" id="L296" title="All 2 branches missed.">        for (Future&lt;ProcessTask&gt; future : processFutures) {</span>
+<span class="nc bnc" id="L297" title="All 2 branches missed.">        for (Future&lt;ProcessTask&gt; future : processFutures) {</span>
             try {
-<span class="nc" id="L298">                final ProcessTask task = future.get();</span>
-<span class="nc bnc" id="L299" title="All 2 branches missed.">                if (task.getException() != null) {</span>
-<span class="nc" id="L300">                    throw task.getException();</span>
+<span class="nc" id="L299">                final ProcessTask task = future.get();</span>
+<span class="nc bnc" id="L300" title="All 2 branches missed.">                if (task.getException() != null) {</span>
+<span class="nc" id="L301">                    throw task.getException();</span>
                 }
-<span class="nc" id="L302">            } catch (InterruptedException ex) {</span>
-<span class="nc" id="L303">                LOGGER.debug(&quot;Thread was interrupted during processing&quot;, ex);</span>
-<span class="nc" id="L304">                Thread.currentThread().interrupt();</span>
-<span class="nc" id="L305">                throw new UpdateException(ex);</span>
-<span class="nc" id="L306">            } catch (ExecutionException ex) {</span>
-<span class="nc" id="L307">                LOGGER.debug(&quot;Execution Exception during process&quot;, ex);</span>
-<span class="nc" id="L308">                throw new UpdateException(ex);</span>
-<span class="nc" id="L309">            }</span>
-<span class="nc" id="L310">        }</span>
+<span class="nc" id="L303">            } catch (InterruptedException ex) {</span>
+<span class="nc" id="L304">                LOGGER.debug(&quot;Thread was interrupted during processing&quot;, ex);</span>
+<span class="nc" id="L305">                Thread.currentThread().interrupt();</span>
+<span class="nc" id="L306">                throw new UpdateException(ex);</span>
+<span class="nc" id="L307">            } catch (ExecutionException ex) {</span>
+<span class="nc" id="L308">                LOGGER.debug(&quot;Execution Exception during process&quot;, ex);</span>
+<span class="nc" id="L309">                throw new UpdateException(ex);</span>
+<span class="nc" id="L310">            }</span>
+<span class="nc" id="L311">        }</span>
 
-<span class="nc bnc" id="L312" title="All 2 branches missed.">        if (runLast != null) {</span>
-<span class="nc" id="L313">            final Future&lt;Future&lt;ProcessTask&gt;&gt; modified = downloadExecutorService.submit(runLast);</span>
+<span class="nc bnc" id="L313" title="All 2 branches missed.">        if (runLast != null) {</span>
+<span class="nc" id="L314">            final Future&lt;Future&lt;ProcessTask&gt;&gt; modified = downloadExecutorService.submit(runLast);</span>
             final Future&lt;ProcessTask&gt; task;
             try {
-<span class="nc" id="L316">                task = modified.get();</span>
-<span class="nc bnc" id="L317" title="All 2 branches missed.">                if (task != null) {</span>
-<span class="nc" id="L318">                    final ProcessTask last = task.get();</span>
-<span class="nc bnc" id="L319" title="All 2 branches missed.">                    if (last.getException() != null) {</span>
-<span class="nc" id="L320">                        throw last.getException();</span>
+<span class="nc" id="L317">                task = modified.get();</span>
+<span class="nc bnc" id="L318" title="All 2 branches missed.">                if (task != null) {</span>
+<span class="nc" id="L319">                    final ProcessTask last = task.get();</span>
+<span class="nc bnc" id="L320" title="All 2 branches missed.">                    if (last.getException() != null) {</span>
+<span class="nc" id="L321">                        throw last.getException();</span>
                     }
                 }
-<span class="nc" id="L323">            } catch (InterruptedException ex) {</span>
-<span class="nc" id="L324">                LOGGER.debug(&quot;Thread was interrupted during download&quot;, ex);</span>
-<span class="nc" id="L325">                Thread.currentThread().interrupt();</span>
-<span class="nc" id="L326">                throw new UpdateException(&quot;The download was interrupted&quot;, ex);</span>
-<span class="nc" id="L327">            } catch (ExecutionException ex) {</span>
-<span class="nc" id="L328">                LOGGER.debug(&quot;Thread was interrupted during download execution&quot;, ex);</span>
-<span class="nc" id="L329">                throw new UpdateException(&quot;The execution of the download was interrupted&quot;, ex);</span>
-<span class="nc" id="L330">            }</span>
+<span class="nc" id="L324">            } catch (InterruptedException ex) {</span>
+<span class="nc" id="L325">                LOGGER.debug(&quot;Thread was interrupted during download&quot;, ex);</span>
+<span class="nc" id="L326">                Thread.currentThread().interrupt();</span>
+<span class="nc" id="L327">                throw new UpdateException(&quot;The download was interrupted&quot;, ex);</span>
+<span class="nc" id="L328">            } catch (ExecutionException ex) {</span>
+<span class="nc" id="L329">                LOGGER.debug(&quot;Thread was interrupted during download execution&quot;, ex);</span>
+<span class="nc" id="L330">                throw new UpdateException(&quot;The execution of the download was interrupted&quot;, ex);</span>
+<span class="nc" id="L331">            }</span>
         }
 
         try {
-<span class="nc" id="L334">            cveDb.cleanupDatabase();</span>
-<span class="nc" id="L335">        } catch (DatabaseException ex) {</span>
-<span class="nc" id="L336">            throw new UpdateException(ex.getMessage(), ex.getCause());</span>
-<span class="nc" id="L337">        }</span>
-<span class="nc" id="L338">    }</span>
+<span class="nc" id="L335">            cveDb.cleanupDatabase();</span>
+<span class="nc" id="L336">        } catch (DatabaseException ex) {</span>
+<span class="nc" id="L337">            throw new UpdateException(ex.getMessage(), ex.getCause());</span>
+<span class="nc" id="L338">        }</span>
+<span class="nc" id="L339">    }</span>
 
     /**
      * Downloads the NVD CVE Meta file properties.
@@ -346,18 +347,18 @@ import org.slf4j.LoggerFactory;
      */
     protected final MetaProperties getMetaFile(String url) throws UpdateException {
         try {
-<span class="nc" id="L349">            final long waitTime = settings.getInt(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, 4000);</span>
-<span class="nc" id="L350">            MetaProperties retVal = doMetaDownload(url, false);</span>
+<span class="nc" id="L350">            final long waitTime = settings.getInt(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, 4000);</span>
+<span class="nc" id="L351">            MetaProperties retVal = doMetaDownload(url, false);</span>
 
-<span class="nc" id="L352">            final int downloadAttempts = 4;</span>
-<span class="nc bnc" id="L353" title="All 4 branches missed.">            for (int x = 2; retVal == null &amp;&amp; x &lt;= downloadAttempts; x++) {</span>
-<span class="nc" id="L354">                Thread.sleep(waitTime * (x / 2));</span>
-<span class="nc bnc" id="L355" title="All 2 branches missed.">                retVal = doMetaDownload(url, x == downloadAttempts);</span>
+<span class="nc" id="L353">            final int downloadAttempts = 4;</span>
+<span class="nc bnc" id="L354" title="All 4 branches missed.">            for (int x = 2; retVal == null &amp;&amp; x &lt;= downloadAttempts; x++) {</span>
+<span class="nc" id="L355">                Thread.sleep(waitTime * (x / 2));</span>
+<span class="nc bnc" id="L356" title="All 2 branches missed.">                retVal = doMetaDownload(url, x == downloadAttempts);</span>
             }
-<span class="nc" id="L357">            return retVal;</span>
-<span class="nc" id="L358">        } catch (InterruptedException ex) {</span>
-<span class="nc" id="L359">            Thread.interrupted();</span>
-<span class="nc" id="L360">            throw new UpdateException(&quot;Download interupted&quot;, ex);</span>
+<span class="nc" id="L358">            return retVal;</span>
+<span class="nc" id="L359">        } catch (InterruptedException ex) {</span>
+<span class="nc" id="L360">            Thread.interrupted();</span>
+<span class="nc" id="L361">            throw new UpdateException(&quot;Download interupted&quot;, ex);</span>
         }
     }
 
@@ -371,58 +372,58 @@ import org.slf4j.LoggerFactory;
      * @throws UpdateException thrown if the meta file could not be downloaded
      */
     private MetaProperties doMetaDownload(String url, boolean throwErrors) throws UpdateException {
-<span class="nc" id="L374">        final String metaUrl = url.substring(0, url.length() - 7) + &quot;meta&quot;;</span>
-<span class="nc" id="L375">        final NvdCache cache = new NvdCache(settings);</span>
+<span class="nc" id="L375">        final String metaUrl = url.substring(0, url.length() - 7) + &quot;meta&quot;;</span>
+<span class="nc" id="L376">        final NvdCache cache = new NvdCache(settings);</span>
         try {
-<span class="nc" id="L377">            final URL u = new URL(metaUrl);</span>
-<span class="nc" id="L378">            final File tmp = settings.getTempFile(&quot;nvd&quot;, &quot;meta&quot;);</span>
-<span class="nc bnc" id="L379" title="All 2 branches missed.">            if (cache.notInCache(u, tmp)) {</span>
-<span class="nc" id="L380">                final Downloader d = new Downloader(settings);</span>
-<span class="nc" id="L381">                final String content = d.fetchContent(u, true, Settings.KEYS.CVE_USER, Settings.KEYS.CVE_PASSWORD);</span>
-<span class="nc" id="L382">                try (FileOutputStream fos = new FileOutputStream(tmp);</span>
-<span class="nc" id="L383">                        OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);</span>
-<span class="nc" id="L384">                        BufferedWriter writer = new BufferedWriter(osw)) {</span>
-<span class="nc" id="L385">                    writer.write(content);</span>
+<span class="nc" id="L378">            final URL u = new URL(metaUrl);</span>
+<span class="nc" id="L379">            final File tmp = settings.getTempFile(&quot;nvd&quot;, &quot;meta&quot;);</span>
+<span class="nc bnc" id="L380" title="All 2 branches missed.">            if (cache.notInCache(u, tmp)) {</span>
+<span class="nc" id="L381">                final Downloader d = new Downloader(settings);</span>
+<span class="nc" id="L382">                final String content = d.fetchContent(u, true, Settings.KEYS.CVE_USER, Settings.KEYS.CVE_PASSWORD);</span>
+<span class="nc" id="L383">                try (FileOutputStream fos = new FileOutputStream(tmp);</span>
+<span class="nc" id="L384">                        OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);</span>
+<span class="nc" id="L385">                        BufferedWriter writer = new BufferedWriter(osw)) {</span>
+<span class="nc" id="L386">                    writer.write(content);</span>
                 }
-<span class="nc" id="L387">                cache.storeInCache(u, tmp);</span>
-<span class="nc" id="L388">                FileUtils.deleteQuietly(tmp);</span>
-<span class="nc" id="L389">                return new MetaProperties(content);</span>
+<span class="nc" id="L388">                cache.storeInCache(u, tmp);</span>
+<span class="nc" id="L389">                FileUtils.deleteQuietly(tmp);</span>
+<span class="nc" id="L390">                return new MetaProperties(content);</span>
             } else {
                 final String content;
-<span class="nc" id="L392">                try (FileInputStream fis = new FileInputStream(tmp);</span>
-<span class="nc" id="L393">                        InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);</span>
-<span class="nc" id="L394">                        BufferedReader reader = new BufferedReader(isr)) {</span>
-<span class="nc" id="L395">                    content = reader.lines().collect(Collectors.joining(&quot;\n&quot;));</span>
+<span class="nc" id="L393">                try (FileInputStream fis = new FileInputStream(tmp);</span>
+<span class="nc" id="L394">                        InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);</span>
+<span class="nc" id="L395">                        BufferedReader reader = new BufferedReader(isr)) {</span>
+<span class="nc" id="L396">                    content = reader.lines().collect(Collectors.joining(&quot;\n&quot;));</span>
                 }
-<span class="nc" id="L397">                FileUtils.deleteQuietly(tmp);</span>
-<span class="nc" id="L398">                return new MetaProperties(content);</span>
+<span class="nc" id="L398">                FileUtils.deleteQuietly(tmp);</span>
+<span class="nc" id="L399">                return new MetaProperties(content);</span>
             }
-<span class="nc" id="L400">        } catch (MalformedURLException ex) {</span>
-<span class="nc bnc" id="L401" title="All 2 branches missed.">            if (throwErrors) {</span>
-<span class="nc" id="L402">                throw new UpdateException(&quot;Meta file url is invalid: &quot; + metaUrl, ex);</span>
+<span class="nc" id="L401">        } catch (MalformedURLException ex) {</span>
+<span class="nc bnc" id="L402" title="All 2 branches missed.">            if (throwErrors) {</span>
+<span class="nc" id="L403">                throw new UpdateException(&quot;Meta file url is invalid: &quot; + metaUrl, ex);</span>
             }
-<span class="nc" id="L404">        } catch (InvalidDataException ex) {</span>
-<span class="nc bnc" id="L405" title="All 2 branches missed.">            if (throwErrors) {</span>
-<span class="nc" id="L406">                throw new UpdateException(&quot;Meta file content is invalid: &quot; + metaUrl, ex);</span>
+<span class="nc" id="L405">        } catch (InvalidDataException ex) {</span>
+<span class="nc bnc" id="L406" title="All 2 branches missed.">            if (throwErrors) {</span>
+<span class="nc" id="L407">                throw new UpdateException(&quot;Meta file content is invalid: &quot; + metaUrl, ex);</span>
             }
-<span class="nc" id="L408">        } catch (DownloadFailedException ex) {</span>
-<span class="nc bnc" id="L409" title="All 2 branches missed.">            if (throwErrors) {</span>
-<span class="nc" id="L410">                throw new UpdateException(&quot;Unable to download meta file: &quot; + metaUrl, ex);</span>
+<span class="nc" id="L409">        } catch (DownloadFailedException ex) {</span>
+<span class="nc bnc" id="L410" title="All 2 branches missed.">            if (throwErrors) {</span>
+<span class="nc" id="L411">                throw new UpdateException(&quot;Unable to download meta file: &quot; + metaUrl, ex);</span>
             }
-<span class="nc" id="L412">        } catch (TooManyRequestsException ex) {</span>
-<span class="nc bnc" id="L413" title="All 2 branches missed.">            if (throwErrors) {</span>
-<span class="nc" id="L414">                throw new UpdateException(&quot;Unable to download meta file: &quot; + metaUrl + &quot;; received 429 -- too many requests&quot;, ex);</span>
+<span class="nc" id="L413">        } catch (TooManyRequestsException ex) {</span>
+<span class="nc bnc" id="L414" title="All 2 branches missed.">            if (throwErrors) {</span>
+<span class="nc" id="L415">                throw new UpdateException(&quot;Unable to download meta file: &quot; + metaUrl + &quot;; received 429 -- too many requests&quot;, ex);</span>
             }
-<span class="nc" id="L416">        } catch (ResourceNotFoundException ex) {</span>
-<span class="nc bnc" id="L417" title="All 2 branches missed.">            if (throwErrors) {</span>
-<span class="nc" id="L418">                throw new UpdateException(&quot;Unable to download meta file: &quot; + metaUrl + &quot;; received 404 -- resource not found&quot;, ex);</span>
+<span class="nc" id="L417">        } catch (ResourceNotFoundException ex) {</span>
+<span class="nc bnc" id="L418" title="All 2 branches missed.">            if (throwErrors) {</span>
+<span class="nc" id="L419">                throw new UpdateException(&quot;Unable to download meta file: &quot; + metaUrl + &quot;; received 404 -- resource not found&quot;, ex);</span>
             }
-<span class="nc" id="L420">        } catch (IOException ex) {</span>
-<span class="nc bnc" id="L421" title="All 2 branches missed.">            if (throwErrors) {</span>
-<span class="nc" id="L422">                throw new RuntimeException(ex);</span>
+<span class="nc" id="L421">        } catch (IOException ex) {</span>
+<span class="nc bnc" id="L422" title="All 2 branches missed.">            if (throwErrors) {</span>
+<span class="nc" id="L423">                throw new RuntimeException(ex);</span>
             }
-<span class="nc" id="L424">        }</span>
-<span class="nc" id="L425">        return null;</span>
+<span class="nc" id="L425">        }</span>
+<span class="nc" id="L426">        return null;</span>
     }
 
     /**
@@ -436,82 +437,96 @@ import org.slf4j.LoggerFactory;
      * updated properties file
      */
     protected final List&lt;NvdCveInfo&gt; getUpdatesNeeded() throws UpdateException {
-<span class="fc" id="L439">        LOGGER.debug(&quot;starting getUpdatesNeeded() ...&quot;);</span>
-<span class="fc" id="L440">        final List&lt;NvdCveInfo&gt; updates = new ArrayList&lt;&gt;();</span>
-<span class="pc bpc" id="L441" title="3 of 4 branches missed.">        if (dbProperties != null &amp;&amp; !dbProperties.isEmpty()) {</span>
+<span class="fc" id="L440">        LOGGER.debug(&quot;starting getUpdatesNeeded() ...&quot;);</span>
+<span class="fc" id="L441">        final List&lt;NvdCveInfo&gt; updates = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L442" title="3 of 4 branches missed.">        if (dbProperties != null &amp;&amp; !dbProperties.isEmpty()) {</span>
             try {
-<span class="nc" id="L443">                final int startYear = settings.getInt(Settings.KEYS.CVE_START_YEAR, 2002);</span>
-<span class="nc" id="L444">                final int endYear = Calendar.getInstance().get(Calendar.YEAR);</span>
-<span class="nc" id="L445">                boolean needsFullUpdate = false;</span>
-<span class="nc bnc" id="L446" title="All 2 branches missed.">                for (int y = startYear; y &lt;= endYear; y++) {</span>
-<span class="nc" id="L447">                    final long val = Long.parseLong(dbProperties.getProperty(DatabaseProperties.LAST_UPDATED_BASE + y, &quot;0&quot;));</span>
-<span class="nc bnc" id="L448" title="All 2 branches missed.">                    if (val == 0) {</span>
-<span class="nc" id="L449">                        needsFullUpdate = true;</span>
-<span class="nc" id="L450">                        break;</span>
+<span class="nc" id="L444">                final int startYear = settings.getInt(Settings.KEYS.CVE_START_YEAR, 2002);</span>
+                // for establishing the current year use the timezone where the new year starts first
+                // as from that moment on CNAs might start assigning CVEs with the new year depending
+                // on the CNA's timezone
+<span class="nc" id="L448">                final ZonedDateTime today = ZonedDateTime.now().withZoneSameInstant(ZoneOffset.ofHours(14));</span>
+<span class="nc" id="L449">                final int endYear = today.getYear();</span>
+<span class="nc" id="L450">                final int dayOfEndYear = today.getDayOfYear();</span>
+<span class="nc" id="L451">                boolean needsFullUpdate = false;</span>
+<span class="nc bnc" id="L452" title="All 2 branches missed.">                for (int y = startYear; y &lt;= endYear; y++) {</span>
+<span class="nc" id="L453">                    final long val = Long.parseLong(dbProperties.getProperty(DatabaseProperties.LAST_UPDATED_BASE + y, &quot;0&quot;));</span>
+<span class="nc bnc" id="L454" title="All 2 branches missed.">                    if (val == 0) {</span>
+<span class="nc" id="L455">                        needsFullUpdate = true;</span>
+<span class="nc" id="L456">                        break;</span>
                     }
                 }
-<span class="nc" id="L453">                final long lastUpdated = getPropertyInSeconds(DatabaseProperties.LAST_UPDATED);</span>
-<span class="nc" id="L454">                final long now = System.currentTimeMillis() / 1000;</span>
-<span class="nc" id="L455">                final int days = settings.getInt(Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS, 7);</span>
+<span class="nc" id="L459">                final long lastUpdated = getPropertyInSeconds(DatabaseProperties.LAST_UPDATED);</span>
+<span class="nc" id="L460">                final long now = System.currentTimeMillis() / 1000;</span>
+<span class="nc" id="L461">                final int days = settings.getInt(Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS, 7);</span>
 
-<span class="nc" id="L457">                String url = settings.getString(Settings.KEYS.CVE_MODIFIED_JSON);</span>
-<span class="nc" id="L458">                final MetaProperties modified = getMetaFile(url);</span>
+<span class="nc" id="L463">                String url = settings.getString(Settings.KEYS.CVE_MODIFIED_JSON);</span>
+<span class="nc" id="L464">                final MetaProperties modified = getMetaFile(url);</span>
 
-<span class="nc bnc" id="L460" title="All 4 branches missed.">                if (!needsFullUpdate &amp;&amp; lastUpdated == modified.getLastModifiedDate()) {</span>
-<span class="nc" id="L461">                    return updates;</span>
+<span class="nc bnc" id="L466" title="All 4 branches missed.">                if (!needsFullUpdate &amp;&amp; lastUpdated == modified.getLastModifiedDate()) {</span>
+<span class="nc" id="L467">                    return updates;</span>
                 } else {
-<span class="nc" id="L463">                    final int start = settings.getInt(Settings.KEYS.CVE_START_YEAR);</span>
-<span class="nc" id="L464">                    final int end = Calendar.getInstance().get(Calendar.YEAR);</span>
-<span class="nc" id="L465">                    final String baseUrl = settings.getString(Settings.KEYS.CVE_BASE_JSON);</span>
-<span class="nc" id="L466">                    final NvdCveInfo item = new NvdCveInfo(MODIFIED, url, modified.getLastModifiedDate());</span>
-<span class="nc" id="L467">                    updates.add(item);</span>
-<span class="nc bnc" id="L468" title="All 2 branches missed.">                    if (needsFullUpdate) {</span>
+<span class="nc" id="L469">                    final String baseUrl = settings.getString(Settings.KEYS.CVE_BASE_JSON);</span>
+<span class="nc" id="L470">                    final NvdCveInfo item = new NvdCveInfo(MODIFIED, url, modified.getLastModifiedDate());</span>
+<span class="nc" id="L471">                    updates.add(item);</span>
+<span class="nc bnc" id="L472" title="All 2 branches missed.">                    if (needsFullUpdate) {</span>
                         // no need to download each one, just use the modified timestamp
-<span class="nc bnc" id="L470" title="All 2 branches missed.">                        for (int i = start; i &lt;= end; i++) {</span>
-<span class="nc" id="L471">                            url = String.format(baseUrl, i);</span>
-<span class="nc" id="L472">                            final NvdCveInfo entry = new NvdCveInfo(Integer.toString(i), url, modified.getLastModifiedDate());</span>
-<span class="nc" id="L473">                            updates.add(entry);</span>
+<span class="nc bnc" id="L474" title="All 2 branches missed.">                        for (int i = startYear; i &lt; endYear; i++) {</span>
+<span class="nc" id="L475">                            url = String.format(baseUrl, i);</span>
+<span class="nc" id="L476">                            final NvdCveInfo entry = new NvdCveInfo(Integer.toString(i), url, modified.getLastModifiedDate());</span>
+<span class="nc" id="L477">                            updates.add(entry);</span>
                         }
-<span class="nc bnc" id="L475" title="All 2 branches missed.">                    } else if (!DateUtil.withinDateRange(lastUpdated, now, days)) {</span>
-<span class="nc" id="L476">                        final long waitTime = settings.getInt(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, 4000);</span>
-<span class="nc bnc" id="L477" title="All 2 branches missed.">                        for (int i = start; i &lt;= end; i++) {</span>
+                        // for endyear check metadata availability to determine inclusion when still in grace period
+<span class="nc bnc" id="L480" title="All 2 branches missed.">                        if (dayOfEndYear &lt; settings.getInt(Settings.KEYS.NVD_NEW_YEAR_GRACE_PERIOD, 10)) {</span>
                             try {
-<span class="nc" id="L479">                                url = String.format(baseUrl, i);</span>
-<span class="nc" id="L480">                                Thread.sleep(waitTime);</span>
-<span class="nc" id="L481">                                final MetaProperties meta = getMetaFile(url);</span>
-<span class="nc" id="L482">                                final long currentTimestamp = getPropertyInSeconds(DatabaseProperties.LAST_UPDATED_BASE + i);</span>
-
-<span class="nc bnc" id="L484" title="All 2 branches missed.">                                if (currentTimestamp &lt; meta.getLastModifiedDate()) {</span>
-<span class="nc" id="L485">                                    final NvdCveInfo entry = new NvdCveInfo(Integer.toString(i), url, meta.getLastModifiedDate());</span>
-<span class="nc" id="L486">                                    updates.add(entry);</span>
-                                }
-<span class="nc" id="L488">                            } catch (UpdateException ex) {</span>
-<span class="nc" id="L489">                                final Calendar date = Calendar.getInstance();</span>
-<span class="nc" id="L490">                                final int year = date.get(Calendar.YEAR);</span>
-<span class="nc" id="L491">                                final int month = date.get(Calendar.MONTH);</span>
-<span class="nc" id="L492">                                final int day = date.get(Calendar.DATE);</span>
-<span class="nc" id="L493">                                final int grace = settings.getInt(Settings.KEYS.NVD_NEW_YEAR_GRACE_PERIOD, 10);</span>
-<span class="nc bnc" id="L494" title="All 8 branches missed.">                                if (ex.getMessage().contains(&quot;Unable to download meta file&quot;)</span>
-                                        &amp;&amp; i == year &amp;&amp; month == 0 &amp;&amp; day &lt; grace) {
-<span class="nc" id="L496">                                    LOGGER.warn(&quot;NVD Data for {} has not been published yet.&quot;, year);</span>
+<span class="nc" id="L482">                                url = String.format(baseUrl, endYear);</span>
+<span class="nc" id="L483">                                final MetaProperties meta = getMetaFile(url);</span>
+<span class="nc" id="L484">                            } catch (UpdateException ue) {</span>
+<span class="nc bnc" id="L485" title="All 2 branches missed.">                                if (ue.getCause() instanceof ResourceNotFoundException) {</span>
+<span class="nc" id="L486">                                    LOGGER.warn(&quot;NVD Data for {} has not been published yet.&quot;, endYear);</span>
                                 } else {
-<span class="nc" id="L498">                                    throw ex;</span>
+<span class="nc" id="L488">                                    throw ue;</span>
                                 }
-<span class="nc" id="L500">                            } catch (InterruptedException ex) {</span>
-<span class="nc" id="L501">                                Thread.interrupted();</span>
-<span class="nc" id="L502">                                throw new UpdateException(&quot;The download of the meta file was interupted: &quot; + url, ex);</span>
-<span class="nc" id="L503">                            }</span>
+<span class="nc" id="L490">                            }</span>
+                        } else {
+<span class="nc" id="L492">                            url = String.format(baseUrl, endYear);</span>
+<span class="nc" id="L493">                            final NvdCveInfo entry = new NvdCveInfo(Integer.toString(endYear), url, modified.getLastModifiedDate());</span>
+<span class="nc" id="L494">                            updates.add(entry);</span>
+<span class="nc" id="L495">                        }</span>
+<span class="nc bnc" id="L496" title="All 2 branches missed.">                    } else if (!DateUtil.withinDateRange(lastUpdated, now, days)) {</span>
+<span class="nc" id="L497">                        final long waitTime = settings.getInt(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, 4000);</span>
+<span class="nc bnc" id="L498" title="All 2 branches missed.">                        for (int i = startYear; i &lt;= endYear; i++) {</span>
+                            try {
+<span class="nc" id="L500">                                url = String.format(baseUrl, i);</span>
+<span class="nc" id="L501">                                Thread.sleep(waitTime);</span>
+<span class="nc" id="L502">                                final MetaProperties meta = getMetaFile(url);</span>
+<span class="nc" id="L503">                                final long currentTimestamp = getPropertyInSeconds(DatabaseProperties.LAST_UPDATED_BASE + i);</span>
+
+<span class="nc bnc" id="L505" title="All 2 branches missed.">                                if (currentTimestamp &lt; meta.getLastModifiedDate()) {</span>
+<span class="nc" id="L506">                                    final NvdCveInfo entry = new NvdCveInfo(Integer.toString(i), url, meta.getLastModifiedDate());</span>
+<span class="nc" id="L507">                                    updates.add(entry);</span>
+                                }
+<span class="nc" id="L509">                            } catch (UpdateException ex) {</span>
+<span class="nc" id="L510">                                final int grace = settings.getInt(Settings.KEYS.NVD_NEW_YEAR_GRACE_PERIOD, 10);</span>
+<span class="nc bnc" id="L511" title="All 6 branches missed.">                                if (ex.getCause() instanceof ResourceNotFoundException</span>
+                                        &amp;&amp; i == endYear &amp;&amp; dayOfEndYear &lt; grace) {
+<span class="nc" id="L513">                                    LOGGER.warn(&quot;NVD Data for {} has not been published yet.&quot;, endYear);</span>
+                                } else {
+<span class="nc" id="L515">                                    throw ex;</span>
+                                }
+<span class="nc" id="L517">                            } catch (InterruptedException ex) {</span>
+<span class="nc" id="L518">                                Thread.interrupted();</span>
+<span class="nc" id="L519">                                throw new UpdateException(&quot;The download of the meta file was interupted: &quot; + url, ex);</span>
+<span class="nc" id="L520">                            }</span>
                         }
                     }
                 }
-<span class="nc" id="L507">            } catch (NumberFormatException ex) {</span>
-<span class="nc" id="L508">                LOGGER.warn(&quot;An invalid schema version or timestamp exists in the data.properties file.&quot;);</span>
-<span class="nc" id="L509">                LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="nc" id="L510">            } catch (InvalidSettingException ex) {</span>
-<span class="nc" id="L511">                throw new UpdateException(&quot;The NVD CVE start year property is set to an invalid value&quot;, ex);</span>
-<span class="nc" id="L512">            }</span>
+<span class="nc" id="L524">            } catch (NumberFormatException ex) {</span>
+<span class="nc" id="L525">                LOGGER.warn(&quot;An invalid schema version or timestamp exists in the data.properties file.&quot;);</span>
+<span class="nc" id="L526">                LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L527">            }</span>
         }
-<span class="fc" id="L514">        return updates;</span>
+<span class="fc" id="L529">        return updates;</span>
     }
 
     /**
@@ -521,8 +536,8 @@ import org.slf4j.LoggerFactory;
      * @return the property value in seconds
      */
     private long getPropertyInSeconds(String key) {
-<span class="nc" id="L524">        final String value = dbProperties.getProperty(key, &quot;0&quot;);</span>
-<span class="nc" id="L525">        return DateUtil.getEpochValueInSeconds(value);</span>
+<span class="nc" id="L539">        final String value = dbProperties.getProperty(key, &quot;0&quot;);</span>
+<span class="nc" id="L540">        return DateUtil.getEpochValueInSeconds(value);</span>
     }
 
     /**
@@ -531,42 +546,42 @@ import org.slf4j.LoggerFactory;
      * @param settings the configured settings
      */
     protected synchronized void setSettings(Settings settings) {
-<span class="fc" id="L534">        this.settings = settings;</span>
-<span class="fc" id="L535">    }</span>
+<span class="fc" id="L549">        this.settings = settings;</span>
+<span class="fc" id="L550">    }</span>
 
     @Override
     public boolean purge(Engine engine) {
-<span class="nc" id="L539">        boolean result = true;</span>
+<span class="nc" id="L554">        boolean result = true;</span>
         try {
-<span class="nc" id="L541">            final File dataDir = engine.getSettings().getDataDirectory();</span>
-<span class="nc" id="L542">            final File db = new File(dataDir, engine.getSettings().getString(Settings.KEYS.DB_FILE_NAME, &quot;odc.mv.db&quot;));</span>
-<span class="nc bnc" id="L543" title="All 2 branches missed.">            if (db.exists()) {</span>
-<span class="nc bnc" id="L544" title="All 2 branches missed.">                if (db.delete()) {</span>
-<span class="nc" id="L545">                    LOGGER.info(&quot;Database file purged; local copy of the NVD has been removed&quot;);</span>
+<span class="nc" id="L556">            final File dataDir = engine.getSettings().getDataDirectory();</span>
+<span class="nc" id="L557">            final File db = new File(dataDir, engine.getSettings().getString(Settings.KEYS.DB_FILE_NAME, &quot;odc.mv.db&quot;));</span>
+<span class="nc bnc" id="L558" title="All 2 branches missed.">            if (db.exists()) {</span>
+<span class="nc bnc" id="L559" title="All 2 branches missed.">                if (db.delete()) {</span>
+<span class="nc" id="L560">                    LOGGER.info(&quot;Database file purged; local copy of the NVD has been removed&quot;);</span>
                 } else {
-<span class="nc" id="L547">                    LOGGER.error(&quot;Unable to delete '{}'; please delete the file manually&quot;, db.getAbsolutePath());</span>
-<span class="nc" id="L548">                    result = false;</span>
+<span class="nc" id="L562">                    LOGGER.error(&quot;Unable to delete '{}'; please delete the file manually&quot;, db.getAbsolutePath());</span>
+<span class="nc" id="L563">                    result = false;</span>
                 }
             } else {
-<span class="nc" id="L551">                LOGGER.info(&quot;Unable to purge database; the database file does not exist: {}&quot;, db.getAbsolutePath());</span>
-<span class="nc" id="L552">                result = false;</span>
+<span class="nc" id="L566">                LOGGER.info(&quot;Unable to purge database; the database file does not exist: {}&quot;, db.getAbsolutePath());</span>
+<span class="nc" id="L567">                result = false;</span>
             }
-<span class="nc" id="L554">            final File traceFile = new File(dataDir, &quot;odc.trace.db&quot;);</span>
-<span class="nc bnc" id="L555" title="All 4 branches missed.">            if (traceFile.exists() &amp;&amp; !traceFile.delete()) {</span>
-<span class="nc" id="L556">                LOGGER.error(&quot;Unable to delete '{}'; please delete the file manually&quot;, traceFile.getAbsolutePath());</span>
-<span class="nc" id="L557">                result = false;</span>
+<span class="nc" id="L569">            final File traceFile = new File(dataDir, &quot;odc.trace.db&quot;);</span>
+<span class="nc bnc" id="L570" title="All 4 branches missed.">            if (traceFile.exists() &amp;&amp; !traceFile.delete()) {</span>
+<span class="nc" id="L571">                LOGGER.error(&quot;Unable to delete '{}'; please delete the file manually&quot;, traceFile.getAbsolutePath());</span>
+<span class="nc" id="L572">                result = false;</span>
             }
-<span class="nc" id="L559">            final File lockFile = new File(dataDir, &quot;odc.update.lock&quot;);</span>
-<span class="nc bnc" id="L560" title="All 4 branches missed.">            if (lockFile.exists() &amp;&amp; !lockFile.delete()) {</span>
-<span class="nc" id="L561">                LOGGER.error(&quot;Unable to delete '{}'; please delete the file manually&quot;, lockFile.getAbsolutePath());</span>
-<span class="nc" id="L562">                result = false;</span>
+<span class="nc" id="L574">            final File lockFile = new File(dataDir, &quot;odc.update.lock&quot;);</span>
+<span class="nc bnc" id="L575" title="All 4 branches missed.">            if (lockFile.exists() &amp;&amp; !lockFile.delete()) {</span>
+<span class="nc" id="L576">                LOGGER.error(&quot;Unable to delete '{}'; please delete the file manually&quot;, lockFile.getAbsolutePath());</span>
+<span class="nc" id="L577">                result = false;</span>
             }
-<span class="nc" id="L564">        } catch (IOException ex) {</span>
-<span class="nc" id="L565">            final String msg = &quot;Unable to delete the database&quot;;</span>
-<span class="nc" id="L566">            LOGGER.error(msg, ex);</span>
-<span class="nc" id="L567">            result = false;</span>
-<span class="nc" id="L568">        }</span>
-<span class="nc" id="L569">        return result;</span>
+<span class="nc" id="L579">        } catch (IOException ex) {</span>
+<span class="nc" id="L580">            final String msg = &quot;Unable to delete the database&quot;;</span>
+<span class="nc" id="L581">            LOGGER.error(msg, ex);</span>
+<span class="nc" id="L582">            result = false;</span>
+<span class="nc" id="L583">        }</span>
+<span class="nc" id="L584">        return result;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

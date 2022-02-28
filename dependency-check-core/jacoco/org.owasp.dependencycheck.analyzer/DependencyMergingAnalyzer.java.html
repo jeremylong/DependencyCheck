@@ -145,20 +145,22 @@ import org.slf4j.LoggerFactory;
      */
     public static void mergeDependencies(final Dependency dependency, final Dependency relatedDependency,
             final Set&lt;Dependency&gt; dependenciesToRemove) {
-<span class="fc" id="L148">        LOGGER.debug(&quot;Merging '{}' into '{}'&quot;, relatedDependency.getFilePath(), dependency.getFilePath());</span>
-<span class="fc" id="L149">        dependency.addRelatedDependency(relatedDependency);</span>
-<span class="fc" id="L150">        relatedDependency.getEvidence(EvidenceType.VENDOR).forEach((e) -&gt; dependency.addEvidence(EvidenceType.VENDOR, e));</span>
-<span class="fc" id="L151">        relatedDependency.getEvidence(EvidenceType.PRODUCT).forEach((e) -&gt; dependency.addEvidence(EvidenceType.PRODUCT, e));</span>
-<span class="fc" id="L152">        relatedDependency.getEvidence(EvidenceType.VERSION).forEach((e) -&gt; dependency.addEvidence(EvidenceType.VERSION, e));</span>
+<span class="fc" id="L148">        synchronized (dependency) {</span>
+<span class="fc" id="L149">            LOGGER.debug(&quot;Merging '{}' into '{}'&quot;, relatedDependency.getFilePath(), dependency.getFilePath());</span>
+<span class="fc" id="L150">            dependency.addRelatedDependency(relatedDependency);</span>
+<span class="fc" id="L151">            relatedDependency.getEvidence(EvidenceType.VENDOR).forEach((e) -&gt; dependency.addEvidence(EvidenceType.VENDOR, e));</span>
+<span class="fc" id="L152">            relatedDependency.getEvidence(EvidenceType.PRODUCT).forEach((e) -&gt; dependency.addEvidence(EvidenceType.PRODUCT, e));</span>
+<span class="fc" id="L153">            relatedDependency.getEvidence(EvidenceType.VERSION).forEach((e) -&gt; dependency.addEvidence(EvidenceType.VERSION, e));</span>
 
-<span class="fc" id="L154">        relatedDependency.getRelatedDependencies().stream()</span>
-<span class="fc" id="L155">                .forEach(dependency::addRelatedDependency);</span>
-<span class="fc" id="L156">        relatedDependency.clearRelatedDependencies();</span>
-<span class="fc" id="L157">        dependency.addAllProjectReferences(relatedDependency.getProjectReferences());</span>
-<span class="fc bfc" id="L158" title="All 2 branches covered.">        if (dependenciesToRemove != null) {</span>
-<span class="fc" id="L159">            dependenciesToRemove.add(relatedDependency);</span>
-        }
-<span class="fc" id="L161">    }</span>
+<span class="fc" id="L155">            relatedDependency.getRelatedDependencies().stream()</span>
+<span class="fc" id="L156">                    .forEach(dependency::addRelatedDependency);</span>
+<span class="fc" id="L157">            relatedDependency.clearRelatedDependencies();</span>
+<span class="fc" id="L158">            dependency.addAllProjectReferences(relatedDependency.getProjectReferences());</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">            if (dependenciesToRemove != null) {</span>
+<span class="fc" id="L160">                dependenciesToRemove.add(relatedDependency);</span>
+            }
+<span class="fc" id="L162">        }</span>
+<span class="fc" id="L163">    }</span>
 
     /**
      * Bundling Ruby gems that are identified from different .gemspec files but
@@ -171,14 +173,14 @@ import org.slf4j.LoggerFactory;
      * same; otherwise false
      */
     protected boolean isSameRubyGem(Dependency dependency1, Dependency dependency2) {
-<span class="pc bpc" id="L174" title="2 of 4 branches missed.">        if (dependency1 == null || dependency2 == null</span>
-<span class="pc bpc" id="L175" title="1 of 2 branches missed.">                || !dependency1.getFileName().endsWith(&quot;.gemspec&quot;)</span>
-<span class="pc bpc" id="L176" title="1 of 2 branches missed.">                || !dependency2.getFileName().endsWith(&quot;.gemspec&quot;)</span>
-<span class="pc bpc" id="L177" title="1 of 2 branches missed.">                || dependency1.getPackagePath() == null</span>
-<span class="pc bpc" id="L178" title="1 of 2 branches missed.">                || dependency2.getPackagePath() == null) {</span>
-<span class="nc" id="L179">            return false;</span>
+<span class="pc bpc" id="L176" title="2 of 4 branches missed.">        if (dependency1 == null || dependency2 == null</span>
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">                || !dependency1.getFileName().endsWith(&quot;.gemspec&quot;)</span>
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">                || !dependency2.getFileName().endsWith(&quot;.gemspec&quot;)</span>
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">                || dependency1.getPackagePath() == null</span>
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">                || dependency2.getPackagePath() == null) {</span>
+<span class="nc" id="L181">            return false;</span>
         }
-<span class="fc" id="L181">        return dependency1.getPackagePath().equalsIgnoreCase(dependency2.getPackagePath());</span>
+<span class="fc" id="L183">        return dependency1.getPackagePath().equalsIgnoreCase(dependency2.getPackagePath());</span>
     }
 
     /**
@@ -199,18 +201,18 @@ import org.slf4j.LoggerFactory;
      * analysis
      */
     protected Dependency getMainGemspecDependency(Dependency dependency1, Dependency dependency2) {
-<span class="pc bpc" id="L202" title="1 of 4 branches missed.">        if (dependency1 != null &amp;&amp; dependency2 != null</span>
-<span class="fc bfc" id="L203" title="All 2 branches covered.">                &amp;&amp; Ecosystem.RUBY.equals(dependency1.getEcosystem())</span>
-<span class="pc bpc" id="L204" title="1 of 2 branches missed.">                &amp;&amp; Ecosystem.RUBY.equals(dependency2.getEcosystem())</span>
-<span class="pc bpc" id="L205" title="1 of 2 branches missed.">                &amp;&amp; isSameRubyGem(dependency1, dependency2)) {</span>
-<span class="fc" id="L206">            final File lFile = dependency1.getActualFile();</span>
-<span class="fc" id="L207">            final File left = lFile.getParentFile();</span>
-<span class="pc bpc" id="L208" title="1 of 4 branches missed.">            if (left != null &amp;&amp; left.getName().equalsIgnoreCase(&quot;specifications&quot;)) {</span>
-<span class="fc" id="L209">                return dependency1;</span>
+<span class="pc bpc" id="L204" title="1 of 4 branches missed.">        if (dependency1 != null &amp;&amp; dependency2 != null</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">                &amp;&amp; Ecosystem.RUBY.equals(dependency1.getEcosystem())</span>
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">                &amp;&amp; Ecosystem.RUBY.equals(dependency2.getEcosystem())</span>
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">                &amp;&amp; isSameRubyGem(dependency1, dependency2)) {</span>
+<span class="fc" id="L208">            final File lFile = dependency1.getActualFile();</span>
+<span class="fc" id="L209">            final File left = lFile.getParentFile();</span>
+<span class="pc bpc" id="L210" title="1 of 4 branches missed.">            if (left != null &amp;&amp; left.getName().equalsIgnoreCase(&quot;specifications&quot;)) {</span>
+<span class="fc" id="L211">                return dependency1;</span>
             }
-<span class="fc" id="L211">            return dependency2;</span>
+<span class="fc" id="L213">            return dependency2;</span>
         }
-<span class="fc" id="L213">        return null;</span>
+<span class="fc" id="L215">        return null;</span>
     }
 
     /**
@@ -223,16 +225,16 @@ import org.slf4j.LoggerFactory;
      * otherwise &lt;code&gt;false&lt;/code&gt;
      */
     protected boolean isSameSwiftPackage(Dependency dependency1, Dependency dependency2) {
-<span class="pc bpc" id="L226" title="2 of 4 branches missed.">        if (dependency1 == null || dependency2 == null</span>
-<span class="fc bfc" id="L227" title="All 2 branches covered.">                || (!dependency1.getFileName().endsWith(&quot;.podspec&quot;)</span>
-<span class="pc bpc" id="L228" title="1 of 2 branches missed.">                &amp;&amp; !dependency1.getFileName().equals(&quot;Package.swift&quot;))</span>
-<span class="fc bfc" id="L229" title="All 2 branches covered.">                || (!dependency2.getFileName().endsWith(&quot;.podspec&quot;)</span>
-<span class="pc bpc" id="L230" title="1 of 2 branches missed.">                &amp;&amp; !dependency2.getFileName().equals(&quot;Package.swift&quot;))</span>
-<span class="pc bpc" id="L231" title="1 of 2 branches missed.">                || dependency1.getPackagePath() == null</span>
-<span class="pc bpc" id="L232" title="1 of 2 branches missed.">                || dependency2.getPackagePath() == null) {</span>
-<span class="nc" id="L233">            return false;</span>
+<span class="pc bpc" id="L228" title="2 of 4 branches missed.">        if (dependency1 == null || dependency2 == null</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">                || (!dependency1.getFileName().endsWith(&quot;.podspec&quot;)</span>
+<span class="pc bpc" id="L230" title="1 of 2 branches missed.">                &amp;&amp; !dependency1.getFileName().equals(&quot;Package.swift&quot;))</span>
+<span class="fc bfc" id="L231" title="All 2 branches covered.">                || (!dependency2.getFileName().endsWith(&quot;.podspec&quot;)</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">                &amp;&amp; !dependency2.getFileName().equals(&quot;Package.swift&quot;))</span>
+<span class="pc bpc" id="L233" title="1 of 2 branches missed.">                || dependency1.getPackagePath() == null</span>
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">                || dependency2.getPackagePath() == null) {</span>
+<span class="nc" id="L235">            return false;</span>
         }
-<span class="fc" id="L235">        return dependency1.getPackagePath().equalsIgnoreCase(dependency2.getPackagePath());</span>
+<span class="fc" id="L237">        return dependency1.getPackagePath().equalsIgnoreCase(dependency2.getPackagePath());</span>
     }
 
     /**
@@ -244,16 +246,16 @@ import org.slf4j.LoggerFactory;
      * @return the primary swift dependency
      */
     protected Dependency getMainSwiftDependency(Dependency dependency1, Dependency dependency2) {
-<span class="pc bpc" id="L247" title="1 of 4 branches missed.">        if (dependency1 != null &amp;&amp; dependency2 != null</span>
-<span class="fc bfc" id="L248" title="All 2 branches covered.">                &amp;&amp; Ecosystem.IOS.equals(dependency1.getEcosystem())</span>
-<span class="pc bpc" id="L249" title="1 of 2 branches missed.">                &amp;&amp; Ecosystem.IOS.equals(dependency2.getEcosystem())</span>
-<span class="pc bpc" id="L250" title="1 of 2 branches missed.">                &amp;&amp; isSameSwiftPackage(dependency1, dependency2)) {</span>
-<span class="fc bfc" id="L251" title="All 2 branches covered.">            if (dependency1.getFileName().endsWith(&quot;.podspec&quot;)) {</span>
-<span class="fc" id="L252">                return dependency1;</span>
+<span class="pc bpc" id="L249" title="1 of 4 branches missed.">        if (dependency1 != null &amp;&amp; dependency2 != null</span>
+<span class="fc bfc" id="L250" title="All 2 branches covered.">                &amp;&amp; Ecosystem.IOS.equals(dependency1.getEcosystem())</span>
+<span class="pc bpc" id="L251" title="1 of 2 branches missed.">                &amp;&amp; Ecosystem.IOS.equals(dependency2.getEcosystem())</span>
+<span class="pc bpc" id="L252" title="1 of 2 branches missed.">                &amp;&amp; isSameSwiftPackage(dependency1, dependency2)) {</span>
+<span class="fc bfc" id="L253" title="All 2 branches covered.">            if (dependency1.getFileName().endsWith(&quot;.podspec&quot;)) {</span>
+<span class="fc" id="L254">                return dependency1;</span>
             }
-<span class="fc" id="L254">            return dependency2;</span>
+<span class="fc" id="L256">            return dependency2;</span>
         }
-<span class="fc" id="L256">        return null;</span>
+<span class="fc" id="L258">        return null;</span>
     }
 
     /**
@@ -265,24 +267,24 @@ import org.slf4j.LoggerFactory;
      * @return the primary swift dependency
      */
     protected Dependency getMainAndroidDependency(Dependency dependency1, Dependency dependency2) {
-<span class="fc bfc" id="L268" title="All 2 branches covered.">        if (!dependency1.isVirtual()</span>
-<span class="fc bfc" id="L269" title="All 2 branches covered.">                &amp;&amp; !dependency2.isVirtual()</span>
-<span class="fc bfc" id="L270" title="All 2 branches covered.">                &amp;&amp; Ecosystem.JAVA.equals(dependency1.getEcosystem())</span>
-<span class="fc bfc" id="L271" title="All 2 branches covered.">                &amp;&amp; Ecosystem.JAVA.equals(dependency2.getEcosystem())) {</span>
-<span class="fc" id="L272">            final String name1 = dependency1.getActualFile().getName();</span>
-<span class="fc" id="L273">            final String name2 = dependency2.getActualFile().getName();</span>
-<span class="fc bfc" id="L274" title="All 2 branches covered.">            if (&quot;classes.jar&quot;.equals(name2)</span>
-<span class="pc bpc" id="L275" title="1 of 2 branches missed.">                    &amp;&amp; &quot;aar&quot;.equals(FileUtils.getFileExtension(name1))</span>
-<span class="pc bpc" id="L276" title="1 of 2 branches missed.">                    &amp;&amp; dependency2.getFileName().contains(name1)) {</span>
-<span class="fc" id="L277">                return dependency1;</span>
+<span class="fc bfc" id="L270" title="All 2 branches covered.">        if (!dependency1.isVirtual()</span>
+<span class="fc bfc" id="L271" title="All 2 branches covered.">                &amp;&amp; !dependency2.isVirtual()</span>
+<span class="fc bfc" id="L272" title="All 2 branches covered.">                &amp;&amp; Ecosystem.JAVA.equals(dependency1.getEcosystem())</span>
+<span class="fc bfc" id="L273" title="All 2 branches covered.">                &amp;&amp; Ecosystem.JAVA.equals(dependency2.getEcosystem())) {</span>
+<span class="fc" id="L274">            final String name1 = dependency1.getActualFile().getName();</span>
+<span class="fc" id="L275">            final String name2 = dependency2.getActualFile().getName();</span>
+<span class="fc bfc" id="L276" title="All 2 branches covered.">            if (&quot;classes.jar&quot;.equals(name2)</span>
+<span class="pc bpc" id="L277" title="1 of 2 branches missed.">                    &amp;&amp; &quot;aar&quot;.equals(FileUtils.getFileExtension(name1))</span>
+<span class="pc bpc" id="L278" title="1 of 2 branches missed.">                    &amp;&amp; dependency2.getFileName().contains(name1)) {</span>
+<span class="fc" id="L279">                return dependency1;</span>
             }
-<span class="pc bpc" id="L279" title="1 of 2 branches missed.">            if (&quot;classes.jar&quot;.equals(name1)</span>
-<span class="nc bnc" id="L280" title="All 2 branches missed.">                    &amp;&amp; &quot;aar&quot;.equals(FileUtils.getFileExtension(name2))</span>
-<span class="nc bnc" id="L281" title="All 2 branches missed.">                    &amp;&amp; dependency1.getFileName().contains(name2)) {</span>
-<span class="nc" id="L282">                return dependency2;</span>
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">            if (&quot;classes.jar&quot;.equals(name1)</span>
+<span class="nc bnc" id="L282" title="All 2 branches missed.">                    &amp;&amp; &quot;aar&quot;.equals(FileUtils.getFileExtension(name2))</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">                    &amp;&amp; dependency1.getFileName().contains(name2)) {</span>
+<span class="nc" id="L284">                return dependency2;</span>
             }
         }
-<span class="fc" id="L285">        return null;</span>
+<span class="fc" id="L287">        return null;</span>
     }
 
     /**
@@ -294,41 +296,41 @@ import org.slf4j.LoggerFactory;
      * @return the primary swift dependency
      */
     protected Dependency getMainDotnetDependency(Dependency dependency1, Dependency dependency2) {
-<span class="pc bpc" id="L297" title="1 of 4 branches missed.">        if (dependency1.getName() != null &amp;&amp; dependency1.getVersion() != null</span>
-<span class="pc bpc" id="L298" title="1 of 4 branches missed.">                &amp;&amp; dependency2.getName() != null &amp;&amp; dependency2.getVersion() != null</span>
-<span class="fc bfc" id="L299" title="All 2 branches covered.">                &amp;&amp; Ecosystem.DOTNET.equals(dependency1.getEcosystem())</span>
-<span class="pc bpc" id="L300" title="1 of 2 branches missed.">                &amp;&amp; Ecosystem.DOTNET.equals(dependency2.getEcosystem())</span>
-<span class="fc bfc" id="L301" title="All 2 branches covered.">                &amp;&amp; dependency1.getName().equals(dependency2.getName())</span>
-<span class="pc bpc" id="L302" title="1 of 2 branches missed.">                &amp;&amp; dependency1.getVersion().equals(dependency2.getVersion())) {</span>
-<span class="fc bfc" id="L303" title="All 2 branches covered.">            if (dependency1.isVirtual()) {</span>
-<span class="fc" id="L304">                return dependency2;</span>
+<span class="pc bpc" id="L299" title="1 of 4 branches missed.">        if (dependency1.getName() != null &amp;&amp; dependency1.getVersion() != null</span>
+<span class="pc bpc" id="L300" title="1 of 4 branches missed.">                &amp;&amp; dependency2.getName() != null &amp;&amp; dependency2.getVersion() != null</span>
+<span class="fc bfc" id="L301" title="All 2 branches covered.">                &amp;&amp; Ecosystem.DOTNET.equals(dependency1.getEcosystem())</span>
+<span class="pc bpc" id="L302" title="1 of 2 branches missed.">                &amp;&amp; Ecosystem.DOTNET.equals(dependency2.getEcosystem())</span>
+<span class="fc bfc" id="L303" title="All 2 branches covered.">                &amp;&amp; dependency1.getName().equals(dependency2.getName())</span>
+<span class="pc bpc" id="L304" title="1 of 2 branches missed.">                &amp;&amp; dependency1.getVersion().equals(dependency2.getVersion())) {</span>
+<span class="fc bfc" id="L305" title="All 2 branches covered.">            if (dependency1.isVirtual()) {</span>
+<span class="fc" id="L306">                return dependency2;</span>
             }
-<span class="fc" id="L306">            return dependency1;</span>
+<span class="fc" id="L308">            return dependency1;</span>
         }
-<span class="fc" id="L308">        return null;</span>
+<span class="fc" id="L310">        return null;</span>
     }
 
     /**
-     * Determines which of the virtual dependencies should be considered the primary.
+     * Determines which of the virtual dependencies should be considered the
+     * primary.
      *
-     * @param dependency1
-     *         the first virtual dependency to compare
-     * @param dependency2
-     *         the second virtual dependency to compare
+     * @param dependency1 the first virtual dependency to compare
+     * @param dependency2 the second virtual dependency to compare
      *
-     * @return the first virtual dependency (or {code null} if they are not to be considered mergeable virtual dependencies)
+     * @return the first virtual dependency (or {code null} if they are not to
+     * be considered mergeable virtual dependencies)
      */
     protected Dependency getMainVirtualDependency(Dependency dependency1, Dependency dependency2) {
-<span class="fc bfc" id="L322" title="All 4 branches covered.">        if (dependency1.isVirtual() &amp;&amp; dependency2.isVirtual()</span>
-<span class="pc bpc" id="L323" title="2 of 4 branches missed.">            &amp;&amp; dependency1.getName() != null &amp;&amp; dependency2.getName() != null</span>
-<span class="pc bpc" id="L324" title="2 of 4 branches missed.">            &amp;&amp; dependency1.getVersion() != null &amp;&amp; dependency2.getVersion() != null</span>
-<span class="pc bpc" id="L325" title="2 of 4 branches missed.">            &amp;&amp; dependency1.getActualFilePath() != null &amp;&amp; dependency2.getActualFilePath() != null</span>
-<span class="fc bfc" id="L326" title="All 2 branches covered.">            &amp;&amp; dependency1.getName().equals(dependency2.getName())</span>
-<span class="fc bfc" id="L327" title="All 2 branches covered.">            &amp;&amp; dependency1.getVersion().equals(dependency2.getVersion())</span>
-<span class="pc bpc" id="L328" title="1 of 2 branches missed.">            &amp;&amp; dependency1.getActualFilePath().equals(dependency2.getActualFilePath())) {</span>
-<span class="nc" id="L329">            return dependency1;</span>
+<span class="fc bfc" id="L324" title="All 4 branches covered.">        if (dependency1.isVirtual() &amp;&amp; dependency2.isVirtual()</span>
+<span class="pc bpc" id="L325" title="2 of 4 branches missed.">                &amp;&amp; dependency1.getName() != null &amp;&amp; dependency2.getName() != null</span>
+<span class="pc bpc" id="L326" title="2 of 4 branches missed.">                &amp;&amp; dependency1.getVersion() != null &amp;&amp; dependency2.getVersion() != null</span>
+<span class="pc bpc" id="L327" title="2 of 4 branches missed.">                &amp;&amp; dependency1.getActualFilePath() != null &amp;&amp; dependency2.getActualFilePath() != null</span>
+<span class="fc bfc" id="L328" title="All 2 branches covered.">                &amp;&amp; dependency1.getName().equals(dependency2.getName())</span>
+<span class="pc bpc" id="L329" title="1 of 2 branches missed.">                &amp;&amp; dependency1.getVersion().equals(dependency2.getVersion())</span>
+<span class="nc bnc" id="L330" title="All 2 branches missed.">                &amp;&amp; dependency1.getActualFilePath().equals(dependency2.getActualFilePath())) {</span>
+<span class="nc" id="L331">            return dependency1;</span>
         }
-<span class="fc" id="L331">        return null;</span>
+<span class="fc" id="L333">        return null;</span>
     }
 
 }

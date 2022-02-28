@@ -60,22 +60,22 @@ public class ODCConnectionTransport extends HttpUrlConnectionTransport {
      * @param userAgent the user agent to send to OSS Index
      */
     public ODCConnectionTransport(Settings settings, OssindexClientConfiguration config, UserAgentSupplier userAgent) {
-<span class="nc" id="L63">        super(userAgent);</span>
-<span class="nc" id="L64">        this.userAgent = userAgent;</span>
-<span class="nc" id="L65">        this.configuration = config;</span>
-<span class="nc" id="L66">        connectionFactory = new URLConnectionFactory(settings);</span>
-<span class="nc" id="L67">    }</span>
+<span class="fc" id="L63">        super(userAgent);</span>
+<span class="fc" id="L64">        this.userAgent = userAgent;</span>
+<span class="fc" id="L65">        this.configuration = config;</span>
+<span class="fc" id="L66">        connectionFactory = new URLConnectionFactory(settings);</span>
+<span class="fc" id="L67">    }</span>
 
     @Override
     protected HttpURLConnection connect(final URL url) throws IOException {
-<span class="nc" id="L71">        final HttpURLConnection connection = connectionFactory.createHttpURLConnection(url);</span>
-<span class="nc" id="L72">        connection.setRequestProperty(&quot;User-Agent&quot;, userAgent.get());</span>
+<span class="fc" id="L71">        final HttpURLConnection connection = connectionFactory.createHttpURLConnection(url);</span>
+<span class="fc" id="L72">        connection.setRequestProperty(&quot;User-Agent&quot;, userAgent.get());</span>
 
-<span class="nc" id="L74">        final String authorization = BasicAuthHelper.authorizationHeader(configuration.getAuthConfiguration());</span>
-<span class="nc bnc" id="L75" title="All 2 branches missed.">        if (authorization != null) {</span>
+<span class="fc" id="L74">        final String authorization = BasicAuthHelper.authorizationHeader(configuration.getAuthConfiguration());</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">        if (authorization != null) {</span>
 <span class="nc" id="L76">            connection.setRequestProperty(AUTHORIZATION, authorization);</span>
         }
-<span class="nc" id="L78">        return connection;</span>
+<span class="fc" id="L78">        return connection;</span>
     }
 
 }

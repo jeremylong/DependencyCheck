@@ -49,11 +49,11 @@ public class WriteLock implements AutoCloseable {
     /**
      * How long to sleep waiting for the lock.
      */
-    public static final int SLEEP_DURATION = 10000;
+    public static final int SLEEP_DURATION = 15000;
     /**
      * Max attempts to obtain a lock.
      */
-    public static final int MAX_SLEEP_COUNT = 120;
+    public static final int MAX_SLEEP_COUNT = 160;
     /**
      * The file lock.
      */

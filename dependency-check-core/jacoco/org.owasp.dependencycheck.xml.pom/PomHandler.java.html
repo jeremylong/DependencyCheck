@@ -73,21 +73,49 @@ import org.xml.sax.helpers.DefaultHandler;
      */
     public static final String LICENSE_NODE = &quot;license&quot;;
     /**
-     * The url element.
+     * The developers element.
+     */
+    public static final String DEVELOPERS = &quot;developers&quot;;
+    /**
+     * The developer element.
+     */
+    public static final String DEVELOPER_NODE = &quot;developer&quot;;
+    /**
+     * The developer id element.
+     */
+    public static final String DEVELOPER_ID = &quot;id&quot;;
+    /**
+     * The developer email element.
+     */
+    public static final String DEVELOPER_EMAIL = &quot;email&quot;;
+    /**
+     * The developer organization element.
+     */
+    public static final String DEVELOPER_ORGANIZATION = &quot;organization&quot;;
+    /**
+     * The developer organization URL element.
+     */
+    public static final String DEVELOPER_ORGANIZATION_URL = &quot;organizationUrl&quot;;
+    /**
+     * The URL element.
      */
     public static final String URL = &quot;url&quot;;
     /**
      * The pom model.
      */
-<span class="fc" id="L82">    private final Model model = new Model();</span>
+<span class="fc" id="L106">    private final Model model = new Model();</span>
     /**
      * The stack of elements processed; used to determine the parent node.
      */
-<span class="fc" id="L86">    private final Deque&lt;String&gt; stack = new ArrayDeque&lt;&gt;();</span>
+<span class="fc" id="L110">    private final Deque&lt;String&gt; stack = new ArrayDeque&lt;&gt;();</span>
     /**
      * The license object.
      */
-<span class="fc" id="L90">    private License license = null;</span>
+<span class="fc" id="L114">    private License license = null;</span>
+    /**
+     * The developer object.
+     */
+<span class="fc" id="L118">    private Developer developer = null;</span>
     /**
      * The current node text being extracted from the element.
      */
@@ -99,7 +127,7 @@ import org.xml.sax.helpers.DefaultHandler;
      * @return the model object
      */
     public Model getModel() {
-<span class="fc" id="L102">        return model;</span>
+<span class="fc" id="L130">        return model;</span>
     }
 
     /**
@@ -113,12 +141,14 @@ import org.xml.sax.helpers.DefaultHandler;
      */
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-<span class="fc" id="L116">        currentText = new StringBuilder();</span>
-<span class="fc" id="L117">        stack.push(qName);</span>
-<span class="fc bfc" id="L118" title="All 2 branches covered.">        if (LICENSE_NODE.equals(qName)) {</span>
-<span class="fc" id="L119">            license = new License();</span>
+<span class="fc" id="L144">        currentText = new StringBuilder();</span>
+<span class="fc" id="L145">        stack.push(qName);</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">        if (LICENSE_NODE.equals(qName)) {</span>
+<span class="fc" id="L147">            license = new License();</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        } else if (DEVELOPER_NODE.equals(qName)) {</span>
+<span class="fc" id="L149">            developer = new Developer();</span>
         }
-<span class="fc" id="L121">    }</span>
+<span class="fc" id="L151">    }</span>
 
     /**
      * Handles the end element event.
@@ -130,79 +160,109 @@ import org.xml.sax.helpers.DefaultHandler;
      */
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-<span class="fc" id="L133">        stack.pop();</span>
-<span class="fc" id="L134">        final String parentNode = stack.peek();</span>
-<span class="fc bfc" id="L135" title="All 2 branches covered.">        if (null != parentNode) {</span>
-<span class="fc bfc" id="L136" title="All 6 branches covered.">            switch (parentNode) {</span>
+<span class="fc" id="L163">        stack.pop();</span>
+<span class="fc" id="L164">        final String parentNode = stack.peek();</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">        if (null != parentNode) {</span>
+<span class="fc bfc" id="L166" title="All 8 branches covered.">            switch (parentNode) {</span>
                 case PROJECT:
-<span class="pc bpc" id="L138" title="1 of 2 branches missed.">                    if (null != qName) {</span>
-<span class="fc bfc" id="L139" title="All 7 branches covered.">                        switch (qName) {</span>
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">                    if (null != qName) {</span>
+<span class="fc bfc" id="L169" title="All 7 branches covered.">                        switch (qName) {</span>
                             case GROUPID:
-<span class="fc" id="L141">                                model.setGroupId(currentText.toString());</span>
-<span class="fc" id="L142">                                break;</span>
+<span class="fc" id="L171">                                model.setGroupId(currentText.toString());</span>
+<span class="fc" id="L172">                                break;</span>
                             case ARTIFACTID:
-<span class="fc" id="L144">                                model.setArtifactId(currentText.toString());</span>
-<span class="fc" id="L145">                                break;</span>
+<span class="fc" id="L174">                                model.setArtifactId(currentText.toString());</span>
+<span class="fc" id="L175">                                break;</span>
                             case VERSION:
-<span class="fc" id="L147">                                model.setVersion(currentText.toString());</span>
-<span class="fc" id="L148">                                break;</span>
+<span class="fc" id="L177">                                model.setVersion(currentText.toString());</span>
+<span class="fc" id="L178">                                break;</span>
                             case NAME:
-<span class="fc" id="L150">                                model.setName(currentText.toString());</span>
-<span class="fc" id="L151">                                break;</span>
+<span class="fc" id="L180">                                model.setName(currentText.toString());</span>
+<span class="fc" id="L181">                                break;</span>
                             case DESCRIPTION:
-<span class="fc" id="L153">                                model.setDescription(currentText.toString());</span>
-<span class="fc" id="L154">                                break;</span>
+<span class="fc" id="L183">                                model.setDescription(currentText.toString());</span>
+<span class="fc" id="L184">                                break;</span>
                             case URL:
-<span class="fc" id="L156">                                model.setProjectURL(currentText.toString());</span>
-<span class="fc" id="L157">                                break;</span>
+<span class="fc" id="L186">                                model.setProjectURL(currentText.toString());</span>
+<span class="fc" id="L187">                                break;</span>
                             default:
-<span class="fc" id="L159">                                break;</span>
+<span class="fc" id="L189">                                break;</span>
                         }
                     }
                     break;
                 case ORGANIZATION:
-<span class="fc bfc" id="L164" title="All 2 branches covered.">                    if (NAME.equals(qName)) {</span>
-<span class="fc" id="L165">                        model.setOrganization(currentText.toString());</span>
-<span class="pc bpc" id="L166" title="1 of 2 branches missed.">                    } else if (URL.equals(qName)) {</span>
-<span class="fc" id="L167">                        model.setOrganizationUrl(currentText.toString());</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">                    if (NAME.equals(qName)) {</span>
+<span class="fc" id="L195">                        model.setOrganization(currentText.toString());</span>
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">                    } else if (URL.equals(qName)) {</span>
+<span class="fc" id="L197">                        model.setOrganizationUrl(currentText.toString());</span>
                     }
                     break;
                 case PARENT:
-<span class="pc bpc" id="L171" title="1 of 2 branches missed.">                    if (null != qName) {</span>
-<span class="fc bfc" id="L172" title="All 4 branches covered.">                        switch (qName) {</span>
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">                    if (null != qName) {</span>
+<span class="fc bfc" id="L202" title="All 4 branches covered.">                        switch (qName) {</span>
                             case GROUPID:
-<span class="fc" id="L174">                                model.setParentGroupId(currentText.toString());</span>
-<span class="fc" id="L175">                                break;</span>
+<span class="fc" id="L204">                                model.setParentGroupId(currentText.toString());</span>
+<span class="fc" id="L205">                                break;</span>
                             case ARTIFACTID:
-<span class="fc" id="L177">                                model.setParentArtifactId(currentText.toString());</span>
-<span class="fc" id="L178">                                break;</span>
+<span class="fc" id="L207">                                model.setParentArtifactId(currentText.toString());</span>
+<span class="fc" id="L208">                                break;</span>
                             case VERSION:
-<span class="fc" id="L180">                                model.setParentVersion(currentText.toString());</span>
-<span class="fc" id="L181">                                break;</span>
+<span class="fc" id="L210">                                model.setParentVersion(currentText.toString());</span>
+<span class="fc" id="L211">                                break;</span>
                             default:
-<span class="fc" id="L183">                                break;</span>
+<span class="fc" id="L213">                                break;</span>
                         }
                     }
                     break;
                 case LICENSE_NODE:
-<span class="pc bpc" id="L188" title="1 of 2 branches missed.">                    if (license != null) {</span>
-<span class="fc bfc" id="L189" title="All 2 branches covered.">                        if (NAME.equals(qName)) {</span>
-<span class="fc" id="L190">                            license.setName(currentText.toString());</span>
-<span class="pc bpc" id="L191" title="1 of 2 branches missed.">                        } else if (URL.equals(qName)) {</span>
-<span class="fc" id="L192">                            license.setUrl(currentText.toString());</span>
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">                    if (license != null) {</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">                        if (NAME.equals(qName)) {</span>
+<span class="fc" id="L220">                            license.setName(currentText.toString());</span>
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">                        } else if (URL.equals(qName)) {</span>
+<span class="fc" id="L222">                            license.setUrl(currentText.toString());</span>
                         }
                     }
                     break;
                 case LICENSES:
-<span class="pc bpc" id="L197" title="2 of 4 branches missed.">                    if (LICENSE_NODE.equals(qName) &amp;&amp; license != null) {</span>
-<span class="fc" id="L198">                        model.addLicense(license);</span>
+<span class="pc bpc" id="L227" title="2 of 4 branches missed.">                    if (LICENSE_NODE.equals(qName) &amp;&amp; license != null) {</span>
+<span class="fc" id="L228">                        model.addLicense(license);</span>
+<span class="fc" id="L229">                        license = null;</span>
+                    }
+                    break;
+                case DEVELOPER_NODE:
+<span class="pc bpc" id="L233" title="2 of 4 branches missed.">                    if (developer != null &amp;&amp; qName != null) {</span>
+<span class="pc bpc" id="L234" title="2 of 6 branches missed.">                        switch (qName) {</span>
+                            case DEVELOPER_ID:
+<span class="fc" id="L236">                                developer.setId(currentText.toString());</span>
+<span class="fc" id="L237">                                break;</span>
+                            case NAME:
+<span class="fc" id="L239">                                developer.setName(currentText.toString());</span>
+<span class="fc" id="L240">                                break;</span>
+                            case DEVELOPER_EMAIL:
+<span class="fc" id="L242">                                developer.setEmail(currentText.toString());</span>
+<span class="fc" id="L243">                                break;</span>
+                            case DEVELOPER_ORGANIZATION:
+<span class="fc" id="L245">                                developer.setOrganization(currentText.toString());</span>
+<span class="fc" id="L246">                                break;</span>
+                            case DEVELOPER_ORGANIZATION_URL:
+<span class="nc" id="L248">                                developer.setOrganizationUrl(currentText.toString());</span>
+<span class="nc" id="L249">                                break;</span>
+                            default:
+<span class="fc" id="L251">                                break;</span>
+                        }
+                    }
+                    break;
+                case DEVELOPERS:
+<span class="pc bpc" id="L256" title="2 of 4 branches missed.">                    if (DEVELOPER_NODE.equals(qName) &amp;&amp; developer != null) {</span>
+<span class="fc" id="L257">                        model.addDeveloper(developer);</span>
+<span class="fc" id="L258">                        developer = null;</span>
                     }
                     break;
                 default:
                     break;
             }
         }
-<span class="fc" id="L205">    }</span>
+<span class="fc" id="L265">    }</span>
 
     /**
      * Collects the body text of the node being processed.
@@ -214,7 +274,7 @@ import org.xml.sax.helpers.DefaultHandler;
      */
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
-<span class="fc" id="L217">        currentText.append(ch, start, length);</span>
-<span class="fc" id="L218">    }</span>
+<span class="fc" id="L277">        currentText.append(ch, start, length);</span>
+<span class="fc" id="L278">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

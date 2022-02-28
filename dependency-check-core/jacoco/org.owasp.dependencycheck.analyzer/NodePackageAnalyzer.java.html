@@ -216,13 +216,13 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
 
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-<span class="pc bpc" id="L219" title="1 of 2 branches missed.">        if (isNodeAuditEnabled(engine)</span>
-<span class="fc bfc" id="L220" title="All 4 branches covered.">                &amp;&amp; !(PACKAGE_LOCK_JSON.equals(dependency.getFileName()) || SHRINKWRAP_JSON.equals(dependency.getFileName()))) {</span>
-<span class="fc" id="L221">            engine.removeDependency(dependency);</span>
+<span class="fc" id="L219">        final File dependencyFile = dependency.getActualFile();</span>
+<span class="pc bpc" id="L220" title="2 of 6 branches missed.">        if (!dependencyFile.isFile() || dependencyFile.length() == 0 || !shouldProcess(dependencyFile)) {</span>
+<span class="fc" id="L221">            return;</span>
         }
-<span class="fc" id="L223">        final File dependencyFile = dependency.getActualFile();</span>
-<span class="pc bpc" id="L224" title="2 of 6 branches missed.">        if (!dependencyFile.isFile() || dependencyFile.length() == 0 || !shouldProcess(dependencyFile)) {</span>
-<span class="fc" id="L225">            return;</span>
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">        if (isNodeAuditEnabled(engine)</span>
+<span class="fc bfc" id="L224" title="All 4 branches covered.">                &amp;&amp; !(PACKAGE_LOCK_JSON.equals(dependency.getFileName()) || SHRINKWRAP_JSON.equals(dependency.getFileName()))) {</span>
+<span class="fc" id="L225">            engine.removeDependency(dependency);</span>
         }
 <span class="fc bfc" id="L227" title="All 2 branches covered.">        if (noLockFileExists(dependency.getActualFile())) {</span>
 <span class="fc" id="L228">            LOGGER.warn(&quot;No lock file exists - this will result in false negatives; please run `npm install --package-lock`&quot;);</span>

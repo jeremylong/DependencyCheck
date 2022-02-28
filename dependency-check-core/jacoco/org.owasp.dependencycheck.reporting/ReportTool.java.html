@@ -17,6 +17,12 @@
  */
 package org.owasp.dependencycheck.reporting;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.Identifier;
@@ -33,12 +39,12 @@ import us.springett.parsers.cpe.util.Convert;
  *
  * @author Jeremy Long
  */
-<span class="fc" id="L36">public class ReportTool {</span>
+<span class="fc" id="L42">public class ReportTool {</span>
 
     /**
      * The logger.
      */
-<span class="fc" id="L41">    private static final Logger LOGGER = LoggerFactory.getLogger(ReportTool.class);</span>
+<span class="fc" id="L47">    private static final Logger LOGGER = LoggerFactory.getLogger(ReportTool.class);</span>
 
     /**
      * Converts an identifier into the Suppression string when possible.
@@ -48,23 +54,23 @@ import us.springett.parsers.cpe.util.Convert;
      * &lt;code&gt;null&lt;/code&gt;.
      */
     public String identifierToSuppressionId(Identifier id) {
-<span class="fc bfc" id="L51" title="All 2 branches covered.">        if (id instanceof PurlIdentifier) {</span>
-<span class="fc" id="L52">            final PurlIdentifier purl = (PurlIdentifier) id;</span>
-<span class="fc" id="L53">            return purl.toString();</span>
-<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        } else if (id instanceof CpeIdentifier) {</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        if (id instanceof PurlIdentifier) {</span>
+<span class="fc" id="L58">            final PurlIdentifier purl = (PurlIdentifier) id;</span>
+<span class="fc" id="L59">            return purl.toString();</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">        } else if (id instanceof CpeIdentifier) {</span>
             try {
-<span class="fc" id="L56">                final CpeIdentifier cpeId = (CpeIdentifier) id;</span>
-<span class="fc" id="L57">                final Cpe cpe = cpeId.getCpe();</span>
-<span class="fc" id="L58">                return String.format(&quot;cpe:/%s:%s:%s&quot;, Convert.wellFormedToCpeUri(cpe.getPart()),</span>
-<span class="fc" id="L59">                        Convert.wellFormedToCpeUri(cpe.getWellFormedVendor()),</span>
-<span class="fc" id="L60">                        Convert.wellFormedToCpeUri(cpe.getWellFormedProduct()));</span>
-<span class="nc" id="L61">            } catch (CpeEncodingException ex) {</span>
-<span class="nc" id="L62">                LOGGER.debug(&quot;Unable to convert to cpe URI&quot;, ex);</span>
-<span class="nc" id="L63">            }</span>
-<span class="nc bnc" id="L64" title="All 2 branches missed.">        } else if (id instanceof GenericIdentifier) {</span>
-<span class="nc" id="L65">            return id.getValue();</span>
+<span class="fc" id="L62">                final CpeIdentifier cpeId = (CpeIdentifier) id;</span>
+<span class="fc" id="L63">                final Cpe cpe = cpeId.getCpe();</span>
+<span class="fc" id="L64">                return String.format(&quot;cpe:/%s:%s:%s&quot;, Convert.wellFormedToCpeUri(cpe.getPart()),</span>
+<span class="fc" id="L65">                        Convert.wellFormedToCpeUri(cpe.getWellFormedVendor()),</span>
+<span class="fc" id="L66">                        Convert.wellFormedToCpeUri(cpe.getWellFormedProduct()));</span>
+<span class="nc" id="L67">            } catch (CpeEncodingException ex) {</span>
+<span class="nc" id="L68">                LOGGER.debug(&quot;Unable to convert to cpe URI&quot;, ex);</span>
+<span class="nc" id="L69">            }</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        } else if (id instanceof GenericIdentifier) {</span>
+<span class="nc" id="L71">            return id.getValue();</span>
         }
-<span class="nc" id="L67">        return null;</span>
+<span class="nc" id="L73">        return null;</span>
     }
 
     /**
@@ -74,7 +80,95 @@ import us.springett.parsers.cpe.util.Convert;
      * @return the estimated score
      */
     public float estimateSeverity(String severity) {
-<span class="fc" id="L77">        return SeverityUtil.estimateCvssV2(severity);</span>
+<span class="fc" id="L83">        return SeverityUtil.estimateCvssV2(severity);</span>
     }
+
+    /**
+     * Creates a list of SARIF rules for the SARIF report.
+     *
+     * @param dependencies the list of dependencies to extract rules from
+     * @return the list of SARIF rules
+     */
+    public Collection&lt;SarifRule&gt; convertToSarifRules(List&lt;Dependency&gt; dependencies) {
+<span class="fc" id="L93">        final Map&lt;String, SarifRule&gt; rules = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        for (Dependency d : dependencies) {</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">            for (Vulnerability v : d.getVulnerabilities()) {</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">                if (!rules.containsKey(v.getName())) {</span>
+<span class="nc" id="L97">                    final SarifRule r = new SarifRule(v.getName(),</span>
+<span class="nc" id="L98">                            buildShortDescription(d, v),</span>
+<span class="nc" id="L99">                            v.getDescription(),</span>
+<span class="nc" id="L100">                            v.getSource().name(),</span>
+<span class="nc" id="L101">                            v.getCvssV2(),</span>
+<span class="nc" id="L102">                            v.getCvssV3());</span>
+<span class="nc" id="L103">                    rules.put(v.getName(), r);</span>
+                }
+<span class="nc" id="L105">            }</span>
+<span class="fc" id="L106">        }</span>
+<span class="fc" id="L107">        return rules.values();</span>
+    }
+
+    private String determineScore(Vulnerability vuln) {
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        if (vuln.getUnscoredSeverity() != null) {</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">            if (&quot;0.0&quot;.equals(vuln.getUnscoredSeverity())) {</span>
+<span class="nc" id="L113">                return &quot;Unknown&quot;;</span>
+            } else {
+<span class="nc" id="L115">                return normalizeSeverity(vuln.getUnscoredSeverity().toLowerCase());</span>
+            }
+<span class="nc bnc" id="L117" title="All 4 branches missed.">        } else if (vuln.getCvssV3() != null &amp;&amp; vuln.getCvssV3().getBaseSeverity() != null) {</span>
+<span class="nc" id="L118">            return normalizeSeverity(vuln.getCvssV3().getBaseSeverity().toLowerCase());</span>
+<span class="nc bnc" id="L119" title="All 4 branches missed.">        } else if (vuln.getCvssV2() != null &amp;&amp; vuln.getCvssV2().getSeverity() != null) {</span>
+<span class="nc" id="L120">            return normalizeSeverity(vuln.getCvssV2().getSeverity());</span>
+        }
+<span class="nc" id="L122">        return &quot;Unknown&quot;;</span>
+    }
+
+    private String normalizeSeverity(String sev) {
+<span class="nc bnc" id="L126" title="All 8 branches missed.">        switch (sev) {</span>
+            case &quot;critical&quot;:
+<span class="nc" id="L128">                return &quot;Critical&quot;;</span>
+            case &quot;high&quot;:
+<span class="nc" id="L130">                return &quot;High&quot;;</span>
+            case &quot;medium&quot;:
+<span class="nc" id="L132">                return &quot;Medium&quot;;</span>
+            case &quot;moderate&quot;:
+<span class="nc" id="L134">                return &quot;Medium&quot;;</span>
+            case &quot;low&quot;:
+<span class="nc" id="L136">                return &quot;Low&quot;;</span>
+            case &quot;informational&quot;:
+<span class="nc" id="L138">                return &quot;Low&quot;;</span>
+            case &quot;info&quot;:
+<span class="nc" id="L140">                return &quot;Low&quot;;</span>
+            default:
+<span class="nc" id="L142">                return &quot;Unknown&quot;;</span>
+        }
+    }
+
+    /**
+     * Builds the short description for the Sarif format.
+     *
+     * @param d the dependency
+     * @param vuln the vulnerability
+     * @return the short description
+     */
+    private String buildShortDescription(Dependency d, Vulnerability vuln) {
+<span class="nc" id="L154">        final StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L155">        sb.append(determineScore(vuln))</span>
+<span class="nc" id="L156">                .append(&quot; severity - &quot;)</span>
+<span class="nc" id="L157">                .append(vuln.getName());</span>
+<span class="nc bnc" id="L158" title="All 4 branches missed.">        if (vuln.getCwes() != null &amp;&amp; !vuln.getCwes().isEmpty()) {</span>
+<span class="nc" id="L159">            final String cwe = vuln.getCwes().getFullCwes().values().iterator().next();</span>
+<span class="nc bnc" id="L160" title="All 6 branches missed.">            if (cwe != null &amp;&amp; !&quot;NVD-CWE-Other&quot;.equals(cwe) &amp;&amp; !&quot;NVD-CWE-noinfo&quot;.equals(cwe)) {</span>
+<span class="nc" id="L161">                sb.append(&quot; &quot;).append(cwe);</span>
+            }
+        }
+<span class="nc" id="L164">        sb.append(&quot; vulnerability in &quot;);</span>
+<span class="nc bnc" id="L165" title="All 4 branches missed.">        if (d.getSoftwareIdentifiers() != null &amp;&amp; !d.getSoftwareIdentifiers().isEmpty()) {</span>
+<span class="nc" id="L166">            sb.append(d.getSoftwareIdentifiers().iterator().next());</span>
+        } else {
+<span class="nc" id="L168">            sb.append(d.getDisplayFileName());</span>
+        }
+<span class="nc" id="L170">        return sb.toString();</span>
+    }
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

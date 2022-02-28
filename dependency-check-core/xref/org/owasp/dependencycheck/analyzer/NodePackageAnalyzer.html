@@ -224,13 +224,13 @@
 <a class="jxr_linenumber" name="L216" href="#L216">216</a> 
 <a class="jxr_linenumber" name="L217" href="#L217">217</a>     @Override
 <a class="jxr_linenumber" name="L218" href="#L218">218</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> analyzeDependency(<a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> dependency, <a href="../../../../org/owasp/dependencycheck/Engine.html">Engine</a> engine) <strong class="jxr_keyword">throws</strong> AnalysisException {
-<a class="jxr_linenumber" name="L219" href="#L219">219</a>         <strong class="jxr_keyword">if</strong> (isNodeAuditEnabled(engine)
-<a class="jxr_linenumber" name="L220" href="#L220">220</a>                 &amp;&amp; !(PACKAGE_LOCK_JSON.equals(dependency.getFileName()) || SHRINKWRAP_JSON.equals(dependency.getFileName()))) {
-<a class="jxr_linenumber" name="L221" href="#L221">221</a>             engine.removeDependency(dependency);
+<a class="jxr_linenumber" name="L219" href="#L219">219</a>         <strong class="jxr_keyword">final</strong> File dependencyFile = dependency.getActualFile();
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>         <strong class="jxr_keyword">if</strong> (!dependencyFile.isFile() || dependencyFile.length() == 0 || !shouldProcess(dependencyFile)) {
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>             <strong class="jxr_keyword">return</strong>;
 <a class="jxr_linenumber" name="L222" href="#L222">222</a>         }
-<a class="jxr_linenumber" name="L223" href="#L223">223</a>         <strong class="jxr_keyword">final</strong> File dependencyFile = dependency.getActualFile();
-<a class="jxr_linenumber" name="L224" href="#L224">224</a>         <strong class="jxr_keyword">if</strong> (!dependencyFile.isFile() || dependencyFile.length() == 0 || !shouldProcess(dependencyFile)) {
-<a class="jxr_linenumber" name="L225" href="#L225">225</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="L223" href="#L223">223</a>         <strong class="jxr_keyword">if</strong> (isNodeAuditEnabled(engine)
+<a class="jxr_linenumber" name="L224" href="#L224">224</a>                 &amp;&amp; !(PACKAGE_LOCK_JSON.equals(dependency.getFileName()) || SHRINKWRAP_JSON.equals(dependency.getFileName()))) {
+<a class="jxr_linenumber" name="L225" href="#L225">225</a>             engine.removeDependency(dependency);
 <a class="jxr_linenumber" name="L226" href="#L226">226</a>         }
 <a class="jxr_linenumber" name="L227" href="#L227">227</a>         <strong class="jxr_keyword">if</strong> (noLockFileExists(dependency.getActualFile())) {
 <a class="jxr_linenumber" name="L228" href="#L228">228</a>             LOGGER.warn(<span class="jxr_string">"No lock file exists - this will result in false negatives; please run `npm install --package-lock`"</span>);

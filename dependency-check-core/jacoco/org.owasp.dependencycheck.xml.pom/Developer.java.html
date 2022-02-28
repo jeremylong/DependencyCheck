@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Developer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.xml.pom</a> &gt; <span class="el_source">Developer.java</span></div><h1>Developer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2022 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.xml.pom;
+
+import java.io.Serializable;
+import java.util.Objects;
+import javax.annotation.concurrent.ThreadSafe;
+
+/**
+ * Represents the developer node within the pom.xml.
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+<span class="fc" id="L30">public class Developer implements Serializable {</span>
+
+    /**
+     * Generated UUID.
+     */
+    private static final long serialVersionUID = 7016253914202775026L;
+
+    /**
+     * The id of the developer.
+     */
+    private String id;
+    /**
+     * The developers name.
+     */
+    private String name;
+    /**
+     * The developers email.
+     */
+    private String email;
+    /**
+     * The developer's organization.
+     */
+    private String organization;
+    /**
+     * The developer's organization URL.
+     */
+    private String organizationUrl;
+
+    /**
+     * Get the value of id.
+     *
+     * @return the value of id
+     */
+    public String getId() {
+<span class="fc" id="L64">        return id;</span>
+    }
+
+    /**
+     * Set the value of id.
+     *
+     * @param id new value of id
+     */
+    public void setId(String id) {
+<span class="fc" id="L73">        this.id = id;</span>
+<span class="fc" id="L74">    }</span>
+
+    /**
+     * Get the value of name.
+     *
+     * @return the value of name
+     */
+    public String getName() {
+<span class="fc" id="L82">        return name;</span>
+    }
+
+    /**
+     * Set the value of name.
+     *
+     * @param name new value of name
+     */
+    public void setName(String name) {
+<span class="fc" id="L91">        this.name = name;</span>
+<span class="fc" id="L92">    }</span>
+
+    /**
+     * Get the value of email.
+     *
+     * @return the value of email
+     */
+    public String getEmail() {
+<span class="fc" id="L100">        return email;</span>
+    }
+
+    /**
+     * Set the value of email.
+     *
+     * @param email new value of email
+     */
+    public void setEmail(String email) {
+<span class="fc" id="L109">        this.email = email;</span>
+<span class="fc" id="L110">    }</span>
+
+    /**
+     * Get the value of organization.
+     *
+     * @return the value of organization
+     */
+    public String getOrganization() {
+<span class="fc" id="L118">        return organization;</span>
+    }
+
+    /**
+     * Set the value of organization.
+     *
+     * @param organization new value of organization
+     */
+    public void setOrganization(String organization) {
+<span class="fc" id="L127">        this.organization = organization;</span>
+<span class="fc" id="L128">    }</span>
+
+    /**
+     * Get the value of organizationUrl.
+     *
+     * @return the value of organizationUrl
+     */
+    public String getOrganizationUrl() {
+<span class="fc" id="L136">        return organizationUrl;</span>
+    }
+
+    /**
+     * Set the value of organizationUrl.
+     *
+     * @param organizationUrl new value of organizationUrl
+     */
+    public void setOrganizationUrl(String organizationUrl) {
+<span class="nc" id="L145">        this.organizationUrl = organizationUrl;</span>
+<span class="nc" id="L146">    }</span>
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L150">        int hash = 3;</span>
+<span class="nc" id="L151">        hash = 61 * hash + Objects.hashCode(this.id);</span>
+<span class="nc" id="L152">        hash = 61 * hash + Objects.hashCode(this.name);</span>
+<span class="nc" id="L153">        hash = 61 * hash + Objects.hashCode(this.email);</span>
+<span class="nc" id="L154">        hash = 61 * hash + Objects.hashCode(this.organization);</span>
+<span class="nc" id="L155">        hash = 61 * hash + Objects.hashCode(this.organizationUrl);</span>
+<span class="nc" id="L156">        return hash;</span>
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        if (this == obj) {</span>
+<span class="nc" id="L162">            return true;</span>
+        }
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        if (obj == null) {</span>
+<span class="nc" id="L165">            return false;</span>
+        }
+<span class="nc bnc" id="L167" title="All 2 branches missed.">        if (getClass() != obj.getClass()) {</span>
+<span class="nc" id="L168">            return false;</span>
+        }
+<span class="nc" id="L170">        final Developer other = (Developer) obj;</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        if (!Objects.equals(this.id, other.id)) {</span>
+<span class="nc" id="L172">            return false;</span>
+        }
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        if (!Objects.equals(this.name, other.name)) {</span>
+<span class="nc" id="L175">            return false;</span>
+        }
+<span class="nc bnc" id="L177" title="All 2 branches missed.">        if (!Objects.equals(this.email, other.email)) {</span>
+<span class="nc" id="L178">            return false;</span>
+        }
+<span class="nc bnc" id="L180" title="All 2 branches missed.">        if (!Objects.equals(this.organization, other.organization)) {</span>
+<span class="nc" id="L181">            return false;</span>
+        }
+<span class="nc bnc" id="L183" title="All 2 branches missed.">        if (!Objects.equals(this.organizationUrl, other.organizationUrl)) {</span>
+<span class="nc" id="L184">            return false;</span>
+        }
+<span class="nc" id="L186">        return true;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L191">        return &quot;Developer{&quot;</span>
+                + &quot;id=&quot; + id
+                + &quot;, name=&quot; + name
+                + &quot;, email=&quot; + email
+                + &quot;, organization=&quot; + organization
+                + &quot;, organizationUrl=&quot; + organizationUrl + '}';
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
