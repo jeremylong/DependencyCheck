@@ -27,7 +27,7 @@ jobs:
         with:
           java-version: 8
           distribution: 'zulu'
-      - uses: pnpm/action-setup@v2.2.0
+      - uses: pnpm/action-setup@v2.2.1
         with:
           version: 6.0.2
       - name: Build with Maven
