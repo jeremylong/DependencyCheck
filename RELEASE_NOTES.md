@@ -1,5 +1,22 @@
 # Release Notes
 
+## [Version 7.0.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.0.0) (2022-02-28)
+
+
+### Breaking Changes
+ - The H2 database version has been upgraded.
+   - if you use the `dataDirectory` option you will need to run a purge after upgrading.
+ - Upgraded to dotnet core 6.0. If analyzing dotnet assemblies the system will need to have the dotnet core 6.0.x runtime available.
+
+### Changes
+ - The Sarif report format has been fixed and can now be imported into GitHub if desired (See #3993).
+ - Introduced IssueOps for False Positive reports to assist the team in evaluating FP reports.
+   - [Create New FP Report Issue](https://github.com/jeremylong/DependencyCheck/issues/new?assignees=&labels=FP+Report&template=false-positive-report.yml&title=%5BFP%5D%3A+).
+ - When analyzing Java projects ODC now includes data from the developers section. 
+   - This will likely cause false positives on things like Apache James, please report the FP and we will fix these quickly.
+ - General project maintenance, bug fixes, and false positive reductions.
+ - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/28?closed=1).
+
 ## [Version 6.5.3](https://github.com/jeremylong/DependencyCheck/releases/tag/v6.5.3) (2022-01-12)
 
 ### Changes
