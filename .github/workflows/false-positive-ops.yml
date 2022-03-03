@@ -25,7 +25,7 @@ jobs:
                 repo: context.repo.repo,
                 name: 'pending more information'
               })
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           path: odc
       - name: Parse False Positive Issue
