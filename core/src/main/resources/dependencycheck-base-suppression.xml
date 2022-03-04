@@ -4842,4 +4842,71 @@
         <cpe>cpe:/a:apache:tomcat</cpe>
         <cpe>cpe:/a:apache_tomcat:apache_tomcat</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       FP per issue #4129
+       ]]></notes>
+        <packageUrl regex="true">^pkg:maven/jakarta\.ws\.rs/jakarta\.ws\.rs-api@.*$</packageUrl>
+        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
+        <cpe>cpe:/a:oracle:java_se</cpe>
+        <cpe>cpe:/a:oracle:web_services</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #4131
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.graylog2/gelfclient@.*$</packageUrl>
+        <cpe>cpe:/a:graylog:graylog</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       FP per issue #4133
+       ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.mariadb\.jdbc/mariadb-java-client@.*$</packageUrl>
+        <cpe>cpe:/a:mariadb:mariadb</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #4135
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.eclipse/yasson@.*$</packageUrl>
+        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
+        <cpe>cpe:/a:oracle:projects</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       FP per issue #4140
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/org\.aspectj/aspectjrt@.*$</packageUrl>
+       <cpe>cpe:/a:vmware:tools</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       FP per issue #4149
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/org\.apache\.kafka/kafka-log4j-appender@.*$</packageUrl>
+       <cpe>cpe:/a:apache:log4j</cpe>
+       <cpe>cpe:/a:apache:kafka</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       FP per issue #4152
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring-cloud-kubernetes-fabric8-config@.*$</packageUrl>
+       <cpe>cpe:/a:vmware:spring_cloud_config</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       FP per issue #4156
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/com\.lightbend\.akka\.management/akka-management-cluster-bootstrap_2\.13@.*$</packageUrl>
+       <cpe>cpe:/a:akka:akka</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       FP per issue #4154
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/io\.netty/netty-tcnative-boringssl-static@.*$</packageUrl>
+       <cpe>cpe:/a:chromium:chromium</cpe>
+    </suppress>
 </suppressions>
