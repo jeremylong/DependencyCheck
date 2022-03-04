@@ -1,8 +1,11 @@
 package org.owasp.dependencycheck.analyzer;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -17,6 +20,10 @@ import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.utils.Settings;
 
 import com.github.packageurl.MalformedPackageURLException;
+import org.sonatype.goodies.packageurl.PackageUrl;
+import org.sonatype.ossindex.service.api.componentreport.ComponentReport;
+import org.sonatype.ossindex.service.client.OssindexClient;
+import org.sonatype.ossindex.service.client.transport.Transport;
 
 public class OssIndexAnalyzerTest extends BaseTest {
 
@@ -76,6 +83,58 @@ public class OssIndexAnalyzerTest extends BaseTest {
                 }
             });
             super.enrich(dependency);
+        }
+    }
+
+    @Test
+    public void should_analyzeDependency_return_a_dedicated_error_message_when_403_response_from_sonatype() throws MalformedPackageURLException {
+        // Given
+        OssIndexAnalyzer analyzer = new OssIndexAnalyzerThrowing403();
+        analyzer.initialize(getSettings());
+
+        Identifier identifier = new PurlIdentifier("maven", "test", "test", "1.0",
+                Confidence.HIGHEST);
+
+        Dependency dependency = new Dependency();
+        dependency.addSoftwareIdentifier(identifier);
+        Settings settings = getSettings();
+        Engine engine = new Engine(settings);
+        engine.setDependencies(Collections.singletonList(dependency));
+
+        // When
+        AnalysisException output = new AnalysisException();
+        try {
+            analyzer.analyzeDependency(dependency, engine);
+        } catch (AnalysisException e) {
+            output = e;
+        }
+
+        // Then
+        assertEquals("OSS Index access forbidden", output.getMessage());
+    }
+
+    static final class OssIndexAnalyzerThrowing403 extends OssIndexAnalyzer {
+        @Override
+        OssindexClient newOssIndexClient() {
+            return new OssIndexClient403();
+        }
+    }
+
+    private static final class OssIndexClient403 implements OssindexClient {
+
+        @Override
+        public Map<PackageUrl, ComponentReport> requestComponentReports(List<PackageUrl> coordinates) throws Exception {
+            throw new Transport.TransportException("Unexpected response; status: 403");
+        }
+
+        @Override
+        public ComponentReport requestComponentReport(PackageUrl coordinates) throws Exception {
+            throw new Transport.TransportException("Unexpected response; status: 403");
+        }
+
+        @Override
+        public void close() throws Exception {
+
         }
     }
 }

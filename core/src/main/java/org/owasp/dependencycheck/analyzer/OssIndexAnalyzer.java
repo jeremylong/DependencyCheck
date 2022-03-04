@@ -144,6 +144,8 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
                         throw new AnalysisException("Invalid credentails provided for OSS Index", ex);
                     } else if (ex.getMessage() != null && ex.getMessage().endsWith("429")) {
                         throw new AnalysisException("OSS Index rate limit exceeded", ex);
+                    } else if (ex.getMessage() != null && ex.getMessage().endsWith("403")) {
+                        throw new AnalysisException("OSS Index access forbidden", ex);
                     }
                     LOG.debug("Error requesting component reports", ex);
                     throw new AnalysisException("Failed to request component-reports", ex);
@@ -210,13 +212,17 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
         });
         // only attempt if we have been able to collect some packages
         if (!packages.isEmpty()) {
-            try (OssindexClient client = OssindexClientFactory.create(getSettings())) {
+            try (OssindexClient client = newOssIndexClient()) {
                 LOG.debug("OSS Index Analyzer submitting: " + packages.toString());
                 return client.requestComponentReports(packages);
             }
         }
         LOG.warn("Unable to determine Package-URL identifiers for {} dependencies", dependencies.length);
         return Collections.emptyMap();
+    }
+
+    OssindexClient newOssIndexClient() {
+        return OssindexClientFactory.create(getSettings());
     }
 
     /**
