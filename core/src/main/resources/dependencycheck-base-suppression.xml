@@ -4850,5 +4850,11 @@
         <packageUrl regex="true">^pkg:maven/(?!org\.apache\.james/).*$</packageUrl>
         <cpe>cpe:/a:apache:james</cpe>
     </suppress>
-
+    <suppress base="true">
+	<notes><![CDATA[
+	FP because cpe make reference to a GO library
+	]]></notes>
+	<packageUrl regex="true">^pkg:maven/com\.ibm\.etcd/etcd\-java@.*$</packageUrl>
+	<cpe>cpe:/a:etcd:etcd</cpe>
+    </suppress>
 </suppressions>
