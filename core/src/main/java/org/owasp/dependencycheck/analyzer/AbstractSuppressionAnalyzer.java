@@ -248,7 +248,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer imple
         } catch (SuppressionParseException ex) {
             throw ex;
         } catch (IOException ex) {
-            throwSuppressionParseException("Unable to create temp file for suppression file", ex, suppressionFilePath);
+            throwSuppressionParseException("Unable to suppression file", ex, suppressionFilePath);
         } finally {
             if (deleteTempFile && file != null) {
                 FileUtils.delete(file);
@@ -267,7 +267,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer imple
      * SuppressionParseException
      */
     private void throwSuppressionParseException(String message, Exception exception, String suppressionFilePath) throws SuppressionParseException {
-        LOGGER.warn(String.format(message + "'%s'", suppressionFilePath));
+        LOGGER.warn(String.format(message + " '%s'", suppressionFilePath));
         LOGGER.debug("", exception);
         throw new SuppressionParseException(message, exception);
     }
