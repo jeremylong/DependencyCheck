@@ -19,7 +19,6 @@ import org.owasp.dependencycheck.dependency.naming.Identifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.utils.Settings;
 
-import com.github.packageurl.MalformedPackageURLException;
 import org.sonatype.goodies.packageurl.PackageUrl;
 import org.sonatype.ossindex.service.api.componentreport.ComponentReport;
 import org.sonatype.ossindex.service.client.OssindexClient;
@@ -29,10 +28,11 @@ public class OssIndexAnalyzerTest extends BaseTest {
 
     @Test
     public void should_enrich_be_included_in_mutex_to_prevent_NPE()
-            throws AnalysisException, MalformedPackageURLException {
+            throws Exception {
 
         // Given
         OssIndexAnalyzer analyzer = new SproutOssIndexAnalyzer();
+        analyzer.close();
 
 
         Identifier identifier = new PurlIdentifier("maven", "test", "test", "1.0",
@@ -87,9 +87,10 @@ public class OssIndexAnalyzerTest extends BaseTest {
     }
 
     @Test
-    public void should_analyzeDependency_return_a_dedicated_error_message_when_403_response_from_sonatype() throws MalformedPackageURLException {
+    public void should_analyzeDependency_return_a_dedicated_error_message_when_403_response_from_sonatype() throws Exception {
         // Given
         OssIndexAnalyzer analyzer = new OssIndexAnalyzerThrowing403();
+        analyzer.close();
         analyzer.initialize(getSettings());
 
         Identifier identifier = new PurlIdentifier("maven", "test", "test", "1.0",
