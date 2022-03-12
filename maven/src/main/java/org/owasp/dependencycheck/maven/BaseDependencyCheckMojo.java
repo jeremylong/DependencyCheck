@@ -911,7 +911,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * The list of artifacts (and their transitive dependencies) to exclude from
      * the check.
      */
-    @Parameter(property = "excludes")
+    @Parameter(property = "odc.excludes")
     private List<String> excludes;
 
     /**
