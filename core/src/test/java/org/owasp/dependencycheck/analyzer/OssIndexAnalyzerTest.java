@@ -32,8 +32,6 @@ public class OssIndexAnalyzerTest extends BaseTest {
 
         // Given
         OssIndexAnalyzer analyzer = new SproutOssIndexAnalyzer();
-        analyzer.close();
-
 
         Identifier identifier = new PurlIdentifier("maven", "test", "test", "1.0",
                 Confidence.HIGHEST);
