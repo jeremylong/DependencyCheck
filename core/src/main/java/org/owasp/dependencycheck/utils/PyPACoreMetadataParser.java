@@ -34,6 +34,8 @@ import java.util.Properties;
  * A utility class to handle Python Packaging Authority (PyPA) core metadata files. It was created based on the
  * <a href="https://packaging.python.org/en/latest/specifications/core-metadata/">specification by PyPA</a> for
  * version 2.2
+ *
+ * @author Hans Aikema
  */
 public class PyPACoreMetadataParser {
 
@@ -52,13 +54,16 @@ public class PyPACoreMetadataParser {
      */
     private static final BigDecimal MAX_SUPPORTED_VERSION = BigDecimal.valueOf(22, 1);
 
+    private PyPACoreMetadataParser() {
+        // hide constructor for utility class
+    }
     /**
      * Loads all key/value pairs from PyPA metadata specifications¶.
      *
      * @param file
-     *         The Wheel metadata of a Python package
+     *         The Wheel metadata of a Python package as a File
      *
-     * @return
+     * @return The metadata properties read from the file
      */
     public static Properties getProperties(File file) throws AnalysisException {
         try (BufferedReader utf8Reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
@@ -68,8 +73,16 @@ public class PyPACoreMetadataParser {
         }
     }
 
+    /**
+     * Loads all key/value pairs from PyPA metadata specifications¶.
+     *
+     * @param utf8Reader
+     *         The Wheel metadata of a Python package as a BufferedReader
+     *
+     * @return The metadata properties read from the utf8Reader
+     */
     public static Properties getProperties(final BufferedReader utf8Reader) throws IOException {
-        Properties result = new Properties();
+        final Properties result = new Properties();
         String line = utf8Reader.readLine();
         StringBuilder singleHeader = null;
         boolean inDescription = false;
@@ -111,16 +124,16 @@ public class PyPACoreMetadataParser {
      *         major version is the value before the first dot).</blockquote>
      */
     private static void parseAndAddHeader(final Properties metadata, final StringBuilder metadataHeader) {
-        String[] keyValue = StringUtils.split(metadataHeader.toString(), ":", 2);
+        final String[] keyValue = StringUtils.split(metadataHeader.toString(), ":", 2);
         if (keyValue.length != 2) {
             LOGGER.warn("Invalid mailheader format encountered in Wheel Metadata, not a \"key: value\" string");
             return;
         }
-        String key = keyValue[0];
-        String value = keyValue[1].trim();
+        final String key = keyValue[0];
+        final String value = keyValue[1].trim();
         if ("Metadata-Version".equals(key)) {
-            int majorVersion = Integer.parseInt(value.substring(0, value.indexOf('.')), 10);
-            BigDecimal version = new BigDecimal(value);
+            final int majorVersion = Integer.parseInt(value.substring(0, value.indexOf('.')), 10);
+            final BigDecimal version = new BigDecimal(value);
             if (majorVersion > SUPPORTED_MAJOR_UPPERBOUND) {
                 throw new IllegalArgumentException(String.format(
                         "Unsupported PyPA Wheel metadata. Metadata-Version " + "is '%s', largest supported major is %d", value,
