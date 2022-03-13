@@ -37,7 +37,7 @@ import java.util.Properties;
  *
  * @author Hans Aikema
  */
-public class PyPACoreMetadataParser {
+public final class PyPACoreMetadataParser {
 
     /**
      * The logger.
