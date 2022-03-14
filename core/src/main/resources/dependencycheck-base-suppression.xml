@@ -4861,7 +4861,7 @@
         <notes><![CDATA[
             Supress FP in cryptomator libraries, because linked CVE-2022-25366 only affects end user application. (#4177)
             ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.cryptomator/.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/org\.cryptomator/(?!cryptomator).*$</packageUrl>
         <cpe>cpe:/a:cryptomator:cryptomator</cpe>
     </suppress>
 </suppressions>
