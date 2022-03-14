@@ -258,6 +258,7 @@ public class ReportGenerator {
         ctxt.put("scanDateJunit", scanDateJunit);
         ctxt.put("enc", new EscapeTool());
         ctxt.put("rpt", new ReportTool());
+        ctxt.put("hash", new HashTool());
         ctxt.put("WordUtils", new WordUtils());
         ctxt.put("VENDOR", EvidenceType.VENDOR);
         ctxt.put("PRODUCT", EvidenceType.PRODUCT);

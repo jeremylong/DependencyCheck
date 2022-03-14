@@ -62,6 +62,8 @@ public class ReportGeneratorIT extends BaseDBTestCase {
         File writeHtmlTo = new File("target/test-reports/Report.html");
         File writeJunitTo = new File("target/test-reports/junit.xml");
         File writeCsvTo = new File("target/test-reports/Report.csv");
+        File writeSarifTo = new File("target/test-reports/Report.sarif");
+
         File suppressionFile = BaseTest.getResourceAsFile(this, "incorrectSuppressions.xml");
         Settings settings = getSettings();
         settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile.getAbsolutePath());
@@ -72,7 +74,7 @@ public class ReportGeneratorIT extends BaseDBTestCase {
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
         settings.setBoolean(Settings.KEYS.PRETTY_PRINT, true);
 
-        generateReport(settings, writeTo, writeJsonTo, writeHtmlTo, writeJunitTo, writeCsvTo, suppressionFile);
+        generateReport(settings, writeTo, writeJsonTo, writeHtmlTo, writeJunitTo, writeCsvTo, writeSarifTo, suppressionFile);
     }
 
     /**
@@ -86,6 +88,8 @@ public class ReportGeneratorIT extends BaseDBTestCase {
         File writeHtmlTo = new File("target/test-reports/nodeAudit/Report.html");
         File writeJunitTo = new File("target/test-reports/nodeAudit/junit.xml");
         File writeCsvTo = new File("target/test-reports/nodeAudit/Report.csv");
+        File writeSarifTo = new File("target/test-reports/nodeAudit/Report.sarif");
+
         File suppressionFile = BaseTest.getResourceAsFile(this, "incorrectSuppressions.xml");
         Settings settings = getSettings();
         settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile.getAbsolutePath());
@@ -95,7 +99,7 @@ public class ReportGeneratorIT extends BaseDBTestCase {
         settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, false);
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
 
-        generateReport(settings, writeTo, writeJsonTo, writeHtmlTo, writeJunitTo, writeCsvTo, suppressionFile);
+        generateReport(settings, writeTo, writeJsonTo, writeHtmlTo, writeJunitTo, writeCsvTo, writeSarifTo, suppressionFile);
     }
 
 
@@ -110,6 +114,8 @@ public class ReportGeneratorIT extends BaseDBTestCase {
         File writeHtmlTo = new File("target/test-reports/retireJS/Report.html");
         File writeJunitTo = new File("target/test-reports/retireJS/junit.xml");
         File writeCsvTo = new File("target/test-reports/retireJS/Report.csv");
+        File writeSarifTo = new File("target/test-reports/retireJS/Report.sarif");
+
         File suppressionFile = BaseTest.getResourceAsFile(this, "incorrectSuppressions.xml");
         Settings settings = getSettings();
         settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile.getAbsolutePath());
@@ -119,7 +125,7 @@ public class ReportGeneratorIT extends BaseDBTestCase {
         settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, false);
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
 
-        generateReport(settings, writeTo, writeJsonTo, writeHtmlTo, writeJunitTo, writeCsvTo, suppressionFile);
+        generateReport(settings, writeTo, writeJsonTo, writeHtmlTo, writeJunitTo, writeCsvTo, writeSarifTo, suppressionFile);
     }
     /**
      * Generates an XML report containing known vulnerabilities and realistic
@@ -132,6 +138,8 @@ public class ReportGeneratorIT extends BaseDBTestCase {
         File writeHtmlTo = new File("target/test-reports/NodePackage/Report.html");
         File writeJunitTo = new File("target/test-reports/NodePackage/junit.xml");
         File writeCsvTo = new File("target/test-reports/NodePackage/Report.csv");
+        File writeSarifTo = new File("target/test-reports/NodePackage/Report.sarif");
+
         File suppressionFile = BaseTest.getResourceAsFile(this, "incorrectSuppressions.xml");
         Settings settings = getSettings();
         settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile.getAbsolutePath());
@@ -141,11 +149,11 @@ public class ReportGeneratorIT extends BaseDBTestCase {
         settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, true);
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
 
-        generateReport(settings, writeTo, writeJsonTo, writeHtmlTo, writeJunitTo, writeCsvTo, suppressionFile);
+        generateReport(settings, writeTo, writeJsonTo, writeHtmlTo, writeJunitTo, writeCsvTo, writeSarifTo, suppressionFile);
     }
 
 
-    public void generateReport(Settings settings, File writeTo, File writeJsonTo, File writeHtmlTo, File writeJunitTo, File writeCsvTo, File suppressionFile){
+    public void generateReport(Settings settings, File writeTo, File writeJsonTo, File writeHtmlTo, File writeJunitTo, File writeCsvTo, File writeSarifTo, File suppressionFile){
         try {
             //first check parent folder
             createParentFolder(writeTo);
@@ -153,6 +161,7 @@ public class ReportGeneratorIT extends BaseDBTestCase {
             createParentFolder(writeHtmlTo);
             createParentFolder(writeJunitTo);
             createParentFolder(writeCsvTo);
+            createParentFolder(writeSarifTo);
 
             File struts = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
             File war = BaseTest.getResourceAsFile(this, "war-4.0.war");
@@ -186,6 +195,7 @@ public class ReportGeneratorIT extends BaseDBTestCase {
                 engine.writeReports("Test Report", "org.owasp", "dependency-check-core", "1.4.8", writeHtmlTo, "HTML", exceptions);
                 engine.writeReports("Test Report", "org.owasp", "dependency-check-core", "1.4.8", writeCsvTo, "CSV", exceptions);
                 engine.writeReports("Test Report", "org.owasp", "dependency-check-core", "1.4.8", writeJunitTo, "JUNIT", exceptions);
+                engine.writeReports("Test Report", "org.owasp", "dependency-check-core", "1.4.8", writeSarifTo, "SARIF", exceptions);
             }
             //Test XML
             InputStream xsdStream = ReportGenerator.class.getClassLoader().getResourceAsStream("schema/dependency-check.2.5.xsd");

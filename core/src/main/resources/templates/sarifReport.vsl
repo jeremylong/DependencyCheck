@@ -122,6 +122,9 @@ For more information see [How dependency-check works](https://jeremylong.github.
           "message": {
             "text": "$enc.json($vuln.name)#if($vuln.description) - $enc.json($vuln.description)#end"
           },
+          "partialFingerprints": {
+            "vulnerabilityHash": "$hash.md5Hex($vuln.name)"
+          },
           "locations": [
             {
               "physicalLocation": {
