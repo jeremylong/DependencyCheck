@@ -4940,4 +4940,11 @@
         <packageUrl regex="true">^pkg:maven/org\.cryptomator/(?!cryptomator).*$</packageUrl>
         <cpe>cpe:/a:cryptomator:cryptomator</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP because quarkus-apache-httpclient is a wrapper of apache-httpclient with different version as per #4217
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus\-apache\-httpclient@.*$</packageUrl>
+        <cpe>cpe:/a:apache:httpclient</cpe>
+    </suppress>
 </suppressions>
