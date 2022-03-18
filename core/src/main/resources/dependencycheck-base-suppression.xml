@@ -4933,4 +4933,11 @@
         <packageUrl regex="true">^pkg:maven/com\.ibm\.etcd/etcd\-java@.*$</packageUrl>
         <cpe>cpe:/a:etcd:etcd</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            Supress FP in cryptomator libraries, because linked CVE-2022-25366 only affects end user application. (#4177)
+            ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.cryptomator/(?!cryptomator).*$</packageUrl>
+        <cpe>cpe:/a:cryptomator:cryptomator</cpe>
+    </suppress>
 </suppressions>
