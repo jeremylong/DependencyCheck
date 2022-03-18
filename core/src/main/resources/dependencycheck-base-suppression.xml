@@ -4821,6 +4821,15 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #3830 - as the netty incubator projects are separate from the mainline of netty
+        it can be assumed that NVD will assign a separate CPE if there is ever a CVE registered
+        for an incubator project.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.netty\.incubator/.*$</packageUrl>
+        <cpe>cpe:/a:netty:netty</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP because reactor-kafka from version 1.3.2 updated the kafka-clients dependency to version 2.6.1
         which does apply to the CVE
         ]]></notes>
