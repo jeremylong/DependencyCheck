@@ -4351,7 +4351,7 @@
         <notes><![CDATA[
         false positive per #2721 on org.bouncycastle:bcpg-jdk15on
         caused by cpe:/a:openpgp:openpgp, cpe:/a:pgp:openpgp and cpe:/a:pgp:pgp
-          ]]></notes>
+        ]]></notes>
         <gav regex="true">^org\.bouncycastle:bcpg-jdk15on:.*$</gav>
         <cpe>cpe:/a:openpgp:openpgp</cpe>
         <cpe>cpe:/a:pgp:openpgp</cpe>
@@ -4359,9 +4359,9 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-          false positive per #2721 on name.neuhalfen.projects.crypto.bouncycastle.openpgp:bouncy-gpg
-          caused by cpe:/a:gpg-pgp_project::gpg-pgp and cpe:/a:openpgp:openpgp
-          ]]></notes>
+        false positive per #2721 on name.neuhalfen.projects.crypto.bouncycastle.openpgp:bouncy-gpg
+        caused by cpe:/a:gpg-pgp_project::gpg-pgp and cpe:/a:openpgp:openpgp
+        ]]></notes>
         <gav regex="true">^name\.neuhalfen\.projects\.crypto\.bouncycastle\.openpgp:bouncy-gpg:.*$</gav>
         <cpe>cpe:/a:gpg-pgp_project::gpg-pgp</cpe>
         <cpe>cpe:/a:openpgp:openpgp</cpe>
@@ -4376,16 +4376,16 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-          false positive per #2977 on org.infinispan.protostream:protostream
-          false positive per #3766 on org.infinispan.protostream:protostream-types
-          ]]></notes>
+        false positive per #2977 on org.infinispan.protostream:protostream
+        false positive per #3766 on org.infinispan.protostream:protostream-types
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.infinispan\.protostream/protostream.*$</packageUrl>
         <cpe>cpe:/a:infinispan:infinispan</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
         false positive per #3026 on io.hawtio.hawtio-wildfly
-       ]]></notes>
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.hawt/hawtio\-wildfly@.*$</packageUrl>
         <cpe>cpe:/a:hawt:hawtio</cpe>
         <cpe>cpe:/a:hawt.io:hawtio</cpe>
@@ -4453,7 +4453,7 @@
     <suppress base="true">
         <notes><![CDATA[
             file name: openshift-model-clusterautoscaling-5.5.0.jar
-   ]]></notes>
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.fabric8/openshift\-model\-clusterautoscaling@.*$</packageUrl>
         <cpe>cpe:/a:redhat:cluster_project</cpe>
         <cpe>cpe:/a:redhat:mod_cluster</cpe>
@@ -4461,7 +4461,7 @@
     <suppress base="true">
         <notes><![CDATA[
         file name: openshift-model-machineconfig-5.5.0.jar
-   ]]></notes>
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.fabric8/openshift\-model\-machineconfig@.*$</packageUrl>
         <cpe>cpe:/a:redhat:machine-config-operator</cpe>
     </suppress>
@@ -4504,8 +4504,8 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-       false positive per #3825
-   ]]></notes>
+        false positive per #3825
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.hibernate/quarkus\-local\-cache@.*$</packageUrl>
         <cpe>cpe:/a:hibernate:hibernate_orm</cpe>
     </suppress>
@@ -4542,8 +4542,8 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-       FP per 3826; quarkus component falsely flagged as redhat resteasy product
-   ]]></notes>
+        FP per 3826; quarkus component falsely flagged as redhat resteasy product
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.quarkus/.*resteasy.*@.*$</packageUrl>
         <cpe>cpe:/a:redhat:resteasy</cpe>
     </suppress>
@@ -4564,7 +4564,7 @@
     <suppress base="true">
         <notes><![CDATA[
         Oracle JDBC drivers are not the database server
-   ]]></notes>
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.oracle\.database\.jdbc/.*@.*$</packageUrl>
         <cpe>cpe:/a:oracle:database</cpe>
         <cpe>cpe:/a:oracle:oracle_database</cpe>
@@ -4572,7 +4572,7 @@
     <suppress base="true">
         <notes><![CDATA[
         Oracle JDBC drivers are not the database server
-   ]]></notes>
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.oracle\.database\.security/.*@.*$</packageUrl>
         <cpe>cpe:/a:oracle:database</cpe>
         <cpe>cpe:/a:oracle:oracle_database</cpe>
@@ -4580,7 +4580,7 @@
     <suppress base="true">
         <notes><![CDATA[
         Oracle JDBC drivers are not the database server
-   ]]></notes>
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.oracle\.database\.ha/.*@.*$</packageUrl>
         <cpe>cpe:/a:oracle:database</cpe>
         <cpe>cpe:/a:oracle:oracle_database</cpe>
@@ -4588,65 +4588,65 @@
     <suppress base="true">
         <notes><![CDATA[
         Suppresses all artifacts of Pivotal java-cfenv modules #3480
-   ]]></notes>
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.pivotal\.cfenv/.*@.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-   See issue #3384
-   ]]></notes>
+        See issue #3384
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.qameta\.allure/allure\-httpclient@.*$</packageUrl>
         <cpe>cpe:/a:apache:httpclient</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-   file name: google-http-client-apache-v2-1.39.2.jar Issue #3348
-   ]]></notes>
+        file name: google-http-client-apache-v2-1.39.2.jar Issue #3348
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.google\.http\-client/google\-http\-client\-apache\-v2@.*$</packageUrl>
         <cpe>cpe:/a:apache:httpclient</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-      FP CPE match triggered by the hint for issue #3337
-   ]]></notes>
+        FP CPE match triggered by the hint for issue #3337
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.adobe\.aem/uber\-jar@.*$</packageUrl>
         <cpe>cpe:/a:adobe:experience_manager_forms</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-      suppress false CPE for mssql-on-azure backend for django #3500
-      ]]></notes>
+        suppress false CPE for mssql-on-azure backend for django #3500
+        ]]></notes>
         <packageUrl regex="true">^pkg:pypi/mssql\-django@.*$</packageUrl>
         <cpe>cpe:/a:django_project:django</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-   file name: fast-uuid-0.1.jar #3336
-   ]]></notes>
+        file name: fast-uuid-0.1.jar #3336
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.eatthepath/fast\-uuid@.*$</packageUrl>
         <cpe>cpe:/a:fast_ber_project:fast_ber</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-   file name: logback-elasticsearch-appender-1.6.jar #3549
-   ]]></notes>
+        file name: logback-elasticsearch-appender-1.6.jar #3549
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.internetitem/logback\-elasticsearch\-appender@.*$</packageUrl>
         <cpe>cpe:/a:elasticsearch:elasticsearch</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-       xercesImpl-2.12.1.jar as matched by Central Search in the CLI hits a FP CPE match #3253
-   ]]></notes>
+        xercesImpl-2.12.1.jar as matched by Central Search in the CLI hits a FP CPE match #3253
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.exist\-db\.thirdparty\.xerces/xercesImpl@.*$</packageUrl>
         <cpe>cpe:/a:exist-db:exist</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-       several python-* PyPI packages hit a FP CPE match #3233 & #3017
-       as Python itself is not a PyPI package suppress it with a broad regex
-   ]]></notes>
+        several python-* PyPI packages hit a FP CPE match #3233 & #3017
+        as Python itself is not a PyPI package suppress it with a broad regex
+        ]]></notes>
         <packageUrl regex="true">^pkg:pypi/python\-.*$</packageUrl>
         <cpe>cpe:/a:python:python</cpe>
         <cpe>cpe:/a:python_software_foundation:python</cpe>
@@ -4660,15 +4660,15 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-     spring-cloud-kubernetes-fabric8-autoconfig is part of spring cloud kubernetes, not spring cloud config #3098
-   ]]></notes>
+        spring-cloud-kubernetes-fabric8-autoconfig is part of spring cloud kubernetes, not spring cloud config #3098
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-kubernetes\-fabric8\-autoconfig@.*$</packageUrl>
         <cpe>cpe:/a:vmware:spring_cloud_config</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-     spring-cloud-deployer-* false CPE matches discovered in handling #3579
-   ]]></notes>
+        spring-cloud-deployer-* false CPE matches discovered in handling #3579
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-deployer\-.*$</packageUrl>
         <cpe>cpe:/a:vmware:spring_cloud_config</cpe>
         <cpe>cpe:/a:vmware:spring_cloud_data_flow</cpe>
@@ -4682,8 +4682,8 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-       Struts annotations is not the struts framework, but a separately versions annotations API library #3088
-   ]]></notes>
+        Struts annotations is not the struts framework, but a separately versions annotations API library #3088
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.struts/struts\-annotations@.*$</packageUrl>
         <cpe>cpe:/a:apache:struts</cpe>
     </suppress>
@@ -4800,8 +4800,8 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-       FP per #3842 nginx-clojure is not part of the nginx project, but an external clojure module for it
-   ]]></notes>
+        FP per #3842 nginx-clojure is not part of the nginx project, but an external clojure module for it
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/nginx\-clojure/nginx\-clojure@.*$</packageUrl>
         <cpe>cpe:/a:nginx:nginx</cpe>
     </suppress>
@@ -4844,6 +4844,73 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per issue #4129
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/jakarta\.ws\.rs/jakarta\.ws\.rs-api@.*$</packageUrl>
+        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
+        <cpe>cpe:/a:oracle:java_se</cpe>
+        <cpe>cpe:/a:oracle:web_services</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #4131
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.graylog2/gelfclient@.*$</packageUrl>
+        <cpe>cpe:/a:graylog:graylog</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       FP per issue #4133
+       ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.mariadb\.jdbc/mariadb-java-client@.*$</packageUrl>
+        <cpe>cpe:/a:mariadb:mariadb</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #4135
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.eclipse/yasson@.*$</packageUrl>
+        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
+        <cpe>cpe:/a:oracle:projects</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       FP per issue #4140
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/org\.aspectj/aspectjrt@.*$</packageUrl>
+       <cpe>cpe:/a:vmware:tools</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       FP per issue #4149
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/org\.apache\.kafka/kafka-log4j-appender@.*$</packageUrl>
+       <cpe>cpe:/a:apache:log4j</cpe>
+       <cpe>cpe:/a:apache:kafka</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       FP per issue #4152
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring-cloud-kubernetes-fabric8-config@.*$</packageUrl>
+       <cpe>cpe:/a:vmware:spring_cloud_config</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       FP per issue #4156
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/com\.lightbend\.akka\.management/akka-management-cluster-bootstrap_2\.13@.*$</packageUrl>
+       <cpe>cpe:/a:akka:akka</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       FP per issue #4154
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/io\.netty/netty-tcnative-boringssl-static@.*$</packageUrl>
+       <cpe>cpe:/a:chromium:chromium</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
             Suppress many FPs in apache projects that have james in the (developer) evidences now triggering apache james
             #4123, #4128, #4132, #4136, #4137, #4138, #4145, #4146
             ]]></notes>
@@ -4851,10 +4918,10 @@
         <cpe>cpe:/a:apache:james</cpe>
     </suppress>
     <suppress base="true">
-	<notes><![CDATA[
-	FP because cpe make reference to a GO library
-	]]></notes>
-	<packageUrl regex="true">^pkg:maven/com\.ibm\.etcd/etcd\-java@.*$</packageUrl>
-	<cpe>cpe:/a:etcd:etcd</cpe>
+        <notes><![CDATA[
+        FP because cpe make reference to a GO library
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.ibm\.etcd/etcd\-java@.*$</packageUrl>
+        <cpe>cpe:/a:etcd:etcd</cpe>
     </suppress>
 </suppressions>
