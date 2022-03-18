@@ -364,6 +364,8 @@ public final class CliParser {
                 .addOption(newOptionWithArg(ARGUMENT.OSSINDEX_PASSWORD, "password", ""
                         + "The password to authenticate to Sonatype's OSS Index. If not set the Sonatype OSS "
                         + "Index Analyzer will use an unauthenticated connection."))
+                .addOption(newOptionWithArg(ARGUMENT.OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS, "true/false", ""
+                        + "Whether a Sonatype OSS Index remote error should result in a warning only or a failure."))
                 .addOption(newOption(ARGUMENT.RETIRE_JS_FORCEUPDATE, "Force the RetireJS Analyzer to update "
                         + "even if autoupdate is disabled"))
                 .addOption(newOptionWithArg(ARGUMENT.RETIREJS_URL, "url",
@@ -1261,6 +1263,10 @@ public final class CliParser {
          * The password for the Sonatype OSS Index.
          */
         public static final String OSSINDEX_PASSWORD = "ossIndexPassword";
+        /**
+         * The password for the Sonatype OSS Index.
+         */
+        public static final String OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS = "ossIndexRemoteErrorWarnOnly";
         /**
          * Disables the OpenSSL Analyzer.
          */

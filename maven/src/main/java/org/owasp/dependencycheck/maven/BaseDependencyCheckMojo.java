@@ -641,6 +641,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private String ossIndexServerId;
 
     /**
+     * Whether we should only warn about Sonatype OSS Index remote errors instead of failing the goal completely.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "ossIndexWarnOnlyOnRemoteErrors")
+    private Boolean ossIndexWarnOnlyOnRemoteErrors;
+    
+    /**
      * Whether or not the Elixir Mix Audit Analyzer is enabled.
      */
     @Parameter(property = "mixAuditAnalyzerEnabled")
@@ -2106,6 +2113,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_URL, ossindexAnalyzerUrl);
         configureServerCredentials(ossIndexServerId, Settings.KEYS.ANALYZER_OSSINDEX_USER, Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE, ossindexAnalyzerUseCache);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS, ossIndexWarnOnlyOnRemoteErrors);
 
         if (retirejs != null) {
             settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, retirejs.getFilterNonVulnerable());

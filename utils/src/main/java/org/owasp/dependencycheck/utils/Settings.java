@@ -718,6 +718,10 @@ public final class Settings {
          */
         public static final String ANALYZER_OSSINDEX_REQUEST_DELAY = "analyzer.ossindex.request.delay";
         /**
+         * The properties key for only warning about Sonatype OSS Index remote errors instead of failing the request.
+         */
+        public static final String ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS = "analyzer.ossindex.remote-error.warn-only";
+        /**
          * The properties key setting whether or not the JSON and XML reports
          * will be pretty printed.
          */
