@@ -58,6 +58,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
+import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.XmlUtils;
@@ -258,7 +259,7 @@ public class ReportGenerator {
         ctxt.put("scanDateJunit", scanDateJunit);
         ctxt.put("enc", new EscapeTool());
         ctxt.put("rpt", new ReportTool());
-        ctxt.put("hash", new HashTool());
+        ctxt.put("checksum", Checksum.class);
         ctxt.put("WordUtils", new WordUtils());
         ctxt.put("VENDOR", EvidenceType.VENDOR);
         ctxt.put("PRODUCT", EvidenceType.PRODUCT);

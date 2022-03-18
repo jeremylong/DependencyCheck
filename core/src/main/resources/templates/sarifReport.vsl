@@ -123,7 +123,7 @@ For more information see [How dependency-check works](https://jeremylong.github.
             "text": "$enc.json($vuln.name)#if($vuln.description) - $enc.json($vuln.description)#end"
           },
           "partialFingerprints": {
-            "vulnerabilityHash": "$hash.md5Hex($vuln.name)"
+            "vulnerabilityHash": "$checksum.getMD5Checksum($vuln.name)"
           },
           "locations": [
             {
