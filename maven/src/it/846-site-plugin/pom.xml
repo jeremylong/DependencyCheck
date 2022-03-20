@@ -57,18 +57,18 @@ Copyright (c) 2017 The OWASP Foundation. All Rights Reserved.
             <plugin>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>3.7</version>
-                <configuration>
-                    <reportPlugins>
-                        <plugin>
-                            <groupId>org.owasp</groupId>
-                            <artifactId>dependency-check-maven</artifactId>
-                            <version>${odcversion}</version>
-                            <configuration>
-                            </configuration>
-                        </plugin>
-                    </reportPlugins>
-                </configuration>
             </plugin>
         </plugins>
     </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${odcversion}</version>
+                <configuration>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
