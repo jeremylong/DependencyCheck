@@ -4947,4 +4947,11 @@
         <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus\-apache\-httpclient@.*$</packageUrl>
         <cpe>cpe:/a:apache:httpclient</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #4219
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.github\.blagerweij/liquibase-sessionlock@.*$</packageUrl>
+        <cpe>cpe:/a:liquibase:liquibase</cpe>
+    </suppress>
 </suppressions>
