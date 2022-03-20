@@ -126,7 +126,6 @@ public class OssIndexAnalyzerTest extends BaseTest {
     public void should_analyzeDependency_only_warn_when_transport_error_from_sonatype() throws Exception {
         // Given
         OssIndexAnalyzer analyzer = new OssIndexAnalyzerThrowing502();
-        analyzer.close();
         
         getSettings().setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS, true);
         analyzer.initialize(getSettings());
@@ -145,6 +144,9 @@ public class OssIndexAnalyzerTest extends BaseTest {
             analyzer.analyzeDependency(dependency, engine);
         } catch (AnalysisException e) {
             Assert.fail("Analysis exception thrown upon remote error although only a warning should have been logged");
+        } finally {
+            analyzer.close();
+            engine.close();
         }
     }
 
