@@ -6,8 +6,10 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
@@ -31,7 +33,7 @@ public class OssIndexAnalyzerTest extends BaseTest {
             throws Exception {
 
         // Given
-        OssIndexAnalyzer analyzer = new SproutOssIndexAnalyzer();
+        SproutOssIndexAnalyzer analyzer = new SproutOssIndexAnalyzer();
 
         Identifier identifier = new PurlIdentifier("maven", "test", "test", "1.0",
                 Confidence.HIGHEST);
@@ -51,6 +53,7 @@ public class OssIndexAnalyzerTest extends BaseTest {
 
         // Then
         assertTrue(identifier.getUrl().startsWith(expectedOutput));
+        analyzer.awaitPendingClosure();
     }
 
     /*
@@ -70,10 +73,11 @@ public class OssIndexAnalyzerTest extends BaseTest {
      * identifier and enrich it.
      */
     static final class SproutOssIndexAnalyzer extends OssIndexAnalyzer {
+        private Future<?> pendingClosureTask;
         @Override
         void enrich(Dependency dependency) {
             ExecutorService executor = Executors.newSingleThreadExecutor();
-            executor.execute(() -> {
+            pendingClosureTask = executor.submit(() -> {
                 try {
                     this.closeAnalyzer();
                 } catch (Exception e) {
@@ -82,13 +86,16 @@ public class OssIndexAnalyzerTest extends BaseTest {
             });
             super.enrich(dependency);
         }
+
+        void awaitPendingClosure() throws ExecutionException, InterruptedException {
+            pendingClosureTask.get();
+        }
     }
 
     @Test
     public void should_analyzeDependency_return_a_dedicated_error_message_when_403_response_from_sonatype() throws Exception {
         // Given
         OssIndexAnalyzer analyzer = new OssIndexAnalyzerThrowing403();
-        analyzer.close();
         analyzer.initialize(getSettings());
 
         Identifier identifier = new PurlIdentifier("maven", "test", "test", "1.0",
@@ -110,6 +117,7 @@ public class OssIndexAnalyzerTest extends BaseTest {
 
         // Then
         assertEquals("OSS Index access forbidden", output.getMessage());
+        analyzer.close();
     }
 
     static final class OssIndexAnalyzerThrowing403 extends OssIndexAnalyzer {
