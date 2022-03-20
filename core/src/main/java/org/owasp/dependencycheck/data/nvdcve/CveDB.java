@@ -240,9 +240,7 @@ public final class CveDB implements AutoCloseable {
         this.cpeStartsWithFilter = settings.getString(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER, "cpe:2.3:a:");
         this.cveItemConverter = new CveItemOperator(cpeStartsWithFilter);
         databaseManager = new DatabaseManager(settings);
-        statementBundle = databaseManager.getDatabaseProductName() != null
-                ? ResourceBundle.getBundle("data/dbStatements", new Locale(databaseManager.getDatabaseProductName()))
-                : ResourceBundle.getBundle("data/dbStatements");
+        statementBundle = databaseManager.getSqlStatements();
         isOracle = databaseManager.isOracle();
         isH2 = databaseManager.isH2Connection();
     }
