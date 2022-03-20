@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
@@ -120,6 +121,33 @@ public class OssIndexAnalyzerTest extends BaseTest {
         analyzer.close();
     }
 
+    
+    @Test
+    public void should_analyzeDependency_only_warn_when_transport_error_from_sonatype() throws Exception {
+        // Given
+        OssIndexAnalyzer analyzer = new OssIndexAnalyzerThrowing502();
+        analyzer.close();
+        
+        getSettings().setBoolean(Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS, true);
+        analyzer.initialize(getSettings());
+
+        Identifier identifier = new PurlIdentifier("maven", "test", "test", "1.0",
+                Confidence.HIGHEST);
+
+        Dependency dependency = new Dependency();
+        dependency.addSoftwareIdentifier(identifier);
+        Settings settings = getSettings();
+        Engine engine = new Engine(settings);
+        engine.setDependencies(Collections.singletonList(dependency));
+
+        // When
+        try {
+            analyzer.analyzeDependency(dependency, engine);
+        } catch (AnalysisException e) {
+            Assert.fail("Analysis exception thrown upon remote error although only a warning should have been logged");
+        }
+    }
+
     static final class OssIndexAnalyzerThrowing403 extends OssIndexAnalyzer {
         @Override
         OssindexClient newOssIndexClient() {
@@ -144,4 +172,29 @@ public class OssIndexAnalyzerTest extends BaseTest {
 
         }
     }
+
+    static final class OssIndexAnalyzerThrowing502 extends OssIndexAnalyzer {
+        @Override
+        OssindexClient newOssIndexClient() {
+            return new OssIndexClient502();
+        }
+    }
+
+    private static final class OssIndexClient502 implements OssindexClient {
+
+        @Override
+        public Map<PackageUrl, ComponentReport> requestComponentReports(List<PackageUrl> coordinates) throws Exception {
+            throw new Transport.TransportException("Unexpected response; status: 502");
+        }
+
+        @Override
+        public ComponentReport requestComponentReport(PackageUrl coordinates) throws Exception {
+            throw new Transport.TransportException("Unexpected response; status: 502");
+        }
+
+        @Override
+        public void close() throws Exception {
+
+        }
+    }    
 }

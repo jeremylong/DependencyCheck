@@ -88,11 +88,6 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
     private static Map<PackageUrl, ComponentReport> reports;
 
     /**
-     * Flag to indicate if fetching reports failed.
-     */
-    private static boolean failed = false;
-
-    /**
      * Lock to protect fetching state.
      */
     private static final Object FETCH_MUTIX = new Object();
@@ -126,7 +121,6 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
     protected void closeAnalyzer() throws Exception {
         synchronized (FETCH_MUTIX) {
             reports = null;
-            failed = false;
         }
     }
 
@@ -134,30 +128,38 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
     protected void analyzeDependency(final Dependency dependency, final Engine engine) throws AnalysisException {
         // batch request component-reports for all dependencies
         synchronized (FETCH_MUTIX) {
-            if (!failed && reports == null) {
+            if (reports == null) {
                 try {
                     requestDelay();
                     reports = requestReports(engine.getDependencies());
                 } catch (TransportException ex) {
-                    failed = true;
-                    if (ex.getMessage() != null && ex.getMessage().endsWith("401")) {
-                        throw new AnalysisException("Invalid credentails provided for OSS Index", ex);
-                    } else if (ex.getMessage() != null && ex.getMessage().endsWith("429")) {
-                        throw new AnalysisException("OSS Index rate limit exceeded", ex);
-                    } else if (ex.getMessage() != null && ex.getMessage().endsWith("403")) {
+                    String message = ex.getMessage();
+                    boolean warnOnly = getSettings().getBoolean(Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS, false);
+
+                    if (StringUtils.endsWith(message, "401")) {
+                        throw new AnalysisException("Invalid credentials provided for OSS Index", ex);
+                    } else if (StringUtils.endsWith(message, "403")) {
                         throw new AnalysisException("OSS Index access forbidden", ex);
+                    } else if (StringUtils.endsWith(message, "429")) {
+                        if (warnOnly) {
+                            LOG.warn("OSS Index rate limit exceeded", ex);
+                        } else {
+                            throw new AnalysisException("OSS Index rate limit exceeded", ex);
+                        }
+                    } else if (warnOnly) {
+                        LOG.warn("Error requesting component reports", ex);
+                    } else {
+                        LOG.debug("Error requesting component reports", ex);
+                        throw new AnalysisException("Failed to request component-reports", ex);
                     }
-                    LOG.debug("Error requesting component reports", ex);
-                    throw new AnalysisException("Failed to request component-reports", ex);
                 } catch (Exception e) {
                     LOG.debug("Error requesting component reports", e);
-                    failed = true;
                     throw new AnalysisException("Failed to request component-reports", e);
                 }
             }
 
             // skip enrichment if we failed to fetch reports
-            if (!failed) {
+            if (reports != null) {
                 enrich(dependency);
             }
         }

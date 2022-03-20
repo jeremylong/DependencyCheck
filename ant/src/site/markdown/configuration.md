@@ -80,6 +80,7 @@ ossIndexAnalyzerEnabled             | Sets whether the [OSS Index Analyzer](../a
 ossindexAnalyzerUseCache            | Sets whether the OSS Index Analyzer will cache results. Cached results expire after 24 hours.              | true
 ossindexAnalyzerUsername            | Sets the username for OSS Index - note an account with OSS Index is not required.                          | &nbsp;
 ossindexAnalyzerPassword            | Sets the password for OSS Index.                                                                           | &nbsp;
+ossIndexAnalyzerWarnOnlyOnRemoteErrors | Whether we should only warn about Sonatype OSS Index remote errors instead of failing completely.       | &nbsp;
 nexusAnalyzerEnabled                | Sets whether Nexus Analyzer will be used (requires Nexus Pro). This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
 nexusUrl                            | Defines the Nexus web service endpoint (example http://domain.enterprise/nexus/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
 nexusUser                           | The username to authenticate to the Nexus Server's web service end point. If not set the Nexus Analyzer will use an unauthenticated connection. | &nbsp;

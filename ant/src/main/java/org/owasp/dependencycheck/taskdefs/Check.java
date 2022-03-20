@@ -354,6 +354,11 @@ public class Check extends Update {
      */
     private String ossindexAnalyzerPassword;
     /**
+     * Whether we should only warn about Sonatype OSS Index remote errors instead of failing completely.
+     */
+    private Boolean ossIndexAnalyzerWarnOnlyOnRemoteErrors;
+
+    /**
      * Whether or not the Artifactory Analyzer is enabled.
      */
     private Boolean artifactoryAnalyzerEnabled;
@@ -1677,6 +1682,24 @@ public class Check extends Update {
     }
 
     /**
+     * Get value of {@link #ossIndexAnalyzerWarnOnlyOnRemoteErrors}.
+     * 
+     * @return the value of ossIndexWarnOnlyOnRemoteErrors
+     */
+    public Boolean getOssIndexWarnOnlyOnRemoteErrors() {
+		return ossIndexAnalyzerWarnOnlyOnRemoteErrors;
+	}
+    
+    /**
+     * Set value of {@link #ossIndexAnalyzerWarnOnlyOnRemoteErrors}.
+     * 
+     * @param ossIndexWarnOnlyOnRemoteErrors the value of ossIndexWarnOnlyOnRemoteErrors
+     */
+    public void setOssIndexWarnOnlyOnRemoteErrors(Boolean ossIndexWarnOnlyOnRemoteErrors) {
+		this.ossIndexAnalyzerWarnOnlyOnRemoteErrors = ossIndexWarnOnlyOnRemoteErrors;
+	}
+    
+    /**
      * Get the value of cmakeAnalyzerEnabled.
      *
      * @return the value of cmakeAnalyzerEnabled
@@ -1994,6 +2017,7 @@ public class Check extends Update {
         getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_USER, ossindexAnalyzerUsername);
         getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD, ossindexAnalyzerPassword);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE, ossindexAnalyzerUseCache);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS, ossIndexAnalyzerWarnOnlyOnRemoteErrors);
         getSettings().setFloat(Settings.KEYS.JUNIT_FAIL_ON_CVSS, junitFailOnCVSS);
     }
 

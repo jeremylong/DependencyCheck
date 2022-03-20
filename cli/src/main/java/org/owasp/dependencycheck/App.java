@@ -544,6 +544,9 @@ public class App {
                 cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_USERNAME));
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD,
                 cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_PASSWORD, Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD));
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS,
+                cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS,
+                    Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS));
         settings.setFloat(Settings.KEYS.JUNIT_FAIL_ON_CVSS,
                 cli.getFloatArgument(CliParser.ARGUMENT.FAIL_JUNIT_ON_CVSS, 0));
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED,
