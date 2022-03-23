@@ -57,15 +57,15 @@ import org.owasp.dependencycheck.exception.ExceptionCollection;
      */
     @Override
     public boolean canGenerateReport() {
-<span class="nc" id="L60">        populateSettings();</span>
-<span class="nc" id="L61">        boolean isCapable = false;</span>
-<span class="nc bnc" id="L62" title="All 2 branches missed.">        for (Artifact a : getProject().getArtifacts()) {</span>
-<span class="nc bnc" id="L63" title="All 2 branches missed.">            if (!getArtifactScopeExcluded().passes(a.getScope())) {</span>
-<span class="nc" id="L64">                isCapable = true;</span>
-<span class="nc" id="L65">                break;</span>
+<span class="fc" id="L60">        populateSettings();</span>
+<span class="fc" id="L61">        boolean isCapable = false;</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">        for (Artifact a : getProject().getArtifacts()) {</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">            if (!getArtifactScopeExcluded().passes(a.getScope())) {</span>
+<span class="fc" id="L64">                isCapable = true;</span>
+<span class="fc" id="L65">                break;</span>
             }
 <span class="nc" id="L67">        }</span>
-<span class="nc" id="L68">        return isCapable;</span>
+<span class="fc" id="L68">        return isCapable;</span>
     }
 
     /**
@@ -76,7 +76,7 @@ import org.owasp.dependencycheck.exception.ExceptionCollection;
      */
     @Override
     public String getName(Locale locale) {
-<span class="nc" id="L79">        return name;</span>
+<span class="fc" id="L79">        return name;</span>
     }
 
     /**
@@ -88,7 +88,7 @@ import org.owasp.dependencycheck.exception.ExceptionCollection;
      */
     @Override
     public String getDescription(Locale locale) {
-<span class="nc" id="L91">        return &quot;Generates a report providing details on any published vulnerabilities within project dependencies. &quot;</span>
+<span class="fc" id="L91">        return &quot;Generates a report providing details on any published vulnerabilities within project dependencies. &quot;</span>
                 + &quot;This report is a best effort and may contain false positives and false negatives.&quot;;
     }
 

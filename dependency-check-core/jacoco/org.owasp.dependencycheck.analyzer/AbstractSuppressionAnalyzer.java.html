@@ -248,7 +248,7 @@ import org.owasp.dependencycheck.xml.suppression.SuppressionRuleFilter;
 <span class="nc" id="L248">        } catch (SuppressionParseException ex) {</span>
 <span class="nc" id="L249">            throw ex;</span>
 <span class="fc" id="L250">        } catch (IOException ex) {</span>
-<span class="nc" id="L251">            throwSuppressionParseException(&quot;Unable to create temp file for suppression file&quot;, ex, suppressionFilePath);</span>
+<span class="nc" id="L251">            throwSuppressionParseException(&quot;Unable to suppression file&quot;, ex, suppressionFilePath);</span>
         } finally {
 <span class="pc bpc" id="L253" title="1 of 4 branches missed.">            if (deleteTempFile &amp;&amp; file != null) {</span>
 <span class="fc" id="L254">                FileUtils.delete(file);</span>
@@ -267,7 +267,7 @@ import org.owasp.dependencycheck.xml.suppression.SuppressionRuleFilter;
      * SuppressionParseException
      */
     private void throwSuppressionParseException(String message, Exception exception, String suppressionFilePath) throws SuppressionParseException {
-<span class="fc" id="L270">        LOGGER.warn(String.format(message + &quot;'%s'&quot;, suppressionFilePath));</span>
+<span class="fc" id="L270">        LOGGER.warn(String.format(message + &quot; '%s'&quot;, suppressionFilePath));</span>
 <span class="fc" id="L271">        LOGGER.debug(&quot;&quot;, exception);</span>
 <span class="fc" id="L272">        throw new SuppressionParseException(message, exception);</span>
     }

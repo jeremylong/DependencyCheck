@@ -92,54 +92,54 @@ import us.springett.parsers.cpe.util.Convert;
     public Collection&lt;SarifRule&gt; convertToSarifRules(List&lt;Dependency&gt; dependencies) {
 <span class="fc" id="L93">        final Map&lt;String, SarifRule&gt; rules = new HashMap&lt;&gt;();</span>
 <span class="fc bfc" id="L94" title="All 2 branches covered.">        for (Dependency d : dependencies) {</span>
-<span class="pc bpc" id="L95" title="1 of 2 branches missed.">            for (Vulnerability v : d.getVulnerabilities()) {</span>
-<span class="nc bnc" id="L96" title="All 2 branches missed.">                if (!rules.containsKey(v.getName())) {</span>
-<span class="nc" id="L97">                    final SarifRule r = new SarifRule(v.getName(),</span>
-<span class="nc" id="L98">                            buildShortDescription(d, v),</span>
-<span class="nc" id="L99">                            v.getDescription(),</span>
-<span class="nc" id="L100">                            v.getSource().name(),</span>
-<span class="nc" id="L101">                            v.getCvssV2(),</span>
-<span class="nc" id="L102">                            v.getCvssV3());</span>
-<span class="nc" id="L103">                    rules.put(v.getName(), r);</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">            for (Vulnerability v : d.getVulnerabilities()) {</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">                if (!rules.containsKey(v.getName())) {</span>
+<span class="fc" id="L97">                    final SarifRule r = new SarifRule(v.getName(),</span>
+<span class="fc" id="L98">                            buildShortDescription(d, v),</span>
+<span class="fc" id="L99">                            v.getDescription(),</span>
+<span class="fc" id="L100">                            v.getSource().name(),</span>
+<span class="fc" id="L101">                            v.getCvssV2(),</span>
+<span class="fc" id="L102">                            v.getCvssV3());</span>
+<span class="fc" id="L103">                    rules.put(v.getName(), r);</span>
                 }
-<span class="nc" id="L105">            }</span>
+<span class="fc" id="L105">            }</span>
 <span class="fc" id="L106">        }</span>
 <span class="fc" id="L107">        return rules.values();</span>
     }
 
     private String determineScore(Vulnerability vuln) {
-<span class="nc bnc" id="L111" title="All 2 branches missed.">        if (vuln.getUnscoredSeverity() != null) {</span>
-<span class="nc bnc" id="L112" title="All 2 branches missed.">            if (&quot;0.0&quot;.equals(vuln.getUnscoredSeverity())) {</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        if (vuln.getUnscoredSeverity() != null) {</span>
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">            if (&quot;0.0&quot;.equals(vuln.getUnscoredSeverity())) {</span>
 <span class="nc" id="L113">                return &quot;Unknown&quot;;</span>
             } else {
-<span class="nc" id="L115">                return normalizeSeverity(vuln.getUnscoredSeverity().toLowerCase());</span>
+<span class="fc" id="L115">                return normalizeSeverity(vuln.getUnscoredSeverity().toLowerCase());</span>
             }
-<span class="nc bnc" id="L117" title="All 4 branches missed.">        } else if (vuln.getCvssV3() != null &amp;&amp; vuln.getCvssV3().getBaseSeverity() != null) {</span>
-<span class="nc" id="L118">            return normalizeSeverity(vuln.getCvssV3().getBaseSeverity().toLowerCase());</span>
-<span class="nc bnc" id="L119" title="All 4 branches missed.">        } else if (vuln.getCvssV2() != null &amp;&amp; vuln.getCvssV2().getSeverity() != null) {</span>
-<span class="nc" id="L120">            return normalizeSeverity(vuln.getCvssV2().getSeverity());</span>
+<span class="pc bpc" id="L117" title="1 of 4 branches missed.">        } else if (vuln.getCvssV3() != null &amp;&amp; vuln.getCvssV3().getBaseSeverity() != null) {</span>
+<span class="fc" id="L118">            return normalizeSeverity(vuln.getCvssV3().getBaseSeverity().toLowerCase());</span>
+<span class="pc bpc" id="L119" title="2 of 4 branches missed.">        } else if (vuln.getCvssV2() != null &amp;&amp; vuln.getCvssV2().getSeverity() != null) {</span>
+<span class="fc" id="L120">            return normalizeSeverity(vuln.getCvssV2().getSeverity());</span>
         }
 <span class="nc" id="L122">        return &quot;Unknown&quot;;</span>
     }
 
     private String normalizeSeverity(String sev) {
-<span class="nc bnc" id="L126" title="All 8 branches missed.">        switch (sev) {</span>
+<span class="pc bpc" id="L126" title="2 of 8 branches missed.">        switch (sev) {</span>
             case &quot;critical&quot;:
-<span class="nc" id="L128">                return &quot;Critical&quot;;</span>
+<span class="fc" id="L128">                return &quot;Critical&quot;;</span>
             case &quot;high&quot;:
-<span class="nc" id="L130">                return &quot;High&quot;;</span>
+<span class="fc" id="L130">                return &quot;High&quot;;</span>
             case &quot;medium&quot;:
-<span class="nc" id="L132">                return &quot;Medium&quot;;</span>
+<span class="fc" id="L132">                return &quot;Medium&quot;;</span>
             case &quot;moderate&quot;:
-<span class="nc" id="L134">                return &quot;Medium&quot;;</span>
+<span class="fc" id="L134">                return &quot;Medium&quot;;</span>
             case &quot;low&quot;:
-<span class="nc" id="L136">                return &quot;Low&quot;;</span>
+<span class="fc" id="L136">                return &quot;Low&quot;;</span>
             case &quot;informational&quot;:
 <span class="nc" id="L138">                return &quot;Low&quot;;</span>
             case &quot;info&quot;:
 <span class="nc" id="L140">                return &quot;Low&quot;;</span>
             default:
-<span class="nc" id="L142">                return &quot;Unknown&quot;;</span>
+<span class="fc" id="L142">                return &quot;Unknown&quot;;</span>
         }
     }
 
@@ -151,23 +151,23 @@ import us.springett.parsers.cpe.util.Convert;
      * @return the short description
      */
     private String buildShortDescription(Dependency d, Vulnerability vuln) {
-<span class="nc" id="L154">        final StringBuilder sb = new StringBuilder();</span>
-<span class="nc" id="L155">        sb.append(determineScore(vuln))</span>
-<span class="nc" id="L156">                .append(&quot; severity - &quot;)</span>
-<span class="nc" id="L157">                .append(vuln.getName());</span>
-<span class="nc bnc" id="L158" title="All 4 branches missed.">        if (vuln.getCwes() != null &amp;&amp; !vuln.getCwes().isEmpty()) {</span>
-<span class="nc" id="L159">            final String cwe = vuln.getCwes().getFullCwes().values().iterator().next();</span>
-<span class="nc bnc" id="L160" title="All 6 branches missed.">            if (cwe != null &amp;&amp; !&quot;NVD-CWE-Other&quot;.equals(cwe) &amp;&amp; !&quot;NVD-CWE-noinfo&quot;.equals(cwe)) {</span>
-<span class="nc" id="L161">                sb.append(&quot; &quot;).append(cwe);</span>
+<span class="fc" id="L154">        final StringBuilder sb = new StringBuilder();</span>
+<span class="fc" id="L155">        sb.append(determineScore(vuln))</span>
+<span class="fc" id="L156">                .append(&quot; severity - &quot;)</span>
+<span class="fc" id="L157">                .append(vuln.getName());</span>
+<span class="pc bpc" id="L158" title="1 of 4 branches missed.">        if (vuln.getCwes() != null &amp;&amp; !vuln.getCwes().isEmpty()) {</span>
+<span class="fc" id="L159">            final String cwe = vuln.getCwes().getFullCwes().values().iterator().next();</span>
+<span class="pc bpc" id="L160" title="2 of 6 branches missed.">            if (cwe != null &amp;&amp; !&quot;NVD-CWE-Other&quot;.equals(cwe) &amp;&amp; !&quot;NVD-CWE-noinfo&quot;.equals(cwe)) {</span>
+<span class="fc" id="L161">                sb.append(&quot; &quot;).append(cwe);</span>
             }
         }
-<span class="nc" id="L164">        sb.append(&quot; vulnerability in &quot;);</span>
-<span class="nc bnc" id="L165" title="All 4 branches missed.">        if (d.getSoftwareIdentifiers() != null &amp;&amp; !d.getSoftwareIdentifiers().isEmpty()) {</span>
-<span class="nc" id="L166">            sb.append(d.getSoftwareIdentifiers().iterator().next());</span>
+<span class="fc" id="L164">        sb.append(&quot; vulnerability in &quot;);</span>
+<span class="pc bpc" id="L165" title="2 of 4 branches missed.">        if (d.getSoftwareIdentifiers() != null &amp;&amp; !d.getSoftwareIdentifiers().isEmpty()) {</span>
+<span class="fc" id="L166">            sb.append(d.getSoftwareIdentifiers().iterator().next());</span>
         } else {
 <span class="nc" id="L168">            sb.append(d.getDisplayFileName());</span>
         }
-<span class="nc" id="L170">        return sb.toString();</span>
+<span class="fc" id="L170">        return sb.toString();</span>
     }
 
 }

@@ -641,6 +641,13 @@ import org.slf4j.spi.LocationAwareLogger;
     private String ossIndexServerId;
 
     /**
+     * Whether we should only warn about Sonatype OSS Index remote errors instead of failing the goal completely.
+     */
+    @SuppressWarnings(&quot;CanBeFinal&quot;)
+    @Parameter(property = &quot;ossIndexWarnOnlyOnRemoteErrors&quot;)
+    private Boolean ossIndexWarnOnlyOnRemoteErrors;
+    
+    /**
      * Whether or not the Elixir Mix Audit Analyzer is enabled.
      */
     @Parameter(property = &quot;mixAuditAnalyzerEnabled&quot;)
@@ -772,39 +779,39 @@ import org.slf4j.spi.LocationAwareLogger;
     /**
      * Skip Dependency Check altogether.
      */
-<span class="fc" id="L775">    @SuppressWarnings(&quot;CanBeFinal&quot;)</span>
+<span class="fc" id="L782">    @SuppressWarnings(&quot;CanBeFinal&quot;)</span>
     @Parameter(property = &quot;dependency-check.skip&quot;, defaultValue = &quot;false&quot;)
     private boolean skip = false;
     /**
      * Skip Analysis for Test Scope Dependencies.
      */
-<span class="fc" id="L781">    @SuppressWarnings(&quot;CanBeFinal&quot;)</span>
+<span class="fc" id="L788">    @SuppressWarnings(&quot;CanBeFinal&quot;)</span>
     @Parameter(property = &quot;skipTestScope&quot;, defaultValue = &quot;true&quot;)
     private boolean skipTestScope = true;
     /**
      * Skip Analysis for Runtime Scope Dependencies.
      */
-<span class="fc" id="L787">    @SuppressWarnings(&quot;CanBeFinal&quot;)</span>
+<span class="fc" id="L794">    @SuppressWarnings(&quot;CanBeFinal&quot;)</span>
     @Parameter(property = &quot;skipRuntimeScope&quot;, defaultValue = &quot;false&quot;)
     private boolean skipRuntimeScope = false;
     /**
      * Skip Analysis for Provided Scope Dependencies.
      */
-<span class="fc" id="L793">    @SuppressWarnings(&quot;CanBeFinal&quot;)</span>
+<span class="fc" id="L800">    @SuppressWarnings(&quot;CanBeFinal&quot;)</span>
     @Parameter(property = &quot;skipProvidedScope&quot;, defaultValue = &quot;false&quot;)
     private boolean skipProvidedScope = false;
 
     /**
      * Skip Analysis for System Scope Dependencies.
      */
-<span class="fc" id="L800">    @SuppressWarnings(&quot;CanBeFinal&quot;)</span>
+<span class="fc" id="L807">    @SuppressWarnings(&quot;CanBeFinal&quot;)</span>
     @Parameter(property = &quot;skipSystemScope&quot;, defaultValue = &quot;false&quot;)
     private boolean skipSystemScope = false;
 
     /**
      * Skip Analysis for dependencyManagement section.
      */
-<span class="fc" id="L807">    @SuppressWarnings(&quot;CanBeFinal&quot;)</span>
+<span class="fc" id="L814">    @SuppressWarnings(&quot;CanBeFinal&quot;)</span>
     @Parameter(property = &quot;skipDependencyManagement&quot;, defaultValue = &quot;true&quot;)
     private boolean skipDependencyManagement = true;
 
@@ -911,7 +918,7 @@ import org.slf4j.spi.LocationAwareLogger;
      * The list of artifacts (and their transitive dependencies) to exclude from
      * the check.
      */
-    @Parameter
+    @Parameter(property = &quot;odc.excludes&quot;)
     private List&lt;String&gt; excludes;
 
     /**
@@ -952,9 +959,9 @@ import org.slf4j.spi.LocationAwareLogger;
      * @return true if the groupId, artifactId, and version match
      */
     private static boolean artifactsMatch(org.apache.maven.model.Dependency d, Artifact a) {
-<span class="nc bnc" id="L955" title="All 2 branches missed.">        return isEqualOrNull(a.getArtifactId(), d.getArtifactId())</span>
-<span class="nc bnc" id="L956" title="All 2 branches missed.">                &amp;&amp; isEqualOrNull(a.getGroupId(), d.getGroupId())</span>
-<span class="nc bnc" id="L957" title="All 2 branches missed.">                &amp;&amp; isEqualOrNull(a.getVersion(), d.getVersion());</span>
+<span class="nc bnc" id="L962" title="All 2 branches missed.">        return isEqualOrNull(a.getArtifactId(), d.getArtifactId())</span>
+<span class="nc bnc" id="L963" title="All 2 branches missed.">                &amp;&amp; isEqualOrNull(a.getGroupId(), d.getGroupId())</span>
+<span class="nc bnc" id="L964" title="All 2 branches missed.">                &amp;&amp; isEqualOrNull(a.getVersion(), d.getVersion());</span>
     }
 
     /**
@@ -967,7 +974,7 @@ import org.slf4j.spi.LocationAwareLogger;
      * false.
      */
     private static boolean isEqualOrNull(String left, String right) {
-<span class="nc bnc" id="L970" title="All 8 branches missed.">        return (left != null &amp;&amp; left.equals(right)) || (left == null &amp;&amp; right == null);</span>
+<span class="nc bnc" id="L977" title="All 8 branches missed.">        return (left != null &amp;&amp; left.equals(right)) || (left == null &amp;&amp; right == null);</span>
     }
 
     /**
@@ -979,15 +986,15 @@ import org.slf4j.spi.LocationAwareLogger;
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-<span class="fc" id="L982">        generatingSite = false;</span>
-<span class="fc" id="L983">        final boolean shouldSkip = Boolean.parseBoolean(System.getProperty(&quot;dependency-check.skip&quot;, Boolean.toString(skip)));</span>
-<span class="pc bpc" id="L984" title="1 of 2 branches missed.">        if (shouldSkip) {</span>
-<span class="nc" id="L985">            getLog().info(&quot;Skipping &quot; + getName(Locale.US));</span>
+<span class="fc" id="L989">        generatingSite = false;</span>
+<span class="fc" id="L990">        final boolean shouldSkip = Boolean.parseBoolean(System.getProperty(&quot;dependency-check.skip&quot;, Boolean.toString(skip)));</span>
+<span class="pc bpc" id="L991" title="1 of 2 branches missed.">        if (shouldSkip) {</span>
+<span class="nc" id="L992">            getLog().info(&quot;Skipping &quot; + getName(Locale.US));</span>
         } else {
-<span class="fc" id="L987">            project.setContextValue(&quot;dependency-check-output-dir&quot;, this.outputDirectory);</span>
-<span class="fc" id="L988">            runCheck();</span>
+<span class="fc" id="L994">            project.setContextValue(&quot;dependency-check-output-dir&quot;, this.outputDirectory);</span>
+<span class="fc" id="L995">            runCheck();</span>
         }
-<span class="fc" id="L990">    }</span>
+<span class="fc" id="L997">    }</span>
 
     /**
      * Generates the Dependency-Check Site Report.
@@ -1001,8 +1008,8 @@ import org.slf4j.spi.LocationAwareLogger;
      */
     @Deprecated
     public final void generate(@SuppressWarnings(&quot;deprecation&quot;) org.codehaus.doxia.sink.Sink sink, Locale locale) throws MavenReportException {
-<span class="nc" id="L1004">        generate((Sink) sink, locale);</span>
-<span class="nc" id="L1005">    }</span>
+<span class="fc" id="L1011">        generate((Sink) sink, locale);</span>
+<span class="fc" id="L1012">    }</span>
 
     /**
      * Returns true if the Maven site is being generated.
@@ -1010,7 +1017,7 @@ import org.slf4j.spi.LocationAwareLogger;
      * @return true if the Maven site is being generated
      */
     protected boolean isGeneratingSite() {
-<span class="nc" id="L1013">        return generatingSite;</span>
+<span class="nc" id="L1020">        return generatingSite;</span>
     }
 
     /**
@@ -1019,7 +1026,7 @@ import org.slf4j.spi.LocationAwareLogger;
      * @return the connection string
      */
     protected String getConnectionString() {
-<span class="nc" id="L1022">        return connectionString;</span>
+<span class="nc" id="L1029">        return connectionString;</span>
     }
 
     /**
@@ -1028,7 +1035,7 @@ import org.slf4j.spi.LocationAwareLogger;
      * @return whether or not the mojo should fail the build
      */
     protected boolean isFailOnError() {
-<span class="fc" id="L1031">        return failOnError;</span>
+<span class="fc" id="L1038">        return failOnError;</span>
     }
 
     /**
@@ -1039,22 +1046,22 @@ import org.slf4j.spi.LocationAwareLogger;
      * @throws MavenReportException if a maven report exception occurs
      */
     public void generate(Sink sink, Locale locale) throws MavenReportException {
-<span class="nc" id="L1042">        final boolean shouldSkip = Boolean.parseBoolean(System.getProperty(&quot;dependency-check.skip&quot;, Boolean.toString(skip)));</span>
-<span class="nc bnc" id="L1043" title="All 2 branches missed.">        if (shouldSkip) {</span>
-<span class="nc" id="L1044">            getLog().info(&quot;Skipping report generation &quot; + getName(Locale.US));</span>
-<span class="nc" id="L1045">            return;</span>
+<span class="fc" id="L1049">        final boolean shouldSkip = Boolean.parseBoolean(System.getProperty(&quot;dependency-check.skip&quot;, Boolean.toString(skip)));</span>
+<span class="pc bpc" id="L1050" title="1 of 2 branches missed.">        if (shouldSkip) {</span>
+<span class="nc" id="L1051">            getLog().info(&quot;Skipping report generation &quot; + getName(Locale.US));</span>
+<span class="nc" id="L1052">            return;</span>
         }
 
-<span class="nc" id="L1048">        generatingSite = true;</span>
-<span class="nc" id="L1049">        project.setContextValue(&quot;dependency-check-output-dir&quot;, getReportOutputDirectory());</span>
+<span class="fc" id="L1055">        generatingSite = true;</span>
+<span class="fc" id="L1056">        project.setContextValue(&quot;dependency-check-output-dir&quot;, getReportOutputDirectory());</span>
         try {
-<span class="nc" id="L1051">            runCheck();</span>
-<span class="nc" id="L1052">        } catch (MojoExecutionException ex) {</span>
-<span class="nc" id="L1053">            throw new MavenReportException(ex.getMessage(), ex);</span>
-<span class="nc" id="L1054">        } catch (MojoFailureException ex) {</span>
-<span class="nc" id="L1055">            getLog().warn(&quot;Vulnerabilities were identifies that exceed the CVSS threshold for failing the build&quot;);</span>
-<span class="nc" id="L1056">        }</span>
-<span class="nc" id="L1057">    }</span>
+<span class="fc" id="L1058">            runCheck();</span>
+<span class="nc" id="L1059">        } catch (MojoExecutionException ex) {</span>
+<span class="nc" id="L1060">            throw new MavenReportException(ex.getMessage(), ex);</span>
+<span class="nc" id="L1061">        } catch (MojoFailureException ex) {</span>
+<span class="nc" id="L1062">            getLog().warn(&quot;Vulnerabilities were identifies that exceed the CVSS threshold for failing the build&quot;);</span>
+<span class="fc" id="L1063">        }</span>
+<span class="fc" id="L1064">    }</span>
 
     /**
      * Returns the correct output directory depending on if a site is being
@@ -1065,7 +1072,7 @@ import org.slf4j.spi.LocationAwareLogger;
      * file path
      */
     protected File getCorrectOutputDirectory() throws MojoExecutionException {
-<span class="nc" id="L1068">        return getCorrectOutputDirectory(this.project);</span>
+<span class="nc" id="L1075">        return getCorrectOutputDirectory(this.project);</span>
     }
 
     /**
@@ -1076,16 +1083,16 @@ import org.slf4j.spi.LocationAwareLogger;
      * @return the directory to write the report(s)
      */
     protected File getCorrectOutputDirectory(MavenProject current) {
-<span class="fc" id="L1079">        final Object obj = current.getContextValue(&quot;dependency-check-output-dir&quot;);</span>
-<span class="pc bpc" id="L1080" title="2 of 4 branches missed.">        if (obj != null &amp;&amp; obj instanceof File) {</span>
-<span class="fc" id="L1081">            return (File) obj;</span>
+<span class="fc" id="L1086">        final Object obj = current.getContextValue(&quot;dependency-check-output-dir&quot;);</span>
+<span class="pc bpc" id="L1087" title="2 of 4 branches missed.">        if (obj != null &amp;&amp; obj instanceof File) {</span>
+<span class="fc" id="L1088">            return (File) obj;</span>
         }
         //else we guess
-<span class="nc" id="L1084">        File target = new File(current.getBuild().getDirectory());</span>
-<span class="nc bnc" id="L1085" title="All 4 branches missed.">        if (target.getParentFile() != null &amp;&amp; &quot;target&quot;.equals(target.getParentFile().getName())) {</span>
-<span class="nc" id="L1086">            target = target.getParentFile();</span>
+<span class="nc" id="L1091">        File target = new File(current.getBuild().getDirectory());</span>
+<span class="nc bnc" id="L1092" title="All 4 branches missed.">        if (target.getParentFile() != null &amp;&amp; &quot;target&quot;.equals(target.getParentFile().getName())) {</span>
+<span class="nc" id="L1093">            target = target.getParentFile();</span>
         }
-<span class="nc" id="L1088">        return target;</span>
+<span class="nc" id="L1095">        return target;</span>
     }
 
     /**
@@ -1098,7 +1105,7 @@ import org.slf4j.spi.LocationAwareLogger;
      * and scanning the dependencies
      */
     protected ExceptionCollection scanArtifacts(MavenProject project, Engine engine) {
-<span class="fc" id="L1101">        return scanArtifacts(project, engine, false);</span>
+<span class="fc" id="L1108">        return scanArtifacts(project, engine, false);</span>
     }
 
     /**
@@ -1113,30 +1120,30 @@ import org.slf4j.spi.LocationAwareLogger;
      */
     protected ExceptionCollection scanArtifacts(MavenProject project, Engine engine, boolean aggregate) {
         try {
-<span class="fc" id="L1116">            final List&lt;String&gt; filterItems = Collections.singletonList(String.format(&quot;%s:%s&quot;, project.getGroupId(), project.getArtifactId()));</span>
-<span class="fc" id="L1117">            final ProjectBuildingRequest buildingRequest = newResolveArtifactProjectBuildingRequest(project);</span>
+<span class="fc" id="L1123">            final List&lt;String&gt; filterItems = Collections.singletonList(String.format(&quot;%s:%s&quot;, project.getGroupId(), project.getArtifactId()));</span>
+<span class="fc" id="L1124">            final ProjectBuildingRequest buildingRequest = newResolveArtifactProjectBuildingRequest(project);</span>
             //For some reason the filter does not filter out the project being analyzed
             //if we pass in the filter below instead of null to the dependencyGraphBuilder
-<span class="fc" id="L1120">            final DependencyNode dn = dependencyGraphBuilder.buildDependencyGraph(buildingRequest, null);</span>
+<span class="fc" id="L1127">            final DependencyNode dn = dependencyGraphBuilder.buildDependencyGraph(buildingRequest, null);</span>
 
-<span class="fc" id="L1122">            final CollectingDependencyNodeVisitor collectorVisitor = new CollectingDependencyNodeVisitor();</span>
+<span class="fc" id="L1129">            final CollectingDependencyNodeVisitor collectorVisitor = new CollectingDependencyNodeVisitor();</span>
             // exclude artifact by pattern and its dependencies
-<span class="fc" id="L1124">            final DependencyNodeVisitor transitiveFilterVisitor = new FilteringDependencyTransitiveNodeVisitor(collectorVisitor,</span>
-<span class="fc" id="L1125">                    new ArtifactDependencyNodeFilter(new PatternExcludesArtifactFilter(getExcludes())));</span>
+<span class="fc" id="L1131">            final DependencyNodeVisitor transitiveFilterVisitor = new FilteringDependencyTransitiveNodeVisitor(collectorVisitor,</span>
+<span class="fc" id="L1132">                    new ArtifactDependencyNodeFilter(new PatternExcludesArtifactFilter(getExcludes())));</span>
             // exclude exact artifact but not its dependencies, this filter must be appied on the root for first otherwise
             // in case the exclude has the same groupId of the current bundle its direct dependencies are not visited
-<span class="fc" id="L1128">            final DependencyNodeVisitor artifactFilter = new FilteringDependencyNodeVisitor(transitiveFilterVisitor,</span>
+<span class="fc" id="L1135">            final DependencyNodeVisitor artifactFilter = new FilteringDependencyNodeVisitor(transitiveFilterVisitor,</span>
                     new ArtifactDependencyNodeFilter(new ExcludesArtifactFilter(filterItems)));
-<span class="fc" id="L1130">            dn.accept(artifactFilter);</span>
+<span class="fc" id="L1137">            dn.accept(artifactFilter);</span>
 
             //collect dependencies with the filter - see comment above.
-<span class="fc" id="L1133">            final List&lt;DependencyNode&gt; nodes = new ArrayList&lt;&gt;(collectorVisitor.getNodes());</span>
+<span class="fc" id="L1140">            final List&lt;DependencyNode&gt; nodes = new ArrayList&lt;&gt;(collectorVisitor.getNodes());</span>
 
-<span class="fc" id="L1135">            return collectDependencies(engine, project, nodes, buildingRequest, aggregate);</span>
-<span class="nc" id="L1136">        } catch (DependencyGraphBuilderException ex) {</span>
-<span class="nc" id="L1137">            final String msg = String.format(&quot;Unable to build dependency graph on project %s&quot;, project.getName());</span>
-<span class="nc" id="L1138">            getLog().debug(msg, ex);</span>
-<span class="nc" id="L1139">            return new ExceptionCollection(ex);</span>
+<span class="fc" id="L1142">            return collectDependencies(engine, project, nodes, buildingRequest, aggregate);</span>
+<span class="nc" id="L1143">        } catch (DependencyGraphBuilderException ex) {</span>
+<span class="nc" id="L1144">            final String msg = String.format(&quot;Unable to build dependency graph on project %s&quot;, project.getName());</span>
+<span class="nc" id="L1145">            getLog().debug(msg, ex);</span>
+<span class="nc" id="L1146">            return new ExceptionCollection(ex);</span>
         }
     }
 
@@ -1154,53 +1161,53 @@ import org.slf4j.spi.LocationAwareLogger;
     private DependencyNode toDependencyNode(List&lt;DependencyNode&gt; nodes, ProjectBuildingRequest buildingRequest,
             DependencyNode parent, org.apache.maven.model.Dependency dependency) throws ArtifactResolverException {
 
-<span class="fc" id="L1157">        final DefaultArtifactCoordinate coordinate = new DefaultArtifactCoordinate();</span>
+<span class="fc" id="L1164">        final DefaultArtifactCoordinate coordinate = new DefaultArtifactCoordinate();</span>
 
-<span class="fc" id="L1159">        coordinate.setGroupId(dependency.getGroupId());</span>
-<span class="fc" id="L1160">        coordinate.setArtifactId(dependency.getArtifactId());</span>
-<span class="fc" id="L1161">        String version = null;</span>
+<span class="fc" id="L1166">        coordinate.setGroupId(dependency.getGroupId());</span>
+<span class="fc" id="L1167">        coordinate.setArtifactId(dependency.getArtifactId());</span>
+<span class="fc" id="L1168">        String version = null;</span>
         final VersionRange vr;
         try {
-<span class="fc" id="L1164">            vr = VersionRange.createFromVersionSpec(dependency.getVersion());</span>
-<span class="nc" id="L1165">        } catch (InvalidVersionSpecificationException ex) {</span>
-<span class="nc" id="L1166">            throw new ArtifactResolverException(&quot;Invalid version specification: &quot;</span>
-<span class="nc" id="L1167">                    + dependency.getGroupId() + &quot;:&quot;</span>
-<span class="nc" id="L1168">                    + dependency.getArtifactId() + &quot;:&quot;</span>
-<span class="nc" id="L1169">                    + dependency.getVersion(), ex);</span>
-<span class="fc" id="L1170">        }</span>
-<span class="fc bfc" id="L1171" title="All 2 branches covered.">        if (vr.hasRestrictions()) {</span>
-<span class="fc" id="L1172">            version = findVersion(nodes, dependency.getGroupId(), dependency.getArtifactId());</span>
-<span class="pc bpc" id="L1173" title="1 of 2 branches missed.">            if (version == null) {</span>
+<span class="fc" id="L1171">            vr = VersionRange.createFromVersionSpec(dependency.getVersion());</span>
+<span class="nc" id="L1172">        } catch (InvalidVersionSpecificationException ex) {</span>
+<span class="nc" id="L1173">            throw new ArtifactResolverException(&quot;Invalid version specification: &quot;</span>
+<span class="nc" id="L1174">                    + dependency.getGroupId() + &quot;:&quot;</span>
+<span class="nc" id="L1175">                    + dependency.getArtifactId() + &quot;:&quot;</span>
+<span class="nc" id="L1176">                    + dependency.getVersion(), ex);</span>
+<span class="fc" id="L1177">        }</span>
+<span class="fc bfc" id="L1178" title="All 2 branches covered.">        if (vr.hasRestrictions()) {</span>
+<span class="fc" id="L1179">            version = findVersion(nodes, dependency.getGroupId(), dependency.getArtifactId());</span>
+<span class="pc bpc" id="L1180" title="1 of 2 branches missed.">            if (version == null) {</span>
                 //TODO - this still may fail if the restriction is not a valid version number (i.e. only 2.9 instead of 2.9.1)
                 //need to get available versions and filter on the restrictions.
-<span class="nc bnc" id="L1176" title="All 2 branches missed.">                if (vr.getRecommendedVersion() != null) {</span>
-<span class="nc" id="L1177">                    version = vr.getRecommendedVersion().toString();</span>
-<span class="nc bnc" id="L1178" title="All 2 branches missed.">                } else if (vr.hasRestrictions()) {</span>
-<span class="nc bnc" id="L1179" title="All 2 branches missed.">                    for (Restriction restriction : vr.getRestrictions()) {</span>
-<span class="nc bnc" id="L1180" title="All 2 branches missed.">                        if (restriction.getLowerBound() != null) {</span>
-<span class="nc" id="L1181">                            version = restriction.getLowerBound().toString();</span>
+<span class="nc bnc" id="L1183" title="All 2 branches missed.">                if (vr.getRecommendedVersion() != null) {</span>
+<span class="nc" id="L1184">                    version = vr.getRecommendedVersion().toString();</span>
+<span class="nc bnc" id="L1185" title="All 2 branches missed.">                } else if (vr.hasRestrictions()) {</span>
+<span class="nc bnc" id="L1186" title="All 2 branches missed.">                    for (Restriction restriction : vr.getRestrictions()) {</span>
+<span class="nc bnc" id="L1187" title="All 2 branches missed.">                        if (restriction.getLowerBound() != null) {</span>
+<span class="nc" id="L1188">                            version = restriction.getLowerBound().toString();</span>
                         }
-<span class="nc bnc" id="L1183" title="All 2 branches missed.">                        if (restriction.getUpperBound() != null) {</span>
-<span class="nc" id="L1184">                            version = restriction.getUpperBound().toString();</span>
+<span class="nc bnc" id="L1190" title="All 2 branches missed.">                        if (restriction.getUpperBound() != null) {</span>
+<span class="nc" id="L1191">                            version = restriction.getUpperBound().toString();</span>
                         }
-<span class="nc" id="L1186">                    }</span>
+<span class="nc" id="L1193">                    }</span>
                 } else {
-<span class="nc" id="L1188">                    version = vr.toString();</span>
+<span class="nc" id="L1195">                    version = vr.toString();</span>
                 }
             }
         }
-<span class="fc bfc" id="L1192" title="All 2 branches covered.">        if (version == null) {</span>
-<span class="fc" id="L1193">            version = dependency.getVersion();</span>
+<span class="fc bfc" id="L1199" title="All 2 branches covered.">        if (version == null) {</span>
+<span class="fc" id="L1200">            version = dependency.getVersion();</span>
         }
-<span class="fc" id="L1195">        coordinate.setVersion(version);</span>
+<span class="fc" id="L1202">        coordinate.setVersion(version);</span>
 
-<span class="fc" id="L1197">        final ArtifactType type = session.getRepositorySession().getArtifactTypeRegistry().get(dependency.getType());</span>
-<span class="fc" id="L1198">        coordinate.setExtension(type.getExtension());</span>
-<span class="pc bpc" id="L1199" title="3 of 4 branches missed.">        coordinate.setClassifier((null == dependency.getClassifier() || dependency.getClassifier().isEmpty())</span>
-<span class="pc" id="L1200">                ? type.getClassifier() : dependency.getClassifier());</span>
-<span class="fc" id="L1201">        final Artifact artifact = artifactResolver.resolveArtifact(buildingRequest, coordinate).getArtifact();</span>
-<span class="fc" id="L1202">        artifact.setScope(dependency.getScope());</span>
-<span class="fc" id="L1203">        return new DefaultDependencyNode(parent, artifact, dependency.getVersion(), dependency.getScope(), null);</span>
+<span class="fc" id="L1204">        final ArtifactType type = session.getRepositorySession().getArtifactTypeRegistry().get(dependency.getType());</span>
+<span class="fc" id="L1205">        coordinate.setExtension(type.getExtension());</span>
+<span class="pc bpc" id="L1206" title="3 of 4 branches missed.">        coordinate.setClassifier((null == dependency.getClassifier() || dependency.getClassifier().isEmpty())</span>
+<span class="pc" id="L1207">                ? type.getClassifier() : dependency.getClassifier());</span>
+<span class="fc" id="L1208">        final Artifact artifact = artifactResolver.resolveArtifact(buildingRequest, coordinate).getArtifact();</span>
+<span class="fc" id="L1209">        artifact.setScope(dependency.getScope());</span>
+<span class="fc" id="L1210">        return new DefaultDependencyNode(parent, artifact, dependency.getVersion(), dependency.getScope(), null);</span>
     }
 
     /**
@@ -1214,13 +1221,13 @@ import org.slf4j.spi.LocationAwareLogger;
      * and artifactID; otherwise &lt;code&gt;null&lt;/code&gt; is returned
      */
     private String findVersion(List&lt;DependencyNode&gt; nodes, String groupId, String artifactId) {
-<span class="fc" id="L1217">        final Optional&lt;DependencyNode&gt; f = nodes.stream().filter(p</span>
-<span class="pc bpc" id="L1218" title="1 of 2 branches missed.">                -&gt; groupId.equals(p.getArtifact().getGroupId())</span>
-<span class="pc bpc" id="L1219" title="1 of 2 branches missed.">                &amp;&amp; artifactId.equals(p.getArtifact().getArtifactId())).findFirst();</span>
-<span class="pc bpc" id="L1220" title="1 of 2 branches missed.">        if (f.isPresent()) {</span>
-<span class="fc" id="L1221">            return f.get().getArtifact().getVersion();</span>
+<span class="fc" id="L1224">        final Optional&lt;DependencyNode&gt; f = nodes.stream().filter(p</span>
+<span class="pc bpc" id="L1225" title="1 of 2 branches missed.">                -&gt; groupId.equals(p.getArtifact().getGroupId())</span>
+<span class="pc bpc" id="L1226" title="1 of 2 branches missed.">                &amp;&amp; artifactId.equals(p.getArtifact().getArtifactId())).findFirst();</span>
+<span class="pc bpc" id="L1227" title="1 of 2 branches missed.">        if (f.isPresent()) {</span>
+<span class="fc" id="L1228">            return f.get().getArtifact().getVersion();</span>
         }
-<span class="nc" id="L1223">        return null;</span>
+<span class="nc" id="L1230">        return null;</span>
     }
 
     /**
@@ -1236,36 +1243,36 @@ import org.slf4j.spi.LocationAwareLogger;
      */
     private ExceptionCollection collectDependencyManagementDependencies(Engine engine, ProjectBuildingRequest buildingRequest,
             MavenProject project, List&lt;DependencyNode&gt; nodes, boolean aggregate) {
-<span class="pc bpc" id="L1239" title="1 of 4 branches missed.">        if (skipDependencyManagement || project.getDependencyManagement() == null) {</span>
-<span class="fc" id="L1240">            return null;</span>
+<span class="pc bpc" id="L1246" title="1 of 4 branches missed.">        if (skipDependencyManagement || project.getDependencyManagement() == null) {</span>
+<span class="fc" id="L1247">            return null;</span>
         }
 
-<span class="fc" id="L1243">        ExceptionCollection exCol = null;</span>
-<span class="fc bfc" id="L1244" title="All 2 branches covered.">        for (org.apache.maven.model.Dependency dependency : project.getDependencyManagement().getDependencies()) {</span>
+<span class="fc" id="L1250">        ExceptionCollection exCol = null;</span>
+<span class="fc bfc" id="L1251" title="All 2 branches covered.">        for (org.apache.maven.model.Dependency dependency : project.getDependencyManagement().getDependencies()) {</span>
             try {
-<span class="fc" id="L1246">                nodes.add(toDependencyNode(nodes, buildingRequest, null, dependency));</span>
-<span class="fc" id="L1247">            } catch (ArtifactResolverException ex) {</span>
-<span class="fc" id="L1248">                getLog().debug(String.format(&quot;Aggregate : %s&quot;, aggregate));</span>
-<span class="fc" id="L1249">                boolean addException = true;</span>
+<span class="fc" id="L1253">                nodes.add(toDependencyNode(nodes, buildingRequest, null, dependency));</span>
+<span class="fc" id="L1254">            } catch (ArtifactResolverException ex) {</span>
+<span class="fc" id="L1255">                getLog().debug(String.format(&quot;Aggregate : %s&quot;, aggregate));</span>
+<span class="fc" id="L1256">                boolean addException = true;</span>
                 //CSOFF: EmptyBlock
-<span class="pc bpc" id="L1251" title="1 of 2 branches missed.">                if (!aggregate) {</span>
+<span class="pc bpc" id="L1258" title="1 of 2 branches missed.">                if (!aggregate) {</span>
                     // do nothing, exception is to be reported
-<span class="pc bpc" id="L1253" title="1 of 2 branches missed.">                } else if (addReactorDependency(engine,</span>
-<span class="fc" id="L1254">                        new DefaultArtifact(dependency.getGroupId(), dependency.getArtifactId(),</span>
-<span class="fc" id="L1255">                                dependency.getVersion(), dependency.getScope(), dependency.getType(), dependency.getClassifier(),</span>
+<span class="pc bpc" id="L1260" title="1 of 2 branches missed.">                } else if (addReactorDependency(engine,</span>
+<span class="fc" id="L1261">                        new DefaultArtifact(dependency.getGroupId(), dependency.getArtifactId(),</span>
+<span class="fc" id="L1262">                                dependency.getVersion(), dependency.getScope(), dependency.getType(), dependency.getClassifier(),</span>
                                 new DefaultArtifactHandler()), project)) {
-<span class="fc" id="L1257">                    addException = false;</span>
+<span class="fc" id="L1264">                    addException = false;</span>
                 }
                 //CSON: EmptyBlock
-<span class="pc bpc" id="L1260" title="1 of 2 branches missed.">                if (addException) {</span>
-<span class="nc bnc" id="L1261" title="All 2 branches missed.">                    if (exCol == null) {</span>
-<span class="nc" id="L1262">                        exCol = new ExceptionCollection();</span>
+<span class="pc bpc" id="L1267" title="1 of 2 branches missed.">                if (addException) {</span>
+<span class="nc bnc" id="L1268" title="All 2 branches missed.">                    if (exCol == null) {</span>
+<span class="nc" id="L1269">                        exCol = new ExceptionCollection();</span>
                     }
-<span class="nc" id="L1264">                    exCol.addException(ex);</span>
+<span class="nc" id="L1271">                    exCol.addException(ex);</span>
                 }
-<span class="fc" id="L1266">            }</span>
-<span class="fc" id="L1267">        }</span>
-<span class="fc" id="L1268">        return exCol;</span>
+<span class="fc" id="L1273">            }</span>
+<span class="fc" id="L1274">        }</span>
+<span class="fc" id="L1275">        return exCol;</span>
     }
 
     /**
@@ -1285,181 +1292,181 @@ import org.slf4j.spi.LocationAwareLogger;
     private ExceptionCollection collectMavenDependencies(Engine engine, MavenProject project,
             List&lt;DependencyNode&gt; nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
 
-<span class="fc" id="L1288">        ExceptionCollection exCol = collectDependencyManagementDependencies(engine, buildingRequest, project, nodes, aggregate);</span>
-<span class="fc" id="L1289">        final List&lt;ArtifactResult&gt; allResolvedDeps = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L1295">        ExceptionCollection exCol = collectDependencyManagementDependencies(engine, buildingRequest, project, nodes, aggregate);</span>
+<span class="fc" id="L1296">        final List&lt;ArtifactResult&gt; allResolvedDeps = new ArrayList&lt;&gt;();</span>
 
-<span class="fc bfc" id="L1291" title="All 2 branches covered.">        for (DependencyNode dependencyNode : nodes) {</span>
-<span class="fc bfc" id="L1292" title="All 2 branches covered.">            if (artifactScopeExcluded.passes(dependencyNode.getArtifact().getScope())</span>
-<span class="pc bpc" id="L1293" title="1 of 2 branches missed.">                    || artifactTypeExcluded.passes(dependencyNode.getArtifact().getType())) {</span>
-<span class="nc" id="L1294">                continue;</span>
+<span class="fc bfc" id="L1298" title="All 2 branches covered.">        for (DependencyNode dependencyNode : nodes) {</span>
+<span class="fc bfc" id="L1299" title="All 2 branches covered.">            if (artifactScopeExcluded.passes(dependencyNode.getArtifact().getScope())</span>
+<span class="pc bpc" id="L1300" title="1 of 2 branches missed.">                    || artifactTypeExcluded.passes(dependencyNode.getArtifact().getType())) {</span>
+<span class="nc" id="L1301">                continue;</span>
             }
 
-<span class="fc" id="L1297">            boolean isResolved = false;</span>
-<span class="fc" id="L1298">            File artifactFile = null;</span>
-<span class="fc" id="L1299">            String artifactId = null;</span>
-<span class="fc" id="L1300">            String groupId = null;</span>
-<span class="fc" id="L1301">            String version = null;</span>
-<span class="fc" id="L1302">            List&lt;ArtifactVersion&gt; availableVersions = null;</span>
-<span class="pc bpc" id="L1303" title="1 of 2 branches missed.">            if (org.apache.maven.artifact.Artifact.SCOPE_SYSTEM.equals(dependencyNode.getArtifact().getScope())) {</span>
-<span class="nc" id="L1304">                final Artifact a = dependencyNode.getArtifact();</span>
-<span class="nc bnc" id="L1305" title="All 4 branches missed.">                if (a.isResolved() &amp;&amp; a.getFile().isFile()) {</span>
-<span class="nc" id="L1306">                    artifactFile = a.getFile();</span>
-<span class="nc" id="L1307">                    isResolved = artifactFile.isFile();</span>
-<span class="nc" id="L1308">                    groupId = a.getGroupId();</span>
-<span class="nc" id="L1309">                    artifactId = a.getArtifactId();</span>
-<span class="nc" id="L1310">                    version = a.getVersion();</span>
-<span class="nc" id="L1311">                    availableVersions = a.getAvailableVersions();</span>
+<span class="fc" id="L1304">            boolean isResolved = false;</span>
+<span class="fc" id="L1305">            File artifactFile = null;</span>
+<span class="fc" id="L1306">            String artifactId = null;</span>
+<span class="fc" id="L1307">            String groupId = null;</span>
+<span class="fc" id="L1308">            String version = null;</span>
+<span class="fc" id="L1309">            List&lt;ArtifactVersion&gt; availableVersions = null;</span>
+<span class="pc bpc" id="L1310" title="1 of 2 branches missed.">            if (org.apache.maven.artifact.Artifact.SCOPE_SYSTEM.equals(dependencyNode.getArtifact().getScope())) {</span>
+<span class="nc" id="L1311">                final Artifact a = dependencyNode.getArtifact();</span>
+<span class="nc bnc" id="L1312" title="All 4 branches missed.">                if (a.isResolved() &amp;&amp; a.getFile().isFile()) {</span>
+<span class="nc" id="L1313">                    artifactFile = a.getFile();</span>
+<span class="nc" id="L1314">                    isResolved = artifactFile.isFile();</span>
+<span class="nc" id="L1315">                    groupId = a.getGroupId();</span>
+<span class="nc" id="L1316">                    artifactId = a.getArtifactId();</span>
+<span class="nc" id="L1317">                    version = a.getVersion();</span>
+<span class="nc" id="L1318">                    availableVersions = a.getAvailableVersions();</span>
                 } else {
-<span class="nc bnc" id="L1313" title="All 2 branches missed.">                    for (org.apache.maven.model.Dependency d : project.getDependencies()) {</span>
-<span class="nc bnc" id="L1314" title="All 4 branches missed.">                        if (d.getSystemPath() != null &amp;&amp; artifactsMatch(d, a)) {</span>
-<span class="nc" id="L1315">                            artifactFile = new File(d.getSystemPath());</span>
-<span class="nc" id="L1316">                            isResolved = artifactFile.isFile();</span>
-<span class="nc" id="L1317">                            groupId = a.getGroupId();</span>
-<span class="nc" id="L1318">                            artifactId = a.getArtifactId();</span>
-<span class="nc" id="L1319">                            version = a.getVersion();</span>
-<span class="nc" id="L1320">                            availableVersions = a.getAvailableVersions();</span>
-<span class="nc" id="L1321">                            break;</span>
+<span class="nc bnc" id="L1320" title="All 2 branches missed.">                    for (org.apache.maven.model.Dependency d : project.getDependencies()) {</span>
+<span class="nc bnc" id="L1321" title="All 4 branches missed.">                        if (d.getSystemPath() != null &amp;&amp; artifactsMatch(d, a)) {</span>
+<span class="nc" id="L1322">                            artifactFile = new File(d.getSystemPath());</span>
+<span class="nc" id="L1323">                            isResolved = artifactFile.isFile();</span>
+<span class="nc" id="L1324">                            groupId = a.getGroupId();</span>
+<span class="nc" id="L1325">                            artifactId = a.getArtifactId();</span>
+<span class="nc" id="L1326">                            version = a.getVersion();</span>
+<span class="nc" id="L1327">                            availableVersions = a.getAvailableVersions();</span>
+<span class="nc" id="L1328">                            break;</span>
                         }
-<span class="nc" id="L1323">                    }</span>
+<span class="nc" id="L1330">                    }</span>
                 }
-<span class="nc bnc" id="L1325" title="All 2 branches missed.">                if (!isResolved) {</span>
-<span class="nc" id="L1326">                    getLog().error(&quot;Unable to resolve system scoped dependency: &quot; + dependencyNode.toNodeString());</span>
-<span class="nc bnc" id="L1327" title="All 2 branches missed.">                    if (exCol == null) {</span>
-<span class="nc" id="L1328">                        exCol = new ExceptionCollection();</span>
+<span class="nc bnc" id="L1332" title="All 2 branches missed.">                if (!isResolved) {</span>
+<span class="nc" id="L1333">                    getLog().error(&quot;Unable to resolve system scoped dependency: &quot; + dependencyNode.toNodeString());</span>
+<span class="nc bnc" id="L1334" title="All 2 branches missed.">                    if (exCol == null) {</span>
+<span class="nc" id="L1335">                        exCol = new ExceptionCollection();</span>
                     }
-<span class="nc" id="L1330">                    exCol.addException(new DependencyNotFoundException(&quot;Unable to resolve system scoped dependency: &quot;</span>
-<span class="nc" id="L1331">                            + dependencyNode.toNodeString()));</span>
+<span class="nc" id="L1337">                    exCol.addException(new DependencyNotFoundException(&quot;Unable to resolve system scoped dependency: &quot;</span>
+<span class="nc" id="L1338">                            + dependencyNode.toNodeString()));</span>
                 }
-<span class="nc" id="L1333">            } else {</span>
-<span class="fc" id="L1334">                final Artifact dependencyArtifact = dependencyNode.getArtifact();</span>
+<span class="nc" id="L1340">            } else {</span>
+<span class="fc" id="L1341">                final Artifact dependencyArtifact = dependencyNode.getArtifact();</span>
                 final Artifact result;
-<span class="fc bfc" id="L1336" title="All 2 branches covered.">                if (dependencyArtifact.isResolved()) {</span>
+<span class="fc bfc" id="L1343" title="All 2 branches covered.">                if (dependencyArtifact.isResolved()) {</span>
                     //All transitive dependencies, excluding reactor and dependencyManagement artifacts should
                     //have been resolved by Maven prior to invoking the plugin - resolving the dependencies
                     //manually is unnecessary, and does not work in some cases (issue-1751)
-<span class="fc" id="L1340">                    getLog().debug(String.format(&quot;Skipping artifact %s, already resolved&quot;, dependencyArtifact.getArtifactId()));</span>
-<span class="fc" id="L1341">                    result = dependencyArtifact;</span>
+<span class="fc" id="L1347">                    getLog().debug(String.format(&quot;Skipping artifact %s, already resolved&quot;, dependencyArtifact.getArtifactId()));</span>
+<span class="fc" id="L1348">                    result = dependencyArtifact;</span>
                 } else {
                     try {
-<span class="fc bfc" id="L1344" title="All 2 branches covered.">                        if (allResolvedDeps.isEmpty()) { // no (partially successful) resolution attempt done</span>
+<span class="fc bfc" id="L1351" title="All 2 branches covered.">                        if (allResolvedDeps.isEmpty()) { // no (partially successful) resolution attempt done</span>
                             try {
-<span class="fc" id="L1346">                                final List&lt;org.apache.maven.model.Dependency&gt; dependencies = project.getDependencies();</span>
-<span class="fc" id="L1347">                                final List&lt;org.apache.maven.model.Dependency&gt; managedDependencies</span>
-<span class="fc bfc" id="L1348" title="All 2 branches covered.">                                        = project.getDependencyManagement() == null ? null : project.getDependencyManagement()</span>
-<span class="fc" id="L1349">                                                                                                    .getDependencies();</span>
-<span class="fc" id="L1350">                                final Iterable&lt;ArtifactResult&gt; allDeps</span>
-<span class="fc" id="L1351">                                        = dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,</span>
+<span class="fc" id="L1353">                                final List&lt;org.apache.maven.model.Dependency&gt; dependencies = project.getDependencies();</span>
+<span class="fc" id="L1354">                                final List&lt;org.apache.maven.model.Dependency&gt; managedDependencies</span>
+<span class="fc bfc" id="L1355" title="All 2 branches covered.">                                        = project.getDependencyManagement() == null ? null : project.getDependencyManagement()</span>
+<span class="fc" id="L1356">                                                                                                    .getDependencies();</span>
+<span class="fc" id="L1357">                                final Iterable&lt;ArtifactResult&gt; allDeps</span>
+<span class="fc" id="L1358">                                        = dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,</span>
                                                                                  null);
-<span class="fc" id="L1353">                                allDeps.forEach(allResolvedDeps::add);</span>
-<span class="fc" id="L1354">                            } catch (DependencyResolverException dre) {</span>
-<span class="pc bpc" id="L1355" title="1 of 2 branches missed.">                                if (dre.getCause() instanceof org.eclipse.aether.resolution.DependencyResolutionException) {</span>
-<span class="fc" id="L1356">                                    final List&lt;ArtifactResult&gt; successResults =</span>
-<span class="fc" id="L1357">                                            Mshared998Util.getResolutionResults(</span>
-<span class="fc" id="L1358">                                                    (org.eclipse.aether.resolution.DependencyResolutionException) dre.getCause());</span>
-<span class="fc" id="L1359">                                    allResolvedDeps.addAll(successResults);</span>
-<span class="fc" id="L1360">                                } else {</span>
-<span class="nc" id="L1361">                                    throw dre;</span>
+<span class="fc" id="L1360">                                allDeps.forEach(allResolvedDeps::add);</span>
+<span class="fc" id="L1361">                            } catch (DependencyResolverException dre) {</span>
+<span class="pc bpc" id="L1362" title="1 of 2 branches missed.">                                if (dre.getCause() instanceof org.eclipse.aether.resolution.DependencyResolutionException) {</span>
+<span class="fc" id="L1363">                                    final List&lt;ArtifactResult&gt; successResults =</span>
+<span class="fc" id="L1364">                                            Mshared998Util.getResolutionResults(</span>
+<span class="fc" id="L1365">                                                    (org.eclipse.aether.resolution.DependencyResolutionException) dre.getCause());</span>
+<span class="fc" id="L1366">                                    allResolvedDeps.addAll(successResults);</span>
+<span class="fc" id="L1367">                                } else {</span>
+<span class="nc" id="L1368">                                    throw dre;</span>
                                 }
-<span class="fc" id="L1363">                            }</span>
+<span class="fc" id="L1370">                            }</span>
                         }
-<span class="fc" id="L1365">                        result = findInAllDeps(allResolvedDeps, dependencyNode.getArtifact(), project);</span>
-<span class="fc" id="L1366">                    } catch (DependencyNotFoundException | DependencyResolverException ex) {</span>
-<span class="fc" id="L1367">                        getLog().debug(String.format(&quot;Aggregate : %s&quot;, aggregate));</span>
-<span class="fc" id="L1368">                        boolean addException = true;</span>
+<span class="fc" id="L1372">                        result = findInAllDeps(allResolvedDeps, dependencyNode.getArtifact(), project);</span>
+<span class="fc" id="L1373">                    } catch (DependencyNotFoundException | DependencyResolverException ex) {</span>
+<span class="fc" id="L1374">                        getLog().debug(String.format(&quot;Aggregate : %s&quot;, aggregate));</span>
+<span class="fc" id="L1375">                        boolean addException = true;</span>
                         //CSOFF: EmptyBlock
-<span class="pc bpc" id="L1370" title="1 of 2 branches missed.">                        if (!aggregate) {</span>
+<span class="pc bpc" id="L1377" title="1 of 2 branches missed.">                        if (!aggregate) {</span>
                             // do nothing - the exception is to be reported
-<span class="pc bpc" id="L1372" title="1 of 2 branches missed.">                        } else if (addReactorDependency(engine, dependencyNode.getArtifact(), project)) {</span>
+<span class="pc bpc" id="L1379" title="1 of 2 branches missed.">                        } else if (addReactorDependency(engine, dependencyNode.getArtifact(), project)) {</span>
                             // successfully resolved as a reactor dependency - swallow the exception
-<span class="fc" id="L1374">                            addException = false;</span>
+<span class="fc" id="L1381">                            addException = false;</span>
                         }
-<span class="pc bpc" id="L1376" title="1 of 2 branches missed.">                        if (addException) {</span>
-<span class="nc bnc" id="L1377" title="All 2 branches missed.">                            if (exCol == null) {</span>
-<span class="nc" id="L1378">                                exCol = new ExceptionCollection();</span>
+<span class="pc bpc" id="L1383" title="1 of 2 branches missed.">                        if (addException) {</span>
+<span class="nc bnc" id="L1384" title="All 2 branches missed.">                            if (exCol == null) {</span>
+<span class="nc" id="L1385">                                exCol = new ExceptionCollection();</span>
                             }
-<span class="nc" id="L1380">                            exCol.addException(ex);</span>
+<span class="nc" id="L1387">                            exCol.addException(ex);</span>
                         }
-<span class="fc" id="L1382">                        continue;</span>
-<span class="fc" id="L1383">                    }</span>
+<span class="fc" id="L1389">                        continue;</span>
+<span class="fc" id="L1390">                    }</span>
                 }
-<span class="pc bpc" id="L1385" title="1 of 4 branches missed.">                if (aggregate &amp;&amp; virtualSnapshotsFromReactor</span>
-<span class="fc bfc" id="L1386" title="All 2 branches covered.">                        &amp;&amp; dependencyNode.getArtifact().isSnapshot()</span>
-<span class="pc bpc" id="L1387" title="1 of 2 branches missed.">                        &amp;&amp; addSnapshotReactorDependency(engine, dependencyNode.getArtifact(), project)) {</span>
-<span class="fc" id="L1388">                    continue;</span>
+<span class="pc bpc" id="L1392" title="1 of 4 branches missed.">                if (aggregate &amp;&amp; virtualSnapshotsFromReactor</span>
+<span class="fc bfc" id="L1393" title="All 2 branches covered.">                        &amp;&amp; dependencyNode.getArtifact().isSnapshot()</span>
+<span class="pc bpc" id="L1394" title="1 of 2 branches missed.">                        &amp;&amp; addSnapshotReactorDependency(engine, dependencyNode.getArtifact(), project)) {</span>
+<span class="fc" id="L1395">                    continue;</span>
                 }
-<span class="fc" id="L1390">                isResolved = result.isResolved();</span>
-<span class="fc" id="L1391">                artifactFile = result.getFile();</span>
-<span class="fc" id="L1392">                groupId = result.getGroupId();</span>
-<span class="fc" id="L1393">                artifactId = result.getArtifactId();</span>
-<span class="fc" id="L1394">                version = result.getVersion();</span>
-<span class="fc" id="L1395">                availableVersions = result.getAvailableVersions();</span>
+<span class="fc" id="L1397">                isResolved = result.isResolved();</span>
+<span class="fc" id="L1398">                artifactFile = result.getFile();</span>
+<span class="fc" id="L1399">                groupId = result.getGroupId();</span>
+<span class="fc" id="L1400">                artifactId = result.getArtifactId();</span>
+<span class="fc" id="L1401">                version = result.getVersion();</span>
+<span class="fc" id="L1402">                availableVersions = result.getAvailableVersions();</span>
             }
-<span class="pc bpc" id="L1397" title="2 of 4 branches missed.">            if (isResolved &amp;&amp; artifactFile != null) {</span>
-<span class="fc" id="L1398">                final List&lt;Dependency&gt; deps = engine.scan(artifactFile.getAbsoluteFile(),</span>
-<span class="fc" id="L1399">                        createProjectReferenceName(project, dependencyNode));</span>
-<span class="pc bpc" id="L1400" title="1 of 2 branches missed.">                if (deps != null) {</span>
-<span class="fc" id="L1401">                    scannedFiles.add(artifactFile);</span>
-<span class="fc" id="L1402">                    Dependency d = null;</span>
-<span class="pc bpc" id="L1403" title="1 of 2 branches missed.">                    if (deps.size() == 1) {</span>
-<span class="fc" id="L1404">                        d = deps.get(0);</span>
+<span class="pc bpc" id="L1404" title="2 of 4 branches missed.">            if (isResolved &amp;&amp; artifactFile != null) {</span>
+<span class="fc" id="L1405">                final List&lt;Dependency&gt; deps = engine.scan(artifactFile.getAbsoluteFile(),</span>
+<span class="fc" id="L1406">                        createProjectReferenceName(project, dependencyNode));</span>
+<span class="pc bpc" id="L1407" title="1 of 2 branches missed.">                if (deps != null) {</span>
+<span class="fc" id="L1408">                    scannedFiles.add(artifactFile);</span>
+<span class="fc" id="L1409">                    Dependency d = null;</span>
+<span class="pc bpc" id="L1410" title="1 of 2 branches missed.">                    if (deps.size() == 1) {</span>
+<span class="fc" id="L1411">                        d = deps.get(0);</span>
                     } else {
-<span class="nc bnc" id="L1406" title="All 2 branches missed.">                        for (Dependency possible : deps) {</span>
-<span class="nc bnc" id="L1407" title="All 2 branches missed.">                            if (artifactFile.getAbsoluteFile().equals(possible.getActualFile())) {</span>
-<span class="nc" id="L1408">                                d = possible;</span>
-<span class="nc" id="L1409">                                break;</span>
+<span class="nc bnc" id="L1413" title="All 2 branches missed.">                        for (Dependency possible : deps) {</span>
+<span class="nc bnc" id="L1414" title="All 2 branches missed.">                            if (artifactFile.getAbsoluteFile().equals(possible.getActualFile())) {</span>
+<span class="nc" id="L1415">                                d = possible;</span>
+<span class="nc" id="L1416">                                break;</span>
                             }
-<span class="nc" id="L1411">                        }</span>
+<span class="nc" id="L1418">                        }</span>
                     }
-<span class="pc bpc" id="L1413" title="1 of 2 branches missed.">                    if (d != null) {</span>
-<span class="fc" id="L1414">                        final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);</span>
-<span class="fc" id="L1415">                        d.addAsEvidence(&quot;pom&quot;, ma, Confidence.HIGHEST);</span>
-<span class="pc bpc" id="L1416" title="1 of 2 branches missed.">                        if (availableVersions != null) {</span>
-<span class="nc bnc" id="L1417" title="All 2 branches missed.">                            for (ArtifactVersion av : availableVersions) {</span>
-<span class="nc" id="L1418">                                d.addAvailableVersion(av.toString());</span>
-<span class="nc" id="L1419">                            }</span>
+<span class="pc bpc" id="L1420" title="1 of 2 branches missed.">                    if (d != null) {</span>
+<span class="fc" id="L1421">                        final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);</span>
+<span class="fc" id="L1422">                        d.addAsEvidence(&quot;pom&quot;, ma, Confidence.HIGHEST);</span>
+<span class="pc bpc" id="L1423" title="1 of 2 branches missed.">                        if (availableVersions != null) {</span>
+<span class="nc bnc" id="L1424" title="All 2 branches missed.">                            for (ArtifactVersion av : availableVersions) {</span>
+<span class="nc" id="L1425">                                d.addAvailableVersion(av.toString());</span>
+<span class="nc" id="L1426">                            }</span>
                         }
-<span class="fc" id="L1421">                        getLog().debug(String.format(&quot;Adding project reference %s on dependency %s&quot;,</span>
-<span class="fc" id="L1422">                                project.getName(), d.getDisplayFileName()));</span>
-<span class="pc bnc" id="L1423" title="All 2 branches missed.">                    } else if (getLog().isDebugEnabled()) {</span>
-<span class="nc" id="L1424">                        final String msg = String.format(&quot;More than 1 dependency was identified in first pass scan of '%s' in project %s&quot;,</span>
-<span class="nc" id="L1425">                                dependencyNode.getArtifact().getId(), project.getName());</span>
-<span class="nc" id="L1426">                        getLog().debug(msg);</span>
+<span class="fc" id="L1428">                        getLog().debug(String.format(&quot;Adding project reference %s on dependency %s&quot;,</span>
+<span class="fc" id="L1429">                                project.getName(), d.getDisplayFileName()));</span>
+<span class="pc bnc" id="L1430" title="All 2 branches missed.">                    } else if (getLog().isDebugEnabled()) {</span>
+<span class="nc" id="L1431">                        final String msg = String.format(&quot;More than 1 dependency was identified in first pass scan of '%s' in project %s&quot;,</span>
+<span class="nc" id="L1432">                                dependencyNode.getArtifact().getId(), project.getName());</span>
+<span class="nc" id="L1433">                        getLog().debug(msg);</span>
                     }
-<span class="pc bnc" id="L1428" title="All 2 branches missed.">                } else if (&quot;import&quot;.equals(dependencyNode.getArtifact().getScope())) {</span>
-<span class="nc" id="L1429">                    final String msg = String.format(&quot;Skipping '%s:%s' in project %s as it uses an `import` scope&quot;,</span>
-<span class="nc" id="L1430">                            dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());</span>
-<span class="nc" id="L1431">                    getLog().debug(msg);</span>
-<span class="nc bnc" id="L1432" title="All 2 branches missed.">                } else if (&quot;pom&quot;.equals(dependencyNode.getArtifact().getType())) {</span>
+<span class="pc bnc" id="L1435" title="All 2 branches missed.">                } else if (&quot;import&quot;.equals(dependencyNode.getArtifact().getScope())) {</span>
+<span class="nc" id="L1436">                    final String msg = String.format(&quot;Skipping '%s:%s' in project %s as it uses an `import` scope&quot;,</span>
+<span class="nc" id="L1437">                            dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());</span>
+<span class="nc" id="L1438">                    getLog().debug(msg);</span>
+<span class="nc bnc" id="L1439" title="All 2 branches missed.">                } else if (&quot;pom&quot;.equals(dependencyNode.getArtifact().getType())) {</span>
 
                     try {
-<span class="nc" id="L1435">                        final Dependency d = new Dependency(artifactFile.getAbsoluteFile());</span>
-<span class="nc" id="L1436">                        final Model pom = PomUtils.readPom(artifactFile.getAbsoluteFile());</span>
-<span class="nc" id="L1437">                        JarAnalyzer.setPomEvidence(d, pom, null, true);</span>
-<span class="nc" id="L1438">                        engine.addDependency(d);</span>
-<span class="nc" id="L1439">                    } catch (AnalysisException ex) {</span>
-<span class="nc bnc" id="L1440" title="All 2 branches missed.">                        if (exCol == null) {</span>
-<span class="nc" id="L1441">                            exCol = new ExceptionCollection();</span>
+<span class="nc" id="L1442">                        final Dependency d = new Dependency(artifactFile.getAbsoluteFile());</span>
+<span class="nc" id="L1443">                        final Model pom = PomUtils.readPom(artifactFile.getAbsoluteFile());</span>
+<span class="nc" id="L1444">                        JarAnalyzer.setPomEvidence(d, pom, null, true);</span>
+<span class="nc" id="L1445">                        engine.addDependency(d);</span>
+<span class="nc" id="L1446">                    } catch (AnalysisException ex) {</span>
+<span class="nc bnc" id="L1447" title="All 2 branches missed.">                        if (exCol == null) {</span>
+<span class="nc" id="L1448">                            exCol = new ExceptionCollection();</span>
                         }
-<span class="nc" id="L1443">                        exCol.addException(ex);</span>
-<span class="nc" id="L1444">                        getLog().debug(&quot;Error reading pom &quot; + artifactFile.getAbsoluteFile(), ex);</span>
-<span class="nc" id="L1445">                    }</span>
+<span class="nc" id="L1450">                        exCol.addException(ex);</span>
+<span class="nc" id="L1451">                        getLog().debug(&quot;Error reading pom &quot; + artifactFile.getAbsoluteFile(), ex);</span>
+<span class="nc" id="L1452">                    }</span>
                 } else {
-<span class="nc bnc" id="L1447" title="All 2 branches missed.">                    if (!scannedFiles.contains(artifactFile)) {</span>
-<span class="nc" id="L1448">                        final String msg = String.format(&quot;No analyzer could be found or the artifact has been scanned twice for '%s:%s' in project %s&quot;,</span>
-<span class="nc" id="L1449">                                dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());</span>
-<span class="nc" id="L1450">                        getLog().warn(msg);</span>
+<span class="nc bnc" id="L1454" title="All 2 branches missed.">                    if (!scannedFiles.contains(artifactFile)) {</span>
+<span class="nc" id="L1455">                        final String msg = String.format(&quot;No analyzer could be found or the artifact has been scanned twice for '%s:%s' in project %s&quot;,</span>
+<span class="nc" id="L1456">                                dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());</span>
+<span class="nc" id="L1457">                        getLog().warn(msg);</span>
                     }
                 }
-<span class="fc" id="L1453">            } else {</span>
-<span class="nc" id="L1454">                final String msg = String.format(&quot;Unable to resolve '%s' in project %s&quot;,</span>
-<span class="nc" id="L1455">                        dependencyNode.getArtifact().getId(), project.getName());</span>
-<span class="nc" id="L1456">                getLog().debug(msg);</span>
-<span class="nc bnc" id="L1457" title="All 2 branches missed.">                if (exCol == null) {</span>
-<span class="nc" id="L1458">                    exCol = new ExceptionCollection();</span>
+<span class="fc" id="L1460">            } else {</span>
+<span class="nc" id="L1461">                final String msg = String.format(&quot;Unable to resolve '%s' in project %s&quot;,</span>
+<span class="nc" id="L1462">                        dependencyNode.getArtifact().getId(), project.getName());</span>
+<span class="nc" id="L1463">                getLog().debug(msg);</span>
+<span class="nc bnc" id="L1464" title="All 2 branches missed.">                if (exCol == null) {</span>
+<span class="nc" id="L1465">                    exCol = new ExceptionCollection();</span>
                 }
             }
-<span class="fc" id="L1461">        }</span>
-<span class="fc" id="L1462">        return exCol;</span>
+<span class="fc" id="L1468">        }</span>
+<span class="fc" id="L1469">        return exCol;</span>
     }
     //CSON: OperatorWrap
 
@@ -1475,18 +1482,18 @@ import org.slf4j.spi.LocationAwareLogger;
     private Artifact findInAllDeps(final List&lt;ArtifactResult&gt; allDeps, final Artifact unresolvedArtifact,
                                    final MavenProject project)
             throws DependencyNotFoundException {
-<span class="fc" id="L1478">        Artifact result = null;</span>
-<span class="fc bfc" id="L1479" title="All 2 branches covered.">        for (final ArtifactResult res : allDeps) {</span>
-<span class="fc bfc" id="L1480" title="All 2 branches covered.">            if (sameArtifact(res, unresolvedArtifact)) {</span>
-<span class="fc" id="L1481">                result = res.getArtifact();</span>
-<span class="fc" id="L1482">                break;</span>
+<span class="fc" id="L1485">        Artifact result = null;</span>
+<span class="fc bfc" id="L1486" title="All 2 branches covered.">        for (final ArtifactResult res : allDeps) {</span>
+<span class="fc bfc" id="L1487" title="All 2 branches covered.">            if (sameArtifact(res, unresolvedArtifact)) {</span>
+<span class="fc" id="L1488">                result = res.getArtifact();</span>
+<span class="fc" id="L1489">                break;</span>
             }
-<span class="fc" id="L1484">        }</span>
-<span class="fc bfc" id="L1485" title="All 2 branches covered.">        if (result == null) {</span>
-<span class="fc" id="L1486">            throw new DependencyNotFoundException(String.format(&quot;Expected dependency not found in resolved artifacts for &quot;</span>
-<span class="fc" id="L1487">                    + &quot;dependency %s of project-artifact %s&quot;, unresolvedArtifact, project.getArtifactId()));</span>
+<span class="fc" id="L1491">        }</span>
+<span class="fc bfc" id="L1492" title="All 2 branches covered.">        if (result == null) {</span>
+<span class="fc" id="L1493">            throw new DependencyNotFoundException(String.format(&quot;Expected dependency not found in resolved artifacts for &quot;</span>
+<span class="fc" id="L1494">                    + &quot;dependency %s of project-artifact %s&quot;, unresolvedArtifact, project.getArtifactId()));</span>
         }
-<span class="fc" id="L1489">        return result;</span>
+<span class="fc" id="L1496">        return result;</span>
     }
 
     /**
@@ -1497,15 +1504,15 @@ import org.slf4j.spi.LocationAwareLogger;
      * @return {@code true} when unresolvedArtifact is non-null and matches with the artifact of res
      */
     private boolean sameArtifact(final ArtifactResult res, final Artifact unresolvedArtifact) {
-<span class="pc bpc" id="L1500" title="2 of 6 branches missed.">        if (res == null || res.getArtifact() == null || unresolvedArtifact == null) {</span>
-<span class="fc" id="L1501">            return false;</span>
+<span class="pc bpc" id="L1507" title="2 of 6 branches missed.">        if (res == null || res.getArtifact() == null || unresolvedArtifact == null) {</span>
+<span class="fc" id="L1508">            return false;</span>
         }
-<span class="fc" id="L1503">        boolean result = Objects.equals(res.getArtifact().getGroupId(), unresolvedArtifact.getGroupId());</span>
-<span class="fc" id="L1504">        result &amp;= Objects.equals(res.getArtifact().getArtifactId(), unresolvedArtifact.getArtifactId());</span>
-<span class="fc" id="L1505">        result &amp;= Objects.equals(res.getArtifact().getBaseVersion(), unresolvedArtifact.getBaseVersion());</span>
-<span class="fc" id="L1506">        result &amp;= Objects.equals(res.getArtifact().getClassifier(), unresolvedArtifact.getClassifier());</span>
-<span class="fc" id="L1507">        result &amp;= Objects.equals(res.getArtifact().getType(), unresolvedArtifact.getType());</span>
-<span class="fc" id="L1508">        return result;</span>
+<span class="fc" id="L1510">        boolean result = Objects.equals(res.getArtifact().getGroupId(), unresolvedArtifact.getGroupId());</span>
+<span class="fc" id="L1511">        result &amp;= Objects.equals(res.getArtifact().getArtifactId(), unresolvedArtifact.getArtifactId());</span>
+<span class="fc" id="L1512">        result &amp;= Objects.equals(res.getArtifact().getBaseVersion(), unresolvedArtifact.getBaseVersion());</span>
+<span class="fc" id="L1513">        result &amp;= Objects.equals(res.getArtifact().getClassifier(), unresolvedArtifact.getClassifier());</span>
+<span class="fc" id="L1514">        result &amp;= Objects.equals(res.getArtifact().getType(), unresolvedArtifact.getType());</span>
+<span class="fc" id="L1515">        return result;</span>
     }
 
     /**
@@ -1518,7 +1525,7 @@ import org.slf4j.spi.LocationAwareLogger;
      * {@link DependencyNode#getArtifact() dependencyNode.getArtifact()}{@link Artifact#getScope() .getScope()}.
      */
     protected String createProjectReferenceName(MavenProject project, DependencyNode dependencyNode) {
-<span class="fc" id="L1521">        return project.getName() + &quot;:&quot; + dependencyNode.getArtifact().getScope();</span>
+<span class="fc" id="L1528">        return project.getName() + &quot;:&quot; + dependencyNode.getArtifact().getScope();</span>
     }
 
     /**
@@ -1538,101 +1545,101 @@ import org.slf4j.spi.LocationAwareLogger;
             List&lt;DependencyNode&gt; nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
 
         ExceptionCollection exCol;
-<span class="fc" id="L1541">        exCol = collectMavenDependencies(engine, project, nodes, buildingRequest, aggregate);</span>
+<span class="fc" id="L1548">        exCol = collectMavenDependencies(engine, project, nodes, buildingRequest, aggregate);</span>
 
         final List&lt;FileSet&gt; projectScan;
 
-<span class="pc bpc" id="L1545" title="2 of 4 branches missed.">        if (scanDirectory != null &amp;&amp; !scanDirectory.isEmpty()) {</span>
-<span class="nc bnc" id="L1546" title="All 2 branches missed.">            if (scanSet == null) {</span>
-<span class="nc" id="L1547">                scanSet = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L1552" title="2 of 4 branches missed.">        if (scanDirectory != null &amp;&amp; !scanDirectory.isEmpty()) {</span>
+<span class="nc bnc" id="L1553" title="All 2 branches missed.">            if (scanSet == null) {</span>
+<span class="nc" id="L1554">                scanSet = new ArrayList&lt;&gt;();</span>
             }
-<span class="nc" id="L1549">            scanDirectory.stream().forEach(d -&gt; {</span>
-<span class="nc" id="L1550">                final FileSet fs = new FileSet();</span>
-<span class="nc" id="L1551">                fs.setDirectory(d);</span>
-<span class="nc" id="L1552">                fs.addInclude(INCLUDE_ALL);</span>
-<span class="nc" id="L1553">                scanSet.add(fs);</span>
-<span class="nc" id="L1554">            });</span>
+<span class="nc" id="L1556">            scanDirectory.stream().forEach(d -&gt; {</span>
+<span class="nc" id="L1557">                final FileSet fs = new FileSet();</span>
+<span class="nc" id="L1558">                fs.setDirectory(d);</span>
+<span class="nc" id="L1559">                fs.addInclude(INCLUDE_ALL);</span>
+<span class="nc" id="L1560">                scanSet.add(fs);</span>
+<span class="nc" id="L1561">            });</span>
         }
 
-<span class="pc bpc" id="L1557" title="1 of 4 branches missed.">        if (scanSet == null || scanSet.isEmpty()) {</span>
+<span class="pc bpc" id="L1564" title="1 of 4 branches missed.">        if (scanSet == null || scanSet.isEmpty()) {</span>
             // Define the default FileSets
-<span class="fc" id="L1559">            final FileSet resourcesSet = new FileSet();</span>
-<span class="fc" id="L1560">            final FileSet filtersSet = new FileSet();</span>
-<span class="fc" id="L1561">            final FileSet webappSet = new FileSet();</span>
-<span class="fc" id="L1562">            final FileSet mixedLangSet = new FileSet();</span>
+<span class="fc" id="L1566">            final FileSet resourcesSet = new FileSet();</span>
+<span class="fc" id="L1567">            final FileSet filtersSet = new FileSet();</span>
+<span class="fc" id="L1568">            final FileSet webappSet = new FileSet();</span>
+<span class="fc" id="L1569">            final FileSet mixedLangSet = new FileSet();</span>
             try {
-<span class="fc" id="L1564">                resourcesSet.setDirectory(new File(project.getBasedir(), &quot;src/main/resources&quot;).getCanonicalPath());</span>
-<span class="fc" id="L1565">                resourcesSet.addInclude(INCLUDE_ALL);</span>
-<span class="fc" id="L1566">                filtersSet.setDirectory(new File(project.getBasedir(), &quot;src/main/filters&quot;).getCanonicalPath());</span>
-<span class="fc" id="L1567">                filtersSet.addInclude(INCLUDE_ALL);</span>
-<span class="fc" id="L1568">                webappSet.setDirectory(new File(project.getBasedir(), &quot;src/main/webapp&quot;).getCanonicalPath());</span>
-<span class="fc" id="L1569">                webappSet.addInclude(INCLUDE_ALL);</span>
-<span class="fc" id="L1570">                mixedLangSet.setDirectory(project.getBasedir().getCanonicalPath());</span>
-<span class="fc" id="L1571">                mixedLangSet.addInclude(&quot;package.json&quot;);</span>
-<span class="fc" id="L1572">                mixedLangSet.addInclude(&quot;package-lock.json&quot;);</span>
-<span class="fc" id="L1573">                mixedLangSet.addInclude(&quot;npm-shrinkwrap.json&quot;);</span>
-<span class="fc" id="L1574">                mixedLangSet.addInclude(&quot;Gopkg.lock&quot;);</span>
-<span class="fc" id="L1575">                mixedLangSet.addInclude(&quot;go.mod&quot;);</span>
-<span class="nc" id="L1576">            } catch (IOException ex) {</span>
-<span class="nc bnc" id="L1577" title="All 2 branches missed.">                if (exCol == null) {</span>
-<span class="nc" id="L1578">                    exCol = new ExceptionCollection();</span>
+<span class="fc" id="L1571">                resourcesSet.setDirectory(new File(project.getBasedir(), &quot;src/main/resources&quot;).getCanonicalPath());</span>
+<span class="fc" id="L1572">                resourcesSet.addInclude(INCLUDE_ALL);</span>
+<span class="fc" id="L1573">                filtersSet.setDirectory(new File(project.getBasedir(), &quot;src/main/filters&quot;).getCanonicalPath());</span>
+<span class="fc" id="L1574">                filtersSet.addInclude(INCLUDE_ALL);</span>
+<span class="fc" id="L1575">                webappSet.setDirectory(new File(project.getBasedir(), &quot;src/main/webapp&quot;).getCanonicalPath());</span>
+<span class="fc" id="L1576">                webappSet.addInclude(INCLUDE_ALL);</span>
+<span class="fc" id="L1577">                mixedLangSet.setDirectory(project.getBasedir().getCanonicalPath());</span>
+<span class="fc" id="L1578">                mixedLangSet.addInclude(&quot;package.json&quot;);</span>
+<span class="fc" id="L1579">                mixedLangSet.addInclude(&quot;package-lock.json&quot;);</span>
+<span class="fc" id="L1580">                mixedLangSet.addInclude(&quot;npm-shrinkwrap.json&quot;);</span>
+<span class="fc" id="L1581">                mixedLangSet.addInclude(&quot;Gopkg.lock&quot;);</span>
+<span class="fc" id="L1582">                mixedLangSet.addInclude(&quot;go.mod&quot;);</span>
+<span class="nc" id="L1583">            } catch (IOException ex) {</span>
+<span class="nc bnc" id="L1584" title="All 2 branches missed.">                if (exCol == null) {</span>
+<span class="nc" id="L1585">                    exCol = new ExceptionCollection();</span>
                 }
-<span class="nc" id="L1580">                exCol.addException(ex);</span>
-<span class="fc" id="L1581">            }</span>
-<span class="fc" id="L1582">            projectScan = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L1583">            projectScan.add(resourcesSet);</span>
-<span class="fc" id="L1584">            projectScan.add(filtersSet);</span>
-<span class="fc" id="L1585">            projectScan.add(webappSet);</span>
-<span class="fc" id="L1586">            projectScan.add(mixedLangSet);</span>
-
-<span class="pc bpc" id="L1588" title="1 of 2 branches missed.">        } else if (aggregate) {</span>
+<span class="nc" id="L1587">                exCol.addException(ex);</span>
+<span class="fc" id="L1588">            }</span>
 <span class="fc" id="L1589">            projectScan = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L1590" title="All 2 branches covered.">            for (FileSet copyFrom : scanSet) {</span>
+<span class="fc" id="L1590">            projectScan.add(resourcesSet);</span>
+<span class="fc" id="L1591">            projectScan.add(filtersSet);</span>
+<span class="fc" id="L1592">            projectScan.add(webappSet);</span>
+<span class="fc" id="L1593">            projectScan.add(mixedLangSet);</span>
+
+<span class="pc bpc" id="L1595" title="1 of 2 branches missed.">        } else if (aggregate) {</span>
+<span class="fc" id="L1596">            projectScan = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L1597" title="All 2 branches covered.">            for (FileSet copyFrom : scanSet) {</span>
                 //deep copy of the FileSet - modifying the directory if it is not absolute.
-<span class="fc" id="L1592">                final FileSet fsCopy = new FileSet();</span>
-<span class="fc" id="L1593">                final File f = new File(copyFrom.getDirectory());</span>
-<span class="pc bpc" id="L1594" title="1 of 2 branches missed.">                if (f.isAbsolute()) {</span>
-<span class="nc" id="L1595">                    fsCopy.setDirectory(copyFrom.getDirectory());</span>
+<span class="fc" id="L1599">                final FileSet fsCopy = new FileSet();</span>
+<span class="fc" id="L1600">                final File f = new File(copyFrom.getDirectory());</span>
+<span class="pc bpc" id="L1601" title="1 of 2 branches missed.">                if (f.isAbsolute()) {</span>
+<span class="nc" id="L1602">                    fsCopy.setDirectory(copyFrom.getDirectory());</span>
                 } else {
                     try {
-<span class="fc" id="L1598">                        fsCopy.setDirectory(new File(project.getBasedir(), copyFrom.getDirectory()).getCanonicalPath());</span>
-<span class="nc" id="L1599">                    } catch (IOException ex) {</span>
-<span class="nc bnc" id="L1600" title="All 2 branches missed.">                        if (exCol == null) {</span>
-<span class="nc" id="L1601">                            exCol = new ExceptionCollection();</span>
+<span class="fc" id="L1605">                        fsCopy.setDirectory(new File(project.getBasedir(), copyFrom.getDirectory()).getCanonicalPath());</span>
+<span class="nc" id="L1606">                    } catch (IOException ex) {</span>
+<span class="nc bnc" id="L1607" title="All 2 branches missed.">                        if (exCol == null) {</span>
+<span class="nc" id="L1608">                            exCol = new ExceptionCollection();</span>
                         }
-<span class="nc" id="L1603">                        exCol.addException(ex);</span>
-<span class="nc" id="L1604">                        fsCopy.setDirectory(copyFrom.getDirectory());</span>
-<span class="fc" id="L1605">                    }</span>
+<span class="nc" id="L1610">                        exCol.addException(ex);</span>
+<span class="nc" id="L1611">                        fsCopy.setDirectory(copyFrom.getDirectory());</span>
+<span class="fc" id="L1612">                    }</span>
                 }
-<span class="fc" id="L1607">                fsCopy.setDirectoryMode(copyFrom.getDirectoryMode());</span>
-<span class="fc" id="L1608">                fsCopy.setExcludes(copyFrom.getExcludes());</span>
-<span class="fc" id="L1609">                fsCopy.setFileMode(copyFrom.getFileMode());</span>
-<span class="fc" id="L1610">                fsCopy.setFollowSymlinks(copyFrom.isFollowSymlinks());</span>
-<span class="fc" id="L1611">                fsCopy.setIncludes(copyFrom.getIncludes());</span>
-<span class="fc" id="L1612">                fsCopy.setLineEnding(copyFrom.getLineEnding());</span>
-<span class="fc" id="L1613">                fsCopy.setMapper(copyFrom.getMapper());</span>
-<span class="fc" id="L1614">                fsCopy.setModelEncoding(copyFrom.getModelEncoding());</span>
-<span class="fc" id="L1615">                fsCopy.setOutputDirectory(copyFrom.getOutputDirectory());</span>
-<span class="fc" id="L1616">                fsCopy.setUseDefaultExcludes(copyFrom.isUseDefaultExcludes());</span>
-<span class="fc" id="L1617">                projectScan.add(fsCopy);</span>
-<span class="fc" id="L1618">            }</span>
+<span class="fc" id="L1614">                fsCopy.setDirectoryMode(copyFrom.getDirectoryMode());</span>
+<span class="fc" id="L1615">                fsCopy.setExcludes(copyFrom.getExcludes());</span>
+<span class="fc" id="L1616">                fsCopy.setFileMode(copyFrom.getFileMode());</span>
+<span class="fc" id="L1617">                fsCopy.setFollowSymlinks(copyFrom.isFollowSymlinks());</span>
+<span class="fc" id="L1618">                fsCopy.setIncludes(copyFrom.getIncludes());</span>
+<span class="fc" id="L1619">                fsCopy.setLineEnding(copyFrom.getLineEnding());</span>
+<span class="fc" id="L1620">                fsCopy.setMapper(copyFrom.getMapper());</span>
+<span class="fc" id="L1621">                fsCopy.setModelEncoding(copyFrom.getModelEncoding());</span>
+<span class="fc" id="L1622">                fsCopy.setOutputDirectory(copyFrom.getOutputDirectory());</span>
+<span class="fc" id="L1623">                fsCopy.setUseDefaultExcludes(copyFrom.isUseDefaultExcludes());</span>
+<span class="fc" id="L1624">                projectScan.add(fsCopy);</span>
+<span class="fc" id="L1625">            }</span>
         } else {
-<span class="nc" id="L1620">            projectScan = scanSet;</span>
+<span class="nc" id="L1627">            projectScan = scanSet;</span>
         }
 
         // Iterate through FileSets and scan included files
-<span class="fc" id="L1624">        final FileSetManager fileSetManager = new FileSetManager();</span>
-<span class="fc bfc" id="L1625" title="All 2 branches covered.">        for (FileSet fileSet : projectScan) {</span>
-<span class="fc" id="L1626">            getLog().debug(&quot;Scanning fileSet: &quot; + fileSet.getDirectory());</span>
-<span class="fc" id="L1627">            final String[] includedFiles = fileSetManager.getIncludedFiles(fileSet);</span>
-<span class="fc bfc" id="L1628" title="All 2 branches covered.">            for (String include : includedFiles) {</span>
-<span class="fc" id="L1629">                final File includeFile = new File(fileSet.getDirectory(), include).getAbsoluteFile();</span>
-<span class="pc bpc" id="L1630" title="1 of 2 branches missed.">                if (includeFile.exists()) {</span>
-<span class="fc" id="L1631">                    engine.scan(includeFile, project.getName());</span>
+<span class="fc" id="L1631">        final FileSetManager fileSetManager = new FileSetManager();</span>
+<span class="fc bfc" id="L1632" title="All 2 branches covered.">        for (FileSet fileSet : projectScan) {</span>
+<span class="fc" id="L1633">            getLog().debug(&quot;Scanning fileSet: &quot; + fileSet.getDirectory());</span>
+<span class="fc" id="L1634">            final String[] includedFiles = fileSetManager.getIncludedFiles(fileSet);</span>
+<span class="fc bfc" id="L1635" title="All 2 branches covered.">            for (String include : includedFiles) {</span>
+<span class="fc" id="L1636">                final File includeFile = new File(fileSet.getDirectory(), include).getAbsoluteFile();</span>
+<span class="pc bpc" id="L1637" title="1 of 2 branches missed.">                if (includeFile.exists()) {</span>
+<span class="fc" id="L1638">                    engine.scan(includeFile, project.getName());</span>
                 }
             }
-<span class="fc" id="L1634">        }</span>
-<span class="fc" id="L1635">        return exCol;</span>
+<span class="fc" id="L1641">        }</span>
+<span class="fc" id="L1642">        return exCol;</span>
     }
 
     /**
@@ -1647,7 +1654,7 @@ import org.slf4j.spi.LocationAwareLogger;
      * &lt;code&gt;false&lt;/code&gt;
      */
     private boolean addReactorDependency(Engine engine, Artifact artifact, final MavenProject depender) {
-<span class="fc" id="L1650">        return addVirtualDependencyFromReactor(engine, artifact, depender, &quot;Unable to resolve %s as it has not been built yet &quot;</span>
+<span class="fc" id="L1657">        return addVirtualDependencyFromReactor(engine, artifact, depender, &quot;Unable to resolve %s as it has not been built yet &quot;</span>
                 + &quot;- creating a virtual dependency instead.&quot;);
     }
 
@@ -1668,87 +1675,87 @@ import org.slf4j.spi.LocationAwareLogger;
     private boolean addVirtualDependencyFromReactor(Engine engine, Artifact artifact,
                                                     final MavenProject depender, String infoLogTemplate) {
 
-<span class="fc" id="L1671">        getLog().debug(String.format(&quot;Checking the reactor projects (%d) for %s:%s:%s&quot;,</span>
-<span class="fc" id="L1672">                reactorProjects.size(),</span>
-<span class="fc" id="L1673">                artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion()));</span>
+<span class="fc" id="L1678">        getLog().debug(String.format(&quot;Checking the reactor projects (%d) for %s:%s:%s&quot;,</span>
+<span class="fc" id="L1679">                reactorProjects.size(),</span>
+<span class="fc" id="L1680">                artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion()));</span>
 
-<span class="pc bpc" id="L1675" title="1 of 2 branches missed.">        for (MavenProject prj : reactorProjects) {</span>
+<span class="pc bpc" id="L1682" title="1 of 2 branches missed.">        for (MavenProject prj : reactorProjects) {</span>
 
-<span class="fc" id="L1677">            getLog().debug(String.format(&quot;Comparing %s:%s:%s to %s:%s:%s&quot;,</span>
-<span class="fc" id="L1678">                    artifact.getGroupId(), artifact.getArtifactId(), artifact.getBaseVersion(),</span>
-<span class="fc" id="L1679">                    prj.getGroupId(), prj.getArtifactId(), prj.getVersion()));</span>
+<span class="fc" id="L1684">            getLog().debug(String.format(&quot;Comparing %s:%s:%s to %s:%s:%s&quot;,</span>
+<span class="fc" id="L1685">                    artifact.getGroupId(), artifact.getArtifactId(), artifact.getBaseVersion(),</span>
+<span class="fc" id="L1686">                    prj.getGroupId(), prj.getArtifactId(), prj.getVersion()));</span>
 
-<span class="fc bfc" id="L1681" title="All 2 branches covered.">            if (prj.getArtifactId().equals(artifact.getArtifactId())</span>
-<span class="pc bpc" id="L1682" title="1 of 2 branches missed.">                    &amp;&amp; prj.getGroupId().equals(artifact.getGroupId())</span>
-<span class="pc bpc" id="L1683" title="1 of 2 branches missed.">                    &amp;&amp; prj.getVersion().equals(artifact.getBaseVersion())) {</span>
+<span class="fc bfc" id="L1688" title="All 2 branches covered.">            if (prj.getArtifactId().equals(artifact.getArtifactId())</span>
+<span class="pc bpc" id="L1689" title="1 of 2 branches missed.">                    &amp;&amp; prj.getGroupId().equals(artifact.getGroupId())</span>
+<span class="pc bpc" id="L1690" title="1 of 2 branches missed.">                    &amp;&amp; prj.getVersion().equals(artifact.getBaseVersion())) {</span>
 
-<span class="fc" id="L1685">                final String displayName = String.format(&quot;%s:%s:%s&quot;,</span>
-<span class="fc" id="L1686">                        prj.getGroupId(), prj.getArtifactId(), prj.getVersion());</span>
-<span class="fc" id="L1687">                getLog().info(String.format(infoLogTemplate,</span>
+<span class="fc" id="L1692">                final String displayName = String.format(&quot;%s:%s:%s&quot;,</span>
+<span class="fc" id="L1693">                        prj.getGroupId(), prj.getArtifactId(), prj.getVersion());</span>
+<span class="fc" id="L1694">                getLog().info(String.format(infoLogTemplate,</span>
                         displayName));
-<span class="fc" id="L1689">                final Dependency d = newDependency(prj);</span>
-<span class="fc" id="L1690">                final String key = String.format(&quot;%s:%s:%s&quot;, prj.getGroupId(), prj.getArtifactId(), prj.getVersion());</span>
-<span class="fc" id="L1691">                d.setSha1sum(Checksum.getSHA1Checksum(key));</span>
-<span class="fc" id="L1692">                d.setSha256sum(Checksum.getSHA256Checksum(key));</span>
-<span class="fc" id="L1693">                d.setMd5sum(Checksum.getMD5Checksum(key));</span>
-<span class="fc" id="L1694">                d.setEcosystem(JarAnalyzer.DEPENDENCY_ECOSYSTEM);</span>
-<span class="fc" id="L1695">                d.setDisplayFileName(displayName);</span>
-<span class="fc" id="L1696">                d.addProjectReference(depender.getName());</span>
+<span class="fc" id="L1696">                final Dependency d = newDependency(prj);</span>
+<span class="fc" id="L1697">                final String key = String.format(&quot;%s:%s:%s&quot;, prj.getGroupId(), prj.getArtifactId(), prj.getVersion());</span>
+<span class="fc" id="L1698">                d.setSha1sum(Checksum.getSHA1Checksum(key));</span>
+<span class="fc" id="L1699">                d.setSha256sum(Checksum.getSHA256Checksum(key));</span>
+<span class="fc" id="L1700">                d.setMd5sum(Checksum.getMD5Checksum(key));</span>
+<span class="fc" id="L1701">                d.setEcosystem(JarAnalyzer.DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc" id="L1702">                d.setDisplayFileName(displayName);</span>
+<span class="fc" id="L1703">                d.addProjectReference(depender.getName());</span>
 
-<span class="fc" id="L1698">                d.addEvidence(EvidenceType.PRODUCT, &quot;project&quot;, &quot;artifactid&quot;, prj.getArtifactId(), Confidence.HIGHEST);</span>
-<span class="fc" id="L1699">                d.addEvidence(EvidenceType.VENDOR, &quot;project&quot;, &quot;artifactid&quot;, prj.getArtifactId(), Confidence.LOW);</span>
+<span class="fc" id="L1705">                d.addEvidence(EvidenceType.PRODUCT, &quot;project&quot;, &quot;artifactid&quot;, prj.getArtifactId(), Confidence.HIGHEST);</span>
+<span class="fc" id="L1706">                d.addEvidence(EvidenceType.VENDOR, &quot;project&quot;, &quot;artifactid&quot;, prj.getArtifactId(), Confidence.LOW);</span>
 
-<span class="fc" id="L1701">                d.addEvidence(EvidenceType.VENDOR, &quot;project&quot;, &quot;groupid&quot;, prj.getGroupId(), Confidence.HIGHEST);</span>
-<span class="fc" id="L1702">                d.addEvidence(EvidenceType.PRODUCT, &quot;project&quot;, &quot;groupid&quot;, prj.getGroupId(), Confidence.LOW);</span>
-<span class="fc" id="L1703">                d.setEcosystem(JarAnalyzer.DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc" id="L1708">                d.addEvidence(EvidenceType.VENDOR, &quot;project&quot;, &quot;groupid&quot;, prj.getGroupId(), Confidence.HIGHEST);</span>
+<span class="fc" id="L1709">                d.addEvidence(EvidenceType.PRODUCT, &quot;project&quot;, &quot;groupid&quot;, prj.getGroupId(), Confidence.LOW);</span>
+<span class="fc" id="L1710">                d.setEcosystem(JarAnalyzer.DEPENDENCY_ECOSYSTEM);</span>
                 Identifier id;
                 try {
-<span class="fc" id="L1706">                    id = new PurlIdentifier(StandardTypes.MAVEN, artifact.getGroupId(),</span>
-<span class="fc" id="L1707">                            artifact.getArtifactId(), artifact.getVersion(), Confidence.HIGHEST);</span>
-<span class="nc" id="L1708">                } catch (MalformedPackageURLException ex) {</span>
-<span class="nc" id="L1709">                    getLog().debug(&quot;Unable to create PackageURL object:&quot; + key);</span>
-<span class="nc" id="L1710">                    id = new GenericIdentifier(&quot;maven:&quot; + key, Confidence.HIGHEST);</span>
-<span class="fc" id="L1711">                }</span>
-<span class="fc" id="L1712">                d.addSoftwareIdentifier(id);</span>
+<span class="fc" id="L1713">                    id = new PurlIdentifier(StandardTypes.MAVEN, artifact.getGroupId(),</span>
+<span class="fc" id="L1714">                            artifact.getArtifactId(), artifact.getVersion(), Confidence.HIGHEST);</span>
+<span class="nc" id="L1715">                } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L1716">                    getLog().debug(&quot;Unable to create PackageURL object:&quot; + key);</span>
+<span class="nc" id="L1717">                    id = new GenericIdentifier(&quot;maven:&quot; + key, Confidence.HIGHEST);</span>
+<span class="fc" id="L1718">                }</span>
+<span class="fc" id="L1719">                d.addSoftwareIdentifier(id);</span>
                 //TODO unify the setName/version and package path - they are equivelent ideas submitted by two seperate committers
-<span class="fc" id="L1714">                d.setName(String.format(&quot;%s:%s&quot;, prj.getGroupId(), prj.getArtifactId()));</span>
-<span class="fc" id="L1715">                d.setVersion(prj.getVersion());</span>
-<span class="fc" id="L1716">                d.setPackagePath(displayName);</span>
-<span class="pc bpc" id="L1717" title="1 of 2 branches missed.">                if (prj.getDescription() != null) {</span>
-<span class="nc" id="L1718">                    JarAnalyzer.addDescription(d, prj.getDescription(), &quot;project&quot;, &quot;description&quot;);</span>
+<span class="fc" id="L1721">                d.setName(String.format(&quot;%s:%s&quot;, prj.getGroupId(), prj.getArtifactId()));</span>
+<span class="fc" id="L1722">                d.setVersion(prj.getVersion());</span>
+<span class="fc" id="L1723">                d.setPackagePath(displayName);</span>
+<span class="pc bpc" id="L1724" title="1 of 2 branches missed.">                if (prj.getDescription() != null) {</span>
+<span class="nc" id="L1725">                    JarAnalyzer.addDescription(d, prj.getDescription(), &quot;project&quot;, &quot;description&quot;);</span>
                 }
-<span class="pc bpc" id="L1720" title="1 of 2 branches missed.">                for (License l : prj.getLicenses()) {</span>
-<span class="nc" id="L1721">                    final StringBuilder license = new StringBuilder();</span>
-<span class="nc bnc" id="L1722" title="All 2 branches missed.">                    if (l.getName() != null) {</span>
-<span class="nc" id="L1723">                        license.append(l.getName());</span>
+<span class="pc bpc" id="L1727" title="1 of 2 branches missed.">                for (License l : prj.getLicenses()) {</span>
+<span class="nc" id="L1728">                    final StringBuilder license = new StringBuilder();</span>
+<span class="nc bnc" id="L1729" title="All 2 branches missed.">                    if (l.getName() != null) {</span>
+<span class="nc" id="L1730">                        license.append(l.getName());</span>
                     }
-<span class="nc bnc" id="L1725" title="All 2 branches missed.">                    if (l.getUrl() != null) {</span>
-<span class="nc" id="L1726">                        license.append(&quot; &quot;).append(l.getUrl());</span>
+<span class="nc bnc" id="L1732" title="All 2 branches missed.">                    if (l.getUrl() != null) {</span>
+<span class="nc" id="L1733">                        license.append(&quot; &quot;).append(l.getUrl());</span>
                     }
-<span class="nc bnc" id="L1728" title="All 2 branches missed.">                    if (d.getLicense() == null) {</span>
-<span class="nc" id="L1729">                        d.setLicense(license.toString());</span>
-<span class="nc bnc" id="L1730" title="All 2 branches missed.">                    } else if (!d.getLicense().contains(license)) {</span>
-<span class="nc" id="L1731">                        d.setLicense(String.format(&quot;%s%n%s&quot;, d.getLicense(), license.toString()));</span>
+<span class="nc bnc" id="L1735" title="All 2 branches missed.">                    if (d.getLicense() == null) {</span>
+<span class="nc" id="L1736">                        d.setLicense(license.toString());</span>
+<span class="nc bnc" id="L1737" title="All 2 branches missed.">                    } else if (!d.getLicense().contains(license)) {</span>
+<span class="nc" id="L1738">                        d.setLicense(String.format(&quot;%s%n%s&quot;, d.getLicense(), license.toString()));</span>
                     }
-<span class="nc" id="L1733">                }</span>
-<span class="fc" id="L1734">                engine.addDependency(d);</span>
-<span class="fc" id="L1735">                return true;</span>
+<span class="nc" id="L1740">                }</span>
+<span class="fc" id="L1741">                engine.addDependency(d);</span>
+<span class="fc" id="L1742">                return true;</span>
             }
-<span class="fc" id="L1737">        }</span>
-<span class="nc" id="L1738">        return false;</span>
+<span class="fc" id="L1744">        }</span>
+<span class="nc" id="L1745">        return false;</span>
     }
 
     Dependency newDependency(MavenProject prj) {
-<span class="fc" id="L1742">        final File pom = new File(prj.getBasedir(), &quot;pom.xml&quot;);</span>
+<span class="fc" id="L1749">        final File pom = new File(prj.getBasedir(), &quot;pom.xml&quot;);</span>
 
-<span class="fc bfc" id="L1744" title="All 2 branches covered.">        if (pom.isFile()) {</span>
-<span class="fc" id="L1745">            getLog().debug(&quot;Adding virtual dependency from pom.xml&quot;);</span>
-<span class="fc" id="L1746">            return new Dependency(pom, true);</span>
-<span class="fc bfc" id="L1747" title="All 2 branches covered.">        } else if (prj.getFile().isFile()) {</span>
-<span class="fc" id="L1748">            getLog().debug(&quot;Adding virtual dependency from file&quot;);</span>
-<span class="fc" id="L1749">            return new Dependency(prj.getFile(), true);</span>
+<span class="fc bfc" id="L1751" title="All 2 branches covered.">        if (pom.isFile()) {</span>
+<span class="fc" id="L1752">            getLog().debug(&quot;Adding virtual dependency from pom.xml&quot;);</span>
+<span class="fc" id="L1753">            return new Dependency(pom, true);</span>
+<span class="fc bfc" id="L1754" title="All 2 branches covered.">        } else if (prj.getFile().isFile()) {</span>
+<span class="fc" id="L1755">            getLog().debug(&quot;Adding virtual dependency from file&quot;);</span>
+<span class="fc" id="L1756">            return new Dependency(prj.getFile(), true);</span>
         } else {
-<span class="fc" id="L1751">            return new Dependency(true);</span>
+<span class="fc" id="L1758">            return new Dependency(true);</span>
         }
     }
 
@@ -1764,10 +1771,10 @@ import org.slf4j.spi.LocationAwareLogger;
      * reactor; otherwise &lt;code&gt;false&lt;/code&gt;
      */
     private boolean addSnapshotReactorDependency(Engine engine, Artifact artifact, final MavenProject depender) {
-<span class="pc bpc" id="L1767" title="1 of 2 branches missed.">        if (!artifact.isSnapshot()) {</span>
-<span class="nc" id="L1768">            return false;</span>
+<span class="pc bpc" id="L1774" title="1 of 2 branches missed.">        if (!artifact.isSnapshot()) {</span>
+<span class="nc" id="L1775">            return false;</span>
         }
-<span class="fc" id="L1770">        return addVirtualDependencyFromReactor(engine, artifact, depender, &quot;Found snapshot reactor project in aggregate for %s - &quot;</span>
+<span class="fc" id="L1777">        return addVirtualDependencyFromReactor(engine, artifact, depender, &quot;Found snapshot reactor project in aggregate for %s - &quot;</span>
                 + &quot;creating a virtual dependency as the snapshot found in the repository may contain outdated dependencies.&quot;);
     }
 
@@ -1778,10 +1785,10 @@ import org.slf4j.spi.LocationAwareLogger;
      * artifacts.
      */
     public ProjectBuildingRequest newResolveArtifactProjectBuildingRequest(MavenProject project) {
-<span class="fc" id="L1781">        final ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());</span>
-<span class="fc" id="L1782">        buildingRequest.setRemoteRepositories(new ArrayList&lt;&gt;(project.getRemoteArtifactRepositories()));</span>
-<span class="fc" id="L1783">        buildingRequest.setProject(project);</span>
-<span class="fc" id="L1784">        return buildingRequest;</span>
+<span class="fc" id="L1788">        final ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());</span>
+<span class="fc" id="L1789">        buildingRequest.setRemoteRepositories(new ArrayList&lt;&gt;(project.getRemoteArtifactRepositories()));</span>
+<span class="fc" id="L1790">        buildingRequest.setProject(project);</span>
+<span class="fc" id="L1791">        return buildingRequest;</span>
     }
 
     /**
@@ -1793,58 +1800,58 @@ import org.slf4j.spi.LocationAwareLogger;
      * fail the build
      */
     protected void runCheck() throws MojoExecutionException, MojoFailureException {
-<span class="fc" id="L1796">        muteJCS();</span>
-<span class="fc" id="L1797">        try (Engine engine = initializeEngine()) {</span>
-<span class="fc" id="L1798">            ExceptionCollection exCol = scanDependencies(engine);</span>
+<span class="fc" id="L1803">        muteJCS();</span>
+<span class="fc" id="L1804">        try (Engine engine = initializeEngine()) {</span>
+<span class="fc" id="L1805">            ExceptionCollection exCol = scanDependencies(engine);</span>
             try {
-<span class="fc" id="L1800">                engine.analyzeDependencies();</span>
-<span class="fc" id="L1801">            } catch (ExceptionCollection ex) {</span>
-<span class="fc" id="L1802">                exCol = handleAnalysisExceptions(exCol, ex);</span>
-<span class="fc" id="L1803">            }</span>
-<span class="pc bpc" id="L1804" title="1 of 4 branches missed.">            if (exCol == null || !exCol.isFatal()) {</span>
+<span class="fc" id="L1807">                engine.analyzeDependencies();</span>
+<span class="fc" id="L1808">            } catch (ExceptionCollection ex) {</span>
+<span class="fc" id="L1809">                exCol = handleAnalysisExceptions(exCol, ex);</span>
+<span class="fc" id="L1810">            }</span>
+<span class="pc bpc" id="L1811" title="1 of 4 branches missed.">            if (exCol == null || !exCol.isFatal()) {</span>
 
-<span class="fc" id="L1806">                File outputDir = getCorrectOutputDirectory(this.getProject());</span>
-<span class="pc bpc" id="L1807" title="1 of 2 branches missed.">                if (outputDir == null) {</span>
+<span class="fc" id="L1813">                File outputDir = getCorrectOutputDirectory(this.getProject());</span>
+<span class="pc bpc" id="L1814" title="1 of 2 branches missed.">                if (outputDir == null) {</span>
                     //in some regards we shouldn't be writing this, but we are anyway.
                     //we shouldn't write this because nothing is configured to generate this report.
-<span class="nc" id="L1810">                    outputDir = new File(this.getProject().getBuild().getDirectory());</span>
+<span class="nc" id="L1817">                    outputDir = new File(this.getProject().getBuild().getDirectory());</span>
                 }
                 try {
-<span class="fc" id="L1813">                    final MavenProject p = this.getProject();</span>
-<span class="fc bfc" id="L1814" title="All 2 branches covered.">                    for (String f : getFormats()) {</span>
-<span class="fc" id="L1815">                        engine.writeReports(p.getName(), p.getGroupId(), p.getArtifactId(), p.getVersion(), outputDir, f, exCol);</span>
-<span class="fc" id="L1816">                    }</span>
-<span class="nc" id="L1817">                } catch (ReportException ex) {</span>
-<span class="nc bnc" id="L1818" title="All 2 branches missed.">                    if (exCol == null) {</span>
-<span class="nc" id="L1819">                        exCol = new ExceptionCollection(ex);</span>
+<span class="fc" id="L1820">                    final MavenProject p = this.getProject();</span>
+<span class="fc bfc" id="L1821" title="All 2 branches covered.">                    for (String f : getFormats()) {</span>
+<span class="fc" id="L1822">                        engine.writeReports(p.getName(), p.getGroupId(), p.getArtifactId(), p.getVersion(), outputDir, f, exCol);</span>
+<span class="fc" id="L1823">                    }</span>
+<span class="nc" id="L1824">                } catch (ReportException ex) {</span>
+<span class="nc bnc" id="L1825" title="All 2 branches missed.">                    if (exCol == null) {</span>
+<span class="nc" id="L1826">                        exCol = new ExceptionCollection(ex);</span>
                     } else {
-<span class="nc" id="L1821">                        exCol.addException(ex);</span>
+<span class="nc" id="L1828">                        exCol.addException(ex);</span>
                     }
-<span class="nc bnc" id="L1823" title="All 2 branches missed.">                    if (this.isFailOnError()) {</span>
-<span class="nc" id="L1824">                        throw new MojoExecutionException(&quot;One or more exceptions occurred during dependency-check analysis&quot;, exCol);</span>
+<span class="nc bnc" id="L1830" title="All 2 branches missed.">                    if (this.isFailOnError()) {</span>
+<span class="nc" id="L1831">                        throw new MojoExecutionException(&quot;One or more exceptions occurred during dependency-check analysis&quot;, exCol);</span>
                     } else {
-<span class="nc" id="L1826">                        getLog().debug(&quot;Error writing the report&quot;, ex);</span>
+<span class="nc" id="L1833">                        getLog().debug(&quot;Error writing the report&quot;, ex);</span>
                     }
-<span class="fc" id="L1828">                }</span>
-<span class="fc" id="L1829">                showSummary(this.getProject(), engine.getDependencies());</span>
-<span class="fc" id="L1830">                checkForFailure(engine.getDependencies());</span>
-<span class="pc bpc" id="L1831" title="1 of 4 branches missed.">                if (exCol != null &amp;&amp; this.isFailOnError()) {</span>
-<span class="fc" id="L1832">                    throw new MojoExecutionException(&quot;One or more exceptions occurred during dependency-check analysis&quot;, exCol);</span>
+<span class="fc" id="L1835">                }</span>
+<span class="fc" id="L1836">                showSummary(this.getProject(), engine.getDependencies());</span>
+<span class="fc" id="L1837">                checkForFailure(engine.getDependencies());</span>
+<span class="pc bpc" id="L1838" title="1 of 4 branches missed.">                if (exCol != null &amp;&amp; this.isFailOnError()) {</span>
+<span class="fc" id="L1839">                    throw new MojoExecutionException(&quot;One or more exceptions occurred during dependency-check analysis&quot;, exCol);</span>
                 }
             }
-<span class="nc" id="L1835">        } catch (DatabaseException ex) {</span>
-<span class="nc bnc" id="L1836" title="All 2 branches missed.">            if (getLog().isDebugEnabled()) {</span>
-<span class="nc" id="L1837">                getLog().debug(&quot;Database connection error&quot;, ex);</span>
+<span class="nc" id="L1842">        } catch (DatabaseException ex) {</span>
+<span class="nc bnc" id="L1843" title="All 2 branches missed.">            if (getLog().isDebugEnabled()) {</span>
+<span class="nc" id="L1844">                getLog().debug(&quot;Database connection error&quot;, ex);</span>
             }
-<span class="nc" id="L1839">            final String msg = &quot;An exception occurred connecting to the local database. Please see the log file for more details.&quot;;</span>
-<span class="nc bnc" id="L1840" title="All 2 branches missed.">            if (this.isFailOnError()) {</span>
-<span class="nc" id="L1841">                throw new MojoExecutionException(msg, ex);</span>
+<span class="nc" id="L1846">            final String msg = &quot;An exception occurred connecting to the local database. Please see the log file for more details.&quot;;</span>
+<span class="nc bnc" id="L1847" title="All 2 branches missed.">            if (this.isFailOnError()) {</span>
+<span class="nc" id="L1848">                throw new MojoExecutionException(msg, ex);</span>
             }
-<span class="nc" id="L1843">            getLog().error(msg, ex);</span>
+<span class="nc" id="L1850">            getLog().error(msg, ex);</span>
         } finally {
-<span class="fc" id="L1845">            getSettings().cleanup();</span>
+<span class="fc" id="L1852">            getSettings().cleanup();</span>
         }
-<span class="fc" id="L1847">    }</span>
+<span class="fc" id="L1854">    }</span>
 
     /**
      * Combines the two exception collections and if either are fatal, throw an
@@ -1857,31 +1864,31 @@ import org.slf4j.spi.LocationAwareLogger;
      * to fail on errors
      */
     private ExceptionCollection handleAnalysisExceptions(ExceptionCollection currentEx, ExceptionCollection newEx) throws MojoExecutionException {
-<span class="fc" id="L1860">        ExceptionCollection returnEx = currentEx;</span>
-<span class="pc bpc" id="L1861" title="1 of 2 branches missed.">        if (returnEx == null) {</span>
-<span class="fc" id="L1862">            returnEx = newEx;</span>
+<span class="fc" id="L1867">        ExceptionCollection returnEx = currentEx;</span>
+<span class="pc bpc" id="L1868" title="1 of 2 branches missed.">        if (returnEx == null) {</span>
+<span class="fc" id="L1869">            returnEx = newEx;</span>
         } else {
-<span class="nc" id="L1864">            returnEx.getExceptions().addAll(newEx.getExceptions());</span>
-<span class="nc bnc" id="L1865" title="All 2 branches missed.">            if (newEx.isFatal()) {</span>
-<span class="nc" id="L1866">                returnEx.setFatal(true);</span>
+<span class="nc" id="L1871">            returnEx.getExceptions().addAll(newEx.getExceptions());</span>
+<span class="nc bnc" id="L1872" title="All 2 branches missed.">            if (newEx.isFatal()) {</span>
+<span class="nc" id="L1873">                returnEx.setFatal(true);</span>
             }
         }
-<span class="pc bpc" id="L1869" title="1 of 2 branches missed.">        if (returnEx.isFatal()) {</span>
-<span class="nc" id="L1870">            final String msg = String.format(&quot;Fatal exception(s) analyzing %s&quot;, getProject().getName());</span>
-<span class="nc bnc" id="L1871" title="All 2 branches missed.">            if (this.isFailOnError()) {</span>
-<span class="nc" id="L1872">                throw new MojoExecutionException(msg, returnEx);</span>
+<span class="pc bpc" id="L1876" title="1 of 2 branches missed.">        if (returnEx.isFatal()) {</span>
+<span class="nc" id="L1877">            final String msg = String.format(&quot;Fatal exception(s) analyzing %s&quot;, getProject().getName());</span>
+<span class="nc bnc" id="L1878" title="All 2 branches missed.">            if (this.isFailOnError()) {</span>
+<span class="nc" id="L1879">                throw new MojoExecutionException(msg, returnEx);</span>
             }
-<span class="nc" id="L1874">            getLog().error(msg);</span>
-<span class="nc bnc" id="L1875" title="All 2 branches missed.">            if (getLog().isDebugEnabled()) {</span>
-<span class="nc" id="L1876">                getLog().debug(returnEx);</span>
+<span class="nc" id="L1881">            getLog().error(msg);</span>
+<span class="nc bnc" id="L1882" title="All 2 branches missed.">            if (getLog().isDebugEnabled()) {</span>
+<span class="nc" id="L1883">                getLog().debug(returnEx);</span>
             }
-<span class="nc" id="L1878">        } else {</span>
-<span class="fc" id="L1879">            final String msg = String.format(&quot;Exception(s) analyzing %s&quot;, getProject().getName());</span>
-<span class="pc bpc" id="L1880" title="1 of 2 branches missed.">            if (getLog().isDebugEnabled()) {</span>
-<span class="nc" id="L1881">                getLog().debug(msg, returnEx);</span>
+<span class="nc" id="L1885">        } else {</span>
+<span class="fc" id="L1886">            final String msg = String.format(&quot;Exception(s) analyzing %s&quot;, getProject().getName());</span>
+<span class="pc bpc" id="L1887" title="1 of 2 branches missed.">            if (getLog().isDebugEnabled()) {</span>
+<span class="nc" id="L1888">                getLog().debug(msg, returnEx);</span>
             }
         }
-<span class="fc" id="L1884">        return returnEx;</span>
+<span class="fc" id="L1891">        return returnEx;</span>
     }
 
     /**
@@ -1900,7 +1907,7 @@ import org.slf4j.spi.LocationAwareLogger;
      */
     @Override
     public File getReportOutputDirectory() {
-<span class="nc" id="L1903">        return reportOutputDirectory;</span>
+<span class="fc" id="L1910">        return reportOutputDirectory;</span>
     }
 
     /**
@@ -1910,8 +1917,8 @@ import org.slf4j.spi.LocationAwareLogger;
      */
     @Override
     public void setReportOutputDirectory(File directory) {
-<span class="fc" id="L1913">        reportOutputDirectory = directory;</span>
-<span class="fc" id="L1914">    }</span>
+<span class="fc" id="L1920">        reportOutputDirectory = directory;</span>
+<span class="fc" id="L1921">    }</span>
 
     /**
      * Returns the output directory.
@@ -1919,7 +1926,7 @@ import org.slf4j.spi.LocationAwareLogger;
      * @return the output directory
      */
     public File getOutputDirectory() {
-<span class="nc" id="L1922">        return outputDirectory;</span>
+<span class="nc" id="L1929">        return outputDirectory;</span>
     }
 
     /**
@@ -1930,7 +1937,7 @@ import org.slf4j.spi.LocationAwareLogger;
      */
     @Override
     public final boolean isExternalReport() {
-<span class="nc" id="L1933">        return true;</span>
+<span class="fc" id="L1940">        return true;</span>
     }
 
     /**
@@ -1940,20 +1947,20 @@ import org.slf4j.spi.LocationAwareLogger;
      */
     @Override
     public String getOutputName() {
-<span class="nc" id="L1943">        final Set&lt;String&gt; selectedFormats = getFormats();</span>
-<span class="nc bnc" id="L1944" title="All 6 branches missed.">        if (selectedFormats.contains(&quot;HTML&quot;) || selectedFormats.contains(&quot;ALL&quot;) || selectedFormats.size() &gt; 1) {</span>
-<span class="nc" id="L1945">            return &quot;dependency-check-report&quot;;</span>
-<span class="nc bnc" id="L1946" title="All 2 branches missed.">        } else if (selectedFormats.contains(&quot;XML&quot;)) {</span>
-<span class="nc" id="L1947">            return &quot;dependency-check-report.xml&quot;;</span>
-<span class="nc bnc" id="L1948" title="All 2 branches missed.">        } else if (selectedFormats.contains(&quot;JUNIT&quot;)) {</span>
-<span class="nc" id="L1949">            return &quot;dependency-check-junit.xml&quot;;</span>
-<span class="nc bnc" id="L1950" title="All 2 branches missed.">        } else if (selectedFormats.contains(&quot;JSON&quot;)) {</span>
-<span class="nc" id="L1951">            return &quot;dependency-check-report.json&quot;;</span>
-<span class="nc bnc" id="L1952" title="All 2 branches missed.">        } else if (selectedFormats.contains(&quot;CSV&quot;)) {</span>
-<span class="nc" id="L1953">            return &quot;dependency-check-report.csv&quot;;</span>
+<span class="fc" id="L1950">        final Set&lt;String&gt; selectedFormats = getFormats();</span>
+<span class="pc bpc" id="L1951" title="5 of 6 branches missed.">        if (selectedFormats.contains(&quot;HTML&quot;) || selectedFormats.contains(&quot;ALL&quot;) || selectedFormats.size() &gt; 1) {</span>
+<span class="fc" id="L1952">            return &quot;dependency-check-report&quot;;</span>
+<span class="nc bnc" id="L1953" title="All 2 branches missed.">        } else if (selectedFormats.contains(&quot;XML&quot;)) {</span>
+<span class="nc" id="L1954">            return &quot;dependency-check-report.xml&quot;;</span>
+<span class="nc bnc" id="L1955" title="All 2 branches missed.">        } else if (selectedFormats.contains(&quot;JUNIT&quot;)) {</span>
+<span class="nc" id="L1956">            return &quot;dependency-check-junit.xml&quot;;</span>
+<span class="nc bnc" id="L1957" title="All 2 branches missed.">        } else if (selectedFormats.contains(&quot;JSON&quot;)) {</span>
+<span class="nc" id="L1958">            return &quot;dependency-check-report.json&quot;;</span>
+<span class="nc bnc" id="L1959" title="All 2 branches missed.">        } else if (selectedFormats.contains(&quot;CSV&quot;)) {</span>
+<span class="nc" id="L1960">            return &quot;dependency-check-report.csv&quot;;</span>
         } else {
-<span class="nc" id="L1955">            getLog().warn(&quot;Unknown report format used during site generation.&quot;);</span>
-<span class="nc" id="L1956">            return &quot;dependency-check-report&quot;;</span>
+<span class="nc" id="L1962">            getLog().warn(&quot;Unknown report format used during site generation.&quot;);</span>
+<span class="nc" id="L1963">            return &quot;dependency-check-report&quot;;</span>
         }
     }
 
@@ -1964,7 +1971,7 @@ import org.slf4j.spi.LocationAwareLogger;
      */
     @Override
     public String getCategoryName() {
-<span class="nc" id="L1967">        return MavenReport.CATEGORY_PROJECT_REPORTS;</span>
+<span class="fc" id="L1974">        return MavenReport.CATEGORY_PROJECT_REPORTS;</span>
     }
     //&lt;/editor-fold&gt;
 
@@ -1977,8 +1984,8 @@ import org.slf4j.spi.LocationAwareLogger;
      * @throws DatabaseException thrown if there is a database exception
      */
     protected Engine initializeEngine() throws DatabaseException {
-<span class="fc" id="L1980">        populateSettings();</span>
-<span class="fc" id="L1981">        return new Engine(settings);</span>
+<span class="fc" id="L1987">        populateSettings();</span>
+<span class="fc" id="L1988">        return new Engine(settings);</span>
     }
 
     /**
@@ -1987,173 +1994,174 @@ import org.slf4j.spi.LocationAwareLogger;
      * proxy URL, port, and connection timeout.
      */
     protected void populateSettings() {
-<span class="fc" id="L1990">        settings = new Settings();</span>
-<span class="fc" id="L1991">        InputStream mojoProperties = null;</span>
+<span class="fc" id="L1997">        settings = new Settings();</span>
+<span class="fc" id="L1998">        InputStream mojoProperties = null;</span>
         try {
-<span class="fc" id="L1993">            mojoProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);</span>
-<span class="fc" id="L1994">            settings.mergeProperties(mojoProperties);</span>
-<span class="nc" id="L1995">        } catch (IOException ex) {</span>
-<span class="nc" id="L1996">            getLog().warn(&quot;Unable to load the dependency-check maven mojo.properties file.&quot;);</span>
-<span class="nc bnc" id="L1997" title="All 2 branches missed.">            if (getLog().isDebugEnabled()) {</span>
-<span class="nc" id="L1998">                getLog().debug(&quot;&quot;, ex);</span>
+<span class="fc" id="L2000">            mojoProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);</span>
+<span class="fc" id="L2001">            settings.mergeProperties(mojoProperties);</span>
+<span class="nc" id="L2002">        } catch (IOException ex) {</span>
+<span class="nc" id="L2003">            getLog().warn(&quot;Unable to load the dependency-check maven mojo.properties file.&quot;);</span>
+<span class="nc bnc" id="L2004" title="All 2 branches missed.">            if (getLog().isDebugEnabled()) {</span>
+<span class="nc" id="L2005">                getLog().debug(&quot;&quot;, ex);</span>
             }
         } finally {
-<span class="pc bpc" id="L2001" title="1 of 2 branches missed.">            if (mojoProperties != null) {</span>
+<span class="pc bpc" id="L2008" title="1 of 2 branches missed.">            if (mojoProperties != null) {</span>
                 try {
-<span class="fc" id="L2003">                    mojoProperties.close();</span>
-<span class="nc" id="L2004">                } catch (IOException ex) {</span>
-<span class="nc bnc" id="L2005" title="All 2 branches missed.">                    if (getLog().isDebugEnabled()) {</span>
-<span class="nc" id="L2006">                        getLog().debug(&quot;&quot;, ex);</span>
+<span class="fc" id="L2010">                    mojoProperties.close();</span>
+<span class="nc" id="L2011">                } catch (IOException ex) {</span>
+<span class="nc bnc" id="L2012" title="All 2 branches missed.">                    if (getLog().isDebugEnabled()) {</span>
+<span class="nc" id="L2013">                        getLog().debug(&quot;&quot;, ex);</span>
                     }
-<span class="fc" id="L2008">                }</span>
+<span class="fc" id="L2015">                }</span>
             }
         }
-<span class="fc" id="L2011">        settings.setStringIfNotEmpty(Settings.KEYS.MAVEN_LOCAL_REPO, mavenSettings.getLocalRepository());</span>
-<span class="fc" id="L2012">        settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);</span>
-<span class="fc" id="L2013">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, enableExperimental);</span>
-<span class="fc" id="L2014">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIRED_ENABLED, enableRetired);</span>
-<span class="fc" id="L2015">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED, golangDepEnabled);</span>
-<span class="fc" id="L2016">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED, golangModEnabled);</span>
-<span class="fc" id="L2017">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH, pathToGo);</span>
-<span class="fc" id="L2018">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_YARN_PATH, pathToYarn);</span>
-<span class="fc" id="L2019">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_PNPM_PATH, pathToPnpm);</span>
+<span class="fc" id="L2018">        settings.setStringIfNotEmpty(Settings.KEYS.MAVEN_LOCAL_REPO, mavenSettings.getLocalRepository());</span>
+<span class="fc" id="L2019">        settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);</span>
+<span class="fc" id="L2020">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, enableExperimental);</span>
+<span class="fc" id="L2021">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIRED_ENABLED, enableRetired);</span>
+<span class="fc" id="L2022">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED, golangDepEnabled);</span>
+<span class="fc" id="L2023">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED, golangModEnabled);</span>
+<span class="fc" id="L2024">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH, pathToGo);</span>
+<span class="fc" id="L2025">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_YARN_PATH, pathToYarn);</span>
+<span class="fc" id="L2026">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_PNPM_PATH, pathToPnpm);</span>
 
-<span class="fc" id="L2021">        final Proxy proxy = getMavenProxy();</span>
-<span class="pc bpc" id="L2022" title="1 of 2 branches missed.">        if (proxy != null) {</span>
-<span class="nc" id="L2023">            settings.setString(Settings.KEYS.PROXY_SERVER, proxy.getHost());</span>
-<span class="nc" id="L2024">            settings.setString(Settings.KEYS.PROXY_PORT, Integer.toString(proxy.getPort()));</span>
-<span class="nc" id="L2025">            final String userName = proxy.getUsername();</span>
-<span class="nc" id="L2026">            String password = proxy.getPassword();</span>
-<span class="nc bnc" id="L2027" title="All 4 branches missed.">            if (password != null &amp;&amp; !password.isEmpty()) {</span>
-<span class="nc bnc" id="L2028" title="All 2 branches missed.">                if (settings.getBoolean(Settings.KEYS.PROXY_DISABLE_SCHEMAS, true)) {</span>
-<span class="nc" id="L2029">                    System.setProperty(&quot;jdk.http.auth.tunneling.disabledSchemes&quot;, &quot;&quot;);</span>
+<span class="fc" id="L2028">        final Proxy proxy = getMavenProxy();</span>
+<span class="pc bpc" id="L2029" title="1 of 2 branches missed.">        if (proxy != null) {</span>
+<span class="nc" id="L2030">            settings.setString(Settings.KEYS.PROXY_SERVER, proxy.getHost());</span>
+<span class="nc" id="L2031">            settings.setString(Settings.KEYS.PROXY_PORT, Integer.toString(proxy.getPort()));</span>
+<span class="nc" id="L2032">            final String userName = proxy.getUsername();</span>
+<span class="nc" id="L2033">            String password = proxy.getPassword();</span>
+<span class="nc bnc" id="L2034" title="All 4 branches missed.">            if (password != null &amp;&amp; !password.isEmpty()) {</span>
+<span class="nc bnc" id="L2035" title="All 2 branches missed.">                if (settings.getBoolean(Settings.KEYS.PROXY_DISABLE_SCHEMAS, true)) {</span>
+<span class="nc" id="L2036">                    System.setProperty(&quot;jdk.http.auth.tunneling.disabledSchemes&quot;, &quot;&quot;);</span>
                 }
                 try {
-<span class="nc" id="L2032">                    password = decryptPasswordFromSettings(password);</span>
-<span class="nc" id="L2033">                } catch (SecDispatcherException ex) {</span>
-<span class="nc" id="L2034">                    password = handleSecDispatcherException(&quot;proxy&quot;, proxy.getId(), password, ex);</span>
-<span class="nc" id="L2035">                }</span>
+<span class="nc" id="L2039">                    password = decryptPasswordFromSettings(password);</span>
+<span class="nc" id="L2040">                } catch (SecDispatcherException ex) {</span>
+<span class="nc" id="L2041">                    password = handleSecDispatcherException(&quot;proxy&quot;, proxy.getId(), password, ex);</span>
+<span class="nc" id="L2042">                }</span>
             }
-<span class="nc" id="L2037">            settings.setStringIfNotNull(Settings.KEYS.PROXY_USERNAME, userName);</span>
-<span class="nc" id="L2038">            settings.setStringIfNotNull(Settings.KEYS.PROXY_PASSWORD, password);</span>
-<span class="nc" id="L2039">            settings.setStringIfNotNull(Settings.KEYS.PROXY_NON_PROXY_HOSTS, proxy.getNonProxyHosts());</span>
+<span class="nc" id="L2044">            settings.setStringIfNotNull(Settings.KEYS.PROXY_USERNAME, userName);</span>
+<span class="nc" id="L2045">            settings.setStringIfNotNull(Settings.KEYS.PROXY_PASSWORD, password);</span>
+<span class="nc" id="L2046">            settings.setStringIfNotNull(Settings.KEYS.PROXY_NON_PROXY_HOSTS, proxy.getNonProxyHosts());</span>
         }
-<span class="fc" id="L2041">        final String[] suppressions = determineSuppressions();</span>
-<span class="fc" id="L2042">        settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressions);</span>
-<span class="fc" id="L2043">        settings.setBooleanIfNotNull(Settings.KEYS.UPDATE_VERSION_CHECK_ENABLED, versionCheckEnabled);</span>
-<span class="fc" id="L2044">        settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);</span>
-<span class="fc" id="L2045">        settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);</span>
-<span class="fc" id="L2046">        settings.setFloat(Settings.KEYS.JUNIT_FAIL_ON_CVSS, junitFailOnCVSS);</span>
-<span class="fc" id="L2047">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);</span>
-<span class="fc" id="L2048">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);</span>
-<span class="fc" id="L2049">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUGETCONF_ENABLED, nugetconfAnalyzerEnabled);</span>
-<span class="fc" id="L2050">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);</span>
-<span class="fc" id="L2051">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE, centralAnalyzerUseCache);</span>
-<span class="fc" id="L2052">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED, artifactoryAnalyzerEnabled);</span>
-<span class="fc" id="L2053">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);</span>
-<span class="fc" id="L2054">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);</span>
-<span class="fc" id="L2055">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_MSBUILD_PROJECT_ENABLED, msbuildAnalyzerEnabled);</span>
-<span class="fc" id="L2056">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);</span>
-<span class="fc" id="L2057">        settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);</span>
-<span class="fc" id="L2058">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH, pathToCore);</span>
-<span class="fc" id="L2059">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);</span>
-<span class="fc" id="L2060">        configureServerCredentials(nexusServerId, Settings.KEYS.ANALYZER_NEXUS_USER, Settings.KEYS.ANALYZER_NEXUS_PASSWORD);</span>
+<span class="fc" id="L2048">        final String[] suppressions = determineSuppressions();</span>
+<span class="fc" id="L2049">        settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressions);</span>
+<span class="fc" id="L2050">        settings.setBooleanIfNotNull(Settings.KEYS.UPDATE_VERSION_CHECK_ENABLED, versionCheckEnabled);</span>
+<span class="fc" id="L2051">        settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);</span>
+<span class="fc" id="L2052">        settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);</span>
+<span class="fc" id="L2053">        settings.setFloat(Settings.KEYS.JUNIT_FAIL_ON_CVSS, junitFailOnCVSS);</span>
+<span class="fc" id="L2054">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);</span>
+<span class="fc" id="L2055">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);</span>
+<span class="fc" id="L2056">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUGETCONF_ENABLED, nugetconfAnalyzerEnabled);</span>
+<span class="fc" id="L2057">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);</span>
+<span class="fc" id="L2058">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE, centralAnalyzerUseCache);</span>
+<span class="fc" id="L2059">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED, artifactoryAnalyzerEnabled);</span>
+<span class="fc" id="L2060">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);</span>
+<span class="fc" id="L2061">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);</span>
+<span class="fc" id="L2062">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_MSBUILD_PROJECT_ENABLED, msbuildAnalyzerEnabled);</span>
+<span class="fc" id="L2063">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);</span>
+<span class="fc" id="L2064">        settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);</span>
+<span class="fc" id="L2065">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH, pathToCore);</span>
+<span class="fc" id="L2066">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);</span>
+<span class="fc" id="L2067">        configureServerCredentials(nexusServerId, Settings.KEYS.ANALYZER_NEXUS_USER, Settings.KEYS.ANALYZER_NEXUS_PASSWORD);</span>
 
-<span class="fc" id="L2062">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);</span>
-<span class="fc" id="L2063">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_URL, artifactoryAnalyzerUrl);</span>
-<span class="fc" id="L2064">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_USES_PROXY, artifactoryAnalyzerUseProxy);</span>
-<span class="fc" id="L2065">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_PARALLEL_ANALYSIS, artifactoryAnalyzerParallelAnalysis);</span>
-<span class="fc bfc" id="L2066" title="All 2 branches covered.">        if (Boolean.TRUE.equals(artifactoryAnalyzerEnabled)) {</span>
-<span class="pc bpc" id="L2067" title="1 of 2 branches missed.">            if (artifactoryAnalyzerServerId != null) {</span>
-<span class="nc" id="L2068">                configureServerCredentials(artifactoryAnalyzerServerId, Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME,</span>
+<span class="fc" id="L2069">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);</span>
+<span class="fc" id="L2070">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_URL, artifactoryAnalyzerUrl);</span>
+<span class="fc" id="L2071">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_USES_PROXY, artifactoryAnalyzerUseProxy);</span>
+<span class="fc" id="L2072">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_PARALLEL_ANALYSIS, artifactoryAnalyzerParallelAnalysis);</span>
+<span class="fc bfc" id="L2073" title="All 2 branches covered.">        if (Boolean.TRUE.equals(artifactoryAnalyzerEnabled)) {</span>
+<span class="pc bpc" id="L2074" title="1 of 2 branches missed.">            if (artifactoryAnalyzerServerId != null) {</span>
+<span class="nc" id="L2075">                configureServerCredentials(artifactoryAnalyzerServerId, Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME,</span>
                         Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN);
             } else {
-<span class="fc" id="L2071">                settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME, artifactoryAnalyzerUsername);</span>
-<span class="fc" id="L2072">                settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN, artifactoryAnalyzerApiToken);</span>
+<span class="fc" id="L2078">                settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME, artifactoryAnalyzerUsername);</span>
+<span class="fc" id="L2079">                settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN, artifactoryAnalyzerApiToken);</span>
             }
-<span class="fc" id="L2074">            settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_BEARER_TOKEN, artifactoryAnalyzerBearerToken);</span>
+<span class="fc" id="L2081">            settings.setStringIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_BEARER_TOKEN, artifactoryAnalyzerBearerToken);</span>
         }
-<span class="fc" id="L2076">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, pyDistributionAnalyzerEnabled);</span>
-<span class="fc" id="L2077">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED, pyPackageAnalyzerEnabled);</span>
-<span class="fc" id="L2078">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED, rubygemsAnalyzerEnabled);</span>
-<span class="fc" id="L2079">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_OPENSSL_ENABLED, opensslAnalyzerEnabled);</span>
-<span class="fc" id="L2080">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CMAKE_ENABLED, cmakeAnalyzerEnabled);</span>
-<span class="fc" id="L2081">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, autoconfAnalyzerEnabled);</span>
-<span class="fc" id="L2082">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PIP_ENABLED, pipAnalyzerEnabled);</span>
-<span class="fc" id="L2083">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PIPFILE_ENABLED, pipfileAnalyzerEnabled);</span>
-<span class="fc" id="L2084">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);</span>
-<span class="fc" id="L2085">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CPANFILE_ENABLED, cpanfileAnalyzerEnabled);</span>
-<span class="fc" id="L2086">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);</span>
-<span class="fc" id="L2087">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, nodeAuditAnalyzerEnabled);</span>
-<span class="fc" id="L2088">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, nodeAuditAnalyzerUseCache);</span>
-<span class="fc" id="L2089">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, nodePackageSkipDevDependencies);</span>
-<span class="fc" id="L2090">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, nodeAuditSkipDevDependencies);</span>
-<span class="fc" id="L2091">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, yarnAuditAnalyzerEnabled);</span>
-<span class="fc" id="L2092">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PNPM_AUDIT_ENABLED, pnpmAuditAnalyzerEnabled);</span>
-<span class="fc" id="L2093">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);</span>
-<span class="fc" id="L2094">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, retireJsUrl);</span>
-<span class="fc" id="L2095">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, retireJsForceUpdate);</span>
-<span class="fc" id="L2096">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED, mixAuditAnalyzerEnabled);</span>
-<span class="fc" id="L2097">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_MIX_AUDIT_PATH, mixAuditPath);</span>
-<span class="fc" id="L2098">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, bundleAuditAnalyzerEnabled);</span>
-<span class="fc" id="L2099">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, bundleAuditPath);</span>
-<span class="fc" id="L2100">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_WORKING_DIRECTORY, bundleAuditWorkingDirectory);</span>
-<span class="fc" id="L2101">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, cocoapodsAnalyzerEnabled);</span>
-<span class="fc" id="L2102">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, swiftPackageManagerAnalyzerEnabled);</span>
-<span class="fc" id="L2103">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_RESOLVED_ENABLED, swiftPackageResolvedAnalyzerEnabled);</span>
+<span class="fc" id="L2083">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, pyDistributionAnalyzerEnabled);</span>
+<span class="fc" id="L2084">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED, pyPackageAnalyzerEnabled);</span>
+<span class="fc" id="L2085">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED, rubygemsAnalyzerEnabled);</span>
+<span class="fc" id="L2086">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_OPENSSL_ENABLED, opensslAnalyzerEnabled);</span>
+<span class="fc" id="L2087">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CMAKE_ENABLED, cmakeAnalyzerEnabled);</span>
+<span class="fc" id="L2088">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, autoconfAnalyzerEnabled);</span>
+<span class="fc" id="L2089">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PIP_ENABLED, pipAnalyzerEnabled);</span>
+<span class="fc" id="L2090">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PIPFILE_ENABLED, pipfileAnalyzerEnabled);</span>
+<span class="fc" id="L2091">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);</span>
+<span class="fc" id="L2092">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CPANFILE_ENABLED, cpanfileAnalyzerEnabled);</span>
+<span class="fc" id="L2093">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);</span>
+<span class="fc" id="L2094">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, nodeAuditAnalyzerEnabled);</span>
+<span class="fc" id="L2095">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, nodeAuditAnalyzerUseCache);</span>
+<span class="fc" id="L2096">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, nodePackageSkipDevDependencies);</span>
+<span class="fc" id="L2097">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, nodeAuditSkipDevDependencies);</span>
+<span class="fc" id="L2098">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, yarnAuditAnalyzerEnabled);</span>
+<span class="fc" id="L2099">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PNPM_AUDIT_ENABLED, pnpmAuditAnalyzerEnabled);</span>
+<span class="fc" id="L2100">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);</span>
+<span class="fc" id="L2101">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, retireJsUrl);</span>
+<span class="fc" id="L2102">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, retireJsForceUpdate);</span>
+<span class="fc" id="L2103">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED, mixAuditAnalyzerEnabled);</span>
+<span class="fc" id="L2104">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_MIX_AUDIT_PATH, mixAuditPath);</span>
+<span class="fc" id="L2105">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, bundleAuditAnalyzerEnabled);</span>
+<span class="fc" id="L2106">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, bundleAuditPath);</span>
+<span class="fc" id="L2107">        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_WORKING_DIRECTORY, bundleAuditWorkingDirectory);</span>
+<span class="fc" id="L2108">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, cocoapodsAnalyzerEnabled);</span>
+<span class="fc" id="L2109">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, swiftPackageManagerAnalyzerEnabled);</span>
+<span class="fc" id="L2110">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_RESOLVED_ENABLED, swiftPackageResolvedAnalyzerEnabled);</span>
 
-<span class="fc" id="L2105">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, ossindexAnalyzerEnabled);</span>
-<span class="fc" id="L2106">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_URL, ossindexAnalyzerUrl);</span>
-<span class="fc" id="L2107">        configureServerCredentials(ossIndexServerId, Settings.KEYS.ANALYZER_OSSINDEX_USER, Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD);</span>
-<span class="fc" id="L2108">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE, ossindexAnalyzerUseCache);</span>
+<span class="fc" id="L2112">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_OSSINDEX_ENABLED, ossindexAnalyzerEnabled);</span>
+<span class="fc" id="L2113">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_URL, ossindexAnalyzerUrl);</span>
+<span class="fc" id="L2114">        configureServerCredentials(ossIndexServerId, Settings.KEYS.ANALYZER_OSSINDEX_USER, Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD);</span>
+<span class="fc" id="L2115">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE, ossindexAnalyzerUseCache);</span>
+<span class="fc" id="L2116">        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS, ossIndexWarnOnlyOnRemoteErrors);</span>
 
-<span class="fc bfc" id="L2110" title="All 2 branches covered.">        if (retirejs != null) {</span>
-<span class="fc" id="L2111">            settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, retirejs.getFilterNonVulnerable());</span>
-<span class="fc" id="L2112">            settings.setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, retirejs.getFilters());</span>
+<span class="fc bfc" id="L2118" title="All 2 branches covered.">        if (retirejs != null) {</span>
+<span class="fc" id="L2119">            settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, retirejs.getFilterNonVulnerable());</span>
+<span class="fc" id="L2120">            settings.setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, retirejs.getFilters());</span>
         }
 
         //Database configuration
-<span class="fc" id="L2116">        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);</span>
-<span class="fc" id="L2117">        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);</span>
-<span class="fc" id="L2118">        settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);</span>
+<span class="fc" id="L2124">        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);</span>
+<span class="fc" id="L2125">        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);</span>
+<span class="fc" id="L2126">        settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);</span>
 
-<span class="pc bpc" id="L2120" title="3 of 6 branches missed.">        if (databaseUser == null &amp;&amp; databasePassword == null &amp;&amp; serverId != null) {</span>
-<span class="nc" id="L2121">            configureServerCredentials(serverId, Settings.KEYS.DB_USER, Settings.KEYS.DB_PASSWORD);</span>
+<span class="pc bpc" id="L2128" title="3 of 6 branches missed.">        if (databaseUser == null &amp;&amp; databasePassword == null &amp;&amp; serverId != null) {</span>
+<span class="nc" id="L2129">            configureServerCredentials(serverId, Settings.KEYS.DB_USER, Settings.KEYS.DB_PASSWORD);</span>
         } else {
-<span class="fc" id="L2123">            settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);</span>
-<span class="fc" id="L2124">            settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);</span>
+<span class="fc" id="L2131">            settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);</span>
+<span class="fc" id="L2132">            settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);</span>
         }
-<span class="fc" id="L2126">        settings.setStringIfNotEmpty(Settings.KEYS.DATA_DIRECTORY, dataDirectory);</span>
-<span class="fc" id="L2127">        settings.setStringIfNotEmpty(Settings.KEYS.DB_FILE_NAME, dbFilename);</span>
+<span class="fc" id="L2134">        settings.setStringIfNotEmpty(Settings.KEYS.DATA_DIRECTORY, dataDirectory);</span>
+<span class="fc" id="L2135">        settings.setStringIfNotEmpty(Settings.KEYS.DB_FILE_NAME, dbFilename);</span>
 
-<span class="fc" id="L2129">        final String cveModifiedJson = Optional.ofNullable(cveUrlModified)</span>
-<span class="fc bfc" id="L2130" title="All 2 branches covered.">                .filter(arg -&gt; !arg.isEmpty())</span>
-<span class="fc" id="L2131">                .orElseGet(this::getDefaultCveUrlModified);</span>
-<span class="fc" id="L2132">        settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveModifiedJson);</span>
-<span class="fc" id="L2133">        settings.setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON, cveUrlBase);</span>
-<span class="fc" id="L2134">        settings.setStringIfNotEmpty(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, cveWaitTime);</span>
-<span class="fc" id="L2135">        settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);</span>
-<span class="pc bpc" id="L2136" title="3 of 4 branches missed.">        if (cveStartYear != null &amp;&amp; cveStartYear &lt; 2002) {</span>
-<span class="nc" id="L2137">            getLog().warn(&quot;Invalid configuration: cveStartYear must be 2002 or greater&quot;);</span>
-<span class="nc" id="L2138">            cveStartYear = 2002;</span>
+<span class="fc" id="L2137">        final String cveModifiedJson = Optional.ofNullable(cveUrlModified)</span>
+<span class="fc bfc" id="L2138" title="All 2 branches covered.">                .filter(arg -&gt; !arg.isEmpty())</span>
+<span class="fc" id="L2139">                .orElseGet(this::getDefaultCveUrlModified);</span>
+<span class="fc" id="L2140">        settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveModifiedJson);</span>
+<span class="fc" id="L2141">        settings.setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON, cveUrlBase);</span>
+<span class="fc" id="L2142">        settings.setStringIfNotEmpty(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, cveWaitTime);</span>
+<span class="fc" id="L2143">        settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);</span>
+<span class="pc bpc" id="L2144" title="3 of 4 branches missed.">        if (cveStartYear != null &amp;&amp; cveStartYear &lt; 2002) {</span>
+<span class="nc" id="L2145">            getLog().warn(&quot;Invalid configuration: cveStartYear must be 2002 or greater&quot;);</span>
+<span class="nc" id="L2146">            cveStartYear = 2002;</span>
         }
-<span class="fc" id="L2140">        settings.setIntIfNotNull(Settings.KEYS.CVE_START_YEAR, cveStartYear);</span>
-<span class="fc" id="L2141">        settings.setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT, prettyPrint);</span>
-<span class="fc" id="L2142">        artifactScopeExcluded = new ArtifactScopeExcluded(skipTestScope, skipProvidedScope, skipSystemScope, skipRuntimeScope);</span>
-<span class="fc" id="L2143">        artifactTypeExcluded = new ArtifactTypeExcluded(skipArtifactType);</span>
-<span class="pc bpc" id="L2144" title="3 of 6 branches missed.">        if (cveUser == null &amp;&amp; cvePassword == null &amp;&amp; cveServerId != null) {</span>
-<span class="nc" id="L2145">            configureServerCredentials(cveServerId, Settings.KEYS.CVE_USER, Settings.KEYS.CVE_PASSWORD);</span>
+<span class="fc" id="L2148">        settings.setIntIfNotNull(Settings.KEYS.CVE_START_YEAR, cveStartYear);</span>
+<span class="fc" id="L2149">        settings.setBooleanIfNotNull(Settings.KEYS.PRETTY_PRINT, prettyPrint);</span>
+<span class="fc" id="L2150">        artifactScopeExcluded = new ArtifactScopeExcluded(skipTestScope, skipProvidedScope, skipSystemScope, skipRuntimeScope);</span>
+<span class="fc" id="L2151">        artifactTypeExcluded = new ArtifactTypeExcluded(skipArtifactType);</span>
+<span class="pc bpc" id="L2152" title="3 of 6 branches missed.">        if (cveUser == null &amp;&amp; cvePassword == null &amp;&amp; cveServerId != null) {</span>
+<span class="nc" id="L2153">            configureServerCredentials(cveServerId, Settings.KEYS.CVE_USER, Settings.KEYS.CVE_PASSWORD);</span>
         } else {
-<span class="fc" id="L2147">            settings.setStringIfNotEmpty(Settings.KEYS.CVE_USER, cveUser);</span>
-<span class="fc" id="L2148">            settings.setStringIfNotEmpty(Settings.KEYS.CVE_PASSWORD, cvePassword);</span>
+<span class="fc" id="L2155">            settings.setStringIfNotEmpty(Settings.KEYS.CVE_USER, cveUser);</span>
+<span class="fc" id="L2156">            settings.setStringIfNotEmpty(Settings.KEYS.CVE_PASSWORD, cvePassword);</span>
         }
-<span class="pc bpc" id="L2150" title="3 of 6 branches missed.">        if (suppressionFileUser == null &amp;&amp; suppressionFilePassword == null &amp;&amp; suppressionFileServerId != null) {</span>
-<span class="nc" id="L2151">            configureServerCredentials(suppressionFileServerId, Settings.KEYS.SUPPRESSION_FILE_USER, Settings.KEYS.SUPPRESSION_FILE_PASSWORD);</span>
+<span class="pc bpc" id="L2158" title="3 of 6 branches missed.">        if (suppressionFileUser == null &amp;&amp; suppressionFilePassword == null &amp;&amp; suppressionFileServerId != null) {</span>
+<span class="nc" id="L2159">            configureServerCredentials(suppressionFileServerId, Settings.KEYS.SUPPRESSION_FILE_USER, Settings.KEYS.SUPPRESSION_FILE_PASSWORD);</span>
         } else {
-<span class="fc" id="L2153">            settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE_USER, suppressionFileUser);</span>
-<span class="fc" id="L2154">            settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE_PASSWORD, suppressionFilePassword);</span>
+<span class="fc" id="L2161">            settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE_USER, suppressionFileUser);</span>
+<span class="fc" id="L2162">            settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE_PASSWORD, suppressionFilePassword);</span>
         }
-<span class="fc" id="L2156">    }</span>
+<span class="fc" id="L2164">    }</span>
 
     /**
      * Retrieves the server credentials from the settings.xml, decrypts the
@@ -2165,23 +2173,23 @@ import org.slf4j.spi.LocationAwareLogger;
      * @param passwordSettingKey the property name for the password
      */
     private void configureServerCredentials(String serverId, String userSettingKey, String passwordSettingKey) {
-<span class="pc bpc" id="L2168" title="1 of 2 branches missed.">        if (serverId != null) {</span>
-<span class="nc" id="L2169">            final Server server = settingsXml.getServer(serverId);</span>
-<span class="nc bnc" id="L2170" title="All 2 branches missed.">            if (server != null) {</span>
-<span class="nc" id="L2171">                final String username = server.getUsername();</span>
-<span class="nc" id="L2172">                String password = null;</span>
+<span class="pc bpc" id="L2176" title="1 of 2 branches missed.">        if (serverId != null) {</span>
+<span class="nc" id="L2177">            final Server server = settingsXml.getServer(serverId);</span>
+<span class="nc bnc" id="L2178" title="All 2 branches missed.">            if (server != null) {</span>
+<span class="nc" id="L2179">                final String username = server.getUsername();</span>
+<span class="nc" id="L2180">                String password = null;</span>
                 try {
-<span class="nc" id="L2174">                    password = decryptPasswordFromSettings(server.getPassword());</span>
-<span class="nc" id="L2175">                } catch (SecDispatcherException ex) {</span>
-<span class="nc" id="L2176">                    password = handleSecDispatcherException(&quot;server&quot;, serverId, server.getPassword(), ex);</span>
-<span class="nc" id="L2177">                }</span>
-<span class="nc" id="L2178">                settings.setStringIfNotEmpty(userSettingKey, username);</span>
-<span class="nc" id="L2179">                settings.setStringIfNotEmpty(passwordSettingKey, password);</span>
-<span class="nc" id="L2180">            } else {</span>
-<span class="nc" id="L2181">                getLog().error(String.format(&quot;Server '%s' not found in the settings.xml file&quot;, serverId));</span>
+<span class="nc" id="L2182">                    password = decryptPasswordFromSettings(server.getPassword());</span>
+<span class="nc" id="L2183">                } catch (SecDispatcherException ex) {</span>
+<span class="nc" id="L2184">                    password = handleSecDispatcherException(&quot;server&quot;, serverId, server.getPassword(), ex);</span>
+<span class="nc" id="L2185">                }</span>
+<span class="nc" id="L2186">                settings.setStringIfNotEmpty(userSettingKey, username);</span>
+<span class="nc" id="L2187">                settings.setStringIfNotEmpty(passwordSettingKey, password);</span>
+<span class="nc" id="L2188">            } else {</span>
+<span class="nc" id="L2189">                getLog().error(String.format(&quot;Server '%s' not found in the settings.xml file&quot;, serverId));</span>
             }
         }
-<span class="fc" id="L2184">    }</span>
+<span class="fc" id="L2192">    }</span>
 
     /**
      * Decrypts a password from the Maven settings if it needs to be decrypted.
@@ -2200,11 +2208,11 @@ import org.slf4j.spi.LocationAwareLogger;
         // org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException:
         // java.io.FileNotFoundException: ~/.settings-security.xml (No such file or directory)
         //
-<span class="nc bnc" id="L2203" title="All 2 branches missed.">        if (securityDispatcher instanceof DefaultSecDispatcher) {</span>
-<span class="nc" id="L2204">            ((DefaultSecDispatcher) securityDispatcher).setConfigurationFile(&quot;~/.m2/settings-security.xml&quot;);</span>
+<span class="nc bnc" id="L2211" title="All 2 branches missed.">        if (securityDispatcher instanceof DefaultSecDispatcher) {</span>
+<span class="nc" id="L2212">            ((DefaultSecDispatcher) securityDispatcher).setConfigurationFile(&quot;~/.m2/settings-security.xml&quot;);</span>
         }
 
-<span class="nc" id="L2207">        return securityDispatcher.decrypt(password);</span>
+<span class="nc" id="L2215">        return securityDispatcher.decrypt(password);</span>
     }
 
     /**
@@ -2222,24 +2230,24 @@ import org.slf4j.spi.LocationAwareLogger;
      */
     private String handleSecDispatcherException(String settingsElementName, String settingsElementId, String passwordValueFromSettings,
             SecDispatcherException ex) {
-<span class="nc" id="L2225">        String password = passwordValueFromSettings;</span>
-<span class="nc bnc" id="L2226" title="All 2 branches missed.">        if (ex.getCause() instanceof FileNotFoundException</span>
-<span class="nc bnc" id="L2227" title="All 4 branches missed.">                || (ex.getCause() != null &amp;&amp; ex.getCause().getCause() instanceof FileNotFoundException)) {</span>
+<span class="nc" id="L2233">        String password = passwordValueFromSettings;</span>
+<span class="nc bnc" id="L2234" title="All 2 branches missed.">        if (ex.getCause() instanceof FileNotFoundException</span>
+<span class="nc bnc" id="L2235" title="All 4 branches missed.">                || (ex.getCause() != null &amp;&amp; ex.getCause().getCause() instanceof FileNotFoundException)) {</span>
             //maybe its not encrypted?
-<span class="nc" id="L2229">            final String tmp = passwordValueFromSettings;</span>
-<span class="nc bnc" id="L2230" title="All 4 branches missed.">            if (tmp.startsWith(&quot;{&quot;) &amp;&amp; tmp.endsWith(&quot;}&quot;)) {</span>
-<span class="nc" id="L2231">                getLog().error(String.format(</span>
+<span class="nc" id="L2237">            final String tmp = passwordValueFromSettings;</span>
+<span class="nc bnc" id="L2238" title="All 4 branches missed.">            if (tmp.startsWith(&quot;{&quot;) &amp;&amp; tmp.endsWith(&quot;}&quot;)) {</span>
+<span class="nc" id="L2239">                getLog().error(String.format(</span>
                         &quot;Unable to decrypt the %s password for %s id '%s' in settings.xml%n\tCause: %s&quot;,
-<span class="nc" id="L2233">                        settingsElementName, settingsElementName, settingsElementId, ex.getMessage()));</span>
+<span class="nc" id="L2241">                        settingsElementName, settingsElementName, settingsElementId, ex.getMessage()));</span>
             } else {
-<span class="nc" id="L2235">                password = tmp;</span>
+<span class="nc" id="L2243">                password = tmp;</span>
             }
-<span class="nc" id="L2237">        } else {</span>
-<span class="nc" id="L2238">            getLog().error(String.format(</span>
+<span class="nc" id="L2245">        } else {</span>
+<span class="nc" id="L2246">            getLog().error(String.format(</span>
                     &quot;Unable to decrypt the %s password for %s id '%s' in settings.xml%n\tCause: %s&quot;,
-<span class="nc" id="L2240">                    settingsElementName, settingsElementName, settingsElementId, ex.getMessage()));</span>
+<span class="nc" id="L2248">                    settingsElementName, settingsElementName, settingsElementId, ex.getMessage()));</span>
         }
-<span class="nc" id="L2242">        return password;</span>
+<span class="nc" id="L2250">        return password;</span>
     }
 
     /**
@@ -2249,16 +2257,16 @@ import org.slf4j.spi.LocationAwareLogger;
      * @return an array of suppression file paths
      */
     private String[] determineSuppressions() {
-<span class="fc" id="L2252">        String[] suppressions = suppressionFiles;</span>
-<span class="fc bfc" id="L2253" title="All 2 branches covered.">        if (suppressionFile != null) {</span>
-<span class="pc bpc" id="L2254" title="1 of 2 branches missed.">            if (suppressions == null) {</span>
-<span class="nc" id="L2255">                suppressions = new String[]{suppressionFile};</span>
+<span class="fc" id="L2260">        String[] suppressions = suppressionFiles;</span>
+<span class="fc bfc" id="L2261" title="All 2 branches covered.">        if (suppressionFile != null) {</span>
+<span class="pc bpc" id="L2262" title="1 of 2 branches missed.">            if (suppressions == null) {</span>
+<span class="nc" id="L2263">                suppressions = new String[]{suppressionFile};</span>
             } else {
-<span class="fc" id="L2257">                suppressions = Arrays.copyOf(suppressions, suppressions.length + 1);</span>
-<span class="fc" id="L2258">                suppressions[suppressions.length - 1] = suppressionFile;</span>
+<span class="fc" id="L2265">                suppressions = Arrays.copyOf(suppressions, suppressions.length + 1);</span>
+<span class="fc" id="L2266">                suppressions[suppressions.length - 1] = suppressionFile;</span>
             }
         }
-<span class="fc" id="L2261">        return suppressions;</span>
+<span class="fc" id="L2269">        return suppressions;</span>
     }
 
     /**
@@ -2266,7 +2274,7 @@ import org.slf4j.spi.LocationAwareLogger;
      * solution from SO: https://stackoverflow.com/a/50723801
      */
     private void muteJCS() {
-<span class="fc" id="L2269">        final String[] noisyLoggers = {</span>
+<span class="fc" id="L2277">        final String[] noisyLoggers = {</span>
             &quot;org.apache.commons.jcs.auxiliary.disk.AbstractDiskCache&quot;,
             &quot;org.apache.commons.jcs.engine.memory.AbstractMemoryCache&quot;,
             &quot;org.apache.commons.jcs.engine.control.CompositeCache&quot;,
@@ -2279,18 +2287,18 @@ import org.slf4j.spi.LocationAwareLogger;
             &quot;org.apache.commons.jcs.engine.control.CompositeCacheManager&quot;,
             &quot;org.apache.commons.jcs.utils.threadpool.ThreadPoolManager&quot;,
             &quot;org.apache.commons.jcs.engine.control.CompositeCacheConfigurator&quot;};
-<span class="fc bfc" id="L2282" title="All 2 branches covered.">        for (String loggerName : noisyLoggers) {</span>
+<span class="fc bfc" id="L2290" title="All 2 branches covered.">        for (String loggerName : noisyLoggers) {</span>
             try {
                 //This is actually a MavenSimpleLogger, but due to various classloader issues, can't work with the directly.
-<span class="fc" id="L2285">                final Logger l = LoggerFactory.getLogger(loggerName);</span>
-<span class="fc" id="L2286">                final Field f = l.getClass().getSuperclass().getDeclaredField(&quot;currentLogLevel&quot;);</span>
-<span class="fc" id="L2287">                f.setAccessible(true);</span>
-<span class="fc" id="L2288">                f.set(l, LocationAwareLogger.ERROR_INT);</span>
-<span class="nc" id="L2289">            } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {</span>
-<span class="nc" id="L2290">                getLog().debug(&quot;Failed to reset the log level of &quot; + loggerName + &quot;, it will continue being noisy.&quot;);</span>
-<span class="fc" id="L2291">            }</span>
+<span class="fc" id="L2293">                final Logger l = LoggerFactory.getLogger(loggerName);</span>
+<span class="fc" id="L2294">                final Field f = l.getClass().getSuperclass().getDeclaredField(&quot;currentLogLevel&quot;);</span>
+<span class="fc" id="L2295">                f.setAccessible(true);</span>
+<span class="fc" id="L2296">                f.set(l, LocationAwareLogger.ERROR_INT);</span>
+<span class="nc" id="L2297">            } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {</span>
+<span class="nc" id="L2298">                getLog().debug(&quot;Failed to reset the log level of &quot; + loggerName + &quot;, it will continue being noisy.&quot;);</span>
+<span class="fc" id="L2299">            }</span>
         }
-<span class="fc" id="L2293">    }</span>
+<span class="fc" id="L2301">    }</span>
 
     /**
      * Returns the maven proxy.
@@ -2298,25 +2306,25 @@ import org.slf4j.spi.LocationAwareLogger;
      * @return the maven proxy
      */
     private Proxy getMavenProxy() {
-<span class="pc bpc" id="L2301" title="1 of 2 branches missed.">        if (mavenSettings != null) {</span>
-<span class="fc" id="L2302">            final List&lt;Proxy&gt; proxies = mavenSettings.getProxies();</span>
-<span class="pc bpc" id="L2303" title="2 of 4 branches missed.">            if (proxies != null &amp;&amp; !proxies.isEmpty()) {</span>
-<span class="nc bnc" id="L2304" title="All 2 branches missed.">                if (mavenSettingsProxyId != null) {</span>
-<span class="nc bnc" id="L2305" title="All 2 branches missed.">                    for (Proxy proxy : proxies) {</span>
-<span class="nc bnc" id="L2306" title="All 2 branches missed.">                        if (mavenSettingsProxyId.equalsIgnoreCase(proxy.getId())) {</span>
-<span class="nc" id="L2307">                            return proxy;</span>
+<span class="pc bpc" id="L2309" title="1 of 2 branches missed.">        if (mavenSettings != null) {</span>
+<span class="fc" id="L2310">            final List&lt;Proxy&gt; proxies = mavenSettings.getProxies();</span>
+<span class="pc bpc" id="L2311" title="2 of 4 branches missed.">            if (proxies != null &amp;&amp; !proxies.isEmpty()) {</span>
+<span class="nc bnc" id="L2312" title="All 2 branches missed.">                if (mavenSettingsProxyId != null) {</span>
+<span class="nc bnc" id="L2313" title="All 2 branches missed.">                    for (Proxy proxy : proxies) {</span>
+<span class="nc bnc" id="L2314" title="All 2 branches missed.">                        if (mavenSettingsProxyId.equalsIgnoreCase(proxy.getId())) {</span>
+<span class="nc" id="L2315">                            return proxy;</span>
                         }
-<span class="nc" id="L2309">                    }</span>
+<span class="nc" id="L2317">                    }</span>
                 } else {
-<span class="nc bnc" id="L2311" title="All 2 branches missed.">                    for (Proxy aProxy : proxies) {</span>
-<span class="nc bnc" id="L2312" title="All 2 branches missed.">                        if (aProxy.isActive()) {</span>
-<span class="nc" id="L2313">                            return aProxy;</span>
+<span class="nc bnc" id="L2319" title="All 2 branches missed.">                    for (Proxy aProxy : proxies) {</span>
+<span class="nc bnc" id="L2320" title="All 2 branches missed.">                        if (aProxy.isActive()) {</span>
+<span class="nc" id="L2321">                            return aProxy;</span>
                         }
-<span class="nc" id="L2315">                    }</span>
+<span class="nc" id="L2323">                    }</span>
                 }
             }
         }
-<span class="fc" id="L2319">        return null;</span>
+<span class="fc" id="L2327">        return null;</span>
     }
 
     /**
@@ -2330,7 +2338,7 @@ import org.slf4j.spi.LocationAwareLogger;
      * @return returns a reference to the current project
      */
     protected MavenProject getProject() {
-<span class="fc" id="L2333">        return project;</span>
+<span class="fc" id="L2341">        return project;</span>
     }
 
     /**
@@ -2339,7 +2347,7 @@ import org.slf4j.spi.LocationAwareLogger;
      * @return the list of Maven Projects in this build
      */
     protected List&lt;MavenProject&gt; getReactorProjects() {
-<span class="fc" id="L2342">        return reactorProjects;</span>
+<span class="fc" id="L2350">        return reactorProjects;</span>
     }
 
     /**
@@ -2348,25 +2356,25 @@ import org.slf4j.spi.LocationAwareLogger;
      * @return the selected report formats
      */
     private Set&lt;String&gt; getFormats() {
-<span class="fc" id="L2351">        final Set&lt;String&gt; invalid = new HashSet&lt;&gt;();</span>
-<span class="pc bpc" id="L2352" title="2 of 4 branches missed.">        final Set&lt;String&gt; selectedFormats = formats == null || formats.length == 0 ? new HashSet&lt;&gt;() : new HashSet&lt;&gt;(Arrays.asList(formats));</span>
-<span class="fc" id="L2353">        selectedFormats.forEach((s) -&gt; {</span>
+<span class="fc" id="L2359">        final Set&lt;String&gt; invalid = new HashSet&lt;&gt;();</span>
+<span class="pc bpc" id="L2360" title="2 of 4 branches missed.">        final Set&lt;String&gt; selectedFormats = formats == null || formats.length == 0 ? new HashSet&lt;&gt;() : new HashSet&lt;&gt;(Arrays.asList(formats));</span>
+<span class="fc" id="L2361">        selectedFormats.forEach((s) -&gt; {</span>
             try {
-<span class="nc" id="L2355">                ReportGenerator.Format.valueOf(s.toUpperCase());</span>
-<span class="nc" id="L2356">            } catch (IllegalArgumentException ex) {</span>
-<span class="nc" id="L2357">                invalid.add(s);</span>
-<span class="nc" id="L2358">            }</span>
-<span class="nc" id="L2359">        });</span>
-<span class="fc" id="L2360">        invalid.forEach((s) -&gt; {</span>
-<span class="nc" id="L2361">            getLog().warn(&quot;Invalid report format specified: &quot; + s);</span>
-<span class="nc" id="L2362">        });</span>
-<span class="pc bpc" id="L2363" title="1 of 2 branches missed.">        if (selectedFormats.contains(&quot;true&quot;)) {</span>
-<span class="nc" id="L2364">            selectedFormats.remove(&quot;true&quot;);</span>
+<span class="nc" id="L2363">                ReportGenerator.Format.valueOf(s.toUpperCase());</span>
+<span class="nc" id="L2364">            } catch (IllegalArgumentException ex) {</span>
+<span class="nc" id="L2365">                invalid.add(s);</span>
+<span class="nc" id="L2366">            }</span>
+<span class="nc" id="L2367">        });</span>
+<span class="fc" id="L2368">        invalid.forEach((s) -&gt; {</span>
+<span class="nc" id="L2369">            getLog().warn(&quot;Invalid report format specified: &quot; + s);</span>
+<span class="nc" id="L2370">        });</span>
+<span class="pc bpc" id="L2371" title="1 of 2 branches missed.">        if (selectedFormats.contains(&quot;true&quot;)) {</span>
+<span class="nc" id="L2372">            selectedFormats.remove(&quot;true&quot;);</span>
         }
-<span class="pc bpc" id="L2366" title="2 of 4 branches missed.">        if (format != null &amp;&amp; selectedFormats.isEmpty()) {</span>
-<span class="fc" id="L2367">            selectedFormats.add(format);</span>
+<span class="pc bpc" id="L2374" title="2 of 4 branches missed.">        if (format != null &amp;&amp; selectedFormats.isEmpty()) {</span>
+<span class="fc" id="L2375">            selectedFormats.add(format);</span>
         }
-<span class="fc" id="L2369">        return selectedFormats;</span>
+<span class="fc" id="L2377">        return selectedFormats;</span>
     }
 
     /**
@@ -2376,10 +2384,10 @@ import org.slf4j.spi.LocationAwareLogger;
      * @return a list of artifact to exclude
      */
     public List&lt;String&gt; getExcludes() {
-<span class="fc bfc" id="L2379" title="All 2 branches covered.">        if (excludes == null) {</span>
-<span class="fc" id="L2380">            excludes = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L2387" title="1 of 2 branches missed.">        if (excludes == null) {</span>
+<span class="nc" id="L2388">            excludes = new ArrayList&lt;&gt;();</span>
         }
-<span class="fc" id="L2382">        return excludes;</span>
+<span class="fc" id="L2390">        return excludes;</span>
     }
 
     /**
@@ -2388,7 +2396,7 @@ import org.slf4j.spi.LocationAwareLogger;
      * @return the artifact scope excluded filter
      */
     protected Filter&lt;String&gt; getArtifactScopeExcluded() {
-<span class="nc" id="L2391">        return artifactScopeExcluded;</span>
+<span class="fc" id="L2399">        return artifactScopeExcluded;</span>
     }
 
     /**
@@ -2397,7 +2405,7 @@ import org.slf4j.spi.LocationAwareLogger;
      * @return the configured settings
      */
     protected Settings getSettings() {
-<span class="fc" id="L2400">        return settings;</span>
+<span class="fc" id="L2408">        return settings;</span>
     }
 
     //&lt;editor-fold defaultstate=&quot;collapsed&quot; desc=&quot;Methods to fail build or show summary&quot;&gt;
@@ -2410,54 +2418,54 @@ import org.slf4j.spi.LocationAwareLogger;
      * higher then the threshold set
      */
     protected void checkForFailure(Dependency[] dependencies) throws MojoFailureException {
-<span class="fc" id="L2413">        final StringBuilder ids = new StringBuilder();</span>
-<span class="fc bfc" id="L2414" title="All 2 branches covered.">        for (Dependency d : dependencies) {</span>
-<span class="fc" id="L2415">            boolean addName = true;</span>
-<span class="fc bfc" id="L2416" title="All 2 branches covered.">            for (Vulnerability v : d.getVulnerabilities()) {</span>
-<span class="pc bpc" id="L2417" title="1 of 2 branches missed.">                final float cvssV2 = v.getCvssV2() != null ? v.getCvssV2().getScore() : -1;</span>
-<span class="pc bpc" id="L2418" title="1 of 2 branches missed.">                final float cvssV3 = v.getCvssV3() != null ? v.getCvssV3().getBaseScore() : -1;</span>
-<span class="pc bpc" id="L2419" title="1 of 2 branches missed.">                final float unscoredCvss = v.getUnscoredSeverity() != null ? SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) : -1;</span>
+<span class="fc" id="L2421">        final StringBuilder ids = new StringBuilder();</span>
+<span class="fc bfc" id="L2422" title="All 2 branches covered.">        for (Dependency d : dependencies) {</span>
+<span class="fc" id="L2423">            boolean addName = true;</span>
+<span class="fc bfc" id="L2424" title="All 2 branches covered.">            for (Vulnerability v : d.getVulnerabilities()) {</span>
+<span class="pc bpc" id="L2425" title="1 of 2 branches missed.">                final float cvssV2 = v.getCvssV2() != null ? v.getCvssV2().getScore() : -1;</span>
+<span class="pc bpc" id="L2426" title="1 of 2 branches missed.">                final float cvssV3 = v.getCvssV3() != null ? v.getCvssV3().getBaseScore() : -1;</span>
+<span class="pc bpc" id="L2427" title="1 of 2 branches missed.">                final float unscoredCvss = v.getUnscoredSeverity() != null ? SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) : -1;</span>
 
-<span class="pc bpc" id="L2421" title="5 of 10 branches missed.">                if (failBuildOnAnyVulnerability || cvssV2 &gt;= failBuildOnCVSS</span>
+<span class="pc bpc" id="L2429" title="5 of 10 branches missed.">                if (failBuildOnAnyVulnerability || cvssV2 &gt;= failBuildOnCVSS</span>
                         || cvssV3 &gt;= failBuildOnCVSS
                         || unscoredCvss &gt;= failBuildOnCVSS
                         //safety net to fail on any if for some reason the above misses on 0
                         || (failBuildOnCVSS &lt;= 0.0f)) {
-<span class="nc" id="L2426">                    String name = v.getName();</span>
-<span class="nc bnc" id="L2427" title="All 2 branches missed.">                    if (cvssV3 &gt;= 0.0f) {</span>
-<span class="nc" id="L2428">                        name += &quot;(&quot; + cvssV3 + &quot;)&quot;;</span>
-<span class="nc bnc" id="L2429" title="All 2 branches missed.">                    } else if (cvssV2 &gt;= 0.0f) {</span>
-<span class="nc" id="L2430">                        name += &quot;(&quot; + cvssV2 + &quot;)&quot;;</span>
-<span class="nc bnc" id="L2431" title="All 2 branches missed.">                    } else if (unscoredCvss &gt;= 0.0f) {</span>
-<span class="nc" id="L2432">                        name += &quot;(&quot; + unscoredCvss + &quot;)&quot;;</span>
+<span class="nc" id="L2434">                    String name = v.getName();</span>
+<span class="nc bnc" id="L2435" title="All 2 branches missed.">                    if (cvssV3 &gt;= 0.0f) {</span>
+<span class="nc" id="L2436">                        name += &quot;(&quot; + cvssV3 + &quot;)&quot;;</span>
+<span class="nc bnc" id="L2437" title="All 2 branches missed.">                    } else if (cvssV2 &gt;= 0.0f) {</span>
+<span class="nc" id="L2438">                        name += &quot;(&quot; + cvssV2 + &quot;)&quot;;</span>
+<span class="nc bnc" id="L2439" title="All 2 branches missed.">                    } else if (unscoredCvss &gt;= 0.0f) {</span>
+<span class="nc" id="L2440">                        name += &quot;(&quot; + unscoredCvss + &quot;)&quot;;</span>
                     }
-<span class="nc bnc" id="L2434" title="All 2 branches missed.">                    if (addName) {</span>
-<span class="nc" id="L2435">                        addName = false;</span>
-<span class="nc" id="L2436">                        ids.append(NEW_LINE).append(d.getFileName()).append(&quot;: &quot;);</span>
-<span class="nc" id="L2437">                        ids.append(name);</span>
+<span class="nc bnc" id="L2442" title="All 2 branches missed.">                    if (addName) {</span>
+<span class="nc" id="L2443">                        addName = false;</span>
+<span class="nc" id="L2444">                        ids.append(NEW_LINE).append(d.getFileName()).append(&quot;: &quot;);</span>
+<span class="nc" id="L2445">                        ids.append(name);</span>
                     } else {
-<span class="nc" id="L2439">                        ids.append(&quot;, &quot;).append(name);</span>
+<span class="nc" id="L2447">                        ids.append(&quot;, &quot;).append(name);</span>
                     }
                 }
-<span class="fc" id="L2442">            }</span>
+<span class="fc" id="L2450">            }</span>
         }
-<span class="pc bpc" id="L2444" title="1 of 2 branches missed.">        if (ids.length() &gt; 0) {</span>
+<span class="pc bpc" id="L2452" title="1 of 2 branches missed.">        if (ids.length() &gt; 0) {</span>
             final String msg;
-<span class="nc bnc" id="L2446" title="All 2 branches missed.">            if (showSummary) {</span>
-<span class="nc bnc" id="L2447" title="All 2 branches missed.">                if (failBuildOnAnyVulnerability) {</span>
-<span class="nc" id="L2448">                    msg = String.format(&quot;%n%nOne or more dependencies were identified with vulnerabilities: %n%s%n%n&quot;</span>
-<span class="nc" id="L2449">                            + &quot;See the dependency-check report for more details.%n%n&quot;, ids.toString());</span>
+<span class="nc bnc" id="L2454" title="All 2 branches missed.">            if (showSummary) {</span>
+<span class="nc bnc" id="L2455" title="All 2 branches missed.">                if (failBuildOnAnyVulnerability) {</span>
+<span class="nc" id="L2456">                    msg = String.format(&quot;%n%nOne or more dependencies were identified with vulnerabilities: %n%s%n%n&quot;</span>
+<span class="nc" id="L2457">                            + &quot;See the dependency-check report for more details.%n%n&quot;, ids.toString());</span>
                 } else {
-<span class="nc" id="L2451">                    msg = String.format(&quot;%n%nOne or more dependencies were identified with vulnerabilities that have a CVSS score greater than or &quot;</span>
-<span class="nc" id="L2452">                            + &quot;equal to '%.1f': %n%s%n%nSee the dependency-check report for more details.%n%n&quot;, failBuildOnCVSS, ids.toString());</span>
+<span class="nc" id="L2459">                    msg = String.format(&quot;%n%nOne or more dependencies were identified with vulnerabilities that have a CVSS score greater than or &quot;</span>
+<span class="nc" id="L2460">                            + &quot;equal to '%.1f': %n%s%n%nSee the dependency-check report for more details.%n%n&quot;, failBuildOnCVSS, ids.toString());</span>
                 }
             } else {
-<span class="nc" id="L2455">                msg = String.format(&quot;%n%nOne or more dependencies were identified with vulnerabilities.%n%n&quot;</span>
+<span class="nc" id="L2463">                msg = String.format(&quot;%n%nOne or more dependencies were identified with vulnerabilities.%n%n&quot;</span>
                         + &quot;See the dependency-check report for more details.%n%n&quot;);
             }
-<span class="nc" id="L2458">            throw new MojoFailureException(msg);</span>
+<span class="nc" id="L2466">            throw new MojoFailureException(msg);</span>
         }
-<span class="fc" id="L2460">    }</span>
+<span class="fc" id="L2468">    }</span>
 
     /**
      * Generates a warning message listing a summary of dependencies and their
@@ -2467,14 +2475,14 @@ import org.slf4j.spi.LocationAwareLogger;
      * @param dependencies a list of dependency objects
      */
     protected void showSummary(MavenProject mp, Dependency[] dependencies) {
-<span class="pc bpc" id="L2470" title="1 of 2 branches missed.">        if (showSummary) {</span>
-<span class="fc" id="L2471">            DependencyCheckScanAgent.showSummary(mp.getName(), dependencies);</span>
+<span class="pc bpc" id="L2478" title="1 of 2 branches missed.">        if (showSummary) {</span>
+<span class="fc" id="L2479">            DependencyCheckScanAgent.showSummary(mp.getName(), dependencies);</span>
         }
-<span class="fc" id="L2473">    }</span>
+<span class="fc" id="L2481">    }</span>
 
     private String getDefaultCveUrlModified() {
-<span class="fc" id="L2476">        return CveUrlParser.newInstance(getSettings())</span>
-<span class="fc" id="L2477">                .getDefaultCveUrlModified(cveUrlBase);</span>
+<span class="fc" id="L2484">        return CveUrlParser.newInstance(getSettings())</span>
+<span class="fc" id="L2485">                .getDefaultCveUrlModified(cveUrlBase);</span>
     }
 
     //&lt;/editor-fold&gt;

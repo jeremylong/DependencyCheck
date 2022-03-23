@@ -256,7 +256,7 @@
 <a class="jxr_linenumber" name="L248" href="#L248">248</a>         } <strong class="jxr_keyword">catch</strong> (SuppressionParseException ex) {
 <a class="jxr_linenumber" name="L249" href="#L249">249</a>             <strong class="jxr_keyword">throw</strong> ex;
 <a class="jxr_linenumber" name="L250" href="#L250">250</a>         } <strong class="jxr_keyword">catch</strong> (IOException ex) {
-<a class="jxr_linenumber" name="L251" href="#L251">251</a>             throwSuppressionParseException(<span class="jxr_string">"Unable to create temp file for suppression file"</span>, ex, suppressionFilePath);
+<a class="jxr_linenumber" name="L251" href="#L251">251</a>             throwSuppressionParseException(<span class="jxr_string">"Unable to suppression file"</span>, ex, suppressionFilePath);
 <a class="jxr_linenumber" name="L252" href="#L252">252</a>         } <strong class="jxr_keyword">finally</strong> {
 <a class="jxr_linenumber" name="L253" href="#L253">253</a>             <strong class="jxr_keyword">if</strong> (deleteTempFile &amp;&amp; file != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L254" href="#L254">254</a>                 FileUtils.delete(file);
@@ -275,7 +275,7 @@
 <a class="jxr_linenumber" name="L267" href="#L267">267</a> <em class="jxr_javadoccomment">     * SuppressionParseException</em>
 <a class="jxr_linenumber" name="L268" href="#L268">268</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L269" href="#L269">269</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> throwSuppressionParseException(String message, Exception exception, String suppressionFilePath) <strong class="jxr_keyword">throws</strong> SuppressionParseException {
-<a class="jxr_linenumber" name="L270" href="#L270">270</a>         LOGGER.warn(String.format(message + <span class="jxr_string">"'%s'"</span>, suppressionFilePath));
+<a class="jxr_linenumber" name="L270" href="#L270">270</a>         LOGGER.warn(String.format(message + <span class="jxr_string">" '%s'"</span>, suppressionFilePath));
 <a class="jxr_linenumber" name="L271" href="#L271">271</a>         LOGGER.debug(<span class="jxr_string">""</span>, exception);
 <a class="jxr_linenumber" name="L272" href="#L272">272</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/suppression/SuppressionParseException.html">SuppressionParseException</a>(message, exception);
 <a class="jxr_linenumber" name="L273" href="#L273">273</a>     }
