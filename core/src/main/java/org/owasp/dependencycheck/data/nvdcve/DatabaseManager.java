@@ -30,6 +30,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import javax.annotation.concurrent.ThreadSafe;
 import org.anarres.jdiagnostics.DefaultQuery;
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -459,6 +461,19 @@ public final class DatabaseManager {
     }
 
     /**
+     * Returns a resource bundle containing the SQL Statements needed for the
+     * database engine being used.
+     *
+     * @return a resource bundle containing the SQL Statements
+     */
+    public ResourceBundle getSqlStatements() {
+        final ResourceBundle statementBundle = getDatabaseProductName() != null
+                ? ResourceBundle.getBundle("data/dbStatements", new Locale(getDatabaseProductName()))
+                : ResourceBundle.getBundle("data/dbStatements");
+        return statementBundle;
+    }
+
+    /**
      * Uses the provided connection to check the specified schema version within
      * the database.
      *
@@ -469,9 +484,10 @@ public final class DatabaseManager {
     private void ensureSchemaVersion(Connection conn) throws DatabaseException {
         ResultSet rs = null;
         PreparedStatement ps = null;
+        final ResourceBundle statementBundle = getSqlStatements();
+        final String sql = statementBundle.getString("SELECT_SCHEMA_VERSION");
         try {
-            //TODO convert this to use DatabaseProperties
-            ps = conn.prepareStatement("SELECT `value` FROM properties WHERE id = 'version'");
+            ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             if (rs.next()) {
                 final String dbSchemaVersion = settings.getString(Settings.KEYS.DB_VERSION);
