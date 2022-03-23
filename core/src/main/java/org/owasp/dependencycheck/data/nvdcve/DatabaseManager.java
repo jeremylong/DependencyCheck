@@ -467,7 +467,7 @@ public final class DatabaseManager {
      * @return a resource bundle containing the SQL Statements
      */
     public ResourceBundle getSqlStatements() {
-        ResourceBundle statementBundle = getDatabaseProductName() != null
+        final ResourceBundle statementBundle = getDatabaseProductName() != null
                 ? ResourceBundle.getBundle("data/dbStatements", new Locale(getDatabaseProductName()))
                 : ResourceBundle.getBundle("data/dbStatements");
         return statementBundle;
@@ -484,7 +484,7 @@ public final class DatabaseManager {
     private void ensureSchemaVersion(Connection conn) throws DatabaseException {
         ResultSet rs = null;
         PreparedStatement ps = null;
-        ResourceBundle statementBundle = getSqlStatements();
+        final ResourceBundle statementBundle = getSqlStatements();
         final String sql = statementBundle.getString("SELECT_SCHEMA_VERSION");
         try {
             ps = conn.prepareStatement(sql);
