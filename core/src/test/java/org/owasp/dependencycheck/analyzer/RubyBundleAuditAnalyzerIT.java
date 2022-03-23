@@ -157,9 +157,16 @@ public class RubyBundleAuditAnalyzerIT extends BaseDBTestCase {
                     "ruby/vulnerable/gems/sinatra/Gemfile.lock"));
             analyzer.analyze(result, engine);
             Dependency dependency = engine.getDependencies()[0];
-            Vulnerability vulnerability = dependency.getVulnerabilities(true).iterator().next();
-            assertEquals(5.0f, vulnerability.getCvssV2().getScore(), 0.0);
-
+            boolean found =false;
+            for (Vulnerability vulnerability : dependency.getVulnerabilities()) {
+                if ("CVE-2015-3225".equals(vulnerability.getName())) {
+                    found = true;
+                    // validate that the score is from NVD rather than translated from the Bundle Audit severity text
+                    assertEquals(5.0f, vulnerability.getCvssV2().getScore(), 0.0);
+                    break;
+                }
+            }
+            assertTrue("CVE-2015-3225 was not found among the vulnerabilities",found);
         } catch (InitializationException | DatabaseException | AnalysisException | UpdateException e) {
             LOGGER.warn("Exception setting up RubyBundleAuditAnalyzer. Make sure Ruby gem bundle-audit is installed. You may also need to set property \"analyzer.bundle.audit.path\".");
             Assume.assumeNoException("Exception setting up RubyBundleAuditAnalyzer; bundle audit may not be installed, or property \"analyzer.bundle.audit.path\" may not be set.", e);
