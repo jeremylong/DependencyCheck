@@ -4954,4 +4954,14 @@
         <packageUrl regex="true">^pkg:maven/com\.github\.blagerweij/liquibase-sessionlock@.*$</packageUrl>
         <cpe>cpe:/a:liquibase:liquibase</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            org.apache.james:apache-mime4j-core and apache-mime4j-core FPs #3987
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.james/apache\-mime4j\-(core|dom)@.*$</packageUrl>
+        <cve>CVE-2021-38542</cve>
+        <cve>CVE-2021-40110</cve>
+        <cve>CVE-2021-40111</cve>
+        <cve>CVE-2021-40525</cve>
+    </suppress>
 </suppressions>
