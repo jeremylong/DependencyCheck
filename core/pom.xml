@@ -467,6 +467,32 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
     </dependencies>
     <profiles>
         <profile>
+            <id>TestMavenPlugin-core</id>
+            <activation>
+                <property>
+                    <name>testMavenPlugin</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>MySQL-IntegrationTest</id>
             <activation>
                 <property>
