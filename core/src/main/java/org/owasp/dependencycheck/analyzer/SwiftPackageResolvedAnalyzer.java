@@ -158,12 +158,12 @@ public class SwiftPackageResolvedAnalyzer extends AbstractFileTypeAnalyzer {
         try (InputStream in = FileUtils.openInputStream(spmResolved.getActualFile());
                 JsonReader resolved = Json.createReader(in)) {
             final JsonObject file = resolved.readObject();
-            final String fileVersion = file.getString("version");
+            final int fileVersion = file.getInt("version");
 
             switch(fileVersion) {
-                case "1":
+                case 1:
                     analyzeSpmResolvedDependenciesV1(spmResolved, engine, file);
-                case "2":
+                case 2:
                     analyzeSpmResolvedDependenciesV2(spmResolved, engine, file);
                 default:
                     return;
