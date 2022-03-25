@@ -157,31 +157,84 @@ public class SwiftPackageResolvedAnalyzer extends AbstractFileTypeAnalyzer {
 
         try (InputStream in = FileUtils.openInputStream(spmResolved.getActualFile());
                 JsonReader resolved = Json.createReader(in)) {
-            final JsonObject object = resolved.readObject().getJsonObject("object");
-            if (object == null) {
-                return;
+            final JsonObject file = resolved.readObject();
+            final String fileVersion = file.getString("version");
+
+            switch(fileVersion) {
+                case "1":
+                    analyzeSpmResolvedDependenciesV1(spmResolved, engine, file);
+                case "2":
+                    analyzeSpmResolvedDependenciesV2(spmResolved, engine, file);
+                default:
+                    return;
             }
-            final JsonArray pins = object.getJsonArray("pins");
-            if (pins == null) {
-                return;
-            }
-            pins.forEach(row -> {
-                final JsonObject pin = (JsonObject) row;
-                final String name = pin.getString("package");
-                final String repo = pin.getString("repositoryURL");
-                String version = null;
-                final JsonObject state = pin.getJsonObject("state");
-                if (state != null) {
-                    if (!state.isNull("version")) {
-                        version = state.getString("version");
-                    } else if (!state.isNull("branch")) {
-                        version = state.getString("branch");
-                    }
-                }
-                final Dependency dependency = createDependency(spmResolved, SPM_RESOLVED_FILE_NAME, name, version, repo);
-                engine.addDependency(dependency);
-            });
         }
+    }
+
+    /**
+     * Analyzes the version 1 of the Package.resolved file to extract evidence for the
+     * dependency.
+     *
+     * @param spmResolved the dependency to analyze
+     * @param engine the analysis engine
+     * @param resolved the json object of the file to analyze
+     */
+    private void analyzeSpmResolvedDependenciesV1(Dependency spmResolved, Engine engine, JsonObject resolved) {
+        final JsonObject object = resolved.getJsonObject("object");
+        if (object == null) {
+            return;
+        }
+        final JsonArray pins = object.getJsonArray("pins");
+        if (pins == null) {
+            return;
+        }
+        pins.forEach(row -> {
+            final JsonObject pin = (JsonObject) row;
+            final String name = pin.getString("package");
+            final String repo = pin.getString("repositoryURL");
+            String version = null;
+            final JsonObject state = pin.getJsonObject("state");
+            if (state != null) {
+                if (!state.isNull("version")) {
+                    version = state.getString("version");
+                } else if (!state.isNull("branch")) {
+                    version = state.getString("branch");
+                }
+            }
+            final Dependency dependency = createDependency(spmResolved, SPM_RESOLVED_FILE_NAME, name, version, repo);
+            engine.addDependency(dependency);
+        });
+    }
+
+    /**
+     * Analyzes the version 2 of the Package.resolved file to extract evidence for the
+     * dependency.
+     *
+     * @param spmResolved the dependency to analyze
+     * @param engine the analysis engine
+     * @param resolved the json object of the file to analyze
+     */
+    private void analyzeSpmResolvedDependenciesV2(Dependency spmResolved, Engine engine, JsonObject resolved) {
+        final JsonArray pins = resolved.getJsonArray("pins");
+        if (pins == null) {
+            return;
+        }
+        pins.forEach(row -> {
+            final JsonObject pin = (JsonObject) row;
+            final String name = pin.getString("identity");
+            final String repo = pin.getString("location");
+            String version = null;
+            final JsonObject state = pin.getJsonObject("state");
+            if (state != null) {
+                if (!state.isNull("version")) {
+                    version = state.getString("version");
+                } else if (!state.isNull("branch")) {
+                    version = state.getString("branch");
+                }
+            }
+            final Dependency dependency = createDependency(spmResolved, SPM_RESOLVED_FILE_NAME, name, version, repo);
+            engine.addDependency(dependency);
+        });
     }
 
     /**
