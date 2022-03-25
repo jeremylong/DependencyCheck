@@ -163,8 +163,10 @@ public class SwiftPackageResolvedAnalyzer extends AbstractFileTypeAnalyzer {
             switch(fileVersion) {
                 case 1:
                     analyzeSpmResolvedDependenciesV1(spmResolved, engine, file);
+                    break;
                 case 2:
                     analyzeSpmResolvedDependenciesV2(spmResolved, engine, file);
+                    break;
                 default:
                     return;
             }
