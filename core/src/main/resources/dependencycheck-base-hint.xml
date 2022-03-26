@@ -426,6 +426,7 @@
     <hint>
         <given>
             <evidence type="product" source="pom" name="name" value="PostgreSQL JDBC Driver"/>
+            <evidence type="product" source="Manifest" name="Implementation-Title" value="PostgreSQL JDBC Driver"/>
         </given>
         <add>
             <evidence type="product" source="hint analyzer" name="product" value="postgresql_jdbc_driver" confidence="HIGHEST"/>
