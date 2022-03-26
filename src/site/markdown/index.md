@@ -1,7 +1,7 @@
 About
 ====================
-OWASP dependency-check is an open source solution the OWASP Top 10 2013 entry:
-[A9 - Using Components with Known Vulnerabilities](https://www.owasp.org/index.php/Top_10_2013-A9-Using_Components_with_Known_Vulnerabilities).
+OWASP dependency-check is an open source solution to the OWASP Top 10 2021 entry:
+[A06:2021 – Vulnerable and Outdated Components](https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/).
 Dependency-check can currently be used to scan Java and .NET applications to 
 identify the use of known vulnerable components. Experimental analyzers for 
 Python, Ruby, PHP (composer), and Node.js applications; these are experimental
