@@ -806,7 +806,20 @@ Copyright (c) 2012 - Jeremy Long
             <plugin>
                 <groupId>se.bjurr.violations</groupId>
                 <artifactId>violation-comments-to-github-maven-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>se.bjurr.violations</groupId>
+                        <artifactId>violation-comments-to-github-lib</artifactId>
+                        <version>1.83.1</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>se.bjurr.violations</groupId>
+                        <artifactId>violations-lib</artifactId>
+                        <version>1.148.0</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
+                    <inherited>false</inherited>
                     <repositoryOwner>jeremylong</repositoryOwner>
                     <repositoryName>DependencyCheck</repositoryName>
                     <gitHubUrl>https://api.github.com/</gitHubUrl>
@@ -827,6 +840,12 @@ Copyright (c) 2012 - Jeremy Long
                             <reporter>Checkstyle</reporter>
                             <folder>.</folder>
                             <pattern>.*/checkstyle-result.xml$</pattern>
+                        </violation>
+                        <violation>
+                            <parser>SARIF</parser>
+                            <reporter>Sarif</reporter>
+                            <folder>.</folder>
+                            <pattern>.*/semgrep.sarif$</pattern>
                         </violation>
                     </violations>
                 </configuration>
