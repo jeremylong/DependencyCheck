@@ -153,13 +153,13 @@ import org.slf4j.LoggerFactory;
             }
 <span class="fc bfc" id="L154" title="All 2 branches covered.">        } else if (ecosystemIs(AbstractNpmAnalyzer.NPM_DEPENDENCY_ECOSYSTEM, dependency, nextDependency)</span>
 <span class="fc bfc" id="L155" title="All 2 branches covered.">                &amp;&amp; namesAreEqual(dependency, nextDependency)</span>
-<span class="pc bpc" id="L156" title="1 of 2 branches missed.">                &amp;&amp; npmVersionsMatch(dependency.getVersion(), nextDependency.getVersion())) {</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">                &amp;&amp; npmVersionsMatch(dependency.getVersion(), nextDependency.getVersion())) {</span>
 
-<span class="nc bnc" id="L158" title="All 2 branches missed.">            if (!dependency.isVirtual()) {</span>
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">            if (!dependency.isVirtual()) {</span>
 <span class="nc" id="L159">                DependencyMergingAnalyzer.mergeDependencies(dependency, nextDependency, dependenciesToRemove);</span>
             } else {
-<span class="nc" id="L161">                DependencyMergingAnalyzer.mergeDependencies(nextDependency, dependency, dependenciesToRemove);</span>
-<span class="nc" id="L162">                return true;</span>
+<span class="fc" id="L161">                DependencyMergingAnalyzer.mergeDependencies(nextDependency, dependency, dependenciesToRemove);</span>
+<span class="fc" id="L162">                return true;</span>
             }
         }
 <span class="fc" id="L165">        return false;</span>
