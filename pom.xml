@@ -356,7 +356,7 @@ Copyright (c) 2012 - Jeremy Long
                 <plugin>
                     <groupId>se.bjurr.violations</groupId>
                     <artifactId>violation-comments-to-github-maven-plugin</artifactId>
-                    <version>1.65</version>
+                    <version>1.67</version>
                 </plugin>
             </plugins>
         </pluginManagement>
