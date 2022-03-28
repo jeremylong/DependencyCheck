@@ -1,5 +1,11 @@
 # Release Notes
 
+## [Version 7.0.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.0.2) (2022-03-28)
+
+### Changes
+ - General project maintenance, bug fixes, and false positive and false negative reductions.
+ - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/41?closed=1).
+
 ## [Version 7.0.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.0.1) (2022-03-23)
 
 ### Changes
