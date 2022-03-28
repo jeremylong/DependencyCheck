@@ -186,8 +186,8 @@ jobs:
           draft: false
           body: |
             ### Changes
-             - General project maintenance, bug fixes, and false positive reductions.
-             - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/40?closed=1).
+            - General project maintenance, bug fixes, and false positive and false negative reductions.
+            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/41?closed=1).
 
       - name: Upload CLI
         id: upload-release-cli
