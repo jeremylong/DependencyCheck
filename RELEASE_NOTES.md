@@ -1,5 +1,11 @@
 # Release Notes
 
+## [Version 7.0.3](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.0.2) (2022-03-29)
+
+### Changes
+ - Update to `jackson-databind` (see #4285).
+ - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/42?closed=1).
+
 ## [Version 7.0.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.0.2) (2022-03-28)
 
 ### Changes
