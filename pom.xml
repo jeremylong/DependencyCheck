@@ -1095,6 +1095,13 @@ Copyright (c) 2012 - Jeremy Long
                 <version>3.4.1</version>
             </dependency>
             <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.13.2.20220324</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!--dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson.version}</version>
@@ -1103,7 +1110,7 @@ Copyright (c) 2012 - Jeremy Long
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-afterburner</artifactId>
                 <version>${jackson-afterburmer.version}</version>
-            </dependency>
+            </dependency-->
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
