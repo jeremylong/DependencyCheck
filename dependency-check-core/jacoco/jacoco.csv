@@ -64,14 +64,14 @@ Dependency-Check Core,org.owasp.dependencycheck.data.update,UpdateService,0,12,0
 Dependency-Check Core,org.owasp.dependencycheck.data.update,EngineVersionCheck,105,178,15,13,28,48,14,9,2,7
 Dependency-Check Core,org.owasp.dependencycheck.data.update,RetireJSDataSource,108,170,9,13,23,35,8,9,1,5
 Dependency-Check Core,org.owasp.dependencycheck.data.update,NvdCveUpdater,1084,108,121,5,238,31,71,7,8,7
-Dependency-Check Core,org.owasp.dependencycheck.data.lucene,UrlTokenizingFilter,11,76,0,10,3,18,0,8,0,3
+Dependency-Check Core,org.owasp.dependencycheck.data.lucene,UrlTokenizingFilter,15,72,1,9,4,17,1,7,0,3
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,LuceneUtils,0,61,1,11,0,17,1,8,0,3
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,TokenPairConcatenatingFilter,59,99,6,10,17,28,5,8,2,3
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,AlphaNumericFilter,51,114,6,14,15,28,5,11,2,4
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,DependencySimilarity,5,0,0,0,2,0,2,0,2,0
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,AbstractTokenizingFilter,0,51,0,4,0,15,0,7,0,5
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,SearchFieldAnalyzer,0,119,1,1,0,19,1,5,0,5
-Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,CveDB,1758,1036,110,52,414,235,86,45,25,25
+Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,CveDB,1756,1038,109,53,413,236,85,46,25,25
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,DatabaseException,13,0,0,0,6,0,3,0,3,0
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,DriverShim,91,27,8,0,25,6,12,4,8,4
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,CveDB.PreparedStatementCveDb,0,254,0,0,0,26,0,1,0,1
@@ -145,9 +145,9 @@ Dependency-Check Core,org.owasp.dependencycheck.analyzer,NvdCveAnalyzer,127,130,
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,GolangModAnalyzer,263,220,17,9,46,66,13,12,0,11
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,PythonDistributionAnalyzer,148,401,27,29,33,93,24,19,1,14
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,MSBuildProjectAnalyzer,38,251,2,8,9,47,2,11,0,8
-Dependency-Check Core,org.owasp.dependencycheck.analyzer,DependencyMergingAnalyzer,88,387,52,84,26,88,45,40,0,17
+Dependency-Check Core,org.owasp.dependencycheck.analyzer,DependencyMergingAnalyzer,94,381,54,82,27,87,46,39,0,17
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,RubyBundleAuditAnalyzer,290,150,24,10,69,39,15,11,1,8
-Dependency-Check Core,org.owasp.dependencycheck.analyzer,AbstractDependencyComparingAnalyzer,0,80,1,11,0,20,1,10,0,5
+Dependency-Check Core,org.owasp.dependencycheck.analyzer,AbstractDependencyComparingAnalyzer,5,75,2,10,1,19,3,8,1,4
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,RubyBundlerAnalyzer,50,91,17,13,10,20,13,6,0,4
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,VulnerabilitySuppressionAnalyzer,0,36,2,8,0,9,2,10,0,7
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,RubyBundlerAnalyzer.new FilenameFilter() {...},0,14,0,0,0,2,0,2,0,2
@@ -168,7 +168,7 @@ Dependency-Check Core,org.owasp.dependencycheck.analyzer,RetireJsAnalyzer,387,50
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,YarnAuditAnalyzer,160,316,14,13,42,79,13,13,0,12
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,CPEAnalyzer,551,1980,88,230,105,423,77,137,6,49
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,ArchiveAnalyzer,541,827,72,88,114,177,64,43,6,21
-Dependency-Check Core,org.owasp.dependencycheck.analyzer,DependencyBundlingAnalyzer,575,663,169,137,134,132,122,60,7,22
+Dependency-Check Core,org.owasp.dependencycheck.analyzer,DependencyBundlingAnalyzer,584,654,171,135,137,129,123,59,7,22
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,AnalyzerService,1,84,1,11,1,22,1,10,0,5
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,CocoaPodsAnalyzer,103,431,17,23,20,102,15,17,0,12
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,PythonPackageAnalyzer,55,312,6,18,9,71,5,20,0,13
