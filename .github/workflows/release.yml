@@ -187,7 +187,7 @@ jobs:
           body: |
             ### Changes
             - Update to `jackson-databind` (see #4285).
-            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/42?closed=1).
+            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/43?closed=1).
 
       - name: Upload CLI
         id: upload-release-cli
