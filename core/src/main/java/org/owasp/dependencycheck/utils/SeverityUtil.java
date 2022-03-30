@@ -66,6 +66,13 @@ public final class SeverityUtil {
         }
     }
 
+    /**
+     * Converts a textual severity to the text that should be used to signal
+     * it in a report.
+     * @param severity The textual unscored severity
+     * @return The severity when properly recognized, otherwise the severity extended with a remark that it was not recognized and
+     *  assumed to represent a critical severity.
+     */
     public static String unscoredToSeveritytext(final String severity) {
         switch (Severity.forUnscored(severity)) {
             case CRITICAL:
@@ -135,13 +142,41 @@ public final class SeverityUtil {
      */
     public static float sortAdjustedCVSSv3BaseScore(final float cvssV3BaseScore) {
         if (cvssV3BaseScore >= 9.0f) {
-            return cvssV3BaseScore+1.3f;
+            return cvssV3BaseScore + 1.3f;
         }
         return cvssV3BaseScore;
     }
 
+    /**
+     * An enum to translate unscored severity texts to a severity level of a defined set of severities.
+     * Allows for re-use of the text-to-severity mapping in multiple helper methods.
+     */
     private enum Severity {
-        CRITICAL, ASSUMED_CRITICAL, HIGH, MEDIUM, LOW, INFO;
+        /**
+         * A severity level for textual values that should be regarded as accompanying a critical severity vulnerability
+         */
+        CRITICAL,
+        /**
+         * A severity level for textual values that are not recognized and therefor assumed to be accompanying a critical severity
+         * vulnerability
+         */
+        ASSUMED_CRITICAL,
+        /**
+         * A severity level for textual values that should be regarded as accompanying a high severity vulnerability
+         */
+        HIGH,
+        /**
+         * A severity level for textual values that should be regarded as accompanying a medium severity vulnerability
+         */
+        MEDIUM,
+        /**
+         * A severity level for textual values that should be regarded as accompanying a low severity vulnerability
+         */
+        LOW,
+        /**
+         * A severity level for textual values that should be regarded as accompanying a vulnerability of informational nature
+         */
+        INFO;
 
         public static Severity forUnscored(String value) {
             switch (value == null ? "none" : value.toLowerCase()) {
