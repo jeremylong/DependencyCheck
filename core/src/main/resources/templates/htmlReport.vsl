@@ -766,17 +766,10 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                             ## with a set sorted approximately on descending severity
                             #if ($severestVuln.cvssV3)
                                 #set($cveImpact=$severestVuln.cvssV3.baseScore)
-                                #set($cveSeverity=$enc.html($severestVuln.cvssV3.baseSeverity))
                             #elseif ($severestVuln.cvssV2)
                                 #set($cveImpact=$severestVuln.cvssV2.score)
-                                #set($cveSeverity=$enc.html($severestVuln.cvssV2.severity))
-                            #elseif ($vuln.unscoredSeverity)
-                                #if($vuln.unscoredSeverity.equals("0.0"))
-                                    #set($cveSeverity="Unknown")
-                                #else
-                                    #set($cveSeverity=$enc.html($vuln.unscoredSeverity))
-                                #end
                             #end
+                            #set($cveSeverity=$enc.html($severestVuln.highestSeverityText))
                         #end
                         #set($sortValue=$cveImpact*10)
                         <td data-sort-value="$sortValue">$cveSeverity</td>
