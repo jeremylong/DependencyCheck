@@ -248,7 +248,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer imple
         } catch (SuppressionParseException ex) {
             throw ex;
         } catch (IOException ex) {
-            throwSuppressionParseException("Unable to suppression file", ex, suppressionFilePath);
+            throwSuppressionParseException("Unable to read suppression file", ex, suppressionFilePath);
         } finally {
             if (deleteTempFile && file != null) {
                 FileUtils.delete(file);
