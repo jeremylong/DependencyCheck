@@ -18,8 +18,6 @@
 package org.owasp.dependencycheck.data.nodeaudit;
 
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -52,6 +50,11 @@ public class NpmPayloadBuilderTest {
                                                 .add("integrity", "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==")
                                                 .add("dev", true)
                                 )
+                                .add("node_modules/jest-resolve",
+                                        Json.createObjectBuilder()
+                                                .add("dev", true)
+                                                .add("optional", true)
+                                                .add("peer", true))
                 );
 
         JsonObject packageJson = builder.build();
@@ -63,9 +66,13 @@ public class NpmPayloadBuilderTest {
         Assert.assertTrue(sanitized.containsKey("dependencies"));
         Assert.assertTrue(sanitized.containsKey("requires"));
 
+        JsonObject dependencies = sanitized.getJsonObject("dependencies");
+        Assert.assertTrue(dependencies.containsKey("node_modules/jest-resolve"));
+
         JsonObject requires = sanitized.getJsonObject("requires");
         Assert.assertTrue(requires.containsKey("abbrev"));
         Assert.assertEquals("^1.1.1", requires.getString("abbrev"));
+        Assert.assertEquals("*", requires.getString("node_modules/jest-resolve"));
 
         Assert.assertFalse(sanitized.containsKey("lockfileVersion"));
         Assert.assertFalse(sanitized.containsKey("random"));

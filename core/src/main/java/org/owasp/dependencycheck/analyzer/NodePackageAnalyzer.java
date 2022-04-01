@@ -37,6 +37,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.json.Json;
 import javax.json.JsonException;
@@ -282,7 +283,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
      */
     public static boolean shouldSkipDependency(String name, String version, boolean optional, boolean fileExist) {
         // some package manager can handle alias, yarn for example, but npm doesn't support it
-        if (version.startsWith("npm:")) {
+        if (Objects.nonNull(version) && version.startsWith("npm:")) {
             //TODO make this an error that gets logged
             LOGGER.warn("dependency skipped: package.json contain an alias for {} => {} npm audit doesn't "
                     + "support aliases", name, version.replace("npm:", ""));
@@ -296,7 +297,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
 
         // this seems to produce crash sometimes, I need to tests
         // using a local node_module is not supported by npm audit, it crash
-        if (version.startsWith("file:")) {
+        if (Objects.nonNull(version) && version.startsWith("file:")) {
             LOGGER.warn("dependency skipped: package.json contain an local node_module for {} seems to be "
                     + "located {} npm audit doesn't support locally referenced modules",
                     name, version.replace("file:", ""));

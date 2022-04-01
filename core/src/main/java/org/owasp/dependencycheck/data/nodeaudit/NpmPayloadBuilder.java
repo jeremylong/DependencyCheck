@@ -20,6 +20,8 @@ package org.owasp.dependencycheck.data.nodeaudit;
 import org.owasp.dependencycheck.analyzer.NodePackageAnalyzer;
 
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import javax.json.Json;
@@ -149,7 +151,10 @@ public final class NpmPayloadBuilder {
                 if (entry.getValue().getValueType() == JsonValue.ValueType.OBJECT) {
                     final JsonObject dep = ((JsonObject) entry.getValue());
                     final String name = entry.getKey();
-                    version = dep.getString("version");
+                    version = Optional.ofNullable(dep.getJsonString("version"))
+                            .map(JsonString::getString)
+                            .orElse(null);
+
                     if (NodePackageAnalyzer.shouldSkipDependency(name, version)) {
                         return;
                     }
@@ -165,7 +170,7 @@ public final class NpmPayloadBuilder {
                         version = tmp;
                     }
                 }
-                requiresBuilder.add(entry.getKey(), "^" + version);
+                requiresBuilder.add(entry.getKey(), Objects.isNull(version) ? "*" : "^" + version);
             });
         }
         payloadBuilder.add("requires", requiresBuilder.build());
@@ -218,7 +223,9 @@ public final class NpmPayloadBuilder {
      */
     private static JsonObject buildDependencies(JsonObject dep, MultiValuedMap<String, String> dependencyMap) {
         final JsonObjectBuilder depBuilder = Json.createObjectBuilder();
-        depBuilder.add("version", dep.getString("version"));
+        Optional.ofNullable(dep.getJsonString("version"))
+                        .map(JsonString::getString)
+                        .ifPresent(version -> depBuilder.add("version", version));
 
         //not installed package (like, dependency of an optional dependency) doesn't contains integrity
         if (dep.containsKey("integrity")) {
