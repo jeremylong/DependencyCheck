@@ -26,6 +26,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
+import org.owasp.dependencycheck.data.update.exception.CorruptedDatastreamException;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -131,9 +132,10 @@ public class ProcessTask implements Callable<ProcessTask> {
      * @throws ClassNotFoundException thrown if the h2 database driver cannot be
      * loaded
      * @throws UpdateException thrown if the file could not be found
+     * @throws CorruptedDatastreamException thrown if the file was found to be a corrupted download
      */
-    protected void importJSON(File file) throws ParserConfigurationException,
-            IOException, SQLException, DatabaseException, ClassNotFoundException, UpdateException {
+    protected void importJSON(File file) throws ParserConfigurationException, IOException, SQLException, DatabaseException,
+            ClassNotFoundException, UpdateException, CorruptedDatastreamException {
 
         final NvdCveParser parser = new NvdCveParser(settings, cveDB);
         parser.parse(file);
@@ -152,6 +154,9 @@ public class ProcessTask implements Callable<ProcessTask> {
             importJSON(downloadTask.getFile());
             properties.save(downloadTask.getNvdCveInfo());
         } catch (ParserConfigurationException | SQLException | DatabaseException | ClassNotFoundException | IOException ex) {
+            throw new UpdateException(ex);
+        } catch (CorruptedDatastreamException ex) {
+            downloadTask.evictCorruptFileFromCache();
             throw new UpdateException(ex);
         } finally {
             downloadTask.cleanup();

@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -32,7 +33,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipException;
+
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.owasp.dependencycheck.data.update.exception.CorruptedDatastreamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
@@ -76,8 +80,9 @@ public final class NvdCveParser {
      *
      * @param file the NVD JSON file to parse
      * @throws UpdateException thrown if the file could not be read
+     * @throws CorruptedDatastreamException thrown if the file was found to be a corrupted download (ZipException or premature EOF)
      */
-    public void parse(File file) throws UpdateException {
+    public void parse(File file) throws UpdateException, CorruptedDatastreamException {
         LOGGER.debug("Parsing " + file.getName());
 
         final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -99,6 +104,8 @@ public final class NvdCveParser {
         } catch (FileNotFoundException ex) {
             LOGGER.error(ex.getMessage());
             throw new UpdateException("Unable to find the NVD CVE file, `" + file + "`, to parse", ex);
+        } catch (ZipException | EOFException ex) {
+            throw new CorruptedDatastreamException("Error reading parsing NVD CVE file", ex);
         } catch (IOException ex) {
             LOGGER.error("Error reading NVD JSON data: {}", file);
             LOGGER.debug("Error extracting the NVD JSON data from: " + file.toString(), ex);

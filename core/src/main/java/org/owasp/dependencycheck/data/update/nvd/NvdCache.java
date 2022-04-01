@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.data.update.nvd;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.time.Instant;
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
@@ -106,6 +107,30 @@ public class NvdCache {
             } catch (IOException ex) {
                 LOGGER.debug("Error storing nvd file in cache", ex);
             }
+        }
+    }
+
+    /**
+     * Evict a file corresponding to a URL from the cache.
+     * <br>
+     * Used to clear files from the cache that are found to be a corrupted download.
+     *
+     * @param url
+     *         the origin URL of the file that is to be evicted from the cache
+     */
+    public void evictFromCache(URL url) {
+        try {
+            final File tmp = new File(url.getPath());
+            final String filename = tmp.getName();
+            final File cache = new File(settings.getDataDirectory(), "nvdcache");
+            if (!cache.isDirectory()) {
+                return;
+            }
+            LOGGER.error("Removing file from cache for {} as a corrupted download is detected", url);
+            final File nvdFile = new File(cache, filename);
+            Files.delete(nvdFile.toPath());
+        } catch (IOException ex) {
+            LOGGER.warn("Error evicting corrupt nvd file from cache", ex);
         }
     }
 }
