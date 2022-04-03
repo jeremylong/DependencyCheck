@@ -488,6 +488,7 @@ Copyright (c) 2012 - Jeremy Long
                         <excludeProperty>git.build.user.*</excludeProperty>
                         <excludeProperty>git.build.host</excludeProperty>
                         <excludeProperty>git.commit.user.*</excludeProperty>
+                        <excludeProperty>git.commit.count</excludeProperty>
                     </excludeProperties>
                 </configuration>
             </plugin>
