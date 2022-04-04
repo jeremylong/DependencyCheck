@@ -650,6 +650,7 @@
             54. aaugustin websockets is a python library #3460
             55. cron_project:cron is a linux C application #3548
             56. html2pdf_project:html2pdf is a PHP framework #4021, #4251
+            57. shadow_project:shadow is a suite of C-applications on Linux #4237
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -708,6 +709,7 @@
         <cpe>cpe:/a:websockets_project:websockets</cpe>
         <cpe>cpe:/a:cron_project:cron</cpe>
         <cpe>cpe:/a:html2pdf_project:html2pdf</cpe>
+        <cpe>cpe:/a:shadow_project:shadow</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
