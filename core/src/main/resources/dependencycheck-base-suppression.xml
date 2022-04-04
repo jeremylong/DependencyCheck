@@ -729,6 +729,7 @@
             17. ws_project is a node websocket client (#1535)
             18. i18n_project is a node.js i18n module (#3350) (#3352) (#3353)
             19. redis:redis is a C project #3744, #3814, #3840, #3841
+            20. perl:perl is a C project #4254
         ]]></notes>
         <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)$</filePath>
         <cpe>cpe:/a:dash:dash</cpe>
@@ -750,6 +751,7 @@
         <cpe>cpe:/a:ws_project:ws</cpe>
         <cpe>cpe:/a:i18n_project:i18n</cpe>
         <cpe>cpe:/a:redis:redis</cpe>
+        <cpe>cpe:/a:perl:perl</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
