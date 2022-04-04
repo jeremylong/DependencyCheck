@@ -4989,4 +4989,11 @@
         <packageUrl regex="true">^pkg:maven/org\.codehaus\.jackson/jackson-jaxrs@.*$</packageUrl>
         <cpe>cpe:/a:fasterxml:jackson-databind</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4228
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.minio/minio@.*$</packageUrl>
+        <cpe>cpe:/a:minio:minio</cpe>
+    </suppress>
 </suppressions>
