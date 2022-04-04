@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.data.update.nvd;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -183,6 +184,19 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
         if (file != null && file.exists() && !file.delete()) {
             LOGGER.debug("Failed to delete first temporary file {}", file.toString());
             file.deleteOnExit();
+        }
+    }
+
+    /**
+     * Attempts to delete the files that were downloaded.
+     */
+    public void evictCorruptFileFromCache() {
+        final NvdCache cache = new NvdCache(settings);
+        try {
+            final URL url1 = new URL(nvdCveInfo.getUrl());
+            cache.evictFromCache(url1);
+        } catch (MalformedURLException e) {
+            LOGGER.debug("Ignoring Cache-eviction request for an invalid URL");
         }
     }
 
