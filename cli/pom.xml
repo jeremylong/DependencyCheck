@@ -48,7 +48,7 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
                 <includes>
                     <include>completion-for-dependency-check.sh</include>
                 </includes>
-                <targetPath>${project.build.directory}/release/bin</targetPath>
+		<targetPath>../release/bin</targetPath>
             </resource>
             <resource>
                 <directory>${basedir}</directory>
