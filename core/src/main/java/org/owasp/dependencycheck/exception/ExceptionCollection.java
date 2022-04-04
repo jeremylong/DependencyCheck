@@ -217,7 +217,7 @@ public class ExceptionCollection extends Exception {
     }
 
     private static StringBuilder nestedCauseList(Throwable t) {
-        final StringBuilder sb = new StringBuilder(t.getMessage());
+        final StringBuilder sb = new StringBuilder().append(t.getMessage());
         Throwable nestedCause = t.getCause();
         while (nestedCause != null) {
             sb.append("\n\t\tcaused by ").append(nestedCause.getClass().getSimpleName()).append(": ").append(nestedCause.getMessage());
