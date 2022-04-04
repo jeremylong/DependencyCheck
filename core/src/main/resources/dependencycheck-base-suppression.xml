@@ -4969,4 +4969,11 @@
         <cpe>cpe:/a:davenport:davenport</cpe>
         <cpe>cpe:/a:protonmail:protonmail</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+          FP CPE match per #4289
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.bouncycastle/bc\-fips@.*$</packageUrl>
+        <cpe>cpe:/a:bouncycastle:legion-of-the-bouncy-castle:</cpe>
+    </suppress>
 </suppressions>
