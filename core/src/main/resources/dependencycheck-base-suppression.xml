@@ -648,7 +648,8 @@
             52. tag project is a GO implemention #3047 & #3043
             53. kubernetes:kubernetes is a GO implementation #1035 & #1056 & #1880 & #3529 & #3530 &
             54. aaugustin websockets is a python library #3460
-            54. cron_project:cron is a linux C application #3548
+            55. cron_project:cron is a linux C application #3548
+            56. html2pdf_project:html2pdf is a PHP framework #4021, #4251
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -706,6 +707,7 @@
         <cpe>cpe:/a:kubernetes:kubernetes</cpe>
         <cpe>cpe:/a:websockets_project:websockets</cpe>
         <cpe>cpe:/a:cron_project:cron</cpe>
+        <cpe>cpe:/a:html2pdf_project:html2pdf</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
