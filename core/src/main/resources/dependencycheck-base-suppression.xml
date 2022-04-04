@@ -2936,9 +2936,9 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        False positive per issue #1068
+        False positive per issue #1068, #4279
         ]]></notes>
-        <gav regex="true">^(?!(io\.netty|org\.jboss\.netty)).*:.*netty.*$</gav>
+        <packageUrl regex="true">^pkg:maven/(?!(io\.netty|org\.jboss\.netty)).*/.*netty.*$</packageUrl>
         <cpe regex="true">^cpe:/a:netty(_project)?:netty.*$</cpe>
     </suppress>
     <suppress base="true">
