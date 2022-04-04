@@ -4961,4 +4961,12 @@
         <packageUrl regex="true">^pkg:maven/org\.apache\.james/apache\-mime4j\-.*$</packageUrl>
         <cpe>cpe:/a:apache:james:</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+          log4cats-core_2.13-2.2.0.jar FPs #4295
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.typelevel/log4cats\-core_2\.13@.*$</packageUrl>
+        <cpe>cpe:/a:davenport:davenport</cpe>
+        <cpe>cpe:/a:protonmail:protonmail</cpe>
+    </suppress>
 </suppressions>
