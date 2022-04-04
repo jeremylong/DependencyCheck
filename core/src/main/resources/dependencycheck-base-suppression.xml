@@ -4980,4 +4980,11 @@
         <packageUrl regex="true">^pkg:maven/org\.bouncycastle/bc\-fips@.*$</packageUrl>
         <cpe>cpe:/a:bouncycastle:legion-of-the-bouncy-castle:</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #4239 - jackson-jaxrs (jackson-jaxrs-json-provider) is not jackson-databind
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.codehaus\.jackson/jackson-jaxrs@.*$</packageUrl>
+        <cpe>cpe:/a:fasterxml:jackson-databind</cpe>
+    </suppress>
 </suppressions>
