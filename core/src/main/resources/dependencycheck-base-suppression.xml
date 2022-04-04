@@ -4996,4 +4996,11 @@
         <packageUrl regex="true">^pkg:maven/io\.minio/minio@.*$</packageUrl>
         <cpe>cpe:/a:minio:minio</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4227 simple-xml-safe is a security-patched fork of the unmaintained simple-xml
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.carrotsearch\.thirdparty/simple-xml-safe@.*$</packageUrl>
+        <cpe>cpe:/a:simplexml_project:simplexml</cpe>
+    </suppress>
 </suppressions>
