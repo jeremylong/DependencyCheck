@@ -760,26 +760,16 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                         #end</td>
                         #set($cveImpact=-1)
                         #set($cveSeverity="&nbsp;")
-                        #foreach($vuln in $dependency.getVulnerabilities())
+                        #if($dependency.getVulnerabilities().size()>0)
+                            #set($severestVuln=$dependency.getVulnerabilities(true).iterator().next())
                             ## yes - we are mixing v2 and v3...  no consistency in data so doing the best we can
-                            #if ($vuln.cvssV3)
-                                #if ($cveImpact<$vuln.cvssV3.baseScore)
-                                    #set($cveImpact=$vuln.cvssV3.baseScore)
-                                    #set($cveSeverity=$enc.html($vuln.cvssV3.baseSeverity))
-                                #end
-                            #elseif ($vuln.cvssV2)
-                                #if ($cveImpact<$vuln.cvssV2.score)
-                                    #set($cveImpact=$vuln.cvssV2.score)
-                                    #set($cveSeverity=$enc.html($vuln.cvssV2.severity))
-                                #end
+                            ## with a set sorted approximately on descending severity
+                            #if ($severestVuln.cvssV3)
+                                #set($cveImpact=$severestVuln.cvssV3.baseScore)
+                            #elseif ($severestVuln.cvssV2)
+                                #set($cveImpact=$severestVuln.cvssV2.score)
                             #end
-                            #if ($vuln.unscoredSeverity)
-                                #if($vuln.unscoredSeverity.equals("0.0"))
-                                    #set($cveSeverity="Unknown")
-                                #else
-                                    #set($cveSeverity=$enc.html($vuln.unscoredSeverity))
-                                #end
-                            #end
+                            #set($cveSeverity=$enc.html($severestVuln.highestSeverityText))
                         #end
                         #set($sortValue=$cveImpact*10)
                         <td data-sort-value="$sortValue">$cveSeverity</td>
