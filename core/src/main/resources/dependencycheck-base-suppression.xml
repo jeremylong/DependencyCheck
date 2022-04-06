@@ -485,13 +485,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per #2499 and #2600
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlinx/kotlinx\-coroutines\-.*$</packageUrl>
-        <cpe>cpe:/a:jetbrains:kotlin</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
         This suppresses false positives for Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll.
         ]]></notes>
         <filePath regex="true">.*Microsoft\.VisualStudio\.QualityTools\.UnitTestFramework*\.dll</filePath>
@@ -1569,6 +1562,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #2499 and #2600
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlinx/kotlinx\-coroutines\-.*$</packageUrl>
+        <cpe>cpe:/a:jetbrains:kotlin</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         kotlinx-html-jvm is a kotlin DSL for generating HTML and should not be identified as core kotlin (#2346)
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlinx/kotlinx\-html\-jvm@.*$</packageUrl>
@@ -1579,6 +1579,13 @@
    FP per issue #4212
    ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlinx/kotlinx-serialization-core-jvm@.*$</packageUrl>
+        <cpe>cpe:/a:jetbrains:kotlin</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3274 on org.jetbrains.kotlinx:atomicfu
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlinx/atomicfu@.*$</packageUrl>
         <cpe>cpe:/a:jetbrains:kotlin</cpe>
     </suppress>
     <suppress base="true">
@@ -4498,13 +4505,6 @@
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.mybatis\.generator/mybatis\-generator\-core@.*$</packageUrl>
         <cpe>cpe:/a:mybatis:mybatis</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        false positive per #3274 on org.jetbrains.kotlinx:atomicfu
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlinx/atomicfu@.*$</packageUrl>
-        <cpe>cpe:/a:jetbrains:kotlin</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
