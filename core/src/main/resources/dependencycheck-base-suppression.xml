@@ -1576,6 +1576,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+   FP per issue #4212
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlinx/kotlinx-serialization-core-jvm@.*$</packageUrl>
+        <cpe>cpe:/a:jetbrains:kotlin</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         False positives found while investigating https://github.com/jeremylong/dependency-check-gradle/issues/103
         ]]></notes>
         <gav regex="true">^org\.jetbrains:annotations:.*$</gav>
