@@ -1562,30 +1562,9 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per #2499 and #2600
+        Joint FP CPE suppression for #2346, #2499, #2600, #3274, #4212 also covering future Kotlin extension libraries
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlinx/kotlinx\-coroutines\-.*$</packageUrl>
-        <cpe>cpe:/a:jetbrains:kotlin</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        kotlinx-html-jvm is a kotlin DSL for generating HTML and should not be identified as core kotlin (#2346)
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlinx/kotlinx\-html\-jvm@.*$</packageUrl>
-        <cpe>cpe:/a:jetbrains:kotlin</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-   FP per issue #4212
-   ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlinx/kotlinx-serialization-core-jvm@.*$</packageUrl>
-        <cpe>cpe:/a:jetbrains:kotlin</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        false positive per #3274 on org.jetbrains.kotlinx:atomicfu
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlinx/atomicfu@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlinx/.*$</packageUrl>
         <cpe>cpe:/a:jetbrains:kotlin</cpe>
     </suppress>
     <suppress base="true">
