@@ -4989,4 +4989,11 @@
         <packageUrl regex="true">^pkg:maven/com\.carrotsearch\.thirdparty/simple-xml-safe@.*$</packageUrl>
         <cpe>cpe:/a:simplexml_project:simplexml</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #4208 suppress CVE for explicit version as CPE 'update' field is not supported and CVE is only for the 5.1 beta-1
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.hazelcast/hazelcast@(?!5\.1-BETA-1).*$</packageUrl>
+        <cve>CVE-2022-0265</cve>
+    </suppress>
 </suppressions>
