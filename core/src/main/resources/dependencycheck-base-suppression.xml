@@ -4996,4 +4996,11 @@
         <packageUrl regex="true">^pkg:maven/com\.hazelcast/hazelcast@(?!5\.1-BETA-1).*$</packageUrl>
         <cve>CVE-2022-0265</cve>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #4327
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/javax\.ws\.rs/javax\.ws\.rs-api@.*$</packageUrl>
+        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
+    </suppress>
 </suppressions>
