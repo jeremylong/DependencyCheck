@@ -5003,4 +5003,11 @@
         <packageUrl regex="true">^pkg:maven/javax\.ws\.rs/javax\.ws\.rs-api@.*$</packageUrl>
         <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4316
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/ch\.qos\.reload4j/reload4j@.*$</packageUrl>
+        <cpe>cpe:/a:apache:log4j</cpe>
+    </suppress>
 </suppressions>
