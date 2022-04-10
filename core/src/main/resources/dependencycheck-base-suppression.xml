@@ -4,7 +4,7 @@
         <notes><![CDATA[
             FP per issue #4180
             ]]></notes>
-        <packageUrl regex="true">^pkg:maven/com\.vaadin/vaadin-spring@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/com\.vaadin/vaadin-spring.*@.*$</packageUrl>
         <cpe>cpe:/a:vaadin:vaadin</cpe>
     </suppress>
     <suppress base="true">
