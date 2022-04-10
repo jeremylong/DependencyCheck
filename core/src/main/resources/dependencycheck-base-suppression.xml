@@ -4998,8 +4998,8 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per issue #4327 and #4328
-   ]]></notes>
+        FP per issue #4327
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/javax\.ws\.rs/javax\.ws\.rs-api@.*$</packageUrl>
         <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
     </suppress>
