@@ -2,6 +2,13 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
+            FP per issue #4180, #4188, #4189, #4190
+            ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.vaadin/vaadin-spring.*@.*$</packageUrl>
+        <cpe>cpe:/a:vaadin:vaadin</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
             FP per issue #4199
             ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.sonarsource\.scanner\.gradle/sonarqube-gradle-plugin@.*$</packageUrl>
