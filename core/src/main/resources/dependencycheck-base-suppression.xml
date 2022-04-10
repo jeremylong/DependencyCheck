@@ -2,10 +2,17 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
-            FP per issue #4180
+            FP per issue #4180, #4188, #4189, #4190
             ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.vaadin/vaadin-spring.*@.*$</packageUrl>
         <cpe>cpe:/a:vaadin:vaadin</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            FP per issue #4199
+            ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.sonarsource\.scanner\.gradle/sonarqube-gradle-plugin@.*$</packageUrl>
+        <cpe>cpe:/a:sonarsource:sonarqube</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -5002,5 +5009,19 @@
    ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.hazelcast/hazelcast@(?!5\.1-BETA-1).*$</packageUrl>
         <cve>CVE-2022-0265</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #4327
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/javax\.ws\.rs/javax\.ws\.rs-api@.*$</packageUrl>
+        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4316
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/ch\.qos\.reload4j/reload4j@.*$</packageUrl>
+        <cpe>cpe:/a:apache:log4j</cpe>
     </suppress>
 </suppressions>
