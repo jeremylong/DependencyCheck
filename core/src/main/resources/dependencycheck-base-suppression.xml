@@ -5024,4 +5024,11 @@
         <packageUrl regex="true">^pkg:maven/ch\.qos\.reload4j/reload4j@.*$</packageUrl>
         <cpe>cpe:/a:apache:log4j</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4317
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.mattbertolini/liquibase-slf4j@.*$</packageUrl>
+        <cpe>cpe:/a:liquibase:liquibase</cpe>
+    </suppress>
 </suppressions>
