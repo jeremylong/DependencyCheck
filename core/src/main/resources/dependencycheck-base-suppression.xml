@@ -571,6 +571,17 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+       Spring-framework libraries always have groupId org.springframework with no further extension, so suppress the
+       spring_framework CPE on other Spring libraries
+       Fixes FPs of #4364, #4363, #4362, 4353, #4351, #4350, #4349
+       ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\..*$</packageUrl>
+        <cpe>cpe:/a:springsource:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cpe>cpe:/a:vmware:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
        False positive per #1513. Spring-boot-starter-data-rest is not data-rest (however, it does
            depend on spring-data-rest so the actual library will get flagged instead of the "boot" version
            being flagged as spring-data-rest with the wrong version number)
