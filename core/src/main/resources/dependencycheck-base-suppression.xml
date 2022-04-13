@@ -5044,4 +5044,11 @@
         <packageUrl regex="true">^pkg:maven/com\.mattbertolini/liquibase-slf4j@.*$</packageUrl>
         <cpe>cpe:/a:liquibase:liquibase</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4344
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.pinterest\.ktlint/ktlint-reporter-checkstyle@.*$</packageUrl>
+        <cpe>cpe:/a:checkstyle:checkstyle</cpe>
+    </suppress>
 </suppressions>
