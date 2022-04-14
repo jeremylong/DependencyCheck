@@ -78,7 +78,7 @@ jobs:
           mvn -s settings.xml -Prelease "-DnexusUrl=https://oss.sonatype.org/" clean package source:jar javadoc:jar gpg:sign deploy site site:stage -DreleaseTesting --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} 
       - name: Archive code coverage results
         id: archive-coverage
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: code-coverage-report
           retention-days: 7
@@ -87,7 +87,7 @@ jobs:
             **/target/jacoco-results/**/*.html
       - name: Archive Release
         id: archive-release
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: archive-release
           retention-days: 7
@@ -100,7 +100,7 @@ jobs:
             target/*.buildinfo
       - name: Archive Site
         id: archive-site
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: archive-site
           retention-days: 7

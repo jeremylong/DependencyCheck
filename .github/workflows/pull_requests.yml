@@ -72,7 +72,7 @@ jobs:
       - name: Archive IT test logs
         id: archive-logs
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: it-test-logs
           retention-days: 7

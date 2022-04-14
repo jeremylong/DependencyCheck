@@ -134,7 +134,7 @@ jobs:
             --enableExperimental
       - name: Upload FP Report
         if: steps.check_files.outputs.files_exists == 'true'
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3
         with:
            name: FP Report
            path: ${{github.workspace}}/reports
