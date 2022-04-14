@@ -2102,13 +2102,13 @@ public class Check extends Update {
 
     /**
      * A class for Ant to represent the {@code <reportFormat format="<format>"/>} nested element to define
-     * multiple report formats for the ant-task
+     * multiple report formats for the ant-task.
      */
     public static class ReportFormat {
         private ReportFormats format;
 
         /**
-         * Gets the format as a String
+         * Gets the format as a String.
          *
          * @return the String representing a report format
          */
@@ -2117,7 +2117,7 @@ public class Check extends Update {
         }
 
         /**
-         * Sets the format
+         * Sets the format.
          *
          * @param format the String value for one of the {@link ReportFormats}
          * @throws BuildException When the offered String is not one of the valid values of the {@link ReportFormats}
