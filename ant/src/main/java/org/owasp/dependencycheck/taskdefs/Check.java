@@ -2105,6 +2105,9 @@ public class Check extends Update {
      * multiple report formats for the ant-task.
      */
     public static class ReportFormat {
+        /**
+         * The format of this ReportFormat.
+         */
         private ReportFormats format;
 
         /**
