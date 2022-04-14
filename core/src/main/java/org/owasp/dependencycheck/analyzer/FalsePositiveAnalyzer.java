@@ -137,41 +137,10 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         removeJreEntries(dependency);
         removeBadMatches(dependency);
-        removeBadSpringMatches(dependency);
         removeWrongVersionMatches(dependency);
         removeSpuriousCPE(dependency);
         removeDuplicativeEntriesFromJar(dependency, engine);
         addFalseNegativeCPEs(dependency);
-    }
-
-    /**
-     * Removes inaccurate matches on springframework CPEs.
-     *
-     * @param dependency the dependency to test for and remove known inaccurate
-     * CPE matches
-     */
-    private void removeBadSpringMatches(Dependency dependency) {
-        String mustContain = null;
-        for (Identifier i : dependency.getSoftwareIdentifiers()) {
-            if (i.getValue() != null && i.getValue().startsWith("org.springframework.")) {
-                final int endPoint = i.getValue().indexOf(':', 19);
-                if (endPoint >= 0) {
-                    mustContain = i.getValue().substring(19, endPoint).toLowerCase();
-                    break;
-                }
-            }
-        }
-        if (mustContain != null) {
-            final Set<Identifier> removalSet = new HashSet<>();
-            for (Identifier i : dependency.getVulnerableSoftwareIdentifiers()) {
-                if (i.getValue() != null
-                        && i.getValue().startsWith("cpe:/a:springsource:")
-                        && !i.getValue().toLowerCase().contains(mustContain)) {
-                    removalSet.add(i);
-                }
-            }
-            removalSet.forEach(dependency::removeVulnerableSoftwareIdentifier);
-        }
     }
 
     /**
