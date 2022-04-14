@@ -95,6 +95,35 @@ public class DependencyCheckTaskIT extends BaseDBTestCase {
         assertTrue("DependencyCheck report was not generated", report.exists());
     }
 
+    @Test
+    public void testNestedReportFormat() throws Exception {
+        File reportHTML = new File("target/dependency-check-report.html");
+        File reportCSV = new File("target/dependency-check-report.csv");
+        if (reportCSV.exists()) {
+            if (!reportCSV.delete()) {
+                throw new Exception("Unable to delete 'target/DependencyCheck-Vulnerability.html' prior to test.");
+            }
+        }
+        if (reportHTML.exists()) {
+            if (!reportHTML.delete()) {
+                throw new Exception("Unable to delete 'target/DependencyCheck-Vulnerability.csv' prior to test.");
+            }
+        }
+        buildFileRule.executeTarget("test.formatNested");
+        assertTrue("DependencyCheck CSV report was not generated", reportCSV.exists());
+        assertTrue("DependencyCheck HTML report was not generated", reportHTML.exists());
+    }
+
+    @Test
+    public void testNestedBADReportFormat() throws Exception {
+        try {
+            buildFileRule.executeTarget("test.formatBADNested");
+            Assert.fail("Should have had a buildExceotion for a bad format attribute");
+        } catch (BuildException e) {
+            assertTrue("Message did not have BAD, unexpected exception: " + e.getMessage(), e.getMessage().contains("BAD is not a legal value for this attribute"));
+        }
+    }
+
     /**
      * Test of getFailBuildOnCVSS method, of class DependencyCheckTask.
      */
