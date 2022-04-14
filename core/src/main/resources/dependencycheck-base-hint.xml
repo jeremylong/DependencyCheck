@@ -421,6 +421,7 @@
         </given>
         <add>
             <evidence type="product" source="hint analyzer" name="product" value="legion-of-the-bouncy-castle-fips-java" confidence="HIGHEST"/>
+            <evidence type="product" source="hint analyzer" name="product" value="legion-of-the-bouncy-castle-fips-java-api" confidence="HIGHEST"/>
         </add>
     </hint>
     <hint>
