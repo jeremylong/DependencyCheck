@@ -5053,9 +5053,18 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-   FP per issue #4370
-   ]]></notes>
+        FP per issue #4370
+        ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.james/apache\-mime4j\-dom@.*$</packageUrl>
         <cpe>cpe:/a:jdom:jdom</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #4376; Allegro for Windows, formerly known as Popsy for Windows is an entirely different
+        product (by Allegro, website: allegro.be) from the pl.allegro libraries (by Allegro Tech - website allegro.tech,
+        github allegro organisation)
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/pl\.allegro\..*$</packageUrl>
+        <cpe>cpe:/a:allegro:allegro</cpe>
     </suppress>
 </suppressions>
