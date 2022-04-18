@@ -423,6 +423,17 @@ public class Check extends Update {
     }
 
     /**
+     * Add a report format.
+     * <p>
+     * This is called by Ant with the configured {@link ReportFormat}.
+     *
+     * @param reportFormat the reportFormat to add.
+     */
+    public void addConfiguredReportFormat(final ReportFormat reportFormat) {
+        reportFormats.add(reportFormat.getFormat());
+    }
+
+    /**
      * Returns the path. If the path has not been initialized yet, this class is
      * synchronized, and will instantiate the path object.
      *
@@ -2086,6 +2097,37 @@ public class Check extends Update {
                 values[i++] = format.name();
             }
             return values;
+        }
+    }
+
+    /**
+     * A class for Ant to represent the {@code <reportFormat format="<format>"/>} nested element to define
+     * multiple report formats for the ant-task.
+     */
+    public static class ReportFormat {
+        /**
+         * The format of this ReportFormat.
+         */
+        private ReportFormats format;
+
+        /**
+         * Gets the format as a String.
+         *
+         * @return the String representing a report format
+         */
+        public String getFormat() {
+            return this.format.getValue();
+        }
+
+        /**
+         * Sets the format.
+         *
+         * @param format the String value for one of the {@link ReportFormats}
+         * @throws BuildException When the offered String is not one of the valid values of the {@link ReportFormats}
+         *                        EnumeratedAttribute
+         */
+        public void setFormat(final String format) {
+            this.format = (ReportFormats) EnumeratedAttribute.getInstance(ReportFormats.class, format);
         }
     }
 }
