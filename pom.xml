@@ -151,7 +151,7 @@ Copyright (c) 2012 - Jeremy Long
         <jackson.version>2.13.2.1</jackson.version>
         <jackson-afterburmer.version>2.13.2</jackson-afterburmer.version>
         <jmockit.version>1.49</jmockit.version>
-        <mockito-core.version>4.4.0</mockito-core.version>
+        <mockito-core.version>4.5.0</mockito-core.version>
         <jsoup.version>1.14.3</jsoup.version>
         <commons-compress.version>1.21</commons-compress.version>
         <org.apache.maven.shared.file-management.version>3.0.0</org.apache.maven.shared.file-management.version>
