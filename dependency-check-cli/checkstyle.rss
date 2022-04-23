@@ -116,7 +116,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-cli/checkstyle.html#src.test.resources.sample2.properties">src/test/resources/sample2.properties</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-cli/checkstyle.html#target.maven-archiver.pom.properties">target/maven-archiver/pom.properties</a>
                 </td>
                 <td>
                   0
@@ -130,7 +130,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-cli/checkstyle.html#target.maven-archiver.pom.properties">target/maven-archiver/pom.properties</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-cli/checkstyle.html#src.test.resources.sample2.properties">src/test/resources/sample2.properties</a>
                 </td>
                 <td>
                   0

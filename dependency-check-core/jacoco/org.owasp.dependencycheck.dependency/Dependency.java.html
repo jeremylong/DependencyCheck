@@ -55,7 +55,7 @@ import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
  *
  * @author Jeremy Long
  */
-<span class="pc bpc" id="L58" title="1 of 2 branches missed.">@ThreadSafe</span>
+@ThreadSafe
 public class Dependency extends EvidenceCollection implements Serializable {
 
     /**
@@ -472,7 +472,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      */
     public synchronized void addSoftwareIdentifier(Identifier identifier) {
         //todo the following assertion should be removed after initial testing and implementation
-<span class="pc bpc" id="L475" title="2 of 4 branches missed.">        assert !(identifier instanceof CpeIdentifier) : &quot;vulnerability identifier cannot be added to software identifiers&quot;;</span>
+<span class="pc bpc" id="L475" title="1 of 2 branches missed.">        assert !(identifier instanceof CpeIdentifier) : &quot;vulnerability identifier cannot be added to software identifiers&quot;;</span>
 
 <span class="fc" id="L477">        final Optional&lt;Identifier&gt; found = softwareIdentifiers.stream().filter(id</span>
 <span class="fc" id="L478">                -&gt; id.getValue().equals(identifier.getValue())).findFirst();</span>
@@ -999,4 +999,4 @@ public class Dependency extends EvidenceCollection implements Serializable {
         String hash(File file) throws IOException, NoSuchAlgorithmException;
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

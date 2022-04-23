@@ -26,6 +26,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
+import org.owasp.dependencycheck.data.update.exception.CorruptedDatastreamException;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -43,11 +44,11 @@ public class ProcessTask implements Callable&lt;ProcessTask&gt; {
     /**
      * The logger.
      */
-<span class="nc" id="L46">    private static final Logger LOGGER = LoggerFactory.getLogger(ProcessTask.class);</span>
+<span class="nc" id="L47">    private static final Logger LOGGER = LoggerFactory.getLogger(ProcessTask.class);</span>
     /**
      * A field to store any update exceptions that occur during the &quot;call&quot;.
      */
-<span class="nc" id="L50">    private UpdateException exception = null;</span>
+<span class="nc" id="L51">    private UpdateException exception = null;</span>
     /**
      * A reference to the CveDB.
      */
@@ -71,7 +72,7 @@ public class ProcessTask implements Callable&lt;ProcessTask&gt; {
      * @return the value of exception
      */
     public UpdateException getException() {
-<span class="nc" id="L74">        return exception;</span>
+<span class="nc" id="L75">        return exception;</span>
     }
 
     /**
@@ -80,8 +81,8 @@ public class ProcessTask implements Callable&lt;ProcessTask&gt; {
      * @param exception new value of exception
      */
     public void setException(UpdateException exception) {
-<span class="nc" id="L83">        this.exception = exception;</span>
-<span class="nc" id="L84">    }</span>
+<span class="nc" id="L84">        this.exception = exception;</span>
+<span class="nc" id="L85">    }</span>
 
     /**
      * Constructs a new ProcessTask used to process an NVD CVE update.
@@ -93,12 +94,12 @@ public class ProcessTask implements Callable&lt;ProcessTask&gt; {
      * necessary so that when the thread is started the dependencies have a
      * correct reference to the global settings.
      */
-<span class="nc" id="L96">    public ProcessTask(final CveDB cveDB, final DownloadTask downloadTask, Settings settings) {</span>
-<span class="nc" id="L97">        this.cveDB = cveDB;</span>
-<span class="nc" id="L98">        this.downloadTask = downloadTask;</span>
-<span class="nc" id="L99">        this.properties = cveDB.getDatabaseProperties();</span>
-<span class="nc" id="L100">        this.settings = settings;</span>
-<span class="nc" id="L101">    }</span>
+<span class="nc" id="L97">    public ProcessTask(final CveDB cveDB, final DownloadTask downloadTask, Settings settings) {</span>
+<span class="nc" id="L98">        this.cveDB = cveDB;</span>
+<span class="nc" id="L99">        this.downloadTask = downloadTask;</span>
+<span class="nc" id="L100">        this.properties = cveDB.getDatabaseProperties();</span>
+<span class="nc" id="L101">        this.settings = settings;</span>
+<span class="nc" id="L102">    }</span>
 
     /**
      * Implements the callable interface.
@@ -110,13 +111,13 @@ public class ProcessTask implements Callable&lt;ProcessTask&gt; {
     @Override
     public ProcessTask call() throws Exception {
         try {
-<span class="nc" id="L113">            processFiles();</span>
-<span class="nc" id="L114">        } catch (UpdateException ex) {</span>
-<span class="nc" id="L115">            this.exception = ex;</span>
+<span class="nc" id="L114">            processFiles();</span>
+<span class="nc" id="L115">        } catch (UpdateException ex) {</span>
+<span class="nc" id="L116">            this.exception = ex;</span>
         } finally {
-<span class="nc" id="L117">            settings.cleanup(false);</span>
+<span class="nc" id="L118">            settings.cleanup(false);</span>
         }
-<span class="nc" id="L119">        return this;</span>
+<span class="nc" id="L120">        return this;</span>
     }
 
     /**
@@ -131,13 +132,14 @@ public class ProcessTask implements Callable&lt;ProcessTask&gt; {
      * @throws ClassNotFoundException thrown if the h2 database driver cannot be
      * loaded
      * @throws UpdateException thrown if the file could not be found
+     * @throws CorruptedDatastreamException thrown if the file was found to be a corrupted download
      */
-    protected void importJSON(File file) throws ParserConfigurationException,
-            IOException, SQLException, DatabaseException, ClassNotFoundException, UpdateException {
+    protected void importJSON(File file) throws ParserConfigurationException, IOException, SQLException, DatabaseException,
+            ClassNotFoundException, UpdateException, CorruptedDatastreamException {
 
-<span class="nc" id="L138">        final NvdCveParser parser = new NvdCveParser(settings, cveDB);</span>
-<span class="nc" id="L139">        parser.parse(file);</span>
-<span class="nc" id="L140">    }</span>
+<span class="nc" id="L140">        final NvdCveParser parser = new NvdCveParser(settings, cveDB);</span>
+<span class="nc" id="L141">        parser.parse(file);</span>
+<span class="nc" id="L142">    }</span>
 
     /**
      * Processes the NVD CVE XML file and imports the data into the DB.
@@ -146,18 +148,21 @@ public class ProcessTask implements Callable&lt;ProcessTask&gt; {
      * the database
      */
     private void processFiles() throws UpdateException {
-<span class="nc" id="L149">        LOGGER.info(&quot;Processing Started for NVD CVE - {}&quot;, downloadTask.getNvdCveInfo().getId());</span>
-<span class="nc" id="L150">        final long startProcessing = System.currentTimeMillis();</span>
+<span class="nc" id="L151">        LOGGER.info(&quot;Processing Started for NVD CVE - {}&quot;, downloadTask.getNvdCveInfo().getId());</span>
+<span class="nc" id="L152">        final long startProcessing = System.currentTimeMillis();</span>
         try {
-<span class="nc" id="L152">            importJSON(downloadTask.getFile());</span>
-<span class="nc" id="L153">            properties.save(downloadTask.getNvdCveInfo());</span>
-<span class="nc" id="L154">        } catch (ParserConfigurationException | SQLException | DatabaseException | ClassNotFoundException | IOException ex) {</span>
-<span class="nc" id="L155">            throw new UpdateException(ex);</span>
+<span class="nc" id="L154">            importJSON(downloadTask.getFile());</span>
+<span class="nc" id="L155">            properties.save(downloadTask.getNvdCveInfo());</span>
+<span class="nc" id="L156">        } catch (ParserConfigurationException | SQLException | DatabaseException | ClassNotFoundException | IOException ex) {</span>
+<span class="nc" id="L157">            throw new UpdateException(ex);</span>
+<span class="nc" id="L158">        } catch (CorruptedDatastreamException ex) {</span>
+<span class="nc" id="L159">            downloadTask.evictCorruptFileFromCache();</span>
+<span class="nc" id="L160">            throw new UpdateException(ex);</span>
         } finally {
-<span class="nc" id="L157">            downloadTask.cleanup();</span>
+<span class="nc" id="L162">            downloadTask.cleanup();</span>
         }
-<span class="nc" id="L159">        LOGGER.info(&quot;Processing Complete for NVD CVE - {}  ({} ms)&quot;, downloadTask.getNvdCveInfo().getId(),</span>
-<span class="nc" id="L160">                System.currentTimeMillis() - startProcessing);</span>
-<span class="nc" id="L161">    }</span>
+<span class="nc" id="L164">        LOGGER.info(&quot;Processing Complete for NVD CVE - {}  ({} ms)&quot;, downloadTask.getNvdCveInfo().getId(),</span>
+<span class="nc" id="L165">                System.currentTimeMillis() - startProcessing);</span>
+<span class="nc" id="L166">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

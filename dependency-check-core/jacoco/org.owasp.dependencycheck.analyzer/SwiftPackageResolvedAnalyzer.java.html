@@ -157,32 +157,87 @@ import org.slf4j.LoggerFactory;
 
 <span class="fc" id="L158">        try (InputStream in = FileUtils.openInputStream(spmResolved.getActualFile());</span>
 <span class="fc" id="L159">                JsonReader resolved = Json.createReader(in)) {</span>
-<span class="fc" id="L160">            final JsonObject object = resolved.readObject().getJsonObject(&quot;object&quot;);</span>
-<span class="pc bpc" id="L161" title="1 of 2 branches missed.">            if (object == null) {</span>
-<span class="nc" id="L162">                return;</span>
+<span class="fc" id="L160">            final JsonObject file = resolved.readObject();</span>
+<span class="fc" id="L161">            final int fileVersion = file.getInt(&quot;version&quot;);</span>
+
+<span class="pc bpc" id="L163" title="1 of 3 branches missed.">            switch(fileVersion) {</span>
+                case 1:
+<span class="fc" id="L165">                    analyzeSpmResolvedDependenciesV1(spmResolved, engine, file);</span>
+<span class="fc" id="L166">                    break;</span>
+                case 2:
+<span class="fc" id="L168">                    analyzeSpmResolvedDependenciesV2(spmResolved, engine, file);</span>
+<span class="fc" id="L169">                    break;</span>
+                default:
+<span class="nc" id="L171">                    return;</span>
             }
-<span class="fc" id="L164">            final JsonArray pins = object.getJsonArray(&quot;pins&quot;);</span>
-<span class="pc bpc" id="L165" title="1 of 2 branches missed.">            if (pins == null) {</span>
-<span class="nc" id="L166">                return;</span>
-            }
-<span class="fc" id="L168">            pins.forEach(row -&gt; {</span>
-<span class="fc" id="L169">                final JsonObject pin = (JsonObject) row;</span>
-<span class="fc" id="L170">                final String name = pin.getString(&quot;package&quot;);</span>
-<span class="fc" id="L171">                final String repo = pin.getString(&quot;repositoryURL&quot;);</span>
-<span class="fc" id="L172">                String version = null;</span>
-<span class="fc" id="L173">                final JsonObject state = pin.getJsonObject(&quot;state&quot;);</span>
-<span class="pc bpc" id="L174" title="1 of 2 branches missed.">                if (state != null) {</span>
-<span class="pc bpc" id="L175" title="1 of 2 branches missed.">                    if (!state.isNull(&quot;version&quot;)) {</span>
-<span class="fc" id="L176">                        version = state.getString(&quot;version&quot;);</span>
-<span class="nc bnc" id="L177" title="All 2 branches missed.">                    } else if (!state.isNull(&quot;branch&quot;)) {</span>
-<span class="nc" id="L178">                        version = state.getString(&quot;branch&quot;);</span>
-                    }
-                }
-<span class="fc" id="L181">                final Dependency dependency = createDependency(spmResolved, SPM_RESOLVED_FILE_NAME, name, version, repo);</span>
-<span class="fc" id="L182">                engine.addDependency(dependency);</span>
-<span class="fc" id="L183">            });</span>
+<span class="nc bnc" id="L173" title="All 4 branches missed.">        }</span>
+<span class="fc" id="L174">    }</span>
+
+    /**
+     * Analyzes the version 1 of the Package.resolved file to extract evidence for the
+     * dependency.
+     *
+     * @param spmResolved the dependency to analyze
+     * @param engine the analysis engine
+     * @param resolved the json object of the file to analyze
+     */
+    private void analyzeSpmResolvedDependenciesV1(Dependency spmResolved, Engine engine, JsonObject resolved) {
+<span class="fc" id="L185">        final JsonObject object = resolved.getJsonObject(&quot;object&quot;);</span>
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">        if (object == null) {</span>
+<span class="nc" id="L187">            return;</span>
         }
-<span class="fc" id="L185">    }</span>
+<span class="fc" id="L189">        final JsonArray pins = object.getJsonArray(&quot;pins&quot;);</span>
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">        if (pins == null) {</span>
+<span class="nc" id="L191">            return;</span>
+        }
+<span class="fc" id="L193">        pins.forEach(row -&gt; {</span>
+<span class="fc" id="L194">            final JsonObject pin = (JsonObject) row;</span>
+<span class="fc" id="L195">            final String name = pin.getString(&quot;package&quot;);</span>
+<span class="fc" id="L196">            final String repo = pin.getString(&quot;repositoryURL&quot;);</span>
+<span class="fc" id="L197">            String version = null;</span>
+<span class="fc" id="L198">            final JsonObject state = pin.getJsonObject(&quot;state&quot;);</span>
+<span class="pc bpc" id="L199" title="1 of 2 branches missed.">            if (state != null) {</span>
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">                if (!state.isNull(&quot;version&quot;)) {</span>
+<span class="fc" id="L201">                    version = state.getString(&quot;version&quot;);</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">                } else if (!state.isNull(&quot;branch&quot;)) {</span>
+<span class="nc" id="L203">                    version = state.getString(&quot;branch&quot;);</span>
+                }
+            }
+<span class="fc" id="L206">            final Dependency dependency = createDependency(spmResolved, SPM_RESOLVED_FILE_NAME, name, version, repo);</span>
+<span class="fc" id="L207">            engine.addDependency(dependency);</span>
+<span class="fc" id="L208">        });</span>
+<span class="fc" id="L209">    }</span>
+
+    /**
+     * Analyzes the version 2 of the Package.resolved file to extract evidence for the
+     * dependency.
+     *
+     * @param spmResolved the dependency to analyze
+     * @param engine the analysis engine
+     * @param resolved the json object of the file to analyze
+     */
+    private void analyzeSpmResolvedDependenciesV2(Dependency spmResolved, Engine engine, JsonObject resolved) {
+<span class="fc" id="L220">        final JsonArray pins = resolved.getJsonArray(&quot;pins&quot;);</span>
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">        if (pins == null) {</span>
+<span class="nc" id="L222">            return;</span>
+        }
+<span class="fc" id="L224">        pins.forEach(row -&gt; {</span>
+<span class="fc" id="L225">            final JsonObject pin = (JsonObject) row;</span>
+<span class="fc" id="L226">            final String name = pin.getString(&quot;identity&quot;);</span>
+<span class="fc" id="L227">            final String repo = pin.getString(&quot;location&quot;);</span>
+<span class="fc" id="L228">            String version = null;</span>
+<span class="fc" id="L229">            final JsonObject state = pin.getJsonObject(&quot;state&quot;);</span>
+<span class="pc bpc" id="L230" title="1 of 2 branches missed.">            if (state != null) {</span>
+<span class="pc bpc" id="L231" title="1 of 2 branches missed.">                if (!state.isNull(&quot;version&quot;)) {</span>
+<span class="fc" id="L232">                    version = state.getString(&quot;version&quot;);</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">                } else if (!state.isNull(&quot;branch&quot;)) {</span>
+<span class="nc" id="L234">                    version = state.getString(&quot;branch&quot;);</span>
+                }
+            }
+<span class="fc" id="L237">            final Dependency dependency = createDependency(spmResolved, SPM_RESOLVED_FILE_NAME, name, version, repo);</span>
+<span class="fc" id="L238">            engine.addDependency(dependency);</span>
+<span class="fc" id="L239">        });</span>
+<span class="fc" id="L240">    }</span>
 
     /**
      * Creates a dependency object.
@@ -195,39 +250,39 @@ import org.slf4j.LoggerFactory;
      * @return the newly created dependency object
      */
     private Dependency createDependency(Dependency parent, String source, final String name, String version, String repo) {
-<span class="fc" id="L198">        final Dependency dependency = new Dependency(parent.getActualFile(), true);</span>
-<span class="fc" id="L199">        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
-<span class="fc" id="L200">        dependency.setName(name);</span>
-<span class="fc" id="L201">        dependency.setVersion(version);</span>
-<span class="fc" id="L202">        final String packagePath = String.format(&quot;%s:%s&quot;, name, version);</span>
-<span class="fc" id="L203">        dependency.setPackagePath(packagePath);</span>
-<span class="fc" id="L204">        dependency.setDisplayFileName(packagePath);</span>
-<span class="fc" id="L205">        dependency.setSha1sum(Checksum.getSHA1Checksum(packagePath));</span>
-<span class="fc" id="L206">        dependency.setSha256sum(Checksum.getSHA256Checksum(packagePath));</span>
-<span class="fc" id="L207">        dependency.setMd5sum(Checksum.getMD5Checksum(packagePath));</span>
-<span class="fc" id="L208">        dependency.addEvidence(EvidenceType.VENDOR, source, &quot;name&quot;, name, Confidence.HIGHEST);</span>
-<span class="fc" id="L209">        dependency.addEvidence(EvidenceType.PRODUCT, source, &quot;name&quot;, name, Confidence.HIGHEST);</span>
-<span class="fc" id="L210">        dependency.addEvidence(EvidenceType.VENDOR, source, &quot;repositoryUrl&quot;, repo, Confidence.HIGH);</span>
-<span class="fc" id="L211">        dependency.addEvidence(EvidenceType.PRODUCT, source, &quot;repositoryUrl&quot;, repo, Confidence.HIGH);</span>
-<span class="fc" id="L212">        dependency.addEvidence(EvidenceType.VERSION, source, &quot;version&quot;, version, Confidence.HIGHEST);</span>
+<span class="fc" id="L253">        final Dependency dependency = new Dependency(parent.getActualFile(), true);</span>
+<span class="fc" id="L254">        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc" id="L255">        dependency.setName(name);</span>
+<span class="fc" id="L256">        dependency.setVersion(version);</span>
+<span class="fc" id="L257">        final String packagePath = String.format(&quot;%s:%s&quot;, name, version);</span>
+<span class="fc" id="L258">        dependency.setPackagePath(packagePath);</span>
+<span class="fc" id="L259">        dependency.setDisplayFileName(packagePath);</span>
+<span class="fc" id="L260">        dependency.setSha1sum(Checksum.getSHA1Checksum(packagePath));</span>
+<span class="fc" id="L261">        dependency.setSha256sum(Checksum.getSHA256Checksum(packagePath));</span>
+<span class="fc" id="L262">        dependency.setMd5sum(Checksum.getMD5Checksum(packagePath));</span>
+<span class="fc" id="L263">        dependency.addEvidence(EvidenceType.VENDOR, source, &quot;name&quot;, name, Confidence.HIGHEST);</span>
+<span class="fc" id="L264">        dependency.addEvidence(EvidenceType.PRODUCT, source, &quot;name&quot;, name, Confidence.HIGHEST);</span>
+<span class="fc" id="L265">        dependency.addEvidence(EvidenceType.VENDOR, source, &quot;repositoryUrl&quot;, repo, Confidence.HIGH);</span>
+<span class="fc" id="L266">        dependency.addEvidence(EvidenceType.PRODUCT, source, &quot;repositoryUrl&quot;, repo, Confidence.HIGH);</span>
+<span class="fc" id="L267">        dependency.addEvidence(EvidenceType.VERSION, source, &quot;version&quot;, version, Confidence.HIGHEST);</span>
         try {
-<span class="fc" id="L214">            final PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType(&quot;swift&quot;).withName(dependency.getName());</span>
-<span class="pc bpc" id="L215" title="1 of 2 branches missed.">            if (dependency.getVersion() != null) {</span>
-<span class="fc" id="L216">                builder.withVersion(dependency.getVersion());</span>
+<span class="fc" id="L269">            final PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType(&quot;swift&quot;).withName(dependency.getName());</span>
+<span class="pc bpc" id="L270" title="1 of 2 branches missed.">            if (dependency.getVersion() != null) {</span>
+<span class="fc" id="L271">                builder.withVersion(dependency.getVersion());</span>
             }
-<span class="fc" id="L218">            final PackageURL purl = builder.build();</span>
-<span class="fc" id="L219">            dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
-<span class="nc" id="L220">        } catch (MalformedPackageURLException ex) {</span>
-<span class="nc" id="L221">            LOGGER.debug(&quot;Unable to build package url for swift dependency&quot;, ex);</span>
+<span class="fc" id="L273">            final PackageURL purl = builder.build();</span>
+<span class="fc" id="L274">            dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
+<span class="nc" id="L275">        } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L276">            LOGGER.debug(&quot;Unable to build package url for swift dependency&quot;, ex);</span>
             final GenericIdentifier id;
-<span class="nc bnc" id="L223" title="All 2 branches missed.">            if (dependency.getVersion() != null) {</span>
-<span class="nc" id="L224">                id = new GenericIdentifier(&quot;swift:&quot; + dependency.getName() + &quot;@&quot; + dependency.getVersion(), Confidence.HIGHEST);</span>
+<span class="nc bnc" id="L278" title="All 2 branches missed.">            if (dependency.getVersion() != null) {</span>
+<span class="nc" id="L279">                id = new GenericIdentifier(&quot;swift:&quot; + dependency.getName() + &quot;@&quot; + dependency.getVersion(), Confidence.HIGHEST);</span>
             } else {
-<span class="nc" id="L226">                id = new GenericIdentifier(&quot;swift:&quot; + dependency.getName(), Confidence.HIGHEST);</span>
+<span class="nc" id="L281">                id = new GenericIdentifier(&quot;swift:&quot; + dependency.getName(), Confidence.HIGHEST);</span>
             }
-<span class="nc" id="L228">            dependency.addSoftwareIdentifier(id);</span>
-<span class="fc" id="L229">        }</span>
-<span class="fc" id="L230">        return dependency;</span>
+<span class="nc" id="L283">            dependency.addSoftwareIdentifier(id);</span>
+<span class="fc" id="L284">        }</span>
+<span class="fc" id="L285">        return dependency;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

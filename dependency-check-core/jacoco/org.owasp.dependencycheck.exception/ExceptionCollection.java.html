@@ -217,7 +217,7 @@ public class ExceptionCollection extends Exception {
     }
 
     private static StringBuilder nestedCauseList(Throwable t) {
-<span class="fc" id="L220">        final StringBuilder sb = new StringBuilder(t.getMessage());</span>
+<span class="fc" id="L220">        final StringBuilder sb = new StringBuilder().append(t.getMessage());</span>
 <span class="fc" id="L221">        Throwable nestedCause = t.getCause();</span>
 <span class="fc bfc" id="L222" title="All 2 branches covered.">        while (nestedCause != null) {</span>
 <span class="fc" id="L223">            sb.append(&quot;\n\t\tcaused by &quot;).append(nestedCause.getClass().getSimpleName()).append(&quot;: &quot;).append(nestedCause.getMessage());</span>
@@ -226,4 +226,4 @@ public class ExceptionCollection extends Exception {
 <span class="fc" id="L226">        return sb;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

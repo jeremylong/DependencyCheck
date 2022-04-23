@@ -186,7 +186,7 @@
 <a class="jxr_linenumber" name="L178" href="#L178">178</a>     }
 <a class="jxr_linenumber" name="L179" href="#L179">179</a> 
 <a class="jxr_linenumber" name="L180" href="#L180">180</a>     @Test
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testSPMResolvedAnalyzer() <strong class="jxr_keyword">throws</strong> AnalysisException {
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testSPMResolvedAnalyzerV1() <strong class="jxr_keyword">throws</strong> AnalysisException {
 <a class="jxr_linenumber" name="L182" href="#L182">182</a>         <strong class="jxr_keyword">final</strong> Engine engine = <strong class="jxr_keyword">new</strong> Engine(getSettings());
 <a class="jxr_linenumber" name="L183" href="#L183">183</a>         <strong class="jxr_keyword">final</strong> Dependency result = <strong class="jxr_keyword">new</strong> Dependency(BaseTest.getResourceAsFile(<strong class="jxr_keyword">this</strong>,
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>                 <span class="jxr_string">"swift/spm/Package.resolved"</span>));
@@ -202,11 +202,27 @@
 <a class="jxr_linenumber" name="L194" href="#L194">194</a>     }
 <a class="jxr_linenumber" name="L195" href="#L195">195</a> 
 <a class="jxr_linenumber" name="L196" href="#L196">196</a>     @Test
-<a class="jxr_linenumber" name="L197" href="#L197">197</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testIsEnabledIsTrueByDefault() {
-<a class="jxr_linenumber" name="L198" href="#L198">198</a>         assertTrue(spmAnalyzer.isEnabled());
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>         assertTrue(sprAnalyzer.isEnabled());
-<a class="jxr_linenumber" name="L200" href="#L200">200</a>     }
-<a class="jxr_linenumber" name="L201" href="#L201">201</a> }
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testSPMResolvedAnalyzerV2() <strong class="jxr_keyword">throws</strong> AnalysisException {
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>         <strong class="jxr_keyword">final</strong> Engine engine = <strong class="jxr_keyword">new</strong> Engine(getSettings());
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>         <strong class="jxr_keyword">final</strong> Dependency result = <strong class="jxr_keyword">new</strong> Dependency(BaseTest.getResourceAsFile(<strong class="jxr_keyword">this</strong>,
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>                 <span class="jxr_string">"swift/spmV2/Package.resolved"</span>));
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>         sprAnalyzer.analyze(result, engine);
+<a class="jxr_linenumber" name="L202" href="#L202">202</a> 
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>         assertThat(engine.getDependencies().length, equalTo(3));
+<a class="jxr_linenumber" name="L204" href="#L204">204</a>         assertThat(engine.getDependencies()[0].getName(), equalTo(<span class="jxr_string">"alamofire"</span>));
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>         assertThat(engine.getDependencies()[0].getVersion(), equalTo(<span class="jxr_string">"5.4.3"</span>));
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>         assertThat(engine.getDependencies()[1].getName(), equalTo(<span class="jxr_string">"alamofireimage"</span>));
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>         assertThat(engine.getDependencies()[1].getVersion(), equalTo(<span class="jxr_string">"4.2.0"</span>));
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>         assertThat(engine.getDependencies()[2].getName(), equalTo(<span class="jxr_string">"facebook"</span>));
+<a class="jxr_linenumber" name="L209" href="#L209">209</a>         assertThat(engine.getDependencies()[2].getVersion(), equalTo(<span class="jxr_string">"9.3.0"</span>));
+<a class="jxr_linenumber" name="L210" href="#L210">210</a>     }
+<a class="jxr_linenumber" name="L211" href="#L211">211</a> 
+<a class="jxr_linenumber" name="L212" href="#L212">212</a>     @Test
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testIsEnabledIsTrueByDefault() {
+<a class="jxr_linenumber" name="L214" href="#L214">214</a>         assertTrue(spmAnalyzer.isEnabled());
+<a class="jxr_linenumber" name="L215" href="#L215">215</a>         assertTrue(sprAnalyzer.isEnabled());
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>     }
+<a class="jxr_linenumber" name="L217" href="#L217">217</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2022 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

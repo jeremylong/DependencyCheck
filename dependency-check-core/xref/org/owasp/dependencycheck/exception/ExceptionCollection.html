@@ -225,7 +225,7 @@
 <a class="jxr_linenumber" name="L217" href="#L217">217</a>     }
 <a class="jxr_linenumber" name="L218" href="#L218">218</a> 
 <a class="jxr_linenumber" name="L219" href="#L219">219</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> StringBuilder nestedCauseList(Throwable t) {
-<a class="jxr_linenumber" name="L220" href="#L220">220</a>         <strong class="jxr_keyword">final</strong> StringBuilder sb = <strong class="jxr_keyword">new</strong> StringBuilder(t.getMessage());
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>         <strong class="jxr_keyword">final</strong> StringBuilder sb = <strong class="jxr_keyword">new</strong> StringBuilder().append(t.getMessage());
 <a class="jxr_linenumber" name="L221" href="#L221">221</a>         Throwable nestedCause = t.getCause();
 <a class="jxr_linenumber" name="L222" href="#L222">222</a>         <strong class="jxr_keyword">while</strong> (nestedCause != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L223" href="#L223">223</a>             sb.append(<span class="jxr_string">"\n\t\tcaused by "</span>).append(nestedCause.getClass().getSimpleName()).append(<span class="jxr_string">": "</span>).append(nestedCause.getMessage());
