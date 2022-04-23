@@ -186,8 +186,10 @@ jobs:
           draft: false
           body: |
             ### Changes
-            - Update to `jackson-databind` (see #4285).
-            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/43?closed=1).
+            - Improved sorting in the HTML report ([see #4112](https://github.com/jeremylong/DependencyCheck/issues/4112)).
+            - Improved support for Swift ([see #4265](https://github.com/jeremylong/DependencyCheck/pull/4265)).
+            - Resolved several false positives.
+            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/44?closed=1).
 
       - name: Upload CLI
         id: upload-release-cli
