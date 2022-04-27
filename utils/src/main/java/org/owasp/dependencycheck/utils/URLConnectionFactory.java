@@ -112,7 +112,11 @@ public final class URLConnectionFactory {
                 conn = (HttpURLConnection) url.openConnection();
             }
             final int connectionTimeout = settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT, 10000);
+            // set a conservative long default timeout to compensate for MITM-proxies that return the (final) bytes only
+            // after all security checks passed
+            final int readTimeout = settings.getInt(Settings.KEYS.CONNECTION_READ_TIMEOUT, 60_000);
             conn.setConnectTimeout(connectionTimeout);
+            conn.setReadTimeout(readTimeout);
             conn.setInstanceFollowRedirects(true);
         } catch (IOException ex) {
             if (conn != null) {

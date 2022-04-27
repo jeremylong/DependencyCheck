@@ -328,6 +328,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "connectionTimeout")
     private String connectionTimeout;
     /**
+     * The Read Timeout.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "readTimeout")
+    private String readTimeout;
+    /**
      * Sets whether dependency-check should check if there is a new version
      * available.
      */
@@ -2049,6 +2055,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressions);
         settings.setBooleanIfNotNull(Settings.KEYS.UPDATE_VERSION_CHECK_ENABLED, versionCheckEnabled);
         settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
+        settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_READ_TIMEOUT, readTimeout);
         settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);
         settings.setFloat(Settings.KEYS.JUNIT_FAIL_ON_CVSS, junitFailOnCVSS);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);

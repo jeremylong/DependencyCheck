@@ -338,6 +338,8 @@ public final class CliParser {
                         + "Use pipe, comma or colon as list separator."))
                 .addOption(newOptionWithArg(ARGUMENT.CONNECTION_TIMEOUT_SHORT, ARGUMENT.CONNECTION_TIMEOUT, "timeout",
                         "The connection timeout (in milliseconds) to use when downloading resources."))
+                .addOption(newOptionWithArg(ARGUMENT.CONNECTION_READ_TIMEOUT, "timeout",
+                        "The read timeout (in milliseconds) to use when downloading resources."))
                 .addOption(newOptionWithArg(ARGUMENT.CONNECTION_STRING, "connStr",
                         "The connection string to the database."))
                 .addOption(newOptionWithArg(ARGUMENT.DB_NAME, "user",
@@ -1058,6 +1060,10 @@ public final class CliParser {
          * The CLI argument name indicating the connection timeout.
          */
         public static final String CONNECTION_TIMEOUT = "connectiontimeout";
+        /**
+         * The CLI argument name indicating the connection read timeout.
+         */
+        public static final String CONNECTION_READ_TIMEOUT = "readtimeout";
         /**
          * The short CLI argument name for setting the location of an additional
          * properties file.
