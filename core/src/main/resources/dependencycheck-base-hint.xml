@@ -5,7 +5,7 @@
             <evidence type="product" source="Manifest" name="Implementation-Title" value="Spring Framework" confidence="HIGH"/>
             <evidence type="product" source="Manifest" name="Implementation-Title" value="org.springframework.core" confidence="HIGH"/>
             <evidence type="product" source="Manifest" name="Implementation-Title" value="spring-core" confidence="HIGH"/>
-            <evidence type="vendor"  source="pom"      name="groupid"              value="org\.springframework" confidence="HIGHEST"/>
+            <evidence type="vendor"  source="pom"      name="groupid"              value="org.springframework" confidence="HIGHEST"/>
         </given>
         <add>
             <evidence type="product" source="hint analyzer" name="product" value="springsource_spring_framework" confidence="HIGHEST"/>
