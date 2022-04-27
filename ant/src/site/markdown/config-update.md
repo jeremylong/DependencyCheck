@@ -24,7 +24,8 @@ proxyPort             | The Proxy Port.                                         
 proxyUsername         | Defines the proxy user name.                                            | &nbsp;
 proxyPassword         | Defines the proxy password.                                             | &nbsp;
 nonProxyHosts         | Defines the hosts that will not be proxied.                             | &nbsp;
-connectionTimeout     | The URL Connection Timeout.                                             | &nbsp;
+connectionTimeout     | The URL Connection Timeout (in milliseconds).                           | 10000
+readtimeout           | The URL Read Timeout (in milliseconds).                                 | 60000
 failOnError           | Whether the build should fail if there is an error executing the update | true
 
 Advanced Configuration
