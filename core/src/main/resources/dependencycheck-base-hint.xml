@@ -434,4 +434,14 @@
             <evidence type="product" source="hint analyzer" name="product" value="pgjdbc" confidence="HIGHEST"/>
         </add>
     </hint>
+    <hint>
+        <!-- false negative per issue #4389, NVD has two CPE products in active use for Apache Xerces: xerces2_java and xerces-j -->
+        <given>
+            <evidence type="product" source="pom" name="artifactId" value="xercesImpl"/>
+            <evidence type="product" source="file" name="name" value="xercesImpl"/>
+        </given>
+        <add>
+            <evidence type="product" source="hint analyzer" name="product" value="xerces-j" confidence="HIGHEST"/>
+        </add>
+    </hint>
 </hints>
