@@ -255,6 +255,10 @@ public final class Settings {
          */
         public static final String CONNECTION_TIMEOUT = "connection.timeout";
         /**
+         * The properties key for the connection read timeout.
+         */
+        public static final String CONNECTION_READ_TIMEOUT = "connection.read.timeout";
+        /**
          * The location of the temporary directory.
          */
         public static final String TEMP_DIRECTORY = "temp.directory";

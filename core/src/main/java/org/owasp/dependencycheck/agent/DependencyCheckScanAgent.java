@@ -142,6 +142,10 @@ public class DependencyCheckScanAgent {
      */
     private String connectionTimeout;
     /**
+     * The Connection Read Timeout.
+     */
+    private String readTimeout;
+    /**
      * The file path used for verbose logging.
      */
     private String logFile = null;
@@ -503,6 +507,24 @@ public class DependencyCheckScanAgent {
      */
     public void setConnectionTimeout(String connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
+    }
+
+    /**
+     * Get the value of readTimeout.
+     *
+     * @return the value of readTimeout
+     */
+    public String getReadTimeout() {
+        return readTimeout;
+    }
+
+    /**
+     * Set the value of readTimeout.
+     *
+     * @param readTimeout new value of readTimeout
+     */
+    public void setReadTimeout(String readTimeout) {
+        this.readTimeout = readTimeout;
     }
 
     /**
@@ -933,6 +955,7 @@ public class DependencyCheckScanAgent {
         settings.setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME, proxyUsername);
         settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPassword);
         settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
+        settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_READ_TIMEOUT, readTimeout);
         settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER, cpeStartsWithFilter);
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);

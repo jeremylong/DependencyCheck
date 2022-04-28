@@ -439,6 +439,8 @@ public class App {
                 cli.getStringArgument(CliParser.ARGUMENT.NON_PROXY_HOSTS));
         settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT,
                 cli.getStringArgument(CliParser.ARGUMENT.CONNECTION_TIMEOUT));
+        settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_READ_TIMEOUT,
+                cli.getStringArgument(CliParser.ARGUMENT.CONNECTION_READ_TIMEOUT));
         settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE,
                 cli.getStringArgument(CliParser.ARGUMENT.HINTS_FILE));
         settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS,
