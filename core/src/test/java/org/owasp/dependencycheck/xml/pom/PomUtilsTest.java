@@ -59,11 +59,11 @@ public class PomUtilsTest extends BaseTest {
         result = PomUtils.readPom(file);
         assertEquals(expResult, result.getName());
     }
-    
+
     @Test
-    public void testReadPom_String_File() throws Exception {  
+    public void testReadPom_String_File() throws Exception {
         File fileCommonValidator = BaseTest.getResourceAsFile(this, "commons-validator-1.4.0.jar");
-        JarFile jar = new JarFile(fileCommonValidator);
+        JarFile jar = new JarFile(fileCommonValidator, false);
         String expResult = "Commons Validator";
         Model result = PomUtils.readPom("META-INF/maven/commons-validator/commons-validator/pom.xml", jar);
         assertEquals(expResult, result.getName());
