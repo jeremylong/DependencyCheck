@@ -428,7 +428,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
         //TODO add breakpoint on groov-all to find out why commons-cli is not added as a new dependency?
         boolean evidenceAdded = false;
-        try (JarFile jar = new JarFile(dependency.getActualFilePath())) {
+        try (JarFile jar = new JarFile(dependency.getActualFilePath(), false)) {
             //check if we are scanning in a repo directory - so the pom is adjacent to the jar
             final String repoPomName = FilenameUtils.removeExtension(dependency.getActualFilePath()) + ".pom";
             final File repoPom = new File(repoPomName);
@@ -852,7 +852,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     protected boolean parseManifest(Dependency dependency, List<ClassNameInformation> classInformation)
             throws IOException {
         boolean foundSomething = false;
-        try (JarFile jar = new JarFile(dependency.getActualFilePath())) {
+        try (JarFile jar = new JarFile(dependency.getActualFilePath(), false)) {
             final Manifest manifest = jar.getManifest();
             if (manifest == null) {
                 if (!dependency.getFileName().toLowerCase().endsWith("-sources.jar")
@@ -1170,7 +1170,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     protected List<ClassNameInformation> collectClassNames(Dependency dependency) {
         final List<ClassNameInformation> classNames = new ArrayList<>();
-        try (JarFile jar = new JarFile(dependency.getActualFilePath())) {
+        try (JarFile jar = new JarFile(dependency.getActualFilePath(), false)) {
             final Enumeration<JarEntry> entries = jar.entries();
             while (entries.hasMoreElements()) {
                 final JarEntry entry = entries.nextElement();
