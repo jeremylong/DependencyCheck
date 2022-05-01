@@ -5076,6 +5076,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+   FP per issue #4384
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.clojure/core\.async@.*$</packageUrl>
+        <cpe>cpe:/a:async_project:async</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per issue #4425 - CVE resides in the impl, not in the api
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/jakarta\.el/jakarta\.el-api@.*$</packageUrl>
