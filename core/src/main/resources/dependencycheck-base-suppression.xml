@@ -5069,17 +5069,10 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-   	    FP per issue #4368
+   	    FP per issue #4368, #4384, #4369 async_project:async is an npm package
    	    ]]></notes>
-   	    <packageUrl regex="true">^pkg:maven/com\.ibm\.async/asyncutil@.*$</packageUrl>
+   	    <packageUrl regex="true">^pkg:maven/.*async.*@.*$</packageUrl>
    	    <cpe>cpe:/a:async_project:async</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-   FP per issue #4384
-   ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.clojure/core\.async@.*$</packageUrl>
-        <cpe>cpe:/a:async_project:async</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
