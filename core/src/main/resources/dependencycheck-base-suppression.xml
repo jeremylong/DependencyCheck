@@ -5097,4 +5097,11 @@
         <cpe>cpe:/a:apache:ant</cpe>
         <cpe>cpe:/a:apache:log4j</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4382
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.swagger\.codegen\.v3/swagger-codegen-generators@.*$</packageUrl>
+        <cpe>cpe:/a:swagger:swagger-codegen</cpe>
+    </suppress>
 </suppressions>
