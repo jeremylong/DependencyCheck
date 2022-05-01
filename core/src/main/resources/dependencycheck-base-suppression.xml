@@ -5118,4 +5118,11 @@
         <packageUrl regex="true">^pkg:maven/io\.swagger\.codegen\.v3/swagger-codegen-generators@.*$</packageUrl>
         <cpe>cpe:/a:swagger:swagger-codegen</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4168; as we lack support for the target_sw field suppress the CVE of the python agent
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/co\.elastic\.apm/apm-agent.*$</packageUrl>
+        <cve>CVE-2019-7617</cve>
+    </suppress>
 </suppressions>
