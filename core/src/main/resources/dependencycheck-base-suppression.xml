@@ -2475,6 +2475,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+   FP per issue #4310
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty/.*$</packageUrl>
+        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #3829 the eclipse Microprofile config file provider project is not the Jenkins config file provider plugin
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.eclipse\.microprofile\.config/.*@.*$</packageUrl>
