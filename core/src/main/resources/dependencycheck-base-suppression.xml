@@ -5081,4 +5081,12 @@
         <packageUrl regex="true">^pkg:maven/jakarta\.el/jakarta\.el-api@.*$</packageUrl>
         <cve>CVE-2021-28170</cve>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       FP per issue #4427; struts-legacy is a very minimal subset of 2 generic utility classes
+       split off from strutsv1, not the struts framework itself
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/struts/struts-legacy@.*$</packageUrl>
+        <cpe>cpe:/a:apache:struts</cpe>
+    </suppress>
 </suppressions>
