@@ -270,7 +270,7 @@
         <notes><![CDATA[
    FP per issue #4160
    ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.smallrye\.reactive/smallrye-mutiny-vertx-pg-client@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/.*vertx-pg-client@.*$</packageUrl>
         <cpe>cpe:/a:postgresql:postgresql</cpe>
     </suppress>
     <suppress base="true">
