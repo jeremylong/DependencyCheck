@@ -5074,4 +5074,11 @@
    	    <packageUrl regex="true">^pkg:maven/com\.ibm\.async/asyncutil@.*$</packageUrl>
    	    <cpe>cpe:/a:async_project:async</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #4425 - CVE resides in the impl, not in the api
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/jakarta\.el/jakarta\.el-api@.*$</packageUrl>
+        <cve>CVE-2021-28170</cve>
+    </suppress>
 </suppressions>
