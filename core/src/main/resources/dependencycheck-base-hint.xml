@@ -233,9 +233,22 @@
             <evidence type="vendor" source="hint analyzer" name="vendor" value="oracle" confidence="HIGHEST"/>
         </add>
     </hint>
+    <hint>
+        <given>
+            <evidence type="product" name="artifactId" value="icu4j"/>
+        </given>
+        <add>
+            <evidence type="product" source="hint analyzer" name="product" value="international_components_for_unicode"
+                      confidence="HIGHEST"/>
+        </add>
+    </hint>
     <vendorDuplicatingHint value="sun" duplicate="oracle"/>	
     <vendorDuplicatingHint value="oracle" duplicate="sun"/>
-    
+    <vendorDuplicatingHint value="icu4j" duplicate="unicode"/>
+    <vendorDuplicatingHint value="icu4j" duplicate="icu-project"/>
+    <vendorDuplicatingHint value="unicode" duplicate="icu-project"/>
+    <vendorDuplicatingHint value="icu-project" duplicate="unicode"/>
+
     <!--additional hints from community-->
     <hint>
         <given>
