@@ -5125,4 +5125,12 @@
         <packageUrl regex="true">^pkg:maven/co\.elastic\.apm/apm-agent.*$</packageUrl>
         <cve>CVE-2019-7617</cve>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4061; also added firebird which suffers from a similar FP
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.flywaydb/.*$</packageUrl>
+        <cpe>cpe:/a:mysql:mysql</cpe>
+        <cpe>cpe:/a:firebird:firebird</cpe>
+    </suppress>
 </suppressions>
