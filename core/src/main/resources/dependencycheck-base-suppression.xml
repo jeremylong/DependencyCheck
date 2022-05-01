@@ -5089,4 +5089,12 @@
         <packageUrl regex="true">^pkg:maven/struts/struts-legacy@.*$</packageUrl>
         <cpe>cpe:/a:apache:struts</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4386
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/(org\.apache\.)?ant/ant\-apache\-log4j@.*$</packageUrl>
+        <cpe>cpe:/a:apache:ant</cpe>
+        <cpe>cpe:/a:apache:log4j</cpe>
+    </suppress>
 </suppressions>
