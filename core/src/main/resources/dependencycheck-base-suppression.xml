@@ -5067,4 +5067,11 @@
         <packageUrl regex="true">^pkg:maven/pl\.allegro\..*$</packageUrl>
         <cpe>cpe:/a:allegro:allegro</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   	    FP per issue #4368
+   	    ]]></notes>
+   	    <packageUrl regex="true">^pkg:maven/com\.ibm\.async/asyncutil@.*$</packageUrl>
+   	    <cpe>cpe:/a:async_project:async</cpe>
+    </suppress>
 </suppressions>
