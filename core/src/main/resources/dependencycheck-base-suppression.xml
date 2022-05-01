@@ -4693,9 +4693,9 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        spring-cloud-kubernetes-fabric8-autoconfig is part of spring cloud kubernetes, not spring cloud config #3098
+        spring-cloud-kubernetes-fabric8-autoconfig is part of spring cloud kubernetes, not spring cloud config #3098, #4038
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-kubernetes\-fabric8\-autoconfig@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-(starter\-)?kubernetes\-fabric8\-(auto)?config@.*$</packageUrl>
         <cpe>cpe:/a:vmware:spring_cloud_config</cpe>
     </suppress>
     <suppress base="true">
