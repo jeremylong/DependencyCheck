@@ -268,6 +268,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+   FP per issue #4160
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.smallrye\.reactive/smallrye-mutiny-vertx-pg-client@.*$</packageUrl>
+        <cpe>cpe:/a:postgresql:postgresql</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #3002
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.opencensus/opencensus\-contrib\-grpc\-metrics@.*$</packageUrl>
