@@ -5138,7 +5138,7 @@
         <cpe>cpe:/a:mysql:mysql</cpe>
         <cpe>cpe:/a:firebird:firebird</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
    FP per issue #4016; ratpack-pac4j is neither pac4j nor ratpack, but a bridge library with its own release schedule
    ]]></notes>
