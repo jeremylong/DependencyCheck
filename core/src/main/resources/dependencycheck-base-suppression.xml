@@ -5153,4 +5153,11 @@
         <packageUrl regex="true">^pkg:maven/org\.apache\.activemq/activeio\-core@.*$</packageUrl>
         <cpe>cpe:/a:apache:activemq</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4445
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.rxtx/rxtx@.*$</packageUrl>
+        <cpe>cpe:/a:gnu:parallel</cpe>
+    </suppress>
 </suppressions>
