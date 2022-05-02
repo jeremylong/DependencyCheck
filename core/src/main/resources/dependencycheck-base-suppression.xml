@@ -5146,4 +5146,11 @@
         <cpe>cpe:/a:ratpack:ratpack</cpe>
         <cpe>cpe:/a:ratpack_project:ratpack</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4440
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.activemq/activeio\-core@.*$</packageUrl>
+        <cpe>cpe:/a:apache:activemq</cpe>
+    </suppress>
 </suppressions>
