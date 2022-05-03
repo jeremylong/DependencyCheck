@@ -5161,4 +5161,11 @@
         <packageUrl regex="true">^pkg:maven/org\.rxtx/rxtx@.*$</packageUrl>
         <cpe>cpe:/a:gnu:parallel</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4465
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.iq80\.snappy/snappy@.*$</packageUrl>
+        <cpe>cpe:/a:electrum:electrum</cpe>
+    </suppress>
 </suppressions>
