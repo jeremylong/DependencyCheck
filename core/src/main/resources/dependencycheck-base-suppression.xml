@@ -5168,4 +5168,22 @@
         <packageUrl regex="true">^pkg:maven/org\.iq80\.snappy/snappy@.*$</packageUrl>
         <cpe>cpe:/a:electrum:electrum</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4462, #4463, #4464; akka management modules are separate from akka core (and from the non-core akka HTTP modules)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.lightbend\.akka\.management/akka\-.*@.*$</packageUrl>
+        <cpe>cpe:/a:akka:akka</cpe>
+        <cpe>cpe:/a:lightbend:akka</cpe>
+        <cpe>cpe:/a:lightbend:akka-http</cpe>
+        <cpe>cpe:/a:lightbend:akka_http</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4461 akka management discovery modules are separate from akka core
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.lightbend\.akka\.discovery/akka\-.*@.*$</packageUrl>
+        <cpe>cpe:/a:akka:akka</cpe>
+        <cpe>cpe:/a:lightbend:akka</cpe>
+    </suppress>
 </suppressions>
