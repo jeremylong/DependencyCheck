@@ -5101,4 +5101,32 @@
    	    <packageUrl regex="true">^pkg:maven/com\.ibm\.async/asyncutil@.*$</packageUrl>
    	    <cpe>cpe:/a:async_project:async</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        quarkus-liquibase is a wrapper of liquibase:liquibase with a lower version
+        ]]></notes>
+        <packageUrl regex="true">^pkg\:maven/io\.quarkus.*/quarkus\-liquibase@.*</packageUrl>
+        <cpe>cpe:/a:liquibase:liquibase</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        quarkus-container-image-docker is not docker:docker and maintains an independent version
+        ]]></notes>
+        <packageUrl regex="true">^pkg\:maven/io\.quarkus/quarkus\-container\-image\-docker@.*</packageUrl>
+        <cpe>cpe:/a:docker:docker</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        quarkus-spring-boot-orm-api has an independent version and does not inherit the product's version
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus\-spring\-boot\-orm\-api@.*$</packageUrl>
+        <cpe>cpe:/a:quarkus:quarkus</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        quarkus-spring-data-commons-api and quarkus-spring-data-jpa-api have an independent version and do not inherit the product's version
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus\-spring\-data\-(commons|jpa)\-api@.*$</packageUrl>
+        <cpe>cpe:/a:quarkus:quarkus</cpe>
+    </suppress>
 </suppressions>
