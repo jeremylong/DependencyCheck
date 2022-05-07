@@ -5211,4 +5211,11 @@
         <packageUrl regex="true">^pkg:maven/io\.github\.detekt\.sarif4k/sarif4k@.*$</packageUrl>
         <cpe>cpe:/a:detekt:detekt</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4263; prince-java-wrapper is an independently versioned wrapper to call the princeXML binary
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.princexml/prince-java-wrapper@.*$</packageUrl>
+        <cpe>cpe:/a:princexml:princexml</cpe>
+    </suppress>
 </suppressions>
