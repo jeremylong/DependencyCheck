@@ -5186,4 +5186,13 @@
         <cpe>cpe:/a:akka:akka</cpe>
         <cpe>cpe:/a:lightbend:akka</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4442; Eclipse Orbit is bundling thirdparty libraries as OSGI bundle, so org.eclipse.jetty.orbit libs
+   should not be linked to Jetty
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty\.orbit/.*$</packageUrl>
+        <cpe>cpe:/a:jetty:jetty</cpe>
+        <cpe>cpe:/a:eclipse:jetty</cpe>
+    </suppress>
 </suppressions>
