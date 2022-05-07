@@ -5202,4 +5202,11 @@
         <packageUrl regex="true">^pkg:maven/com\.google\.cloud/spring-cloud-gcp-starter-sql-postgresql@.*$</packageUrl>
         <cpe>cpe:/a:postgresql:postgresql</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4435; Sarif4k is not the Kotlin static analyzer Detekt
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.github\.detekt\.sarif4k/sarif4k@.*$</packageUrl>
+        <cpe>cpe:/a:detekt:detekt</cpe>
+    </suppress>
 </suppressions>
