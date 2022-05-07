@@ -4580,9 +4580,9 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per 3826; quarkus component falsely flagged as redhat resteasy product
+        FP per 3826, 4467; quarkus component falsely flagged as redhat resteasy product
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.quarkus/.*resteasy.*@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/io\.quarkus.*/.*resteasy.*@.*$</packageUrl>
         <cpe>cpe:/a:redhat:resteasy</cpe>
     </suppress>
     <suppress base="true">
