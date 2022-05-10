@@ -67,6 +67,10 @@ public class App {
      */
     private static final String ERROR_LOADING_PROPERTIES_FILE = "Error loading properties file";
     /**
+     * System specific new line character.
+     */
+    private static final String NEW_LINE = System.getProperty("line.separator", "\n").intern();
+    /**
      * The configured settings.
      */
     private Settings settings;
@@ -296,17 +300,46 @@ public class App {
     private int determineReturnCode(Engine engine, float cvssFailScore) {
         int retCode = 0;
         //Set the exit code based on whether we found a high enough vulnerability
+        final StringBuilder ids = new StringBuilder();
         for (Dependency d : engine.getDependencies()) {
+            boolean addName = true;
             for (Vulnerability v : d.getVulnerabilities()) {
-                if ((v.getCvssV2() != null && v.getCvssV2().getScore() >= cvssFailScore)
-                        || (v.getCvssV3() != null && v.getCvssV3().getBaseScore() >= cvssFailScore)
-                        || (v.getUnscoredSeverity() != null && SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) >= cvssFailScore)
-                        || (cvssFailScore <= 0.0f)) { //safety net to fail on any if for some reason the above misses on 0
-                    retCode = 1;
-                    break;
+                final float cvssV2 = v.getCvssV2() != null ? v.getCvssV2().getScore() : -1;
+                final float cvssV3 = v.getCvssV3() != null ? v.getCvssV3().getBaseScore() : -1;
+                final float unscoredCvss = v.getUnscoredSeverity() != null ? SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) : -1;
+
+                if (cvssV2 >= cvssFailScore
+                        || cvssV3 >= cvssFailScore
+                        || unscoredCvss >= cvssFailScore
+                        //safety net to fail on any if for some reason the above misses on 0
+                        || (cvssFailScore <= 0.0f)) {
+                    String name = v.getName();
+                    if (cvssV3 >= 0.0f) {
+                        name += "(" + cvssV3 + ")";
+                    } else if (cvssV2 >= 0.0f) {
+                        name += "(" + cvssV2 + ")";
+                    } else if (unscoredCvss >= 0.0f) {
+                        name += "(" + unscoredCvss + ")";
+                    }
+                    if (addName) {
+                        addName = false;
+                        ids.append(NEW_LINE).append(d.getFileName()).append(": ");
+                        ids.append(name);
+                    } else {
+                        ids.append(", ").append(name);
+                    }
                 }
             }
         }
+        if (ids.length() > 0) {
+            LOGGER.error(
+                    String.format("%n%nOne or more dependencies were identified with vulnerabilities that have a CVSS score greater than or "
+                            + "equal to '%.1f': %n%s%n%nSee the dependency-check report for more details.%n%n", cvssFailScore, ids.toString())
+            );
+
+            retCode = 1;
+        }
+
         return retCode;
     }
 
