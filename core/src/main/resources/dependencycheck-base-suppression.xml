@@ -5218,4 +5218,11 @@
         <packageUrl regex="true">^pkg:maven/com\.princexml/prince-java-wrapper@.*$</packageUrl>
         <cpe>cpe:/a:princexml:princexml</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4487
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.google\.http-client/google-http-client-gson@.*$</packageUrl>
+        <cpe>cpe:/a:google:gson</cpe>
+    </suppress>
 </suppressions>
