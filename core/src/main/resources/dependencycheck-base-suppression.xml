@@ -5225,4 +5225,11 @@
         <packageUrl regex="true">^pkg:maven/com\.google\.http-client/google-http-client-gson@.*$</packageUrl>
         <cpe>cpe:/a:google:gson</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4490; Datastax driver for Cassandra is not part of the Cassandra project
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.datastax\.cassandra/cassandra-driver-core@.*$</packageUrl>
+        <cpe>cpe:/a:apache:cassandra</cpe>
+    </suppress>
 </suppressions>
