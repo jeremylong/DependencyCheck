@@ -134,7 +134,7 @@ Copyright (c) 2012 - Jeremy Long
         <maven-project-info-reports-plugin.version>3.3.0</maven-project-info-reports-plugin.version>
         <maven-surefire-report-plugin.version>2.22.2</maven-surefire-report-plugin.version>
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
-        <spotbugs.version>4.6.0</spotbugs.version>
+        <spotbugs.version>4.7.0</spotbugs.version>
         <spotbugs.maven.plugin.version>4.6.0.0</spotbugs.maven.plugin.version>
         <taglist-maven-plugin.version>3.0.0</taglist-maven-plugin.version>
         <versions-maven-plugin.version>2.10.0</versions-maven-plugin.version>
@@ -198,7 +198,7 @@ Copyright (c) 2012 - Jeremy Long
                 <plugin>
                     <groupId>org.jsonschema2pojo</groupId>
                     <artifactId>jsonschema2pojo-maven-plugin</artifactId>
-                    <version>1.1.1</version>
+                    <version>1.1.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -817,7 +817,7 @@ Copyright (c) 2012 - Jeremy Long
                     <dependency>
                         <groupId>se.bjurr.violations</groupId>
                         <artifactId>violations-lib</artifactId>
-                        <version>1.148.3</version>
+                        <version>1.149.0</version>
                     </dependency>
                 </dependencies>
                 <configuration>

@@ -2796,10 +2796,37 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        False positive per issue #851 and #1073
+        False positive per issue #851 and #1073 and #4414;
+        the CVEs listed are in the C++ part of the ICU project (and are currently all CVEs listed
+        against ICU project; nevertheless we should not suppress the CPE itself to avoid false negatives
+        when the CVE is in the icu4j (cpe:2.3:a:icu-project:international_components_for_unicode:*:*:*:*:*:java:*:*
+        / cpe:2.3:a:unicode:international_components_for_unicode:*:*:*:*:*:java:*:*) CPE
+        cpe cpe:/a:unicode:unicode is the unicode specification
         ]]></notes>
-        <gav regex="true">^com\.ibm\.icu:icu4j:.*$</gav>
-        <cpe regex="true">cpe:/a:icu[_-]project:international[_-]components[_-]for[_-]unicode:.*</cpe>
+        <packageUrl regex="true">^pkg:maven/com\.ibm\.icu/icu4j@.*$</packageUrl>
+        <cve>CVE-2020-21913</cve>
+        <cve>CVE-2014-9654</cve>
+        <cve>CVE-2014-9911</cve>
+        <cve>CVE-2016-6293</cve>
+        <cve>CVE-2016-7415</cve>
+        <cve>CVE-2017-14952</cve>
+        <cve>CVE-2017-17484</cve>
+        <cve>CVE-2015-5922</cve>
+        <cve>CVE-2007-4771</cve>
+        <cve>CVE-2020-10531</cve>
+        <cve>CVE-2011-4599</cve>
+        <cve>CVE-2014-7923</cve>
+        <cve>CVE-2014-7926</cve>
+        <cve>CVE-2014-7940</cve>
+        <cve>CVE-2014-8146</cve>
+        <cve>CVE-2014-8147</cve>
+        <cve>CVE-2017-7867</cve>
+        <cve>CVE-2017-7868</cve>
+        <cve>CVE-2007-4770</cve>
+        <cve>CVE-2017-15396</cve>
+        <cve>CVE-2017-15422</cve>
+        <cpe>cpe:/a:apple:java</cpe>
+        <cpe>cpe:/a:unicode:unicode:</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -5231,5 +5258,33 @@
    ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.datastax\.cassandra/cassandra-driver-core@.*$</packageUrl>
         <cpe>cpe:/a:apache:cassandra</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        quarkus-liquibase is a wrapper of liquibase:liquibase with a lower version
+        ]]></notes>
+        <packageUrl regex="true">^pkg\:maven/io\.quarkus.*/quarkus\-liquibase@.*</packageUrl>
+        <cpe>cpe:/a:liquibase:liquibase</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        quarkus-container-image-docker is not docker:docker and maintains an independent version
+        ]]></notes>
+        <packageUrl regex="true">^pkg\:maven/io\.quarkus/quarkus\-container\-image\-docker@.*</packageUrl>
+        <cpe>cpe:/a:docker:docker</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        quarkus-spring-boot-orm-api has an independent version and does not inherit the product's version
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus\-spring\-boot\-orm\-api@.*$</packageUrl>
+        <cpe>cpe:/a:quarkus:quarkus</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        quarkus-spring-data-commons-api and quarkus-spring-data-jpa-api have an independent version and do not inherit the product's version
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus\-spring\-data\-(commons|jpa)\-api@.*$</packageUrl>
+        <cpe>cpe:/a:quarkus:quarkus</cpe>
     </suppress>
 </suppressions>
