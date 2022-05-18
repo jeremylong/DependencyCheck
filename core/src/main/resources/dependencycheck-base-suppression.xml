@@ -5299,4 +5299,16 @@
         <packageUrl regex="true">^pkg:maven/(?!org\.springframework/spring\-web@).*$</packageUrl>
         <cve>CVE-2016-1000027</cve>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #4502. When there is spring somewhere in an artifact, but the groupId is
+        not springframework (up to 1.2.6) or org.springframework (all versions) it's not the
+        Spring Framework.
+        ]]></notes>
+        <gav regex="true">^(?!(org\.)springframework).*:.*spring.*$</gav>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cpe>cpe:/a:springsource:spring_framework</cpe>
+        <cpe>cpe:/a:vmware:spring_framework</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
+    </suppress>
 </suppressions>
