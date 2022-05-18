@@ -5287,4 +5287,16 @@
         <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus\-spring\-data\-(commons|jpa)\-api@.*$</packageUrl>
         <cpe>cpe:/a:quarkus:quarkus</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4509; Issue is in spring-web and will only be fixed by Spring in their next major release.
+   So suppressing it for the spring-framework components other than spring-web is an appropriate
+   exception to the basic policy of not micromanaging spring_framework vulnerabilities by library
+   in our suppressions.
+   https://github.com/spring-projects/spring-framework/issues/25379 (deprecation only in current 5.x versions)
+   https://github.com/spring-projects/spring-framework/commit/5822f1bf85b94fd15f9829914b065b1c61910c7d (removal in 6.0.0-M1)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/(?!org\.springframework/spring\-web@).*$</packageUrl>
+        <cve>CVE-2016-1000027</cve>
+    </suppress>
 </suppressions>
