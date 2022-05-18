@@ -5311,4 +5311,11 @@
         <cpe>cpe:/a:vmware:spring_framework</cpe>
         <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4514
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.axis2/axis2-xmlbeans@.*$</packageUrl>
+        <cpe>cpe:/a:apache:xmlbeans</cpe>
+    </suppress>
 </suppressions>
