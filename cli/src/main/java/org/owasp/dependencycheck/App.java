@@ -116,11 +116,11 @@ public class App {
         } catch (FileNotFoundException ex) {
             System.err.println(ex.getMessage());
             cli.printHelp();
-            return -1;
+            return 1;
         } catch (ParseException ex) {
             System.err.println(ex.getMessage());
             cli.printHelp();
-            return -2;
+            return 2;
         }
         final String verboseLog = cli.getStringArgument(CliParser.ARGUMENT.VERBOSE_LOG);
         if (verboseLog != null) {
@@ -131,19 +131,19 @@ public class App {
             final String connStr = cli.getStringArgument(CliParser.ARGUMENT.CONNECTION_STRING);
             if (connStr != null) {
                 LOGGER.error("Unable to purge the database when using a non-default connection string");
-                exitCode = -3;
+                exitCode = 3;
             } else {
                 try {
                     populateSettings(cli);
                 } catch (InvalidSettingException ex) {
                     LOGGER.error(ex.getMessage());
                     LOGGER.debug(ERROR_LOADING_PROPERTIES_FILE, ex);
-                    exitCode = -4;
+                    exitCode = 4;
                     return exitCode;
                 }
                 try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, settings)) {
                     if (!engine.purge()) {
-                        exitCode = -7;
+                        exitCode = 7;
                         return exitCode;
                     }
                 } finally {
@@ -159,17 +159,17 @@ public class App {
             } catch (InvalidSettingException ex) {
                 LOGGER.error(ex.getMessage());
                 LOGGER.debug(ERROR_LOADING_PROPERTIES_FILE, ex);
-                exitCode = -4;
+                exitCode = 4;
                 return exitCode;
             }
             try {
                 runUpdateOnly();
             } catch (UpdateException ex) {
                 LOGGER.error(ex.getMessage(), ex);
-                exitCode = -8;
+                exitCode = 8;
             } catch (DatabaseException ex) {
                 LOGGER.error(ex.getMessage(), ex);
-                exitCode = -9;
+                exitCode = 9;
             } finally {
                 settings.cleanup();
             }
@@ -179,7 +179,7 @@ public class App {
             } catch (InvalidSettingException ex) {
                 LOGGER.error(ex.getMessage(), ex);
                 LOGGER.debug(ERROR_LOADING_PROPERTIES_FILE, ex);
-                exitCode = -4;
+                exitCode = 4;
                 return exitCode;
             }
             try {
@@ -193,17 +193,17 @@ public class App {
             } catch (DatabaseException ex) {
                 LOGGER.error(ex.getMessage());
                 LOGGER.debug("database exception", ex);
-                exitCode = -11;
+                exitCode = 11;
             } catch (ReportException ex) {
                 LOGGER.error(ex.getMessage());
                 LOGGER.debug("report exception", ex);
-                exitCode = -12;
+                exitCode = 12;
             } catch (ExceptionCollection ex) {
                 if (ex.isFatal()) {
-                    exitCode = -13;
+                    exitCode = 13;
                     LOGGER.error("One or more fatal errors occurred");
                 } else {
-                    exitCode = -14;
+                    exitCode = 14;
                 }
                 for (Throwable e : ex.getExceptions()) {
                     if (e.getMessage() != null) {
@@ -302,7 +302,7 @@ public class App {
                         || (v.getCvssV3() != null && v.getCvssV3().getBaseScore() >= cvssFailScore)
                         || (v.getUnscoredSeverity() != null && SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) >= cvssFailScore)
                         || (cvssFailScore <= 0.0f)) { //safety net to fail on any if for some reason the above misses on 0
-                    retCode = 1;
+                    retCode = 15;
                     break;
                 }
             }
