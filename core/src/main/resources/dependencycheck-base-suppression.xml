@@ -5318,4 +5318,11 @@
         <packageUrl regex="true">^pkg:maven/org\.apache\.axis2/axis2-xmlbeans@.*$</packageUrl>
         <cpe>cpe:/a:apache:xmlbeans</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4518; http-swagger is a SwagGo Go-librarie, not one of the swagger.io libraries
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.swagger/.*$</packageUrl>
+        <cpe>cpe:/a:http-swagger_project:http-swagger</cpe>
+    </suppress>
 </suppressions>
