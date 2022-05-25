@@ -313,20 +313,20 @@ public class App {
                         || unscoredCvss >= cvssFailScore
                         //safety net to fail on any if for some reason the above misses on 0
                         || (cvssFailScore <= 0.0f)) {
-                    String name = v.getName();
+                    float score;
                     if (cvssV3 >= 0.0f) {
-                        name += "(" + cvssV3 + ")";
+                        score = cvssV3;
                     } else if (cvssV2 >= 0.0f) {
-                        name += "(" + cvssV2 + ")";
+                        score = cvssV2;
                     } else if (unscoredCvss >= 0.0f) {
-                        name += "(" + unscoredCvss + ")";
+                        score = unscoredCvss;
                     }
                     if (addName) {
                         addName = false;
                         ids.append(NEW_LINE).append(d.getFileName()).append(": ");
-                        ids.append(name);
+                        ids.append(v.getName()).append('(').append(score).append(')');
                     } else {
-                        ids.append(", ").append(name);
+                        ids.append(", ").append(v.getName()).append('(').append(score).append(')');
                     }
                 }
             }
