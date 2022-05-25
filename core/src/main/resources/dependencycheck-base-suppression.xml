@@ -268,6 +268,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+   FP per issue #4160
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/.*vertx-pg-client@.*$</packageUrl>
+        <cpe>cpe:/a:postgresql:postgresql</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #3002
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.opencensus/opencensus\-contrib\-grpc\-metrics@.*$</packageUrl>
@@ -670,6 +677,9 @@
             56. html2pdf_project:html2pdf is a PHP framework #4021, #4251
             57. shadow_project:shadow is a suite of C-applications on Linux #4237
             58. Common Desktop Environment is an X11 GUI environment coded in C for Unix #4346 , #4347, #4348
+            59. docker:docker is a go implementation #4025
+            60. travis-ci:travis_ci is ci server software build in ruby/shell/go #4025
+            61. cpe:/a:storage_project:storage is software build in go (the github.com/containers/storage project) #4436
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -730,6 +740,9 @@
         <cpe>cpe:/a:html2pdf_project:html2pdf</cpe>
         <cpe>cpe:/a:shadow_project:shadow</cpe>
         <cpe>cpe:/a:cde:cde</cpe>
+        <cpe>cpe:/a:docker:docker</cpe>
+        <cpe>cpe:/a:travis-ci:travis_ci</cpe>
+        <cpe>cpe:/a:storage_project:storage</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -843,9 +856,9 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        Suppresses false positives per #2882 and #3562 and #3828
+        Suppresses false positives per #2882 and #3562 and #3828 and #4423
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/(io\.quarkus/quarkus\-|io\.smallrye\.reactive/).*mutiny.*@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/(io\.quarkus/quarkus\-|io\.smallrye).*mutiny.*@.*$</packageUrl>
         <cpe>cpe:/a:mutiny:mutiny</cpe>
     </suppress>
     <suppress base="true">
@@ -2475,6 +2488,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+   FP per issue #4310
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty/.*$</packageUrl>
+        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #3829 the eclipse Microprofile config file provider project is not the Jenkins config file provider plugin
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.eclipse\.microprofile\.config/.*@.*$</packageUrl>
@@ -3329,10 +3349,11 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per #2248
+        FP per #2248, #4444
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.apache\.zookeeper/zookeeper@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.zookeeper/zookeeper.*@.*$</packageUrl>
         <cpe>cpe:/a:apache:hadoop</cpe>
+        <cve>CVE-2021-21295</cve>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -4588,9 +4609,9 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per 3826; quarkus component falsely flagged as redhat resteasy product
+        FP per 3826, 4467; quarkus component falsely flagged as redhat resteasy product
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.quarkus/.*resteasy.*@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/io\.quarkus.*/.*resteasy.*@.*$</packageUrl>
         <cpe>cpe:/a:redhat:resteasy</cpe>
     </suppress>
     <suppress base="true">
@@ -4706,9 +4727,9 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        spring-cloud-kubernetes-fabric8-autoconfig is part of spring cloud kubernetes, not spring cloud config #3098
+        spring-cloud-kubernetes-fabric8-autoconfig is part of spring cloud kubernetes, not spring cloud config #3098, #4038
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-kubernetes\-fabric8\-autoconfig@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-(starter\-)?kubernetes\-fabric8\-(auto)?config@.*$</packageUrl>
         <cpe>cpe:/a:vmware:spring_cloud_config</cpe>
     </suppress>
     <suppress base="true">
@@ -5096,10 +5117,147 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-   	    FP per issue #4368
+   	    FP per issue #4368, #4384, #4369 async_project:async is an npm package
    	    ]]></notes>
-   	    <packageUrl regex="true">^pkg:maven/com\.ibm\.async/asyncutil@.*$</packageUrl>
+   	    <packageUrl regex="true">^pkg:maven/.*async.*@.*$</packageUrl>
    	    <cpe>cpe:/a:async_project:async</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #4425 - CVE resides in the impl, not in the api
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/jakarta\.el/jakarta\.el-api@.*$</packageUrl>
+        <cve>CVE-2021-28170</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       FP per issue #4427; struts-legacy is a very minimal subset of 2 generic utility classes
+       split off from strutsv1, not the struts framework itself
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/struts/struts-legacy@.*$</packageUrl>
+        <cpe>cpe:/a:apache:struts</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4386
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/(org\.apache\.)?ant/ant\-apache\-log4j@.*$</packageUrl>
+        <cpe>cpe:/a:apache:ant</cpe>
+        <cpe>cpe:/a:apache:log4j</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4382
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.swagger\.codegen\.v3/swagger-codegen-generators@.*$</packageUrl>
+        <cpe>cpe:/a:swagger:swagger-codegen</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4168; as we lack support for the target_sw field suppress the CVE of the python agent
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/co\.elastic\.apm/apm-agent.*$</packageUrl>
+        <cve>CVE-2019-7617</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4061; also added firebird which suffers from a similar FP
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.flywaydb/.*$</packageUrl>
+        <cpe>cpe:/a:mysql:mysql</cpe>
+        <cpe>cpe:/a:firebird:firebird</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4016; ratpack-pac4j is neither pac4j nor ratpack, but a bridge library with its own release schedule
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.pac4j/ratpack\-pac4j@.*$</packageUrl>
+        <cpe>cpe:/a:pac4j:pac4j</cpe>
+        <cpe>cpe:/a:ratpack:ratpack</cpe>
+        <cpe>cpe:/a:ratpack_project:ratpack</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4440
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.activemq/activeio\-core@.*$</packageUrl>
+        <cpe>cpe:/a:apache:activemq</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4445
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.rxtx/rxtx@.*$</packageUrl>
+        <cpe>cpe:/a:gnu:parallel</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4465
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.iq80\.snappy/snappy@.*$</packageUrl>
+        <cpe>cpe:/a:electrum:electrum</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4462, #4463, #4464; akka management modules are separate from akka core (and from the non-core akka HTTP modules)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.lightbend\.akka\.management/akka\-.*@.*$</packageUrl>
+        <cpe>cpe:/a:akka:akka</cpe>
+        <cpe>cpe:/a:lightbend:akka</cpe>
+        <cpe>cpe:/a:lightbend:akka-http</cpe>
+        <cpe>cpe:/a:lightbend:akka_http</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4461 akka management discovery modules are separate from akka core
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.lightbend\.akka\.discovery/akka\-.*@.*$</packageUrl>
+        <cpe>cpe:/a:akka:akka</cpe>
+        <cpe>cpe:/a:lightbend:akka</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4442; Eclipse Orbit is bundling thirdparty libraries as OSGI bundle, so org.eclipse.jetty.orbit libs
+   should not be linked to Jetty
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty\.orbit/.*$</packageUrl>
+        <cpe>cpe:/a:jetty:jetty</cpe>
+        <cpe>cpe:/a:eclipse:jetty</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4439
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.google\.cloud/spring-cloud-gcp-starter-sql-postgresql@.*$</packageUrl>
+        <cpe>cpe:/a:postgresql:postgresql</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4435; Sarif4k is not the Kotlin static analyzer Detekt
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.github\.detekt\.sarif4k/sarif4k@.*$</packageUrl>
+        <cpe>cpe:/a:detekt:detekt</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4263; prince-java-wrapper is an independently versioned wrapper to call the princeXML binary
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.princexml/prince-java-wrapper@.*$</packageUrl>
+        <cpe>cpe:/a:princexml:princexml</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4487
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.google\.http-client/google-http-client-gson@.*$</packageUrl>
+        <cpe>cpe:/a:google:gson</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4490; Datastax driver for Cassandra is not part of the Cassandra project
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.datastax\.cassandra/cassandra-driver-core@.*$</packageUrl>
+        <cpe>cpe:/a:apache:cassandra</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -5128,5 +5286,43 @@
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus\-spring\-data\-(commons|jpa)\-api@.*$</packageUrl>
         <cpe>cpe:/a:quarkus:quarkus</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4509; Issue is in spring-web and will only be fixed by Spring in their next major release.
+   So suppressing it for the spring-framework components other than spring-web is an appropriate
+   exception to the basic policy of not micromanaging spring_framework vulnerabilities by library
+   in our suppressions.
+   https://github.com/spring-projects/spring-framework/issues/25379 (deprecation only in current 5.x versions)
+   https://github.com/spring-projects/spring-framework/commit/5822f1bf85b94fd15f9829914b065b1c61910c7d (removal in 6.0.0-M1)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/(?!org\.springframework/spring\-web@).*$</packageUrl>
+        <cve>CVE-2016-1000027</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #4502. When there is spring somewhere in an artifact, but the groupId is
+        not springframework (up to 1.2.6) or org.springframework (all versions) it's not the
+        Spring Framework.
+        ]]></notes>
+        <gav regex="true">^(?!(org\.)springframework).*:.*spring.*$</gav>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cpe>cpe:/a:springsource:spring_framework</cpe>
+        <cpe>cpe:/a:vmware:spring_framework</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4514
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.axis2/axis2-xmlbeans@.*$</packageUrl>
+        <cpe>cpe:/a:apache:xmlbeans</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4518; http-swagger is a SwagGo Go-librarie, not one of the swagger.io libraries
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.swagger/.*$</packageUrl>
+        <cpe>cpe:/a:http-swagger_project:http-swagger</cpe>
     </suppress>
 </suppressions>
