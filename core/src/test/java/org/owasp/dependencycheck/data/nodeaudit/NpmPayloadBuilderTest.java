@@ -59,7 +59,7 @@ public class NpmPayloadBuilderTest {
 
         JsonObject packageJson = builder.build();
         final MultiValuedMap<String, String> dependencyMap = new HashSetValuedHashMap<>();
-        JsonObject sanitized = NpmPayloadBuilder.build(packageJson, dependencyMap);
+        JsonObject sanitized = NpmPayloadBuilder.build(packageJson, dependencyMap, false);
 
         Assert.assertTrue(sanitized.containsKey("name"));
         Assert.assertTrue(sanitized.containsKey("version"));
@@ -108,7 +108,7 @@ public class NpmPayloadBuilderTest {
 
         JsonObject packageJson = builder.build();
         final MultiValuedMap<String, String> dependencyMap = new HashSetValuedHashMap<>();
-        JsonObject sanitized = NpmPayloadBuilder.build(packageJson, dependencyMap);
+        JsonObject sanitized = NpmPayloadBuilder.build(packageJson, dependencyMap, false);
 
         Assert.assertTrue(sanitized.containsKey("name"));
         Assert.assertTrue(sanitized.containsKey("version"));
@@ -133,7 +133,7 @@ public class NpmPayloadBuilderTest {
         final MultiValuedMap<String, String> dependencyMap = new HashSetValuedHashMap<>();
         try (JsonReader jsonReader = Json.createReader(in)) {
             JsonObject packageJson = jsonReader.readObject();
-            JsonObject sanitized = NpmPayloadBuilder.build(packageJson, dependencyMap);
+            JsonObject sanitized = NpmPayloadBuilder.build(packageJson, dependencyMap, false);
 
             Assert.assertTrue(sanitized.containsKey("name"));
             Assert.assertTrue(sanitized.containsKey("version"));

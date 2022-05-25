@@ -132,10 +132,12 @@ public final class NpmPayloadBuilder {
      *
      * @param packageJson a raw package-lock.json file
      * @param dependencyMap a collection of module/version pairs that is
+     * @param skipDevDependencies whether devDependencies should be skipped
      * populated while building the payload
      * @return the JSON payload for NPN Audit
      */
-    public static JsonObject build(JsonObject packageJson, MultiValuedMap<String, String> dependencyMap) {
+    public static JsonObject build(JsonObject packageJson, MultiValuedMap<String, String> dependencyMap,
+                                   final boolean skipDevDependencies) {
         final JsonObjectBuilder payloadBuilder = Json.createObjectBuilder();
         addProjectInfo(packageJson, payloadBuilder);
 
@@ -155,6 +157,10 @@ public final class NpmPayloadBuilder {
                             .map(JsonString::getString)
                             .orElse(null);
 
+                    final boolean isDev = dep.getBoolean("dev", false);
+                    if (skipDevDependencies && isDev) {
+                        return;
+                    }
                     if (NodePackageAnalyzer.shouldSkipDependency(name, version)) {
                         return;
                     }
