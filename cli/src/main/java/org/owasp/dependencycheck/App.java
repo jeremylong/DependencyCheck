@@ -69,7 +69,7 @@ public class App {
     /**
      * System specific new line character.
      */
-    private static final String NEW_LINE = System.getProperty("line.separator", "\n").intern();
+    private static final String NEW_LINE = System.getProperty("line.separator", "\n");
     /**
      * The configured settings.
      */
