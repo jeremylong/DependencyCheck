@@ -915,11 +915,14 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-            FP per #1665
-            ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring\-security\-rsa@.*$</packageUrl>
+        Suppresses false positives per issue #1665, #3219, #4562.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-rsa.*$</packageUrl>
         <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
+        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -988,15 +991,6 @@
         Suppresses false positives per issue #2235.
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.kerberos/spring-security-kerberos.*$</packageUrl>
-        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
-        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
-        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        Suppresses false positives per issue #3219.
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-rsa.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
         <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
         <cpe>cpe:/a:security-framework_project:security-framework</cpe>
