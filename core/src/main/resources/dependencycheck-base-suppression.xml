@@ -5321,4 +5321,11 @@
         <packageUrl regex="true">^pkg:maven/io\.swagger/.*$</packageUrl>
         <cpe>cpe:/a:http-swagger_project:http-swagger</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4560. Tomcat jakartaee-migration utility is other project than Apache Tomcat itself
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat/jakartaee-migration@.*$</packageUrl>
+        <cpe>cpe:/a:apache:tomcat</cpe>
+    </suppress>
 </suppressions>
