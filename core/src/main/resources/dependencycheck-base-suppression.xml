@@ -5331,4 +5331,11 @@
         <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat/jakartaee-migration@.*$</packageUrl>
         <cpe>cpe:/a:apache:tomcat</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4554; archiver_project:archiver is a go-module, not the NPM package
+   ]]></notes>
+        <packageUrl regex="true">^pkg:npm/archiver@.*$</packageUrl>
+        <cpe>cpe:/a:archiver_project:archiver</cpe>
+    </suppress>
 </suppressions>
