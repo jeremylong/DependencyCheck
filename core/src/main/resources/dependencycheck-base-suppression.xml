@@ -5345,4 +5345,11 @@
         <packageUrl regex="true">^pkg:maven/tyrex/tyrex@.*$</packageUrl>
         <cpe>cpe:/a:sun:j2ee</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #4524; Zipkin Brave-aws is not the Brave desktop browser
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.zipkin\.aws/brave-propagation-aws@.*$</packageUrl>
+        <cpe>cpe:/a:brave:brave</cpe>
+    </suppress>
 </suppressions>
