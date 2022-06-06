@@ -5338,4 +5338,11 @@
         <packageUrl regex="true">^pkg:npm/archiver@.*$</packageUrl>
         <cpe>cpe:/a:archiver_project:archiver</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4540
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/tyrex/tyrex@.*$</packageUrl>
+        <cpe>cpe:/a:sun:j2ee</cpe>
+    </suppress>
 </suppressions>
