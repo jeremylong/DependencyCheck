@@ -599,11 +599,14 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-       False positive per #3622. Spring-boot-starter-oauth2-client gets flagged with wrong spring CPEs.
+       False positive per #3622, #4561. Spring-boot-starter-oauth2-client gets flagged with wrong spring CPEs.
    ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring\-boot\-starter\-oauth2\-client@.*$</packageUrl>
         <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
         <cpe>cpe:/a:pivotal:spring_security</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security_oauth</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
