@@ -5370,4 +5370,12 @@
         <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus-micrometer-registry-prometheus@.*$</packageUrl>
         <cpe>cpe:/a:prometheus:prometheus</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            FP per issue #3888;
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.activemq/activemq\-artemis\-native@.*$</packageUrl>
+        <cpe>cpe:/a:apache:activemq</cpe>
+        <cpe>cpe:/a:apache:activemq_artemis</cpe>
+    </suppress>
 </suppressions>
