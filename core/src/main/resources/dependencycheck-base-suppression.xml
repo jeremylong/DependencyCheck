@@ -5378,4 +5378,12 @@
         <cpe>cpe:/a:apache:activemq</cpe>
         <cpe>cpe:/a:apache:activemq_artemis</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #3811
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.ws/spring\-ws\-security@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+    </suppress>
 </suppressions>
