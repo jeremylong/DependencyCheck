@@ -33,7 +33,7 @@ jobs:
         id: issue-parser
         with:
           template-path: odc/.github/ISSUE_TEMPLATE/false-positive-report.yml
-      - uses: actions/setup-node@v3.2.0
+      - uses: actions/setup-node@v3.3.0
         with:
           node-version: 14
       - name: Initialize npm
