@@ -975,10 +975,11 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-       Supress false positives per issue #1872
+       Supress false positives per issue #1872, #4577
        ]]></notes>
-        <gav regex="true">^org\.springframework\.security\.oauth:spring-security-oauth2:.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.oauth/spring-security-oauth2@.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
