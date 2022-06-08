@@ -5386,4 +5386,12 @@
         <cpe>cpe:/a:vmware:spring_security</cpe>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issues #4581, #4582
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring-cloud-dataflow-rest-.*$</packageUrl>
+        <cpe>cpe:/a:vmware:spring_data_rest</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_data_rest</cpe>
+    </suppress>
 </suppressions>

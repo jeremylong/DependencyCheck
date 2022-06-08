@@ -626,7 +626,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "ossindexAnalyzerEnabled")
     private Boolean ossindexAnalyzerEnabled;
     /**
-     * Whether or not the Sonatype OSS Index analyzer is enabled.
+     * Whether or not the Sonatype OSS Index analyzer should cache results.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "ossindexAnalyzerUseCache")
