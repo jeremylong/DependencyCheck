@@ -313,7 +313,7 @@ public class App {
                         || unscoredCvss >= cvssFailScore
                         //safety net to fail on any if for some reason the above misses on 0
                         || (cvssFailScore <= 0.0f)) {
-                    float score;
+                    float score = 0.0f;
                     if (cvssV3 >= 0.0f) {
                         score = cvssV3;
                     } else if (cvssV2 >= 0.0f) {
