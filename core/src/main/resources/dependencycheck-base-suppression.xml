@@ -5361,4 +5361,11 @@
         <cpe>cpe:/a:saml_project:saml</cpe>
         <cpe>cpe:/a:vmware:spring_security</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            FP per issue #4205;
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus-micrometer-registry-prometheus@.*$</packageUrl>
+        <cpe>cpe:/a:prometheus:prometheus</cpe>
+    </suppress>
 </suppressions>
