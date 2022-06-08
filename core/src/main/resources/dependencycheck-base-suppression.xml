@@ -5352,4 +5352,12 @@
         <packageUrl regex="true">^pkg:maven/io\.zipkin\.aws/brave-propagation-aws@.*$</packageUrl>
         <cpe>cpe:/a:brave:brave</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4576; spring-security-saml2-core is an (end-of-life) extension project separate from spring-security https://github.com/spring-projects/spring-security-saml
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.extensions/spring-security-saml2-core@.*$</packageUrl>
+        <cpe>cpe:/a:saml_project:saml</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
+    </suppress>
 </suppressions>
