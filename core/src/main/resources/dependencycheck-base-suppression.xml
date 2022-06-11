@@ -599,11 +599,14 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-       False positive per #3622. Spring-boot-starter-oauth2-client gets flagged with wrong spring CPEs.
+       False positive per #3622, #4561. Spring-boot-starter-oauth2-client gets flagged with wrong spring CPEs.
    ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring\-boot\-starter\-oauth2\-client@.*$</packageUrl>
         <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
         <cpe>cpe:/a:pivotal:spring_security</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security_oauth</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -680,6 +683,7 @@
             59. docker:docker is a go implementation #4025
             60. travis-ci:travis_ci is ci server software build in ruby/shell/go #4025
             61. cpe:/a:storage_project:storage is software build in go (the github.com/containers/storage project) #4436
+            62. cpe:/a:pivotal_software:rabbitmq is software build in Erlang #4178
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -743,6 +747,7 @@
         <cpe>cpe:/a:docker:docker</cpe>
         <cpe>cpe:/a:travis-ci:travis_ci</cpe>
         <cpe>cpe:/a:storage_project:storage</cpe>
+        <cpe>cpe:/a:pivotal_software:rabbitmq</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -915,11 +920,14 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-            FP per #1665
-            ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring\-security\-rsa@.*$</packageUrl>
+        Suppresses false positives per issue #1665, #3219, #4562.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-rsa.*$</packageUrl>
         <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
+        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -969,10 +977,11 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-       Supress false positives per issue #1872
+       Supress false positives per issue #1872, #4577
        ]]></notes>
-        <gav regex="true">^org\.springframework\.security\.oauth:spring-security-oauth2:.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.oauth/spring-security-oauth2@.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -988,15 +997,6 @@
         Suppresses false positives per issue #2235.
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.kerberos/spring-security-kerberos.*$</packageUrl>
-        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
-        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
-        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        Suppresses false positives per issue #3219.
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-rsa.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
         <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
         <cpe>cpe:/a:security-framework_project:security-framework</cpe>
@@ -2924,10 +2924,12 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        spring-boot-starter-security is not the same as spring-security, See #1975
+        spring-boot-starter-security is not the same as spring-security, See #1975, #4563
         ]]></notes>
         <gav regex="true">^org\.springframework\.boot:spring-boot-starter-security:.*$</gav>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -5247,9 +5249,9 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-   FP per issue #4487
+   FP per issue #4487,    FP per issue #4551
    ]]></notes>
-        <packageUrl regex="true">^pkg:maven/com\.google\.http-client/google-http-client-gson@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/com\.google\.(?!code\.gson).*/.*gson.*$</packageUrl>
         <cpe>cpe:/a:google:gson</cpe>
     </suppress>
     <suppress base="true">
@@ -5324,6 +5326,65 @@
    ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.swagger/.*$</packageUrl>
         <cpe>cpe:/a:http-swagger_project:http-swagger</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4560. Tomcat jakartaee-migration utility is other project than Apache Tomcat itself
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat/jakartaee-migration@.*$</packageUrl>
+        <cpe>cpe:/a:apache:tomcat</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4554; archiver_project:archiver is a go-module, not the NPM package
+   ]]></notes>
+        <packageUrl regex="true">^pkg:npm/archiver@.*$</packageUrl>
+        <cpe>cpe:/a:archiver_project:archiver</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4540
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/tyrex/tyrex@.*$</packageUrl>
+        <cpe>cpe:/a:sun:j2ee</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #4524; Zipkin Brave-aws is not the Brave desktop browser
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.zipkin\.aws/brave-propagation-aws@.*$</packageUrl>
+        <cpe>cpe:/a:brave:brave</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4576; spring-security-saml2-core is an (end-of-life) extension project separate from spring-security https://github.com/spring-projects/spring-security-saml
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.extensions/spring-security-saml2-core@.*$</packageUrl>
+        <cpe>cpe:/a:saml_project:saml</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            FP per issue #4205;
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus-micrometer-registry-prometheus@.*$</packageUrl>
+        <cpe>cpe:/a:prometheus:prometheus</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            FP per issue #3888;
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.activemq/activemq\-artemis\-native@.*$</packageUrl>
+        <cpe>cpe:/a:apache:activemq</cpe>
+        <cpe>cpe:/a:apache:activemq_artemis</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #3811
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.ws/spring\-ws\-security@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
