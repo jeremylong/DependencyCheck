@@ -158,20 +158,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.analyzer.JarAnalyzer.java">org/owasp/dependencycheck/analyzer/JarAnalyzer.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.exception.ExceptionCollection.java">org/owasp/dependencycheck/exception/ExceptionCollection.java</a>
                 </td>
                 <td>
@@ -182,6 +168,20 @@ under the License.
                 </td>
                 <td>
                   0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.analyzer.JarAnalyzer.java">org/owasp/dependencycheck/analyzer/JarAnalyzer.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
                 </td>
               </tr>
                           <tr>
@@ -382,7 +382,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.data.nuget.NuspecParser.java">org/owasp/dependencycheck/data/nuget/NuspecParser.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.data.cwe.CweDB.java">org/owasp/dependencycheck/data/cwe/CweDB.java</a>
                 </td>
                 <td>
                   0
@@ -396,7 +396,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.data.cwe.CweDB.java">org/owasp/dependencycheck/data/cwe/CweDB.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.data.nuget.NuspecParser.java">org/owasp/dependencycheck/data/nuget/NuspecParser.java</a>
                 </td>
                 <td>
                   0
@@ -1306,7 +1306,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.analyzer.AbstractAnalyzer.java">org/owasp/dependencycheck/analyzer/AbstractAnalyzer.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.utils.ExtractionUtil.java">org/owasp/dependencycheck/utils/ExtractionUtil.java</a>
                 </td>
                 <td>
                   0
@@ -1320,7 +1320,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.utils.ExtractionUtil.java">org/owasp/dependencycheck/utils/ExtractionUtil.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.analyzer.AbstractAnalyzer.java">org/owasp/dependencycheck/analyzer/AbstractAnalyzer.java</a>
                 </td>
                 <td>
                   0
@@ -2132,7 +2132,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.data.cpe.Fields.java">org/owasp/dependencycheck/data/cpe/Fields.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.data.central.package-info.java">org/owasp/dependencycheck/data/central/package-info.java</a>
                 </td>
                 <td>
                   0
@@ -2146,7 +2146,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.data.central.package-info.java">org/owasp/dependencycheck/data/central/package-info.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.data.cpe.Fields.java">org/owasp/dependencycheck/data/cpe/Fields.java</a>
                 </td>
                 <td>
                   0
@@ -2482,6 +2482,20 @@ under the License.
               </tr>
                           <tr>
                 <td>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.utils.DependencyVersion.java">org/owasp/dependencycheck/utils/DependencyVersion.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.dependency.CweSet.java">org/owasp/dependencycheck/dependency/CweSet.java</a>
                 </td>
                 <td>
@@ -2497,20 +2511,6 @@ under the License.
                           <tr>
                 <td>
                   <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.analyzer.CMakeAnalyzer.java">org/owasp/dependencycheck/analyzer/CMakeAnalyzer.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.utils.DependencyVersion.java">org/owasp/dependencycheck/utils/DependencyVersion.java</a>
                 </td>
                 <td>
                   0
@@ -2958,7 +2958,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.dependency.Vulnerability.java">org/owasp/dependencycheck/dependency/Vulnerability.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.data.nvd.json.MetaProperties.java">org/owasp/dependencycheck/data/nvd/json/MetaProperties.java</a>
                 </td>
                 <td>
                   0
@@ -2972,7 +2972,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.data.nvd.json.MetaProperties.java">org/owasp/dependencycheck/data/nvd/json/MetaProperties.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.dependency.Vulnerability.java">org/owasp/dependencycheck/dependency/Vulnerability.java</a>
                 </td>
                 <td>
                   0
@@ -3742,7 +3742,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#maven.src.it.3944-multimodule-virtual-duplication.invoker.properties">maven/src/it/3944-multimodule-virtual-duplication/invoker.properties</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#maven.src.it.2494-managed-reactor-dependencies.invoker.properties">maven/src/it/2494-managed-reactor-dependencies/invoker.properties</a>
                 </td>
                 <td>
                   0
@@ -3756,7 +3756,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#maven.src.it.2494-managed-reactor-dependencies.invoker.properties">maven/src/it/2494-managed-reactor-dependencies/invoker.properties</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#maven.src.it.3944-multimodule-virtual-duplication.invoker.properties">maven/src/it/3944-multimodule-virtual-duplication/invoker.properties</a>
                 </td>
                 <td>
                   0
@@ -4008,7 +4008,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.data.lucene.SearchFieldAnalyzer.java">org/owasp/dependencycheck/data/lucene/SearchFieldAnalyzer.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.data.update.exception.InvalidDataException.java">org/owasp/dependencycheck/data/update/exception/InvalidDataException.java</a>
                 </td>
                 <td>
                   0
@@ -4022,7 +4022,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.data.update.exception.InvalidDataException.java">org/owasp/dependencycheck/data/update/exception/InvalidDataException.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.data.lucene.SearchFieldAnalyzer.java">org/owasp/dependencycheck/data/lucene/SearchFieldAnalyzer.java</a>
                 </td>
                 <td>
                   0
@@ -4372,7 +4372,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.xml.hints.HintRule.java">org/owasp/dependencycheck/xml/hints/HintRule.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.utils.DBUtils.java">org/owasp/dependencycheck/utils/DBUtils.java</a>
                 </td>
                 <td>
                   0
@@ -4386,7 +4386,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.utils.DBUtils.java">org/owasp/dependencycheck/utils/DBUtils.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.xml.hints.HintRule.java">org/owasp/dependencycheck/xml/hints/HintRule.java</a>
                 </td>
                 <td>
                   0
@@ -5646,7 +5646,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.dependency.EvidenceType.java">org/owasp/dependencycheck/dependency/EvidenceType.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.data.lucene.LuceneUtils.java">org/owasp/dependencycheck/data/lucene/LuceneUtils.java</a>
                 </td>
                 <td>
                   0
@@ -5660,7 +5660,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.data.lucene.LuceneUtils.java">org/owasp/dependencycheck/data/lucene/LuceneUtils.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/checkstyle.html#org.owasp.dependencycheck.dependency.EvidenceType.java">org/owasp/dependencycheck/dependency/EvidenceType.java</a>
                 </td>
                 <td>
                   0

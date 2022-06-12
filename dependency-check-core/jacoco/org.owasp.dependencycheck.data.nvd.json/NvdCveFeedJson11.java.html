@@ -2,7 +2,7 @@
 package org.owasp.dependencycheck.data.nvd.json;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
@@ -77,7 +77,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     @JsonPropertyDescription(&quot;NVD feed array of CVE&quot;)
     private List&lt;DefCveItem&gt; cVEItems = new ArrayList&lt;DefCveItem&gt;();
 <span class="nc" id="L79">    @JsonIgnore</span>
-    private Map&lt;String, Object&gt; additionalProperties = new HashMap&lt;String, Object&gt;();
+    private Map&lt;String, Object&gt; additionalProperties = new LinkedHashMap&lt;String, Object&gt;();
 
     @JsonProperty(&quot;CVE_data_type&quot;)
     public String getCVEDataType() {

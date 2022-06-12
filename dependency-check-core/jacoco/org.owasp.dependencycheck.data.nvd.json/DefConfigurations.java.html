@@ -2,7 +2,7 @@
 package org.owasp.dependencycheck.data.nvd.json;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 <span class="fc" id="L28">    @JsonProperty(&quot;nodes&quot;)</span>
     private List&lt;DefNode&gt; nodes = new ArrayList&lt;DefNode&gt;();
 <span class="fc" id="L30">    @JsonIgnore</span>
-    private Map&lt;String, Object&gt; additionalProperties = new HashMap&lt;String, Object&gt;();
+    private Map&lt;String, Object&gt; additionalProperties = new LinkedHashMap&lt;String, Object&gt;();
 
     @JsonProperty(&quot;nodes&quot;)
     public List&lt;DefNode&gt; getNodes() {

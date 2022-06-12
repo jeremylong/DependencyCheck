@@ -131,9 +131,9 @@ import us.springett.parsers.cpe.exceptions.CpeValidationException;
         }
 <span class="fc" id="L132">        final File packageLock = dependency.getActualFile();</span>
 <span class="fc" id="L133">        final File shrinkwrap = new File(packageLock.getParentFile(), SHRINKWRAP_JSON);</span>
-<span class="pc bpc" id="L134" title="1 of 4 branches missed.">        if (PACKAGE_LOCK_JSON.equals(dependency.getFileName()) &amp;&amp; shrinkwrap.isFile()) {</span>
-<span class="nc" id="L135">            LOGGER.debug(&quot;Skipping {} because shrinkwrap lock file exists&quot;, dependency.getFilePath());</span>
-<span class="nc" id="L136">            return;</span>
+<span class="fc bfc" id="L134" title="All 4 branches covered.">        if (PACKAGE_LOCK_JSON.equals(dependency.getFileName()) &amp;&amp; shrinkwrap.isFile()) {</span>
+<span class="fc" id="L135">            LOGGER.debug(&quot;Skipping {} because shrinkwrap lock file exists&quot;, dependency.getFilePath());</span>
+<span class="fc" id="L136">            return;</span>
         }
 <span class="pc bpc" id="L138" title="1 of 6 branches missed.">        if (!packageLock.isFile() || packageLock.length() == 0 || !shouldProcess(packageLock)) {</span>
 <span class="fc" id="L139">            return;</span>
@@ -246,26 +246,27 @@ import us.springett.parsers.cpe.exceptions.CpeValidationException;
             }
 
             // Modify the payload to meet the NPM Audit API requirements
-<span class="nc" id="L249">            final JsonObject payload = NpmPayloadBuilder.build(packageJson, dependencyMap);</span>
+<span class="nc" id="L249">            final JsonObject payload = NpmPayloadBuilder.build(packageJson, dependencyMap,</span>
+<span class="nc" id="L250">                    getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false));</span>
 
             // Submits the package payload to the nsp check service
-<span class="nc" id="L252">            return getSearcher().submitPackage(payload);</span>
+<span class="nc" id="L253">            return getSearcher().submitPackage(payload);</span>
 
-<span class="nc" id="L254">        } catch (URLConnectionFailureException e) {</span>
-<span class="nc" id="L255">            this.setEnabled(false);</span>
-<span class="nc" id="L256">            throw new AnalysisException(&quot;Failed to connect to the NPM Audit API (NodeAuditAnalyzer); the analyzer &quot;</span>
+<span class="nc" id="L255">        } catch (URLConnectionFailureException e) {</span>
+<span class="nc" id="L256">            this.setEnabled(false);</span>
+<span class="nc" id="L257">            throw new AnalysisException(&quot;Failed to connect to the NPM Audit API (NodeAuditAnalyzer); the analyzer &quot;</span>
                     + &quot;is being disabled and may result in false negatives.&quot;, e);
-<span class="nc" id="L258">        } catch (IOException e) {</span>
-<span class="nc" id="L259">            LOGGER.debug(&quot;Error reading dependency or connecting to NPM Audit API&quot;, e);</span>
-<span class="nc" id="L260">            this.setEnabled(false);</span>
-<span class="nc" id="L261">            throw new AnalysisException(&quot;Failed to read results from the NPM Audit API (NodeAuditAnalyzer); &quot;</span>
+<span class="nc" id="L259">        } catch (IOException e) {</span>
+<span class="nc" id="L260">            LOGGER.debug(&quot;Error reading dependency or connecting to NPM Audit API&quot;, e);</span>
+<span class="nc" id="L261">            this.setEnabled(false);</span>
+<span class="nc" id="L262">            throw new AnalysisException(&quot;Failed to read results from the NPM Audit API (NodeAuditAnalyzer); &quot;</span>
                     + &quot;the analyzer is being disabled and may result in false negatives.&quot;, e);
-<span class="nc" id="L263">        } catch (JsonException e) {</span>
-<span class="nc" id="L264">            throw new AnalysisException(String.format(&quot;Failed to parse %s file from the NPM Audit API &quot;</span>
-<span class="nc" id="L265">                    + &quot;(NodeAuditAnalyzer).&quot;, file.getPath()), e);</span>
-<span class="nc" id="L266">        } catch (SearchException ex) {</span>
-<span class="nc" id="L267">            LOGGER.error(&quot;NodeAuditAnalyzer failed on {}&quot;, dependency.getActualFilePath());</span>
-<span class="nc" id="L268">            throw ex;</span>
+<span class="nc" id="L264">        } catch (JsonException e) {</span>
+<span class="nc" id="L265">            throw new AnalysisException(String.format(&quot;Failed to parse %s file from the NPM Audit API &quot;</span>
+<span class="nc" id="L266">                    + &quot;(NodeAuditAnalyzer).&quot;, file.getPath()), e);</span>
+<span class="nc" id="L267">        } catch (SearchException ex) {</span>
+<span class="nc" id="L268">            LOGGER.error(&quot;NodeAuditAnalyzer failed on {}&quot;, dependency.getActualFilePath());</span>
+<span class="nc" id="L269">            throw ex;</span>
         }
     }
 }

@@ -254,29 +254,30 @@
 <a class="jxr_linenumber" name="L246" href="#L246">246</a>             }
 <a class="jxr_linenumber" name="L247" href="#L247">247</a> 
 <a class="jxr_linenumber" name="L248" href="#L248">248</a>             <em class="jxr_comment">// Modify the payload to meet the NPM Audit API requirements</em>
-<a class="jxr_linenumber" name="L249" href="#L249">249</a>             <strong class="jxr_keyword">final</strong> JsonObject payload = NpmPayloadBuilder.build(packageJson, dependencyMap);
-<a class="jxr_linenumber" name="L250" href="#L250">250</a> 
-<a class="jxr_linenumber" name="L251" href="#L251">251</a>             <em class="jxr_comment">// Submits the package payload to the nsp check service</em>
-<a class="jxr_linenumber" name="L252" href="#L252">252</a>             <strong class="jxr_keyword">return</strong> getSearcher().submitPackage(payload);
-<a class="jxr_linenumber" name="L253" href="#L253">253</a> 
-<a class="jxr_linenumber" name="L254" href="#L254">254</a>         } <strong class="jxr_keyword">catch</strong> (URLConnectionFailureException e) {
-<a class="jxr_linenumber" name="L255" href="#L255">255</a>             <strong class="jxr_keyword">this</strong>.setEnabled(false);
-<a class="jxr_linenumber" name="L256" href="#L256">256</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(<span class="jxr_string">"Failed to connect to the NPM Audit API (NodeAuditAnalyzer); the analyzer "</span>
-<a class="jxr_linenumber" name="L257" href="#L257">257</a>                     + <span class="jxr_string">"is being disabled and may result in false negatives."</span>, e);
-<a class="jxr_linenumber" name="L258" href="#L258">258</a>         } <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="L259" href="#L259">259</a>             LOGGER.debug(<span class="jxr_string">"Error reading dependency or connecting to NPM Audit API"</span>, e);
-<a class="jxr_linenumber" name="L260" href="#L260">260</a>             <strong class="jxr_keyword">this</strong>.setEnabled(false);
-<a class="jxr_linenumber" name="L261" href="#L261">261</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(<span class="jxr_string">"Failed to read results from the NPM Audit API (NodeAuditAnalyzer); "</span>
-<a class="jxr_linenumber" name="L262" href="#L262">262</a>                     + <span class="jxr_string">"the analyzer is being disabled and may result in false negatives."</span>, e);
-<a class="jxr_linenumber" name="L263" href="#L263">263</a>         } <strong class="jxr_keyword">catch</strong> (JsonException e) {
-<a class="jxr_linenumber" name="L264" href="#L264">264</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(String.format(<span class="jxr_string">"Failed to parse %s file from the NPM Audit API "</span>
-<a class="jxr_linenumber" name="L265" href="#L265">265</a>                     + <span class="jxr_string">"(NodeAuditAnalyzer)."</span>, file.getPath()), e);
-<a class="jxr_linenumber" name="L266" href="#L266">266</a>         } <strong class="jxr_keyword">catch</strong> (SearchException ex) {
-<a class="jxr_linenumber" name="L267" href="#L267">267</a>             LOGGER.error(<span class="jxr_string">"NodeAuditAnalyzer failed on {}"</span>, dependency.getActualFilePath());
-<a class="jxr_linenumber" name="L268" href="#L268">268</a>             <strong class="jxr_keyword">throw</strong> ex;
-<a class="jxr_linenumber" name="L269" href="#L269">269</a>         }
-<a class="jxr_linenumber" name="L270" href="#L270">270</a>     }
-<a class="jxr_linenumber" name="L271" href="#L271">271</a> }
+<a class="jxr_linenumber" name="L249" href="#L249">249</a>             <strong class="jxr_keyword">final</strong> JsonObject payload = NpmPayloadBuilder.build(packageJson, dependencyMap,
+<a class="jxr_linenumber" name="L250" href="#L250">250</a>                     getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false));
+<a class="jxr_linenumber" name="L251" href="#L251">251</a> 
+<a class="jxr_linenumber" name="L252" href="#L252">252</a>             <em class="jxr_comment">// Submits the package payload to the nsp check service</em>
+<a class="jxr_linenumber" name="L253" href="#L253">253</a>             <strong class="jxr_keyword">return</strong> getSearcher().submitPackage(payload);
+<a class="jxr_linenumber" name="L254" href="#L254">254</a> 
+<a class="jxr_linenumber" name="L255" href="#L255">255</a>         } <strong class="jxr_keyword">catch</strong> (URLConnectionFailureException e) {
+<a class="jxr_linenumber" name="L256" href="#L256">256</a>             <strong class="jxr_keyword">this</strong>.setEnabled(false);
+<a class="jxr_linenumber" name="L257" href="#L257">257</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(<span class="jxr_string">"Failed to connect to the NPM Audit API (NodeAuditAnalyzer); the analyzer "</span>
+<a class="jxr_linenumber" name="L258" href="#L258">258</a>                     + <span class="jxr_string">"is being disabled and may result in false negatives."</span>, e);
+<a class="jxr_linenumber" name="L259" href="#L259">259</a>         } <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="L260" href="#L260">260</a>             LOGGER.debug(<span class="jxr_string">"Error reading dependency or connecting to NPM Audit API"</span>, e);
+<a class="jxr_linenumber" name="L261" href="#L261">261</a>             <strong class="jxr_keyword">this</strong>.setEnabled(false);
+<a class="jxr_linenumber" name="L262" href="#L262">262</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(<span class="jxr_string">"Failed to read results from the NPM Audit API (NodeAuditAnalyzer); "</span>
+<a class="jxr_linenumber" name="L263" href="#L263">263</a>                     + <span class="jxr_string">"the analyzer is being disabled and may result in false negatives."</span>, e);
+<a class="jxr_linenumber" name="L264" href="#L264">264</a>         } <strong class="jxr_keyword">catch</strong> (JsonException e) {
+<a class="jxr_linenumber" name="L265" href="#L265">265</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(String.format(<span class="jxr_string">"Failed to parse %s file from the NPM Audit API "</span>
+<a class="jxr_linenumber" name="L266" href="#L266">266</a>                     + <span class="jxr_string">"(NodeAuditAnalyzer)."</span>, file.getPath()), e);
+<a class="jxr_linenumber" name="L267" href="#L267">267</a>         } <strong class="jxr_keyword">catch</strong> (SearchException ex) {
+<a class="jxr_linenumber" name="L268" href="#L268">268</a>             LOGGER.error(<span class="jxr_string">"NodeAuditAnalyzer failed on {}"</span>, dependency.getActualFilePath());
+<a class="jxr_linenumber" name="L269" href="#L269">269</a>             <strong class="jxr_keyword">throw</strong> ex;
+<a class="jxr_linenumber" name="L270" href="#L270">270</a>         }
+<a class="jxr_linenumber" name="L271" href="#L271">271</a>     }
+<a class="jxr_linenumber" name="L272" href="#L272">272</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2022 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

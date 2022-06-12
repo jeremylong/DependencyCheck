@@ -74,7 +74,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.FileUtils.java">org/owasp/dependencycheck/utils/FileUtils.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.ResourceNotFoundException.java">org/owasp/dependencycheck/utils/ResourceNotFoundException.java</a>
                 </td>
                 <td>
                   0
@@ -88,7 +88,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.ResourceNotFoundException.java">org/owasp/dependencycheck/utils/ResourceNotFoundException.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.FileUtils.java">org/owasp/dependencycheck/utils/FileUtils.java</a>
                 </td>
                 <td>
                   0
@@ -130,20 +130,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.Settings.java">org/owasp/dependencycheck/utils/Settings.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.InvalidSettingException.java">org/owasp/dependencycheck/utils/InvalidSettingException.java</a>
                 </td>
                 <td>
@@ -158,7 +144,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.DefaultCveUrlModifiedParser.java">org/owasp/dependencycheck/utils/DefaultCveUrlModifiedParser.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.Settings.java">org/owasp/dependencycheck/utils/Settings.java</a>
                 </td>
                 <td>
                   0
@@ -173,6 +159,20 @@ under the License.
                           <tr>
                 <td>
                   <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.processing.ProcessReader.java">org/owasp/dependencycheck/utils/processing/ProcessReader.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.DefaultCveUrlModifiedParser.java">org/owasp/dependencycheck/utils/DefaultCveUrlModifiedParser.java</a>
                 </td>
                 <td>
                   0
@@ -214,7 +214,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.search.package-info.java">org/owasp/dependencycheck/utils/search/package-info.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.package-info.java">org/owasp/dependencycheck/utils/package-info.java</a>
                 </td>
                 <td>
                   0
@@ -228,7 +228,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.package-info.java">org/owasp/dependencycheck/utils/package-info.java</a>
+                  <a href="https://github.com/jeremylong/DependencyCheck.git/dependency-check-utils/checkstyle.html#org.owasp.dependencycheck.utils.search.package-info.java">org/owasp/dependencycheck/utils/search/package-info.java</a>
                 </td>
                 <td>
                   0

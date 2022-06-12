@@ -436,7 +436,7 @@
 <a class="jxr_linenumber" name="L428" href="#L428">428</a> 
 <a class="jxr_linenumber" name="L429" href="#L429">429</a>         <em class="jxr_comment">//TODO add breakpoint on groov-all to find out why commons-cli is not added as a new dependency?</em>
 <a class="jxr_linenumber" name="L430" href="#L430">430</a>         <strong class="jxr_keyword">boolean</strong> evidenceAdded = false;
-<a class="jxr_linenumber" name="L431" href="#L431">431</a>         <strong class="jxr_keyword">try</strong> (JarFile jar = <strong class="jxr_keyword">new</strong> JarFile(dependency.getActualFilePath())) {
+<a class="jxr_linenumber" name="L431" href="#L431">431</a>         <strong class="jxr_keyword">try</strong> (JarFile jar = <strong class="jxr_keyword">new</strong> JarFile(dependency.getActualFilePath(), false)) {
 <a class="jxr_linenumber" name="L432" href="#L432">432</a>             <em class="jxr_comment">//check if we are scanning in a repo directory - so the pom is adjacent to the jar</em>
 <a class="jxr_linenumber" name="L433" href="#L433">433</a>             <strong class="jxr_keyword">final</strong> String repoPomName = FilenameUtils.removeExtension(dependency.getActualFilePath()) + <span class="jxr_string">".pom"</span>;
 <a class="jxr_linenumber" name="L434" href="#L434">434</a>             <strong class="jxr_keyword">final</strong> File repoPom = <strong class="jxr_keyword">new</strong> File(repoPomName);
@@ -860,7 +860,7 @@
 <a class="jxr_linenumber" name="L852" href="#L852">852</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> parseManifest(<a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> dependency, List&lt;ClassNameInformation&gt; classInformation)
 <a class="jxr_linenumber" name="L853" href="#L853">853</a>             <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L854" href="#L854">854</a>         <strong class="jxr_keyword">boolean</strong> foundSomething = false;
-<a class="jxr_linenumber" name="L855" href="#L855">855</a>         <strong class="jxr_keyword">try</strong> (JarFile jar = <strong class="jxr_keyword">new</strong> JarFile(dependency.getActualFilePath())) {
+<a class="jxr_linenumber" name="L855" href="#L855">855</a>         <strong class="jxr_keyword">try</strong> (JarFile jar = <strong class="jxr_keyword">new</strong> JarFile(dependency.getActualFilePath(), false)) {
 <a class="jxr_linenumber" name="L856" href="#L856">856</a>             <strong class="jxr_keyword">final</strong> Manifest manifest = jar.getManifest();
 <a class="jxr_linenumber" name="L857" href="#L857">857</a>             <strong class="jxr_keyword">if</strong> (manifest == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L858" href="#L858">858</a>                 <strong class="jxr_keyword">if</strong> (!dependency.getFileName().toLowerCase().endsWith(<span class="jxr_string">"-sources.jar"</span>)
@@ -1178,7 +1178,7 @@
 <a class="jxr_linenumber" name="L1170" href="#L1170">1170</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L1171" href="#L1171">1171</a>     <strong class="jxr_keyword">protected</strong> List&lt;ClassNameInformation&gt; collectClassNames(<a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> dependency) {
 <a class="jxr_linenumber" name="L1172" href="#L1172">1172</a>         <strong class="jxr_keyword">final</strong> List&lt;ClassNameInformation&gt; classNames = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
-<a class="jxr_linenumber" name="L1173" href="#L1173">1173</a>         <strong class="jxr_keyword">try</strong> (JarFile jar = <strong class="jxr_keyword">new</strong> JarFile(dependency.getActualFilePath())) {
+<a class="jxr_linenumber" name="L1173" href="#L1173">1173</a>         <strong class="jxr_keyword">try</strong> (JarFile jar = <strong class="jxr_keyword">new</strong> JarFile(dependency.getActualFilePath(), false)) {
 <a class="jxr_linenumber" name="L1174" href="#L1174">1174</a>             <strong class="jxr_keyword">final</strong> Enumeration&lt;JarEntry&gt; entries = jar.entries();
 <a class="jxr_linenumber" name="L1175" href="#L1175">1175</a>             <strong class="jxr_keyword">while</strong> (entries.hasMoreElements()) {
 <a class="jxr_linenumber" name="L1176" href="#L1176">1176</a>                 <strong class="jxr_keyword">final</strong> JarEntry entry = entries.nextElement();

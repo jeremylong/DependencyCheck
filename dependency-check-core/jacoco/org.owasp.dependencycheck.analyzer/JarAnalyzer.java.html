@@ -428,7 +428,7 @@ import org.slf4j.LoggerFactory;
 
         //TODO add breakpoint on groov-all to find out why commons-cli is not added as a new dependency?
 <span class="fc" id="L430">        boolean evidenceAdded = false;</span>
-<span class="fc" id="L431">        try (JarFile jar = new JarFile(dependency.getActualFilePath())) {</span>
+<span class="fc" id="L431">        try (JarFile jar = new JarFile(dependency.getActualFilePath(), false)) {</span>
             //check if we are scanning in a repo directory - so the pom is adjacent to the jar
 <span class="fc" id="L433">            final String repoPomName = FilenameUtils.removeExtension(dependency.getActualFilePath()) + &quot;.pom&quot;;</span>
 <span class="fc" id="L434">            final File repoPom = new File(repoPomName);</span>
@@ -852,7 +852,7 @@ import org.slf4j.LoggerFactory;
     protected boolean parseManifest(Dependency dependency, List&lt;ClassNameInformation&gt; classInformation)
             throws IOException {
 <span class="fc" id="L854">        boolean foundSomething = false;</span>
-<span class="fc" id="L855">        try (JarFile jar = new JarFile(dependency.getActualFilePath())) {</span>
+<span class="fc" id="L855">        try (JarFile jar = new JarFile(dependency.getActualFilePath(), false)) {</span>
 <span class="fc" id="L856">            final Manifest manifest = jar.getManifest();</span>
 <span class="pc bpc" id="L857" title="1 of 2 branches missed.">            if (manifest == null) {</span>
 <span class="nc bnc" id="L858" title="All 2 branches missed.">                if (!dependency.getFileName().toLowerCase().endsWith(&quot;-sources.jar&quot;)</span>
@@ -1170,7 +1170,7 @@ import org.slf4j.LoggerFactory;
      */
     protected List&lt;ClassNameInformation&gt; collectClassNames(Dependency dependency) {
 <span class="fc" id="L1172">        final List&lt;ClassNameInformation&gt; classNames = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L1173">        try (JarFile jar = new JarFile(dependency.getActualFilePath())) {</span>
+<span class="fc" id="L1173">        try (JarFile jar = new JarFile(dependency.getActualFilePath(), false)) {</span>
 <span class="fc" id="L1174">            final Enumeration&lt;JarEntry&gt; entries = jar.entries();</span>
 <span class="fc bfc" id="L1175" title="All 2 branches covered.">            while (entries.hasMoreElements()) {</span>
 <span class="fc" id="L1176">                final JarEntry entry = entries.nextElement();</span>

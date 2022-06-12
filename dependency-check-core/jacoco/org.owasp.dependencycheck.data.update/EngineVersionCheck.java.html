@@ -210,7 +210,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
     protected String getCurrentReleaseVersion() {
 <span class="fc" id="L211">        HttpURLConnection conn = null;</span>
         try {
-<span class="fc" id="L213">            final String str = settings.getString(Settings.KEYS.ENGINE_VERSION_CHECK_URL, &quot;http://jeremylong.github.io/DependencyCheck/current.txt&quot;);</span>
+<span class="fc" id="L213">            final String str = settings.getString(Settings.KEYS.ENGINE_VERSION_CHECK_URL, &quot;https://jeremylong.github.io/DependencyCheck/current.txt&quot;);</span>
 <span class="fc" id="L214">            final URL url = new URL(str);</span>
 <span class="fc" id="L215">            final URLConnectionFactory factory = new URLConnectionFactory(settings);</span>
 <span class="fc" id="L216">            conn = factory.createHttpURLConnection(url);</span>

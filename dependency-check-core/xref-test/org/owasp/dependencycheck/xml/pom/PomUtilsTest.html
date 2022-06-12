@@ -67,11 +67,11 @@
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>          result = PomUtils.readPom(file);
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>          assertEquals(expResult, result.getName());
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      }
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>      
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>      @Test
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testReadPom_String_File() <strong class="jxr_keyword">throws</strong> Exception {  
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testReadPom_String_File() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          File fileCommonValidator = BaseTest.getResourceAsFile(<strong class="jxr_keyword">this</strong>, <span class="jxr_string">"commons-validator-1.4.0.jar"</span>);
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>          JarFile jar = <strong class="jxr_keyword">new</strong> JarFile(fileCommonValidator);
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>          JarFile jar = <strong class="jxr_keyword">new</strong> JarFile(fileCommonValidator, false);
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          String expResult = <span class="jxr_string">"Commons Validator"</span>;
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>          Model result = PomUtils.readPom(<span class="jxr_string">"META-INF/maven/commons-validator/commons-validator/pom.xml"</span>, jar);
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>          assertEquals(expResult, result.getName());
