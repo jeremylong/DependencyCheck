@@ -20,7 +20,7 @@ Copyright (c) 2017 Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>7.1.1-SNAPSHOT</version>
+        <version>7.1.2-SNAPSHOT</version>
     </parent>
     <artifactId>dependency-check-plugin</artifactId>
     <name>Dependency-Check Plugin Archetype</name>
