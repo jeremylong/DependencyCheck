@@ -1229,7 +1229,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-compat</artifactId>
-                <version>3.8.5</version>
+                <version>3.8.6</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
