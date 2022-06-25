@@ -54,7 +54,7 @@
                 #end
             #end
         #end
-    <testsuite failures="$failed" id="$suiteId" name="$enc.xml($dependency.FilePath)" package="$enc.xml($dependency.DisplayFileName)" skipped="$skipped" tests="$testCount" timestamp="$scanDateJunit">
+        <testsuite failures="$failed" errors="0" time="0" id="$suiteId" name="$enc.xml($dependency.FilePath)" package="$enc.xml($dependency.DisplayFileName)" skipped="$skipped" tests="$testCount" timestamp="$scanDateJunit">
         #if($dependency.getVulnerabilities().size()==0 && $dependency.getSuppressedVulnerabilities().size()==0)
             <testcase classname="dependency-check" name="$enc.xml($dependency.DisplayFileName)"/>
         #end
