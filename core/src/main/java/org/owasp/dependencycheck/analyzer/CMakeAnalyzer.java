@@ -177,8 +177,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                     "Problem occurred while reading dependency file.", e);
         }
         if (StringUtils.isNotBlank(contents)) {
-            final HashMap<String, String> vars = new HashMap<>();
-            collectDefinedVariables(contents, vars);
+            final Map<String, String> vars = collectDefinedVariables(contents);
 
             String contentsReplacer = contents;
             Matcher r = INL_VAR_REGEX.matcher(contents);
@@ -246,9 +245,9 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * Collect defined CMake variables
      *
      * @param contents the version information
-     * @param vars map of variable replacement tokens
      */
-    private void collectDefinedVariables(String contents, HashMap<String, String> vars) {
+    private Map<String, String> collectDefinedVariables(String contents) {
+        Map<String, String> vars = new HashMap<>();
         final Matcher m = SET_VAR_REGEX.matcher(contents);
         int count = 0;
         while (m.find()) {
@@ -262,6 +261,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
             vars.put(name, value);
         }
         LOGGER.debug("Found {} matches.", count);
+        return vars;
     }
 
     /**
