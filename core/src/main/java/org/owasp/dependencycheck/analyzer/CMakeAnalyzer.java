@@ -174,7 +174,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
         }
         if (StringUtils.isNotBlank(contents)) {
             final HashMap<String, String> vars = new HashMap<>();
-            collectDefinedVariables(dependency, engine, contents, vars);
+            collectDefinedVariables(contents, vars);
 
             String contentsReplacer = contents;
             Matcher r = INL_VAR_REGEX.matcher(contents);
@@ -241,13 +241,10 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Collect defined CMake variables
      *
-     * @param dependency the dependency being analyzed
-     * @param engine the dependency-check engine
      * @param contents the version information
      * @param vars map of variable replacement tokens
      */
-    private void collectDefinedVariables(Dependency dependency, Engine engine, String contents,
-            HashMap<String, String> vars) {
+    private void collectDefinedVariables(String contents, HashMap<String, String> vars) {
         final Matcher m = SET_VAR_REGEX.matcher(contents);
         int count = 0;
         while (m.find()) {
