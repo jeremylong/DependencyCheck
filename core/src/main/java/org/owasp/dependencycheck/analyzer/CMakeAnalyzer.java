@@ -261,7 +261,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
             vars.put(name, value);
         }
         LOGGER.debug("Found {} matches.", count);
-        return vars;
+        return removeSelfReferences(vars);
     }
 
     /**

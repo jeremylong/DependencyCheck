@@ -218,4 +218,21 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
         // Then
         assertEquals(expectedOutput, output);
     }
+
+    /**
+     * Test the analyzer does not end up in an infinite loop when a temp
+     * variable is used to store old value and then restore it afterwards.
+     *
+     * @throws AnalysisException is thrown when an exception occurs.
+     */
+    @Test
+    public void testAnalyzeCMakeTempVariable() throws AnalysisException {
+        try (Engine engine = new Engine(getSettings())) {
+            final Dependency result = new Dependency(BaseTest.getResourceAsFile(
+                    this, "cmake/libtiff/FindDeflate.cmake"));
+            analyzer.analyze(result, engine);
+
+            assertEquals("FindDeflate.cmake", result.getFileName());
+        }
+    }
 }
