@@ -84,11 +84,11 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * Regex to obtain variables.
      */
     private static final Pattern SET_VAR_REGEX = Pattern.compile(
-            "^\\s*set\\s*\\(\\s*([a-zA-Z0-9_\\-]*)\\s+\"?([a-zA-Z0-9_\\-\\.\\$\\{\\}]*)\"?\\s*\\)", REGEX_OPTIONS);
+            "^\\s*set\\s*\\(\\s*([a-zA-Z0-9_\\-]*)\\s+\"?([a-zA-Z0-9_\\-.${}]*)\"?\\s*\\)", REGEX_OPTIONS);
     /**
      * Regex to find inlined variables to replace them.
      */
-    private static final Pattern INL_VAR_REGEX = Pattern.compile("(\\$\\s*\\{([^\\}]*)\\s*\\})", REGEX_OPTIONS);
+    private static final Pattern INL_VAR_REGEX = Pattern.compile("(\\$\\s*\\{([^}]*)\\s*})", REGEX_OPTIONS);
     /**
      * Regex to extract the product information.
      */
@@ -102,7 +102,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * Group 2: Version
      */
     private static final Pattern SET_VERSION = Pattern
-            .compile("^\\s*set\\s*\\(\\s*(\\w+)_version\\s+\"?([^\"\\)]*)\\s*\"?\\)", REGEX_OPTIONS);
+            .compile("^\\s*set\\s*\\(\\s*(\\w+)_version\\s+\"?([^\")]*)\\s*\"?\\)", REGEX_OPTIONS);
 
     /**
      * Detects files that can be analyzed.
