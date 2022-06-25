@@ -245,9 +245,11 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * Collect defined CMake variables
      *
      * @param contents the version information
+     *
+     * @return a map referencing identified variables
      */
     private Map<String, String> collectDefinedVariables(String contents) {
-        Map<String, String> vars = new HashMap<>();
+        final Map<String, String> vars = new HashMap<>();
         final Matcher m = SET_VAR_REGEX.matcher(contents);
         int count = 0;
         while (m.find()) {
