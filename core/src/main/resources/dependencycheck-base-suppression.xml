@@ -104,13 +104,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-	    FP per #3749
-	    ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.kafka/spring\-kafka@.*$</packageUrl>
-        <cpe>cpe:/a:vmware:spring_framework</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
 	    FP per #3776
 	    ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.seleniumhq\.selenium/selenium\-chromium\-driver@.*$</packageUrl>
@@ -427,24 +420,10 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per #2927 & #2931
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-.*$</packageUrl>
-        <cpe>cpe:/a:vmware:cloud_foundation</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
         FP per #2923
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.netbeans\.external/.*$</packageUrl>
         <cpe>cpe:/a:apache:netbeans</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        FP per #1721
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.batch/spring\-batch\-infrastructure@.*$</packageUrl>
-        <cpe>cpe:/a:vmware:infrastructure</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -499,13 +478,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per #2498
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring\-boot\-loader\-tools@.*$</packageUrl>
-        <cpe>cpe:/a:vmware:tools</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
         This suppresses false positives for Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll.
         ]]></notes>
         <filePath regex="true">.*Microsoft\.VisualStudio\.QualityTools\.UnitTestFramework*\.dll</filePath>
@@ -518,18 +490,6 @@
         <filePath regex="true">.*EntityFramework\.SqlServer*\.dll</filePath>
         <cpe>cpe:/a:microsoft:server:6.0.0.0</cpe>
         <cpe>cpe:/a:microsoft:sql_server:6.0</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        This suppresses false positives identified on spring security.
-        ]]></notes>
-        <gav regex="true">org\.springframework\.security:spring.*</gav>
-        <cpe>cpe:/a:mod_security:mod_security</cpe>
-        <cpe>cpe:/a:springsource:spring_framework</cpe>
-        <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
-        <cpe>cpe:/a:pivotal:spring_framework</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
-        <cve>CVE-2018-1258</cve>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -555,58 +515,6 @@
         <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-            This suppresses false positives identified on spring projects that are separate projects side-by-side with the Spring Framework
-            project that have springframework in the groupid where NVD is known to have separate products in the CPE dictionary.
-        ]]></notes>
-        <gav regex="true">^org\.springframework\.(amqp|batch|boot|cloud|data|integration|ldap|security|social|webflow|ws).*$</gav>
-        <cpe>cpe:/a:vmware:spring_framework</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
-        <cpe>cpe:/a:springsource:spring_framework</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-       Don't flag specific CVEs for spring framework related components (i.e. org.springframework.data).
-       ]]></notes>
-        <gav regex="true">^org\.springframework\..*$</gav>
-        <cve>CVE-2016-9878</cve>
-        <cve>CVE-2018-1270</cve>
-        <cve>CVE-2018-1271</cve>
-        <cve>CVE-2018-1272</cve>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-       Spring-framework libraries always have groupId org.springframework with no further extension, so suppress the
-       spring_framework CPE on other Spring libraries
-       Fixes FPs of #4364, #4363, #4362, 4353, #4351, #4350, #4349
-       ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\..*$</packageUrl>
-        <cpe>cpe:/a:springsource:spring_framework</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
-        <cpe>cpe:/a:vmware:spring_framework</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-       False positive per #1513. Spring-boot-starter-data-rest is not data-rest (however, it does
-           depend on spring-data-rest so the actual library will get flagged instead of the "boot" version
-           being flagged as spring-data-rest with the wrong version number)
-       ]]></notes>
-        <gav regex="true">^org\.springframework\.boot:spring-boot-starter-data-rest:.*$</gav>
-        <cpe>cpe:/a:pivotal_software:spring_data_rest</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-       False positive per #3622, #4561. Spring-boot-starter-oauth2-client gets flagged with wrong spring CPEs.
-   ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring\-boot\-starter\-oauth2\-client@.*$</packageUrl>
-        <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
-        <cpe>cpe:/a:pivotal:spring_security</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_security_oauth</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
-        <cpe>cpe:/a:vmware:spring_security</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -912,49 +820,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        Suppresses false positives per #1566 and #3580.
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/.*$</packageUrl>
-        <cpe>cpe:/a:springsource:spring_framework</cpe>
-        <cpe>cpe:/a:vmware:spring_integration</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        Suppresses false positives per issue #1665, #3219, #4562.
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-rsa.*$</packageUrl>
-        <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
-        <cpe>cpe:/a:vmware:spring_security</cpe>
-        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
-        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-            Suppress false positives per #3400
-            ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-security@.*$</packageUrl>
-        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-            Suppresses false positives per #1566.
-            ]]></notes>
-        <gav regex="true">^org\.springframework\.security\.oauth\.boot:spring-security-oauth2-autoconfigure:.*$</gav>
-        <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-            Suppresses false positives per #3738.
-            ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring\-security\-jwt@.*$</packageUrl>
-        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
-        <cpe>cpe:/a:vmware:spring_framework</cpe>
-        <cpe>cpe:/a:vmware:spring_security</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
         Suppresses false positives per #1573, #3889 and #4065
         ]]></notes>
         <gav regex="true">^io\.netty:netty-tcnative.*$</gav>
@@ -977,32 +842,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-       Supress false positives per issue #1872, #4577
-       ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.oauth/spring-security-oauth2@.*$</packageUrl>
-        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
-        <cpe>cpe:/a:vmware:spring_security</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        Suppresses false positives per issue #1694.
-        ]]></notes>
-        <gav regex="true">^org\.springframework\.security\.extensions:spring-security-saml.*$</gav>
-        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
-        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
-        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        Suppresses false positives per issue #2235.
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.kerberos/spring-security-kerberos.*$</packageUrl>
-        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
-        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
-        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
         Suppresses false positives per issue 2246
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.ehcache/ehcache@.*$</packageUrl>
@@ -1014,15 +853,6 @@
         ]]></notes>
         <gav regex="true">^com\.atlassian\.http:atlassian-http:.*$</gav>
         <cpe>cpe:/a:atlassian:bitbucket</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        Suppresses false positives per issue #1595
-        ]]></notes>
-        <gav regex="true">^org\.springframework\.security:spring-security-jwt:.*$</gav>
-        <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_security_oauth</cpe>
-        <cpe>cpe:/a:jwt_project:jwt</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -1239,14 +1069,6 @@
         ]]></notes>
         <gav regex="true">^org\.apache\.geronimo\.javamail:geronimo-javamail_1\.4_provider:.*$</gav>
         <cpe>cpe:/a:apache:geronimo</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        Suppresses false positives per issue #1566
-        ]]></notes>
-        <gav regex="true">^org\.springframework\.security\.oauth\.boot:spring-security-oauth2-autoconfigure:.*$</gav>
-        <cpe>cpe:/a:pivotal_software:spring_security_oauth</cpe>
-        <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -1616,29 +1438,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per #1027
-        ]]></notes>
-        <gav regex="true">^org\.springframework\.kafka:spring-kafka.*$</gav>
-        <cpe>cpe:/a:pivotal:spring_framework</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        FP per #1328
-        ]]></notes>
-        <gav regex="true">^org\.springframework\.batch:spring-batch.*$</gav>
-        <cpe>cpe:/a:pivotal:spring_framework</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        FP per #3216
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.batch/spring\-batch\-integration@.*$</packageUrl>
-        <cpe>cpe:/a:vmware:spring_integration</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
         FP per #2031
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.wildfly/wildfly\-microprofile\-config\-implementation@.*$</packageUrl>
@@ -1882,13 +1681,6 @@
         ]]></notes>
         <gav regex="true">^org\.apache\.xbean:xbean.*$</gav>
         <cpe>cpe:/a:apache:geronimo</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        FP per #2070
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring\-boot\-starter\-web\-services@.*$</packageUrl>
-        <cpe>cpe:/a:pivotal_software:spring_web_services</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -2412,61 +2204,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per #1740
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.integration/(?!spring\-integration\-(ws|xml)).*$</packageUrl>
-        <cve>CVE-2019-3772</cve>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        Spring data mongodb false positives.
-        ]]></notes>
-        <gav regex="true">org\.springframework\.data:spring-data-mongodb.*</gav>
-        <cpe>cpe:/a:mongodb:mongodb</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        Spring false positives; see https://github.com/jeremylong/DependencyCheck/issues/1921.
-        ]]></notes>
-        <gav regex="true">org\.springframework\.[^:]+:.*</gav>
-        <cpe>cpe:/a:springsource:spring_framework</cpe>
-        <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
-        <cpe>cpe:/a:pivotal:spring_framework</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        Spring data neo4j false positives.
-        ]]></notes>
-        <gav regex="true">org\.springframework\.data:spring-data-neo4j:.*</gav>
-        <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
-        <cpe>cpe:/a:pivotal:spring_framework</cpe>
-        <cpe>cpe:/a:neo4j:neo4j</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        Spring data solr false positives.
-        ]]></notes>
-        <gav regex="true">org\.springframework\.data:spring-data-solr:.*</gav>
-        <cpe>cpe:/a:apache:solr</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        Spring social facebook false positive.
-        ]]></notes>
-        <gav regex="true">org\.springframework\.social:spring-social-facebook:.*</gav>
-        <cpe>cpe:/a:facebook:facebook</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        Spring Security JWT false positive.
-        ]]></notes>
-        <gav regex="true">org\.springframework\.security:spring-security-jwt.*</gav>
-        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
-        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
         Aether false positive.
         ]]></notes>
         <gav regex="true">org\.eclipse\.aether:aether.*</gav>
@@ -2604,29 +2341,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        False positives per issue #642
-        ]]></notes>
-        <gav regex="true">^org\.springframework\.boot:spring-boot.*$</gav>
-        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
-        <cpe>cpe:/a:pivotal:spring_framework</cpe>
-        <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        False positives per issue #1720
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring\-boot\-starter\-batch@.*$</packageUrl>
-        <cpe>cpe:/a:pivotal_software:spring_batch</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        False positives per issue #642
-        ]]></notes>
-        <gav regex="true">^org\.springframework:spring-context:.*$</gav>
-        <cpe>cpe:/a:context_project:context</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
         False positives per issue #2873
         ]]></notes>
         <packageUrl regex="true">^pkg:npm/faye\-websocket@.*$</packageUrl>
@@ -2720,13 +2434,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        False positive per issue #691
-        ]]></notes>
-        <gav regex="true">^org\.springframework\.boot:spring-boot-starter-data-jpa:.*$</gav>
-        <cve>CVE-2016-6652</cve>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
         False positive per issue #699
         ]]></notes>
         <gav regex="true">^com\.splunk:splunk:.*$</gav>
@@ -2739,24 +2446,6 @@
         <gav regex="true">^org\.openid4java:openid4java:.*$</gav>
         <cpe>cpe:/a:openid:openid</cpe>
         <cpe>cpe:/a:openid:openid4java</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        False positive per issue #700
-        ]]></notes>
-        <gav regex="true">^org\.springframework\.cloud:spring-cloud-netflix-core:.*$</gav>
-        <cpe>cpe:/a:pivotal:spring_framework</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        False positive per issue #700 and #3579
-        ]]></notes>
-        <gav regex="true">^org\.springframework\.cloud:spring-cloud-.*$</gav>
-        <cpe>cpe:/a:pivotal:spring_framework</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
-        <cpe>cpe:/a:context_project:context</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_batch</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -2786,13 +2475,6 @@
         ]]></notes>
         <gav regex="true">^io\.swagger:.*$</gav>
         <cpe>cpe:/a:sonatype:nexus</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        False positive per issue #838
-        ]]></notes>
-        <gav regex="true">^org\.springframework\.boot:.*$</gav>
-        <cpe>cpe:/a:pivotal_software:spring_data_jpa</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -2913,24 +2595,6 @@
         <gav regex="true">^com\.unboundid:unboundid-ldapsdk:.*$</gav>
         <cpe>cpe:/a:ldap_project:ldap</cpe>
     </suppress-->
-    <suppress base="true">
-        <notes><![CDATA[
-        spring-session has a different version numbering than spring-core. See #1399
-        ]]></notes>
-        <gav regex="true">^org\.springframework\.session:spring-session-(core|data-).*$</gav>
-        <cpe>cpe:/a:pivotal:spring_framework</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        spring-boot-starter-security is not the same as spring-security, See #1975, #4563
-        ]]></notes>
-        <gav regex="true">^org\.springframework\.boot:spring-boot-starter-security:.*$</gav>
-        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
-        <cpe>cpe:/a:vmware:spring_security</cpe>
-        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
-    </suppress>
     <suppress base="true">
         <notes><![CDATA[
         FP per #1398
@@ -3428,31 +3092,6 @@
         ]]></notes>
         <gav regex="true">^org\.webjars\.npm:.*$</gav>
         <cpe>cpe:/a:npm:npm</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        spring boot mongo FP per issue #1067
-        ]]></notes>
-        <gav regex="true">^org\.springframework\.boot:spring-boot-starter-data-mongodb:.*$</gav>
-        <cpe>cpe:/a:mongodb:mongodb</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        file name: spring-boot-starter-amqp-2.5.0.jar
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring\-boot\-starter\-amqp@.*$</packageUrl>
-        <cpe>cpe:/a:pivotal_software:rabbitmq</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
-        <cpe>cpe:/a:vmware:rabbitmq</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-       spring ldap cleanup per issue #1060
-       ]]></notes>
-        <gav regex="true">^org\.springframework\.ldap:spring-ldap-core:.*$</gav>
-        <cpe>cpe:/a:net-ldap_project:net-ldap</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
-        <cpe>cpe:/a:pivotal:spring_framework</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -4505,14 +4144,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        false positive per #3068 on spring-session-hazelcast
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.session/spring\-session\-hazelcast@.*$</packageUrl>
-        <cpe>cpe:/a:hazelcast:hazelcast</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
         false positive per #3271 on org.apache.sis.storage
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.sis\.storage/sis\-.*$</packageUrl>
@@ -4726,21 +4357,6 @@
         ]]></notes>
         <packageUrl regex="true">^pkg:pypi/python\-keycloak@.*$</packageUrl>
         <cpe>cpe:/a:keycloak:keycloak</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        spring-cloud-kubernetes-fabric8-autoconfig is part of spring cloud kubernetes, not spring cloud config #3098, #4038
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-(starter\-)?kubernetes\-fabric8\-(auto)?config@.*$</packageUrl>
-        <cpe>cpe:/a:vmware:spring_cloud_config</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        spring-cloud-deployer-* false CPE matches discovered in handling #3579
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-deployer\-.*$</packageUrl>
-        <cpe>cpe:/a:vmware:spring_cloud_config</cpe>
-        <cpe>cpe:/a:vmware:spring_cloud_data_flow</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -4965,13 +4581,6 @@
        <packageUrl regex="true">^pkg:maven/org\.apache\.kafka/kafka-log4j-appender@.*$</packageUrl>
        <cpe>cpe:/a:apache:log4j</cpe>
        <cpe>cpe:/a:apache:kafka</cpe>
-    </suppress>
-    <suppress base="true">
-       <notes><![CDATA[
-       FP per issue #4152
-       ]]></notes>
-       <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring-cloud-kubernetes-fabric8-config@.*$</packageUrl>
-       <cpe>cpe:/a:vmware:spring_cloud_config</cpe>
     </suppress>
     <suppress base="true">
        <notes><![CDATA[
@@ -5291,18 +4900,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-   FP per issue #4509; Issue is in spring-web and will only be fixed by Spring in their next major release.
-   So suppressing it for the spring-framework components other than spring-web is an appropriate
-   exception to the basic policy of not micromanaging spring_framework vulnerabilities by library
-   in our suppressions.
-   https://github.com/spring-projects/spring-framework/issues/25379 (deprecation only in current 5.x versions)
-   https://github.com/spring-projects/spring-framework/commit/5822f1bf85b94fd15f9829914b065b1c61910c7d (removal in 6.0.0-M1)
-   ]]></notes>
-        <packageUrl regex="true">^pkg:maven/(?!org\.springframework/spring\-web@).*$</packageUrl>
-        <cve>CVE-2016-1000027</cve>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
         FP per #4502. When there is spring somewhere in an artifact, but the groupId is
         not springframework (up to 1.2.6) or org.springframework (all versions) it's not the
         Spring Framework.
@@ -5357,14 +4954,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-   FP per issue #4576; spring-security-saml2-core is an (end-of-life) extension project separate from spring-security https://github.com/spring-projects/spring-security-saml
-   ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.extensions/spring-security-saml2-core@.*$</packageUrl>
-        <cpe>cpe:/a:saml_project:saml</cpe>
-        <cpe>cpe:/a:vmware:spring_security</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
             FP per issue #4205;
    ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus-micrometer-registry-prometheus@.*$</packageUrl>
@@ -5378,6 +4967,7 @@
         <cpe>cpe:/a:apache:activemq</cpe>
         <cpe>cpe:/a:apache:activemq_artemis</cpe>
     </suppress>
+    <!-- region Spring suppressions -->
     <suppress base="true">
         <notes><![CDATA[
         FP per issue #3811
@@ -5394,4 +4984,416 @@
         <cpe>cpe:/a:vmware:spring_data_rest</cpe>
         <cpe>cpe:/a:pivotal_software:spring_data_rest</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2927 & #2931
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-.*$</packageUrl>
+        <cpe>cpe:/a:vmware:cloud_foundation</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+	    FP per #3749
+	    ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.kafka/spring\-kafka@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #1721
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.batch/spring\-batch\-infrastructure@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:infrastructure</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2498
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring\-boot\-loader\-tools@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:tools</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        This suppresses false positives identified on spring security.
+        ]]></notes>
+        <gav regex="true">org\.springframework\.security:spring.*</gav>
+        <cpe>cpe:/a:mod_security:mod_security</cpe>
+        <cpe>cpe:/a:springsource:spring_framework</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cve>CVE-2018-1258</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            This suppresses false positives identified on spring projects that are separate projects side-by-side with the Spring Framework
+            project that have springframework in the groupid where NVD is known to have separate products in the CPE dictionary.
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.(amqp|batch|boot|cloud|data|integration|ldap|security|social|webflow|ws).*$</gav>
+        <cpe>cpe:/a:vmware:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cpe>cpe:/a:springsource:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       Don't flag specific CVEs for spring framework related components (i.e. org.springframework.data).
+       ]]></notes>
+        <gav regex="true">^org\.springframework\..*$</gav>
+        <cve>CVE-2016-9878</cve>
+        <cve>CVE-2018-1270</cve>
+        <cve>CVE-2018-1271</cve>
+        <cve>CVE-2018-1272</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       Spring-framework libraries always have groupId org.springframework with no further extension, so suppress the
+       spring_framework CPE on other Spring libraries
+       Fixes FPs of #4364, #4363, #4362, 4353, #4351, #4350, #4349
+       ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\..*$</packageUrl>
+        <cpe>cpe:/a:springsource:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cpe>cpe:/a:vmware:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       False positive per #1513. Spring-boot-starter-data-rest is not data-rest (however, it does
+           depend on spring-data-rest so the actual library will get flagged instead of the "boot" version
+           being flagged as spring-data-rest with the wrong version number)
+       ]]></notes>
+        <gav regex="true">^org\.springframework\.boot:spring-boot-starter-data-rest:.*$</gav>
+        <cpe>cpe:/a:pivotal_software:spring_data_rest</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       False positive per #3622, #4561. Spring-boot-starter-oauth2-client gets flagged with wrong spring CPEs.
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring\-boot\-starter\-oauth2\-client@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
+        <cpe>cpe:/a:pivotal:spring_security</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security_oauth</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per #1566 and #3580.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/.*$</packageUrl>
+        <cpe>cpe:/a:springsource:spring_framework</cpe>
+        <cpe>cpe:/a:vmware:spring_integration</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #1665, #3219, #4562.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-rsa.*$</packageUrl>
+        <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
+        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            Suppress false positives per #3400
+            ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-security@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            Suppresses false positives per #1566.
+            ]]></notes>
+        <gav regex="true">^org\.springframework\.security\.oauth\.boot:spring-security-oauth2-autoconfigure:.*$</gav>
+        <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            Suppresses false positives per #3738.
+            ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring\-security\-jwt@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:spring_framework</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       Supress false positives per issue #1872, #4577
+       ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.oauth/spring-security-oauth2@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #1694.
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.security\.extensions:spring-security-saml.*$</gav>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
+        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #2235.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.kerberos/spring-security-kerberos.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
+        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #1595
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.security:spring-security-jwt:.*$</gav>
+        <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security_oauth</cpe>
+        <cpe>cpe:/a:jwt_project:jwt</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives per issue #1566
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.security\.oauth\.boot:spring-security-oauth2-autoconfigure:.*$</gav>
+        <cpe>cpe:/a:pivotal_software:spring_security_oauth</cpe>
+        <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #1027
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.kafka:spring-kafka.*$</gav>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #1328
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.batch:spring-batch.*$</gav>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #3216
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.batch/spring\-batch\-integration@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:spring_integration</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #2070
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring\-boot\-starter\-web\-services@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_web_services</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #1740
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.integration/(?!spring\-integration\-(ws|xml)).*$</packageUrl>
+        <cve>CVE-2019-3772</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Spring data mongodb false positives.
+        ]]></notes>
+        <gav regex="true">org\.springframework\.data:spring-data-mongodb.*</gav>
+        <cpe>cpe:/a:mongodb:mongodb</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Spring false positives; see https://github.com/jeremylong/DependencyCheck/issues/1921.
+        ]]></notes>
+        <gav regex="true">org\.springframework\.[^:]+:.*</gav>
+        <cpe>cpe:/a:springsource:spring_framework</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Spring data neo4j false positives.
+        ]]></notes>
+        <gav regex="true">org\.springframework\.data:spring-data-neo4j:.*</gav>
+        <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <cpe>cpe:/a:neo4j:neo4j</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Spring data solr false positives.
+        ]]></notes>
+        <gav regex="true">org\.springframework\.data:spring-data-solr:.*</gav>
+        <cpe>cpe:/a:apache:solr</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Spring social facebook false positive.
+        ]]></notes>
+        <gav regex="true">org\.springframework\.social:spring-social-facebook:.*</gav>
+        <cpe>cpe:/a:facebook:facebook</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Spring Security JWT false positive.
+        ]]></notes>
+        <gav regex="true">org\.springframework\.security:spring-security-jwt.*</gav>
+        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
+        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positives per issue #642
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.boot:spring-boot.*$</gav>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positives per issue #1720
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring\-boot\-starter\-batch@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_batch</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positives per issue #642
+        ]]></notes>
+        <gav regex="true">^org\.springframework:spring-context:.*$</gav>
+        <cpe>cpe:/a:context_project:context</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #691
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.boot:spring-boot-starter-data-jpa:.*$</gav>
+        <cve>CVE-2016-6652</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #700
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.cloud:spring-cloud-netflix-core:.*$</gav>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #700 and #3579
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.cloud:spring-cloud-.*$</gav>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cpe>cpe:/a:context_project:context</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_batch</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #838
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.boot:.*$</gav>
+        <cpe>cpe:/a:pivotal_software:spring_data_jpa</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        spring-session has a different version numbering than spring-core. See #1399
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.session:spring-session-(core|data-).*$</gav>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        spring-boot-starter-security is not the same as spring-security, See #1975, #4563
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.boot:spring-boot-starter-security:.*$</gav>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        spring boot mongo FP per issue #1067
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.boot:spring-boot-starter-data-mongodb:.*$</gav>
+        <cpe>cpe:/a:mongodb:mongodb</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: spring-boot-starter-amqp-2.5.0.jar
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring\-boot\-starter\-amqp@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:rabbitmq</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
+        <cpe>cpe:/a:vmware:rabbitmq</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       spring ldap cleanup per issue #1060
+       ]]></notes>
+        <gav regex="true">^org\.springframework\.ldap:spring-ldap-core:.*$</gav>
+        <cpe>cpe:/a:net-ldap_project:net-ldap</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per #3068 on spring-session-hazelcast
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.session/spring\-session\-hazelcast@.*$</packageUrl>
+        <cpe>cpe:/a:hazelcast:hazelcast</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        spring-cloud-kubernetes-fabric8-autoconfig is part of spring cloud kubernetes, not spring cloud config #3098, #4038
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-(starter\-)?kubernetes\-fabric8\-(auto)?config@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:spring_cloud_config</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        spring-cloud-deployer-* false CPE matches discovered in handling #3579
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-deployer\-.*$</packageUrl>
+        <cpe>cpe:/a:vmware:spring_cloud_config</cpe>
+        <cpe>cpe:/a:vmware:spring_cloud_data_flow</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+       FP per issue #4152
+       ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring-cloud-kubernetes-fabric8-config@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:spring_cloud_config</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4509; Issue is in spring-web and will only be fixed by Spring in their next major release.
+   So suppressing it for the spring-framework components other than spring-web is an appropriate
+   exception to the basic policy of not micromanaging spring_framework vulnerabilities by library
+   in our suppressions.
+   https://github.com/spring-projects/spring-framework/issues/25379 (deprecation only in current 5.x versions)
+   https://github.com/spring-projects/spring-framework/commit/5822f1bf85b94fd15f9829914b065b1c61910c7d (removal in 6.0.0-M1)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/(?!org\.springframework/spring\-web@).*$</packageUrl>
+        <cve>CVE-2016-1000027</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4576; spring-security-saml2-core is an (end-of-life) extension project separate from spring-security https://github.com/spring-projects/spring-security-saml
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.extensions/spring-security-saml2-core@.*$</packageUrl>
+        <cpe>cpe:/a:saml_project:saml</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
+    </suppress>
+    <!-- endregion -->
 </suppressions>
