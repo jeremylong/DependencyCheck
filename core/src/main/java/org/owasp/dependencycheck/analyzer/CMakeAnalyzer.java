@@ -355,7 +355,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * @return a new map without infinite chain variables
      */
     Map<String, String> removeSelfReferences(final Map<String, String> vars) {
-        Map<String, String> resolvedVars = new HashMap<>();
+        final Map<String, String> resolvedVars = new HashMap<>();
 
         vars.forEach((key, value) -> {
             if (!isVariableSelfReferencing(vars, key)) {
@@ -367,12 +367,12 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     private boolean isVariableSelfReferencing(Map<String, String> vars, String key) {
-        List<String> resolutionChain = new ArrayList<>();
+        final List<String> resolutionChain = new ArrayList<>();
         resolutionChain.add(key);
 
         String nextKey = resolutionChain.get(0);
         do {
-            Matcher matcher = INL_VAR_REGEX.matcher(vars.get(nextKey));
+            final Matcher matcher = INL_VAR_REGEX.matcher(vars.get(nextKey));
             if (!matcher.find()) {
                 break;
             }
