@@ -38,7 +38,11 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
@@ -336,5 +340,46 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected String getAnalyzerEnabledSettingKey() {
         return Settings.KEYS.ANALYZER_CMAKE_ENABLED;
+    }
+
+    /**
+     * This method prevents to generate an infinite loop when variables are
+     * initialized by other variables and end up forming an unresolvable
+     * chain.
+     *
+     * This method takes the resolved variables map as an input and will return
+     * a new map, without the keys generate an infinite resolution chain.
+     *
+     * @param vars variables initialization detected in the CMake build file
+     *
+     * @return a new map without infinite chain variables
+     */
+    Map<String, String> removeSelfReferences(final Map<String, String> vars) {
+        Map<String, String> resolvedVars = new HashMap<>();
+
+        vars.forEach((key, value) -> {
+            if (!isVariableSelfReferencing(vars, key)) {
+                resolvedVars.put(key, value);
+            }
+        });
+
+        return resolvedVars;
+    }
+
+    private boolean isVariableSelfReferencing(Map<String, String> vars, String key) {
+        List<String> resolutionChain = new ArrayList<>();
+        resolutionChain.add(key);
+
+        String nextKey = resolutionChain.get(0);
+        do {
+            Matcher matcher = INL_VAR_REGEX.matcher(vars.get(nextKey));
+            if (!matcher.find()) {
+                break;
+            }
+            nextKey = matcher.group(2);
+            resolutionChain.add(nextKey);
+        } while (Objects.nonNull(nextKey) && vars.containsKey(nextKey) && !key.equals(nextKey));
+
+        return resolutionChain.size() != 1 && key.equals(nextKey);
     }
 }
