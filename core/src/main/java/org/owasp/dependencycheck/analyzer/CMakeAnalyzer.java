@@ -84,7 +84,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * Regex to obtain variables.
      */
     private static final Pattern SET_VAR_REGEX = Pattern.compile(
-            "^\\s*set\\s*\\(\\s*([a-zA-Z0-9_\\-]*)\\s+\"?([a-zA-Z0-9_\\-.${}]*)\"?\\s*\\)", REGEX_OPTIONS);
+            "^\\s*set\\s*\\(\\s*([a-zA-Z\\d_\\-]*)\\s+\"?([a-zA-Z\\d_\\-.${}]*)\"?\\s*\\)", REGEX_OPTIONS);
     /**
      * Regex to find inlined variables to replace them.
      */
