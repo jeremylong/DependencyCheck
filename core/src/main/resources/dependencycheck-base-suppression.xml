@@ -4935,7 +4935,6 @@
         <cpe>cpe:/a:apache:activemq</cpe>
         <cpe>cpe:/a:apache:activemq_artemis</cpe>
     </suppress>
-    <!-- region Spring framework suppressions -->
     <suppress base="true">
         <notes><![CDATA[
        Spring-framework libraries always have groupId org.springframework with no further extension, so suppress the
@@ -4951,7 +4950,6 @@
         <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
         <cpe>cpe:/a:vmware:spring_framework</cpe>
     </suppress>
-    <!-- endregion -->
     <!-- region Spring suppressions -->
     <suppress base="true">
         <notes><![CDATA[
