@@ -4953,14 +4953,6 @@
     <!-- region Spring-security suppressions -->
     <suppress base="true">
         <notes><![CDATA[
-        FP per issue #3811
-   ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.ws/spring\-ws\-security@.*$</packageUrl>
-        <cpe>cpe:/a:vmware:spring_security</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
        False positive per #3622, #4561. Spring-boot-starter-oauth2-client gets flagged with wrong spring CPEs.
    ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring\-boot\-starter\-oauth2\-client@.*$</packageUrl>
@@ -4970,6 +4962,24 @@
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
         <cpe>cpe:/a:vmware:spring_security</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        spring-boot-starter-security is not the same as spring-security, See #1975, #4563
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring-boot-starter-security@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
+    </suppress>
+
+    <suppress base="true">
+        <notes><![CDATA[
+            Suppress false positives per #3400
+            ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-security@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+    </suppress>
+
     <suppress base="true">
         <notes><![CDATA[
         Suppresses false positives per issue #1665, #3219, #4562.
@@ -4983,32 +4993,35 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-            Suppress false positives per #3400
-            ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-security@.*$</packageUrl>
-        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        Spring Security JWT false positive.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-jwt.*$</packageUrl>
+        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
+        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-            Suppresses false positives per #1566.
-            ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.oauth\.boot/spring-security-oauth2-autoconfigure@.*$</packageUrl>
-        <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        Suppresses false positives per issue #1595
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-jwt@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security_oauth</cpe>
+        <cpe>cpe:/a:jwt_project:jwt</cpe>
     </suppress>
+
     <suppress base="true">
         <notes><![CDATA[
-       Supress false positives per issue #1872, #4577
-       ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.oauth/spring-security-oauth2@.*$</packageUrl>
-        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+   FP per issue #4576; spring-security-saml2-core is an (end-of-life) extension project separate from spring-security https://github.com/spring-projects/spring-security-saml
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.extensions/spring-security-saml2-core@.*$</packageUrl>
+        <cpe>cpe:/a:saml_project:saml</cpe>
         <cpe>cpe:/a:vmware:spring_security</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
         Suppresses false positives per issue #1694.
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.extensions/pring-security-saml.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.extensions/spring-security-saml.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
         <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
         <cpe>cpe:/a:security-framework_project:security-framework</cpe>
@@ -5022,14 +5035,22 @@
         <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
         <cpe>cpe:/a:security-framework_project:security-framework</cpe>
     </suppress>
+
     <suppress base="true">
         <notes><![CDATA[
-        Suppresses false positives per issue #1595
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-jwt@.*$</packageUrl>
-        <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
-        <cpe>cpe:/a:pivotal_software:spring_security_oauth</cpe>
-        <cpe>cpe:/a:jwt_project:jwt</cpe>
+       Supress false positives per issue #1872, #4577
+       ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.oauth/spring-security-oauth2@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+            Suppresses false positives per #1566.
+            ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.oauth\.boot/spring-security-oauth2-autoconfigure@.*$</packageUrl>
+        <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -5039,29 +5060,13 @@
         <cpe>cpe:/a:pivotal_software:spring_security_oauth</cpe>
         <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
     </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        Spring Security JWT false positive.
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-jwt.*$</packageUrl>
-        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
-        <cpe>cpe:/a:security-framework_project:security-framework</cpe>
-    </suppress>
+
     <suppress base="true">
         <notes><![CDATA[
         spring-session has a different version numbering than spring-core. See #1399
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.springframework\.session/spring-session-(core|data-).*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        spring-boot-starter-security is not the same as spring-security, See #1975, #4563
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring-boot-starter-security@.*$</packageUrl>
-        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
-        <cpe>cpe:/a:vmware:spring_security</cpe>
-        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -5073,11 +5078,11 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-   FP per issue #4576; spring-security-saml2-core is an (end-of-life) extension project separate from spring-security https://github.com/spring-projects/spring-security-saml
+        FP per issue #3811
    ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.extensions/spring-security-saml2-core@.*$</packageUrl>
-        <cpe>cpe:/a:saml_project:saml</cpe>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.ws/spring\-ws\-security@.*$</packageUrl>
         <cpe>cpe:/a:vmware:spring_security</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
     </suppress>
     <!-- endregion -->
     <!-- region Spring suppressions -->
