@@ -4984,7 +4984,7 @@
         <notes><![CDATA[
         This suppresses false positives identified on spring security.
         ]]></notes>
-        <gav regex="true">org\.springframework\.security:spring.*</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring.*$</packageUrl>
         <cpe>cpe:/a:mod_security:mod_security</cpe>
         <cpe>cpe:/a:springsource:spring_framework</cpe>
         <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
@@ -4997,7 +4997,7 @@
             This suppresses false positives identified on spring projects that are separate projects side-by-side with the Spring Framework
             project that have springframework in the groupid where NVD is known to have separate products in the CPE dictionary.
         ]]></notes>
-        <gav regex="true">^org\.springframework\.(amqp|batch|boot|cloud|data|integration|ldap|security|social|webflow|ws).*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.(amqp|batch|boot|cloud|data|integration|ldap|security|social|webflow|ws).*$</packageUrl>
         <cpe>cpe:/a:vmware:spring_framework</cpe>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
         <cpe>cpe:/a:springsource:spring_framework</cpe>
@@ -5006,7 +5006,7 @@
         <notes><![CDATA[
        Don't flag specific CVEs for spring framework related components (i.e. org.springframework.data).
        ]]></notes>
-        <gav regex="true">^org\.springframework\..*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\..*$</packageUrl>
         <cve>CVE-2016-9878</cve>
         <cve>CVE-2018-1270</cve>
         <cve>CVE-2018-1271</cve>
@@ -5029,7 +5029,7 @@
            depend on spring-data-rest so the actual library will get flagged instead of the "boot" version
            being flagged as spring-data-rest with the wrong version number)
        ]]></notes>
-        <gav regex="true">^org\.springframework\.boot:spring-boot-starter-data-rest:.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring-boot-starter-data-rest@.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_data_rest</cpe>
         <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
     </suppress>
@@ -5074,7 +5074,7 @@
         <notes><![CDATA[
             Suppresses false positives per #1566.
             ]]></notes>
-        <gav regex="true">^org\.springframework\.security\.oauth\.boot:spring-security-oauth2-autoconfigure:.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.oauth\.boot/spring-security-oauth2-autoconfigure@.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
     </suppress>
@@ -5099,7 +5099,7 @@
         <notes><![CDATA[
         Suppresses false positives per issue #1694.
         ]]></notes>
-        <gav regex="true">^org\.springframework\.security\.extensions:spring-security-saml.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.extensions/pring-security-saml.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
         <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
         <cpe>cpe:/a:security-framework_project:security-framework</cpe>
@@ -5117,7 +5117,7 @@
         <notes><![CDATA[
         Suppresses false positives per issue #1595
         ]]></notes>
-        <gav regex="true">^org\.springframework\.security:spring-security-jwt:.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-jwt@.*$</packageUrl>
         <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
         <cpe>cpe:/a:pivotal_software:spring_security_oauth</cpe>
         <cpe>cpe:/a:jwt_project:jwt</cpe>
@@ -5126,7 +5126,7 @@
         <notes><![CDATA[
         Suppresses false positives per issue #1566
         ]]></notes>
-        <gav regex="true">^org\.springframework\.security\.oauth\.boot:spring-security-oauth2-autoconfigure:.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.oauth\.boot/spring-security-oauth2-autoconfigure@.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_security_oauth</cpe>
         <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
     </suppress>
@@ -5134,7 +5134,7 @@
         <notes><![CDATA[
         FP per #1027
         ]]></notes>
-        <gav regex="true">^org\.springframework\.kafka:spring-kafka.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.kafka/spring-kafka.*$</packageUrl>
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
     </suppress>
@@ -5142,7 +5142,7 @@
         <notes><![CDATA[
         FP per #1328
         ]]></notes>
-        <gav regex="true">^org\.springframework\.batch:spring-batch.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.batch/spring-batch.*$</packageUrl>
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
     </suppress>
@@ -5171,14 +5171,14 @@
         <notes><![CDATA[
         Spring data mongodb false positives.
         ]]></notes>
-        <gav regex="true">org\.springframework\.data:spring-data-mongodb.*</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.data/spring-data-mongodb.*$</packageUrl>
         <cpe>cpe:/a:mongodb:mongodb</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
         Spring false positives; see https://github.com/jeremylong/DependencyCheck/issues/1921.
         ]]></notes>
-        <gav regex="true">org\.springframework\.[^:]+:.*</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.[^/]+/.*$</packageUrl>
         <cpe>cpe:/a:springsource:spring_framework</cpe>
         <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
@@ -5188,7 +5188,7 @@
         <notes><![CDATA[
         Spring data neo4j false positives.
         ]]></notes>
-        <gav regex="true">org\.springframework\.data:spring-data-neo4j:.*</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.data/spring-data-neo4j@.*$</packageUrl>
         <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
         <cpe>cpe:/a:neo4j:neo4j</cpe>
@@ -5197,21 +5197,21 @@
         <notes><![CDATA[
         Spring data solr false positives.
         ]]></notes>
-        <gav regex="true">org\.springframework\.data:spring-data-solr:.*</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.data/spring-data-solr@.*$</packageUrl>
         <cpe>cpe:/a:apache:solr</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
         Spring social facebook false positive.
         ]]></notes>
-        <gav regex="true">org\.springframework\.social:spring-social-facebook:.*</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.social/spring-social-facebook@.*$</packageUrl>
         <cpe>cpe:/a:facebook:facebook</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
         Spring Security JWT false positive.
         ]]></notes>
-        <gav regex="true">org\.springframework\.security:spring-security-jwt.*</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-jwt.*$</packageUrl>
         <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
         <cpe>cpe:/a:security-framework_project:security-framework</cpe>
     </suppress>
@@ -5219,7 +5219,7 @@
         <notes><![CDATA[
         False positives per issue #642
         ]]></notes>
-        <gav regex="true">^org\.springframework\.boot:spring-boot.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring-boot.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
         <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
@@ -5235,21 +5235,21 @@
         <notes><![CDATA[
         False positives per issue #642
         ]]></notes>
-        <gav regex="true">^org\.springframework:spring-context:.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework/spring-context@.*$</packageUrl>
         <cpe>cpe:/a:context_project:context</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
         False positive per issue #691
         ]]></notes>
-        <gav regex="true">^org\.springframework\.boot:spring-boot-starter-data-jpa:.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring-boot-starter-data-jpa@.*$</packageUrl>
         <cve>CVE-2016-6652</cve>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
         False positive per issue #700
         ]]></notes>
-        <gav regex="true">^org\.springframework\.cloud:spring-cloud-netflix-core:.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring-cloud-netflix-core@.*$</packageUrl>
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
     </suppress>
@@ -5257,7 +5257,7 @@
         <notes><![CDATA[
         False positive per issue #700 and #3579
         ]]></notes>
-        <gav regex="true">^org\.springframework\.cloud:spring-cloud-.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring-cloud-.*$</packageUrl>
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
         <cpe>cpe:/a:context_project:context</cpe>
@@ -5267,14 +5267,14 @@
         <notes><![CDATA[
         False positive per issue #838
         ]]></notes>
-        <gav regex="true">^org\.springframework\.boot:.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_data_jpa</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
         spring-session has a different version numbering than spring-core. See #1399
         ]]></notes>
-        <gav regex="true">^org\.springframework\.session:spring-session-(core|data-).*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.session/spring-session-(core|data-).*$</packageUrl>
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
@@ -5283,7 +5283,7 @@
         <notes><![CDATA[
         spring-boot-starter-security is not the same as spring-security, See #1975, #4563
         ]]></notes>
-        <gav regex="true">^org\.springframework\.boot:spring-boot-starter-security:.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring-boot-starter-security@.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
         <cpe>cpe:/a:vmware:spring_security</cpe>
         <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
@@ -5292,7 +5292,7 @@
         <notes><![CDATA[
         spring boot mongo FP per issue #1067
         ]]></notes>
-        <gav regex="true">^org\.springframework\.boot:spring-boot-starter-data-mongodb:.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring-boot-starter-data-mongodb@.*$</packageUrl>
         <cpe>cpe:/a:mongodb:mongodb</cpe>
     </suppress>
     <suppress base="true">
@@ -5308,7 +5308,7 @@
         <notes><![CDATA[
        spring ldap cleanup per issue #1060
        ]]></notes>
-        <gav regex="true">^org\.springframework\.ldap:spring-ldap-core:.*$</gav>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.ldap/spring-ldap-core@.*$</packageUrl>
         <cpe>cpe:/a:net-ldap_project:net-ldap</cpe>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
