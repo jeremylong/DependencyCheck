@@ -1242,14 +1242,6 @@
         <packageUrl regex="true">^pkg:(generic|nuget)/Microsoft\.Win32\.Registry\.AccessControl@.*$</packageUrl>
         <cpe>cpe:/a:microsoft:access</cpe>
     </suppress>
-    <!--suppress base="true">
-        <notes><![CDATA[
-        This was added to a broader suppression ruleg
-        Suppresses false positives on ldap_project (issue #165).
-        ]]></notes>
-        <gav regex="true">org\.forgerock\.opendj:opendj-ldap-sdk:.*</gav>
-        <cpe>cpe:/a:ldap_project:ldap</cpe>
-    </suppress-->
     <suppress base="true">
         <notes><![CDATA[
         FP per #1485
@@ -1379,14 +1371,6 @@
         <packageUrl regex="true">^pkg:maven/com\.hazelcast/hazelcast\-client\-protocol@.*$</packageUrl>
         <cpe>cpe:/a:hazelcast:hazelcast</cpe>
     </suppress>
-    <!--suppress base="true">
-        <notes><![CDATA[
-        Removed as this is too generic and is masking vulnerabilities for the activemq-client
-        Client library reported as the server (#2334)
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.apache\.activemq/activemq\-client@.*$</packageUrl>
-        <cpe>cpe:/a:apache:activemq</cpe>
-    </suppress-->
     <suppress base="true">
         <notes><![CDATA[
         Client library reported as the server (#2334)
@@ -2586,15 +2570,6 @@
         <gav regex="true">^org\.apache\.struts\.xwork:xwork-core:.*$</gav>
         <cpe>cpe:/a:apache:struts</cpe>
     </suppress>
-    <!--suppress base="true">
-        <notes><![CDATA[
-        This was added to a broader suppression.
-        
-        false positive per issue #908
-        ]]></notes>
-        <gav regex="true">^com\.unboundid:unboundid-ldapsdk:.*$</gav>
-        <cpe>cpe:/a:ldap_project:ldap</cpe>
-    </suppress-->
     <suppress base="true">
         <notes><![CDATA[
         FP per #1398
@@ -2917,13 +2892,6 @@
         <gav regex="true">^org\.codehaus\.groovy:groovy-all:.*$</gav>
         <cve>CVE-2016-6497</cve>
     </suppress>
-    <!--suppress base="true">
-        <notes><![CDATA[
-        FP per issue #997 - actual fix was in DependencyVersionUtils
-        ]]></notes>
-        <gav regex="true">^com\.typesafe\.play:play-netty-utils:.*$</gav>
-        <cpe>cpe:/a:playframework:play_framework</cpe>
-    </suppress-->
     <suppress base="true">
         <notes><![CDATA[
         FP per #987
