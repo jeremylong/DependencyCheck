@@ -5170,9 +5170,9 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        Spring data neo4j false positives.
+        Spring data neo4j false positives. Adapted to resolve #4598
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.data/spring-data-neo4j@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.(data|boot)/spring-(boot-starter-)?data-neo4j@.*$</packageUrl>
         <cpe>cpe:/a:neo4j:neo4j</cpe>
     </suppress>
     <suppress base="true">
