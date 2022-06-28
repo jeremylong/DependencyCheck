@@ -4978,6 +4978,7 @@
             ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-security@.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
     </suppress>
 
     <suppress base="true">
@@ -4997,6 +4998,7 @@
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-jwt.*$</packageUrl>
         <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
         <cpe>cpe:/a:security-framework_project:security-framework</cpe>
     </suppress>
     <suppress base="true">
@@ -5024,6 +5026,7 @@
         <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.extensions/spring-security-saml.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
         <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
         <cpe>cpe:/a:security-framework_project:security-framework</cpe>
     </suppress>
     <suppress base="true">
@@ -5052,6 +5055,7 @@
         <packageUrl regex="true">^pkg:maven/org\.springframework\.security\.oauth\.boot/spring-security-oauth2-autoconfigure@.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_boot</cpe>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -5068,6 +5072,7 @@
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.springframework\.session/spring-session-(core|data-).*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -5076,6 +5081,7 @@
         <packageUrl regex="true">^pkg:maven/org\.springframework\.session/spring\-session\-hazelcast@.*$</packageUrl>
         <cpe>cpe:/a:hazelcast:hazelcast</cpe>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
