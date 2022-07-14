@@ -54,7 +54,7 @@
                 #end
             #end
         #end
-    <testsuite failures="$failed" id="$suiteId" name="$enc.xml($dependency.FilePath)" package="$enc.xml($dependency.DisplayFileName)" skipped="$skipped" tests="$testCount" timestamp="$scanDateJunit">
+        <testsuite failures="$failed" errors="0" time="0" id="$suiteId" name="$enc.xml($dependency.FilePath)" package="$enc.xml($dependency.DisplayFileName)" skipped="$skipped" tests="$testCount" timestamp="$scanDateJunit">
         #if($dependency.getVulnerabilities().size()==0 && $dependency.getSuppressedVulnerabilities().size()==0)
             <testcase classname="dependency-check" name="$enc.xml($dependency.DisplayFileName)"/>
         #end
@@ -87,7 +87,17 @@
                 #foreach($ref in $vuln.getReferences())
                     #if($ref.url)$enc.xml($ref.name): $enc.xml($ref.url)#end
                 #end]]>#end</system-out>
-            <system-err>location: $enc.xml($dependency.FilePath)</system-err>
+            #set($referencedProjects="")
+            #set($projectReferenced=false)
+            #foreach($ref in $dependency.projectReferences)
+                #if($projectReferenced)
+                    #set($referencedProjects="$referencedProjects, $ref")
+                #else
+                    #set($referencedProjects="$ref")
+                    #set($projectReferenced=true)
+                #end
+            #end
+            <system-err>location: $enc.xml($dependency.FilePath), project-references: [ $enc.xml($referencedProjects) ]</system-err>
         </testcase>
         #end
         #foreach($vuln in $dependency.getSuppressedVulnerabilities())
