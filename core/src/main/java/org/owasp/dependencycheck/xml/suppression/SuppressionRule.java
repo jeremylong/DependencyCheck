@@ -104,6 +104,29 @@ public class SuppressionRule {
     private Calendar until;
 
     /**
+     * A flag whether or not the rule matched a dependency & CPE.
+     */
+    private boolean matched = false;
+
+    /**
+     * Get the value of matched.
+     *
+     * @return the value of matched
+     */
+    public boolean isMatched() {
+        return matched;
+    }
+
+    /**
+     * Set the value of matched.
+     *
+     * @param matched new value of matched
+     */
+    public void setMatched(boolean matched) {
+        this.matched = matched;
+    }
+
+    /**
      * Get the (@code{nullable}) value of until.
      *
      * @return the value of until
@@ -467,6 +490,7 @@ public class SuppressionRule {
                 for (PropertyType c : this.cpe) {
                     if (identifierMatches(c, i)) {
                         if (!isBase()) {
+                            matched = true;
                             if (this.notes != null) {
                                 i.setNotes(this.notes);
                             }
@@ -507,7 +531,6 @@ public class SuppressionRule {
                             removeVulns.add(v);
                             break;
                         }
-
                     }
                 }
                 if (!remove) {
@@ -524,13 +547,12 @@ public class SuppressionRule {
                         }
                     }
                 }
-                if (remove) {
-                    if (!isBase()) {
-                        if (this.notes != null) {
-                            v.setNotes(this.notes);
-                        }
-                        dependency.addSuppressedVulnerability(v);
+                if (remove && !isBase()) {
+                    matched = true;
+                    if (this.notes != null) {
+                        v.setNotes(this.notes);
                     }
+                    dependency.addSuppressedVulnerability(v);
                 }
             }
             removeVulns.forEach((v) -> {
@@ -645,6 +667,9 @@ public class SuppressionRule {
         }
         if (sha1 != null) {
             sb.append("sha1=").append(sha1).append(',');
+        }
+        if (packageUrl != null) {
+            sb.append("packageUrl=").append(packageUrl).append(',');
         }
         if (gav != null) {
             sb.append("gav=").append(gav).append(',');

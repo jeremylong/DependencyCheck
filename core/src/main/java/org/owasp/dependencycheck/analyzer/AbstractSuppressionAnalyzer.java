@@ -113,7 +113,12 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer imple
         if (rules.isEmpty()) {
             return;
         }
-        rules.forEach((rule) -> rule.process(dependency));
+        rules.forEach((rule) -> {
+            rule.process(dependency);
+            if (!rule.isMatched() && !rule.isBase()) {
+                LOGGER.debug("Suppression Rule had zero matches: {}", rule.toString());
+            }
+        });
     }
 
     /**
