@@ -50,12 +50,12 @@ rm $NVD_ROOT/*.xml # D-C works directly with .gz files anyway.
 ```
 
 Nist-Data-Mirror will automatically create the directory, download the
-.xml.gz files, and extract the .xml files alongside them. Given the parameters
-in the cron example above, the new directory will be `~/NVD/2015-08-03` if
-executed on August 3<sup>rd</sup>, 2015. The download for 2015-08-03 pulled 47
-MiB, and took up a total of 668 MiB after extracting from the compressed
-archive format. It turns out that D-C works directly with the .xml.gz files,
-so the above script preserves disk space by deleting the .xml files.
+.json.gz files. Given the parameters in the cron example above, the new
+directory will be `~/NVD/2015-08-03` if executed on August 3<sup>rd</sup>, 
+2015. The download for 2015-08-03 pulled 47 MiB, and took up a total of 668 
+MiB after extracting from the compressed archive format. It turns out that 
+D-C works directly with the .json.gz files, so the above script preserves disk 
+space by deleting the .json files.
 
 Invoke the Command-Line Using a Specific Daily Snapshot
 -------------------------------------------------------
@@ -70,10 +70,8 @@ CLI_SCRIPT=$CLI_LOCATION/bin/dependency-check.sh
 NVD_PATH=$1/`date -I -d $2`
 NVD=file://$NVD_PATH
 shift 2 # We've used the first two params. The rest go to CLI_SCRIPT.
-$CLI_SCRIPT --cveUrl20Base $NVD/nvdcve-2.0-%d.xml.gz \
-    --cveUrl12Base $NVD/nvdcve-%d.xml.gz \
-    --cveUrl20Modified $NVD/nvdcve-2.0-Modified.xml.gz \
-    --cveUrl12Modified $NVD/nvdcve-Modified.xml.gz \
+$CLI_SCRIPT --cveUrlBase $NVD/nvdcve-1.1-%d.json.gz \
+    --cveUrlModified $NVD/nvdcve-1.1-modified.json.gz \
     --data $NVD_PATH $@
 ```
 
@@ -85,6 +83,6 @@ of date formats. The following invocation would successfully point to the
 
 If today happened to be August 4th, 2015, `"yesterday"` also would have
 worked. Also notice the usage of the `--data` parameter. This places the H2
-database file directly in the folder alongside the .xml.gz files. This is
+database file directly in the folder alongside the .json.gz files. This is
 critical, so that D-C doesn't run against another version of the database,
 like the usual default in `$CLI_LOCATION/data`.
