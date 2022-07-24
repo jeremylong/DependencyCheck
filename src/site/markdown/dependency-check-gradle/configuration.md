@@ -63,8 +63,8 @@ Please see https://docs.gradle.org/current/userguide/build_environment.html#sec:
 ### Advanced Configuration
 
 The following properties can be configured in the dependencyCheck task. However, they are less frequently changed. One exception
-may be the cvedUrl properties, which can be used to host a mirror of the NVD within an enterprise environment. When mirroring the
-NVD you must mirror the *.json.gz and the *.meta files. Note, if ANY of the cve configuration group are set - they should all be set to ensure things work as expected.
+may be the cve Url properties, which can be used to host a mirror of the NVD within an enterprise environment. When mirroring the
+NVD you must mirror the *.json.gz and the *.meta files. Note, if ANY of the cve Url configurations are set - they should both be set to ensure things work as expected.
 
 Config Group | Property          | Description                                                                                                          | Default Value
 -------------|-------------------|----------------------------------------------------------------------------------------------------------------------|------------------
@@ -72,6 +72,8 @@ cve          | urlModified       | URL for the modified CVE JSON data feed. When
 cve          | urlBase           | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.                                  | https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-%d.json.gz       |
 cve          | waitTime          | The time in milliseconds to wait between downloads from the NVD.                                                     | 4000                                                                |
 cve          | startYear         | The first year of NVD CVE data to download from the NVD.                                                             | 2002                                                                |
+cve          | user              | The user to authenticate (to a proxy/mirror) for download of CVE datastreams.                                        | &nbsp;                                                              |
+cve          | password          | The password to authenticate (to a proxy/mirror) for download of CVE datastreams.                                    | &nbsp;                                                              |
 data         | directory         | Sets the data directory to hold SQL CVEs contents. This should generally not be changed.                             | &nbsp;                                                              |
 data         | driver            | The name of the database driver. Example: org.h2.Driver.                                                             | &nbsp;                                                              |
 data         | driverPath        | The path to the database driver JAR file; only used if the driver is not in the class path.                          | &nbsp;                                                              |
