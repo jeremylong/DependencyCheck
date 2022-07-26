@@ -5234,10 +5234,11 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        spring boot mongo FP per issue #1067
+        spring boot mongo FP per issue #1067, #4641
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring-boot-starter-data-mongodb@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring-boot-starter-data-mongodb.*@.*$</packageUrl>
         <cpe>cpe:/a:mongodb:mongodb</cpe>
+        <cpe>cpe:/a:vmware:spring_data_mongodb</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
