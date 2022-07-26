@@ -89,7 +89,7 @@ public class RetireJSDataSource implements CachedWebDataSource {
                 initializeRetireJsRepo(settings, url, repoFile);
             }
         } catch (MalformedURLException ex) {
-            throw new UpdateException(String.format("Inavlid URL for RetireJS repository (%s)", configuredUrl), ex);
+            throw new UpdateException(String.format("Invalid URL for RetireJS repository (%s)", configuredUrl), ex);
         } catch (IOException ex) {
             throw new UpdateException("Unable to get the data directory", ex);
         }
