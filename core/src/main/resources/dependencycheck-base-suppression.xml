@@ -4974,9 +4974,9 @@
 
     <suppress base="true">
         <notes><![CDATA[
-            Suppress false positives per #3400
+            Suppress false positives per #3400 and #4597
             ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-security@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-(common\-)?security.*$</packageUrl>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
         <cpe>cpe:/a:vmware:spring_security</cpe>
     </suppress>
