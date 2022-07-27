@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 import org.owasp.dependencycheck.xml.suppression.SuppressionRuleFilter;
+import org.owasp.dependencycheck.xml.suppression.SuppressionRules;
 
 /**
  * Abstract base suppression analyzer that contains methods for parsing the
@@ -63,9 +64,18 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer imple
      */
     private static final String BASE_SUPPRESSION_FILE = "dependencycheck-base-suppression.xml";
     /**
-     * The list of suppression rules.
+     * The collection of suppression rules.
      */
-    private final List<SuppressionRule> rules = new ArrayList<>();
+    private final SuppressionRules rules = SuppressionRules.getInstance();
+
+    /**
+     * Returns the suppression rules.
+     *
+     * @return the suppression rules
+     */
+    protected SuppressionRules getSuppressionRules() {
+        return rules;
+    }
 
     /**
      * Get the number of suppression rules.
@@ -113,11 +123,8 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer imple
         if (rules.isEmpty()) {
             return;
         }
-        rules.forEach((rule) -> {
+        rules.list().forEach((rule) -> {
             rule.process(dependency);
-            if (!rule.isMatched() && !rule.isBase()) {
-                LOGGER.debug("Suppression Rule had zero matches: {}", rule.toString());
-            }
         });
     }
 

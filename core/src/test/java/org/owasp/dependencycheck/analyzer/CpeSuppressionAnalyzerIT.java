@@ -26,6 +26,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.Settings;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import org.owasp.dependencycheck.xml.suppression.SuppressionRules;
 
 /**
  * Testing the CPE suppression analyzer.
@@ -80,6 +81,8 @@ public class CpeSuppressionAnalyzerIT extends BaseDBTestCase {
             assertTrue(cveSize > 0);
             assertTrue(cpeSize > 0);
             getSettings().setString(Settings.KEYS.SUPPRESSION_FILE, suppression.getAbsolutePath());
+            //as the suppression rules are now a singleton - we must reset the list to cause the new suppression rules to load
+            SuppressionRules.getInstance().list().clear();
             CpeSuppressionAnalyzer instance = new CpeSuppressionAnalyzer();
             instance.initialize(getSettings());
             instance.prepare(engine);
