@@ -5290,5 +5290,12 @@
         <packageUrl regex="true">^pkg:maven/(?!org\.springframework/spring\-web@).*$</packageUrl>
         <cve>CVE-2016-1000027</cve>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+        FP because cpe make reference to IonicaBizau/parse-url dependency
+        ]]></notes>
+        <packageUrl regex="true">^pkg:npm/parseurl@.*$</packageUrl>
+        <cpe>cpe:/a:parse-url_project:parse-url</cpe>
+    </suppress>
     <!-- endregion -->
 </suppressions>
