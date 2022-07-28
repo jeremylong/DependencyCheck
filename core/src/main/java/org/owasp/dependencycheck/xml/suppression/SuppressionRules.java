@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
-public class SuppressionRules {
+public final class SuppressionRules {
 
     /**
      * Singleton.
@@ -37,9 +37,9 @@ public class SuppressionRules {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(SuppressionRules.class);
     /**
-     * The list of suppression rules.
+     * The list of suppression RULES.
      */
-    private static final List<SuppressionRule> rules = new ArrayList<>();
+    private static final List<SuppressionRule> RULES = new ArrayList<>();
 
     private SuppressionRules() {
     }
@@ -54,46 +54,46 @@ public class SuppressionRules {
     }
 
     /**
-     * Get the number of suppression rules.
+     * Get the number of suppression RULES.
      *
-     * @return the number of suppression rules
+     * @return the number of suppression RULES
      */
     public int size() {
-        return rules.size();
+        return RULES.size();
     }
 
     /**
-     * Returns true if there are no suppression rules; otherwise false.
+     * Returns true if there are no suppression RULES; otherwise false.
      *
-     * @return true if there are no suppression rules; otherwise false
+     * @return true if there are no suppression RULES; otherwise false
      */
     public boolean isEmpty() {
-        return rules.isEmpty();
+        return RULES.isEmpty();
     }
 
     /**
-     * Returns the list of suppression rules.
+     * Returns the list of suppression RULES.
      *
-     * @return the list of suppression rules
+     * @return the list of suppression RULES
      */
     public List<SuppressionRule> list() {
-        return rules;
+        return RULES;
     }
 
     /**
-     * Appends the new suppression rules to the list of rules.
+     * Appends the new suppression RULES to the list of RULES.
      *
-     * @param newRules the new suppression rules
+     * @param newRules the new suppression RULES
      */
     public void addAll(List<SuppressionRule> newRules) {
-        rules.addAll(newRules);
+        RULES.addAll(newRules);
     }
 
     /**
-     * Logs unused suppression rules.
+     * Logs unused suppression RULES.
      */
     public void logUnusedRules() {
-        rules.forEach((rule) -> {
+        RULES.forEach((rule) -> {
             if (!rule.isMatched() && !rule.isBase()) {
                 LOGGER.debug("Suppression Rule had zero matches: {}", rule.toString());
             }

@@ -660,7 +660,7 @@ public class Engine implements FileFilter, AutoCloseable {
                 .forEach((analyzerList) -> analyzerList.forEach((a) -> closeAnalyzer(a)));
 
         SuppressionRules.getInstance().logUnusedRules();
-        
+
         LOGGER.debug("\n----------------------------------------------------\nEND ANALYSIS\n----------------------------------------------------");
         final long analysisDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - analysisStart);
         LOGGER.info("Analysis Complete ({} seconds)", analysisDurationSeconds);
