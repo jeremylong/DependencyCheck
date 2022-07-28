@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.xml.suppression;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -49,6 +50,7 @@ public final class SuppressionRules {
      *
      * @return the instance of SuppressionRules
      */
+    @SuppressFBWarnings(justification = "Intended", value = {"MS_EXPOSE_REP"})
     public static SuppressionRules getInstance() {
         return INSTANCE;
     }
