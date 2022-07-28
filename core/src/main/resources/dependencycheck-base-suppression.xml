@@ -5290,5 +5290,71 @@
         <packageUrl regex="true">^pkg:maven/(?!org\.springframework/spring\-web@).*$</packageUrl>
         <cve>CVE-2016-1000027</cve>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #4671, CVEs for Python pet projects
+   ]]></notes>
+        <packageUrl regex="true">^.*$</packageUrl>
+        <cve>CVE-2022-31504</cve>
+        <cve>CVE-2022-31505</cve>
+        <cve>CVE-2022-31509</cve>
+        <cve>CVE-2022-31510</cve>
+        <cve>CVE-2022-31511</cve>
+        <cve>CVE-2022-31512</cve>
+        <cve>CVE-2022-31513</cve>
+        <cve>CVE-2022-31514</cve>
+        <cve>CVE-2022-31515</cve>
+        <cve>CVE-2022-31516</cve>
+        <cve>CVE-2022-31518</cve>
+        <cve>CVE-2022-31520</cve>
+        <cve>CVE-2022-31521</cve>
+        <cve>CVE-2022-31526</cve>
+        <cve>CVE-2022-31527</cve>
+        <cve>CVE-2022-31528</cve>
+        <cve>CVE-2022-31532</cve>
+        <cve>CVE-2022-31533</cve>
+        <cve>CVE-2022-31534</cve>
+        <cve>CVE-2022-31535</cve>
+        <cve>CVE-2022-31536</cve>
+        <cve>CVE-2022-31537</cve>
+        <cve>CVE-2022-31538</cve>
+        <cve>CVE-2022-31540</cve>
+        <cve>CVE-2022-31544</cve>
+        <cve>CVE-2022-31545</cve>
+        <cve>CVE-2022-31546</cve>
+        <cve>CVE-2022-31547</cve>
+        <cve>CVE-2022-31548</cve>
+        <cve>CVE-2022-31551</cve>
+        <cve>CVE-2022-31552</cve>
+        <cve>CVE-2022-31553</cve>
+        <cve>CVE-2022-31554</cve>
+        <cve>CVE-2022-31555</cve>
+        <cve>CVE-2022-31556</cve>
+        <cve>CVE-2022-31557</cve>
+        <cve>CVE-2022-31559</cve>
+        <cve>CVE-2022-31560</cve>
+        <cve>CVE-2022-31561</cve>
+        <cve>CVE-2022-31562</cve>
+        <cve>CVE-2022-31563</cve>
+        <cve>CVE-2022-31564</cve>
+        <cve>CVE-2022-31565</cve>
+        <cve>CVE-2022-31566</cve>
+        <cve>CVE-2022-31567</cve>
+        <cve>CVE-2022-31568</cve>
+        <cve>CVE-2022-31570</cve>
+        <cve>CVE-2022-31571</cve>
+        <cve>CVE-2022-31572</cve>
+        <cve>CVE-2022-31574</cve>
+        <cve>CVE-2022-31575</cve>
+        <cve>CVE-2022-31576</cve>
+        <cve>CVE-2022-31577</cve>
+        <cve>CVE-2022-31578</cve>
+        <cve>CVE-2022-31579</cve>
+        <cve>CVE-2022-31582</cve>
+        <cve>CVE-2022-31583</cve>
+        <cve>CVE-2022-31585</cve>
+        <cve>CVE-2022-31587</cve>
+        <cve>CVE-2022-31588</cve>
+    </suppress>
     <!-- endregion -->
 </suppressions>
