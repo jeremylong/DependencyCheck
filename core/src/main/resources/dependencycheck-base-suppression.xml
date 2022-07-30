@@ -4842,7 +4842,7 @@
         <notes><![CDATA[
         quarkus-liquibase is a wrapper of liquibase:liquibase with a lower version
         ]]></notes>
-        <packageUrl regex="true">^pkg\:maven/io\.quarkus.*/quarkus\-liquibase@.*</packageUrl>
+        <packageUrl regex="true">^pkg\:maven/io\.quarkus.*/quarkus\-liquibase(-[a-z]+)?@.*</packageUrl>
         <cpe>cpe:/a:liquibase:liquibase</cpe>
     </suppress>
     <suppress base="true">
