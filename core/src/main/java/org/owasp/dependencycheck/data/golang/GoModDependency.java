@@ -21,7 +21,6 @@ import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURLBuilder;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
