@@ -196,7 +196,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
             final Dependency relatedDependency, final Set<Dependency> dependenciesToRemove,
             final boolean copyVulnsAndIds) {
         dependency.addRelatedDependency(relatedDependency);
-        relatedDependency.getRelatedDependencies().stream()
+        relatedDependency.getRelatedDependencies()
                 .forEach(dependency::addRelatedDependency);
         relatedDependency.clearRelatedDependencies();
 

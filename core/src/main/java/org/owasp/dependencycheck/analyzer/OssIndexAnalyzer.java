@@ -215,7 +215,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
         // only attempt if we have been able to collect some packages
         if (!packages.isEmpty()) {
             try (OssindexClient client = newOssIndexClient()) {
-                LOG.debug("OSS Index Analyzer submitting: " + packages.toString());
+                LOG.debug("OSS Index Analyzer submitting: " + packages);
                 return client.requestComponentReports(packages);
             }
         }

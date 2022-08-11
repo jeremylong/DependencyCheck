@@ -28,6 +28,7 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Vulnerability;
+import org.owasp.dependencycheck.dependency.naming.Identifier;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.exception.ScanAgentException;
@@ -112,7 +113,7 @@ public class DependencyCheckScanAgent {
      */
     private boolean updateOnly = false;
     /**
-     * flag indicating whether or not to generate a report of findings.
+     * flag indicating whether to generate a report of findings.
      */
     private boolean generateReport = true;
     /**
@@ -150,7 +151,7 @@ public class DependencyCheckScanAgent {
      */
     private String logFile = null;
     /**
-     * flag indicating whether or not to show a summary of findings.
+     * flag indicating whether to show a summary of findings.
      */
     private boolean showSummary = true;
     /**
@@ -167,7 +168,7 @@ public class DependencyCheckScanAgent {
      */
     private String cpeStartsWithFilter;
     /**
-     * Whether or not the Maven Central analyzer is enabled.
+     * Whether the Maven Central analyzer is enabled.
      */
     private boolean centralAnalyzerEnabled = true;
     /**
@@ -175,7 +176,7 @@ public class DependencyCheckScanAgent {
      */
     private String centralUrl;
     /**
-     * Whether or not the nexus analyzer is enabled.
+     * Whether the nexus analyzer is enabled.
      */
     private boolean nexusAnalyzerEnabled = true;
     /**
@@ -183,7 +184,7 @@ public class DependencyCheckScanAgent {
      */
     private String nexusUrl;
     /**
-     * Whether or not the defined proxy should be used when connecting to Nexus.
+     * Whether the defined proxy should be used when connecting to Nexus.
      */
     private boolean nexusUsesProxy = true;
     /**
@@ -199,7 +200,7 @@ public class DependencyCheckScanAgent {
      */
     private String connectionString;
     /**
-     * The user name for connecting to the database.
+     * The username for connecting to the database.
      */
     private String databaseUser;
     /**
@@ -916,8 +917,12 @@ public class DependencyCheckScanAgent {
      */
     private void generateExternalReports(Engine engine, File outDirectory) throws ScanAgentException {
         try {
-            engine.writeReports(applicationName, outDirectory, this.reportFormat.name());
-        } catch (ReportException ex) {
+            ExceptionCollection ex = null;
+            engine.writeReports(applicationName, outDirectory, this.reportFormat.name(), ex);
+            if (ex != null) {
+                throw ex;
+            }
+        } catch (ReportException | ExceptionCollection ex) {
             LOGGER.debug("Unexpected exception occurred during analysis; please see the verbose error log for more details.", ex);
             throw new ScanAgentException("Error generating the report", ex);
         }
@@ -1044,7 +1049,7 @@ public class DependencyCheckScanAgent {
             if (showSummary) {
                 msg = String.format("%n%nDependency-Check Failure:%n"
                         + "One or more dependencies were identified with vulnerabilities that have a CVSS score greater than or equal to '%.1f': %s%n"
-                        + "See the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
+                        + "See the dependency-check report for more details.%n%n", failBuildOnCVSS, ids);
             } else {
                 msg = String.format("%n%nDependency-Check Failure:%n"
                         + "One or more dependencies were identified with vulnerabilities.%n%n"
@@ -1075,12 +1080,12 @@ public class DependencyCheckScanAgent {
         final StringBuilder summary = new StringBuilder();
         for (Dependency d : dependencies) {
             final String ids = d.getVulnerabilities(true).stream()
-                    .map(v -> v.getName())
+                    .map(Vulnerability::getName)
                     .collect(Collectors.joining(", "));
             if (ids.length() > 0) {
                 summary.append(d.getFileName()).append(" (");
                 summary.append(Stream.concat(d.getSoftwareIdentifiers().stream(), d.getVulnerableSoftwareIdentifiers().stream())
-                        .map(i -> i.getValue())
+                        .map(Identifier::getValue)
                         .collect(Collectors.joining(", ")));
                 summary.append(") : ").append(ids).append(NEW_LINE);
             }
@@ -1089,12 +1094,12 @@ public class DependencyCheckScanAgent {
             if (projectName == null || projectName.isEmpty()) {
                 LOGGER.warn("\n\nOne or more dependencies were identified with known vulnerabilities:\n\n{}\n\n"
                         + "See the dependency-check report for more details.\n\n",
-                        summary.toString());
+                        summary);
             } else {
                 LOGGER.warn("\n\nOne or more dependencies were identified with known vulnerabilities in {}:\n\n{}\n\n"
                         + "See the dependency-check report for more details.\n\n",
                         projectName,
-                        summary.toString());
+                        summary);
             }
         }
     }

@@ -70,7 +70,7 @@ public class PomParser {
                 throw (PomParseException) ex;
             }
             LOGGER.debug("", ex);
-            throw new PomParseException(String.format("Unable to parse pom '%s'", file.toString()), ex);
+            throw new PomParseException(String.format("Unable to parse pom '%s'", file), ex);
         }
     }
 
@@ -92,7 +92,7 @@ public class PomParser {
                 throw (PomParseException) ex;
             }
             LOGGER.debug("", ex);
-            throw new PomParseException(String.format("Unable to parse pom '%s'", file.toString()), ex);
+            throw new PomParseException(String.format("Unable to parse pom '%s'", file), ex);
         }
     }
 

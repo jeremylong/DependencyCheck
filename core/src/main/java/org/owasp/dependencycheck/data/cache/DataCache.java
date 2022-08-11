@@ -31,7 +31,7 @@ public class DataCache<T> {
     /**
      * A reference to the JCS cache.
      */
-    private CacheAccess<String, T> cache;
+    private final CacheAccess<String, T> cache;
 
     /**
      * Creates a new generic JCS wrapper.

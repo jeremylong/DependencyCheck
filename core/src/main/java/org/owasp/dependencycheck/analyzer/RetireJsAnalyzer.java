@@ -118,6 +118,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
      * contained in a JAR.
      */
     //TODO implement this
+    @SuppressWarnings("FieldMayBeFinal")
     private boolean skipNonVulnerableInJAR = true;
 
     /**
@@ -225,7 +226,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
             this.jsRepository = new VulnerabilitiesRepositoryLoader().loadFromInputStream(in);
         } catch (JSONException ex) {
             this.setEnabled(false);
-            throw new InitializationException("Failed to initialize the RetireJS repo: `" + repoFile.toString()
+            throw new InitializationException("Failed to initialize the RetireJS repo: `" + repoFile
                     + "` appears to be malformed. Please delete the file or run the dependency-check purge "
                     + "command and re-try running dependency-check.", ex);
         } catch (IOException ex) {

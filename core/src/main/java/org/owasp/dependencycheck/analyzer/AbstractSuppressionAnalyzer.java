@@ -81,6 +81,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer imple
      *
      * @return a list of file EXTENSIONS supported by this analyzer.
      */
+    @SuppressWarnings("SameReturnValue")
     public Set<String> getSupportedExtensions() {
         return null;
     }

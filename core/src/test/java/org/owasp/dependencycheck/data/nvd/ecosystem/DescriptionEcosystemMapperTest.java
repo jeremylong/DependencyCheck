@@ -24,7 +24,7 @@ public class DescriptionEcosystemMapperTest {
 
     private static final String POSTFIX = ".ecosystem.txt";
 
-    protected static File directory = new File("./src/test/resources/ecosystem");
+    protected static final File directory = new File("./src/test/resources/ecosystem");
 
     protected static Map<String, File> getEcosystemFiles() throws IOException {
         if (!directory.exists()) {

@@ -108,12 +108,12 @@ public final class NvdCveParser {
             throw new CorruptedDatastreamException("Error reading parsing NVD CVE file", ex);
         } catch (IOException ex) {
             LOGGER.error("Error reading NVD JSON data: {}", file);
-            LOGGER.debug("Error extracting the NVD JSON data from: " + file.toString(), ex);
+            LOGGER.debug("Error extracting the NVD JSON data from: " + file, ex);
             throw new UpdateException("Unable to find the NVD CVE file to parse", ex);
         }
     }
 
-    protected void init(JsonParser parser) throws IOException {
+    void init(JsonParser parser) throws IOException {
         JsonToken nextToken = parser.nextToken();
         if (nextToken != JsonToken.START_OBJECT) {
             throw new IOException("Expected " + JsonToken.START_OBJECT + ", got " + nextToken);

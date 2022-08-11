@@ -296,7 +296,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
 
                     } finally {
                         if (pomFile != null && pomFile.exists() && !FileUtils.deleteQuietly(pomFile)) {
-                            LOGGER.debug("Failed to delete temporary pom file {}", pomFile.toString());
+                            LOGGER.debug("Failed to delete temporary pom file {}", pomFile);
                             pomFile.deleteOnExit();
                         }
                     }

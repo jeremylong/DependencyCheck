@@ -53,7 +53,7 @@ public class JsonArrayFixingInputStream extends InputStream {
     /**
      * The input stream to be filtered.
      */
-    private volatile InputStream in;
+    private final InputStream in;
     /**
      * The read buffer.
      */
@@ -207,9 +207,9 @@ public class JsonArrayFixingInputStream extends InputStream {
                 incrementRead();
                 return 1;
             }
-            int copyLength = bufferAvailable > len ? len : bufferAvailable;
+            int copyLength = Math.min(bufferAvailable, len);
             if (brace > 0) {
-                copyLength = copyLength > brace ? brace : copyLength;
+                copyLength = Math.min(copyLength, brace);
             }
             final int copyEnd = copyLength + off;
             for (int pos = off; pos < copyEnd; pos++) {

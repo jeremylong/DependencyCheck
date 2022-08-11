@@ -161,8 +161,6 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
                         LOGGER.debug("{} is enabled.", getName());
                         break;
                     case yarnExecutableNotFoundExitValue:
-                        this.setEnabled(false);
-                        LOGGER.warn("The {} has been disabled. Yarn executable was not found.", getName());
                     default:
                         this.setEnabled(false);
                         LOGGER.warn("The {} has been disabled. Yarn executable was not found.", getName());
@@ -170,7 +168,6 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
             }
         } catch (Exception ex) {
             this.setEnabled(false);
-            LOGGER.debug("The {} has been disabled. Yarn executable was not found.", ex);
             LOGGER.warn("The {} has been disabled. Yarn executable was not found.", getName());
             throw new InitializationException("Unable to read yarn audit output.", ex);
         }
@@ -279,7 +276,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
             Dependency dependency, MultiValuedMap<String, String> dependencyMap)
             throws AnalysisException {
         try {
-            final Boolean skipDevDependencies = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false);
+            final boolean skipDevDependencies = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false);
             // Retrieves the contents of package-lock.json from the Dependency
             final JsonObject lockJson = fetchYarnAuditJson(dependency, skipDevDependencies);
             // Retrieves the contents of package-lock.json from the Dependency

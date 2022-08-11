@@ -232,8 +232,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         if (data.getFileVersion() != null && data.getProductVersion() != null) {
-            final int max = data.getFileVersion().length() > data.getProductVersion().length()
-                    ? data.getProductVersion().length() : data.getFileVersion().length();
+            final int max = Math.min(data.getFileVersion().length(), data.getProductVersion().length());
             int pos;
             for (pos = 0; pos < max; pos++) {
                 if (data.getFileVersion().charAt(pos) != data.getProductVersion().charAt(pos)) {

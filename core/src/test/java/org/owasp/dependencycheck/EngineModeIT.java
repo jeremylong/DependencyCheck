@@ -33,7 +33,7 @@ import org.owasp.dependencycheck.utils.FileUtils;
 public class EngineModeIT extends BaseTest {
 
     @Rule
-    public TemporaryFolder tempDir = new TemporaryFolder();
+    public final TemporaryFolder tempDir = new TemporaryFolder();
     @Rule
     public TestName testName = new TestName();
 

@@ -182,11 +182,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
     protected void initializeExecutorServices() {
         final int downloadPoolSize;
         final int max = settings.getInt(Settings.KEYS.MAX_DOWNLOAD_THREAD_POOL_SIZE, 1);
-        if (DOWNLOAD_THREAD_POOL_SIZE > max) {
-            downloadPoolSize = max;
-        } else {
-            downloadPoolSize = DOWNLOAD_THREAD_POOL_SIZE;
-        }
+        downloadPoolSize = Math.min(DOWNLOAD_THREAD_POOL_SIZE, max);
         downloadExecutorService = Executors.newFixedThreadPool(downloadPoolSize);
         processingExecutorService = Executors.newFixedThreadPool(PROCESSING_THREAD_POOL_SIZE);
         LOGGER.debug("#download   threads: {}", downloadPoolSize);

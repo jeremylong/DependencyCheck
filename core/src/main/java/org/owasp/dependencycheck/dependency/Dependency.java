@@ -354,9 +354,6 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @param filePath the file path of the dependency
      */
     public void setFilePath(String filePath) {
-//        if (this.packagePath == null || this.packagePath.equals(this.filePath)) {
-//            this.packagePath = filePath;
-//        }
         this.filePath = filePath;
     }
 

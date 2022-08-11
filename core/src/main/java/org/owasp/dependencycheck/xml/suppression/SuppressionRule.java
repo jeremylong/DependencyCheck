@@ -74,7 +74,7 @@ public class SuppressionRule {
     /**
      * The list of vulnerability name entries to suppress.
      */
-    private List<PropertyType> vulnerabilityNames = new ArrayList<>();
+    private final List<PropertyType> vulnerabilityNames = new ArrayList<>();
     /**
      * A Maven GAV to suppression.
      */
@@ -604,20 +604,20 @@ public class SuppressionRule {
                 try {
                     return suppressionEntry.matches(cpeId.toCpe22Uri());
                 } catch (CpeEncodingException ex) {
-                    LOGGER.debug("Unable to convert CPE to 22 URI?" + cpeId.toString());
+                    LOGGER.debug("Unable to convert CPE to 22 URI?" + cpeId);
                 }
             } else if (suppressionEntry.isCaseSensitive()) {
                 try {
                     return cpeId.toCpe22Uri().startsWith(suppressionEntry.getValue());
                 } catch (CpeEncodingException ex) {
-                    LOGGER.debug("Unable to convert CPE to 22 URI?" + cpeId.toString());
+                    LOGGER.debug("Unable to convert CPE to 22 URI?" + cpeId);
                 }
             } else {
                 final String id;
                 try {
                     id = cpeId.toCpe22Uri().toLowerCase();
                 } catch (CpeEncodingException ex) {
-                    LOGGER.debug("Unable to convert CPE to 22 URI?" + cpeId.toString());
+                    LOGGER.debug("Unable to convert CPE to 22 URI?" + cpeId);
                     return false;
                 }
                 final String check = suppressionEntry.getValue().toLowerCase();

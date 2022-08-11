@@ -37,7 +37,7 @@ import static org.junit.Assert.assertTrue;
 public class DependencyCheckTaskIT extends BaseDBTestCase {
 
     @Rule
-    public BuildFileRule buildFileRule = new BuildFileRule();
+    public final BuildFileRule buildFileRule = new BuildFileRule();
 
     @Before
     @Override
@@ -129,9 +129,7 @@ public class DependencyCheckTaskIT extends BaseDBTestCase {
      */
     @Test
     public void testGetFailBuildOnCVSS() {
-        Exception exception = Assert.assertThrows(BuildException.class, () -> {
-            buildFileRule.executeTarget("failCVSS");
-        });
+        Exception exception = Assert.assertThrows(BuildException.class, () -> buildFileRule.executeTarget("failCVSS"));
 
         String expectedMessage = String.format("One or more dependencies were identified with vulnerabilities that " +
                 "have a CVSS score greater than or equal to '%.1f':", 3.0f);

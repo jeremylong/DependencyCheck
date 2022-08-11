@@ -762,9 +762,6 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 }
             }
             isValid &= found;
-//            if (!isValid) {
-//                break;
-//            }
         }
         return isValid;
     }
@@ -921,7 +918,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         try {
             guessCpe = cpeBuilder.build();
         } catch (CpeValidationException ex) {
-            throw new AnalysisException(String.format("Unable to create a CPE for %s:%s:%s", vendor, product, bestGuess.toString()));
+            throw new AnalysisException(String.format("Unable to create a CPE for %s:%s:%s", vendor, product, bestGuess));
         }
         if (!"-".equals(guessCpe.getVersion())) {
             String url = null;
@@ -1299,6 +1296,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      *
      * @param args not used
      */
+    @SuppressWarnings("InfiniteLoopStatement")
     public static void main(String[] args) {
         final Settings props = new Settings();
         try (Engine en = new Engine(Engine.Mode.EVIDENCE_PROCESSING, props)) {
@@ -1337,8 +1335,8 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                     if (list == null || list.isEmpty()) {
                         System.out.println("No results found");
                     } else {
-                        list.forEach((e) -> System.out.println(String.format("%s:%s (%f)", e.getVendor(), e.getProduct(),
-                                e.getSearchScore())));
+                        list.forEach((e) -> System.out.printf("%s:%s (%f)%n", e.getVendor(), e.getProduct(),
+                                e.getSearchScore()));
                     }
                     System.out.println();
                     System.out.println();

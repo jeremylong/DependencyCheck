@@ -138,7 +138,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * The list of files that have been scanned.
      */
-    private List<File> scannedFiles = new ArrayList<>();
+    private final List<File> scannedFiles = new ArrayList<>();
     //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Maven bound parameters and components">
     /**
@@ -1559,7 +1559,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             if (scanSet == null) {
                 scanSet = new ArrayList<>();
             }
-            scanDirectory.stream().forEach(d -> {
+            scanDirectory.forEach(d -> {
                 final FileSet fs = new FileSet();
                 fs.setDirectory(d);
                 fs.addInclude(INCLUDE_ALL);

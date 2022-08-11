@@ -107,7 +107,7 @@ public class SuppressionHandler extends DefaultHandler {
     /**
      * The suppression rule filter.
      */
-    private SuppressionRuleFilter filter;
+    private final SuppressionRuleFilter filter;
 
     /**
      * Get the value of suppressionRules.

@@ -137,7 +137,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * value of this system property at runtime. We store the value to reset the
      * property to its original value.
      */
-    private String accessExternalSchema;
+    private final String accessExternalSchema;
 
     /**
      * Creates a new {@link Mode#STANDALONE} Engine.
@@ -970,6 +970,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * opening the database
      * @throws DatabaseException if the database connection could not be created
      */
+    @SuppressWarnings("try")
     public void openDatabase(boolean readOnly, boolean lockRequired) throws DatabaseException {
         if (mode.isDatabaseRequired() && database == null) {
             try (WriteLock dblock = new WriteLock(getSettings(), lockRequired && DatabaseManager.isH2Connection(settings))) {
@@ -989,7 +990,7 @@ public class Engine implements FileFilter, AutoCloseable {
                         }
                         database = new CveDB(settings);
                     } else {
-                        throw new DatabaseException("Unable to open database - configured database file does not exist: " + db.toString());
+                        throw new DatabaseException("Unable to open database - configured database file does not exist: " + db);
                     }
                 } else {
                     database = new CveDB(settings);

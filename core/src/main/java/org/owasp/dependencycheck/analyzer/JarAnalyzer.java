@@ -693,8 +693,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     id = new PurlIdentifier(purl, Confidence.HIGH);
                 } else {
                     LOGGER.debug("Invalid maven identifier identified: " + originalGroupID + ":" + originalArtifactID);
-//                    final String gav = String.format("%s:%s:%s", originalGroupID, originalArtifactID, version);
-//                    id = new GenericIdentifier("generic:" + gav, Confidence.LOW);
                 }
             } catch (MalformedPackageURLException ex) {
                 final String gav = String.format("%s:%s:%s", originalGroupID, originalArtifactID, version);

@@ -75,7 +75,7 @@ public class HttpResourceConnection implements AutoCloseable {
     /**
      * Whether or not the conn will use the defined proxy.
      */
-    private boolean usesProxy;
+    private final boolean usesProxy;
 
     /**
      * The settings key for the username to be used.

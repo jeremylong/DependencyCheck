@@ -73,7 +73,7 @@ public class App {
     /**
      * The configured settings.
      */
-    private Settings settings;
+    private final Settings settings;
 
     /**
      * The main method for the application.
@@ -334,7 +334,7 @@ public class App {
         if (ids.length() > 0) {
             LOGGER.error(
                     String.format("%n%nOne or more dependencies were identified with vulnerabilities that have a CVSS score greater than or "
-                            + "equal to '%.1f': %n%s%n%nSee the dependency-check report for more details.%n%n", cvssFailScore, ids.toString())
+                            + "equal to '%.1f': %n%s%n%nSee the dependency-check report for more details.%n%n", cvssFailScore, ids)
             );
 
             retCode = 1;
@@ -388,7 +388,7 @@ public class App {
             if (scanner.getIncludedFilesCount() > 0) {
                 for (String s : scanner.getIncludedFiles()) {
                     final File f = new File(baseDir, s);
-                    LOGGER.debug("Found file {}", f.toString());
+                    LOGGER.debug("Found file {}", f);
                     paths.add(f);
                 }
             }
@@ -731,6 +731,7 @@ public class App {
      * @param file a file path
      * @return the position of the last file separator
      */
+    @SuppressWarnings("ManualMinMaxCalculation")
     private int getLastFileSeparator(String file) {
         if (file.contains("*") || file.contains("?")) {
             int p1 = file.indexOf('*');

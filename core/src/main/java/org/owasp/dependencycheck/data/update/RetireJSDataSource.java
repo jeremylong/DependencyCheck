@@ -131,6 +131,7 @@ public class RetireJSDataSource implements CachedWebDataSource {
      * @throws UpdateException thrown if there is an exception during
      * initialization
      */
+    @SuppressWarnings("try")
     private void initializeRetireJsRepo(Settings settings, URL repoUrl, File repoFile) throws UpdateException {
         try (WriteLock lock = new WriteLock(settings, true, repoFile.getName() + ".lock")) {
             LOGGER.debug("RetireJS Repo URL: {}", repoUrl.toExternalForm());
@@ -142,6 +143,7 @@ public class RetireJSDataSource implements CachedWebDataSource {
     }
 
     @Override
+    @SuppressWarnings("try")
     public boolean purge(Engine engine) {
         this.settings = engine.getSettings();
         boolean result = true;
