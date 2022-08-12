@@ -125,7 +125,7 @@ public class SuppressionParser {
                 xmlReader.parse(in);
                 return handler.getSuppressionRules();
             }
-        } catch (ParserConfigurationException | FileNotFoundException ex) {
+        } catch (ParserConfigurationException | IOException ex) {
             LOGGER.debug("", ex);
             throw new SuppressionParseException(ex);
         } catch (SAXException ex) {
@@ -135,9 +135,6 @@ public class SuppressionParser {
                 LOGGER.debug("", ex);
                 throw new SuppressionParseException(ex);
             }
-        } catch (IOException ex) {
-            LOGGER.debug("", ex);
-            throw new SuppressionParseException(ex);
         }
     }
 

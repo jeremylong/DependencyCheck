@@ -57,7 +57,7 @@ public class FilterTest extends BaseTest {
         expResults.add("keep");
         expResults.add("keep");
 
-        List<String> actResults = new ArrayList<String>();
+        List<String> actResults = new ArrayList<>();
         for (String s : TEST_FILTER.filter(testData)) {
             actResults.add(s);
         }

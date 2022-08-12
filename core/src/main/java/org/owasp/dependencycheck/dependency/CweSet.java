@@ -68,7 +68,7 @@ public class CweSet implements Serializable {
         if (cwes.isEmpty()) {
             return "";
         }
-        return cwes.stream().map(cwe -> CweDB.getFullName(cwe)).collect(Collectors.joining(", "));
+        return cwes.stream().map(CweDB::getFullName).collect(Collectors.joining(", "));
     }
 
     /**
@@ -87,9 +87,7 @@ public class CweSet implements Serializable {
      */
     public Map<String, String> getFullCwes() {
         final Map<String, String> map = new HashMap<>();
-        cwes.forEach((cwe) -> {
-            map.put(cwe, CweDB.getName(cwe));
-        });
+        cwes.forEach((cwe) -> map.put(cwe, CweDB.getName(cwe)));
         return map;
     }
 

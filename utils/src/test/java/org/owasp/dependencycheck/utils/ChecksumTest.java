@@ -44,9 +44,7 @@ public class ChecksumTest {
     public void testGetChecksum_FileNotFound() throws Exception {
         String algorithm = "MD5";
         File file = new File("not a valid file");
-        Exception exception = Assert.assertThrows(IOException.class, () -> {
-            Checksum.getChecksum(algorithm, file);
-        });
+        Exception exception = Assert.assertThrows(IOException.class, () -> Checksum.getChecksum(algorithm, file));
         assertTrue(exception.getMessage().contains("not a valid file"));
     }
 
@@ -60,9 +58,7 @@ public class ChecksumTest {
     public void testGetChecksum_NoSuchAlgorithm() throws Exception {
         String algorithm = "some unknown algorithm";
         File file = new File(this.getClass().getClassLoader().getResource("checkSumTest.file").getPath());
-        Exception exception = Assert.assertThrows(NoSuchAlgorithmException.class, () -> {
-            Checksum.getChecksum(algorithm, file);
-        });
+        Exception exception = Assert.assertThrows(NoSuchAlgorithmException.class, () -> Checksum.getChecksum(algorithm, file));
         assertTrue(exception.getMessage().contains("some unknown algorithm"));
     }
 

@@ -45,14 +45,7 @@ public abstract class Filter<T> {
      * @return the filtered iterable
      */
     public Iterable<T> filter(final Iterable<T> iterable) {
-        return new Iterable<T>() {
-
-            @NotNull
-            @Override
-            public Iterator<T> iterator() {
-                return filter(iterable.iterator());
-            }
-        };
+        return () -> filter(iterable.iterator());
     }
 
     private class FilterIterator implements Iterator<T> {

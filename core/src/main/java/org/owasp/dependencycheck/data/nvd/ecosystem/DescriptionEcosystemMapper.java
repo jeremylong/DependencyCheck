@@ -77,9 +77,7 @@ public class DescriptionEcosystemMapper {
         }
 
         ECOSYSTEMS = new String[ecosystemIndexes.size()];
-        ecosystemIndexes.entrySet().forEach((e) -> {
-            ECOSYSTEMS[e.getValue()] = e.getKey();
-        });
+        ecosystemIndexes.forEach((key, value) -> ECOSYSTEMS[value] = key);
     }
 
     // take advantage of chars also being numbers
@@ -183,9 +181,7 @@ public class DescriptionEcosystemMapper {
         final int[] ecosystemMap = new int[ECOSYSTEMS.length];
         cve.getCve().getDescription().getDescriptionData().stream()
                 .filter((langString) -> (langString.getLang().equals("en")))
-                .forEachOrdered((langString) -> {
-                    search(langString.getValue(), ecosystemMap);
-                });
+                .forEachOrdered((langString) -> search(langString.getValue(), ecosystemMap));
         return getResult(ecosystemMap);
     }
 

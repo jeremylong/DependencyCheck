@@ -461,16 +461,12 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
         final String nextName = nextDependency.getFileName().toLowerCase();
         if (mainName.endsWith(".jar") && nextName.endsWith(".js") && nextName.startsWith(mainName)) {
             return dependency.getSoftwareIdentifiers()
-                    .stream().map(id -> id.getValue()).collect(toSet())
-                    .containsAll(nextDependency.getSoftwareIdentifiers().stream().map(id -> {
-                        return identifierToWebJarForCompairson(id);
-                    }).collect(toSet()));
+                    .stream().map(Identifier::getValue).collect(toSet())
+                    .containsAll(nextDependency.getSoftwareIdentifiers().stream().map(this::identifierToWebJarForCompairson).collect(toSet()));
         } else if (nextName.endsWith(".jar") && mainName.endsWith("js") && mainName.startsWith(nextName)) {
             return nextDependency.getSoftwareIdentifiers()
-                    .stream().map(id -> id.getValue()).collect(toSet())
-                    .containsAll(dependency.getSoftwareIdentifiers().stream().map(id -> {
-                        return identifierToWebJarForCompairson(id);
-                    }).collect(toSet()));
+                    .stream().map(Identifier::getValue).collect(toSet())
+                    .containsAll(dependency.getSoftwareIdentifiers().stream().map(this::identifierToWebJarForCompairson).collect(toSet()));
         }
         return false;
     }

@@ -137,8 +137,8 @@ public class PerlCpanfileAnalyzer extends AbstractFileTypeAnalyzer {
         final Pattern pattern = Pattern.compile(";");
         return Arrays.stream(contents.split("\n"))
                 .map(r -> r.indexOf("#") > 0 ? r.substring(0, r.indexOf("#")) : r)
-                .flatMap(r -> pattern.splitAsStream(r))
-                .map(r -> r.trim())
+                .flatMap(pattern::splitAsStream)
+                .map(String::trim)
                 .filter(r -> r.startsWith("requires"))
                 .collect(toCollection(ArrayList::new));
     }
@@ -203,9 +203,7 @@ public class PerlCpanfileAnalyzer extends AbstractFileTypeAnalyzer {
                     //sha1sum is used for anchor links in the HtML report
                     dependency.setSha1sum(Checksum.getSHA1Checksum(id.getValue()));
                     return dependency;
-                }).forEachOrdered(dependency -> {
-            engine.addDependency(dependency);
-        });
+                }).forEachOrdered(engine::addDependency);
     }
 
 }

@@ -59,6 +59,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -421,8 +422,8 @@ public class Engine implements FileFilter, AutoCloseable {
     public List<Dependency> scan(Collection<File> files, String projectReference) {
         final List<Dependency> deps = new ArrayList<>();
         files.stream().map((file) -> scan(file, projectReference))
-                .filter((d) -> (d != null))
-                .forEach((d) -> deps.addAll(d));
+                .filter(Objects::nonNull)
+                .forEach(deps::addAll);
         return deps;
     }
 
@@ -655,8 +656,8 @@ public class Engine implements FileFilter, AutoCloseable {
             }
         }
         mode.getPhases().stream()
-                .map((phase) -> analyzers.get(phase))
-                .forEach((analyzerList) -> analyzerList.forEach((a) -> closeAnalyzer(a)));
+                .map(analyzers::get)
+                .forEach((analyzerList) -> analyzerList.forEach(this::closeAnalyzer));
 
         LOGGER.debug("\n----------------------------------------------------\nEND ANALYSIS\n----------------------------------------------------");
         final long analysisDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - analysisStart);
@@ -768,7 +769,7 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     protected synchronized List<AnalysisTask> getAnalysisTasks(Analyzer analyzer, List<Throwable> exceptions) {
         final List<AnalysisTask> result = new ArrayList<>();
-        dependencies.stream().map((dependency) -> new AnalysisTask(analyzer, dependency, this, exceptions)).forEach((task) -> result.add(task));
+        dependencies.stream().map((dependency) -> new AnalysisTask(analyzer, dependency, this, exceptions)).forEach(result::add);
         return result;
     }
 
@@ -1021,12 +1022,12 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     @NotNull
     public List<Analyzer> getAnalyzers() {
-        final List<Analyzer> ret = new ArrayList<>();
+        final List<Analyzer> analyzerList = new ArrayList<>();
         //insteae of forEach - we can just do a collect
-        mode.getPhases().stream().map((phase) -> analyzers.get(phase)).forEachOrdered((analyzerList) -> {
-            ret.addAll(analyzerList);
-        });
-        return ret;
+        mode.getPhases().stream()
+                .map(analyzers::get)
+                .forEachOrdered(analyzerList::addAll);
+        return analyzerList;
     }
 
     /**

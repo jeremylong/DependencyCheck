@@ -918,7 +918,7 @@ public class DependencyCheckScanAgent {
     private void generateExternalReports(Engine engine, File outDirectory) throws ScanAgentException {
         try {
             engine.writeReports(applicationName, outDirectory, this.reportFormat.name(), null);
-        } catch (ReportException | ExceptionCollection ex) {
+        } catch (ReportException ex) {
             LOGGER.debug("Unexpected exception occurred during analysis; please see the verbose error log for more details.", ex);
             throw new ScanAgentException("Error generating the report", ex);
         }

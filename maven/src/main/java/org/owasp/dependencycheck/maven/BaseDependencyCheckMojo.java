@@ -1741,7 +1741,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     if (d.getLicense() == null) {
                         d.setLicense(license.toString());
                     } else if (!d.getLicense().contains(license)) {
-                        d.setLicense(String.format("%s%n%s", d.getLicense(), license.toString()));
+                        d.setLicense(String.format("%s%n%s", d.getLicense(), license));
                     }
                 }
                 engine.addDependency(d);
@@ -2372,9 +2372,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 invalid.add(s);
             }
         });
-        invalid.forEach((s) -> {
-            getLog().warn("Invalid report format specified: " + s);
-        });
+        invalid.forEach((s) -> getLog().warn("Invalid report format specified: " + s));
         if (selectedFormats.contains("true")) {
             selectedFormats.remove("true");
         }
@@ -2461,10 +2459,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             if (showSummary) {
                 if (failBuildOnAnyVulnerability) {
                     msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities: %n%s%n%n"
-                            + "See the dependency-check report for more details.%n%n", ids.toString());
+                            + "See the dependency-check report for more details.%n%n", ids);
                 } else {
                     msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities that have a CVSS score greater than or "
-                            + "equal to '%.1f': %n%s%n%nSee the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
+                            + "equal to '%.1f': %n%s%n%nSee the dependency-check report for more details.%n%n", failBuildOnCVSS, ids);
                 }
             } else {
                 msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities.%n%n"

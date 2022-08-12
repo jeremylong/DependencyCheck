@@ -128,12 +128,8 @@ public final class DriverLoader {
                 }
             }
         }
-        final URLClassLoader loader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
-            @Override
-            public URLClassLoader run() {
-                return new URLClassLoader(urls.toArray(new URL[0]), parent);
-            }
-        });
+        final URLClassLoader loader = AccessController.doPrivileged((PrivilegedAction<URLClassLoader>) () ->
+                new URLClassLoader(urls.toArray(new URL[0]), parent));
 
         return load(className, loader);
     }

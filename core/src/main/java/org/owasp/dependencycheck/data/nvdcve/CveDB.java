@@ -1441,7 +1441,7 @@ public final class CveDB implements AutoCloseable {
      */
     private void setBooleanValue(PreparedStatement ps, int i, Map<String, Object> props, String key) throws SQLException {
         if (props != null && props.containsKey(key)) {
-            ps.setBoolean(i, Boolean.valueOf(props.get(key).toString()));
+            ps.setBoolean(i, Boolean.parseBoolean(props.get(key).toString()));
         } else {
             ps.setNull(i, java.sql.Types.NULL);
         }

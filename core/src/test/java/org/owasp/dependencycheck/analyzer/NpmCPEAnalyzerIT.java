@@ -107,7 +107,6 @@ public class NpmCPEAnalyzerIT extends BaseDBTestCase {
      * @param vendor
      * @param product
      * @param version
-     * @param expectedCpe
      * @param engine
      * @throws Exception
      */

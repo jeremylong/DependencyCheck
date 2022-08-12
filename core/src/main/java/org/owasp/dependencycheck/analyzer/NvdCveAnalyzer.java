@@ -128,17 +128,13 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
      * @param vulns the vulnerability to add
      */
     private void replaceOrAddVulnerability(Dependency dependency, List<Vulnerability> vulns) {
-        vulns.forEach(v -> {
-            v.getReferences().forEach(ref -> {
-                dependency.getVulnerabilities().forEach(existing -> {
-                    if (existing.getSource() == Source.NPM
-                            && ref.getName() != null
-                            && ref.getName().equals("https://nodesecurity.io/advisories/" + existing.getName())) {
-                        dependency.removeVulnerability(existing);
-                    }
-                });
-            });
-        });
+        vulns.forEach(v -> v.getReferences().forEach(ref -> dependency.getVulnerabilities().forEach(existing -> {
+                if (existing.getSource() == Source.NPM
+                        && ref.getName() != null
+                        && ref.getName().equals("https://nodesecurity.io/advisories/" + existing.getName())) {
+                    dependency.removeVulnerability(existing);
+                }
+            })));
         dependency.addVulnerabilities(vulns);
     }
 

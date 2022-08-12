@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -373,29 +374,25 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         final Map<String, MutableInt> temp = new HashMap<>();
         products.entrySet().stream()
                 .filter(term -> term.getKey() != null)
-                .forEach(term -> {
-                    majorVersions.stream()
-                            .filter(version -> version != null
-                            && (!term.getKey().endsWith(version)
-                            && !Character.isDigit(term.getKey().charAt(term.getKey().length() - 1))
-                            && !products.containsKey(term.getKey() + version)))
-                            .forEach(version -> {
-                                addTerm(temp, term.getKey() + version);
-                            });
-                });
+                .forEach(term -> majorVersions.stream()
+                        .filter(version -> version != null
+                        && (!term.getKey().endsWith(version)
+                        && !Character.isDigit(term.getKey().charAt(term.getKey().length() - 1))
+                        && !products.containsKey(term.getKey() + version)))
+                        .forEach(version -> {
+                            addTerm(temp, term.getKey() + version);
+                        }));
         products.entrySet().stream()
                 .filter(term -> term.getKey() != null)
-                .forEach(term -> {
-                    majorVersions.stream()
-                            .filter(version -> version != null)
-                            .map(version -> "v" + version)
-                            .filter(version -> (!term.getKey().endsWith(version)
-                            && !Character.isDigit(term.getKey().charAt(term.getKey().length() - 1))
-                            && !products.containsKey(term.getKey() + version)))
-                            .forEach(version -> {
-                                addTerm(temp, term.getKey() + version);
-                            });
-                });
+                .forEach(term -> majorVersions.stream()
+                        .filter(Objects::nonNull)
+                        .map(version -> "v" + version)
+                        .filter(version -> (!term.getKey().endsWith(version)
+                        && !Character.isDigit(term.getKey().charAt(term.getKey().length() - 1))
+                        && !products.containsKey(term.getKey() + version)))
+                        .forEach(version -> {
+                            addTerm(temp, term.getKey() + version);
+                        }));
         products.putAll(temp);
     }
 
@@ -745,9 +742,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
 
         // Prepare the evidence values, e.g. remove the characters we used for splitting
         final List<String> evidenceValues = new ArrayList<>(evidence.size());
-        evidence.forEach((e) -> {
-            evidenceValues.add(e.getValue().toLowerCase().replaceAll("[\\s_-]+", ""));
-        });
+        evidence.forEach((e) -> evidenceValues.add(e.getValue().toLowerCase().replaceAll("[\\s_-]+", "")));
 
         for (String word : list) {
             word = word.toLowerCase();
@@ -940,7 +935,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             final IdentifierConfidence bestIdentifierQuality = items.get(0).getIdentifierConfidence();
             final Confidence bestEvidenceQuality = items.get(0).getEvidenceConfidence();
             boolean addedNonGuess = false;
-            final Confidence prevAddedConfidence = dependency.getVulnerableSoftwareIdentifiers().stream().map(id -> id.getConfidence())
+            final Confidence prevAddedConfidence = dependency.getVulnerableSoftwareIdentifiers().stream().map(Identifier::getConfidence)
                     .min(Comparator.comparing(Confidence::ordinal))
                     .orElse(Confidence.LOW);
 
@@ -1091,11 +1086,11 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                     || c.getEcosystem().equals(ecosystem)
                     //some ios CVE/CPEs are listed under native
                     || (Ecosystem.IOS.equals(ecosystem) && Ecosystem.NATIVE.equals(c.getEcosystem())))
-                    .map(c -> c.getCpe())
+                    .map(CpePlus::getCpe)
                     .collect(Collectors.toSet());
         }
         return entries.stream()
-                .map(c -> c.getCpe())
+                .map(CpePlus::getCpe)
                 .collect(Collectors.toSet());
     }
 

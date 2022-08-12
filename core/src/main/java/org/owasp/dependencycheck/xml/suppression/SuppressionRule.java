@@ -533,9 +533,7 @@ public class SuppressionRule {
                     }
                 }
             }
-            removeVulns.forEach((v) -> {
-                dependency.removeVulnerability(v);
-            });
+            removeVulns.forEach(dependency::removeVulnerability);
         }
     }
 
@@ -651,37 +649,27 @@ public class SuppressionRule {
         }
         if (cpe != null && !cpe.isEmpty()) {
             sb.append("cpe={");
-            cpe.forEach((pt) -> {
-                sb.append(pt).append(',');
-            });
+            cpe.forEach((pt) -> sb.append(pt).append(','));
             sb.append('}');
         }
         if (cwe != null && !cwe.isEmpty()) {
             sb.append("cwe={");
-            cwe.forEach((s) -> {
-                sb.append(s).append(',');
-            });
+            cwe.forEach((s) -> sb.append(s).append(','));
             sb.append('}');
         }
         if (cve != null && !cve.isEmpty()) {
             sb.append("cve={");
-            cve.forEach((s) -> {
-                sb.append(s).append(',');
-            });
+            cve.forEach((s) -> sb.append(s).append(','));
             sb.append('}');
         }
         if (vulnerabilityNames != null && !vulnerabilityNames.isEmpty()) {
             sb.append("vulnerabilityName={");
-            vulnerabilityNames.forEach((pt) -> {
-                sb.append(pt).append(',');
-            });
+            vulnerabilityNames.forEach((pt) -> sb.append(pt).append(','));
             sb.append('}');
         }
         if (cvssBelow != null && !cvssBelow.isEmpty()) {
             sb.append("cvssBelow={");
-            cvssBelow.forEach((s) -> {
-                sb.append(s).append(',');
-            });
+            cvssBelow.forEach((s) -> sb.append(s).append(','));
             sb.append('}');
         }
         sb.append('}');

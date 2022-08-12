@@ -52,7 +52,7 @@ public class CpeMatchStreamCollectorTest {
     @Test
     public void testCollector() {
         assertTrue(nodes.stream().collect(CpeMatchStreamCollector.getInstance()).anyMatch((node) -> "cpe:/a:owasp:dependency-check:4".equals(node.getCpe23Uri())));
-        List<String> operators = nodes.stream().collect(CpeMatchStreamCollector.getInstance()).map(mapper -> mapper.getCpe23Uri()).collect(Collectors.toList());
+        List<String> operators = nodes.stream().collect(CpeMatchStreamCollector.getInstance()).map(DefCpeMatch::getCpe23Uri).collect(Collectors.toList());
         assertEquals(5, operators.size());
     }
 }

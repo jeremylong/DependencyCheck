@@ -183,7 +183,7 @@ public final class Downloader {
             IOUtils.copy(in, out);
             return out.toString(UTF8);
         } catch (IOException ex) {
-            final String msg = format("Download failed, unable to retrieve '%s'; %s", url.toString(), ex.getMessage());
+            final String msg = format("Download failed, unable to retrieve '%s'; %s", url, ex.getMessage());
             throw new DownloadFailedException(msg, ex);
         } finally {
             if (in != null) {

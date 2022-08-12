@@ -278,7 +278,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private boolean isExcludedJar(File path) {
         final String fileName = path.getName().toLowerCase();
-        return EXCLUDE_JARS.stream().anyMatch(exclude -> fileName.endsWith(exclude));
+        return EXCLUDE_JARS.stream().anyMatch(fileName::endsWith);
     }
     //</editor-fold>
 

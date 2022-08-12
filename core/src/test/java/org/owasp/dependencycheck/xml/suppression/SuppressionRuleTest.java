@@ -73,7 +73,7 @@ public class SuppressionRuleTest extends BaseTest {
     @Test
     public void testCpe() {
         SuppressionRule instance = new SuppressionRule();
-        List<PropertyType> cpe = new ArrayList<PropertyType>();
+        List<PropertyType> cpe = new ArrayList<>();
         instance.setCpe(cpe);
         assertFalse(instance.hasCpe());
         PropertyType pt = new PropertyType();

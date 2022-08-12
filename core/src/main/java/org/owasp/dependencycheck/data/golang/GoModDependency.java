@@ -54,7 +54,7 @@ public class GoModDependency {
     /**
      * A list of license files we recognize.
      */
-    private static final Set<String> LICENSE_FILES = new HashSet<String>(Arrays.asList("LICENSE", "LICENCE", "LICENSE.TXT",
+    private static final Set<String> LICENSE_FILES = new HashSet<>(Arrays.asList("LICENSE", "LICENCE", "LICENSE.TXT",
             "LICENSE.MD", "LICENCE.MD", "LICENSE.CODE", "LICENCE.CODE", "COPYING"));
     /**
      * The module path.

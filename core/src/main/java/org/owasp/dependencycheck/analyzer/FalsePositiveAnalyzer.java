@@ -228,7 +228,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
             }
 
         });
-        removalSet.forEach((i) -> dependency.removeVulnerableSoftwareIdentifier(i));
+        removalSet.forEach(dependency::removeVulnerableSoftwareIdentifier);
     }
 
     /**

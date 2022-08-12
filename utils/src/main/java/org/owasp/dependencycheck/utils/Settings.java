@@ -1120,7 +1120,7 @@ public final class Settings {
             final File jarPath = getJarPath();
             LOGGER.debug("Settings.getDataFile() - jar file: '{}'", jarPath.toString());
             final File retVal = new File(jarPath, file.substring(6));
-            LOGGER.debug("Settings.getDataFile() - returning: '{}'", retVal.toString());
+            LOGGER.debug("Settings.getDataFile() - returning: '{}'", retVal);
             return retVal;
         }
         return new File(file);
@@ -1440,7 +1440,7 @@ public final class Settings {
      */
     public File getTempFile(@NotNull final String prefix, @NotNull final String extension) throws IOException {
         final File dir = getTempDirectory();
-        final String tempFileName = String.format("%s%s.%s", prefix, UUID.randomUUID().toString(), extension);
+        final String tempFileName = String.format("%s%s.%s", prefix, UUID.randomUUID(), extension);
         final File tempFile = new File(dir, tempFileName);
         if (tempFile.exists()) {
             return getTempFile(prefix, extension);
