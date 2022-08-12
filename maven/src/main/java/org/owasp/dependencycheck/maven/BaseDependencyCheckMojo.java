@@ -1587,6 +1587,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 mixedLangSet.addInclude("Gopkg.lock");
                 mixedLangSet.addInclude("go.mod");
                 mixedLangSet.addInclude("yarn.lock");
+                mixedLangSet.addInclude("pnpm-lock.yaml");
             } catch (IOException ex) {
                 if (exCol == null) {
                     exCol = new ExceptionCollection();
