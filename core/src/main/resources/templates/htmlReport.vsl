@@ -37,7 +37,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         </script>
         <script type="text/javascript">
             $(document).ready(function() {
-                $(".expandable").click(function (event) {
+                $(".expandable, .collapsed").click(function (event) {
                     e = event || window.event;
                     var h = e.target || e.srcElement;
                     var content = "#content" + h.id.substr(6);
