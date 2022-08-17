@@ -266,7 +266,7 @@ public class CliParserTest extends BaseTest {
             String[] lines = text.split(System.getProperty("line.separator"));
             Assert.assertTrue(lines.length >= 1);
             Assert.assertTrue(text.contains("version"));
-            Assert.assertTrue(!text.contains("unknown"));
+            Assert.assertFalse(text.contains("unknown"));
         } catch (IOException ex) {
             System.setOut(out);
             Assert.fail("CliParser.printVersionInfo did not write anything to system.out.");
@@ -323,7 +323,7 @@ public class CliParserTest extends BaseTest {
         } catch (FileNotFoundException ex) {
             Assert.assertTrue(ex.getMessage().contains("Invalid 'scan' argument"));
         }
-        Boolean expResult;
+        boolean expResult;
         Boolean result = instance.getBooleanArgument("missingArgument");
         Assert.assertNull(result);
 

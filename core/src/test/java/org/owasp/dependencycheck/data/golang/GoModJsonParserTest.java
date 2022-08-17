@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  */
 public class GoModJsonParserTest {
 
-    String issue2891 = "{\n"
+    final String issue2891 = "{\n"
             + "	\"Path\": \"cloud.google.com/go\",\n"
             + "	\"Version\": \"v0.26.0\",\n"
             + "	\"Time\": \"2018-08-07T10:25:35Z\",\n"

@@ -46,7 +46,7 @@ import org.xml.sax.XMLReader;
 public class HintHandlerTest extends BaseTest {
     
     @Test
-    public void testHandler() throws ParserConfigurationException, SAXNotRecognizedException, SAXNotSupportedException, SAXException, FileNotFoundException, UnsupportedEncodingException, IOException {
+    public void testHandler() throws ParserConfigurationException, SAXException, IOException {
         File file = BaseTest.getResourceAsFile(this, "hints.xml");
         File schema = BaseTest.getResourceAsFile(this, "schema/dependency-hint.1.1.xsd");
         HintHandler handler = new HintHandler();

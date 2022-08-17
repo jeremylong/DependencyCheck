@@ -239,7 +239,7 @@ public class XmlInputStream extends FilterInputStream {
                 h.append(" ").append(Integer.toHexString(s.charAt(i)));
             }
         }
-        return "[" + given + "]-\"" + s + "\"" + (h.length() > 0 ? " (" + h.toString() + ")" : "");
+        return "[" + given + "]-\"" + s + "\"" + (h.length() > 0 ? " (" + h + ")" : "");
     }
 
     /**

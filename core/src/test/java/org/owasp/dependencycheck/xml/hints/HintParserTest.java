@@ -78,9 +78,7 @@ public class HintParserTest extends BaseTest {
     public void testParseHintsXSDSelection() throws Exception {
         File file = BaseTest.getResourceAsFile(this, "hints_invalid.xml");
         HintParser instance = new HintParser();
-        Exception exception = Assert.assertThrows(org.owasp.dependencycheck.xml.hints.HintParseException.class, () -> {
-            instance.parseHints(file);
-        });
+        Exception exception = Assert.assertThrows(org.owasp.dependencycheck.xml.hints.HintParseException.class, () -> instance.parseHints(file));
         Assert.assertTrue(exception.getMessage().contains("Line=7, Column=133: cvc-enumeration-valid: Value 'version' is not facet-valid with respect to enumeration '[vendor, product]'. It must be a value from the enumeration."));
 
     }

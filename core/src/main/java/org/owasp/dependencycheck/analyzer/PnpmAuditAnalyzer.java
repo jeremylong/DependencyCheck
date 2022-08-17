@@ -148,8 +148,6 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
                         LOGGER.debug("{} is enabled.", getName());
                         break;
                     case executableNotFoundExitValue:
-                        this.setEnabled(false);
-                        LOGGER.warn("The {} has been disabled. Pnpm executable was not found.", getName());
                     default:
                         this.setEnabled(false);
                         LOGGER.warn("The {} has been disabled. Pnpm executable was not found.", getName());
@@ -157,7 +155,6 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
             }
         } catch (Exception ex) {
             this.setEnabled(false);
-            LOGGER.debug("The {} has been disabled. Pnpm executable was not found.", ex);
             LOGGER.warn("The {} has been disabled. Pnpm executable was not found.", getName());
             throw new InitializationException("Unable to read pnpm audit output.", ex);
         }
@@ -238,7 +235,7 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
                 throw new AnalysisException("Pnpm audit returned an invalid response.", e);
             } finally {
                 if (!tmpFile.delete()) {
-                    LOGGER.debug("Unable to delete temp file: {}", tmpFile.toString());
+                    LOGGER.debug("Unable to delete temp file: {}", tmpFile);
                 }
             }
         } catch (IOException ioe) {
@@ -262,7 +259,7 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
             Dependency dependency)
             throws AnalysisException {
         try {
-            final Boolean skipDevDependencies = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false);
+            final boolean skipDevDependencies = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false);
 
             // Use pnpm directly to fetch audit.json
             // Retrieves the contents of package-lock.json from the Dependency

@@ -119,11 +119,7 @@ public class ItemImpl {
 
         ItemImpl item = (ItemImpl) o;
 
-        if (!uri.equals(item.uri)) {
-            return false;
-        }
-
-        return true;
+        return uri.equals(item.uri);
     }
 
     @Override

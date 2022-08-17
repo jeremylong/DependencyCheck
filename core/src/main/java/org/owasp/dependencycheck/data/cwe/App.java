@@ -60,7 +60,7 @@ public final class App {
         }
         in = new File(args[0]);
         if (!in.isFile()) {
-            System.err.println(String.format("%s does not exist", in.getAbsolutePath()));
+            System.err.printf("%s does not exist%n", in.getAbsolutePath());
             return;
         }
         out = new File("cwe.hashmap.serialized");
@@ -83,15 +83,15 @@ public final class App {
             for (String f : files) {
                 final File in = new File(f);
                 if (!in.isFile()) {
-                    System.err.println(String.format("File not found %s", in));
+                    System.err.printf("File not found %s%n", in);
                     return null;
                 }
-                System.out.println(String.format("Parsing %s", in));
+                System.out.printf("Parsing %s%n", in);
                 saxParser.parse(in, handler);
             }
             return handler.getCwe();
         } catch (SAXException | IOException | ParserConfigurationException ex) {
-            System.err.println(String.format("Error generating serialized data: %s", ex.getMessage()));
+            System.err.printf("Error generating serialized data: %s%n", ex.getMessage());
         }
         return null;
     }
@@ -107,10 +107,10 @@ public final class App {
                 ObjectOutputStream objOut = new ObjectOutputStream(fout)) {
             System.out.println("Writing " + cwe.size() + " cwe entries.");
             objOut.writeObject(cwe);
-            System.out.println(String.format("Serialized CWE data written to %s", out.getCanonicalPath()));
+            System.out.printf("Serialized CWE data written to %s%n", out.getCanonicalPath());
             System.out.println("To update the ODC CWE data copy the serialized file to 'src/main/resources/data/cwe.hashmap.serialized'");
         } catch (IOException ex) {
-            System.err.println(String.format("Error generating serialized data: %s", ex.getMessage()));
+            System.err.printf("Error generating serialized data: %s%n", ex.getMessage());
         }
     }
 }

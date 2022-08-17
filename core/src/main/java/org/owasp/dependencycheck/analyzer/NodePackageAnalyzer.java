@@ -244,7 +244,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
         final File nodeModules = new File(baseDir, "node_modules");
         if (!nodeModules.isDirectory()) {
             LOGGER.warn("Analyzing `{}` - however, the node_modules directory does not exist. "
-                    + "Please run `npm install` prior to running dependency-check", dependencyFile.toString());
+                    + "Please run `npm install` prior to running dependency-check", dependencyFile);
             return;
         }
 
@@ -392,7 +392,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                         throw new AnalysisException("Problem occurred while reading dependency file.", e);
                     }
                 } else {
-                    LOGGER.warn("Unable to find node module: {}", f.toString());
+                    LOGGER.warn("Unable to find node module: {}", f);
                     //TODO - we should use the integrity value instead of calculating the SHA1/MD5
                     child.setSha1sum(Checksum.getSHA1Checksum(String.format("%s:%s", name, version)));
                     child.setSha256sum(Checksum.getSHA256Checksum(String.format("%s:%s", name, version)));

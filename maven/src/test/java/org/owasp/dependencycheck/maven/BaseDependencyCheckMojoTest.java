@@ -104,6 +104,7 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
                 return artifacts;
             }
 
+            @SuppressWarnings("SameReturnValue")
             @Mock
             public String getName() {
                 return "test-project";

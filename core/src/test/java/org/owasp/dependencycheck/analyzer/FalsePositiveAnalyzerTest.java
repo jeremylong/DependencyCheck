@@ -38,7 +38,7 @@ public class FalsePositiveAnalyzerTest extends BaseTest {
     /**
      * A CPE builder object.
      */
-    private CpeBuilder builder = new CpeBuilder();
+    private final CpeBuilder builder = new CpeBuilder();
 
     /**
      * Test of getName method, of class FalsePositiveAnalyzer.

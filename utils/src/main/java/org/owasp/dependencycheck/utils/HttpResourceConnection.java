@@ -75,7 +75,7 @@ public class HttpResourceConnection implements AutoCloseable {
     /**
      * Whether or not the conn will use the defined proxy.
      */
-    private boolean usesProxy;
+    private final boolean usesProxy;
 
     /**
      * The settings key for the username to be used.
@@ -140,18 +140,18 @@ public class HttpResourceConnection implements AutoCloseable {
             try {
                 file = new File(url.toURI());
             } catch (URISyntaxException ex) {
-                final String msg = format("Download failed, unable to locate '%s'", url.toString());
+                final String msg = format("Download failed, unable to locate '%s'", url);
                 throw new DownloadFailedException(msg);
             }
             if (file.exists()) {
                 try {
                     return new FileInputStream(file);
                 } catch (IOException ex) {
-                    final String msg = format("Download failed, unable to rerieve '%s'", url.toString());
+                    final String msg = format("Download failed, unable to rerieve '%s'", url);
                     throw new DownloadFailedException(msg, ex);
                 }
             } else {
-                final String msg = format("Download failed, file ('%s') does not exist", url.toString());
+                final String msg = format("Download failed, file ('%s') does not exist", url);
                 throw new DownloadFailedException(msg);
             }
         } else {
@@ -164,9 +164,9 @@ public class HttpResourceConnection implements AutoCloseable {
 
             final String encoding = connection.getContentEncoding();
             try {
-                if (encoding != null && "gzip".equalsIgnoreCase(encoding)) {
+                if ("gzip".equalsIgnoreCase(encoding)) {
                     return new GZIPInputStream(connection.getInputStream());
-                } else if (encoding != null && "deflate".equalsIgnoreCase(encoding)) {
+                } else if ("deflate".equalsIgnoreCase(encoding)) {
                     return new InflaterInputStream(connection.getInputStream());
                 } else {
                     return connection.getInputStream();
@@ -174,11 +174,11 @@ public class HttpResourceConnection implements AutoCloseable {
             } catch (IOException ex) {
                 checkForCommonExceptionTypes(ex);
                 final String msg = format("Error retrieving '%s'%nConnection Timeout: %d%nEncoding: %s%n",
-                        url.toString(), connection.getConnectTimeout(), encoding);
+                        url, connection.getConnectTimeout(), encoding);
                 throw new DownloadFailedException(msg, ex);
             } catch (Exception ex) {
                 final String msg = format("Unexpected exception retrieving '%s'%nConnection Timeout: %d%nEncoding: %s%n",
-                        url.toString(), connection.getConnectTimeout(), encoding);
+                        url, connection.getConnectTimeout(), encoding);
                 throw new DownloadFailedException(msg, ex);
             }
         }
@@ -218,7 +218,7 @@ public class HttpResourceConnection implements AutoCloseable {
                 } finally {
                     conn = null;
                 }
-                LOGGER.debug("Download is being redirected from {} to {}", url.toString(), location);
+                LOGGER.debug("Download is being redirected from {} to {}", url, location);
                 conn = connFactory.createHttpURLConnection(new URL(location), this.usesProxy);
                 conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
                 conn.connect();
@@ -244,7 +244,7 @@ public class HttpResourceConnection implements AutoCloseable {
                 } finally {
                     conn = null;
                 }
-                final String msg = format("Error retrieving %s; received response code %s; %s", url.toString(), status, message);
+                final String msg = format("Error retrieving %s; received response code %s; %s", url, status, message);
                 LOGGER.error(msg);
                 throw new DownloadFailedException(msg);
             }
@@ -263,7 +263,7 @@ public class HttpResourceConnection implements AutoCloseable {
                 LOGGER.error(msg);
                 throw new DownloadFailedException(msg, ex);
             }
-            final String msg = format("Error downloading file %s; unable to connect.", url.toString());
+            final String msg = format("Error downloading file %s; unable to connect.", url);
             throw new DownloadFailedException(msg, ex);
         }
         return conn;

@@ -111,7 +111,7 @@ public final class FileUtils {
      */
     @NotNull
     public static File createTempDirectory(@Nullable final File base) throws IOException {
-        final File tempDir = new File(base, "dctemp" + UUID.randomUUID().toString());
+        final File tempDir = new File(base, "dctemp" + UUID.randomUUID());
         if (tempDir.exists()) {
             return createTempDirectory(base);
         }

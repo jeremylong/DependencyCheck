@@ -375,10 +375,8 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
         } else {
             try (InputStream in = new BufferedInputStream(new FileInputStream(manifest))) {
                 prop.load(in);
-            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
                 LOGGER.warn(e.getMessage(), e);
-            } catch (IOException ex) {
-                LOGGER.warn(ex.getMessage(), ex);
             }
         }
         return prop;

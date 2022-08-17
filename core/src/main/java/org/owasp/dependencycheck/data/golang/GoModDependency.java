@@ -21,7 +21,7 @@ import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURLBuilder;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -54,7 +54,7 @@ public class GoModDependency {
     /**
      * A list of license files we recognize.
      */
-    private static final Set<String> LICENSE_FILES = new HashSet<String>(Arrays.asList("LICENSE", "LICENCE", "LICENSE.TXT",
+    private static final Set<String> LICENSE_FILES = new HashSet<>(Arrays.asList("LICENSE", "LICENCE", "LICENSE.TXT",
             "LICENSE.MD", "LICENCE.MD", "LICENSE.CODE", "LICENCE.CODE", "COPYING"));
     /**
      * The module path.
@@ -195,7 +195,7 @@ public class GoModDependency {
             for (File f : files) {
                 if (LICENSE_FILES.contains(f.getName().toUpperCase())) {
                     try {
-                        final String license = FileUtils.readFileToString(f, Charset.forName("UTF-8"));
+                        final String license = FileUtils.readFileToString(f, StandardCharsets.UTF_8);
                         dependency.setLicense(license);
                         break;
                     } catch (IOException ex) {

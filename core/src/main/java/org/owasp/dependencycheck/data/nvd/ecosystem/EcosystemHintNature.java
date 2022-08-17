@@ -33,5 +33,5 @@ public enum EcosystemHintNature {
     /**
      * Hint is from the URL path.
      */
-    URL_PATH;
+    URL_PATH
 }

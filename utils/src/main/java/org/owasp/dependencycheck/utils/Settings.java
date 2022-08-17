@@ -85,7 +85,7 @@ public final class Settings {
     /**
      * Reference to a utility class used to convert objects to json.
      */
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     //<editor-fold defaultstate="collapsed" desc="KEYS used to access settings">
     /**
@@ -850,7 +850,7 @@ public final class Settings {
      * @param value the property value
      * @return the printable value
      */
-    protected String getPrintableValue(@NotNull String key, String value) {
+    String getPrintableValue(@NotNull String key, String value) {
         String printableValue = null;
         if (value != null) {
             printableValue = isKeyMasked(key) ? "********" : value;
@@ -864,13 +864,12 @@ public final class Settings {
      * {@link #mergeProperties(java.io.File)} to add additional properties after
      * the call to initialize.
      */
-    protected void initMaskedKeys() {
+    void initMaskedKeys() {
         final String[] masked = getArray(Settings.KEYS.MASKED_PROPERTIES);
         if (masked == null) {
             maskedKeys = new ArrayList<>();
         } else {
-            maskedKeys = Arrays.asList(masked)
-                    .stream()
+            maskedKeys = Arrays.stream(masked)
                     .map(v -> Pattern.compile(v).asPredicate())
                     .collect(Collectors.toList());
         }
@@ -1110,7 +1109,7 @@ public final class Settings {
      * @param key the key to lookup within the properties file
      * @return the property from the properties file converted to a File object
      */
-    protected File getDataFile(@NotNull final String key) {
+    File getDataFile(@NotNull final String key) {
         final String file = getString(key);
         LOGGER.debug("Settings.getDataFile() - file: '{}'", file);
         if (file == null) {
@@ -1121,7 +1120,7 @@ public final class Settings {
             final File jarPath = getJarPath();
             LOGGER.debug("Settings.getDataFile() - jar file: '{}'", jarPath.toString());
             final File retVal = new File(jarPath, file.substring(6));
-            LOGGER.debug("Settings.getDataFile() - returning: '{}'", retVal.toString());
+            LOGGER.debug("Settings.getDataFile() - returning: '{}'", retVal);
             return retVal;
         }
         return new File(file);
@@ -1441,7 +1440,7 @@ public final class Settings {
      */
     public File getTempFile(@NotNull final String prefix, @NotNull final String extension) throws IOException {
         final File dir = getTempDirectory();
-        final String tempFileName = String.format("%s%s.%s", prefix, UUID.randomUUID().toString(), extension);
+        final String tempFileName = String.format("%s%s.%s", prefix, UUID.randomUUID(), extension);
         final File tempFile = new File(dir, tempFileName);
         if (tempFile.exists()) {
             return getTempFile(prefix, extension);

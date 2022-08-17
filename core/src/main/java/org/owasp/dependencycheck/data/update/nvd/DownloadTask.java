@@ -67,7 +67,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
     /**
      * a file.
      */
-    private File file;
+    private final File file;
 
     /**
      * Simple constructor for the callable download task.
@@ -120,6 +120,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
         return file;
     }
 
+    @SuppressWarnings("BusyWait")
     @Override
     public Future<ProcessTask> call() throws Exception {
         final long waitTime = settings.getInt(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, 4000);
@@ -182,7 +183,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
      */
     public void cleanup() {
         if (file != null && file.exists() && !file.delete()) {
-            LOGGER.debug("Failed to delete first temporary file {}", file.toString());
+            LOGGER.debug("Failed to delete first temporary file {}", file);
             file.deleteOnExit();
         }
     }

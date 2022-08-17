@@ -138,7 +138,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * The list of files that have been scanned.
      */
-    private List<File> scannedFiles = new ArrayList<>();
+    private final List<File> scannedFiles = new ArrayList<>();
     //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Maven bound parameters and components">
     /**
@@ -1559,7 +1559,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             if (scanSet == null) {
                 scanSet = new ArrayList<>();
             }
-            scanDirectory.stream().forEach(d -> {
+            scanDirectory.forEach(d -> {
                 final FileSet fs = new FileSet();
                 fs.setDirectory(d);
                 fs.addInclude(INCLUDE_ALL);
@@ -1743,7 +1743,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     if (d.getLicense() == null) {
                         d.setLicense(license.toString());
                     } else if (!d.getLicense().contains(license)) {
-                        d.setLicense(String.format("%s%n%s", d.getLicense(), license.toString()));
+                        d.setLicense(String.format("%s%n%s", d.getLicense(), license));
                     }
                 }
                 engine.addDependency(d);
@@ -2374,9 +2374,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 invalid.add(s);
             }
         });
-        invalid.forEach((s) -> {
-            getLog().warn("Invalid report format specified: " + s);
-        });
+        invalid.forEach((s) -> getLog().warn("Invalid report format specified: " + s));
         if (selectedFormats.contains("true")) {
             selectedFormats.remove("true");
         }
@@ -2463,10 +2461,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             if (showSummary) {
                 if (failBuildOnAnyVulnerability) {
                     msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities: %n%s%n%n"
-                            + "See the dependency-check report for more details.%n%n", ids.toString());
+                            + "See the dependency-check report for more details.%n%n", ids);
                 } else {
                     msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities that have a CVSS score greater than or "
-                            + "equal to '%.1f': %n%s%n%nSee the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
+                            + "equal to '%.1f': %n%s%n%nSee the dependency-check report for more details.%n%n", failBuildOnCVSS, ids);
                 }
             } else {
                 msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities.%n%n"

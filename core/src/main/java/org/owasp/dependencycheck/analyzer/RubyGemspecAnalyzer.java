@@ -260,12 +260,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
         String version = null;
         int versionCount = 0;
         if (parentDir != null) {
-            final File[] matchingFiles = parentDir.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.contains(VERSION_FILE_NAME);
-                }
-            });
+            final File[] matchingFiles = parentDir.listFiles((dir, name) -> name.contains(VERSION_FILE_NAME));
             if (matchingFiles == null) {
                 return null;
             }
