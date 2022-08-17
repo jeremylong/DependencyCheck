@@ -4842,7 +4842,7 @@
         <notes><![CDATA[
         quarkus-liquibase is a wrapper of liquibase:liquibase with a lower version
         ]]></notes>
-        <packageUrl regex="true">^pkg\:maven/io\.quarkus.*/quarkus\-liquibase@.*</packageUrl>
+        <packageUrl regex="true">^pkg\:maven/io\.quarkus.*/quarkus\-liquibase(-[a-z]+)?@.*</packageUrl>
         <cpe>cpe:/a:liquibase:liquibase</cpe>
     </suppress>
     <suppress base="true">
@@ -5290,10 +5290,11 @@
         <packageUrl regex="true">^pkg:maven/(?!org\.springframework/spring\-web@).*$</packageUrl>
         <cve>CVE-2016-1000027</cve>
     </suppress>
+    <!-- endregion -->
     <suppress base="true">
         <notes><![CDATA[
-   FP per issue #4671, CVEs for Python pet projects
-   ]]></notes>
+        FP per issue #4671, CVEs for Python pet projects
+        ]]></notes>
         <packageUrl regex="true">^.*$</packageUrl>
         <cve>CVE-2022-31504</cve>
         <cve>CVE-2022-31505</cve>
@@ -5356,5 +5357,11 @@
         <cve>CVE-2022-31587</cve>
         <cve>CVE-2022-31588</cve>
     </suppress>
-    <!-- endregion -->
+    <suppress base="true">
+        <notes><![CDATA[
+        FP because cpe make reference to IonicaBizau/parse-url dependency
+        ]]></notes>
+        <packageUrl regex="true">^pkg:npm/parseurl@.*$</packageUrl>
+        <cpe>cpe:/a:parse-url_project:parse-url</cpe>
+    </suppress>
 </suppressions>

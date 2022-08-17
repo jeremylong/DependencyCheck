@@ -37,7 +37,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         </script>
         <script type="text/javascript">
             $(document).ready(function() {
-                $(".expandable").click(function (event) {
+                $(".expandable, .collapsed").click(function (event) {
                     e = event || window.event;
                     var h = e.target || e.srcElement;
                     var content = "#content" + h.id.substr(6);
@@ -910,7 +910,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                         </div>
                     #if($dependency.getVulnerabilities().size()>0)
                     #set($cnt=$cnt+1)
-                    <h4 id="header$cnt" class="subsectionheader expandable collaspablesubsection white">Published Vulnerabilities</h4>
+                    <h4 id="header$cnt" class="subsectionheader collapsed collaspablesubsection white">Published Vulnerabilities</h4>
                     <div id="content$cnt" class="subsectioncontent standardsubsection">
                         #foreach($vuln in $dependency.getVulnerabilities(true))
                             #set($vsctr=$vsctr+1)
@@ -1078,7 +1078,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                 </div>
                             #if($dependency.getSuppressedVulnerabilities().size()>0)
                             #set($cnt=$cnt+1)
-                            <h4 id="header$cnt" class="subsectionheader expandable collaspablesubsection white">Suppressed Vulnerabilities</h4>
+                            <h4 id="header$cnt" class="subsectionheader collapsed collaspablesubsection white">Suppressed Vulnerabilities</h4>
                             <div id="content$cnt" class="subsectioncontent standardsubsection">
                                 #foreach($vuln in $dependency.getSuppressedVulnerabilities(true))
                                     #set($vsctr=$vsctr+1)

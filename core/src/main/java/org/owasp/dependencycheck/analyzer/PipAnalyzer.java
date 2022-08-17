@@ -166,6 +166,7 @@ public class PipAnalyzer extends AbstractFileTypeAnalyzer {
                     d.setMd5sum(Checksum.getMD5Checksum(filePath));
                     d.addEvidence(EvidenceType.PRODUCT, REQUIREMENTS, "product", identifiedPackage, Confidence.HIGHEST);
                     d.addEvidence(EvidenceType.VERSION, REQUIREMENTS, "version", identifiedVersion, Confidence.HIGHEST);
+                    d.addEvidence(EvidenceType.VENDOR, REQUIREMENTS, "vendor", identifiedPackage, Confidence.HIGHEST);
                     engine.addDependency(d);
                 }
             }
