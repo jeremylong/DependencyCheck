@@ -77,14 +77,13 @@ public class SuppressionParser {
      * contained.
      *
      * @param file an XML file containing suppression rules
-     * @param filter the suppression rule filter
      * @return a list of suppression rules
      * @throws SuppressionParseException thrown if the XML file cannot be parsed
      */
     @SuppressFBWarnings(justification = "try with resource will clenaup the resources", value = {"OBL_UNSATISFIED_OBLIGATION"})
-    public List<SuppressionRule> parseSuppressionRules(File file, SuppressionRuleFilter filter) throws SuppressionParseException {
+    public List<SuppressionRule> parseSuppressionRules(File file) throws SuppressionParseException {
         try (FileInputStream fis = new FileInputStream(file)) {
-            return parseSuppressionRules(fis, filter);
+            return parseSuppressionRules(fis);
         } catch (SAXException | IOException ex) {
             LOGGER.debug("", ex);
             throw new SuppressionParseException(ex);
@@ -96,12 +95,11 @@ public class SuppressionParser {
      * contained.
      *
      * @param inputStream an InputStream containing suppression rules
-     * @param filter a filter to use when loading suppression rules
      * @return a list of suppression rules
      * @throws SuppressionParseException thrown if the XML cannot be parsed
      * @throws SAXException thrown if the XML cannot be parsed
      */
-    public List<SuppressionRule> parseSuppressionRules(InputStream inputStream, SuppressionRuleFilter filter)
+    public List<SuppressionRule> parseSuppressionRules(InputStream inputStream)
             throws SuppressionParseException, SAXException {
         try (
                 InputStream schemaStream13 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_3);
@@ -114,7 +112,7 @@ public class SuppressionParser {
             final String defaultEncoding = StandardCharsets.UTF_8.name();
             final String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();
 
-            final SuppressionHandler handler = new SuppressionHandler(filter);
+            final SuppressionHandler handler = new SuppressionHandler();
             final SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream13, schemaStream12, schemaStream11, schemaStream10);
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setErrorHandler(new SuppressionErrorHandler());

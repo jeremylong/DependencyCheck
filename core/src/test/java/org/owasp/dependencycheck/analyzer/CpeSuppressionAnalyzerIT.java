@@ -64,10 +64,9 @@ public class CpeSuppressionAnalyzerIT extends BaseDBTestCase {
      */
     @Test
     public void testAnalyze() throws Exception {
-
-        //File file = new File(this.getClass().getClassLoader().getResource("commons-fileupload-1.2.1.jar").getPath());
+        //as the suppression rules are now a singleton - we must reset the list to cause the new suppression rules to load
+        SuppressionRules.getInstance().list().clear();
         File file = BaseTest.getResourceAsFile(this, "commons-fileupload-1.2.1.jar");
-        //File suppression = new File(this.getClass().getClassLoader().getResource("commons-fileupload-1.2.1.suppression.xml").getPath());
         File suppression = BaseTest.getResourceAsFile(this, "commons-fileupload-1.2.1.suppression.xml");
         getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
         getSettings().setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
@@ -80,20 +79,20 @@ public class CpeSuppressionAnalyzerIT extends BaseDBTestCase {
             int cpeSize = dependency.getVulnerableSoftwareIdentifiers().size();
             assertTrue(cveSize > 0);
             assertTrue(cpeSize > 0);
-            getSettings().setString(Settings.KEYS.SUPPRESSION_FILE, suppression.getAbsolutePath());
             //as the suppression rules are now a singleton - we must reset the list to cause the new suppression rules to load
             SuppressionRules.getInstance().list().clear();
+            getSettings().setString(Settings.KEYS.SUPPRESSION_FILE, suppression.getAbsolutePath());
             CpeSuppressionAnalyzer instance = new CpeSuppressionAnalyzer();
             instance.initialize(getSettings());
             instance.prepare(engine);
             instance.analyze(dependency, engine);
-            //after adding filtering to the load - the cpe suppression
-            //analyzer no longer suppresses CPEs.
-            //cveSize -= 1;
+
             cpeSize -= 1;
             assertEquals(cveSize, dependency.getVulnerabilities().size());
             assertEquals(cpeSize, dependency.getVulnerableSoftwareIdentifiers().size());
         }
+        //be kind to other tests and cleanup any custom loaded suppression rules for your test.
+        SuppressionRules.getInstance().list().clear();
     }
 
     /**

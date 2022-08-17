@@ -123,9 +123,13 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer imple
         if (rules.isEmpty()) {
             return;
         }
-        rules.list().forEach((rule) -> {
-            rule.process(dependency);
-        });
+        int ctr =0;
+        for (SuppressionRule rule : rules.list()) {
+            if (filter(rule)) {
+                ctr++;
+                rule.process(dependency);
+            }
+        }
     }
 
     /**
@@ -171,7 +175,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer imple
             if (in == null) {
                 throw new SuppressionParseException("Suppression rules `" + BASE_SUPPRESSION_FILE + "` could not be found");
             }
-            ruleList = parser.parseSuppressionRules(in, this);
+            ruleList = parser.parseSuppressionRules(in);
         } catch (SAXException | IOException ex) {
             throw new SuppressionParseException("Unable to parse the base suppression data file", ex);
         }
@@ -246,7 +250,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer imple
                     throw new SuppressionParseException(msg);
                 }
                 try {
-                    list.addAll(parser.parseSuppressionRules(file, this));
+                    list.addAll(parser.parseSuppressionRules(file));
                 } catch (SuppressionParseException ex) {
                     LOGGER.warn("Unable to parse suppression xml file '{}'", file.getPath());
                     LOGGER.warn(ex.getMessage());
