@@ -191,10 +191,7 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
                 case "nodejs":
                 case "node.js":
                 case "node_js":
-                    return true;
-                //not actually in NVD...just future proofing
                 case "npm":
-                    return true;
                 case "node-js":
                     return true;
                 default:

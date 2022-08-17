@@ -155,7 +155,6 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
             }
         } catch (Exception ex) {
             this.setEnabled(false);
-            LOGGER.debug("Pnpm executable was not found.", ex);
             LOGGER.warn("The {} has been disabled. Pnpm executable was not found.", getName());
             throw new InitializationException("Unable to read pnpm audit output.", ex);
         }

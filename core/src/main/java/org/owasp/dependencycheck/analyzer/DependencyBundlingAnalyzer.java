@@ -462,11 +462,11 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
         if (mainName.endsWith(".jar") && nextName.endsWith(".js") && nextName.startsWith(mainName)) {
             return dependency.getSoftwareIdentifiers()
                     .stream().map(Identifier::getValue).collect(toSet())
-                    .containsAll(nextDependency.getSoftwareIdentifiers().stream().map(this::identifierToWebJarForCompairson).collect(toSet()));
+                    .containsAll(nextDependency.getSoftwareIdentifiers().stream().map(this::identifierToWebJarForComparison).collect(toSet()));
         } else if (nextName.endsWith(".jar") && mainName.endsWith("js") && mainName.startsWith(nextName)) {
             return nextDependency.getSoftwareIdentifiers()
                     .stream().map(Identifier::getValue).collect(toSet())
-                    .containsAll(dependency.getSoftwareIdentifiers().stream().map(this::identifierToWebJarForCompairson).collect(toSet()));
+                    .containsAll(dependency.getSoftwareIdentifiers().stream().map(this::identifierToWebJarForComparison).collect(toSet()));
         }
         return false;
     }
@@ -478,7 +478,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
      * @return a Maven CPE for a web jar if conversion is possible; otherwise
      * the original CPE is returned
      */
-    private String identifierToWebJarForCompairson(Identifier id) {
+    private String identifierToWebJarForComparison(Identifier id) {
         if (id instanceof PurlIdentifier) {
             final PurlIdentifier pid = (PurlIdentifier) id;
             try {
