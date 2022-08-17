@@ -43,7 +43,6 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
-import org.owasp.dependencycheck.xml.suppression.SuppressionRuleFilter;
 import org.owasp.dependencycheck.xml.suppression.SuppressionRules;
 
 /**
@@ -53,7 +52,7 @@ import org.owasp.dependencycheck.xml.suppression.SuppressionRules;
  * @author Jeremy Long
  */
 @ThreadSafe
-public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer implements SuppressionRuleFilter {
+public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
 
     /**
      * The Logger for use throughout the class.
@@ -123,7 +122,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer imple
         if (rules.isEmpty()) {
             return;
         }
-        int ctr =0;
+        int ctr = 0;
         for (SuppressionRule rule : rules.list()) {
             if (filter(rule)) {
                 ctr++;
@@ -131,6 +130,15 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer imple
             }
         }
     }
+
+    /**
+     * Determines whether or not to filter a suppression rule.
+     *
+     * @param rule the suppression rule to evaluate
+     * @return <code>true</code> if the rule should be filtered; otherwise
+     * <code>true</code>
+     */
+    abstract boolean filter(SuppressionRule rule);
 
     /**
      * Loads all the suppression rules files configured in the {@link Settings}.
