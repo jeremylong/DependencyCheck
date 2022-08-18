@@ -128,10 +128,10 @@ Copyright (c) 2012 - Jeremy Long
         <doxia-module-markdown.version>1.11.1</doxia-module-markdown.version>
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
         <maven-dependency-plugin.version>3.3.0</maven-dependency-plugin.version>
-        <maven-javadoc-plugin.version>3.4.0</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.4.1</maven-javadoc-plugin.version>
         <!-- upgrading beyond 2.5 breaks maven site-->
         <maven-jxr-plugin.version>2.5</maven-jxr-plugin.version>
-        <maven-project-info-reports-plugin.version>3.4.0</maven-project-info-reports-plugin.version>
+        <maven-project-info-reports-plugin.version>3.4.1</maven-project-info-reports-plugin.version>
         <maven-surefire-report-plugin.version>2.22.2</maven-surefire-report-plugin.version>
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
         <spotbugs.version>4.7.1</spotbugs.version>
@@ -151,7 +151,7 @@ Copyright (c) 2012 - Jeremy Long
         <jackson.version>2.13.2.1</jackson.version>
         <jackson-afterburmer.version>2.13.2</jackson-afterburmer.version>
         <jmockit.version>1.49</jmockit.version>
-        <mockito-core.version>4.6.1</mockito-core.version>
+        <mockito-core.version>4.7.0</mockito-core.version>
         <jsoup.version>1.15.2</jsoup.version>
         <commons-compress.version>1.21</commons-compress.version>
         <org.apache.maven.shared.file-management.version>3.1.0</org.apache.maven.shared.file-management.version>
@@ -243,7 +243,7 @@ Copyright (c) 2012 - Jeremy Long
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>animal-sniffer-maven-plugin</artifactId>
-                    <version>1.21</version>
+                    <version>1.22</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

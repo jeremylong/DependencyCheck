@@ -205,17 +205,15 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
         LOG.debug("Requesting component-reports for {} dependencies", dependencies.length);
         // create requests for each dependency which has a PURL identifier
         final List<PackageUrl> packages = new ArrayList<>();
-        Arrays.stream(dependencies).forEach(dependency -> {
-            dependency.getSoftwareIdentifiers().stream()
-                    .filter(id -> id instanceof PurlIdentifier)
-                    .map(id -> parsePackageUrl(id.getValue()))
-                    .filter(id -> id != null && StringUtils.isNotBlank(id.getVersion()))
-                    .forEach(id -> packages.add(id));
-        });
+        Arrays.stream(dependencies).forEach(dependency -> dependency.getSoftwareIdentifiers().stream()
+                .filter(id -> id instanceof PurlIdentifier)
+                .map(id -> parsePackageUrl(id.getValue()))
+                .filter(id -> id != null && StringUtils.isNotBlank(id.getVersion()))
+                .forEach(packages::add));
         // only attempt if we have been able to collect some packages
         if (!packages.isEmpty()) {
             try (OssindexClient client = newOssIndexClient()) {
-                LOG.debug("OSS Index Analyzer submitting: " + packages.toString());
+                LOG.debug("OSS Index Analyzer submitting: " + packages);
                 return client.requestComponentReports(packages);
             }
         }
@@ -350,9 +348,8 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
         result.addReference(REFERENCE_TYPE, source.getTitle(), source.getReference().toString());
 
         // generate references to other references reported by OSS Index
-        source.getExternalReferences().forEach(externalReference -> {
-            result.addReference("OSSIndex", externalReference.toString(), externalReference.toString());
-        });
+        source.getExternalReferences().forEach(externalReference ->
+                result.addReference("OSSIndex", externalReference.toString(), externalReference.toString()));
 
         // attach vulnerable software details as best we can
         final PackageUrl purl = report.getCoordinates();

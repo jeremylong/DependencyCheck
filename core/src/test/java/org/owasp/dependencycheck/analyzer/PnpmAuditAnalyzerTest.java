@@ -14,6 +14,7 @@ import org.owasp.dependencycheck.utils.Settings;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Properties;
 
@@ -27,7 +28,7 @@ public class PnpmAuditAnalyzerTest extends BaseTest
     public void testNpmAuditParserCompatibility() throws IOException, JSONException
     {
         NpmAuditParser npmAuditParser = new NpmAuditParser();
-        JSONObject vulnsAuditJson = new JSONObject(IOUtils.toString(getResourceAsStream(this, "pnpmaudit/pnpm-audit.json"), "UTF-8"));
+        JSONObject vulnsAuditJson = new JSONObject(IOUtils.toString(getResourceAsStream(this, "pnpmaudit/pnpm-audit.json"), StandardCharsets.UTF_8));
         List<Advisory> advisories = npmAuditParser.parse(vulnsAuditJson);
         assertThat(advisories.size(), is(2));
     }

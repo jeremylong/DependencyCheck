@@ -177,7 +177,7 @@ public final class ExtractionUtil {
                 } else {
                     final File file = new File(extractTo, entry.getName());
                     if (!file.getCanonicalPath().startsWith(destPath)) {
-                        LOGGER.debug("ZipSlip detected\n-Destination: " + destPath + "\n-Path: " + file.toString());
+                        LOGGER.debug("ZipSlip detected\n-Destination: " + destPath + "\n-Path: " + file);
                         throw new ExtractionException("Archive contains a file that would be extracted outside of the target directory.");
                     }
                     try (FileOutputStream fos = new FileOutputStream(file)) {
@@ -284,7 +284,7 @@ public final class ExtractionUtil {
             if (filter.accept(file.getParentFile(), file.getName())) {
                 final String destPath = destination.getCanonicalPath();
                 if (!file.getCanonicalPath().startsWith(destPath)) {
-                    LOGGER.debug("ZipSlip detected\n-Destination: " + destPath + "\n-Path: " + file.toString());
+                    LOGGER.debug("ZipSlip detected\n-Destination: " + destPath + "\n-Path: " + file);
                     final String msg = String.format(
                             "Archive contains a file (%s) that would be extracted outside of the target directory.",
                             file.getAbsolutePath());
@@ -338,7 +338,7 @@ public final class ExtractionUtil {
         final String originalPath = file.getPath();
         final File gzip = new File(originalPath + ".gz");
         if (gzip.isFile() && !gzip.delete()) {
-            LOGGER.debug("Failed to delete initial temporary file when extracting 'gz' {}", gzip.toString());
+            LOGGER.debug("Failed to delete initial temporary file when extracting 'gz' {}", gzip);
             gzip.deleteOnExit();
         }
         if (!file.renameTo(gzip)) {
@@ -351,7 +351,7 @@ public final class ExtractionUtil {
             IOUtils.copy(cin, out);
         } finally {
             if (gzip.isFile() && !org.apache.commons.io.FileUtils.deleteQuietly(gzip)) {
-                LOGGER.debug("Failed to delete temporary file when extracting 'gz' {}", gzip.toString());
+                LOGGER.debug("Failed to delete temporary file when extracting 'gz' {}", gzip);
                 gzip.deleteOnExit();
             }
         }
@@ -369,7 +369,7 @@ public final class ExtractionUtil {
         final String originalPath = file.getPath();
         final File zip = new File(originalPath + ".zip");
         if (zip.isFile() && !zip.delete()) {
-            LOGGER.debug("Failed to delete initial temporary file when extracting 'zip' {}", zip.toString());
+            LOGGER.debug("Failed to delete initial temporary file when extracting 'zip' {}", zip);
             zip.deleteOnExit();
         }
         if (!file.renameTo(zip)) {
@@ -383,7 +383,7 @@ public final class ExtractionUtil {
             IOUtils.copy(cin, out);
         } finally {
             if (zip.isFile() && !org.apache.commons.io.FileUtils.deleteQuietly(zip)) {
-                LOGGER.debug("Failed to delete temporary file when extracting 'zip' {}", zip.toString());
+                LOGGER.debug("Failed to delete temporary file when extracting 'zip' {}", zip);
                 zip.deleteOnExit();
             }
         }

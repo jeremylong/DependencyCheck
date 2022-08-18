@@ -165,7 +165,7 @@ public class HintParser {
                 this.hintRules = handler.getHintRules();
                 this.vendorDuplicatingHintRules = handler.getVendorDuplicatingHintRules();
             }
-        } catch (ParserConfigurationException | FileNotFoundException ex) {
+        } catch (ParserConfigurationException | IOException ex) {
             LOGGER.debug("", ex);
             throw new HintParseException(ex);
         } catch (SAXException ex) {
@@ -175,9 +175,6 @@ public class HintParser {
                 LOGGER.debug("", ex);
                 throw new HintParseException(ex);
             }
-        } catch (IOException ex) {
-            LOGGER.debug("", ex);
-            throw new HintParseException(ex);
         }
     }
 }

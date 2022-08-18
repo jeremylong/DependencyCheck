@@ -432,7 +432,7 @@ public final class DatabaseManager {
                     statement.execute(dbStructureUpdate);
                 } catch (SQLException ex) {
                     throw new DatabaseException(String.format("Unable to upgrade the database schema from %s to %s",
-                            currentDbVersion.toString(), appExpectedVersion.toString()), ex);
+                            currentDbVersion, appExpectedVersion.toString()), ex);
                 } finally {
                     DBUtils.closeStatement(statement);
                 }
@@ -499,8 +499,8 @@ public final class DatabaseManager {
                 if (db == null) {
                     throw new DatabaseException("Invalid database schema");
                 }
-                LOGGER.debug("DC Schema: {}", appDbVersion.toString());
-                LOGGER.debug("DB Schema: {}", db.toString());
+                LOGGER.debug("DC Schema: {}", appDbVersion);
+                LOGGER.debug("DB Schema: {}", db);
                 if (appDbVersion.compareTo(db) > 0) {
                     final boolean autoUpdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);
                     if (autoUpdate) {

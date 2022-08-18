@@ -92,7 +92,7 @@ public class GrokParser {
                 xmlReader.parse(in);
                 return handler.getAssemblyData();
             }
-        } catch (ParserConfigurationException | FileNotFoundException ex) {
+        } catch (ParserConfigurationException | IOException ex) {
             LOGGER.debug("", ex);
             throw new GrokParseException(ex);
         } catch (SAXException ex) {
@@ -102,9 +102,6 @@ public class GrokParser {
                 LOGGER.debug("", ex);
                 throw new GrokParseException(ex);
             }
-        } catch (IOException ex) {
-            LOGGER.debug("", ex);
-            throw new GrokParseException(ex);
         }
     }
 }

@@ -69,15 +69,15 @@ public class Dependency extends EvidenceCollection implements Serializable {
     /**
      * The MD5 hashing function.
      */
-    private static final HashingFunction MD5_HASHING_FUNCTION = (File file) -> Checksum.getMD5Checksum(file);
+    private static final HashingFunction MD5_HASHING_FUNCTION = Checksum::getMD5Checksum;
     /**
      * The SHA1 hashing function.
      */
-    private static final HashingFunction SHA1_HASHING_FUNCTION = (File file) -> Checksum.getSHA1Checksum(file);
+    private static final HashingFunction SHA1_HASHING_FUNCTION = Checksum::getSHA1Checksum;
     /**
      * The SHA256 hashing function.
      */
-    private static final HashingFunction SHA256_HASHING_FUNCTION = (File file) -> Checksum.getSHA256Checksum(file);
+    private static final HashingFunction SHA256_HASHING_FUNCTION = Checksum::getSHA256Checksum;
     /**
      * A list of Identifiers.
      */
@@ -354,9 +354,6 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @param filePath the file path of the dependency
      */
     public void setFilePath(String filePath) {
-//        if (this.packagePath == null || this.packagePath.equals(this.filePath)) {
-//            this.packagePath = filePath;
-//        }
         this.filePath = filePath;
     }
 
@@ -978,9 +975,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * Simple sorting by display file name and actual file path.
      */
     public static final Comparator<Dependency> NAME_COMPARATOR
-            = (Dependency d1, Dependency d2)
-            -> (d1.getDisplayFileName() + d1.getFilePath())
-                    .compareTo(d2.getDisplayFileName() + d2.getFilePath());
+            = Comparator.comparing((Dependency d) -> (d.getDisplayFileName() + d.getFilePath()));
 
     //CSON: OperatorWrap
     /**

@@ -129,13 +129,10 @@ public class ReportTool {
             case "high":
                 return "High";
             case "medium":
-                return "Medium";
             case "moderate":
                 return "Medium";
             case "low":
-                return "Low";
             case "informational":
-                return "Low";
             case "info":
                 return "Low";
             default:

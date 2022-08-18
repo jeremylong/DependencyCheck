@@ -106,7 +106,7 @@ public class Check extends Update {
      * to exclude files that contain matching content..
      */
     @SuppressWarnings("CanBeFinal")
-    private List<String> retirejsFilters = new ArrayList<>();
+    private final List<String> retirejsFilters = new ArrayList<>();
     /**
      * Whether or not the RetireJS Analyzer filters non-vulnerable JS files from
      * the report; default is false.
@@ -2067,7 +2067,7 @@ public class Check extends Update {
             if (showSummary) {
                 msg = String.format("%n%nDependency-Check Failure:%n"
                         + "One or more dependencies were identified with vulnerabilities that have a CVSS score greater than or equal to '%.1f': %s%n"
-                        + "See the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
+                        + "See the dependency-check report for more details.%n%n", failBuildOnCVSS, ids);
             } else {
                 msg = String.format("%n%nDependency-Check Failure:%n"
                         + "One or more dependencies were identified with vulnerabilities.%n%n"

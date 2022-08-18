@@ -396,7 +396,7 @@ public final class CveDB implements AutoCloseable {
      *
      * @return the database properties
      */
-    protected DatabaseProperties reloadProperties() {
+    DatabaseProperties reloadProperties() {
         databaseProperties = new DatabaseProperties(this);
         return databaseProperties;
     }
@@ -1239,7 +1239,7 @@ public final class CveDB implements AutoCloseable {
             }
             LOGGER.error("Unable to access the local database.\n\nEnsure that '{}' is a writable directory. "
                     + "If the problem persist try deleting the files in '{}' and running {} again. If the problem continues, please "
-                    + "create a log file (see documentation at http://jeremylong.github.io/DependencyCheck/) and open a ticket at "
+                    + "create a log file (see documentation at https://jeremylong.github.io/DependencyCheck/) and open a ticket at "
                     + "https://github.com/jeremylong/DependencyCheck/issues and include the log file.\n\n",
                     dd, dd, settings.getString(Settings.KEYS.APPLICATION_NAME));
             LOGGER.debug("", ex);
@@ -1320,7 +1320,7 @@ public final class CveDB implements AutoCloseable {
      * @param vulnerableSoftware a set of the vulnerable software
      * @return true if the identified version is affected, otherwise false
      */
-    protected VulnerableSoftware getMatchingSoftware(Cpe cpe, Set<VulnerableSoftware> vulnerableSoftware) {
+    VulnerableSoftware getMatchingSoftware(Cpe cpe, Set<VulnerableSoftware> vulnerableSoftware) {
         VulnerableSoftware matched = null;
         for (VulnerableSoftware vs : vulnerableSoftware) {
             if (vs.matches(cpe)) {
@@ -1441,7 +1441,7 @@ public final class CveDB implements AutoCloseable {
      */
     private void setBooleanValue(PreparedStatement ps, int i, Map<String, Object> props, String key) throws SQLException {
         if (props != null && props.containsKey(key)) {
-            ps.setBoolean(i, Boolean.valueOf(props.get(key).toString()));
+            ps.setBoolean(i, Boolean.parseBoolean(props.get(key).toString()));
         } else {
             ps.setNull(i, java.sql.Types.NULL);
         }

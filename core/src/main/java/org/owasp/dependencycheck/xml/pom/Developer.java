@@ -180,6 +180,7 @@ public class Developer implements Serializable {
         if (!Objects.equals(this.organization, other.organization)) {
             return false;
         }
+        //noinspection RedundantIfStatement
         if (!Objects.equals(this.organizationUrl, other.organizationUrl)) {
             return false;
         }

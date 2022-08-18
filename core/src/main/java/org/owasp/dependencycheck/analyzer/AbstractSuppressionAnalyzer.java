@@ -90,6 +90,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      *
      * @return a list of file EXTENSIONS supported by this analyzer.
      */
+    @SuppressWarnings("SameReturnValue")
     public Set<String> getSupportedExtensions() {
         return null;
     }
@@ -164,7 +165,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         if (!failedLoadingFiles.isEmpty()) {
             LOGGER.debug("{} suppression files failed to load.", failedLoadingFiles.size());
             final StringBuilder sb = new StringBuilder();
-            failedLoadingFiles.forEach((item) -> sb.append(item));
+            failedLoadingFiles.forEach(sb::append);
             throw new SuppressionParseException(sb.toString());
         }
     }

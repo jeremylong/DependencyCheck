@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.data.nvd.json;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -101,7 +102,7 @@ public final class NodeFlatteningCollector implements Collector<DefNode, ArrayLi
 
     @Override
     public Function<ArrayList<DefNode>, Stream<DefNode>> finisher() {
-        return (m) -> m.stream();
+        return Collection::stream;
     }
 
     @Override

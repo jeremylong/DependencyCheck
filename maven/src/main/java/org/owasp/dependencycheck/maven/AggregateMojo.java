@@ -22,8 +22,11 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+
+import org.apache.maven.model.ConfigurationContainer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -192,12 +195,12 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
     protected boolean isConfiguredToSkip(MavenProject mavenProject) {
         final Optional<String> value = mavenProject.getBuildPlugins().stream()
                 .filter(f -> "org.owasp:dependency-check-maven".equals(f.getKey()))
-                .map(c -> c.getConfiguration())
+                .map(ConfigurationContainer::getConfiguration)
                 .filter(c -> c != null && c instanceof Xpp3Dom)
                 .map(c -> (Xpp3Dom) c)
                 .map(c -> c.getChild("skip"))
-                .filter(c -> c != null)
-                .map(c -> c.getValue())
+                .filter(Objects::nonNull)
+                .map(Xpp3Dom::getValue)
                 .findFirst();
 
         final String property = mavenProject.getProperties().getProperty("dependency-check.skip");

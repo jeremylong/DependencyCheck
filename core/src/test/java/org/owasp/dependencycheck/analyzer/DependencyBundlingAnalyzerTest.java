@@ -121,36 +121,34 @@ public class DependencyBundlingAnalyzerTest extends BaseTest {
 
     @Test
     public void testFirstPathIsShortest() {
-        DependencyBundlingAnalyzer instance = new DependencyBundlingAnalyzer();
-
         String left = "./a/c.jar";
         String right = "./d/e/f.jar";
         boolean expResult = true;
-        boolean result = instance.firstPathIsShortest(left, right);
+        boolean result = DependencyBundlingAnalyzer.firstPathIsShortest(left, right);
         assertEquals(expResult, result);
 
         left = "./a/b/c.jar";
         right = "./d/e/f.jar";
         expResult = true;
-        result = instance.firstPathIsShortest(left, right);
+        result = DependencyBundlingAnalyzer.firstPathIsShortest(left, right);
         assertEquals(expResult, result);
 
         left = "./d/b/c.jar";
         right = "./a/e/f.jar";
         expResult = false;
-        result = instance.firstPathIsShortest(left, right);
+        result = DependencyBundlingAnalyzer.firstPathIsShortest(left, right);
         assertEquals(expResult, result);
 
         left = "./a/b/c.jar";
         right = "./d/f.jar";
         expResult = false;
-        result = instance.firstPathIsShortest(left, right);
+        result = DependencyBundlingAnalyzer.firstPathIsShortest(left, right);
         assertEquals(expResult, result);
 
         left = "./a/b/c.jar";
         right = "./a/b/c.jar";
         expResult = true;
-        result = instance.firstPathIsShortest(left, right);
+        result = DependencyBundlingAnalyzer.firstPathIsShortest(left, right);
         assertEquals(expResult, result);
     }
 

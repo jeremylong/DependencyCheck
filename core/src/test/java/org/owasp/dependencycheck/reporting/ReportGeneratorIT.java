@@ -219,8 +219,6 @@ public class ReportGeneratorIT extends BaseDBTestCase {
             //Test CSV
             int linesWritten = countLines(writeCsvTo);
             Assert.assertEquals(vulnCount + 1, linesWritten);
-        } catch (InvalidSettingException ex) {
-            fail(ex.getMessage());
         } catch (DatabaseException | ExceptionCollection | ReportException | SAXException | IOException ex) {
             fail(ex.getMessage());
         }

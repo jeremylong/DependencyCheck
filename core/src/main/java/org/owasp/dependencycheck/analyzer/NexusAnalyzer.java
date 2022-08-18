@@ -272,7 +272,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
                             + "this could result in undetected CPE/CVEs.", dependency.getFileName());
                 } finally {
                     if (pomFile != null && pomFile.exists() && !FileUtils.deleteQuietly(pomFile)) {
-                        LOGGER.debug("Failed to delete temporary pom file {}", pomFile.toString());
+                        LOGGER.debug("Failed to delete temporary pom file {}", pomFile);
                         pomFile.deleteOnExit();
                     }
                 }

@@ -57,7 +57,7 @@ public class NodeFlatteningCollectorTest {
     public void testCollector() {
         assertFalse(nodes.stream().anyMatch((node) -> "Child 4".equals(node.getOperator())));
         assertTrue(nodes.stream().collect(NodeFlatteningCollector.getInstance()).anyMatch((node) -> "Child 4".equals(node.getOperator())));
-        List<String> operators = nodes.stream().collect(NodeFlatteningCollector.getInstance()).map(mapper -> mapper.getOperator()).collect(Collectors.toList());
+        List<String> operators = nodes.stream().collect(NodeFlatteningCollector.getInstance()).map(DefNode::getOperator).collect(Collectors.toList());
         assertEquals(6, operators.size());
     }
 }

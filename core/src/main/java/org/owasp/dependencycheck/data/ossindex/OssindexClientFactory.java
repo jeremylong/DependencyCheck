@@ -101,7 +101,7 @@ public final class OssindexClientFactory {
                     cache.setBaseDir(cacheDir.toPath());
                     cache.setExpireAfter(Duration.standardHours(24));
                     config.setCacheConfiguration(cache);
-                    LOGGER.debug("OSS Index Cache: " + cache.toString());
+                    LOGGER.debug("OSS Index Cache: " + cache);
                 } else {
                     LOGGER.warn("Unable to use a cache for the OSS Index");
                 }

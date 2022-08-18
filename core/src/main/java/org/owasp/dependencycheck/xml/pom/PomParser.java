@@ -70,7 +70,7 @@ public class PomParser {
                 throw (PomParseException) ex;
             }
             LOGGER.debug("", ex);
-            throw new PomParseException(String.format("Unable to parse pom '%s'", file.toString()), ex);
+            throw new PomParseException(String.format("Unable to parse pom '%s'", file), ex);
         }
     }
 
@@ -92,7 +92,7 @@ public class PomParser {
                 throw (PomParseException) ex;
             }
             LOGGER.debug("", ex);
-            throw new PomParseException(String.format("Unable to parse pom '%s'", file.toString()), ex);
+            throw new PomParseException(String.format("Unable to parse pom '%s'", file), ex);
         }
     }
 
@@ -120,10 +120,7 @@ public class PomParser {
             final InputSource in = new InputSource(reader);
             xmlReader.parse(in);
             return handler.getModel();
-        } catch (ParserConfigurationException | SAXException | FileNotFoundException ex) {
-            LOGGER.debug("", ex);
-            throw new PomParseException(ex);
-        } catch (IOException ex) {
+        } catch (ParserConfigurationException | SAXException | IOException ex) {
             LOGGER.debug("", ex);
             throw new PomParseException(ex);
         }
@@ -153,10 +150,7 @@ public class PomParser {
             final InputSource in = new InputSource(reader);
             xmlReader.parse(in);
             return handler.getModel();
-        } catch (ParserConfigurationException | SAXException | FileNotFoundException ex) {
-            LOGGER.debug("", ex);
-            throw new PomParseException(ex);
-        } catch (IOException ex) {
+        } catch (ParserConfigurationException | SAXException | IOException ex) {
             LOGGER.debug("", ex);
             throw new PomParseException(ex);
         }

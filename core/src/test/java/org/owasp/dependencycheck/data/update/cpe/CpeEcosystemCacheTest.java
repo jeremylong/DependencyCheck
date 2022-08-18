@@ -126,7 +126,7 @@ public class CpeEcosystemCacheTest {
         boolean expResult = true;
         boolean result = CpeEcosystemCache.isEmpty();
         assertEquals(expResult, result);
-        map.put(new Pair<String, String>("apache", "zookeeper"), "MULTPILE");
+        map.put(new Pair<>("apache", "zookeeper"), "MULTPILE");
         expResult = false;
         result = CpeEcosystemCache.isEmpty();
         assertEquals(expResult, result);

@@ -250,7 +250,7 @@ public class ReportGenerator {
 
         final VelocityContext ctxt = new VelocityContext();
         ctxt.put("applicationName", applicationName);
-        Collections.sort(dependencies, Dependency.NAME_COMPARATOR);
+        dependencies.sort(Dependency.NAME_COMPARATOR);
         ctxt.put("dependencies", dependencies);
         ctxt.put("analyzers", analyzers);
         ctxt.put("properties", properties);
@@ -507,7 +507,7 @@ public class ReportGenerator {
             final XMLReader saxReader = XmlUtils.buildSecureSaxParser().getXMLReader();
 
             saxs.setXMLReader(saxReader);
-            transformer.transform(saxs, new StreamResult(new OutputStreamWriter(os, "utf-8")));
+            transformer.transform(saxs, new StreamResult(new OutputStreamWriter(os, StandardCharsets.UTF_8)));
         } catch (ParserConfigurationException | TransformerConfigurationException ex) {
             LOGGER.debug("Configuration exception when pretty printing", ex);
             LOGGER.error("Unable to generate pretty report, caused by: {}", ex.getMessage());

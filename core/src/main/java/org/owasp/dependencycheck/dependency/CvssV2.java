@@ -67,35 +67,35 @@ public class CvssV2 implements Serializable {
     /**
      * CVSSv2 Base Metric severity.
      */
-    private String severity;
+    private final String severity;
     /**
      * CVSSv2 Base Metric exploitability score.
      */
-    private Float exploitabilityScore;
+    private final Float exploitabilityScore;
     /**
      * CVSSv2 Base Metric impact score.
      */
-    private Float impactScore;
+    private final Float impactScore;
     /**
      * CVSSv2 Base Metric acInsufInfo.
      */
-    private Boolean acInsufInfo;
+    private final Boolean acInsufInfo;
     /**
      * CVSSv2 Base Metric obtain all privilege.
      */
-    private Boolean obtainAllPrivilege;
+    private final Boolean obtainAllPrivilege;
     /**
      * CVSSv2 Base Metric obtain user privilege.
      */
-    private Boolean obtainUserPrivilege;
+    private final Boolean obtainUserPrivilege;
     /**
      * CVSSv2 Base Metric obtain other privilege.
      */
-    private Boolean obtainOtherPrivilege;
+    private final Boolean obtainOtherPrivilege;
     /**
      * CVSSv2 Base Metric user interaction required.
      */
-    private Boolean userInteractionRequired;
+    private final Boolean userInteractionRequired;
 
     /**
      * Constructs a new CVSS V2 object.
