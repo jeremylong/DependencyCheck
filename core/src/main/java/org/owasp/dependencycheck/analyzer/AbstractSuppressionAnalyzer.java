@@ -130,11 +130,11 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Determines whether or not to filter a suppression rule.
+     * Determines whether a suppression rule should be retained when filtering a set of suppression rules for a concrete suppression analyzer.
      *
      * @param rule the suppression rule to evaluate
-     * @return <code>true</code> if the rule should be filtered; otherwise
-     * <code>true</code>
+     * @return <code>true</code> if the rule should be retained; otherwise
+     * <code>false<code>
      */
     abstract boolean filter(SuppressionRule rule);
 
