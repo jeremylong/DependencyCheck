@@ -135,7 +135,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      *
      * @param rule the suppression rule to evaluate
      * @return <code>true</code> if the rule should be retained; otherwise
-     * <code>false<code>
+     * <code>false</code>
      */
     abstract boolean filter(SuppressionRule rule);
 
