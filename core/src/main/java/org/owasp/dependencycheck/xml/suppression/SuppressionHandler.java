@@ -115,13 +115,6 @@ public class SuppressionHandler extends DefaultHandler {
     }
 
     /**
-     * Constructs a Suppression Handler.
-     */
-    public SuppressionHandler() {
-
-    }
-
-    /**
      * Handles the start element event.
      *
      * @param uri the URI of the element being processed
