@@ -34,6 +34,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.Settings.KEYS;
 import org.owasp.dependencycheck.xml.suppression.SuppressionRule;
+import org.owasp.dependencycheck.xml.suppression.SuppressionRules;
 
 /**
  * @author Jeremy Long
@@ -49,11 +50,12 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
      * Suppression file to test with.
      */
     private static final String SUPPRESSIONS_FILE = "suppressions.xml";
-    
+
     private AbstractSuppressionAnalyzer instance;
-    
+
     @Before
     public void createObjectUnderTest() throws Exception {
+        SuppressionRules.getInstance().list().clear();
         instance = new AbstractSuppressionAnalyzerImpl();
     }
 
@@ -112,7 +114,7 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
         final int expectedSize = rulesInFirstFile + rulesInSecondFile + rulesInCoreFile;
         assertThat("Expected suppressions from both files", instance.getRuleCount(), is(expectedSize));
     }
-    
+
     @Test(expected = InitializationException.class)
     public void testFailureToLocateSuppressionFileAnywhere() throws Exception {
         getSettings().setString(Settings.KEYS.SUPPRESSION_FILE, "doesnotexist.xml");
@@ -132,7 +134,9 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
         final AbstractSuppressionAnalyzerImpl coreFileAnalyzer = new AbstractSuppressionAnalyzerImpl();
         coreFileAnalyzer.initialize(getSettings());
         coreFileAnalyzer.prepare(null);
-        return coreFileAnalyzer.getRuleCount();
+        int count = coreFileAnalyzer.getRuleCount();
+        coreFileAnalyzer.reset();
+        return count;
     }
 
     /**
@@ -148,26 +152,28 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
         final AbstractSuppressionAnalyzerImpl fileAnalyzer = new AbstractSuppressionAnalyzerImpl();
         fileAnalyzer.initialize(getSettings());
         fileAnalyzer.prepare(null);
-        return fileAnalyzer.getRuleCount();
+        int count = fileAnalyzer.getRuleCount();
+        fileAnalyzer.reset();
+        return count;
     }
-    
+
     public static class AbstractSuppressionAnalyzerImpl extends AbstractSuppressionAnalyzer {
-        
+
         @Override
         public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-        
+
         @Override
         public String getName() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-        
+
         @Override
         public AnalysisPhase getAnalysisPhase() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-        
+
         @Override
         protected String getAnalyzerEnabledSettingKey() {
             return "unknown";
@@ -177,6 +183,10 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
         public boolean filter(SuppressionRule rule) {
             return false;
         }
+
+        public void reset() {
+            getSuppressionRules().list().clear();
+        }
     }
-    
+
 }

@@ -82,7 +82,7 @@ public class CpeSuppressionAnalyzer extends AbstractSuppressionAnalyzer {
 
     @Override
     public boolean filter(SuppressionRule rule) {
-        return !rule.hasCpe();
+        return rule.hasCpe();
     }
 
     @Override

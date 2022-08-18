@@ -44,6 +44,7 @@ import static org.junit.Assert.fail;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
+import org.owasp.dependencycheck.xml.suppression.SuppressionRules;
 
 /**
  *
@@ -75,6 +76,9 @@ public class ReportGeneratorIT extends BaseDBTestCase {
         settings.setBoolean(Settings.KEYS.PRETTY_PRINT, true);
 
         generateReport(settings, writeTo, writeJsonTo, writeHtmlTo, writeJunitTo, writeCsvTo, writeSarifTo, suppressionFile);
+        
+        //be kind to other tests and cleanup any custom loaded suppression rules for your test.
+        SuppressionRules.getInstance().list().clear();
     }
 
     /**
@@ -100,6 +104,8 @@ public class ReportGeneratorIT extends BaseDBTestCase {
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
 
         generateReport(settings, writeTo, writeJsonTo, writeHtmlTo, writeJunitTo, writeCsvTo, writeSarifTo, suppressionFile);
+        //be kind to other tests and cleanup any custom loaded suppression rules for your test.
+        SuppressionRules.getInstance().list().clear();
     }
 
 
@@ -126,6 +132,8 @@ public class ReportGeneratorIT extends BaseDBTestCase {
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
 
         generateReport(settings, writeTo, writeJsonTo, writeHtmlTo, writeJunitTo, writeCsvTo, writeSarifTo, suppressionFile);
+        //be kind to other tests and cleanup any custom loaded suppression rules for your test.
+        SuppressionRules.getInstance().list().clear();
     }
     /**
      * Generates an XML report containing known vulnerabilities and realistic
@@ -150,6 +158,8 @@ public class ReportGeneratorIT extends BaseDBTestCase {
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
 
         generateReport(settings, writeTo, writeJsonTo, writeHtmlTo, writeJunitTo, writeCsvTo, writeSarifTo, suppressionFile);
+        //be kind to other tests and cleanup any custom loaded suppression rules for your test.
+        SuppressionRules.getInstance().list().clear();
     }
 
 

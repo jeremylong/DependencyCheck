@@ -82,6 +82,7 @@ import static org.owasp.dependencycheck.analyzer.AnalysisPhase.PRE_FINDING_ANALY
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.PRE_IDENTIFIER_ANALYSIS;
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.PRE_INFORMATION_COLLECTION;
 import org.owasp.dependencycheck.analyzer.DependencyBundlingAnalyzer;
+import org.owasp.dependencycheck.xml.suppression.SuppressionRules;
 
 /**
  * Scans files, directories, etc. for Dependencies. Analyzers are loaded and
@@ -658,6 +659,8 @@ public class Engine implements FileFilter, AutoCloseable {
         mode.getPhases().stream()
                 .map(analyzers::get)
                 .forEach((analyzerList) -> analyzerList.forEach(this::closeAnalyzer));
+
+        SuppressionRules.getInstance().logUnusedRules();
 
         LOGGER.debug("\n----------------------------------------------------\nEND ANALYSIS\n----------------------------------------------------");
         final long analysisDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - analysisStart);

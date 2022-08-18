@@ -43,7 +43,7 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
-import org.owasp.dependencycheck.xml.suppression.SuppressionRuleFilter;
+import org.owasp.dependencycheck.xml.suppression.SuppressionRules;
 
 /**
  * Abstract base suppression analyzer that contains methods for parsing the
@@ -52,7 +52,7 @@ import org.owasp.dependencycheck.xml.suppression.SuppressionRuleFilter;
  * @author Jeremy Long
  */
 @ThreadSafe
-public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer implements SuppressionRuleFilter {
+public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
 
     /**
      * The Logger for use throughout the class.
@@ -63,9 +63,18 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer imple
      */
     private static final String BASE_SUPPRESSION_FILE = "dependencycheck-base-suppression.xml";
     /**
-     * The list of suppression rules.
+     * The collection of suppression rules.
      */
-    private final List<SuppressionRule> rules = new ArrayList<>();
+    private final SuppressionRules rules = SuppressionRules.getInstance();
+
+    /**
+     * Returns the suppression rules.
+     *
+     * @return the suppression rules
+     */
+    protected SuppressionRules getSuppressionRules() {
+        return rules;
+    }
 
     /**
      * Get the number of suppression rules.
@@ -114,8 +123,21 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer imple
         if (rules.isEmpty()) {
             return;
         }
-        rules.forEach((rule) -> rule.process(dependency));
+        for (SuppressionRule rule : rules.list()) {
+            if (filter(rule)) {
+                rule.process(dependency);
+            }
+        }
     }
+
+    /**
+     * Determines whether a suppression rule should be retained when filtering a set of suppression rules for a concrete suppression analyzer.
+     *
+     * @param rule the suppression rule to evaluate
+     * @return <code>true</code> if the rule should be retained; otherwise
+     * <code>false</code>
+     */
+    abstract boolean filter(SuppressionRule rule);
 
     /**
      * Loads all the suppression rules files configured in the {@link Settings}.
@@ -160,7 +182,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer imple
             if (in == null) {
                 throw new SuppressionParseException("Suppression rules `" + BASE_SUPPRESSION_FILE + "` could not be found");
             }
-            ruleList = parser.parseSuppressionRules(in, this);
+            ruleList = parser.parseSuppressionRules(in);
         } catch (SAXException | IOException ex) {
             throw new SuppressionParseException("Unable to parse the base suppression data file", ex);
         }
@@ -235,7 +257,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer imple
                     throw new SuppressionParseException(msg);
                 }
                 try {
-                    list.addAll(parser.parseSuppressionRules(file, this));
+                    list.addAll(parser.parseSuppressionRules(file));
                 } catch (SuppressionParseException ex) {
                     LOGGER.warn("Unable to parse suppression xml file '{}'", file.getPath());
                     LOGGER.warn(ex.getMessage());
