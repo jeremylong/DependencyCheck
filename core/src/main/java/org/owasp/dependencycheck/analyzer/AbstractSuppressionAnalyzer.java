@@ -122,10 +122,8 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         if (rules.isEmpty()) {
             return;
         }
-        int ctr = 0;
         for (SuppressionRule rule : rules.list()) {
             if (filter(rule)) {
-                ctr++;
                 rule.process(dependency);
             }
         }
