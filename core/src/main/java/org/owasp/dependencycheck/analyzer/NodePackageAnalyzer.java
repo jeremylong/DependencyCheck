@@ -297,10 +297,10 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
 
         // this seems to produce crash sometimes, I need to tests
         // using a local node_module is not supported by npm audit, it crash
-        if (Objects.nonNull(version) && version.startsWith("file:")) {
+        if (Objects.nonNull(version) && (version.startsWith("file:") || version.matches("^[.~]{0,2}/.*"))) {
             LOGGER.warn("dependency skipped: package.json contain an local node_module for {} seems to be "
                     + "located {} npm audit doesn't support locally referenced modules",
-                    name, version.replace("file:", ""));
+                    name, version);
             return true;
         }
         return false;
