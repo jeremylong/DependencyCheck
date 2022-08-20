@@ -106,7 +106,7 @@ public class Check extends Update {
      * to exclude files that contain matching content..
      */
 <span class="fc" id="L108">    @SuppressWarnings(&quot;CanBeFinal&quot;)</span>
-    private List&lt;String&gt; retirejsFilters = new ArrayList&lt;&gt;();
+    private final List&lt;String&gt; retirejsFilters = new ArrayList&lt;&gt;();
     /**
      * Whether or not the RetireJS Analyzer filters non-vulnerable JS files from
      * the report; default is false.
@@ -2067,7 +2067,7 @@ public class Check extends Update {
 <span class="pc bpc" id="L2067" title="1 of 2 branches missed.">            if (showSummary) {</span>
 <span class="fc" id="L2068">                msg = String.format(&quot;%n%nDependency-Check Failure:%n&quot;</span>
                         + &quot;One or more dependencies were identified with vulnerabilities that have a CVSS score greater than or equal to '%.1f': %s%n&quot;
-<span class="fc" id="L2070">                        + &quot;See the dependency-check report for more details.%n%n&quot;, failBuildOnCVSS, ids.toString());</span>
+<span class="fc" id="L2070">                        + &quot;See the dependency-check report for more details.%n%n&quot;, failBuildOnCVSS, ids);</span>
             } else {
 <span class="nc" id="L2072">                msg = String.format(&quot;%n%nDependency-Check Failure:%n&quot;</span>
                         + &quot;One or more dependencies were identified with vulnerabilities.%n%n&quot;

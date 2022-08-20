@@ -165,7 +165,7 @@ public class WriteLock implements AutoCloseable {
                         } else {
 <span class="fc" id="L166">                            addShutdownHook();</span>
 <span class="fc" id="L167">                            final Timestamp timestamp = new Timestamp(System.currentTimeMillis());</span>
-<span class="fc" id="L168">                            LOGGER.debug(&quot;Lock file created ({}) {} @ {}&quot;, Thread.currentThread().getName(), magic, timestamp.toString());</span>
+<span class="fc" id="L168">                            LOGGER.debug(&quot;Lock file created ({}) {} @ {}&quot;, Thread.currentThread().getName(), magic, timestamp);</span>
                         }
                     }
 <span class="nc" id="L171">                } catch (InterruptedException ex) {</span>
@@ -187,7 +187,7 @@ public class WriteLock implements AutoCloseable {
                     try {
 <span class="nc" id="L188">                        final Timestamp timestamp = new Timestamp(System.currentTimeMillis());</span>
 <span class="nc" id="L189">                        LOGGER.debug(&quot;Sleeping thread {} ({}) for {} seconds because an exclusive lock on the database could not be obtained ({})&quot;,</span>
-<span class="nc" id="L190">                                Thread.currentThread().getName(), magic, SLEEP_DURATION / 1000, timestamp.toString());</span>
+<span class="nc" id="L190">                                Thread.currentThread().getName(), magic, SLEEP_DURATION / 1000, timestamp);</span>
 <span class="nc" id="L191">                        Thread.sleep(SLEEP_DURATION);</span>
 <span class="nc" id="L192">                    } catch (InterruptedException ex) {</span>
 <span class="nc" id="L193">                        LOGGER.debug(&quot;sleep was interrupted.&quot;, ex);</span>
@@ -237,7 +237,7 @@ public class WriteLock implements AutoCloseable {
 <span class="fc" id="L237">        lockFile = null;</span>
 <span class="fc" id="L238">        removeShutdownHook();</span>
 <span class="fc" id="L239">        final Timestamp timestamp = new Timestamp(System.currentTimeMillis());</span>
-<span class="fc" id="L240">        LOGGER.debug(&quot;Lock released ({}) {} @ {}&quot;, Thread.currentThread().getName(), magic, timestamp.toString());</span>
+<span class="fc" id="L240">        LOGGER.debug(&quot;Lock released ({}) {} @ {}&quot;, Thread.currentThread().getName(), magic, timestamp);</span>
 <span class="fc" id="L241">    }</span>
 
     /**

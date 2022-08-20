@@ -108,12 +108,12 @@ public final class NvdCveParser {
 <span class="nc" id="L108">            throw new CorruptedDatastreamException(&quot;Error reading parsing NVD CVE file&quot;, ex);</span>
 <span class="nc" id="L109">        } catch (IOException ex) {</span>
 <span class="nc" id="L110">            LOGGER.error(&quot;Error reading NVD JSON data: {}&quot;, file);</span>
-<span class="nc" id="L111">            LOGGER.debug(&quot;Error extracting the NVD JSON data from: &quot; + file.toString(), ex);</span>
+<span class="nc" id="L111">            LOGGER.debug(&quot;Error extracting the NVD JSON data from: &quot; + file, ex);</span>
 <span class="nc" id="L112">            throw new UpdateException(&quot;Unable to find the NVD CVE file to parse&quot;, ex);</span>
 <span class="nc" id="L113">        }</span>
 <span class="nc" id="L114">    }</span>
 
-    protected void init(JsonParser parser) throws IOException {
+    void init(JsonParser parser) throws IOException {
 <span class="nc" id="L117">        JsonToken nextToken = parser.nextToken();</span>
 <span class="nc bnc" id="L118" title="All 2 branches missed.">        if (nextToken != JsonToken.START_OBJECT) {</span>
 <span class="nc" id="L119">            throw new IOException(&quot;Expected &quot; + JsonToken.START_OBJECT + &quot;, got &quot; + nextToken);</span>

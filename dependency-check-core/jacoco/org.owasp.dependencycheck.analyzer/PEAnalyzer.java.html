@@ -207,7 +207,7 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L207">                            LOGGER.debug(&quot;PE Analyzer found `&quot; + key + &quot;` with a value:&quot; + value);</span>
                     }
 <span class="fc bfc" id="L209" title="All 4 branches covered.">                    if (fVersion != null &amp;&amp; pVersion != null) {</span>
-<span class="pc bpc" id="L210" title="1 of 2 branches missed.">                        final int max = fVersion.length() &gt; pVersion.length() ? pVersion.length() : fVersion.length();</span>
+<span class="fc" id="L210">                        final int max = Math.min(fVersion.length(), pVersion.length());</span>
                         int pos;
 <span class="fc bfc" id="L212" title="All 2 branches covered.">                        for (pos = 0; pos &lt; max; pos++) {</span>
 <span class="pc bpc" id="L213" title="1 of 2 branches missed.">                            if (fVersion.charAt(pos) != pVersion.charAt(pos)) {</span>

@@ -56,7 +56,7 @@
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>          File file = BaseTest.getResourceAsFile(<strong class="jxr_keyword">this</strong>, <span class="jxr_string">"suppressions.xml"</span>);
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>          InputStream schemaStream = BaseTest.getResourceAsStream(<strong class="jxr_keyword">this</strong>, <span class="jxr_string">"schema/suppression.xsd"</span>);
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>          SuppressionHandler handler = <strong class="jxr_keyword">new</strong> SuppressionHandler(<strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>          SuppressionHandler handler = <strong class="jxr_keyword">new</strong> SuppressionHandler();
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>          SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream);
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>          XMLReader xmlReader = saxParser.getXMLReader();
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>          xmlReader.setErrorHandler(<strong class="jxr_keyword">new</strong> SuppressionErrorHandler());

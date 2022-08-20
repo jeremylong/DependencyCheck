@@ -111,7 +111,7 @@ public final class FileUtils {
      */
     @NotNull
     public static File createTempDirectory(@Nullable final File base) throws IOException {
-<span class="fc" id="L114">        final File tempDir = new File(base, &quot;dctemp&quot; + UUID.randomUUID().toString());</span>
+<span class="fc" id="L114">        final File tempDir = new File(base, &quot;dctemp&quot; + UUID.randomUUID());</span>
 <span class="pc bpc" id="L115" title="1 of 2 branches missed.">        if (tempDir.exists()) {</span>
 <span class="nc" id="L116">            return createTempDirectory(base);</span>
         }

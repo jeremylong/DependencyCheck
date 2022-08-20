@@ -81,7 +81,7 @@
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>  <em class="jxr_javadoccomment">     * The configured settings.</em>
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">private</strong> Settings settings;
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Settings settings;
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_javadoccomment">     * The main method for the application.</em>
@@ -342,7 +342,7 @@
 <a class="jxr_linenumber" name="L334" href="#L334">334</a>         <strong class="jxr_keyword">if</strong> (ids.length() &gt; 0) {
 <a class="jxr_linenumber" name="L335" href="#L335">335</a>             LOGGER.error(
 <a class="jxr_linenumber" name="L336" href="#L336">336</a>                     String.format(<span class="jxr_string">"%n%nOne or more dependencies were identified with vulnerabilities that have a CVSS score greater than or "</span>
-<a class="jxr_linenumber" name="L337" href="#L337">337</a>                             + <span class="jxr_string">"equal to '%.1f': %n%s%n%nSee the dependency-check report for more details.%n%n"</span>, cvssFailScore, ids.toString())
+<a class="jxr_linenumber" name="L337" href="#L337">337</a>                             + <span class="jxr_string">"equal to '%.1f': %n%s%n%nSee the dependency-check report for more details.%n%n"</span>, cvssFailScore, ids)
 <a class="jxr_linenumber" name="L338" href="#L338">338</a>             );
 <a class="jxr_linenumber" name="L339" href="#L339">339</a> 
 <a class="jxr_linenumber" name="L340" href="#L340">340</a>             retCode = 1;
@@ -396,7 +396,7 @@
 <a class="jxr_linenumber" name="L388" href="#L388">388</a>             <strong class="jxr_keyword">if</strong> (scanner.getIncludedFilesCount() &gt; 0) {
 <a class="jxr_linenumber" name="L389" href="#L389">389</a>                 <strong class="jxr_keyword">for</strong> (String s : scanner.getIncludedFiles()) {
 <a class="jxr_linenumber" name="L390" href="#L390">390</a>                     <strong class="jxr_keyword">final</strong> File f = <strong class="jxr_keyword">new</strong> File(baseDir, s);
-<a class="jxr_linenumber" name="L391" href="#L391">391</a>                     LOGGER.debug(<span class="jxr_string">"Found file {}"</span>, f.toString());
+<a class="jxr_linenumber" name="L391" href="#L391">391</a>                     LOGGER.debug(<span class="jxr_string">"Found file {}"</span>, f);
 <a class="jxr_linenumber" name="L392" href="#L392">392</a>                     paths.add(f);
 <a class="jxr_linenumber" name="L393" href="#L393">393</a>                 }
 <a class="jxr_linenumber" name="L394" href="#L394">394</a>             }
@@ -739,20 +739,21 @@
 <a class="jxr_linenumber" name="L731" href="#L731">731</a> <em class="jxr_javadoccomment">     * @param file a file path</em>
 <a class="jxr_linenumber" name="L732" href="#L732">732</a> <em class="jxr_javadoccomment">     * @return the position of the last file separator</em>
 <a class="jxr_linenumber" name="L733" href="#L733">733</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L734" href="#L734">734</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> getLastFileSeparator(String file) {
-<a class="jxr_linenumber" name="L735" href="#L735">735</a>         <strong class="jxr_keyword">if</strong> (file.contains(<span class="jxr_string">"*"</span>) || file.contains(<span class="jxr_string">"?"</span>)) {
-<a class="jxr_linenumber" name="L736" href="#L736">736</a>             <strong class="jxr_keyword">int</strong> p1 = file.indexOf('*');
-<a class="jxr_linenumber" name="L737" href="#L737">737</a>             <strong class="jxr_keyword">int</strong> p2 = file.indexOf('?');
-<a class="jxr_linenumber" name="L738" href="#L738">738</a>             p1 = p1 &gt; 0 ? p1 : file.length();
-<a class="jxr_linenumber" name="L739" href="#L739">739</a>             p2 = p2 &gt; 0 ? p2 : file.length();
-<a class="jxr_linenumber" name="L740" href="#L740">740</a>             <strong class="jxr_keyword">int</strong> pos = p1 &lt; p2 ? p1 : p2;
-<a class="jxr_linenumber" name="L741" href="#L741">741</a>             pos = file.lastIndexOf('/', pos);
-<a class="jxr_linenumber" name="L742" href="#L742">742</a>             <strong class="jxr_keyword">return</strong> pos;
-<a class="jxr_linenumber" name="L743" href="#L743">743</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L744" href="#L744">744</a>             <strong class="jxr_keyword">return</strong> file.lastIndexOf('/');
-<a class="jxr_linenumber" name="L745" href="#L745">745</a>         }
-<a class="jxr_linenumber" name="L746" href="#L746">746</a>     }
-<a class="jxr_linenumber" name="L747" href="#L747">747</a> }
+<a class="jxr_linenumber" name="L734" href="#L734">734</a>     @SuppressWarnings(<span class="jxr_string">"ManualMinMaxCalculation"</span>)
+<a class="jxr_linenumber" name="L735" href="#L735">735</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> getLastFileSeparator(String file) {
+<a class="jxr_linenumber" name="L736" href="#L736">736</a>         <strong class="jxr_keyword">if</strong> (file.contains(<span class="jxr_string">"*"</span>) || file.contains(<span class="jxr_string">"?"</span>)) {
+<a class="jxr_linenumber" name="L737" href="#L737">737</a>             <strong class="jxr_keyword">int</strong> p1 = file.indexOf('*');
+<a class="jxr_linenumber" name="L738" href="#L738">738</a>             <strong class="jxr_keyword">int</strong> p2 = file.indexOf('?');
+<a class="jxr_linenumber" name="L739" href="#L739">739</a>             p1 = p1 &gt; 0 ? p1 : file.length();
+<a class="jxr_linenumber" name="L740" href="#L740">740</a>             p2 = p2 &gt; 0 ? p2 : file.length();
+<a class="jxr_linenumber" name="L741" href="#L741">741</a>             <strong class="jxr_keyword">int</strong> pos = p1 &lt; p2 ? p1 : p2;
+<a class="jxr_linenumber" name="L742" href="#L742">742</a>             pos = file.lastIndexOf('/', pos);
+<a class="jxr_linenumber" name="L743" href="#L743">743</a>             <strong class="jxr_keyword">return</strong> pos;
+<a class="jxr_linenumber" name="L744" href="#L744">744</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L745" href="#L745">745</a>             <strong class="jxr_keyword">return</strong> file.lastIndexOf('/');
+<a class="jxr_linenumber" name="L746" href="#L746">746</a>         }
+<a class="jxr_linenumber" name="L747" href="#L747">747</a>     }
+<a class="jxr_linenumber" name="L748" href="#L748">748</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2022 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

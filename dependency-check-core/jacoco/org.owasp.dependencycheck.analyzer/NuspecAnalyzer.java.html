@@ -159,8 +159,8 @@ import org.owasp.dependencycheck.exception.InitializationException;
 <span class="fc" id="L159">            dependency.addEvidence(EvidenceType.VENDOR, &quot;nuspec&quot;, &quot;authors&quot;, np.getAuthors(), Confidence.HIGH);</span>
 <span class="fc" id="L160">            dependency.addEvidence(EvidenceType.VERSION, &quot;nuspec&quot;, &quot;version&quot;, np.getVersion(), Confidence.HIGHEST);</span>
 <span class="fc" id="L161">            dependency.addEvidence(EvidenceType.PRODUCT, &quot;nuspec&quot;, &quot;id&quot;, np.getId(), Confidence.HIGHEST);</span>
-<span class="fc" id="L162">            dependency.addEvidence(EvidenceType.VENDOR, &quot;nuspec&quot;, &quot;description&quot;, np.getDescription(), Confidence.LOW);;</span>
-<span class="fc" id="L163">            dependency.addEvidence(EvidenceType.PRODUCT, &quot;nuspec&quot;, &quot;description&quot;, np.getDescription(), Confidence.LOW);;</span>
+<span class="fc" id="L162">            dependency.addEvidence(EvidenceType.VENDOR, &quot;nuspec&quot;, &quot;description&quot;, np.getDescription(), Confidence.LOW);</span>
+<span class="fc" id="L163">            dependency.addEvidence(EvidenceType.PRODUCT, &quot;nuspec&quot;, &quot;description&quot;, np.getDescription(), Confidence.LOW);</span>
 <span class="fc" id="L164">            dependency.setName(np.getId());</span>
 <span class="fc" id="L165">            dependency.setVersion(np.getVersion());</span>
             try {

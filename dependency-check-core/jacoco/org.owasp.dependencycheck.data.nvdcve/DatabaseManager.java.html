@@ -432,7 +432,7 @@ public final class DatabaseManager {
 <span class="fc" id="L432">                    statement.execute(dbStructureUpdate);</span>
 <span class="nc" id="L433">                } catch (SQLException ex) {</span>
 <span class="nc" id="L434">                    throw new DatabaseException(String.format(&quot;Unable to upgrade the database schema from %s to %s&quot;,</span>
-<span class="nc" id="L435">                            currentDbVersion.toString(), appExpectedVersion.toString()), ex);</span>
+<span class="nc" id="L435">                            currentDbVersion, appExpectedVersion.toString()), ex);</span>
                 } finally {
 <span class="fc" id="L437">                    DBUtils.closeStatement(statement);</span>
                 }
@@ -499,8 +499,8 @@ public final class DatabaseManager {
 <span class="pc bpc" id="L499" title="1 of 2 branches missed.">                if (db == null) {</span>
 <span class="nc" id="L500">                    throw new DatabaseException(&quot;Invalid database schema&quot;);</span>
                 }
-<span class="fc" id="L502">                LOGGER.debug(&quot;DC Schema: {}&quot;, appDbVersion.toString());</span>
-<span class="fc" id="L503">                LOGGER.debug(&quot;DB Schema: {}&quot;, db.toString());</span>
+<span class="fc" id="L502">                LOGGER.debug(&quot;DC Schema: {}&quot;, appDbVersion);</span>
+<span class="fc" id="L503">                LOGGER.debug(&quot;DB Schema: {}&quot;, db);</span>
 <span class="fc bfc" id="L504" title="All 2 branches covered.">                if (appDbVersion.compareTo(db) &gt; 0) {</span>
 <span class="fc" id="L505">                    final boolean autoUpdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);</span>
 <span class="pc bpc" id="L506" title="1 of 2 branches missed.">                    if (autoUpdate) {</span>

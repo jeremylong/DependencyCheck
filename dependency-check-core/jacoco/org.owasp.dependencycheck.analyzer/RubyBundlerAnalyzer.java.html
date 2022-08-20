@@ -116,34 +116,29 @@ import org.owasp.dependencycheck.dependency.Dependency;
 <span class="fc" id="L116">            final File parentDir = specificationsDir.getParentFile();</span>
 <span class="fc" id="L117">            final File gemsDir = new File(parentDir, GEMS);</span>
 <span class="pc bpc" id="L118" title="3 of 6 branches missed.">            if (parentDir != null &amp;&amp; parentDir.exists() &amp;&amp; gemsDir.exists()) {</span>
-<span class="fc" id="L119">                final File[] matchingFiles = gemsDir.listFiles(new FilenameFilter() {</span>
-                    @Override
-                    public boolean accept(File dir, String name) {
-<span class="fc" id="L122">                        return name.equals(gemName);</span>
-                    }
-                });
+<span class="fc" id="L119">                final File[] matchingFiles = gemsDir.listFiles((dir, name) -&gt; name.equals(gemName));</span>
 
-<span class="pc bpc" id="L126" title="2 of 4 branches missed.">                if (matchingFiles != null &amp;&amp; matchingFiles.length &gt; 0) {</span>
-<span class="nc" id="L127">                    final String gemPath = matchingFiles[0].getAbsolutePath();</span>
-<span class="nc bnc" id="L128" title="All 2 branches missed.">                    if (dependency.getActualFilePath().equals(dependency.getFilePath())) {</span>
-<span class="nc bnc" id="L129" title="All 2 branches missed.">                        if (gemPath != null) {</span>
-<span class="nc" id="L130">                            dependency.setPackagePath(gemPath);</span>
+<span class="pc bpc" id="L121" title="2 of 4 branches missed.">                if (matchingFiles != null &amp;&amp; matchingFiles.length &gt; 0) {</span>
+<span class="nc" id="L122">                    final String gemPath = matchingFiles[0].getAbsolutePath();</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                    if (dependency.getActualFilePath().equals(dependency.getFilePath())) {</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">                        if (gemPath != null) {</span>
+<span class="nc" id="L125">                            dependency.setPackagePath(gemPath);</span>
                         }
                     } else {
                         //.gemspec's actualFilePath and filePath are different when it's from a compressed file
                         //in which case actualFilePath is the temp directory used by decompression.
                         //packagePath should use the filePath of the identified gem file in &quot;gems&quot; folder
-<span class="nc" id="L136">                        final File gemspecStub = new File(dependency.getFilePath());</span>
-<span class="nc" id="L137">                        final File specDir = gemspecStub.getParentFile();</span>
-<span class="nc bnc" id="L138" title="All 4 branches missed.">                        if (specDir != null &amp;&amp; specDir.getName().equals(SPECIFICATIONS)) {</span>
-<span class="nc" id="L139">                            final File gemsDir2 = new File(specDir.getParentFile(), GEMS);</span>
-<span class="nc" id="L140">                            final File packageDir = new File(gemsDir2, gemName);</span>
-<span class="nc" id="L141">                            dependency.setPackagePath(packageDir.getAbsolutePath());</span>
+<span class="nc" id="L131">                        final File gemspecStub = new File(dependency.getFilePath());</span>
+<span class="nc" id="L132">                        final File specDir = gemspecStub.getParentFile();</span>
+<span class="nc bnc" id="L133" title="All 4 branches missed.">                        if (specDir != null &amp;&amp; specDir.getName().equals(SPECIFICATIONS)) {</span>
+<span class="nc" id="L134">                            final File gemsDir2 = new File(specDir.getParentFile(), GEMS);</span>
+<span class="nc" id="L135">                            final File packageDir = new File(gemsDir2, gemName);</span>
+<span class="nc" id="L136">                            dependency.setPackagePath(packageDir.getAbsolutePath());</span>
                         }
                     }
                 }
             }
         }
-<span class="fc" id="L147">    }</span>
+<span class="fc" id="L142">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

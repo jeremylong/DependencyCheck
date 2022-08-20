@@ -100,7 +100,7 @@
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>                      <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> CacheException(<span class="jxr_string">"Unable to obtain disk cache directory path"</span>, ex);
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>                  }
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>                  <strong class="jxr_keyword">if</strong> (!cacheDirectory.isDirectory() &amp;&amp; !cacheDirectory.mkdirs()) {
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>                      <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> CacheException(<span class="jxr_string">"Unable to create disk cache: "</span> + cacheDirectory.toString());
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>                      <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> CacheException(<span class="jxr_string">"Unable to create disk cache: "</span> + cacheDirectory);
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>                  }
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>                  <strong class="jxr_keyword">try</strong> (InputStream in = FileUtils.getResourceAsStream(CACHE_PROPERTIES)) {
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>                      <strong class="jxr_keyword">if</strong> (in == <strong class="jxr_keyword">null</strong>) {
@@ -112,7 +112,7 @@
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>                     properties.put(<span class="jxr_string">"jcs.auxiliary.ODC.attributes.DiskPath"</span>, cacheDirectory.getCanonicalPath());
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>                     <strong class="jxr_keyword">for</strong> (CacheType t : CacheType.values()) {
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>                         <strong class="jxr_keyword">final</strong> File fp = <strong class="jxr_keyword">new</strong> File(cacheDirectory, t.toString());
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>                         properties.put(<span class="jxr_string">"jcs.auxiliary."</span> + t.toString() + <span class="jxr_string">".attributes.DiskPath"</span>, fp.getCanonicalPath());
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>                         properties.put(<span class="jxr_string">"jcs.auxiliary."</span> + t + <span class="jxr_string">".attributes.DiskPath"</span>, fp.getCanonicalPath());
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>                     }
 <a class="jxr_linenumber" name="L109" href="#L109">109</a> 
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>                     JCS.setConfigProperties(properties);

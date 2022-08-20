@@ -114,7 +114,7 @@
 <a class="jxr_linenumber" name="L106" href="#L106">106</a> <em class="jxr_javadoccomment">     * to exclude files that contain matching content..</em>
 <a class="jxr_linenumber" name="L107" href="#L107">107</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>     @SuppressWarnings(<span class="jxr_string">"CanBeFinal"</span>)
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>     <strong class="jxr_keyword">private</strong> List&lt;String&gt; retirejsFilters = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> List&lt;String&gt; retirejsFilters = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L111" href="#L111">111</a> <em class="jxr_javadoccomment">     * Whether or not the RetireJS Analyzer filters non-vulnerable JS files from</em>
 <a class="jxr_linenumber" name="L112" href="#L112">112</a> <em class="jxr_javadoccomment">     * the report; default is false.</em>
@@ -2075,7 +2075,7 @@
 <a class="jxr_linenumber" name="L2067" href="#L2067">2067</a>             <strong class="jxr_keyword">if</strong> (showSummary) {
 <a class="jxr_linenumber" name="L2068" href="#L2068">2068</a>                 msg = String.format(<span class="jxr_string">"%n%nDependency-Check Failure:%n"</span>
 <a class="jxr_linenumber" name="L2069" href="#L2069">2069</a>                         + <span class="jxr_string">"One or more dependencies were identified with vulnerabilities that have a CVSS score greater than or equal to '%.1f': %s%n"</span>
-<a class="jxr_linenumber" name="L2070" href="#L2070">2070</a>                         + <span class="jxr_string">"See the dependency-check report for more details.%n%n"</span>, failBuildOnCVSS, ids.toString());
+<a class="jxr_linenumber" name="L2070" href="#L2070">2070</a>                         + <span class="jxr_string">"See the dependency-check report for more details.%n%n"</span>, failBuildOnCVSS, ids);
 <a class="jxr_linenumber" name="L2071" href="#L2071">2071</a>             } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L2072" href="#L2072">2072</a>                 msg = String.format(<span class="jxr_string">"%n%nDependency-Check Failure:%n"</span>
 <a class="jxr_linenumber" name="L2073" href="#L2073">2073</a>                         + <span class="jxr_string">"One or more dependencies were identified with vulnerabilities.%n%n"</span>

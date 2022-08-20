@@ -65,7 +65,7 @@
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testCollector() {
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>          assertFalse(nodes.stream().anyMatch((node) -&gt; <span class="jxr_string">"Child 4"</span>.equals(node.getOperator())));
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>          assertTrue(nodes.stream().collect(NodeFlatteningCollector.getInstance()).anyMatch((node) -&gt; <span class="jxr_string">"Child 4"</span>.equals(node.getOperator())));
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>          List&lt;String&gt; operators = nodes.stream().collect(NodeFlatteningCollector.getInstance()).map(mapper -&gt; mapper.getOperator()).collect(Collectors.toList());
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>          List&lt;String&gt; operators = nodes.stream().collect(NodeFlatteningCollector.getInstance()).map(DefNode::getOperator).collect(Collectors.toList());
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>          assertEquals(6, operators.size());
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>      }
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  }

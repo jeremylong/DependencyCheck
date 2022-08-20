@@ -101,7 +101,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
                     }
                 }
             }
-<span class="fc" id="L104">            dependenciesToRemove.forEach((d) -&gt; engine.removeDependency(d));</span>
+<span class="fc" id="L104">            dependenciesToRemove.forEach(engine::removeDependency);</span>
         }
 <span class="fc" id="L106">    }</span>
 

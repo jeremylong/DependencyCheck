@@ -166,11 +166,12 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L166">                    d.setMd5sum(Checksum.getMD5Checksum(filePath));</span>
 <span class="fc" id="L167">                    d.addEvidence(EvidenceType.PRODUCT, REQUIREMENTS, &quot;product&quot;, identifiedPackage, Confidence.HIGHEST);</span>
 <span class="fc" id="L168">                    d.addEvidence(EvidenceType.VERSION, REQUIREMENTS, &quot;version&quot;, identifiedVersion, Confidence.HIGHEST);</span>
-<span class="fc" id="L169">                    engine.addDependency(d);</span>
-<span class="fc" id="L170">                }</span>
+<span class="fc" id="L169">                    d.addEvidence(EvidenceType.VENDOR, REQUIREMENTS, &quot;vendor&quot;, identifiedPackage, Confidence.HIGHEST);</span>
+<span class="fc" id="L170">                    engine.addDependency(d);</span>
+<span class="fc" id="L171">                }</span>
             }
         }
-<span class="fc" id="L173">    }</span>
+<span class="fc" id="L174">    }</span>
 
     /**
      * Retrieves the contents of a given file.
@@ -181,9 +182,9 @@ import org.slf4j.LoggerFactory;
      */
     private String getFileContents(final File actualFile) throws AnalysisException {
         try {
-<span class="fc" id="L184">            return FileUtils.readFileToString(actualFile, Charset.defaultCharset()).trim();</span>
-<span class="nc" id="L185">        } catch (IOException e) {</span>
-<span class="nc" id="L186">            throw new AnalysisException(&quot;Problem occurred while reading dependency file.&quot;, e);</span>
+<span class="fc" id="L185">            return FileUtils.readFileToString(actualFile, Charset.defaultCharset()).trim();</span>
+<span class="nc" id="L186">        } catch (IOException e) {</span>
+<span class="nc" id="L187">            throw new AnalysisException(&quot;Problem occurred while reading dependency file.&quot;, e);</span>
         }
     }
 
@@ -197,6 +198,6 @@ import org.slf4j.LoggerFactory;
     @Override
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         // No initialization needed.
-<span class="fc" id="L200">    }</span>
+<span class="fc" id="L201">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

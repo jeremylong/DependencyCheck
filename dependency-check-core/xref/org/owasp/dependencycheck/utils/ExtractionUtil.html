@@ -185,7 +185,7 @@
 <a class="jxr_linenumber" name="L177" href="#L177">177</a>                 } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L178" href="#L178">178</a>                     <strong class="jxr_keyword">final</strong> File file = <strong class="jxr_keyword">new</strong> File(extractTo, entry.getName());
 <a class="jxr_linenumber" name="L179" href="#L179">179</a>                     <strong class="jxr_keyword">if</strong> (!file.getCanonicalPath().startsWith(destPath)) {
-<a class="jxr_linenumber" name="L180" href="#L180">180</a>                         LOGGER.debug(<span class="jxr_string">"ZipSlip detected\n-Destination: "</span> + destPath + <span class="jxr_string">"\n-Path: "</span> + file.toString());
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>                         LOGGER.debug(<span class="jxr_string">"ZipSlip detected\n-Destination: "</span> + destPath + <span class="jxr_string">"\n-Path: "</span> + file);
 <a class="jxr_linenumber" name="L181" href="#L181">181</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> ExtractionException(<span class="jxr_string">"Archive contains a file that would be extracted outside of the target directory."</span>);
 <a class="jxr_linenumber" name="L182" href="#L182">182</a>                     }
 <a class="jxr_linenumber" name="L183" href="#L183">183</a>                     <strong class="jxr_keyword">try</strong> (FileOutputStream fos = <strong class="jxr_keyword">new</strong> FileOutputStream(file)) {
@@ -292,7 +292,7 @@
 <a class="jxr_linenumber" name="L284" href="#L284">284</a>             <strong class="jxr_keyword">if</strong> (filter.accept(file.getParentFile(), file.getName())) {
 <a class="jxr_linenumber" name="L285" href="#L285">285</a>                 <strong class="jxr_keyword">final</strong> String destPath = destination.getCanonicalPath();
 <a class="jxr_linenumber" name="L286" href="#L286">286</a>                 <strong class="jxr_keyword">if</strong> (!file.getCanonicalPath().startsWith(destPath)) {
-<a class="jxr_linenumber" name="L287" href="#L287">287</a>                     LOGGER.debug(<span class="jxr_string">"ZipSlip detected\n-Destination: "</span> + destPath + <span class="jxr_string">"\n-Path: "</span> + file.toString());
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>                     LOGGER.debug(<span class="jxr_string">"ZipSlip detected\n-Destination: "</span> + destPath + <span class="jxr_string">"\n-Path: "</span> + file);
 <a class="jxr_linenumber" name="L288" href="#L288">288</a>                     <strong class="jxr_keyword">final</strong> String msg = String.format(
 <a class="jxr_linenumber" name="L289" href="#L289">289</a>                             <span class="jxr_string">"Archive contains a file (%s) that would be extracted outside of the target directory."</span>,
 <a class="jxr_linenumber" name="L290" href="#L290">290</a>                             file.getAbsolutePath());
@@ -346,7 +346,7 @@
 <a class="jxr_linenumber" name="L338" href="#L338">338</a>         <strong class="jxr_keyword">final</strong> String originalPath = file.getPath();
 <a class="jxr_linenumber" name="L339" href="#L339">339</a>         <strong class="jxr_keyword">final</strong> File gzip = <strong class="jxr_keyword">new</strong> File(originalPath + <span class="jxr_string">".gz"</span>);
 <a class="jxr_linenumber" name="L340" href="#L340">340</a>         <strong class="jxr_keyword">if</strong> (gzip.isFile() &amp;&amp; !gzip.delete()) {
-<a class="jxr_linenumber" name="L341" href="#L341">341</a>             LOGGER.debug(<span class="jxr_string">"Failed to delete initial temporary file when extracting 'gz' {}"</span>, gzip.toString());
+<a class="jxr_linenumber" name="L341" href="#L341">341</a>             LOGGER.debug(<span class="jxr_string">"Failed to delete initial temporary file when extracting 'gz' {}"</span>, gzip);
 <a class="jxr_linenumber" name="L342" href="#L342">342</a>             gzip.deleteOnExit();
 <a class="jxr_linenumber" name="L343" href="#L343">343</a>         }
 <a class="jxr_linenumber" name="L344" href="#L344">344</a>         <strong class="jxr_keyword">if</strong> (!file.renameTo(gzip)) {
@@ -359,7 +359,7 @@
 <a class="jxr_linenumber" name="L351" href="#L351">351</a>             IOUtils.copy(cin, out);
 <a class="jxr_linenumber" name="L352" href="#L352">352</a>         } <strong class="jxr_keyword">finally</strong> {
 <a class="jxr_linenumber" name="L353" href="#L353">353</a>             <strong class="jxr_keyword">if</strong> (gzip.isFile() &amp;&amp; !org.apache.commons.io.FileUtils.deleteQuietly(gzip)) {
-<a class="jxr_linenumber" name="L354" href="#L354">354</a>                 LOGGER.debug(<span class="jxr_string">"Failed to delete temporary file when extracting 'gz' {}"</span>, gzip.toString());
+<a class="jxr_linenumber" name="L354" href="#L354">354</a>                 LOGGER.debug(<span class="jxr_string">"Failed to delete temporary file when extracting 'gz' {}"</span>, gzip);
 <a class="jxr_linenumber" name="L355" href="#L355">355</a>                 gzip.deleteOnExit();
 <a class="jxr_linenumber" name="L356" href="#L356">356</a>             }
 <a class="jxr_linenumber" name="L357" href="#L357">357</a>         }
@@ -377,7 +377,7 @@
 <a class="jxr_linenumber" name="L369" href="#L369">369</a>         <strong class="jxr_keyword">final</strong> String originalPath = file.getPath();
 <a class="jxr_linenumber" name="L370" href="#L370">370</a>         <strong class="jxr_keyword">final</strong> File zip = <strong class="jxr_keyword">new</strong> File(originalPath + <span class="jxr_string">".zip"</span>);
 <a class="jxr_linenumber" name="L371" href="#L371">371</a>         <strong class="jxr_keyword">if</strong> (zip.isFile() &amp;&amp; !zip.delete()) {
-<a class="jxr_linenumber" name="L372" href="#L372">372</a>             LOGGER.debug(<span class="jxr_string">"Failed to delete initial temporary file when extracting 'zip' {}"</span>, zip.toString());
+<a class="jxr_linenumber" name="L372" href="#L372">372</a>             LOGGER.debug(<span class="jxr_string">"Failed to delete initial temporary file when extracting 'zip' {}"</span>, zip);
 <a class="jxr_linenumber" name="L373" href="#L373">373</a>             zip.deleteOnExit();
 <a class="jxr_linenumber" name="L374" href="#L374">374</a>         }
 <a class="jxr_linenumber" name="L375" href="#L375">375</a>         <strong class="jxr_keyword">if</strong> (!file.renameTo(zip)) {
@@ -391,7 +391,7 @@
 <a class="jxr_linenumber" name="L383" href="#L383">383</a>             IOUtils.copy(cin, out);
 <a class="jxr_linenumber" name="L384" href="#L384">384</a>         } <strong class="jxr_keyword">finally</strong> {
 <a class="jxr_linenumber" name="L385" href="#L385">385</a>             <strong class="jxr_keyword">if</strong> (zip.isFile() &amp;&amp; !org.apache.commons.io.FileUtils.deleteQuietly(zip)) {
-<a class="jxr_linenumber" name="L386" href="#L386">386</a>                 LOGGER.debug(<span class="jxr_string">"Failed to delete temporary file when extracting 'zip' {}"</span>, zip.toString());
+<a class="jxr_linenumber" name="L386" href="#L386">386</a>                 LOGGER.debug(<span class="jxr_string">"Failed to delete temporary file when extracting 'zip' {}"</span>, zip);
 <a class="jxr_linenumber" name="L387" href="#L387">387</a>                 zip.deleteOnExit();
 <a class="jxr_linenumber" name="L388" href="#L388">388</a>             }
 <a class="jxr_linenumber" name="L389" href="#L389">389</a>         }

@@ -73,7 +73,7 @@ public class NvdCache {
             }
 <span class="nc" id="L74">            final File nvdFile = new File(cache, filename);</span>
 <span class="nc bnc" id="L75" title="All 4 branches missed.">            if (nvdFile.isFile() &amp;&amp; nvdFile.lastModified() &gt; validEpoch) {</span>
-<span class="nc" id="L76">                LOGGER.debug(&quot;Copying {} from cache&quot;, url.toString());</span>
+<span class="nc" id="L76">                LOGGER.debug(&quot;Copying {} from cache&quot;, url);</span>
 <span class="nc" id="L77">                FileUtils.copyFile(nvdFile, file);</span>
 <span class="nc" id="L78">                return false;</span>
             }
@@ -102,7 +102,7 @@ public class NvdCache {
 <span class="fc" id="L102">                final File nvdFile = new File(cache, filename);</span>
 <span class="fc" id="L103">                FileUtils.copyFile(file, nvdFile);</span>
 <span class="pc bpc" id="L104" title="1 of 2 branches missed.">                if (!nvdFile.setLastModified(Instant.now().toEpochMilli())) {</span>
-<span class="nc" id="L105">                    LOGGER.debug(&quot;Unable to set last modified date on {}&quot;, nvdFile.toString());</span>
+<span class="nc" id="L105">                    LOGGER.debug(&quot;Unable to set last modified date on {}&quot;, nvdFile);</span>
                 }
 <span class="nc" id="L107">            } catch (IOException ex) {</span>
 <span class="nc" id="L108">                LOGGER.debug(&quot;Error storing nvd file in cache&quot;, ex);</span>

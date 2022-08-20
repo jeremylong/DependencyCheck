@@ -180,15 +180,16 @@ import javax.annotation.concurrent.ThreadSafe;
 <span class="nc bnc" id="L180" title="All 2 branches missed.">        if (!Objects.equals(this.organization, other.organization)) {</span>
 <span class="nc" id="L181">            return false;</span>
         }
-<span class="nc bnc" id="L183" title="All 2 branches missed.">        if (!Objects.equals(this.organizationUrl, other.organizationUrl)) {</span>
-<span class="nc" id="L184">            return false;</span>
+        //noinspection RedundantIfStatement
+<span class="nc bnc" id="L184" title="All 2 branches missed.">        if (!Objects.equals(this.organizationUrl, other.organizationUrl)) {</span>
+<span class="nc" id="L185">            return false;</span>
         }
-<span class="nc" id="L186">        return true;</span>
+<span class="nc" id="L187">        return true;</span>
     }
 
     @Override
     public String toString() {
-<span class="nc" id="L191">        return &quot;Developer{&quot;</span>
+<span class="nc" id="L192">        return &quot;Developer{&quot;</span>
                 + &quot;id=&quot; + id
                 + &quot;, name=&quot; + name
                 + &quot;, email=&quot; + email

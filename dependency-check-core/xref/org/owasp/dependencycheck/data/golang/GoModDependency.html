@@ -29,7 +29,7 @@
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> com.github.packageurl.PackageURLBuilder;
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> java.io.File;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> java.nio.charset.Charset;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> java.nio.charset.StandardCharsets;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> java.util.Arrays;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> java.util.HashSet;
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> java.util.Set;
@@ -62,7 +62,7 @@
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment">     * A list of license files we recognize.</em>
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Set&lt;String&gt; LICENSE_FILES = <strong class="jxr_keyword">new</strong> HashSet&lt;String&gt;(Arrays.asList(<span class="jxr_string">"LICENSE"</span>, <span class="jxr_string">"LICENCE"</span>, <span class="jxr_string">"LICENSE.TXT"</span>,
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Set&lt;String&gt; LICENSE_FILES = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;(Arrays.asList(<span class="jxr_string">"LICENSE"</span>, <span class="jxr_string">"LICENCE"</span>, <span class="jxr_string">"LICENSE.TXT"</span>,
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>              <span class="jxr_string">"LICENSE.MD"</span>, <span class="jxr_string">"LICENCE.MD"</span>, <span class="jxr_string">"LICENSE.CODE"</span>, <span class="jxr_string">"LICENCE.CODE"</span>, <span class="jxr_string">"COPYING"</span>));
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">     * The module path.</em>
@@ -203,7 +203,7 @@
 <a class="jxr_linenumber" name="L195" href="#L195">195</a>             <strong class="jxr_keyword">for</strong> (File f : files) {
 <a class="jxr_linenumber" name="L196" href="#L196">196</a>                 <strong class="jxr_keyword">if</strong> (LICENSE_FILES.contains(f.getName().toUpperCase())) {
 <a class="jxr_linenumber" name="L197" href="#L197">197</a>                     <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L198" href="#L198">198</a>                         <strong class="jxr_keyword">final</strong> String license = FileUtils.readFileToString(f, Charset.forName(<span class="jxr_string">"UTF-8"</span>));
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>                         <strong class="jxr_keyword">final</strong> String license = FileUtils.readFileToString(f, StandardCharsets.UTF_8);
 <a class="jxr_linenumber" name="L199" href="#L199">199</a>                         dependency.setLicense(license);
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>                         <strong class="jxr_keyword">break</strong>;
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>                     } <strong class="jxr_keyword">catch</strong> (IOException ex) {

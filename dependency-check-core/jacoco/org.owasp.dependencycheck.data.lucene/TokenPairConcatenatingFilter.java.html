@@ -100,13 +100,6 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
 <span class="fc" id="L100">        return false;</span>
     }
 
-//    @Override
-//    public void reset() throws IOException {
-//        super.reset();
-//        previousWord = null;
-//        addSingleTerm = true;
-//    }
-
     /**
      * Resets the filter. This must be manually called between searching and
      * indexing. Unable to rely on `reset` as it appears to be called between
@@ -115,21 +108,21 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
      * @throws IOException thrown if there is an error reseting the tokenizer
      */
     public void clear() throws IOException {
-<span class="fc" id="L118">        previousWord = null;</span>
-<span class="fc" id="L119">        addSingleTerm = true;</span>
-<span class="fc" id="L120">    }</span>
+<span class="fc" id="L111">        previousWord = null;</span>
+<span class="fc" id="L112">        addSingleTerm = true;</span>
+<span class="fc" id="L113">    }</span>
 
     /**
      * {@inheritDoc}
      */
     @Override
     public int hashCode() {
-<span class="nc" id="L127">        return new HashCodeBuilder(13, 27)</span>
-<span class="nc" id="L128">                .appendSuper(super.hashCode())</span>
-<span class="nc" id="L129">                .append(addSingleTerm)</span>
-<span class="nc" id="L130">                .append(previousWord)</span>
-<span class="nc" id="L131">                .append(termAtt)</span>
-<span class="nc" id="L132">                .build();</span>
+<span class="nc" id="L120">        return new HashCodeBuilder(13, 27)</span>
+<span class="nc" id="L121">                .appendSuper(super.hashCode())</span>
+<span class="nc" id="L122">                .append(addSingleTerm)</span>
+<span class="nc" id="L123">                .append(previousWord)</span>
+<span class="nc" id="L124">                .append(termAtt)</span>
+<span class="nc" id="L125">                .build();</span>
     }
 
     /**
@@ -137,19 +130,19 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
      */
     @Override
     public boolean equals(Object obj) {
-<span class="nc bnc" id="L140" title="All 4 branches missed.">        if (obj == null || !(obj instanceof TokenPairConcatenatingFilter)) {</span>
-<span class="nc" id="L141">            return false;</span>
+<span class="nc bnc" id="L133" title="All 4 branches missed.">        if (obj == null || !(obj instanceof TokenPairConcatenatingFilter)) {</span>
+<span class="nc" id="L134">            return false;</span>
         }
-<span class="nc bnc" id="L143" title="All 2 branches missed.">        if (this == obj) {</span>
-<span class="nc" id="L144">            return true;</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        if (this == obj) {</span>
+<span class="nc" id="L137">            return true;</span>
         }
-<span class="nc" id="L146">        final TokenPairConcatenatingFilter rhs = (TokenPairConcatenatingFilter) obj;</span>
-<span class="nc" id="L147">        return new EqualsBuilder()</span>
-<span class="nc" id="L148">                .appendSuper(super.equals(obj))</span>
-<span class="nc" id="L149">                .append(addSingleTerm, rhs.addSingleTerm)</span>
-<span class="nc" id="L150">                .append(previousWord, rhs.previousWord)</span>
-<span class="nc" id="L151">                .append(termAtt, rhs.termAtt)</span>
-<span class="nc" id="L152">                .isEquals();</span>
+<span class="nc" id="L139">        final TokenPairConcatenatingFilter rhs = (TokenPairConcatenatingFilter) obj;</span>
+<span class="nc" id="L140">        return new EqualsBuilder()</span>
+<span class="nc" id="L141">                .appendSuper(super.equals(obj))</span>
+<span class="nc" id="L142">                .append(addSingleTerm, rhs.addSingleTerm)</span>
+<span class="nc" id="L143">                .append(previousWord, rhs.previousWord)</span>
+<span class="nc" id="L144">                .append(termAtt, rhs.termAtt)</span>
+<span class="nc" id="L145">                .isEquals();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

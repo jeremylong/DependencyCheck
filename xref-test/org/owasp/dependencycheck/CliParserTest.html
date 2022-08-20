@@ -274,7 +274,7 @@
 <a class="jxr_linenumber" name="L266" href="#L266">266</a>             String[] lines = text.split(System.getProperty(<span class="jxr_string">"line.separator"</span>));
 <a class="jxr_linenumber" name="L267" href="#L267">267</a>             Assert.assertTrue(lines.length &gt;= 1);
 <a class="jxr_linenumber" name="L268" href="#L268">268</a>             Assert.assertTrue(text.contains(<span class="jxr_string">"version"</span>));
-<a class="jxr_linenumber" name="L269" href="#L269">269</a>             Assert.assertTrue(!text.contains(<span class="jxr_string">"unknown"</span>));
+<a class="jxr_linenumber" name="L269" href="#L269">269</a>             Assert.assertFalse(text.contains(<span class="jxr_string">"unknown"</span>));
 <a class="jxr_linenumber" name="L270" href="#L270">270</a>         } <strong class="jxr_keyword">catch</strong> (IOException ex) {
 <a class="jxr_linenumber" name="L271" href="#L271">271</a>             System.setOut(out);
 <a class="jxr_linenumber" name="L272" href="#L272">272</a>             Assert.fail(<span class="jxr_string">"CliParser.printVersionInfo did not write anything to system.out."</span>);
@@ -331,7 +331,7 @@
 <a class="jxr_linenumber" name="L323" href="#L323">323</a>         } <strong class="jxr_keyword">catch</strong> (FileNotFoundException ex) {
 <a class="jxr_linenumber" name="L324" href="#L324">324</a>             Assert.assertTrue(ex.getMessage().contains(<span class="jxr_string">"Invalid 'scan' argument"</span>));
 <a class="jxr_linenumber" name="L325" href="#L325">325</a>         }
-<a class="jxr_linenumber" name="L326" href="#L326">326</a>         Boolean expResult;
+<a class="jxr_linenumber" name="L326" href="#L326">326</a>         <strong class="jxr_keyword">boolean</strong> expResult;
 <a class="jxr_linenumber" name="L327" href="#L327">327</a>         Boolean result = instance.getBooleanArgument(<span class="jxr_string">"missingArgument"</span>);
 <a class="jxr_linenumber" name="L328" href="#L328">328</a>         Assert.assertNull(result);
 <a class="jxr_linenumber" name="L329" href="#L329">329</a> 

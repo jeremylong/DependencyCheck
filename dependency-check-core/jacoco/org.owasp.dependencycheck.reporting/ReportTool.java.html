@@ -123,23 +123,20 @@ import us.springett.parsers.cpe.util.Convert;
     }
 
     private String normalizeSeverity(String sev) {
-<span class="pc bpc" id="L126" title="2 of 8 branches missed.">        switch (sev) {</span>
+<span class="fc bfc" id="L126" title="All 5 branches covered.">        switch (sev) {</span>
             case &quot;critical&quot;:
 <span class="fc" id="L128">                return &quot;Critical&quot;;</span>
             case &quot;high&quot;:
 <span class="fc" id="L130">                return &quot;High&quot;;</span>
             case &quot;medium&quot;:
-<span class="fc" id="L132">                return &quot;Medium&quot;;</span>
             case &quot;moderate&quot;:
-<span class="fc" id="L134">                return &quot;Medium&quot;;</span>
+<span class="fc" id="L133">                return &quot;Medium&quot;;</span>
             case &quot;low&quot;:
-<span class="fc" id="L136">                return &quot;Low&quot;;</span>
             case &quot;informational&quot;:
-<span class="nc" id="L138">                return &quot;Low&quot;;</span>
             case &quot;info&quot;:
-<span class="nc" id="L140">                return &quot;Low&quot;;</span>
+<span class="fc" id="L137">                return &quot;Low&quot;;</span>
             default:
-<span class="fc" id="L142">                return &quot;Unknown&quot;;</span>
+<span class="fc" id="L139">                return &quot;Unknown&quot;;</span>
         }
     }
 
@@ -151,23 +148,23 @@ import us.springett.parsers.cpe.util.Convert;
      * @return the short description
      */
     private String buildShortDescription(Dependency d, Vulnerability vuln) {
-<span class="fc" id="L154">        final StringBuilder sb = new StringBuilder();</span>
-<span class="fc" id="L155">        sb.append(determineScore(vuln))</span>
-<span class="fc" id="L156">                .append(&quot; severity - &quot;)</span>
-<span class="fc" id="L157">                .append(vuln.getName());</span>
-<span class="pc bpc" id="L158" title="1 of 4 branches missed.">        if (vuln.getCwes() != null &amp;&amp; !vuln.getCwes().isEmpty()) {</span>
-<span class="fc" id="L159">            final String cwe = vuln.getCwes().getFullCwes().values().iterator().next();</span>
-<span class="pc bpc" id="L160" title="2 of 6 branches missed.">            if (cwe != null &amp;&amp; !&quot;NVD-CWE-Other&quot;.equals(cwe) &amp;&amp; !&quot;NVD-CWE-noinfo&quot;.equals(cwe)) {</span>
-<span class="fc" id="L161">                sb.append(&quot; &quot;).append(cwe);</span>
+<span class="fc" id="L151">        final StringBuilder sb = new StringBuilder();</span>
+<span class="fc" id="L152">        sb.append(determineScore(vuln))</span>
+<span class="fc" id="L153">                .append(&quot; severity - &quot;)</span>
+<span class="fc" id="L154">                .append(vuln.getName());</span>
+<span class="pc bpc" id="L155" title="1 of 4 branches missed.">        if (vuln.getCwes() != null &amp;&amp; !vuln.getCwes().isEmpty()) {</span>
+<span class="fc" id="L156">            final String cwe = vuln.getCwes().getFullCwes().values().iterator().next();</span>
+<span class="pc bpc" id="L157" title="2 of 6 branches missed.">            if (cwe != null &amp;&amp; !&quot;NVD-CWE-Other&quot;.equals(cwe) &amp;&amp; !&quot;NVD-CWE-noinfo&quot;.equals(cwe)) {</span>
+<span class="fc" id="L158">                sb.append(&quot; &quot;).append(cwe);</span>
             }
         }
-<span class="fc" id="L164">        sb.append(&quot; vulnerability in &quot;);</span>
-<span class="pc bpc" id="L165" title="2 of 4 branches missed.">        if (d.getSoftwareIdentifiers() != null &amp;&amp; !d.getSoftwareIdentifiers().isEmpty()) {</span>
-<span class="fc" id="L166">            sb.append(d.getSoftwareIdentifiers().iterator().next());</span>
+<span class="fc" id="L161">        sb.append(&quot; vulnerability in &quot;);</span>
+<span class="pc bpc" id="L162" title="2 of 4 branches missed.">        if (d.getSoftwareIdentifiers() != null &amp;&amp; !d.getSoftwareIdentifiers().isEmpty()) {</span>
+<span class="fc" id="L163">            sb.append(d.getSoftwareIdentifiers().iterator().next());</span>
         } else {
-<span class="nc" id="L168">            sb.append(d.getDisplayFileName());</span>
+<span class="nc" id="L165">            sb.append(d.getDisplayFileName());</span>
         }
-<span class="fc" id="L170">        return sb.toString();</span>
+<span class="fc" id="L167">        return sb.toString();</span>
     }
 
 }

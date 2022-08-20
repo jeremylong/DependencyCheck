@@ -304,7 +304,7 @@
 <a class="jxr_linenumber" name="L296" href="#L296">296</a> 
 <a class="jxr_linenumber" name="L297" href="#L297">297</a>                     } <strong class="jxr_keyword">finally</strong> {
 <a class="jxr_linenumber" name="L298" href="#L298">298</a>                         <strong class="jxr_keyword">if</strong> (pomFile != <strong class="jxr_keyword">null</strong> &amp;&amp; pomFile.exists() &amp;&amp; !FileUtils.deleteQuietly(pomFile)) {
-<a class="jxr_linenumber" name="L299" href="#L299">299</a>                             LOGGER.debug(<span class="jxr_string">"Failed to delete temporary pom file {}"</span>, pomFile.toString());
+<a class="jxr_linenumber" name="L299" href="#L299">299</a>                             LOGGER.debug(<span class="jxr_string">"Failed to delete temporary pom file {}"</span>, pomFile);
 <a class="jxr_linenumber" name="L300" href="#L300">300</a>                             pomFile.deleteOnExit();
 <a class="jxr_linenumber" name="L301" href="#L301">301</a>                         }
 <a class="jxr_linenumber" name="L302" href="#L302">302</a>                     }

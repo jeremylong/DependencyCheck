@@ -272,7 +272,7 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
 <span class="nc" id="L272">                            + &quot;this could result in undetected CPE/CVEs.&quot;, dependency.getFileName());</span>
                 } finally {
 <span class="nc bnc" id="L274" title="All 6 branches missed.">                    if (pomFile != null &amp;&amp; pomFile.exists() &amp;&amp; !FileUtils.deleteQuietly(pomFile)) {</span>
-<span class="nc" id="L275">                        LOGGER.debug(&quot;Failed to delete temporary pom file {}&quot;, pomFile.toString());</span>
+<span class="nc" id="L275">                        LOGGER.debug(&quot;Failed to delete temporary pom file {}&quot;, pomFile);</span>
 <span class="nc" id="L276">                        pomFile.deleteOnExit();</span>
                     }
                 }

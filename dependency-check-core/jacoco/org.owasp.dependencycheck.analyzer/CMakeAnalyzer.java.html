@@ -38,7 +38,11 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
@@ -58,7 +62,7 @@ import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
  * @author Dale Visser
  */
 @Experimental
-<span class="fc" id="L61">public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {</span>
+<span class="fc" id="L65">public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {</span>
 
     /**
      * A descriptor for the type of dependencies processed or added by this
@@ -69,7 +73,7 @@ import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
     /**
      * The logger.
      */
-<span class="fc" id="L72">    private static final Logger LOGGER = LoggerFactory.getLogger(CMakeAnalyzer.class);</span>
+<span class="fc" id="L76">    private static final Logger LOGGER = LoggerFactory.getLogger(CMakeAnalyzer.class);</span>
 
     /**
      * Used when compiling file scanning regex patterns.
@@ -78,21 +82,21 @@ import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
     /**
      * Regex to obtain the project version.
      */
-<span class="fc" id="L81">    private static final Pattern PROJECT_VERSION = Pattern.compile(&quot;^\\s*set\\s*\\(\\s*VERSION\\s*\&quot;([^\&quot;]*)\&quot;\\)&quot;,</span>
+<span class="fc" id="L85">    private static final Pattern PROJECT_VERSION = Pattern.compile(&quot;^\\s*set\\s*\\(\\s*VERSION\\s*\&quot;([^\&quot;]*)\&quot;\\)&quot;,</span>
             REGEX_OPTIONS);
     /**
      * Regex to obtain variables.
      */
-<span class="fc" id="L86">    private static final Pattern SET_VAR_REGEX = Pattern.compile(</span>
-            &quot;^\\s*set\\s*\\(\\s*([a-zA-Z0-9_\\-]*)\\s+\&quot;?([a-zA-Z0-9_\\-\\.\\$\\{\\}]*)\&quot;?\\s*\\)&quot;, REGEX_OPTIONS);
+<span class="fc" id="L90">    private static final Pattern SET_VAR_REGEX = Pattern.compile(</span>
+            &quot;^\\s*set\\s*\\(\\s*([a-zA-Z\\d_\\-]*)\\s+\&quot;?([a-zA-Z\\d_\\-.${}]*)\&quot;?\\s*\\)&quot;, REGEX_OPTIONS);
     /**
      * Regex to find inlined variables to replace them.
      */
-<span class="fc" id="L91">    private static final Pattern INL_VAR_REGEX = Pattern.compile(&quot;(\\$\\s*\\{([^\\}]*)\\s*\\})&quot;, REGEX_OPTIONS);</span>
+<span class="fc" id="L95">    private static final Pattern INL_VAR_REGEX = Pattern.compile(&quot;(\\$\\s*\\{([^}]*)\\s*})&quot;, REGEX_OPTIONS);</span>
     /**
      * Regex to extract the product information.
      */
-<span class="fc" id="L95">    private static final Pattern PROJECT = Pattern.compile(&quot;^ *project *\\([ \\n]*(\\w+)[ \\n]*.*?\\)&quot;, REGEX_OPTIONS);</span>
+<span class="fc" id="L99">    private static final Pattern PROJECT = Pattern.compile(&quot;^ *project *\\([ \\n]*(\\w+)[ \\n]*.*?\\)&quot;, REGEX_OPTIONS);</span>
 
     /**
      * Regex to extract product and version information.
@@ -101,14 +105,14 @@ import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
      *
      * Group 2: Version
      */
-<span class="fc" id="L104">    private static final Pattern SET_VERSION = Pattern</span>
-<span class="fc" id="L105">            .compile(&quot;^\\s*set\\s*\\(\\s*(\\w+)_version\\s+\&quot;?([^\&quot;\\)]*)\\s*\&quot;?\\)&quot;, REGEX_OPTIONS);</span>
+<span class="fc" id="L108">    private static final Pattern SET_VERSION = Pattern</span>
+<span class="fc" id="L109">            .compile(&quot;^\\s*set\\s*\\(\\s*(\\w+)_version\\s+\&quot;?([^\&quot;)]*)\\s*\&quot;?\\)&quot;, REGEX_OPTIONS);</span>
 
     /**
      * Detects files that can be analyzed.
      */
-<span class="fc" id="L110">    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(&quot;.cmake&quot;)</span>
-<span class="fc" id="L111">            .addFilenames(&quot;CMakeLists.txt&quot;).build();</span>
+<span class="fc" id="L114">    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(&quot;.cmake&quot;)</span>
+<span class="fc" id="L115">            .addFilenames(&quot;CMakeLists.txt&quot;).build();</span>
 
     /**
      * Returns the name of the CMake analyzer.
@@ -117,7 +121,7 @@ import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
      */
     @Override
     public String getName() {
-<span class="fc" id="L120">        return &quot;CMake Analyzer&quot;;</span>
+<span class="fc" id="L124">        return &quot;CMake Analyzer&quot;;</span>
     }
 
     /**
@@ -127,7 +131,7 @@ import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
      */
     @Override
     public AnalysisPhase getAnalysisPhase() {
-<span class="fc" id="L130">        return AnalysisPhase.INFORMATION_COLLECTION;</span>
+<span class="fc" id="L134">        return AnalysisPhase.INFORMATION_COLLECTION;</span>
     }
 
     /**
@@ -137,7 +141,7 @@ import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
      */
     @Override
     protected FileFilter getFileFilter() {
-<span class="fc" id="L140">        return FILTER;</span>
+<span class="fc" id="L144">        return FILTER;</span>
     }
 
     /**
@@ -150,7 +154,7 @@ import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
     @Override
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         //do nothing
-<span class="fc" id="L153">    }</span>
+<span class="fc" id="L157">    }</span>
 
     /**
      * Analyzes python packages and adds evidence to the dependency.
@@ -162,106 +166,105 @@ import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
      */
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-<span class="fc" id="L165">        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
-<span class="fc" id="L166">        final File file = dependency.getActualFile();</span>
-<span class="fc" id="L167">        final String name = file.getName();</span>
+<span class="fc" id="L169">        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc" id="L170">        final File file = dependency.getActualFile();</span>
+<span class="fc" id="L171">        final String name = file.getName();</span>
         final String contents;
         try {
-<span class="fc" id="L170">            contents = FileUtils.readFileToString(file, Charset.defaultCharset()).trim();</span>
-<span class="nc" id="L171">        } catch (IOException e) {</span>
-<span class="nc" id="L172">            throw new AnalysisException(</span>
+<span class="fc" id="L174">            contents = FileUtils.readFileToString(file, Charset.defaultCharset()).trim();</span>
+<span class="nc" id="L175">        } catch (IOException e) {</span>
+<span class="nc" id="L176">            throw new AnalysisException(</span>
                     &quot;Problem occurred while reading dependency file.&quot;, e);
-<span class="fc" id="L174">        }</span>
-<span class="pc bpc" id="L175" title="1 of 2 branches missed.">        if (StringUtils.isNotBlank(contents)) {</span>
-<span class="fc" id="L176">            final HashMap&lt;String, String&gt; vars = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L177">            collectDefinedVariables(dependency, engine, contents, vars);</span>
+<span class="fc" id="L178">        }</span>
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">        if (StringUtils.isNotBlank(contents)) {</span>
+<span class="fc" id="L180">            final Map&lt;String, String&gt; vars = collectDefinedVariables(contents);</span>
 
-<span class="fc" id="L179">            String contentsReplacer = contents;</span>
-<span class="fc" id="L180">            Matcher r = INL_VAR_REGEX.matcher(contents);</span>
-<span class="fc bfc" id="L181" title="All 2 branches covered.">            while (r.find()) {</span>
-<span class="fc" id="L182">                boolean leastOne = false;</span>
-<span class="pc bpc" id="L183" title="1 of 2 branches missed.">                if (vars.containsKey(r.group(2))) {</span>
-<span class="nc bnc" id="L184" title="All 2 branches missed.">                    if (!vars.get(r.group(2)).contains(r.group(2))) {</span>
-<span class="nc" id="L185">                        contentsReplacer = contentsReplacer.replace(r.group(1), vars.get(r.group(2)));</span>
-<span class="nc" id="L186">                        r = INL_VAR_REGEX.matcher(contentsReplacer);</span>
-<span class="nc" id="L187">                        leastOne = true;</span>
+<span class="fc" id="L182">            String contentsReplacer = contents;</span>
+<span class="fc" id="L183">            Matcher r = INL_VAR_REGEX.matcher(contents);</span>
+<span class="fc bfc" id="L184" title="All 2 branches covered.">            while (r.find()) {</span>
+<span class="fc" id="L185">                boolean leastOne = false;</span>
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">                if (vars.containsKey(r.group(2))) {</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">                    if (!vars.get(r.group(2)).contains(r.group(2))) {</span>
+<span class="nc" id="L188">                        contentsReplacer = contentsReplacer.replace(r.group(1), vars.get(r.group(2)));</span>
+<span class="nc" id="L189">                        r = INL_VAR_REGEX.matcher(contentsReplacer);</span>
+<span class="nc" id="L190">                        leastOne = true;</span>
                     }
                 }
-<span class="fc bfc" id="L190" title="All 2 branches covered.">                while (r.find()) {</span>
-<span class="fc bfc" id="L191" title="All 2 branches covered.">                    if (vars.containsKey(r.group(2))) {</span>
-<span class="fc bfc" id="L192" title="All 2 branches covered.">                        if (!vars.get(r.group(2)).contains(r.group(2))) {</span>
-<span class="fc" id="L193">                            contentsReplacer = contentsReplacer.replace(r.group(1), vars.get(r.group(2)));</span>
-<span class="fc" id="L194">                            r = INL_VAR_REGEX.matcher(contentsReplacer);</span>
-<span class="fc" id="L195">                            leastOne = true;</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">                while (r.find()) {</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">                    if (vars.containsKey(r.group(2))) {</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">                        if (!vars.get(r.group(2)).contains(r.group(2))) {</span>
+<span class="fc" id="L196">                            contentsReplacer = contentsReplacer.replace(r.group(1), vars.get(r.group(2)));</span>
+<span class="fc" id="L197">                            r = INL_VAR_REGEX.matcher(contentsReplacer);</span>
+<span class="fc" id="L198">                            leastOne = true;</span>
                         }
                     }
                 }
-<span class="fc bfc" id="L199" title="All 2 branches covered.">                if (!leastOne) {</span>
-<span class="fc" id="L200">                    break;</span>
+<span class="fc bfc" id="L202" title="All 2 branches covered.">                if (!leastOne) {</span>
+<span class="fc" id="L203">                    break;</span>
                 }
-<span class="fc" id="L202">                r = INL_VAR_REGEX.matcher(contentsReplacer);</span>
-<span class="fc" id="L203">            }</span>
-<span class="fc" id="L204">            final String contentsReplaced = contentsReplacer;</span>
-<span class="fc" id="L205">            final Matcher m = PROJECT.matcher(contentsReplaced);</span>
-<span class="fc" id="L206">            int count = 0;</span>
-<span class="fc bfc" id="L207" title="All 2 branches covered.">            while (m.find()) {</span>
-<span class="fc" id="L208">                count++;</span>
-<span class="fc" id="L209">                LOGGER.debug(String.format(</span>
+<span class="fc" id="L205">                r = INL_VAR_REGEX.matcher(contentsReplacer);</span>
+<span class="fc" id="L206">            }</span>
+<span class="fc" id="L207">            final String contentsReplaced = contentsReplacer;</span>
+<span class="fc" id="L208">            final Matcher m = PROJECT.matcher(contentsReplaced);</span>
+<span class="fc" id="L209">            int count = 0;</span>
+<span class="fc bfc" id="L210" title="All 2 branches covered.">            while (m.find()) {</span>
+<span class="fc" id="L211">                count++;</span>
+<span class="fc" id="L212">                LOGGER.debug(String.format(</span>
                         &quot;Found project command match with %d groups: %s&quot;,
-<span class="fc" id="L211">                        m.groupCount(), m.group(0)));</span>
-<span class="fc" id="L212">                final String group = m.group(1);</span>
-<span class="fc" id="L213">                LOGGER.debug(&quot;Group 1: {}&quot;, group);</span>
-<span class="fc" id="L214">                dependency.addEvidence(EvidenceType.PRODUCT, name, &quot;Project&quot;, group, Confidence.HIGH);</span>
-<span class="fc" id="L215">                dependency.addEvidence(EvidenceType.VENDOR, name, &quot;Project&quot;, group, Confidence.HIGH);</span>
-<span class="fc" id="L216">                dependency.setName(group);</span>
-<span class="fc" id="L217">                dependency.setDisplayFileName(group);</span>
-<span class="fc" id="L218">            }</span>
-<span class="fc bfc" id="L219" title="All 2 branches covered.">            if (count &gt; 0) {</span>
-<span class="fc" id="L220">                dependency.addEvidence(EvidenceType.VENDOR, &quot;CmakeAnalyzer&quot;, &quot;hint&quot;, &quot;gnu&quot;, Confidence.MEDIUM);</span>
+<span class="fc" id="L214">                        m.groupCount(), m.group(0)));</span>
+<span class="fc" id="L215">                final String group = m.group(1);</span>
+<span class="fc" id="L216">                LOGGER.debug(&quot;Group 1: {}&quot;, group);</span>
+<span class="fc" id="L217">                dependency.addEvidence(EvidenceType.PRODUCT, name, &quot;Project&quot;, group, Confidence.HIGH);</span>
+<span class="fc" id="L218">                dependency.addEvidence(EvidenceType.VENDOR, name, &quot;Project&quot;, group, Confidence.HIGH);</span>
+<span class="fc" id="L219">                dependency.setName(group);</span>
+<span class="fc" id="L220">                dependency.setDisplayFileName(group);</span>
+<span class="fc" id="L221">            }</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">            if (count &gt; 0) {</span>
+<span class="fc" id="L223">                dependency.addEvidence(EvidenceType.VENDOR, &quot;CmakeAnalyzer&quot;, &quot;hint&quot;, &quot;gnu&quot;, Confidence.MEDIUM);</span>
             }
-<span class="fc" id="L222">            LOGGER.debug(&quot;Found {} matches.&quot;, count);</span>
-<span class="fc" id="L223">            final Matcher mVersion = PROJECT_VERSION.matcher(contentsReplaced);</span>
-<span class="fc bfc" id="L224" title="All 2 branches covered.">            while (mVersion.find()) {</span>
-<span class="fc" id="L225">                LOGGER.debug(String.format(</span>
+<span class="fc" id="L225">            LOGGER.debug(&quot;Found {} matches.&quot;, count);</span>
+<span class="fc" id="L226">            final Matcher mVersion = PROJECT_VERSION.matcher(contentsReplaced);</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">            while (mVersion.find()) {</span>
+<span class="fc" id="L228">                LOGGER.debug(String.format(</span>
                         &quot;Found set version command match with %d groups: %s&quot;,
-<span class="fc" id="L227">                        mVersion.groupCount(), mVersion.group(0)));</span>
-<span class="fc" id="L228">                final String group = mVersion.group(1);</span>
-<span class="fc" id="L229">                LOGGER.debug(&quot;Group 1: {}&quot;, group);</span>
-<span class="fc" id="L230">                dependency.addEvidence(EvidenceType.VERSION, name, &quot;VERSION&quot;, group, Confidence.HIGH);</span>
-<span class="fc" id="L231">                final DependencyVersion vers = DependencyVersionUtil.parseVersion(group, true);</span>
-<span class="pc bpc" id="L232" title="1 of 2 branches missed.">                if (vers != null) {</span>
-<span class="fc" id="L233">                    dependency.setVersion(vers.toString());</span>
+<span class="fc" id="L230">                        mVersion.groupCount(), mVersion.group(0)));</span>
+<span class="fc" id="L231">                final String group = mVersion.group(1);</span>
+<span class="fc" id="L232">                LOGGER.debug(&quot;Group 1: {}&quot;, group);</span>
+<span class="fc" id="L233">                dependency.addEvidence(EvidenceType.VERSION, name, &quot;VERSION&quot;, group, Confidence.HIGH);</span>
+<span class="fc" id="L234">                final DependencyVersion vers = DependencyVersionUtil.parseVersion(group, true);</span>
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">                if (vers != null) {</span>
+<span class="fc" id="L236">                    dependency.setVersion(vers.toString());</span>
                 }
-<span class="fc" id="L235">            }</span>
+<span class="fc" id="L238">            }</span>
 
-<span class="fc" id="L237">            analyzeSetVersionCommand(dependency, engine, contentsReplaced);</span>
+<span class="fc" id="L240">            analyzeSetVersionCommand(dependency, engine, contentsReplaced);</span>
         }
-<span class="fc" id="L239">    }</span>
+<span class="fc" id="L242">    }</span>
 
     /**
      * Collect defined CMake variables
      *
-     * @param dependency the dependency being analyzed
-     * @param engine the dependency-check engine
      * @param contents the version information
-     * @param vars map of variable replacement tokens
+     *
+     * @return a map referencing identified variables
      */
-    private void collectDefinedVariables(Dependency dependency, Engine engine, String contents,
-            HashMap&lt;String, String&gt; vars) {
-<span class="fc" id="L251">        final Matcher m = SET_VAR_REGEX.matcher(contents);</span>
-<span class="fc" id="L252">        int count = 0;</span>
-<span class="fc bfc" id="L253" title="All 2 branches covered.">        while (m.find()) {</span>
-<span class="fc" id="L254">            count++;</span>
-<span class="fc" id="L255">            LOGGER.debug(&quot;Found set variable command match with {} groups: {}&quot;,</span>
-<span class="fc" id="L256">                    m.groupCount(), m.group(0));</span>
-<span class="fc" id="L257">            final String name = m.group(1);</span>
-<span class="fc" id="L258">            final String value = m.group(2);</span>
-<span class="fc" id="L259">            LOGGER.debug(&quot;Group 1: {}&quot;, name);</span>
-<span class="fc" id="L260">            LOGGER.debug(&quot;Group 2: {}&quot;, value);</span>
-<span class="fc" id="L261">            vars.put(name, value);</span>
-<span class="fc" id="L262">        }</span>
-<span class="fc" id="L263">        LOGGER.debug(&quot;Found {} matches.&quot;, count);</span>
-<span class="fc" id="L264">    }</span>
+    private Map&lt;String, String&gt; collectDefinedVariables(String contents) {
+<span class="fc" id="L252">        final Map&lt;String, String&gt; vars = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L253">        final Matcher m = SET_VAR_REGEX.matcher(contents);</span>
+<span class="fc" id="L254">        int count = 0;</span>
+<span class="fc bfc" id="L255" title="All 2 branches covered.">        while (m.find()) {</span>
+<span class="fc" id="L256">            count++;</span>
+<span class="fc" id="L257">            LOGGER.debug(&quot;Found set variable command match with {} groups: {}&quot;,</span>
+<span class="fc" id="L258">                    m.groupCount(), m.group(0));</span>
+<span class="fc" id="L259">            final String name = m.group(1);</span>
+<span class="fc" id="L260">            final String value = m.group(2);</span>
+<span class="fc" id="L261">            LOGGER.debug(&quot;Group 1: {}&quot;, name);</span>
+<span class="fc" id="L262">            LOGGER.debug(&quot;Group 2: {}&quot;, value);</span>
+<span class="fc" id="L263">            vars.put(name, value);</span>
+<span class="fc" id="L264">        }</span>
+<span class="fc" id="L265">        LOGGER.debug(&quot;Found {} matches.&quot;, count);</span>
+<span class="fc" id="L266">        return removeSelfReferences(vars);</span>
+    }
 
     /**
      * Extracts the version information from the contents. If more then one
@@ -273,72 +276,113 @@ import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
      * @param contents the version information
      */
     private void analyzeSetVersionCommand(Dependency dependency, Engine engine, String contents) {
-<span class="fc" id="L276">        Dependency currentDep = dependency;</span>
+<span class="fc" id="L279">        Dependency currentDep = dependency;</span>
 
-<span class="fc" id="L278">        final Matcher m = SET_VERSION.matcher(contents);</span>
-<span class="fc" id="L279">        int count = 0;</span>
-<span class="fc bfc" id="L280" title="All 2 branches covered.">        while (m.find()) {</span>
-<span class="fc" id="L281">            count++;</span>
-<span class="fc" id="L282">            LOGGER.debug(&quot;Found project command match with {} groups: {}&quot;,</span>
-<span class="fc" id="L283">                    m.groupCount(), m.group(0));</span>
-<span class="fc" id="L284">            String product = m.group(1);</span>
-<span class="fc" id="L285">            final String version = m.group(2);</span>
-<span class="fc" id="L286">            LOGGER.debug(&quot;Group 1: {}&quot;, product);</span>
-<span class="fc" id="L287">            LOGGER.debug(&quot;Group 2: {}&quot;, version);</span>
-<span class="fc" id="L288">            final String aliasPrefix = &quot;ALIASOF_&quot;;</span>
-<span class="fc bfc" id="L289" title="All 2 branches covered.">            if (product.startsWith(aliasPrefix)) {</span>
-<span class="fc" id="L290">                product = product.replaceFirst(aliasPrefix, &quot;&quot;);</span>
+<span class="fc" id="L281">        final Matcher m = SET_VERSION.matcher(contents);</span>
+<span class="fc" id="L282">        int count = 0;</span>
+<span class="fc bfc" id="L283" title="All 2 branches covered.">        while (m.find()) {</span>
+<span class="fc" id="L284">            count++;</span>
+<span class="fc" id="L285">            LOGGER.debug(&quot;Found project command match with {} groups: {}&quot;,</span>
+<span class="fc" id="L286">                    m.groupCount(), m.group(0));</span>
+<span class="fc" id="L287">            String product = m.group(1);</span>
+<span class="fc" id="L288">            final String version = m.group(2);</span>
+<span class="fc" id="L289">            LOGGER.debug(&quot;Group 1: {}&quot;, product);</span>
+<span class="fc" id="L290">            LOGGER.debug(&quot;Group 2: {}&quot;, version);</span>
+<span class="fc" id="L291">            final String aliasPrefix = &quot;ALIASOF_&quot;;</span>
+<span class="fc bfc" id="L292" title="All 2 branches covered.">            if (product.startsWith(aliasPrefix)) {</span>
+<span class="fc" id="L293">                product = product.replaceFirst(aliasPrefix, &quot;&quot;);</span>
             }
-<span class="fc bfc" id="L292" title="All 2 branches covered.">            if (product.startsWith(&quot;_&quot;)) {</span>
-<span class="fc" id="L293">                product = product.substring(1);</span>
+<span class="fc bfc" id="L295" title="All 2 branches covered.">            if (product.startsWith(&quot;_&quot;)) {</span>
+<span class="fc" id="L296">                product = product.substring(1);</span>
             }
-<span class="fc bfc" id="L295" title="All 2 branches covered.">            if (count &gt; 1) {</span>
-<span class="fc" id="L296">                currentDep = new Dependency(dependency.getActualFile(), true);</span>
-<span class="fc" id="L297">                currentDep.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
-<span class="fc" id="L298">                final String filePath = String.format(&quot;%s:%s&quot;, dependency.getFilePath(), product);</span>
-<span class="fc" id="L299">                currentDep.setFilePath(filePath);</span>
+<span class="fc bfc" id="L298" title="All 2 branches covered.">            if (count &gt; 1) {</span>
+<span class="fc" id="L299">                currentDep = new Dependency(dependency.getActualFile(), true);</span>
+<span class="fc" id="L300">                currentDep.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc" id="L301">                final String filePath = String.format(&quot;%s:%s&quot;, dependency.getFilePath(), product);</span>
+<span class="fc" id="L302">                currentDep.setFilePath(filePath);</span>
 
-<span class="fc" id="L301">                currentDep.setSha1sum(Checksum.getSHA1Checksum(filePath));</span>
-<span class="fc" id="L302">                currentDep.setSha256sum(Checksum.getSHA256Checksum(filePath));</span>
-<span class="fc" id="L303">                currentDep.setMd5sum(Checksum.getMD5Checksum(filePath));</span>
-<span class="fc" id="L304">                engine.addDependency(currentDep);</span>
+<span class="fc" id="L304">                currentDep.setSha1sum(Checksum.getSHA1Checksum(filePath));</span>
+<span class="fc" id="L305">                currentDep.setSha256sum(Checksum.getSHA256Checksum(filePath));</span>
+<span class="fc" id="L306">                currentDep.setMd5sum(Checksum.getMD5Checksum(filePath));</span>
+<span class="fc" id="L307">                engine.addDependency(currentDep);</span>
             }
-<span class="fc" id="L306">            final String source = currentDep.getFileName();</span>
-<span class="fc" id="L307">            currentDep.addEvidence(EvidenceType.PRODUCT, source, &quot;Product&quot;, product, Confidence.MEDIUM);</span>
-<span class="fc" id="L308">            currentDep.addEvidence(EvidenceType.VENDOR, source, &quot;Vendor&quot;, product, Confidence.MEDIUM);</span>
-<span class="fc" id="L309">            currentDep.addEvidence(EvidenceType.VERSION, source, &quot;Version&quot;, version, Confidence.MEDIUM);</span>
-<span class="pc bpc" id="L310" title="1 of 2 branches missed.">            if (product.toLowerCase().endsWith(&quot;lib&quot;)) {</span>
-<span class="nc" id="L311">                currentDep = new Dependency(dependency.getActualFile(), true);</span>
-<span class="nc" id="L312">                currentDep.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
-<span class="nc" id="L313">                final String filePath = String.format(&quot;%s:%s&quot;, dependency.getFilePath(), product);</span>
-<span class="nc" id="L314">                currentDep.setFilePath(filePath);</span>
+<span class="fc" id="L309">            final String source = currentDep.getFileName();</span>
+<span class="fc" id="L310">            currentDep.addEvidence(EvidenceType.PRODUCT, source, &quot;Product&quot;, product, Confidence.MEDIUM);</span>
+<span class="fc" id="L311">            currentDep.addEvidence(EvidenceType.VENDOR, source, &quot;Vendor&quot;, product, Confidence.MEDIUM);</span>
+<span class="fc" id="L312">            currentDep.addEvidence(EvidenceType.VERSION, source, &quot;Version&quot;, version, Confidence.MEDIUM);</span>
+<span class="pc bpc" id="L313" title="1 of 2 branches missed.">            if (product.toLowerCase().endsWith(&quot;lib&quot;)) {</span>
+<span class="nc" id="L314">                currentDep = new Dependency(dependency.getActualFile(), true);</span>
+<span class="nc" id="L315">                currentDep.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="nc" id="L316">                final String filePath = String.format(&quot;%s:%s&quot;, dependency.getFilePath(), product);</span>
+<span class="nc" id="L317">                currentDep.setFilePath(filePath);</span>
 
-<span class="nc" id="L316">                currentDep.setSha1sum(Checksum.getSHA1Checksum(filePath));</span>
-<span class="nc" id="L317">                currentDep.setSha256sum(Checksum.getSHA256Checksum(filePath));</span>
-<span class="nc" id="L318">                currentDep.setMd5sum(Checksum.getMD5Checksum(filePath));</span>
-<span class="nc" id="L319">                engine.addDependency(currentDep);</span>
-<span class="nc" id="L320">                product = &quot;lib&quot; + product.toLowerCase().substring(0, product.length() - 3);</span>
-<span class="nc" id="L321">                currentDep.addEvidence(EvidenceType.PRODUCT, source, &quot;Product&quot;, product, Confidence.MEDIUM);</span>
-<span class="nc" id="L322">                currentDep.addEvidence(EvidenceType.VENDOR, source, &quot;Vendor&quot;, product, Confidence.MEDIUM);</span>
-<span class="nc" id="L323">                currentDep.addEvidence(EvidenceType.VERSION, source, &quot;Version&quot;, version, Confidence.MEDIUM);</span>
+<span class="nc" id="L319">                currentDep.setSha1sum(Checksum.getSHA1Checksum(filePath));</span>
+<span class="nc" id="L320">                currentDep.setSha256sum(Checksum.getSHA256Checksum(filePath));</span>
+<span class="nc" id="L321">                currentDep.setMd5sum(Checksum.getMD5Checksum(filePath));</span>
+<span class="nc" id="L322">                engine.addDependency(currentDep);</span>
+<span class="nc" id="L323">                product = &quot;lib&quot; + product.toLowerCase().substring(0, product.length() - 3);</span>
+<span class="nc" id="L324">                currentDep.addEvidence(EvidenceType.PRODUCT, source, &quot;Product&quot;, product, Confidence.MEDIUM);</span>
+<span class="nc" id="L325">                currentDep.addEvidence(EvidenceType.VENDOR, source, &quot;Vendor&quot;, product, Confidence.MEDIUM);</span>
+<span class="nc" id="L326">                currentDep.addEvidence(EvidenceType.VERSION, source, &quot;Version&quot;, version, Confidence.MEDIUM);</span>
             }
-<span class="pc bpc" id="L325" title="1 of 2 branches missed.">            if (StringUtils.isBlank(currentDep.getName())) {</span>
-<span class="fc" id="L326">                currentDep.setName(product);</span>
-<span class="fc" id="L327">                currentDep.setDisplayFileName(product);</span>
+<span class="pc bpc" id="L328" title="1 of 2 branches missed.">            if (StringUtils.isBlank(currentDep.getName())) {</span>
+<span class="fc" id="L329">                currentDep.setName(product);</span>
+<span class="fc" id="L330">                currentDep.setDisplayFileName(product);</span>
             }
-<span class="pc bpc" id="L329" title="1 of 2 branches missed.">            if (StringUtils.isBlank(currentDep.getVersion())) {</span>
-<span class="fc" id="L330">                final DependencyVersion vers = DependencyVersionUtil.parseVersion(version, true);</span>
-<span class="fc bfc" id="L331" title="All 2 branches covered.">                if (vers != null) {</span>
-<span class="fc" id="L332">                    currentDep.setVersion(vers.toString());</span>
+<span class="pc bpc" id="L332" title="1 of 2 branches missed.">            if (StringUtils.isBlank(currentDep.getVersion())) {</span>
+<span class="fc" id="L333">                final DependencyVersion vers = DependencyVersionUtil.parseVersion(version, true);</span>
+<span class="fc bfc" id="L334" title="All 2 branches covered.">                if (vers != null) {</span>
+<span class="fc" id="L335">                    currentDep.setVersion(vers.toString());</span>
                 }
             }
-<span class="fc" id="L335">        }</span>
-<span class="fc" id="L336">        LOGGER.debug(&quot;Found {} matches.&quot;, count);</span>
-<span class="fc" id="L337">    }</span>
+<span class="fc" id="L338">        }</span>
+<span class="fc" id="L339">        LOGGER.debug(&quot;Found {} matches.&quot;, count);</span>
+<span class="fc" id="L340">    }</span>
 
     @Override
     protected String getAnalyzerEnabledSettingKey() {
-<span class="fc" id="L341">        return Settings.KEYS.ANALYZER_CMAKE_ENABLED;</span>
+<span class="fc" id="L344">        return Settings.KEYS.ANALYZER_CMAKE_ENABLED;</span>
+    }
+
+    /**
+     * This method prevents to generate an infinite loop when variables are
+     * initialized by other variables and end up forming an unresolvable
+     * chain.
+     *
+     * This method takes the resolved variables map as an input and will return
+     * a new map, without the keys generate an infinite resolution chain.
+     *
+     * @param vars variables initialization detected in the CMake build file
+     *
+     * @return a new map without infinite chain variables
+     */
+    Map&lt;String, String&gt; removeSelfReferences(final Map&lt;String, String&gt; vars) {
+<span class="fc" id="L360">        final Map&lt;String, String&gt; resolvedVars = new HashMap&lt;&gt;();</span>
+
+<span class="fc" id="L362">        vars.forEach((key, value) -&gt; {</span>
+<span class="fc bfc" id="L363" title="All 2 branches covered.">            if (!isVariableSelfReferencing(vars, key)) {</span>
+<span class="fc" id="L364">                resolvedVars.put(key, value);</span>
+            }
+<span class="fc" id="L366">        });</span>
+
+<span class="fc" id="L368">        return resolvedVars;</span>
+    }
+
+    private boolean isVariableSelfReferencing(Map&lt;String, String&gt; vars, String key) {
+<span class="fc" id="L372">        final List&lt;String&gt; resolutionChain = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L373">        resolutionChain.add(key);</span>
+
+<span class="fc" id="L375">        String nextKey = resolutionChain.get(0);</span>
+        do {
+<span class="fc" id="L377">            final Matcher matcher = INL_VAR_REGEX.matcher(vars.get(nextKey));</span>
+<span class="fc bfc" id="L378" title="All 2 branches covered.">            if (!matcher.find()) {</span>
+<span class="fc" id="L379">                break;</span>
+            }
+<span class="fc" id="L381">            nextKey = matcher.group(2);</span>
+<span class="fc" id="L382">            resolutionChain.add(nextKey);</span>
+<span class="pc bpc" id="L383" title="1 of 6 branches missed.">        } while (Objects.nonNull(nextKey) &amp;&amp; vars.containsKey(nextKey) &amp;&amp; !key.equals(nextKey));</span>
+
+<span class="fc bfc" id="L385" title="All 4 branches covered.">        return resolutionChain.size() != 1 &amp;&amp; key.equals(nextKey);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

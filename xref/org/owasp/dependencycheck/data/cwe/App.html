@@ -68,7 +68,7 @@
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>          }
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>          in = <strong class="jxr_keyword">new</strong> File(args[0]);
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>          <strong class="jxr_keyword">if</strong> (!in.isFile()) {
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>              System.err.println(String.format(<span class="jxr_string">"%s does not exist"</span>, in.getAbsolutePath()));
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>              System.err.printf(<span class="jxr_string">"%s does not exist%n"</span>, in.getAbsolutePath());
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>              <strong class="jxr_keyword">return</strong>;
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          }
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          out = <strong class="jxr_keyword">new</strong> File(<span class="jxr_string">"cwe.hashmap.serialized"</span>);
@@ -91,15 +91,15 @@
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>              <strong class="jxr_keyword">for</strong> (String f : files) {
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>                  <strong class="jxr_keyword">final</strong> File in = <strong class="jxr_keyword">new</strong> File(f);
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>                  <strong class="jxr_keyword">if</strong> (!in.isFile()) {
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>                      System.err.println(String.format(<span class="jxr_string">"File not found %s"</span>, in));
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>                      System.err.printf(<span class="jxr_string">"File not found %s%n"</span>, in);
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>                      <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>                  }
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>                  System.out.println(String.format(<span class="jxr_string">"Parsing %s"</span>, in));
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>                  System.out.printf(<span class="jxr_string">"Parsing %s%n"</span>, in);
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>                  saxParser.parse(in, handler);
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>              }
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>              <strong class="jxr_keyword">return</strong> handler.getCwe();
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>          } <strong class="jxr_keyword">catch</strong> (SAXException | IOException | ParserConfigurationException ex) {
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>              System.err.println(String.format(<span class="jxr_string">"Error generating serialized data: %s"</span>, ex.getMessage()));
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>              System.err.printf(<span class="jxr_string">"Error generating serialized data: %s%n"</span>, ex.getMessage());
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>          }
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>      }
@@ -115,10 +115,10 @@
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>                 ObjectOutputStream objOut = <strong class="jxr_keyword">new</strong> ObjectOutputStream(fout)) {
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>             System.out.println(<span class="jxr_string">"Writing "</span> + cwe.size() + <span class="jxr_string">" cwe entries."</span>);
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>             objOut.writeObject(cwe);
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>             System.out.println(String.format(<span class="jxr_string">"Serialized CWE data written to %s"</span>, out.getCanonicalPath()));
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>             System.out.printf(<span class="jxr_string">"Serialized CWE data written to %s%n"</span>, out.getCanonicalPath());
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>             System.out.println(<span class="jxr_string">"To update the ODC CWE data copy the serialized file to 'src/main/resources/data/cwe.hashmap.serialized'"</span>);
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>         } <strong class="jxr_keyword">catch</strong> (IOException ex) {
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>             System.err.println(String.format(<span class="jxr_string">"Error generating serialized data: %s"</span>, ex.getMessage()));
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>             System.err.printf(<span class="jxr_string">"Error generating serialized data: %s%n"</span>, ex.getMessage());
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>         }
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>     }
 <a class="jxr_linenumber" name="L116" href="#L116">116</a> }

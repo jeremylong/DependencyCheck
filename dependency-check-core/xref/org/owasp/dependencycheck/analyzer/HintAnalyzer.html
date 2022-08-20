@@ -203,148 +203,146 @@
 <a class="jxr_linenumber" name="L195" href="#L195">195</a>             }
 <a class="jxr_linenumber" name="L196" href="#L196">196</a>         }
 <a class="jxr_linenumber" name="L197" href="#L197">197</a> 
-<a class="jxr_linenumber" name="L198" href="#L198">198</a>         <strong class="jxr_keyword">final</strong> Iterator&lt;Evidence&gt; itr = dependency.getEvidence(EvidenceType.VENDOR).iterator();
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>         <strong class="jxr_keyword">while</strong> (itr.hasNext()) {
-<a class="jxr_linenumber" name="L200" href="#L200">200</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Evidence.html">Evidence</a> e = itr.next();
-<a class="jxr_linenumber" name="L201" href="#L201">201</a>             <strong class="jxr_keyword">for</strong> (VendorDuplicatingHintRule dhr : vendorHints) {
-<a class="jxr_linenumber" name="L202" href="#L202">202</a>                 <strong class="jxr_keyword">if</strong> (dhr.getValue().equalsIgnoreCase(e.getValue())) {
-<a class="jxr_linenumber" name="L203" href="#L203">203</a>                     dependency.addEvidence(EvidenceType.VENDOR, <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Evidence.html">Evidence</a>(e.getSource() + <span class="jxr_string">" (hint)"</span>,
-<a class="jxr_linenumber" name="L204" href="#L204">204</a>                             e.getName(), dhr.getDuplicate(), e.getConfidence()));
-<a class="jxr_linenumber" name="L205" href="#L205">205</a>                 }
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>             }
-<a class="jxr_linenumber" name="L207" href="#L207">207</a>         }
-<a class="jxr_linenumber" name="L208" href="#L208">208</a>     }
-<a class="jxr_linenumber" name="L209" href="#L209">209</a> 
-<a class="jxr_linenumber" name="L210" href="#L210">210</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L211" href="#L211">211</a> <em class="jxr_javadoccomment">     * Determine if there is matching evidence.</em>
-<a class="jxr_linenumber" name="L212" href="#L212">212</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L213" href="#L213">213</a> <em class="jxr_javadoccomment">     * @param evidences the evidence to test</em>
-<a class="jxr_linenumber" name="L214" href="#L214">214</a> <em class="jxr_javadoccomment">     * @param criterion the criteria for a match</em>
-<a class="jxr_linenumber" name="L215" href="#L215">215</a> <em class="jxr_javadoccomment">     * @return true if the evidence matches, otherwise false</em>
-<a class="jxr_linenumber" name="L216" href="#L216">216</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L217" href="#L217">217</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> hasMatchingEvidence(Set&lt;Evidence&gt; evidences, <a href="../../../../org/owasp/dependencycheck/xml/hints/EvidenceMatcher.html">EvidenceMatcher</a> criterion) {
-<a class="jxr_linenumber" name="L218" href="#L218">218</a>         <strong class="jxr_keyword">for</strong> (Evidence evidence : evidences) {
-<a class="jxr_linenumber" name="L219" href="#L219">219</a>             <strong class="jxr_keyword">if</strong> (criterion.matches(evidence)) {
-<a class="jxr_linenumber" name="L220" href="#L220">220</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L221" href="#L221">221</a>             }
-<a class="jxr_linenumber" name="L222" href="#L222">222</a>         }
-<a class="jxr_linenumber" name="L223" href="#L223">223</a>         <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L224" href="#L224">224</a>     }
-<a class="jxr_linenumber" name="L225" href="#L225">225</a> 
-<a class="jxr_linenumber" name="L226" href="#L226">226</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L227" href="#L227">227</a> <em class="jxr_javadoccomment">     * Removes any matching evidence from the dependency.</em>
-<a class="jxr_linenumber" name="L228" href="#L228">228</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L229" href="#L229">229</a> <em class="jxr_javadoccomment">     * @param dependency the dependency to update</em>
-<a class="jxr_linenumber" name="L230" href="#L230">230</a> <em class="jxr_javadoccomment">     * @param type the type of evidence to inspect and possibly remove</em>
-<a class="jxr_linenumber" name="L231" href="#L231">231</a> <em class="jxr_javadoccomment">     * @param e the evidence matcher</em>
-<a class="jxr_linenumber" name="L232" href="#L232">232</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L233" href="#L233">233</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> removeMatchingEvidences(<a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> dependency, <a href="../../../../org/owasp/dependencycheck/dependency/EvidenceType.html">EvidenceType</a> type, <a href="../../../../org/owasp/dependencycheck/xml/hints/EvidenceMatcher.html">EvidenceMatcher</a> e) {
-<a class="jxr_linenumber" name="L234" href="#L234">234</a>         <strong class="jxr_keyword">for</strong> (Evidence evidence : dependency.getEvidence(type)) {
-<a class="jxr_linenumber" name="L235" href="#L235">235</a>             <strong class="jxr_keyword">if</strong> (e.matches(evidence)) {
-<a class="jxr_linenumber" name="L236" href="#L236">236</a>                 dependency.removeEvidence(type, evidence);
-<a class="jxr_linenumber" name="L237" href="#L237">237</a>             }
-<a class="jxr_linenumber" name="L238" href="#L238">238</a>         }
-<a class="jxr_linenumber" name="L239" href="#L239">239</a>     }
-<a class="jxr_linenumber" name="L240" href="#L240">240</a> 
-<a class="jxr_linenumber" name="L241" href="#L241">241</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L242" href="#L242">242</a> <em class="jxr_javadoccomment">     * Loads the hint rules file.</em>
-<a class="jxr_linenumber" name="L243" href="#L243">243</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L244" href="#L244">244</a> <em class="jxr_javadoccomment">     * @throws HintParseException thrown if the XML cannot be parsed.</em>
-<a class="jxr_linenumber" name="L245" href="#L245">245</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L246" href="#L246">246</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> loadHintRules() <strong class="jxr_keyword">throws</strong> HintParseException {
-<a class="jxr_linenumber" name="L247" href="#L247">247</a>         <strong class="jxr_keyword">final</strong> List&lt;HintRule&gt; localHints;
-<a class="jxr_linenumber" name="L248" href="#L248">248</a>         <strong class="jxr_keyword">final</strong> List&lt;VendorDuplicatingHintRule&gt; localVendorHints;
-<a class="jxr_linenumber" name="L249" href="#L249">249</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParser.html">HintParser</a> parser = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParser.html">HintParser</a>();
-<a class="jxr_linenumber" name="L250" href="#L250">250</a>         File file = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L251" href="#L251">251</a>         <strong class="jxr_keyword">try</strong> (InputStream in = FileUtils.getResourceAsStream(HINT_RULE_FILE_NAME)) {
-<a class="jxr_linenumber" name="L252" href="#L252">252</a>             <strong class="jxr_keyword">if</strong> (in == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L253" href="#L253">253</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Hint rules `"</span> + HINT_RULE_FILE_NAME + <span class="jxr_string">"` could not be found"</span>);
-<a class="jxr_linenumber" name="L254" href="#L254">254</a>             }
-<a class="jxr_linenumber" name="L255" href="#L255">255</a>             parser.parseHints(in);
-<a class="jxr_linenumber" name="L256" href="#L256">256</a>         } <strong class="jxr_keyword">catch</strong> (SAXException | IOException ex) {
-<a class="jxr_linenumber" name="L257" href="#L257">257</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Error parsing hints: "</span> + ex.getMessage(), ex);
-<a class="jxr_linenumber" name="L258" href="#L258">258</a>         }
-<a class="jxr_linenumber" name="L259" href="#L259">259</a>         localHints = parser.getHintRules();
-<a class="jxr_linenumber" name="L260" href="#L260">260</a>         localVendorHints = parser.getVendorDuplicatingHintRules();
-<a class="jxr_linenumber" name="L261" href="#L261">261</a> 
-<a class="jxr_linenumber" name="L262" href="#L262">262</a>         <strong class="jxr_keyword">final</strong> String filePath = getSettings().getString(Settings.KEYS.HINTS_FILE);
-<a class="jxr_linenumber" name="L263" href="#L263">263</a>         <strong class="jxr_keyword">if</strong> (filePath != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L264" href="#L264">264</a>             <strong class="jxr_keyword">boolean</strong> deleteTempFile = false;
-<a class="jxr_linenumber" name="L265" href="#L265">265</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L266" href="#L266">266</a>                 <strong class="jxr_keyword">final</strong> Pattern uriRx = Pattern.compile(<span class="jxr_string">"^(https?|file):.*"</span>, Pattern.CASE_INSENSITIVE);
-<a class="jxr_linenumber" name="L267" href="#L267">267</a>                 <strong class="jxr_keyword">if</strong> (uriRx.matcher(filePath).matches()) {
-<a class="jxr_linenumber" name="L268" href="#L268">268</a>                     deleteTempFile = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L269" href="#L269">269</a>                     file = getSettings().getTempFile(<span class="jxr_string">"hint"</span>, <span class="jxr_string">"xml"</span>);
-<a class="jxr_linenumber" name="L270" href="#L270">270</a>                     <strong class="jxr_keyword">final</strong> URL url = <strong class="jxr_keyword">new</strong> URL(filePath);
-<a class="jxr_linenumber" name="L271" href="#L271">271</a>                     <strong class="jxr_keyword">final</strong> Downloader downloader = <strong class="jxr_keyword">new</strong> Downloader(getSettings());
-<a class="jxr_linenumber" name="L272" href="#L272">272</a>                     <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L273" href="#L273">273</a>                         downloader.fetchFile(url, file, false);
-<a class="jxr_linenumber" name="L274" href="#L274">274</a>                     } <strong class="jxr_keyword">catch</strong> (DownloadFailedException ex) {
-<a class="jxr_linenumber" name="L275" href="#L275">275</a>                         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L276" href="#L276">276</a>                             Thread.sleep(500);
-<a class="jxr_linenumber" name="L277" href="#L277">277</a>                             downloader.fetchFile(url, file, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L278" href="#L278">278</a>                         } <strong class="jxr_keyword">catch</strong> (TooManyRequestsException ex1) {
-<a class="jxr_linenumber" name="L279" href="#L279">279</a>                             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Unable to download hint file `"</span> + file + <span class="jxr_string">"`; received 429 - too many requests"</span>, ex1);
-<a class="jxr_linenumber" name="L280" href="#L280">280</a>                         } <strong class="jxr_keyword">catch</strong> (ResourceNotFoundException ex1) {
-<a class="jxr_linenumber" name="L281" href="#L281">281</a>                             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Unable to download hint file `"</span> + file + <span class="jxr_string">"`; received 404 - resource not found"</span>, ex1);
-<a class="jxr_linenumber" name="L282" href="#L282">282</a>                         } <strong class="jxr_keyword">catch</strong> (InterruptedException ex1) {
-<a class="jxr_linenumber" name="L283" href="#L283">283</a>                             Thread.currentThread().interrupt();
-<a class="jxr_linenumber" name="L284" href="#L284">284</a>                             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Unable to download hint file `"</span> + file + <span class="jxr_string">"`"</span>, ex1);
-<a class="jxr_linenumber" name="L285" href="#L285">285</a>                         }
-<a class="jxr_linenumber" name="L286" href="#L286">286</a>                     } <strong class="jxr_keyword">catch</strong> (TooManyRequestsException ex) {
-<a class="jxr_linenumber" name="L287" href="#L287">287</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Unable to download hint file `"</span> + file + <span class="jxr_string">"`; received 429 - too many requests"</span>, ex);
-<a class="jxr_linenumber" name="L288" href="#L288">288</a>                     } <strong class="jxr_keyword">catch</strong> (ResourceNotFoundException ex) {
-<a class="jxr_linenumber" name="L289" href="#L289">289</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Unable to download hint file `"</span> + file + <span class="jxr_string">"`; received 404 - resource not found"</span>, ex);
-<a class="jxr_linenumber" name="L290" href="#L290">290</a>                     }
-<a class="jxr_linenumber" name="L291" href="#L291">291</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L292" href="#L292">292</a>                     file = <strong class="jxr_keyword">new</strong> File(filePath);
-<a class="jxr_linenumber" name="L293" href="#L293">293</a>                     <strong class="jxr_keyword">if</strong> (!file.exists()) {
-<a class="jxr_linenumber" name="L294" href="#L294">294</a>                         <strong class="jxr_keyword">try</strong> (InputStream fromClasspath = FileUtils.getResourceAsStream(filePath)) {
-<a class="jxr_linenumber" name="L295" href="#L295">295</a>                             deleteTempFile = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L296" href="#L296">296</a>                             file = getSettings().getTempFile(<span class="jxr_string">"hint"</span>, <span class="jxr_string">"xml"</span>);
-<a class="jxr_linenumber" name="L297" href="#L297">297</a>                             org.apache.commons.io.FileUtils.copyInputStreamToFile(fromClasspath, file);
-<a class="jxr_linenumber" name="L298" href="#L298">298</a>                         } <strong class="jxr_keyword">catch</strong> (IOException ex) {
-<a class="jxr_linenumber" name="L299" href="#L299">299</a>                             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Unable to locate hints file in classpath"</span>, ex);
-<a class="jxr_linenumber" name="L300" href="#L300">300</a>                         }
-<a class="jxr_linenumber" name="L301" href="#L301">301</a>                     }
-<a class="jxr_linenumber" name="L302" href="#L302">302</a>                 }
-<a class="jxr_linenumber" name="L303" href="#L303">303</a> 
-<a class="jxr_linenumber" name="L304" href="#L304">304</a>                 <strong class="jxr_keyword">if</strong> (file == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L305" href="#L305">305</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Unable to locate hints file:"</span> + filePath);
-<a class="jxr_linenumber" name="L306" href="#L306">306</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L307" href="#L307">307</a>                     <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L308" href="#L308">308</a>                         parser.parseHints(file);
-<a class="jxr_linenumber" name="L309" href="#L309">309</a>                         <strong class="jxr_keyword">if</strong> (parser.getHintRules() != <strong class="jxr_keyword">null</strong> &amp;&amp; !parser.getHintRules().isEmpty()) {
-<a class="jxr_linenumber" name="L310" href="#L310">310</a>                             localHints.addAll(parser.getHintRules());
-<a class="jxr_linenumber" name="L311" href="#L311">311</a>                         }
-<a class="jxr_linenumber" name="L312" href="#L312">312</a>                         <strong class="jxr_keyword">if</strong> (parser.getVendorDuplicatingHintRules() != <strong class="jxr_keyword">null</strong> &amp;&amp; !parser.getVendorDuplicatingHintRules().isEmpty()) {
-<a class="jxr_linenumber" name="L313" href="#L313">313</a>                             localVendorHints.addAll(parser.getVendorDuplicatingHintRules());
-<a class="jxr_linenumber" name="L314" href="#L314">314</a>                         }
-<a class="jxr_linenumber" name="L315" href="#L315">315</a>                     } <strong class="jxr_keyword">catch</strong> (HintParseException ex) {
-<a class="jxr_linenumber" name="L316" href="#L316">316</a>                         LOGGER.warn(<span class="jxr_string">"Unable to parse hint rule xml file '{}'"</span>, file.getPath());
-<a class="jxr_linenumber" name="L317" href="#L317">317</a>                         LOGGER.warn(ex.getMessage());
-<a class="jxr_linenumber" name="L318" href="#L318">318</a>                         LOGGER.debug(<span class="jxr_string">""</span>, ex);
-<a class="jxr_linenumber" name="L319" href="#L319">319</a>                         <strong class="jxr_keyword">throw</strong> ex;
-<a class="jxr_linenumber" name="L320" href="#L320">320</a>                     }
-<a class="jxr_linenumber" name="L321" href="#L321">321</a>                 }
-<a class="jxr_linenumber" name="L322" href="#L322">322</a>             } <strong class="jxr_keyword">catch</strong> (DownloadFailedException ex) {
-<a class="jxr_linenumber" name="L323" href="#L323">323</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Unable to fetch the configured hint file"</span>, ex);
-<a class="jxr_linenumber" name="L324" href="#L324">324</a>             } <strong class="jxr_keyword">catch</strong> (MalformedURLException ex) {
-<a class="jxr_linenumber" name="L325" href="#L325">325</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Configured hint file has an invalid URL"</span>, ex);
-<a class="jxr_linenumber" name="L326" href="#L326">326</a>             } <strong class="jxr_keyword">catch</strong> (IOException ex) {
-<a class="jxr_linenumber" name="L327" href="#L327">327</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Unable to create temp file for hints"</span>, ex);
-<a class="jxr_linenumber" name="L328" href="#L328">328</a>             } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="L329" href="#L329">329</a>                 <strong class="jxr_keyword">if</strong> (deleteTempFile &amp;&amp; file != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L330" href="#L330">330</a>                     FileUtils.delete(file);
-<a class="jxr_linenumber" name="L331" href="#L331">331</a>                 }
-<a class="jxr_linenumber" name="L332" href="#L332">332</a>             }
-<a class="jxr_linenumber" name="L333" href="#L333">333</a>         }
-<a class="jxr_linenumber" name="L334" href="#L334">334</a>         hints = localHints.toArray(<strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintRule.html">HintRule</a>[0]);
-<a class="jxr_linenumber" name="L335" href="#L335">335</a>         vendorHints = localVendorHints.toArray(<strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/VendorDuplicatingHintRule.html">VendorDuplicatingHintRule</a>[0]);
-<a class="jxr_linenumber" name="L336" href="#L336">336</a>         LOGGER.debug(<span class="jxr_string">"{} hint rules were loaded."</span>, hints.length);
-<a class="jxr_linenumber" name="L337" href="#L337">337</a>         LOGGER.debug(<span class="jxr_string">"{} duplicating hint rules were loaded."</span>, vendorHints.length);
-<a class="jxr_linenumber" name="L338" href="#L338">338</a>     }
-<a class="jxr_linenumber" name="L339" href="#L339">339</a> }
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>         <strong class="jxr_keyword">for</strong> (Evidence e : dependency.getEvidence(EvidenceType.VENDOR)) {
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>             <strong class="jxr_keyword">for</strong> (VendorDuplicatingHintRule dhr : vendorHints) {
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>                 <strong class="jxr_keyword">if</strong> (dhr.getValue().equalsIgnoreCase(e.getValue())) {
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>                     dependency.addEvidence(EvidenceType.VENDOR, <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Evidence.html">Evidence</a>(e.getSource() + <span class="jxr_string">" (hint)"</span>,
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>                             e.getName(), dhr.getDuplicate(), e.getConfidence()));
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>                 }
+<a class="jxr_linenumber" name="L204" href="#L204">204</a>             }
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>         }
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>     }
+<a class="jxr_linenumber" name="L207" href="#L207">207</a> 
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L209" href="#L209">209</a> <em class="jxr_javadoccomment">     * Determine if there is matching evidence.</em>
+<a class="jxr_linenumber" name="L210" href="#L210">210</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L211" href="#L211">211</a> <em class="jxr_javadoccomment">     * @param evidences the evidence to test</em>
+<a class="jxr_linenumber" name="L212" href="#L212">212</a> <em class="jxr_javadoccomment">     * @param criterion the criteria for a match</em>
+<a class="jxr_linenumber" name="L213" href="#L213">213</a> <em class="jxr_javadoccomment">     * @return true if the evidence matches, otherwise false</em>
+<a class="jxr_linenumber" name="L214" href="#L214">214</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L215" href="#L215">215</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> hasMatchingEvidence(Set&lt;Evidence&gt; evidences, <a href="../../../../org/owasp/dependencycheck/xml/hints/EvidenceMatcher.html">EvidenceMatcher</a> criterion) {
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>         <strong class="jxr_keyword">for</strong> (Evidence evidence : evidences) {
+<a class="jxr_linenumber" name="L217" href="#L217">217</a>             <strong class="jxr_keyword">if</strong> (criterion.matches(evidence)) {
+<a class="jxr_linenumber" name="L218" href="#L218">218</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L219" href="#L219">219</a>             }
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>         }
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>         <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L222" href="#L222">222</a>     }
+<a class="jxr_linenumber" name="L223" href="#L223">223</a> 
+<a class="jxr_linenumber" name="L224" href="#L224">224</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L225" href="#L225">225</a> <em class="jxr_javadoccomment">     * Removes any matching evidence from the dependency.</em>
+<a class="jxr_linenumber" name="L226" href="#L226">226</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L227" href="#L227">227</a> <em class="jxr_javadoccomment">     * @param dependency the dependency to update</em>
+<a class="jxr_linenumber" name="L228" href="#L228">228</a> <em class="jxr_javadoccomment">     * @param type the type of evidence to inspect and possibly remove</em>
+<a class="jxr_linenumber" name="L229" href="#L229">229</a> <em class="jxr_javadoccomment">     * @param e the evidence matcher</em>
+<a class="jxr_linenumber" name="L230" href="#L230">230</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L231" href="#L231">231</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> removeMatchingEvidences(<a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> dependency, <a href="../../../../org/owasp/dependencycheck/dependency/EvidenceType.html">EvidenceType</a> type, <a href="../../../../org/owasp/dependencycheck/xml/hints/EvidenceMatcher.html">EvidenceMatcher</a> e) {
+<a class="jxr_linenumber" name="L232" href="#L232">232</a>         <strong class="jxr_keyword">for</strong> (Evidence evidence : dependency.getEvidence(type)) {
+<a class="jxr_linenumber" name="L233" href="#L233">233</a>             <strong class="jxr_keyword">if</strong> (e.matches(evidence)) {
+<a class="jxr_linenumber" name="L234" href="#L234">234</a>                 dependency.removeEvidence(type, evidence);
+<a class="jxr_linenumber" name="L235" href="#L235">235</a>             }
+<a class="jxr_linenumber" name="L236" href="#L236">236</a>         }
+<a class="jxr_linenumber" name="L237" href="#L237">237</a>     }
+<a class="jxr_linenumber" name="L238" href="#L238">238</a> 
+<a class="jxr_linenumber" name="L239" href="#L239">239</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L240" href="#L240">240</a> <em class="jxr_javadoccomment">     * Loads the hint rules file.</em>
+<a class="jxr_linenumber" name="L241" href="#L241">241</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L242" href="#L242">242</a> <em class="jxr_javadoccomment">     * @throws HintParseException thrown if the XML cannot be parsed.</em>
+<a class="jxr_linenumber" name="L243" href="#L243">243</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L244" href="#L244">244</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> loadHintRules() <strong class="jxr_keyword">throws</strong> HintParseException {
+<a class="jxr_linenumber" name="L245" href="#L245">245</a>         <strong class="jxr_keyword">final</strong> List&lt;HintRule&gt; localHints;
+<a class="jxr_linenumber" name="L246" href="#L246">246</a>         <strong class="jxr_keyword">final</strong> List&lt;VendorDuplicatingHintRule&gt; localVendorHints;
+<a class="jxr_linenumber" name="L247" href="#L247">247</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParser.html">HintParser</a> parser = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParser.html">HintParser</a>();
+<a class="jxr_linenumber" name="L248" href="#L248">248</a>         File file = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L249" href="#L249">249</a>         <strong class="jxr_keyword">try</strong> (InputStream in = FileUtils.getResourceAsStream(HINT_RULE_FILE_NAME)) {
+<a class="jxr_linenumber" name="L250" href="#L250">250</a>             <strong class="jxr_keyword">if</strong> (in == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L251" href="#L251">251</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Hint rules `"</span> + HINT_RULE_FILE_NAME + <span class="jxr_string">"` could not be found"</span>);
+<a class="jxr_linenumber" name="L252" href="#L252">252</a>             }
+<a class="jxr_linenumber" name="L253" href="#L253">253</a>             parser.parseHints(in);
+<a class="jxr_linenumber" name="L254" href="#L254">254</a>         } <strong class="jxr_keyword">catch</strong> (SAXException | IOException ex) {
+<a class="jxr_linenumber" name="L255" href="#L255">255</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Error parsing hints: "</span> + ex.getMessage(), ex);
+<a class="jxr_linenumber" name="L256" href="#L256">256</a>         }
+<a class="jxr_linenumber" name="L257" href="#L257">257</a>         localHints = parser.getHintRules();
+<a class="jxr_linenumber" name="L258" href="#L258">258</a>         localVendorHints = parser.getVendorDuplicatingHintRules();
+<a class="jxr_linenumber" name="L259" href="#L259">259</a> 
+<a class="jxr_linenumber" name="L260" href="#L260">260</a>         <strong class="jxr_keyword">final</strong> String filePath = getSettings().getString(Settings.KEYS.HINTS_FILE);
+<a class="jxr_linenumber" name="L261" href="#L261">261</a>         <strong class="jxr_keyword">if</strong> (filePath != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L262" href="#L262">262</a>             <strong class="jxr_keyword">boolean</strong> deleteTempFile = false;
+<a class="jxr_linenumber" name="L263" href="#L263">263</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L264" href="#L264">264</a>                 <strong class="jxr_keyword">final</strong> Pattern uriRx = Pattern.compile(<span class="jxr_string">"^(https?|file):.*"</span>, Pattern.CASE_INSENSITIVE);
+<a class="jxr_linenumber" name="L265" href="#L265">265</a>                 <strong class="jxr_keyword">if</strong> (uriRx.matcher(filePath).matches()) {
+<a class="jxr_linenumber" name="L266" href="#L266">266</a>                     deleteTempFile = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L267" href="#L267">267</a>                     file = getSettings().getTempFile(<span class="jxr_string">"hint"</span>, <span class="jxr_string">"xml"</span>);
+<a class="jxr_linenumber" name="L268" href="#L268">268</a>                     <strong class="jxr_keyword">final</strong> URL url = <strong class="jxr_keyword">new</strong> URL(filePath);
+<a class="jxr_linenumber" name="L269" href="#L269">269</a>                     <strong class="jxr_keyword">final</strong> Downloader downloader = <strong class="jxr_keyword">new</strong> Downloader(getSettings());
+<a class="jxr_linenumber" name="L270" href="#L270">270</a>                     <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L271" href="#L271">271</a>                         downloader.fetchFile(url, file, false);
+<a class="jxr_linenumber" name="L272" href="#L272">272</a>                     } <strong class="jxr_keyword">catch</strong> (DownloadFailedException ex) {
+<a class="jxr_linenumber" name="L273" href="#L273">273</a>                         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L274" href="#L274">274</a>                             Thread.sleep(500);
+<a class="jxr_linenumber" name="L275" href="#L275">275</a>                             downloader.fetchFile(url, file, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L276" href="#L276">276</a>                         } <strong class="jxr_keyword">catch</strong> (TooManyRequestsException ex1) {
+<a class="jxr_linenumber" name="L277" href="#L277">277</a>                             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Unable to download hint file `"</span> + file + <span class="jxr_string">"`; received 429 - too many requests"</span>, ex1);
+<a class="jxr_linenumber" name="L278" href="#L278">278</a>                         } <strong class="jxr_keyword">catch</strong> (ResourceNotFoundException ex1) {
+<a class="jxr_linenumber" name="L279" href="#L279">279</a>                             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Unable to download hint file `"</span> + file + <span class="jxr_string">"`; received 404 - resource not found"</span>, ex1);
+<a class="jxr_linenumber" name="L280" href="#L280">280</a>                         } <strong class="jxr_keyword">catch</strong> (InterruptedException ex1) {
+<a class="jxr_linenumber" name="L281" href="#L281">281</a>                             Thread.currentThread().interrupt();
+<a class="jxr_linenumber" name="L282" href="#L282">282</a>                             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Unable to download hint file `"</span> + file + <span class="jxr_string">"`"</span>, ex1);
+<a class="jxr_linenumber" name="L283" href="#L283">283</a>                         }
+<a class="jxr_linenumber" name="L284" href="#L284">284</a>                     } <strong class="jxr_keyword">catch</strong> (TooManyRequestsException ex) {
+<a class="jxr_linenumber" name="L285" href="#L285">285</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Unable to download hint file `"</span> + file + <span class="jxr_string">"`; received 429 - too many requests"</span>, ex);
+<a class="jxr_linenumber" name="L286" href="#L286">286</a>                     } <strong class="jxr_keyword">catch</strong> (ResourceNotFoundException ex) {
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Unable to download hint file `"</span> + file + <span class="jxr_string">"`; received 404 - resource not found"</span>, ex);
+<a class="jxr_linenumber" name="L288" href="#L288">288</a>                     }
+<a class="jxr_linenumber" name="L289" href="#L289">289</a>                 } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L290" href="#L290">290</a>                     file = <strong class="jxr_keyword">new</strong> File(filePath);
+<a class="jxr_linenumber" name="L291" href="#L291">291</a>                     <strong class="jxr_keyword">if</strong> (!file.exists()) {
+<a class="jxr_linenumber" name="L292" href="#L292">292</a>                         <strong class="jxr_keyword">try</strong> (InputStream fromClasspath = FileUtils.getResourceAsStream(filePath)) {
+<a class="jxr_linenumber" name="L293" href="#L293">293</a>                             deleteTempFile = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L294" href="#L294">294</a>                             file = getSettings().getTempFile(<span class="jxr_string">"hint"</span>, <span class="jxr_string">"xml"</span>);
+<a class="jxr_linenumber" name="L295" href="#L295">295</a>                             org.apache.commons.io.FileUtils.copyInputStreamToFile(fromClasspath, file);
+<a class="jxr_linenumber" name="L296" href="#L296">296</a>                         } <strong class="jxr_keyword">catch</strong> (IOException ex) {
+<a class="jxr_linenumber" name="L297" href="#L297">297</a>                             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Unable to locate hints file in classpath"</span>, ex);
+<a class="jxr_linenumber" name="L298" href="#L298">298</a>                         }
+<a class="jxr_linenumber" name="L299" href="#L299">299</a>                     }
+<a class="jxr_linenumber" name="L300" href="#L300">300</a>                 }
+<a class="jxr_linenumber" name="L301" href="#L301">301</a> 
+<a class="jxr_linenumber" name="L302" href="#L302">302</a>                 <strong class="jxr_keyword">if</strong> (file == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L303" href="#L303">303</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Unable to locate hints file:"</span> + filePath);
+<a class="jxr_linenumber" name="L304" href="#L304">304</a>                 } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L305" href="#L305">305</a>                     <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L306" href="#L306">306</a>                         parser.parseHints(file);
+<a class="jxr_linenumber" name="L307" href="#L307">307</a>                         <strong class="jxr_keyword">if</strong> (parser.getHintRules() != <strong class="jxr_keyword">null</strong> &amp;&amp; !parser.getHintRules().isEmpty()) {
+<a class="jxr_linenumber" name="L308" href="#L308">308</a>                             localHints.addAll(parser.getHintRules());
+<a class="jxr_linenumber" name="L309" href="#L309">309</a>                         }
+<a class="jxr_linenumber" name="L310" href="#L310">310</a>                         <strong class="jxr_keyword">if</strong> (parser.getVendorDuplicatingHintRules() != <strong class="jxr_keyword">null</strong> &amp;&amp; !parser.getVendorDuplicatingHintRules().isEmpty()) {
+<a class="jxr_linenumber" name="L311" href="#L311">311</a>                             localVendorHints.addAll(parser.getVendorDuplicatingHintRules());
+<a class="jxr_linenumber" name="L312" href="#L312">312</a>                         }
+<a class="jxr_linenumber" name="L313" href="#L313">313</a>                     } <strong class="jxr_keyword">catch</strong> (HintParseException ex) {
+<a class="jxr_linenumber" name="L314" href="#L314">314</a>                         LOGGER.warn(<span class="jxr_string">"Unable to parse hint rule xml file '{}'"</span>, file.getPath());
+<a class="jxr_linenumber" name="L315" href="#L315">315</a>                         LOGGER.warn(ex.getMessage());
+<a class="jxr_linenumber" name="L316" href="#L316">316</a>                         LOGGER.debug(<span class="jxr_string">""</span>, ex);
+<a class="jxr_linenumber" name="L317" href="#L317">317</a>                         <strong class="jxr_keyword">throw</strong> ex;
+<a class="jxr_linenumber" name="L318" href="#L318">318</a>                     }
+<a class="jxr_linenumber" name="L319" href="#L319">319</a>                 }
+<a class="jxr_linenumber" name="L320" href="#L320">320</a>             } <strong class="jxr_keyword">catch</strong> (DownloadFailedException ex) {
+<a class="jxr_linenumber" name="L321" href="#L321">321</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Unable to fetch the configured hint file"</span>, ex);
+<a class="jxr_linenumber" name="L322" href="#L322">322</a>             } <strong class="jxr_keyword">catch</strong> (MalformedURLException ex) {
+<a class="jxr_linenumber" name="L323" href="#L323">323</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Configured hint file has an invalid URL"</span>, ex);
+<a class="jxr_linenumber" name="L324" href="#L324">324</a>             } <strong class="jxr_keyword">catch</strong> (IOException ex) {
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintParseException.html">HintParseException</a>(<span class="jxr_string">"Unable to create temp file for hints"</span>, ex);
+<a class="jxr_linenumber" name="L326" href="#L326">326</a>             } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="L327" href="#L327">327</a>                 <strong class="jxr_keyword">if</strong> (deleteTempFile &amp;&amp; file != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L328" href="#L328">328</a>                     FileUtils.delete(file);
+<a class="jxr_linenumber" name="L329" href="#L329">329</a>                 }
+<a class="jxr_linenumber" name="L330" href="#L330">330</a>             }
+<a class="jxr_linenumber" name="L331" href="#L331">331</a>         }
+<a class="jxr_linenumber" name="L332" href="#L332">332</a>         hints = localHints.toArray(<strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/HintRule.html">HintRule</a>[0]);
+<a class="jxr_linenumber" name="L333" href="#L333">333</a>         vendorHints = localVendorHints.toArray(<strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/hints/VendorDuplicatingHintRule.html">VendorDuplicatingHintRule</a>[0]);
+<a class="jxr_linenumber" name="L334" href="#L334">334</a>         LOGGER.debug(<span class="jxr_string">"{} hint rules were loaded."</span>, hints.length);
+<a class="jxr_linenumber" name="L335" href="#L335">335</a>         LOGGER.debug(<span class="jxr_string">"{} duplicating hint rules were loaded."</span>, vendorHints.length);
+<a class="jxr_linenumber" name="L336" href="#L336">336</a>     }
+<a class="jxr_linenumber" name="L337" href="#L337">337</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2022 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

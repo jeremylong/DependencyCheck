@@ -260,36 +260,31 @@ import org.slf4j.LoggerFactory;
 <span class="nc" id="L260">        String version = null;</span>
 <span class="nc" id="L261">        int versionCount = 0;</span>
 <span class="nc bnc" id="L262" title="All 2 branches missed.">        if (parentDir != null) {</span>
-<span class="nc" id="L263">            final File[] matchingFiles = parentDir.listFiles(new FilenameFilter() {</span>
-                @Override
-                public boolean accept(File dir, String name) {
-<span class="nc" id="L266">                    return name.contains(VERSION_FILE_NAME);</span>
-                }
-            });
-<span class="nc bnc" id="L269" title="All 2 branches missed.">            if (matchingFiles == null) {</span>
-<span class="nc" id="L270">                return null;</span>
+<span class="nc" id="L263">            final File[] matchingFiles = parentDir.listFiles((dir, name) -&gt; name.contains(VERSION_FILE_NAME));</span>
+<span class="nc bnc" id="L264" title="All 2 branches missed.">            if (matchingFiles == null) {</span>
+<span class="nc" id="L265">                return null;</span>
             }
-<span class="nc bnc" id="L272" title="All 2 branches missed.">            for (File f : matchingFiles) {</span>
+<span class="nc bnc" id="L267" title="All 2 branches missed.">            for (File f : matchingFiles) {</span>
                 try {
-<span class="nc" id="L274">                    final List&lt;String&gt; lines = FileUtils.readLines(f, Charset.defaultCharset());</span>
-<span class="nc bnc" id="L275" title="All 2 branches missed.">                    if (lines.size() == 1) { //TODO other checking?</span>
-<span class="nc" id="L276">                        final String value = lines.get(0).trim();</span>
-<span class="nc bnc" id="L277" title="All 4 branches missed.">                        if (version == null || !version.equals(value)) {</span>
-<span class="nc" id="L278">                            version = value;</span>
-<span class="nc" id="L279">                            versionCount++;</span>
+<span class="nc" id="L269">                    final List&lt;String&gt; lines = FileUtils.readLines(f, Charset.defaultCharset());</span>
+<span class="nc bnc" id="L270" title="All 2 branches missed.">                    if (lines.size() == 1) { //TODO other checking?</span>
+<span class="nc" id="L271">                        final String value = lines.get(0).trim();</span>
+<span class="nc bnc" id="L272" title="All 4 branches missed.">                        if (version == null || !version.equals(value)) {</span>
+<span class="nc" id="L273">                            version = value;</span>
+<span class="nc" id="L274">                            versionCount++;</span>
                         }
 
-<span class="nc" id="L282">                        dependency.addEvidence(type, GEMSPEC, &quot;version&quot;, value, Confidence.HIGH);</span>
+<span class="nc" id="L277">                        dependency.addEvidence(type, GEMSPEC, &quot;version&quot;, value, Confidence.HIGH);</span>
                     }
-<span class="nc" id="L284">                } catch (IOException e) {</span>
-<span class="nc" id="L285">                    LOGGER.debug(&quot;Error reading gemspec&quot;, e);</span>
-<span class="nc" id="L286">                }</span>
+<span class="nc" id="L279">                } catch (IOException e) {</span>
+<span class="nc" id="L280">                    LOGGER.debug(&quot;Error reading gemspec&quot;, e);</span>
+<span class="nc" id="L281">                }</span>
             }
         }
-<span class="nc bnc" id="L289" title="All 2 branches missed.">        if (versionCount == 1) {</span>
-<span class="nc" id="L290">            return version;</span>
+<span class="nc bnc" id="L284" title="All 2 branches missed.">        if (versionCount == 1) {</span>
+<span class="nc" id="L285">            return version;</span>
         }
-<span class="nc" id="L292">        return null;</span>
+<span class="nc" id="L287">        return null;</span>
     }
 
     /**
@@ -298,11 +293,11 @@ import org.slf4j.LoggerFactory;
      * @param dep the dependency to alter
      */
     private void setPackagePath(Dependency dep) {
-<span class="fc" id="L301">        final File file = new File(dep.getFilePath());</span>
-<span class="fc" id="L302">        final String parent = file.getParent();</span>
-<span class="pc bpc" id="L303" title="1 of 2 branches missed.">        if (parent != null) {</span>
-<span class="fc" id="L304">            dep.setPackagePath(parent);</span>
+<span class="fc" id="L296">        final File file = new File(dep.getFilePath());</span>
+<span class="fc" id="L297">        final String parent = file.getParent();</span>
+<span class="pc bpc" id="L298" title="1 of 2 branches missed.">        if (parent != null) {</span>
+<span class="fc" id="L299">            dep.setPackagePath(parent);</span>
         }
-<span class="fc" id="L306">    }</span>
+<span class="fc" id="L301">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

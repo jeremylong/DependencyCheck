@@ -92,7 +92,7 @@ import org.xml.sax.XMLReader;
 <span class="fc" id="L92">                xmlReader.parse(in);</span>
 <span class="fc" id="L93">                return handler.getAssemblyData();</span>
             }
-<span class="nc" id="L95">        } catch (ParserConfigurationException | FileNotFoundException ex) {</span>
+<span class="nc" id="L95">        } catch (ParserConfigurationException | IOException ex) {</span>
 <span class="nc" id="L96">            LOGGER.debug(&quot;&quot;, ex);</span>
 <span class="nc" id="L97">            throw new GrokParseException(ex);</span>
 <span class="nc" id="L98">        } catch (SAXException ex) {</span>
@@ -102,9 +102,6 @@ import org.xml.sax.XMLReader;
 <span class="nc" id="L102">                LOGGER.debug(&quot;&quot;, ex);</span>
 <span class="nc" id="L103">                throw new GrokParseException(ex);</span>
             }
-<span class="nc" id="L105">        } catch (IOException ex) {</span>
-<span class="nc" id="L106">            LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="nc" id="L107">            throw new GrokParseException(ex);</span>
         }
     }
 }

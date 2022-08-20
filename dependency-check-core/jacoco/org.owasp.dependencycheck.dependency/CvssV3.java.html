@@ -74,11 +74,11 @@ public class CvssV3 implements Serializable {
     /**
      * CVSSv3 Base Metric exploitability score.
      */
-    private Float exploitabilityScore;
+    private final Float exploitabilityScore;
     /**
      * CVSSv3 Base Metric impact score.
      */
-    private Float impactScore;
+    private final Float impactScore;
     /**
      * CVSS version.
      */

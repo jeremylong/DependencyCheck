@@ -239,7 +239,7 @@ public class XmlInputStream extends FilterInputStream {
 <span class="fc" id="L239">                h.append(&quot; &quot;).append(Integer.toHexString(s.charAt(i)));</span>
             }
         }
-<span class="pc bpc" id="L242" title="1 of 2 branches missed.">        return &quot;[&quot; + given + &quot;]-\&quot;&quot; + s + &quot;\&quot;&quot; + (h.length() &gt; 0 ? &quot; (&quot; + h.toString() + &quot;)&quot; : &quot;&quot;);</span>
+<span class="pc bpc" id="L242" title="1 of 2 branches missed.">        return &quot;[&quot; + given + &quot;]-\&quot;&quot; + s + &quot;\&quot;&quot; + (h.length() &gt; 0 ? &quot; (&quot; + h + &quot;)&quot; : &quot;&quot;);</span>
     }
 
     /**

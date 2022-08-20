@@ -152,7 +152,7 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L152">            relatedDependency.getEvidence(EvidenceType.PRODUCT).forEach((e) -&gt; dependency.addEvidence(EvidenceType.PRODUCT, e));</span>
 <span class="fc" id="L153">            relatedDependency.getEvidence(EvidenceType.VERSION).forEach((e) -&gt; dependency.addEvidence(EvidenceType.VERSION, e));</span>
 
-<span class="fc" id="L155">            relatedDependency.getRelatedDependencies().stream()</span>
+<span class="fc" id="L155">            relatedDependency.getRelatedDependencies()</span>
 <span class="fc" id="L156">                    .forEach(dependency::addRelatedDependency);</span>
 <span class="fc" id="L157">            relatedDependency.clearRelatedDependencies();</span>
 <span class="fc" id="L158">            dependency.addAllProjectReferences(relatedDependency.getProjectReferences());</span>

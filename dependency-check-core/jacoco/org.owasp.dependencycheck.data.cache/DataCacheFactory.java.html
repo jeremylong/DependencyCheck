@@ -92,7 +92,7 @@ public class DataCacheFactory {
 <span class="nc" id="L92">                    throw new CacheException(&quot;Unable to obtain disk cache directory path&quot;, ex);</span>
 <span class="fc" id="L93">                }</span>
 <span class="pc bpc" id="L94" title="1 of 4 branches missed.">                if (!cacheDirectory.isDirectory() &amp;&amp; !cacheDirectory.mkdirs()) {</span>
-<span class="nc" id="L95">                    throw new CacheException(&quot;Unable to create disk cache: &quot; + cacheDirectory.toString());</span>
+<span class="nc" id="L95">                    throw new CacheException(&quot;Unable to create disk cache: &quot; + cacheDirectory);</span>
                 }
 <span class="fc" id="L97">                try (InputStream in = FileUtils.getResourceAsStream(CACHE_PROPERTIES)) {</span>
 <span class="pc bpc" id="L98" title="1 of 2 branches missed.">                    if (in == null) {</span>
@@ -104,7 +104,7 @@ public class DataCacheFactory {
 <span class="fc" id="L104">                    properties.put(&quot;jcs.auxiliary.ODC.attributes.DiskPath&quot;, cacheDirectory.getCanonicalPath());</span>
 <span class="fc bfc" id="L105" title="All 2 branches covered.">                    for (CacheType t : CacheType.values()) {</span>
 <span class="fc" id="L106">                        final File fp = new File(cacheDirectory, t.toString());</span>
-<span class="fc" id="L107">                        properties.put(&quot;jcs.auxiliary.&quot; + t.toString() + &quot;.attributes.DiskPath&quot;, fp.getCanonicalPath());</span>
+<span class="fc" id="L107">                        properties.put(&quot;jcs.auxiliary.&quot; + t + &quot;.attributes.DiskPath&quot;, fp.getCanonicalPath());</span>
                     }
 
 <span class="fc" id="L110">                    JCS.setConfigProperties(properties);</span>

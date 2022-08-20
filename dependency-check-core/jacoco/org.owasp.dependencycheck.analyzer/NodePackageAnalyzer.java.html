@@ -237,14 +237,14 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
             }
 <span class="fc bfc" id="L238" title="All 2 branches covered.">        } else if (PACKAGE_LOCK_JSON.equals(dependency.getFileName())) {</span>
 <span class="fc" id="L239">            final File shrinkwrap = new File(baseDir, SHRINKWRAP_JSON);</span>
-<span class="fc bfc" id="L240" title="All 2 branches covered.">            if (shrinkwrap.exists()) {</span>
-<span class="fc" id="L241">                return;</span>
+<span class="pc bpc" id="L240" title="1 of 2 branches missed.">            if (shrinkwrap.exists()) {</span>
+<span class="nc" id="L241">                return;</span>
             }
         }
 <span class="fc" id="L244">        final File nodeModules = new File(baseDir, &quot;node_modules&quot;);</span>
 <span class="pc bpc" id="L245" title="1 of 2 branches missed.">        if (!nodeModules.isDirectory()) {</span>
 <span class="nc" id="L246">            LOGGER.warn(&quot;Analyzing `{}` - however, the node_modules directory does not exist. &quot;</span>
-<span class="nc" id="L247">                    + &quot;Please run `npm install` prior to running dependency-check&quot;, dependencyFile.toString());</span>
+                    + &quot;Please run `npm install` prior to running dependency-check&quot;, dependencyFile);
 <span class="nc" id="L248">            return;</span>
         }
 
@@ -297,10 +297,10 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
 
         // this seems to produce crash sometimes, I need to tests
         // using a local node_module is not supported by npm audit, it crash
-<span class="fc bfc" id="L300" title="All 4 branches covered.">        if (Objects.nonNull(version) &amp;&amp; version.startsWith(&quot;file:&quot;)) {</span>
+<span class="pc bpc" id="L300" title="1 of 6 branches missed.">        if (Objects.nonNull(version) &amp;&amp; (version.startsWith(&quot;file:&quot;) || version.matches(&quot;^[.~]{0,2}/.*&quot;))) {</span>
 <span class="fc" id="L301">            LOGGER.warn(&quot;dependency skipped: package.json contain an local node_module for {} seems to be &quot;</span>
                     + &quot;located {} npm audit doesn't support locally referenced modules&quot;,
-<span class="fc" id="L303">                    name, version.replace(&quot;file:&quot;, &quot;&quot;));</span>
+                    name, version);
 <span class="fc" id="L304">            return true;</span>
         }
 <span class="fc" id="L306">        return false;</span>
@@ -392,7 +392,7 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
 <span class="nc" id="L392">                        throw new AnalysisException(&quot;Problem occurred while reading dependency file.&quot;, e);</span>
 <span class="pc" id="L393">                    }</span>
                 } else {
-<span class="nc" id="L395">                    LOGGER.warn(&quot;Unable to find node module: {}&quot;, f.toString());</span>
+<span class="nc" id="L395">                    LOGGER.warn(&quot;Unable to find node module: {}&quot;, f);</span>
                     //TODO - we should use the integrity value instead of calculating the SHA1/MD5
 <span class="nc" id="L397">                    child.setSha1sum(Checksum.getSHA1Checksum(String.format(&quot;%s:%s&quot;, name, version)));</span>
 <span class="nc" id="L398">                    child.setSha256sum(Checksum.getSHA256Checksum(String.format(&quot;%s:%s&quot;, name, version)));</span>

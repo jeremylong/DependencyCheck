@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.data.nvd.json;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -43,11 +44,11 @@ public final class CpeMatchStreamCollector implements Collector&lt;DefNode, Arra
     private static final CpeMatchStreamCollector INSTANCE;
 
     static {
-<span class="fc" id="L46">        INSTANCE = new CpeMatchStreamCollector();</span>
-<span class="fc" id="L47">    }</span>
+<span class="fc" id="L47">        INSTANCE = new CpeMatchStreamCollector();</span>
+<span class="fc" id="L48">    }</span>
 
     public static CpeMatchStreamCollector getInstance() {
-<span class="fc" id="L50">        return INSTANCE;</span>
+<span class="fc" id="L51">        return INSTANCE;</span>
     }
 
     private CpeMatchStreamCollector() {
@@ -55,30 +56,30 @@ public final class CpeMatchStreamCollector implements Collector&lt;DefNode, Arra
 
     @Override
     public Supplier&lt;ArrayList&lt;DefCpeMatch&gt;&gt; supplier() {
-<span class="fc" id="L58">        return ArrayList::new;</span>
+<span class="fc" id="L59">        return ArrayList::new;</span>
     }
 
     @Override
     public BiConsumer&lt;ArrayList&lt;DefCpeMatch&gt;, DefNode&gt; accumulator() {
-<span class="fc" id="L63">        return (match, nodes) -&gt; match.addAll(nodes.getCpeMatch());</span>
+<span class="fc" id="L64">        return (match, nodes) -&gt; match.addAll(nodes.getCpeMatch());</span>
     }
 
     @Override
     public BinaryOperator&lt;ArrayList&lt;DefCpeMatch&gt;&gt; combiner() {
-<span class="fc" id="L68">        return (map, other) -&gt; {</span>
-<span class="nc" id="L69">            map.addAll(other);</span>
-<span class="nc" id="L70">            return map;</span>
+<span class="fc" id="L69">        return (map, other) -&gt; {</span>
+<span class="nc" id="L70">            map.addAll(other);</span>
+<span class="nc" id="L71">            return map;</span>
         };
     }
 
     @Override
     public Function&lt;ArrayList&lt;DefCpeMatch&gt;, Stream&lt;DefCpeMatch&gt;&gt; finisher() {
-<span class="fc" id="L76">        return (m) -&gt; m.stream();</span>
+<span class="fc" id="L77">        return Collection::stream;</span>
     }
 
     @Override
     public Set&lt;Characteristics&gt; characteristics() {
-<span class="fc" id="L81">        return EnumSet.of(Characteristics.UNORDERED);</span>
+<span class="fc" id="L82">        return EnumSet.of(Characteristics.UNORDERED);</span>
     }
 
 }

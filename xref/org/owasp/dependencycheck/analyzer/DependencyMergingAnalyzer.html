@@ -160,7 +160,7 @@
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>             relatedDependency.getEvidence(EvidenceType.PRODUCT).forEach((e) -&gt; dependency.addEvidence(EvidenceType.PRODUCT, e));
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>             relatedDependency.getEvidence(EvidenceType.VERSION).forEach((e) -&gt; dependency.addEvidence(EvidenceType.VERSION, e));
 <a class="jxr_linenumber" name="L154" href="#L154">154</a> 
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>             relatedDependency.getRelatedDependencies().stream()
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>             relatedDependency.getRelatedDependencies()
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>                     .forEach(dependency::addRelatedDependency);
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>             relatedDependency.clearRelatedDependencies();
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>             dependency.addAllProjectReferences(relatedDependency.getProjectReferences());

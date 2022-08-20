@@ -77,20 +77,18 @@ public class DescriptionEcosystemMapper {
 <span class="fc" id="L77">        }</span>
 
 <span class="fc" id="L79">        ECOSYSTEMS = new String[ecosystemIndexes.size()];</span>
-<span class="fc" id="L80">        ecosystemIndexes.entrySet().forEach((e) -&gt; {</span>
-<span class="fc" id="L81">            ECOSYSTEMS[e.getValue()] = e.getKey();</span>
-<span class="fc" id="L82">        });</span>
-<span class="fc" id="L83">    }</span>
+<span class="fc" id="L80">        ecosystemIndexes.forEach((key, value) -&gt; ECOSYSTEMS[value] = key);</span>
+<span class="fc" id="L81">    }</span>
 
     // take advantage of chars also being numbers
     /**
      * Prefix prefix for matching ecosystems.
      */
-<span class="fc" id="L89">    private final boolean[] keywordPrefixes = getPrefixesFor(&quot; -(\&quot;'&quot;);</span>
+<span class="fc" id="L87">    private final boolean[] keywordPrefixes = getPrefixesFor(&quot; -(\&quot;'&quot;);</span>
     /**
      * Postfix prefix for matching ecosystems.
      */
-<span class="fc" id="L93">    private final boolean[] keywordPostfixes = getPrefixesFor(&quot; -)\&quot;',.:;&quot;);</span>
+<span class="fc" id="L91">    private final boolean[] keywordPostfixes = getPrefixesFor(&quot; -)\&quot;',.:;&quot;);</span>
     /**
      * Aho Corasick double array trie used for parsing and matching ecosystems.
      */
@@ -99,48 +97,48 @@ public class DescriptionEcosystemMapper {
     /**
      * Constructs a new description ecosystem mapper.
      */
-<span class="fc" id="L102">    public DescriptionEcosystemMapper() {</span>
-<span class="fc" id="L103">        ahoCorasickDoubleArrayTrie = toAhoCorasickDoubleArrayTrie();</span>
-<span class="fc" id="L104">    }</span>
+<span class="fc" id="L100">    public DescriptionEcosystemMapper() {</span>
+<span class="fc" id="L101">        ahoCorasickDoubleArrayTrie = toAhoCorasickDoubleArrayTrie();</span>
+<span class="fc" id="L102">    }</span>
 
     protected static boolean[] getPrefixesFor(String str) {
-<span class="fc" id="L107">        int max = -1;</span>
-<span class="fc bfc" id="L108" title="All 2 branches covered.">        for (int i = 0; i &lt; str.length(); i++) {</span>
-<span class="fc bfc" id="L109" title="All 2 branches covered.">            if (max &lt; str.charAt(i)) {</span>
-<span class="fc" id="L110">                max = str.charAt(i);</span>
+<span class="fc" id="L105">        int max = -1;</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        for (int i = 0; i &lt; str.length(); i++) {</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">            if (max &lt; str.charAt(i)) {</span>
+<span class="fc" id="L108">                max = str.charAt(i);</span>
             }
         }
 
-<span class="fc" id="L114">        final boolean[] delimiters = new boolean[max + 1];</span>
-<span class="fc bfc" id="L115" title="All 2 branches covered.">        for (int i = 0; i &lt; str.length(); i++) {</span>
-<span class="fc" id="L116">            delimiters[str.charAt(i)] = true;</span>
+<span class="fc" id="L112">        final boolean[] delimiters = new boolean[max + 1];</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        for (int i = 0; i &lt; str.length(); i++) {</span>
+<span class="fc" id="L114">            delimiters[str.charAt(i)] = true;</span>
         }
-<span class="fc" id="L118">        return delimiters;</span>
+<span class="fc" id="L116">        return delimiters;</span>
     }
 
     protected static StringAhoCorasickDoubleArrayTrie&lt;EcosystemHint&gt; toAhoCorasickDoubleArrayTrie() {
-<span class="fc" id="L122">        final StringAhoCorasickDoubleArrayTrie&lt;EcosystemHint&gt; exact = new StringAhoCorasickDoubleArrayTrie&lt;&gt;();</span>
-<span class="fc" id="L123">        exact.build(ECOSYSTEM_MAP);</span>
-<span class="fc" id="L124">        return exact;</span>
+<span class="fc" id="L120">        final StringAhoCorasickDoubleArrayTrie&lt;EcosystemHint&gt; exact = new StringAhoCorasickDoubleArrayTrie&lt;&gt;();</span>
+<span class="fc" id="L121">        exact.build(ECOSYSTEM_MAP);</span>
+<span class="fc" id="L122">        return exact;</span>
     }
 
     protected static boolean isExtension(String str, int begin, int end) {
-<span class="fc bfc" id="L128" title="All 4 branches covered.">        if (str.length() != end &amp;&amp; Character.isLetterOrDigit(str.charAt(end))) {</span>
-<span class="fc" id="L129">            return false;</span>
+<span class="fc bfc" id="L126" title="All 4 branches covered.">        if (str.length() != end &amp;&amp; Character.isLetterOrDigit(str.charAt(end))) {</span>
+<span class="fc" id="L127">            return false;</span>
         }
 
-<span class="fc" id="L132">        return isLowercaseAscii(str, begin + 1, end);</span>
+<span class="fc" id="L130">        return isLowercaseAscii(str, begin + 1, end);</span>
     }
 
     protected static boolean isLowercaseAscii(String multicase, int start, int end) {
-<span class="fc bfc" id="L136" title="All 2 branches covered.">        for (int i = start; i &lt; end; i++) {</span>
-<span class="fc" id="L137">            final char c = multicase.charAt(i);</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">        for (int i = start; i &lt; end; i++) {</span>
+<span class="fc" id="L135">            final char c = multicase.charAt(i);</span>
 
-<span class="pc bpc" id="L139" title="2 of 4 branches missed.">            if (c &lt; 'a' || c &gt; 'z') {</span>
-<span class="nc" id="L140">                return false;</span>
+<span class="pc bpc" id="L137" title="2 of 4 branches missed.">            if (c &lt; 'a' || c &gt; 'z') {</span>
+<span class="nc" id="L138">                return false;</span>
             }
         }
-<span class="fc" id="L143">        return true;</span>
+<span class="fc" id="L141">        return true;</span>
     }
 
     /**
@@ -152,25 +150,25 @@ public class DescriptionEcosystemMapper {
      * @return &lt;code&gt;true&lt;/code&gt; if `://` is found; otherwise &lt;code&gt;false&lt;/code&gt;
      */
     public static boolean isURL(String c, int begin) {
-<span class="fc" id="L155">        int pos = begin - 2;</span>
+<span class="fc" id="L153">        int pos = begin - 2;</span>
 
-<span class="pc bpc" id="L157" title="1 of 2 branches missed.">        while (pos &gt; 2) {</span>
-<span class="fc" id="L158">            pos--;</span>
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">        while (pos &gt; 2) {</span>
+<span class="fc" id="L156">            pos--;</span>
 
-<span class="fc bfc" id="L160" title="All 2 branches covered.">            if (c.charAt(pos) == ' ') {</span>
-<span class="fc" id="L161">                return false;</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">            if (c.charAt(pos) == ' ') {</span>
+<span class="fc" id="L159">                return false;</span>
             }
-<span class="fc bfc" id="L163" title="All 2 branches covered.">            if (c.charAt(pos) == ':') {</span>
-<span class="pc bpc" id="L164" title="2 of 4 branches missed.">                return c.charAt(pos + 1) == '/' &amp;&amp; c.charAt(pos + 2) == '/';</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">            if (c.charAt(pos) == ':') {</span>
+<span class="pc bpc" id="L162" title="2 of 4 branches missed.">                return c.charAt(pos + 1) == '/' &amp;&amp; c.charAt(pos + 2) == '/';</span>
             }
         }
 
-<span class="nc" id="L168">        return false;</span>
+<span class="nc" id="L166">        return false;</span>
     }
 
     protected void increment(int i, int[] ecosystemMap) {
-<span class="fc" id="L172">        ecosystemMap[HINT_TO_ECOSYSTEM_LOOKUP[i]]++;</span>
-<span class="fc" id="L173">    }</span>
+<span class="fc" id="L170">        ecosystemMap[HINT_TO_ECOSYSTEM_LOOKUP[i]]++;</span>
+<span class="fc" id="L171">    }</span>
 
     /**
      * Returns the ecosystem if identified by English description from the CVE
@@ -180,13 +178,11 @@ public class DescriptionEcosystemMapper {
      * @return the ecosystem if identified
      */
     public String getEcosystem(DefCveItem cve) {
-<span class="fc" id="L183">        final int[] ecosystemMap = new int[ECOSYSTEMS.length];</span>
-<span class="fc" id="L184">        cve.getCve().getDescription().getDescriptionData().stream()</span>
-<span class="fc" id="L185">                .filter((langString) -&gt; (langString.getLang().equals(&quot;en&quot;)))</span>
-<span class="fc" id="L186">                .forEachOrdered((langString) -&gt; {</span>
-<span class="fc" id="L187">                    search(langString.getValue(), ecosystemMap);</span>
-<span class="fc" id="L188">                });</span>
-<span class="fc" id="L189">        return getResult(ecosystemMap);</span>
+<span class="fc" id="L181">        final int[] ecosystemMap = new int[ECOSYSTEMS.length];</span>
+<span class="fc" id="L182">        cve.getCve().getDescription().getDescriptionData().stream()</span>
+<span class="fc" id="L183">                .filter((langString) -&gt; (langString.getLang().equals(&quot;en&quot;)))</span>
+<span class="fc" id="L184">                .forEachOrdered((langString) -&gt; search(langString.getValue(), ecosystemMap));</span>
+<span class="fc" id="L185">        return getResult(ecosystemMap);</span>
     }
 
     /**
@@ -196,78 +192,78 @@ public class DescriptionEcosystemMapper {
      * @return the ecosystem
      */
     public String getEcosystem(String multicase) {
-<span class="nc" id="L199">        final int[] ecosystemMap = new int[ECOSYSTEMS.length];</span>
-<span class="nc" id="L200">        search(multicase, ecosystemMap);</span>
-<span class="nc" id="L201">        return getResult(ecosystemMap);</span>
+<span class="nc" id="L195">        final int[] ecosystemMap = new int[ECOSYSTEMS.length];</span>
+<span class="nc" id="L196">        search(multicase, ecosystemMap);</span>
+<span class="nc" id="L197">        return getResult(ecosystemMap);</span>
     }
 
     private void search(String multicase, int[] ecosystemMap) {
-<span class="fc" id="L205">        final String c = multicase.toLowerCase();</span>
-<span class="fc" id="L206">        ahoCorasickDoubleArrayTrie.parseText(c, (begin, end, value, index) -&gt; {</span>
-<span class="fc bfc" id="L207" title="All 2 branches covered.">            if (value.getNature() == EcosystemHintNature.FILE_EXTENSION) {</span>
-<span class="fc bfc" id="L208" title="All 2 branches covered.">                if (!isExtension(multicase, begin, end)) {</span>
-<span class="fc" id="L209">                    return;</span>
+<span class="fc" id="L201">        final String c = multicase.toLowerCase();</span>
+<span class="fc" id="L202">        ahoCorasickDoubleArrayTrie.parseText(c, (begin, end, value, index) -&gt; {</span>
+<span class="fc bfc" id="L203" title="All 2 branches covered.">            if (value.getNature() == EcosystemHintNature.FILE_EXTENSION) {</span>
+<span class="fc bfc" id="L204" title="All 2 branches covered.">                if (!isExtension(multicase, begin, end)) {</span>
+<span class="fc" id="L205">                    return;</span>
                 }
 
-<span class="fc" id="L212">                final String ecosystem = value.getEcosystem();</span>
+<span class="fc" id="L208">                final String ecosystem = value.getEcosystem();</span>
                 // real extension, if not part of url
-<span class="pc bpc" id="L214" title="1 of 4 branches missed.">                if (Ecosystem.PHP.equals(ecosystem) &amp;&amp; c.regionMatches(begin, &quot;.php&quot;, 0, 4)) {</span>
+<span class="pc bpc" id="L210" title="1 of 4 branches missed.">                if (Ecosystem.PHP.equals(ecosystem) &amp;&amp; c.regionMatches(begin, &quot;.php&quot;, 0, 4)) {</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">                    if (isURL(c, begin)) {</span>
+<span class="fc" id="L212">                        return;</span>
+                    }
+<span class="fc bfc" id="L214" title="All 4 branches covered.">                } else if (Ecosystem.JAVA.equals(ecosystem) &amp;&amp; c.regionMatches(begin, &quot;.jsp&quot;, 0, 4)) {</span>
 <span class="fc bfc" id="L215" title="All 2 branches covered.">                    if (isURL(c, begin)) {</span>
 <span class="fc" id="L216">                        return;</span>
                     }
-<span class="fc bfc" id="L218" title="All 4 branches covered.">                } else if (Ecosystem.JAVA.equals(ecosystem) &amp;&amp; c.regionMatches(begin, &quot;.jsp&quot;, 0, 4)) {</span>
-<span class="fc bfc" id="L219" title="All 2 branches covered.">                    if (isURL(c, begin)) {</span>
-<span class="fc" id="L220">                        return;</span>
-                    }
                 }
-<span class="fc" id="L223">            } else { // keyword</span>
+<span class="fc" id="L219">            } else { // keyword</span>
 
                 // check if full word, i.e. typically space first and then space or dot after
-<span class="fc bfc" id="L226" title="All 2 branches covered.">                if (begin != 0) {</span>
-<span class="fc" id="L227">                    final char startChar = c.charAt(begin - 1);</span>
-<span class="pc bpc" id="L228" title="2 of 4 branches missed.">                    if (startChar &gt;= keywordPrefixes.length || !keywordPrefixes[startChar]) {</span>
-<span class="nc" id="L229">                        return;</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">                if (begin != 0) {</span>
+<span class="fc" id="L223">                    final char startChar = c.charAt(begin - 1);</span>
+<span class="pc bpc" id="L224" title="2 of 4 branches missed.">                    if (startChar &gt;= keywordPrefixes.length || !keywordPrefixes[startChar]) {</span>
+<span class="nc" id="L225">                        return;</span>
                     }
                 }
-<span class="pc bpc" id="L232" title="1 of 2 branches missed.">                if (end != c.length()) {</span>
-<span class="fc" id="L233">                    final char endChar = c.charAt(end);</span>
-<span class="fc bfc" id="L234" title="All 4 branches covered.">                    if (endChar &gt;= keywordPostfixes.length || !keywordPostfixes[endChar]) {</span>
-<span class="fc" id="L235">                        return;</span>
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">                if (end != c.length()) {</span>
+<span class="fc" id="L229">                    final char endChar = c.charAt(end);</span>
+<span class="fc bfc" id="L230" title="All 4 branches covered.">                    if (endChar &gt;= keywordPostfixes.length || !keywordPostfixes[endChar]) {</span>
+<span class="fc" id="L231">                        return;</span>
                     }
                 }
 
-<span class="fc" id="L239">                final String ecosystem = value.getEcosystem();</span>
-<span class="fc bfc" id="L240" title="All 2 branches covered.">                if (Ecosystem.NATIVE.equals(ecosystem)) { // TODO could be checked afterwards</span>
-<span class="pc bpc" id="L241" title="1 of 2 branches missed.">                    if (StringUtils.contains(c, &quot;android&quot;)) {</span>
-<span class="nc" id="L242">                        return;</span>
+<span class="fc" id="L235">                final String ecosystem = value.getEcosystem();</span>
+<span class="fc bfc" id="L236" title="All 2 branches covered.">                if (Ecosystem.NATIVE.equals(ecosystem)) { // TODO could be checked afterwards</span>
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">                    if (StringUtils.contains(c, &quot;android&quot;)) {</span>
+<span class="nc" id="L238">                        return;</span>
                     }
                 }
             }
-<span class="fc" id="L246">            increment(index, ecosystemMap);</span>
-<span class="fc" id="L247">        });</span>
-<span class="fc" id="L248">    }</span>
+<span class="fc" id="L242">            increment(index, ecosystemMap);</span>
+<span class="fc" id="L243">        });</span>
+<span class="fc" id="L244">    }</span>
 
     private String getResult(int[] values) {
-<span class="fc" id="L251">        final int best = getBestScore(values);</span>
-<span class="fc bfc" id="L252" title="All 2 branches covered.">        if (best != -1) {</span>
-<span class="fc" id="L253">            return ECOSYSTEMS[best];</span>
+<span class="fc" id="L247">        final int best = getBestScore(values);</span>
+<span class="fc bfc" id="L248" title="All 2 branches covered.">        if (best != -1) {</span>
+<span class="fc" id="L249">            return ECOSYSTEMS[best];</span>
         }
-<span class="fc" id="L255">        return null;</span>
+<span class="fc" id="L251">        return null;</span>
     }
 
     private int getBestScore(int[] values) {
-<span class="fc" id="L259">        int bestIndex = -1;</span>
-<span class="fc" id="L260">        int bestScore = -1;</span>
-<span class="fc bfc" id="L261" title="All 2 branches covered.">        for (int i = 0; i &lt; values.length; i++) {</span>
-<span class="fc bfc" id="L262" title="All 2 branches covered.">            if (values[i] &gt; 0) {</span>
-<span class="pc bpc" id="L263" title="1 of 2 branches missed.">                if (values[i] &gt; bestScore) {</span>
-<span class="fc" id="L264">                    bestIndex = i;</span>
-<span class="fc" id="L265">                    bestScore = values[i];</span>
+<span class="fc" id="L255">        int bestIndex = -1;</span>
+<span class="fc" id="L256">        int bestScore = -1;</span>
+<span class="fc bfc" id="L257" title="All 2 branches covered.">        for (int i = 0; i &lt; values.length; i++) {</span>
+<span class="fc bfc" id="L258" title="All 2 branches covered.">            if (values[i] &gt; 0) {</span>
+<span class="pc bpc" id="L259" title="1 of 2 branches missed.">                if (values[i] &gt; bestScore) {</span>
+<span class="fc" id="L260">                    bestIndex = i;</span>
+<span class="fc" id="L261">                    bestScore = values[i];</span>
                 }
-<span class="fc" id="L267">                values[i] = 0;</span>
+<span class="fc" id="L263">                values[i] = 0;</span>
             }
         }
-<span class="fc" id="L270">        return bestIndex;</span>
+<span class="fc" id="L266">        return bestIndex;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

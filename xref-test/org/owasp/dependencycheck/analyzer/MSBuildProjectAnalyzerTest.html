@@ -83,7 +83,7 @@
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>              analyzer.setEnabled(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>              analyzer.analyze(toScan, engine);
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>              assertEquals(<span class="jxr_string">"3 dependencies should be found"</span>, 3, engine.getDependencies().length);
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>              assertEquals(<span class="jxr_string">"4 dependencies should be found"</span>, 4, engine.getDependencies().length);
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>              <strong class="jxr_keyword">int</strong> foundCount = 0;
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  
@@ -109,13 +109,20 @@
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>                     assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains(<span class="jxr_string">"AspNetCore"</span>));
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>                     assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains(<span class="jxr_string">"AspNetCore.All"</span>));
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>                     assertTrue(result.getEvidence(EvidenceType.VERSION).toString().contains(<span class="jxr_string">"2.0.5"</span>));
-<a class="jxr_linenumber" name="L104" href="#L104">104</a>                 }
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>             }
-<a class="jxr_linenumber" name="L106" href="#L106">106</a> 
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>             assertEquals(<span class="jxr_string">"3 expected dependencies should be found"</span>, 3, foundCount);
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>         }
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>     }
-<a class="jxr_linenumber" name="L110" href="#L110">110</a> }
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>                 } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"Microsoft.Extensions.Logging"</span>.equals(result.getName())) {
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>                     foundCount++;
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>                     assertTrue(result.getEvidence(EvidenceType.VENDOR).toString().contains(<span class="jxr_string">"Microsoft"</span>));
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>                     assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains(<span class="jxr_string">"Microsoft.Extensions.Logging"</span>));
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>                     assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains(<span class="jxr_string">"Extensions"</span>));
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>                     assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains(<span class="jxr_string">"Extensions.Logging"</span>));
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>                     assertTrue(result.getEvidence(EvidenceType.VERSION).toString().contains(<span class="jxr_string">"6.0.0"</span>));
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>                 }
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>             }
+<a class="jxr_linenumber" name="L113" href="#L113">113</a> 
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>             assertEquals(<span class="jxr_string">"4 expected dependencies should be found"</span>, 4, foundCount);
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>         }
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>     }
+<a class="jxr_linenumber" name="L117" href="#L117">117</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2022 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

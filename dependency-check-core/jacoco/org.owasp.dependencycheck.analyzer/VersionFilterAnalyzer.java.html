@@ -185,7 +185,7 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L185">                version = DependencyVersionUtil.parseVersion(e.getValue(), true);</span>
 <span class="fc bfc" id="L186" title="All 2 branches covered.">                if (version != null &amp;&amp; evidence.stream()</span>
 <span class="fc" id="L187">                        .map(ev -&gt; DependencyVersionUtil.parseVersion(ev.getValue(), true))</span>
-<span class="fc bfc" id="L188" title="All 2 branches covered.">                        .allMatch(v -&gt; version.equals(v))) {</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">                        .allMatch(version::equals)) {</span>
 <span class="fc" id="L189">                    dependency.setVersion(version.toString());</span>
                 }
             }

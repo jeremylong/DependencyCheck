@@ -68,7 +68,7 @@ import org.owasp.dependencycheck.data.cwe.CweDB;
 <span class="fc bfc" id="L68" title="All 2 branches covered.">        if (cwes.isEmpty()) {</span>
 <span class="fc" id="L69">            return &quot;&quot;;</span>
         }
-<span class="fc" id="L71">        return cwes.stream().map(cwe -&gt; CweDB.getFullName(cwe)).collect(Collectors.joining(&quot;, &quot;));</span>
+<span class="fc" id="L71">        return cwes.stream().map(CweDB::getFullName).collect(Collectors.joining(&quot;, &quot;));</span>
     }
 
     /**
@@ -87,10 +87,8 @@ import org.owasp.dependencycheck.data.cwe.CweDB;
      */
     public Map&lt;String, String&gt; getFullCwes() {
 <span class="fc" id="L89">        final Map&lt;String, String&gt; map = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L90">        cwes.forEach((cwe) -&gt; {</span>
-<span class="fc" id="L91">            map.put(cwe, CweDB.getName(cwe));</span>
-<span class="fc" id="L92">        });</span>
-<span class="fc" id="L93">        return map;</span>
+<span class="fc" id="L90">        cwes.forEach((cwe) -&gt; map.put(cwe, CweDB.getName(cwe)));</span>
+<span class="fc" id="L91">        return map;</span>
     }
 
     /**
@@ -101,7 +99,7 @@ import org.owasp.dependencycheck.data.cwe.CweDB;
      * &lt;code&gt;false&lt;/code&gt;
      */
     public boolean isEmpty() {
-<span class="fc" id="L104">        return cwes.isEmpty();</span>
+<span class="fc" id="L102">        return cwes.isEmpty();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -137,8 +137,8 @@ public class PerlCpanfileAnalyzer extends AbstractFileTypeAnalyzer {
 <span class="fc" id="L137">        final Pattern pattern = Pattern.compile(&quot;;&quot;);</span>
 <span class="fc" id="L138">        return Arrays.stream(contents.split(&quot;\n&quot;))</span>
 <span class="fc bfc" id="L139" title="All 2 branches covered.">                .map(r -&gt; r.indexOf(&quot;#&quot;) &gt; 0 ? r.substring(0, r.indexOf(&quot;#&quot;)) : r)</span>
-<span class="fc" id="L140">                .flatMap(r -&gt; pattern.splitAsStream(r))</span>
-<span class="fc" id="L141">                .map(r -&gt; r.trim())</span>
+<span class="fc" id="L140">                .flatMap(pattern::splitAsStream)</span>
+<span class="fc" id="L141">                .map(String::trim)</span>
 <span class="fc" id="L142">                .filter(r -&gt; r.startsWith(&quot;requires&quot;))</span>
 <span class="fc" id="L143">                .collect(toCollection(ArrayList::new));</span>
     }
@@ -203,10 +203,8 @@ public class PerlCpanfileAnalyzer extends AbstractFileTypeAnalyzer {
                     //sha1sum is used for anchor links in the HtML report
 <span class="fc" id="L204">                    dependency.setSha1sum(Checksum.getSHA1Checksum(id.getValue()));</span>
 <span class="fc" id="L205">                    return dependency;</span>
-<span class="fc" id="L206">                }).forEachOrdered(dependency -&gt; {</span>
-<span class="fc" id="L207">            engine.addDependency(dependency);</span>
-<span class="fc" id="L208">        });</span>
-<span class="fc" id="L209">    }</span>
+<span class="fc" id="L206">                }).forEachOrdered(engine::addDependency);</span>
+<span class="fc" id="L207">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

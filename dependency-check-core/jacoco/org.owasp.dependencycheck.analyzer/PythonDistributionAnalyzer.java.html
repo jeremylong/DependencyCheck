@@ -375,13 +375,11 @@ import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
         } else {
 <span class="nc" id="L376">            try (InputStream in = new BufferedInputStream(new FileInputStream(manifest))) {</span>
 <span class="nc" id="L377">                prop.load(in);</span>
-<span class="nc" id="L378">            } catch (FileNotFoundException e) {</span>
+<span class="nc" id="L378">            } catch (IOException e) {</span>
 <span class="nc" id="L379">                LOGGER.warn(e.getMessage(), e);</span>
-<span class="nc" id="L380">            } catch (IOException ex) {</span>
-<span class="nc" id="L381">                LOGGER.warn(ex.getMessage(), ex);</span>
-<span class="nc" id="L382">            }</span>
+<span class="nc" id="L380">            }</span>
         }
-<span class="nc" id="L384">        return prop;</span>
+<span class="nc" id="L382">        return prop;</span>
     }
 
     /**
@@ -397,15 +395,15 @@ import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
         // getting an exception for some directories not being able to be
         // created; might be because the directory already exists?
         do {
-<span class="fc" id="L400">            final int dirCount = DIR_COUNT.incrementAndGet();</span>
-<span class="fc" id="L401">            directory = new File(tempFileLocation, String.valueOf(dirCount));</span>
-<span class="pc bpc" id="L402" title="1 of 2 branches missed.">        } while (directory.exists());</span>
-<span class="pc bpc" id="L403" title="1 of 2 branches missed.">        if (!directory.mkdirs()) {</span>
-<span class="nc" id="L404">            throw new AnalysisException(String.format(</span>
+<span class="fc" id="L398">            final int dirCount = DIR_COUNT.incrementAndGet();</span>
+<span class="fc" id="L399">            directory = new File(tempFileLocation, String.valueOf(dirCount));</span>
+<span class="pc bpc" id="L400" title="1 of 2 branches missed.">        } while (directory.exists());</span>
+<span class="pc bpc" id="L401" title="1 of 2 branches missed.">        if (!directory.mkdirs()) {</span>
+<span class="nc" id="L402">            throw new AnalysisException(String.format(</span>
                     &quot;Unable to create temp directory '%s'.&quot;,
-<span class="nc" id="L406">                    directory.getAbsolutePath()));</span>
+<span class="nc" id="L404">                    directory.getAbsolutePath()));</span>
         }
-<span class="fc" id="L408">        return directory;</span>
+<span class="fc" id="L406">        return directory;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

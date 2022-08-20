@@ -165,7 +165,7 @@ import org.xml.sax.XMLReader;
 <span class="fc" id="L165">                this.hintRules = handler.getHintRules();</span>
 <span class="fc" id="L166">                this.vendorDuplicatingHintRules = handler.getVendorDuplicatingHintRules();</span>
             }
-<span class="nc" id="L168">        } catch (ParserConfigurationException | FileNotFoundException ex) {</span>
+<span class="nc" id="L168">        } catch (ParserConfigurationException | IOException ex) {</span>
 <span class="nc" id="L169">            LOGGER.debug(&quot;&quot;, ex);</span>
 <span class="nc" id="L170">            throw new HintParseException(ex);</span>
 <span class="fc" id="L171">        } catch (SAXException ex) {</span>
@@ -175,10 +175,7 @@ import org.xml.sax.XMLReader;
 <span class="fc" id="L175">                LOGGER.debug(&quot;&quot;, ex);</span>
 <span class="fc" id="L176">                throw new HintParseException(ex);</span>
             }
-<span class="nc" id="L178">        } catch (IOException ex) {</span>
-<span class="nc" id="L179">            LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="nc" id="L180">            throw new HintParseException(ex);</span>
-<span class="fc" id="L181">        }</span>
-<span class="fc" id="L182">    }</span>
+<span class="fc" id="L178">        }</span>
+<span class="fc" id="L179">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

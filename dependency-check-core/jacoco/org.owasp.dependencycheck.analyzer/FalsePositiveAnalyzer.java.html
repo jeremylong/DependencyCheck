@@ -228,7 +228,7 @@ import us.springett.parsers.cpe.values.Part;
             }
 
 <span class="fc" id="L230">        });</span>
-<span class="pc" id="L231">        removalSet.forEach((i) -&gt; dependency.removeVulnerableSoftwareIdentifier(i));</span>
+<span class="fc" id="L231">        removalSet.forEach(dependency::removeVulnerableSoftwareIdentifier);</span>
 <span class="fc" id="L232">    }</span>
 
     /**
@@ -335,7 +335,7 @@ import us.springett.parsers.cpe.values.Part;
                 }
             }
 <span class="fc" id="L337">        }</span>
-<span class="fc" id="L338">        toRemove.stream().forEach(dependency::removeVulnerableSoftwareIdentifier);</span>
+<span class="fc" id="L338">        toRemove.forEach(dependency::removeVulnerableSoftwareIdentifier);</span>
 <span class="fc" id="L339">    }</span>
 
     /**

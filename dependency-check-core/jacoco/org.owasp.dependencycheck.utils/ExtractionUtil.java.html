@@ -177,7 +177,7 @@ public final class ExtractionUtil {
 <span class="nc" id="L177">                } else {</span>
 <span class="fc" id="L178">                    final File file = new File(extractTo, entry.getName());</span>
 <span class="pc bpc" id="L179" title="1 of 2 branches missed.">                    if (!file.getCanonicalPath().startsWith(destPath)) {</span>
-<span class="nc" id="L180">                        LOGGER.debug(&quot;ZipSlip detected\n-Destination: &quot; + destPath + &quot;\n-Path: &quot; + file.toString());</span>
+<span class="nc" id="L180">                        LOGGER.debug(&quot;ZipSlip detected\n-Destination: &quot; + destPath + &quot;\n-Path: &quot; + file);</span>
 <span class="nc" id="L181">                        throw new ExtractionException(&quot;Archive contains a file that would be extracted outside of the target directory.&quot;);</span>
                     }
 <span class="fc" id="L183">                    try (FileOutputStream fos = new FileOutputStream(file)) {</span>
@@ -284,7 +284,7 @@ public final class ExtractionUtil {
 <span class="fc bfc" id="L284" title="All 2 branches covered.">            if (filter.accept(file.getParentFile(), file.getName())) {</span>
 <span class="fc" id="L285">                final String destPath = destination.getCanonicalPath();</span>
 <span class="pc bpc" id="L286" title="1 of 2 branches missed.">                if (!file.getCanonicalPath().startsWith(destPath)) {</span>
-<span class="nc" id="L287">                    LOGGER.debug(&quot;ZipSlip detected\n-Destination: &quot; + destPath + &quot;\n-Path: &quot; + file.toString());</span>
+<span class="nc" id="L287">                    LOGGER.debug(&quot;ZipSlip detected\n-Destination: &quot; + destPath + &quot;\n-Path: &quot; + file);</span>
 <span class="nc" id="L288">                    final String msg = String.format(</span>
                             &quot;Archive contains a file (%s) that would be extracted outside of the target directory.&quot;,
 <span class="nc" id="L290">                            file.getAbsolutePath());</span>
@@ -338,7 +338,7 @@ public final class ExtractionUtil {
 <span class="nc" id="L338">        final String originalPath = file.getPath();</span>
 <span class="nc" id="L339">        final File gzip = new File(originalPath + &quot;.gz&quot;);</span>
 <span class="nc bnc" id="L340" title="All 4 branches missed.">        if (gzip.isFile() &amp;&amp; !gzip.delete()) {</span>
-<span class="nc" id="L341">            LOGGER.debug(&quot;Failed to delete initial temporary file when extracting 'gz' {}&quot;, gzip.toString());</span>
+<span class="nc" id="L341">            LOGGER.debug(&quot;Failed to delete initial temporary file when extracting 'gz' {}&quot;, gzip);</span>
 <span class="nc" id="L342">            gzip.deleteOnExit();</span>
         }
 <span class="nc bnc" id="L344" title="All 2 branches missed.">        if (!file.renameTo(gzip)) {</span>
@@ -351,7 +351,7 @@ public final class ExtractionUtil {
 <span class="nc" id="L351">            IOUtils.copy(cin, out);</span>
         } finally {
 <span class="nc bnc" id="L353" title="All 4 branches missed.">            if (gzip.isFile() &amp;&amp; !org.apache.commons.io.FileUtils.deleteQuietly(gzip)) {</span>
-<span class="nc" id="L354">                LOGGER.debug(&quot;Failed to delete temporary file when extracting 'gz' {}&quot;, gzip.toString());</span>
+<span class="nc" id="L354">                LOGGER.debug(&quot;Failed to delete temporary file when extracting 'gz' {}&quot;, gzip);</span>
 <span class="nc" id="L355">                gzip.deleteOnExit();</span>
             }
         }
@@ -369,7 +369,7 @@ public final class ExtractionUtil {
 <span class="nc" id="L369">        final String originalPath = file.getPath();</span>
 <span class="nc" id="L370">        final File zip = new File(originalPath + &quot;.zip&quot;);</span>
 <span class="nc bnc" id="L371" title="All 4 branches missed.">        if (zip.isFile() &amp;&amp; !zip.delete()) {</span>
-<span class="nc" id="L372">            LOGGER.debug(&quot;Failed to delete initial temporary file when extracting 'zip' {}&quot;, zip.toString());</span>
+<span class="nc" id="L372">            LOGGER.debug(&quot;Failed to delete initial temporary file when extracting 'zip' {}&quot;, zip);</span>
 <span class="nc" id="L373">            zip.deleteOnExit();</span>
         }
 <span class="nc bnc" id="L375" title="All 2 branches missed.">        if (!file.renameTo(zip)) {</span>
@@ -383,7 +383,7 @@ public final class ExtractionUtil {
 <span class="nc" id="L383">            IOUtils.copy(cin, out);</span>
         } finally {
 <span class="nc bnc" id="L385" title="All 4 branches missed.">            if (zip.isFile() &amp;&amp; !org.apache.commons.io.FileUtils.deleteQuietly(zip)) {</span>
-<span class="nc" id="L386">                LOGGER.debug(&quot;Failed to delete temporary file when extracting 'zip' {}&quot;, zip.toString());</span>
+<span class="nc" id="L386">                LOGGER.debug(&quot;Failed to delete temporary file when extracting 'zip' {}&quot;, zip);</span>
 <span class="nc" id="L387">                zip.deleteOnExit();</span>
             }
         }

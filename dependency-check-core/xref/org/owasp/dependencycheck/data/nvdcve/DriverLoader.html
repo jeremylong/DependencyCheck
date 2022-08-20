@@ -136,44 +136,40 @@
 <a class="jxr_linenumber" name="L128" href="#L128">128</a>                 }
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>             }
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>         }
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>         <strong class="jxr_keyword">final</strong> URLClassLoader loader = AccessController.doPrivileged(<strong class="jxr_keyword">new</strong> PrivilegedAction&lt;URLClassLoader&gt;() {
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>             @Override
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>             <strong class="jxr_keyword">public</strong> URLClassLoader run() {
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> URLClassLoader(urls.toArray(<strong class="jxr_keyword">new</strong> URL[0]), parent);
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>             }
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>         });
-<a class="jxr_linenumber" name="L137" href="#L137">137</a> 
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>         <strong class="jxr_keyword">return</strong> load(className, loader);
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>     }
-<a class="jxr_linenumber" name="L140" href="#L140">140</a> 
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L142" href="#L142">142</a> <em class="jxr_javadoccomment">     * Loads the specified class using the supplied class loader and registers</em>
-<a class="jxr_linenumber" name="L143" href="#L143">143</a> <em class="jxr_javadoccomment">     * the driver with the driver manager.</em>
-<a class="jxr_linenumber" name="L144" href="#L144">144</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L145" href="#L145">145</a> <em class="jxr_javadoccomment">     * @param className the fully qualified name of the desired class</em>
-<a class="jxr_linenumber" name="L146" href="#L146">146</a> <em class="jxr_javadoccomment">     * @param loader the class loader to use when loading the driver</em>
-<a class="jxr_linenumber" name="L147" href="#L147">147</a> <em class="jxr_javadoccomment">     * @return the loaded Driver</em>
-<a class="jxr_linenumber" name="L148" href="#L148">148</a> <em class="jxr_javadoccomment">     * @throws DriverLoadException thrown if the driver cannot be loaded</em>
-<a class="jxr_linenumber" name="L149" href="#L149">149</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Driver load(String className, ClassLoader loader) <strong class="jxr_keyword">throws</strong> DriverLoadException {
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>             <strong class="jxr_keyword">final</strong> Class&lt;?&gt; c = Class.forName(className, <strong class="jxr_keyword">true</strong>, loader);
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>             <em class="jxr_comment">//final Class c = loader.loadClass(className);</em>
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>             <strong class="jxr_keyword">final</strong> Driver driver = (Driver) c.getDeclaredConstructor().newInstance();
-<a class="jxr_linenumber" name="L155" href="#L155">155</a> 
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>             <em class="jxr_comment">//TODO add usage count so we don't de-register a driver that is in use.</em>
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>             <strong class="jxr_keyword">final</strong> Driver shim = <strong class="jxr_keyword">new</strong> <a href="../../../../../org/owasp/dependencycheck/data/nvdcve/DriverShim.html">DriverShim</a>(driver);
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>             <em class="jxr_comment">//using the DriverShim to get around the fact that the DriverManager won't register a driver not in the base class path</em>
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>             DriverManager.registerDriver(shim);
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>             <strong class="jxr_keyword">return</strong> shim;
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>         } <strong class="jxr_keyword">catch</strong> (ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>                 | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException ex) {
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>             <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"Unable to load database driver '%s'"</span>, className);
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>             LOGGER.debug(msg, ex);
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/owasp/dependencycheck/data/nvdcve/DriverLoadException.html">DriverLoadException</a>(msg, ex);
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>         }
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>     }
-<a class="jxr_linenumber" name="L168" href="#L168">168</a> }
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>         <strong class="jxr_keyword">final</strong> URLClassLoader loader = AccessController.doPrivileged((PrivilegedAction&lt;URLClassLoader&gt;) () -&gt;
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>                 <strong class="jxr_keyword">new</strong> URLClassLoader(urls.toArray(<strong class="jxr_keyword">new</strong> URL[0]), parent));
+<a class="jxr_linenumber" name="L133" href="#L133">133</a> 
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>         <strong class="jxr_keyword">return</strong> load(className, loader);
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>     }
+<a class="jxr_linenumber" name="L136" href="#L136">136</a> 
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L138" href="#L138">138</a> <em class="jxr_javadoccomment">     * Loads the specified class using the supplied class loader and registers</em>
+<a class="jxr_linenumber" name="L139" href="#L139">139</a> <em class="jxr_javadoccomment">     * the driver with the driver manager.</em>
+<a class="jxr_linenumber" name="L140" href="#L140">140</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L141" href="#L141">141</a> <em class="jxr_javadoccomment">     * @param className the fully qualified name of the desired class</em>
+<a class="jxr_linenumber" name="L142" href="#L142">142</a> <em class="jxr_javadoccomment">     * @param loader the class loader to use when loading the driver</em>
+<a class="jxr_linenumber" name="L143" href="#L143">143</a> <em class="jxr_javadoccomment">     * @return the loaded Driver</em>
+<a class="jxr_linenumber" name="L144" href="#L144">144</a> <em class="jxr_javadoccomment">     * @throws DriverLoadException thrown if the driver cannot be loaded</em>
+<a class="jxr_linenumber" name="L145" href="#L145">145</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Driver load(String className, ClassLoader loader) <strong class="jxr_keyword">throws</strong> DriverLoadException {
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>             <strong class="jxr_keyword">final</strong> Class&lt;?&gt; c = Class.forName(className, <strong class="jxr_keyword">true</strong>, loader);
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>             <em class="jxr_comment">//final Class c = loader.loadClass(className);</em>
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>             <strong class="jxr_keyword">final</strong> Driver driver = (Driver) c.getDeclaredConstructor().newInstance();
+<a class="jxr_linenumber" name="L151" href="#L151">151</a> 
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>             <em class="jxr_comment">//TODO add usage count so we don't de-register a driver that is in use.</em>
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>             <strong class="jxr_keyword">final</strong> Driver shim = <strong class="jxr_keyword">new</strong> <a href="../../../../../org/owasp/dependencycheck/data/nvdcve/DriverShim.html">DriverShim</a>(driver);
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>             <em class="jxr_comment">//using the DriverShim to get around the fact that the DriverManager won't register a driver not in the base class path</em>
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>             DriverManager.registerDriver(shim);
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>             <strong class="jxr_keyword">return</strong> shim;
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>         } <strong class="jxr_keyword">catch</strong> (ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>                 | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException ex) {
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>             <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"Unable to load database driver '%s'"</span>, className);
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>             LOGGER.debug(msg, ex);
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/owasp/dependencycheck/data/nvdcve/DriverLoadException.html">DriverLoadException</a>(msg, ex);
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>         }
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>     }
+<a class="jxr_linenumber" name="L164" href="#L164">164</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2022 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

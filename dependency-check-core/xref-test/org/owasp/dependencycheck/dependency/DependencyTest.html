@@ -288,21 +288,17 @@
 <a class="jxr_linenumber" name="L280" href="#L280">280</a>         assertTrue(instance.size() == 4);
 <a class="jxr_linenumber" name="L281" href="#L281">281</a>         assertFalse(instance.getSoftwareIdentifiers().isEmpty());
 <a class="jxr_linenumber" name="L282" href="#L282">282</a> 
-<a class="jxr_linenumber" name="L283" href="#L283">283</a>         instance.getSoftwareIdentifiers().forEach((i) -&gt; {
-<a class="jxr_linenumber" name="L284" href="#L284">284</a>             assertNull(i.getUrl());
-<a class="jxr_linenumber" name="L285" href="#L285">285</a>         });
-<a class="jxr_linenumber" name="L286" href="#L286">286</a> 
-<a class="jxr_linenumber" name="L287" href="#L287">287</a>         mavenArtifact = <strong class="jxr_keyword">new</strong> MavenArtifact(<span class="jxr_string">"group"</span>, <span class="jxr_string">"artifact"</span>, <span class="jxr_string">"version"</span>, <span class="jxr_string">"url"</span>);
-<a class="jxr_linenumber" name="L288" href="#L288">288</a>         instance.addAsEvidence(<span class="jxr_string">"pom"</span>, mavenArtifact, Confidence.HIGH);
-<a class="jxr_linenumber" name="L289" href="#L289">289</a>         assertTrue(instance.getEvidence(EvidenceType.VENDOR).stream().anyMatch(e -&gt; e.getConfidence() == Confidence.HIGH));
-<a class="jxr_linenumber" name="L290" href="#L290">290</a>         assertTrue(instance.size() == 4);
-<a class="jxr_linenumber" name="L291" href="#L291">291</a>         assertFalse(instance.getSoftwareIdentifiers().isEmpty());
-<a class="jxr_linenumber" name="L292" href="#L292">292</a> 
-<a class="jxr_linenumber" name="L293" href="#L293">293</a>         instance.getSoftwareIdentifiers().forEach((i) -&gt; {
-<a class="jxr_linenumber" name="L294" href="#L294">294</a>             assertNotNull(i.getUrl());
-<a class="jxr_linenumber" name="L295" href="#L295">295</a>         });
-<a class="jxr_linenumber" name="L296" href="#L296">296</a>     }
-<a class="jxr_linenumber" name="L297" href="#L297">297</a> }
+<a class="jxr_linenumber" name="L283" href="#L283">283</a>         instance.getSoftwareIdentifiers().forEach((i) -&gt; assertNull(i.getUrl()));
+<a class="jxr_linenumber" name="L284" href="#L284">284</a> 
+<a class="jxr_linenumber" name="L285" href="#L285">285</a>         mavenArtifact = <strong class="jxr_keyword">new</strong> MavenArtifact(<span class="jxr_string">"group"</span>, <span class="jxr_string">"artifact"</span>, <span class="jxr_string">"version"</span>, <span class="jxr_string">"url"</span>);
+<a class="jxr_linenumber" name="L286" href="#L286">286</a>         instance.addAsEvidence(<span class="jxr_string">"pom"</span>, mavenArtifact, Confidence.HIGH);
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>         assertTrue(instance.getEvidence(EvidenceType.VENDOR).stream().anyMatch(e -&gt; e.getConfidence() == Confidence.HIGH));
+<a class="jxr_linenumber" name="L288" href="#L288">288</a>         assertTrue(instance.size() == 4);
+<a class="jxr_linenumber" name="L289" href="#L289">289</a>         assertFalse(instance.getSoftwareIdentifiers().isEmpty());
+<a class="jxr_linenumber" name="L290" href="#L290">290</a> 
+<a class="jxr_linenumber" name="L291" href="#L291">291</a>         instance.getSoftwareIdentifiers().forEach((i) -&gt; assertNotNull(i.getUrl()));
+<a class="jxr_linenumber" name="L292" href="#L292">292</a>     }
+<a class="jxr_linenumber" name="L293" href="#L293">293</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2022 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

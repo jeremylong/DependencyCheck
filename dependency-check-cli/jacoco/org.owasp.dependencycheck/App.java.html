@@ -73,7 +73,7 @@ public class App {
     /**
      * The configured settings.
      */
-    private Settings settings;
+    private final Settings settings;
 
     /**
      * The main method for the application.
@@ -334,7 +334,7 @@ public class App {
 <span class="nc bnc" id="L334" title="All 2 branches missed.">        if (ids.length() &gt; 0) {</span>
 <span class="nc" id="L335">            LOGGER.error(</span>
 <span class="nc" id="L336">                    String.format(&quot;%n%nOne or more dependencies were identified with vulnerabilities that have a CVSS score greater than or &quot;</span>
-<span class="nc" id="L337">                            + &quot;equal to '%.1f': %n%s%n%nSee the dependency-check report for more details.%n%n&quot;, cvssFailScore, ids.toString())</span>
+<span class="nc" id="L337">                            + &quot;equal to '%.1f': %n%s%n%nSee the dependency-check report for more details.%n%n&quot;, cvssFailScore, ids)</span>
             );
 
 <span class="nc" id="L340">            retCode = 1;</span>
@@ -388,7 +388,7 @@ public class App {
 <span class="nc bnc" id="L388" title="All 2 branches missed.">            if (scanner.getIncludedFilesCount() &gt; 0) {</span>
 <span class="nc bnc" id="L389" title="All 2 branches missed.">                for (String s : scanner.getIncludedFiles()) {</span>
 <span class="nc" id="L390">                    final File f = new File(baseDir, s);</span>
-<span class="nc" id="L391">                    LOGGER.debug(&quot;Found file {}&quot;, f.toString());</span>
+<span class="nc" id="L391">                    LOGGER.debug(&quot;Found file {}&quot;, f);</span>
 <span class="nc" id="L392">                    paths.add(f);</span>
                 }
             }
@@ -731,17 +731,18 @@ public class App {
      * @param file a file path
      * @return the position of the last file separator
      */
+    @SuppressWarnings(&quot;ManualMinMaxCalculation&quot;)
     private int getLastFileSeparator(String file) {
-<span class="pc bpc" id="L735" title="3 of 4 branches missed.">        if (file.contains(&quot;*&quot;) || file.contains(&quot;?&quot;)) {</span>
-<span class="fc" id="L736">            int p1 = file.indexOf('*');</span>
-<span class="fc" id="L737">            int p2 = file.indexOf('?');</span>
-<span class="pc bpc" id="L738" title="1 of 2 branches missed.">            p1 = p1 &gt; 0 ? p1 : file.length();</span>
-<span class="pc bpc" id="L739" title="1 of 2 branches missed.">            p2 = p2 &gt; 0 ? p2 : file.length();</span>
-<span class="pc bpc" id="L740" title="1 of 2 branches missed.">            int pos = p1 &lt; p2 ? p1 : p2;</span>
-<span class="fc" id="L741">            pos = file.lastIndexOf('/', pos);</span>
-<span class="fc" id="L742">            return pos;</span>
+<span class="pc bpc" id="L736" title="3 of 4 branches missed.">        if (file.contains(&quot;*&quot;) || file.contains(&quot;?&quot;)) {</span>
+<span class="fc" id="L737">            int p1 = file.indexOf('*');</span>
+<span class="fc" id="L738">            int p2 = file.indexOf('?');</span>
+<span class="pc bpc" id="L739" title="1 of 2 branches missed.">            p1 = p1 &gt; 0 ? p1 : file.length();</span>
+<span class="pc bpc" id="L740" title="1 of 2 branches missed.">            p2 = p2 &gt; 0 ? p2 : file.length();</span>
+<span class="pc bpc" id="L741" title="1 of 2 branches missed.">            int pos = p1 &lt; p2 ? p1 : p2;</span>
+<span class="fc" id="L742">            pos = file.lastIndexOf('/', pos);</span>
+<span class="fc" id="L743">            return pos;</span>
         } else {
-<span class="nc" id="L744">            return file.lastIndexOf('/');</span>
+<span class="nc" id="L745">            return file.lastIndexOf('/');</span>
         }
     }
 }

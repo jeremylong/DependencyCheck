@@ -258,7 +258,7 @@
 <a class="jxr_linenumber" name="L250" href="#L250">250</a> 
 <a class="jxr_linenumber" name="L251" href="#L251">251</a>         <strong class="jxr_keyword">final</strong> VelocityContext ctxt = <strong class="jxr_keyword">new</strong> VelocityContext();
 <a class="jxr_linenumber" name="L252" href="#L252">252</a>         ctxt.put(<span class="jxr_string">"applicationName"</span>, applicationName);
-<a class="jxr_linenumber" name="L253" href="#L253">253</a>         Collections.sort(dependencies, Dependency.NAME_COMPARATOR);
+<a class="jxr_linenumber" name="L253" href="#L253">253</a>         dependencies.sort(Dependency.NAME_COMPARATOR);
 <a class="jxr_linenumber" name="L254" href="#L254">254</a>         ctxt.put(<span class="jxr_string">"dependencies"</span>, dependencies);
 <a class="jxr_linenumber" name="L255" href="#L255">255</a>         ctxt.put(<span class="jxr_string">"analyzers"</span>, analyzers);
 <a class="jxr_linenumber" name="L256" href="#L256">256</a>         ctxt.put(<span class="jxr_string">"properties"</span>, properties);
@@ -515,7 +515,7 @@
 <a class="jxr_linenumber" name="L507" href="#L507">507</a>             <strong class="jxr_keyword">final</strong> XMLReader saxReader = XmlUtils.buildSecureSaxParser().getXMLReader();
 <a class="jxr_linenumber" name="L508" href="#L508">508</a> 
 <a class="jxr_linenumber" name="L509" href="#L509">509</a>             saxs.setXMLReader(saxReader);
-<a class="jxr_linenumber" name="L510" href="#L510">510</a>             transformer.transform(saxs, <strong class="jxr_keyword">new</strong> StreamResult(<strong class="jxr_keyword">new</strong> OutputStreamWriter(os, <span class="jxr_string">"utf-8"</span>)));
+<a class="jxr_linenumber" name="L510" href="#L510">510</a>             transformer.transform(saxs, <strong class="jxr_keyword">new</strong> StreamResult(<strong class="jxr_keyword">new</strong> OutputStreamWriter(os, StandardCharsets.UTF_8)));
 <a class="jxr_linenumber" name="L511" href="#L511">511</a>         } <strong class="jxr_keyword">catch</strong> (ParserConfigurationException | TransformerConfigurationException ex) {
 <a class="jxr_linenumber" name="L512" href="#L512">512</a>             LOGGER.debug(<span class="jxr_string">"Configuration exception when pretty printing"</span>, ex);
 <a class="jxr_linenumber" name="L513" href="#L513">513</a>             LOGGER.error(<span class="jxr_string">"Unable to generate pretty report, caused by: {}"</span>, ex.getMessage());

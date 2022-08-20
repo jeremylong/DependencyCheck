@@ -173,7 +173,7 @@
 <a class="jxr_linenumber" name="L165" href="#L165">165</a>                         } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L166" href="#L166">166</a>                             addShutdownHook();
 <a class="jxr_linenumber" name="L167" href="#L167">167</a>                             <strong class="jxr_keyword">final</strong> Timestamp timestamp = <strong class="jxr_keyword">new</strong> Timestamp(System.currentTimeMillis());
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>                             LOGGER.debug(<span class="jxr_string">"Lock file created ({}) {} @ {}"</span>, Thread.currentThread().getName(), magic, timestamp.toString());
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>                             LOGGER.debug(<span class="jxr_string">"Lock file created ({}) {} @ {}"</span>, Thread.currentThread().getName(), magic, timestamp);
 <a class="jxr_linenumber" name="L169" href="#L169">169</a>                         }
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>                     }
 <a class="jxr_linenumber" name="L171" href="#L171">171</a>                 } <strong class="jxr_keyword">catch</strong> (InterruptedException ex) {
@@ -195,7 +195,7 @@
 <a class="jxr_linenumber" name="L187" href="#L187">187</a>                     <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L188" href="#L188">188</a>                         <strong class="jxr_keyword">final</strong> Timestamp timestamp = <strong class="jxr_keyword">new</strong> Timestamp(System.currentTimeMillis());
 <a class="jxr_linenumber" name="L189" href="#L189">189</a>                         LOGGER.debug(<span class="jxr_string">"Sleeping thread {} ({}) for {} seconds because an exclusive lock on the database could not be obtained ({})"</span>,
-<a class="jxr_linenumber" name="L190" href="#L190">190</a>                                 Thread.currentThread().getName(), magic, SLEEP_DURATION / 1000, timestamp.toString());
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>                                 Thread.currentThread().getName(), magic, SLEEP_DURATION / 1000, timestamp);
 <a class="jxr_linenumber" name="L191" href="#L191">191</a>                         Thread.sleep(SLEEP_DURATION);
 <a class="jxr_linenumber" name="L192" href="#L192">192</a>                     } <strong class="jxr_keyword">catch</strong> (InterruptedException ex) {
 <a class="jxr_linenumber" name="L193" href="#L193">193</a>                         LOGGER.debug(<span class="jxr_string">"sleep was interrupted."</span>, ex);
@@ -245,7 +245,7 @@
 <a class="jxr_linenumber" name="L237" href="#L237">237</a>         lockFile = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L238" href="#L238">238</a>         removeShutdownHook();
 <a class="jxr_linenumber" name="L239" href="#L239">239</a>         <strong class="jxr_keyword">final</strong> Timestamp timestamp = <strong class="jxr_keyword">new</strong> Timestamp(System.currentTimeMillis());
-<a class="jxr_linenumber" name="L240" href="#L240">240</a>         LOGGER.debug(<span class="jxr_string">"Lock released ({}) {} @ {}"</span>, Thread.currentThread().getName(), magic, timestamp.toString());
+<a class="jxr_linenumber" name="L240" href="#L240">240</a>         LOGGER.debug(<span class="jxr_string">"Lock released ({}) {} @ {}"</span>, Thread.currentThread().getName(), magic, timestamp);
 <a class="jxr_linenumber" name="L241" href="#L241">241</a>     }
 <a class="jxr_linenumber" name="L242" href="#L242">242</a> 
 <a class="jxr_linenumber" name="L243" href="#L243">243</a>     <em class="jxr_javadoccomment">/**</em>

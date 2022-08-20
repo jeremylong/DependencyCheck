@@ -383,39 +383,37 @@
 <a class="jxr_linenumber" name="L375" href="#L375">375</a>         } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L376" href="#L376">376</a>             <strong class="jxr_keyword">try</strong> (InputStream in = <strong class="jxr_keyword">new</strong> BufferedInputStream(<strong class="jxr_keyword">new</strong> FileInputStream(manifest))) {
 <a class="jxr_linenumber" name="L377" href="#L377">377</a>                 prop.load(in);
-<a class="jxr_linenumber" name="L378" href="#L378">378</a>             } <strong class="jxr_keyword">catch</strong> (FileNotFoundException e) {
+<a class="jxr_linenumber" name="L378" href="#L378">378</a>             } <strong class="jxr_keyword">catch</strong> (IOException e) {
 <a class="jxr_linenumber" name="L379" href="#L379">379</a>                 LOGGER.warn(e.getMessage(), e);
-<a class="jxr_linenumber" name="L380" href="#L380">380</a>             } <strong class="jxr_keyword">catch</strong> (IOException ex) {
-<a class="jxr_linenumber" name="L381" href="#L381">381</a>                 LOGGER.warn(ex.getMessage(), ex);
-<a class="jxr_linenumber" name="L382" href="#L382">382</a>             }
-<a class="jxr_linenumber" name="L383" href="#L383">383</a>         }
-<a class="jxr_linenumber" name="L384" href="#L384">384</a>         <strong class="jxr_keyword">return</strong> prop;
-<a class="jxr_linenumber" name="L385" href="#L385">385</a>     }
-<a class="jxr_linenumber" name="L386" href="#L386">386</a> 
-<a class="jxr_linenumber" name="L387" href="#L387">387</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L388" href="#L388">388</a> <em class="jxr_javadoccomment">     * Retrieves the next temporary destination directory for extracting an</em>
-<a class="jxr_linenumber" name="L389" href="#L389">389</a> <em class="jxr_javadoccomment">     * archive.</em>
-<a class="jxr_linenumber" name="L390" href="#L390">390</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L391" href="#L391">391</a> <em class="jxr_javadoccomment">     * @return a directory</em>
-<a class="jxr_linenumber" name="L392" href="#L392">392</a> <em class="jxr_javadoccomment">     * @throws AnalysisException thrown if unable to create temporary directory</em>
-<a class="jxr_linenumber" name="L393" href="#L393">393</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L394" href="#L394">394</a>     <strong class="jxr_keyword">private</strong> File getNextTempDirectory() <strong class="jxr_keyword">throws</strong> AnalysisException {
-<a class="jxr_linenumber" name="L395" href="#L395">395</a>         File directory;
-<a class="jxr_linenumber" name="L396" href="#L396">396</a> 
-<a class="jxr_linenumber" name="L397" href="#L397">397</a>         <em class="jxr_comment">// getting an exception for some directories not being able to be</em>
-<a class="jxr_linenumber" name="L398" href="#L398">398</a>         <em class="jxr_comment">// created; might be because the directory already exists?</em>
-<a class="jxr_linenumber" name="L399" href="#L399">399</a>         <strong class="jxr_keyword">do</strong> {
-<a class="jxr_linenumber" name="L400" href="#L400">400</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> dirCount = DIR_COUNT.incrementAndGet();
-<a class="jxr_linenumber" name="L401" href="#L401">401</a>             directory = <strong class="jxr_keyword">new</strong> File(tempFileLocation, String.valueOf(dirCount));
-<a class="jxr_linenumber" name="L402" href="#L402">402</a>         } <strong class="jxr_keyword">while</strong> (directory.exists());
-<a class="jxr_linenumber" name="L403" href="#L403">403</a>         <strong class="jxr_keyword">if</strong> (!directory.mkdirs()) {
-<a class="jxr_linenumber" name="L404" href="#L404">404</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(String.format(
-<a class="jxr_linenumber" name="L405" href="#L405">405</a>                     <span class="jxr_string">"Unable to create temp directory '%s'."</span>,
-<a class="jxr_linenumber" name="L406" href="#L406">406</a>                     directory.getAbsolutePath()));
-<a class="jxr_linenumber" name="L407" href="#L407">407</a>         }
-<a class="jxr_linenumber" name="L408" href="#L408">408</a>         <strong class="jxr_keyword">return</strong> directory;
-<a class="jxr_linenumber" name="L409" href="#L409">409</a>     }
-<a class="jxr_linenumber" name="L410" href="#L410">410</a> }
+<a class="jxr_linenumber" name="L380" href="#L380">380</a>             }
+<a class="jxr_linenumber" name="L381" href="#L381">381</a>         }
+<a class="jxr_linenumber" name="L382" href="#L382">382</a>         <strong class="jxr_keyword">return</strong> prop;
+<a class="jxr_linenumber" name="L383" href="#L383">383</a>     }
+<a class="jxr_linenumber" name="L384" href="#L384">384</a> 
+<a class="jxr_linenumber" name="L385" href="#L385">385</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L386" href="#L386">386</a> <em class="jxr_javadoccomment">     * Retrieves the next temporary destination directory for extracting an</em>
+<a class="jxr_linenumber" name="L387" href="#L387">387</a> <em class="jxr_javadoccomment">     * archive.</em>
+<a class="jxr_linenumber" name="L388" href="#L388">388</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L389" href="#L389">389</a> <em class="jxr_javadoccomment">     * @return a directory</em>
+<a class="jxr_linenumber" name="L390" href="#L390">390</a> <em class="jxr_javadoccomment">     * @throws AnalysisException thrown if unable to create temporary directory</em>
+<a class="jxr_linenumber" name="L391" href="#L391">391</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L392" href="#L392">392</a>     <strong class="jxr_keyword">private</strong> File getNextTempDirectory() <strong class="jxr_keyword">throws</strong> AnalysisException {
+<a class="jxr_linenumber" name="L393" href="#L393">393</a>         File directory;
+<a class="jxr_linenumber" name="L394" href="#L394">394</a> 
+<a class="jxr_linenumber" name="L395" href="#L395">395</a>         <em class="jxr_comment">// getting an exception for some directories not being able to be</em>
+<a class="jxr_linenumber" name="L396" href="#L396">396</a>         <em class="jxr_comment">// created; might be because the directory already exists?</em>
+<a class="jxr_linenumber" name="L397" href="#L397">397</a>         <strong class="jxr_keyword">do</strong> {
+<a class="jxr_linenumber" name="L398" href="#L398">398</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> dirCount = DIR_COUNT.incrementAndGet();
+<a class="jxr_linenumber" name="L399" href="#L399">399</a>             directory = <strong class="jxr_keyword">new</strong> File(tempFileLocation, String.valueOf(dirCount));
+<a class="jxr_linenumber" name="L400" href="#L400">400</a>         } <strong class="jxr_keyword">while</strong> (directory.exists());
+<a class="jxr_linenumber" name="L401" href="#L401">401</a>         <strong class="jxr_keyword">if</strong> (!directory.mkdirs()) {
+<a class="jxr_linenumber" name="L402" href="#L402">402</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(String.format(
+<a class="jxr_linenumber" name="L403" href="#L403">403</a>                     <span class="jxr_string">"Unable to create temp directory '%s'."</span>,
+<a class="jxr_linenumber" name="L404" href="#L404">404</a>                     directory.getAbsolutePath()));
+<a class="jxr_linenumber" name="L405" href="#L405">405</a>         }
+<a class="jxr_linenumber" name="L406" href="#L406">406</a>         <strong class="jxr_keyword">return</strong> directory;
+<a class="jxr_linenumber" name="L407" href="#L407">407</a>     }
+<a class="jxr_linenumber" name="L408" href="#L408">408</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2022 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

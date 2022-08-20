@@ -440,7 +440,7 @@
 <a class="jxr_linenumber" name="L432" href="#L432">432</a>                     statement.execute(dbStructureUpdate);
 <a class="jxr_linenumber" name="L433" href="#L433">433</a>                 } <strong class="jxr_keyword">catch</strong> (SQLException ex) {
 <a class="jxr_linenumber" name="L434" href="#L434">434</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/owasp/dependencycheck/data/nvdcve/DatabaseException.html">DatabaseException</a>(String.format(<span class="jxr_string">"Unable to upgrade the database schema from %s to %s"</span>,
-<a class="jxr_linenumber" name="L435" href="#L435">435</a>                             currentDbVersion.toString(), appExpectedVersion.toString()), ex);
+<a class="jxr_linenumber" name="L435" href="#L435">435</a>                             currentDbVersion, appExpectedVersion.toString()), ex);
 <a class="jxr_linenumber" name="L436" href="#L436">436</a>                 } <strong class="jxr_keyword">finally</strong> {
 <a class="jxr_linenumber" name="L437" href="#L437">437</a>                     DBUtils.closeStatement(statement);
 <a class="jxr_linenumber" name="L438" href="#L438">438</a>                 }
@@ -507,8 +507,8 @@
 <a class="jxr_linenumber" name="L499" href="#L499">499</a>                 <strong class="jxr_keyword">if</strong> (db == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L500" href="#L500">500</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/owasp/dependencycheck/data/nvdcve/DatabaseException.html">DatabaseException</a>(<span class="jxr_string">"Invalid database schema"</span>);
 <a class="jxr_linenumber" name="L501" href="#L501">501</a>                 }
-<a class="jxr_linenumber" name="L502" href="#L502">502</a>                 LOGGER.debug(<span class="jxr_string">"DC Schema: {}"</span>, appDbVersion.toString());
-<a class="jxr_linenumber" name="L503" href="#L503">503</a>                 LOGGER.debug(<span class="jxr_string">"DB Schema: {}"</span>, db.toString());
+<a class="jxr_linenumber" name="L502" href="#L502">502</a>                 LOGGER.debug(<span class="jxr_string">"DC Schema: {}"</span>, appDbVersion);
+<a class="jxr_linenumber" name="L503" href="#L503">503</a>                 LOGGER.debug(<span class="jxr_string">"DB Schema: {}"</span>, db);
 <a class="jxr_linenumber" name="L504" href="#L504">504</a>                 <strong class="jxr_keyword">if</strong> (appDbVersion.compareTo(db) &gt; 0) {
 <a class="jxr_linenumber" name="L505" href="#L505">505</a>                     <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> autoUpdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, <strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L506" href="#L506">506</a>                     <strong class="jxr_keyword">if</strong> (autoUpdate) {

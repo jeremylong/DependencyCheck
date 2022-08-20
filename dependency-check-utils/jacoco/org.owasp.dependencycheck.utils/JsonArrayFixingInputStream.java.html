@@ -53,7 +53,7 @@ public class JsonArrayFixingInputStream extends InputStream {
     /**
      * The input stream to be filtered.
      */
-    private volatile InputStream in;
+    private final InputStream in;
     /**
      * The read buffer.
      */
@@ -194,12 +194,12 @@ public class JsonArrayFixingInputStream extends InputStream {
     }
 
     @Override
-    public int read(byte b[]) throws IOException {
+    public int read(byte[] b) throws IOException {
 <span class="fc" id="L198">        return this.read(b, 0, b.length);</span>
     }
 
     @Override
-    public int read(byte b[], int off, int len) throws IOException {
+    public int read(byte[] b, int off, int len) throws IOException {
 <span class="fc bfc" id="L203" title="All 2 branches covered.">        if (advanceStream()) {</span>
 <span class="fc" id="L204">            final int brace = getClosingBraceOffset();</span>
 <span class="fc bfc" id="L205" title="All 2 branches covered.">            if (brace == 0) {</span>
@@ -207,9 +207,9 @@ public class JsonArrayFixingInputStream extends InputStream {
 <span class="fc" id="L207">                incrementRead();</span>
 <span class="fc" id="L208">                return 1;</span>
             }
-<span class="pc bpc" id="L210" title="1 of 2 branches missed.">            int copyLength = bufferAvailable &gt; len ? len : bufferAvailable;</span>
+<span class="fc" id="L210">            int copyLength = Math.min(bufferAvailable, len);</span>
 <span class="fc bfc" id="L211" title="All 2 branches covered.">            if (brace &gt; 0) {</span>
-<span class="pc bpc" id="L212" title="1 of 2 branches missed.">                copyLength = copyLength &gt; brace ? brace : copyLength;</span>
+<span class="fc" id="L212">                copyLength = Math.min(copyLength, brace);</span>
             }
 <span class="fc" id="L214">            final int copyEnd = copyLength + off;</span>
 <span class="fc bfc" id="L215" title="All 2 branches covered.">            for (int pos = off; pos &lt; copyEnd; pos++) {</span>

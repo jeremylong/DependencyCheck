@@ -250,7 +250,7 @@ public class ReportGenerator {
 
 <span class="fc" id="L251">        final VelocityContext ctxt = new VelocityContext();</span>
 <span class="fc" id="L252">        ctxt.put(&quot;applicationName&quot;, applicationName);</span>
-<span class="fc" id="L253">        Collections.sort(dependencies, Dependency.NAME_COMPARATOR);</span>
+<span class="fc" id="L253">        dependencies.sort(Dependency.NAME_COMPARATOR);</span>
 <span class="fc" id="L254">        ctxt.put(&quot;dependencies&quot;, dependencies);</span>
 <span class="fc" id="L255">        ctxt.put(&quot;analyzers&quot;, analyzers);</span>
 <span class="fc" id="L256">        ctxt.put(&quot;properties&quot;, properties);</span>
@@ -507,7 +507,7 @@ public class ReportGenerator {
 <span class="fc" id="L507">            final XMLReader saxReader = XmlUtils.buildSecureSaxParser().getXMLReader();</span>
 
 <span class="fc" id="L509">            saxs.setXMLReader(saxReader);</span>
-<span class="fc" id="L510">            transformer.transform(saxs, new StreamResult(new OutputStreamWriter(os, &quot;utf-8&quot;)));</span>
+<span class="fc" id="L510">            transformer.transform(saxs, new StreamResult(new OutputStreamWriter(os, StandardCharsets.UTF_8)));</span>
 <span class="nc" id="L511">        } catch (ParserConfigurationException | TransformerConfigurationException ex) {</span>
 <span class="nc" id="L512">            LOGGER.debug(&quot;Configuration exception when pretty printing&quot;, ex);</span>
 <span class="nc" id="L513">            LOGGER.error(&quot;Unable to generate pretty report, caused by: {}&quot;, ex.getMessage());</span>

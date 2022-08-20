@@ -128,14 +128,10 @@ public final class DriverLoader {
 <span class="fc" id="L128">                }</span>
             }
         }
-<span class="fc" id="L131">        final URLClassLoader loader = AccessController.doPrivileged(new PrivilegedAction&lt;URLClassLoader&gt;() {</span>
-            @Override
-            public URLClassLoader run() {
-<span class="fc" id="L134">                return new URLClassLoader(urls.toArray(new URL[0]), parent);</span>
-            }
-        });
+<span class="fc" id="L131">        final URLClassLoader loader = AccessController.doPrivileged((PrivilegedAction&lt;URLClassLoader&gt;) () -&gt;</span>
+<span class="fc" id="L132">                new URLClassLoader(urls.toArray(new URL[0]), parent));</span>
 
-<span class="fc" id="L138">        return load(className, loader);</span>
+<span class="fc" id="L134">        return load(className, loader);</span>
     }
 
     /**
@@ -149,20 +145,20 @@ public final class DriverLoader {
      */
     private static Driver load(String className, ClassLoader loader) throws DriverLoadException {
         try {
-<span class="fc" id="L152">            final Class&lt;?&gt; c = Class.forName(className, true, loader);</span>
+<span class="fc" id="L148">            final Class&lt;?&gt; c = Class.forName(className, true, loader);</span>
             //final Class c = loader.loadClass(className);
-<span class="fc" id="L154">            final Driver driver = (Driver) c.getDeclaredConstructor().newInstance();</span>
+<span class="fc" id="L150">            final Driver driver = (Driver) c.getDeclaredConstructor().newInstance();</span>
 
             //TODO add usage count so we don't de-register a driver that is in use.
-<span class="fc" id="L157">            final Driver shim = new DriverShim(driver);</span>
+<span class="fc" id="L153">            final Driver shim = new DriverShim(driver);</span>
             //using the DriverShim to get around the fact that the DriverManager won't register a driver not in the base class path
-<span class="fc" id="L159">            DriverManager.registerDriver(shim);</span>
-<span class="fc" id="L160">            return shim;</span>
-<span class="fc" id="L161">        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException</span>
+<span class="fc" id="L155">            DriverManager.registerDriver(shim);</span>
+<span class="fc" id="L156">            return shim;</span>
+<span class="fc" id="L157">        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException</span>
                 | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException ex) {
-<span class="fc" id="L163">            final String msg = String.format(&quot;Unable to load database driver '%s'&quot;, className);</span>
-<span class="fc" id="L164">            LOGGER.debug(msg, ex);</span>
-<span class="fc" id="L165">            throw new DriverLoadException(msg, ex);</span>
+<span class="fc" id="L159">            final String msg = String.format(&quot;Unable to load database driver '%s'&quot;, className);</span>
+<span class="fc" id="L160">            LOGGER.debug(msg, ex);</span>
+<span class="fc" id="L161">            throw new DriverLoadException(msg, ex);</span>
         }
     }
 }

@@ -21,7 +21,7 @@ import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURLBuilder;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -54,7 +54,7 @@ public class GoModDependency {
     /**
      * A list of license files we recognize.
      */
-<span class="fc" id="L57">    private static final Set&lt;String&gt; LICENSE_FILES = new HashSet&lt;String&gt;(Arrays.asList(&quot;LICENSE&quot;, &quot;LICENCE&quot;, &quot;LICENSE.TXT&quot;,</span>
+<span class="fc" id="L57">    private static final Set&lt;String&gt; LICENSE_FILES = new HashSet&lt;&gt;(Arrays.asList(&quot;LICENSE&quot;, &quot;LICENCE&quot;, &quot;LICENSE.TXT&quot;,</span>
             &quot;LICENSE.MD&quot;, &quot;LICENCE.MD&quot;, &quot;LICENSE.CODE&quot;, &quot;LICENCE.CODE&quot;, &quot;COPYING&quot;));
     /**
      * The module path.
@@ -195,7 +195,7 @@ public class GoModDependency {
 <span class="fc bfc" id="L195" title="All 2 branches covered.">            for (File f : files) {</span>
 <span class="pc bpc" id="L196" title="1 of 2 branches missed.">                if (LICENSE_FILES.contains(f.getName().toUpperCase())) {</span>
                     try {
-<span class="nc" id="L198">                        final String license = FileUtils.readFileToString(f, Charset.forName(&quot;UTF-8&quot;));</span>
+<span class="nc" id="L198">                        final String license = FileUtils.readFileToString(f, StandardCharsets.UTF_8);</span>
 <span class="nc" id="L199">                        dependency.setLicense(license);</span>
 <span class="nc" id="L200">                        break;</span>
 <span class="nc" id="L201">                    } catch (IOException ex) {</span>

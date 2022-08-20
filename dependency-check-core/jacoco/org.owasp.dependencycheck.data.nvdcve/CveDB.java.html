@@ -396,7 +396,7 @@ public final class CveDB implements AutoCloseable {
      *
      * @return the database properties
      */
-    protected DatabaseProperties reloadProperties() {
+    DatabaseProperties reloadProperties() {
 <span class="fc" id="L400">        databaseProperties = new DatabaseProperties(this);</span>
 <span class="fc" id="L401">        return databaseProperties;</span>
     }
@@ -1239,7 +1239,7 @@ public final class CveDB implements AutoCloseable {
 <span class="nc" id="L1239">            }</span>
 <span class="nc" id="L1240">            LOGGER.error(&quot;Unable to access the local database.\n\nEnsure that '{}' is a writable directory. &quot;</span>
                     + &quot;If the problem persist try deleting the files in '{}' and running {} again. If the problem continues, please &quot;
-                    + &quot;create a log file (see documentation at http://jeremylong.github.io/DependencyCheck/) and open a ticket at &quot;
+                    + &quot;create a log file (see documentation at https://jeremylong.github.io/DependencyCheck/) and open a ticket at &quot;
                     + &quot;https://github.com/jeremylong/DependencyCheck/issues and include the log file.\n\n&quot;,
 <span class="nc" id="L1244">                    dd, dd, settings.getString(Settings.KEYS.APPLICATION_NAME));</span>
 <span class="nc" id="L1245">            LOGGER.debug(&quot;&quot;, ex);</span>
@@ -1320,7 +1320,7 @@ public final class CveDB implements AutoCloseable {
      * @param vulnerableSoftware a set of the vulnerable software
      * @return true if the identified version is affected, otherwise false
      */
-    protected VulnerableSoftware getMatchingSoftware(Cpe cpe, Set&lt;VulnerableSoftware&gt; vulnerableSoftware) {
+    VulnerableSoftware getMatchingSoftware(Cpe cpe, Set&lt;VulnerableSoftware&gt; vulnerableSoftware) {
 <span class="fc" id="L1324">        VulnerableSoftware matched = null;</span>
 <span class="fc bfc" id="L1325" title="All 2 branches covered.">        for (VulnerableSoftware vs : vulnerableSoftware) {</span>
 <span class="fc bfc" id="L1326" title="All 2 branches covered.">            if (vs.matches(cpe)) {</span>
@@ -1441,7 +1441,7 @@ public final class CveDB implements AutoCloseable {
      */
     private void setBooleanValue(PreparedStatement ps, int i, Map&lt;String, Object&gt; props, String key) throws SQLException {
 <span class="nc bnc" id="L1443" title="All 4 branches missed.">        if (props != null &amp;&amp; props.containsKey(key)) {</span>
-<span class="nc" id="L1444">            ps.setBoolean(i, Boolean.valueOf(props.get(key).toString()));</span>
+<span class="nc" id="L1444">            ps.setBoolean(i, Boolean.parseBoolean(props.get(key).toString()));</span>
         } else {
 <span class="nc" id="L1446">            ps.setNull(i, java.sql.Types.NULL);</span>
         }

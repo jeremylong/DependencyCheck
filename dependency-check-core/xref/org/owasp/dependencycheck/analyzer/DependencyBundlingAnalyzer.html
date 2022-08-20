@@ -204,7 +204,7 @@
 <a class="jxr_linenumber" name="L196" href="#L196">196</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> relatedDependency, <strong class="jxr_keyword">final</strong> Set&lt;Dependency&gt; dependenciesToRemove,
 <a class="jxr_linenumber" name="L197" href="#L197">197</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> copyVulnsAndIds) {
 <a class="jxr_linenumber" name="L198" href="#L198">198</a>         dependency.addRelatedDependency(relatedDependency);
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>         relatedDependency.getRelatedDependencies().stream()
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>         relatedDependency.getRelatedDependencies()
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>                 .forEach(dependency::addRelatedDependency);
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>         relatedDependency.clearRelatedDependencies();
 <a class="jxr_linenumber" name="L202" href="#L202">202</a> 
@@ -469,226 +469,222 @@
 <a class="jxr_linenumber" name="L461" href="#L461">461</a>         <strong class="jxr_keyword">final</strong> String nextName = nextDependency.getFileName().toLowerCase();
 <a class="jxr_linenumber" name="L462" href="#L462">462</a>         <strong class="jxr_keyword">if</strong> (mainName.endsWith(<span class="jxr_string">".jar"</span>) &amp;&amp; nextName.endsWith(<span class="jxr_string">".js"</span>) &amp;&amp; nextName.startsWith(mainName)) {
 <a class="jxr_linenumber" name="L463" href="#L463">463</a>             <strong class="jxr_keyword">return</strong> dependency.getSoftwareIdentifiers()
-<a class="jxr_linenumber" name="L464" href="#L464">464</a>                     .stream().map(id -&gt; id.getValue()).collect(toSet())
-<a class="jxr_linenumber" name="L465" href="#L465">465</a>                     .containsAll(nextDependency.getSoftwareIdentifiers().stream().map(id -&gt; {
-<a class="jxr_linenumber" name="L466" href="#L466">466</a>                         <strong class="jxr_keyword">return</strong> identifierToWebJarForCompairson(id);
-<a class="jxr_linenumber" name="L467" href="#L467">467</a>                     }).collect(toSet()));
-<a class="jxr_linenumber" name="L468" href="#L468">468</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (nextName.endsWith(<span class="jxr_string">".jar"</span>) &amp;&amp; mainName.endsWith(<span class="jxr_string">"js"</span>) &amp;&amp; mainName.startsWith(nextName)) {
-<a class="jxr_linenumber" name="L469" href="#L469">469</a>             <strong class="jxr_keyword">return</strong> nextDependency.getSoftwareIdentifiers()
-<a class="jxr_linenumber" name="L470" href="#L470">470</a>                     .stream().map(id -&gt; id.getValue()).collect(toSet())
-<a class="jxr_linenumber" name="L471" href="#L471">471</a>                     .containsAll(dependency.getSoftwareIdentifiers().stream().map(id -&gt; {
-<a class="jxr_linenumber" name="L472" href="#L472">472</a>                         <strong class="jxr_keyword">return</strong> identifierToWebJarForCompairson(id);
-<a class="jxr_linenumber" name="L473" href="#L473">473</a>                     }).collect(toSet()));
-<a class="jxr_linenumber" name="L474" href="#L474">474</a>         }
-<a class="jxr_linenumber" name="L475" href="#L475">475</a>         <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L476" href="#L476">476</a>     }
-<a class="jxr_linenumber" name="L477" href="#L477">477</a> 
-<a class="jxr_linenumber" name="L478" href="#L478">478</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L479" href="#L479">479</a> <em class="jxr_javadoccomment">     * Attempts to convert a given JavaScript identifier to a web jar CPE.</em>
-<a class="jxr_linenumber" name="L480" href="#L480">480</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L481" href="#L481">481</a> <em class="jxr_javadoccomment">     * @param id a JavaScript CPE</em>
-<a class="jxr_linenumber" name="L482" href="#L482">482</a> <em class="jxr_javadoccomment">     * @return a Maven CPE for a web jar if conversion is possible; otherwise</em>
-<a class="jxr_linenumber" name="L483" href="#L483">483</a> <em class="jxr_javadoccomment">     * the original CPE is returned</em>
-<a class="jxr_linenumber" name="L484" href="#L484">484</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L485" href="#L485">485</a>     <strong class="jxr_keyword">private</strong> String identifierToWebJarForCompairson(<a href="../../../../org/owasp/dependencycheck/dependency/naming/Identifier.html">Identifier</a> id) {
-<a class="jxr_linenumber" name="L486" href="#L486">486</a>         <strong class="jxr_keyword">if</strong> (id instanceof PurlIdentifier) {
-<a class="jxr_linenumber" name="L487" href="#L487">487</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/naming/PurlIdentifier.html">PurlIdentifier</a> pid = (PurlIdentifier) id;
-<a class="jxr_linenumber" name="L488" href="#L488">488</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L489" href="#L489">489</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/naming/Identifier.html">Identifier</a> nid = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/naming/PurlIdentifier.html">PurlIdentifier</a>(<span class="jxr_string">"maven"</span>, <span class="jxr_string">"org.webjars"</span>, pid.getName(), pid.getVersion(), pid.getConfidence());
-<a class="jxr_linenumber" name="L490" href="#L490">490</a>                 <strong class="jxr_keyword">return</strong> nid.getValue();
-<a class="jxr_linenumber" name="L491" href="#L491">491</a>             } <strong class="jxr_keyword">catch</strong> (MalformedPackageURLException ex) {
-<a class="jxr_linenumber" name="L492" href="#L492">492</a>                 LOGGER.debug(<span class="jxr_string">"Unable to build webjar purl id"</span>, ex);
-<a class="jxr_linenumber" name="L493" href="#L493">493</a>                 <strong class="jxr_keyword">return</strong> id.getValue();
-<a class="jxr_linenumber" name="L494" href="#L494">494</a>             }
-<a class="jxr_linenumber" name="L495" href="#L495">495</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L496" href="#L496">496</a>             <strong class="jxr_keyword">return</strong> id == <strong class="jxr_keyword">null</strong> ? <span class="jxr_string">""</span> : id.getValue();
-<a class="jxr_linenumber" name="L497" href="#L497">497</a>         }
-<a class="jxr_linenumber" name="L498" href="#L498">498</a>     }
-<a class="jxr_linenumber" name="L499" href="#L499">499</a> 
-<a class="jxr_linenumber" name="L500" href="#L500">500</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L501" href="#L501">501</a> <em class="jxr_javadoccomment">     * Determines if the jar is shaded and the created pom.xml identified the</em>
-<a class="jxr_linenumber" name="L502" href="#L502">502</a> <em class="jxr_javadoccomment">     * same CPE as the jar - if so, the pom.xml dependency should be removed.</em>
-<a class="jxr_linenumber" name="L503" href="#L503">503</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L504" href="#L504">504</a> <em class="jxr_javadoccomment">     * @param dependency a dependency to check</em>
-<a class="jxr_linenumber" name="L505" href="#L505">505</a> <em class="jxr_javadoccomment">     * @param nextDependency another dependency to check</em>
-<a class="jxr_linenumber" name="L506" href="#L506">506</a> <em class="jxr_javadoccomment">     * @return true if on of the dependencies is a pom.xml and the identifiers</em>
-<a class="jxr_linenumber" name="L507" href="#L507">507</a> <em class="jxr_javadoccomment">     * between the two collections match; otherwise false</em>
-<a class="jxr_linenumber" name="L508" href="#L508">508</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L509" href="#L509">509</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> isShadedJar(<a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> dependency, <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> nextDependency) {
-<a class="jxr_linenumber" name="L510" href="#L510">510</a>         <strong class="jxr_keyword">if</strong> (dependency == <strong class="jxr_keyword">null</strong> || dependency.getFileName() == <strong class="jxr_keyword">null</strong>
-<a class="jxr_linenumber" name="L511" href="#L511">511</a>                 || nextDependency == <strong class="jxr_keyword">null</strong> || nextDependency.getFileName() == <strong class="jxr_keyword">null</strong>
-<a class="jxr_linenumber" name="L512" href="#L512">512</a>                 || dependency.getSoftwareIdentifiers().isEmpty()
-<a class="jxr_linenumber" name="L513" href="#L513">513</a>                 || nextDependency.getSoftwareIdentifiers().isEmpty()) {
-<a class="jxr_linenumber" name="L514" href="#L514">514</a>             <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L515" href="#L515">515</a>         }
-<a class="jxr_linenumber" name="L516" href="#L516">516</a>         <strong class="jxr_keyword">final</strong> String mainName = dependency.getFileName().toLowerCase();
-<a class="jxr_linenumber" name="L517" href="#L517">517</a>         <strong class="jxr_keyword">final</strong> String nextName = nextDependency.getFileName().toLowerCase();
-<a class="jxr_linenumber" name="L518" href="#L518">518</a>         <strong class="jxr_keyword">if</strong> (mainName.endsWith(<span class="jxr_string">".jar"</span>) &amp;&amp; nextName.endsWith(<span class="jxr_string">"pom.xml"</span>)) {
-<a class="jxr_linenumber" name="L519" href="#L519">519</a>             <strong class="jxr_keyword">return</strong> dependency.getSoftwareIdentifiers().containsAll(nextDependency.getSoftwareIdentifiers());
-<a class="jxr_linenumber" name="L520" href="#L520">520</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (nextName.endsWith(<span class="jxr_string">".jar"</span>) &amp;&amp; mainName.endsWith(<span class="jxr_string">"pom.xml"</span>)) {
-<a class="jxr_linenumber" name="L521" href="#L521">521</a>             <strong class="jxr_keyword">return</strong> nextDependency.getSoftwareIdentifiers().containsAll(dependency.getSoftwareIdentifiers());
-<a class="jxr_linenumber" name="L522" href="#L522">522</a>         }
-<a class="jxr_linenumber" name="L523" href="#L523">523</a>         <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L524" href="#L524">524</a>     }
-<a class="jxr_linenumber" name="L525" href="#L525">525</a> 
-<a class="jxr_linenumber" name="L526" href="#L526">526</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L527" href="#L527">527</a> <em class="jxr_javadoccomment">     * Determines which path is shortest; if path lengths are equal then we use</em>
-<a class="jxr_linenumber" name="L528" href="#L528">528</a> <em class="jxr_javadoccomment">     * compareTo of the string method to determine if the first path is smaller.</em>
-<a class="jxr_linenumber" name="L529" href="#L529">529</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L530" href="#L530">530</a> <em class="jxr_javadoccomment">     * @param left the first path to compare</em>
-<a class="jxr_linenumber" name="L531" href="#L531">531</a> <em class="jxr_javadoccomment">     * @param right the second path to compare</em>
-<a class="jxr_linenumber" name="L532" href="#L532">532</a> <em class="jxr_javadoccomment">     * @return &lt;code&gt;true&lt;/code&gt; if the leftPath is the shortest; otherwise</em>
-<a class="jxr_linenumber" name="L533" href="#L533">533</a> <em class="jxr_javadoccomment">     * &lt;code&gt;false&lt;/code&gt;</em>
-<a class="jxr_linenumber" name="L534" href="#L534">534</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L535" href="#L535">535</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> firstPathIsShortest(String left, String right) {
-<a class="jxr_linenumber" name="L536" href="#L536">536</a>         <strong class="jxr_keyword">if</strong> (left.contains(<span class="jxr_string">"dctemp"</span>) &amp;&amp; !right.contains(<span class="jxr_string">"dctemp"</span>)) {
-<a class="jxr_linenumber" name="L537" href="#L537">537</a>             <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L538" href="#L538">538</a>         }
-<a class="jxr_linenumber" name="L539" href="#L539">539</a>         <strong class="jxr_keyword">final</strong> String leftPath = left.replace('&#92;&#92;', '/');
-<a class="jxr_linenumber" name="L540" href="#L540">540</a>         <strong class="jxr_keyword">final</strong> String rightPath = right.replace('&#92;&#92;', '/');
-<a class="jxr_linenumber" name="L541" href="#L541">541</a> 
-<a class="jxr_linenumber" name="L542" href="#L542">542</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> leftCount = countChar(leftPath, '/');
-<a class="jxr_linenumber" name="L543" href="#L543">543</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> rightCount = countChar(rightPath, '/');
-<a class="jxr_linenumber" name="L544" href="#L544">544</a>         <strong class="jxr_keyword">if</strong> (leftCount == rightCount) {
-<a class="jxr_linenumber" name="L545" href="#L545">545</a>             <strong class="jxr_keyword">return</strong> leftPath.compareTo(rightPath) &lt;= 0;
-<a class="jxr_linenumber" name="L546" href="#L546">546</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L547" href="#L547">547</a>             <strong class="jxr_keyword">return</strong> leftCount &lt; rightCount;
-<a class="jxr_linenumber" name="L548" href="#L548">548</a>         }
-<a class="jxr_linenumber" name="L549" href="#L549">549</a>     }
-<a class="jxr_linenumber" name="L550" href="#L550">550</a> 
-<a class="jxr_linenumber" name="L551" href="#L551">551</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L552" href="#L552">552</a> <em class="jxr_javadoccomment">     * Counts the number of times the character is present in the string.</em>
-<a class="jxr_linenumber" name="L553" href="#L553">553</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L554" href="#L554">554</a> <em class="jxr_javadoccomment">     * @param string the string to count the characters in</em>
-<a class="jxr_linenumber" name="L555" href="#L555">555</a> <em class="jxr_javadoccomment">     * @param c the character to count</em>
-<a class="jxr_linenumber" name="L556" href="#L556">556</a> <em class="jxr_javadoccomment">     * @return the number of times the character is present in the string</em>
-<a class="jxr_linenumber" name="L557" href="#L557">557</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L558" href="#L558">558</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">int</strong> countChar(String string, <strong class="jxr_keyword">char</strong> c) {
-<a class="jxr_linenumber" name="L559" href="#L559">559</a>         <strong class="jxr_keyword">int</strong> count = 0;
-<a class="jxr_linenumber" name="L560" href="#L560">560</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> max = string.length();
-<a class="jxr_linenumber" name="L561" href="#L561">561</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; max; i++) {
-<a class="jxr_linenumber" name="L562" href="#L562">562</a>             <strong class="jxr_keyword">if</strong> (c == string.charAt(i)) {
-<a class="jxr_linenumber" name="L563" href="#L563">563</a>                 count++;
-<a class="jxr_linenumber" name="L564" href="#L564">564</a>             }
-<a class="jxr_linenumber" name="L565" href="#L565">565</a>         }
-<a class="jxr_linenumber" name="L566" href="#L566">566</a>         <strong class="jxr_keyword">return</strong> count;
-<a class="jxr_linenumber" name="L567" href="#L567">567</a>     }
-<a class="jxr_linenumber" name="L568" href="#L568">568</a> 
-<a class="jxr_linenumber" name="L569" href="#L569">569</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L570" href="#L570">570</a> <em class="jxr_javadoccomment">     * Checks if the given file path is contained within a war or ear file.</em>
-<a class="jxr_linenumber" name="L571" href="#L571">571</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L572" href="#L572">572</a> <em class="jxr_javadoccomment">     * @param filePath the file path to check</em>
-<a class="jxr_linenumber" name="L573" href="#L573">573</a> <em class="jxr_javadoccomment">     * @return true if the path contains '.war\' or '.ear\'.</em>
-<a class="jxr_linenumber" name="L574" href="#L574">574</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L575" href="#L575">575</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> containedInWar(String filePath) {
-<a class="jxr_linenumber" name="L576" href="#L576">576</a>         <strong class="jxr_keyword">return</strong> filePath != <strong class="jxr_keyword">null</strong> &amp;&amp; filePath.matches(<span class="jxr_string">".*&#92;&#92;.(ear|war)[&#92;&#92;&#92;&#92;/].*"</span>);
-<a class="jxr_linenumber" name="L577" href="#L577">577</a>     }
-<a class="jxr_linenumber" name="L578" href="#L578">578</a> 
-<a class="jxr_linenumber" name="L579" href="#L579">579</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L580" href="#L580">580</a> <em class="jxr_javadoccomment">     * Determine if the dependency ecosystem is equal in the given dependencies.</em>
-<a class="jxr_linenumber" name="L581" href="#L581">581</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L582" href="#L582">582</a> <em class="jxr_javadoccomment">     * @param ecoSystem the ecosystem to validate against</em>
-<a class="jxr_linenumber" name="L583" href="#L583">583</a> <em class="jxr_javadoccomment">     * @param dependency a dependency to compare</em>
-<a class="jxr_linenumber" name="L584" href="#L584">584</a> <em class="jxr_javadoccomment">     * @param nextDependency a dependency to compare</em>
-<a class="jxr_linenumber" name="L585" href="#L585">585</a> <em class="jxr_javadoccomment">     * @return true if the ecosystem is equal in both dependencies; otherwise</em>
-<a class="jxr_linenumber" name="L586" href="#L586">586</a> <em class="jxr_javadoccomment">     * false</em>
-<a class="jxr_linenumber" name="L587" href="#L587">587</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L588" href="#L588">588</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> ecosystemIs(String ecoSystem, <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> dependency, <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> nextDependency) {
-<a class="jxr_linenumber" name="L589" href="#L589">589</a>         <strong class="jxr_keyword">return</strong> ecoSystem.equals(dependency.getEcosystem()) &amp;&amp; ecoSystem.equals(nextDependency.getEcosystem());
-<a class="jxr_linenumber" name="L590" href="#L590">590</a>     }
-<a class="jxr_linenumber" name="L591" href="#L591">591</a> 
-<a class="jxr_linenumber" name="L592" href="#L592">592</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L593" href="#L593">593</a> <em class="jxr_javadoccomment">     * Determine if the dependency name is equal in the given dependencies.</em>
-<a class="jxr_linenumber" name="L594" href="#L594">594</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L595" href="#L595">595</a> <em class="jxr_javadoccomment">     * @param dependency a dependency to compare</em>
-<a class="jxr_linenumber" name="L596" href="#L596">596</a> <em class="jxr_javadoccomment">     * @param nextDependency a dependency to compare</em>
-<a class="jxr_linenumber" name="L597" href="#L597">597</a> <em class="jxr_javadoccomment">     * @return true if the name is equal in both dependencies; otherwise false</em>
-<a class="jxr_linenumber" name="L598" href="#L598">598</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L599" href="#L599">599</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> namesAreEqual(<a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> dependency, <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> nextDependency) {
-<a class="jxr_linenumber" name="L600" href="#L600">600</a>         <strong class="jxr_keyword">return</strong> dependency.getName() != <strong class="jxr_keyword">null</strong> &amp;&amp; dependency.getName().equals(nextDependency.getName());
-<a class="jxr_linenumber" name="L601" href="#L601">601</a>     }
-<a class="jxr_linenumber" name="L602" href="#L602">602</a> 
-<a class="jxr_linenumber" name="L603" href="#L603">603</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L604" href="#L604">604</a> <em class="jxr_javadoccomment">     * Determine if the dependency version is equal in the given dependencies.</em>
-<a class="jxr_linenumber" name="L605" href="#L605">605</a> <em class="jxr_javadoccomment">     * This method attempts to evaluate version range checks.</em>
-<a class="jxr_linenumber" name="L606" href="#L606">606</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L607" href="#L607">607</a> <em class="jxr_javadoccomment">     * @param current a dependency version to compare</em>
-<a class="jxr_linenumber" name="L608" href="#L608">608</a> <em class="jxr_javadoccomment">     * @param next a dependency version to compare</em>
-<a class="jxr_linenumber" name="L609" href="#L609">609</a> <em class="jxr_javadoccomment">     * @return true if the version is equal in both dependencies; otherwise</em>
-<a class="jxr_linenumber" name="L610" href="#L610">610</a> <em class="jxr_javadoccomment">     * false</em>
-<a class="jxr_linenumber" name="L611" href="#L611">611</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L612" href="#L612">612</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> npmVersionsMatch(String current, String next) {
-<a class="jxr_linenumber" name="L613" href="#L613">613</a>         String left = current;
-<a class="jxr_linenumber" name="L614" href="#L614">614</a>         String right = next;
-<a class="jxr_linenumber" name="L615" href="#L615">615</a>         <strong class="jxr_keyword">if</strong> (left == <strong class="jxr_keyword">null</strong> || right == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L616" href="#L616">616</a>             <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L617" href="#L617">617</a>         }
-<a class="jxr_linenumber" name="L618" href="#L618">618</a>         <strong class="jxr_keyword">if</strong> (left.equals(right) || <span class="jxr_string">"*"</span>.equals(left) || <span class="jxr_string">"*"</span>.equals(right)) {
-<a class="jxr_linenumber" name="L619" href="#L619">619</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L620" href="#L620">620</a>         }
-<a class="jxr_linenumber" name="L621" href="#L621">621</a>         <strong class="jxr_keyword">if</strong> (left.contains(<span class="jxr_string">" "</span>)) { <em class="jxr_comment">// we have a version string from package.json</em>
-<a class="jxr_linenumber" name="L622" href="#L622">622</a>             <strong class="jxr_keyword">if</strong> (right.contains(<span class="jxr_string">" "</span>)) { <em class="jxr_comment">// we can't evaluate this "&gt;=1.5.4 &lt;2.0.0" vs "2 || 3"</em>
-<a class="jxr_linenumber" name="L623" href="#L623">623</a>                 <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L624" href="#L624">624</a>             }
-<a class="jxr_linenumber" name="L625" href="#L625">625</a>             <strong class="jxr_keyword">if</strong> (!right.matches(<span class="jxr_string">"^&#92;&#92;d.*$"</span>)) {
-<a class="jxr_linenumber" name="L626" href="#L626">626</a>                 right = stripLeadingNonNumeric(right);
-<a class="jxr_linenumber" name="L627" href="#L627">627</a>                 <strong class="jxr_keyword">if</strong> (right == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L628" href="#L628">628</a>                     <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L629" href="#L629">629</a>                 }
-<a class="jxr_linenumber" name="L630" href="#L630">630</a>             }
-<a class="jxr_linenumber" name="L631" href="#L631">631</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L632" href="#L632">632</a>                 <strong class="jxr_keyword">final</strong> Semver v = <strong class="jxr_keyword">new</strong> Semver(right, SemverType.NPM);
-<a class="jxr_linenumber" name="L633" href="#L633">633</a>                 <strong class="jxr_keyword">return</strong> v.satisfies(left);
-<a class="jxr_linenumber" name="L634" href="#L634">634</a>             } <strong class="jxr_keyword">catch</strong> (SemverException ex) {
-<a class="jxr_linenumber" name="L635" href="#L635">635</a>                 LOGGER.trace(<span class="jxr_string">"ignore"</span>, ex);
-<a class="jxr_linenumber" name="L636" href="#L636">636</a>             }
-<a class="jxr_linenumber" name="L637" href="#L637">637</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L638" href="#L638">638</a>             <strong class="jxr_keyword">if</strong> (!left.matches(<span class="jxr_string">"^&#92;&#92;d.*$"</span>)) {
-<a class="jxr_linenumber" name="L639" href="#L639">639</a>                 left = stripLeadingNonNumeric(left);
-<a class="jxr_linenumber" name="L640" href="#L640">640</a>                 <strong class="jxr_keyword">if</strong> (left == <strong class="jxr_keyword">null</strong> || left.isEmpty()) {
-<a class="jxr_linenumber" name="L641" href="#L641">641</a>                     <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L642" href="#L642">642</a>                 }
-<a class="jxr_linenumber" name="L643" href="#L643">643</a>             }
-<a class="jxr_linenumber" name="L644" href="#L644">644</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L645" href="#L645">645</a>                 Semver v = <strong class="jxr_keyword">new</strong> Semver(left, SemverType.NPM);
-<a class="jxr_linenumber" name="L646" href="#L646">646</a>                 <strong class="jxr_keyword">if</strong> (!right.isEmpty() &amp;&amp; v.satisfies(right)) {
-<a class="jxr_linenumber" name="L647" href="#L647">647</a>                     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L648" href="#L648">648</a>                 }
-<a class="jxr_linenumber" name="L649" href="#L649">649</a>                 <strong class="jxr_keyword">if</strong> (!right.contains(<span class="jxr_string">" "</span>)) {
-<a class="jxr_linenumber" name="L650" href="#L650">650</a>                     left = current;
-<a class="jxr_linenumber" name="L651" href="#L651">651</a>                     right = stripLeadingNonNumeric(right);
-<a class="jxr_linenumber" name="L652" href="#L652">652</a>                     <strong class="jxr_keyword">if</strong> (right != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L653" href="#L653">653</a>                         v = <strong class="jxr_keyword">new</strong> Semver(right, SemverType.NPM);
-<a class="jxr_linenumber" name="L654" href="#L654">654</a>                         <strong class="jxr_keyword">return</strong> v.satisfies(left);
-<a class="jxr_linenumber" name="L655" href="#L655">655</a>                     }
-<a class="jxr_linenumber" name="L656" href="#L656">656</a>                 }
-<a class="jxr_linenumber" name="L657" href="#L657">657</a>             } <strong class="jxr_keyword">catch</strong> (SemverException ex) {
-<a class="jxr_linenumber" name="L658" href="#L658">658</a>                 LOGGER.trace(<span class="jxr_string">"ignore"</span>, ex);
-<a class="jxr_linenumber" name="L659" href="#L659">659</a>             } <strong class="jxr_keyword">catch</strong> (NullPointerException ex) {
-<a class="jxr_linenumber" name="L660" href="#L660">660</a>                 LOGGER.error(<span class="jxr_string">"SemVer comparison error: left:\&quot;{}\&quot;, right:\&quot;{}\&quot;"</span>, left, right);
-<a class="jxr_linenumber" name="L661" href="#L661">661</a>                 LOGGER.debug(<span class="jxr_string">"SemVer comparison resulted in NPE"</span>, ex);
-<a class="jxr_linenumber" name="L662" href="#L662">662</a>             }
-<a class="jxr_linenumber" name="L663" href="#L663">663</a>         }
-<a class="jxr_linenumber" name="L664" href="#L664">664</a>         <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L665" href="#L665">665</a>     }
-<a class="jxr_linenumber" name="L666" href="#L666">666</a> 
-<a class="jxr_linenumber" name="L667" href="#L667">667</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L668" href="#L668">668</a> <em class="jxr_javadoccomment">     * Strips leading non-numeric values from the start of the string. If no</em>
-<a class="jxr_linenumber" name="L669" href="#L669">669</a> <em class="jxr_javadoccomment">     * numbers are present this will return null.</em>
-<a class="jxr_linenumber" name="L670" href="#L670">670</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L671" href="#L671">671</a> <em class="jxr_javadoccomment">     * @param str the string to modify</em>
-<a class="jxr_linenumber" name="L672" href="#L672">672</a> <em class="jxr_javadoccomment">     * @return the string without leading non-numeric characters</em>
-<a class="jxr_linenumber" name="L673" href="#L673">673</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L674" href="#L674">674</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> String stripLeadingNonNumeric(String str) {
-<a class="jxr_linenumber" name="L675" href="#L675">675</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> x = 0; x &lt; str.length(); x++) {
-<a class="jxr_linenumber" name="L676" href="#L676">676</a>             <strong class="jxr_keyword">if</strong> (Character.isDigit(str.codePointAt(x))) {
-<a class="jxr_linenumber" name="L677" href="#L677">677</a>                 <strong class="jxr_keyword">return</strong> str.substring(x);
-<a class="jxr_linenumber" name="L678" href="#L678">678</a>             }
-<a class="jxr_linenumber" name="L679" href="#L679">679</a>         }
-<a class="jxr_linenumber" name="L680" href="#L680">680</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L681" href="#L681">681</a>     }
-<a class="jxr_linenumber" name="L682" href="#L682">682</a> 
-<a class="jxr_linenumber" name="L683" href="#L683">683</a> }
+<a class="jxr_linenumber" name="L464" href="#L464">464</a>                     .stream().map(Identifier::getValue).collect(toSet())
+<a class="jxr_linenumber" name="L465" href="#L465">465</a>                     .containsAll(nextDependency.getSoftwareIdentifiers().stream().map(<strong class="jxr_keyword">this</strong>::identifierToWebJarForComparison).collect(toSet()));
+<a class="jxr_linenumber" name="L466" href="#L466">466</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (nextName.endsWith(<span class="jxr_string">".jar"</span>) &amp;&amp; mainName.endsWith(<span class="jxr_string">"js"</span>) &amp;&amp; mainName.startsWith(nextName)) {
+<a class="jxr_linenumber" name="L467" href="#L467">467</a>             <strong class="jxr_keyword">return</strong> nextDependency.getSoftwareIdentifiers()
+<a class="jxr_linenumber" name="L468" href="#L468">468</a>                     .stream().map(Identifier::getValue).collect(toSet())
+<a class="jxr_linenumber" name="L469" href="#L469">469</a>                     .containsAll(dependency.getSoftwareIdentifiers().stream().map(<strong class="jxr_keyword">this</strong>::identifierToWebJarForComparison).collect(toSet()));
+<a class="jxr_linenumber" name="L470" href="#L470">470</a>         }
+<a class="jxr_linenumber" name="L471" href="#L471">471</a>         <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L472" href="#L472">472</a>     }
+<a class="jxr_linenumber" name="L473" href="#L473">473</a> 
+<a class="jxr_linenumber" name="L474" href="#L474">474</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L475" href="#L475">475</a> <em class="jxr_javadoccomment">     * Attempts to convert a given JavaScript identifier to a web jar CPE.</em>
+<a class="jxr_linenumber" name="L476" href="#L476">476</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L477" href="#L477">477</a> <em class="jxr_javadoccomment">     * @param id a JavaScript CPE</em>
+<a class="jxr_linenumber" name="L478" href="#L478">478</a> <em class="jxr_javadoccomment">     * @return a Maven CPE for a web jar if conversion is possible; otherwise</em>
+<a class="jxr_linenumber" name="L479" href="#L479">479</a> <em class="jxr_javadoccomment">     * the original CPE is returned</em>
+<a class="jxr_linenumber" name="L480" href="#L480">480</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L481" href="#L481">481</a>     <strong class="jxr_keyword">private</strong> String identifierToWebJarForComparison(<a href="../../../../org/owasp/dependencycheck/dependency/naming/Identifier.html">Identifier</a> id) {
+<a class="jxr_linenumber" name="L482" href="#L482">482</a>         <strong class="jxr_keyword">if</strong> (id instanceof PurlIdentifier) {
+<a class="jxr_linenumber" name="L483" href="#L483">483</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/naming/PurlIdentifier.html">PurlIdentifier</a> pid = (PurlIdentifier) id;
+<a class="jxr_linenumber" name="L484" href="#L484">484</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L485" href="#L485">485</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/naming/Identifier.html">Identifier</a> nid = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/naming/PurlIdentifier.html">PurlIdentifier</a>(<span class="jxr_string">"maven"</span>, <span class="jxr_string">"org.webjars"</span>, pid.getName(), pid.getVersion(), pid.getConfidence());
+<a class="jxr_linenumber" name="L486" href="#L486">486</a>                 <strong class="jxr_keyword">return</strong> nid.getValue();
+<a class="jxr_linenumber" name="L487" href="#L487">487</a>             } <strong class="jxr_keyword">catch</strong> (MalformedPackageURLException ex) {
+<a class="jxr_linenumber" name="L488" href="#L488">488</a>                 LOGGER.debug(<span class="jxr_string">"Unable to build webjar purl id"</span>, ex);
+<a class="jxr_linenumber" name="L489" href="#L489">489</a>                 <strong class="jxr_keyword">return</strong> id.getValue();
+<a class="jxr_linenumber" name="L490" href="#L490">490</a>             }
+<a class="jxr_linenumber" name="L491" href="#L491">491</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L492" href="#L492">492</a>             <strong class="jxr_keyword">return</strong> id == <strong class="jxr_keyword">null</strong> ? <span class="jxr_string">""</span> : id.getValue();
+<a class="jxr_linenumber" name="L493" href="#L493">493</a>         }
+<a class="jxr_linenumber" name="L494" href="#L494">494</a>     }
+<a class="jxr_linenumber" name="L495" href="#L495">495</a> 
+<a class="jxr_linenumber" name="L496" href="#L496">496</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L497" href="#L497">497</a> <em class="jxr_javadoccomment">     * Determines if the jar is shaded and the created pom.xml identified the</em>
+<a class="jxr_linenumber" name="L498" href="#L498">498</a> <em class="jxr_javadoccomment">     * same CPE as the jar - if so, the pom.xml dependency should be removed.</em>
+<a class="jxr_linenumber" name="L499" href="#L499">499</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L500" href="#L500">500</a> <em class="jxr_javadoccomment">     * @param dependency a dependency to check</em>
+<a class="jxr_linenumber" name="L501" href="#L501">501</a> <em class="jxr_javadoccomment">     * @param nextDependency another dependency to check</em>
+<a class="jxr_linenumber" name="L502" href="#L502">502</a> <em class="jxr_javadoccomment">     * @return true if on of the dependencies is a pom.xml and the identifiers</em>
+<a class="jxr_linenumber" name="L503" href="#L503">503</a> <em class="jxr_javadoccomment">     * between the two collections match; otherwise false</em>
+<a class="jxr_linenumber" name="L504" href="#L504">504</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L505" href="#L505">505</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> isShadedJar(<a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> dependency, <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> nextDependency) {
+<a class="jxr_linenumber" name="L506" href="#L506">506</a>         <strong class="jxr_keyword">if</strong> (dependency == <strong class="jxr_keyword">null</strong> || dependency.getFileName() == <strong class="jxr_keyword">null</strong>
+<a class="jxr_linenumber" name="L507" href="#L507">507</a>                 || nextDependency == <strong class="jxr_keyword">null</strong> || nextDependency.getFileName() == <strong class="jxr_keyword">null</strong>
+<a class="jxr_linenumber" name="L508" href="#L508">508</a>                 || dependency.getSoftwareIdentifiers().isEmpty()
+<a class="jxr_linenumber" name="L509" href="#L509">509</a>                 || nextDependency.getSoftwareIdentifiers().isEmpty()) {
+<a class="jxr_linenumber" name="L510" href="#L510">510</a>             <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L511" href="#L511">511</a>         }
+<a class="jxr_linenumber" name="L512" href="#L512">512</a>         <strong class="jxr_keyword">final</strong> String mainName = dependency.getFileName().toLowerCase();
+<a class="jxr_linenumber" name="L513" href="#L513">513</a>         <strong class="jxr_keyword">final</strong> String nextName = nextDependency.getFileName().toLowerCase();
+<a class="jxr_linenumber" name="L514" href="#L514">514</a>         <strong class="jxr_keyword">if</strong> (mainName.endsWith(<span class="jxr_string">".jar"</span>) &amp;&amp; nextName.endsWith(<span class="jxr_string">"pom.xml"</span>)) {
+<a class="jxr_linenumber" name="L515" href="#L515">515</a>             <strong class="jxr_keyword">return</strong> dependency.getSoftwareIdentifiers().containsAll(nextDependency.getSoftwareIdentifiers());
+<a class="jxr_linenumber" name="L516" href="#L516">516</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (nextName.endsWith(<span class="jxr_string">".jar"</span>) &amp;&amp; mainName.endsWith(<span class="jxr_string">"pom.xml"</span>)) {
+<a class="jxr_linenumber" name="L517" href="#L517">517</a>             <strong class="jxr_keyword">return</strong> nextDependency.getSoftwareIdentifiers().containsAll(dependency.getSoftwareIdentifiers());
+<a class="jxr_linenumber" name="L518" href="#L518">518</a>         }
+<a class="jxr_linenumber" name="L519" href="#L519">519</a>         <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L520" href="#L520">520</a>     }
+<a class="jxr_linenumber" name="L521" href="#L521">521</a> 
+<a class="jxr_linenumber" name="L522" href="#L522">522</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L523" href="#L523">523</a> <em class="jxr_javadoccomment">     * Determines which path is shortest; if path lengths are equal then we use</em>
+<a class="jxr_linenumber" name="L524" href="#L524">524</a> <em class="jxr_javadoccomment">     * compareTo of the string method to determine if the first path is smaller.</em>
+<a class="jxr_linenumber" name="L525" href="#L525">525</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L526" href="#L526">526</a> <em class="jxr_javadoccomment">     * @param left the first path to compare</em>
+<a class="jxr_linenumber" name="L527" href="#L527">527</a> <em class="jxr_javadoccomment">     * @param right the second path to compare</em>
+<a class="jxr_linenumber" name="L528" href="#L528">528</a> <em class="jxr_javadoccomment">     * @return &lt;code&gt;true&lt;/code&gt; if the leftPath is the shortest; otherwise</em>
+<a class="jxr_linenumber" name="L529" href="#L529">529</a> <em class="jxr_javadoccomment">     * &lt;code&gt;false&lt;/code&gt;</em>
+<a class="jxr_linenumber" name="L530" href="#L530">530</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L531" href="#L531">531</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> firstPathIsShortest(String left, String right) {
+<a class="jxr_linenumber" name="L532" href="#L532">532</a>         <strong class="jxr_keyword">if</strong> (left.contains(<span class="jxr_string">"dctemp"</span>) &amp;&amp; !right.contains(<span class="jxr_string">"dctemp"</span>)) {
+<a class="jxr_linenumber" name="L533" href="#L533">533</a>             <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L534" href="#L534">534</a>         }
+<a class="jxr_linenumber" name="L535" href="#L535">535</a>         <strong class="jxr_keyword">final</strong> String leftPath = left.replace('&#92;&#92;', '/');
+<a class="jxr_linenumber" name="L536" href="#L536">536</a>         <strong class="jxr_keyword">final</strong> String rightPath = right.replace('&#92;&#92;', '/');
+<a class="jxr_linenumber" name="L537" href="#L537">537</a> 
+<a class="jxr_linenumber" name="L538" href="#L538">538</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> leftCount = countChar(leftPath, '/');
+<a class="jxr_linenumber" name="L539" href="#L539">539</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> rightCount = countChar(rightPath, '/');
+<a class="jxr_linenumber" name="L540" href="#L540">540</a>         <strong class="jxr_keyword">if</strong> (leftCount == rightCount) {
+<a class="jxr_linenumber" name="L541" href="#L541">541</a>             <strong class="jxr_keyword">return</strong> leftPath.compareTo(rightPath) &lt;= 0;
+<a class="jxr_linenumber" name="L542" href="#L542">542</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L543" href="#L543">543</a>             <strong class="jxr_keyword">return</strong> leftCount &lt; rightCount;
+<a class="jxr_linenumber" name="L544" href="#L544">544</a>         }
+<a class="jxr_linenumber" name="L545" href="#L545">545</a>     }
+<a class="jxr_linenumber" name="L546" href="#L546">546</a> 
+<a class="jxr_linenumber" name="L547" href="#L547">547</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L548" href="#L548">548</a> <em class="jxr_javadoccomment">     * Counts the number of times the character is present in the string.</em>
+<a class="jxr_linenumber" name="L549" href="#L549">549</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L550" href="#L550">550</a> <em class="jxr_javadoccomment">     * @param string the string to count the characters in</em>
+<a class="jxr_linenumber" name="L551" href="#L551">551</a> <em class="jxr_javadoccomment">     * @param c the character to count</em>
+<a class="jxr_linenumber" name="L552" href="#L552">552</a> <em class="jxr_javadoccomment">     * @return the number of times the character is present in the string</em>
+<a class="jxr_linenumber" name="L553" href="#L553">553</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L554" href="#L554">554</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">int</strong> countChar(String string, <strong class="jxr_keyword">char</strong> c) {
+<a class="jxr_linenumber" name="L555" href="#L555">555</a>         <strong class="jxr_keyword">int</strong> count = 0;
+<a class="jxr_linenumber" name="L556" href="#L556">556</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> max = string.length();
+<a class="jxr_linenumber" name="L557" href="#L557">557</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; max; i++) {
+<a class="jxr_linenumber" name="L558" href="#L558">558</a>             <strong class="jxr_keyword">if</strong> (c == string.charAt(i)) {
+<a class="jxr_linenumber" name="L559" href="#L559">559</a>                 count++;
+<a class="jxr_linenumber" name="L560" href="#L560">560</a>             }
+<a class="jxr_linenumber" name="L561" href="#L561">561</a>         }
+<a class="jxr_linenumber" name="L562" href="#L562">562</a>         <strong class="jxr_keyword">return</strong> count;
+<a class="jxr_linenumber" name="L563" href="#L563">563</a>     }
+<a class="jxr_linenumber" name="L564" href="#L564">564</a> 
+<a class="jxr_linenumber" name="L565" href="#L565">565</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L566" href="#L566">566</a> <em class="jxr_javadoccomment">     * Checks if the given file path is contained within a war or ear file.</em>
+<a class="jxr_linenumber" name="L567" href="#L567">567</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L568" href="#L568">568</a> <em class="jxr_javadoccomment">     * @param filePath the file path to check</em>
+<a class="jxr_linenumber" name="L569" href="#L569">569</a> <em class="jxr_javadoccomment">     * @return true if the path contains '.war\' or '.ear\'.</em>
+<a class="jxr_linenumber" name="L570" href="#L570">570</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L571" href="#L571">571</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> containedInWar(String filePath) {
+<a class="jxr_linenumber" name="L572" href="#L572">572</a>         <strong class="jxr_keyword">return</strong> filePath != <strong class="jxr_keyword">null</strong> &amp;&amp; filePath.matches(<span class="jxr_string">".*&#92;&#92;.(ear|war)[&#92;&#92;&#92;&#92;/].*"</span>);
+<a class="jxr_linenumber" name="L573" href="#L573">573</a>     }
+<a class="jxr_linenumber" name="L574" href="#L574">574</a> 
+<a class="jxr_linenumber" name="L575" href="#L575">575</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L576" href="#L576">576</a> <em class="jxr_javadoccomment">     * Determine if the dependency ecosystem is equal in the given dependencies.</em>
+<a class="jxr_linenumber" name="L577" href="#L577">577</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L578" href="#L578">578</a> <em class="jxr_javadoccomment">     * @param ecoSystem the ecosystem to validate against</em>
+<a class="jxr_linenumber" name="L579" href="#L579">579</a> <em class="jxr_javadoccomment">     * @param dependency a dependency to compare</em>
+<a class="jxr_linenumber" name="L580" href="#L580">580</a> <em class="jxr_javadoccomment">     * @param nextDependency a dependency to compare</em>
+<a class="jxr_linenumber" name="L581" href="#L581">581</a> <em class="jxr_javadoccomment">     * @return true if the ecosystem is equal in both dependencies; otherwise</em>
+<a class="jxr_linenumber" name="L582" href="#L582">582</a> <em class="jxr_javadoccomment">     * false</em>
+<a class="jxr_linenumber" name="L583" href="#L583">583</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L584" href="#L584">584</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> ecosystemIs(String ecoSystem, <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> dependency, <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> nextDependency) {
+<a class="jxr_linenumber" name="L585" href="#L585">585</a>         <strong class="jxr_keyword">return</strong> ecoSystem.equals(dependency.getEcosystem()) &amp;&amp; ecoSystem.equals(nextDependency.getEcosystem());
+<a class="jxr_linenumber" name="L586" href="#L586">586</a>     }
+<a class="jxr_linenumber" name="L587" href="#L587">587</a> 
+<a class="jxr_linenumber" name="L588" href="#L588">588</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L589" href="#L589">589</a> <em class="jxr_javadoccomment">     * Determine if the dependency name is equal in the given dependencies.</em>
+<a class="jxr_linenumber" name="L590" href="#L590">590</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L591" href="#L591">591</a> <em class="jxr_javadoccomment">     * @param dependency a dependency to compare</em>
+<a class="jxr_linenumber" name="L592" href="#L592">592</a> <em class="jxr_javadoccomment">     * @param nextDependency a dependency to compare</em>
+<a class="jxr_linenumber" name="L593" href="#L593">593</a> <em class="jxr_javadoccomment">     * @return true if the name is equal in both dependencies; otherwise false</em>
+<a class="jxr_linenumber" name="L594" href="#L594">594</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L595" href="#L595">595</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> namesAreEqual(<a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> dependency, <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> nextDependency) {
+<a class="jxr_linenumber" name="L596" href="#L596">596</a>         <strong class="jxr_keyword">return</strong> dependency.getName() != <strong class="jxr_keyword">null</strong> &amp;&amp; dependency.getName().equals(nextDependency.getName());
+<a class="jxr_linenumber" name="L597" href="#L597">597</a>     }
+<a class="jxr_linenumber" name="L598" href="#L598">598</a> 
+<a class="jxr_linenumber" name="L599" href="#L599">599</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L600" href="#L600">600</a> <em class="jxr_javadoccomment">     * Determine if the dependency version is equal in the given dependencies.</em>
+<a class="jxr_linenumber" name="L601" href="#L601">601</a> <em class="jxr_javadoccomment">     * This method attempts to evaluate version range checks.</em>
+<a class="jxr_linenumber" name="L602" href="#L602">602</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L603" href="#L603">603</a> <em class="jxr_javadoccomment">     * @param current a dependency version to compare</em>
+<a class="jxr_linenumber" name="L604" href="#L604">604</a> <em class="jxr_javadoccomment">     * @param next a dependency version to compare</em>
+<a class="jxr_linenumber" name="L605" href="#L605">605</a> <em class="jxr_javadoccomment">     * @return true if the version is equal in both dependencies; otherwise</em>
+<a class="jxr_linenumber" name="L606" href="#L606">606</a> <em class="jxr_javadoccomment">     * false</em>
+<a class="jxr_linenumber" name="L607" href="#L607">607</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L608" href="#L608">608</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> npmVersionsMatch(String current, String next) {
+<a class="jxr_linenumber" name="L609" href="#L609">609</a>         String left = current;
+<a class="jxr_linenumber" name="L610" href="#L610">610</a>         String right = next;
+<a class="jxr_linenumber" name="L611" href="#L611">611</a>         <strong class="jxr_keyword">if</strong> (left == <strong class="jxr_keyword">null</strong> || right == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L612" href="#L612">612</a>             <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L613" href="#L613">613</a>         }
+<a class="jxr_linenumber" name="L614" href="#L614">614</a>         <strong class="jxr_keyword">if</strong> (left.equals(right) || <span class="jxr_string">"*"</span>.equals(left) || <span class="jxr_string">"*"</span>.equals(right)) {
+<a class="jxr_linenumber" name="L615" href="#L615">615</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L616" href="#L616">616</a>         }
+<a class="jxr_linenumber" name="L617" href="#L617">617</a>         <strong class="jxr_keyword">if</strong> (left.contains(<span class="jxr_string">" "</span>)) { <em class="jxr_comment">// we have a version string from package.json</em>
+<a class="jxr_linenumber" name="L618" href="#L618">618</a>             <strong class="jxr_keyword">if</strong> (right.contains(<span class="jxr_string">" "</span>)) { <em class="jxr_comment">// we can't evaluate this "&gt;=1.5.4 &lt;2.0.0" vs "2 || 3"</em>
+<a class="jxr_linenumber" name="L619" href="#L619">619</a>                 <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L620" href="#L620">620</a>             }
+<a class="jxr_linenumber" name="L621" href="#L621">621</a>             <strong class="jxr_keyword">if</strong> (!right.matches(<span class="jxr_string">"^&#92;&#92;d.*$"</span>)) {
+<a class="jxr_linenumber" name="L622" href="#L622">622</a>                 right = stripLeadingNonNumeric(right);
+<a class="jxr_linenumber" name="L623" href="#L623">623</a>                 <strong class="jxr_keyword">if</strong> (right == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L624" href="#L624">624</a>                     <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L625" href="#L625">625</a>                 }
+<a class="jxr_linenumber" name="L626" href="#L626">626</a>             }
+<a class="jxr_linenumber" name="L627" href="#L627">627</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L628" href="#L628">628</a>                 <strong class="jxr_keyword">final</strong> Semver v = <strong class="jxr_keyword">new</strong> Semver(right, SemverType.NPM);
+<a class="jxr_linenumber" name="L629" href="#L629">629</a>                 <strong class="jxr_keyword">return</strong> v.satisfies(left);
+<a class="jxr_linenumber" name="L630" href="#L630">630</a>             } <strong class="jxr_keyword">catch</strong> (SemverException ex) {
+<a class="jxr_linenumber" name="L631" href="#L631">631</a>                 LOGGER.trace(<span class="jxr_string">"ignore"</span>, ex);
+<a class="jxr_linenumber" name="L632" href="#L632">632</a>             }
+<a class="jxr_linenumber" name="L633" href="#L633">633</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L634" href="#L634">634</a>             <strong class="jxr_keyword">if</strong> (!left.matches(<span class="jxr_string">"^&#92;&#92;d.*$"</span>)) {
+<a class="jxr_linenumber" name="L635" href="#L635">635</a>                 left = stripLeadingNonNumeric(left);
+<a class="jxr_linenumber" name="L636" href="#L636">636</a>                 <strong class="jxr_keyword">if</strong> (left == <strong class="jxr_keyword">null</strong> || left.isEmpty()) {
+<a class="jxr_linenumber" name="L637" href="#L637">637</a>                     <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L638" href="#L638">638</a>                 }
+<a class="jxr_linenumber" name="L639" href="#L639">639</a>             }
+<a class="jxr_linenumber" name="L640" href="#L640">640</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L641" href="#L641">641</a>                 Semver v = <strong class="jxr_keyword">new</strong> Semver(left, SemverType.NPM);
+<a class="jxr_linenumber" name="L642" href="#L642">642</a>                 <strong class="jxr_keyword">if</strong> (!right.isEmpty() &amp;&amp; v.satisfies(right)) {
+<a class="jxr_linenumber" name="L643" href="#L643">643</a>                     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L644" href="#L644">644</a>                 }
+<a class="jxr_linenumber" name="L645" href="#L645">645</a>                 <strong class="jxr_keyword">if</strong> (!right.contains(<span class="jxr_string">" "</span>)) {
+<a class="jxr_linenumber" name="L646" href="#L646">646</a>                     left = current;
+<a class="jxr_linenumber" name="L647" href="#L647">647</a>                     right = stripLeadingNonNumeric(right);
+<a class="jxr_linenumber" name="L648" href="#L648">648</a>                     <strong class="jxr_keyword">if</strong> (right != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L649" href="#L649">649</a>                         v = <strong class="jxr_keyword">new</strong> Semver(right, SemverType.NPM);
+<a class="jxr_linenumber" name="L650" href="#L650">650</a>                         <strong class="jxr_keyword">return</strong> v.satisfies(left);
+<a class="jxr_linenumber" name="L651" href="#L651">651</a>                     }
+<a class="jxr_linenumber" name="L652" href="#L652">652</a>                 }
+<a class="jxr_linenumber" name="L653" href="#L653">653</a>             } <strong class="jxr_keyword">catch</strong> (SemverException ex) {
+<a class="jxr_linenumber" name="L654" href="#L654">654</a>                 LOGGER.trace(<span class="jxr_string">"ignore"</span>, ex);
+<a class="jxr_linenumber" name="L655" href="#L655">655</a>             } <strong class="jxr_keyword">catch</strong> (NullPointerException ex) {
+<a class="jxr_linenumber" name="L656" href="#L656">656</a>                 LOGGER.error(<span class="jxr_string">"SemVer comparison error: left:\&quot;{}\&quot;, right:\&quot;{}\&quot;"</span>, left, right);
+<a class="jxr_linenumber" name="L657" href="#L657">657</a>                 LOGGER.debug(<span class="jxr_string">"SemVer comparison resulted in NPE"</span>, ex);
+<a class="jxr_linenumber" name="L658" href="#L658">658</a>             }
+<a class="jxr_linenumber" name="L659" href="#L659">659</a>         }
+<a class="jxr_linenumber" name="L660" href="#L660">660</a>         <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L661" href="#L661">661</a>     }
+<a class="jxr_linenumber" name="L662" href="#L662">662</a> 
+<a class="jxr_linenumber" name="L663" href="#L663">663</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L664" href="#L664">664</a> <em class="jxr_javadoccomment">     * Strips leading non-numeric values from the start of the string. If no</em>
+<a class="jxr_linenumber" name="L665" href="#L665">665</a> <em class="jxr_javadoccomment">     * numbers are present this will return null.</em>
+<a class="jxr_linenumber" name="L666" href="#L666">666</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L667" href="#L667">667</a> <em class="jxr_javadoccomment">     * @param str the string to modify</em>
+<a class="jxr_linenumber" name="L668" href="#L668">668</a> <em class="jxr_javadoccomment">     * @return the string without leading non-numeric characters</em>
+<a class="jxr_linenumber" name="L669" href="#L669">669</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L670" href="#L670">670</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> String stripLeadingNonNumeric(String str) {
+<a class="jxr_linenumber" name="L671" href="#L671">671</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> x = 0; x &lt; str.length(); x++) {
+<a class="jxr_linenumber" name="L672" href="#L672">672</a>             <strong class="jxr_keyword">if</strong> (Character.isDigit(str.codePointAt(x))) {
+<a class="jxr_linenumber" name="L673" href="#L673">673</a>                 <strong class="jxr_keyword">return</strong> str.substring(x);
+<a class="jxr_linenumber" name="L674" href="#L674">674</a>             }
+<a class="jxr_linenumber" name="L675" href="#L675">675</a>         }
+<a class="jxr_linenumber" name="L676" href="#L676">676</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L677" href="#L677">677</a>     }
+<a class="jxr_linenumber" name="L678" href="#L678">678</a> 
+<a class="jxr_linenumber" name="L679" href="#L679">679</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2022 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

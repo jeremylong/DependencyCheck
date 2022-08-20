@@ -36,23 +36,23 @@ public class MetaProperties {
     /**
      * The SHA256 of the NVD file.
      */
-    private String sha256;
+    private final String sha256;
     /**
      * The last modified date of the NVD file in epoch time.
      */
-    private long lastModifiedDate;
+    private final long lastModifiedDate;
     /**
      * The size of the NVD file.
      */
-    private long size;
+    private final long size;
     /**
      * The size of the zipped NVD file.
      */
-    private long zipSize;
+    private final long zipSize;
     /**
      * The size of the gzipped NVD file.
      */
-    private long gzSize;
+    private final long gzSize;
 
     /**
      * Get the value of gzSize.

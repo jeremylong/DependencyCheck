@@ -278,7 +278,7 @@ import org.slf4j.LoggerFactory;
      */
     private boolean isExcludedJar(File path) {
 <span class="fc" id="L280">        final String fileName = path.getName().toLowerCase();</span>
-<span class="fc" id="L281">        return EXCLUDE_JARS.stream().anyMatch(exclude -&gt; fileName.endsWith(exclude));</span>
+<span class="fc" id="L281">        return EXCLUDE_JARS.stream().anyMatch(fileName::endsWith);</span>
     }
     //&lt;/editor-fold&gt;
 
@@ -693,102 +693,100 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L693">                    id = new PurlIdentifier(purl, Confidence.HIGH);</span>
 <span class="fc" id="L694">                } else {</span>
 <span class="nc" id="L695">                    LOGGER.debug(&quot;Invalid maven identifier identified: &quot; + originalGroupID + &quot;:&quot; + originalArtifactID);</span>
-//                    final String gav = String.format(&quot;%s:%s:%s&quot;, originalGroupID, originalArtifactID, version);
-//                    id = new GenericIdentifier(&quot;generic:&quot; + gav, Confidence.LOW);
                 }
-<span class="nc" id="L699">            } catch (MalformedPackageURLException ex) {</span>
-<span class="nc" id="L700">                final String gav = String.format(&quot;%s:%s:%s&quot;, originalGroupID, originalArtifactID, version);</span>
-<span class="nc" id="L701">                LOGGER.debug(&quot;Error building package url for &quot; + gav + &quot;; using generic identifier instead.&quot;, ex);</span>
-<span class="nc" id="L702">                id = new GenericIdentifier(&quot;maven:&quot; + gav, Confidence.HIGH);</span>
-<span class="fc" id="L703">            }</span>
-<span class="pc bpc" id="L704" title="1 of 2 branches missed.">            if (id != null) {</span>
-<span class="fc" id="L705">                dependency.addSoftwareIdentifier(id);</span>
+<span class="nc" id="L697">            } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L698">                final String gav = String.format(&quot;%s:%s:%s&quot;, originalGroupID, originalArtifactID, version);</span>
+<span class="nc" id="L699">                LOGGER.debug(&quot;Error building package url for &quot; + gav + &quot;; using generic identifier instead.&quot;, ex);</span>
+<span class="nc" id="L700">                id = new GenericIdentifier(&quot;maven:&quot; + gav, Confidence.HIGH);</span>
+<span class="fc" id="L701">            }</span>
+<span class="pc bpc" id="L702" title="1 of 2 branches missed.">            if (id != null) {</span>
+<span class="fc" id="L703">                dependency.addSoftwareIdentifier(id);</span>
             }
         }
 
         // org name
-<span class="fc" id="L710">        final String org = pom.getOrganization();</span>
-<span class="pc bpc" id="L711" title="3 of 4 branches missed.">        if (org != null &amp;&amp; !org.isEmpty()) {</span>
-<span class="nc" id="L712">            dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;organization name&quot;, org, Confidence.HIGH);</span>
-<span class="nc" id="L713">            dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;organization name&quot;, org, Confidence.LOW);</span>
-<span class="nc" id="L714">            addMatchingValues(classes, org, dependency, EvidenceType.VENDOR);</span>
-<span class="nc" id="L715">            addMatchingValues(classes, org, dependency, EvidenceType.PRODUCT);</span>
+<span class="fc" id="L708">        final String org = pom.getOrganization();</span>
+<span class="pc bpc" id="L709" title="3 of 4 branches missed.">        if (org != null &amp;&amp; !org.isEmpty()) {</span>
+<span class="nc" id="L710">            dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;organization name&quot;, org, Confidence.HIGH);</span>
+<span class="nc" id="L711">            dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;organization name&quot;, org, Confidence.LOW);</span>
+<span class="nc" id="L712">            addMatchingValues(classes, org, dependency, EvidenceType.VENDOR);</span>
+<span class="nc" id="L713">            addMatchingValues(classes, org, dependency, EvidenceType.PRODUCT);</span>
         }
         // org name
-<span class="fc" id="L718">        String orgUrl = pom.getOrganizationUrl();</span>
-<span class="pc bpc" id="L719" title="3 of 4 branches missed.">        if (orgUrl != null &amp;&amp; !orgUrl.isEmpty()) {</span>
-<span class="nc bnc" id="L720" title="All 4 branches missed.">            if (orgUrl.startsWith(&quot;https://github.com/&quot;) || orgUrl.startsWith(&quot;https://gitlab.com/&quot;)) {</span>
-<span class="nc" id="L721">                orgUrl = orgUrl.substring(19);</span>
-<span class="nc" id="L722">                dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;url&quot;, orgUrl, Confidence.HIGH);</span>
+<span class="fc" id="L716">        String orgUrl = pom.getOrganizationUrl();</span>
+<span class="pc bpc" id="L717" title="3 of 4 branches missed.">        if (orgUrl != null &amp;&amp; !orgUrl.isEmpty()) {</span>
+<span class="nc bnc" id="L718" title="All 4 branches missed.">            if (orgUrl.startsWith(&quot;https://github.com/&quot;) || orgUrl.startsWith(&quot;https://gitlab.com/&quot;)) {</span>
+<span class="nc" id="L719">                orgUrl = orgUrl.substring(19);</span>
+<span class="nc" id="L720">                dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;url&quot;, orgUrl, Confidence.HIGH);</span>
             } else {
-<span class="nc" id="L724">                dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;organization url&quot;, orgUrl, Confidence.LOW);</span>
+<span class="nc" id="L722">                dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;organization url&quot;, orgUrl, Confidence.LOW);</span>
             }
-<span class="nc" id="L726">            dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;organization url&quot;, orgUrl, Confidence.MEDIUM);</span>
+<span class="nc" id="L724">            dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;organization url&quot;, orgUrl, Confidence.MEDIUM);</span>
         }
         //pom name
-<span class="fc" id="L729">        final String pomName = pom.getName();</span>
-<span class="pc bpc" id="L730" title="3 of 6 branches missed.">        if (pomName != null &amp;&amp; !pomName.isEmpty() &amp;&amp; !&quot;${project.groupId}:${project.artifactId}&quot;.equals(pomName)) {</span>
-<span class="fc" id="L731">            foundSomething = true;</span>
-<span class="fc" id="L732">            dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;name&quot;, pomName, Confidence.HIGH);</span>
-<span class="fc" id="L733">            dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;name&quot;, pomName, Confidence.HIGH);</span>
-<span class="fc" id="L734">            addMatchingValues(classes, pomName, dependency, EvidenceType.VENDOR);</span>
-<span class="fc" id="L735">            addMatchingValues(classes, pomName, dependency, EvidenceType.PRODUCT);</span>
+<span class="fc" id="L727">        final String pomName = pom.getName();</span>
+<span class="pc bpc" id="L728" title="3 of 6 branches missed.">        if (pomName != null &amp;&amp; !pomName.isEmpty() &amp;&amp; !&quot;${project.groupId}:${project.artifactId}&quot;.equals(pomName)) {</span>
+<span class="fc" id="L729">            foundSomething = true;</span>
+<span class="fc" id="L730">            dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;name&quot;, pomName, Confidence.HIGH);</span>
+<span class="fc" id="L731">            dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;name&quot;, pomName, Confidence.HIGH);</span>
+<span class="fc" id="L732">            addMatchingValues(classes, pomName, dependency, EvidenceType.VENDOR);</span>
+<span class="fc" id="L733">            addMatchingValues(classes, pomName, dependency, EvidenceType.PRODUCT);</span>
         }
 
         //Description
-<span class="fc" id="L739">        final String description = pom.getDescription();</span>
-<span class="pc bpc" id="L740" title="1 of 4 branches missed.">        if (description != null &amp;&amp; !description.isEmpty()</span>
-<span class="pc bpc" id="L741" title="1 of 2 branches missed.">                &amp;&amp; !description.startsWith(&quot;POM was created by&quot;)</span>
-<span class="pc bpc" id="L742" title="1 of 2 branches missed.">                &amp;&amp; !description.startsWith(&quot;Sonatype helps open source projects&quot;)</span>
-<span class="pc bpc" id="L743" title="1 of 2 branches missed.">                &amp;&amp; !description.endsWith(&quot;project for Spring Boot&quot;)) {</span>
-<span class="fc" id="L744">            foundSomething = true;</span>
-<span class="fc" id="L745">            final String trimmedDescription = addDescription(dependency, description, &quot;pom&quot;, &quot;description&quot;);</span>
-<span class="fc" id="L746">            addMatchingValues(classes, trimmedDescription, dependency, EvidenceType.VENDOR);</span>
-<span class="fc" id="L747">            addMatchingValues(classes, trimmedDescription, dependency, EvidenceType.PRODUCT);</span>
+<span class="fc" id="L737">        final String description = pom.getDescription();</span>
+<span class="pc bpc" id="L738" title="1 of 4 branches missed.">        if (description != null &amp;&amp; !description.isEmpty()</span>
+<span class="pc bpc" id="L739" title="1 of 2 branches missed.">                &amp;&amp; !description.startsWith(&quot;POM was created by&quot;)</span>
+<span class="pc bpc" id="L740" title="1 of 2 branches missed.">                &amp;&amp; !description.startsWith(&quot;Sonatype helps open source projects&quot;)</span>
+<span class="pc bpc" id="L741" title="1 of 2 branches missed.">                &amp;&amp; !description.endsWith(&quot;project for Spring Boot&quot;)) {</span>
+<span class="fc" id="L742">            foundSomething = true;</span>
+<span class="fc" id="L743">            final String trimmedDescription = addDescription(dependency, description, &quot;pom&quot;, &quot;description&quot;);</span>
+<span class="fc" id="L744">            addMatchingValues(classes, trimmedDescription, dependency, EvidenceType.VENDOR);</span>
+<span class="fc" id="L745">            addMatchingValues(classes, trimmedDescription, dependency, EvidenceType.PRODUCT);</span>
         }
 
-<span class="fc" id="L750">        String projectURL = pom.getProjectURL();</span>
-<span class="pc bpc" id="L751" title="1 of 4 branches missed.">        if (projectURL != null &amp;&amp; !projectURL.trim().isEmpty()) {</span>
-<span class="pc bpc" id="L752" title="2 of 4 branches missed.">            if (projectURL.startsWith(&quot;https://github.com/&quot;) || projectURL.startsWith(&quot;https://gitlab.com/&quot;)) {</span>
-<span class="nc" id="L753">                projectURL = projectURL.substring(19);</span>
-<span class="nc" id="L754">                dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;url&quot;, projectURL, Confidence.HIGH);</span>
+<span class="fc" id="L748">        String projectURL = pom.getProjectURL();</span>
+<span class="pc bpc" id="L749" title="1 of 4 branches missed.">        if (projectURL != null &amp;&amp; !projectURL.trim().isEmpty()) {</span>
+<span class="pc bpc" id="L750" title="2 of 4 branches missed.">            if (projectURL.startsWith(&quot;https://github.com/&quot;) || projectURL.startsWith(&quot;https://gitlab.com/&quot;)) {</span>
+<span class="nc" id="L751">                projectURL = projectURL.substring(19);</span>
+<span class="nc" id="L752">                dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;url&quot;, projectURL, Confidence.HIGH);</span>
             } else {
-<span class="fc" id="L756">                dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;url&quot;, projectURL, Confidence.MEDIUM);</span>
+<span class="fc" id="L754">                dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;url&quot;, projectURL, Confidence.MEDIUM);</span>
             }
-<span class="fc" id="L758">            dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;url&quot;, projectURL, Confidence.HIGHEST);</span>
+<span class="fc" id="L756">            dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;url&quot;, projectURL, Confidence.HIGHEST);</span>
 
         }
 
-<span class="pc bpc" id="L762" title="1 of 4 branches missed.">        if (pom.getDevelopers() != null &amp;&amp; !pom.getDevelopers().isEmpty()) {</span>
-<span class="fc bfc" id="L763" title="All 2 branches covered.">            for (Developer dev : pom.getDevelopers()) {</span>
-<span class="pc bpc" id="L764" title="1 of 2 branches missed.">                if (!Strings.isNullOrEmpty(dev.getId())) {</span>
-<span class="fc" id="L765">                    dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;developer id&quot;, dev.getId(), Confidence.MEDIUM);</span>
-<span class="fc" id="L766">                    dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;developer id&quot;, dev.getId(), Confidence.LOW);</span>
+<span class="pc bpc" id="L760" title="1 of 4 branches missed.">        if (pom.getDevelopers() != null &amp;&amp; !pom.getDevelopers().isEmpty()) {</span>
+<span class="fc bfc" id="L761" title="All 2 branches covered.">            for (Developer dev : pom.getDevelopers()) {</span>
+<span class="pc bpc" id="L762" title="1 of 2 branches missed.">                if (!Strings.isNullOrEmpty(dev.getId())) {</span>
+<span class="fc" id="L763">                    dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;developer id&quot;, dev.getId(), Confidence.MEDIUM);</span>
+<span class="fc" id="L764">                    dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;developer id&quot;, dev.getId(), Confidence.LOW);</span>
                 }
-<span class="pc bpc" id="L768" title="1 of 2 branches missed.">                if (!Strings.isNullOrEmpty(dev.getName())) {</span>
-<span class="fc" id="L769">                    dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;developer name&quot;, dev.getName(), Confidence.MEDIUM);</span>
-<span class="fc" id="L770">                    dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;developer name&quot;, dev.getName(), Confidence.LOW);</span>
+<span class="pc bpc" id="L766" title="1 of 2 branches missed.">                if (!Strings.isNullOrEmpty(dev.getName())) {</span>
+<span class="fc" id="L767">                    dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;developer name&quot;, dev.getName(), Confidence.MEDIUM);</span>
+<span class="fc" id="L768">                    dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;developer name&quot;, dev.getName(), Confidence.LOW);</span>
                 }
-<span class="fc bfc" id="L772" title="All 2 branches covered.">                if (!Strings.isNullOrEmpty(dev.getEmail())) {</span>
-<span class="fc" id="L773">                    dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;developer email&quot;, dev.getEmail(), Confidence.LOW);</span>
-<span class="fc" id="L774">                    dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;developer email&quot;, dev.getEmail(), Confidence.LOW);</span>
+<span class="fc bfc" id="L770" title="All 2 branches covered.">                if (!Strings.isNullOrEmpty(dev.getEmail())) {</span>
+<span class="fc" id="L771">                    dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;developer email&quot;, dev.getEmail(), Confidence.LOW);</span>
+<span class="fc" id="L772">                    dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;developer email&quot;, dev.getEmail(), Confidence.LOW);</span>
                 }
-<span class="pc bpc" id="L776" title="1 of 2 branches missed.">                if (!Strings.isNullOrEmpty(dev.getOrganizationUrl())) {</span>
-<span class="nc" id="L777">                    dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;developer org URL&quot;, dev.getOrganizationUrl(), Confidence.MEDIUM);</span>
-<span class="nc" id="L778">                    dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;developer org URL&quot;, dev.getOrganizationUrl(), Confidence.LOW);</span>
+<span class="pc bpc" id="L774" title="1 of 2 branches missed.">                if (!Strings.isNullOrEmpty(dev.getOrganizationUrl())) {</span>
+<span class="nc" id="L775">                    dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;developer org URL&quot;, dev.getOrganizationUrl(), Confidence.MEDIUM);</span>
+<span class="nc" id="L776">                    dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;developer org URL&quot;, dev.getOrganizationUrl(), Confidence.LOW);</span>
                 }
-<span class="fc" id="L780">                final String devOrg = dev.getOrganization();</span>
-<span class="fc bfc" id="L781" title="All 2 branches covered.">                if (!Strings.isNullOrEmpty(devOrg)) {</span>
-<span class="fc" id="L782">                    dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;developer org&quot;, devOrg, Confidence.MEDIUM);</span>
-<span class="fc" id="L783">                    dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;developer org&quot;, devOrg, Confidence.LOW);</span>
-<span class="fc" id="L784">                    addMatchingValues(classes, devOrg, dependency, EvidenceType.VENDOR);</span>
-<span class="fc" id="L785">                    addMatchingValues(classes, devOrg, dependency, EvidenceType.PRODUCT);</span>
+<span class="fc" id="L778">                final String devOrg = dev.getOrganization();</span>
+<span class="fc bfc" id="L779" title="All 2 branches covered.">                if (!Strings.isNullOrEmpty(devOrg)) {</span>
+<span class="fc" id="L780">                    dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;developer org&quot;, devOrg, Confidence.MEDIUM);</span>
+<span class="fc" id="L781">                    dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;developer org&quot;, devOrg, Confidence.LOW);</span>
+<span class="fc" id="L782">                    addMatchingValues(classes, devOrg, dependency, EvidenceType.VENDOR);</span>
+<span class="fc" id="L783">                    addMatchingValues(classes, devOrg, dependency, EvidenceType.PRODUCT);</span>
                 }
-<span class="fc" id="L787">            }</span>
+<span class="fc" id="L785">            }</span>
         }
 
-<span class="fc" id="L790">        extractLicense(pom, dependency);</span>
-<span class="fc" id="L791">        return foundSomething;</span>
+<span class="fc" id="L788">        extractLicense(pom, dependency);</span>
+<span class="fc" id="L789">        return foundSomething;</span>
     }
 
     /**
@@ -804,33 +802,33 @@ import org.slf4j.LoggerFactory;
      */
     protected void analyzePackageNames(List&lt;ClassNameInformation&gt; classNames,
             Dependency dependency, boolean addPackagesAsEvidence) {
-<span class="fc" id="L807">        final Map&lt;String, Integer&gt; vendorIdentifiers = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L808">        final Map&lt;String, Integer&gt; productIdentifiers = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L809">        analyzeFullyQualifiedClassNames(classNames, vendorIdentifiers, productIdentifiers);</span>
+<span class="fc" id="L805">        final Map&lt;String, Integer&gt; vendorIdentifiers = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L806">        final Map&lt;String, Integer&gt; productIdentifiers = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L807">        analyzeFullyQualifiedClassNames(classNames, vendorIdentifiers, productIdentifiers);</span>
 
-<span class="fc" id="L811">        final int classCount = classNames.size();</span>
+<span class="fc" id="L809">        final int classCount = classNames.size();</span>
 
-<span class="fc" id="L813">        vendorIdentifiers.forEach((key, value) -&gt; {</span>
-<span class="fc" id="L814">            final float ratio = value / (float) classCount;</span>
-<span class="fc bfc" id="L815" title="All 2 branches covered.">            if (ratio &gt; 0.5) {</span>
+<span class="fc" id="L811">        vendorIdentifiers.forEach((key, value) -&gt; {</span>
+<span class="fc" id="L812">            final float ratio = value / (float) classCount;</span>
+<span class="fc bfc" id="L813" title="All 2 branches covered.">            if (ratio &gt; 0.5) {</span>
                 //TODO remove weighting?
-<span class="fc" id="L817">                dependency.addVendorWeighting(key);</span>
-<span class="pc bpc" id="L818" title="1 of 4 branches missed.">                if (addPackagesAsEvidence &amp;&amp; key.length() &gt; 1) {</span>
-<span class="fc" id="L819">                    dependency.addEvidence(EvidenceType.VENDOR, &quot;jar&quot;, &quot;package name&quot;, key, Confidence.LOW);</span>
+<span class="fc" id="L815">                dependency.addVendorWeighting(key);</span>
+<span class="pc bpc" id="L816" title="1 of 4 branches missed.">                if (addPackagesAsEvidence &amp;&amp; key.length() &gt; 1) {</span>
+<span class="fc" id="L817">                    dependency.addEvidence(EvidenceType.VENDOR, &quot;jar&quot;, &quot;package name&quot;, key, Confidence.LOW);</span>
                 }
             }
-<span class="fc" id="L822">        });</span>
-<span class="fc" id="L823">        productIdentifiers.forEach((key, value) -&gt; {</span>
-<span class="fc" id="L824">            final float ratio = value / (float) classCount;</span>
-<span class="fc bfc" id="L825" title="All 2 branches covered.">            if (ratio &gt; 0.5) {</span>
+<span class="fc" id="L820">        });</span>
+<span class="fc" id="L821">        productIdentifiers.forEach((key, value) -&gt; {</span>
+<span class="fc" id="L822">            final float ratio = value / (float) classCount;</span>
+<span class="fc bfc" id="L823" title="All 2 branches covered.">            if (ratio &gt; 0.5) {</span>
                 //todo remove weighting
-<span class="fc" id="L827">                dependency.addProductWeighting(key);</span>
-<span class="pc bpc" id="L828" title="1 of 4 branches missed.">                if (addPackagesAsEvidence &amp;&amp; key.length() &gt; 1) {</span>
-<span class="fc" id="L829">                    dependency.addEvidence(EvidenceType.PRODUCT, &quot;jar&quot;, &quot;package name&quot;, key, Confidence.LOW);</span>
+<span class="fc" id="L825">                dependency.addProductWeighting(key);</span>
+<span class="pc bpc" id="L826" title="1 of 4 branches missed.">                if (addPackagesAsEvidence &amp;&amp; key.length() &gt; 1) {</span>
+<span class="fc" id="L827">                    dependency.addEvidence(EvidenceType.PRODUCT, &quot;jar&quot;, &quot;package name&quot;, key, Confidence.LOW);</span>
                 }
             }
-<span class="fc" id="L832">        });</span>
-<span class="fc" id="L833">    }</span>
+<span class="fc" id="L830">        });</span>
+<span class="fc" id="L831">    }</span>
 
     /**
      * &lt;p&gt;
@@ -851,174 +849,174 @@ import org.slf4j.LoggerFactory;
     //CSOFF: MethodLength
     protected boolean parseManifest(Dependency dependency, List&lt;ClassNameInformation&gt; classInformation)
             throws IOException {
-<span class="fc" id="L854">        boolean foundSomething = false;</span>
-<span class="fc" id="L855">        try (JarFile jar = new JarFile(dependency.getActualFilePath(), false)) {</span>
-<span class="fc" id="L856">            final Manifest manifest = jar.getManifest();</span>
-<span class="pc bpc" id="L857" title="1 of 2 branches missed.">            if (manifest == null) {</span>
-<span class="nc bnc" id="L858" title="All 2 branches missed.">                if (!dependency.getFileName().toLowerCase().endsWith(&quot;-sources.jar&quot;)</span>
-<span class="nc bnc" id="L859" title="All 2 branches missed.">                        &amp;&amp; !dependency.getFileName().toLowerCase().endsWith(&quot;-javadoc.jar&quot;)</span>
-<span class="nc bnc" id="L860" title="All 2 branches missed.">                        &amp;&amp; !dependency.getFileName().toLowerCase().endsWith(&quot;-src.jar&quot;)</span>
-<span class="nc bnc" id="L861" title="All 2 branches missed.">                        &amp;&amp; !dependency.getFileName().toLowerCase().endsWith(&quot;-doc.jar&quot;)) {</span>
-<span class="nc" id="L862">                    LOGGER.debug(&quot;Jar file '{}' does not contain a manifest.&quot;, dependency.getFileName());</span>
+<span class="fc" id="L852">        boolean foundSomething = false;</span>
+<span class="fc" id="L853">        try (JarFile jar = new JarFile(dependency.getActualFilePath(), false)) {</span>
+<span class="fc" id="L854">            final Manifest manifest = jar.getManifest();</span>
+<span class="pc bpc" id="L855" title="1 of 2 branches missed.">            if (manifest == null) {</span>
+<span class="nc bnc" id="L856" title="All 2 branches missed.">                if (!dependency.getFileName().toLowerCase().endsWith(&quot;-sources.jar&quot;)</span>
+<span class="nc bnc" id="L857" title="All 2 branches missed.">                        &amp;&amp; !dependency.getFileName().toLowerCase().endsWith(&quot;-javadoc.jar&quot;)</span>
+<span class="nc bnc" id="L858" title="All 2 branches missed.">                        &amp;&amp; !dependency.getFileName().toLowerCase().endsWith(&quot;-src.jar&quot;)</span>
+<span class="nc bnc" id="L859" title="All 2 branches missed.">                        &amp;&amp; !dependency.getFileName().toLowerCase().endsWith(&quot;-doc.jar&quot;)) {</span>
+<span class="nc" id="L860">                    LOGGER.debug(&quot;Jar file '{}' does not contain a manifest.&quot;, dependency.getFileName());</span>
                 }
-<span class="nc" id="L864">                return false;</span>
+<span class="nc" id="L862">                return false;</span>
             }
-<span class="fc" id="L866">            String source = &quot;Manifest&quot;;</span>
-<span class="fc" id="L867">            String specificationVersion = null;</span>
-<span class="fc" id="L868">            boolean hasImplementationVersion = false;</span>
-<span class="fc" id="L869">            Attributes atts = manifest.getMainAttributes();</span>
-<span class="fc bfc" id="L870" title="All 2 branches covered.">            for (Entry&lt;Object, Object&gt; entry : atts.entrySet()) {</span>
-<span class="fc" id="L871">                String key = entry.getKey().toString();</span>
-<span class="fc" id="L872">                String value = atts.getValue(key);</span>
-<span class="pc bpc" id="L873" title="1 of 2 branches missed.">                if (HTML_DETECTION_PATTERN.matcher(value).find()) {</span>
-<span class="nc" id="L874">                    value = Jsoup.parse(value).text();</span>
+<span class="fc" id="L864">            String source = &quot;Manifest&quot;;</span>
+<span class="fc" id="L865">            String specificationVersion = null;</span>
+<span class="fc" id="L866">            boolean hasImplementationVersion = false;</span>
+<span class="fc" id="L867">            Attributes atts = manifest.getMainAttributes();</span>
+<span class="fc bfc" id="L868" title="All 2 branches covered.">            for (Entry&lt;Object, Object&gt; entry : atts.entrySet()) {</span>
+<span class="fc" id="L869">                String key = entry.getKey().toString();</span>
+<span class="fc" id="L870">                String value = atts.getValue(key);</span>
+<span class="pc bpc" id="L871" title="1 of 2 branches missed.">                if (HTML_DETECTION_PATTERN.matcher(value).find()) {</span>
+<span class="nc" id="L872">                    value = Jsoup.parse(value).text();</span>
                 }
-<span class="pc bpc" id="L876" title="2 of 4 branches missed.">                if (value.startsWith(&quot;git@github.com:&quot;) || value.startsWith(&quot;git@gitlab.com:&quot;)) {</span>
-<span class="nc" id="L877">                    value = value.substring(15);</span>
+<span class="pc bpc" id="L874" title="2 of 4 branches missed.">                if (value.startsWith(&quot;git@github.com:&quot;) || value.startsWith(&quot;git@gitlab.com:&quot;)) {</span>
+<span class="nc" id="L875">                    value = value.substring(15);</span>
                 }
-<span class="pc bpc" id="L879" title="1 of 2 branches missed.">                if (IGNORE_VALUES.contains(value)) {</span>
-<span class="nc" id="L880">                    continue;</span>
-<span class="fc bfc" id="L881" title="All 2 branches covered.">                } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {</span>
-<span class="fc" id="L882">                    foundSomething = true;</span>
-<span class="fc" id="L883">                    dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.HIGH);</span>
-<span class="fc" id="L884">                    addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);</span>
-<span class="fc bfc" id="L885" title="All 2 branches covered.">                } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VERSION.toString())) {</span>
-<span class="fc" id="L886">                    hasImplementationVersion = true;</span>
-<span class="fc" id="L887">                    foundSomething = true;</span>
-<span class="fc" id="L888">                    dependency.addEvidence(EvidenceType.VERSION, source, key, value, Confidence.HIGH);</span>
-<span class="fc bfc" id="L889" title="All 2 branches covered.">                } else if (&quot;specification-version&quot;.equalsIgnoreCase(key)) {</span>
-<span class="fc" id="L890">                    specificationVersion = value;</span>
-<span class="fc bfc" id="L891" title="All 2 branches covered.">                } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VENDOR.toString())) {</span>
-<span class="fc" id="L892">                    foundSomething = true;</span>
-<span class="fc" id="L893">                    dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.HIGH);</span>
-<span class="fc" id="L894">                    addMatchingValues(classInformation, value, dependency, EvidenceType.VENDOR);</span>
-<span class="fc bfc" id="L895" title="All 2 branches covered.">                } else if (key.equalsIgnoreCase(IMPLEMENTATION_VENDOR_ID)) {</span>
-<span class="fc" id="L896">                    foundSomething = true;</span>
-<span class="fc" id="L897">                    dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.MEDIUM);</span>
-<span class="fc" id="L898">                    addMatchingValues(classInformation, value, dependency, EvidenceType.VENDOR);</span>
-<span class="fc bfc" id="L899" title="All 2 branches covered.">                } else if (key.equalsIgnoreCase(BUNDLE_DESCRIPTION)) {</span>
-<span class="pc bpc" id="L900" title="1 of 2 branches missed.">                    if (!value.startsWith(&quot;Sonatype helps open source projects&quot;)) {</span>
-<span class="fc" id="L901">                        foundSomething = true;</span>
-<span class="fc" id="L902">                        addDescription(dependency, value, &quot;manifest&quot;, key);</span>
-<span class="fc" id="L903">                        addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);</span>
+<span class="pc bpc" id="L877" title="1 of 2 branches missed.">                if (IGNORE_VALUES.contains(value)) {</span>
+<span class="nc" id="L878">                    continue;</span>
+<span class="fc bfc" id="L879" title="All 2 branches covered.">                } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {</span>
+<span class="fc" id="L880">                    foundSomething = true;</span>
+<span class="fc" id="L881">                    dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.HIGH);</span>
+<span class="fc" id="L882">                    addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);</span>
+<span class="fc bfc" id="L883" title="All 2 branches covered.">                } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VERSION.toString())) {</span>
+<span class="fc" id="L884">                    hasImplementationVersion = true;</span>
+<span class="fc" id="L885">                    foundSomething = true;</span>
+<span class="fc" id="L886">                    dependency.addEvidence(EvidenceType.VERSION, source, key, value, Confidence.HIGH);</span>
+<span class="fc bfc" id="L887" title="All 2 branches covered.">                } else if (&quot;specification-version&quot;.equalsIgnoreCase(key)) {</span>
+<span class="fc" id="L888">                    specificationVersion = value;</span>
+<span class="fc bfc" id="L889" title="All 2 branches covered.">                } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VENDOR.toString())) {</span>
+<span class="fc" id="L890">                    foundSomething = true;</span>
+<span class="fc" id="L891">                    dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.HIGH);</span>
+<span class="fc" id="L892">                    addMatchingValues(classInformation, value, dependency, EvidenceType.VENDOR);</span>
+<span class="fc bfc" id="L893" title="All 2 branches covered.">                } else if (key.equalsIgnoreCase(IMPLEMENTATION_VENDOR_ID)) {</span>
+<span class="fc" id="L894">                    foundSomething = true;</span>
+<span class="fc" id="L895">                    dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.MEDIUM);</span>
+<span class="fc" id="L896">                    addMatchingValues(classInformation, value, dependency, EvidenceType.VENDOR);</span>
+<span class="fc bfc" id="L897" title="All 2 branches covered.">                } else if (key.equalsIgnoreCase(BUNDLE_DESCRIPTION)) {</span>
+<span class="pc bpc" id="L898" title="1 of 2 branches missed.">                    if (!value.startsWith(&quot;Sonatype helps open source projects&quot;)) {</span>
+<span class="fc" id="L899">                        foundSomething = true;</span>
+<span class="fc" id="L900">                        addDescription(dependency, value, &quot;manifest&quot;, key);</span>
+<span class="fc" id="L901">                        addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);</span>
                     }
-<span class="fc bfc" id="L905" title="All 2 branches covered.">                } else if (key.equalsIgnoreCase(BUNDLE_NAME)) {</span>
-<span class="fc" id="L906">                    foundSomething = true;</span>
-<span class="fc" id="L907">                    dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);</span>
-<span class="fc" id="L908">                    addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);</span>
+<span class="fc bfc" id="L903" title="All 2 branches covered.">                } else if (key.equalsIgnoreCase(BUNDLE_NAME)) {</span>
+<span class="fc" id="L904">                    foundSomething = true;</span>
+<span class="fc" id="L905">                    dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);</span>
+<span class="fc" id="L906">                    addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);</span>
 //                //the following caused false positives.
 //                } else if (key.equalsIgnoreCase(BUNDLE_VENDOR)) {
-<span class="fc bfc" id="L911" title="All 2 branches covered.">                } else if (key.equalsIgnoreCase(BUNDLE_VERSION)) {</span>
-<span class="fc" id="L912">                    foundSomething = true;</span>
-<span class="fc" id="L913">                    dependency.addEvidence(EvidenceType.VERSION, source, key, value, Confidence.HIGH);</span>
-<span class="fc bfc" id="L914" title="All 2 branches covered.">                } else if (key.equalsIgnoreCase(Attributes.Name.MAIN_CLASS.toString())) {</span>
+<span class="fc bfc" id="L909" title="All 2 branches covered.">                } else if (key.equalsIgnoreCase(BUNDLE_VERSION)) {</span>
+<span class="fc" id="L910">                    foundSomething = true;</span>
+<span class="fc" id="L911">                    dependency.addEvidence(EvidenceType.VERSION, source, key, value, Confidence.HIGH);</span>
+<span class="fc bfc" id="L912" title="All 2 branches covered.">                } else if (key.equalsIgnoreCase(Attributes.Name.MAIN_CLASS.toString())) {</span>
                     //noinspection UnnecessaryContinue
-<span class="fc" id="L916">                    continue;</span>
+<span class="fc" id="L914">                    continue;</span>
                     //skipping main class as if this has important information to add it will be added during class name analysis...
-<span class="pc bpc" id="L918" title="1 of 4 branches missed.">                } else if (&quot;implementation-url&quot;.equalsIgnoreCase(key)</span>
+<span class="pc bpc" id="L916" title="1 of 4 branches missed.">                } else if (&quot;implementation-url&quot;.equalsIgnoreCase(key)</span>
                         &amp;&amp; value != null
-<span class="pc bpc" id="L920" title="1 of 2 branches missed.">                        &amp;&amp; value.startsWith(&quot;https://projects.spring.io/spring-boot/#/spring-boot-starter-parent/parent/&quot;)) {</span>
-<span class="nc" id="L921">                    continue;</span>
+<span class="pc bpc" id="L918" title="1 of 2 branches missed.">                        &amp;&amp; value.startsWith(&quot;https://projects.spring.io/spring-boot/#/spring-boot-starter-parent/parent/&quot;)) {</span>
+<span class="nc" id="L919">                    continue;</span>
                 } else {
-<span class="fc" id="L923">                    key = key.toLowerCase();</span>
-<span class="fc bfc" id="L924" title="All 2 branches covered.">                    if (!IGNORE_KEYS.contains(key)</span>
-<span class="fc bfc" id="L925" title="All 2 branches covered.">                            &amp;&amp; !key.endsWith(&quot;jdk&quot;)</span>
-<span class="fc bfc" id="L926" title="All 2 branches covered.">                            &amp;&amp; !key.contains(&quot;lastmodified&quot;)</span>
-<span class="fc bfc" id="L927" title="All 2 branches covered.">                            &amp;&amp; !key.endsWith(&quot;package&quot;)</span>
-<span class="pc bpc" id="L928" title="1 of 2 branches missed.">                            &amp;&amp; !key.endsWith(&quot;classpath&quot;)</span>
-<span class="pc bpc" id="L929" title="1 of 2 branches missed.">                            &amp;&amp; !key.endsWith(&quot;class-path&quot;)</span>
-<span class="pc bpc" id="L930" title="1 of 2 branches missed.">                            &amp;&amp; !key.endsWith(&quot;-scm&quot;) //todo change this to a regex?</span>
-<span class="pc bpc" id="L931" title="1 of 2 branches missed.">                            &amp;&amp; !key.startsWith(&quot;scm-&quot;)</span>
-<span class="pc bpc" id="L932" title="1 of 2 branches missed.">                            &amp;&amp; !value.trim().startsWith(&quot;scm:&quot;)</span>
-<span class="pc bpc" id="L933" title="1 of 2 branches missed.">                            &amp;&amp; !isImportPackage(key, value)</span>
-<span class="fc bfc" id="L934" title="All 2 branches covered.">                            &amp;&amp; !isPackage(key, value)) {</span>
-<span class="fc" id="L935">                        foundSomething = true;</span>
-<span class="fc bfc" id="L936" title="All 2 branches covered.">                        if (key.contains(&quot;version&quot;)) {</span>
-<span class="pc bpc" id="L937" title="1 of 2 branches missed.">                            if (!key.contains(&quot;specification&quot;)) {</span>
-<span class="fc" id="L938">                                dependency.addEvidence(EvidenceType.VERSION, source, key, value, Confidence.MEDIUM);</span>
+<span class="fc" id="L921">                    key = key.toLowerCase();</span>
+<span class="fc bfc" id="L922" title="All 2 branches covered.">                    if (!IGNORE_KEYS.contains(key)</span>
+<span class="fc bfc" id="L923" title="All 2 branches covered.">                            &amp;&amp; !key.endsWith(&quot;jdk&quot;)</span>
+<span class="fc bfc" id="L924" title="All 2 branches covered.">                            &amp;&amp; !key.contains(&quot;lastmodified&quot;)</span>
+<span class="fc bfc" id="L925" title="All 2 branches covered.">                            &amp;&amp; !key.endsWith(&quot;package&quot;)</span>
+<span class="pc bpc" id="L926" title="1 of 2 branches missed.">                            &amp;&amp; !key.endsWith(&quot;classpath&quot;)</span>
+<span class="pc bpc" id="L927" title="1 of 2 branches missed.">                            &amp;&amp; !key.endsWith(&quot;class-path&quot;)</span>
+<span class="pc bpc" id="L928" title="1 of 2 branches missed.">                            &amp;&amp; !key.endsWith(&quot;-scm&quot;) //todo change this to a regex?</span>
+<span class="pc bpc" id="L929" title="1 of 2 branches missed.">                            &amp;&amp; !key.startsWith(&quot;scm-&quot;)</span>
+<span class="pc bpc" id="L930" title="1 of 2 branches missed.">                            &amp;&amp; !value.trim().startsWith(&quot;scm:&quot;)</span>
+<span class="pc bpc" id="L931" title="1 of 2 branches missed.">                            &amp;&amp; !isImportPackage(key, value)</span>
+<span class="fc bfc" id="L932" title="All 2 branches covered.">                            &amp;&amp; !isPackage(key, value)) {</span>
+<span class="fc" id="L933">                        foundSomething = true;</span>
+<span class="fc bfc" id="L934" title="All 2 branches covered.">                        if (key.contains(&quot;version&quot;)) {</span>
+<span class="pc bpc" id="L935" title="1 of 2 branches missed.">                            if (!key.contains(&quot;specification&quot;)) {</span>
+<span class="fc" id="L936">                                dependency.addEvidence(EvidenceType.VERSION, source, key, value, Confidence.MEDIUM);</span>
                             }
-<span class="pc bpc" id="L940" title="1 of 2 branches missed.">                        } else if (&quot;build-id&quot;.equals(key)) {</span>
-<span class="nc" id="L941">                            int pos = value.indexOf('(');</span>
-<span class="nc bnc" id="L942" title="All 2 branches missed.">                            if (pos &gt; 0) {</span>
-<span class="nc" id="L943">                                value = value.substring(0, pos - 1);</span>
+<span class="pc bpc" id="L938" title="1 of 2 branches missed.">                        } else if (&quot;build-id&quot;.equals(key)) {</span>
+<span class="nc" id="L939">                            int pos = value.indexOf('(');</span>
+<span class="nc bnc" id="L940" title="All 2 branches missed.">                            if (pos &gt; 0) {</span>
+<span class="nc" id="L941">                                value = value.substring(0, pos - 1);</span>
                             }
-<span class="nc" id="L945">                            pos = value.indexOf('[');</span>
-<span class="nc bnc" id="L946" title="All 2 branches missed.">                            if (pos &gt; 0) {</span>
-<span class="nc" id="L947">                                value = value.substring(0, pos - 1);</span>
+<span class="nc" id="L943">                            pos = value.indexOf('[');</span>
+<span class="nc bnc" id="L944" title="All 2 branches missed.">                            if (pos &gt; 0) {</span>
+<span class="nc" id="L945">                                value = value.substring(0, pos - 1);</span>
                             }
-<span class="nc" id="L949">                            dependency.addEvidence(EvidenceType.VERSION, source, key, value, Confidence.MEDIUM);</span>
-<span class="pc bfc" id="L950" title="All 2 branches covered.">                        } else if (key.contains(&quot;title&quot;)) {</span>
-<span class="fc" id="L951">                            dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);</span>
-<span class="fc" id="L952">                            addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);</span>
-<span class="fc bfc" id="L953" title="All 2 branches covered.">                        } else if (key.contains(&quot;vendor&quot;)) {</span>
-<span class="pc bpc" id="L954" title="1 of 2 branches missed.">                            if (key.contains(&quot;specification&quot;)) {</span>
-<span class="fc" id="L955">                                dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.LOW);</span>
+<span class="nc" id="L947">                            dependency.addEvidence(EvidenceType.VERSION, source, key, value, Confidence.MEDIUM);</span>
+<span class="pc bfc" id="L948" title="All 2 branches covered.">                        } else if (key.contains(&quot;title&quot;)) {</span>
+<span class="fc" id="L949">                            dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);</span>
+<span class="fc" id="L950">                            addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);</span>
+<span class="fc bfc" id="L951" title="All 2 branches covered.">                        } else if (key.contains(&quot;vendor&quot;)) {</span>
+<span class="pc bpc" id="L952" title="1 of 2 branches missed.">                            if (key.contains(&quot;specification&quot;)) {</span>
+<span class="fc" id="L953">                                dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.LOW);</span>
                             } else {
-<span class="nc" id="L957">                                dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.MEDIUM);</span>
-<span class="nc" id="L958">                                addMatchingValues(classInformation, value, dependency, EvidenceType.VENDOR);</span>
+<span class="nc" id="L955">                                dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.MEDIUM);</span>
+<span class="nc" id="L956">                                addMatchingValues(classInformation, value, dependency, EvidenceType.VENDOR);</span>
                             }
-<span class="fc bfc" id="L960" title="All 2 branches covered.">                        } else if (key.contains(&quot;name&quot;)) {</span>
-<span class="fc" id="L961">                            dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);</span>
-<span class="fc" id="L962">                            dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.MEDIUM);</span>
-<span class="fc" id="L963">                            addMatchingValues(classInformation, value, dependency, EvidenceType.VENDOR);</span>
-<span class="fc" id="L964">                            addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);</span>
-<span class="fc bfc" id="L965" title="All 2 branches covered.">                        } else if (key.contains(&quot;license&quot;)) {</span>
-<span class="fc" id="L966">                            addLicense(dependency, value);</span>
-<span class="pc bpc" id="L967" title="1 of 2 branches missed.">                        } else if (key.contains(&quot;description&quot;)) {</span>
-<span class="nc bnc" id="L968" title="All 2 branches missed.">                            if (!value.startsWith(&quot;Sonatype helps open source projects&quot;)) {</span>
-<span class="nc" id="L969">                                final String trimmedDescription = addDescription(dependency, value, &quot;manifest&quot;, key);</span>
-<span class="nc" id="L970">                                addMatchingValues(classInformation, trimmedDescription, dependency, EvidenceType.VENDOR);</span>
-<span class="nc" id="L971">                                addMatchingValues(classInformation, trimmedDescription, dependency, EvidenceType.PRODUCT);</span>
-<span class="nc" id="L972">                            }</span>
+<span class="fc bfc" id="L958" title="All 2 branches covered.">                        } else if (key.contains(&quot;name&quot;)) {</span>
+<span class="fc" id="L959">                            dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);</span>
+<span class="fc" id="L960">                            dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.MEDIUM);</span>
+<span class="fc" id="L961">                            addMatchingValues(classInformation, value, dependency, EvidenceType.VENDOR);</span>
+<span class="fc" id="L962">                            addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);</span>
+<span class="fc bfc" id="L963" title="All 2 branches covered.">                        } else if (key.contains(&quot;license&quot;)) {</span>
+<span class="fc" id="L964">                            addLicense(dependency, value);</span>
+<span class="pc bpc" id="L965" title="1 of 2 branches missed.">                        } else if (key.contains(&quot;description&quot;)) {</span>
+<span class="nc bnc" id="L966" title="All 2 branches missed.">                            if (!value.startsWith(&quot;Sonatype helps open source projects&quot;)) {</span>
+<span class="nc" id="L967">                                final String trimmedDescription = addDescription(dependency, value, &quot;manifest&quot;, key);</span>
+<span class="nc" id="L968">                                addMatchingValues(classInformation, trimmedDescription, dependency, EvidenceType.VENDOR);</span>
+<span class="nc" id="L969">                                addMatchingValues(classInformation, trimmedDescription, dependency, EvidenceType.PRODUCT);</span>
+<span class="nc" id="L970">                            }</span>
                         } else {
-<span class="fc" id="L974">                            dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.LOW);</span>
-<span class="fc" id="L975">                            dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.LOW);</span>
-<span class="fc" id="L976">                            addMatchingValues(classInformation, value, dependency, EvidenceType.VERSION);</span>
-<span class="fc" id="L977">                            addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);</span>
-<span class="fc bfc" id="L978" title="All 2 branches covered.">                            if (value.matches(&quot;.*\\d.*&quot;)) {</span>
-<span class="fc" id="L979">                                final StringTokenizer tokenizer = new StringTokenizer(value, &quot; &quot;);</span>
-<span class="fc bfc" id="L980" title="All 2 branches covered.">                                while (tokenizer.hasMoreElements()) {</span>
-<span class="fc" id="L981">                                    final String s = tokenizer.nextToken();</span>
-<span class="fc bfc" id="L982" title="All 2 branches covered.">                                    if (s.matches(&quot;^[0-9.]+$&quot;)) {</span>
-<span class="fc" id="L983">                                        dependency.addEvidence(EvidenceType.VERSION, source, key, s, Confidence.LOW);</span>
+<span class="fc" id="L972">                            dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.LOW);</span>
+<span class="fc" id="L973">                            dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.LOW);</span>
+<span class="fc" id="L974">                            addMatchingValues(classInformation, value, dependency, EvidenceType.VERSION);</span>
+<span class="fc" id="L975">                            addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);</span>
+<span class="fc bfc" id="L976" title="All 2 branches covered.">                            if (value.matches(&quot;.*\\d.*&quot;)) {</span>
+<span class="fc" id="L977">                                final StringTokenizer tokenizer = new StringTokenizer(value, &quot; &quot;);</span>
+<span class="fc bfc" id="L978" title="All 2 branches covered.">                                while (tokenizer.hasMoreElements()) {</span>
+<span class="fc" id="L979">                                    final String s = tokenizer.nextToken();</span>
+<span class="fc bfc" id="L980" title="All 2 branches covered.">                                    if (s.matches(&quot;^[0-9.]+$&quot;)) {</span>
+<span class="fc" id="L981">                                        dependency.addEvidence(EvidenceType.VERSION, source, key, s, Confidence.LOW);</span>
                                     }
-<span class="fc" id="L985">                                }</span>
+<span class="fc" id="L983">                                }</span>
                             }
                         }
                     }
                 }
-<span class="fc" id="L990">            }</span>
-<span class="fc bfc" id="L991" title="All 2 branches covered.">            for (Map.Entry&lt;String, Attributes&gt; item : manifest.getEntries().entrySet()) {</span>
-<span class="fc" id="L992">                final String name = item.getKey();</span>
-<span class="fc" id="L993">                source = &quot;manifest: &quot; + name;</span>
-<span class="fc" id="L994">                atts = item.getValue();</span>
-<span class="fc bfc" id="L995" title="All 2 branches covered.">                for (Entry&lt;Object, Object&gt; entry : atts.entrySet()) {</span>
-<span class="fc" id="L996">                    final String key = entry.getKey().toString();</span>
-<span class="fc" id="L997">                    final String value = atts.getValue(key);</span>
-<span class="fc bfc" id="L998" title="All 2 branches covered.">                    if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {</span>
-<span class="fc" id="L999">                        foundSomething = true;</span>
-<span class="fc" id="L1000">                        dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);</span>
-<span class="fc" id="L1001">                        addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);</span>
-<span class="fc bfc" id="L1002" title="All 2 branches covered.">                    } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VERSION.toString())) {</span>
-<span class="fc" id="L1003">                        foundSomething = true;</span>
-<span class="fc" id="L1004">                        dependency.addEvidence(EvidenceType.VERSION, source, key, value, Confidence.MEDIUM);</span>
-<span class="fc bfc" id="L1005" title="All 2 branches covered.">                    } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VENDOR.toString())) {</span>
-<span class="fc" id="L1006">                        foundSomething = true;</span>
-<span class="fc" id="L1007">                        dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.MEDIUM);</span>
-<span class="fc" id="L1008">                        addMatchingValues(classInformation, value, dependency, EvidenceType.VENDOR);</span>
-<span class="fc bfc" id="L1009" title="All 2 branches covered.">                    } else if (key.equalsIgnoreCase(Attributes.Name.SPECIFICATION_TITLE.toString())) {</span>
-<span class="fc" id="L1010">                        foundSomething = true;</span>
-<span class="fc" id="L1011">                        dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);</span>
-<span class="fc" id="L1012">                        addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);</span>
+<span class="fc" id="L988">            }</span>
+<span class="fc bfc" id="L989" title="All 2 branches covered.">            for (Map.Entry&lt;String, Attributes&gt; item : manifest.getEntries().entrySet()) {</span>
+<span class="fc" id="L990">                final String name = item.getKey();</span>
+<span class="fc" id="L991">                source = &quot;manifest: &quot; + name;</span>
+<span class="fc" id="L992">                atts = item.getValue();</span>
+<span class="fc bfc" id="L993" title="All 2 branches covered.">                for (Entry&lt;Object, Object&gt; entry : atts.entrySet()) {</span>
+<span class="fc" id="L994">                    final String key = entry.getKey().toString();</span>
+<span class="fc" id="L995">                    final String value = atts.getValue(key);</span>
+<span class="fc bfc" id="L996" title="All 2 branches covered.">                    if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {</span>
+<span class="fc" id="L997">                        foundSomething = true;</span>
+<span class="fc" id="L998">                        dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);</span>
+<span class="fc" id="L999">                        addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);</span>
+<span class="fc bfc" id="L1000" title="All 2 branches covered.">                    } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VERSION.toString())) {</span>
+<span class="fc" id="L1001">                        foundSomething = true;</span>
+<span class="fc" id="L1002">                        dependency.addEvidence(EvidenceType.VERSION, source, key, value, Confidence.MEDIUM);</span>
+<span class="fc bfc" id="L1003" title="All 2 branches covered.">                    } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VENDOR.toString())) {</span>
+<span class="fc" id="L1004">                        foundSomething = true;</span>
+<span class="fc" id="L1005">                        dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.MEDIUM);</span>
+<span class="fc" id="L1006">                        addMatchingValues(classInformation, value, dependency, EvidenceType.VENDOR);</span>
+<span class="fc bfc" id="L1007" title="All 2 branches covered.">                    } else if (key.equalsIgnoreCase(Attributes.Name.SPECIFICATION_TITLE.toString())) {</span>
+<span class="fc" id="L1008">                        foundSomething = true;</span>
+<span class="fc" id="L1009">                        dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);</span>
+<span class="fc" id="L1010">                        addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);</span>
                     }
-<span class="fc" id="L1014">                }</span>
-<span class="fc" id="L1015">            }</span>
-<span class="pc bpc" id="L1016" title="1 of 4 branches missed.">            if (specificationVersion != null &amp;&amp; !hasImplementationVersion) {</span>
-<span class="nc" id="L1017">                foundSomething = true;</span>
-<span class="nc" id="L1018">                dependency.addEvidence(EvidenceType.VERSION, source, &quot;specification-version&quot;, specificationVersion, Confidence.HIGH);</span>
+<span class="fc" id="L1012">                }</span>
+<span class="fc" id="L1013">            }</span>
+<span class="pc bpc" id="L1014" title="1 of 4 branches missed.">            if (specificationVersion != null &amp;&amp; !hasImplementationVersion) {</span>
+<span class="nc" id="L1015">                foundSomething = true;</span>
+<span class="nc" id="L1016">                dependency.addEvidence(EvidenceType.VERSION, source, &quot;specification-version&quot;, specificationVersion, Confidence.HIGH);</span>
             }
         }
-<span class="fc" id="L1021">        return foundSomething;</span>
+<span class="fc" id="L1019">        return foundSomething;</span>
     }
     //CSON: MethodLength
 
@@ -1037,42 +1035,42 @@ import org.slf4j.LoggerFactory;
      * otherwise the original description is returned
      */
     public static String addDescription(Dependency dependency, String description, String source, String key) {
-<span class="fc bfc" id="L1040" title="All 2 branches covered.">        if (dependency.getDescription() == null) {</span>
-<span class="fc" id="L1041">            dependency.setDescription(description);</span>
+<span class="fc bfc" id="L1038" title="All 2 branches covered.">        if (dependency.getDescription() == null) {</span>
+<span class="fc" id="L1039">            dependency.setDescription(description);</span>
         }
         String desc;
-<span class="pc bpc" id="L1044" title="1 of 2 branches missed.">        if (HTML_DETECTION_PATTERN.matcher(description).find()) {</span>
-<span class="nc" id="L1045">            desc = Jsoup.parse(description).text();</span>
+<span class="pc bpc" id="L1042" title="1 of 2 branches missed.">        if (HTML_DETECTION_PATTERN.matcher(description).find()) {</span>
+<span class="nc" id="L1043">            desc = Jsoup.parse(description).text();</span>
         } else {
-<span class="fc" id="L1047">            desc = description;</span>
+<span class="fc" id="L1045">            desc = description;</span>
         }
-<span class="fc" id="L1049">        dependency.setDescription(desc);</span>
-<span class="fc bfc" id="L1050" title="All 2 branches covered.">        if (desc.length() &gt; 100) {</span>
-<span class="fc" id="L1051">            desc = desc.replaceAll(&quot;\\s\\s+&quot;, &quot; &quot;);</span>
-<span class="fc" id="L1052">            final int posSuchAs = desc.toLowerCase().indexOf(&quot;such as &quot;, 100);</span>
-<span class="fc" id="L1053">            final int posLike = desc.toLowerCase().indexOf(&quot;like &quot;, 100);</span>
-<span class="fc" id="L1054">            final int posWillUse = desc.toLowerCase().indexOf(&quot;will use &quot;, 100);</span>
-<span class="fc" id="L1055">            final int posUses = desc.toLowerCase().indexOf(&quot; uses &quot;, 100);</span>
+<span class="fc" id="L1047">        dependency.setDescription(desc);</span>
+<span class="fc bfc" id="L1048" title="All 2 branches covered.">        if (desc.length() &gt; 100) {</span>
+<span class="fc" id="L1049">            desc = desc.replaceAll(&quot;\\s\\s+&quot;, &quot; &quot;);</span>
+<span class="fc" id="L1050">            final int posSuchAs = desc.toLowerCase().indexOf(&quot;such as &quot;, 100);</span>
+<span class="fc" id="L1051">            final int posLike = desc.toLowerCase().indexOf(&quot;like &quot;, 100);</span>
+<span class="fc" id="L1052">            final int posWillUse = desc.toLowerCase().indexOf(&quot;will use &quot;, 100);</span>
+<span class="fc" id="L1053">            final int posUses = desc.toLowerCase().indexOf(&quot; uses &quot;, 100);</span>
 
-<span class="fc" id="L1057">            int pos = -1;</span>
-<span class="fc" id="L1058">            pos = Math.max(pos, posSuchAs);</span>
-<span class="pc bpc" id="L1059" title="3 of 4 branches missed.">            if (pos &gt;= 0 &amp;&amp; posLike &gt;= 0) {</span>
-<span class="nc" id="L1060">                pos = Math.min(pos, posLike);</span>
+<span class="fc" id="L1055">            int pos = -1;</span>
+<span class="fc" id="L1056">            pos = Math.max(pos, posSuchAs);</span>
+<span class="pc bpc" id="L1057" title="3 of 4 branches missed.">            if (pos &gt;= 0 &amp;&amp; posLike &gt;= 0) {</span>
+<span class="nc" id="L1058">                pos = Math.min(pos, posLike);</span>
             } else {
-<span class="fc" id="L1062">                pos = Math.max(pos, posLike);</span>
+<span class="fc" id="L1060">                pos = Math.max(pos, posLike);</span>
             }
-<span class="pc bpc" id="L1064" title="1 of 4 branches missed.">            if (pos &gt;= 0 &amp;&amp; posWillUse &gt;= 0) {</span>
-<span class="nc" id="L1065">                pos = Math.min(pos, posWillUse);</span>
+<span class="pc bpc" id="L1062" title="1 of 4 branches missed.">            if (pos &gt;= 0 &amp;&amp; posWillUse &gt;= 0) {</span>
+<span class="nc" id="L1063">                pos = Math.min(pos, posWillUse);</span>
             } else {
-<span class="fc" id="L1067">                pos = Math.max(pos, posWillUse);</span>
+<span class="fc" id="L1065">                pos = Math.max(pos, posWillUse);</span>
             }
-<span class="pc bpc" id="L1069" title="1 of 4 branches missed.">            if (pos &gt;= 0 &amp;&amp; posUses &gt;= 0) {</span>
-<span class="nc" id="L1070">                pos = Math.min(pos, posUses);</span>
+<span class="pc bpc" id="L1067" title="1 of 4 branches missed.">            if (pos &gt;= 0 &amp;&amp; posUses &gt;= 0) {</span>
+<span class="nc" id="L1068">                pos = Math.min(pos, posUses);</span>
             } else {
-<span class="fc" id="L1072">                pos = Math.max(pos, posUses);</span>
+<span class="fc" id="L1070">                pos = Math.max(pos, posUses);</span>
             }
-<span class="fc bfc" id="L1074" title="All 2 branches covered.">            if (pos &gt; 0) {</span>
-<span class="fc" id="L1075">                desc = desc.substring(0, pos) + &quot;...&quot;;</span>
+<span class="fc bfc" id="L1072" title="All 2 branches covered.">            if (pos &gt; 0) {</span>
+<span class="fc" id="L1073">                desc = desc.substring(0, pos) + &quot;...&quot;;</span>
             }
 //            //no longer add description directly. Use matching terms in other parts of the evidence collection
 //            //but description adds too many FP
@@ -1082,7 +1080,7 @@ import org.slf4j.LoggerFactory;
 //            dependency.addEvidence(EvidenceType.PRODUCT, source, key, desc, Confidence.MEDIUM);
 //            dependency.addEvidence(EvidenceType.VENDOR, source, key, desc, Confidence.MEDIUM);
         }
-<span class="fc" id="L1085">        return desc;</span>
+<span class="fc" id="L1083">        return desc;</span>
     }
 
     /**
@@ -1092,12 +1090,12 @@ import org.slf4j.LoggerFactory;
      * @param license the license
      */
     private void addLicense(Dependency d, String license) {
-<span class="pc bpc" id="L1095" title="1 of 2 branches missed.">        if (d.getLicense() == null) {</span>
-<span class="fc" id="L1096">            d.setLicense(license);</span>
-<span class="nc bnc" id="L1097" title="All 2 branches missed.">        } else if (!d.getLicense().contains(license)) {</span>
-<span class="nc" id="L1098">            d.setLicense(d.getLicense() + NEWLINE + license);</span>
+<span class="pc bpc" id="L1093" title="1 of 2 branches missed.">        if (d.getLicense() == null) {</span>
+<span class="fc" id="L1094">            d.setLicense(license);</span>
+<span class="nc bnc" id="L1095" title="All 2 branches missed.">        } else if (!d.getLicense().contains(license)) {</span>
+<span class="nc" id="L1096">            d.setLicense(d.getLicense() + NEWLINE + license);</span>
         }
-<span class="fc" id="L1100">    }</span>
+<span class="fc" id="L1098">    }</span>
 
     /**
      * Initializes the JarAnalyzer.
@@ -1109,41 +1107,41 @@ import org.slf4j.LoggerFactory;
     @Override
     public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         try {
-<span class="fc" id="L1112">            final File baseDir = getSettings().getTempDirectory();</span>
-<span class="fc" id="L1113">            tempFileLocation = File.createTempFile(&quot;check&quot;, &quot;tmp&quot;, baseDir);</span>
-<span class="pc bpc" id="L1114" title="1 of 2 branches missed.">            if (!tempFileLocation.delete()) {</span>
-<span class="nc" id="L1115">                final String msg = String.format(&quot;Unable to delete temporary file '%s'.&quot;, tempFileLocation.getAbsolutePath());</span>
-<span class="nc" id="L1116">                setEnabled(false);</span>
-<span class="nc" id="L1117">                throw new InitializationException(msg);</span>
+<span class="fc" id="L1110">            final File baseDir = getSettings().getTempDirectory();</span>
+<span class="fc" id="L1111">            tempFileLocation = File.createTempFile(&quot;check&quot;, &quot;tmp&quot;, baseDir);</span>
+<span class="pc bpc" id="L1112" title="1 of 2 branches missed.">            if (!tempFileLocation.delete()) {</span>
+<span class="nc" id="L1113">                final String msg = String.format(&quot;Unable to delete temporary file '%s'.&quot;, tempFileLocation.getAbsolutePath());</span>
+<span class="nc" id="L1114">                setEnabled(false);</span>
+<span class="nc" id="L1115">                throw new InitializationException(msg);</span>
             }
-<span class="pc bpc" id="L1119" title="1 of 2 branches missed.">            if (!tempFileLocation.mkdirs()) {</span>
-<span class="nc" id="L1120">                final String msg = String.format(&quot;Unable to create directory '%s'.&quot;, tempFileLocation.getAbsolutePath());</span>
-<span class="nc" id="L1121">                setEnabled(false);</span>
-<span class="nc" id="L1122">                throw new InitializationException(msg);</span>
+<span class="pc bpc" id="L1117" title="1 of 2 branches missed.">            if (!tempFileLocation.mkdirs()) {</span>
+<span class="nc" id="L1118">                final String msg = String.format(&quot;Unable to create directory '%s'.&quot;, tempFileLocation.getAbsolutePath());</span>
+<span class="nc" id="L1119">                setEnabled(false);</span>
+<span class="nc" id="L1120">                throw new InitializationException(msg);</span>
             }
-<span class="nc" id="L1124">        } catch (IOException ex) {</span>
-<span class="nc" id="L1125">            setEnabled(false);</span>
-<span class="nc" id="L1126">            throw new InitializationException(&quot;Unable to create a temporary file&quot;, ex);</span>
-<span class="fc" id="L1127">        }</span>
-<span class="fc" id="L1128">    }</span>
+<span class="nc" id="L1122">        } catch (IOException ex) {</span>
+<span class="nc" id="L1123">            setEnabled(false);</span>
+<span class="nc" id="L1124">            throw new InitializationException(&quot;Unable to create a temporary file&quot;, ex);</span>
+<span class="fc" id="L1125">        }</span>
+<span class="fc" id="L1126">    }</span>
 
     /**
      * Deletes any files extracted from the JAR during analysis.
      */
     @Override
     public void closeAnalyzer() {
-<span class="pc bpc" id="L1135" title="2 of 4 branches missed.">        if (tempFileLocation != null &amp;&amp; tempFileLocation.exists()) {</span>
-<span class="fc" id="L1136">            LOGGER.debug(&quot;Attempting to delete temporary files from `{}`&quot;, tempFileLocation.toString());</span>
-<span class="fc" id="L1137">            final boolean success = FileUtils.delete(tempFileLocation);</span>
-<span class="pc bpc" id="L1138" title="3 of 4 branches missed.">            if (!success &amp;&amp; tempFileLocation.exists()) {</span>
-<span class="nc" id="L1139">                final String[] l = tempFileLocation.list();</span>
-<span class="nc bnc" id="L1140" title="All 4 branches missed.">                if (l != null &amp;&amp; l.length &gt; 0) {</span>
-<span class="nc" id="L1141">                    LOGGER.warn(&quot;Failed to delete the JAR Analyzder's temporary files from `{}`, &quot;</span>
-<span class="nc" id="L1142">                            + &quot;see the log for more details&quot;, tempFileLocation.getAbsolutePath());</span>
+<span class="pc bpc" id="L1133" title="2 of 4 branches missed.">        if (tempFileLocation != null &amp;&amp; tempFileLocation.exists()) {</span>
+<span class="fc" id="L1134">            LOGGER.debug(&quot;Attempting to delete temporary files from `{}`&quot;, tempFileLocation.toString());</span>
+<span class="fc" id="L1135">            final boolean success = FileUtils.delete(tempFileLocation);</span>
+<span class="pc bpc" id="L1136" title="3 of 4 branches missed.">            if (!success &amp;&amp; tempFileLocation.exists()) {</span>
+<span class="nc" id="L1137">                final String[] l = tempFileLocation.list();</span>
+<span class="nc bnc" id="L1138" title="All 4 branches missed.">                if (l != null &amp;&amp; l.length &gt; 0) {</span>
+<span class="nc" id="L1139">                    LOGGER.warn(&quot;Failed to delete the JAR Analyzder's temporary files from `{}`, &quot;</span>
+<span class="nc" id="L1140">                            + &quot;see the log for more details&quot;, tempFileLocation.getAbsolutePath());</span>
                 }
             }
         }
-<span class="fc" id="L1146">    }</span>
+<span class="fc" id="L1144">    }</span>
 
     /**
      * Determines if the key value pair from the manifest is for an &quot;import&quot;
@@ -1155,9 +1153,9 @@ import org.slf4j.LoggerFactory;
      * &quot;import&quot; entry
      */
     private boolean isImportPackage(String key, String value) {
-<span class="fc" id="L1158">        final Pattern packageRx = Pattern.compile(&quot;^(\\s*[a-zA-Z0-9_#\\$\\*\\.]+\\s*[,;])+(\\s*[a-zA-Z0-9_#\\$\\*\\.]+\\s*)?$&quot;);</span>
-<span class="fc" id="L1159">        final boolean matches = packageRx.matcher(value).matches();</span>
-<span class="pc bpc" id="L1160" title="7 of 8 branches missed.">        return matches &amp;&amp; (key.contains(&quot;import&quot;) || key.contains(&quot;include&quot;) || value.length() &gt; 10);</span>
+<span class="fc" id="L1156">        final Pattern packageRx = Pattern.compile(&quot;^(\\s*[a-zA-Z0-9_#\\$\\*\\.]+\\s*[,;])+(\\s*[a-zA-Z0-9_#\\$\\*\\.]+\\s*)?$&quot;);</span>
+<span class="fc" id="L1157">        final boolean matches = packageRx.matcher(value).matches();</span>
+<span class="pc bpc" id="L1158" title="7 of 8 branches missed.">        return matches &amp;&amp; (key.contains(&quot;import&quot;) || key.contains(&quot;include&quot;) || value.length() &gt; 10);</span>
     }
 
     /**
@@ -1169,23 +1167,23 @@ import org.slf4j.LoggerFactory;
      * @return an list of fully qualified class names
      */
     protected List&lt;ClassNameInformation&gt; collectClassNames(Dependency dependency) {
-<span class="fc" id="L1172">        final List&lt;ClassNameInformation&gt; classNames = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L1173">        try (JarFile jar = new JarFile(dependency.getActualFilePath(), false)) {</span>
-<span class="fc" id="L1174">            final Enumeration&lt;JarEntry&gt; entries = jar.entries();</span>
-<span class="fc bfc" id="L1175" title="All 2 branches covered.">            while (entries.hasMoreElements()) {</span>
-<span class="fc" id="L1176">                final JarEntry entry = entries.nextElement();</span>
-<span class="fc" id="L1177">                final String name = entry.getName().toLowerCase();</span>
+<span class="fc" id="L1170">        final List&lt;ClassNameInformation&gt; classNames = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L1171">        try (JarFile jar = new JarFile(dependency.getActualFilePath(), false)) {</span>
+<span class="fc" id="L1172">            final Enumeration&lt;JarEntry&gt; entries = jar.entries();</span>
+<span class="fc bfc" id="L1173" title="All 2 branches covered.">            while (entries.hasMoreElements()) {</span>
+<span class="fc" id="L1174">                final JarEntry entry = entries.nextElement();</span>
+<span class="fc" id="L1175">                final String name = entry.getName().toLowerCase();</span>
                 //no longer stripping &quot;|com\\.sun&quot; - there are some com.sun jar files with CVEs.
-<span class="pc bpc" id="L1179" title="1 of 4 branches missed.">                if (name.endsWith(&quot;.class&quot;) &amp;&amp; !name.matches(&quot;^javax?\\..*$&quot;)) {</span>
-<span class="fc" id="L1180">                    final ClassNameInformation className = new ClassNameInformation(name.substring(0, name.length() - 6));</span>
-<span class="fc" id="L1181">                    classNames.add(className);</span>
+<span class="pc bpc" id="L1177" title="1 of 4 branches missed.">                if (name.endsWith(&quot;.class&quot;) &amp;&amp; !name.matches(&quot;^javax?\\..*$&quot;)) {</span>
+<span class="fc" id="L1178">                    final ClassNameInformation className = new ClassNameInformation(name.substring(0, name.length() - 6));</span>
+<span class="fc" id="L1179">                    classNames.add(className);</span>
                 }
-<span class="fc" id="L1183">            }</span>
-<span class="fc" id="L1184">        } catch (IOException ex) {</span>
-<span class="fc" id="L1185">            LOGGER.warn(&quot;Unable to open jar file '{}'.&quot;, dependency.getFileName());</span>
-<span class="fc" id="L1186">            LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="fc" id="L1187">        }</span>
-<span class="fc" id="L1188">        return classNames;</span>
+<span class="fc" id="L1181">            }</span>
+<span class="fc" id="L1182">        } catch (IOException ex) {</span>
+<span class="fc" id="L1183">            LOGGER.warn(&quot;Unable to open jar file '{}'.&quot;, dependency.getFileName());</span>
+<span class="fc" id="L1184">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="fc" id="L1185">        }</span>
+<span class="fc" id="L1186">        return classNames;</span>
     }
 
     /**
@@ -1202,25 +1200,25 @@ import org.slf4j.LoggerFactory;
      */
     private void analyzeFullyQualifiedClassNames(List&lt;ClassNameInformation&gt; classNames,
             Map&lt;String, Integer&gt; vendor, Map&lt;String, Integer&gt; product) {
-<span class="fc bfc" id="L1205" title="All 2 branches covered.">        for (ClassNameInformation entry : classNames) {</span>
-<span class="fc" id="L1206">            final List&lt;String&gt; list = entry.getPackageStructure();</span>
-<span class="fc" id="L1207">            addEntry(vendor, list.get(0));</span>
+<span class="fc bfc" id="L1203" title="All 2 branches covered.">        for (ClassNameInformation entry : classNames) {</span>
+<span class="fc" id="L1204">            final List&lt;String&gt; list = entry.getPackageStructure();</span>
+<span class="fc" id="L1205">            addEntry(vendor, list.get(0));</span>
 
-<span class="fc bfc" id="L1209" title="All 2 branches covered.">            if (list.size() == 2) {</span>
-<span class="fc" id="L1210">                addEntry(product, list.get(1));</span>
-<span class="fc bfc" id="L1211" title="All 2 branches covered.">            } else if (list.size() == 3) {</span>
-<span class="fc" id="L1212">                addEntry(vendor, list.get(1));</span>
-<span class="fc" id="L1213">                addEntry(product, list.get(1));</span>
-<span class="fc" id="L1214">                addEntry(product, list.get(2));</span>
-<span class="pc bpc" id="L1215" title="1 of 2 branches missed.">            } else if (list.size() &gt;= 4) {</span>
-<span class="fc" id="L1216">                addEntry(vendor, list.get(1));</span>
-<span class="fc" id="L1217">                addEntry(vendor, list.get(2));</span>
-<span class="fc" id="L1218">                addEntry(product, list.get(1));</span>
-<span class="fc" id="L1219">                addEntry(product, list.get(2));</span>
-<span class="fc" id="L1220">                addEntry(product, list.get(3));</span>
+<span class="fc bfc" id="L1207" title="All 2 branches covered.">            if (list.size() == 2) {</span>
+<span class="fc" id="L1208">                addEntry(product, list.get(1));</span>
+<span class="fc bfc" id="L1209" title="All 2 branches covered.">            } else if (list.size() == 3) {</span>
+<span class="fc" id="L1210">                addEntry(vendor, list.get(1));</span>
+<span class="fc" id="L1211">                addEntry(product, list.get(1));</span>
+<span class="fc" id="L1212">                addEntry(product, list.get(2));</span>
+<span class="pc bpc" id="L1213" title="1 of 2 branches missed.">            } else if (list.size() &gt;= 4) {</span>
+<span class="fc" id="L1214">                addEntry(vendor, list.get(1));</span>
+<span class="fc" id="L1215">                addEntry(vendor, list.get(2));</span>
+<span class="fc" id="L1216">                addEntry(product, list.get(1));</span>
+<span class="fc" id="L1217">                addEntry(product, list.get(2));</span>
+<span class="fc" id="L1218">                addEntry(product, list.get(3));</span>
             }
-<span class="fc" id="L1222">        }</span>
-<span class="fc" id="L1223">    }</span>
+<span class="fc" id="L1220">        }</span>
+<span class="fc" id="L1221">    }</span>
 
     /**
      * Adds an entry to the specified collection and sets the Integer (e.g. the
@@ -1231,12 +1229,12 @@ import org.slf4j.LoggerFactory;
      * @param key the key to add to the collection
      */
     private void addEntry(Map&lt;String, Integer&gt; collection, String key) {
-<span class="fc bfc" id="L1234" title="All 2 branches covered.">        if (collection.containsKey(key)) {</span>
-<span class="fc" id="L1235">            collection.put(key, collection.get(key) + 1);</span>
+<span class="fc bfc" id="L1232" title="All 2 branches covered.">        if (collection.containsKey(key)) {</span>
+<span class="fc" id="L1233">            collection.put(key, collection.get(key) + 1);</span>
         } else {
-<span class="fc" id="L1237">            collection.put(key, 1);</span>
+<span class="fc" id="L1235">            collection.put(key, 1);</span>
         }
-<span class="fc" id="L1239">    }</span>
+<span class="fc" id="L1237">    }</span>
 
     /**
      * Cycles through the collection of class name information to see if parts
@@ -1250,29 +1248,29 @@ import org.slf4j.LoggerFactory;
      * @param type the type of evidence (vendor, product, or version)
      */
     protected static void addMatchingValues(List&lt;ClassNameInformation&gt; classes, String value, Dependency dep, EvidenceType type) {
-<span class="pc bpc" id="L1253" title="3 of 8 branches missed.">        if (value == null || value.isEmpty() || classes == null || classes.isEmpty()) {</span>
-<span class="fc" id="L1254">            return;</span>
+<span class="pc bpc" id="L1251" title="3 of 8 branches missed.">        if (value == null || value.isEmpty() || classes == null || classes.isEmpty()) {</span>
+<span class="fc" id="L1252">            return;</span>
         }
-<span class="fc" id="L1256">        final HashSet&lt;String&gt; tested = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L1254">        final HashSet&lt;String&gt; tested = new HashSet&lt;&gt;();</span>
         //TODO add a hashSet and only analyze any given key once.
-<span class="fc bfc" id="L1258" title="All 2 branches covered.">        for (ClassNameInformation cni : classes) {</span>
+<span class="fc bfc" id="L1256" title="All 2 branches covered.">        for (ClassNameInformation cni : classes) {</span>
             //classes.forEach((cni) -&gt; {
-<span class="fc bfc" id="L1260" title="All 2 branches covered.">            for (String key : cni.getPackageStructure()) {</span>
+<span class="fc bfc" id="L1258" title="All 2 branches covered.">            for (String key : cni.getPackageStructure()) {</span>
                 //cni.getPackageStructure().forEach((key) -&gt; {
-<span class="fc bfc" id="L1262" title="All 2 branches covered.">                if (!tested.contains(key)) {</span>
-<span class="fc" id="L1263">                    tested.add(key);</span>
-<span class="fc" id="L1264">                    final int pos = StringUtils.indexOfIgnoreCase(value, key);</span>
-<span class="pc bpc" id="L1265" title="1 of 6 branches missed.">                    if ((pos == 0 &amp;&amp; (key.length() == value.length() || (key.length() &lt; value.length()</span>
-<span class="fc bfc" id="L1266" title="All 4 branches covered.">                            &amp;&amp; !Character.isLetterOrDigit(value.charAt(key.length())))))</span>
-<span class="fc bfc" id="L1267" title="All 2 branches covered.">                            || (pos &gt; 0 &amp;&amp; !Character.isLetterOrDigit(value.charAt(pos - 1))</span>
-<span class="pc bpc" id="L1268" title="1 of 4 branches missed.">                            &amp;&amp; (pos + key.length() == value.length() || (key.length() &lt; value.length()</span>
-<span class="fc bfc" id="L1269" title="All 2 branches covered.">                            &amp;&amp; !Character.isLetterOrDigit(value.charAt(pos + key.length())))))) {</span>
-<span class="fc" id="L1270">                        dep.addEvidence(type, &quot;jar&quot;, &quot;package name&quot;, key, Confidence.HIGHEST);</span>
+<span class="fc bfc" id="L1260" title="All 2 branches covered.">                if (!tested.contains(key)) {</span>
+<span class="fc" id="L1261">                    tested.add(key);</span>
+<span class="fc" id="L1262">                    final int pos = StringUtils.indexOfIgnoreCase(value, key);</span>
+<span class="pc bpc" id="L1263" title="1 of 6 branches missed.">                    if ((pos == 0 &amp;&amp; (key.length() == value.length() || (key.length() &lt; value.length()</span>
+<span class="fc bfc" id="L1264" title="All 4 branches covered.">                            &amp;&amp; !Character.isLetterOrDigit(value.charAt(key.length())))))</span>
+<span class="fc bfc" id="L1265" title="All 2 branches covered.">                            || (pos &gt; 0 &amp;&amp; !Character.isLetterOrDigit(value.charAt(pos - 1))</span>
+<span class="pc bpc" id="L1266" title="1 of 4 branches missed.">                            &amp;&amp; (pos + key.length() == value.length() || (key.length() &lt; value.length()</span>
+<span class="fc bfc" id="L1267" title="All 2 branches covered.">                            &amp;&amp; !Character.isLetterOrDigit(value.charAt(pos + key.length())))))) {</span>
+<span class="fc" id="L1268">                        dep.addEvidence(type, &quot;jar&quot;, &quot;package name&quot;, key, Confidence.HIGHEST);</span>
                     }
                 }
-<span class="fc" id="L1273">            }</span>
-<span class="fc" id="L1274">        }</span>
-<span class="fc" id="L1275">    }</span>
+<span class="fc" id="L1271">            }</span>
+<span class="fc" id="L1272">        }</span>
+<span class="fc" id="L1273">    }</span>
 
     /**
      * Simple check to see if the attribute from a manifest is just a package
@@ -1284,8 +1282,8 @@ import org.slf4j.LoggerFactory;
      */
     private boolean isPackage(String key, String value) {
 
-<span class="fc bfc" id="L1287" title="All 2 branches covered.">        return !key.matches(&quot;.*(version|title|vendor|name|license|description).*&quot;)</span>
-<span class="fc bfc" id="L1288" title="All 2 branches covered.">                &amp;&amp; value.matches(&quot;^[a-zA-Z_][a-zA-Z0-9_\\$]*\\.([a-zA-Z_][a-zA-Z0-9_\\$]*\\.)*([a-zA-Z_][a-zA-Z0-9_\\$]*)$&quot;);</span>
+<span class="fc bfc" id="L1285" title="All 2 branches covered.">        return !key.matches(&quot;.*(version|title|vendor|name|license|description).*&quot;)</span>
+<span class="fc bfc" id="L1286" title="All 2 branches covered.">                &amp;&amp; value.matches(&quot;^[a-zA-Z_][a-zA-Z0-9_\\$]*\\.([a-zA-Z_][a-zA-Z0-9_\\$]*\\.)*([a-zA-Z_][a-zA-Z0-9_\\$]*)$&quot;);</span>
 
     }
 
@@ -1298,38 +1296,38 @@ import org.slf4j.LoggerFactory;
      */
     public static void extractLicense(Model pom, Dependency dependency) {
         //license
-<span class="pc bpc" id="L1301" title="1 of 2 branches missed.">        if (pom.getLicenses() != null) {</span>
-<span class="fc" id="L1302">            StringBuilder license = null;</span>
-<span class="fc bfc" id="L1303" title="All 2 branches covered.">            for (License lic : pom.getLicenses()) {</span>
-<span class="fc" id="L1304">                String tmp = null;</span>
-<span class="pc bpc" id="L1305" title="1 of 2 branches missed.">                if (lic.getName() != null) {</span>
-<span class="fc" id="L1306">                    tmp = lic.getName();</span>
+<span class="pc bpc" id="L1299" title="1 of 2 branches missed.">        if (pom.getLicenses() != null) {</span>
+<span class="fc" id="L1300">            StringBuilder license = null;</span>
+<span class="fc bfc" id="L1301" title="All 2 branches covered.">            for (License lic : pom.getLicenses()) {</span>
+<span class="fc" id="L1302">                String tmp = null;</span>
+<span class="pc bpc" id="L1303" title="1 of 2 branches missed.">                if (lic.getName() != null) {</span>
+<span class="fc" id="L1304">                    tmp = lic.getName();</span>
                 }
-<span class="pc bpc" id="L1308" title="1 of 2 branches missed.">                if (lic.getUrl() != null) {</span>
-<span class="pc bpc" id="L1309" title="1 of 2 branches missed.">                    if (tmp == null) {</span>
-<span class="nc" id="L1310">                        tmp = lic.getUrl();</span>
+<span class="pc bpc" id="L1306" title="1 of 2 branches missed.">                if (lic.getUrl() != null) {</span>
+<span class="pc bpc" id="L1307" title="1 of 2 branches missed.">                    if (tmp == null) {</span>
+<span class="nc" id="L1308">                        tmp = lic.getUrl();</span>
                     } else {
-<span class="fc" id="L1312">                        tmp += &quot;: &quot; + lic.getUrl();</span>
+<span class="fc" id="L1310">                        tmp += &quot;: &quot; + lic.getUrl();</span>
                     }
                 }
-<span class="pc bpc" id="L1315" title="1 of 2 branches missed.">                if (tmp == null) {</span>
-<span class="nc" id="L1316">                    continue;</span>
+<span class="pc bpc" id="L1313" title="1 of 2 branches missed.">                if (tmp == null) {</span>
+<span class="nc" id="L1314">                    continue;</span>
                 }
-<span class="pc bpc" id="L1318" title="1 of 2 branches missed.">                if (HTML_DETECTION_PATTERN.matcher(tmp).find()) {</span>
-<span class="nc" id="L1319">                    tmp = Jsoup.parse(tmp).text();</span>
+<span class="pc bpc" id="L1316" title="1 of 2 branches missed.">                if (HTML_DETECTION_PATTERN.matcher(tmp).find()) {</span>
+<span class="nc" id="L1317">                    tmp = Jsoup.parse(tmp).text();</span>
                 }
-<span class="pc bpc" id="L1321" title="1 of 2 branches missed.">                if (license == null) {</span>
-<span class="fc" id="L1322">                    license = new StringBuilder(tmp);</span>
+<span class="pc bpc" id="L1319" title="1 of 2 branches missed.">                if (license == null) {</span>
+<span class="fc" id="L1320">                    license = new StringBuilder(tmp);</span>
                 } else {
-<span class="nc" id="L1324">                    license.append(&quot;\n&quot;).append(tmp);</span>
+<span class="nc" id="L1322">                    license.append(&quot;\n&quot;).append(tmp);</span>
                 }
-<span class="fc" id="L1326">            }</span>
-<span class="fc bfc" id="L1327" title="All 2 branches covered.">            if (license != null) {</span>
-<span class="fc" id="L1328">                dependency.setLicense(license.toString());</span>
+<span class="fc" id="L1324">            }</span>
+<span class="fc bfc" id="L1325" title="All 2 branches covered.">            if (license != null) {</span>
+<span class="fc" id="L1326">                dependency.setLicense(license.toString());</span>
 
             }
         }
-<span class="fc" id="L1332">    }</span>
+<span class="fc" id="L1330">    }</span>
 
     /**
      * Stores information about a class name.
@@ -1344,7 +1342,7 @@ import org.slf4j.LoggerFactory;
          * Up to the first four levels of the package structure, excluding a
          * leading &quot;org&quot; or &quot;com&quot;.
          */
-<span class="fc" id="L1347">        private final ArrayList&lt;String&gt; packageStructure = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L1345">        private final ArrayList&lt;String&gt; packageStructure = new ArrayList&lt;&gt;();</span>
 
         /**
          * &lt;p&gt;
@@ -1368,24 +1366,24 @@ import org.slf4j.LoggerFactory;
          *
          * @param className a fully qualified class name
          */
-<span class="fc" id="L1371">        ClassNameInformation(String className) {</span>
-<span class="fc" id="L1372">            name = className;</span>
-<span class="pc bpc" id="L1373" title="1 of 2 branches missed.">            if (name.contains(&quot;/&quot;)) {</span>
-<span class="fc" id="L1374">                final String[] tmp = StringUtils.split(className.toLowerCase(), '/');</span>
-<span class="fc" id="L1375">                int start = 0;</span>
-<span class="fc" id="L1376">                int end = 3;</span>
-<span class="fc bfc" id="L1377" title="All 4 branches covered.">                if (&quot;com&quot;.equals(tmp[0]) || &quot;org&quot;.equals(tmp[0])) {</span>
-<span class="fc" id="L1378">                    start = 1;</span>
-<span class="fc" id="L1379">                    end = 4;</span>
+<span class="fc" id="L1369">        ClassNameInformation(String className) {</span>
+<span class="fc" id="L1370">            name = className;</span>
+<span class="pc bpc" id="L1371" title="1 of 2 branches missed.">            if (name.contains(&quot;/&quot;)) {</span>
+<span class="fc" id="L1372">                final String[] tmp = StringUtils.split(className.toLowerCase(), '/');</span>
+<span class="fc" id="L1373">                int start = 0;</span>
+<span class="fc" id="L1374">                int end = 3;</span>
+<span class="fc bfc" id="L1375" title="All 4 branches covered.">                if (&quot;com&quot;.equals(tmp[0]) || &quot;org&quot;.equals(tmp[0])) {</span>
+<span class="fc" id="L1376">                    start = 1;</span>
+<span class="fc" id="L1377">                    end = 4;</span>
                 }
-<span class="fc bfc" id="L1381" title="All 2 branches covered.">                if (tmp.length &lt;= end) {</span>
-<span class="fc" id="L1382">                    end = tmp.length - 1;</span>
+<span class="fc bfc" id="L1379" title="All 2 branches covered.">                if (tmp.length &lt;= end) {</span>
+<span class="fc" id="L1380">                    end = tmp.length - 1;</span>
                 }
-<span class="fc" id="L1384">                packageStructure.addAll(Arrays.asList(tmp).subList(start, end + 1));</span>
-<span class="fc" id="L1385">            } else {</span>
-<span class="nc" id="L1386">                packageStructure.add(name);</span>
+<span class="fc" id="L1382">                packageStructure.addAll(Arrays.asList(tmp).subList(start, end + 1));</span>
+<span class="fc" id="L1383">            } else {</span>
+<span class="nc" id="L1384">                packageStructure.add(name);</span>
             }
-<span class="fc" id="L1388">        }</span>
+<span class="fc" id="L1386">        }</span>
 
         /**
          * Get the value of name
@@ -1393,7 +1391,7 @@ import org.slf4j.LoggerFactory;
          * @return the value of name
          */
         public String getName() {
-<span class="fc" id="L1396">            return name;</span>
+<span class="fc" id="L1394">            return name;</span>
         }
 
         /**
@@ -1402,8 +1400,8 @@ import org.slf4j.LoggerFactory;
          * @param name new value of name
          */
         public void setName(String name) {
-<span class="nc" id="L1405">            this.name = name;</span>
-<span class="nc" id="L1406">        }</span>
+<span class="nc" id="L1403">            this.name = name;</span>
+<span class="nc" id="L1404">        }</span>
 
         /**
          * Get the value of packageStructure
@@ -1411,7 +1409,7 @@ import org.slf4j.LoggerFactory;
          * @return the value of packageStructure
          */
         public ArrayList&lt;String&gt; getPackageStructure() {
-<span class="fc" id="L1414">            return packageStructure;</span>
+<span class="fc" id="L1412">            return packageStructure;</span>
         }
     }
 
@@ -1422,17 +1420,17 @@ import org.slf4j.LoggerFactory;
      * @throws AnalysisException thrown if unable to create temporary directory
      */
     private File getNextTempDirectory() throws AnalysisException {
-<span class="fc" id="L1425">        final int dirCount = DIR_COUNT.incrementAndGet();</span>
-<span class="fc" id="L1426">        final File directory = new File(tempFileLocation, String.valueOf(dirCount));</span>
+<span class="fc" id="L1423">        final int dirCount = DIR_COUNT.incrementAndGet();</span>
+<span class="fc" id="L1424">        final File directory = new File(tempFileLocation, String.valueOf(dirCount));</span>
         //getting an exception for some directories not being able to be created; might be because the directory already exists?
-<span class="pc bpc" id="L1428" title="1 of 2 branches missed.">        if (directory.exists()) {</span>
-<span class="nc" id="L1429">            return getNextTempDirectory();</span>
+<span class="pc bpc" id="L1426" title="1 of 2 branches missed.">        if (directory.exists()) {</span>
+<span class="nc" id="L1427">            return getNextTempDirectory();</span>
         }
-<span class="pc bpc" id="L1431" title="1 of 2 branches missed.">        if (!directory.mkdirs()) {</span>
-<span class="nc" id="L1432">            final String msg = String.format(&quot;Unable to create temp directory '%s'.&quot;, directory.getAbsolutePath());</span>
-<span class="nc" id="L1433">            throw new AnalysisException(msg);</span>
+<span class="pc bpc" id="L1429" title="1 of 2 branches missed.">        if (!directory.mkdirs()) {</span>
+<span class="nc" id="L1430">            final String msg = String.format(&quot;Unable to create temp directory '%s'.&quot;, directory.getAbsolutePath());</span>
+<span class="nc" id="L1431">            throw new AnalysisException(msg);</span>
         }
-<span class="fc" id="L1435">        return directory;</span>
+<span class="fc" id="L1433">        return directory;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

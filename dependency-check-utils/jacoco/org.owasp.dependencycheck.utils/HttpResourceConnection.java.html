@@ -75,7 +75,7 @@ public class HttpResourceConnection implements AutoCloseable {
     /**
      * Whether or not the conn will use the defined proxy.
      */
-    private boolean usesProxy;
+    private final boolean usesProxy;
 
     /**
      * The settings key for the username to be used.
@@ -140,18 +140,18 @@ public class HttpResourceConnection implements AutoCloseable {
             try {
 <span class="nc" id="L141">                file = new File(url.toURI());</span>
 <span class="nc" id="L142">            } catch (URISyntaxException ex) {</span>
-<span class="nc" id="L143">                final String msg = format(&quot;Download failed, unable to locate '%s'&quot;, url.toString());</span>
+<span class="nc" id="L143">                final String msg = format(&quot;Download failed, unable to locate '%s'&quot;, url);</span>
 <span class="nc" id="L144">                throw new DownloadFailedException(msg);</span>
 <span class="nc" id="L145">            }</span>
 <span class="nc bnc" id="L146" title="All 2 branches missed.">            if (file.exists()) {</span>
                 try {
 <span class="nc" id="L148">                    return new FileInputStream(file);</span>
 <span class="nc" id="L149">                } catch (IOException ex) {</span>
-<span class="nc" id="L150">                    final String msg = format(&quot;Download failed, unable to rerieve '%s'&quot;, url.toString());</span>
+<span class="nc" id="L150">                    final String msg = format(&quot;Download failed, unable to rerieve '%s'&quot;, url);</span>
 <span class="nc" id="L151">                    throw new DownloadFailedException(msg, ex);</span>
                 }
             } else {
-<span class="nc" id="L154">                final String msg = format(&quot;Download failed, file ('%s') does not exist&quot;, url.toString());</span>
+<span class="nc" id="L154">                final String msg = format(&quot;Download failed, file ('%s') does not exist&quot;, url);</span>
 <span class="nc" id="L155">                throw new DownloadFailedException(msg);</span>
             }
         } else {
@@ -164,9 +164,9 @@ public class HttpResourceConnection implements AutoCloseable {
 
 <span class="fc" id="L165">            final String encoding = connection.getContentEncoding();</span>
             try {
-<span class="pc bpc" id="L167" title="3 of 4 branches missed.">                if (encoding != null &amp;&amp; &quot;gzip&quot;.equalsIgnoreCase(encoding)) {</span>
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">                if (&quot;gzip&quot;.equalsIgnoreCase(encoding)) {</span>
 <span class="nc" id="L168">                    return new GZIPInputStream(connection.getInputStream());</span>
-<span class="pc bpc" id="L169" title="3 of 4 branches missed.">                } else if (encoding != null &amp;&amp; &quot;deflate&quot;.equalsIgnoreCase(encoding)) {</span>
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">                } else if (&quot;deflate&quot;.equalsIgnoreCase(encoding)) {</span>
 <span class="nc" id="L170">                    return new InflaterInputStream(connection.getInputStream());</span>
                 } else {
 <span class="fc" id="L172">                    return connection.getInputStream();</span>
@@ -174,11 +174,11 @@ public class HttpResourceConnection implements AutoCloseable {
 <span class="nc" id="L174">            } catch (IOException ex) {</span>
 <span class="nc" id="L175">                checkForCommonExceptionTypes(ex);</span>
 <span class="nc" id="L176">                final String msg = format(&quot;Error retrieving '%s'%nConnection Timeout: %d%nEncoding: %s%n&quot;,</span>
-<span class="nc" id="L177">                        url.toString(), connection.getConnectTimeout(), encoding);</span>
+<span class="nc" id="L177">                        url, connection.getConnectTimeout(), encoding);</span>
 <span class="nc" id="L178">                throw new DownloadFailedException(msg, ex);</span>
 <span class="nc" id="L179">            } catch (Exception ex) {</span>
 <span class="nc" id="L180">                final String msg = format(&quot;Unexpected exception retrieving '%s'%nConnection Timeout: %d%nEncoding: %s%n&quot;,</span>
-<span class="nc" id="L181">                        url.toString(), connection.getConnectTimeout(), encoding);</span>
+<span class="nc" id="L181">                        url, connection.getConnectTimeout(), encoding);</span>
 <span class="nc" id="L182">                throw new DownloadFailedException(msg, ex);</span>
             }
         }
@@ -218,7 +218,7 @@ public class HttpResourceConnection implements AutoCloseable {
                 } finally {
 <span class="nc" id="L219">                    conn = null;</span>
                 }
-<span class="nc" id="L221">                LOGGER.debug(&quot;Download is being redirected from {} to {}&quot;, url.toString(), location);</span>
+<span class="nc" id="L221">                LOGGER.debug(&quot;Download is being redirected from {} to {}&quot;, url, location);</span>
 <span class="nc" id="L222">                conn = connFactory.createHttpURLConnection(new URL(location), this.usesProxy);</span>
 <span class="nc" id="L223">                conn.setRequestProperty(&quot;Accept-Encoding&quot;, &quot;gzip, deflate&quot;);</span>
 <span class="nc" id="L224">                conn.connect();</span>
@@ -244,7 +244,7 @@ public class HttpResourceConnection implements AutoCloseable {
                 } finally {
 <span class="nc" id="L245">                    conn = null;</span>
                 }
-<span class="nc" id="L247">                final String msg = format(&quot;Error retrieving %s; received response code %s; %s&quot;, url.toString(), status, message);</span>
+<span class="nc" id="L247">                final String msg = format(&quot;Error retrieving %s; received response code %s; %s&quot;, url, status, message);</span>
 <span class="nc" id="L248">                LOGGER.error(msg);</span>
 <span class="nc" id="L249">                throw new DownloadFailedException(msg);</span>
             }
@@ -263,7 +263,7 @@ public class HttpResourceConnection implements AutoCloseable {
 <span class="nc" id="L263">                LOGGER.error(msg);</span>
 <span class="nc" id="L264">                throw new DownloadFailedException(msg, ex);</span>
             }
-<span class="nc" id="L266">            final String msg = format(&quot;Error downloading file %s; unable to connect.&quot;, url.toString());</span>
+<span class="nc" id="L266">            final String msg = format(&quot;Error downloading file %s; unable to connect.&quot;, url);</span>
 <span class="nc" id="L267">            throw new DownloadFailedException(msg, ex);</span>
 <span class="fc" id="L268">        }</span>
 <span class="fc" id="L269">        return conn;</span>

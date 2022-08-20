@@ -60,7 +60,7 @@
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      @Test
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testCollector() {
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>          assertTrue(nodes.stream().collect(CpeMatchStreamCollector.getInstance()).anyMatch((node) -&gt; <span class="jxr_string">"cpe:/a:owasp:dependency-check:4"</span>.equals(node.getCpe23Uri())));
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>          List&lt;String&gt; operators = nodes.stream().collect(CpeMatchStreamCollector.getInstance()).map(mapper -&gt; mapper.getCpe23Uri()).collect(Collectors.toList());
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>          List&lt;String&gt; operators = nodes.stream().collect(CpeMatchStreamCollector.getInstance()).map(DefCpeMatch::getCpe23Uri).collect(Collectors.toList());
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>          assertEquals(5, operators.size());
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>      }
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>  }

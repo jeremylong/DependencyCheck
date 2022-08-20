@@ -586,7 +586,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 //final File file = new File(destination, entry.getName());
 <span class="fc" id="L587">                final Path f = d.resolve(entry.getName()).normalize();</span>
 <span class="pc bpc" id="L588" title="1 of 2 branches missed.">                if (!f.startsWith(d)) {</span>
-<span class="nc" id="L589">                    LOGGER.debug(&quot;ZipSlip detected\n-Destination: &quot; + d.toString() + &quot;\n-Path: &quot; + f.toString());</span>
+<span class="nc" id="L589">                    LOGGER.debug(&quot;ZipSlip detected\n-Destination: &quot; + d + &quot;\n-Path: &quot; + f);</span>
 <span class="nc" id="L590">                    final String msg = String.format(</span>
                             &quot;Archive contains a file (%s) that would be extracted outside of the target directory.&quot;,
 <span class="nc" id="L592">                            entry.getName());</span>

@@ -441,8 +441,8 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L441">            byte[] pa = new byte[pointer - dr.getPosition()];</span>
 <span class="fc" id="L442">            dr.read(pa);</span>
 <span class="fc" id="L443">            boolean zeroes = true;</span>
-<span class="fc bfc" id="L444" title="All 2 branches covered.">            for (int i = 0; i &lt; pa.length; i++) {</span>
-<span class="pc bpc" id="L445" title="1 of 2 branches missed.">                if (pa[i] != 0) {</span>
+<span class="fc bfc" id="L444" title="All 2 branches covered.">            for (byte b : pa) {</span>
+<span class="pc bpc" id="L445" title="1 of 2 branches missed.">                if (b != 0) {</span>
 <span class="nc" id="L446">                    zeroes = false;</span>
 <span class="nc" id="L447">                    break;</span>
                 }
@@ -515,55 +515,50 @@ import org.slf4j.LoggerFactory;
             byte[] b) throws IOException {
 <span class="nc" id="L516">        DataReader dr = new DataReader(b);</span>
 <span class="nc" id="L517">        BoundImportDirectoryTable bidt = new BoundImportDirectoryTable();</span>
-<span class="nc" id="L518">        List&lt;BoundImport&gt; imports = new ArrayList&lt;BoundImport&gt;();</span>
+<span class="nc" id="L518">        List&lt;BoundImport&gt; imports = new ArrayList&lt;&gt;();</span>
 <span class="nc" id="L519">        BoundImport bi = null;</span>
 <span class="nc bnc" id="L520" title="All 2 branches missed.">        while ((bi = readBoundImport(dr)) != null) {</span>
 <span class="nc" id="L521">            bidt.add(bi);</span>
 <span class="nc" id="L522">            imports.add(bi);</span>
         }
-<span class="nc" id="L524">        Collections.sort(imports, new Comparator&lt;BoundImport&gt;() {</span>
-            @Override
-            public int compare(BoundImport o1, BoundImport o2) {
-<span class="nc" id="L527">                return o1.getOffsetToModuleName() - o2.getOffsetToModuleName();</span>
+<span class="nc" id="L524">        imports.sort((o1, o2) -&gt; o1.getOffsetToModuleName() - o2.getOffsetToModuleName());</span>
+<span class="nc" id="L525">        IntMap names = new IntMap();</span>
+<span class="nc bnc" id="L526" title="All 2 branches missed.">        for (BoundImport anImport : imports) {</span>
+<span class="nc" id="L527">            bi = anImport;</span>
+<span class="nc" id="L528">            int offset = bi.getOffsetToModuleName();</span>
+<span class="nc" id="L529">            String n = (String) names.get(offset);</span>
+<span class="nc bnc" id="L530" title="All 2 branches missed.">            if (n == null) {</span>
+<span class="nc" id="L531">                dr.jumpTo(offset);</span>
+<span class="nc" id="L532">                n = dr.readUtf();</span>
+<span class="nc" id="L533">                names.put(offset, n);</span>
             }
-        });
-<span class="nc" id="L530">        IntMap names = new IntMap();</span>
-<span class="nc bnc" id="L531" title="All 2 branches missed.">        for (int i = 0; i &lt; imports.size(); i++) {</span>
-<span class="nc" id="L532">            bi = imports.get(i);</span>
-<span class="nc" id="L533">            int offset = bi.getOffsetToModuleName();</span>
-<span class="nc" id="L534">            String n = (String) names.get(offset);</span>
-<span class="nc bnc" id="L535" title="All 2 branches missed.">            if (n == null) {</span>
-<span class="nc" id="L536">                dr.jumpTo(offset);</span>
-<span class="nc" id="L537">                n = dr.readUtf();</span>
-<span class="nc" id="L538">                names.put(offset, n);</span>
-            }
-<span class="nc" id="L540">            bi.setModuleName(n);</span>
-        }
-<span class="nc" id="L542">        return bidt;</span>
+<span class="nc" id="L535">            bi.setModuleName(n);</span>
+<span class="nc" id="L536">        }</span>
+<span class="nc" id="L537">        return bidt;</span>
     }
 
     private static BoundImport readBoundImport(IDataReader dr)
             throws IOException {
-<span class="nc" id="L547">        BoundImport bi = new BoundImport();</span>
-<span class="nc" id="L548">        bi.setTimestamp(dr.readDoubleWord());</span>
-<span class="nc" id="L549">        bi.setOffsetToModuleName(dr.readWord());</span>
-<span class="nc" id="L550">        bi.setNumberOfModuleForwarderRefs(dr.readWord());</span>
+<span class="nc" id="L542">        BoundImport bi = new BoundImport();</span>
+<span class="nc" id="L543">        bi.setTimestamp(dr.readDoubleWord());</span>
+<span class="nc" id="L544">        bi.setOffsetToModuleName(dr.readWord());</span>
+<span class="nc" id="L545">        bi.setNumberOfModuleForwarderRefs(dr.readWord());</span>
 
-<span class="nc bnc" id="L552" title="All 4 branches missed.">        if (bi.getTimestamp() == 0 &amp;&amp; bi.getOffsetToModuleName() == 0</span>
-<span class="nc bnc" id="L553" title="All 2 branches missed.">                &amp;&amp; bi.getNumberOfModuleForwarderRefs() == 0) {</span>
-<span class="nc" id="L554">            return null;</span>
+<span class="nc bnc" id="L547" title="All 4 branches missed.">        if (bi.getTimestamp() == 0 &amp;&amp; bi.getOffsetToModuleName() == 0</span>
+<span class="nc bnc" id="L548" title="All 2 branches missed.">                &amp;&amp; bi.getNumberOfModuleForwarderRefs() == 0) {</span>
+<span class="nc" id="L549">            return null;</span>
         }
 
-<span class="nc" id="L557">        return bi;</span>
+<span class="nc" id="L552">        return bi;</span>
     }
 
     public static ImportDirectory readImportDirectory(byte[] b, int baseAddress)
             throws IOException {
-<span class="fc" id="L562">        DataReader dr = new DataReader(b);</span>
-<span class="fc" id="L563">        ImportDirectory id = new ImportDirectory();</span>
-<span class="fc" id="L564">        ImportDirectoryEntry ide = null;</span>
-<span class="fc bfc" id="L565" title="All 2 branches covered.">        while ((ide = readImportDirectoryEntry(dr)) != null) {</span>
-<span class="fc" id="L566">            id.add(ide);</span>
+<span class="fc" id="L557">        DataReader dr = new DataReader(b);</span>
+<span class="fc" id="L558">        ImportDirectory id = new ImportDirectory();</span>
+<span class="fc" id="L559">        ImportDirectoryEntry ide = null;</span>
+<span class="fc bfc" id="L560" title="All 2 branches covered.">        while ((ide = readImportDirectoryEntry(dr)) != null) {</span>
+<span class="fc" id="L561">            id.add(ide);</span>
         }
 
         /*
@@ -576,217 +571,217 @@ import org.slf4j.LoggerFactory;
 		 * ImportDirectoryTable at = null; // readImportDirectoryTable(dr, //
 		 * baseAddress); id.add(name, nt, at); }
          */
-<span class="fc" id="L579">        return id;</span>
+<span class="fc" id="L574">        return id;</span>
     }
 
     public static ImportDirectoryEntry readImportDirectoryEntry(IDataReader dr)
             throws IOException {
-<span class="fc" id="L584">        ImportDirectoryEntry id = new ImportDirectoryEntry();</span>
-<span class="fc" id="L585">        id.setImportLookupTableRVA(dr.readDoubleWord());</span>
-<span class="fc" id="L586">        id.setTimeDateStamp(dr.readDoubleWord());</span>
-<span class="fc" id="L587">        id.setForwarderChain(dr.readDoubleWord());</span>
-<span class="fc" id="L588">        id.setNameRVA(dr.readDoubleWord());</span>
-<span class="fc" id="L589">        id.setImportAddressTableRVA(dr.readDoubleWord());</span>
+<span class="fc" id="L579">        ImportDirectoryEntry id = new ImportDirectoryEntry();</span>
+<span class="fc" id="L580">        id.setImportLookupTableRVA(dr.readDoubleWord());</span>
+<span class="fc" id="L581">        id.setTimeDateStamp(dr.readDoubleWord());</span>
+<span class="fc" id="L582">        id.setForwarderChain(dr.readDoubleWord());</span>
+<span class="fc" id="L583">        id.setNameRVA(dr.readDoubleWord());</span>
+<span class="fc" id="L584">        id.setImportAddressTableRVA(dr.readDoubleWord());</span>
 
         // The last entry is null
-<span class="fc bfc" id="L592" title="All 2 branches covered.">        if (id.getImportLookupTableRVA() == 0) {</span>
-<span class="fc" id="L593">            return null;</span>
+<span class="fc bfc" id="L587" title="All 2 branches covered.">        if (id.getImportLookupTableRVA() == 0) {</span>
+<span class="fc" id="L588">            return null;</span>
         }
 
-<span class="fc" id="L596">        return id;</span>
+<span class="fc" id="L591">        return id;</span>
     }
 
     public static ImportDirectoryTable readImportDirectoryTable(IDataReader dr,
             int baseAddress) throws IOException {
-<span class="nc" id="L601">        ImportDirectoryTable idt = new ImportDirectoryTable();</span>
-<span class="nc" id="L602">        ImportEntry ie = null;</span>
-<span class="nc bnc" id="L603" title="All 2 branches missed.">        while ((ie = readImportEntry(dr)) != null) {</span>
-<span class="nc" id="L604">            idt.add(ie);</span>
+<span class="nc" id="L596">        ImportDirectoryTable idt = new ImportDirectoryTable();</span>
+<span class="nc" id="L597">        ImportEntry ie = null;</span>
+<span class="nc bnc" id="L598" title="All 2 branches missed.">        while ((ie = readImportEntry(dr)) != null) {</span>
+<span class="nc" id="L599">            idt.add(ie);</span>
         }
 
-<span class="nc bnc" id="L607" title="All 2 branches missed.">        for (int i = 0; i &lt; idt.size(); i++) {</span>
-<span class="nc" id="L608">            ImportEntry iee = idt.getEntry(i);</span>
-<span class="nc bnc" id="L609" title="All 2 branches missed.">            if ((iee.getVal() &amp; 0x80000000) != 0) {</span>
-<span class="nc" id="L610">                iee.setOrdinal(iee.getVal() &amp; 0x7fffffff);</span>
+<span class="nc bnc" id="L602" title="All 2 branches missed.">        for (int i = 0; i &lt; idt.size(); i++) {</span>
+<span class="nc" id="L603">            ImportEntry iee = idt.getEntry(i);</span>
+<span class="nc bnc" id="L604" title="All 2 branches missed.">            if ((iee.getVal() &amp; 0x80000000) != 0) {</span>
+<span class="nc" id="L605">                iee.setOrdinal(iee.getVal() &amp; 0x7fffffff);</span>
             } else {
-<span class="nc" id="L612">                dr.jumpTo(iee.getVal() - baseAddress);</span>
-<span class="nc" id="L613">                dr.readWord(); // FIXME this is an index into the export table</span>
-<span class="nc" id="L614">                iee.setName(dr.readUtf());</span>
+<span class="nc" id="L607">                dr.jumpTo(iee.getVal() - baseAddress);</span>
+<span class="nc" id="L608">                dr.readWord(); // FIXME this is an index into the export table</span>
+<span class="nc" id="L609">                iee.setName(dr.readUtf());</span>
             }
         }
-<span class="nc" id="L617">        return idt;</span>
+<span class="nc" id="L612">        return idt;</span>
     }
 
     public static ImportEntry readImportEntry(IDataReader dr)
             throws IOException {
-<span class="nc" id="L622">        ImportEntry ie = new ImportEntry();</span>
-<span class="nc" id="L623">        ie.setVal(dr.readDoubleWord());</span>
-<span class="nc bnc" id="L624" title="All 2 branches missed.">        if (ie.getVal() == 0) {</span>
-<span class="nc" id="L625">            return null;</span>
+<span class="nc" id="L617">        ImportEntry ie = new ImportEntry();</span>
+<span class="nc" id="L618">        ie.setVal(dr.readDoubleWord());</span>
+<span class="nc bnc" id="L619" title="All 2 branches missed.">        if (ie.getVal() == 0) {</span>
+<span class="nc" id="L620">            return null;</span>
         }
 
-<span class="nc" id="L628">        return ie;</span>
+<span class="nc" id="L623">        return ie;</span>
     }
 
     public static ExportDirectory readExportDirectory(byte[] b)
             throws IOException {
-<span class="nc" id="L633">        DataReader dr = new DataReader(b);</span>
-<span class="nc" id="L634">        ExportDirectory edt = new ExportDirectory();</span>
-<span class="nc" id="L635">        edt.set(b);</span>
-<span class="nc" id="L636">        edt.setExportFlags(dr.readDoubleWord());</span>
-<span class="nc" id="L637">        edt.setTimeDateStamp(dr.readDoubleWord());</span>
-<span class="nc" id="L638">        edt.setMajorVersion(dr.readWord());</span>
-<span class="nc" id="L639">        edt.setMinorVersion(dr.readWord());</span>
-<span class="nc" id="L640">        edt.setNameRVA(dr.readDoubleWord());</span>
-<span class="nc" id="L641">        edt.setOrdinalBase(dr.readDoubleWord());</span>
-<span class="nc" id="L642">        edt.setAddressTableEntries(dr.readDoubleWord());</span>
-<span class="nc" id="L643">        edt.setNumberOfNamePointers(dr.readDoubleWord());</span>
-<span class="nc" id="L644">        edt.setExportAddressTableRVA(dr.readDoubleWord());</span>
-<span class="nc" id="L645">        edt.setNamePointerRVA(dr.readDoubleWord());</span>
-<span class="nc" id="L646">        edt.setOrdinalTableRVA(dr.readDoubleWord());</span>
-<span class="nc" id="L647">        return edt;</span>
+<span class="nc" id="L628">        DataReader dr = new DataReader(b);</span>
+<span class="nc" id="L629">        ExportDirectory edt = new ExportDirectory();</span>
+<span class="nc" id="L630">        edt.set(b);</span>
+<span class="nc" id="L631">        edt.setExportFlags(dr.readDoubleWord());</span>
+<span class="nc" id="L632">        edt.setTimeDateStamp(dr.readDoubleWord());</span>
+<span class="nc" id="L633">        edt.setMajorVersion(dr.readWord());</span>
+<span class="nc" id="L634">        edt.setMinorVersion(dr.readWord());</span>
+<span class="nc" id="L635">        edt.setNameRVA(dr.readDoubleWord());</span>
+<span class="nc" id="L636">        edt.setOrdinalBase(dr.readDoubleWord());</span>
+<span class="nc" id="L637">        edt.setAddressTableEntries(dr.readDoubleWord());</span>
+<span class="nc" id="L638">        edt.setNumberOfNamePointers(dr.readDoubleWord());</span>
+<span class="nc" id="L639">        edt.setExportAddressTableRVA(dr.readDoubleWord());</span>
+<span class="nc" id="L640">        edt.setNamePointerRVA(dr.readDoubleWord());</span>
+<span class="nc" id="L641">        edt.setOrdinalTableRVA(dr.readDoubleWord());</span>
+<span class="nc" id="L642">        return edt;</span>
     }
 
     public static LoadConfigDirectory readLoadConfigDirectory(PE pe, byte[] b)
             throws IOException {
-<span class="nc" id="L652">        DataReader dr = new DataReader(b);</span>
-<span class="nc" id="L653">        LoadConfigDirectory lcd = new LoadConfigDirectory();</span>
-<span class="nc" id="L654">        lcd.set(b);</span>
-<span class="nc" id="L655">        lcd.setSize(dr.readDoubleWord());</span>
-<span class="nc" id="L656">        lcd.setTimeDateStamp(dr.readDoubleWord());</span>
-<span class="nc" id="L657">        lcd.setMajorVersion(dr.readWord());</span>
-<span class="nc" id="L658">        lcd.setMinorVersion(dr.readWord());</span>
-<span class="nc" id="L659">        lcd.setGlobalFlagsClear(dr.readDoubleWord());</span>
-<span class="nc" id="L660">        lcd.setGlobalFlagsSet(dr.readDoubleWord());</span>
-<span class="nc" id="L661">        lcd.setCriticalSectionDefaultTimeout(dr.readDoubleWord());</span>
-<span class="nc bnc" id="L662" title="All 2 branches missed.">        lcd.setDeCommitFreeBlockThreshold(pe.is64() ? dr.readLong() : dr.readDoubleWord());</span>
-<span class="nc bnc" id="L663" title="All 2 branches missed.">        lcd.setDeCommitTotalFreeThreshold(pe.is64() ? dr.readLong() : dr.readDoubleWord());</span>
-<span class="nc bnc" id="L664" title="All 2 branches missed.">        lcd.setLockPrefixTable(pe.is64() ? dr.readLong() : dr.readDoubleWord());</span>
-<span class="nc bnc" id="L665" title="All 2 branches missed.">        lcd.setMaximumAllocationSize(pe.is64() ? dr.readLong() : dr.readDoubleWord());</span>
-<span class="nc bnc" id="L666" title="All 2 branches missed.">        lcd.setVirtualMemoryThreshold(pe.is64() ? dr.readLong() : dr.readDoubleWord());</span>
-<span class="nc bnc" id="L667" title="All 2 branches missed.">        lcd.setProcessAffinityMask(pe.is64() ? dr.readLong() : dr.readDoubleWord());</span>
-<span class="nc" id="L668">        lcd.setProcessHeapFlags(dr.readDoubleWord());</span>
-<span class="nc" id="L669">        lcd.setCsdVersion(dr.readWord());</span>
-<span class="nc" id="L670">        lcd.setReserved(dr.readWord());</span>
-<span class="nc bnc" id="L671" title="All 2 branches missed.">        lcd.setEditList(pe.is64() ? dr.readLong() : dr.readDoubleWord());</span>
-<span class="nc bnc" id="L672" title="All 2 branches missed.">        if (dr.hasMore()) // optional</span>
+<span class="nc" id="L647">        DataReader dr = new DataReader(b);</span>
+<span class="nc" id="L648">        LoadConfigDirectory lcd = new LoadConfigDirectory();</span>
+<span class="nc" id="L649">        lcd.set(b);</span>
+<span class="nc" id="L650">        lcd.setSize(dr.readDoubleWord());</span>
+<span class="nc" id="L651">        lcd.setTimeDateStamp(dr.readDoubleWord());</span>
+<span class="nc" id="L652">        lcd.setMajorVersion(dr.readWord());</span>
+<span class="nc" id="L653">        lcd.setMinorVersion(dr.readWord());</span>
+<span class="nc" id="L654">        lcd.setGlobalFlagsClear(dr.readDoubleWord());</span>
+<span class="nc" id="L655">        lcd.setGlobalFlagsSet(dr.readDoubleWord());</span>
+<span class="nc" id="L656">        lcd.setCriticalSectionDefaultTimeout(dr.readDoubleWord());</span>
+<span class="nc bnc" id="L657" title="All 2 branches missed.">        lcd.setDeCommitFreeBlockThreshold(pe.is64() ? dr.readLong() : dr.readDoubleWord());</span>
+<span class="nc bnc" id="L658" title="All 2 branches missed.">        lcd.setDeCommitTotalFreeThreshold(pe.is64() ? dr.readLong() : dr.readDoubleWord());</span>
+<span class="nc bnc" id="L659" title="All 2 branches missed.">        lcd.setLockPrefixTable(pe.is64() ? dr.readLong() : dr.readDoubleWord());</span>
+<span class="nc bnc" id="L660" title="All 2 branches missed.">        lcd.setMaximumAllocationSize(pe.is64() ? dr.readLong() : dr.readDoubleWord());</span>
+<span class="nc bnc" id="L661" title="All 2 branches missed.">        lcd.setVirtualMemoryThreshold(pe.is64() ? dr.readLong() : dr.readDoubleWord());</span>
+<span class="nc bnc" id="L662" title="All 2 branches missed.">        lcd.setProcessAffinityMask(pe.is64() ? dr.readLong() : dr.readDoubleWord());</span>
+<span class="nc" id="L663">        lcd.setProcessHeapFlags(dr.readDoubleWord());</span>
+<span class="nc" id="L664">        lcd.setCsdVersion(dr.readWord());</span>
+<span class="nc" id="L665">        lcd.setReserved(dr.readWord());</span>
+<span class="nc bnc" id="L666" title="All 2 branches missed.">        lcd.setEditList(pe.is64() ? dr.readLong() : dr.readDoubleWord());</span>
+<span class="nc bnc" id="L667" title="All 2 branches missed.">        if (dr.hasMore()) // optional</span>
         {
-<span class="nc bnc" id="L674" title="All 2 branches missed.">            lcd.setSecurityCookie(pe.is64() ? dr.readLong() : dr.readDoubleWord());</span>
+<span class="nc bnc" id="L669" title="All 2 branches missed.">            lcd.setSecurityCookie(pe.is64() ? dr.readLong() : dr.readDoubleWord());</span>
         }
-<span class="nc bnc" id="L676" title="All 2 branches missed.">        if (dr.hasMore()) // optional</span>
+<span class="nc bnc" id="L671" title="All 2 branches missed.">        if (dr.hasMore()) // optional</span>
         {
-<span class="nc bnc" id="L678" title="All 2 branches missed.">            lcd.setSeHandlerTable(pe.is64() ? dr.readLong() : dr.readDoubleWord());</span>
+<span class="nc bnc" id="L673" title="All 2 branches missed.">            lcd.setSeHandlerTable(pe.is64() ? dr.readLong() : dr.readDoubleWord());</span>
         }
-<span class="nc bnc" id="L680" title="All 2 branches missed.">        if (dr.hasMore()) // optional</span>
+<span class="nc bnc" id="L675" title="All 2 branches missed.">        if (dr.hasMore()) // optional</span>
         {
-<span class="nc bnc" id="L682" title="All 2 branches missed.">            lcd.setSeHandlerCount(pe.is64() ? dr.readLong() : dr.readDoubleWord());</span>
+<span class="nc bnc" id="L677" title="All 2 branches missed.">            lcd.setSeHandlerCount(pe.is64() ? dr.readLong() : dr.readDoubleWord());</span>
         }
 
-<span class="nc" id="L685">        return lcd;</span>
+<span class="nc" id="L680">        return lcd;</span>
     }
 
     public static DebugDirectory readDebugDirectory(byte[] b)
             throws IOException {
-<span class="nc" id="L690">        return readDebugDirectory(b, new DataReader(b));</span>
+<span class="nc" id="L685">        return readDebugDirectory(b, new DataReader(b));</span>
     }
 
     public static DebugDirectory readDebugDirectory(byte[] b, IDataReader dr)
             throws IOException {
-<span class="nc" id="L695">        DebugDirectory dd = new DebugDirectory();</span>
-<span class="nc" id="L696">        dd.set(b);</span>
-<span class="nc" id="L697">        dd.setCharacteristics(dr.readDoubleWord());</span>
-<span class="nc" id="L698">        dd.setTimeDateStamp(dr.readDoubleWord());</span>
-<span class="nc" id="L699">        dd.setMajorVersion(dr.readWord());</span>
-<span class="nc" id="L700">        dd.setMajorVersion(dr.readWord());</span>
-<span class="nc" id="L701">        dd.setType(dr.readDoubleWord());</span>
-<span class="nc" id="L702">        dd.setSizeOfData(dr.readDoubleWord());</span>
-<span class="nc" id="L703">        dd.setAddressOfRawData(dr.readDoubleWord());</span>
-<span class="nc" id="L704">        dd.setPointerToRawData(dr.readDoubleWord());</span>
-<span class="nc" id="L705">        return dd;</span>
+<span class="nc" id="L690">        DebugDirectory dd = new DebugDirectory();</span>
+<span class="nc" id="L691">        dd.set(b);</span>
+<span class="nc" id="L692">        dd.setCharacteristics(dr.readDoubleWord());</span>
+<span class="nc" id="L693">        dd.setTimeDateStamp(dr.readDoubleWord());</span>
+<span class="nc" id="L694">        dd.setMajorVersion(dr.readWord());</span>
+<span class="nc" id="L695">        dd.setMajorVersion(dr.readWord());</span>
+<span class="nc" id="L696">        dd.setType(dr.readDoubleWord());</span>
+<span class="nc" id="L697">        dd.setSizeOfData(dr.readDoubleWord());</span>
+<span class="nc" id="L698">        dd.setAddressOfRawData(dr.readDoubleWord());</span>
+<span class="nc" id="L699">        dd.setPointerToRawData(dr.readDoubleWord());</span>
+<span class="nc" id="L700">        return dd;</span>
     }
 
     private static ResourceDirectory readResourceDirectory(byte[] b,
             int baseAddress) throws IOException {
-<span class="fc" id="L710">        IDataReader dr = new ByteArrayDataReader(b);</span>
-<span class="fc" id="L711">        return readResourceDirectory(dr, baseAddress);</span>
+<span class="fc" id="L705">        IDataReader dr = new ByteArrayDataReader(b);</span>
+<span class="fc" id="L706">        return readResourceDirectory(dr, baseAddress);</span>
     }
 
     private static ResourceDirectory readResourceDirectory(IDataReader dr,
             int baseAddress) throws IOException {
-<span class="fc" id="L716">        ResourceDirectory d = new ResourceDirectory();</span>
-<span class="fc" id="L717">        d.setTable(readResourceDirectoryTable(dr));</span>
-<span class="fc" id="L718">        int ne = d.getTable().getNumNameEntries()</span>
-<span class="fc" id="L719">                + d.getTable().getNumIdEntries();</span>
-<span class="fc bfc" id="L720" title="All 2 branches covered.">        for (int i = 0; i &lt; ne; i++) {</span>
-<span class="fc" id="L721">            d.add(readResourceEntry(dr, baseAddress));</span>
+<span class="fc" id="L711">        ResourceDirectory d = new ResourceDirectory();</span>
+<span class="fc" id="L712">        d.setTable(readResourceDirectoryTable(dr));</span>
+<span class="fc" id="L713">        int ne = d.getTable().getNumNameEntries()</span>
+<span class="fc" id="L714">                + d.getTable().getNumIdEntries();</span>
+<span class="fc bfc" id="L715" title="All 2 branches covered.">        for (int i = 0; i &lt; ne; i++) {</span>
+<span class="fc" id="L716">            d.add(readResourceEntry(dr, baseAddress));</span>
         }
 
-<span class="fc" id="L724">        return d;</span>
+<span class="fc" id="L719">        return d;</span>
     }
 
     private static ResourceEntry readResourceEntry(IDataReader dr,
             int baseAddress) throws IOException {
-<span class="fc" id="L729">        ResourceEntry re = new ResourceEntry();</span>
-<span class="fc" id="L730">        int id = dr.readDoubleWord();</span>
-<span class="fc" id="L731">        int offset = dr.readDoubleWord();</span>
-<span class="fc" id="L732">        re.setOffset(offset);</span>
-<span class="fc" id="L733">        int pos = dr.getPosition();</span>
-<span class="pc bpc" id="L734" title="1 of 2 branches missed.">        if ((id &amp; 0x80000000) != 0) {</span>
-<span class="nc" id="L735">            dr.jumpTo(id &amp; 0x7fffffff);</span>
-<span class="nc" id="L736">            re.setName(dr.readUnicode(dr.readWord()));</span>
+<span class="fc" id="L724">        ResourceEntry re = new ResourceEntry();</span>
+<span class="fc" id="L725">        int id = dr.readDoubleWord();</span>
+<span class="fc" id="L726">        int offset = dr.readDoubleWord();</span>
+<span class="fc" id="L727">        re.setOffset(offset);</span>
+<span class="fc" id="L728">        int pos = dr.getPosition();</span>
+<span class="pc bpc" id="L729" title="1 of 2 branches missed.">        if ((id &amp; 0x80000000) != 0) {</span>
+<span class="nc" id="L730">            dr.jumpTo(id &amp; 0x7fffffff);</span>
+<span class="nc" id="L731">            re.setName(dr.readUnicode(dr.readWord()));</span>
         } else {
-<span class="fc" id="L738">            re.setId(id);</span>
+<span class="fc" id="L733">            re.setId(id);</span>
         }
-<span class="fc bfc" id="L740" title="All 2 branches covered.">        if ((offset &amp; 0x80000000) != 0) {</span>
-<span class="fc" id="L741">            dr.jumpTo(offset &amp; 0x7fffffff);</span>
-<span class="fc" id="L742">            re.setDirectory(readResourceDirectory(dr, baseAddress));</span>
+<span class="fc bfc" id="L735" title="All 2 branches covered.">        if ((offset &amp; 0x80000000) != 0) {</span>
+<span class="fc" id="L736">            dr.jumpTo(offset &amp; 0x7fffffff);</span>
+<span class="fc" id="L737">            re.setDirectory(readResourceDirectory(dr, baseAddress));</span>
         } else {
-<span class="fc" id="L744">            dr.jumpTo(offset);</span>
-<span class="fc" id="L745">            int rva = dr.readDoubleWord();</span>
-<span class="fc" id="L746">            int size = dr.readDoubleWord();</span>
-<span class="fc" id="L747">            int cp = dr.readDoubleWord();</span>
-<span class="fc" id="L748">            int res = dr.readDoubleWord();</span>
-<span class="fc" id="L749">            re.setDataRVA(rva);</span>
-<span class="fc" id="L750">            re.setCodePage(cp);</span>
-<span class="fc" id="L751">            re.setReserved(res);</span>
-<span class="fc" id="L752">            dr.jumpTo(rva - baseAddress);</span>
-<span class="fc" id="L753">            byte[] b = new byte[size];</span>
-<span class="fc" id="L754">            dr.read(b);</span>
-<span class="fc" id="L755">            re.setData(b);</span>
+<span class="fc" id="L739">            dr.jumpTo(offset);</span>
+<span class="fc" id="L740">            int rva = dr.readDoubleWord();</span>
+<span class="fc" id="L741">            int size = dr.readDoubleWord();</span>
+<span class="fc" id="L742">            int cp = dr.readDoubleWord();</span>
+<span class="fc" id="L743">            int res = dr.readDoubleWord();</span>
+<span class="fc" id="L744">            re.setDataRVA(rva);</span>
+<span class="fc" id="L745">            re.setCodePage(cp);</span>
+<span class="fc" id="L746">            re.setReserved(res);</span>
+<span class="fc" id="L747">            dr.jumpTo(rva - baseAddress);</span>
+<span class="fc" id="L748">            byte[] b = new byte[size];</span>
+<span class="fc" id="L749">            dr.read(b);</span>
+<span class="fc" id="L750">            re.setData(b);</span>
         }
-<span class="fc" id="L757">        dr.jumpTo(pos);</span>
-<span class="fc" id="L758">        return re;</span>
+<span class="fc" id="L752">        dr.jumpTo(pos);</span>
+<span class="fc" id="L753">        return re;</span>
     }
 
     private static ResourceDirectoryTable readResourceDirectoryTable(
             IDataReader dr) throws IOException {
-<span class="fc" id="L763">        ResourceDirectoryTable t = new ResourceDirectoryTable();</span>
-<span class="fc" id="L764">        t.setCharacteristics(dr.readDoubleWord());</span>
-<span class="fc" id="L765">        t.setTimeDateStamp(dr.readDoubleWord());</span>
-<span class="fc" id="L766">        t.setMajorVersion(dr.readWord());</span>
-<span class="fc" id="L767">        t.setMinVersion(dr.readWord());</span>
-<span class="fc" id="L768">        t.setNumNameEntries(dr.readWord());</span>
-<span class="fc" id="L769">        t.setNumIdEntries(dr.readWord());</span>
+<span class="fc" id="L758">        ResourceDirectoryTable t = new ResourceDirectoryTable();</span>
+<span class="fc" id="L759">        t.setCharacteristics(dr.readDoubleWord());</span>
+<span class="fc" id="L760">        t.setTimeDateStamp(dr.readDoubleWord());</span>
+<span class="fc" id="L761">        t.setMajorVersion(dr.readWord());</span>
+<span class="fc" id="L762">        t.setMinVersion(dr.readWord());</span>
+<span class="fc" id="L763">        t.setNumNameEntries(dr.readWord());</span>
+<span class="fc" id="L764">        t.setNumIdEntries(dr.readWord());</span>
 
-<span class="fc" id="L771">        return t;</span>
+<span class="fc" id="L766">        return t;</span>
     }
 
     public static AttributeCertificateTable readAttributeCertificateTable(byte[] b)
             throws IOException {
-<span class="nc" id="L776">        return readAttributeCertificateTable(b, new DataReader(b));</span>
+<span class="nc" id="L771">        return readAttributeCertificateTable(b, new DataReader(b));</span>
     }
 
     public static AttributeCertificateTable readAttributeCertificateTable(byte[] b, IDataReader dr)
             throws IOException {
-<span class="nc" id="L781">        AttributeCertificateTable dd = new AttributeCertificateTable();</span>
-<span class="nc" id="L782">        dd.set(b);</span>
-<span class="nc" id="L783">        dd.setLength(dr.readDoubleWord());</span>
-<span class="nc" id="L784">        dd.setRevision(dr.readWord());</span>
-<span class="nc" id="L785">        dd.setCertificateType(dr.readWord());</span>
-<span class="nc" id="L786">        byte[] certificate = new byte[dd.getLength() - 8];</span>
-<span class="nc" id="L787">        dr.read(certificate);</span>
-<span class="nc" id="L788">        dd.setCertificate(certificate);</span>
-<span class="nc" id="L789">        return dd;</span>
+<span class="nc" id="L776">        AttributeCertificateTable dd = new AttributeCertificateTable();</span>
+<span class="nc" id="L777">        dd.set(b);</span>
+<span class="nc" id="L778">        dd.setLength(dr.readDoubleWord());</span>
+<span class="nc" id="L779">        dd.setRevision(dr.readWord());</span>
+<span class="nc" id="L780">        dd.setCertificateType(dr.readWord());</span>
+<span class="nc" id="L781">        byte[] certificate = new byte[dd.getLength() - 8];</span>
+<span class="nc" id="L782">        dr.read(certificate);</span>
+<span class="nc" id="L783">        dd.setCertificate(certificate);</span>
+<span class="nc" id="L784">        return dd;</span>
     }
 
 }

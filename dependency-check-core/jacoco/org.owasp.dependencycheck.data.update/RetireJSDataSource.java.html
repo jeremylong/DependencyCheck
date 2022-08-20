@@ -89,7 +89,7 @@ public class RetireJSDataSource implements CachedWebDataSource {
 <span class="fc" id="L89">                initializeRetireJsRepo(settings, url, repoFile);</span>
             }
 <span class="nc" id="L91">        } catch (MalformedURLException ex) {</span>
-<span class="nc" id="L92">            throw new UpdateException(String.format(&quot;Inavlid URL for RetireJS repository (%s)&quot;, configuredUrl), ex);</span>
+<span class="nc" id="L92">            throw new UpdateException(String.format(&quot;Invalid URL for RetireJS repository (%s)&quot;, configuredUrl), ex);</span>
 <span class="nc" id="L93">        } catch (IOException ex) {</span>
 <span class="nc" id="L94">            throw new UpdateException(&quot;Unable to get the data directory&quot;, ex);</span>
 <span class="fc" id="L95">        }</span>
@@ -131,40 +131,42 @@ public class RetireJSDataSource implements CachedWebDataSource {
      * @throws UpdateException thrown if there is an exception during
      * initialization
      */
+    @SuppressWarnings(&quot;try&quot;)
     private void initializeRetireJsRepo(Settings settings, URL repoUrl, File repoFile) throws UpdateException {
-<span class="fc" id="L135">        try (WriteLock lock = new WriteLock(settings, true, repoFile.getName() + &quot;.lock&quot;)) {</span>
-<span class="fc" id="L136">            LOGGER.debug(&quot;RetireJS Repo URL: {}&quot;, repoUrl.toExternalForm());</span>
-<span class="fc" id="L137">            final Downloader downloader = new Downloader(settings);</span>
-<span class="fc" id="L138">            downloader.fetchFile(repoUrl, repoFile);</span>
-<span class="nc" id="L139">        } catch (IOException | TooManyRequestsException | ResourceNotFoundException | WriteLockException ex) {</span>
-<span class="nc" id="L140">            throw new UpdateException(&quot;Failed to initialize the RetireJS repo&quot;, ex);</span>
-<span class="fc" id="L141">        }</span>
-<span class="fc" id="L142">    }</span>
+<span class="fc" id="L136">        try (WriteLock lock = new WriteLock(settings, true, repoFile.getName() + &quot;.lock&quot;)) {</span>
+<span class="fc" id="L137">            LOGGER.debug(&quot;RetireJS Repo URL: {}&quot;, repoUrl.toExternalForm());</span>
+<span class="fc" id="L138">            final Downloader downloader = new Downloader(settings);</span>
+<span class="fc" id="L139">            downloader.fetchFile(repoUrl, repoFile);</span>
+<span class="nc" id="L140">        } catch (IOException | TooManyRequestsException | ResourceNotFoundException | WriteLockException ex) {</span>
+<span class="nc" id="L141">            throw new UpdateException(&quot;Failed to initialize the RetireJS repo&quot;, ex);</span>
+<span class="fc" id="L142">        }</span>
+<span class="fc" id="L143">    }</span>
 
     @Override
+    @SuppressWarnings(&quot;try&quot;)
     public boolean purge(Engine engine) {
-<span class="nc" id="L146">        this.settings = engine.getSettings();</span>
-<span class="nc" id="L147">        boolean result = true;</span>
+<span class="nc" id="L148">        this.settings = engine.getSettings();</span>
+<span class="nc" id="L149">        boolean result = true;</span>
         try {
-<span class="nc" id="L149">            final File dataDir = engine.getSettings().getDataDirectory();</span>
-<span class="nc" id="L150">            final URL repoUrl = new URL(engine.getSettings().getString(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, DEFAULT_JS_URL));</span>
-<span class="nc" id="L151">            final String filename = repoUrl.getFile().substring(repoUrl.getFile().lastIndexOf(&quot;/&quot;) + 1);</span>
-<span class="nc" id="L152">            final File repo = new File(dataDir, filename);</span>
-<span class="nc bnc" id="L153" title="All 2 branches missed.">            if (repo.exists()) {</span>
-<span class="nc" id="L154">                try (WriteLock lock = new WriteLock(settings, true, filename + &quot;.lock&quot;)) {</span>
-<span class="nc bnc" id="L155" title="All 2 branches missed.">                    if (repo.delete()) {</span>
-<span class="nc" id="L156">                        LOGGER.info(&quot;RetireJS repo removed successfully&quot;);</span>
+<span class="nc" id="L151">            final File dataDir = engine.getSettings().getDataDirectory();</span>
+<span class="nc" id="L152">            final URL repoUrl = new URL(engine.getSettings().getString(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, DEFAULT_JS_URL));</span>
+<span class="nc" id="L153">            final String filename = repoUrl.getFile().substring(repoUrl.getFile().lastIndexOf(&quot;/&quot;) + 1);</span>
+<span class="nc" id="L154">            final File repo = new File(dataDir, filename);</span>
+<span class="nc bnc" id="L155" title="All 2 branches missed.">            if (repo.exists()) {</span>
+<span class="nc" id="L156">                try (WriteLock lock = new WriteLock(settings, true, filename + &quot;.lock&quot;)) {</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">                    if (repo.delete()) {</span>
+<span class="nc" id="L158">                        LOGGER.info(&quot;RetireJS repo removed successfully&quot;);</span>
                     } else {
-<span class="nc" id="L158">                        LOGGER.error(&quot;Unable to delete '{}'; please delete the file manually&quot;, repo.getAbsolutePath());</span>
-<span class="nc" id="L159">                        result = false;</span>
+<span class="nc" id="L160">                        LOGGER.error(&quot;Unable to delete '{}'; please delete the file manually&quot;, repo.getAbsolutePath());</span>
+<span class="nc" id="L161">                        result = false;</span>
                     }
                 }
             }
-<span class="nc" id="L163">        } catch (WriteLockException | IOException ex) {</span>
-<span class="nc" id="L164">            LOGGER.error(&quot;Unable to delete the RetireJS repo - invalid configuration&quot;);</span>
-<span class="nc" id="L165">            result = false;</span>
-<span class="nc" id="L166">        }</span>
-<span class="nc" id="L167">        return result;</span>
+<span class="nc" id="L165">        } catch (WriteLockException | IOException ex) {</span>
+<span class="nc" id="L166">            LOGGER.error(&quot;Unable to delete the RetireJS repo - invalid configuration&quot;);</span>
+<span class="nc" id="L167">            result = false;</span>
+<span class="nc" id="L168">        }</span>
+<span class="nc" id="L169">        return result;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

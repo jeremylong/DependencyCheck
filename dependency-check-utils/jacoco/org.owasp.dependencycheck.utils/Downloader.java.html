@@ -183,7 +183,7 @@ public final class Downloader {
 <span class="nc" id="L183">            IOUtils.copy(in, out);</span>
 <span class="nc" id="L184">            return out.toString(UTF8);</span>
 <span class="nc" id="L185">        } catch (IOException ex) {</span>
-<span class="nc" id="L186">            final String msg = format(&quot;Download failed, unable to retrieve '%s'; %s&quot;, url.toString(), ex.getMessage());</span>
+<span class="nc" id="L186">            final String msg = format(&quot;Download failed, unable to retrieve '%s'; %s&quot;, url, ex.getMessage());</span>
 <span class="nc" id="L187">            throw new DownloadFailedException(msg, ex);</span>
         } finally {
 <span class="nc bnc" id="L189" title="All 2 branches missed.">            if (in != null) {</span>

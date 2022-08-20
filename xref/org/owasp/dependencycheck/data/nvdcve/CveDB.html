@@ -404,7 +404,7 @@
 <a class="jxr_linenumber" name="L396" href="#L396">396</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L397" href="#L397">397</a> <em class="jxr_javadoccomment">     * @return the database properties</em>
 <a class="jxr_linenumber" name="L398" href="#L398">398</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L399" href="#L399">399</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../../../org/owasp/dependencycheck/data/nvdcve/DatabaseProperties.html">DatabaseProperties</a> reloadProperties() {
+<a class="jxr_linenumber" name="L399" href="#L399">399</a>     <a href="../../../../../org/owasp/dependencycheck/data/nvdcve/DatabaseProperties.html">DatabaseProperties</a> reloadProperties() {
 <a class="jxr_linenumber" name="L400" href="#L400">400</a>         databaseProperties = <strong class="jxr_keyword">new</strong> <a href="../../../../../org/owasp/dependencycheck/data/nvdcve/DatabaseProperties.html">DatabaseProperties</a>(<strong class="jxr_keyword">this</strong>);
 <a class="jxr_linenumber" name="L401" href="#L401">401</a>         <strong class="jxr_keyword">return</strong> databaseProperties;
 <a class="jxr_linenumber" name="L402" href="#L402">402</a>     }
@@ -1247,7 +1247,7 @@
 <a class="jxr_linenumber" name="L1239" href="#L1239">1239</a>             }
 <a class="jxr_linenumber" name="L1240" href="#L1240">1240</a>             LOGGER.error(<span class="jxr_string">"Unable to access the local database.\n\nEnsure that '{}' is a writable directory. "</span>
 <a class="jxr_linenumber" name="L1241" href="#L1241">1241</a>                     + <span class="jxr_string">"If the problem persist try deleting the files in '{}' and running {} again. If the problem continues, please "</span>
-<a class="jxr_linenumber" name="L1242" href="#L1242">1242</a>                     + <span class="jxr_string">"create a log file (see documentation at http://jeremylong.github.io/DependencyCheck/) and open a ticket at "</span>
+<a class="jxr_linenumber" name="L1242" href="#L1242">1242</a>                     + <span class="jxr_string">"create a log file (see documentation at https://jeremylong.github.io/DependencyCheck/) and open a ticket at "</span>
 <a class="jxr_linenumber" name="L1243" href="#L1243">1243</a>                     + <span class="jxr_string">"https://github.com/jeremylong/DependencyCheck/issues and include the log file.\n\n"</span>,
 <a class="jxr_linenumber" name="L1244" href="#L1244">1244</a>                     dd, dd, settings.getString(Settings.KEYS.APPLICATION_NAME));
 <a class="jxr_linenumber" name="L1245" href="#L1245">1245</a>             LOGGER.debug(<span class="jxr_string">""</span>, ex);
@@ -1328,7 +1328,7 @@
 <a class="jxr_linenumber" name="L1320" href="#L1320">1320</a> <em class="jxr_javadoccomment">     * @param vulnerableSoftware a set of the vulnerable software</em>
 <a class="jxr_linenumber" name="L1321" href="#L1321">1321</a> <em class="jxr_javadoccomment">     * @return true if the identified version is affected, otherwise false</em>
 <a class="jxr_linenumber" name="L1322" href="#L1322">1322</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L1323" href="#L1323">1323</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../../../org/owasp/dependencycheck/dependency/VulnerableSoftware.html">VulnerableSoftware</a> getMatchingSoftware(Cpe cpe, Set&lt;VulnerableSoftware&gt; vulnerableSoftware) {
+<a class="jxr_linenumber" name="L1323" href="#L1323">1323</a>     <a href="../../../../../org/owasp/dependencycheck/dependency/VulnerableSoftware.html">VulnerableSoftware</a> getMatchingSoftware(Cpe cpe, Set&lt;VulnerableSoftware&gt; vulnerableSoftware) {
 <a class="jxr_linenumber" name="L1324" href="#L1324">1324</a>         <a href="../../../../../org/owasp/dependencycheck/dependency/VulnerableSoftware.html">VulnerableSoftware</a> matched = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L1325" href="#L1325">1325</a>         <strong class="jxr_keyword">for</strong> (VulnerableSoftware vs : vulnerableSoftware) {
 <a class="jxr_linenumber" name="L1326" href="#L1326">1326</a>             <strong class="jxr_keyword">if</strong> (vs.matches(cpe)) {
@@ -1449,7 +1449,7 @@
 <a class="jxr_linenumber" name="L1441" href="#L1441">1441</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L1442" href="#L1442">1442</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> setBooleanValue(PreparedStatement ps, <strong class="jxr_keyword">int</strong> i, Map&lt;String, Object&gt; props, String key) <strong class="jxr_keyword">throws</strong> SQLException {
 <a class="jxr_linenumber" name="L1443" href="#L1443">1443</a>         <strong class="jxr_keyword">if</strong> (props != <strong class="jxr_keyword">null</strong> &amp;&amp; props.containsKey(key)) {
-<a class="jxr_linenumber" name="L1444" href="#L1444">1444</a>             ps.setBoolean(i, Boolean.valueOf(props.get(key).toString()));
+<a class="jxr_linenumber" name="L1444" href="#L1444">1444</a>             ps.setBoolean(i, Boolean.parseBoolean(props.get(key).toString()));
 <a class="jxr_linenumber" name="L1445" href="#L1445">1445</a>         } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L1446" href="#L1446">1446</a>             ps.setNull(i, java.sql.Types.NULL);
 <a class="jxr_linenumber" name="L1447" href="#L1447">1447</a>         }
