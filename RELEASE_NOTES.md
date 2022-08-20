@@ -1,5 +1,14 @@
 # Release Notes
 
+## [Version 7.1.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.1.2) (2022-08-20)
+
+**Changes**
+
+- The maven plugin now includes pnpm and yarn lock files in the scan by default (#4753).
+- If a suppression rule is no longer used a log entry will be written (#4685).
+- Several bug fixes made and suppression rules added.
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/47?closed=1).
+
 ## [Version 7.1.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.1.1) (2022-06-12)
 
 **Changes**
