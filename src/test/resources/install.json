@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json.schemastore.org/install",
+  "resources": {
+    "head": [],
+    "body": []
+  },
+  "options": {
+    "properties": {}
+  },
+  "preview": {
+    "handlers": []
+  },
+  "hooks": [],
+  "dns": []
+}
