@@ -63,6 +63,10 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      */
     private static final String BASE_SUPPRESSION_FILE = "dependencycheck-base-suppression.xml";
     /**
+     * Settings flag to indicate if the suppression rules have been previously loaded.
+     */
+    private static final String SUPPRESSION_LOADED = "SUPPRESSION_LOADED";
+    /**
      * The collection of suppression rules.
      */
     private final SuppressionRules rules = SuppressionRules.getInstance();
@@ -103,6 +107,11 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      */
     @Override
     public synchronized void prepareAnalyzer(Engine engine) throws InitializationException {
+        //check if we have a brand new settings object - if we do the suppression rules could be different
+        final boolean loaded = getSettings().getBoolean(SUPPRESSION_LOADED, false);
+        if (!loaded) {
+            SuppressionRules.getInstance().list().clear();
+        }
         if (rules.isEmpty()) {
             try {
                 loadSuppressionBaseData();
@@ -115,6 +124,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
             } catch (SuppressionParseException ex) {
                 throw new InitializationException("Warn initializing the suppression analyzer: " + ex.getLocalizedMessage(), ex, false);
             }
+            getSettings().setBoolean(SUPPRESSION_LOADED, true);
         }
     }
 
