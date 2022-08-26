@@ -148,8 +148,6 @@ Copyright (c) 2012 - Jeremy Long
         <aho-corasick-double-array-trie.version>1.2.3</aho-corasick-double-array-trie.version>
         <junit.version>4.13.2</junit.version>
         <hamcrest-core.version>2.2</hamcrest-core.version>
-        <jackson.version>2.13.2.1</jackson.version>
-        <jackson-afterburmer.version>2.13.2</jackson-afterburmer.version>
         <jmockit.version>1.49</jmockit.version>
         <mockito-core.version>4.7.0</mockito-core.version>
         <jsoup.version>1.15.3</jsoup.version>
@@ -1102,16 +1100,6 @@ Copyright (c) 2012 - Jeremy Long
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!--dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.module</groupId>
-                <artifactId>jackson-module-afterburner</artifactId>
-                <version>${jackson-afterburmer.version}</version>
-            </dependency-->
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
