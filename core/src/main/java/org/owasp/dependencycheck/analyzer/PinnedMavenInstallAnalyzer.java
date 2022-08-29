@@ -167,7 +167,7 @@ public class PinnedMavenInstallAnalyzer extends AbstractFileTypeAnalyzer {
                 version = pieces[4];
             }
 
-            if ("sources".equals(classifier)) {
+            if ("sources".equals(classifier) || "javadoc".equals(classifier)) {
                 LOGGER.debug("Skipping sources jar {}", dep.coord);
                 continue;
             }
