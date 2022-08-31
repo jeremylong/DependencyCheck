@@ -89,7 +89,7 @@ public class DependencyCheckPropertiesTest {
     }
 
     public Set<Class<?>> findAllClasses(String packageName) throws IOException {
-        String parsedPackageName = packageName.replaceAll("[.]", File.separator);
+        String parsedPackageName = packageName.replaceAll("[.]", File.separator.replaceAll("\\\\","\\\\\\\\"));
 
         Set<Class<?>> classes = new HashSet<>();
         Enumeration<URL> resources = ClassLoader.getSystemClassLoader().getResources(parsedPackageName);
