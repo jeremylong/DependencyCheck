@@ -69,9 +69,14 @@ public class XPathMSBuildProjectParser implements MSBuildProjectParser {
                 final NamedNodeMap attrs = node.getAttributes();
 
                 final String include = attrs.getNamedItem("Include").getNodeValue();
-                final String version = attrs.getNamedItem("Version") != null
-                        ? attrs.getNamedItem("Version").getNodeValue()
-                        : ((Node) xpath.evaluate("Version", node, XPathConstants.NODE)).getTextContent();
+                String version = null;
+                
+                if(attrs.getNamedItem("Version") != null) {
+                    version = attrs.getNamedItem("Version").getNodeValue();
+                }
+                else if(xpath.evaluate("Version", node, XPathConstants.NODE) instanceof Node) {
+                    version = ((Node) xpath.evaluate("Version", node, XPathConstants.NODE)).getTextContent();
+                }
 
                 if (include != null && version != null) {
                     final NugetPackageReference npr = new NugetPackageReference();
