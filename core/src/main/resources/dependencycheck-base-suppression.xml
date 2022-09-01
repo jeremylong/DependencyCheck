@@ -5142,10 +5142,14 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        Suppresses false positives per #1566 and #3580.
+        Suppresses false positives per #1566, #3580 and #4617
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/.*$</packageUrl>
         <cpe>cpe:/a:vmware:spring_integration</cpe>
+        <cpe>cpe:/a:pivotal:spring_security_oauth</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:server</cpe>
+        <cpe>cpe:/a:vmware:spring_security</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
