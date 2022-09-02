@@ -1197,6 +1197,10 @@ public final class CliParser {
          */
         public static final String DISABLE_AUTOCONF = "disableAutoconf";
         /**
+         * Disables the Maven install Analyzer.
+         */
+        public static final String DISABLE_MAVEN_INSTALL = "disableMavenInstall";
+        /**
          * Disables the pip Analyzer.
          */
         public static final String DISABLE_PIP = "disablePip";

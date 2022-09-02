@@ -430,6 +430,10 @@ public final class Settings {
          */
         public static final String ANALYZER_AUTOCONF_ENABLED = "analyzer.autoconf.enabled";
         /**
+         * The properties key for whether the maven_install.json analyzer is enabled.
+         */
+        public static final String ANALYZER_MAVEN_INSTALL_ENABLED = "analyzer.maveninstall.enabled";
+        /**
          * The properties key for whether the pip analyzer is enabled.
          */
         public static final String ANALYZER_PIP_ENABLED = "analyzer.pip.enabled";
