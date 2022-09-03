@@ -38,7 +38,7 @@ jobs:
             })
             
             let botComments = comments.filter(comment => 
-              comment.user.login == 'github-actions' && 
+              comment.user.login === 'github-actions' && 
               comment.body.includes('<suppress base="true">') &&
               comment.body.includes('Suppression rule:')
             )
@@ -70,8 +70,8 @@ jobs:
             let previousReportNotes = '';
 
             for (r of rules.suppress) {
-              if (proposedRule.suppress.packageUrl == r.packageUrl &&
-                  proposedRule.suppress.cpe == r.cpe) {
+              if (proposedRule.suppress.packageUrl === r.packageUrl &&
+                  proposedRule.suppress.cpe === r.cpe) {
                     found = true;
                     previousReportNotes = r.notes.trim();
                     break;
