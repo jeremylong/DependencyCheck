@@ -10,9 +10,9 @@ jobs:
     if: ${{ !github.event.issue.pull_request && 
       contains(github.event.issue.labels.*.name, 'FP Report') && 
       contains(github.event.comment.body,'approved') &&
-      (github.event.comment.user.login === 'jeremylong') ||
-      github.event.comment.user.login === 'aikebah') || 
-      github.event.comment.user.login === 'nhumblot'))  }}
+      (github.event.comment.user.login == 'jeremylong') ||
+      github.event.comment.user.login == 'aikebah') || 
+      github.event.comment.user.login == 'nhumblot'))  }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -38,7 +38,7 @@ jobs:
             })
             
             let botComments = comments.filter(comment => 
-              comment.user.login === 'github-actions' && 
+              comment.user.login == 'github-actions' && 
               comment.body.includes('<suppress base="true">') &&
               comment.body.includes('Suppression rule:')
             )
@@ -70,8 +70,8 @@ jobs:
             let previousReportNotes = '';
 
             for (r of rules.suppress) {
-              if (proposedRule.suppress.packageUrl === r.packageUrl &&
-                  proposedRule.suppress.cpe === r.cpe) {
+              if (proposedRule.suppress.packageUrl == r.packageUrl &&
+                  proposedRule.suppress.cpe == r.cpe) {
                     found = true;
                     previousReportNotes = r.notes.trim();
                     break;
