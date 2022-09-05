@@ -136,7 +136,6 @@ public final class CliParser {
                     throw new ParseException("Invalid Setting: cveStartYear must be a number greater than or equal to 2002.");
                 }
             }
-
         }
         if (isRunScan()) {
             validatePathExists(getScanFiles(), ARGUMENT.SCAN);
@@ -146,16 +145,13 @@ public final class CliParser {
                 validatePathExists(pathToCore, ARGUMENT.PATH_TO_CORE);
             }
             if (line.hasOption(ARGUMENT.OUTPUT_FORMAT)) {
-                String validating = null;
-                try {
-                    for (String format : getReportFormat()) {
-                        validating = format;
-                        Format.valueOf(format);
+                for (String validating : getReportFormat()) {
+                    if (!isValidFormat(validating)
+                        && !isValidFilePath(validating, "format")) {
+                        final String msg = String.format("An invalid 'format' of '%s' was specified. "
+                                                         + "Supported output formats are %s, and custom template files.", validating, SUPPORTED_FORMATS);
+                        throw new ParseException(msg);
                     }
-                } catch (IllegalArgumentException ex) {
-                    final String msg = String.format("An invalid 'format' of '%s' was specified. "
-                            + "Supported output formats are " + SUPPORTED_FORMATS, validating);
-                    throw new ParseException(msg);
                 }
             }
             final String base = getStringArgument(ARGUMENT.CVE_BASE_URL);
@@ -174,6 +170,38 @@ public final class CliParser {
                     throw new ParseException("Symbolic Link Depth (symLink) is not a number.");
                 }
             }
+        }
+    }
+
+    /**
+     * Validates the format to be one of the known Formats.
+     *
+     * @param format the format to validate
+     * @return true, if format is known in Format; false otherwise
+     * @see Format
+     */
+    private boolean isValidFormat(String format) {
+        try {
+            Format.valueOf(format);
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
+    }
+
+    /**
+     * Validates the path to point at an existing file.
+     *
+     * @param path the path to validate if it exists
+     * @param argumentName the argument being validated (e.g. scan, out, etc.)
+     * @return true, if path exists; false otherwise
+     */
+    private boolean isValidFilePath(String path, String argumentName) {
+        try {
+            validatePathExists(path, argumentName);
+            return true;
+        } catch (FileNotFoundException ex) {
+            return false;
         }
     }
 
@@ -431,6 +459,7 @@ public final class CliParser {
                 .addOption(newOption(ARGUMENT.DISABLE_BUNDLE_AUDIT, "Disable the Ruby Bundler-Audit Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_FILENAME, "Disable the File Name Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_AUTOCONF, "Disable the Autoconf Analyzer."))
+                .addOption(newOption(ARGUMENT.DISABLE_MAVEN_INSTALL, "Disable the Maven install Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_PIP, "Disable the pip Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_PIPFILE, "Disable the Pipfile Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_COMPOSER, "Disable the PHP Composer Analyzer."))
