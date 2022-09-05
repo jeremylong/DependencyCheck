@@ -20,14 +20,6 @@
         </repository>
 
         <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>central</id>
-            <name>libs-release</name>
-            <url>https://repo.spring.io/libs-release</url>
-        </repository>
-        <repository>
             <name>mavengoogle</name>
             <id>mavengoogle</id>
             <url>https://dl.google.com/android/maven2/</url>
