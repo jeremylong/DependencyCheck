@@ -282,3 +282,16 @@ jobs:
               repo: context.repo.repo,
               labels: ['dotnet']
             })
+            
+      - name: Message failure
+        if: ${{ failure() }}
+        uses: actions/github-script@v5.1.1
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Failed to automatically evaluate the false positive. ' +
+                    'See: ' + context.serverUrl + '/' + context.repo.owner + '/' + context.repo.repo + '/actions/runs/' + context.runId,
+            });
