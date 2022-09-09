@@ -53,7 +53,7 @@ jobs:
             let lastComment = botComments[botComments.length-1];
             let data = lastComment.body.split('```');
             let suppression = data[data.length-2].substring(3).trim();
-            
+            console.log("suppression rule: " + suppression);
             const options = {
                 ignoreAttributes : true
             };
@@ -62,19 +62,22 @@ jobs:
 
             let commitComment = proposedRule.suppress.notes.trim();
             commitComment = commitComment.replace(/[[\]{}`'";|\/\\]/g, '');
-
+            console.log("commit comment: " + commitComment);
+            
             //validate we haven't already suppressed this one.
             const generatedSuppressions = fs.readFileSync('generatedSuppressions.xml', 'utf8');
-            let rules = parser.parse(generatedSuppressions);
+            
             let found = false;
             let previousReportNotes = '';
-
-            for (r of rules.suppress) {
-              if (proposedRule.suppress.packageUrl === r.packageUrl &&
+            if (!(str && str.trim() === '')) {
+              let rules = parser.parse(generatedSuppressions);
+              for (r of rules.suppress) {
+                if (proposedRule.suppress.packageUrl === r.packageUrl &&
                   proposedRule.suppress.cpe === r.cpe) {
-                    found = true;
-                    previousReportNotes = r.notes.trim();
-                    break;
+                  found = true;
+                  previousReportNotes = r.notes.trim();
+                  break;
+                }
               }
             }
             if (found) {
