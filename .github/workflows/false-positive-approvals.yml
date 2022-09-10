@@ -39,10 +39,8 @@ jobs:
             })
             console.log('author0: ' + comments[0].user.login);
             console.log('comments0: ' + comments[0].body);
-            console.log('author1: ' + comments[1].user.login);
-            console.log('comments1: ' + comments[1].body);
             let botComments = comments.filter(comment => 
-              comment.user.login === 'github-actions' && 
+              comment.user.login === 'github-actions[bot]' && 
               comment.body.includes('<suppress base="true">') &&
               comment.body.includes('Suppression rule:')
             )
