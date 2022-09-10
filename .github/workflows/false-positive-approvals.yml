@@ -30,7 +30,8 @@ jobs:
             const { execSync } = require("child_process");
             const { XMLParser } = require("fast-xml-parser");
             const fs = require('fs');
-
+            console.log('evaluating issue #' + context.issue.number);
+            
             const { data: comments } = await github.rest.issues.listComments({
               issue_number: context.issue.number,
               owner: context.issue.owner,
@@ -42,7 +43,7 @@ jobs:
               comment.body.includes('<suppress base="true">') &&
               comment.body.includes('Suppression rule:')
             )
-            
+            console.log('bot comments: ' + botComments);
             if (botComments.length<=0) {
               console.log('Suppression rule from github-actions not found');
               core.setOutput('publish', 'false');
@@ -157,5 +158,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Failed to automatically generate and publish the suppression rule! ❌',
+              body: 'Failed to automatically generate and publish the suppression rule!\n\n' + 'Link to action run: ' + context.serverUrl + '/' + context.repo.owner + '/' + context.repo.repo + '/actions/runs/' + context.runId,
             });
