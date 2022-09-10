@@ -1,1 +1,9 @@
 
+
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4803
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/net\.sourceforge\.htmlunit/htmlunit-cssparser@.*$</packageUrl>
+   <cpe>cpe:/a:htmlunit_project:htmlunit</cpe>
+</suppress>
