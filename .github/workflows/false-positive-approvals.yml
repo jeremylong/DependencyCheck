@@ -71,7 +71,7 @@ jobs:
             
             let found = false;
             let previousReportNotes = '';
-            if (!(str && str.trim() === '')) {
+            if (!(generatedSuppressions && generatedSuppressions.trim() === '')) {
               let rules = parser.parse(generatedSuppressions);
               for (r of rules.suppress) {
                 if (proposedRule.suppress.packageUrl === r.packageUrl &&
