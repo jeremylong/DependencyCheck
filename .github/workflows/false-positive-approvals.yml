@@ -37,7 +37,7 @@ jobs:
               owner: context.issue.owner,
               repo: context.issue.repo,
             })
-            
+            console.log('all comments: ' + botComments);
             let botComments = comments.filter(comment => 
               comment.user.login === 'github-actions' && 
               comment.body.includes('<suppress base="true">') &&
