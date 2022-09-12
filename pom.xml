@@ -165,7 +165,7 @@ Copyright (c) 2012 - Jeremy Long
         <groovy-all.version>2.4.21</groovy-all.version>
         <gmavenplus-plugin.version>1.13.1</gmavenplus-plugin.version>
         <com.h3xstream.retirejs.core.version>3.0.3</com.h3xstream.retirejs.core.version>
-        
+        <jackson.version>2.13.4</jackson.version>
         <!--necassary for some IDEs to be able to execute test cases (Netbeans)-->
         <surefireArgLine />
         
@@ -1096,7 +1096,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
-                <version>2.13.4</version>
+                <version>${jackson.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
