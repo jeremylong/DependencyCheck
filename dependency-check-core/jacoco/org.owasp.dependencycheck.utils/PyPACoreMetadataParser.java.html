@@ -139,7 +139,7 @@ public final class PyPACoreMetadataParser {
                         &quot;Unsupported PyPA Wheel metadata. Metadata-Version &quot; + &quot;is '%s', largest supported major is %d&quot;, value,
 <span class="fc" id="L140">                        SUPPORTED_MAJOR_UPPERBOUND));</span>
 <span class="pc bpc" id="L141" title="1 of 4 branches missed.">            } else if (version.compareTo(MAX_SUPPORTED_VERSION) &gt; 0 &amp;&amp; LOGGER.isWarnEnabled()) {</span>
-<span class="fc" id="L142">                LOGGER.warn(String.format(&quot;Wheel metadata Metadata-Version (%s) has a larger minor version than the highest known &quot;</span>
+<span class="nc" id="L142">                LOGGER.warn(String.format(&quot;Wheel metadata Metadata-Version (%s) has a larger minor version than the highest known &quot;</span>
                                           + &quot;supported Metadata specification (%s) continuing with best effort&quot;, value,
                                           MAX_SUPPORTED_VERSION));
             }

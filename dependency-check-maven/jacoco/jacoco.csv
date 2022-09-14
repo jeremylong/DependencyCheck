@@ -10,4 +10,4 @@ Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,ArtifactTypeExclud
 Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,FilteringDependencyTransitiveNodeVisitor,10,35,2,2,4,10,4,3,2,3
 Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,Retirejs,0,9,0,0,0,3,0,3,0,3
 Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,UpdateMojo,63,21,7,1,19,7,8,2,4,2
-Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,BaseDependencyCheckMojo,1333,2444,236,146,269,486,170,78,11,46
+Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,BaseDependencyCheckMojo,1332,2451,235,147,269,487,169,79,11,46

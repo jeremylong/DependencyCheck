@@ -97,7 +97,7 @@
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>      }
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>      <strong class="jxr_keyword">public</strong> Set&lt;Class&lt;?&gt;&gt; findAllClasses(String packageName) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>          String parsedPackageName = packageName.replaceAll(<span class="jxr_string">"[.]"</span>, File.separator);
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>          String parsedPackageName = packageName.replaceAll(<span class="jxr_string">"[.]"</span>, <span class="jxr_string">"/"</span>);
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>  
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>          Set&lt;Class&lt;?&gt;&gt; classes = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;();
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>          Enumeration&lt;URL&gt; resources = ClassLoader.getSystemClassLoader().getResources(parsedPackageName);

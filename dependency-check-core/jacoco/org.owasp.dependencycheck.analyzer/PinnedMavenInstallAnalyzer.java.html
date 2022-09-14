@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PinnedMavenInstallAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">PinnedMavenInstallAnalyzer.java</span></div><h1>PinnedMavenInstallAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2020 The OWASP Foundation. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURL;
+import com.github.packageurl.PackageURLBuilder;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.concurrent.ThreadSafe;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.regex.Pattern;
+
+/**
+ * Used to analyze Maven pinned dependency files named {@code *install*.json}, a Java Maven dependency lockfile
+ * like Python's {@code requirements.txt}.
+ *
+ * @author dhalperi
+ * @see &lt;a href=&quot;https://github.com/bazelbuild/rules_jvm_external#pinning-artifacts-and-integration-with-bazels-downloader&quot;&gt;rules_jvm_external&lt;/a&gt;
+ */
+@Experimental
+@ThreadSafe
+<span class="fc" id="L58">public class PinnedMavenInstallAnalyzer extends AbstractFileTypeAnalyzer {</span>
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L63">    private static final Logger LOGGER = LoggerFactory.getLogger(PinnedMavenInstallAnalyzer.class);</span>
+
+    /**
+     * The name of the analyzer.
+     */
+    private static final String ANALYZER_NAME = &quot;Pinned Maven install Analyzer&quot;;
+
+    /**
+     * The phase that this analyzer is intended to run in.
+     */
+<span class="fc" id="L73">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;</span>
+
+    /**
+     * Pattern matching files with &quot;install&quot; in the basename and extension &quot;json&quot;.
+     *
+     * &lt;p&gt;This regex is designed to explicitly skip files named {@code install.json} since those are used for
+     * Cloudflare installations and this will save on work.
+     */
+<span class="fc" id="L81">    private static final Pattern MAVEN_INSTALL_JSON_PATTERN = Pattern.compile(&quot;(.+install.*|.*install.+)\\.json&quot;);</span>
+
+    /**
+     * Match any files that look like *install*.json.
+     */
+<span class="fc" id="L86">    private static final FileFilter FILTER = (File file) -&gt; MAVEN_INSTALL_JSON_PATTERN.matcher(file.getName()).matches();</span>
+
+    @Override
+    protected FileFilter getFileFilter() {
+<span class="fc" id="L90">        return FILTER;</span>
+    }
+
+    @Override
+    public String getName() {
+<span class="fc" id="L95">        return ANALYZER_NAME;</span>
+    }
+
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+<span class="fc" id="L100">        return ANALYSIS_PHASE;</span>
+    }
+
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+<span class="fc" id="L105">        return Settings.KEYS.ANALYZER_MAVEN_INSTALL_ENABLED;</span>
+    }
+
+    @Override
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+<span class="fc" id="L110">        LOGGER.debug(&quot;Checking file {}&quot;, dependency.getActualFilePath());</span>
+
+<span class="fc" id="L112">        final File dependencyFile = dependency.getActualFile();</span>
+<span class="pc bpc" id="L113" title="2 of 4 branches missed.">        if (!dependencyFile.isFile() || dependencyFile.length() == 0) {</span>
+<span class="nc" id="L114">            return;</span>
+        }
+
+        DependencyTree tree;
+        try {
+<span class="fc" id="L119">            InstallFile installFile = INSTALL_FILE_READER.readValue(dependencyFile);</span>
+<span class="fc" id="L120">            tree = installFile.dependencyTree;</span>
+<span class="nc" id="L121">        } catch (IOException e) {</span>
+<span class="nc" id="L122">            return;</span>
+<span class="fc" id="L123">        }</span>
+
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        if (tree == null) {</span>
+<span class="fc" id="L126">            return;</span>
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">        } else if (!Objects.equals(tree.autogeneratedSentinel, &quot;THERE_IS_NO_DATA_ONLY_ZUUL&quot;)) {</span>
+<span class="nc" id="L128">            return;</span>
+        }
+
+<span class="fc" id="L131">        engine.removeDependency(dependency);</span>
+
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">        if (!Objects.equals(tree.version, &quot;0.1.0&quot;)) {</span>
+<span class="nc" id="L134">            LOGGER.warn(&quot;Unsupported pinned maven_install.json version {}. Continuing optimistically.&quot;, tree.version);</span>
+        }
+
+<span class="fc" id="L137">        List&lt;MavenDependency&gt; deps = tree.dependencies;</span>
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">        if (deps == null) {</span>
+<span class="nc" id="L139">            deps = Collections.emptyList();</span>
+        }
+
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        for (MavenDependency dep : deps) {</span>
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">            if (dep.coord == null) {</span>
+<span class="nc" id="L144">                LOGGER.warn(&quot;Unexpected null coordinate in {}&quot;, dependency.getActualFilePath());</span>
+<span class="nc" id="L145">                continue;</span>
+            }
+
+<span class="fc" id="L148">            LOGGER.debug(&quot;Analyzing {}&quot;, dep.coord);</span>
+<span class="fc" id="L149">            String[] pieces = dep.coord.split(&quot;:&quot;);</span>
+<span class="pc bpc" id="L150" title="2 of 4 branches missed.">            if (pieces.length &lt; 3 || pieces.length &gt; 5) {</span>
+<span class="nc" id="L151">                LOGGER.warn(&quot;Invalid maven coordinate {}&quot;, dep.coord);</span>
+<span class="nc" id="L152">                continue;</span>
+            }
+
+<span class="fc" id="L155">            String group = pieces[0];</span>
+<span class="fc" id="L156">            String artifact = pieces[1];</span>
+            String version;
+<span class="fc" id="L158">            String classifier = null;</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">            if (pieces.length == 3) {</span>
+<span class="fc" id="L160">                version = pieces[2];</span>
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">            } else if (pieces.length == 4) {</span>
+<span class="nc" id="L162">                classifier = pieces[2];</span>
+<span class="nc" id="L163">                version = pieces[3];</span>
+            } else {
+                // length == 5 as guaranteed above.
+<span class="fc" id="L166">                classifier = pieces[3];</span>
+<span class="fc" id="L167">                version = pieces[4];</span>
+            }
+
+<span class="pc bpc" id="L170" title="1 of 4 branches missed.">            if (&quot;sources&quot;.equals(classifier) || &quot;javadoc&quot;.equals(classifier)) {</span>
+<span class="fc" id="L171">                LOGGER.debug(&quot;Skipping sources jar {}&quot;, dep.coord);</span>
+<span class="fc" id="L172">                continue;</span>
+            }
+
+<span class="fc" id="L175">            final Dependency d = new Dependency(dependency.getActualFile(), true);</span>
+<span class="fc" id="L176">            d.setEcosystem(Ecosystem.JAVA);</span>
+<span class="fc" id="L177">            d.addEvidence(EvidenceType.VENDOR, &quot;project&quot;, &quot;groupid&quot;, group, Confidence.HIGHEST);</span>
+<span class="fc" id="L178">            d.addEvidence(EvidenceType.PRODUCT, &quot;project&quot;, &quot;artifactid&quot;, artifact, Confidence.HIGHEST);</span>
+<span class="fc" id="L179">            d.addEvidence(EvidenceType.VERSION, &quot;project&quot;, &quot;version&quot;, version, Confidence.HIGHEST);</span>
+<span class="fc" id="L180">            d.setName(String.format(&quot;%s:%s&quot;, group, artifact));</span>
+<span class="fc" id="L181">            d.setFilePath(String.format(&quot;%s&gt;&gt;%s&quot;, dependency.getActualFile(), dep.coord));</span>
+<span class="fc" id="L182">            d.setFileName(dep.coord);</span>
+            try {
+<span class="fc" id="L184">                final PackageURLBuilder purl = PackageURLBuilder.aPackageURL()</span>
+<span class="fc" id="L185">                        .withType(PackageURL.StandardTypes.MAVEN)</span>
+<span class="fc" id="L186">                        .withNamespace(group)</span>
+<span class="fc" id="L187">                        .withName(artifact)</span>
+<span class="fc" id="L188">                        .withVersion(version);</span>
+<span class="pc bpc" id="L189" title="1 of 2 branches missed.">                if (classifier != null) {</span>
+<span class="nc" id="L190">                    purl.withQualifier(&quot;classifier&quot;, classifier);</span>
+                }
+<span class="fc" id="L192">                d.addSoftwareIdentifier(new PurlIdentifier(purl.build(), Confidence.HIGHEST));</span>
+<span class="nc" id="L193">            } catch (MalformedPackageURLException e) {</span>
+<span class="nc" id="L194">                d.addSoftwareIdentifier(new GenericIdentifier(&quot;maven_install JSON coord &quot; + dep.coord, Confidence.HIGH));</span>
+<span class="fc" id="L195">            }</span>
+<span class="fc" id="L196">            d.setVersion(version);</span>
+<span class="fc" id="L197">            engine.addDependency(d);</span>
+<span class="fc" id="L198">        }</span>
+<span class="fc" id="L199">    }</span>
+
+    @Override
+    protected void prepareFileTypeAnalyzer(Engine engine) {
+        // No initialization needed.
+<span class="fc" id="L204">    }</span>
+
+    /**
+     * Represents the entire pinned Maven dependency set in an install.json file.
+     *
+     * &lt;p&gt;At the time of writing, the latest version is 0.1.0, and the dependencies are stored in {@code .dependency_tree.dependencies[].coord}.
+     *
+     * &lt;p&gt;The only top-level key we care about is {@code .dependency_tree}.
+     */
+    private static class InstallFile {
+        @JsonProperty(&quot;dependency_tree&quot;)
+        public DependencyTree dependencyTree;
+    }
+
+    /**
+     * Represents the values at {@code .dependency_tree} in the {@link InstallFile install file}.
+     */
+    private static class DependencyTree {
+        /**
+         * A sentinel value placed in the file to indicate that it is an auto-generated pinned maven install file.
+         */
+        @JsonProperty(&quot;__AUTOGENERATED_FILE_DO_NOT_MODIFY_THIS_FILE_MANUALLY&quot;)
+        public String autogeneratedSentinel;
+
+        /**
+         * A list of Maven dependencies made available. Note that this list is transitively closed and pinned to a specific version of each artifact.
+         */
+        @JsonProperty(&quot;dependencies&quot;)
+        public List&lt;MavenDependency&gt; dependencies;
+
+        /**
+         * The file format version.
+         */
+        @JsonProperty(&quot;version&quot;)
+        public String version;
+    }
+
+    /**
+     * Represents a single dependency in the list at {@code .dependency_tree.dependencies}.
+     */
+    private static class MavenDependency {
+        /**
+         * The standard Maven coordinate string {@code group:artifact[:optional classifier][:optional packaging]:version}.
+         */
+        @JsonProperty(&quot;coord&quot;)
+        public String coord;
+    }
+
+    /**
+     * A reusable reader for {@link InstallFile}.
+     */
+    private static final ObjectReader INSTALL_FILE_READER;
+
+    static {
+<span class="fc" id="L258">        ObjectMapper mapper = new ObjectMapper();</span>
+<span class="fc" id="L259">        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);</span>
+<span class="fc" id="L260">        INSTALL_FILE_READER = mapper.readerFor(InstallFile.class);</span>
+<span class="fc" id="L261">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

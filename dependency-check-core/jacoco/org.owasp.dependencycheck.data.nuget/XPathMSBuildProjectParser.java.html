@@ -69,23 +69,28 @@ import java.util.List;
 <span class="fc" id="L69">                final NamedNodeMap attrs = node.getAttributes();</span>
 
 <span class="fc" id="L71">                final String include = attrs.getNamedItem(&quot;Include&quot;).getNodeValue();</span>
-<span class="fc bfc" id="L72" title="All 2 branches covered.">                final String version = attrs.getNamedItem(&quot;Version&quot;) != null</span>
-<span class="fc" id="L73">                        ? attrs.getNamedItem(&quot;Version&quot;).getNodeValue()</span>
-<span class="fc" id="L74">                        : ((Node) xpath.evaluate(&quot;Version&quot;, node, XPathConstants.NODE)).getTextContent();</span>
+<span class="fc" id="L72">                String version = null;</span>
+                
+<span class="fc bfc" id="L74" title="All 2 branches covered.">                if(attrs.getNamedItem(&quot;Version&quot;) != null) {</span>
+<span class="fc" id="L75">                    version = attrs.getNamedItem(&quot;Version&quot;).getNodeValue();</span>
+                }
+<span class="fc bfc" id="L77" title="All 2 branches covered.">                else if(xpath.evaluate(&quot;Version&quot;, node, XPathConstants.NODE) instanceof Node) {</span>
+<span class="fc" id="L78">                    version = ((Node) xpath.evaluate(&quot;Version&quot;, node, XPathConstants.NODE)).getTextContent();</span>
+                }
 
-<span class="pc bpc" id="L76" title="2 of 4 branches missed.">                if (include != null &amp;&amp; version != null) {</span>
-<span class="fc" id="L77">                    final NugetPackageReference npr = new NugetPackageReference();</span>
+<span class="pc bpc" id="L81" title="1 of 4 branches missed.">                if (include != null &amp;&amp; version != null) {</span>
+<span class="fc" id="L82">                    final NugetPackageReference npr = new NugetPackageReference();</span>
 
-<span class="fc" id="L79">                    npr.setId(include);</span>
-<span class="fc" id="L80">                    npr.setVersion(version);</span>
+<span class="fc" id="L84">                    npr.setId(include);</span>
+<span class="fc" id="L85">                    npr.setVersion(version);</span>
 
-<span class="fc" id="L82">                    packages.add(npr);</span>
+<span class="fc" id="L87">                    packages.add(npr);</span>
                 }
             }
 
-<span class="fc" id="L86">            return packages;</span>
-<span class="nc" id="L87">        } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException | MSBuildProjectParseException e) {</span>
-<span class="nc" id="L88">            throw new MSBuildProjectParseException(&quot;Unable to parse MSBuild project file&quot;, e);</span>
+<span class="fc" id="L91">            return packages;</span>
+<span class="nc" id="L92">        } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException | MSBuildProjectParseException e) {</span>
+<span class="nc" id="L93">            throw new MSBuildProjectParseException(&quot;Unable to parse MSBuild project file&quot;, e);</span>
         }
     }
 
