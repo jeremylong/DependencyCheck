@@ -4602,9 +4602,9 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-            org.apache.james:apache-mime4j-core and apache-mime4j-core FPs #3987
+            org.apache.james:apache-mime4j and apache-mime4j-* FPs #3987 #4842
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.apache\.james/apache\-mime4j\-.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.james/apache\-mime4j(\-.+)?@.*$</packageUrl>
         <cpe>cpe:/a:apache:james:</cpe>
     </suppress>
     <suppress base="true">
