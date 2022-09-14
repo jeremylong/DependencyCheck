@@ -2,6 +2,41 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress base="true">
         <notes><![CDATA[
+        obvious fp - currently not returning any CVEs
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/commons\-cli/commons\-cli@.*$</packageUrl>
+        <cpe>cpe:/a:spirit-project:spirit</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        obvious fp - currently not returning any CVEs
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/javax\.xml\.bind/jaxb\-api@.*$</packageUrl>
+        <cpe>cpe:/a:oracle:java_se</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        obvious fp - currently not returning any CVEs
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/joda\-time/joda\-time@.*$</packageUrl>
+        <cpe>cpe:/a:time_project:time</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        obvious fp - currently not returning any CVEs
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/javax\.ws\.rs/javax\.ws\.rs\-api@.*$</packageUrl>
+        <cpe>cpe:/a:oracle:web_services</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        obvious fp - currently not returning any CVEs
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.sonatype\.ossindex/ossindex\-service\-api@.*$</packageUrl>
+        <cpe>cpe:/a:service_project:service</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
             FP per issue #4180, #4188, #4189, #4190
             ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.vaadin/vaadin-spring.*@.*$</packageUrl>
@@ -4536,33 +4571,33 @@
         <cpe>cpe:/a:oracle:projects</cpe>
     </suppress>
     <suppress base="true">
-       <notes><![CDATA[
+        <notes><![CDATA[
        FP per issue #4140, 4256
        ]]></notes>
-       <packageUrl regex="true">^pkg:maven/org\.aspectj/aspectj.*@.*$</packageUrl>
-       <cpe>cpe:/a:vmware:tools</cpe>
+        <packageUrl regex="true">^pkg:maven/org\.aspectj/aspectj.*@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:tools</cpe>
     </suppress>
     <suppress base="true">
-       <notes><![CDATA[
+        <notes><![CDATA[
        FP per issue #4149
        ]]></notes>
-       <packageUrl regex="true">^pkg:maven/org\.apache\.kafka/kafka-log4j-appender@.*$</packageUrl>
-       <cpe>cpe:/a:apache:log4j</cpe>
-       <cpe>cpe:/a:apache:kafka</cpe>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.kafka/kafka-log4j-appender@.*$</packageUrl>
+        <cpe>cpe:/a:apache:log4j</cpe>
+        <cpe>cpe:/a:apache:kafka</cpe>
     </suppress>
     <suppress base="true">
-       <notes><![CDATA[
+        <notes><![CDATA[
        FP per issue #4156
        ]]></notes>
-       <packageUrl regex="true">^pkg:maven/com\.lightbend\.akka\.management/akka-management-cluster-bootstrap_2\.13@.*$</packageUrl>
-       <cpe>cpe:/a:akka:akka</cpe>
+        <packageUrl regex="true">^pkg:maven/com\.lightbend\.akka\.management/akka-management-cluster-bootstrap_2\.13@.*$</packageUrl>
+        <cpe>cpe:/a:akka:akka</cpe>
     </suppress>
     <suppress base="true">
-       <notes><![CDATA[
+        <notes><![CDATA[
        FP per issue #4154
        ]]></notes>
-       <packageUrl regex="true">^pkg:maven/io\.netty/netty-tcnative-boringssl-static@.*$</packageUrl>
-       <cpe>cpe:/a:chromium:chromium</cpe>
+        <packageUrl regex="true">^pkg:maven/io\.netty/netty-tcnative-boringssl-static@.*$</packageUrl>
+        <cpe>cpe:/a:chromium:chromium</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -4698,8 +4733,8 @@
         <notes><![CDATA[
    	    FP per issue #4368, #4384, #4369 async_project:async is an npm package
    	    ]]></notes>
-   	    <packageUrl regex="true">^pkg:maven/.*async.*@.*$</packageUrl>
-   	    <cpe>cpe:/a:async_project:async</cpe>
+        <packageUrl regex="true">^pkg:maven/.*async.*@.*$</packageUrl>
+        <cpe>cpe:/a:async_project:async</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[

@@ -186,10 +186,11 @@ jobs:
           draft: false
           body: |
             ### Changes
-            - The maven plugin now includes pnpm and yarn lock files in the scan by default (#4753).
-            - If a suppression rule is no longer used a log entry will be written (#4685).
-            - Several bug fixes made and suppression rules added.
-            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/47?closed=1).
+            - Add support for Bazel's pinned `maven_install.json` (#4772).
+            - Fixed bug preventing the use of custom report templates (#4800).
+            - Updated several dependencies including upgrades for dependencies with CVEs.
+            - Several bug fixes made and suppression rules were added.
+            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/48?closed=1).
 
       - name: Upload CLI
         id: upload-release-cli
