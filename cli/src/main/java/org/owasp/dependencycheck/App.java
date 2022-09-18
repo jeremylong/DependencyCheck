@@ -657,8 +657,7 @@ public class App {
      * @param verboseLog the path to the verbose log file
      */
     private void prepareLogger(String verboseLog) {
-        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-
+        final LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
         final PatternLayoutEncoder encoder = new PatternLayoutEncoder();
         encoder.setPattern("%d %C:%L%n%-5level - %msg%n");
         encoder.setContext(context);
