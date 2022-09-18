@@ -39,7 +39,6 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.impl.StaticLoggerBinder;
 
 import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
@@ -658,8 +657,7 @@ public class App {
      * @param verboseLog the path to the verbose log file
      */
     private void prepareLogger(String verboseLog) {
-        final StaticLoggerBinder loggerBinder = StaticLoggerBinder.getSingleton();
-        final LoggerContext context = (LoggerContext) loggerBinder.getLoggerFactory();
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
 
         final PatternLayoutEncoder encoder = new PatternLayoutEncoder();
         encoder.setPattern("%d %C:%L%n%-5level - %msg%n");
