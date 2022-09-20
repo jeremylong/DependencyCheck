@@ -50,3 +50,10 @@
    <packageUrl regex="true">^pkg:maven/io\.github\.graphql-java/graphql-java-annotations@.*$</packageUrl>
    <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4863
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.graphql-java/java-dataloader@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
+</suppress>
