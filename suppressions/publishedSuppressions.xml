@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4852
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.graphql-java-kickstart/graphql-java-kickstart@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4803
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/net\.sourceforge\.htmlunit/htmlunit-cssparser@.*$</packageUrl>
+   <cpe>cpe:/a:htmlunit_project:htmlunit</cpe>
+</suppress>
+
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4853
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.graphql-java-kickstart/graphql-java-servlet@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
+</suppress>
+</suppressions>
