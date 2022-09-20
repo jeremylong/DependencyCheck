@@ -2,6 +2,13 @@
 
 <suppress base="true">
    <notes><![CDATA[
+   FP per issue #4852
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.graphql-java-kickstart/graphql-java-kickstart@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
    FP per issue #4803
    ]]></notes>
    <packageUrl regex="true">^pkg:maven/net\.sourceforge\.htmlunit/htmlunit-cssparser@.*$</packageUrl>
