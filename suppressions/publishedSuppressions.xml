@@ -135,4 +135,11 @@
    <packageUrl regex="true">^pkg:maven/com\.vladsch\.flexmark/flexmark-ext-macros@.*$</packageUrl>
    <cpe>cpe:/a:processing:processing</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4726
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jfrog\.artifactory\.client/artifactory-java-client-api@.*$</packageUrl>
+   <cpe>cpe:/a:jfrog:artifactory</cpe>
+</suppress>
 </suppressions>
