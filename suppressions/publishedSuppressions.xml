@@ -121,4 +121,11 @@
    <packageUrl regex="true">^pkg:maven/com\.openhtmltopdf/openhtmltopdf-jsoup-dom-converter@.*$</packageUrl>
    <cpe>cpe:/a:jsoup:jsoup</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4728
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.vladsch\.flexmark/flexmark-ext-xwiki-macros@.*$</packageUrl>
+   <cpe>cpe:/a:xwiki:xwiki</cpe>
+</suppress>
 </suppressions>
