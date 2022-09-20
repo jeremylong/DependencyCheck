@@ -85,3 +85,10 @@
    <packageUrl regex="true">^pkg:maven/org\.eclipse\.microprofile\.config/microprofile-config-api@.*$</packageUrl>
    <cpe>cpe:/a:payara:payara</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4777
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.james/apache-mime4j@.*$</packageUrl>
+   <cpe>cpe:/a:apache:james</cpe>
+</suppress>
