@@ -107,4 +107,11 @@
    <packageUrl regex="true">^pkg:maven/org\.mockito/mockito-junit-jupiter@.*$</packageUrl>
    <cpe>cpe:/a:junit:junit4</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4735
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.robolectric/junit@.*$</packageUrl>
+   <cpe>cpe:/a:junit:junit4</cpe>
+</suppress>
 </suppressions>
