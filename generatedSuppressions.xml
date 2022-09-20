@@ -64,3 +64,10 @@
    <packageUrl regex="true">^pkg:maven/com\.graphql-java-kickstart/graphql-java-tools@.*$</packageUrl>
    <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4806
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.vaadin\.addon/easyuploads@.*$</packageUrl>
+   <cpe>cpe:/a:vaadin:vaadin</cpe>
+</suppress>
