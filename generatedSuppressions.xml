@@ -92,3 +92,10 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.james/apache-mime4j@.*$</packageUrl>
    <cpe>cpe:/a:apache:james</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4755
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.postgresql/r2dbc-postgresql@.*$</packageUrl>
+   <cpe>cpe:/a:postgresql:postgresql</cpe>
+</suppress>
