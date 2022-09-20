@@ -71,3 +71,10 @@
    <packageUrl regex="true">^pkg:maven/org\.vaadin\.addon/easyuploads@.*$</packageUrl>
    <cpe>cpe:/a:vaadin:vaadin</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4790
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/ch\.qos\.logback/logback-classic@.*$</packageUrl>
+   <cpe>cpe:/a:qos:slf4j</cpe>
+</suppress>
