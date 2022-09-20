@@ -114,4 +114,11 @@
    <packageUrl regex="true">^pkg:maven/org\.robolectric/junit@.*$</packageUrl>
    <cpe>cpe:/a:junit:junit4</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4729
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.openhtmltopdf/openhtmltopdf-jsoup-dom-converter@.*$</packageUrl>
+   <cpe>cpe:/a:jsoup:jsoup</cpe>
+</suppress>
 </suppressions>
