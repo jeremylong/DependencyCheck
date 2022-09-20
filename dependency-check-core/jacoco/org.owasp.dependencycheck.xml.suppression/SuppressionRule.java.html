@@ -656,20 +656,20 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
     public String toString() {
 <span class="fc" id="L657">        final StringBuilder sb = new StringBuilder(64);</span>
 <span class="fc" id="L658">        sb.append(&quot;SuppressionRule{&quot;);</span>
-<span class="pc bpc" id="L659" title="1 of 2 branches missed.">        if (until != null) {</span>
-<span class="nc" id="L660">            final String dt = DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(until);</span>
-<span class="nc" id="L661">            sb.append(&quot;until=&quot;).append(dt).append(',');</span>
+<span class="fc bfc" id="L659" title="All 2 branches covered.">        if (until != null) {</span>
+<span class="fc" id="L660">            final String dt = DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(until);</span>
+<span class="fc" id="L661">            sb.append(&quot;until=&quot;).append(dt).append(',');</span>
         }
 <span class="pc bpc" id="L663" title="1 of 2 branches missed.">        if (filePath != null) {</span>
 <span class="nc" id="L664">            sb.append(&quot;filePath=&quot;).append(filePath).append(',');</span>
         }
-<span class="pc bpc" id="L666" title="1 of 2 branches missed.">        if (sha1 != null) {</span>
-<span class="nc" id="L667">            sb.append(&quot;sha1=&quot;).append(sha1).append(',');</span>
+<span class="fc bfc" id="L666" title="All 2 branches covered.">        if (sha1 != null) {</span>
+<span class="fc" id="L667">            sb.append(&quot;sha1=&quot;).append(sha1).append(',');</span>
         }
 <span class="pc bpc" id="L669" title="1 of 2 branches missed.">        if (packageUrl != null) {</span>
 <span class="nc" id="L670">            sb.append(&quot;packageUrl=&quot;).append(packageUrl).append(',');</span>
         }
-<span class="pc bpc" id="L672" title="1 of 2 branches missed.">        if (gav != null) {</span>
+<span class="fc bfc" id="L672" title="All 2 branches covered.">        if (gav != null) {</span>
 <span class="fc" id="L673">            sb.append(&quot;gav=&quot;).append(gav).append(',');</span>
         }
 <span class="pc bpc" id="L675" title="1 of 4 branches missed.">        if (cpe != null &amp;&amp; !cpe.isEmpty()) {</span>
