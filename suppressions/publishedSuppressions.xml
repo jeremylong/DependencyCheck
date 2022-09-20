@@ -79,4 +79,11 @@
    <packageUrl regex="true">^pkg:maven/ch\.qos\.logback/logback-classic@.*$</packageUrl>
    <cpe>cpe:/a:qos:slf4j</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4781
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.eclipse\.microprofile\.config/microprofile-config-api@.*$</packageUrl>
+   <cpe>cpe:/a:payara:payara</cpe>
+</suppress>
 </suppressions>
