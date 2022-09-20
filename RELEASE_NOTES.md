@@ -1,5 +1,12 @@
 # Release Notes
 
+## [Version 7.2.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.2.1) (2022-09-20)
+
+**Changes**
+
+- Fixed logging issue (#4846).
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/49?closed=1).
+
 ## [Version 7.2.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.2.0) (2022-09-14)
 
 **Changes**
