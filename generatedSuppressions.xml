@@ -14,3 +14,11 @@
    <packageUrl regex="true">^pkg:maven/net\.sourceforge\.htmlunit/htmlunit-cssparser@.*$</packageUrl>
    <cpe>cpe:/a:htmlunit_project:htmlunit</cpe>
 </suppress>
+
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4853
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.graphql-java-kickstart/graphql-java-servlet@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
+</suppress>
