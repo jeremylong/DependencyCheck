@@ -1,5 +1,15 @@
 # Release Notes
 
+## [Version 7.2.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.2.0) (2022-09-14)
+
+**Changes**
+
+- Add support for Bazel's pinned `maven_install.json` (#4772).
+- Fixed bug preventing the use of custom report templates (#4800).
+- Updated several dependencies including upgrades for dependencies with CVEs.
+- Several bug fixes made and suppression rules were added.
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/48?closed=1).
+
 ## [Version 7.1.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.1.2) (2022-08-20)
 
 **Changes**
