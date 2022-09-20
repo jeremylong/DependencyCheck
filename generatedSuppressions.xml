@@ -99,3 +99,10 @@
    <packageUrl regex="true">^pkg:maven/org\.postgresql/r2dbc-postgresql@.*$</packageUrl>
    <cpe>cpe:/a:postgresql:postgresql</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4754
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.mockito/mockito-junit-jupiter@.*$</packageUrl>
+   <cpe>cpe:/a:junit:junit4</cpe>
+</suppress>
