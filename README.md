@@ -81,6 +81,10 @@ The dependency-check plugin can be configured using the following:
 </project>
 ```
 
+### Gradle Plugin
+
+For instructions on the use of the Gradle Plugin, please see the [dependency-check-gradle github page](http://jeremylong.github.io/DependencyCheck/dependency-check-gradle).
+
 ### Ant Task
 
 For instructions on the use of the Ant Task, please see the [dependency-check-ant github page](http://jeremylong.github.io/DependencyCheck/dependency-check-ant).
