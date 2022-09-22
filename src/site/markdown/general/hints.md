@@ -65,5 +65,6 @@ Please see the appropriate configuration option in each interfaces configuration
 
 -  [Command Line Tool](../dependency-check-cli/arguments.html)
 -  [Maven Plugin](../dependency-check-maven/configuration.html)
+-  [Gradle Plugin](../dependency-check-gradle/configuration.html)
 -  [Ant Task](../dependency-check-ant/configuration.html)
 -  [Jenkins Plugin](../dependency-check-jenkins/index.html)
