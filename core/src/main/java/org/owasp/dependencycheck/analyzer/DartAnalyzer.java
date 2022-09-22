@@ -28,13 +28,17 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceType;
-import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import us.springett.parsers.cpe.Cpe;
+import us.springett.parsers.cpe.CpeBuilder;
+import us.springett.parsers.cpe.exceptions.CpeValidationException;
+import us.springett.parsers.cpe.values.Part;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.File;
@@ -215,13 +219,12 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
 
         dependency.addSoftwareIdentifier(new PurlIdentifier(packageURL, Confidence.HIGHEST));
 
-        dependency.addEvidence(EvidenceType.PRODUCT, YAML_FILE, "name", name, Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.PRODUCT, file.getName(), "name", name, Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VENDOR, file.getName(), "name", name, Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.VENDOR, file.getName(), "name", "dart", Confidence.HIGHEST);
         if (!version.isEmpty()) {
-            dependency.addEvidence(EvidenceType.VERSION, YAML_FILE, "version", version, Confidence.MEDIUM);
+            dependency.addEvidence(EvidenceType.VERSION, file.getName(), "version", version, Confidence.MEDIUM);
         }
-
-        String cpeString = String.format("cpe:2.3:a:*:%s:%s:*:*:*:*:*:*:*", name, version.isEmpty() ? "*" : version);
-        dependency.addSoftwareIdentifier(new GenericIdentifier(cpeString, Confidence.HIGHEST));
 
         final String packagePath = String.format("%s:%s", name, version);
         dependency.setSha1sum(Checksum.getSHA1Checksum(packagePath));
