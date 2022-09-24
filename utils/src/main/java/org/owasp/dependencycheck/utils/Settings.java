@@ -282,6 +282,24 @@ public final class Settings {
          * The password used when connecting to the suppressionFiles.
          */
         public static final String SUPPRESSION_FILE_PASSWORD = "suppression.file.password";
+
+        /**
+         * The key for the hosted suppressions file URL.
+         */
+        public static final String HOSTED_SUPPRESSIONS_URL = "hosted.suppressions.url";
+
+        /**
+         * The properties key for defining whether the hosted suppressions file will
+         * be updated regardless of the autoupdate settings.
+         */
+        public static final String HOSTED_SUPPRESSIONS_FORCEUPDATE = "hosted.suppressions.forceupdate";
+
+        /**
+         * The properties key to control the skipping of the check for hosted suppressions file
+         * updates.
+         */
+        public static final String HOSTED_SUPPRESSIONS_VALID_FOR_HOURS = "hosted.suppressions.validforhours";
+
         /**
          * The key for the hint file.
          */
