@@ -1,12 +1,11 @@
-name: Delete workflow runs
+name: False Positive Cleanup
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 1 * *'
-# Run monthly, at 00:00 on the 1st day of month.
+    - cron: '0 8 * * *'
 
 jobs:
-  del_runs:
+  cleanup:
     runs-on: ubuntu-latest
     steps:
       - name: Delete workflow runs
@@ -18,5 +17,3 @@ jobs:
           keep_minimum_runs: 0
           delete_workflow_pattern: 'false-positive'
           delete_run_by_conclusion_pattern: 'skipped'
-          dry_run: true
-          
