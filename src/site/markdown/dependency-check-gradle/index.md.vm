@@ -38,7 +38,7 @@ You can run dependency-check by executing:
 ./gradlew dependencyCheckAnalyze
 ```
 
-The reports will be generated automatically under `build/reports` folder.
+The reports will be generated automatically under `${buildDir}/reports` folder.
 
 $H$H Task Configuration
 The OWASP dependency-check-gradle plugin contains three tasks: [dependencyCheckAnalyze](configuration.html),
