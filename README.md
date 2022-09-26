@@ -130,6 +130,28 @@ On Windows
 
 Then load the resulting 'dependency-check-report.html' into your favorite browser.
 
+### IntelliJ Idea
+To be able to debug your tests in IntelliJ Idea, you can introduce a maven configuration that executes your test and enables debugging with breakpoints etc.  
+Basically, you do what´s described in https://www.jetbrains.com/help/idea/work-with-tests-in-maven.html#run_single_test and set the `forkCount` to 0, otherwise debugging won´t work.  
+
+Step by step:  
+- `Run -> Edit Configurations`
+- `+ (Add new configuration) -> Maven`
+- Give the Configuration a name, e.g. `Run tests`
+- Choose working directory, e.g. `core`
+- In `command line`, enter `-DforkCount=0 -f pom.xml -s ../settings.xml test`
+- Press `OK`
+- `Run -> Debug`, then choose the newly created run configuration
+
+IntelliJ will now execute the test run for the `core` subproject with enabled debugging. Breakpoints set anywhere in code should work.
+
+#### Only test one function or one class
+If you would like to speed up your turnaround cycle times, you can also just test one function or one test class.  
+This works by adding `-Dtest=MyTestClass` or `-Dtest=MyTestClass#myTestFunction` to the run configuration. The complete command line in the run configuration then would be:
+
+`-Dtest=MyTestClass#myTestFunction -DforkCount=0 -f pom.xml -s ../settings.xml test`
+
+
 ### Docker
 
 In the following example it is assumed that the source to be checked is in the current working directory and the reports will be written to `$(pwd)/odc-reports`. Persistent data and cache directories are used, allowing you to destroy the container after running.
