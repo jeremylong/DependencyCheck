@@ -130,6 +130,12 @@ On Windows
 
 Then load the resulting 'dependency-check-report.html' into your favorite browser.
 
+#### Building without running tests
+To speed up your turnaround cycle times, you can also compile without running the tests each time:  
+`mvn -s settings.xml install -Dmaven.test.skip=true -Dmaven.test.skip.exec`
+
+Please remember to at least run the tests once before opening the PR. :) 
+
 ### IntelliJ Idea
 To be able to debug your tests in IntelliJ Idea, you can introduce a maven configuration that executes your test and enables debugging with breakpoints etc.  
 Basically, you do what´s described in https://www.jetbrains.com/help/idea/work-with-tests-in-maven.html#run_single_test and set the `forkCount` to 0, otherwise debugging won´t work.  
