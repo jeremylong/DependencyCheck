@@ -2,6 +2,9 @@ name: Purge Cache
 
 on: workflow_dispatch
 
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
 jobs:
   build:
     name: Purge GitHub Cache
