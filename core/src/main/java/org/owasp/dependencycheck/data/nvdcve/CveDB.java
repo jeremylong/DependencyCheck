@@ -224,7 +224,11 @@ public final class CveDB implements AutoCloseable {
         /**
          * Key for SQL Statement.
          */
-        ADD_DICT_CPE
+        ADD_DICT_CPE,
+        /**
+         * Key for SQL Statement.
+         */
+        MERGE_KNOWN_VULNERABLE
     }
 
     /**
@@ -997,6 +1001,46 @@ public final class CveDB implements AutoCloseable {
         try (Connection conn = databaseManager.getConnection();
                 PreparedStatement deleteVulnerability = getPreparedStatement(conn, DELETE_VULNERABILITY, cve)) {
             deleteVulnerability.executeUpdate();
+        }
+    }
+
+    public void updateKnownExploitedVulnerabilities(List<org.owasp.dependencycheck.data.knownexploited.json.Vulnerability> vulnerabilities) throws DatabaseException, SQLException {
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement mergeKnownVulnerability = getPreparedStatement(conn, MERGE_KNOWN_VULNERABLE)) {
+            int ctr = 0;
+            for (org.owasp.dependencycheck.data.knownexploited.json.Vulnerability v : vulnerabilities) {
+                mergeKnownVulnerability.setString(1, v.getCveID());
+                addNullableStringParameter(mergeKnownVulnerability, 2, v.getVendorProject());
+                addNullableStringParameter(mergeKnownVulnerability, 3, v.getProduct());
+                addNullableStringParameter(mergeKnownVulnerability, 4, v.getVulnerabilityName());
+                addNullableStringParameter(mergeKnownVulnerability, 5, v.getDateAdded());
+                addNullableStringParameter(mergeKnownVulnerability, 6, v.getShortDescription());
+                addNullableStringParameter(mergeKnownVulnerability, 7, v.getRequiredAction());
+                addNullableStringParameter(mergeKnownVulnerability, 8, v.getDueDate());
+                addNullableStringParameter(mergeKnownVulnerability, 9, v.getNotes());
+                if (isBatchInsertEnabled()) {
+                    mergeKnownVulnerability.addBatch();
+                    ctr++;
+                    if (ctr >= getBatchSize()) {
+                        mergeKnownVulnerability.executeBatch();
+                        ctr = 0;
+                    }
+                } else {
+                    try {
+                        mergeKnownVulnerability.execute();
+                    } catch (SQLException ex) {
+                        if (ex.getMessage().contains("Duplicate entry")) {
+                            final String msg = String.format("Duplicate known exploited vulnerability key identified in '%s'", v.getCveID());
+                            LOGGER.info(msg, ex);
+                        } else {
+                            throw ex;
+                        }
+                    }
+                }
+            }
+            if (isBatchInsertEnabled()) {
+                mergeKnownVulnerability.executeBatch();
+            }
         }
     }
 

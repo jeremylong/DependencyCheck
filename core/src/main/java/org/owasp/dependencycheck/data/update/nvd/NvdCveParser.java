@@ -80,7 +80,8 @@ public final class NvdCveParser {
      *
      * @param file the NVD JSON file to parse
      * @throws UpdateException thrown if the file could not be read
-     * @throws CorruptedDatastreamException thrown if the file was found to be a corrupted download (ZipException or premature EOF)
+     * @throws CorruptedDatastreamException thrown if the file was found to be a
+     * corrupted download (ZipException or premature EOF)
      */
     public void parse(File file) throws UpdateException, CorruptedDatastreamException {
         LOGGER.debug("Parsing " + file.getName());
@@ -105,7 +106,7 @@ public final class NvdCveParser {
             LOGGER.error(ex.getMessage());
             throw new UpdateException("Unable to find the NVD CVE file, `" + file + "`, to parse", ex);
         } catch (ZipException | EOFException ex) {
-            throw new CorruptedDatastreamException("Error reading parsing NVD CVE file", ex);
+            throw new CorruptedDatastreamException("Error parsing NVD CVE file", ex);
         } catch (IOException ex) {
             LOGGER.error("Error reading NVD JSON data: {}", file);
             LOGGER.debug("Error extracting the NVD JSON data from: " + file, ex);
@@ -113,7 +114,13 @@ public final class NvdCveParser {
         }
     }
 
-    void init(JsonParser parser) throws IOException {
+    /**
+     * Naive implementation that skips to the first JSON Array
+     *
+     * @param parser the parser to skip to first array
+     * @throws IOException thrown if there is an error?
+     */
+    private void init(JsonParser parser) throws IOException {
         JsonToken nextToken = parser.nextToken();
         if (nextToken != JsonToken.START_OBJECT) {
             throw new IOException("Expected " + JsonToken.START_OBJECT + ", got " + nextToken);

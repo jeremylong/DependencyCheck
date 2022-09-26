@@ -224,6 +224,15 @@ public final class Settings {
          */
         public static final String CPE_URL = "cpe.url";
         /**
+         * The properties key for the URL to retrieve the Known Exploited Vulnerabilities..
+         */
+        public static final String KEV_URL = "kev.url";
+        /**
+         * The properties key to control the skipping of the check for Known Exploited
+         * Vulnerabilities updates.
+         */
+        public static final String KEV_CHECK_VALID_FOR_HOURS = "kev.check.validforhours";
+        /**
          * Whether or not if using basic auth with a proxy the system setting
          * 'jdk.http.auth.tunneling.disabledSchemes' should be set to an empty
          * string.
@@ -303,7 +312,7 @@ public final class Settings {
         /**
          * The properties key for whether experimental analyzers are loaded.
          */
-        public static final String ANALYZER_RETIRED_ENABLED = "analyzer.retired.enabled";
+        public static final String ANALYZER_RETIRED_ENABLED = "analyzer.retired.enabled";        
         /**
          * The properties key for whether the Archive analyzer is enabled.
          */

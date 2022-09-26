@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import com.google.common.base.Strings;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -313,6 +314,67 @@ public final class H2Functions {
         return ret;
     }
     //CSON: ParameterNumber
+
+    /**
+     * Update or insert a known exploited vulnerability.
+     *
+     * @param conn the connection
+     * @param cveId the id
+     * @param vendorProject the vendor/project
+     * @param product the product
+     * @param vulnerabilityName the vulnerability name
+     * @param dateAdded the date added
+     * @param shortDescription the short description
+     * @param requiredAction the action required
+     * @param dueDate the due date
+     * @param notes notes
+     * @throws SQLException
+     */
+    public static void updateKnownExploited(final Connection conn, String cveId,
+            String vendorProject, String product, String vulnerabilityName,
+            String dateAdded, String shortDescription, String requiredAction,
+            String dueDate, String notes) throws SQLException {
+
+        String id = "";
+        try (PreparedStatement selectVulnerabilityId = conn.prepareStatement("SELECT cveID FROM knownExploited cveID WHERE cveID=?")) {
+            selectVulnerabilityId.setString(1, cveId);
+            try (ResultSet rs = selectVulnerabilityId.executeQuery()) {
+                if (rs.next()) {
+                    id = rs.getString(1);
+                }
+            }
+        }
+        PreparedStatement merge = null;
+        try {
+            if (Strings.isNullOrEmpty(id)) {//insert
+                merge = conn.prepareStatement("INSERT INTO knownExploited ("
+                        + "vendorProject, product, vulnerabilityName, "
+                        + "dateAdded, shortDescription, requiredAction, "
+                        + "dueDate, notes, cveID) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            } else {//update
+                merge = conn.prepareStatement("UPDATE knownExploited SET "
+                        + "vendorProject=?, product=?, vulnerabilityName=?, "
+                        + "dateAdded=?, shortDescription=?, requiredAction=?, "
+                        + "dueDate=?, notes=? WHERE cveID=?");
+            }
+
+            setStringOrNull(merge, 1, vendorProject);
+            setStringOrNull(merge, 2, product);
+            setStringOrNull(merge, 3, vulnerabilityName);
+            setStringOrNull(merge, 4, dateAdded);
+            setStringOrNull(merge, 5, shortDescription);
+            setStringOrNull(merge, 6, requiredAction);
+            setStringOrNull(merge, 7, dueDate);
+            setStringOrNull(merge, 8, notes);
+            setStringOrNull(merge, 9, cveId);
+            merge.execute();
+        } finally {
+            if (merge != null) {
+                merge.close();
+            }
+        }
+    }
 
     /**
      * Sets a parameter value on a prepared statement with null checks.
