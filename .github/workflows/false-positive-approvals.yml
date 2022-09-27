@@ -24,7 +24,7 @@ jobs:
           npm install fs
       - name: Commit Suppression Rule
         id: fp-ops-commit
-        uses: actions/github-script@v6.2.0
+        uses: actions/github-script@v6.3.0
         with:
           script: |
             const { execSync } = require("child_process");
@@ -152,7 +152,7 @@ jobs:
           target-folder: suppressions
       - name: Message failure
         if: ${{ failure() || steps.fp-ops-commit.outputs.failed }}
-        uses: actions/github-script@v6.2.0
+        uses: actions/github-script@v6.3.0
         with:
           script: |
             github.rest.issues.createComment({
