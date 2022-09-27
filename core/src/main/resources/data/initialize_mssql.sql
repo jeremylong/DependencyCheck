@@ -26,6 +26,8 @@ if exists (SELECT 1 FROM sysobjects WHERE name='insert_software' AND xtype='P')
     drop procedure insert_software;    
 if exists (SELECT 1 FROM sysobjects WHERE name='knownExploited' AND xtype='U')
     drop table knownExploited;
+if exists (SELECT 1 FROM sysobjects WHERE name='merge_knownexpoited' AND xtype='P')
+    drop procedure merge_knownexpoited;    
 
 CREATE TABLE vulnerability (id int identity(1,1) PRIMARY KEY, cve VARCHAR(20) UNIQUE,
 	description VARCHAR(8000), v2Severity VARCHAR(20), v2ExploitabilityScore DECIMAL(3,1), 
@@ -215,6 +217,31 @@ BEGIN
             @versionStartExcluding, @versionStartIncluding, @vulnerable);
 END;
 
+GO
+
+CREATE PROCEDURE merge_knownexpoited (@cveID varchar(20),
+    @vendorProject VARCHAR(255),
+    @product VARCHAR(255),
+    @vulnerabilityName VARCHAR(500),
+    @dateAdded CHAR(10),
+    @shortDescription VARCHAR(2000),
+    @requiredAction VARCHAR(1000),
+    @dueDate CHAR(10),
+    @notes VARCHAR(2000))
+AS
+BEGIN
+IF EXISTS(SELECT * FROM knownExploited WHERE cveID=@cveID)
+    UPDATE knownExploited
+    SET vendorProject=@vendorProject, product=@product, vulnerabilityName=@vulnerabilityName, 
+        dateAdded=@dateAdded, shortDescription=@shortDescription, requiredAction=@requiredAction, 
+        dueDate=@dueDate, notes=@notes
+    WHERE cveID=@cveID
+ELSE
+    INSERT INTO knownExploited (vendorProject, product, vulnerabilityName,
+        dateAdded, shortDescription, requiredAction, dueDate, notes, cveID) 
+    VALUES (@vendorProject, @product, @vulnerabilityName,
+        @dateAdded, @shortDescription, @requiredAction, @dueDate, @notes, @cveID)
+END;
 
 GO
 

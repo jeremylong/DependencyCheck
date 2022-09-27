@@ -330,7 +330,7 @@ public final class H2Functions {
      * @param notes notes
      * @throws SQLException
      */
-    public static void updateKnownExploited(final Connection conn, String cveId,
+    public static void mergeKnownExploited(final Connection conn, String cveId,
             String vendorProject, String product, String vulnerabilityName,
             String dateAdded, String shortDescription, String requiredAction,
             String dueDate, String notes) throws SQLException {
