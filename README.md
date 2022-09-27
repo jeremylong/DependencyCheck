@@ -132,7 +132,7 @@ Then load the resulting 'dependency-check-report.html' into your favorite browse
 
 #### Building without running tests
 To speed up your turnaround cycle times, you can also compile without running the tests each time:  
-`mvn -s settings.xml install -Dmaven.test.skip=true -Dmaven.test.skip.exec`
+`mvn -s settings.xml install -Dmaven.test.skip=true`
 
 Please remember to at least run the tests once before opening the PR. :) 
 
