@@ -43,3 +43,4 @@ org.owasp.dependencycheck.analyzer.VersionFilterAnalyzer
 org.owasp.dependencycheck.analyzer.OssIndexAnalyzer
 org.owasp.dependencycheck.analyzer.PerlCpanfileAnalyzer
 org.owasp.dependencycheck.analyzer.PinnedMavenInstallAnalyzer
+org.owasp.dependencycheck.analyzer.KnownExploitedVulnerabilityAnalyzer

@@ -228,6 +228,10 @@ public final class CveDB implements AutoCloseable {
         /**
          * Key for SQL Statement.
          */
+        SELECT_KNOWN_EXPLOITED_VULNERABILITIES,
+        /**
+         * Key for SQL Statement.
+         */
         MERGE_KNOWN_VULNERABLE
     }
 
@@ -1418,6 +1422,38 @@ public final class CveDB implements AutoCloseable {
         } catch (SQLException ex) {
             LOGGER.error("Unable to add CPE dictionary entry", ex);
         }
+    }
+
+    /**
+     * Returns a map of known exploited vulnerabilities.
+     *
+     * @return a map of known exploited vulnerabilities
+     */
+    public Map<String, org.owasp.dependencycheck.data.knownexploited.json.Vulnerability> getknownExploitedVulnerabilities() {
+        final Map<String, org.owasp.dependencycheck.data.knownexploited.json.Vulnerability> known = new HashMap<>();
+
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement ps = getPreparedStatement(conn, SELECT_KNOWN_EXPLOITED_VULNERABILITIES);
+                ResultSet rs = ps.executeQuery()) {
+    
+            while (rs.next()) {
+                org.owasp.dependencycheck.data.knownexploited.json.Vulnerability kev = new org.owasp.dependencycheck.data.knownexploited.json.Vulnerability();
+                kev.setCveID(rs.getString(1));
+                kev.setVendorProject(rs.getString(2));
+                kev.setProduct(rs.getString(3));
+                kev.setVulnerabilityName(rs.getString(4));
+                kev.setDateAdded(rs.getString(5));
+                kev.setShortDescription(rs.getString(6));
+                kev.setRequiredAction(rs.getString(7));
+                kev.setDueDate(rs.getString(8));
+                kev.setNotes(rs.getString(9));
+                known.put(kev.getCveID(), kev);
+            }
+            
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+        return known;
     }
 
     /**

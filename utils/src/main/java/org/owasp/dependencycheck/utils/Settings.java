@@ -305,6 +305,12 @@ public final class Settings {
          * The properties key for whether the Jar Analyzer is enabled.
          */
         public static final String ANALYZER_JAR_ENABLED = "analyzer.jar.enabled";
+        
+        /**
+         * The properties key for whether the Known Exploited Vulnerability Analyzer is enabled.
+         */
+        public static final String ANALYZER_KNOWN_EXPLOITED_ENABLED = "analyzer.knownexploited.enabled";
+        
         /**
          * The properties key for whether experimental analyzers are loaded.
          */
