@@ -145,6 +145,7 @@ public class ReportTool {
      *
      * @param d the dependency
      * @param vuln the vulnerability
+     * @param knownExploited true if the vulnerability is known to be exploited
      * @return the short description
      */
     private String buildShortDescription(Dependency d, Vulnerability vuln, boolean knownExploited) {
@@ -170,7 +171,8 @@ public class ReportTool {
         return sb.toString();
     }
 
-    private String buildDescription(String description, org.owasp.dependencycheck.data.knownexploited.json.Vulnerability knownExploitedVulnerability) {
+    private String buildDescription(String description,
+            org.owasp.dependencycheck.data.knownexploited.json.Vulnerability knownExploitedVulnerability) {
         final StringBuilder sb = new StringBuilder();
         if (knownExploitedVulnerability != null) {
             sb.append("CISA Known Exploited Vulnerability\n");

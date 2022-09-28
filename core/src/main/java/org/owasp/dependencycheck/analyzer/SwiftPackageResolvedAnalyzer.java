@@ -160,7 +160,7 @@ public class SwiftPackageResolvedAnalyzer extends AbstractFileTypeAnalyzer {
             final JsonObject file = resolved.readObject();
             final int fileVersion = file.getInt("version");
 
-            switch(fileVersion) {
+            switch (fileVersion) {
                 case 1:
                     analyzeSpmResolvedDependenciesV1(spmResolved, engine, file);
                     break;
@@ -174,8 +174,8 @@ public class SwiftPackageResolvedAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Analyzes the version 1 of the Package.resolved file to extract evidence for the
-     * dependency.
+     * Analyzes the version 1 of the Package.resolved file to extract evidence
+     * for the dependency.
      *
      * @param spmResolved the dependency to analyze
      * @param engine the analysis engine
@@ -209,8 +209,8 @@ public class SwiftPackageResolvedAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Analyzes the version 2 of the Package.resolved file to extract evidence for the
-     * dependency.
+     * Analyzes the version 2 of the Package.resolved file to extract evidence
+     * for the dependency.
      *
      * @param spmResolved the dependency to analyze
      * @param engine the analysis engine

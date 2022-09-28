@@ -586,7 +586,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @return true if there was evidence within the pom that we could use;
      * otherwise false
      */
-    public static boolean setPomEvidence(Dependency dependency, Model pom, List<ClassNameInformation> classes, boolean isMainPom) {
+    public static boolean setPomEvidence(Dependency dependency, Model pom,
+            List<ClassNameInformation> classes, boolean isMainPom) {
         if (pom == null) {
             return false;
         }

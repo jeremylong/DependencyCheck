@@ -190,10 +190,10 @@
                     "DateAdded": "$enc.json($vuln.getKnownExploitedVulnerability().getDateAdded())",
                     #end
                     #if($vuln.getKnownExploitedVulnerability().getShortDescription())
-                    "Description: "$enc.json($vuln.getKnownExploitedVulnerability().getShortDescription())",
+                    "Description": "$enc.json($vuln.getKnownExploitedVulnerability().getShortDescription())",
                     #end
                     #if($vuln.getKnownExploitedVulnerability().getRequiredAction())
-                    "RequiredAction: "$enc.json($vuln.getKnownExploitedVulnerability().getRequiredAction())",
+                    "RequiredAction": "$enc.json($vuln.getKnownExploitedVulnerability().getRequiredAction())",
                     #end
                     #if($vuln.getKnownExploitedVulnerability().getDueDate())
                     "DueDate": "$enc.json($vuln.getKnownExploitedVulnerability().getDueDate())",

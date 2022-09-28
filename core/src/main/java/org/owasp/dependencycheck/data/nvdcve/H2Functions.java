@@ -315,6 +315,7 @@ public final class H2Functions {
     }
     //CSON: ParameterNumber
 
+    //CSOFF: ParameterNumber
     /**
      * Update or insert a known exploited vulnerability.
      *
@@ -375,6 +376,7 @@ public final class H2Functions {
             }
         }
     }
+    //CSON: ParameterNumber
 
     /**
      * Sets a parameter value on a prepared statement with null checks.

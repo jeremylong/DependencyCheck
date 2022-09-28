@@ -133,7 +133,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INITIAL;
 
     /**
-     * Make java compiler happy
+     * Make java compiler happy.
      */
     public ArchiveAnalyzer() {
     }

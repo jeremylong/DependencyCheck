@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,11 +46,12 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
- * Used to analyze Maven pinned dependency files named {@code *install*.json}, a Java Maven dependency lockfile
- * like Python's {@code requirements.txt}.
+ * Used to analyze Maven pinned dependency files named {@code *install*.json}, a
+ * Java Maven dependency lockfile like Python's {@code requirements.txt}.
  *
  * @author dhalperi
- * @see <a href="https://github.com/bazelbuild/rules_jvm_external#pinning-artifacts-and-integration-with-bazels-downloader">rules_jvm_external</a>
+ * @see
+ * <a href="https://github.com/bazelbuild/rules_jvm_external#pinning-artifacts-and-integration-with-bazels-downloader">rules_jvm_external</a>
  */
 @Experimental
 @ThreadSafe
@@ -73,10 +73,13 @@ public class PinnedMavenInstallAnalyzer extends AbstractFileTypeAnalyzer {
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
 
     /**
-     * Pattern matching files with "install" in the basename and extension "json".
+     * Pattern matching files with "install" in the basename and extension
+     * "json".
      *
-     * <p>This regex is designed to explicitly skip files named {@code install.json} since those are used for
-     * Cloudflare installations and this will save on work.
+     * <p>
+     * This regex is designed to explicitly skip files named
+     * {@code install.json} since those are used for Cloudflare installations
+     * and this will save on work.
      */
     private static final Pattern MAVEN_INSTALL_JSON_PATTERN = Pattern.compile("(.+install.*|.*install.+)\\.json");
 
@@ -114,9 +117,9 @@ public class PinnedMavenInstallAnalyzer extends AbstractFileTypeAnalyzer {
             return;
         }
 
-        DependencyTree tree;
+        final DependencyTree tree;
         try {
-            InstallFile installFile = INSTALL_FILE_READER.readValue(dependencyFile);
+            final InstallFile installFile = INSTALL_FILE_READER.readValue(dependencyFile);
             tree = installFile.dependencyTree;
         } catch (IOException e) {
             return;
@@ -146,25 +149,29 @@ public class PinnedMavenInstallAnalyzer extends AbstractFileTypeAnalyzer {
             }
 
             LOGGER.debug("Analyzing {}", dep.coord);
-            String[] pieces = dep.coord.split(":");
+            final String[] pieces = dep.coord.split(":");
             if (pieces.length < 3 || pieces.length > 5) {
                 LOGGER.warn("Invalid maven coordinate {}", dep.coord);
                 continue;
             }
 
-            String group = pieces[0];
-            String artifact = pieces[1];
-            String version;
+            final String group = pieces[0];
+            final String artifact = pieces[1];
+            final String version;
             String classifier = null;
-            if (pieces.length == 3) {
-                version = pieces[2];
-            } else if (pieces.length == 4) {
-                classifier = pieces[2];
-                version = pieces[3];
-            } else {
-                // length == 5 as guaranteed above.
-                classifier = pieces[3];
-                version = pieces[4];
+            switch (pieces.length) {
+                case 3:
+                    version = pieces[2];
+                    break;
+                case 4:
+                    classifier = pieces[2];
+                    version = pieces[3];
+                    break;
+                default:
+                    // length == 5 as guaranteed above.
+                    classifier = pieces[3];
+                    version = pieces[4];
+                    break;
             }
 
             if ("sources".equals(classifier) || "javadoc".equals(classifier)) {
@@ -204,29 +211,42 @@ public class PinnedMavenInstallAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Represents the entire pinned Maven dependency set in an install.json file.
+     * Represents the entire pinned Maven dependency set in an install.json
+     * file.
      *
-     * <p>At the time of writing, the latest version is 0.1.0, and the dependencies are stored in {@code .dependency_tree.dependencies[].coord}.
+     * <p>
+     * At the time of writing, the latest version is 0.1.0, and the dependencies
+     * are stored in {@code .dependency_tree.dependencies[].coord}.
      *
-     * <p>The only top-level key we care about is {@code .dependency_tree}.
+     * <p>
+     * The only top-level key we care about is {@code .dependency_tree}.
      */
     private static class InstallFile {
+
+        /**
+         * The dependency tree.
+         */
         @JsonProperty("dependency_tree")
         public DependencyTree dependencyTree;
     }
 
     /**
-     * Represents the values at {@code .dependency_tree} in the {@link InstallFile install file}.
+     * Represents the values at {@code .dependency_tree} in the
+     * {@link InstallFile install file}.
      */
     private static class DependencyTree {
+
         /**
-         * A sentinel value placed in the file to indicate that it is an auto-generated pinned maven install file.
+         * A sentinel value placed in the file to indicate that it is an
+         * auto-generated pinned maven install file.
          */
         @JsonProperty("__AUTOGENERATED_FILE_DO_NOT_MODIFY_THIS_FILE_MANUALLY")
         public String autogeneratedSentinel;
 
         /**
-         * A list of Maven dependencies made available. Note that this list is transitively closed and pinned to a specific version of each artifact.
+         * A list of Maven dependencies made available. Note that this list is
+         * transitively closed and pinned to a specific version of each
+         * artifact.
          */
         @JsonProperty("dependencies")
         public List<MavenDependency> dependencies;
@@ -239,11 +259,14 @@ public class PinnedMavenInstallAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Represents a single dependency in the list at {@code .dependency_tree.dependencies}.
+     * Represents a single dependency in the list at
+     * {@code .dependency_tree.dependencies}.
      */
     private static class MavenDependency {
+
         /**
-         * The standard Maven coordinate string {@code group:artifact[:optional classifier][:optional packaging]:version}.
+         * The standard Maven coordinate string
+         * {@code group:artifact[:optional classifier][:optional packaging]:version}.
          */
         @JsonProperty("coord")
         public String coord;
@@ -255,7 +278,7 @@ public class PinnedMavenInstallAnalyzer extends AbstractFileTypeAnalyzer {
     private static final ObjectReader INSTALL_FILE_READER;
 
     static {
-        ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         INSTALL_FILE_READER = mapper.readerFor(InstallFile.class);
     }

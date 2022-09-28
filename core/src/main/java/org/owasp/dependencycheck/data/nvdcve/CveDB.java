@@ -1008,7 +1008,16 @@ public final class CveDB implements AutoCloseable {
         }
     }
 
-    public void updateKnownExploitedVulnerabilities(List<org.owasp.dependencycheck.data.knownexploited.json.Vulnerability> vulnerabilities) throws DatabaseException, SQLException {
+    /**
+     * Merges the list of known exploited vulnerabilities into the database.
+     *
+     * @param vulnerabilities the list of known exploited vulnerabilities
+     * @throws DatabaseException thrown if there is an exception... duh..
+     * @throws SQLException thrown if there is an exception... duh..
+     */
+    public void updateKnownExploitedVulnerabilities(
+            List<org.owasp.dependencycheck.data.knownexploited.json.Vulnerability> vulnerabilities)
+            throws DatabaseException, SQLException {
         try (Connection conn = databaseManager.getConnection();
                 PreparedStatement mergeKnownVulnerability = getPreparedStatement(conn, MERGE_KNOWN_VULNERABLE)) {
             int ctr = 0;
@@ -1435,9 +1444,10 @@ public final class CveDB implements AutoCloseable {
         try (Connection conn = databaseManager.getConnection();
                 PreparedStatement ps = getPreparedStatement(conn, SELECT_KNOWN_EXPLOITED_VULNERABILITIES);
                 ResultSet rs = ps.executeQuery()) {
-    
+
             while (rs.next()) {
-                org.owasp.dependencycheck.data.knownexploited.json.Vulnerability kev = new org.owasp.dependencycheck.data.knownexploited.json.Vulnerability();
+                final org.owasp.dependencycheck.data.knownexploited.json.Vulnerability kev
+                        = new org.owasp.dependencycheck.data.knownexploited.json.Vulnerability();
                 kev.setCveID(rs.getString(1));
                 kev.setVendorProject(rs.getString(2));
                 kev.setProduct(rs.getString(3));
@@ -1449,7 +1459,7 @@ public final class CveDB implements AutoCloseable {
                 kev.setNotes(rs.getString(9));
                 known.put(kev.getCveID(), kev);
             }
-            
+
         } catch (SQLException ex) {
             throw new DatabaseException(ex);
         }
