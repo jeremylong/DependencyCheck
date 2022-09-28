@@ -19,7 +19,7 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
 @version 2.0
 
 *#<?xml version="1.0"?>
-<analysis xmlns="https://jeremylong.github.io/DependencyCheck/dependency-check.2.5.xsd">
+<analysis xmlns="https://jeremylong.github.io/DependencyCheck/dependency-check.3.0.xsd">
     <scanInfo>
         <engineVersion>$version</engineVersion>
 #foreach($prop in $properties.getMetaData().entrySet())
@@ -192,6 +192,34 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
 #foreach($vuln in $dependency.getVulnerabilities(true))
                 <vulnerability source="$enc.xml($vuln.getSource().name())">
                     <name>$enc.xml($vuln.name)</name>
+#if($vuln.getKnownExploitedVulnerability())
+                    <knownExploitedVulnerability>
+#if($vuln.getKnownExploitedVulnerability().getVendorProject())
+                        <vendorProject>$enc.xml($vuln.getKnownExploitedVulnerability().getVendorProject())</vendorProject>
+#end
+#if($vuln.getKnownExploitedVulnerability().getProduct())
+                        <product>$enc.xml($vuln.getKnownExploitedVulnerability().getProduct())</product>
+#end
+#if($vuln.getKnownExploitedVulnerability().getVulnerabilityName())
+                        <name>enc.xml($vuln.getKnownExploitedVulnerability().getVulnerabilityName())</name>
+#end
+#if($vuln.getKnownExploitedVulnerability().getDateAdded())
+                        <dateAdded>$enc.xml($vuln.getKnownExploitedVulnerability().getDateAdded())</dateAdded>
+#end
+#if($vuln.getKnownExploitedVulnerability().getShortDescription())
+                        <description>$enc.xml($vuln.getKnownExploitedVulnerability().getShortDescription())</description>
+#end
+#if($vuln.getKnownExploitedVulnerability().getRequiredAction())
+                        <requiredAction>$enc.xml($vuln.getKnownExploitedVulnerability().getRequiredAction())</requiredAction>
+#end
+#if($vuln.getKnownExploitedVulnerability().getDueDate())
+                        <dueDate>$enc.xml($vuln.getKnownExploitedVulnerability().getDueDate())</dueDate>
+#end
+#if($vuln.getKnownExploitedVulnerability().getNotes())
+                        <notes>$enc.xml($vuln.getKnownExploitedVulnerability().getNotes())</notes>
+#end
+                    </knownExploitedVulnerability>
+#end
 #if($vuln.unscoredSeverity)
                     <severity unscored="true">#if($vuln.unscoredSeverity.equals("0.0"))Unknown#else$enc.xml($vuln.unscoredSeverity)#end</severity>
 #elseif($vuln.cvssV3 && $vuln.cvssV3.baseSeverity)
