@@ -162,7 +162,7 @@
     <xs:complexType name="vulnerability">
         <xs:sequence>
             <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="knownExploitedVulnerability" type="knownExploitedVulnerability" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="knownExploitedVulnerability" type="dc:knownExploitedVulnerability" minOccurs="0" maxOccurs="1"/>
             <xs:element name="severity" type="dc:severity" minOccurs="0" maxOccurs="1"/>
             <xs:element name="cvssV2" type="dc:cvssV2" minOccurs="0" maxOccurs="1"/>
             <xs:element name="cvssV3" type="dc:cvssV3" minOccurs="0" maxOccurs="1"/>
