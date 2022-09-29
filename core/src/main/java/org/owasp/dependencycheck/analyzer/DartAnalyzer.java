@@ -137,8 +137,7 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
         Iterator<Map.Entry<String, JsonNode>> devDependencies = rootNode.get("dev_dependencies").fields();
         addYamlDependenciesToEngine(devDependencies, yamlFile, engine);
 
-        String dartVersion = rootNode.get("environment").get("sdk").textValue();
-        addYamlDartDependencyToEngine(dartVersion, yamlFile, engine);
+        addYamlDartDependencyToEngine(rootNode, yamlFile, engine);
     }
 
     private void analyzeLockFileDependencies(Dependency lockFileDependency, Engine engine) throws AnalysisException {
@@ -207,7 +206,8 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
-    private void addYamlDartDependencyToEngine(String dartVersion, File file, Engine engine) throws AnalysisException {
+    private void addYamlDartDependencyToEngine(JsonNode rootNode, File file, Engine engine) throws AnalysisException {
+        String dartVersion = rootNode.get("environment").get("sdk").textValue();
         String minimumVersion = extractMinimumVersion(dartVersion);
 
         engine.addDependency(
