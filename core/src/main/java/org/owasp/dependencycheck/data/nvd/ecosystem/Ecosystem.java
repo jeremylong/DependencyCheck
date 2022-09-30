@@ -84,6 +84,12 @@ public final class Ecosystem {
     public static final String ELIXIR = "exlixir";
 
     /**
+     * The Dart ecosystem.
+     */
+    public static final String DART = "dart";
+
+
+    /**
      * A reference to the ODC settings.
      */
     private final Settings settings;

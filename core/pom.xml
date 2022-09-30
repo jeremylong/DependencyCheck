@@ -292,6 +292,11 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <version>${jackson.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.h3xstream.retirejs</groupId>
             <artifactId>retirejs-core</artifactId>
         </dependency>

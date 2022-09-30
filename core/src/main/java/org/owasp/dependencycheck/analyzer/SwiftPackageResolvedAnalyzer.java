@@ -228,9 +228,11 @@ public class SwiftPackageResolvedAnalyzer extends AbstractFileTypeAnalyzer {
             String version = null;
             final JsonObject state = pin.getJsonObject("state");
             if (state != null) {
-                if (!state.isNull("version")) {
+                if (state.containsKey("version")
+                        && !state.isNull("version")
+                        && !state.getString("version").isEmpty()) {
                     version = state.getString("version");
-                } else if (!state.isNull("branch")) {
+                } else if (state.containsKey("branch") && !state.isNull("branch")) {
                     version = state.getString("branch");
                 }
             }
