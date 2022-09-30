@@ -137,6 +137,7 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
         Iterator<Map.Entry<String, JsonNode>> devDependencies = rootNode.get("dev_dependencies").fields();
         addYamlDependenciesToEngine(devDependencies, yamlFile, engine);
 
+        addYamlDartDependencyToEngine(rootNode, yamlFile, engine);
     }
 
     private void analyzeLockFileDependencies(Dependency lockFileDependency, Engine engine) throws AnalysisException {
@@ -152,6 +153,15 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         addLockFileDependenciesToEngine(lockFile, engine, rootNode);
+        addLockFileDartVersionToEngine(lockFile, engine, rootNode);
+    }
+
+    private void addLockFileDartVersionToEngine(File file, Engine engine, JsonNode rootNode) throws AnalysisException {
+        String dartVersion = rootNode.get("sdks").get("dart").textValue();
+        String minimumVersion = extractMinimumVersion(dartVersion);
+
+        engine.addDependency(
+                createDependencyFromNameAndVersion(file, "dart_software_development_kit", minimumVersion));
     }
 
     private void addLockFileDependenciesToEngine(File file, Engine engine, JsonNode rootNode) throws AnalysisException {
@@ -194,6 +204,14 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
                     createDependencyFromNameAndVersion(file, name, version)
             );
         }
+    }
+
+    private void addYamlDartDependencyToEngine(JsonNode rootNode, File file, Engine engine) throws AnalysisException {
+        String dartVersion = rootNode.get("environment").get("sdk").textValue();
+        String minimumVersion = extractMinimumVersion(dartVersion);
+
+        engine.addDependency(
+                createDependencyFromNameAndVersion(file, "dart_software_development_kit", minimumVersion));
     }
 
     private Dependency createDependencyFromNameAndVersion(File file, String name, String version) throws AnalysisException {
