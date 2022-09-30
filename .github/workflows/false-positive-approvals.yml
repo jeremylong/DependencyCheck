@@ -4,8 +4,13 @@ on:
   issue_comment:
     types: [ created ]
 
+permissions: {}
 jobs:
   update_suppression:
+    permissions:
+      contents: write # to push changes in repo (jamesives/github-pages-deploy-action)
+      issues: write
+
     name: Update Suppression Rules
     if: ${{ !github.event.issue.pull_request && 
       contains(github.event.issue.labels.*.name, 'FP Report') && 
