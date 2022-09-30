@@ -308,4 +308,4 @@ GRANT EXECUTE ON PROCEDURE dependencycheck.merge_knownexpoited TO 'dcuser';
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON dependencycheck.* TO 'dcuser';
 
-INSERT INTO properties(id, value) VALUES ('version', '6.0');
+INSERT INTO properties(id, value) VALUES ('version', '5.3');

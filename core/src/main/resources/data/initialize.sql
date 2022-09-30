@@ -68,4 +68,4 @@ CREATE ALIAS insert_software FOR "org.owasp.dependencycheck.data.nvdcve.H2Functi
 CREATE ALIAS merge_knownexpoited FOR "org.owasp.dependencycheck.data.nvdcve.H2Functions.mergeKnownExploited";
 
 CREATE TABLE properties (id varchar(50) PRIMARY KEY, `value` varchar(500));
-INSERT INTO properties(id, `value`) VALUES ('version', '6.0');
+INSERT INTO properties(id, `value`) VALUES ('version', '5.3');

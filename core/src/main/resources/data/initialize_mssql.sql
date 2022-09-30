@@ -245,7 +245,7 @@ END;
 
 GO
 
-INSERT INTO properties(id,value) VALUES ('version','6.0');
+INSERT INTO properties(id,value) VALUES ('version','5.3');
 
 GO
 /**
