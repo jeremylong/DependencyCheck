@@ -933,16 +933,16 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                 <p><span class="underline"><b>$enc.html($vuln.name)</b>&nbsp;($vuln.getSource().name())</span>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this vulnerability for this file" data-display-name="$enc.html($dependency.DisplayFileName)" data-sha1="$enc.html($dependency.Sha1sum)" data-pkgurl="#if($supressPkgUrl)$enc.html($supressPkgUrl)#end" data-type-to-suppress="vulnerabilityName" data-id-to-suppress="$enc.html($vuln.name)">suppress</button></p>
                             #end
                             #if($vuln.getKnownExploitedVulnerability())
-                                <p><b><span class="redtext">CISA Known Exploited Vulnerability:</span></b><br/>
-                                Product: $enc.html($vuln.getKnownExploitedVulnerability().getVendorProject()) $enc.html($vuln.getKnownExploitedVulnerability().getProduct())<br/>
-                                Name: $enc.html($vuln.getKnownExploitedVulnerability().getVulnerabilityName())<br/>
-                                Date Added:  $enc.html($vuln.getKnownExploitedVulnerability().getDateAdded())<br/>
-                                Description:  $enc.html($vuln.getKnownExploitedVulnerability().getShortDescription())<br/>
-                                Required Action:  $enc.html($vuln.getKnownExploitedVulnerability().getRequiredAction())<br/>
-                                Due Date:  $enc.html($vuln.getKnownExploitedVulnerability().getDueDate())<br/>
+                                <b><span class="redtext">CISA Known Exploited Vulnerability:</span></b>
+                                <ul><li>Product: $enc.html($vuln.getKnownExploitedVulnerability().getVendorProject()) $enc.html($vuln.getKnownExploitedVulnerability().getProduct())</li>
+                                <li>Name: $enc.html($vuln.getKnownExploitedVulnerability().getVulnerabilityName())</li>
+                                <li>Date Added:  $enc.html($vuln.getKnownExploitedVulnerability().getDateAdded())</li>
+                                <li>Description:  $enc.html($vuln.getKnownExploitedVulnerability().getShortDescription())</li>
+                                <li>Required Action:  $enc.html($vuln.getKnownExploitedVulnerability().getRequiredAction())</li>
+                                <li>Due Date:  $enc.html($vuln.getKnownExploitedVulnerability().getDueDate())</li>
                                 #if($vuln.getKnownExploitedVulnerability().getNotes())
-                                    Notes: $enc.html($vuln.getKnownExploitedVulnerability().getNotes())
-                                #end</p>
+                                    <li>Notes: $enc.html($vuln.getKnownExploitedVulnerability().getNotes())</li>
+                                #end</ul>
                             #end
                             <p>#if($vuln.description)
                             <pre>$enc.html($vuln.description)</pre>
@@ -1113,16 +1113,16 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                         <p><b>$enc.html($vuln.name)</b> ($vuln.getSource().name())&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span></p>
                                     #end
                                     #if($vuln.getKnownExploitedVulnerability())
-                                        <p><b><span class="redtext">CISA Known Exploited Vulnerability:</span></b><br/>
-                                        Product: $enc.html($vuln.getKnownExploitedVulnerability().getVendorProject()) $enc.html($vuln.getKnownExploitedVulnerability().getProduct())<br/>
-                                        Name: $enc.html($vuln.getKnownExploitedVulnerability().getVulnerabilityName())<br/>
-                                        Date Added:  $enc.html($vuln.getKnownExploitedVulnerability().getDateAdded())<br/>
-                                        Description:  $enc.html($vuln.getKnownExploitedVulnerability().getShortDescription())<br/>
-                                        Required Action:  $enc.html($vuln.getKnownExploitedVulnerability().getRequiredAction())<br/>
-                                        Due Date:  $enc.html($vuln.getKnownExploitedVulnerability().getDueDate())<br/>
+                                        <b><span class="redtext">CISA Known Exploited Vulnerability:</span></b>
+                                        <ul><li>Product: $enc.html($vuln.getKnownExploitedVulnerability().getVendorProject()) $enc.html($vuln.getKnownExploitedVulnerability().getProduct())</li>
+                                        <li>Name: $enc.html($vuln.getKnownExploitedVulnerability().getVulnerabilityName())</li>
+                                        <li>Date Added:  $enc.html($vuln.getKnownExploitedVulnerability().getDateAdded())</li>
+                                        <li>Description:  $enc.html($vuln.getKnownExploitedVulnerability().getShortDescription())</li>
+                                        <li>Required Action:  $enc.html($vuln.getKnownExploitedVulnerability().getRequiredAction())</li>
+                                        <li>Due Date:  $enc.html($vuln.getKnownExploitedVulnerability().getDueDate())</li>
                                         #if($vuln.getKnownExploitedVulnerability().getNotes())
-                                        Notes: $enc.html($vuln.getKnownExploitedVulnerability().getNotes())
-                                        #end</p>
+                                            <li>Notes: $enc.html($vuln.getKnownExploitedVulnerability().getNotes())</li>
+                                        #end</ul>
                                     #end
                                     <p>#if($vuln.description)
                                     <pre>$enc.html($vuln.description)</pre>
