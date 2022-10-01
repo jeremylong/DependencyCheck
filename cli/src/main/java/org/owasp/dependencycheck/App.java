@@ -643,6 +643,13 @@ public class App {
                 cli.getStringArgument(CliParser.ARGUMENT.CVE_USER));
         settings.setStringIfNotEmpty(Settings.KEYS.CVE_PASSWORD,
                 cli.getStringArgument(CliParser.ARGUMENT.CVE_PASSWORD, Settings.KEYS.CVE_PASSWORD));
+
+        settings.setStringIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_URL,
+                                    cli.getStringArgument(CliParser.ARGUMENT.HOSTED_SUPPRESSIONS_URL));
+        settings.setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE,
+                                     cli.hasOption(CliParser.ARGUMENT.HOSTED_SUPPRESSIONS_FORCEUPDATE));
+        settings.setIntIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS,
+                                 cli.getIntegerValue(CliParser.ARGUMENT.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS));
     }
 
     private String getDefaultCveUrlModified(CliParser cli) {
