@@ -230,7 +230,7 @@ public class HttpResourceConnection implements AutoCloseable {
                 } finally {
                     conn = null;
                 }
-                throw new ResourceNotFoundException("Requested resource does not exists - received a 404");
+                throw new ResourceNotFoundException("Requested resource does not exist - received a 404");
             } else if (status == 429) {
                 try {
                     conn.disconnect();
