@@ -105,6 +105,15 @@ public class Update extends Purge {
      */
     private Integer cveValidForHours;
     /**
+     * The number of hours to wait before re-checking hosted suppressions file for updates.
+     */
+    private Integer hostedSuppressionsValidForHours;
+    /**
+     * Whether or not the hosted suppressions file will be updated regardless of the `autoupdate` settings. Defaults to false.
+     */
+    private Boolean hostedSuppressionsForceUpdate;
+
+    /**
      * Specify the first year of NVD CVE data to download; default is 2002.
      */
     private Integer cveStartYear;
@@ -431,6 +440,42 @@ public class Update extends Purge {
     }
 
     /**
+     * Get the value of hostedSuppressionsValidForHours.
+     *
+     * @return the value of hostedSuppressionsValidForHours
+     */
+    public Integer getHostedSuppressionsValidForHours() {
+        return hostedSuppressionsValidForHours;
+    }
+
+    /**
+     * Set the value of hostedSuppressionsValidForHours.
+     *
+     * @param hostedSuppressionsValidForHours new value of hostedSuppressionsValidForHours
+     */
+    public void setHostedSuppressionsValidForHours(final Integer hostedSuppressionsValidForHours) {
+        this.hostedSuppressionsValidForHours = hostedSuppressionsValidForHours;
+    }
+
+    /**
+     * Get the value of hostedSuppressionsForceUpdate.
+     *
+     * @return the value of hostedSuppressionsForceUpdate
+     */
+    public Boolean isHostedSuppressionsForceUpdate() {
+        return hostedSuppressionsForceUpdate;
+    }
+
+    /**
+     * Set the value of hostedSuppressionsForceUpdate.
+     *
+     * @param hostedSuppressionsForceUpdate new value of hostedSuppressionsForceUpdate
+     */
+    public void setHostedSuppressionsForceUpdate(final Boolean hostedSuppressionsForceUpdate) {
+        this.hostedSuppressionsForceUpdate = hostedSuppressionsForceUpdate;
+    }
+
+    /**
      * Executes the update by initializing the settings, downloads the NVD XML
      * data, and then processes the data storing it in the local database.
      *
@@ -492,6 +537,8 @@ public class Update extends Purge {
         getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON, cveUrlBase);
         getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, cveWaitTime);
         getSettings().setIntIfNotNull(Settings.KEYS.CVE_START_YEAR, cveStartYear);
+        getSettings().setIntIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS, hostedSuppressionsValidForHours);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE, hostedSuppressionsForceUpdate);
         if (cveValidForHours != null) {
             if (cveValidForHours >= 0) {
                 getSettings().setInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);

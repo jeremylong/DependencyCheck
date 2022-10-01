@@ -54,6 +54,11 @@ public class Purge extends Task {
     private boolean failOnError = true;
 
     /**
+     * The URL to hosted suppressions file with base FP suppressions.
+     */
+    private String hostedSuppressionsUrl = null;
+
+    /**
      * Construct a new DependencyCheckTask.
      */
     public Purge() {
@@ -105,6 +110,24 @@ public class Purge extends Task {
     }
 
     /**
+     * Get the value of hostedSuppressionsUrl.
+     *
+     * @return the value of hostedSuppressionsUrl
+     */
+    public String getHostedSuppressionsUrl() {
+        return hostedSuppressionsUrl;
+    }
+
+    /**
+     * Set the value of hostedSuppressionsUrl.
+     *
+     * @param hostedSuppressionsUrl new value of hostedSuppressionsUrl
+     */
+    public void setHostedSuppressionsUrl(final String hostedSuppressionsUrl) {
+        this.hostedSuppressionsUrl = hostedSuppressionsUrl;
+    }
+
+    /**
      * Executes the dependency-check purge to delete the existing local copy of
      * the NVD CVE data.
      *
@@ -142,6 +165,7 @@ public class Purge extends Task {
             }
             log(msg, ex, Project.MSG_WARN);
         }
+        settings.setStringIfNotEmpty(Settings.KEYS.HOSTED_SUPPRESSIONS_URL, hostedSuppressionsUrl);
         if (dataDirectory != null) {
             settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
         } else {

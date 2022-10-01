@@ -15,7 +15,7 @@ for more information on why this task would be used.
 
 Configuration: dependency-check-update Task
 --------------------
-The following properties can be set on the dependency-check task.
+The following properties can be set on the dependency-check-update task.
 
 Property              | Description                                                             | Default Value
 ----------------------|-------------------------------------------------------------------------|------------------
@@ -45,3 +45,6 @@ databaseDriverPath   | The path to the database driver JAR file; only used if th
 connectionString     | The connection string used to connect to the database. See using a [database server](../data/database.html).         | &nbsp;
 databaseUser         | The username used when connecting to the database.                                                                   | &nbsp;
 databasePassword     | The password used when connecting to the database.                                                                   | &nbsp;
+hostedSuppressionsUrl | The URL to a mirrored copy of the hosted suppressions file for internet-constrained environments | https://jeremylong.github.io/DependencyCheck/suppressions/publishedSuppressions.xml
+hostedSuppressionsValidForHours | Sets the number of hours to wait before checking for new updates of the hosted suppressions file | 2
+hostedSuppressionsForceUpdate | Sets whether the hosted suppressions file should update regardless of the `autoupdate` and validForHours settings | false 
