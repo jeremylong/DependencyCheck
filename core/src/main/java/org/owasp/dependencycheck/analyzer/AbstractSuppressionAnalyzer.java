@@ -241,7 +241,11 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                 getSettings().setBoolean(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE, true);
             }
             if ((!autoupdate && forceupdate) || (autoupdate && repoEmpty)) {
-                repoEmpty = forceUpdateHostedSuppressions(engine, repoFile);
+                if (engine == null) {
+                    LOGGER.warn("Engine was null, this should only happen in tests - skipping forced update");
+                } else {
+                    repoEmpty = forceUpdateHostedSuppressions(engine, repoFile);
+                }
             }
             if (!repoEmpty) {
                 loadCachedHostedSuppressionsRules(parser, repoFile, engine);
