@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -34,6 +35,8 @@ import org.owasp.dependencycheck.data.update.HostedSuppressionsDataSource;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.exception.WriteLockException;
+import org.owasp.dependencycheck.utils.WriteLock;
 import org.owasp.dependencycheck.xml.suppression.SuppressionParseException;
 import org.owasp.dependencycheck.xml.suppression.SuppressionParser;
 import org.owasp.dependencycheck.xml.suppression.SuppressionRule;
@@ -253,13 +256,33 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                 LOGGER.warn("Empty Hosted Suppression file after update, results may contain false positives "
                         + "already resolved by the DependencyCheck project due to failed download of the hosted suppression file");
             }
-        } catch (IOException ex) {
+        } catch (IOException | InitializationException ex) {
             LOGGER.warn("Unable to load hosted suppressions");
         }
     }
 
-    private void loadCachedHostedSuppressionsRules(final SuppressionParser parser, final File repoFile, final Engine engine) {
-        try (InputStream in = Files.newInputStream(repoFile.toPath())) {
+    /**
+     * Load the hosted suppression file from the web resource
+     * @param parser The suppressionParser to use for loading
+     * @param repoFile The cached web resource
+     * @param engine a reference the dependency-check engine
+     * 
+     * @throws InitializationException When errors occur trying to create a defensive copy of the web resource before loading
+     */
+    private void loadCachedHostedSuppressionsRules(final SuppressionParser parser, final File repoFile,  final Engine engine)
+            throws InitializationException {
+        // take a defensive copy to avoid a risk of corrupted file by a competing parallel new download.
+        final Path defensiveCopy;
+        try (WriteLock lock = new WriteLock(getSettings(), true, repoFile.getName() + ".lock")) {
+            defensiveCopy = Files.createTempFile("dc-basesuppressions", ".xml");
+            LOGGER.debug("copying hosted suppressions file {} to {}", repoFile.toPath(), defensiveCopy);
+            Files.copy(repoFile.toPath(), defensiveCopy);
+        } catch (WriteLockException | IOException ex) {
+            this.setEnabled(false);
+            throw new InitializationException("Failed to copy the hosted suppressions file", ex);
+        }
+
+        try (InputStream in = Files.newInputStream(defensiveCopy)) {
             final List<SuppressionRule> ruleList;
             ruleList = parser.parseSuppressionRules(in);
             if (!ruleList.isEmpty()) {
@@ -274,6 +297,11 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         } catch (SAXException | IOException ex) {
             LOGGER.warn("Unable to parse the hosted suppressions data file, results may contain false positives already resolved "
                     + "by the DependencyCheck project", ex);
+        }
+        try {
+            Files.delete(defensiveCopy);
+        } catch (IOException ex) {
+            LOGGER.warn("Could not delete defensive copy of hosted suppressions file {}", defensiveCopy, ex);
         }
     }
 
