@@ -906,6 +906,24 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "pathToCore")
     private String pathToCore;
+    /**
+     * The hosted suppressions file URL.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "hostedSuppressionsUrl")
+    private String hostedSuppressionsUrl;
+    /**
+     * Whether the hosted suppressions file will be updated regardless of the `autoupdate` settings.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "hostedSuppressionsForceUpdate")
+    private Boolean hostedSuppressionsForceUpdate;
+    /**
+     * Skip excessive hosted suppression file update checks for a designated duration in hours (defaults to 2 hours).
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "hostedSuppressionsValidForHours")
+    private Integer hostedSuppressionsValidForHours;
 
     /**
      * The RetireJS Analyzer configuration:
@@ -2178,6 +2196,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE_USER, suppressionFileUser);
             settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE_PASSWORD, suppressionFilePassword);
         }
+        settings.setIntIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS, hostedSuppressionsValidForHours);
+        settings.setStringIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_URL, hostedSuppressionsUrl);
+        settings.setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE, hostedSuppressionsForceUpdate);
     }
 
     /**
