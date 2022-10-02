@@ -142,4 +142,11 @@
    <packageUrl regex="true">^pkg:maven/org\.jfrog\.artifactory\.client/artifactory-java-client-api@.*$</packageUrl>
    <cpe>cpe:/a:jfrog:artifactory</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4897
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlin/kotlin-annotation-processing-gradle@.*$</packageUrl>
+   <cpe>cpe:/a:processing:processing</cpe>
+</suppress>
 </suppressions>
