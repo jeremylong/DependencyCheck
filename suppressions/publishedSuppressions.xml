@@ -149,4 +149,11 @@
    <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlin/kotlin-annotation-processing-gradle@.*$</packageUrl>
    <cpe>cpe:/a:processing:processing</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4900
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.testcontainers/mysql@.*$</packageUrl>
+   <cpe>cpe:/a:mysql:mysql</cpe>
+</suppress>
 </suppressions>
