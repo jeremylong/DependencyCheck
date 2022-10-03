@@ -155,3 +155,10 @@
    <packageUrl regex="true">^pkg:maven/org\.testcontainers/mysql@.*$</packageUrl>
    <cpe>cpe:/a:mysql:mysql</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4899
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.mariadb/r2dbc-mariadb@.*$</packageUrl>
+   <cpe>cpe:/a:mariadb:mariadb</cpe>
+</suppress>
