@@ -169,3 +169,10 @@
    <packageUrl regex="true">^pkg:maven/org\.testcontainers/mariadb@.*$</packageUrl>
    <cpe>cpe:/a:mariadb:mariadb</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4907
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/net\.minidev/accessors-smart@.*$</packageUrl>
+   <cpe>cpe:/a:json-smart_project:json-smart-v1</cpe>
+</suppress>
