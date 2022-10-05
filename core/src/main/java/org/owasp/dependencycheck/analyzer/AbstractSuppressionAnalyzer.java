@@ -22,8 +22,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -257,7 +259,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                         + "already resolved by the DependencyCheck project due to failed download of the hosted suppression file");
             }
         } catch (IOException | InitializationException ex) {
-            LOGGER.warn("Unable to load hosted suppressions");
+            LOGGER.warn("Unable to load hosted suppressions", ex);
         }
     }
 
@@ -276,7 +278,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         try (WriteLock lock = new WriteLock(getSettings(), true, repoFile.getName() + ".lock")) {
             defensiveCopy = Files.createTempFile("dc-basesuppressions", ".xml");
             LOGGER.debug("copying hosted suppressions file {} to {}", repoFile.toPath(), defensiveCopy);
-            Files.copy(repoFile.toPath(), defensiveCopy);
+            Files.copy(repoFile.toPath(), defensiveCopy, StandardCopyOption.REPLACE_EXISTING);
         } catch (WriteLockException | IOException ex) {
             this.setEnabled(false);
             throw new InitializationException("Failed to copy the hosted suppressions file", ex);
