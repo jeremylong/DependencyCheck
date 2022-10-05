@@ -81,16 +81,17 @@ public final class NvdCveParser {
      *
      * @param file the NVD JSON file to parse
      * @throws UpdateException thrown if the file could not be read
-     * @throws CorruptedDatastreamException thrown if the file was found to be a corrupted download (ZipException or premature EOF)
+     * @throws CorruptedDatastreamException thrown if the file was found to be a
+     * corrupted download (ZipException or premature EOF)
      */
     public void parse(File file) throws UpdateException, CorruptedDatastreamException {
         LOGGER.debug("Parsing " + file.getName());
-        
+
         final ObjectMapper objectMapper = JsonMapper.builder()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .addModule(new BlackbirdModule())
                 .build();
-        
+
         final ObjectReader objectReader = objectMapper.readerFor(DefCveItem.class);
 
         try (InputStream fin = new FileInputStream(file);
