@@ -1489,7 +1489,7 @@ public final class CliParser {
          */
         public static final String FAIL_JUNIT_ON_CVSS = "junitFailOnCVSS";
         /**
-         * The CLI argument to set the number of hours to wait before re-checking hosted suppressions file for updates
+         * The CLI argument to set the number of hours to wait before re-checking hosted suppressions file for updates.
          */
         public static final String HOSTED_SUPPRESSIONS_VALID_FOR_HOURS = "hostedSuppressionsValidForHours";
         /**
