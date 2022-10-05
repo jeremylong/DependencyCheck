@@ -163,4 +163,11 @@
    <packageUrl regex="true">^pkg:maven/org\.mariadb/r2dbc-mariadb@.*$</packageUrl>
    <cpe>cpe:/a:mariadb:mariadb</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4898
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.testcontainers/mariadb@.*$</packageUrl>
+   <cpe>cpe:/a:mariadb:mariadb</cpe>
+</suppress>
 </suppressions>
