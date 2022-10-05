@@ -22,7 +22,8 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 
 import java.io.EOFException;
 import java.io.File;
@@ -80,13 +81,16 @@ public final class NvdCveParser {
      *
      * @param file the NVD JSON file to parse
      * @throws UpdateException thrown if the file could not be read
-     * @throws CorruptedDatastreamException thrown if the file was found to be a corrupted download (ZipException or premature EOF)
+     * @throws CorruptedDatastreamException thrown if the file was found to be a
+     * corrupted download (ZipException or premature EOF)
      */
     public void parse(File file) throws UpdateException, CorruptedDatastreamException {
         LOGGER.debug("Parsing " + file.getName());
 
-        final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.registerModule(new AfterburnerModule());
+        final ObjectMapper objectMapper = JsonMapper.builder()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .addModule(new BlackbirdModule())
+                .build();
 
         final ObjectReader objectReader = objectMapper.readerFor(DefCveItem.class);
 
