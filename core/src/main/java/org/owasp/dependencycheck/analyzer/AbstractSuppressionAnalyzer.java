@@ -280,7 +280,6 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
             LOGGER.debug("copying hosted suppressions file {} to {}", repoFile.toPath(), defensiveCopy);
             Files.copy(repoFile.toPath(), defensiveCopy, StandardCopyOption.REPLACE_EXISTING);
         } catch (WriteLockException | IOException ex) {
-            this.setEnabled(false);
             throw new InitializationException("Failed to copy the hosted suppressions file", ex);
         }
 
