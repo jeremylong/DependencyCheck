@@ -176,3 +176,10 @@
    <packageUrl regex="true">^pkg:maven/net\.minidev/accessors-smart@.*$</packageUrl>
    <cpe>cpe:/a:json-smart_project:json-smart-v1</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4721
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.camel/camel-activemq@.*$</packageUrl>
+   <cpe>cpe:/a:apache:activemq</cpe>
+</suppress>
