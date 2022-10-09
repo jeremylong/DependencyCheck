@@ -191,4 +191,11 @@
    <packageUrl regex="true">^pkg:maven/org\.jruby\.rack/jruby-rack@.*$</packageUrl>
    <cpe>cpe:/a:jruby:jruby</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4647
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jruby/dirgra@.*$</packageUrl>
+   <cpe>cpe:/a:jruby:jruby</cpe>
+</suppress>
 </suppressions>
