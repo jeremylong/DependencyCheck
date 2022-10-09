@@ -183,3 +183,10 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.camel/camel-activemq@.*$</packageUrl>
    <cpe>cpe:/a:apache:activemq</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4652
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jruby\.rack/jruby-rack@.*$</packageUrl>
+   <cpe>cpe:/a:jruby:jruby</cpe>
+</suppress>
