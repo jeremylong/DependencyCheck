@@ -5403,4 +5403,18 @@
         <packageUrl regex="true">^pkg:npm/parseurl@.*$</packageUrl>
         <cpe>cpe:/a:parse-url_project:parse-url</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #4648 and #4649
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/rubygems/jruby\-.*@.*$</packageUrl>
+        <cpe>cpe:/a:jruby:jruby</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #4649
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/rubygems/jruby\-openssl@.*$</packageUrl>
+        <cpe>cpe:/a:openssl:openssl</cpe>
+    </suppress>
 </suppressions>
