@@ -49,7 +49,7 @@ jobs:
           script: |
             try {
                 const { PackageURL } = require('packageurl-js');
-                const pkg = PackageURL.fromString(process.env.PURL);
+                const pkg = PackageURL.fromString(process.env.PURL.trim().replaceAll(/^`|`$/g,''));
                 console.log(pkg);
                 return pkg;
             } catch (ex) {
@@ -160,7 +160,7 @@ jobs:
                 purl += '/' + name.replaceAll('.','\\.');
             }
             purl += '@.*$';
-            var cpe = process.env.CPE.split(':');
+            var cpe = process.env.CPE.trim().replaceAll(/^`|`$/g,'').split(':');
             var matchCpe;
             if (cpe[1] == '2.3') {
                matchcpe = 'cpe:/a:' + cpe[3] + ':' + cpe[4];
@@ -206,7 +206,7 @@ jobs:
                 purl += '/' + name.replaceAll('.','\\.');
             }
             purl += '@.*$';
-            var cpe = process.env.CPE.split(':');
+            var cpe = process.env.CPE.trim().replaceAll(/^`|`$/g,'').split(':');
             console.log(cpe);
             var matchCpe;
             if (cpe[1] == '2.3') {
@@ -253,7 +253,7 @@ jobs:
                 purl += '/' + name.replaceAll('.','\\.');
             }
             purl += '@.*$';
-            var cpe = process.env.CPE.split(':');
+            var cpe = process.env.CPE.trim().replaceAll(/^`|`$/g,'').split(':');
             var matchCpe;
             if (cpe[1] == '2.3') {
                matchcpe = 'cpe:/a:' + cpe[3] + ':' + cpe[4];
