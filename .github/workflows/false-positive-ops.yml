@@ -49,7 +49,7 @@ jobs:
           script: |
             try {
                 const { PackageURL } = require('packageurl-js');
-                const pkg = PackageURL.fromString(process.env.PURL);
+                const pkg = PackageURL.fromString(process.env.PURL.trim().replaceAll(/^`|`$/g,''));
                 console.log(pkg);
                 return pkg;
             } catch (ex) {
