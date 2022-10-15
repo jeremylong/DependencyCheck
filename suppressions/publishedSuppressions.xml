@@ -198,4 +198,11 @@
    <packageUrl regex="true">^pkg:maven/org\.jruby/dirgra@.*$</packageUrl>
    <cpe>cpe:/a:jruby:jruby</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4932
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.datasketches/datasketches-java@.*$</packageUrl>
+   <cpe>cpe:/a:sketch:sketch</cpe>
+</suppress>
 </suppressions>
