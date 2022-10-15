@@ -3109,9 +3109,9 @@
 
     <suppress base="true">
         <notes><![CDATA[
-        FP per issue #3041
+        FP per issue #3041 and #4933
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/mysql/mysql\-connector\-java@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/(mysql/mysql\-connector\-java|com\.mysql/mysql\-connector\-j)@.*$</packageUrl>
         <cpe>cpe:/a:oracle:connector%2fj</cpe>
         <cpe>cpe:/a:oracle:jdbc</cpe>
     </suppress>
@@ -3119,9 +3119,9 @@
         <notes><![CDATA[
         FP per issue #952 - instead of suppressing the whole thing, we will just
             suppress specific CVE that are for the server
-            Added additional CVE per #3509.
+            Added additional CVE per #3509 and new connector co-ordinates per #4933
         ]]></notes>
-        <gav regex="true">^(mysql:mysql-connector-java|org\.drizzle\.jdbc:drizzle-jdbc):.*$</gav>
+        <gav regex="true">^(mysql:mysql-connector-java|com\.mysql:mysql-connector-j|org\.drizzle\.jdbc:drizzle-jdbc):.*$</gav>
         <cve>CVE-2017-15945</cve>
         <cve>CVE-2018-3081</cve>
         <cve>CVE-2018-3137</cve>
