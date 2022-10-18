@@ -137,6 +137,10 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      */
     private CveDB cve;
     /**
+     * A reference to the ODC engine.
+     */
+    private Engine engine;
+    /**
      * The list of ecosystems to skip during analysis. These are skipped because
      * there is generally a more accurate vulnerability analyzer in the
      * pipeline.
@@ -185,6 +189,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     @Override
     public void prepareAnalyzer(Engine engine) throws InitializationException {
         super.prepareAnalyzer(engine);
+        this.engine = engine;
         try {
             this.open(engine.getDatabase());
         } catch (IOException ex) {
@@ -375,24 +380,24 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         products.entrySet().stream()
                 .filter(term -> term.getKey() != null)
                 .forEach(term -> majorVersions.stream()
-                        .filter(version -> version != null
-                        && (!term.getKey().endsWith(version)
-                        && !Character.isDigit(term.getKey().charAt(term.getKey().length() - 1))
-                        && !products.containsKey(term.getKey() + version)))
-                        .forEach(version -> {
-                            addTerm(temp, term.getKey() + version);
-                        }));
+                .filter(version -> version != null
+                && (!term.getKey().endsWith(version)
+                && !Character.isDigit(term.getKey().charAt(term.getKey().length() - 1))
+                && !products.containsKey(term.getKey() + version)))
+                .forEach(version -> {
+                    addTerm(temp, term.getKey() + version);
+                }));
         products.entrySet().stream()
                 .filter(term -> term.getKey() != null)
                 .forEach(term -> majorVersions.stream()
-                        .filter(Objects::nonNull)
-                        .map(version -> "v" + version)
-                        .filter(version -> (!term.getKey().endsWith(version)
-                        && !Character.isDigit(term.getKey().charAt(term.getKey().length() - 1))
-                        && !products.containsKey(term.getKey() + version)))
-                        .forEach(version -> {
-                            addTerm(temp, term.getKey() + version);
-                        }));
+                .filter(Objects::nonNull)
+                .map(version -> "v" + version)
+                .filter(version -> (!term.getKey().endsWith(version)
+                && !Character.isDigit(term.getKey().charAt(term.getKey().length() - 1))
+                && !products.containsKey(term.getKey() + version)))
+                .forEach(version -> {
+                    addTerm(temp, term.getKey() + version);
+                }));
         products.putAll(temp);
     }
 
@@ -957,7 +962,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
 
                     //TODO - while this gets the job down it is slow; consider refactoring
                     dependency.addVulnerableSoftwareIdentifier(i);
-                    suppression.analyze(dependency, null);
+                    suppression.analyze(dependency, engine);
                     if (dependency.getVulnerableSoftwareIdentifiers().contains(i)) {
                         identifierAdded = true;
                         if (!addedNonGuess && bestIdentifierQuality != IdentifierConfidence.BEST_GUESS) {
