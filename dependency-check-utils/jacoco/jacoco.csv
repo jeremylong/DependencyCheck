@@ -10,12 +10,12 @@ Dependency-Check Utils,org.owasp.dependencycheck.utils,InvalidSettingException,1
 Dependency-Check Utils,org.owasp.dependencycheck.utils,URLConnectionFactory.new Authenticator() {...},52,0,6,0,7,0,5,0,2,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,URLConnectionFailureException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,URLConnectionFactory,270,106,47,7,59,31,27,8,2,6
-Dependency-Check Utils,org.owasp.dependencycheck.utils,ResourceNotFoundException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,Downloader,119,55,3,1,25,16,6,4,4,4
-Dependency-Check Utils,org.owasp.dependencycheck.utils,CveUrlParser,5,0,0,0,1,0,1,0,1,0
+Dependency-Check Utils,org.owasp.dependencycheck.utils,ResourceNotFoundException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,ExtractionException,16,0,0,0,8,0,4,0,4,0
-Dependency-Check Utils,org.owasp.dependencycheck.utils,DefaultCveUrlModifiedParser,55,0,4,0,8,0,4,0,2,0
+Dependency-Check Utils,org.owasp.dependencycheck.utils,CveUrlParser,5,0,0,0,1,0,1,0,1,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,TooManyRequestsException,16,0,0,0,8,0,4,0,4,0
+Dependency-Check Utils,org.owasp.dependencycheck.utils,DefaultCveUrlModifiedParser,55,0,4,0,8,0,4,0,2,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,DownloadFailedException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,XmlUtils,209,0,19,0,50,0,15,0,5,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,Checksum,64,152,6,10,19,30,10,12,4,8

@@ -168,7 +168,7 @@
 <a class="jxr_linenumber" name="L160" href="#L160">160</a>             <strong class="jxr_keyword">final</strong> JsonObject file = resolved.readObject();
 <a class="jxr_linenumber" name="L161" href="#L161">161</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> fileVersion = file.getInt(<span class="jxr_string">"version"</span>);
 <a class="jxr_linenumber" name="L162" href="#L162">162</a> 
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>             <strong class="jxr_keyword">switch</strong>(fileVersion) {
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>             <strong class="jxr_keyword">switch</strong> (fileVersion) {
 <a class="jxr_linenumber" name="L164" href="#L164">164</a>                 <strong class="jxr_keyword">case</strong> 1:
 <a class="jxr_linenumber" name="L165" href="#L165">165</a>                     analyzeSpmResolvedDependenciesV1(spmResolved, engine, file);
 <a class="jxr_linenumber" name="L166" href="#L166">166</a>                     <strong class="jxr_keyword">break</strong>;
@@ -182,8 +182,8 @@
 <a class="jxr_linenumber" name="L174" href="#L174">174</a>     }
 <a class="jxr_linenumber" name="L175" href="#L175">175</a> 
 <a class="jxr_linenumber" name="L176" href="#L176">176</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L177" href="#L177">177</a> <em class="jxr_javadoccomment">     * Analyzes the version 1 of the Package.resolved file to extract evidence for the</em>
-<a class="jxr_linenumber" name="L178" href="#L178">178</a> <em class="jxr_javadoccomment">     * dependency.</em>
+<a class="jxr_linenumber" name="L177" href="#L177">177</a> <em class="jxr_javadoccomment">     * Analyzes the version 1 of the Package.resolved file to extract evidence</em>
+<a class="jxr_linenumber" name="L178" href="#L178">178</a> <em class="jxr_javadoccomment">     * for the dependency.</em>
 <a class="jxr_linenumber" name="L179" href="#L179">179</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L180" href="#L180">180</a> <em class="jxr_javadoccomment">     * @param spmResolved the dependency to analyze</em>
 <a class="jxr_linenumber" name="L181" href="#L181">181</a> <em class="jxr_javadoccomment">     * @param engine the analysis engine</em>
@@ -217,8 +217,8 @@
 <a class="jxr_linenumber" name="L209" href="#L209">209</a>     }
 <a class="jxr_linenumber" name="L210" href="#L210">210</a> 
 <a class="jxr_linenumber" name="L211" href="#L211">211</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L212" href="#L212">212</a> <em class="jxr_javadoccomment">     * Analyzes the version 2 of the Package.resolved file to extract evidence for the</em>
-<a class="jxr_linenumber" name="L213" href="#L213">213</a> <em class="jxr_javadoccomment">     * dependency.</em>
+<a class="jxr_linenumber" name="L212" href="#L212">212</a> <em class="jxr_javadoccomment">     * Analyzes the version 2 of the Package.resolved file to extract evidence</em>
+<a class="jxr_linenumber" name="L213" href="#L213">213</a> <em class="jxr_javadoccomment">     * for the dependency.</em>
 <a class="jxr_linenumber" name="L214" href="#L214">214</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L215" href="#L215">215</a> <em class="jxr_javadoccomment">     * @param spmResolved the dependency to analyze</em>
 <a class="jxr_linenumber" name="L216" href="#L216">216</a> <em class="jxr_javadoccomment">     * @param engine the analysis engine</em>
@@ -236,63 +236,65 @@
 <a class="jxr_linenumber" name="L228" href="#L228">228</a>             String version = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L229" href="#L229">229</a>             <strong class="jxr_keyword">final</strong> JsonObject state = pin.getJsonObject(<span class="jxr_string">"state"</span>);
 <a class="jxr_linenumber" name="L230" href="#L230">230</a>             <strong class="jxr_keyword">if</strong> (state != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L231" href="#L231">231</a>                 <strong class="jxr_keyword">if</strong> (!state.isNull(<span class="jxr_string">"version"</span>)) {
-<a class="jxr_linenumber" name="L232" href="#L232">232</a>                     version = state.getString(<span class="jxr_string">"version"</span>);
-<a class="jxr_linenumber" name="L233" href="#L233">233</a>                 } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (!state.isNull(<span class="jxr_string">"branch"</span>)) {
-<a class="jxr_linenumber" name="L234" href="#L234">234</a>                     version = state.getString(<span class="jxr_string">"branch"</span>);
-<a class="jxr_linenumber" name="L235" href="#L235">235</a>                 }
-<a class="jxr_linenumber" name="L236" href="#L236">236</a>             }
-<a class="jxr_linenumber" name="L237" href="#L237">237</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> dependency = createDependency(spmResolved, SPM_RESOLVED_FILE_NAME, name, version, repo);
-<a class="jxr_linenumber" name="L238" href="#L238">238</a>             engine.addDependency(dependency);
-<a class="jxr_linenumber" name="L239" href="#L239">239</a>         });
-<a class="jxr_linenumber" name="L240" href="#L240">240</a>     }
-<a class="jxr_linenumber" name="L241" href="#L241">241</a> 
-<a class="jxr_linenumber" name="L242" href="#L242">242</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L243" href="#L243">243</a> <em class="jxr_javadoccomment">     * Creates a dependency object.</em>
-<a class="jxr_linenumber" name="L244" href="#L244">244</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L245" href="#L245">245</a> <em class="jxr_javadoccomment">     * @param parent the parent dependency</em>
-<a class="jxr_linenumber" name="L246" href="#L246">246</a> <em class="jxr_javadoccomment">     * @param source the source type</em>
-<a class="jxr_linenumber" name="L247" href="#L247">247</a> <em class="jxr_javadoccomment">     * @param name the name of the dependency</em>
-<a class="jxr_linenumber" name="L248" href="#L248">248</a> <em class="jxr_javadoccomment">     * @param version the version of the dependency</em>
-<a class="jxr_linenumber" name="L249" href="#L249">249</a> <em class="jxr_javadoccomment">     * @param repo the repository URL of the dependency</em>
-<a class="jxr_linenumber" name="L250" href="#L250">250</a> <em class="jxr_javadoccomment">     * @return the newly created dependency object</em>
-<a class="jxr_linenumber" name="L251" href="#L251">251</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L252" href="#L252">252</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> createDependency(<a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> parent, String source, <strong class="jxr_keyword">final</strong> String name, String version, String repo) {
-<a class="jxr_linenumber" name="L253" href="#L253">253</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> dependency = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a>(parent.getActualFile(), <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L254" href="#L254">254</a>         dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
-<a class="jxr_linenumber" name="L255" href="#L255">255</a>         dependency.setName(name);
-<a class="jxr_linenumber" name="L256" href="#L256">256</a>         dependency.setVersion(version);
-<a class="jxr_linenumber" name="L257" href="#L257">257</a>         <strong class="jxr_keyword">final</strong> String packagePath = String.format(<span class="jxr_string">"%s:%s"</span>, name, version);
-<a class="jxr_linenumber" name="L258" href="#L258">258</a>         dependency.setPackagePath(packagePath);
-<a class="jxr_linenumber" name="L259" href="#L259">259</a>         dependency.setDisplayFileName(packagePath);
-<a class="jxr_linenumber" name="L260" href="#L260">260</a>         dependency.setSha1sum(Checksum.getSHA1Checksum(packagePath));
-<a class="jxr_linenumber" name="L261" href="#L261">261</a>         dependency.setSha256sum(Checksum.getSHA256Checksum(packagePath));
-<a class="jxr_linenumber" name="L262" href="#L262">262</a>         dependency.setMd5sum(Checksum.getMD5Checksum(packagePath));
-<a class="jxr_linenumber" name="L263" href="#L263">263</a>         dependency.addEvidence(EvidenceType.VENDOR, source, <span class="jxr_string">"name"</span>, name, Confidence.HIGHEST);
-<a class="jxr_linenumber" name="L264" href="#L264">264</a>         dependency.addEvidence(EvidenceType.PRODUCT, source, <span class="jxr_string">"name"</span>, name, Confidence.HIGHEST);
-<a class="jxr_linenumber" name="L265" href="#L265">265</a>         dependency.addEvidence(EvidenceType.VENDOR, source, <span class="jxr_string">"repositoryUrl"</span>, repo, Confidence.HIGH);
-<a class="jxr_linenumber" name="L266" href="#L266">266</a>         dependency.addEvidence(EvidenceType.PRODUCT, source, <span class="jxr_string">"repositoryUrl"</span>, repo, Confidence.HIGH);
-<a class="jxr_linenumber" name="L267" href="#L267">267</a>         dependency.addEvidence(EvidenceType.VERSION, source, <span class="jxr_string">"version"</span>, version, Confidence.HIGHEST);
-<a class="jxr_linenumber" name="L268" href="#L268">268</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L269" href="#L269">269</a>             <strong class="jxr_keyword">final</strong> PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType(<span class="jxr_string">"swift"</span>).withName(dependency.getName());
-<a class="jxr_linenumber" name="L270" href="#L270">270</a>             <strong class="jxr_keyword">if</strong> (dependency.getVersion() != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L271" href="#L271">271</a>                 builder.withVersion(dependency.getVersion());
-<a class="jxr_linenumber" name="L272" href="#L272">272</a>             }
-<a class="jxr_linenumber" name="L273" href="#L273">273</a>             <strong class="jxr_keyword">final</strong> PackageURL purl = builder.build();
-<a class="jxr_linenumber" name="L274" href="#L274">274</a>             dependency.addSoftwareIdentifier(<strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/naming/PurlIdentifier.html">PurlIdentifier</a>(purl, Confidence.HIGHEST));
-<a class="jxr_linenumber" name="L275" href="#L275">275</a>         } <strong class="jxr_keyword">catch</strong> (MalformedPackageURLException ex) {
-<a class="jxr_linenumber" name="L276" href="#L276">276</a>             LOGGER.debug(<span class="jxr_string">"Unable to build package url for swift dependency"</span>, ex);
-<a class="jxr_linenumber" name="L277" href="#L277">277</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/naming/GenericIdentifier.html">GenericIdentifier</a> id;
-<a class="jxr_linenumber" name="L278" href="#L278">278</a>             <strong class="jxr_keyword">if</strong> (dependency.getVersion() != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L279" href="#L279">279</a>                 id = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/naming/GenericIdentifier.html">GenericIdentifier</a>(<span class="jxr_string">"swift:"</span> + dependency.getName() + <span class="jxr_string">"@"</span> + dependency.getVersion(), Confidence.HIGHEST);
-<a class="jxr_linenumber" name="L280" href="#L280">280</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L281" href="#L281">281</a>                 id = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/naming/GenericIdentifier.html">GenericIdentifier</a>(<span class="jxr_string">"swift:"</span> + dependency.getName(), Confidence.HIGHEST);
-<a class="jxr_linenumber" name="L282" href="#L282">282</a>             }
-<a class="jxr_linenumber" name="L283" href="#L283">283</a>             dependency.addSoftwareIdentifier(id);
-<a class="jxr_linenumber" name="L284" href="#L284">284</a>         }
-<a class="jxr_linenumber" name="L285" href="#L285">285</a>         <strong class="jxr_keyword">return</strong> dependency;
-<a class="jxr_linenumber" name="L286" href="#L286">286</a>     }
-<a class="jxr_linenumber" name="L287" href="#L287">287</a> }
+<a class="jxr_linenumber" name="L231" href="#L231">231</a>                 <strong class="jxr_keyword">if</strong> (state.containsKey(<span class="jxr_string">"version"</span>)
+<a class="jxr_linenumber" name="L232" href="#L232">232</a>                         &amp;&amp; !state.isNull(<span class="jxr_string">"version"</span>)
+<a class="jxr_linenumber" name="L233" href="#L233">233</a>                         &amp;&amp; !state.getString(<span class="jxr_string">"version"</span>).isEmpty()) {
+<a class="jxr_linenumber" name="L234" href="#L234">234</a>                     version = state.getString(<span class="jxr_string">"version"</span>);
+<a class="jxr_linenumber" name="L235" href="#L235">235</a>                 } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (state.containsKey(<span class="jxr_string">"branch"</span>) &amp;&amp; !state.isNull(<span class="jxr_string">"branch"</span>)) {
+<a class="jxr_linenumber" name="L236" href="#L236">236</a>                     version = state.getString(<span class="jxr_string">"branch"</span>);
+<a class="jxr_linenumber" name="L237" href="#L237">237</a>                 }
+<a class="jxr_linenumber" name="L238" href="#L238">238</a>             }
+<a class="jxr_linenumber" name="L239" href="#L239">239</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> dependency = createDependency(spmResolved, SPM_RESOLVED_FILE_NAME, name, version, repo);
+<a class="jxr_linenumber" name="L240" href="#L240">240</a>             engine.addDependency(dependency);
+<a class="jxr_linenumber" name="L241" href="#L241">241</a>         });
+<a class="jxr_linenumber" name="L242" href="#L242">242</a>     }
+<a class="jxr_linenumber" name="L243" href="#L243">243</a> 
+<a class="jxr_linenumber" name="L244" href="#L244">244</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L245" href="#L245">245</a> <em class="jxr_javadoccomment">     * Creates a dependency object.</em>
+<a class="jxr_linenumber" name="L246" href="#L246">246</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L247" href="#L247">247</a> <em class="jxr_javadoccomment">     * @param parent the parent dependency</em>
+<a class="jxr_linenumber" name="L248" href="#L248">248</a> <em class="jxr_javadoccomment">     * @param source the source type</em>
+<a class="jxr_linenumber" name="L249" href="#L249">249</a> <em class="jxr_javadoccomment">     * @param name the name of the dependency</em>
+<a class="jxr_linenumber" name="L250" href="#L250">250</a> <em class="jxr_javadoccomment">     * @param version the version of the dependency</em>
+<a class="jxr_linenumber" name="L251" href="#L251">251</a> <em class="jxr_javadoccomment">     * @param repo the repository URL of the dependency</em>
+<a class="jxr_linenumber" name="L252" href="#L252">252</a> <em class="jxr_javadoccomment">     * @return the newly created dependency object</em>
+<a class="jxr_linenumber" name="L253" href="#L253">253</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L254" href="#L254">254</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> createDependency(<a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> parent, String source, <strong class="jxr_keyword">final</strong> String name, String version, String repo) {
+<a class="jxr_linenumber" name="L255" href="#L255">255</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> dependency = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a>(parent.getActualFile(), <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L256" href="#L256">256</a>         dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
+<a class="jxr_linenumber" name="L257" href="#L257">257</a>         dependency.setName(name);
+<a class="jxr_linenumber" name="L258" href="#L258">258</a>         dependency.setVersion(version);
+<a class="jxr_linenumber" name="L259" href="#L259">259</a>         <strong class="jxr_keyword">final</strong> String packagePath = String.format(<span class="jxr_string">"%s:%s"</span>, name, version);
+<a class="jxr_linenumber" name="L260" href="#L260">260</a>         dependency.setPackagePath(packagePath);
+<a class="jxr_linenumber" name="L261" href="#L261">261</a>         dependency.setDisplayFileName(packagePath);
+<a class="jxr_linenumber" name="L262" href="#L262">262</a>         dependency.setSha1sum(Checksum.getSHA1Checksum(packagePath));
+<a class="jxr_linenumber" name="L263" href="#L263">263</a>         dependency.setSha256sum(Checksum.getSHA256Checksum(packagePath));
+<a class="jxr_linenumber" name="L264" href="#L264">264</a>         dependency.setMd5sum(Checksum.getMD5Checksum(packagePath));
+<a class="jxr_linenumber" name="L265" href="#L265">265</a>         dependency.addEvidence(EvidenceType.VENDOR, source, <span class="jxr_string">"name"</span>, name, Confidence.HIGHEST);
+<a class="jxr_linenumber" name="L266" href="#L266">266</a>         dependency.addEvidence(EvidenceType.PRODUCT, source, <span class="jxr_string">"name"</span>, name, Confidence.HIGHEST);
+<a class="jxr_linenumber" name="L267" href="#L267">267</a>         dependency.addEvidence(EvidenceType.VENDOR, source, <span class="jxr_string">"repositoryUrl"</span>, repo, Confidence.HIGH);
+<a class="jxr_linenumber" name="L268" href="#L268">268</a>         dependency.addEvidence(EvidenceType.PRODUCT, source, <span class="jxr_string">"repositoryUrl"</span>, repo, Confidence.HIGH);
+<a class="jxr_linenumber" name="L269" href="#L269">269</a>         dependency.addEvidence(EvidenceType.VERSION, source, <span class="jxr_string">"version"</span>, version, Confidence.HIGHEST);
+<a class="jxr_linenumber" name="L270" href="#L270">270</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L271" href="#L271">271</a>             <strong class="jxr_keyword">final</strong> PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType(<span class="jxr_string">"swift"</span>).withName(dependency.getName());
+<a class="jxr_linenumber" name="L272" href="#L272">272</a>             <strong class="jxr_keyword">if</strong> (dependency.getVersion() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L273" href="#L273">273</a>                 builder.withVersion(dependency.getVersion());
+<a class="jxr_linenumber" name="L274" href="#L274">274</a>             }
+<a class="jxr_linenumber" name="L275" href="#L275">275</a>             <strong class="jxr_keyword">final</strong> PackageURL purl = builder.build();
+<a class="jxr_linenumber" name="L276" href="#L276">276</a>             dependency.addSoftwareIdentifier(<strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/naming/PurlIdentifier.html">PurlIdentifier</a>(purl, Confidence.HIGHEST));
+<a class="jxr_linenumber" name="L277" href="#L277">277</a>         } <strong class="jxr_keyword">catch</strong> (MalformedPackageURLException ex) {
+<a class="jxr_linenumber" name="L278" href="#L278">278</a>             LOGGER.debug(<span class="jxr_string">"Unable to build package url for swift dependency"</span>, ex);
+<a class="jxr_linenumber" name="L279" href="#L279">279</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/naming/GenericIdentifier.html">GenericIdentifier</a> id;
+<a class="jxr_linenumber" name="L280" href="#L280">280</a>             <strong class="jxr_keyword">if</strong> (dependency.getVersion() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L281" href="#L281">281</a>                 id = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/naming/GenericIdentifier.html">GenericIdentifier</a>(<span class="jxr_string">"swift:"</span> + dependency.getName() + <span class="jxr_string">"@"</span> + dependency.getVersion(), Confidence.HIGHEST);
+<a class="jxr_linenumber" name="L282" href="#L282">282</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L283" href="#L283">283</a>                 id = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/naming/GenericIdentifier.html">GenericIdentifier</a>(<span class="jxr_string">"swift:"</span> + dependency.getName(), Confidence.HIGHEST);
+<a class="jxr_linenumber" name="L284" href="#L284">284</a>             }
+<a class="jxr_linenumber" name="L285" href="#L285">285</a>             dependency.addSoftwareIdentifier(id);
+<a class="jxr_linenumber" name="L286" href="#L286">286</a>         }
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>         <strong class="jxr_keyword">return</strong> dependency;
+<a class="jxr_linenumber" name="L288" href="#L288">288</a>     }
+<a class="jxr_linenumber" name="L289" href="#L289">289</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2022 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

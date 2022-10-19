@@ -178,44 +178,44 @@
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>         File file = BaseTest.getResourceAsFile(<strong class="jxr_keyword">this</strong>, <span class="jxr_string">"struts2-core-2.1.2.jar"</span>);
 <a class="jxr_linenumber" name="L171" href="#L171">171</a>         <em class="jxr_comment">//File file = new File(this.getClass().getClassLoader().getResource("axis2-adb-1.4.1.jar").getPath());</em>
 <a class="jxr_linenumber" name="L172" href="#L172">172</a>         Dependency struts = <strong class="jxr_keyword">new</strong> Dependency(file);
-<a class="jxr_linenumber" name="L173" href="#L173">173</a> 
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>         CpeSuppressionAnalyzer suppressionAnalyzer = <strong class="jxr_keyword">new</strong> CpeSuppressionAnalyzer();
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>         suppressionAnalyzer.initialize(getSettings());
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>         suppressionAnalyzer.prepare(<strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>         <strong class="jxr_keyword">try</strong> (Engine engine = <strong class="jxr_keyword">new</strong> Engine(getSettings())) {
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>             CpeSuppressionAnalyzer suppressionAnalyzer = <strong class="jxr_keyword">new</strong> CpeSuppressionAnalyzer();
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>             suppressionAnalyzer.initialize(getSettings());
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>             suppressionAnalyzer.prepare(engine);
 <a class="jxr_linenumber" name="L177" href="#L177">177</a> 
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>         FileNameAnalyzer fnAnalyzer = <strong class="jxr_keyword">new</strong> FileNameAnalyzer();
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>         fnAnalyzer.analyze(struts, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>             FileNameAnalyzer fnAnalyzer = <strong class="jxr_keyword">new</strong> FileNameAnalyzer();
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>             fnAnalyzer.analyze(struts, engine);
 <a class="jxr_linenumber" name="L180" href="#L180">180</a> 
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>         HintAnalyzer hintAnalyzer = <strong class="jxr_keyword">new</strong> HintAnalyzer();
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>         hintAnalyzer.initialize(getSettings());
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>         hintAnalyzer.prepare(<strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>         JarAnalyzer jarAnalyzer = <strong class="jxr_keyword">new</strong> JarAnalyzer();
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>         jarAnalyzer.initialize(getSettings());
-<a class="jxr_linenumber" name="L186" href="#L186">186</a>         jarAnalyzer.accept(<strong class="jxr_keyword">new</strong> File(<span class="jxr_string">"test.jar"</span>));<em class="jxr_comment">//trick analyzer into "thinking it is active"</em>
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>         jarAnalyzer.prepare(<strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>             HintAnalyzer hintAnalyzer = <strong class="jxr_keyword">new</strong> HintAnalyzer();
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>             hintAnalyzer.initialize(getSettings());
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>             hintAnalyzer.prepare(engine);
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>             JarAnalyzer jarAnalyzer = <strong class="jxr_keyword">new</strong> JarAnalyzer();
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>             jarAnalyzer.initialize(getSettings());
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>             jarAnalyzer.accept(<strong class="jxr_keyword">new</strong> File(<span class="jxr_string">"test.jar"</span>));<em class="jxr_comment">//trick analyzer into "thinking it is active"</em>
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>             jarAnalyzer.prepare(engine);
 <a class="jxr_linenumber" name="L188" href="#L188">188</a> 
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>         jarAnalyzer.analyze(struts, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L190" href="#L190">190</a>         hintAnalyzer.analyze(struts, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L191" href="#L191">191</a>         <em class="jxr_comment">//File fileCommonValidator = new File(this.getClass().getClassLoader().getResource("commons-validator-1.4.0.jar").getPath());</em>
-<a class="jxr_linenumber" name="L192" href="#L192">192</a>         File fileCommonValidator = BaseTest.getResourceAsFile(<strong class="jxr_keyword">this</strong>, <span class="jxr_string">"commons-validator-1.4.0.jar"</span>);
-<a class="jxr_linenumber" name="L193" href="#L193">193</a>         Dependency commonValidator = <strong class="jxr_keyword">new</strong> Dependency(fileCommonValidator);
-<a class="jxr_linenumber" name="L194" href="#L194">194</a>         jarAnalyzer.analyze(commonValidator, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L195" href="#L195">195</a>         hintAnalyzer.analyze(commonValidator, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>             jarAnalyzer.analyze(struts, engine);
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>             hintAnalyzer.analyze(struts, engine);
+<a class="jxr_linenumber" name="L191" href="#L191">191</a>             <em class="jxr_comment">//File fileCommonValidator = new File(this.getClass().getClassLoader().getResource("commons-validator-1.4.0.jar").getPath());</em>
+<a class="jxr_linenumber" name="L192" href="#L192">192</a>             File fileCommonValidator = BaseTest.getResourceAsFile(<strong class="jxr_keyword">this</strong>, <span class="jxr_string">"commons-validator-1.4.0.jar"</span>);
+<a class="jxr_linenumber" name="L193" href="#L193">193</a>             Dependency commonValidator = <strong class="jxr_keyword">new</strong> Dependency(fileCommonValidator);
+<a class="jxr_linenumber" name="L194" href="#L194">194</a>             jarAnalyzer.analyze(commonValidator, engine);
+<a class="jxr_linenumber" name="L195" href="#L195">195</a>             hintAnalyzer.analyze(commonValidator, engine);
 <a class="jxr_linenumber" name="L196" href="#L196">196</a> 
-<a class="jxr_linenumber" name="L197" href="#L197">197</a>         <em class="jxr_comment">//File fileSpring = new File(this.getClass().getClassLoader().getResource("spring-core-2.5.5.jar").getPath());</em>
-<a class="jxr_linenumber" name="L198" href="#L198">198</a>         File fileSpring = BaseTest.getResourceAsFile(<strong class="jxr_keyword">this</strong>, <span class="jxr_string">"spring-core-2.5.5.jar"</span>);
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>         Dependency spring = <strong class="jxr_keyword">new</strong> Dependency(fileSpring);
-<a class="jxr_linenumber" name="L200" href="#L200">200</a>         jarAnalyzer.analyze(spring, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L201" href="#L201">201</a>         hintAnalyzer.analyze(spring, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>             <em class="jxr_comment">//File fileSpring = new File(this.getClass().getClassLoader().getResource("spring-core-2.5.5.jar").getPath());</em>
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>             File fileSpring = BaseTest.getResourceAsFile(<strong class="jxr_keyword">this</strong>, <span class="jxr_string">"spring-core-2.5.5.jar"</span>);
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>             Dependency spring = <strong class="jxr_keyword">new</strong> Dependency(fileSpring);
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>             jarAnalyzer.analyze(spring, engine);
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>             hintAnalyzer.analyze(spring, engine);
 <a class="jxr_linenumber" name="L202" href="#L202">202</a> 
-<a class="jxr_linenumber" name="L203" href="#L203">203</a>         <em class="jxr_comment">//File fileSpring3 = new File(this.getClass().getClassLoader().getResource("spring-core-3.0.0.RELEASE.jar").getPath());</em>
-<a class="jxr_linenumber" name="L204" href="#L204">204</a>         File fileSpring3 = BaseTest.getResourceAsFile(<strong class="jxr_keyword">this</strong>, <span class="jxr_string">"spring-core-3.0.0.RELEASE.jar"</span>);
-<a class="jxr_linenumber" name="L205" href="#L205">205</a>         Dependency spring3 = <strong class="jxr_keyword">new</strong> Dependency(fileSpring3);
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>         jarAnalyzer.analyze(spring3, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L207" href="#L207">207</a>         hintAnalyzer.analyze(spring3, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>             <em class="jxr_comment">//File fileSpring3 = new File(this.getClass().getClassLoader().getResource("spring-core-3.0.0.RELEASE.jar").getPath());</em>
+<a class="jxr_linenumber" name="L204" href="#L204">204</a>             File fileSpring3 = BaseTest.getResourceAsFile(<strong class="jxr_keyword">this</strong>, <span class="jxr_string">"spring-core-3.0.0.RELEASE.jar"</span>);
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>             Dependency spring3 = <strong class="jxr_keyword">new</strong> Dependency(fileSpring3);
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>             jarAnalyzer.analyze(spring3, engine);
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>             hintAnalyzer.analyze(spring3, engine);
 <a class="jxr_linenumber" name="L208" href="#L208">208</a> 
-<a class="jxr_linenumber" name="L209" href="#L209">209</a>         CPEAnalyzer instance = <strong class="jxr_keyword">new</strong> CPEAnalyzer();
-<a class="jxr_linenumber" name="L210" href="#L210">210</a>         <strong class="jxr_keyword">try</strong> (Engine engine = <strong class="jxr_keyword">new</strong> Engine(getSettings())) {
+<a class="jxr_linenumber" name="L209" href="#L209">209</a>             CPEAnalyzer instance = <strong class="jxr_keyword">new</strong> CPEAnalyzer();
+<a class="jxr_linenumber" name="L210" href="#L210">210</a> 
 <a class="jxr_linenumber" name="L211" href="#L211">211</a>             engine.openDatabase(<strong class="jxr_keyword">true</strong>, <strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L212" href="#L212">212</a>             instance.initialize(getSettings());
 <a class="jxr_linenumber" name="L213" href="#L213">213</a>             instance.prepare(engine);

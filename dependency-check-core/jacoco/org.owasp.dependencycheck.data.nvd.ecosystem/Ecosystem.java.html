@@ -84,6 +84,12 @@ public final class Ecosystem {
     public static final String ELIXIR = &quot;exlixir&quot;;
 
     /**
+     * The Dart ecosystem.
+     */
+    public static final String DART = &quot;dart&quot;;
+
+
+    /**
      * A reference to the ODC settings.
      */
     private final Settings settings;
@@ -97,10 +103,10 @@ public final class Ecosystem {
      *
      * @param settings the ODC configuration
      */
-<span class="fc" id="L100">    public Ecosystem(Settings settings) {</span>
-<span class="fc" id="L101">        this.settings = settings;</span>
-<span class="fc" id="L102">        this.defaultQuerySize = settings.getInt(Settings.KEYS.MAX_QUERY_SIZE_DEFAULT, 100);</span>
-<span class="fc" id="L103">    }</span>
+<span class="fc" id="L106">    public Ecosystem(Settings settings) {</span>
+<span class="fc" id="L107">        this.settings = settings;</span>
+<span class="fc" id="L108">        this.defaultQuerySize = settings.getInt(Settings.KEYS.MAX_QUERY_SIZE_DEFAULT, 100);</span>
+<span class="fc" id="L109">    }</span>
 
     /**
      * Returns the max query result size for the Lucene search for each
@@ -110,7 +116,7 @@ public final class Ecosystem {
      * @return the max query result size
      */
     public int getLuceneMaxQueryLimitFor(String ecosystem) {
-<span class="fc" id="L113">        return settings.getInt(Settings.KEYS.MAX_QUERY_SIZE_PREFIX + ecosystem, defaultQuerySize);</span>
+<span class="fc" id="L119">        return settings.getInt(Settings.KEYS.MAX_QUERY_SIZE_PREFIX + ecosystem, defaultQuerySize);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
