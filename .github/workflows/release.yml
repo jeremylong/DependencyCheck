@@ -186,8 +186,10 @@ jobs:
           draft: false
           body: |
             ### Changes
-            - Fixed logging issue (#4846).
-            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/49?closed=1).
+            - Fixed issue with the Maven plugin that caused concurrent modification exceptions (#4935).
+            - Migrated from Jackson Afterburner to Blackbird (#4905).
+            - Added an experimental Dart analyzer (#4869).
+            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/50?closed=1).
 
       - name: Upload CLI
         id: upload-release-cli

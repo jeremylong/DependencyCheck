@@ -1,5 +1,14 @@
 # Release Notes
 
+## [Version 7.3.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.3.0) (2022-10-19)
+
+**Changes**
+
+- Fixed issue with the Maven plugin that caused concurrent modification exceptions (#4935).
+- Migrated from Jackson Afterburner to Blackbird (#4905).
+- Added an experimental Dart analyzer (#4869).
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/50?closed=1).
+
 ## [Version 7.2.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.2.1) (2022-09-20)
 
 **Changes**
