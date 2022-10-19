@@ -43,7 +43,6 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
-import org.owasp.dependencycheck.xml.suppression.SuppressionRules;
 
 /**
  * Abstract base suppression analyzer that contains methods for parsing the
@@ -63,31 +62,9 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      */
     private static final String BASE_SUPPRESSION_FILE = "dependencycheck-base-suppression.xml";
     /**
-     * Settings flag to indicate if the suppression rules have been previously loaded.
+     * The key used to store and retrieve the suppression files.
      */
-    private static final String SUPPRESSION_LOADED = "SUPPRESSION_LOADED";
-    /**
-     * The collection of suppression rules.
-     */
-    private final SuppressionRules rules = SuppressionRules.getInstance();
-
-    /**
-     * Returns the suppression rules.
-     *
-     * @return the suppression rules
-     */
-    protected SuppressionRules getSuppressionRules() {
-        return rules;
-    }
-
-    /**
-     * Get the number of suppression rules.
-     *
-     * @return the number of suppression rules
-     */
-    protected int getRuleCount() {
-        return rules.size();
-    }
+    public static final String SUPPRESSION_OBJECT_KEY = "suppression.rules";
 
     /**
      * Returns a list of file EXTENSIONS supported by this analyzer.
@@ -107,33 +84,33 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      */
     @Override
     public synchronized void prepareAnalyzer(Engine engine) throws InitializationException {
-        //check if we have a brand new settings object - if we do the suppression rules could be different
-        final boolean loaded = getSettings().getBoolean(SUPPRESSION_LOADED, false);
-        if (!loaded) {
-            SuppressionRules.getInstance().list().clear();
+        if (engine.hasObject(SUPPRESSION_OBJECT_KEY)) {
+            return;
         }
-        if (rules.isEmpty()) {
-            try {
-                loadSuppressionBaseData();
-            } catch (SuppressionParseException ex) {
-                throw new InitializationException("Error initializing the suppression analyzer: " + ex.getLocalizedMessage(), ex, true);
-            }
+        try {
+            loadSuppressionBaseData(engine);
+        } catch (SuppressionParseException ex) {
+            throw new InitializationException("Error initializing the suppression analyzer: " + ex.getLocalizedMessage(), ex, true);
+        }
 
-            try {
-                loadSuppressionData();
-            } catch (SuppressionParseException ex) {
-                throw new InitializationException("Warn initializing the suppression analyzer: " + ex.getLocalizedMessage(), ex, false);
-            }
-            getSettings().setBoolean(SUPPRESSION_LOADED, true);
+        try {
+            loadSuppressionData(engine);
+        } catch (SuppressionParseException ex) {
+            throw new InitializationException("Warn initializing the suppression analyzer: " + ex.getLocalizedMessage(), ex, false);
         }
     }
 
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+        if (engine == null) {
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        final List<SuppressionRule> rules = (List<SuppressionRule>) engine.getObject(SUPPRESSION_OBJECT_KEY);
         if (rules.isEmpty()) {
             return;
         }
-        for (SuppressionRule rule : rules.list()) {
+        for (SuppressionRule rule : rules) {
             if (filter(rule)) {
                 rule.process(dependency);
             }
@@ -141,7 +118,8 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Determines whether a suppression rule should be retained when filtering a set of suppression rules for a concrete suppression analyzer.
+     * Determines whether a suppression rule should be retained when filtering a
+     * set of suppression rules for a concrete suppression analyzer.
      *
      * @param rule the suppression rule to evaluate
      * @return <code>true</code> if the rule should be retained; otherwise
@@ -152,9 +130,10 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     /**
      * Loads all the suppression rules files configured in the {@link Settings}.
      *
+     * @param engine a reference to the ODC engine.
      * @throws SuppressionParseException thrown if the XML cannot be parsed.
      */
-    private void loadSuppressionData() throws SuppressionParseException {
+    private void loadSuppressionData(Engine engine) throws SuppressionParseException {
         final List<SuppressionRule> ruleList = new ArrayList<>();
         final SuppressionParser parser = new SuppressionParser();
         final String[] suppressionFilePaths = getSettings().getArray(Settings.KEYS.SUPPRESSION_FILE);
@@ -170,8 +149,17 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                 }
             }
         }
+
         LOGGER.debug("{} suppression rules were loaded.", ruleList.size());
-        rules.addAll(ruleList);
+        if (!ruleList.isEmpty()) {
+            if (engine.hasObject(SUPPRESSION_OBJECT_KEY)) {
+                @SuppressWarnings("unchecked")
+                final List<SuppressionRule> rules = (List<SuppressionRule>) engine.getObject(SUPPRESSION_OBJECT_KEY);
+                rules.addAll(ruleList);
+            } else {
+                engine.putObject(SUPPRESSION_OBJECT_KEY, ruleList);
+            }
+        }
         if (!failedLoadingFiles.isEmpty()) {
             LOGGER.debug("{} suppression files failed to load.", failedLoadingFiles.size());
             final StringBuilder sb = new StringBuilder();
@@ -183,9 +171,10 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     /**
      * Loads all the base suppression rules files.
      *
+     * @param engine a reference to the ODC engine
      * @throws SuppressionParseException thrown if the XML cannot be parsed.
      */
-    private void loadSuppressionBaseData() throws SuppressionParseException {
+    private void loadSuppressionBaseData(Engine engine) throws SuppressionParseException {
         final SuppressionParser parser = new SuppressionParser();
         final List<SuppressionRule> ruleList;
         try (InputStream in = FileUtils.getResourceAsStream(BASE_SUPPRESSION_FILE)) {
@@ -196,7 +185,15 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         } catch (SAXException | IOException ex) {
             throw new SuppressionParseException("Unable to parse the base suppression data file", ex);
         }
-        rules.addAll(ruleList);
+        if (!ruleList.isEmpty()) {
+            if (engine.hasObject(SUPPRESSION_OBJECT_KEY)) {
+                @SuppressWarnings("unchecked")
+                final List<SuppressionRule> rules = (List<SuppressionRule>) engine.getObject(SUPPRESSION_OBJECT_KEY);
+                rules.addAll(ruleList);
+            } else {
+                engine.putObject(SUPPRESSION_OBJECT_KEY, ruleList);
+            }
+        }
     }
 
     /**
@@ -303,5 +300,20 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         LOGGER.warn(String.format(message + " '%s'", suppressionFilePath));
         LOGGER.debug("", exception);
         throw new SuppressionParseException(message, exception);
+    }
+
+    /**
+     * Returns the number of suppression rules currently loaded in the engine.
+     *
+     * @param engine a reference to the ODC engine
+     * @return the count of rules loaded
+     */
+    public static int getRuleCount(Engine engine) {
+        if (engine.hasObject(SUPPRESSION_OBJECT_KEY)) {
+            @SuppressWarnings("unchecked")
+            final List<SuppressionRule> rules = (List<SuppressionRule>) engine.getObject(SUPPRESSION_OBJECT_KEY);
+            return rules.size();
+        }
+        return 0;
     }
 }

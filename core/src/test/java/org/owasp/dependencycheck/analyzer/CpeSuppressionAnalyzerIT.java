@@ -26,7 +26,6 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.Settings;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.owasp.dependencycheck.xml.suppression.SuppressionRules;
 
 /**
  * Testing the CPE suppression analyzer.
@@ -64,24 +63,26 @@ public class CpeSuppressionAnalyzerIT extends BaseDBTestCase {
      */
     @Test
     public void testAnalyze() throws Exception {
-        //as the suppression rules are now a singleton - we must reset the list to cause the new suppression rules to load
-        SuppressionRules.getInstance().list().clear();
+
         File file = BaseTest.getResourceAsFile(this, "commons-fileupload-1.2.1.jar");
         File suppression = BaseTest.getResourceAsFile(this, "commons-fileupload-1.2.1.suppression.xml");
         getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
         getSettings().setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
         getSettings().setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
+        Dependency dependency;
+        int cveSize = 0;
+        int cpeSize = 0;
         try (Engine engine = new Engine(getSettings())) {
             engine.scan(file);
             engine.analyzeDependencies();
-            Dependency dependency = getDependency(engine, file);
-            int cveSize = dependency.getVulnerabilities().size();
-            int cpeSize = dependency.getVulnerableSoftwareIdentifiers().size();
+            dependency = getDependency(engine, file);
+            cveSize = dependency.getVulnerabilities().size();
+            cpeSize = dependency.getVulnerableSoftwareIdentifiers().size();
             assertTrue(cveSize > 0);
             assertTrue(cpeSize > 0);
-            //as the suppression rules are now a singleton - we must reset the list to cause the new suppression rules to load
-            SuppressionRules.getInstance().list().clear();
-            getSettings().setString(Settings.KEYS.SUPPRESSION_FILE, suppression.getAbsolutePath());
+        }
+        getSettings().setString(Settings.KEYS.SUPPRESSION_FILE, suppression.getAbsolutePath());
+        try (Engine engine = new Engine(getSettings())) {
             CpeSuppressionAnalyzer instance = new CpeSuppressionAnalyzer();
             instance.initialize(getSettings());
             instance.prepare(engine);
@@ -91,8 +92,6 @@ public class CpeSuppressionAnalyzerIT extends BaseDBTestCase {
             assertEquals(cveSize, dependency.getVulnerabilities().size());
             assertEquals(cpeSize, dependency.getVulnerableSoftwareIdentifiers().size());
         }
-        //be kind to other tests and cleanup any custom loaded suppression rules for your test.
-        SuppressionRules.getInstance().list().clear();
     }
 
     /**

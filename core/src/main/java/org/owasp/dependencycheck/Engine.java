@@ -55,6 +55,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -82,7 +83,6 @@ import static org.owasp.dependencycheck.analyzer.AnalysisPhase.PRE_FINDING_ANALY
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.PRE_IDENTIFIER_ANALYSIS;
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.PRE_INFORMATION_COLLECTION;
 import org.owasp.dependencycheck.analyzer.DependencyBundlingAnalyzer;
-import org.owasp.dependencycheck.xml.suppression.SuppressionRules;
 
 /**
  * Scans files, directories, etc. for Dependencies. Analyzers are loaded and
@@ -125,6 +125,10 @@ public class Engine implements FileFilter, AutoCloseable {
      * The configured settings.
      */
     private final Settings settings;
+    /**
+     * A storage location to persist objects throughout the execution of ODC.
+     */
+    private final Map<String, Object> objects = new HashMap<>();
     /**
      * The external view of the dependency list.
      */
@@ -660,8 +664,6 @@ public class Engine implements FileFilter, AutoCloseable {
                 .map(analyzers::get)
                 .forEach((analyzerList) -> analyzerList.forEach(this::closeAnalyzer));
 
-        SuppressionRules.getInstance().logUnusedRules();
-
         LOGGER.debug("\n----------------------------------------------------\nEND ANALYSIS\n----------------------------------------------------");
         final long analysisDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - analysisStart);
         LOGGER.info("Analysis Complete ({} seconds)", analysisDurationSeconds);
@@ -1066,6 +1068,46 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     public Settings getSettings() {
         return settings;
+    }
+
+    /**
+     * Retrieve an object from the objects collection.
+     *
+     * @param key the key to retrieve the object
+     * @return the object
+     */
+    public Object getObject(String key) {
+        return objects.get(key);
+    }
+
+    /**
+     * Put an object in the object collection.
+     *
+     * @param key the key to store the object
+     * @param object the object to store
+     */
+    public void putObject(String key, Object object) {
+        objects.put(key, object);
+    }
+
+    /**
+     * Verifies if the object exists in the object store.
+     *
+     * @param key the key to retrieve the object
+     * @return <code>true</code> if the object exists; otherwise
+     * <code>false</code>
+     */
+    public boolean hasObject(String key) {
+        return objects.containsKey(key);
+    }
+
+    /**
+     * Removes an object from the object store.
+     *
+     * @param key the key to the object
+     */
+    public void removeObject(String key) {
+        objects.remove(key);
     }
 
     /**

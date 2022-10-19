@@ -44,3 +44,4 @@ org.owasp.dependencycheck.analyzer.OssIndexAnalyzer
 org.owasp.dependencycheck.analyzer.PerlCpanfileAnalyzer
 org.owasp.dependencycheck.analyzer.PinnedMavenInstallAnalyzer
 org.owasp.dependencycheck.analyzer.DartAnalyzer
+org.owasp.dependencycheck.analyzer.UnusedSuppressionRuleAnalyzer
