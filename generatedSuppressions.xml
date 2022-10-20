@@ -204,3 +204,10 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.datasketches/datasketches-java@.*$</packageUrl>
    <cpe>cpe:/a:sketch:sketch</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4962
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.github\.pagehelper/pagehelper-spring-boot-starter@.*$</packageUrl>
+   <cpe>cpe:/a:pagehelper_project:pagehelper</cpe>
+</suppress>
