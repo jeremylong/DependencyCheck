@@ -20,10 +20,12 @@ package org.owasp.dependencycheck.data.update.nvd;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 
 import java.io.EOFException;
 import java.io.File;
@@ -87,9 +89,15 @@ public final class NvdCveParser {
     public void parse(File file) throws UpdateException, CorruptedDatastreamException {
         LOGGER.debug("Parsing " + file.getName());
 
+        final Module module;
+        if (getJavaVersion() <= 8) {
+            module = new AfterburnerModule();
+        } else {
+            module = new BlackbirdModule();
+        }
         final ObjectMapper objectMapper = JsonMapper.builder()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .addModule(new BlackbirdModule())
+                .addModule(module)
                 .build();
 
         final ObjectReader objectReader = objectMapper.readerFor(DefCveItem.class);
@@ -115,6 +123,24 @@ public final class NvdCveParser {
             LOGGER.debug("Error extracting the NVD JSON data from: " + file, ex);
             throw new UpdateException("Unable to find the NVD CVE file to parse", ex);
         }
+    }
+
+    /**
+     * Returns the Java major version as a whole number.
+     *
+     * @return the Java major version as a whole number
+     */
+    private static int getJavaVersion() {
+        String version = System.getProperty("java.version");
+        if (version.startsWith("1.")) {
+            version = version.substring(2, 3);
+        } else {
+            final int dot = version.indexOf(".");
+            if (dot != -1) {
+                version = version.substring(0, dot);
+            }
+        }
+        return Integer.parseInt(version);
     }
 
     void init(JsonParser parser) throws IOException {
