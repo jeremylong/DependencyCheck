@@ -131,7 +131,7 @@ public final class NvdCveParser {
      * @return the Java major version as a whole number
      */
     private static int getJavaVersion() {
-        String version = System.getProperty("java.version");
+        String version = System.getProperty("java.specification.version");
         if (version.startsWith("1.")) {
             version = version.substring(2, 3);
         } else {
