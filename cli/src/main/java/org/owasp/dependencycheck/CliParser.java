@@ -147,9 +147,10 @@ public final class CliParser {
             if (line.hasOption(ARGUMENT.OUTPUT_FORMAT)) {
                 for (String validating : getReportFormat()) {
                     if (!isValidFormat(validating)
-                        && !isValidFilePath(validating, "format")) {
+                            && !isValidFilePath(validating, "format")) {
                         final String msg = String.format("An invalid 'format' of '%s' was specified. "
-                                                         + "Supported output formats are %s, and custom template files.", validating, SUPPORTED_FORMATS);
+                                + "Supported output formats are %s, and custom template files.",
+                                validating, SUPPORTED_FORMATS);
                         throw new ParseException(msg);
                     }
                 }

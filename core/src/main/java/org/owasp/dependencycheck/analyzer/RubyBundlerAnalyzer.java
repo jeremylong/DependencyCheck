@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import javax.annotation.concurrent.ThreadSafe;
 
 import org.owasp.dependencycheck.Engine;

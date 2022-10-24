@@ -81,7 +81,8 @@ public class Check extends Update {
      */
     private Boolean nodeAuditAnalyzerUseCache;
     /**
-     * Sets whether or not the Node Package Analyzer should skip dev dependencies.
+     * Sets whether or not the Node Package Analyzer should skip dev
+     * dependencies.
      */
     private Boolean nodePackageSkipDevDependencies;
     /**
@@ -358,7 +359,8 @@ public class Check extends Update {
      */
     private String ossindexAnalyzerPassword;
     /**
-     * Whether we should only warn about Sonatype OSS Index remote errors instead of failing completely.
+     * Whether we should only warn about Sonatype OSS Index remote errors
+     * instead of failing completely.
      */
     private Boolean ossIndexAnalyzerWarnOnlyOnRemoteErrors;
 
@@ -1021,6 +1023,7 @@ public class Check extends Update {
     public void setSwiftPackageManagerAnalyzerEnabled(Boolean swiftPackageManagerAnalyzerEnabled) {
         this.swiftPackageManagerAnalyzerEnabled = swiftPackageManagerAnalyzerEnabled;
     }
+
     /**
      * Returns whether or not the Swift package resolved Analyzer is enabled.
      *
@@ -1698,22 +1701,23 @@ public class Check extends Update {
 
     /**
      * Get value of {@link #ossIndexAnalyzerWarnOnlyOnRemoteErrors}.
-     * 
+     *
      * @return the value of ossIndexWarnOnlyOnRemoteErrors
      */
     public Boolean getOssIndexWarnOnlyOnRemoteErrors() {
-		return ossIndexAnalyzerWarnOnlyOnRemoteErrors;
-	}
-    
+        return ossIndexAnalyzerWarnOnlyOnRemoteErrors;
+    }
+
     /**
      * Set value of {@link #ossIndexAnalyzerWarnOnlyOnRemoteErrors}.
-     * 
-     * @param ossIndexWarnOnlyOnRemoteErrors the value of ossIndexWarnOnlyOnRemoteErrors
+     *
+     * @param ossIndexWarnOnlyOnRemoteErrors the value of
+     * ossIndexWarnOnlyOnRemoteErrors
      */
     public void setOssIndexWarnOnlyOnRemoteErrors(Boolean ossIndexWarnOnlyOnRemoteErrors) {
-		this.ossIndexAnalyzerWarnOnlyOnRemoteErrors = ossIndexWarnOnlyOnRemoteErrors;
-	}
-    
+        this.ossIndexAnalyzerWarnOnlyOnRemoteErrors = ossIndexWarnOnlyOnRemoteErrors;
+    }
+
     /**
      * Get the value of cmakeAnalyzerEnabled.
      *
@@ -2106,10 +2110,12 @@ public class Check extends Update {
     }
 
     /**
-     * A class for Ant to represent the {@code <reportFormat format="<format>"/>} nested element to define
+     * A class for Ant to represent the
+     * {@code <reportFormat format="<format>"/>} nested element to define
      * multiple report formats for the ant-task.
      */
     public static class ReportFormat {
+
         /**
          * The format of this ReportFormat.
          */
@@ -2128,8 +2134,8 @@ public class Check extends Update {
          * Sets the format.
          *
          * @param format the String value for one of the {@link ReportFormats}
-         * @throws BuildException When the offered String is not one of the valid values of the {@link ReportFormats}
-         *                        EnumeratedAttribute
+         * @throws BuildException When the offered String is not one of the
+         * valid values of the {@link ReportFormats} EnumeratedAttribute
          */
         public void setFormat(final String format) {
             this.format = (ReportFormats) EnumeratedAttribute.getInstance(ReportFormats.class, format);
