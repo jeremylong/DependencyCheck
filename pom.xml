@@ -140,7 +140,7 @@ Copyright (c) 2012 - Jeremy Long
         <spotbugs.version>4.7.3</spotbugs.version>
         <spotbugs.maven.plugin.version>4.7.2.1</spotbugs.maven.plugin.version>
         <taglist-maven-plugin.version>3.0.0</taglist-maven-plugin.version>
-        <versions-maven-plugin.version>2.12.0</versions-maven-plugin.version>
+        <versions-maven-plugin.version>2.13.0</versions-maven-plugin.version>
         <jetbrains.annotations.version>23.0.0</jetbrains.annotations.version>
         <com.h2database.version>2.1.214</com.h2database.version>
         <commons-cli.version>1.5.0</commons-cli.version>
