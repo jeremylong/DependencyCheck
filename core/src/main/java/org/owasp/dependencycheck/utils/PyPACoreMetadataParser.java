@@ -80,6 +80,7 @@ public final class PyPACoreMetadataParser {
      *         The Wheel metadata of a Python package as a BufferedReader
      *
      * @return The metadata properties read from the utf8Reader
+     * @throws java.io.IOException thrown if there is error reading the properties
      */
     public static Properties getProperties(final BufferedReader utf8Reader) throws IOException {
         final Properties result = new Properties();

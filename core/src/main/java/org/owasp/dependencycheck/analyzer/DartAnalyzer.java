@@ -28,17 +28,12 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceType;
-import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import us.springett.parsers.cpe.Cpe;
-import us.springett.parsers.cpe.CpeBuilder;
-import us.springett.parsers.cpe.exceptions.CpeValidationException;
-import us.springett.parsers.cpe.values.Part;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.File;
@@ -48,8 +43,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * This analyzer is used to analyze Dart packages by collecting
- * information from pubspec lock and yaml files. See https://dart.dev/tools/pub/pubspec
+ * This analyzer is used to analyze Dart packages by collecting information from
+ * pubspec lock and yaml files. See https://dart.dev/tools/pub/pubspec
  *
  * @author Marc Rödder (http://github.com/sticksen)
  */
@@ -63,10 +58,18 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
 //     */
 //    // currently not supported by Sonatype OSS
 //    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.DART;
-
+    /**
+     * The logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(DartAnalyzer.class);
 
+    /**
+     * The lock file name.
+     */
     private static final String LOCK_FILE = "pubspec.lock";
+    /**
+     * The YAML file name.
+     */
     private static final String YAML_FILE = "pubspec.yaml";
 
     @Override
@@ -106,7 +109,7 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
-        String fileName = dependency.getFileName();
+        final String fileName = dependency.getFileName();
         LOGGER.debug("Checking file {}", fileName);
 
         switch (fileName) {
@@ -116,25 +119,27 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
             case YAML_FILE:
                 analyzeYamlFileDependencies(dependency, engine);
                 break;
+            default:
+            //do nothing
         }
     }
 
     private void analyzeYamlFileDependencies(Dependency yamlFileDependency, Engine engine) throws AnalysisException {
         engine.removeDependency(yamlFileDependency);
 
-        JsonNode rootNode;
-        File yamlFile = yamlFileDependency.getActualFile();
-        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+        final JsonNode rootNode;
+        final File yamlFile = yamlFileDependency.getActualFile();
+        final ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
         try {
             rootNode = objectMapper.readTree(yamlFile);
         } catch (IOException e) {
             throw new AnalysisException("Problem occurred while reading dependency file.", e);
         }
 
-        Iterator<Map.Entry<String, JsonNode>> dependencies = rootNode.get("dependencies").fields();
+        final Iterator<Map.Entry<String, JsonNode>> dependencies = rootNode.get("dependencies").fields();
         addYamlDependenciesToEngine(dependencies, yamlFile, engine);
 
-        Iterator<Map.Entry<String, JsonNode>> devDependencies = rootNode.get("dev_dependencies").fields();
+        final Iterator<Map.Entry<String, JsonNode>> devDependencies = rootNode.get("dev_dependencies").fields();
         addYamlDependenciesToEngine(devDependencies, yamlFile, engine);
 
         addYamlDartDependencyToEngine(rootNode, yamlFile, engine);
@@ -143,9 +148,9 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
     private void analyzeLockFileDependencies(Dependency lockFileDependency, Engine engine) throws AnalysisException {
         engine.removeDependency(lockFileDependency);
 
-        JsonNode rootNode;
-        File lockFile = lockFileDependency.getActualFile();
-        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+        final JsonNode rootNode;
+        final File lockFile = lockFileDependency.getActualFile();
+        final ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
         try {
             rootNode = objectMapper.readTree(lockFile);
         } catch (IOException e) {
@@ -157,8 +162,8 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     private void addLockFileDartVersionToEngine(File file, Engine engine, JsonNode rootNode) throws AnalysisException {
-        String dartVersion = rootNode.get("sdks").get("dart").textValue();
-        String minimumVersion = extractMinimumVersion(dartVersion);
+        final String dartVersion = rootNode.get("sdks").get("dart").textValue();
+        final String minimumVersion = extractMinimumVersion(dartVersion);
 
         engine.addDependency(
                 createDependencyFromNameAndVersion(file, "dart_software_development_kit", minimumVersion));
@@ -166,23 +171,23 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
 
     private void addLockFileDependenciesToEngine(File file, Engine engine, JsonNode rootNode) throws AnalysisException {
         for (JsonNode nextPackage : rootNode.get("packages")) {
-            JsonNode description = nextPackage.get("description");
+            final JsonNode description = nextPackage.get("description");
             if (description == null) {
                 continue;
             }
 
-            JsonNode nameNode = description.get("name");
+            final JsonNode nameNode = description.get("name");
             if (nameNode == null) {
                 continue;
             }
 
-            JsonNode versionNode = nextPackage.get("version");
+            final JsonNode versionNode = nextPackage.get("version");
             if (versionNode == null) {
                 continue;
             }
 
-            String name = nameNode.asText();
-            String version = versionNode.asText();
+            final String name = nameNode.asText();
+            final String version = versionNode.asText();
             LOGGER.debug("Found dependency in {} file, name: {}, version: {}", LOCK_FILE, name, version);
 
             engine.addDependency(
@@ -193,11 +198,11 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
 
     private void addYamlDependenciesToEngine(Iterator<Map.Entry<String, JsonNode>> dependencies, File file, Engine engine) throws AnalysisException {
         while (dependencies.hasNext()) {
-            Map.Entry<String, JsonNode> entry = dependencies.next();
+            final Map.Entry<String, JsonNode> entry = dependencies.next();
 
-            String name = entry.getKey();
-            String versionRaw = entry.getValue().asText();
-            String version = extractMinimumVersion(versionRaw);
+            final String name = entry.getKey();
+            final String versionRaw = entry.getValue().asText();
+            final String version = extractMinimumVersion(versionRaw);
             LOGGER.debug("Found dependency in {} file, name: {}, version: {}", YAML_FILE, name, version);
 
             engine.addDependency(
@@ -207,22 +212,22 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     private void addYamlDartDependencyToEngine(JsonNode rootNode, File file, Engine engine) throws AnalysisException {
-        String dartVersion = rootNode.get("environment").get("sdk").textValue();
-        String minimumVersion = extractMinimumVersion(dartVersion);
+        final String dartVersion = rootNode.get("environment").get("sdk").textValue();
+        final String minimumVersion = extractMinimumVersion(dartVersion);
 
         engine.addDependency(
                 createDependencyFromNameAndVersion(file, "dart_software_development_kit", minimumVersion));
     }
 
     private Dependency createDependencyFromNameAndVersion(File file, String name, String version) throws AnalysisException {
-        Dependency dependency = new Dependency(file, true);
+        final Dependency dependency = new Dependency(file, true);
 
         // currently not supported by Sonatype OSS
 //            // dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
         dependency.setName(name);
         dependency.setVersion(version);
 
-        PackageURL packageURL;
+        final PackageURL packageURL;
         try {
             packageURL = PackageURLBuilder
                     .aPackageURL()
@@ -255,12 +260,12 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     private String extractMinimumVersion(String versionRaw) {
-        String version;
+        final String version;
         if (versionRaw.contains("^")) {
             version = versionRaw.replace("^", "");
         } else if (versionRaw.contains("<")) {
             // this code should parse version definitions like ">=2.10.0 <3.0.0"
-            String firstPart = versionRaw.split("<")[0].trim();
+            final String firstPart = versionRaw.split("<")[0].trim();
             version = firstPart.replace(">=", "").trim();
         } else if (versionRaw.contains("any")) {
             version = "";

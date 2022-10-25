@@ -133,8 +133,8 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
                     requestDelay();
                     reports = requestReports(engine.getDependencies());
                 } catch (TransportException ex) {
-                    String message = ex.getMessage();
-                    boolean warnOnly = getSettings().getBoolean(Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS, false);
+                    final String message = ex.getMessage();
+                    final boolean warnOnly = getSettings().getBoolean(Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS, false);
 
                     if (StringUtils.endsWith(message, "401")) {
                         throw new AnalysisException("Invalid credentials provided for OSS Index", ex);
@@ -348,8 +348,8 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
         result.addReference(REFERENCE_TYPE, source.getTitle(), source.getReference().toString());
 
         // generate references to other references reported by OSS Index
-        source.getExternalReferences().forEach(externalReference ->
-                result.addReference("OSSIndex", externalReference.toString(), externalReference.toString()));
+        source.getExternalReferences().forEach(externalReference
+                -> result.addReference("OSSIndex", externalReference.toString(), externalReference.toString()));
 
         // attach vulnerable software details as best we can
         final PackageUrl purl = report.getCoordinates();

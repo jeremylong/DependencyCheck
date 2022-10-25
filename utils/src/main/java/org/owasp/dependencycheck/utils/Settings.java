@@ -739,6 +739,9 @@ public final class Settings {
          */
         public static final String ANALYZER_DART_ENABLED = "analyzer.dart.enabled";
 
+        /**
+         * The properties key for whether to pretty print the XML/JSON reports.
+         */
         public static final String PRETTY_PRINT = "odc.reports.pretty.print";
         /**
          * The properties key setting which other keys should be considered
