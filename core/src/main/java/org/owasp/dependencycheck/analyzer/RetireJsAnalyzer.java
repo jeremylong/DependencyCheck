@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import com.esotericsoftware.minlog.Log;
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
@@ -179,6 +180,14 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
+        // RetireJS outputs a bunch of repeated output like the following for
+        // vulnerable dependencies, with little context:
+        // 
+        // INFO: Vulnerability found: jquery below 1.6.3
+        //
+        // This logging is suppressed because it isn't particularly useful, and
+        // it aligns with other analyzers that don't log such information.
+        Log.set(Log.LEVEL_WARN);
 
         File repoFile = null;
         boolean repoEmpty = false;
@@ -440,5 +449,10 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (IOException | DatabaseException e) {
             throw new AnalysisException(e);
         }
+    }
+
+    @Override
+    protected void closeAnalyzer() throws Exception {
+        Log.set(Log.LEVEL_INFO);
     }
 }
