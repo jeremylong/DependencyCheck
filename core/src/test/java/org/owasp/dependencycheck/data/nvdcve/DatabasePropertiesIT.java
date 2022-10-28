@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import com.vdurmont.semver4j.Semver;
 import org.owasp.dependencycheck.BaseDBTestCase;
 import java.util.Properties;
 import org.junit.After;
@@ -97,9 +98,9 @@ public class DatabasePropertiesIT extends BaseDBTestCase {
         String key = "version";
         DatabaseProperties instance = cveDb.getDatabaseProperties();
         String result = instance.getProperty(key);
-        double version = Double.parseDouble(result);
-        assertTrue(version >= 2.8);
-        assertTrue(version <= 10);
+        
+        Semver ver = new Semver(result, Semver.SemverType.LOOSE);
+        assertTrue(ver.getMajor() >= 5);
     }
 
     /**

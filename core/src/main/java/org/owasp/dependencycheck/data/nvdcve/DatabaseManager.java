@@ -64,6 +64,10 @@ public final class DatabaseManager {
      */
     public static final String DB_STRUCTURE_RESOURCE = "data/initialize.sql";
     /**
+     * Resource location for SQL file containing updates to the ecosystem cache.
+     */
+    public static final String DB_ECOSYSTEM_CACHE = "data/dbEcosystemCacheUpdates.sql";
+    /**
      * Resource location for SQL file used to create the database schema.
      */
     public static final String DB_STRUCTURE_UPDATE_RESOURCE = "data/upgrade_%s.sql";
@@ -217,6 +221,14 @@ public final class DatabaseManager {
             } catch (DatabaseException dex) {
                 LOGGER.debug("", dex);
                 throw new DatabaseException("Database schema does not match this version of dependency-check", dex);
+            }
+            if (autoUpdate) {
+                try {
+                    updateEcosystemCache(conn);
+                } catch (DatabaseException dex) {
+                    LOGGER.debug("", dex);
+                    throw new DatabaseException("Unable to update the database ecosystem cache", dex);
+                }
             }
         } finally {
             if (conn != null) {
@@ -572,6 +584,29 @@ public final class DatabaseManager {
             return connectionPool.getConnection();
         } catch (SQLException ex) {
             throw new DatabaseException("Error connecting to the database", ex);
+        }
+    }
+
+    private void updateEcosystemCache(Connection conn) {
+        LOGGER.debug("Updating the ecosystem cache");
+        final String dbStructure;
+        try {
+            dbStructure = getResource(DB_ECOSYSTEM_CACHE);
+
+            Statement statement = null;
+            try {
+                statement = conn.createStatement();
+                statement.execute(dbStructure);
+            } catch (SQLException ex) {
+                LOGGER.debug("", ex);
+                throw new DatabaseException("Unable to update the ecosystem cache", ex);
+            } finally {
+                DBUtils.closeStatement(statement);
+            }
+        } catch (IOException ex) {
+            throw new DatabaseException("Unable to update the ecosystem cache", ex);
+        } catch (LinkageError ex) {
+            LOGGER.debug(new DefaultQuery(ex).call().toString());
         }
     }
 }

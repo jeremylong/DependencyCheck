@@ -994,6 +994,7 @@ public class Engine implements FileFilter, AutoCloseable {
                         if (!connStr.contains("ACCESS_MODE_DATA")) {
                             settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connStr + "ACCESS_MODE_DATA=r");
                         }
+                        settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
                         database = new CveDB(settings);
                     } else {
                         throw new DatabaseException("Unable to open database - configured database file does not exist: " + db);
