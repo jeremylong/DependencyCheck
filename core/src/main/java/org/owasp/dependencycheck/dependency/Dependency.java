@@ -795,6 +795,15 @@ public class Dependency extends EvidenceCollection implements Serializable {
     }
 
     /**
+     * Adds a set of project references.
+     *
+     * @param includedBy a set of project references
+     */
+    public synchronized void addAllIncludedBy(Set<String> includedBy) {
+        this.includedBy.addAll(includedBy);
+    }
+
+    /**
      * Get the unmodifiable set of projectReferences.
      *
      * @return the unmodifiable set of projectReferences

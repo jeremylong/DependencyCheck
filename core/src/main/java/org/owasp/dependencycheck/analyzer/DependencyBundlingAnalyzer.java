@@ -211,6 +211,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
         //  we may want to merge project references on virtual dependencies...
         if (dependency.getSha1sum() != null && dependency.getSha1sum().equals(relatedDependency.getSha1sum())) {
             dependency.addAllProjectReferences(relatedDependency.getProjectReferences());
+            dependency.addAllIncludedBy(relatedDependency.getIncludedBy());
         }
         if (dependenciesToRemove != null) {
             dependenciesToRemove.add(relatedDependency);
