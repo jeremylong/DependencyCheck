@@ -602,6 +602,28 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             .underline {
                 text-decoration: underline;
             }
+            .tooltip {
+              position: relative;
+              display: inline-block;
+              border-bottom: 1px dotted black;
+            }
+
+            .tooltip .tooltiptext {
+              visibility: hidden;
+              width: 220px;
+              background-color: #cccccc;
+              text-align: center;
+              border-radius: 6px;
+              padding: 5px 0;
+
+              /* Position the tooltip */
+              position: absolute;
+              z-index: 1;
+            }
+
+            .tooltip:hover .tooltiptext {
+              visibility: visible;
+            }
         </style>
     </head>
     <body>
@@ -804,15 +826,22 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                             <b>SHA256:</b>$enc.html($dependency.Sha256sum)
                             #end
                             #if ($dependency.projectReferences.size()==1)
-                                <br/><b>Referenced In Project/Scope:</b>
-                                #foreach($ref in $dependency.projectReferences)
-                                    $enc.html($ref)
-                                #end
+                                <br/><b>Referenced In Project/Scope:</b> $enc.html($dependency.projectReferences.iterator().next())
                             #end
                             #if ($dependency.projectReferences.size()>1)
                                 <br/><b>Referenced In Projects/Scopes:</b><ul>
                                 #foreach($ref in $dependency.projectReferences)
                                     <li>$enc.html($ref)</li>
+                                #end
+                                </ul>
+                            #end
+                            #if ($dependency.includedBy.size()==1)
+                                <br/><span class="tooltip"><span class="tooltiptext">$enc.html($dependency.DisplayFileName) is in the transitive dependency tree of the listed items.</span><b>Included by:</b></span> $enc.html($dependency.includedBy.iterator().next())
+                            #end
+                            #if ($dependency.includedBy.size()>1)
+                                <br/><span class="tooltip"><span class="tooltiptext">$enc.html($dependency.DisplayFileName) is in the transitive dependency tree of the listed items.</span><b>Included by:</b></span><ul>
+                                #foreach($parent in $dependency.includedBy)
+                                    <li>$enc.html($parent)</li>
                                 #end
                                 </ul>
                             #end
@@ -1010,11 +1039,31 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                     #end
                                 #end
                                     <b>File&nbsp;Path:</b>&nbsp;$enc.html($dependency.FilePath)<br/>
-                                    #if(!$dependency.isVirtual())
+                                #if(!$dependency.isVirtual())
                                     <b>MD5:</b>&nbsp;$enc.html($dependency.Md5sum)<br/>
                                     <b>SHA1:</b>&nbsp;$enc.html($dependency.Sha1sum)<br/>
                                     <b>SHA256:</b>&nbsp;$enc.html($dependency.Sha256sum)
+                                #end
+                                #if ($dependency.projectReferences.size()==1)
+                                    <br/><b>Referenced In Project/Scope:</b> $enc.html($dependency.projectReferences.iterator().next())
+                                #end
+                                #if ($dependency.projectReferences.size()>1)
+                                    <br/><b>Referenced In Projects/Scopes:</b><ul>
+                                    #foreach($ref in $dependency.projectReferences)
+                                        <li>$enc.html($ref)</li>
                                     #end
+                                    </ul>
+                                #end
+                                #if ($dependency.includedBy.size()==1)
+                                    <br/><b>Included by:</b> $enc.html($dependency.includedBy.iterator().next())
+                                #end
+                                #if ($dependency.includedBy.size()>1)
+                                    <br/><b>Included by:</b><ul>
+                                    #foreach($parent in $dependency.includedBy)
+                                        <li>$enc.html($parent)</li>
+                                    #end
+                                    </ul>
+                                #end
                                 </p>
                                 #set($cnt=$cnt+1)
                                 <h4 id="header$cnt" class="subsectionheader expandable expandablesubsection white">Evidence</h4>

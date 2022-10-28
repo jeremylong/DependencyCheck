@@ -97,6 +97,24 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
     }
 
     /**
+     * Scans the plugins of the project.
+     *
+     * @param engine the engine used to perform the scanning
+     * @param exCollection the collection of exceptions that might have occurred
+     * previously
+     * @return a collection of exceptions
+     * @throws MojoExecutionException thrown if a fatal exception occurs
+     */
+    @Override
+    protected ExceptionCollection scanPlugins(final Engine engine, final ExceptionCollection exCollection) throws MojoExecutionException {
+        ExceptionCollection exCol = scanPlugins(getProject(), engine, null);
+        for (MavenProject childProject : getDescendants(this.getProject())) {
+            exCol = scanPlugins(childProject, engine, exCol);
+        }
+        return exCol;
+    }
+
+    /**
      * Returns a set containing all the descendant projects of the given
      * project.
      *

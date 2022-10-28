@@ -24,6 +24,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 
@@ -102,6 +103,20 @@ public class CheckMojo extends BaseDependencyCheckMojo {
     @Override
     protected ExceptionCollection scanDependencies(final Engine engine) throws MojoExecutionException {
         return scanArtifacts(getProject(), engine);
+    }
+    
+    /**
+     * Scans the plugins of the project.
+     *
+     * @param engine the engine used to perform the scanning
+     * @param exCollection the collection of exceptions that might have occurred previously
+     * @return a collection of exceptions
+     * @throws MojoExecutionException thrown if a fatal exception occurs
+     */
+    @Override
+    protected ExceptionCollection scanPlugins(final Engine engine, final ExceptionCollection exCollection) throws MojoExecutionException {
+        ExceptionCollection exCol = scanPlugins(getProject(), engine, exCollection);
+        return exCol;
     }
 
 }

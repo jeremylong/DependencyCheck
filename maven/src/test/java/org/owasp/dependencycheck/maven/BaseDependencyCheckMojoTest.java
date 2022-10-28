@@ -231,6 +231,10 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
         protected ExceptionCollection scanDependencies(Engine engine) throws MojoExecutionException {
             throw new UnsupportedOperationException("Operation not supported");
         }
+        @Override
+        protected ExceptionCollection scanPlugins(Engine engine, ExceptionCollection exCollection) throws MojoExecutionException {
+            throw new UnsupportedOperationException("Operation not supported");
+        }
     }
 
     @Test

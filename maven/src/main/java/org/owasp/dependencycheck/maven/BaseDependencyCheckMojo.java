@@ -83,15 +83,16 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 
 import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.Restriction;
 import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.shared.dependency.graph.traversal.CollectingDependencyNodeVisitor;
 
 import org.owasp.dependencycheck.agent.DependencyCheckScanAgent;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
@@ -99,6 +100,8 @@ import org.owasp.dependencycheck.dependency.naming.Identifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
 import org.apache.maven.shared.dependency.graph.traversal.FilteringDependencyNodeVisitor;
+import org.apache.maven.shared.transfer.dependencies.DefaultDependableCoordinate;
+import org.apache.maven.shared.transfer.dependencies.DependableCoordinate;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.SeverityUtil;
@@ -982,6 +985,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "scanDirectory")
     private List<String> scanDirectory;
 
+    /**
+     * The name of the report in the site.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "odc.plugins.scan", defaultValue = "false", required = false)
+    private boolean scanPlugins = false;
+
     // </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Base Maven implementation">
     /**
@@ -1155,12 +1165,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     protected ExceptionCollection scanArtifacts(MavenProject project, Engine engine, boolean aggregate) {
         try {
             final List<String> filterItems = Collections.singletonList(String.format("%s:%s", project.getGroupId(), project.getArtifactId()));
-            final ProjectBuildingRequest buildingRequest = newResolveArtifactProjectBuildingRequest(project);
+            final ProjectBuildingRequest buildingRequest = newResolveArtifactProjectBuildingRequest(project, project.getRemoteArtifactRepositories());
             //For some reason the filter does not filter out the project being analyzed
             //if we pass in the filter below instead of null to the dependencyGraphBuilder
             final DependencyNode dn = dependencyGraphBuilder.buildDependencyGraph(buildingRequest, null);
 
-            final CollectingDependencyNodeVisitor collectorVisitor = new CollectingDependencyNodeVisitor();
+            //final CollectingDependencyNodeVisitor collectorVisitor = new CollectingDependencyNodeVisitor();
+            final CollectingRootDependencyGraphVisitor collectorVisitor = new CollectingRootDependencyGraphVisitor();
+
             // exclude artifact by pattern and its dependencies
             final DependencyNodeVisitor transitiveFilterVisitor = new FilteringDependencyTransitiveNodeVisitor(collectorVisitor,
                     new ArtifactDependencyNodeFilter(new PatternExcludesArtifactFilter(getExcludes())));
@@ -1171,7 +1183,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             dn.accept(artifactFilter);
 
             //collect dependencies with the filter - see comment above.
-            final List<DependencyNode> nodes = new ArrayList<>(collectorVisitor.getNodes());
+            final Map<DependencyNode, List<DependencyNode>> nodes = collectorVisitor.getNodes();
 
             return collectDependencies(engine, project, nodes, buildingRequest, aggregate);
         } catch (DependencyGraphBuilderException ex) {
@@ -1179,6 +1191,130 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             getLog().debug(msg, ex);
             return new ExceptionCollection(ex);
         }
+    }
+
+    /**
+     * Scans the project's artifacts and adds them to the engine's dependency
+     * list.
+     *
+     * @param project the project to scan the dependencies of
+     * @param engine the engine to use to scan the dependencies
+     * @param exCollection the collection of exceptions that have previously occurred
+     * @return a collection of exceptions that may have occurred while resolving
+     * and scanning the dependencies
+     */
+    protected ExceptionCollection scanPlugins(MavenProject project, Engine engine, ExceptionCollection exCollection) {
+        ExceptionCollection exCol = exCollection;
+        final Set<Artifact> plugins = getProject().getPluginArtifacts();
+        final Set<Artifact> reports = getProject().getReportArtifacts();
+        final Set<Artifact> extensions = getProject().getExtensionArtifacts();
+
+        plugins.addAll(reports);
+        plugins.addAll(extensions);
+
+        final ProjectBuildingRequest buildingRequest = newResolveArtifactProjectBuildingRequest(project, project.getPluginArtifactRepositories());
+        for (Artifact plugin : plugins) {
+            try {
+                final Artifact resolved = artifactResolver.resolveArtifact(buildingRequest, plugin).getArtifact();
+
+                exCol = addPluginToDependencies(project, engine, resolved, "pom.xml (plugins)", exCol);
+
+                final DefaultDependableCoordinate pluginCoordinate = new DefaultDependableCoordinate();
+                pluginCoordinate.setGroupId(resolved.getGroupId());
+                pluginCoordinate.setArtifactId(resolved.getArtifactId());
+                pluginCoordinate.setVersion(resolved.getVersion());
+
+                //TOOD - convert this to a packageURl instead of GAV
+                final String parent = resolved.getGroupId() + ":" + resolved.getArtifactId() + ":" + resolved.getVersion();
+                for (Artifact artifact : resolveArtifactDependencies(pluginCoordinate, project)) {
+                    exCol = addPluginToDependencies(project, engine, artifact, parent, exCol);
+                }
+            } catch (ArtifactResolverException ex) {
+                throw new RuntimeException(ex);
+            } catch (IllegalArgumentException ex) {
+                throw new RuntimeException(ex);
+            } catch (DependencyResolverException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+
+        return null;
+
+    }
+
+    private ExceptionCollection addPluginToDependencies(MavenProject project, Engine engine, Artifact artifact, String parent, ExceptionCollection exCollection) {
+        ExceptionCollection exCol = exCollection;
+        final String groupId = artifact.getGroupId();
+        final String artifactId = artifact.getArtifactId();
+        final String version = artifact.getVersion();
+        final File artifactFile = artifact.getFile();
+        if (artifactFile.isFile()) {
+            final List<ArtifactVersion> availableVersions = artifact.getAvailableVersions();
+
+            final List<Dependency> deps = engine.scan(artifactFile.getAbsoluteFile(),
+                    project.getName() + " (plugins)");
+            if (deps != null) {
+                Dependency d = null;
+                if (deps.size() == 1) {
+                    d = deps.get(0);
+                } else {
+                    for (Dependency possible : deps) {
+                        if (artifactFile.getAbsoluteFile().equals(possible.getActualFile())) {
+                            d = possible;
+                            break;
+                        }
+                    }
+                    for (Dependency dep : deps) {
+                        if (d != null && d != dep) {
+                            //TODO convert to package URL
+                            dep.addIncludedBy(groupId + ":" + artifactId + ":" + version + " (plugins)");
+                        }
+                    }
+                }
+                if (d != null) {
+                    final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);
+                    d.addAsEvidence("pom", ma, Confidence.HIGHEST);
+                    if (parent != null) {
+                        d.addIncludedBy(parent + " (plugins)");
+                    } else {
+                        String includedby = String.format("%s:%s:%s",
+                                project.getGroupId(),
+                                project.getArtifactId(),
+                                project.getVersion());
+                        d.addIncludedBy(includedby);
+                    }
+                    if (availableVersions != null) {
+                        for (ArtifactVersion av : availableVersions) {
+                            d.addAvailableVersion(av.toString());
+                        }
+                    }
+                }
+            }
+        } else {
+            if (exCol == null) {
+                exCol = new ExceptionCollection();
+            }
+            exCol.addException(new DependencyNotFoundException("Unable to resolve plugin: "
+                    + groupId + ":" + artifactId + ":" + version));
+        }
+
+        return exCol;
+    }
+
+    protected Set<Artifact> resolveArtifactDependencies(final DependableCoordinate artifact, MavenProject project)
+            throws DependencyResolverException {
+        final ProjectBuildingRequest buildingRequest = newResolveArtifactProjectBuildingRequest(project, project.getRemoteArtifactRepositories());
+
+        final Iterable<ArtifactResult> artifactResults = dependencyResolver.resolveDependencies(buildingRequest, artifact, null);
+
+        final Set<Artifact> artifacts = new HashSet<>();
+
+        for (ArtifactResult artifactResult : artifactResults) {
+            artifacts.add(artifactResult.getArtifact());
+        }
+
+        return artifacts;
+
     }
 
     /**
@@ -1324,180 +1460,23 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     //CSOFF: OperatorWrap
     private ExceptionCollection collectMavenDependencies(Engine engine, MavenProject project,
-            List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
+            Map<DependencyNode, List<DependencyNode>> nodeMap, ProjectBuildingRequest buildingRequest, boolean aggregate) {
 
-        ExceptionCollection exCol = collectDependencyManagementDependencies(engine, buildingRequest, project, nodes, aggregate);
         final List<ArtifactResult> allResolvedDeps = new ArrayList<>();
 
-        for (DependencyNode dependencyNode : nodes) {
-            if (artifactScopeExcluded.passes(dependencyNode.getArtifact().getScope())
-                    || artifactTypeExcluded.passes(dependencyNode.getArtifact().getType())) {
-                continue;
-            }
+        //dependency management
+        final List<DependencyNode> dmNodes = new ArrayList<>();
+        ExceptionCollection exCol = collectDependencyManagementDependencies(engine, buildingRequest, project, dmNodes, aggregate);
+        for (DependencyNode dependencyNode : dmNodes) {
+            exCol = scanDependencyNode(dependencyNode, null, engine, project, allResolvedDeps, buildingRequest, aggregate, exCol);
+        }
 
-            boolean isResolved = false;
-            File artifactFile = null;
-            String artifactId = null;
-            String groupId = null;
-            String version = null;
-            List<ArtifactVersion> availableVersions = null;
-            if (org.apache.maven.artifact.Artifact.SCOPE_SYSTEM.equals(dependencyNode.getArtifact().getScope())) {
-                final Artifact a = dependencyNode.getArtifact();
-                if (a.isResolved() && a.getFile().isFile()) {
-                    artifactFile = a.getFile();
-                    isResolved = artifactFile.isFile();
-                    groupId = a.getGroupId();
-                    artifactId = a.getArtifactId();
-                    version = a.getVersion();
-                    availableVersions = a.getAvailableVersions();
-                } else {
-                    for (org.apache.maven.model.Dependency d : project.getDependencies()) {
-                        if (d.getSystemPath() != null && artifactsMatch(d, a)) {
-                            artifactFile = new File(d.getSystemPath());
-                            isResolved = artifactFile.isFile();
-                            groupId = a.getGroupId();
-                            artifactId = a.getArtifactId();
-                            version = a.getVersion();
-                            availableVersions = a.getAvailableVersions();
-                            break;
-                        }
-                    }
-                }
-                if (!isResolved) {
-                    getLog().error("Unable to resolve system scoped dependency: " + dependencyNode.toNodeString());
-                    if (exCol == null) {
-                        exCol = new ExceptionCollection();
-                    }
-                    exCol.addException(new DependencyNotFoundException("Unable to resolve system scoped dependency: "
-                            + dependencyNode.toNodeString()));
-                }
-            } else {
-                final Artifact dependencyArtifact = dependencyNode.getArtifact();
-                final Artifact result;
-                if (dependencyArtifact.isResolved()) {
-                    //All transitive dependencies, excluding reactor and dependencyManagement artifacts should
-                    //have been resolved by Maven prior to invoking the plugin - resolving the dependencies
-                    //manually is unnecessary, and does not work in some cases (issue-1751)
-                    getLog().debug(String.format("Skipping artifact %s, already resolved", dependencyArtifact.getArtifactId()));
-                    result = dependencyArtifact;
-                } else {
-                    try {
-                        if (allResolvedDeps.isEmpty()) { // no (partially successful) resolution attempt done
-                            try {
-                                final List<org.apache.maven.model.Dependency> dependencies = project.getDependencies();
-                                final List<org.apache.maven.model.Dependency> managedDependencies
-                                        = project.getDependencyManagement() == null ? null : project.getDependencyManagement()
-                                        .getDependencies();
-                                final Iterable<ArtifactResult> allDeps
-                                        = dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,
-                                                null);
-                                allDeps.forEach(allResolvedDeps::add);
-                            } catch (DependencyResolverException dre) {
-                                if (dre.getCause() instanceof org.eclipse.aether.resolution.DependencyResolutionException) {
-                                    final List<ArtifactResult> successResults
-                                            = Mshared998Util.getResolutionResults(
-                                                    (org.eclipse.aether.resolution.DependencyResolutionException) dre.getCause());
-                                    allResolvedDeps.addAll(successResults);
-                                } else {
-                                    throw dre;
-                                }
-                            }
-                        }
-                        result = findInAllDeps(allResolvedDeps, dependencyNode.getArtifact(), project);
-                    } catch (DependencyNotFoundException | DependencyResolverException ex) {
-                        getLog().debug(String.format("Aggregate : %s", aggregate));
-                        boolean addException = true;
-                        //CSOFF: EmptyBlock
-                        if (!aggregate) {
-                            // do nothing - the exception is to be reported
-                        } else if (addReactorDependency(engine, dependencyNode.getArtifact(), project)) {
-                            // successfully resolved as a reactor dependency - swallow the exception
-                            addException = false;
-                        }
-                        if (addException) {
-                            if (exCol == null) {
-                                exCol = new ExceptionCollection();
-                            }
-                            exCol.addException(ex);
-                        }
-                        continue;
-                    }
-                }
-                if (aggregate && virtualSnapshotsFromReactor
-                        && dependencyNode.getArtifact().isSnapshot()
-                        && addSnapshotReactorDependency(engine, dependencyNode.getArtifact(), project)) {
-                    continue;
-                }
-                isResolved = result.isResolved();
-                artifactFile = result.getFile();
-                groupId = result.getGroupId();
-                artifactId = result.getArtifactId();
-                version = result.getVersion();
-                availableVersions = result.getAvailableVersions();
-            }
-            if (isResolved && artifactFile != null) {
-                final List<Dependency> deps = engine.scan(artifactFile.getAbsoluteFile(),
-                        createProjectReferenceName(project, dependencyNode));
-                if (deps != null) {
-                    scannedFiles.add(artifactFile);
-                    Dependency d = null;
-                    if (deps.size() == 1) {
-                        d = deps.get(0);
-                    } else {
-                        for (Dependency possible : deps) {
-                            if (artifactFile.getAbsoluteFile().equals(possible.getActualFile())) {
-                                d = possible;
-                                break;
-                            }
-                        }
-                    }
-                    if (d != null) {
-                        final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);
-                        d.addAsEvidence("pom", ma, Confidence.HIGHEST);
-                        if (availableVersions != null) {
-                            for (ArtifactVersion av : availableVersions) {
-                                d.addAvailableVersion(av.toString());
-                            }
-                        }
-                        getLog().debug(String.format("Adding project reference %s on dependency %s",
-                                project.getName(), d.getDisplayFileName()));
-                    } else if (getLog().isDebugEnabled()) {
-                        final String msg = String.format("More than 1 dependency was identified in first pass scan of '%s' in project %s",
-                                dependencyNode.getArtifact().getId(), project.getName());
-                        getLog().debug(msg);
-                    }
-                } else if ("import".equals(dependencyNode.getArtifact().getScope())) {
-                    final String msg = String.format("Skipping '%s:%s' in project %s as it uses an `import` scope",
-                            dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
-                    getLog().debug(msg);
-                } else if ("pom".equals(dependencyNode.getArtifact().getType())) {
-
-                    try {
-                        final Dependency d = new Dependency(artifactFile.getAbsoluteFile());
-                        final Model pom = PomUtils.readPom(artifactFile.getAbsoluteFile());
-                        JarAnalyzer.setPomEvidence(d, pom, null, true);
-                        engine.addDependency(d);
-                    } catch (AnalysisException ex) {
-                        if (exCol == null) {
-                            exCol = new ExceptionCollection();
-                        }
-                        exCol.addException(ex);
-                        getLog().debug("Error reading pom " + artifactFile.getAbsoluteFile(), ex);
-                    }
-                } else {
-                    if (!scannedFiles.contains(artifactFile)) {
-                        final String msg = String.format("No analyzer could be found or the artifact has been scanned twice for '%s:%s' in project %s",
-                                dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
-                        getLog().warn(msg);
-                    }
-                }
-            } else {
-                final String msg = String.format("Unable to resolve '%s' in project %s",
-                        dependencyNode.getArtifact().getId(), project.getName());
-                getLog().debug(msg);
-                if (exCol == null) {
-                    exCol = new ExceptionCollection();
-                }
+        //dependencies
+        for (DependencyNode root : nodeMap.keySet()) {
+            List<DependencyNode> nodes = nodeMap.get(root);
+            exCol = scanDependencyNode(root, null, engine, project, allResolvedDeps, buildingRequest, aggregate, exCol);
+            for (DependencyNode dependencyNode : nodes) {
+                exCol = scanDependencyNode(dependencyNode, root, engine, project, allResolvedDeps, buildingRequest, aggregate, exCol);
             }
         }
         return exCol;
@@ -1580,7 +1559,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * and scanning the dependencies
      */
     private ExceptionCollection collectDependencies(Engine engine, MavenProject project,
-            List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
+            Map<DependencyNode, List<DependencyNode>> nodes, ProjectBuildingRequest buildingRequest, boolean aggregate) {
 
         ExceptionCollection exCol;
         exCol = collectMavenDependencies(engine, project, nodes, buildingRequest, aggregate);
@@ -1742,7 +1721,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 d.setEcosystem(JarAnalyzer.DEPENDENCY_ECOSYSTEM);
                 d.setDisplayFileName(displayName);
                 d.addProjectReference(depender.getName());
-
+                //TODO - consider packageUrL
+                String includedby = String.format("%s:%s:%s",
+                        depender.getGroupId(),
+                        depender.getArtifactId(),
+                        depender.getVersion());
+                d.addIncludedBy(includedby);
                 d.addEvidence(EvidenceType.PRODUCT, "project", "artifactid", prj.getArtifactId(), Confidence.HIGHEST);
                 d.addEvidence(EvidenceType.VENDOR, "project", "artifactid", prj.getArtifactId(), Confidence.LOW);
 
@@ -1821,13 +1805,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
     /**
      * @param project The target project to create a building request for.
+     * @param repos the artifact repositories to use.
      * @return Returns a new ProjectBuildingRequest populated from the current
      * session and the target project remote repositories, used to resolve
      * artifacts.
      */
-    public ProjectBuildingRequest newResolveArtifactProjectBuildingRequest(MavenProject project) {
+    public ProjectBuildingRequest newResolveArtifactProjectBuildingRequest(MavenProject project, List<ArtifactRepository> repos) {
         final ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
-        buildingRequest.setRemoteRepositories(new ArrayList<>(project.getRemoteArtifactRepositories()));
+        buildingRequest.setRemoteRepositories(repos);
         buildingRequest.setProject(project);
         return buildingRequest;
     }
@@ -1844,6 +1829,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         muteJCS();
         try (Engine engine = initializeEngine()) {
             ExceptionCollection exCol = scanDependencies(engine);
+            if (scanPlugins) {
+                exCol = scanPlugins(engine, exCol);
+            }
             try {
                 engine.analyzeDependencies();
             } catch (ExceptionCollection ex) {
@@ -1933,13 +1921,24 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Scans the dependencies of the projects in aggregate.
+     * Scans the dependencies of the projects.
      *
      * @param engine the engine used to perform the scanning
      * @return a collection of exceptions
      * @throws MojoExecutionException thrown if a fatal exception occurs
      */
     protected abstract ExceptionCollection scanDependencies(Engine engine) throws MojoExecutionException;
+
+    /**
+     * Scans the plugins of the projects.
+     *
+     * @param engine the engine used to perform the scanning
+     * @param exCol the collection of any exceptions that have previously been
+     * captured.
+     * @return a collection of exceptions
+     * @throws MojoExecutionException thrown if a fatal exception occurs
+     */
+    protected abstract ExceptionCollection scanPlugins(Engine engine, ExceptionCollection exCol) throws MojoExecutionException;
 
     /**
      * Returns the report output directory.
@@ -2551,5 +2550,218 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     //</editor-fold>
+    private ExceptionCollection scanDependencyNode(DependencyNode dependencyNode, DependencyNode root,
+            Engine engine, MavenProject project, List<ArtifactResult> allResolvedDeps,
+            ProjectBuildingRequest buildingRequest, boolean aggregate, ExceptionCollection exceptionCollection) {
+        ExceptionCollection exCol = exceptionCollection;
+        if (artifactScopeExcluded.passes(dependencyNode.getArtifact().getScope())
+                || artifactTypeExcluded.passes(dependencyNode.getArtifact().getType())) {
+            return exCol;
+        }
+
+        boolean isResolved = false;
+        File artifactFile = null;
+        String artifactId = null;
+        String groupId = null;
+        String version = null;
+        List<ArtifactVersion> availableVersions = null;
+        if (org.apache.maven.artifact.Artifact.SCOPE_SYSTEM.equals(dependencyNode.getArtifact().getScope())) {
+            final Artifact a = dependencyNode.getArtifact();
+            if (a.isResolved() && a.getFile().isFile()) {
+                artifactFile = a.getFile();
+                isResolved = artifactFile.isFile();
+                groupId = a.getGroupId();
+                artifactId = a.getArtifactId();
+                version = a.getVersion();
+                availableVersions = a.getAvailableVersions();
+            } else {
+                for (org.apache.maven.model.Dependency d : project.getDependencies()) {
+                    if (d.getSystemPath() != null && artifactsMatch(d, a)) {
+                        artifactFile = new File(d.getSystemPath());
+                        isResolved = artifactFile.isFile();
+                        groupId = a.getGroupId();
+                        artifactId = a.getArtifactId();
+                        version = a.getVersion();
+                        availableVersions = a.getAvailableVersions();
+                        break;
+                    }
+                }
+            }
+            if (!isResolved) {
+                getLog().error("Unable to resolve system scoped dependency: " + dependencyNode.toNodeString());
+                if (exCol == null) {
+                    exCol = new ExceptionCollection();
+                }
+                exCol.addException(new DependencyNotFoundException("Unable to resolve system scoped dependency: "
+                        + dependencyNode.toNodeString()));
+            }
+        } else {
+            final Artifact dependencyArtifact = dependencyNode.getArtifact();
+            final Artifact result;
+            if (dependencyArtifact.isResolved()) {
+                //All transitive dependencies, excluding reactor and dependencyManagement artifacts should
+                //have been resolved by Maven prior to invoking the plugin - resolving the dependencies
+                //manually is unnecessary, and does not work in some cases (issue-1751)
+                getLog().debug(String.format("Skipping artifact %s, already resolved", dependencyArtifact.getArtifactId()));
+                result = dependencyArtifact;
+            } else {
+                try {
+                    if (allResolvedDeps.isEmpty()) { // no (partially successful) resolution attempt done
+                        try {
+                            final List<org.apache.maven.model.Dependency> dependencies = project.getDependencies();
+                            final List<org.apache.maven.model.Dependency> managedDependencies
+                                    = project.getDependencyManagement() == null ? null : project.getDependencyManagement()
+                                    .getDependencies();
+                            final Iterable<ArtifactResult> allDeps
+                                    = dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,
+                                            null);
+                            allDeps.forEach(allResolvedDeps::add);
+                        } catch (DependencyResolverException dre) {
+                            if (dre.getCause() instanceof org.eclipse.aether.resolution.DependencyResolutionException) {
+                                final List<ArtifactResult> successResults
+                                        = Mshared998Util.getResolutionResults(
+                                                (org.eclipse.aether.resolution.DependencyResolutionException) dre.getCause());
+                                allResolvedDeps.addAll(successResults);
+                            } else {
+                                throw dre;
+                            }
+                        }
+                    }
+                    result = findInAllDeps(allResolvedDeps, dependencyNode.getArtifact(), project);
+                } catch (DependencyNotFoundException | DependencyResolverException ex) {
+                    getLog().debug(String.format("Aggregate : %s", aggregate));
+                    boolean addException = true;
+                    //CSOFF: EmptyBlock
+                    if (!aggregate) {
+                        // do nothing - the exception is to be reported
+                    } else if (addReactorDependency(engine, dependencyNode.getArtifact(), project)) {
+                        // successfully resolved as a reactor dependency - swallow the exception
+                        addException = false;
+                    }
+                    if (addException) {
+                        if (exCol == null) {
+                            exCol = new ExceptionCollection();
+                        }
+                        exCol.addException(ex);
+                    }
+                    return exCol;
+                }
+            }
+            if (aggregate && virtualSnapshotsFromReactor
+                    && dependencyNode.getArtifact().isSnapshot()
+                    //TODO ensure root is passed in so we can assign parent
+                    && addSnapshotReactorDependency(engine, dependencyNode.getArtifact(), project)) {
+                return exCol;
+            }
+            isResolved = result.isResolved();
+            artifactFile = result.getFile();
+            groupId = result.getGroupId();
+            artifactId = result.getArtifactId();
+            version = result.getVersion();
+            availableVersions = result.getAvailableVersions();
+        }
+        if (isResolved && artifactFile != null) {
+            final List<Dependency> deps = engine.scan(artifactFile.getAbsoluteFile(),
+                    createProjectReferenceName(project, dependencyNode));
+            if (deps != null) {
+                scannedFiles.add(artifactFile);
+                Dependency d = null;
+                if (deps.size() == 1) {
+                    d = deps.get(0);
+
+                } else {
+                    for (Dependency possible : deps) {
+                        if (artifactFile.getAbsoluteFile().equals(possible.getActualFile())) {
+                            d = possible;
+                            break;
+                        }
+                    }
+                    for (Dependency dep : deps) {
+                        if (d != null && d != dep) {
+                            //TODO convert to package URL
+                            dep.addIncludedBy(groupId + ":" + artifactId + ":" + version);
+                        }
+                    }
+                }
+                if (d != null) {
+                    final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);
+                    d.addAsEvidence("pom", ma, Confidence.HIGHEST);
+                    if (root != null) {
+                        //TODO convert to packageURL
+                        String includedby = String.format("%s:%s:%s",
+                                root.getArtifact().getGroupId(),
+                                root.getArtifact().getArtifactId(),
+                                root.getArtifact().getVersion());
+                        d.addIncludedBy(includedby);
+                    } else {
+                        //TODO convert to packageURL
+                        String includedby = String.format("%s:%s:%s",
+                                project.getGroupId(),
+                                project.getArtifactId(),
+                                project.getVersion());
+                        d.addIncludedBy(includedby);
+                    }
+                    if (availableVersions != null) {
+                        for (ArtifactVersion av : availableVersions) {
+                            d.addAvailableVersion(av.toString());
+                        }
+                    }
+                    getLog().debug(String.format("Adding project reference %s on dependency %s",
+                            project.getName(), d.getDisplayFileName()));
+                } else if (getLog().isDebugEnabled()) {
+                    final String msg = String.format("More than 1 dependency was identified in first pass scan of '%s' in project %s",
+                            dependencyNode.getArtifact().getId(), project.getName());
+                    getLog().debug(msg);
+                }
+            } else if ("import".equals(dependencyNode.getArtifact().getScope())) {
+                final String msg = String.format("Skipping '%s:%s' in project %s as it uses an `import` scope",
+                        dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
+                getLog().debug(msg);
+            } else if ("pom".equals(dependencyNode.getArtifact().getType())) {
+
+                try {
+                    final Dependency d = new Dependency(artifactFile.getAbsoluteFile());
+                    final Model pom = PomUtils.readPom(artifactFile.getAbsoluteFile());
+                    JarAnalyzer.setPomEvidence(d, pom, null, true);
+                    if (root != null) {
+                        //TODO convert to packageURL
+                        String includedby = String.format("%s:%s:%s",
+                                root.getArtifact().getGroupId(),
+                                root.getArtifact().getArtifactId(),
+                                root.getArtifact().getVersion());
+                        d.addIncludedBy(includedby);
+                    } else {
+                        //TODO convert to packageURL
+                        String includedby = String.format("%s:%s:%s",
+                                project.getGroupId(),
+                                project.getArtifactId(),
+                                project.getVersion());
+                        d.addIncludedBy(includedby);
+                    }
+                    engine.addDependency(d);
+                } catch (AnalysisException ex) {
+                    if (exCol == null) {
+                        exCol = new ExceptionCollection();
+                    }
+                    exCol.addException(ex);
+                    getLog().debug("Error reading pom " + artifactFile.getAbsoluteFile(), ex);
+                }
+            } else {
+                if (!scannedFiles.contains(artifactFile)) {
+                    final String msg = String.format("No analyzer could be found or the artifact has been scanned twice for '%s:%s' in project %s",
+                            dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
+                    getLog().warn(msg);
+                }
+            }
+        } else {
+            final String msg = String.format("Unable to resolve '%s' in project %s",
+                    dependencyNode.getArtifact().getId(), project.getName());
+            getLog().debug(msg);
+            if (exCol == null) {
+                exCol = new ExceptionCollection();
+            }
+        }
+        return exCol;
+    }
 }
 //CSON: FileLength
