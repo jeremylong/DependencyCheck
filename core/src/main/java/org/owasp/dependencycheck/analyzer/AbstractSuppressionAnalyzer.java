@@ -264,13 +264,15 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
 
     /**
      * Load the hosted suppression file from the web resource
+     *
      * @param parser The suppressionParser to use for loading
      * @param repoFile The cached web resource
      * @param engine a reference the dependency-check engine
-     * 
-     * @throws InitializationException When errors occur trying to create a defensive copy of the web resource before loading
+     *
+     * @throws InitializationException When errors occur trying to create a
+     * defensive copy of the web resource before loading
      */
-    private void loadCachedHostedSuppressionsRules(final SuppressionParser parser, final File repoFile,  final Engine engine)
+    private void loadCachedHostedSuppressionsRules(final SuppressionParser parser, final File repoFile, final Engine engine)
             throws InitializationException {
         // take a defensive copy to avoid a risk of corrupted file by a competing parallel new download.
         final Path defensiveCopy;
