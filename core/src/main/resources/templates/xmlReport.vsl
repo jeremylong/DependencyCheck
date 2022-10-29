@@ -89,6 +89,13 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
 #end
             </projectReferences>
 #end
+#if ($dependency.includedBy.size()>0)
+            <includedBy>
+#foreach($ref in $dependency.includedBy)
+                <reference>$enc.xml($ref)</reference>
+#end
+            </includedBy>
+#end
 #if ($dependency.getRelatedDependencies().size()>0)
             <relatedDependencies>
 #foreach($related in $dependency.getRelatedDependencies())
