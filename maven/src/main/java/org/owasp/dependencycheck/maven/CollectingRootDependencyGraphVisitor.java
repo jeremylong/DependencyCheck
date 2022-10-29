@@ -35,12 +35,14 @@ public class CollectingRootDependencyGraphVisitor implements DependencyNodeVisit
      * The map of nodes collected by root nodes.
      */
     private final Map<DependencyNode, List<DependencyNode>> nodes = new HashMap<>();
+    /**
+     * A reference to the root node of the dependency tree.
+     */
     private DependencyNode root;
+    /**
+     * Track the depth of the dependency tree.
+     */
     private int depth = 0;
-
-    public CollectingRootDependencyGraphVisitor() {
-
-    }
 
     @Override
     public boolean visit(DependencyNode node) {

@@ -1199,7 +1199,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      *
      * @param project the project to scan the dependencies of
      * @param engine the engine to use to scan the dependencies
-     * @param exCollection the collection of exceptions that have previously occurred
+     * @param exCollection the collection of exceptions that have previously
+     * occurred
      * @return a collection of exceptions that may have occurred while resolving
      * and scanning the dependencies
      */
@@ -1277,7 +1278,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     if (parent != null) {
                         d.addIncludedBy(parent + " (plugins)");
                     } else {
-                        String includedby = String.format("%s:%s:%s",
+                        final String includedby = String.format("%s:%s:%s",
                                 project.getGroupId(),
                                 project.getArtifactId(),
                                 project.getVersion());
@@ -1451,8 +1452,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      *
      * @param engine the core dependency-check engine
      * @param project the project being scanned
-     * @param nodes the list of dependency nodes, generally obtained via the
-     * DependencyGraphBuilder
+     * @param nodeMap the map of dependency nodes, generally obtained via the
+     * DependencyGraphBuilder using the CollectingRootDependencyGraphVisitor
      * @param buildingRequest the Maven project building request
      * @param aggregate whether the scan is part of an aggregate build
      * @return a collection of exceptions that may have occurred while resolving
@@ -1473,7 +1474,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
         //dependencies
         for (DependencyNode root : nodeMap.keySet()) {
-            List<DependencyNode> nodes = nodeMap.get(root);
+            final List<DependencyNode> nodes = nodeMap.get(root);
             exCol = scanDependencyNode(root, null, engine, project, allResolvedDeps, buildingRequest, aggregate, exCol);
             for (DependencyNode dependencyNode : nodes) {
                 exCol = scanDependencyNode(dependencyNode, root, engine, project, allResolvedDeps, buildingRequest, aggregate, exCol);
@@ -1722,7 +1723,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 d.setDisplayFileName(displayName);
                 d.addProjectReference(depender.getName());
                 //TODO - consider packageUrL
-                String includedby = String.format("%s:%s:%s",
+                final String includedby = String.format("%s:%s:%s",
                         depender.getGroupId(),
                         depender.getArtifactId(),
                         depender.getVersion());
@@ -2550,6 +2551,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     //</editor-fold>
+    //CSOFF: ParameterNumber
     private ExceptionCollection scanDependencyNode(DependencyNode dependencyNode, DependencyNode root,
             Engine engine, MavenProject project, List<ArtifactResult> allResolvedDeps,
             ProjectBuildingRequest buildingRequest, boolean aggregate, ExceptionCollection exceptionCollection) {
@@ -2609,18 +2611,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     if (allResolvedDeps.isEmpty()) { // no (partially successful) resolution attempt done
                         try {
                             final List<org.apache.maven.model.Dependency> dependencies = project.getDependencies();
-                            final List<org.apache.maven.model.Dependency> managedDependencies
-                                    = project.getDependencyManagement() == null ? null : project.getDependencyManagement()
-                                    .getDependencies();
-                            final Iterable<ArtifactResult> allDeps
-                                    = dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,
-                                            null);
+                            final List<org.apache.maven.model.Dependency> managedDependencies = project
+                                    .getDependencyManagement() == null ? null : project.getDependencyManagement().getDependencies();
+                            final Iterable<ArtifactResult> allDeps = dependencyResolver
+                                    .resolveDependencies(buildingRequest, dependencies, managedDependencies, null);
                             allDeps.forEach(allResolvedDeps::add);
                         } catch (DependencyResolverException dre) {
                             if (dre.getCause() instanceof org.eclipse.aether.resolution.DependencyResolutionException) {
-                                final List<ArtifactResult> successResults
-                                        = Mshared998Util.getResolutionResults(
-                                                (org.eclipse.aether.resolution.DependencyResolutionException) dre.getCause());
+                                final List<ArtifactResult> successResults = Mshared998Util
+                                        .getResolutionResults((org.eclipse.aether.resolution.DependencyResolutionException) dre.getCause());
                                 allResolvedDeps.addAll(successResults);
                             } else {
                                 throw dre;
@@ -2688,14 +2687,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     d.addAsEvidence("pom", ma, Confidence.HIGHEST);
                     if (root != null) {
                         //TODO convert to packageURL
-                        String includedby = String.format("%s:%s:%s",
+                        final String includedby = String.format("%s:%s:%s",
                                 root.getArtifact().getGroupId(),
                                 root.getArtifact().getArtifactId(),
                                 root.getArtifact().getVersion());
                         d.addIncludedBy(includedby);
                     } else {
                         //TODO convert to packageURL
-                        String includedby = String.format("%s:%s:%s",
+                        final String includedby = String.format("%s:%s:%s",
                                 project.getGroupId(),
                                 project.getArtifactId(),
                                 project.getVersion());
@@ -2725,14 +2724,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     JarAnalyzer.setPomEvidence(d, pom, null, true);
                     if (root != null) {
                         //TODO convert to packageURL
-                        String includedby = String.format("%s:%s:%s",
+                        final String includedby = String.format("%s:%s:%s",
                                 root.getArtifact().getGroupId(),
                                 root.getArtifact().getArtifactId(),
                                 root.getArtifact().getVersion());
                         d.addIncludedBy(includedby);
                     } else {
                         //TODO convert to packageURL
-                        String includedby = String.format("%s:%s:%s",
+                        final String includedby = String.format("%s:%s:%s",
                                 project.getGroupId(),
                                 project.getArtifactId(),
                                 project.getVersion());
@@ -2763,5 +2762,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         return exCol;
     }
+    //CSON: ParameterNumber
 }
 //CSON: FileLength
