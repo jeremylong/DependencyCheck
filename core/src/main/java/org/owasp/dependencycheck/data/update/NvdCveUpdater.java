@@ -138,6 +138,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
                 }
                 //all dates in the db are now stored in seconds as opposed to previously milliseconds.
                 dbProperties.save(DatabaseProperties.LAST_CHECKED, Long.toString(System.currentTimeMillis() / 1000));
+                cveDb.updateEcosystemCache();
             }
         } catch (UpdateException ex) {
             if (ex.getCause() != null && ex.getCause() instanceof DownloadFailedException) {
