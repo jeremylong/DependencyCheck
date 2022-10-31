@@ -986,7 +986,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private List<String> scanDirectory;
 
     /**
-     * The name of the report in the site.
+     * Whether the project plugins should also be scanned.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "odc.plugins.scan", defaultValue = "false", required = false)
