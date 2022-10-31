@@ -211,3 +211,4 @@
    <packageUrl regex="true">^pkg:maven/com\.github\.pagehelper/pagehelper-spring-boot-starter@.*$</packageUrl>
    <cpe>cpe:/a:pagehelper_project:pagehelper</cpe>
 </suppress>
+<!-- suppressions above this entry were included in the 7.3.1 release -->
