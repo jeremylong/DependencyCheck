@@ -1473,11 +1473,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
 
         //dependencies
-        for (DependencyNode root : nodeMap.keySet()) {
-            final List<DependencyNode> nodes = nodeMap.get(root);
-            exCol = scanDependencyNode(root, null, engine, project, allResolvedDeps, buildingRequest, aggregate, exCol);
-            for (DependencyNode dependencyNode : nodes) {
-                exCol = scanDependencyNode(dependencyNode, root, engine, project, allResolvedDeps, buildingRequest, aggregate, exCol);
+        for (Map.Entry<DependencyNode, List<DependencyNode>> entry : nodeMap.entrySet()) {
+            exCol = scanDependencyNode(entry.getKey(), null, engine, project, allResolvedDeps, buildingRequest, aggregate, exCol);
+            for (DependencyNode dependencyNode : entry.getValue()) {
+                exCol = scanDependencyNode(dependencyNode, entry.getKey(), engine, project, allResolvedDeps, buildingRequest, aggregate, exCol);
             }
         }
         return exCol;
@@ -2663,88 +2662,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             final List<Dependency> deps = engine.scan(artifactFile.getAbsoluteFile(),
                     createProjectReferenceName(project, dependencyNode));
             if (deps != null) {
-                scannedFiles.add(artifactFile);
-                Dependency d = null;
-                if (deps.size() == 1) {
-                    d = deps.get(0);
-
-                } else {
-                    for (Dependency possible : deps) {
-                        if (artifactFile.getAbsoluteFile().equals(possible.getActualFile())) {
-                            d = possible;
-                            break;
-                        }
-                    }
-                    for (Dependency dep : deps) {
-                        if (d != null && d != dep) {
-                            //TODO convert to package URL
-                            dep.addIncludedBy(groupId + ":" + artifactId + ":" + version);
-                        }
-                    }
-                }
-                if (d != null) {
-                    final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);
-                    d.addAsEvidence("pom", ma, Confidence.HIGHEST);
-                    if (root != null) {
-                        //TODO convert to packageURL
-                        final String includedby = String.format("%s:%s:%s",
-                                root.getArtifact().getGroupId(),
-                                root.getArtifact().getArtifactId(),
-                                root.getArtifact().getVersion());
-                        d.addIncludedBy(includedby);
-                    } else {
-                        //TODO convert to packageURL
-                        final String includedby = String.format("%s:%s:%s",
-                                project.getGroupId(),
-                                project.getArtifactId(),
-                                project.getVersion());
-                        d.addIncludedBy(includedby);
-                    }
-                    if (availableVersions != null) {
-                        for (ArtifactVersion av : availableVersions) {
-                            d.addAvailableVersion(av.toString());
-                        }
-                    }
-                    getLog().debug(String.format("Adding project reference %s on dependency %s",
-                            project.getName(), d.getDisplayFileName()));
-                } else if (getLog().isDebugEnabled()) {
-                    final String msg = String.format("More than 1 dependency was identified in first pass scan of '%s' in project %s",
-                            dependencyNode.getArtifact().getId(), project.getName());
-                    getLog().debug(msg);
-                }
+                processResolvedArtifact(artifactFile, deps, groupId, artifactId, version, root, project, availableVersions, dependencyNode);
             } else if ("import".equals(dependencyNode.getArtifact().getScope())) {
                 final String msg = String.format("Skipping '%s:%s' in project %s as it uses an `import` scope",
                         dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
                 getLog().debug(msg);
             } else if ("pom".equals(dependencyNode.getArtifact().getType())) {
-
-                try {
-                    final Dependency d = new Dependency(artifactFile.getAbsoluteFile());
-                    final Model pom = PomUtils.readPom(artifactFile.getAbsoluteFile());
-                    JarAnalyzer.setPomEvidence(d, pom, null, true);
-                    if (root != null) {
-                        //TODO convert to packageURL
-                        final String includedby = String.format("%s:%s:%s",
-                                root.getArtifact().getGroupId(),
-                                root.getArtifact().getArtifactId(),
-                                root.getArtifact().getVersion());
-                        d.addIncludedBy(includedby);
-                    } else {
-                        //TODO convert to packageURL
-                        final String includedby = String.format("%s:%s:%s",
-                                project.getGroupId(),
-                                project.getArtifactId(),
-                                project.getVersion());
-                        d.addIncludedBy(includedby);
-                    }
-                    engine.addDependency(d);
-                } catch (AnalysisException ex) {
-                    if (exCol == null) {
-                        exCol = new ExceptionCollection();
-                    }
-                    exCol.addException(ex);
-                    getLog().debug("Error reading pom " + artifactFile.getAbsoluteFile(), ex);
-                }
+                exCol = processPomArtifact(artifactFile, root, project, engine, exCol);
             } else {
                 if (!scannedFiles.contains(artifactFile)) {
                     final String msg = String.format("No analyzer could be found or the artifact has been scanned twice for '%s:%s' in project %s",
@@ -2763,5 +2687,86 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         return exCol;
     }
     //CSON: ParameterNumber
+
+    //CSOFF: ParameterNumber
+    private void processResolvedArtifact(File artifactFile, final List<Dependency> deps,
+            String groupId, String artifactId, String version, DependencyNode root,
+            MavenProject project1, List<ArtifactVersion> availableVersions,
+            DependencyNode dependencyNode) {
+        scannedFiles.add(artifactFile);
+        Dependency d = null;
+        if (deps.size() == 1) {
+            d = deps.get(0);
+
+        } else {
+            for (Dependency possible : deps) {
+                if (artifactFile.getAbsoluteFile().equals(possible.getActualFile())) {
+                    d = possible;
+                    break;
+                }
+            }
+            for (Dependency dep : deps) {
+                if (d != null && d != dep) {
+                    //TODO convert to package URL
+                    dep.addIncludedBy(groupId + ":" + artifactId + ":" + version);
+                }
+            }
+        }
+        if (d != null) {
+            final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);
+            d.addAsEvidence("pom", ma, Confidence.HIGHEST);
+            if (root != null) {
+                //TODO convert to packageURL
+                final String includedby = String.format("%s:%s:%s",
+                        root.getArtifact().getGroupId(),
+                        root.getArtifact().getArtifactId(),
+                        root.getArtifact().getVersion());
+                d.addIncludedBy(includedby);
+            } else {
+                //TODO convert to packageURL
+                final String includedby = String.format("%s:%s:%s", project1.getGroupId(), project1.getArtifactId(), project1.getVersion());
+                d.addIncludedBy(includedby);
+            }
+            if (availableVersions != null) {
+                for (ArtifactVersion av : availableVersions) {
+                    d.addAvailableVersion(av.toString());
+                }
+            }
+            getLog().debug(String.format("Adding project reference %s on dependency %s", project1.getName(), d.getDisplayFileName()));
+        } else if (getLog().isDebugEnabled()) {
+            final String msg = String.format("More than 1 dependency was identified in first pass scan of '%s' in project %s", dependencyNode.getArtifact().getId(), project1.getName());
+            getLog().debug(msg);
+        }
+    }
+    //CSON: ParameterNumber
+
+    private ExceptionCollection processPomArtifact(File artifactFile, DependencyNode root,
+            MavenProject project1, Engine engine, ExceptionCollection exCol) {
+        try {
+            final Dependency d = new Dependency(artifactFile.getAbsoluteFile());
+            final Model pom = PomUtils.readPom(artifactFile.getAbsoluteFile());
+            JarAnalyzer.setPomEvidence(d, pom, null, true);
+            if (root != null) {
+                //TODO convert to packageURL
+                final String includedby = String.format("%s:%s:%s",
+                        root.getArtifact().getGroupId(),
+                        root.getArtifact().getArtifactId(),
+                        root.getArtifact().getVersion());
+                d.addIncludedBy(includedby);
+            } else {
+                //TODO convert to packageURL
+                final String includedby = String.format("%s:%s:%s", project1.getGroupId(), project1.getArtifactId(), project1.getVersion());
+                d.addIncludedBy(includedby);
+            }
+            engine.addDependency(d);
+        } catch (AnalysisException ex) {
+            if (exCol == null) {
+                exCol = new ExceptionCollection();
+            }
+            exCol.addException(ex);
+            getLog().debug("Error reading pom " + artifactFile.getAbsoluteFile(), ex);
+        }
+        return exCol;
+    }
 }
 //CSON: FileLength
