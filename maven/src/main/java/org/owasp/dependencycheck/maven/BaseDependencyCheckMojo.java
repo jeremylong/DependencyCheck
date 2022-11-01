@@ -269,6 +269,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "pathToGo")
     private String pathToGo;
+
     /**
      * Sets the path to `yarn`.
      */
@@ -395,6 +396,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "jarAnalyzerEnabled")
     private Boolean jarAnalyzerEnabled;
+
+    /**
+     * Sets whether the Dart analyzer is enabled. Default is true.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "dartAnalyzerEnabled")
+    private Boolean dartAnalyzerEnabled;
 
     /**
      * Whether or not the Archive Analyzer is enabled.
@@ -653,12 +661,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private String ossIndexServerId;
 
     /**
-     * Whether we should only warn about Sonatype OSS Index remote errors instead of failing the goal completely.
+     * Whether we should only warn about Sonatype OSS Index remote errors
+     * instead of failing the goal completely.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "ossIndexWarnOnlyOnRemoteErrors")
     private Boolean ossIndexWarnOnlyOnRemoteErrors;
-    
+
     /**
      * Whether or not the Elixir Mix Audit Analyzer is enabled.
      */
@@ -1365,15 +1374,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                                 final List<org.apache.maven.model.Dependency> dependencies = project.getDependencies();
                                 final List<org.apache.maven.model.Dependency> managedDependencies
                                         = project.getDependencyManagement() == null ? null : project.getDependencyManagement()
-                                                                                                    .getDependencies();
+                                        .getDependencies();
                                 final Iterable<ArtifactResult> allDeps
                                         = dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,
-                                                                                 null);
+                                                null);
                                 allDeps.forEach(allResolvedDeps::add);
                             } catch (DependencyResolverException dre) {
                                 if (dre.getCause() instanceof org.eclipse.aether.resolution.DependencyResolutionException) {
-                                    final List<ArtifactResult> successResults =
-                                            Mshared998Util.getResolutionResults(
+                                    final List<ArtifactResult> successResults
+                                            = Mshared998Util.getResolutionResults(
                                                     (org.eclipse.aether.resolution.DependencyResolutionException) dre.getCause());
                                     allResolvedDeps.addAll(successResults);
                                 } else {
@@ -1486,13 +1495,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Utility method for a work-around to MSHARED-998
      *
      * @param allDeps The List of ArtifactResults for all dependencies
-     * @param unresolvedArtifact The ArtifactCoordinate of the artifact we're looking for
+     * @param unresolvedArtifact The ArtifactCoordinate of the artifact we're
+     * looking for
      * @param project The project in whose context resolution was attempted
      * @return the resolved artifact matching with {@code unresolvedArtifact}
-     * @throws DependencyNotFoundException If {@code unresolvedArtifact} could not be found within {@code allDeps}
+     * @throws DependencyNotFoundException If {@code unresolvedArtifact} could
+     * not be found within {@code allDeps}
      */
     private Artifact findInAllDeps(final List<ArtifactResult> allDeps, final Artifact unresolvedArtifact,
-                                   final MavenProject project)
+            final MavenProject project)
             throws DependencyNotFoundException {
         Artifact result = null;
         for (final ArtifactResult res : allDeps) {
@@ -1512,8 +1523,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Utility method for a work-around to MSHARED-998
      *
      * @param res A single ArtifactResult obtained from the DependencyResolver
-     * @param unresolvedArtifact The unresolved Artifact from the dependencyGraph that we try to find
-     * @return {@code true} when unresolvedArtifact is non-null and matches with the artifact of res
+     * @param unresolvedArtifact The unresolved Artifact from the
+     * dependencyGraph that we try to find
+     * @return {@code true} when unresolvedArtifact is non-null and matches with
+     * the artifact of res
      */
     private boolean sameArtifact(final ArtifactResult res, final Artifact unresolvedArtifact) {
         if (res == null || res.getArtifact() == null || unresolvedArtifact == null) {
@@ -1688,7 +1701,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * <code>false</code>
      */
     private boolean addVirtualDependencyFromReactor(Engine engine, Artifact artifact,
-                                                    final MavenProject depender, String infoLogTemplate) {
+            final MavenProject depender, String infoLogTemplate) {
 
         getLog().debug(String.format("Checking the reactor projects (%d) for %s:%s:%s",
                 reactorProjects.size(),
@@ -2036,6 +2049,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIRED_ENABLED, enableRetired);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED, golangDepEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED, golangModEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_DART_ENABLED, dartAnalyzerEnabled);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH, pathToGo);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_YARN_PATH, pathToYarn);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_PNPM_PATH, pathToPnpm);
