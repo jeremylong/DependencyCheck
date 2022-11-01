@@ -181,6 +181,10 @@ public class Check extends Update {
      */
     private String pathToGo;
     /**
+     * Sets whether the Dart analyzer is enabled. Default is true.
+     */
+    private Boolean dartEnabled;
+    /**
      * The path to `yarn`.
      */
     private String pathToYarn;
@@ -1448,6 +1452,24 @@ public class Check extends Update {
     }
 
     /**
+     * Get the value of dartEnabled.
+     *
+     * @return the value of dartEnabled
+     */
+    public Boolean isDartEnabled() {
+        return dartEnabled;
+    }
+
+    /**
+     * Set the value of dartEnabled.
+     *
+     * @param dartEnabled new value of dartEnabled
+     */
+    public void setDartEnabled(Boolean dartEnabled) {
+        this.dartEnabled = dartEnabled;
+    }
+
+    /**
      * Get the value of pathToYarn.
      *
      * @return the value of pathToYarn
@@ -2013,6 +2035,7 @@ public class Check extends Update {
         getSettings().setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, retirejsFilters);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED, golangDepEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED, golangModEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_DART_ENABLED, dartEnabled);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH, pathToGo);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_YARN_PATH, pathToYarn);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_PNPM_PATH, pathToPnpm);

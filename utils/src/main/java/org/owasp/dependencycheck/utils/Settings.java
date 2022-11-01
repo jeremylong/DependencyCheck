@@ -422,6 +422,10 @@ public final class Settings {
          */
         public static final String ANALYZER_GOLANG_DEP_ENABLED = "analyzer.golang.dep.enabled";
         /**
+         * The properties key for whether the Dart analyzer is enabled.
+         */
+        public static final String ANALYZER_DART_ENABLED = "analyzer.dart.enabled";
+        /**
          * The properties key for whether the Ruby Gemspec Analyzer is enabled.
          */
         public static final String ANALYZER_RUBY_GEMSPEC_ENABLED = "analyzer.ruby.gemspec.enabled";

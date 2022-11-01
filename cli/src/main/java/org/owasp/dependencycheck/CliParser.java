@@ -466,6 +466,7 @@ public final class CliParser {
                 .addOption(newOption(ARGUMENT.DISABLE_COMPOSER, "Disable the PHP Composer Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_CPAN, "Disable the Perl CPAN file Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_GOLANG_MOD, "Disable the Golang Mod Analyzer."))
+                .addOption(newOption(ARGUMENT.DISABLE_DART, "Disable the Dart Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_OPENSSL, "Disable the OpenSSL Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_NUSPEC, "Disable the Nuspec Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_NUGETCONF, "Disable the Nuget packages.config Analyzer."))
@@ -1206,6 +1207,10 @@ public final class CliParser {
          * Disables the Golang Mod Analyzer.
          */
         public static final String DISABLE_GOLANG_MOD = "disableGolangMod";
+        /**
+         * Disables the Dart Analyzer.
+         */
+        public static final String DISABLE_DART = "disableDart";
         /**
          * The CLI argument name for setting the path to `go`.
          */
