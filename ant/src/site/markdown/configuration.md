@@ -76,6 +76,7 @@ zipExtensions                       | A comma-separated list of additional file 
 jarAnalyzer                         | Sets whether the Jar Analyzer will be used.                                                                | true
 centralAnalyzerEnabled              | Sets whether the Central Analyzer will be used. **Disabling this analyzer for Ant builds is not recommended as it could lead to false negatives (e.g. libraries that have vulnerabilities may not be reported correctly).** If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer (see below).                                  | true
 centralAnalyzerUseCache             | Sets whether the Central Analyer will cache results. Cached results expire after 30 days.                  | true
+dartAnalyzerEnabled                 | Sets whether the [experimental](../analyzers/index.html) Dart Analyzer will be used.                       | true
 ossIndexAnalyzerEnabled             | Sets whether the [OSS Index Analyzer](../analyzers/oss-index-analyzer.html) will be enabled. This analyzer requires an internet connection. | true
 ossindexAnalyzerUseCache            | Sets whether the OSS Index Analyzer will cache results. Cached results expire after 24 hours.              | true
 ossindexAnalyzerUsername            | Sets the username for OSS Index - note an account with OSS Index is not required.                          | &nbsp;
@@ -85,7 +86,7 @@ nexusAnalyzerEnabled                | Sets whether Nexus Analyzer will be used (
 nexusUrl                            | Defines the Nexus web service endpoint (example http://domain.enterprise/nexus/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
 nexusUser                           | The username to authenticate to the Nexus Server's web service end point. If not set the Nexus Analyzer will use an unauthenticated connection. | &nbsp;
 nexusPassword                       | The password to authenticate to the Nexus Server's web service end point. If not set the Nexus Analyzer will use an unauthenticated connection. | &nbsp;
-nexusUsesProxy                      | Whether or not the defined proxy should be used when connecting to Nexus.                                  | true
+nexusUsesProxy                      | Whether the defined proxy should be used when connecting to Nexus.                                  | true
 artifactoryAnalyzerEnabled          | Sets whether Artifactory analyzer will be used                                                             | false
 artifactoryAnalyzerUrl              | The Artifactory server URL.                                                                                | &nbsp;
 artifactoryAnalyzerUseProxy         | Whether Artifactory should be accessed through a proxy or not.                                             | false
@@ -129,8 +130,8 @@ swiftPackageResolvedAnalyzerEnabled | Sets whether the [experimental](../analyze
 assemblyAnalyzerEnabled             | Sets whether the .NET Assembly Analyzer should be used.                                                    | true
 msbuildAnalyzerEnabled              | Sets whether the MSBuild Analyzer should be used.                                                          | true
 pathToCore                          | The path to dotnet core .NET assembly analysis on non-windows systems.                                     | &nbsp;
-golangDepEnabled                    | Sets whether or not the [experimental](../analyzers/index.html) Golang Dependency Analyzer should be used. `enableExperimental` must be set to true. | true
-golangModEnabled                    | Sets whether or not the [experimental](../analyzers/index.html) Goland Module Analyzer should be used; requires `go` to be installed. `enableExperimental` must be set to true. | true
+golangDepEnabled                    | Sets whether the [experimental](../analyzers/index.html) Golang Dependency Analyzer should be used. `enableExperimental` must be set to true. | true
+golangModEnabled                    | Sets whether the [experimental](../analyzers/index.html) Goland Module Analyzer should be used; requires `go` to be installed. `enableExperimental` must be set to true. | true
 pathToGo                            | The path to `go`.                                                                                          | &nbsp;
 
 Advanced Configuration

@@ -540,6 +540,8 @@ public class App {
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_GO_DEP, Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_GOLANG_MOD, Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_DART_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_DART, Settings.KEYS.ANALYZER_DART_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NODE_JS, Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED));
         //TODO next major - remove the deprecated check in isNodeAuditDisabled
