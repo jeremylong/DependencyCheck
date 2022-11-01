@@ -2741,7 +2741,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     //CSON: ParameterNumber
 
     private ExceptionCollection processPomArtifact(File artifactFile, DependencyNode root,
-            MavenProject project1, Engine engine, ExceptionCollection exCol) {
+            MavenProject project1, Engine engine, ExceptionCollection exCollection) {
+        ExceptionCollection exCol = exCollection;
         try {
             final Dependency d = new Dependency(artifactFile.getAbsoluteFile());
             final Model pom = PomUtils.readPom(artifactFile.getAbsoluteFile());
