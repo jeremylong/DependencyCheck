@@ -126,9 +126,16 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
 
     private void analyzeYamlFileDependencies(Dependency yamlFileDependency, Engine engine) throws AnalysisException {
         engine.removeDependency(yamlFileDependency);
+        final File yamlFile = yamlFileDependency.getActualFile();
+        if (YAML_FILE.equals(yamlFile.getName())) {
+            final File lock = new File(yamlFile.getParentFile(), LOCK_FILE);
+            if (lock.isFile()) {
+                LOGGER.debug("Skipping {} because {} exists", yamlFile, lock);
+                return;
+            }
+        }
 
         final JsonNode rootNode;
-        final File yamlFile = yamlFileDependency.getActualFile();
         final ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
         try {
             rootNode = objectMapper.readTree(yamlFile);
@@ -136,11 +143,15 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
             throw new AnalysisException("Problem occurred while reading dependency file.", e);
         }
 
-        final Iterator<Map.Entry<String, JsonNode>> dependencies = rootNode.get("dependencies").fields();
-        addYamlDependenciesToEngine(dependencies, yamlFile, engine);
-
-        final Iterator<Map.Entry<String, JsonNode>> devDependencies = rootNode.get("dev_dependencies").fields();
-        addYamlDependenciesToEngine(devDependencies, yamlFile, engine);
+        if (rootNode.hasNonNull("dependencies")) {
+            final Iterator<Map.Entry<String, JsonNode>> dependencies = rootNode.get("dependencies").fields();
+            addYamlDependenciesToEngine(dependencies, yamlFile, engine);
+        }
+        //TODO - add configuration to allow skipping dev dependencies.
+        if (rootNode.hasNonNull("dev_dependencies")) {
+            final Iterator<Map.Entry<String, JsonNode>> devDependencies = rootNode.get("dev_dependencies").fields();
+            addYamlDependenciesToEngine(devDependencies, yamlFile, engine);
+        }
 
         addYamlDartDependencyToEngine(rootNode, yamlFile, engine);
     }
@@ -212,11 +223,13 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     private void addYamlDartDependencyToEngine(JsonNode rootNode, File file, Engine engine) throws AnalysisException {
-        final String dartVersion = rootNode.get("environment").get("sdk").textValue();
-        final String minimumVersion = extractMinimumVersion(dartVersion);
+        if (rootNode.hasNonNull("environment")) {
+            final String dartVersion = rootNode.get("environment").get("sdk").textValue();
+            final String minimumVersion = extractMinimumVersion(dartVersion);
 
-        engine.addDependency(
-                createDependencyFromNameAndVersion(file, "dart_software_development_kit", minimumVersion));
+            engine.addDependency(
+                    createDependencyFromNameAndVersion(file, "dart_software_development_kit", minimumVersion));
+        }
     }
 
     private Dependency createDependencyFromNameAndVersion(File file, String name, String version) throws AnalysisException {
@@ -267,7 +280,7 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
             // this code should parse version definitions like ">=2.10.0 <3.0.0"
             final String firstPart = versionRaw.split("<")[0].trim();
             version = firstPart.replace(">=", "").trim();
-        } else if (versionRaw.contains("any")) {
+        } else if (versionRaw.contains("any") || versionRaw.equals("null")) {
             version = "";
         } else {
             version = versionRaw;
