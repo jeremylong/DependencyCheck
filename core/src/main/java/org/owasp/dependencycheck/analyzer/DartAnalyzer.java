@@ -280,7 +280,7 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
             // this code should parse version definitions like ">=2.10.0 <3.0.0"
             final String firstPart = versionRaw.split("<")[0].trim();
             version = firstPart.replace(">=", "").trim();
-        } else if (versionRaw.contains("any") || versionRaw.equals("null")) {
+        } else if (versionRaw.contains("any") || "null".equals(versionRaw)) {
             version = "";
         } else {
             version = versionRaw;
