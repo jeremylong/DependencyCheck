@@ -223,7 +223,7 @@ public class DartAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     private void addYamlDartDependencyToEngine(JsonNode rootNode, File file, Engine engine) throws AnalysisException {
-        if (rootNode.hasNonNull("environment")) {
+        if (rootNode.hasNonNull("environment") && rootNode.get("environment").hasNonNull("sdk")) {
             final String dartVersion = rootNode.get("environment").get("sdk").textValue();
             final String minimumVersion = extractMinimumVersion(dartVersion);
 
