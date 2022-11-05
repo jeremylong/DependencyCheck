@@ -986,11 +986,17 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private List<String> scanDirectory;
 
     /**
-     * Whether the project plugins should also be scanned.
+     * Whether the project's plugins should also be scanned.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "odc.plugins.scan", defaultValue = "false", required = false)
     private boolean scanPlugins = false;
+    /**
+     * Whether the project's dependencies should also be scanned.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "odc.dependencies.scan", defaultValue = "true", required = false)
+    private boolean scanDependencies = true;
 
     // </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Base Maven implementation">
@@ -1828,7 +1834,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     protected void runCheck() throws MojoExecutionException, MojoFailureException {
         muteJCS();
         try (Engine engine = initializeEngine()) {
-            ExceptionCollection exCol = scanDependencies(engine);
+            ExceptionCollection exCol = null;
+            if (scanDependencies) {
+                exCol = scanDependencies(engine);
+            }
             if (scanPlugins) {
                 exCol = scanPlugins(engine, exCol);
             }
