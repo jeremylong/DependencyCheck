@@ -1084,7 +1084,7 @@
         <gav regex="true">^com\.liferay:org\.apache\.felix\.configadmin:.*$</gav>
         <cpe>cpe:/a:cm_project:cm</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
        <notes><![CDATA[
        Suppresses false positives per issue #5048
        ]]></notes>
