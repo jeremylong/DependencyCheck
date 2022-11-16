@@ -1085,6 +1085,15 @@
         <cpe>cpe:/a:cm_project:cm</cpe>
     </suppress>
     <suppress base="true">
+       <notes><![CDATA[
+       Suppresses false positives per issue #5048
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/com\.liferay\.portal/com\.liferay\.util\.slf4j@.*$</packageUrl>
+       <cpe>cpe:/a:liferay:liferay</cpe>
+       <cpe>cpe:/a:liferay:liferay_portal</cpe>
+       <cpe>cpe:/a:liferay:portal</cpe>
+    </suppress>
+    <suppress base="true">
         <notes><![CDATA[
         Suppresses false positives per issue #1585
         ]]></notes>
