@@ -212,3 +212,11 @@
    <cpe>cpe:/a:pagehelper_project:pagehelper</cpe>
 </suppress>
 <!-- suppressions above this entry were included in the 7.3.1 release -->
+
+<suppress base="true">
+       <notes><![CDATA[
+           FP per issue https://github.com/jeremylong/DependencyCheck/issues/5060
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/org\.msgpack/.*@.*$</packageUrl>
+       <cpe>cpe:/a:messagepack_project:messagepack</cpe>
+    </suppress>
