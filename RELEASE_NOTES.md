@@ -1,5 +1,15 @@
 # Release Notes
 
+## [Version 7.3.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.3.2) (2022-11-16)
+
+**Changes**
+
+- Automated release of 7.3.1 failed and only published to Central; 7.3.2 is a re-release of 7.3.1.
+- Resolved several false positives and false negatives.
+- Use Jackson Afterburner if still on Java 8 (#4966).
+- Exclude `node_modules` from the Maven plugin's scan path (#4974).
+- See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/51?closed=1).
+
 ## [Version 7.3.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.3.1) (2022-11-16)
 
 **Changes**
