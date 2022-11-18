@@ -19,7 +19,6 @@ package org.owasp.dependencycheck.xml.pom;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -45,12 +44,12 @@ import org.xml.sax.XMLReader;
  * @author Jeremy Long
  */
 @ThreadSafe
-<span class="fc" id="L48">public class PomParser {</span>
+<span class="fc" id="L47">public class PomParser {</span>
 
     /**
      * The logger.
      */
-<span class="fc" id="L53">    private static final Logger LOGGER = LoggerFactory.getLogger(PomParser.class);</span>
+<span class="fc" id="L52">    private static final Logger LOGGER = LoggerFactory.getLogger(PomParser.class);</span>
 
     /**
      * Parses the given xml file and returns a Model object containing only the
@@ -63,14 +62,14 @@ import org.xml.sax.XMLReader;
      * @throws PomParseException thrown if the xml file cannot be parsed
      */
     public Model parse(File file) throws PomParseException {
-<span class="fc" id="L66">        try (FileInputStream fis = new FileInputStream(file)) {</span>
-<span class="fc" id="L67">            return parse(fis);</span>
-<span class="fc" id="L68">        } catch (IOException ex) {</span>
-<span class="pc bpc" id="L69" title="1 of 2 branches missed.">            if (ex instanceof PomParseException) {</span>
-<span class="fc" id="L70">                throw (PomParseException) ex;</span>
+<span class="fc" id="L65">        try (FileInputStream fis = new FileInputStream(file)) {</span>
+<span class="fc" id="L66">            return parse(fis);</span>
+<span class="fc" id="L67">        } catch (IOException ex) {</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">            if (ex instanceof PomParseException) {</span>
+<span class="fc" id="L69">                throw (PomParseException) ex;</span>
             }
-<span class="nc" id="L72">            LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="nc" id="L73">            throw new PomParseException(String.format(&quot;Unable to parse pom '%s'&quot;, file), ex);</span>
+<span class="nc" id="L71">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L72">            throw new PomParseException(String.format(&quot;Unable to parse pom '%s'&quot;, file), ex);</span>
         }
     }
 
@@ -85,14 +84,14 @@ import org.xml.sax.XMLReader;
      * @throws PomParseException thrown if the xml file cannot be parsed
      */
     public Model parseWithoutDocTypeCleanup(File file) throws PomParseException {
-<span class="fc" id="L88">        try (FileInputStream fis = new FileInputStream(file)) {</span>
-<span class="fc" id="L89">            return parseWithoutDocTypeCleanup(fis);</span>
-<span class="fc" id="L90">        } catch (IOException ex) {</span>
-<span class="pc bpc" id="L91" title="1 of 2 branches missed.">            if (ex instanceof PomParseException) {</span>
-<span class="fc" id="L92">                throw (PomParseException) ex;</span>
+<span class="fc" id="L87">        try (FileInputStream fis = new FileInputStream(file)) {</span>
+<span class="fc" id="L88">            return parseWithoutDocTypeCleanup(fis);</span>
+<span class="fc" id="L89">        } catch (IOException ex) {</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">            if (ex instanceof PomParseException) {</span>
+<span class="fc" id="L91">                throw (PomParseException) ex;</span>
             }
-<span class="nc" id="L94">            LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="nc" id="L95">            throw new PomParseException(String.format(&quot;Unable to parse pom '%s'&quot;, file), ex);</span>
+<span class="nc" id="L93">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L94">            throw new PomParseException(String.format(&quot;Unable to parse pom '%s'&quot;, file), ex);</span>
         }
     }
 
@@ -107,22 +106,22 @@ import org.xml.sax.XMLReader;
      */
     public Model parse(InputStream inputStream) throws PomParseException {
         try {
-<span class="fc" id="L110">            final PomHandler handler = new PomHandler();</span>
-<span class="fc" id="L111">            final SAXParser saxParser = XmlUtils.buildSecureSaxParser();</span>
-<span class="fc" id="L112">            final XMLReader xmlReader = saxParser.getXMLReader();</span>
-<span class="fc" id="L113">            xmlReader.setContentHandler(handler);</span>
+<span class="fc" id="L109">            final PomHandler handler = new PomHandler();</span>
+<span class="fc" id="L110">            final SAXParser saxParser = XmlUtils.buildSecureSaxParser();</span>
+<span class="fc" id="L111">            final XMLReader xmlReader = saxParser.getXMLReader();</span>
+<span class="fc" id="L112">            xmlReader.setContentHandler(handler);</span>
 
-<span class="fc" id="L115">            final BOMInputStream bomStream = new BOMInputStream(new XmlInputStream(new PomProjectInputStream(inputStream)));</span>
-<span class="fc" id="L116">            final ByteOrderMark bom = bomStream.getBOM();</span>
-<span class="fc" id="L117">            final String defaultEncoding = StandardCharsets.UTF_8.name();</span>
-<span class="pc bpc" id="L118" title="1 of 2 branches missed.">            final String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();</span>
-<span class="fc" id="L119">            final Reader reader = new InputStreamReader(bomStream, charsetName);</span>
-<span class="fc" id="L120">            final InputSource in = new InputSource(reader);</span>
-<span class="fc" id="L121">            xmlReader.parse(in);</span>
-<span class="fc" id="L122">            return handler.getModel();</span>
-<span class="fc" id="L123">        } catch (ParserConfigurationException | SAXException | IOException ex) {</span>
-<span class="fc" id="L124">            LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="fc" id="L125">            throw new PomParseException(ex);</span>
+<span class="fc" id="L114">            final BOMInputStream bomStream = new BOMInputStream(new XmlInputStream(new PomProjectInputStream(inputStream)));</span>
+<span class="fc" id="L115">            final ByteOrderMark bom = bomStream.getBOM();</span>
+<span class="fc" id="L116">            final String defaultEncoding = StandardCharsets.UTF_8.name();</span>
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">            final String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();</span>
+<span class="fc" id="L118">            final Reader reader = new InputStreamReader(bomStream, charsetName);</span>
+<span class="fc" id="L119">            final InputSource in = new InputSource(reader);</span>
+<span class="fc" id="L120">            xmlReader.parse(in);</span>
+<span class="fc" id="L121">            return handler.getModel();</span>
+<span class="fc" id="L122">        } catch (ParserConfigurationException | SAXException | IOException ex) {</span>
+<span class="fc" id="L123">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="fc" id="L124">            throw new PomParseException(ex);</span>
         }
     }
 
@@ -137,22 +136,22 @@ import org.xml.sax.XMLReader;
      */
     public Model parseWithoutDocTypeCleanup(InputStream inputStream) throws PomParseException {
         try {
-<span class="fc" id="L140">            final PomHandler handler = new PomHandler();</span>
-<span class="fc" id="L141">            final SAXParser saxParser = XmlUtils.buildSecureSaxParser();</span>
-<span class="fc" id="L142">            final XMLReader xmlReader = saxParser.getXMLReader();</span>
-<span class="fc" id="L143">            xmlReader.setContentHandler(handler);</span>
+<span class="fc" id="L139">            final PomHandler handler = new PomHandler();</span>
+<span class="fc" id="L140">            final SAXParser saxParser = XmlUtils.buildSecureSaxParser();</span>
+<span class="fc" id="L141">            final XMLReader xmlReader = saxParser.getXMLReader();</span>
+<span class="fc" id="L142">            xmlReader.setContentHandler(handler);</span>
 
-<span class="fc" id="L145">            final BOMInputStream bomStream = new BOMInputStream(new XmlInputStream(inputStream));</span>
-<span class="fc" id="L146">            final ByteOrderMark bom = bomStream.getBOM();</span>
-<span class="fc" id="L147">            final String defaultEncoding = StandardCharsets.UTF_8.name();</span>
-<span class="pc bpc" id="L148" title="1 of 2 branches missed.">            final String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();</span>
-<span class="fc" id="L149">            final Reader reader = new InputStreamReader(bomStream, charsetName);</span>
-<span class="fc" id="L150">            final InputSource in = new InputSource(reader);</span>
-<span class="fc" id="L151">            xmlReader.parse(in);</span>
-<span class="fc" id="L152">            return handler.getModel();</span>
-<span class="fc" id="L153">        } catch (ParserConfigurationException | SAXException | IOException ex) {</span>
-<span class="fc" id="L154">            LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="fc" id="L155">            throw new PomParseException(ex);</span>
+<span class="fc" id="L144">            final BOMInputStream bomStream = new BOMInputStream(new XmlInputStream(inputStream));</span>
+<span class="fc" id="L145">            final ByteOrderMark bom = bomStream.getBOM();</span>
+<span class="fc" id="L146">            final String defaultEncoding = StandardCharsets.UTF_8.name();</span>
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">            final String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();</span>
+<span class="fc" id="L148">            final Reader reader = new InputStreamReader(bomStream, charsetName);</span>
+<span class="fc" id="L149">            final InputSource in = new InputSource(reader);</span>
+<span class="fc" id="L150">            xmlReader.parse(in);</span>
+<span class="fc" id="L151">            return handler.getModel();</span>
+<span class="fc" id="L152">        } catch (ParserConfigurationException | SAXException | IOException ex) {</span>
+<span class="fc" id="L153">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="fc" id="L154">            throw new PomParseException(ex);</span>
         }
     }
 }

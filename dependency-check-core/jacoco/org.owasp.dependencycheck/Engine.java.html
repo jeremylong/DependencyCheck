@@ -994,21 +994,22 @@ public class Engine implements FileFilter, AutoCloseable {
 <span class="pc bpc" id="L994" title="1 of 2 branches missed.">                        if (!connStr.contains(&quot;ACCESS_MODE_DATA&quot;)) {</span>
 <span class="fc" id="L995">                            settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connStr + &quot;ACCESS_MODE_DATA=r&quot;);</span>
                         }
-<span class="fc" id="L997">                        database = new CveDB(settings);</span>
-<span class="fc" id="L998">                    } else {</span>
-<span class="nc" id="L999">                        throw new DatabaseException(&quot;Unable to open database - configured database file does not exist: &quot; + db);</span>
+<span class="fc" id="L997">                        settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);</span>
+<span class="fc" id="L998">                        database = new CveDB(settings);</span>
+<span class="fc" id="L999">                    } else {</span>
+<span class="nc" id="L1000">                        throw new DatabaseException(&quot;Unable to open database - configured database file does not exist: &quot; + db);</span>
                     }
-<span class="fc" id="L1001">                } else {</span>
-<span class="fc" id="L1002">                    database = new CveDB(settings);</span>
+<span class="fc" id="L1002">                } else {</span>
+<span class="fc" id="L1003">                    database = new CveDB(settings);</span>
                 }
-<span class="nc" id="L1004">            } catch (IOException ex) {</span>
-<span class="nc" id="L1005">                throw new DatabaseException(&quot;Unable to open database in read only mode&quot;, ex);</span>
-<span class="nc" id="L1006">            } catch (WriteLockException ex) {</span>
-<span class="nc" id="L1007">                throw new DatabaseException(&quot;Failed to obtain lock - unable to open database&quot;, ex);</span>
-<span class="fc" id="L1008">            }</span>
-<span class="fc" id="L1009">            database.open();</span>
+<span class="nc" id="L1005">            } catch (IOException ex) {</span>
+<span class="nc" id="L1006">                throw new DatabaseException(&quot;Unable to open database in read only mode&quot;, ex);</span>
+<span class="nc" id="L1007">            } catch (WriteLockException ex) {</span>
+<span class="nc" id="L1008">                throw new DatabaseException(&quot;Failed to obtain lock - unable to open database&quot;, ex);</span>
+<span class="fc" id="L1009">            }</span>
+<span class="fc" id="L1010">            database.open();</span>
         }
-<span class="fc" id="L1011">    }</span>
+<span class="fc" id="L1012">    }</span>
 
     /**
      * Returns a reference to the database.
@@ -1016,7 +1017,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return a reference to the database
      */
     public CveDB getDatabase() {
-<span class="fc" id="L1019">        return this.database;</span>
+<span class="fc" id="L1020">        return this.database;</span>
     }
 
     /**
@@ -1027,12 +1028,12 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     @NotNull
     public List&lt;Analyzer&gt; getAnalyzers() {
-<span class="fc" id="L1030">        final List&lt;Analyzer&gt; analyzerList = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L1031">        final List&lt;Analyzer&gt; analyzerList = new ArrayList&lt;&gt;();</span>
         //insteae of forEach - we can just do a collect
-<span class="fc" id="L1032">        mode.getPhases().stream()</span>
-<span class="fc" id="L1033">                .map(analyzers::get)</span>
-<span class="fc" id="L1034">                .forEachOrdered(analyzerList::addAll);</span>
-<span class="fc" id="L1035">        return analyzerList;</span>
+<span class="fc" id="L1033">        mode.getPhases().stream()</span>
+<span class="fc" id="L1034">                .map(analyzers::get)</span>
+<span class="fc" id="L1035">                .forEachOrdered(analyzerList::addAll);</span>
+<span class="fc" id="L1036">        return analyzerList;</span>
     }
 
     /**
@@ -1044,12 +1045,12 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     @Override
     public boolean accept(@Nullable final File file) {
-<span class="pc bpc" id="L1047" title="1 of 2 branches missed.">        if (file == null) {</span>
-<span class="nc" id="L1048">            return false;</span>
+<span class="pc bpc" id="L1048" title="1 of 2 branches missed.">        if (file == null) {</span>
+<span class="nc" id="L1049">            return false;</span>
         }
         /* note, we can't break early on this loop as the analyzers need to know if
         they have files to work on prior to initialization */
-<span class="fc bfc" id="L1052" title="All 4 branches covered.">        return this.fileTypeAnalyzers.stream().map((a) -&gt; a.accept(file)).reduce(false, (accumulator, result) -&gt; accumulator || result);</span>
+<span class="fc bfc" id="L1053" title="All 4 branches covered.">        return this.fileTypeAnalyzers.stream().map((a) -&gt; a.accept(file)).reduce(false, (accumulator, result) -&gt; accumulator || result);</span>
     }
 
     /**
@@ -1058,7 +1059,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return the set of file type analyzers
      */
     public Set&lt;FileTypeAnalyzer&gt; getFileTypeAnalyzers() {
-<span class="nc" id="L1061">        return this.fileTypeAnalyzers;</span>
+<span class="nc" id="L1062">        return this.fileTypeAnalyzers;</span>
     }
 
     /**
@@ -1067,7 +1068,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return the configured settings
      */
     public Settings getSettings() {
-<span class="fc" id="L1070">        return settings;</span>
+<span class="fc" id="L1071">        return settings;</span>
     }
 
     /**
@@ -1077,7 +1078,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return the object
      */
     public Object getObject(String key) {
-<span class="fc" id="L1080">        return objects.get(key);</span>
+<span class="fc" id="L1081">        return objects.get(key);</span>
     }
 
     /**
@@ -1087,8 +1088,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param object the object to store
      */
     public void putObject(String key, Object object) {
-<span class="fc" id="L1090">        objects.put(key, object);</span>
-<span class="fc" id="L1091">    }</span>
+<span class="fc" id="L1091">        objects.put(key, object);</span>
+<span class="fc" id="L1092">    }</span>
 
     /**
      * Verifies if the object exists in the object store.
@@ -1098,7 +1099,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * &lt;code&gt;false&lt;/code&gt;
      */
     public boolean hasObject(String key) {
-<span class="fc" id="L1101">        return objects.containsKey(key);</span>
+<span class="fc" id="L1102">        return objects.containsKey(key);</span>
     }
 
     /**
@@ -1107,8 +1108,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param key the key to the object
      */
     public void removeObject(String key) {
-<span class="nc" id="L1110">        objects.remove(key);</span>
-<span class="nc" id="L1111">    }</span>
+<span class="nc" id="L1111">        objects.remove(key);</span>
+<span class="nc" id="L1112">    }</span>
 
     /**
      * Returns the mode of the engine.
@@ -1116,7 +1117,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return the mode of the engine
      */
     public Mode getMode() {
-<span class="fc" id="L1119">        return mode;</span>
+<span class="fc" id="L1120">        return mode;</span>
     }
 
     /**
@@ -1126,8 +1127,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param fta the file type analyzer to add
      */
     protected void addFileTypeAnalyzer(@NotNull final FileTypeAnalyzer fta) {
-<span class="fc" id="L1129">        this.fileTypeAnalyzers.add(fta);</span>
-<span class="fc" id="L1130">    }</span>
+<span class="fc" id="L1130">        this.fileTypeAnalyzers.add(fta);</span>
+<span class="fc" id="L1131">    }</span>
 
     /**
      * Checks the CPE Index to ensure documents exists. If none exist a
@@ -1136,10 +1137,10 @@ public class Engine implements FileFilter, AutoCloseable {
      * @throws NoDataException thrown if no data exists in the CPE Index
      */
     private void ensureDataExists() throws NoDataException {
-<span class="pc bpc" id="L1139" title="3 of 6 branches missed.">        if (mode.isDatabaseRequired() &amp;&amp; (database == null || !database.dataExists())) {</span>
-<span class="nc" id="L1140">            throw new NoDataException(&quot;No documents exist&quot;);</span>
+<span class="pc bpc" id="L1140" title="3 of 6 branches missed.">        if (mode.isDatabaseRequired() &amp;&amp; (database == null || !database.dataExists())) {</span>
+<span class="nc" id="L1141">            throw new NoDataException(&quot;No documents exist&quot;);</span>
         }
-<span class="fc" id="L1142">    }</span>
+<span class="fc" id="L1143">    }</span>
 
     /**
      * Constructs and throws a fatal exception collection.
@@ -1152,10 +1153,10 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     private void throwFatalExceptionCollection(String message, @NotNull final Throwable throwable,
             @NotNull final List&lt;Throwable&gt; exceptions) throws ExceptionCollection {
-<span class="fc" id="L1155">        LOGGER.error(message);</span>
-<span class="fc" id="L1156">        LOGGER.debug(&quot;&quot;, throwable);</span>
-<span class="fc" id="L1157">        exceptions.add(throwable);</span>
-<span class="fc" id="L1158">        throw new ExceptionCollection(exceptions, true);</span>
+<span class="fc" id="L1156">        LOGGER.error(message);</span>
+<span class="fc" id="L1157">        LOGGER.debug(&quot;&quot;, throwable);</span>
+<span class="fc" id="L1158">        exceptions.add(throwable);</span>
+<span class="fc" id="L1159">        throw new ExceptionCollection(exceptions, true);</span>
     }
 
     /**
@@ -1171,8 +1172,8 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     @Deprecated
     public void writeReports(String applicationName, File outputDir, String format) throws ReportException {
-<span class="nc" id="L1174">        writeReports(applicationName, null, null, null, outputDir, format, null);</span>
-<span class="nc" id="L1175">    }</span>
+<span class="nc" id="L1175">        writeReports(applicationName, null, null, null, outputDir, format, null);</span>
+<span class="nc" id="L1176">    }</span>
 
     //CSOFF: LineLength
     /**
@@ -1187,8 +1188,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * @throws ReportException thrown if there is an error generating the report
      */
     public void writeReports(String applicationName, File outputDir, String format, ExceptionCollection exceptions) throws ReportException {
-<span class="fc" id="L1190">        writeReports(applicationName, null, null, null, outputDir, format, exceptions);</span>
-<span class="fc" id="L1191">    }</span>
+<span class="fc" id="L1191">        writeReports(applicationName, null, null, null, outputDir, format, exceptions);</span>
+<span class="fc" id="L1192">    }</span>
     //CSON: LineLength
 
     /**
@@ -1209,8 +1210,8 @@ public class Engine implements FileFilter, AutoCloseable {
     public synchronized void writeReports(String applicationName, @Nullable final String groupId,
             @Nullable final String artifactId, @Nullable final String version,
             @NotNull final File outputDir, String format) throws ReportException {
-<span class="nc" id="L1212">        writeReports(applicationName, groupId, artifactId, version, outputDir, format, null);</span>
-<span class="nc" id="L1213">    }</span>
+<span class="nc" id="L1213">        writeReports(applicationName, groupId, artifactId, version, outputDir, format, null);</span>
+<span class="nc" id="L1214">    }</span>
 
     //CSOFF: LineLength
     /**
@@ -1230,32 +1231,32 @@ public class Engine implements FileFilter, AutoCloseable {
     public synchronized void writeReports(String applicationName, @Nullable final String groupId,
             @Nullable final String artifactId, @Nullable final String version,
             @NotNull final File outputDir, String format, ExceptionCollection exceptions) throws ReportException {
-<span class="pc bpc" id="L1233" title="1 of 2 branches missed.">        if (mode == Mode.EVIDENCE_COLLECTION) {</span>
-<span class="nc" id="L1234">            throw new UnsupportedOperationException(&quot;Cannot generate report in evidence collection mode.&quot;);</span>
+<span class="pc bpc" id="L1234" title="1 of 2 branches missed.">        if (mode == Mode.EVIDENCE_COLLECTION) {</span>
+<span class="nc" id="L1235">            throw new UnsupportedOperationException(&quot;Cannot generate report in evidence collection mode.&quot;);</span>
         }
-<span class="fc" id="L1236">        final DatabaseProperties prop = database.getDatabaseProperties();</span>
+<span class="fc" id="L1237">        final DatabaseProperties prop = database.getDatabaseProperties();</span>
 
-<span class="fc" id="L1238">        final ReportGenerator r = new ReportGenerator(applicationName, groupId, artifactId, version,</span>
-<span class="fc" id="L1239">                dependencies, getAnalyzers(), prop, settings, exceptions);</span>
+<span class="fc" id="L1239">        final ReportGenerator r = new ReportGenerator(applicationName, groupId, artifactId, version,</span>
+<span class="fc" id="L1240">                dependencies, getAnalyzers(), prop, settings, exceptions);</span>
         try {
-<span class="fc" id="L1241">            r.write(outputDir.getAbsolutePath(), format);</span>
-<span class="nc" id="L1242">        } catch (ReportException ex) {</span>
-<span class="nc" id="L1243">            final String msg = String.format(&quot;Error generating the report for %s&quot;, applicationName);</span>
-<span class="nc" id="L1244">            LOGGER.debug(msg, ex);</span>
-<span class="nc" id="L1245">            throw new ReportException(msg, ex);</span>
-<span class="fc" id="L1246">        }</span>
-<span class="fc" id="L1247">    }</span>
+<span class="fc" id="L1242">            r.write(outputDir.getAbsolutePath(), format);</span>
+<span class="nc" id="L1243">        } catch (ReportException ex) {</span>
+<span class="nc" id="L1244">            final String msg = String.format(&quot;Error generating the report for %s&quot;, applicationName);</span>
+<span class="nc" id="L1245">            LOGGER.debug(msg, ex);</span>
+<span class="nc" id="L1246">            throw new ReportException(msg, ex);</span>
+<span class="fc" id="L1247">        }</span>
+<span class="fc" id="L1248">    }</span>
     //CSON: LineLength
 
     /**
      * {@link Engine} execution modes.
      */
-<span class="fc" id="L1253">    public enum Mode {</span>
+<span class="fc" id="L1254">    public enum Mode {</span>
         /**
          * In evidence collection mode the {@link Engine} only collects evidence
          * from the scan targets, and doesn't require a database.
          */
-<span class="fc" id="L1258">        EVIDENCE_COLLECTION(</span>
+<span class="fc" id="L1259">        EVIDENCE_COLLECTION(</span>
                 false,
                 INITIAL,
                 PRE_INFORMATION_COLLECTION,
@@ -1269,7 +1270,7 @@ public class Engine implements FileFilter, AutoCloseable {
          * should be injected into the {@link Engine} using
          * {@link Engine#setDependencies(List)}.
          */
-<span class="fc" id="L1272">        EVIDENCE_PROCESSING(</span>
+<span class="fc" id="L1273">        EVIDENCE_PROCESSING(</span>
                 true,
                 PRE_IDENTIFIER_ANALYSIS,
                 IDENTIFIER_ANALYSIS,
@@ -1284,7 +1285,7 @@ public class Engine implements FileFilter, AutoCloseable {
          * In standalone mode the {@link Engine} will collect and process
          * evidence in a single execution.
          */
-<span class="fc" id="L1287">        STANDALONE(true, AnalysisPhase.values());</span>
+<span class="fc" id="L1288">        STANDALONE(true, AnalysisPhase.values());</span>
 
         /**
          * Whether the database is required in this mode.
@@ -1301,10 +1302,10 @@ public class Engine implements FileFilter, AutoCloseable {
          * @param databaseRequired if the database is required for the mode
          * @param phases the analysis phases to include in the mode
          */
-<span class="fc" id="L1304">        Mode(boolean databaseRequired, AnalysisPhase... phases) {</span>
-<span class="fc" id="L1305">            this.databaseRequired = databaseRequired;</span>
-<span class="fc" id="L1306">            this.phases = Collections.unmodifiableList(Arrays.asList(phases));</span>
-<span class="fc" id="L1307">        }</span>
+<span class="fc" id="L1305">        Mode(boolean databaseRequired, AnalysisPhase... phases) {</span>
+<span class="fc" id="L1306">            this.databaseRequired = databaseRequired;</span>
+<span class="fc" id="L1307">            this.phases = Collections.unmodifiableList(Arrays.asList(phases));</span>
+<span class="fc" id="L1308">        }</span>
 
         /**
          * Returns true if the database is required; otherwise false.
@@ -1312,7 +1313,7 @@ public class Engine implements FileFilter, AutoCloseable {
          * @return whether or not the database is required
          */
         private boolean isDatabaseRequired() {
-<span class="fc" id="L1315">            return databaseRequired;</span>
+<span class="fc" id="L1316">            return databaseRequired;</span>
         }
 
         /**
@@ -1321,7 +1322,7 @@ public class Engine implements FileFilter, AutoCloseable {
          * @return the phases for this mode
          */
         public List&lt;AnalysisPhase&gt; getPhases() {
-<span class="fc" id="L1324">            return phases;</span>
+<span class="fc" id="L1325">            return phases;</span>
         }
     }
 }

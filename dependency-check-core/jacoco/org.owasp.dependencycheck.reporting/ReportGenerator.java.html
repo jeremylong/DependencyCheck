@@ -34,7 +34,6 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
@@ -86,41 +85,41 @@ public class ReportGenerator {
     /**
      * The logger.
      */
-<span class="fc" id="L89">    private static final Logger LOGGER = LoggerFactory.getLogger(ReportGenerator.class);</span>
+<span class="fc" id="L88">    private static final Logger LOGGER = LoggerFactory.getLogger(ReportGenerator.class);</span>
 
     /**
      * An enumeration of the report formats.
      */
-<span class="fc" id="L94">    public enum Format {</span>
+<span class="fc" id="L93">    public enum Format {</span>
 
         /**
          * Generate all reports.
          */
-<span class="fc" id="L99">        ALL,</span>
+<span class="fc" id="L98">        ALL,</span>
         /**
          * Generate XML report.
          */
-<span class="fc" id="L103">        XML,</span>
+<span class="fc" id="L102">        XML,</span>
         /**
          * Generate HTML report.
          */
-<span class="fc" id="L107">        HTML,</span>
+<span class="fc" id="L106">        HTML,</span>
         /**
          * Generate JSON report.
          */
-<span class="fc" id="L111">        JSON,</span>
+<span class="fc" id="L110">        JSON,</span>
         /**
          * Generate CSV report.
          */
-<span class="fc" id="L115">        CSV,</span>
+<span class="fc" id="L114">        CSV,</span>
         /**
          * Generate Sarif report.
          */
-<span class="fc" id="L119">        SARIF,</span>
+<span class="fc" id="L118">        SARIF,</span>
         /**
          * Generate JUNIT report.
          */
-<span class="fc" id="L123">        JUNIT</span>
+<span class="fc" id="L122">        JUNIT</span>
     }
 
     /**
@@ -153,8 +152,8 @@ public class ReportGenerator {
     @Deprecated
     public ReportGenerator(String applicationName, List&lt;Dependency&gt; dependencies, List&lt;Analyzer&gt; analyzers,
             DatabaseProperties properties, Settings settings) {
-<span class="nc" id="L156">        this(applicationName, dependencies, analyzers, properties, settings, null);</span>
-<span class="nc" id="L157">    }</span>
+<span class="nc" id="L155">        this(applicationName, dependencies, analyzers, properties, settings, null);</span>
+<span class="nc" id="L156">    }</span>
 
     /**
      * Constructs a new ReportGenerator.
@@ -171,8 +170,8 @@ public class ReportGenerator {
      */
     public ReportGenerator(String applicationName, List&lt;Dependency&gt; dependencies, List&lt;Analyzer&gt; analyzers,
             DatabaseProperties properties, Settings settings, ExceptionCollection exceptions) {
-<span class="nc" id="L174">        this(applicationName, null, null, null, dependencies, analyzers, properties, settings, exceptions);</span>
-<span class="nc" id="L175">    }</span>
+<span class="nc" id="L173">        this(applicationName, null, null, null, dependencies, analyzers, properties, settings, exceptions);</span>
+<span class="nc" id="L174">    }</span>
 
     /**
      * Constructs a new ReportGenerator.
@@ -193,8 +192,8 @@ public class ReportGenerator {
     public ReportGenerator(String applicationName, String groupID, String artifactID, String version,
             List&lt;Dependency&gt; dependencies, List&lt;Analyzer&gt; analyzers, DatabaseProperties properties,
             Settings settings) {
-<span class="nc" id="L196">        this(applicationName, groupID, artifactID, version, dependencies, analyzers, properties, settings, null);</span>
-<span class="nc" id="L197">    }</span>
+<span class="nc" id="L195">        this(applicationName, groupID, artifactID, version, dependencies, analyzers, properties, settings, null);</span>
+<span class="nc" id="L196">    }</span>
 
     /**
      * Constructs a new ReportGenerator.
@@ -214,13 +213,13 @@ public class ReportGenerator {
      */
     public ReportGenerator(String applicationName, String groupID, String artifactID, String version,
             List&lt;Dependency&gt; dependencies, List&lt;Analyzer&gt; analyzers, DatabaseProperties properties,
-<span class="fc" id="L217">            Settings settings, ExceptionCollection exceptions) {</span>
-<span class="fc" id="L218">        this.settings = settings;</span>
-<span class="fc" id="L219">        velocityEngine = createVelocityEngine();</span>
-<span class="fc" id="L220">        velocityEngine.init();</span>
-<span class="fc" id="L221">        context = createContext(applicationName, dependencies, analyzers, properties, groupID,</span>
+<span class="fc" id="L216">            Settings settings, ExceptionCollection exceptions) {</span>
+<span class="fc" id="L217">        this.settings = settings;</span>
+<span class="fc" id="L218">        velocityEngine = createVelocityEngine();</span>
+<span class="fc" id="L219">        velocityEngine.init();</span>
+<span class="fc" id="L220">        context = createContext(applicationName, dependencies, analyzers, properties, groupID,</span>
                 artifactID, version, exceptions);
-<span class="fc" id="L223">    }</span>
+<span class="fc" id="L222">    }</span>
 
     /**
      * Constructs the velocity context used to generate the dependency-check
@@ -243,42 +242,42 @@ public class ReportGenerator {
             List&lt;Analyzer&gt; analyzers, DatabaseProperties properties, String groupID,
             String artifactID, String version, ExceptionCollection exceptions) {
 
-<span class="fc" id="L246">        final ZonedDateTime dt = ZonedDateTime.now();</span>
-<span class="fc" id="L247">        final String scanDate = DateTimeFormatter.RFC_1123_DATE_TIME.format(dt);</span>
-<span class="fc" id="L248">        final String scanDateXML = DateTimeFormatter.ISO_INSTANT.format(dt);</span>
-<span class="fc" id="L249">        final String scanDateJunit = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(dt);</span>
+<span class="fc" id="L245">        final ZonedDateTime dt = ZonedDateTime.now();</span>
+<span class="fc" id="L246">        final String scanDate = DateTimeFormatter.RFC_1123_DATE_TIME.format(dt);</span>
+<span class="fc" id="L247">        final String scanDateXML = DateTimeFormatter.ISO_INSTANT.format(dt);</span>
+<span class="fc" id="L248">        final String scanDateJunit = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(dt);</span>
 
-<span class="fc" id="L251">        final VelocityContext ctxt = new VelocityContext();</span>
-<span class="fc" id="L252">        ctxt.put(&quot;applicationName&quot;, applicationName);</span>
-<span class="fc" id="L253">        dependencies.sort(Dependency.NAME_COMPARATOR);</span>
-<span class="fc" id="L254">        ctxt.put(&quot;dependencies&quot;, dependencies);</span>
-<span class="fc" id="L255">        ctxt.put(&quot;analyzers&quot;, analyzers);</span>
-<span class="fc" id="L256">        ctxt.put(&quot;properties&quot;, properties);</span>
-<span class="fc" id="L257">        ctxt.put(&quot;scanDate&quot;, scanDate);</span>
-<span class="fc" id="L258">        ctxt.put(&quot;scanDateXML&quot;, scanDateXML);</span>
-<span class="fc" id="L259">        ctxt.put(&quot;scanDateJunit&quot;, scanDateJunit);</span>
-<span class="fc" id="L260">        ctxt.put(&quot;enc&quot;, new EscapeTool());</span>
-<span class="fc" id="L261">        ctxt.put(&quot;rpt&quot;, new ReportTool());</span>
-<span class="fc" id="L262">        ctxt.put(&quot;checksum&quot;, Checksum.class);</span>
-<span class="fc" id="L263">        ctxt.put(&quot;WordUtils&quot;, new WordUtils());</span>
-<span class="fc" id="L264">        ctxt.put(&quot;VENDOR&quot;, EvidenceType.VENDOR);</span>
-<span class="fc" id="L265">        ctxt.put(&quot;PRODUCT&quot;, EvidenceType.PRODUCT);</span>
-<span class="fc" id="L266">        ctxt.put(&quot;VERSION&quot;, EvidenceType.VERSION);</span>
-<span class="fc" id="L267">        ctxt.put(&quot;version&quot;, settings.getString(Settings.KEYS.APPLICATION_VERSION, &quot;Unknown&quot;));</span>
-<span class="fc" id="L268">        ctxt.put(&quot;settings&quot;, settings);</span>
-<span class="fc bfc" id="L269" title="All 2 branches covered.">        if (version != null) {</span>
-<span class="fc" id="L270">            ctxt.put(&quot;applicationVersion&quot;, version);</span>
+<span class="fc" id="L250">        final VelocityContext ctxt = new VelocityContext();</span>
+<span class="fc" id="L251">        ctxt.put(&quot;applicationName&quot;, applicationName);</span>
+<span class="fc" id="L252">        dependencies.sort(Dependency.NAME_COMPARATOR);</span>
+<span class="fc" id="L253">        ctxt.put(&quot;dependencies&quot;, dependencies);</span>
+<span class="fc" id="L254">        ctxt.put(&quot;analyzers&quot;, analyzers);</span>
+<span class="fc" id="L255">        ctxt.put(&quot;properties&quot;, properties);</span>
+<span class="fc" id="L256">        ctxt.put(&quot;scanDate&quot;, scanDate);</span>
+<span class="fc" id="L257">        ctxt.put(&quot;scanDateXML&quot;, scanDateXML);</span>
+<span class="fc" id="L258">        ctxt.put(&quot;scanDateJunit&quot;, scanDateJunit);</span>
+<span class="fc" id="L259">        ctxt.put(&quot;enc&quot;, new EscapeTool());</span>
+<span class="fc" id="L260">        ctxt.put(&quot;rpt&quot;, new ReportTool());</span>
+<span class="fc" id="L261">        ctxt.put(&quot;checksum&quot;, Checksum.class);</span>
+<span class="fc" id="L262">        ctxt.put(&quot;WordUtils&quot;, new WordUtils());</span>
+<span class="fc" id="L263">        ctxt.put(&quot;VENDOR&quot;, EvidenceType.VENDOR);</span>
+<span class="fc" id="L264">        ctxt.put(&quot;PRODUCT&quot;, EvidenceType.PRODUCT);</span>
+<span class="fc" id="L265">        ctxt.put(&quot;VERSION&quot;, EvidenceType.VERSION);</span>
+<span class="fc" id="L266">        ctxt.put(&quot;version&quot;, settings.getString(Settings.KEYS.APPLICATION_VERSION, &quot;Unknown&quot;));</span>
+<span class="fc" id="L267">        ctxt.put(&quot;settings&quot;, settings);</span>
+<span class="fc bfc" id="L268" title="All 2 branches covered.">        if (version != null) {</span>
+<span class="fc" id="L269">            ctxt.put(&quot;applicationVersion&quot;, version);</span>
         }
-<span class="fc bfc" id="L272" title="All 2 branches covered.">        if (artifactID != null) {</span>
-<span class="fc" id="L273">            ctxt.put(&quot;artifactID&quot;, artifactID);</span>
+<span class="fc bfc" id="L271" title="All 2 branches covered.">        if (artifactID != null) {</span>
+<span class="fc" id="L272">            ctxt.put(&quot;artifactID&quot;, artifactID);</span>
         }
-<span class="fc bfc" id="L275" title="All 2 branches covered.">        if (groupID != null) {</span>
-<span class="fc" id="L276">            ctxt.put(&quot;groupID&quot;, groupID);</span>
+<span class="fc bfc" id="L274" title="All 2 branches covered.">        if (groupID != null) {</span>
+<span class="fc" id="L275">            ctxt.put(&quot;groupID&quot;, groupID);</span>
         }
-<span class="fc bfc" id="L278" title="All 2 branches covered.">        if (exceptions != null) {</span>
-<span class="fc" id="L279">            ctxt.put(&quot;exceptions&quot;, exceptions.getExceptions());</span>
+<span class="fc bfc" id="L277" title="All 2 branches covered.">        if (exceptions != null) {</span>
+<span class="fc" id="L278">            ctxt.put(&quot;exceptions&quot;, exceptions.getExceptions());</span>
         }
-<span class="fc" id="L281">        return ctxt;</span>
+<span class="fc" id="L280">        return ctxt;</span>
     }
     //CSON: ParameterNumber
     //CSON: LineLength
@@ -289,7 +288,7 @@ public class ReportGenerator {
      * @return a velocity engine
      */
     private VelocityEngine createVelocityEngine() {
-<span class="fc" id="L292">        return new VelocityEngine();</span>
+<span class="fc" id="L291">        return new VelocityEngine();</span>
     }
 
     /**
@@ -303,24 +302,24 @@ public class ReportGenerator {
      * reports
      */
     public void write(String outputLocation, String format) throws ReportException {
-<span class="fc" id="L306">        Format reportFormat = null;</span>
+<span class="fc" id="L305">        Format reportFormat = null;</span>
         try {
-<span class="fc" id="L308">            reportFormat = Format.valueOf(format.toUpperCase());</span>
-<span class="nc" id="L309">        } catch (IllegalArgumentException ex) {</span>
-<span class="nc" id="L310">            LOGGER.trace(&quot;ignore this exception&quot;, ex);</span>
-<span class="fc" id="L311">        }</span>
+<span class="fc" id="L307">            reportFormat = Format.valueOf(format.toUpperCase());</span>
+<span class="nc" id="L308">        } catch (IllegalArgumentException ex) {</span>
+<span class="nc" id="L309">            LOGGER.trace(&quot;ignore this exception&quot;, ex);</span>
+<span class="fc" id="L310">        }</span>
 
-<span class="pc bpc" id="L313" title="1 of 2 branches missed.">        if (reportFormat != null) {</span>
-<span class="fc" id="L314">            write(outputLocation, reportFormat);</span>
+<span class="pc bpc" id="L312" title="1 of 2 branches missed.">        if (reportFormat != null) {</span>
+<span class="fc" id="L313">            write(outputLocation, reportFormat);</span>
         } else {
-<span class="nc" id="L316">            final File out = getReportFile(outputLocation, null);</span>
-<span class="nc bnc" id="L317" title="All 2 branches missed.">            if (out.isDirectory()) {</span>
-<span class="nc" id="L318">                throw new ReportException(&quot;Unable to write non-standard VSL output to a directory, please specify a file name&quot;);</span>
+<span class="nc" id="L315">            final File out = getReportFile(outputLocation, null);</span>
+<span class="nc bnc" id="L316" title="All 2 branches missed.">            if (out.isDirectory()) {</span>
+<span class="nc" id="L317">                throw new ReportException(&quot;Unable to write non-standard VSL output to a directory, please specify a file name&quot;);</span>
             }
-<span class="nc" id="L320">            processTemplate(format, out);</span>
+<span class="nc" id="L319">            processTemplate(format, out);</span>
         }
 
-<span class="fc" id="L323">    }</span>
+<span class="fc" id="L322">    }</span>
 
     /**
      * Writes the dependency-check report(s).
@@ -331,25 +330,25 @@ public class ReportGenerator {
      * reports
      */
     public void write(String outputLocation, Format format) throws ReportException {
-<span class="fc bfc" id="L334" title="All 2 branches covered.">        if (format == Format.ALL) {</span>
-<span class="fc bfc" id="L335" title="All 2 branches covered.">            for (Format f : Format.values()) {</span>
-<span class="fc bfc" id="L336" title="All 2 branches covered.">                if (f != Format.ALL) {</span>
-<span class="fc" id="L337">                    write(outputLocation, f);</span>
+<span class="fc bfc" id="L333" title="All 2 branches covered.">        if (format == Format.ALL) {</span>
+<span class="fc bfc" id="L334" title="All 2 branches covered.">            for (Format f : Format.values()) {</span>
+<span class="fc bfc" id="L335" title="All 2 branches covered.">                if (f != Format.ALL) {</span>
+<span class="fc" id="L336">                    write(outputLocation, f);</span>
                 }
             }
         } else {
-<span class="fc" id="L341">            final File out = getReportFile(outputLocation, format);</span>
-<span class="fc" id="L342">            final String templateName = format.toString().toLowerCase() + &quot;Report&quot;;</span>
-<span class="fc" id="L343">            processTemplate(templateName, out);</span>
-<span class="fc bfc" id="L344" title="All 2 branches covered.">            if (settings.getBoolean(Settings.KEYS.PRETTY_PRINT, false)) {</span>
-<span class="fc bfc" id="L345" title="All 4 branches covered.">                if (format == Format.JSON || format == Format.SARIF) {</span>
-<span class="fc" id="L346">                    pretifyJson(out.getPath());</span>
-<span class="fc bfc" id="L347" title="All 4 branches covered.">                } else if (format == Format.XML || format == Format.JUNIT) {</span>
-<span class="fc" id="L348">                    pretifyXml(out.getPath());</span>
+<span class="fc" id="L340">            final File out = getReportFile(outputLocation, format);</span>
+<span class="fc" id="L341">            final String templateName = format.toString().toLowerCase() + &quot;Report&quot;;</span>
+<span class="fc" id="L342">            processTemplate(templateName, out);</span>
+<span class="fc bfc" id="L343" title="All 2 branches covered.">            if (settings.getBoolean(Settings.KEYS.PRETTY_PRINT, false)) {</span>
+<span class="fc bfc" id="L344" title="All 4 branches covered.">                if (format == Format.JSON || format == Format.SARIF) {</span>
+<span class="fc" id="L345">                    pretifyJson(out.getPath());</span>
+<span class="fc bfc" id="L346" title="All 4 branches covered.">                } else if (format == Format.XML || format == Format.JUNIT) {</span>
+<span class="fc" id="L347">                    pretifyXml(out.getPath());</span>
                 }
             }
         }
-<span class="fc" id="L352">    }</span>
+<span class="fc" id="L351">    }</span>
 
     /**
      * Determines the report file name based on the give output location and
@@ -363,30 +362,30 @@ public class ReportGenerator {
      * @return the report File
      */
     public static File getReportFile(String outputLocation, Format format) {
-<span class="fc" id="L366">        File outFile = new File(outputLocation);</span>
-<span class="pc bpc" id="L367" title="1 of 2 branches missed.">        if (outFile.getParentFile() == null) {</span>
-<span class="nc" id="L368">            outFile = new File(&quot;.&quot;, outputLocation);</span>
+<span class="fc" id="L365">        File outFile = new File(outputLocation);</span>
+<span class="pc bpc" id="L366" title="1 of 2 branches missed.">        if (outFile.getParentFile() == null) {</span>
+<span class="nc" id="L367">            outFile = new File(&quot;.&quot;, outputLocation);</span>
         }
-<span class="fc" id="L370">        final String pathToCheck = outputLocation.toLowerCase();</span>
-<span class="fc bfc" id="L371" title="All 4 branches covered.">        if (format == Format.XML &amp;&amp; !pathToCheck.endsWith(&quot;.xml&quot;)) {</span>
-<span class="fc" id="L372">            return new File(outFile, &quot;dependency-check-report.xml&quot;);</span>
+<span class="fc" id="L369">        final String pathToCheck = outputLocation.toLowerCase();</span>
+<span class="fc bfc" id="L370" title="All 4 branches covered.">        if (format == Format.XML &amp;&amp; !pathToCheck.endsWith(&quot;.xml&quot;)) {</span>
+<span class="fc" id="L371">            return new File(outFile, &quot;dependency-check-report.xml&quot;);</span>
         }
-<span class="pc bpc" id="L374" title="1 of 6 branches missed.">        if (format == Format.HTML &amp;&amp; !pathToCheck.endsWith(&quot;.html&quot;) &amp;&amp; !pathToCheck.endsWith(&quot;.htm&quot;)) {</span>
-<span class="fc" id="L375">            return new File(outFile, &quot;dependency-check-report.html&quot;);</span>
+<span class="pc bpc" id="L373" title="1 of 6 branches missed.">        if (format == Format.HTML &amp;&amp; !pathToCheck.endsWith(&quot;.html&quot;) &amp;&amp; !pathToCheck.endsWith(&quot;.htm&quot;)) {</span>
+<span class="fc" id="L374">            return new File(outFile, &quot;dependency-check-report.html&quot;);</span>
         }
-<span class="fc bfc" id="L377" title="All 4 branches covered.">        if (format == Format.JSON &amp;&amp; !pathToCheck.endsWith(&quot;.json&quot;)) {</span>
-<span class="fc" id="L378">            return new File(outFile, &quot;dependency-check-report.json&quot;);</span>
+<span class="fc bfc" id="L376" title="All 4 branches covered.">        if (format == Format.JSON &amp;&amp; !pathToCheck.endsWith(&quot;.json&quot;)) {</span>
+<span class="fc" id="L377">            return new File(outFile, &quot;dependency-check-report.json&quot;);</span>
         }
-<span class="fc bfc" id="L380" title="All 4 branches covered.">        if (format == Format.CSV &amp;&amp; !pathToCheck.endsWith(&quot;.csv&quot;)) {</span>
-<span class="fc" id="L381">            return new File(outFile, &quot;dependency-check-report.csv&quot;);</span>
+<span class="fc bfc" id="L379" title="All 4 branches covered.">        if (format == Format.CSV &amp;&amp; !pathToCheck.endsWith(&quot;.csv&quot;)) {</span>
+<span class="fc" id="L380">            return new File(outFile, &quot;dependency-check-report.csv&quot;);</span>
         }
-<span class="fc bfc" id="L383" title="All 4 branches covered.">        if (format == Format.JUNIT &amp;&amp; !pathToCheck.endsWith(&quot;.xml&quot;)) {</span>
-<span class="fc" id="L384">            return new File(outFile, &quot;dependency-check-junit.xml&quot;);</span>
+<span class="fc bfc" id="L382" title="All 4 branches covered.">        if (format == Format.JUNIT &amp;&amp; !pathToCheck.endsWith(&quot;.xml&quot;)) {</span>
+<span class="fc" id="L383">            return new File(outFile, &quot;dependency-check-junit.xml&quot;);</span>
         }
-<span class="fc bfc" id="L386" title="All 4 branches covered.">        if (format == Format.SARIF &amp;&amp; !pathToCheck.endsWith(&quot;.sarif&quot;)) {</span>
-<span class="fc" id="L387">            return new File(outFile, &quot;dependency-check-report.sarif&quot;);</span>
+<span class="fc bfc" id="L385" title="All 4 branches covered.">        if (format == Format.SARIF &amp;&amp; !pathToCheck.endsWith(&quot;.sarif&quot;)) {</span>
+<span class="fc" id="L386">            return new File(outFile, &quot;dependency-check-report.sarif&quot;);</span>
         }
-<span class="fc" id="L389">        return outFile;</span>
+<span class="fc" id="L388">        return outFile;</span>
     }
 
     /**
@@ -401,14 +400,14 @@ public class ReportGenerator {
      */
     @SuppressFBWarnings(justification = &quot;try with resources will clean up the output stream&quot;, value = {&quot;OBL_UNSATISFIED_OBLIGATION&quot;})
     protected void processTemplate(String template, File file) throws ReportException {
-<span class="fc" id="L404">        ensureParentDirectoryExists(file);</span>
-<span class="fc" id="L405">        LOGGER.info(&quot;Writing report to: &quot; + file.getAbsolutePath());</span>
-<span class="fc" id="L406">        try (OutputStream output = new FileOutputStream(file)) {</span>
-<span class="fc" id="L407">            processTemplate(template, output);</span>
-<span class="nc" id="L408">        } catch (IOException ex) {</span>
-<span class="nc" id="L409">            throw new ReportException(String.format(&quot;Unable to write to file: %s&quot;, file), ex);</span>
-<span class="fc" id="L410">        }</span>
-<span class="fc" id="L411">    }</span>
+<span class="fc" id="L403">        ensureParentDirectoryExists(file);</span>
+<span class="fc" id="L404">        LOGGER.info(&quot;Writing report to: &quot; + file.getAbsolutePath());</span>
+<span class="fc" id="L405">        try (OutputStream output = new FileOutputStream(file)) {</span>
+<span class="fc" id="L406">            processTemplate(template, output);</span>
+<span class="nc" id="L407">        } catch (IOException ex) {</span>
+<span class="nc" id="L408">            throw new ReportException(String.format(&quot;Unable to write to file: %s&quot;, file), ex);</span>
+<span class="fc" id="L409">        }</span>
+<span class="fc" id="L410">    }</span>
 
     /**
      * Generates a report from a given Velocity Template. The template name
@@ -421,50 +420,50 @@ public class ReportGenerator {
      * @throws ReportException is thrown when an exception occurs
      */
     protected void processTemplate(String templateName, OutputStream outputStream) throws ReportException {
-<span class="fc" id="L424">        InputStream input = null;</span>
+<span class="fc" id="L423">        InputStream input = null;</span>
         String logTag;
-<span class="fc" id="L426">        final File f = new File(templateName);</span>
+<span class="fc" id="L425">        final File f = new File(templateName);</span>
         try {
-<span class="pc bpc" id="L428" title="1 of 2 branches missed.">            if (f.isFile()) {</span>
+<span class="pc bpc" id="L427" title="1 of 2 branches missed.">            if (f.isFile()) {</span>
                 try {
-<span class="nc" id="L430">                    logTag = templateName;</span>
-<span class="nc" id="L431">                    input = new FileInputStream(f);</span>
-<span class="nc" id="L432">                } catch (FileNotFoundException ex) {</span>
-<span class="nc" id="L433">                    throw new ReportException(&quot;Unable to locate template file: &quot; + templateName, ex);</span>
-<span class="nc" id="L434">                }</span>
+<span class="nc" id="L429">                    logTag = templateName;</span>
+<span class="nc" id="L430">                    input = new FileInputStream(f);</span>
+<span class="nc" id="L431">                } catch (FileNotFoundException ex) {</span>
+<span class="nc" id="L432">                    throw new ReportException(&quot;Unable to locate template file: &quot; + templateName, ex);</span>
+<span class="nc" id="L433">                }</span>
             } else {
-<span class="fc" id="L436">                logTag = &quot;templates/&quot; + templateName + &quot;.vsl&quot;;</span>
-<span class="fc" id="L437">                input = FileUtils.getResourceAsStream(logTag);</span>
+<span class="fc" id="L435">                logTag = &quot;templates/&quot; + templateName + &quot;.vsl&quot;;</span>
+<span class="fc" id="L436">                input = FileUtils.getResourceAsStream(logTag);</span>
             }
-<span class="pc bpc" id="L439" title="1 of 2 branches missed.">            if (input == null) {</span>
-<span class="nc" id="L440">                logTag = templateName;</span>
-<span class="nc" id="L441">                input = FileUtils.getResourceAsStream(templateName);</span>
+<span class="pc bpc" id="L438" title="1 of 2 branches missed.">            if (input == null) {</span>
+<span class="nc" id="L439">                logTag = templateName;</span>
+<span class="nc" id="L440">                input = FileUtils.getResourceAsStream(templateName);</span>
             }
-<span class="pc bpc" id="L443" title="1 of 2 branches missed.">            if (input == null) {</span>
-<span class="nc" id="L444">                throw new ReportException(&quot;Template file doesn't exist: &quot; + logTag);</span>
+<span class="pc bpc" id="L442" title="1 of 2 branches missed.">            if (input == null) {</span>
+<span class="nc" id="L443">                throw new ReportException(&quot;Template file doesn't exist: &quot; + logTag);</span>
             }
 
-<span class="fc" id="L447">            try (InputStreamReader reader = new InputStreamReader(input, StandardCharsets.UTF_8);</span>
-<span class="fc" id="L448">                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {</span>
-<span class="pc bpc" id="L449" title="1 of 2 branches missed.">                if (!velocityEngine.evaluate(context, writer, logTag, reader)) {</span>
-<span class="nc" id="L450">                    throw new ReportException(&quot;Failed to convert the template into html.&quot;);</span>
+<span class="fc" id="L446">            try (InputStreamReader reader = new InputStreamReader(input, StandardCharsets.UTF_8);</span>
+<span class="fc" id="L447">                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {</span>
+<span class="pc bpc" id="L448" title="1 of 2 branches missed.">                if (!velocityEngine.evaluate(context, writer, logTag, reader)) {</span>
+<span class="nc" id="L449">                    throw new ReportException(&quot;Failed to convert the template into html.&quot;);</span>
                 }
-<span class="fc" id="L452">                writer.flush();</span>
-<span class="nc" id="L453">            } catch (UnsupportedEncodingException ex) {</span>
-<span class="nc" id="L454">                throw new ReportException(&quot;Unable to generate the report using UTF-8&quot;, ex);</span>
-<span class="fc" id="L455">            }</span>
-<span class="nc" id="L456">        } catch (IOException ex) {</span>
-<span class="nc" id="L457">            throw new ReportException(&quot;Unable to write the report&quot;, ex);</span>
+<span class="fc" id="L451">                writer.flush();</span>
+<span class="nc" id="L452">            } catch (UnsupportedEncodingException ex) {</span>
+<span class="nc" id="L453">                throw new ReportException(&quot;Unable to generate the report using UTF-8&quot;, ex);</span>
+<span class="fc" id="L454">            }</span>
+<span class="nc" id="L455">        } catch (IOException ex) {</span>
+<span class="nc" id="L456">            throw new ReportException(&quot;Unable to write the report&quot;, ex);</span>
         } finally {
-<span class="pc bpc" id="L459" title="1 of 2 branches missed.">            if (input != null) {</span>
+<span class="pc bpc" id="L458" title="1 of 2 branches missed.">            if (input != null) {</span>
                 try {
-<span class="fc" id="L461">                    input.close();</span>
-<span class="nc" id="L462">                } catch (IOException ex) {</span>
-<span class="nc" id="L463">                    LOGGER.trace(&quot;Error closing input&quot;, ex);</span>
-<span class="fc" id="L464">                }</span>
+<span class="fc" id="L460">                    input.close();</span>
+<span class="nc" id="L461">                } catch (IOException ex) {</span>
+<span class="nc" id="L462">                    LOGGER.trace(&quot;Error closing input&quot;, ex);</span>
+<span class="fc" id="L463">                }</span>
             }
         }
-<span class="fc" id="L467">    }</span>
+<span class="fc" id="L466">    }</span>
 
     /**
      * Validates that the given file's parent directory exists. If the directory
@@ -476,14 +475,14 @@ public class ReportGenerator {
      * cannot be created
      */
     private void ensureParentDirectoryExists(File file) throws ReportException {
-<span class="fc bfc" id="L479" title="All 2 branches covered.">        if (!file.getParentFile().exists()) {</span>
-<span class="fc" id="L480">            final boolean created = file.getParentFile().mkdirs();</span>
-<span class="pc bpc" id="L481" title="1 of 2 branches missed.">            if (!created) {</span>
-<span class="nc" id="L482">                final String msg = String.format(&quot;Unable to create directory '%s'.&quot;, file.getParentFile().getAbsolutePath());</span>
-<span class="nc" id="L483">                throw new ReportException(msg);</span>
+<span class="fc bfc" id="L478" title="All 2 branches covered.">        if (!file.getParentFile().exists()) {</span>
+<span class="fc" id="L479">            final boolean created = file.getParentFile().mkdirs();</span>
+<span class="pc bpc" id="L480" title="1 of 2 branches missed.">            if (!created) {</span>
+<span class="nc" id="L481">                final String msg = String.format(&quot;Unable to create directory '%s'.&quot;, file.getParentFile().getAbsolutePath());</span>
+<span class="nc" id="L482">                throw new ReportException(msg);</span>
             }
         }
-<span class="fc" id="L486">    }</span>
+<span class="fc" id="L485">    }</span>
 
     /**
      * Reformats the given XML file.
@@ -492,41 +491,41 @@ public class ReportGenerator {
      * @throws ReportException thrown if the given JSON file is malformed
      */
     private void pretifyXml(String path) throws ReportException {
-<span class="fc" id="L495">        final String outputPath = path + &quot;.pretty&quot;;</span>
-<span class="fc" id="L496">        final File in = new File(path);</span>
-<span class="fc" id="L497">        final File out = new File(outputPath);</span>
-<span class="fc" id="L498">        try (OutputStream os = new FileOutputStream(out)) {</span>
-<span class="fc" id="L499">            final TransformerFactory transformerFactory = SAXTransformerFactory.newInstance();</span>
-<span class="fc" id="L500">            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);</span>
-<span class="fc" id="L501">            final Transformer transformer = transformerFactory.newTransformer();</span>
-<span class="fc" id="L502">            transformer.setOutputProperty(OutputKeys.ENCODING, &quot;UTF-8&quot;);</span>
-<span class="fc" id="L503">            transformer.setOutputProperty(OutputKeys.INDENT, &quot;yes&quot;);</span>
-<span class="fc" id="L504">            transformer.setOutputProperty(&quot;{http://xml.apache.org/xslt}indent-amount&quot;, &quot;2&quot;);</span>
+<span class="fc" id="L494">        final String outputPath = path + &quot;.pretty&quot;;</span>
+<span class="fc" id="L495">        final File in = new File(path);</span>
+<span class="fc" id="L496">        final File out = new File(outputPath);</span>
+<span class="fc" id="L497">        try (OutputStream os = new FileOutputStream(out)) {</span>
+<span class="fc" id="L498">            final TransformerFactory transformerFactory = SAXTransformerFactory.newInstance();</span>
+<span class="fc" id="L499">            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);</span>
+<span class="fc" id="L500">            final Transformer transformer = transformerFactory.newTransformer();</span>
+<span class="fc" id="L501">            transformer.setOutputProperty(OutputKeys.ENCODING, &quot;UTF-8&quot;);</span>
+<span class="fc" id="L502">            transformer.setOutputProperty(OutputKeys.INDENT, &quot;yes&quot;);</span>
+<span class="fc" id="L503">            transformer.setOutputProperty(&quot;{http://xml.apache.org/xslt}indent-amount&quot;, &quot;2&quot;);</span>
 
-<span class="fc" id="L506">            final SAXSource saxs = new SAXSource(new InputSource(path));</span>
-<span class="fc" id="L507">            final XMLReader saxReader = XmlUtils.buildSecureSaxParser().getXMLReader();</span>
+<span class="fc" id="L505">            final SAXSource saxs = new SAXSource(new InputSource(path));</span>
+<span class="fc" id="L506">            final XMLReader saxReader = XmlUtils.buildSecureSaxParser().getXMLReader();</span>
 
-<span class="fc" id="L509">            saxs.setXMLReader(saxReader);</span>
-<span class="fc" id="L510">            transformer.transform(saxs, new StreamResult(new OutputStreamWriter(os, StandardCharsets.UTF_8)));</span>
-<span class="nc" id="L511">        } catch (ParserConfigurationException | TransformerConfigurationException ex) {</span>
-<span class="nc" id="L512">            LOGGER.debug(&quot;Configuration exception when pretty printing&quot;, ex);</span>
-<span class="nc" id="L513">            LOGGER.error(&quot;Unable to generate pretty report, caused by: {}&quot;, ex.getMessage());</span>
-<span class="nc" id="L514">        } catch (TransformerException | SAXException | IOException ex) {</span>
-<span class="nc" id="L515">            LOGGER.debug(&quot;Malformed XML?&quot;, ex);</span>
-<span class="nc" id="L516">            LOGGER.error(&quot;Unable to generate pretty report, caused by: {}&quot;, ex.getMessage());</span>
-<span class="pc" id="L517">        }</span>
-<span class="pc bpc" id="L518" title="3 of 6 branches missed.">        if (out.isFile() &amp;&amp; in.isFile() &amp;&amp; in.delete()) {</span>
+<span class="fc" id="L508">            saxs.setXMLReader(saxReader);</span>
+<span class="fc" id="L509">            transformer.transform(saxs, new StreamResult(new OutputStreamWriter(os, StandardCharsets.UTF_8)));</span>
+<span class="nc" id="L510">        } catch (ParserConfigurationException | TransformerConfigurationException ex) {</span>
+<span class="nc" id="L511">            LOGGER.debug(&quot;Configuration exception when pretty printing&quot;, ex);</span>
+<span class="nc" id="L512">            LOGGER.error(&quot;Unable to generate pretty report, caused by: {}&quot;, ex.getMessage());</span>
+<span class="nc" id="L513">        } catch (TransformerException | SAXException | IOException ex) {</span>
+<span class="nc" id="L514">            LOGGER.debug(&quot;Malformed XML?&quot;, ex);</span>
+<span class="nc" id="L515">            LOGGER.error(&quot;Unable to generate pretty report, caused by: {}&quot;, ex.getMessage());</span>
+<span class="pc" id="L516">        }</span>
+<span class="pc bpc" id="L517" title="3 of 6 branches missed.">        if (out.isFile() &amp;&amp; in.isFile() &amp;&amp; in.delete()) {</span>
             try {
-<span class="fc" id="L520">                Thread.sleep(1000);</span>
-<span class="fc" id="L521">                org.apache.commons.io.FileUtils.moveFile(out, in);</span>
-<span class="nc" id="L522">            } catch (IOException ex) {</span>
-<span class="nc" id="L523">                LOGGER.error(&quot;Unable to generate pretty report, caused by: {}&quot;, ex.getMessage());</span>
-<span class="nc" id="L524">            } catch (InterruptedException ex) {</span>
-<span class="nc" id="L525">                Thread.currentThread().interrupt();</span>
-<span class="nc" id="L526">                LOGGER.error(&quot;Unable to generate pretty report, caused by: {}&quot;, ex.getMessage());</span>
-<span class="pc" id="L527">            }</span>
+<span class="fc" id="L519">                Thread.sleep(1000);</span>
+<span class="fc" id="L520">                org.apache.commons.io.FileUtils.moveFile(out, in);</span>
+<span class="nc" id="L521">            } catch (IOException ex) {</span>
+<span class="nc" id="L522">                LOGGER.error(&quot;Unable to generate pretty report, caused by: {}&quot;, ex.getMessage());</span>
+<span class="nc" id="L523">            } catch (InterruptedException ex) {</span>
+<span class="nc" id="L524">                Thread.currentThread().interrupt();</span>
+<span class="nc" id="L525">                LOGGER.error(&quot;Unable to generate pretty report, caused by: {}&quot;, ex.getMessage());</span>
+<span class="pc" id="L526">            }</span>
         }
-<span class="fc" id="L529">    }</span>
+<span class="fc" id="L528">    }</span>
 
     /**
      * Reformats the given JSON file.
@@ -535,41 +534,41 @@ public class ReportGenerator {
      * @throws ReportException thrown if the given JSON file is malformed
      */
     private void pretifyJson(String pathToJson) throws ReportException {
-<span class="fc" id="L538">        LOGGER.debug(&quot;pretify json: {}&quot;, pathToJson);</span>
-<span class="fc" id="L539">        final String outputPath = pathToJson + &quot;.pretty&quot;;</span>
-<span class="fc" id="L540">        final File in = new File(pathToJson);</span>
-<span class="fc" id="L541">        final File out = new File(outputPath);</span>
+<span class="fc" id="L537">        LOGGER.debug(&quot;pretify json: {}&quot;, pathToJson);</span>
+<span class="fc" id="L538">        final String outputPath = pathToJson + &quot;.pretty&quot;;</span>
+<span class="fc" id="L539">        final File in = new File(pathToJson);</span>
+<span class="fc" id="L540">        final File out = new File(outputPath);</span>
 
-<span class="fc" id="L543">        final JsonFactory factory = new JsonFactory();</span>
+<span class="fc" id="L542">        final JsonFactory factory = new JsonFactory();</span>
 
-<span class="fc" id="L545">        try (InputStream is = new FileInputStream(in);</span>
-<span class="fc" id="L546">                OutputStream os = new FileOutputStream(out)) {</span>
+<span class="fc" id="L544">        try (InputStream is = new FileInputStream(in);</span>
+<span class="fc" id="L545">                OutputStream os = new FileOutputStream(out)) {</span>
 
-<span class="fc" id="L548">            final JsonParser parser = factory.createParser(is);</span>
-<span class="fc" id="L549">            final JsonGenerator generator = factory.createGenerator(os);</span>
+<span class="fc" id="L547">            final JsonParser parser = factory.createParser(is);</span>
+<span class="fc" id="L548">            final JsonGenerator generator = factory.createGenerator(os);</span>
 
-<span class="fc" id="L551">            generator.useDefaultPrettyPrinter();</span>
+<span class="fc" id="L550">            generator.useDefaultPrettyPrinter();</span>
 
-<span class="fc bfc" id="L553" title="All 2 branches covered.">            while (parser.nextToken() != null) {</span>
-<span class="fc" id="L554">                generator.copyCurrentEvent(parser);</span>
+<span class="fc bfc" id="L552" title="All 2 branches covered.">            while (parser.nextToken() != null) {</span>
+<span class="fc" id="L553">                generator.copyCurrentEvent(parser);</span>
             }
-<span class="fc" id="L556">            generator.flush();</span>
-<span class="nc" id="L557">        } catch (IOException ex) {</span>
-<span class="nc" id="L558">            LOGGER.debug(&quot;Malformed JSON?&quot;, ex);</span>
-<span class="nc" id="L559">            throw new ReportException(&quot;Unable to generate json report&quot;, ex);</span>
-<span class="fc" id="L560">        }</span>
-<span class="pc bpc" id="L561" title="3 of 6 branches missed.">        if (out.isFile() &amp;&amp; in.isFile() &amp;&amp; in.delete()) {</span>
+<span class="fc" id="L555">            generator.flush();</span>
+<span class="nc" id="L556">        } catch (IOException ex) {</span>
+<span class="nc" id="L557">            LOGGER.debug(&quot;Malformed JSON?&quot;, ex);</span>
+<span class="nc" id="L558">            throw new ReportException(&quot;Unable to generate json report&quot;, ex);</span>
+<span class="fc" id="L559">        }</span>
+<span class="pc bpc" id="L560" title="3 of 6 branches missed.">        if (out.isFile() &amp;&amp; in.isFile() &amp;&amp; in.delete()) {</span>
             try {
-<span class="fc" id="L563">                Thread.sleep(1000);</span>
-<span class="fc" id="L564">                org.apache.commons.io.FileUtils.moveFile(out, in);</span>
-<span class="nc" id="L565">            } catch (IOException ex) {</span>
-<span class="nc" id="L566">                LOGGER.error(&quot;Unable to generate pretty report, caused by: {}&quot;, ex.getMessage());</span>
-<span class="nc" id="L567">            } catch (InterruptedException ex) {</span>
-<span class="nc" id="L568">                Thread.currentThread().interrupt();</span>
-<span class="nc" id="L569">                LOGGER.error(&quot;Unable to generate pretty report, caused by: {}&quot;, ex.getMessage());</span>
-<span class="pc" id="L570">            }</span>
+<span class="fc" id="L562">                Thread.sleep(1000);</span>
+<span class="fc" id="L563">                org.apache.commons.io.FileUtils.moveFile(out, in);</span>
+<span class="nc" id="L564">            } catch (IOException ex) {</span>
+<span class="nc" id="L565">                LOGGER.error(&quot;Unable to generate pretty report, caused by: {}&quot;, ex.getMessage());</span>
+<span class="nc" id="L566">            } catch (InterruptedException ex) {</span>
+<span class="nc" id="L567">                Thread.currentThread().interrupt();</span>
+<span class="nc" id="L568">                LOGGER.error(&quot;Unable to generate pretty report, caused by: {}&quot;, ex.getMessage());</span>
+<span class="pc" id="L569">            }</span>
         }
-<span class="fc" id="L572">    }</span>
+<span class="fc" id="L571">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

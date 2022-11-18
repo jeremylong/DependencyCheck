@@ -20,7 +20,6 @@ package org.owasp.dependencycheck.xml.assembly;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -45,12 +44,12 @@ import org.xml.sax.XMLReader;
  * @author Jeremy Long
  */
 @ThreadSafe
-<span class="fc" id="L48">public class GrokParser {</span>
+<span class="fc" id="L47">public class GrokParser {</span>
 
     /**
      * The logger.
      */
-<span class="fc" id="L53">    private static final Logger LOGGER = LoggerFactory.getLogger(GrokParser.class);</span>
+<span class="fc" id="L52">    private static final Logger LOGGER = LoggerFactory.getLogger(GrokParser.class);</span>
     /**
      * The grok assembly schema file location.
      */
@@ -65,11 +64,11 @@ import org.xml.sax.XMLReader;
      */
     @SuppressFBWarnings(justification = &quot;try with resources will clean up the input stream&quot;, value = {&quot;OBL_UNSATISFIED_OBLIGATION&quot;})
     public AssemblyData parse(File file) throws GrokParseException {
-<span class="fc" id="L68">        try (FileInputStream fis = new FileInputStream(file)) {</span>
-<span class="fc" id="L69">            return parse(fis);</span>
-<span class="nc" id="L70">        } catch (IOException ex) {</span>
-<span class="nc" id="L71">            LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="nc" id="L72">            throw new GrokParseException(ex);</span>
+<span class="fc" id="L67">        try (FileInputStream fis = new FileInputStream(file)) {</span>
+<span class="fc" id="L68">            return parse(fis);</span>
+<span class="nc" id="L69">        } catch (IOException ex) {</span>
+<span class="nc" id="L70">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L71">            throw new GrokParseException(ex);</span>
         }
     }
 
@@ -81,26 +80,26 @@ import org.xml.sax.XMLReader;
      * @throws GrokParseException thrown if the XML cannot be parsed
      */
     public AssemblyData parse(InputStream inputStream) throws GrokParseException {
-<span class="fc" id="L84">        try (InputStream schema = FileUtils.getResourceAsStream(GROK_SCHEMA)) {</span>
-<span class="fc" id="L85">            final GrokHandler handler = new GrokHandler();</span>
-<span class="fc" id="L86">            final SAXParser saxParser = XmlUtils.buildSecureSaxParser(schema);</span>
-<span class="fc" id="L87">            final XMLReader xmlReader = saxParser.getXMLReader();</span>
-<span class="fc" id="L88">            xmlReader.setErrorHandler(new GrokErrorHandler());</span>
-<span class="fc" id="L89">            xmlReader.setContentHandler(handler);</span>
-<span class="fc" id="L90">            try (Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {</span>
-<span class="fc" id="L91">                final InputSource in = new InputSource(reader);</span>
-<span class="fc" id="L92">                xmlReader.parse(in);</span>
-<span class="fc" id="L93">                return handler.getAssemblyData();</span>
+<span class="fc" id="L83">        try (InputStream schema = FileUtils.getResourceAsStream(GROK_SCHEMA)) {</span>
+<span class="fc" id="L84">            final GrokHandler handler = new GrokHandler();</span>
+<span class="fc" id="L85">            final SAXParser saxParser = XmlUtils.buildSecureSaxParser(schema);</span>
+<span class="fc" id="L86">            final XMLReader xmlReader = saxParser.getXMLReader();</span>
+<span class="fc" id="L87">            xmlReader.setErrorHandler(new GrokErrorHandler());</span>
+<span class="fc" id="L88">            xmlReader.setContentHandler(handler);</span>
+<span class="fc" id="L89">            try (Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {</span>
+<span class="fc" id="L90">                final InputSource in = new InputSource(reader);</span>
+<span class="fc" id="L91">                xmlReader.parse(in);</span>
+<span class="fc" id="L92">                return handler.getAssemblyData();</span>
             }
-<span class="nc" id="L95">        } catch (ParserConfigurationException | IOException ex) {</span>
-<span class="nc" id="L96">            LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="nc" id="L97">            throw new GrokParseException(ex);</span>
-<span class="nc" id="L98">        } catch (SAXException ex) {</span>
-<span class="nc bnc" id="L99" title="All 2 branches missed.">            if (ex.getMessage().contains(&quot;Cannot find the declaration of element 'assembly'.&quot;)) {</span>
-<span class="nc" id="L100">                throw new GrokParseException(&quot;Malformed grok xml?&quot;, ex);</span>
+<span class="nc" id="L94">        } catch (ParserConfigurationException | IOException ex) {</span>
+<span class="nc" id="L95">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L96">            throw new GrokParseException(ex);</span>
+<span class="nc" id="L97">        } catch (SAXException ex) {</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">            if (ex.getMessage().contains(&quot;Cannot find the declaration of element 'assembly'.&quot;)) {</span>
+<span class="nc" id="L99">                throw new GrokParseException(&quot;Malformed grok xml?&quot;, ex);</span>
             } else {
-<span class="nc" id="L102">                LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="nc" id="L103">                throw new GrokParseException(ex);</span>
+<span class="nc" id="L101">                LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L102">                throw new GrokParseException(ex);</span>
             }
         }
     }

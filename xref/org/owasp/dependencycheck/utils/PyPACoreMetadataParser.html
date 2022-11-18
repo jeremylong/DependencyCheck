@@ -88,73 +88,74 @@
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>  <em class="jxr_javadoccomment">     *         The Wheel metadata of a Python package as a BufferedReader</em>
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>  <em class="jxr_javadoccomment">     * @return The metadata properties read from the utf8Reader</em>
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Properties getProperties(<strong class="jxr_keyword">final</strong> BufferedReader utf8Reader) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>          <strong class="jxr_keyword">final</strong> Properties result = <strong class="jxr_keyword">new</strong> Properties();
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>          String line = utf8Reader.readLine();
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>          StringBuilder singleHeader = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>          <strong class="jxr_keyword">boolean</strong> inDescription = false;
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>          <strong class="jxr_keyword">while</strong> (line != <strong class="jxr_keyword">null</strong> &amp;&amp; !line.isEmpty()) {
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>              <strong class="jxr_keyword">if</strong> (inDescription &amp;&amp; line.startsWith(<span class="jxr_string">"       |"</span>)) {
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>                  singleHeader.append('\n').append(line.substring(8));
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>              } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (singleHeader != <strong class="jxr_keyword">null</strong> &amp;&amp; line.startsWith(<span class="jxr_string">" "</span>)) {
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>                  singleHeader.append(line.substring(1));
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>              } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>                  <strong class="jxr_keyword">if</strong> (singleHeader != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>                      parseAndAddHeader(result, singleHeader);
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>                  }
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>                  singleHeader = <strong class="jxr_keyword">new</strong> StringBuilder(line);
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>                  inDescription = line.startsWith(<span class="jxr_string">"Description:"</span>);
-<a class="jxr_linenumber" name="L100" href="#L100">100</a>             }
-<a class="jxr_linenumber" name="L101" href="#L101">101</a>             line = utf8Reader.readLine();
-<a class="jxr_linenumber" name="L102" href="#L102">102</a>         }
-<a class="jxr_linenumber" name="L103" href="#L103">103</a>         <strong class="jxr_keyword">if</strong> (singleHeader != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L104" href="#L104">104</a>             parseAndAddHeader(result, singleHeader);
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>         }
-<a class="jxr_linenumber" name="L106" href="#L106">106</a>         <em class="jxr_comment">// ignore a body if any (description is allowed to be the message body)</em>
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>         <strong class="jxr_keyword">return</strong> result;
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>     }
-<a class="jxr_linenumber" name="L109" href="#L109">109</a> 
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L111" href="#L111">111</a> <em class="jxr_javadoccomment">     * Add a single metadata keyvalue pair to the metadata. When the given metadataHeader cannot be parsed as a '{@code key: value}'</em>
-<a class="jxr_linenumber" name="L112" href="#L112">112</a> <em class="jxr_javadoccomment">     * line a warning is emitted and the line is ignored.</em>
-<a class="jxr_linenumber" name="L113" href="#L113">113</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L114" href="#L114">114</a> <em class="jxr_javadoccomment">     * @param metadata</em>
-<a class="jxr_linenumber" name="L115" href="#L115">115</a> <em class="jxr_javadoccomment">     *         The collected metadata to which the new metadataHeader must be added</em>
-<a class="jxr_linenumber" name="L116" href="#L116">116</a> <em class="jxr_javadoccomment">     * @param metadataHeader</em>
-<a class="jxr_linenumber" name="L117" href="#L117">117</a> <em class="jxr_javadoccomment">     *         A single uncollapsed header line of the metadata</em>
-<a class="jxr_linenumber" name="L118" href="#L118">118</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L119" href="#L119">119</a> <em class="jxr_javadoccomment">     * @throws IllegalArgumentException</em>
-<a class="jxr_linenumber" name="L120" href="#L120">120</a> <em class="jxr_javadoccomment">     *         When the given metadataHeader has a key {@code Metadata-Version} and the value holds a major version that is larger</em>
-<a class="jxr_linenumber" name="L121" href="#L121">121</a> <em class="jxr_javadoccomment">     *         than the highest supported metadata version. As defined by the specification: &lt;blockquote&gt;Automated tools consuming</em>
-<a class="jxr_linenumber" name="L122" href="#L122">122</a> <em class="jxr_javadoccomment">     *         metadata SHOULD warn if metadata_version is greater than the highest version they support, and MUST fail if</em>
-<a class="jxr_linenumber" name="L123" href="#L123">123</a> <em class="jxr_javadoccomment">     *         metadata_version has a greater major version than the highest version they support (as described in PEP 440, the</em>
-<a class="jxr_linenumber" name="L124" href="#L124">124</a> <em class="jxr_javadoccomment">     *         major version is the value before the first dot).&lt;/blockquote&gt;</em>
-<a class="jxr_linenumber" name="L125" href="#L125">125</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L126" href="#L126">126</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> parseAndAddHeader(<strong class="jxr_keyword">final</strong> Properties metadata, <strong class="jxr_keyword">final</strong> StringBuilder metadataHeader) {
-<a class="jxr_linenumber" name="L127" href="#L127">127</a>         <strong class="jxr_keyword">final</strong> String[] keyValue = StringUtils.split(metadataHeader.toString(), <span class="jxr_string">":"</span>, 2);
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>         <strong class="jxr_keyword">if</strong> (keyValue.length != 2) {
-<a class="jxr_linenumber" name="L129" href="#L129">129</a>             LOGGER.warn(<span class="jxr_string">"Invalid mailheader format encountered in Wheel Metadata, not a \&quot;key: value\&quot; string"</span>);
-<a class="jxr_linenumber" name="L130" href="#L130">130</a>             <strong class="jxr_keyword">return</strong>;
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>         }
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>         <strong class="jxr_keyword">final</strong> String key = keyValue[0];
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>         <strong class="jxr_keyword">final</strong> String value = keyValue[1].trim();
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>         <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"Metadata-Version"</span>.equals(key)) {
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> majorVersion = Integer.parseInt(value.substring(0, value.indexOf('.')), 10);
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>             <strong class="jxr_keyword">final</strong> BigDecimal version = <strong class="jxr_keyword">new</strong> BigDecimal(value);
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>             <strong class="jxr_keyword">if</strong> (majorVersion &gt; SUPPORTED_MAJOR_UPPERBOUND) {
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(String.format(
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>                         <span class="jxr_string">"Unsupported PyPA Wheel metadata. Metadata-Version "</span> + <span class="jxr_string">"is '%s', largest supported major is %d"</span>, value,
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>                         SUPPORTED_MAJOR_UPPERBOUND));
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (version.compareTo(MAX_SUPPORTED_VERSION) &gt; 0 &amp;&amp; LOGGER.isWarnEnabled()) {
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>                 LOGGER.warn(String.format(<span class="jxr_string">"Wheel metadata Metadata-Version (%s) has a larger minor version than the highest known "</span>
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>                                           + <span class="jxr_string">"supported Metadata specification (%s) continuing with best effort"</span>, value,
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>                                           MAX_SUPPORTED_VERSION));
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>             }
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>         }
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>         metadata.setProperty(key, value);
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>     }
-<a class="jxr_linenumber" name="L149" href="#L149">149</a> }
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>  <em class="jxr_javadoccomment">     * @throws java.io.IOException thrown if there is error reading the properties</em>
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Properties getProperties(<strong class="jxr_keyword">final</strong> BufferedReader utf8Reader) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>          <strong class="jxr_keyword">final</strong> Properties result = <strong class="jxr_keyword">new</strong> Properties();
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>          String line = utf8Reader.readLine();
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>          StringBuilder singleHeader = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>          <strong class="jxr_keyword">boolean</strong> inDescription = false;
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">while</strong> (line != <strong class="jxr_keyword">null</strong> &amp;&amp; !line.isEmpty()) {
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>              <strong class="jxr_keyword">if</strong> (inDescription &amp;&amp; line.startsWith(<span class="jxr_string">"       |"</span>)) {
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>                  singleHeader.append('\n').append(line.substring(8));
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>              } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (singleHeader != <strong class="jxr_keyword">null</strong> &amp;&amp; line.startsWith(<span class="jxr_string">" "</span>)) {
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>                  singleHeader.append(line.substring(1));
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>              } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>                  <strong class="jxr_keyword">if</strong> (singleHeader != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>                      parseAndAddHeader(result, singleHeader);
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>                  }
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>                  singleHeader = <strong class="jxr_keyword">new</strong> StringBuilder(line);
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>                 inDescription = line.startsWith(<span class="jxr_string">"Description:"</span>);
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>             }
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>             line = utf8Reader.readLine();
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>         }
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>         <strong class="jxr_keyword">if</strong> (singleHeader != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>             parseAndAddHeader(result, singleHeader);
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>         }
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>         <em class="jxr_comment">// ignore a body if any (description is allowed to be the message body)</em>
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>         <strong class="jxr_keyword">return</strong> result;
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>     }
+<a class="jxr_linenumber" name="L110" href="#L110">110</a> 
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L112" href="#L112">112</a> <em class="jxr_javadoccomment">     * Add a single metadata keyvalue pair to the metadata. When the given metadataHeader cannot be parsed as a '{@code key: value}'</em>
+<a class="jxr_linenumber" name="L113" href="#L113">113</a> <em class="jxr_javadoccomment">     * line a warning is emitted and the line is ignored.</em>
+<a class="jxr_linenumber" name="L114" href="#L114">114</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L115" href="#L115">115</a> <em class="jxr_javadoccomment">     * @param metadata</em>
+<a class="jxr_linenumber" name="L116" href="#L116">116</a> <em class="jxr_javadoccomment">     *         The collected metadata to which the new metadataHeader must be added</em>
+<a class="jxr_linenumber" name="L117" href="#L117">117</a> <em class="jxr_javadoccomment">     * @param metadataHeader</em>
+<a class="jxr_linenumber" name="L118" href="#L118">118</a> <em class="jxr_javadoccomment">     *         A single uncollapsed header line of the metadata</em>
+<a class="jxr_linenumber" name="L119" href="#L119">119</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L120" href="#L120">120</a> <em class="jxr_javadoccomment">     * @throws IllegalArgumentException</em>
+<a class="jxr_linenumber" name="L121" href="#L121">121</a> <em class="jxr_javadoccomment">     *         When the given metadataHeader has a key {@code Metadata-Version} and the value holds a major version that is larger</em>
+<a class="jxr_linenumber" name="L122" href="#L122">122</a> <em class="jxr_javadoccomment">     *         than the highest supported metadata version. As defined by the specification: &lt;blockquote&gt;Automated tools consuming</em>
+<a class="jxr_linenumber" name="L123" href="#L123">123</a> <em class="jxr_javadoccomment">     *         metadata SHOULD warn if metadata_version is greater than the highest version they support, and MUST fail if</em>
+<a class="jxr_linenumber" name="L124" href="#L124">124</a> <em class="jxr_javadoccomment">     *         metadata_version has a greater major version than the highest version they support (as described in PEP 440, the</em>
+<a class="jxr_linenumber" name="L125" href="#L125">125</a> <em class="jxr_javadoccomment">     *         major version is the value before the first dot).&lt;/blockquote&gt;</em>
+<a class="jxr_linenumber" name="L126" href="#L126">126</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> parseAndAddHeader(<strong class="jxr_keyword">final</strong> Properties metadata, <strong class="jxr_keyword">final</strong> StringBuilder metadataHeader) {
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>         <strong class="jxr_keyword">final</strong> String[] keyValue = StringUtils.split(metadataHeader.toString(), <span class="jxr_string">":"</span>, 2);
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>         <strong class="jxr_keyword">if</strong> (keyValue.length != 2) {
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>             LOGGER.warn(<span class="jxr_string">"Invalid mailheader format encountered in Wheel Metadata, not a \&quot;key: value\&quot; string"</span>);
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>         }
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>         <strong class="jxr_keyword">final</strong> String key = keyValue[0];
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>         <strong class="jxr_keyword">final</strong> String value = keyValue[1].trim();
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>         <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"Metadata-Version"</span>.equals(key)) {
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> majorVersion = Integer.parseInt(value.substring(0, value.indexOf('.')), 10);
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>             <strong class="jxr_keyword">final</strong> BigDecimal version = <strong class="jxr_keyword">new</strong> BigDecimal(value);
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>             <strong class="jxr_keyword">if</strong> (majorVersion &gt; SUPPORTED_MAJOR_UPPERBOUND) {
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(String.format(
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>                         <span class="jxr_string">"Unsupported PyPA Wheel metadata. Metadata-Version "</span> + <span class="jxr_string">"is '%s', largest supported major is %d"</span>, value,
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>                         SUPPORTED_MAJOR_UPPERBOUND));
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (version.compareTo(MAX_SUPPORTED_VERSION) &gt; 0 &amp;&amp; LOGGER.isWarnEnabled()) {
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>                 LOGGER.warn(String.format(<span class="jxr_string">"Wheel metadata Metadata-Version (%s) has a larger minor version than the highest known "</span>
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>                                           + <span class="jxr_string">"supported Metadata specification (%s) continuing with best effort"</span>, value,
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>                                           MAX_SUPPORTED_VERSION));
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>             }
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>         }
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>         metadata.setProperty(key, value);
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>     }
+<a class="jxr_linenumber" name="L150" href="#L150">150</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2022 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

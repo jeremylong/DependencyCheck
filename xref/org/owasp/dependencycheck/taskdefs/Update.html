@@ -448,7 +448,7 @@
 <a class="jxr_linenumber" name="L440" href="#L440">440</a>     <em class="jxr_comment">//see note on `Check.dealWithReferences()` for information on this suppression</em>
 <a class="jxr_linenumber" name="L441" href="#L441">441</a>     @SuppressWarnings(<span class="jxr_string">"squid:RedundantThrowsDeclarationCheck"</span>)
 <a class="jxr_linenumber" name="L442" href="#L442">442</a>     @Override
-<a class="jxr_linenumber" name="L443" href="#L443">443</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> execute() <strong class="jxr_keyword">throws</strong> BuildException {
+<a class="jxr_linenumber" name="L443" href="#L443">443</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> executeWithContextClassloader() <strong class="jxr_keyword">throws</strong> BuildException {
 <a class="jxr_linenumber" name="L444" href="#L444">444</a>         populateSettings();
 <a class="jxr_linenumber" name="L445" href="#L445">445</a>         <strong class="jxr_keyword">try</strong> (Engine engine = <strong class="jxr_keyword">new</strong> Engine(Update.<strong class="jxr_keyword">class</strong>.getClassLoader(), getSettings())) {
 <a class="jxr_linenumber" name="L446" href="#L446">446</a>             engine.doUpdates();

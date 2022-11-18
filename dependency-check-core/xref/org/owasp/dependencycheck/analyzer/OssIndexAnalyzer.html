@@ -141,8 +141,8 @@
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>                     requestDelay();
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>                     reports = requestReports(engine.getDependencies());
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>                 } <strong class="jxr_keyword">catch</strong> (TransportException ex) {
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>                     String message = ex.getMessage();
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>                     <strong class="jxr_keyword">boolean</strong> warnOnly = getSettings().getBoolean(Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS, false);
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>                     <strong class="jxr_keyword">final</strong> String message = ex.getMessage();
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>                     <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> warnOnly = getSettings().getBoolean(Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS, false);
 <a class="jxr_linenumber" name="L138" href="#L138">138</a> 
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>                     <strong class="jxr_keyword">if</strong> (StringUtils.endsWith(message, <span class="jxr_string">"401"</span>)) {
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(<span class="jxr_string">"Invalid credentials provided for OSS Index"</span>, ex);
@@ -356,8 +356,8 @@
 <a class="jxr_linenumber" name="L348" href="#L348">348</a>         result.addReference(REFERENCE_TYPE, source.getTitle(), source.getReference().toString());
 <a class="jxr_linenumber" name="L349" href="#L349">349</a> 
 <a class="jxr_linenumber" name="L350" href="#L350">350</a>         <em class="jxr_comment">// generate references to other references reported by OSS Index</em>
-<a class="jxr_linenumber" name="L351" href="#L351">351</a>         source.getExternalReferences().forEach(externalReference -&gt;
-<a class="jxr_linenumber" name="L352" href="#L352">352</a>                 result.addReference(<span class="jxr_string">"OSSIndex"</span>, externalReference.toString(), externalReference.toString()));
+<a class="jxr_linenumber" name="L351" href="#L351">351</a>         source.getExternalReferences().forEach(externalReference
+<a class="jxr_linenumber" name="L352" href="#L352">352</a>                 -&gt; result.addReference(<span class="jxr_string">"OSSIndex"</span>, externalReference.toString(), externalReference.toString()));
 <a class="jxr_linenumber" name="L353" href="#L353">353</a> 
 <a class="jxr_linenumber" name="L354" href="#L354">354</a>         <em class="jxr_comment">// attach vulnerable software details as best we can</em>
 <a class="jxr_linenumber" name="L355" href="#L355">355</a>         <strong class="jxr_keyword">final</strong> PackageUrl purl = report.getCoordinates();

@@ -28,17 +28,12 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceType;
-import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import us.springett.parsers.cpe.Cpe;
-import us.springett.parsers.cpe.CpeBuilder;
-import us.springett.parsers.cpe.exceptions.CpeValidationException;
-import us.springett.parsers.cpe.values.Part;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.File;
@@ -48,14 +43,14 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * This analyzer is used to analyze Dart packages by collecting
- * information from pubspec lock and yaml files. See https://dart.dev/tools/pub/pubspec
+ * This analyzer is used to analyze Dart packages by collecting information from
+ * pubspec lock and yaml files. See https://dart.dev/tools/pub/pubspec
  *
  * @author Marc Rödder (http://github.com/sticksen)
  */
 @Experimental
 @ThreadSafe
-<span class="fc" id="L58">public class DartAnalyzer extends AbstractFileTypeAnalyzer {</span>
+<span class="fc" id="L53">public class DartAnalyzer extends AbstractFileTypeAnalyzer {</span>
 
 //    /**
 //     * A descriptor for the type of dependencies processed or added by this
@@ -63,25 +58,33 @@ import java.util.Map;
 //     */
 //    // currently not supported by Sonatype OSS
 //    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.DART;
+    /**
+     * The logger.
+     */
+<span class="fc" id="L64">    private static final Logger LOGGER = LoggerFactory.getLogger(DartAnalyzer.class);</span>
 
-<span class="fc" id="L67">    private static final Logger LOGGER = LoggerFactory.getLogger(DartAnalyzer.class);</span>
-
+    /**
+     * The lock file name.
+     */
     private static final String LOCK_FILE = &quot;pubspec.lock&quot;;
+    /**
+     * The YAML file name.
+     */
     private static final String YAML_FILE = &quot;pubspec.yaml&quot;;
 
     @Override
     protected FileFilter getFileFilter() {
-<span class="fc" id="L74">        return FileFilterBuilder.newInstance().addFilenames(LOCK_FILE, YAML_FILE).build();</span>
+<span class="fc" id="L77">        return FileFilterBuilder.newInstance().addFilenames(LOCK_FILE, YAML_FILE).build();</span>
     }
 
     @Override
     protected void prepareFileTypeAnalyzer(Engine engine) {
         // NO-OP
-<span class="fc" id="L80">    }</span>
+<span class="fc" id="L83">    }</span>
 
     @Override
     public String getName() {
-<span class="fc" id="L84">        return &quot;Dart Package Analyzer&quot;;</span>
+<span class="fc" id="L87">        return &quot;Dart Package Analyzer&quot;;</span>
     }
 
     /**
@@ -89,7 +92,7 @@ import java.util.Map;
      */
     @Override
     public AnalysisPhase getAnalysisPhase() {
-<span class="fc" id="L92">        return AnalysisPhase.INFORMATION_COLLECTION;</span>
+<span class="fc" id="L95">        return AnalysisPhase.INFORMATION_COLLECTION;</span>
     }
 
     /**
@@ -100,176 +103,191 @@ import java.util.Map;
      */
     @Override
     protected String getAnalyzerEnabledSettingKey() {
-<span class="fc" id="L103">        return Settings.KEYS.ANALYZER_DART_ENABLED;</span>
+<span class="fc" id="L106">        return Settings.KEYS.ANALYZER_DART_ENABLED;</span>
     }
 
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
-<span class="fc" id="L109">        String fileName = dependency.getFileName();</span>
-<span class="fc" id="L110">        LOGGER.debug(&quot;Checking file {}&quot;, fileName);</span>
+<span class="fc" id="L112">        final String fileName = dependency.getFileName();</span>
+<span class="fc" id="L113">        LOGGER.debug(&quot;Checking file {}&quot;, fileName);</span>
 
-<span class="pc bpc" id="L112" title="1 of 3 branches missed.">        switch (fileName) {</span>
+<span class="pc bpc" id="L115" title="1 of 3 branches missed.">        switch (fileName) {</span>
             case LOCK_FILE:
-<span class="fc" id="L114">                analyzeLockFileDependencies(dependency, engine);</span>
-<span class="fc" id="L115">                break;</span>
+<span class="fc" id="L117">                analyzeLockFileDependencies(dependency, engine);</span>
+<span class="fc" id="L118">                break;</span>
             case YAML_FILE:
-<span class="fc" id="L117">                analyzeYamlFileDependencies(dependency, engine);</span>
-                break;
+<span class="fc" id="L120">                analyzeYamlFileDependencies(dependency, engine);</span>
+<span class="fc" id="L121">                break;</span>
+            default:
+            //do nothing
         }
-<span class="fc" id="L120">    }</span>
+<span class="fc" id="L125">    }</span>
 
     private void analyzeYamlFileDependencies(Dependency yamlFileDependency, Engine engine) throws AnalysisException {
-<span class="fc" id="L123">        engine.removeDependency(yamlFileDependency);</span>
+<span class="fc" id="L128">        engine.removeDependency(yamlFileDependency);</span>
+<span class="fc" id="L129">        final File yamlFile = yamlFileDependency.getActualFile();</span>
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        if (YAML_FILE.equals(yamlFile.getName())) {</span>
+<span class="fc" id="L131">            final File lock = new File(yamlFile.getParentFile(), LOCK_FILE);</span>
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">            if (lock.isFile()) {</span>
+<span class="nc" id="L133">                LOGGER.debug(&quot;Skipping {} because {} exists&quot;, yamlFile, lock);</span>
+<span class="nc" id="L134">                return;</span>
+            }
+        }
 
-        JsonNode rootNode;
-<span class="fc" id="L126">        File yamlFile = yamlFileDependency.getActualFile();</span>
-<span class="fc" id="L127">        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());</span>
+        final JsonNode rootNode;
+<span class="fc" id="L139">        final ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());</span>
         try {
-<span class="fc" id="L129">            rootNode = objectMapper.readTree(yamlFile);</span>
-<span class="nc" id="L130">        } catch (IOException e) {</span>
-<span class="nc" id="L131">            throw new AnalysisException(&quot;Problem occurred while reading dependency file.&quot;, e);</span>
-<span class="fc" id="L132">        }</span>
+<span class="fc" id="L141">            rootNode = objectMapper.readTree(yamlFile);</span>
+<span class="nc" id="L142">        } catch (IOException e) {</span>
+<span class="nc" id="L143">            throw new AnalysisException(&quot;Problem occurred while reading dependency file.&quot;, e);</span>
+<span class="fc" id="L144">        }</span>
 
-<span class="fc" id="L134">        Iterator&lt;Map.Entry&lt;String, JsonNode&gt;&gt; dependencies = rootNode.get(&quot;dependencies&quot;).fields();</span>
-<span class="fc" id="L135">        addYamlDependenciesToEngine(dependencies, yamlFile, engine);</span>
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">        if (rootNode.hasNonNull(&quot;dependencies&quot;)) {</span>
+<span class="fc" id="L147">            final Iterator&lt;Map.Entry&lt;String, JsonNode&gt;&gt; dependencies = rootNode.get(&quot;dependencies&quot;).fields();</span>
+<span class="fc" id="L148">            addYamlDependenciesToEngine(dependencies, yamlFile, engine);</span>
+        }
+        //TODO - add configuration to allow skipping dev dependencies.
+<span class="fc bfc" id="L151" title="All 2 branches covered.">        if (rootNode.hasNonNull(&quot;dev_dependencies&quot;)) {</span>
+<span class="fc" id="L152">            final Iterator&lt;Map.Entry&lt;String, JsonNode&gt;&gt; devDependencies = rootNode.get(&quot;dev_dependencies&quot;).fields();</span>
+<span class="fc" id="L153">            addYamlDependenciesToEngine(devDependencies, yamlFile, engine);</span>
+        }
 
-<span class="fc" id="L137">        Iterator&lt;Map.Entry&lt;String, JsonNode&gt;&gt; devDependencies = rootNode.get(&quot;dev_dependencies&quot;).fields();</span>
-<span class="fc" id="L138">        addYamlDependenciesToEngine(devDependencies, yamlFile, engine);</span>
-
-<span class="fc" id="L140">        addYamlDartDependencyToEngine(rootNode, yamlFile, engine);</span>
-<span class="fc" id="L141">    }</span>
-
-    private void analyzeLockFileDependencies(Dependency lockFileDependency, Engine engine) throws AnalysisException {
-<span class="fc" id="L144">        engine.removeDependency(lockFileDependency);</span>
-
-        JsonNode rootNode;
-<span class="fc" id="L147">        File lockFile = lockFileDependency.getActualFile();</span>
-<span class="fc" id="L148">        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());</span>
-        try {
-<span class="fc" id="L150">            rootNode = objectMapper.readTree(lockFile);</span>
-<span class="nc" id="L151">        } catch (IOException e) {</span>
-<span class="nc" id="L152">            throw new AnalysisException(&quot;Problem occurred while reading dependency lockFile.&quot;, e);</span>
-<span class="fc" id="L153">        }</span>
-
-<span class="fc" id="L155">        addLockFileDependenciesToEngine(lockFile, engine, rootNode);</span>
-<span class="fc" id="L156">        addLockFileDartVersionToEngine(lockFile, engine, rootNode);</span>
+<span class="fc" id="L156">        addYamlDartDependencyToEngine(rootNode, yamlFile, engine);</span>
 <span class="fc" id="L157">    }</span>
 
-    private void addLockFileDartVersionToEngine(File file, Engine engine, JsonNode rootNode) throws AnalysisException {
-<span class="fc" id="L160">        String dartVersion = rootNode.get(&quot;sdks&quot;).get(&quot;dart&quot;).textValue();</span>
-<span class="fc" id="L161">        String minimumVersion = extractMinimumVersion(dartVersion);</span>
+    private void analyzeLockFileDependencies(Dependency lockFileDependency, Engine engine) throws AnalysisException {
+<span class="fc" id="L160">        engine.removeDependency(lockFileDependency);</span>
 
-<span class="fc" id="L163">        engine.addDependency(</span>
-<span class="fc" id="L164">                createDependencyFromNameAndVersion(file, &quot;dart_software_development_kit&quot;, minimumVersion));</span>
-<span class="fc" id="L165">    }</span>
+        final JsonNode rootNode;
+<span class="fc" id="L163">        final File lockFile = lockFileDependency.getActualFile();</span>
+<span class="fc" id="L164">        final ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());</span>
+        try {
+<span class="fc" id="L166">            rootNode = objectMapper.readTree(lockFile);</span>
+<span class="nc" id="L167">        } catch (IOException e) {</span>
+<span class="nc" id="L168">            throw new AnalysisException(&quot;Problem occurred while reading dependency lockFile.&quot;, e);</span>
+<span class="fc" id="L169">        }</span>
+
+<span class="fc" id="L171">        addLockFileDependenciesToEngine(lockFile, engine, rootNode);</span>
+<span class="fc" id="L172">        addLockFileDartVersionToEngine(lockFile, engine, rootNode);</span>
+<span class="fc" id="L173">    }</span>
+
+    private void addLockFileDartVersionToEngine(File file, Engine engine, JsonNode rootNode) throws AnalysisException {
+<span class="fc" id="L176">        final String dartVersion = rootNode.get(&quot;sdks&quot;).get(&quot;dart&quot;).textValue();</span>
+<span class="fc" id="L177">        final String minimumVersion = extractMinimumVersion(dartVersion);</span>
+
+<span class="fc" id="L179">        engine.addDependency(</span>
+<span class="fc" id="L180">                createDependencyFromNameAndVersion(file, &quot;dart_software_development_kit&quot;, minimumVersion));</span>
+<span class="fc" id="L181">    }</span>
 
     private void addLockFileDependenciesToEngine(File file, Engine engine, JsonNode rootNode) throws AnalysisException {
-<span class="fc bfc" id="L168" title="All 2 branches covered.">        for (JsonNode nextPackage : rootNode.get(&quot;packages&quot;)) {</span>
-<span class="fc" id="L169">            JsonNode description = nextPackage.get(&quot;description&quot;);</span>
-<span class="pc bpc" id="L170" title="1 of 2 branches missed.">            if (description == null) {</span>
-<span class="nc" id="L171">                continue;</span>
+<span class="fc bfc" id="L184" title="All 2 branches covered.">        for (JsonNode nextPackage : rootNode.get(&quot;packages&quot;)) {</span>
+<span class="fc" id="L185">            final JsonNode description = nextPackage.get(&quot;description&quot;);</span>
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">            if (description == null) {</span>
+<span class="nc" id="L187">                continue;</span>
             }
 
-<span class="fc" id="L174">            JsonNode nameNode = description.get(&quot;name&quot;);</span>
-<span class="pc bpc" id="L175" title="1 of 2 branches missed.">            if (nameNode == null) {</span>
-<span class="nc" id="L176">                continue;</span>
+<span class="fc" id="L190">            final JsonNode nameNode = description.get(&quot;name&quot;);</span>
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">            if (nameNode == null) {</span>
+<span class="nc" id="L192">                continue;</span>
             }
 
-<span class="fc" id="L179">            JsonNode versionNode = nextPackage.get(&quot;version&quot;);</span>
-<span class="pc bpc" id="L180" title="1 of 2 branches missed.">            if (versionNode == null) {</span>
-<span class="nc" id="L181">                continue;</span>
+<span class="fc" id="L195">            final JsonNode versionNode = nextPackage.get(&quot;version&quot;);</span>
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">            if (versionNode == null) {</span>
+<span class="nc" id="L197">                continue;</span>
             }
 
-<span class="fc" id="L184">            String name = nameNode.asText();</span>
-<span class="fc" id="L185">            String version = versionNode.asText();</span>
-<span class="fc" id="L186">            LOGGER.debug(&quot;Found dependency in {} file, name: {}, version: {}&quot;, LOCK_FILE, name, version);</span>
+<span class="fc" id="L200">            final String name = nameNode.asText();</span>
+<span class="fc" id="L201">            final String version = versionNode.asText();</span>
+<span class="fc" id="L202">            LOGGER.debug(&quot;Found dependency in {} file, name: {}, version: {}&quot;, LOCK_FILE, name, version);</span>
 
-<span class="fc" id="L188">            engine.addDependency(</span>
-<span class="fc" id="L189">                    createDependencyFromNameAndVersion(file, name, version)</span>
+<span class="fc" id="L204">            engine.addDependency(</span>
+<span class="fc" id="L205">                    createDependencyFromNameAndVersion(file, name, version)</span>
             );
-<span class="fc" id="L191">        }</span>
-<span class="fc" id="L192">    }</span>
+<span class="fc" id="L207">        }</span>
+<span class="fc" id="L208">    }</span>
 
     private void addYamlDependenciesToEngine(Iterator&lt;Map.Entry&lt;String, JsonNode&gt;&gt; dependencies, File file, Engine engine) throws AnalysisException {
-<span class="fc bfc" id="L195" title="All 2 branches covered.">        while (dependencies.hasNext()) {</span>
-<span class="fc" id="L196">            Map.Entry&lt;String, JsonNode&gt; entry = dependencies.next();</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">        while (dependencies.hasNext()) {</span>
+<span class="fc" id="L212">            final Map.Entry&lt;String, JsonNode&gt; entry = dependencies.next();</span>
 
-<span class="fc" id="L198">            String name = entry.getKey();</span>
-<span class="fc" id="L199">            String versionRaw = entry.getValue().asText();</span>
-<span class="fc" id="L200">            String version = extractMinimumVersion(versionRaw);</span>
-<span class="fc" id="L201">            LOGGER.debug(&quot;Found dependency in {} file, name: {}, version: {}&quot;, YAML_FILE, name, version);</span>
+<span class="fc" id="L214">            final String name = entry.getKey();</span>
+<span class="fc" id="L215">            final String versionRaw = entry.getValue().asText();</span>
+<span class="fc" id="L216">            final String version = extractMinimumVersion(versionRaw);</span>
+<span class="fc" id="L217">            LOGGER.debug(&quot;Found dependency in {} file, name: {}, version: {}&quot;, YAML_FILE, name, version);</span>
 
-<span class="fc" id="L203">            engine.addDependency(</span>
-<span class="fc" id="L204">                    createDependencyFromNameAndVersion(file, name, version)</span>
+<span class="fc" id="L219">            engine.addDependency(</span>
+<span class="fc" id="L220">                    createDependencyFromNameAndVersion(file, name, version)</span>
             );
-<span class="fc" id="L206">        }</span>
-<span class="fc" id="L207">    }</span>
+<span class="fc" id="L222">        }</span>
+<span class="fc" id="L223">    }</span>
 
     private void addYamlDartDependencyToEngine(JsonNode rootNode, File file, Engine engine) throws AnalysisException {
-<span class="fc" id="L210">        String dartVersion = rootNode.get(&quot;environment&quot;).get(&quot;sdk&quot;).textValue();</span>
-<span class="fc" id="L211">        String minimumVersion = extractMinimumVersion(dartVersion);</span>
+<span class="pc bpc" id="L226" title="1 of 4 branches missed.">        if (rootNode.hasNonNull(&quot;environment&quot;) &amp;&amp; rootNode.get(&quot;environment&quot;).hasNonNull(&quot;sdk&quot;)) {</span>
+<span class="fc" id="L227">            final String dartVersion = rootNode.get(&quot;environment&quot;).get(&quot;sdk&quot;).textValue();</span>
+<span class="fc" id="L228">            final String minimumVersion = extractMinimumVersion(dartVersion);</span>
 
-<span class="fc" id="L213">        engine.addDependency(</span>
-<span class="fc" id="L214">                createDependencyFromNameAndVersion(file, &quot;dart_software_development_kit&quot;, minimumVersion));</span>
-<span class="fc" id="L215">    }</span>
+<span class="fc" id="L230">            engine.addDependency(</span>
+<span class="fc" id="L231">                    createDependencyFromNameAndVersion(file, &quot;dart_software_development_kit&quot;, minimumVersion));</span>
+        }
+<span class="fc" id="L233">    }</span>
 
     private Dependency createDependencyFromNameAndVersion(File file, String name, String version) throws AnalysisException {
-<span class="fc" id="L218">        Dependency dependency = new Dependency(file, true);</span>
+<span class="fc" id="L236">        final Dependency dependency = new Dependency(file, true);</span>
 
         // currently not supported by Sonatype OSS
 //            // dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
-<span class="fc" id="L222">        dependency.setName(name);</span>
-<span class="fc" id="L223">        dependency.setVersion(version);</span>
+<span class="fc" id="L240">        dependency.setName(name);</span>
+<span class="fc" id="L241">        dependency.setVersion(version);</span>
 
-        PackageURL packageURL;
+        final PackageURL packageURL;
         try {
             packageURL = PackageURLBuilder
-<span class="fc" id="L228">                    .aPackageURL()</span>
-<span class="fc" id="L229">                    .withType(&quot;pub&quot;)</span>
-<span class="fc" id="L230">                    .withName(dependency.getName())</span>
-<span class="fc bfc" id="L231" title="All 2 branches covered.">                    .withVersion(version.isEmpty() ? null : version)</span>
-<span class="fc" id="L232">                    .build();</span>
+<span class="fc" id="L246">                    .aPackageURL()</span>
+<span class="fc" id="L247">                    .withType(&quot;pub&quot;)</span>
+<span class="fc" id="L248">                    .withName(dependency.getName())</span>
+<span class="fc bfc" id="L249" title="All 2 branches covered.">                    .withVersion(version.isEmpty() ? null : version)</span>
+<span class="fc" id="L250">                    .build();</span>
 
-<span class="nc" id="L234">        } catch (MalformedPackageURLException e) {</span>
-<span class="nc" id="L235">            throw new AnalysisException(&quot;Problem occurred while reading dependency file.&quot;, e);</span>
-<span class="fc" id="L236">        }</span>
+<span class="nc" id="L252">        } catch (MalformedPackageURLException e) {</span>
+<span class="nc" id="L253">            throw new AnalysisException(&quot;Problem occurred while reading dependency file.&quot;, e);</span>
+<span class="fc" id="L254">        }</span>
 
-<span class="fc" id="L238">        dependency.addSoftwareIdentifier(new PurlIdentifier(packageURL, Confidence.HIGHEST));</span>
+<span class="fc" id="L256">        dependency.addSoftwareIdentifier(new PurlIdentifier(packageURL, Confidence.HIGHEST));</span>
 
-<span class="fc" id="L240">        dependency.addEvidence(EvidenceType.PRODUCT, file.getName(), &quot;name&quot;, name, Confidence.HIGHEST);</span>
-<span class="fc" id="L241">        dependency.addEvidence(EvidenceType.VENDOR, file.getName(), &quot;name&quot;, name, Confidence.HIGHEST);</span>
-<span class="fc" id="L242">        dependency.addEvidence(EvidenceType.VENDOR, file.getName(), &quot;name&quot;, &quot;dart&quot;, Confidence.HIGHEST);</span>
-<span class="fc bfc" id="L243" title="All 2 branches covered.">        if (!version.isEmpty()) {</span>
-<span class="fc" id="L244">            dependency.addEvidence(EvidenceType.VERSION, file.getName(), &quot;version&quot;, version, Confidence.MEDIUM);</span>
+<span class="fc" id="L258">        dependency.addEvidence(EvidenceType.PRODUCT, file.getName(), &quot;name&quot;, name, Confidence.HIGHEST);</span>
+<span class="fc" id="L259">        dependency.addEvidence(EvidenceType.VENDOR, file.getName(), &quot;name&quot;, name, Confidence.HIGHEST);</span>
+<span class="fc" id="L260">        dependency.addEvidence(EvidenceType.VENDOR, file.getName(), &quot;name&quot;, &quot;dart&quot;, Confidence.HIGHEST);</span>
+<span class="fc bfc" id="L261" title="All 2 branches covered.">        if (!version.isEmpty()) {</span>
+<span class="fc" id="L262">            dependency.addEvidence(EvidenceType.VERSION, file.getName(), &quot;version&quot;, version, Confidence.MEDIUM);</span>
         }
 
-<span class="fc" id="L247">        final String packagePath = String.format(&quot;%s:%s&quot;, name, version);</span>
-<span class="fc" id="L248">        dependency.setSha1sum(Checksum.getSHA1Checksum(packagePath));</span>
-<span class="fc" id="L249">        dependency.setSha256sum(Checksum.getSHA256Checksum(packagePath));</span>
-<span class="fc" id="L250">        dependency.setMd5sum(Checksum.getMD5Checksum(packagePath));</span>
-<span class="fc" id="L251">        dependency.setPackagePath(packagePath);</span>
-<span class="fc" id="L252">        dependency.setDisplayFileName(packagePath);</span>
+<span class="fc" id="L265">        final String packagePath = String.format(&quot;%s:%s&quot;, name, version);</span>
+<span class="fc" id="L266">        dependency.setSha1sum(Checksum.getSHA1Checksum(packagePath));</span>
+<span class="fc" id="L267">        dependency.setSha256sum(Checksum.getSHA256Checksum(packagePath));</span>
+<span class="fc" id="L268">        dependency.setMd5sum(Checksum.getMD5Checksum(packagePath));</span>
+<span class="fc" id="L269">        dependency.setPackagePath(packagePath);</span>
+<span class="fc" id="L270">        dependency.setDisplayFileName(packagePath);</span>
 
-<span class="fc" id="L254">        return dependency;</span>
+<span class="fc" id="L272">        return dependency;</span>
     }
 
     private String extractMinimumVersion(String versionRaw) {
-        String version;
-<span class="fc bfc" id="L259" title="All 2 branches covered.">        if (versionRaw.contains(&quot;^&quot;)) {</span>
-<span class="fc" id="L260">            version = versionRaw.replace(&quot;^&quot;, &quot;&quot;);</span>
-<span class="fc bfc" id="L261" title="All 2 branches covered.">        } else if (versionRaw.contains(&quot;&lt;&quot;)) {</span>
+        final String version;
+<span class="fc bfc" id="L277" title="All 2 branches covered.">        if (versionRaw.contains(&quot;^&quot;)) {</span>
+<span class="fc" id="L278">            version = versionRaw.replace(&quot;^&quot;, &quot;&quot;);</span>
+<span class="fc bfc" id="L279" title="All 2 branches covered.">        } else if (versionRaw.contains(&quot;&lt;&quot;)) {</span>
             // this code should parse version definitions like &quot;&gt;=2.10.0 &lt;3.0.0&quot;
-<span class="fc" id="L263">            String firstPart = versionRaw.split(&quot;&lt;&quot;)[0].trim();</span>
-<span class="fc" id="L264">            version = firstPart.replace(&quot;&gt;=&quot;, &quot;&quot;).trim();</span>
-<span class="fc bfc" id="L265" title="All 2 branches covered.">        } else if (versionRaw.contains(&quot;any&quot;)) {</span>
-<span class="fc" id="L266">            version = &quot;&quot;;</span>
+<span class="fc" id="L281">            final String firstPart = versionRaw.split(&quot;&lt;&quot;)[0].trim();</span>
+<span class="fc" id="L282">            version = firstPart.replace(&quot;&gt;=&quot;, &quot;&quot;).trim();</span>
+<span class="fc bfc" id="L283" title="All 4 branches covered.">        } else if (versionRaw.contains(&quot;any&quot;) || &quot;null&quot;.equals(versionRaw)) {</span>
+<span class="fc" id="L284">            version = &quot;&quot;;</span>
         } else {
-<span class="fc" id="L268">            version = versionRaw;</span>
+<span class="fc" id="L286">            version = versionRaw;</span>
         }
 
-<span class="fc" id="L271">        LOGGER.debug(&quot;Extracted minimum version: {} from raw version: {}&quot;, version, versionRaw);</span>
-<span class="fc" id="L272">        return version;</span>
+<span class="fc" id="L289">        LOGGER.debug(&quot;Extracted minimum version: {} from raw version: {}&quot;, version, versionRaw);</span>
+<span class="fc" id="L290">        return version;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

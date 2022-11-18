@@ -22,7 +22,6 @@ import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -54,7 +53,7 @@ import org.slf4j.LoggerFactory;
  */
 @Experimental
 @ThreadSafe
-<span class="fc" id="L57">public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {</span>
+<span class="fc" id="L56">public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {</span>
 
     /**
      * A descriptor for the type of dependencies processed or added by this
@@ -64,7 +63,7 @@ import org.slf4j.LoggerFactory;
     /**
      * The logger.
      */
-<span class="fc" id="L67">    private static final Logger LOGGER = LoggerFactory.getLogger(RubyGemspecAnalyzer.class);</span>
+<span class="fc" id="L66">    private static final Logger LOGGER = LoggerFactory.getLogger(RubyGemspecAnalyzer.class);</span>
     /**
      * The name of the analyzer.
      */
@@ -72,7 +71,7 @@ import org.slf4j.LoggerFactory;
     /**
      * The phase that this analyzer is intended to run in.
      */
-<span class="fc" id="L75">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;</span>
+<span class="fc" id="L74">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;</span>
     /**
      * The gemspec file extension.
      */
@@ -81,7 +80,7 @@ import org.slf4j.LoggerFactory;
      * The file filter containing the list of file extensions that can be
      * analyzed.
      */
-<span class="fc" id="L84">    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(GEMSPEC).build();</span>
+<span class="fc" id="L83">    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(GEMSPEC).build();</span>
     //TODO: support Rakefile
     //= FileFilterBuilder.newInstance().addExtensions(GEMSPEC).addFilenames(&quot;Rakefile&quot;).build();
 
@@ -93,20 +92,20 @@ import org.slf4j.LoggerFactory;
     /**
      * The capture group #1 is the block variable.
      */
-<span class="fc" id="L96">    private static final Pattern GEMSPEC_BLOCK_INIT = Pattern.compile(&quot;Gem::Specification\\.new\\s+?do\\s+?\\|(.+?)\\|&quot;);</span>
+<span class="fc" id="L95">    private static final Pattern GEMSPEC_BLOCK_INIT = Pattern.compile(&quot;Gem::Specification\\.new\\s+?do\\s+?\\|(.+?)\\|&quot;);</span>
 
     /**
      * @return a filter that accepts files matching the glob pattern, *.gemspec
      */
     @Override
     protected FileFilter getFileFilter() {
-<span class="fc" id="L103">        return FILTER;</span>
+<span class="fc" id="L102">        return FILTER;</span>
     }
 
     @Override
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         // NO-OP
-<span class="fc" id="L109">    }</span>
+<span class="fc" id="L108">    }</span>
 
     /**
      * Returns the name of the analyzer.
@@ -115,7 +114,7 @@ import org.slf4j.LoggerFactory;
      */
     @Override
     public String getName() {
-<span class="fc" id="L118">        return ANALYZER_NAME;</span>
+<span class="fc" id="L117">        return ANALYZER_NAME;</span>
     }
 
     /**
@@ -125,7 +124,7 @@ import org.slf4j.LoggerFactory;
      */
     @Override
     public AnalysisPhase getAnalysisPhase() {
-<span class="fc" id="L128">        return ANALYSIS_PHASE;</span>
+<span class="fc" id="L127">        return ANALYSIS_PHASE;</span>
     }
 
     /**
@@ -136,80 +135,80 @@ import org.slf4j.LoggerFactory;
      */
     @Override
     protected String getAnalyzerEnabledSettingKey() {
-<span class="fc" id="L139">        return Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED;</span>
+<span class="fc" id="L138">        return Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED;</span>
     }
 
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-<span class="fc" id="L144">        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc" id="L143">        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
         String contents;
         try {
-<span class="fc" id="L147">            contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());</span>
-<span class="nc" id="L148">        } catch (IOException e) {</span>
-<span class="nc" id="L149">            throw new AnalysisException(</span>
+<span class="fc" id="L146">            contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());</span>
+<span class="nc" id="L147">        } catch (IOException e) {</span>
+<span class="nc" id="L148">            throw new AnalysisException(</span>
                     &quot;Problem occurred while reading dependency file.&quot;, e);
-<span class="fc" id="L151">        }</span>
-<span class="fc" id="L152">        final Matcher matcher = GEMSPEC_BLOCK_INIT.matcher(contents);</span>
-<span class="pc bpc" id="L153" title="1 of 2 branches missed.">        if (matcher.find()) {</span>
-<span class="fc" id="L154">            contents = contents.substring(matcher.end());</span>
-<span class="fc" id="L155">            final String blockVariable = matcher.group(1);</span>
+<span class="fc" id="L150">        }</span>
+<span class="fc" id="L151">        final Matcher matcher = GEMSPEC_BLOCK_INIT.matcher(contents);</span>
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">        if (matcher.find()) {</span>
+<span class="fc" id="L153">            contents = contents.substring(matcher.end());</span>
+<span class="fc" id="L154">            final String blockVariable = matcher.group(1);</span>
 
-<span class="fc" id="L157">            final String name = addStringEvidence(dependency, EvidenceType.PRODUCT, contents, blockVariable, &quot;name&quot;, &quot;name&quot;, Confidence.HIGHEST);</span>
-<span class="pc bpc" id="L158" title="1 of 2 branches missed.">            if (!name.isEmpty()) {</span>
-<span class="fc" id="L159">                dependency.addEvidence(EvidenceType.VENDOR, GEMSPEC, &quot;name_project&quot;, name + &quot;_project&quot;, Confidence.LOW);</span>
-<span class="fc" id="L160">                dependency.setName(name);</span>
+<span class="fc" id="L156">            final String name = addStringEvidence(dependency, EvidenceType.PRODUCT, contents, blockVariable, &quot;name&quot;, &quot;name&quot;, Confidence.HIGHEST);</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">            if (!name.isEmpty()) {</span>
+<span class="fc" id="L158">                dependency.addEvidence(EvidenceType.VENDOR, GEMSPEC, &quot;name_project&quot;, name + &quot;_project&quot;, Confidence.LOW);</span>
+<span class="fc" id="L159">                dependency.setName(name);</span>
             }
-<span class="fc" id="L162">            final String description = addStringEvidence(dependency, EvidenceType.PRODUCT, contents, blockVariable,</span>
+<span class="fc" id="L161">            final String description = addStringEvidence(dependency, EvidenceType.PRODUCT, contents, blockVariable,</span>
                     &quot;summary&quot;, &quot;summary&quot;, Confidence.LOW);
-<span class="pc bpc" id="L164" title="2 of 4 branches missed.">            if (description != null &amp;&amp; !description.isEmpty()) {</span>
-<span class="fc" id="L165">                dependency.setDescription(description);</span>
+<span class="pc bpc" id="L163" title="2 of 4 branches missed.">            if (description != null &amp;&amp; !description.isEmpty()) {</span>
+<span class="fc" id="L164">                dependency.setDescription(description);</span>
             }
-<span class="fc" id="L167">            addStringEvidence(dependency, EvidenceType.VENDOR, contents, blockVariable,</span>
+<span class="fc" id="L166">            addStringEvidence(dependency, EvidenceType.VENDOR, contents, blockVariable,</span>
                     &quot;author&quot;, &quot;authors?&quot;, Confidence.HIGHEST);
-<span class="fc" id="L169">            addStringEvidence(dependency, EvidenceType.VENDOR, contents, blockVariable,</span>
+<span class="fc" id="L168">            addStringEvidence(dependency, EvidenceType.VENDOR, contents, blockVariable,</span>
                     &quot;email&quot;, &quot;emails?&quot;, Confidence.MEDIUM);
-<span class="fc" id="L171">            addStringEvidence(dependency, EvidenceType.VENDOR, contents, blockVariable,</span>
+<span class="fc" id="L170">            addStringEvidence(dependency, EvidenceType.VENDOR, contents, blockVariable,</span>
                     &quot;homepage&quot;, &quot;homepage&quot;, Confidence.HIGHEST);
-<span class="fc" id="L173">            final String license = addStringEvidence(dependency, EvidenceType.VENDOR, contents, blockVariable,</span>
+<span class="fc" id="L172">            final String license = addStringEvidence(dependency, EvidenceType.VENDOR, contents, blockVariable,</span>
                     &quot;license&quot;, &quot;licen[cs]es?&quot;, Confidence.HIGHEST);
-<span class="pc bpc" id="L175" title="2 of 4 branches missed.">            if (license != null &amp;&amp; !license.isEmpty()) {</span>
-<span class="fc" id="L176">                dependency.setLicense(license);</span>
+<span class="pc bpc" id="L174" title="2 of 4 branches missed.">            if (license != null &amp;&amp; !license.isEmpty()) {</span>
+<span class="fc" id="L175">                dependency.setLicense(license);</span>
             }
-<span class="fc" id="L178">            final String value = addStringEvidence(dependency, EvidenceType.VERSION, contents,</span>
+<span class="fc" id="L177">            final String value = addStringEvidence(dependency, EvidenceType.VERSION, contents,</span>
                     blockVariable, &quot;version&quot;, &quot;version&quot;, Confidence.HIGHEST);
-<span class="pc bpc" id="L180" title="1 of 2 branches missed.">            if (value.length() &lt; 1) {</span>
-<span class="nc" id="L181">                final String version = addEvidenceFromVersionFile(dependency, EvidenceType.VERSION, dependency.getActualFile());</span>
-<span class="nc bnc" id="L182" title="All 2 branches missed.">                if (version != null) {</span>
-<span class="nc" id="L183">                    dependency.setVersion(version);</span>
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">            if (value.length() &lt; 1) {</span>
+<span class="nc" id="L180">                final String version = addEvidenceFromVersionFile(dependency, EvidenceType.VERSION, dependency.getActualFile());</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">                if (version != null) {</span>
+<span class="nc" id="L182">                    dependency.setVersion(version);</span>
                 }
-<span class="nc" id="L185">            } else {</span>
-<span class="fc" id="L186">                dependency.setVersion(value);</span>
+<span class="nc" id="L184">            } else {</span>
+<span class="fc" id="L185">                dependency.setVersion(value);</span>
             }
         }
-<span class="pc bpc" id="L189" title="2 of 4 branches missed.">        if (dependency.getName() != null &amp;&amp; dependency.getVersion() != null) {</span>
-<span class="fc" id="L190">            dependency.setDisplayFileName(String.format(&quot;%s:%s&quot;, dependency.getName(), dependency.getVersion()));</span>
+<span class="pc bpc" id="L188" title="2 of 4 branches missed.">        if (dependency.getName() != null &amp;&amp; dependency.getVersion() != null) {</span>
+<span class="fc" id="L189">            dependency.setDisplayFileName(String.format(&quot;%s:%s&quot;, dependency.getName(), dependency.getVersion()));</span>
         }
 
         try {
-<span class="fc" id="L194">            final PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType(&quot;gem&quot;).withName(dependency.getName());</span>
-<span class="pc bpc" id="L195" title="1 of 2 branches missed.">            if (dependency.getVersion() != null) {</span>
-<span class="fc" id="L196">                builder.withVersion(dependency.getVersion());</span>
+<span class="fc" id="L193">            final PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType(&quot;gem&quot;).withName(dependency.getName());</span>
+<span class="pc bpc" id="L194" title="1 of 2 branches missed.">            if (dependency.getVersion() != null) {</span>
+<span class="fc" id="L195">                builder.withVersion(dependency.getVersion());</span>
             }
-<span class="fc" id="L198">            final PackageURL purl = builder.build();</span>
-<span class="fc" id="L199">            dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
-<span class="nc" id="L200">        } catch (MalformedPackageURLException ex) {</span>
-<span class="nc" id="L201">            LOGGER.debug(&quot;Unable to build package url for python&quot;, ex);</span>
+<span class="fc" id="L197">            final PackageURL purl = builder.build();</span>
+<span class="fc" id="L198">            dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
+<span class="nc" id="L199">        } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L200">            LOGGER.debug(&quot;Unable to build package url for python&quot;, ex);</span>
             final GenericIdentifier id;
-<span class="nc bnc" id="L203" title="All 2 branches missed.">            if (dependency.getVersion() != null) {</span>
-<span class="nc" id="L204">                id = new GenericIdentifier(&quot;gem:&quot; + dependency.getName() + &quot;@&quot; + dependency.getVersion(), Confidence.HIGHEST);</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">            if (dependency.getVersion() != null) {</span>
+<span class="nc" id="L203">                id = new GenericIdentifier(&quot;gem:&quot; + dependency.getName() + &quot;@&quot; + dependency.getVersion(), Confidence.HIGHEST);</span>
             } else {
-<span class="nc" id="L206">                id = new GenericIdentifier(&quot;gem:&quot; + dependency.getName(), Confidence.HIGHEST);</span>
+<span class="nc" id="L205">                id = new GenericIdentifier(&quot;gem:&quot; + dependency.getName(), Confidence.HIGHEST);</span>
             }
-<span class="nc" id="L208">            dependency.addSoftwareIdentifier(id);</span>
-<span class="fc" id="L209">        }</span>
+<span class="nc" id="L207">            dependency.addSoftwareIdentifier(id);</span>
+<span class="fc" id="L208">        }</span>
 
-<span class="fc" id="L211">        setPackagePath(dependency);</span>
-<span class="fc" id="L212">    }</span>
+<span class="fc" id="L210">        setPackagePath(dependency);</span>
+<span class="fc" id="L211">    }</span>
 
     /**
      * Adds the specified evidence to the given evidence collection.
@@ -225,26 +224,26 @@ import org.slf4j.LoggerFactory;
      */
     private String addStringEvidence(Dependency dependency, EvidenceType type, String contents,
             String blockVariable, String field, String fieldPattern, Confidence confidence) {
-<span class="fc" id="L228">        String value = &quot;&quot;;</span>
+<span class="fc" id="L227">        String value = &quot;&quot;;</span>
 
         //capture array value between [ ]
-<span class="fc" id="L231">        final Matcher arrayMatcher = Pattern.compile(</span>
-<span class="fc" id="L232">                String.format(&quot;\\s*?%s\\.%s\\s*?=\\s*?\\[(.*?)\\]&quot;, blockVariable, fieldPattern), Pattern.CASE_INSENSITIVE).matcher(contents);</span>
-<span class="fc bfc" id="L233" title="All 2 branches covered.">        if (arrayMatcher.find()) {</span>
-<span class="fc" id="L234">            final String arrayValue = arrayMatcher.group(1);</span>
-<span class="fc" id="L235">            value = arrayValue.replaceAll(&quot;['\&quot;]&quot;, &quot;&quot;).trim(); //strip quotes</span>
-<span class="fc" id="L236">        } else { //capture single value between quotes</span>
-<span class="fc" id="L237">            final Matcher matcher = Pattern.compile(</span>
-<span class="fc" id="L238">                    String.format(&quot;\\s*?%s\\.%s\\s*?=\\s*?(['\&quot;])(.*?)\\1&quot;, blockVariable, fieldPattern), Pattern.CASE_INSENSITIVE).matcher(contents);</span>
-<span class="pc bpc" id="L239" title="1 of 2 branches missed.">            if (matcher.find()) {</span>
-<span class="fc" id="L240">                value = matcher.group(2);</span>
+<span class="fc" id="L230">        final Matcher arrayMatcher = Pattern.compile(</span>
+<span class="fc" id="L231">                String.format(&quot;\\s*?%s\\.%s\\s*?=\\s*?\\[(.*?)\\]&quot;, blockVariable, fieldPattern), Pattern.CASE_INSENSITIVE).matcher(contents);</span>
+<span class="fc bfc" id="L232" title="All 2 branches covered.">        if (arrayMatcher.find()) {</span>
+<span class="fc" id="L233">            final String arrayValue = arrayMatcher.group(1);</span>
+<span class="fc" id="L234">            value = arrayValue.replaceAll(&quot;['\&quot;]&quot;, &quot;&quot;).trim(); //strip quotes</span>
+<span class="fc" id="L235">        } else { //capture single value between quotes</span>
+<span class="fc" id="L236">            final Matcher matcher = Pattern.compile(</span>
+<span class="fc" id="L237">                    String.format(&quot;\\s*?%s\\.%s\\s*?=\\s*?(['\&quot;])(.*?)\\1&quot;, blockVariable, fieldPattern), Pattern.CASE_INSENSITIVE).matcher(contents);</span>
+<span class="pc bpc" id="L238" title="1 of 2 branches missed.">            if (matcher.find()) {</span>
+<span class="fc" id="L239">                value = matcher.group(2);</span>
             }
         }
-<span class="pc bpc" id="L243" title="1 of 2 branches missed.">        if (value.length() &gt; 0) {</span>
-<span class="fc" id="L244">            dependency.addEvidence(type, GEMSPEC, field, value, confidence);</span>
+<span class="pc bpc" id="L242" title="1 of 2 branches missed.">        if (value.length() &gt; 0) {</span>
+<span class="fc" id="L243">            dependency.addEvidence(type, GEMSPEC, field, value, confidence);</span>
         }
 
-<span class="fc" id="L247">        return value;</span>
+<span class="fc" id="L246">        return value;</span>
     }
 
     /**
@@ -256,35 +255,35 @@ import org.slf4j.LoggerFactory;
      * @return the version number added
      */
     private String addEvidenceFromVersionFile(Dependency dependency, EvidenceType type, File dependencyFile) {
-<span class="nc" id="L259">        final File parentDir = dependencyFile.getParentFile();</span>
-<span class="nc" id="L260">        String version = null;</span>
-<span class="nc" id="L261">        int versionCount = 0;</span>
-<span class="nc bnc" id="L262" title="All 2 branches missed.">        if (parentDir != null) {</span>
-<span class="nc" id="L263">            final File[] matchingFiles = parentDir.listFiles((dir, name) -&gt; name.contains(VERSION_FILE_NAME));</span>
-<span class="nc bnc" id="L264" title="All 2 branches missed.">            if (matchingFiles == null) {</span>
-<span class="nc" id="L265">                return null;</span>
+<span class="nc" id="L258">        final File parentDir = dependencyFile.getParentFile();</span>
+<span class="nc" id="L259">        String version = null;</span>
+<span class="nc" id="L260">        int versionCount = 0;</span>
+<span class="nc bnc" id="L261" title="All 2 branches missed.">        if (parentDir != null) {</span>
+<span class="nc" id="L262">            final File[] matchingFiles = parentDir.listFiles((dir, name) -&gt; name.contains(VERSION_FILE_NAME));</span>
+<span class="nc bnc" id="L263" title="All 2 branches missed.">            if (matchingFiles == null) {</span>
+<span class="nc" id="L264">                return null;</span>
             }
-<span class="nc bnc" id="L267" title="All 2 branches missed.">            for (File f : matchingFiles) {</span>
+<span class="nc bnc" id="L266" title="All 2 branches missed.">            for (File f : matchingFiles) {</span>
                 try {
-<span class="nc" id="L269">                    final List&lt;String&gt; lines = FileUtils.readLines(f, Charset.defaultCharset());</span>
-<span class="nc bnc" id="L270" title="All 2 branches missed.">                    if (lines.size() == 1) { //TODO other checking?</span>
-<span class="nc" id="L271">                        final String value = lines.get(0).trim();</span>
-<span class="nc bnc" id="L272" title="All 4 branches missed.">                        if (version == null || !version.equals(value)) {</span>
-<span class="nc" id="L273">                            version = value;</span>
-<span class="nc" id="L274">                            versionCount++;</span>
+<span class="nc" id="L268">                    final List&lt;String&gt; lines = FileUtils.readLines(f, Charset.defaultCharset());</span>
+<span class="nc bnc" id="L269" title="All 2 branches missed.">                    if (lines.size() == 1) { //TODO other checking?</span>
+<span class="nc" id="L270">                        final String value = lines.get(0).trim();</span>
+<span class="nc bnc" id="L271" title="All 4 branches missed.">                        if (version == null || !version.equals(value)) {</span>
+<span class="nc" id="L272">                            version = value;</span>
+<span class="nc" id="L273">                            versionCount++;</span>
                         }
 
-<span class="nc" id="L277">                        dependency.addEvidence(type, GEMSPEC, &quot;version&quot;, value, Confidence.HIGH);</span>
+<span class="nc" id="L276">                        dependency.addEvidence(type, GEMSPEC, &quot;version&quot;, value, Confidence.HIGH);</span>
                     }
-<span class="nc" id="L279">                } catch (IOException e) {</span>
-<span class="nc" id="L280">                    LOGGER.debug(&quot;Error reading gemspec&quot;, e);</span>
-<span class="nc" id="L281">                }</span>
+<span class="nc" id="L278">                } catch (IOException e) {</span>
+<span class="nc" id="L279">                    LOGGER.debug(&quot;Error reading gemspec&quot;, e);</span>
+<span class="nc" id="L280">                }</span>
             }
         }
-<span class="nc bnc" id="L284" title="All 2 branches missed.">        if (versionCount == 1) {</span>
-<span class="nc" id="L285">            return version;</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">        if (versionCount == 1) {</span>
+<span class="nc" id="L284">            return version;</span>
         }
-<span class="nc" id="L287">        return null;</span>
+<span class="nc" id="L286">        return null;</span>
     }
 
     /**
@@ -293,11 +292,11 @@ import org.slf4j.LoggerFactory;
      * @param dep the dependency to alter
      */
     private void setPackagePath(Dependency dep) {
-<span class="fc" id="L296">        final File file = new File(dep.getFilePath());</span>
-<span class="fc" id="L297">        final String parent = file.getParent();</span>
-<span class="pc bpc" id="L298" title="1 of 2 branches missed.">        if (parent != null) {</span>
-<span class="fc" id="L299">            dep.setPackagePath(parent);</span>
+<span class="fc" id="L295">        final File file = new File(dep.getFilePath());</span>
+<span class="fc" id="L296">        final String parent = file.getParent();</span>
+<span class="pc bpc" id="L297" title="1 of 2 branches missed.">        if (parent != null) {</span>
+<span class="fc" id="L298">            dep.setPackagePath(parent);</span>
         }
-<span class="fc" id="L301">    }</span>
+<span class="fc" id="L300">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

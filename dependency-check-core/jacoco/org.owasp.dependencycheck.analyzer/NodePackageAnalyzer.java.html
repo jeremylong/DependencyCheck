@@ -237,8 +237,8 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
             }
 <span class="fc bfc" id="L238" title="All 2 branches covered.">        } else if (PACKAGE_LOCK_JSON.equals(dependency.getFileName())) {</span>
 <span class="fc" id="L239">            final File shrinkwrap = new File(baseDir, SHRINKWRAP_JSON);</span>
-<span class="pc bpc" id="L240" title="1 of 2 branches missed.">            if (shrinkwrap.exists()) {</span>
-<span class="nc" id="L241">                return;</span>
+<span class="fc bfc" id="L240" title="All 2 branches covered.">            if (shrinkwrap.exists()) {</span>
+<span class="fc" id="L241">                return;</span>
             }
         }
 <span class="fc" id="L244">        final File nodeModules = new File(baseDir, &quot;node_modules&quot;);</span>

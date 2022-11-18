@@ -80,31 +80,32 @@ public final class PyPACoreMetadataParser {
      *         The Wheel metadata of a Python package as a BufferedReader
      *
      * @return The metadata properties read from the utf8Reader
+     * @throws java.io.IOException thrown if there is error reading the properties
      */
     public static Properties getProperties(final BufferedReader utf8Reader) throws IOException {
-<span class="fc" id="L85">        final Properties result = new Properties();</span>
-<span class="fc" id="L86">        String line = utf8Reader.readLine();</span>
-<span class="fc" id="L87">        StringBuilder singleHeader = null;</span>
-<span class="fc" id="L88">        boolean inDescription = false;</span>
-<span class="fc bfc" id="L89" title="All 4 branches covered.">        while (line != null &amp;&amp; !line.isEmpty()) {</span>
-<span class="fc bfc" id="L90" title="All 4 branches covered.">            if (inDescription &amp;&amp; line.startsWith(&quot;       |&quot;)) {</span>
-<span class="fc" id="L91">                singleHeader.append('\n').append(line.substring(8));</span>
-<span class="fc bfc" id="L92" title="All 4 branches covered.">            } else if (singleHeader != null &amp;&amp; line.startsWith(&quot; &quot;)) {</span>
-<span class="fc" id="L93">                singleHeader.append(line.substring(1));</span>
+<span class="fc" id="L86">        final Properties result = new Properties();</span>
+<span class="fc" id="L87">        String line = utf8Reader.readLine();</span>
+<span class="fc" id="L88">        StringBuilder singleHeader = null;</span>
+<span class="fc" id="L89">        boolean inDescription = false;</span>
+<span class="fc bfc" id="L90" title="All 4 branches covered.">        while (line != null &amp;&amp; !line.isEmpty()) {</span>
+<span class="fc bfc" id="L91" title="All 4 branches covered.">            if (inDescription &amp;&amp; line.startsWith(&quot;       |&quot;)) {</span>
+<span class="fc" id="L92">                singleHeader.append('\n').append(line.substring(8));</span>
+<span class="fc bfc" id="L93" title="All 4 branches covered.">            } else if (singleHeader != null &amp;&amp; line.startsWith(&quot; &quot;)) {</span>
+<span class="fc" id="L94">                singleHeader.append(line.substring(1));</span>
             } else {
-<span class="fc bfc" id="L95" title="All 2 branches covered.">                if (singleHeader != null) {</span>
-<span class="fc" id="L96">                    parseAndAddHeader(result, singleHeader);</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">                if (singleHeader != null) {</span>
+<span class="fc" id="L97">                    parseAndAddHeader(result, singleHeader);</span>
                 }
-<span class="fc" id="L98">                singleHeader = new StringBuilder(line);</span>
-<span class="fc" id="L99">                inDescription = line.startsWith(&quot;Description:&quot;);</span>
+<span class="fc" id="L99">                singleHeader = new StringBuilder(line);</span>
+<span class="fc" id="L100">                inDescription = line.startsWith(&quot;Description:&quot;);</span>
             }
-<span class="fc" id="L101">            line = utf8Reader.readLine();</span>
+<span class="fc" id="L102">            line = utf8Reader.readLine();</span>
         }
-<span class="pc bpc" id="L103" title="1 of 2 branches missed.">        if (singleHeader != null) {</span>
-<span class="fc" id="L104">            parseAndAddHeader(result, singleHeader);</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">        if (singleHeader != null) {</span>
+<span class="fc" id="L105">            parseAndAddHeader(result, singleHeader);</span>
         }
         // ignore a body if any (description is allowed to be the message body)
-<span class="fc" id="L107">        return result;</span>
+<span class="fc" id="L108">        return result;</span>
     }
 
     /**
@@ -124,27 +125,27 @@ public final class PyPACoreMetadataParser {
      *         major version is the value before the first dot).&lt;/blockquote&gt;
      */
     private static void parseAndAddHeader(final Properties metadata, final StringBuilder metadataHeader) {
-<span class="fc" id="L127">        final String[] keyValue = StringUtils.split(metadataHeader.toString(), &quot;:&quot;, 2);</span>
-<span class="pc bpc" id="L128" title="1 of 2 branches missed.">        if (keyValue.length != 2) {</span>
-<span class="nc" id="L129">            LOGGER.warn(&quot;Invalid mailheader format encountered in Wheel Metadata, not a \&quot;key: value\&quot; string&quot;);</span>
-<span class="nc" id="L130">            return;</span>
+<span class="fc" id="L128">        final String[] keyValue = StringUtils.split(metadataHeader.toString(), &quot;:&quot;, 2);</span>
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">        if (keyValue.length != 2) {</span>
+<span class="nc" id="L130">            LOGGER.warn(&quot;Invalid mailheader format encountered in Wheel Metadata, not a \&quot;key: value\&quot; string&quot;);</span>
+<span class="nc" id="L131">            return;</span>
         }
-<span class="fc" id="L132">        final String key = keyValue[0];</span>
-<span class="fc" id="L133">        final String value = keyValue[1].trim();</span>
-<span class="fc bfc" id="L134" title="All 2 branches covered.">        if (&quot;Metadata-Version&quot;.equals(key)) {</span>
-<span class="fc" id="L135">            final int majorVersion = Integer.parseInt(value.substring(0, value.indexOf('.')), 10);</span>
-<span class="fc" id="L136">            final BigDecimal version = new BigDecimal(value);</span>
-<span class="fc bfc" id="L137" title="All 2 branches covered.">            if (majorVersion &gt; SUPPORTED_MAJOR_UPPERBOUND) {</span>
-<span class="fc" id="L138">                throw new IllegalArgumentException(String.format(</span>
+<span class="fc" id="L133">        final String key = keyValue[0];</span>
+<span class="fc" id="L134">        final String value = keyValue[1].trim();</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        if (&quot;Metadata-Version&quot;.equals(key)) {</span>
+<span class="fc" id="L136">            final int majorVersion = Integer.parseInt(value.substring(0, value.indexOf('.')), 10);</span>
+<span class="fc" id="L137">            final BigDecimal version = new BigDecimal(value);</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">            if (majorVersion &gt; SUPPORTED_MAJOR_UPPERBOUND) {</span>
+<span class="fc" id="L139">                throw new IllegalArgumentException(String.format(</span>
                         &quot;Unsupported PyPA Wheel metadata. Metadata-Version &quot; + &quot;is '%s', largest supported major is %d&quot;, value,
-<span class="fc" id="L140">                        SUPPORTED_MAJOR_UPPERBOUND));</span>
-<span class="pc bpc" id="L141" title="1 of 4 branches missed.">            } else if (version.compareTo(MAX_SUPPORTED_VERSION) &gt; 0 &amp;&amp; LOGGER.isWarnEnabled()) {</span>
-<span class="fc" id="L142">                LOGGER.warn(String.format(&quot;Wheel metadata Metadata-Version (%s) has a larger minor version than the highest known &quot;</span>
+<span class="fc" id="L141">                        SUPPORTED_MAJOR_UPPERBOUND));</span>
+<span class="pc bpc" id="L142" title="1 of 4 branches missed.">            } else if (version.compareTo(MAX_SUPPORTED_VERSION) &gt; 0 &amp;&amp; LOGGER.isWarnEnabled()) {</span>
+<span class="fc" id="L143">                LOGGER.warn(String.format(&quot;Wheel metadata Metadata-Version (%s) has a larger minor version than the highest known &quot;</span>
                                           + &quot;supported Metadata specification (%s) continuing with best effort&quot;, value,
                                           MAX_SUPPORTED_VERSION));
             }
         }
-<span class="fc" id="L147">        metadata.setProperty(key, value);</span>
-<span class="fc" id="L148">    }</span>
+<span class="fc" id="L148">        metadata.setProperty(key, value);</span>
+<span class="fc" id="L149">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

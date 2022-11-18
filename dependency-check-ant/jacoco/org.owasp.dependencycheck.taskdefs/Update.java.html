@@ -440,7 +440,7 @@ public class Update extends Purge {
     //see note on `Check.dealWithReferences()` for information on this suppression
     @SuppressWarnings(&quot;squid:RedundantThrowsDeclarationCheck&quot;)
     @Override
-    public void execute() throws BuildException {
+    protected void executeWithContextClassloader() throws BuildException {
 <span class="nc" id="L444">        populateSettings();</span>
 <span class="nc" id="L445">        try (Engine engine = new Engine(Update.class.getClassLoader(), getSettings())) {</span>
 <span class="nc" id="L446">            engine.doUpdates();</span>

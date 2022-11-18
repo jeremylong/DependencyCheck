@@ -20,10 +20,12 @@ package org.owasp.dependencycheck.data.update.nvd;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 
 import java.io.EOFException;
 import java.io.File;
@@ -55,7 +57,7 @@ public final class NvdCveParser {
     /**
      * The logger.
      */
-<span class="nc" id="L58">    private static final Logger LOGGER = LoggerFactory.getLogger(NvdCveParser.class);</span>
+<span class="nc" id="L60">    private static final Logger LOGGER = LoggerFactory.getLogger(NvdCveParser.class);</span>
     /**
      * A reference to the CVE DB.
      */
@@ -71,10 +73,10 @@ public final class NvdCveParser {
      * @param settings the dependency-check settings
      * @param db a reference to the database
      */
-<span class="nc" id="L74">    public NvdCveParser(Settings settings, CveDB db) {</span>
-<span class="nc" id="L75">        this.settings = settings;</span>
-<span class="nc" id="L76">        this.cveDB = db;</span>
-<span class="nc" id="L77">    }</span>
+<span class="nc" id="L76">    public NvdCveParser(Settings settings, CveDB db) {</span>
+<span class="nc" id="L77">        this.settings = settings;</span>
+<span class="nc" id="L78">        this.cveDB = db;</span>
+<span class="nc" id="L79">    }</span>
 
     /**
      * Parses the NVD JSON file and inserts/updates data into the database.
@@ -85,58 +87,82 @@ public final class NvdCveParser {
      * corrupted download (ZipException or premature EOF)
      */
     public void parse(File file) throws UpdateException, CorruptedDatastreamException {
-<span class="nc" id="L88">        LOGGER.debug(&quot;Parsing &quot; + file.getName());</span>
+<span class="nc" id="L90">        LOGGER.debug(&quot;Parsing &quot; + file.getName());</span>
 
-<span class="nc" id="L90">        final ObjectMapper objectMapper = JsonMapper.builder()</span>
-<span class="nc" id="L91">                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)</span>
-<span class="nc" id="L92">                .addModule(new BlackbirdModule())</span>
-<span class="nc" id="L93">                .build();</span>
+        final Module module;
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        if (getJavaVersion() &lt;= 8) {</span>
+<span class="nc" id="L94">            module = new AfterburnerModule();</span>
+        } else {
+<span class="nc" id="L96">            module = new BlackbirdModule();</span>
+        }
+<span class="nc" id="L98">        final ObjectMapper objectMapper = JsonMapper.builder()</span>
+<span class="nc" id="L99">                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)</span>
+<span class="nc" id="L100">                .addModule(module)</span>
+<span class="nc" id="L101">                .build();</span>
 
-<span class="nc" id="L95">        final ObjectReader objectReader = objectMapper.readerFor(DefCveItem.class);</span>
+<span class="nc" id="L103">        final ObjectReader objectReader = objectMapper.readerFor(DefCveItem.class);</span>
 
-<span class="nc" id="L97">        try (InputStream fin = new FileInputStream(file);</span>
-<span class="nc" id="L98">                InputStream in = new GZIPInputStream(fin);</span>
-<span class="nc" id="L99">                InputStreamReader isr = new InputStreamReader(in, UTF_8);</span>
-<span class="nc" id="L100">                JsonParser parser = objectReader.getFactory().createParser(isr)) {</span>
+<span class="nc" id="L105">        try (InputStream fin = new FileInputStream(file);</span>
+<span class="nc" id="L106">                InputStream in = new GZIPInputStream(fin);</span>
+<span class="nc" id="L107">                InputStreamReader isr = new InputStreamReader(in, UTF_8);</span>
+<span class="nc" id="L108">                JsonParser parser = objectReader.getFactory().createParser(isr)) {</span>
 
-<span class="nc" id="L102">            final CveEcosystemMapper mapper = new CveEcosystemMapper();</span>
-<span class="nc" id="L103">            init(parser);</span>
-<span class="nc bnc" id="L104" title="All 2 branches missed.">            while (parser.nextToken() == JsonToken.START_OBJECT) {</span>
-<span class="nc" id="L105">                final DefCveItem cve = objectReader.readValue(parser);</span>
-<span class="nc" id="L106">                cveDB.updateVulnerability(cve, mapper.getEcosystem(cve));</span>
-<span class="nc" id="L107">            }</span>
-<span class="nc" id="L108">        } catch (FileNotFoundException ex) {</span>
-<span class="nc" id="L109">            LOGGER.error(ex.getMessage());</span>
-<span class="nc" id="L110">            throw new UpdateException(&quot;Unable to find the NVD CVE file, `&quot; + file + &quot;`, to parse&quot;, ex);</span>
-<span class="nc" id="L111">        } catch (ZipException | EOFException ex) {</span>
-<span class="nc" id="L112">            throw new CorruptedDatastreamException(&quot;Error reading parsing NVD CVE file&quot;, ex);</span>
-<span class="nc" id="L113">        } catch (IOException ex) {</span>
-<span class="nc" id="L114">            LOGGER.error(&quot;Error reading NVD JSON data: {}&quot;, file);</span>
-<span class="nc" id="L115">            LOGGER.debug(&quot;Error extracting the NVD JSON data from: &quot; + file, ex);</span>
-<span class="nc" id="L116">            throw new UpdateException(&quot;Unable to find the NVD CVE file to parse&quot;, ex);</span>
-<span class="nc" id="L117">        }</span>
-<span class="nc" id="L118">    }</span>
+<span class="nc" id="L110">            final CveEcosystemMapper mapper = new CveEcosystemMapper();</span>
+<span class="nc" id="L111">            init(parser);</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">            while (parser.nextToken() == JsonToken.START_OBJECT) {</span>
+<span class="nc" id="L113">                final DefCveItem cve = objectReader.readValue(parser);</span>
+<span class="nc" id="L114">                cveDB.updateVulnerability(cve, mapper.getEcosystem(cve));</span>
+<span class="nc" id="L115">            }</span>
+<span class="nc" id="L116">        } catch (FileNotFoundException ex) {</span>
+<span class="nc" id="L117">            LOGGER.error(ex.getMessage());</span>
+<span class="nc" id="L118">            throw new UpdateException(&quot;Unable to find the NVD CVE file, `&quot; + file + &quot;`, to parse&quot;, ex);</span>
+<span class="nc" id="L119">        } catch (ZipException | EOFException ex) {</span>
+<span class="nc" id="L120">            throw new CorruptedDatastreamException(&quot;Error reading parsing NVD CVE file&quot;, ex);</span>
+<span class="nc" id="L121">        } catch (IOException ex) {</span>
+<span class="nc" id="L122">            LOGGER.error(&quot;Error reading NVD JSON data: {}&quot;, file);</span>
+<span class="nc" id="L123">            LOGGER.debug(&quot;Error extracting the NVD JSON data from: &quot; + file, ex);</span>
+<span class="nc" id="L124">            throw new UpdateException(&quot;Unable to find the NVD CVE file to parse&quot;, ex);</span>
+<span class="nc" id="L125">        }</span>
+<span class="nc" id="L126">    }</span>
+
+    /**
+     * Returns the Java major version as a whole number.
+     *
+     * @return the Java major version as a whole number
+     */
+    private static int getJavaVersion() {
+<span class="nc" id="L134">        String version = System.getProperty(&quot;java.specification.version&quot;);</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        if (version.startsWith(&quot;1.&quot;)) {</span>
+<span class="nc" id="L136">            version = version.substring(2, 3);</span>
+        } else {
+<span class="nc" id="L138">            final int dot = version.indexOf(&quot;.&quot;);</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">            if (dot != -1) {</span>
+<span class="nc" id="L140">                version = version.substring(0, dot);</span>
+            }
+        }
+<span class="nc" id="L143">        return Integer.parseInt(version);</span>
+    }
 
     void init(JsonParser parser) throws IOException {
-<span class="nc" id="L121">        JsonToken nextToken = parser.nextToken();</span>
-<span class="nc bnc" id="L122" title="All 2 branches missed.">        if (nextToken != JsonToken.START_OBJECT) {</span>
-<span class="nc" id="L123">            throw new IOException(&quot;Expected &quot; + JsonToken.START_OBJECT + &quot;, got &quot; + nextToken);</span>
+<span class="nc" id="L147">        JsonToken nextToken = parser.nextToken();</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">        if (nextToken != JsonToken.START_OBJECT) {</span>
+<span class="nc" id="L149">            throw new IOException(&quot;Expected &quot; + JsonToken.START_OBJECT + &quot;, got &quot; + nextToken);</span>
         }
 
         do {
-<span class="nc" id="L127">            nextToken = parser.nextToken();</span>
-<span class="nc bnc" id="L128" title="All 2 branches missed.">            if (nextToken == null) {</span>
-<span class="nc" id="L129">                break;</span>
+<span class="nc" id="L153">            nextToken = parser.nextToken();</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">            if (nextToken == null) {</span>
+<span class="nc" id="L155">                break;</span>
             }
 
-<span class="nc bnc" id="L132" title="All 2 branches missed.">            if (nextToken.isStructStart()) {</span>
-<span class="nc bnc" id="L133" title="All 2 branches missed.">                if (nextToken == JsonToken.START_ARRAY) {</span>
-<span class="nc" id="L134">                    break;</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">            if (nextToken.isStructStart()) {</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">                if (nextToken == JsonToken.START_ARRAY) {</span>
+<span class="nc" id="L160">                    break;</span>
                 } else {
-<span class="nc" id="L136">                    parser.skipChildren();</span>
+<span class="nc" id="L162">                    parser.skipChildren();</span>
                 }
             }
         } while (true);
-<span class="nc" id="L140">    }</span>
+<span class="nc" id="L166">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

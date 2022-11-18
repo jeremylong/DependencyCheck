@@ -196,7 +196,7 @@
 <a class="jxr_linenumber" name="L188" href="#L188">188</a>         assertEquals(<span class="jxr_string">"version"</span>, version.getName());
 <a class="jxr_linenumber" name="L189" href="#L189">189</a>         assertEquals(<span class="jxr_string">"1.3.0"</span>, version.getValue());
 <a class="jxr_linenumber" name="L190" href="#L190">190</a> 
-<a class="jxr_linenumber" name="L191" href="#L191">191</a>         assertEquals(3, dependency.getVulnerabilities().size());
+<a class="jxr_linenumber" name="L191" href="#L191">191</a>         assertTrue(dependency.getVulnerabilities().size() &gt;= 3);
 <a class="jxr_linenumber" name="L192" href="#L192">192</a>         assertTrue(dependency.getVulnerabilities().contains(<strong class="jxr_keyword">new</strong> Vulnerability(<span class="jxr_string">"CVE-2014-0013"</span>)));
 <a class="jxr_linenumber" name="L193" href="#L193">193</a>         assertTrue(dependency.getVulnerabilities().contains(<strong class="jxr_keyword">new</strong> Vulnerability(<span class="jxr_string">"CVE-2014-0014"</span>)));
 <a class="jxr_linenumber" name="L194" href="#L194">194</a>         assertTrue(dependency.getVulnerabilities().contains(<strong class="jxr_keyword">new</strong> Vulnerability(<span class="jxr_string">"CVE-2014-0046"</span>)));

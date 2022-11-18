@@ -133,8 +133,8 @@ import org.sonatype.ossindex.service.client.transport.Transport.TransportExcepti
 <span class="fc" id="L133">                    requestDelay();</span>
 <span class="fc" id="L134">                    reports = requestReports(engine.getDependencies());</span>
 <span class="fc" id="L135">                } catch (TransportException ex) {</span>
-<span class="fc" id="L136">                    String message = ex.getMessage();</span>
-<span class="fc" id="L137">                    boolean warnOnly = getSettings().getBoolean(Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS, false);</span>
+<span class="fc" id="L136">                    final String message = ex.getMessage();</span>
+<span class="fc" id="L137">                    final boolean warnOnly = getSettings().getBoolean(Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS, false);</span>
 
 <span class="pc bpc" id="L139" title="1 of 2 branches missed.">                    if (StringUtils.endsWith(message, &quot;401&quot;)) {</span>
 <span class="nc" id="L140">                        throw new AnalysisException(&quot;Invalid credentials provided for OSS Index&quot;, ex);</span>
@@ -348,8 +348,8 @@ import org.sonatype.ossindex.service.client.transport.Transport.TransportExcepti
 <span class="nc" id="L348">        result.addReference(REFERENCE_TYPE, source.getTitle(), source.getReference().toString());</span>
 
         // generate references to other references reported by OSS Index
-<span class="nc" id="L351">        source.getExternalReferences().forEach(externalReference -&gt;</span>
-<span class="nc" id="L352">                result.addReference(&quot;OSSIndex&quot;, externalReference.toString(), externalReference.toString()));</span>
+<span class="nc" id="L351">        source.getExternalReferences().forEach(externalReference</span>
+<span class="nc" id="L352">                -&gt; result.addReference(&quot;OSSIndex&quot;, externalReference.toString(), externalReference.toString()));</span>
 
         // attach vulnerable software details as best we can
 <span class="nc" id="L355">        final PackageUrl purl = report.getCoordinates();</span>
