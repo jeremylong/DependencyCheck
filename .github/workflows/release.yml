@@ -186,6 +186,7 @@ jobs:
           draft: false
           body: |
             ### Changes
+            - Automated release of 7.3.1 failed and only published to Central; 7.3.2 is a re-release of 7.3.1.
             - Resolved several false positives and false negatives.
             - Use Jackson Afterburner if still on Java 8 (#4966).
             - Exclude `node_modules` from the Maven plugin's scan path (#4974).
