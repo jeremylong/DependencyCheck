@@ -263,4 +263,11 @@
    <packageUrl regex="true">^pkg:maven/io\.debezium/debezium-connector-mysql@.*$</packageUrl>
    <cpe>cpe:/a:mysql:mysql</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4944
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.hbase/hbase-zookeeper@.*$</packageUrl>
+   <cpe>cpe:/a:apache:zookeeper</cpe>
+</suppress>
 </suppressions>
