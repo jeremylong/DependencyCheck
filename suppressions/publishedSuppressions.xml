@@ -270,4 +270,11 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.hbase/hbase-zookeeper@.*$</packageUrl>
    <cpe>cpe:/a:apache:zookeeper</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4949
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.curioswitch\.curiostack/protobuf-jackson@.*$</packageUrl>
+   <cpe>cpe:/a:grpc:grpc</cpe>
+</suppress>
 </suppressions>
