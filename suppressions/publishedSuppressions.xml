@@ -249,4 +249,11 @@
    <packageUrl regex="true">^pkg:maven/net\.openhft/chronicle-wire@.*$</packageUrl>
    <cpe>cpe:/a:wire:wire</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5022
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.zendesk/mysql-binlog-connector-java@.*$</packageUrl>
+   <cpe>cpe:/a:mysql:mysql</cpe>
+</suppress>
 </suppressions>
