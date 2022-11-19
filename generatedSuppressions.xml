@@ -220,3 +220,10 @@
        <packageUrl regex="true">^pkg:maven/org\.msgpack/.*@.*$</packageUrl>
        <cpe>cpe:/a:messagepack_project:messagepack</cpe>
     </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5038
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.locationtech\.spatial4j/spatial4j@.*$</packageUrl>
+   <cpe>cpe:/a:pro_search:pro_search</cpe>
+</suppress>
