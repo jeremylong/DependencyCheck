@@ -129,7 +129,7 @@ jobs:
                 if (err) throw err;
               });
 
-              execSync('git commit -m "' + commitComment + '" generatedSuppressions.xml;git push origin generatedSuppressions', (err, stdout, stderr) => {
+              execSync('git commit -m "fix(fp): ' + commitComment + '" generatedSuppressions.xml;git push origin generatedSuppressions', (err, stdout, stderr) => {
                 if (err) throw err;
                 console.log('committed suppression rule');
               });

@@ -789,6 +789,7 @@ Copyright (c) 2012 - Jeremy Long
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
+                    <scmCommentPrefix>build:</scmCommentPrefix>
                     <tagNameFormat>v@{project.version}</tagNameFormat>
                     <arguments>-Dmaven.javadoc.skip=true -DskipTests -DskipITs</arguments>
                     <updateWorkingCopyVersions>true</updateWorkingCopyVersions>
