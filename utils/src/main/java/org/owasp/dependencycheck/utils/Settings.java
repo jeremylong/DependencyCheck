@@ -442,6 +442,10 @@ public final class Settings {
          */
         public static final String ANALYZER_PIPFILE_ENABLED = "analyzer.pipfile.enabled";
         /**
+         * The properties key for whether the Poetry analyzer is enabled.
+         */
+        public static final String ANALYZER_POETRY_ENABLED = "analyzer.poetry.enabled";
+        /**
          * The properties key for whether the CMake analyzer is enabled.
          */
         public static final String ANALYZER_CMAKE_ENABLED = "analyzer.cmake.enabled";

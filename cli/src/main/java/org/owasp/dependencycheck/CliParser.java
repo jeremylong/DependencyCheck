@@ -1244,6 +1244,10 @@ public final class CliParser {
          */
         public static final String DISABLE_PIPFILE = "disablePipfile";
         /**
+         * Disables the Poetry Analyzer.
+         */
+        public static final String DISABLE_POETRY = "disablePoetry";
+        /**
          * Disables the Cmake Analyzer.
          */
         public static final String DISABLE_CMAKE = "disableCmake";

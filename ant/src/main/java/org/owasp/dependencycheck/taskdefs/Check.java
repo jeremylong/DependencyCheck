@@ -316,6 +316,10 @@ public class Check extends Update {
      */
     private Boolean pipfileAnalyzerEnabled;
     /**
+     * Whether the Poetry analyzer should be enabled.
+     */
+    private Boolean poetryAnalyzerEnabled;
+    /**
      * Sets the path for the mix_audit binary.
      */
     private String mixAuditPath;
@@ -930,6 +934,24 @@ public class Check extends Update {
      */
     public void setPipfileAnalyzerEnabled(Boolean pipfileAnalyzerEnabled) {
         this.pipfileAnalyzerEnabled = pipfileAnalyzerEnabled;
+    }
+
+    /**
+     * Get the value of poetryAnalyzerEnabled.
+     *
+     * @return the value of poetryAnalyzerEnabled
+     */
+    public Boolean isPoetryAnalyzerEnabled() {
+        return poetryAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of poetryAnalyzerEnabled.
+     *
+     * @param poetryAnalyzerEnabled new value of poetryAnalyzerEnabled
+     */
+    public void setPoetryAnalyzerEnabled(Boolean poetryAnalyzerEnabled) {
+        this.poetryAnalyzerEnabled = poetryAnalyzerEnabled;
     }
 
     /**
@@ -2019,6 +2041,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_MAVEN_INSTALL_ENABLED, mavenInstallAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_PIP_ENABLED, pipAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_PIPFILE_ENABLED, pipfileAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_POETRY_ENABLED, poetryAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_CPANFILE_ENABLED, cpanfileAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
