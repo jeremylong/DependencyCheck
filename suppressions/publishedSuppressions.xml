@@ -256,4 +256,11 @@
    <packageUrl regex="true">^pkg:maven/com\.zendesk/mysql-binlog-connector-java@.*$</packageUrl>
    <cpe>cpe:/a:mysql:mysql</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5021
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.debezium/debezium-connector-mysql@.*$</packageUrl>
+   <cpe>cpe:/a:mysql:mysql</cpe>
+</suppress>
 </suppressions>
