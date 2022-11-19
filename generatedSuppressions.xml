@@ -276,3 +276,10 @@
    <packageUrl regex="true">^pkg:maven/org\.curioswitch\.curiostack/protobuf-jackson@.*$</packageUrl>
    <cpe>cpe:/a:grpc:grpc</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5014
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.ejbca\.cvc/cert-cvc@.*$</packageUrl>
+   <cpe>cpe:/a:primekey:ejbca</cpe>
+</suppress>
