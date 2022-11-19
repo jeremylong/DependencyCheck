@@ -31,6 +31,12 @@ More detailed instructions can be found on the
 [dependency-check github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-cli/).
 The latest CLI can be downloaded from github in the [releases section](https://github.com/jeremylong/DependencyCheck/releases).
 
+Downloading the latest release:
+```
+$ VERSION=$(curl -s https://jeremylong.github.io/DependencyCheck/current.txt)
+$ curl -s "https://github.com/jeremylong/DependencyCheck/releases/download/v$VERSION/dependency-check-$VERSION-release.zip" --output dependency-check.zip
+```
+
 On *nix
 ```
 $ ./bin/dependency-check.sh -h
