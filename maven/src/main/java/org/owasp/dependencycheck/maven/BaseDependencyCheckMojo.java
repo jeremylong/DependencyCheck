@@ -2065,7 +2065,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_PNPM_PATH, pathToPnpm);
 
         final Proxy proxy = getMavenProxy();
+        boolean proxySet = false;
         if (proxy != null) {
+            proxySet = true;
             settings.setString(Settings.KEYS.PROXY_SERVER, proxy.getHost());
             settings.setString(Settings.KEYS.PROXY_PORT, Integer.toString(proxy.getPort()));
             final String userName = proxy.getUsername();
@@ -2083,6 +2085,21 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             settings.setStringIfNotNull(Settings.KEYS.PROXY_USERNAME, userName);
             settings.setStringIfNotNull(Settings.KEYS.PROXY_PASSWORD, password);
             settings.setStringIfNotNull(Settings.KEYS.PROXY_NON_PROXY_HOSTS, proxy.getNonProxyHosts());
+        }
+        if (!proxySet && System.getProperty("http.proxyHost") != null) {
+            settings.setString(Settings.KEYS.PROXY_SERVER, System.getProperty("http.proxyHost", ""));
+            if (System.getProperty("http.proxyPort") != null) {
+                settings.setString(Settings.KEYS.PROXY_PORT, System.getProperty("http.proxyPort"));
+            }
+            if (System.getProperty("http.proxyUser") != null) {
+                settings.setString(Settings.KEYS.PROXY_USERNAME, System.getProperty("http.proxyUser"));
+            }
+            if (System.getProperty("http.proxyPassword") != null) {
+                settings.setString(Settings.KEYS.PROXY_PASSWORD, System.getProperty("http.proxyPassword"));
+            }
+            if (System.getProperty("http.nonProxyHosts") != null) {
+                settings.setString(Settings.KEYS.PROXY_NON_PROXY_HOSTS, System.getProperty("http.nonProxyHosts"));
+            }
         }
         final String[] suppressions = determineSuppressions();
         settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressions);
