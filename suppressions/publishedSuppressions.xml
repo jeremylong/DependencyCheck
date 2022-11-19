@@ -242,4 +242,11 @@
    <packageUrl regex="true">^pkg:maven/software\.aws\.rds/aws-mysql-jdbc@.*$</packageUrl>
    <cpe>cpe:/a:mysql:mysql</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5024
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/net\.openhft/chronicle-wire@.*$</packageUrl>
+   <cpe>cpe:/a:wire:wire</cpe>
+</suppress>
 </suppressions>
