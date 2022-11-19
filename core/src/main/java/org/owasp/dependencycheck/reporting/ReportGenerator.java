@@ -117,6 +117,10 @@ public class ReportGenerator {
          */
         SARIF,
         /**
+         * Generate HTML report without script or non-vulnerable libraries for Jenkins.
+         */
+        JENKINS,
+        /**
          * Generate JUNIT report.
          */
         JUNIT
@@ -372,6 +376,9 @@ public class ReportGenerator {
         }
         if (format == Format.HTML && !pathToCheck.endsWith(".html") && !pathToCheck.endsWith(".htm")) {
             return new File(outFile, "dependency-check-report.html");
+        }
+        if (format == Format.JENKINS && !pathToCheck.endsWith(".html") && !pathToCheck.endsWith(".htm")) {
+            return new File(outFile, "dependency-check-jenkins.html");
         }
         if (format == Format.JSON && !pathToCheck.endsWith(".json")) {
             return new File(outFile, "dependency-check-report.json");

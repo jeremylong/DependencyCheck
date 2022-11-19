@@ -289,7 +289,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "dependency-check.virtualSnapshotsFromReactor", defaultValue = "true")
     private Boolean virtualSnapshotsFromReactor;
     /**
-     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF,
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF, JENKINS,
      * ALL). Multiple formats can be selected using a comma delineated list.
      */
     @SuppressWarnings("CanBeFinal")
@@ -303,7 +303,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "prettyPrint")
     private Boolean prettyPrint;
     /**
-     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF,
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF, JENKINS,
      * ALL). Multiple formats can be selected using a comma delineated list.
      */
     @Parameter(property = "formats", required = true)
@@ -1978,12 +1978,16 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         final Set<String> selectedFormats = getFormats();
         if (selectedFormats.contains("HTML") || selectedFormats.contains("ALL") || selectedFormats.size() > 1) {
             return "dependency-check-report";
+        } else if (selectedFormats.contains("JENKINS")) {
+            return "dependency-check-jenkins.html";
         } else if (selectedFormats.contains("XML")) {
             return "dependency-check-report.xml";
         } else if (selectedFormats.contains("JUNIT")) {
             return "dependency-check-junit.xml";
         } else if (selectedFormats.contains("JSON")) {
             return "dependency-check-report.json";
+        } else if (selectedFormats.contains("SARIF")) {
+            return "dependency-check-report.sarif";
         } else if (selectedFormats.contains("CSV")) {
             return "dependency-check-report.csv";
         } else {
