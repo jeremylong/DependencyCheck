@@ -319,4 +319,11 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.hbase/hbase-hadoop-compat@.*$</packageUrl>
    <cpe>cpe:/a:apache:hadoop</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4941
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.flink/flink-rpc-akka-loader@.*$</packageUrl>
+   <cpe>cpe:/a:akka:akka</cpe>
+</suppress>
 </suppressions>
