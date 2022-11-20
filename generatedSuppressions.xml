@@ -290,3 +290,10 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.twill/twill-zookeeper@.*$</packageUrl>
    <cpe>cpe:/a:apache:zookeeper</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4948
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.opentracing\.contrib/opentracing-grpc@.*$</packageUrl>
+   <cpe>cpe:/a:grpc:grpc</cpe>
+</suppress>
