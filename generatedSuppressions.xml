@@ -297,3 +297,10 @@
    <packageUrl regex="true">^pkg:maven/io\.opentracing\.contrib/opentracing-grpc@.*$</packageUrl>
    <cpe>cpe:/a:grpc:grpc</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4947
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.pf4j/pf4j@.*$</packageUrl>
+   <cpe>cpe:/a:sonatype:nexus</cpe>
+</suppress>
