@@ -360,3 +360,10 @@
    <packageUrl regex="true">^pkg:maven/io\.zipkin\.zipkin2/zipkin@.*$</packageUrl>
    <cpe>cpe:/a:pki-core_project:pki-core</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4669
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.junit\.jupiter/junit-jupiter-engine@.*$</packageUrl>
+   <cpe>cpe:/a:fan_platform_project:fan_platform</cpe>
+</suppress>
