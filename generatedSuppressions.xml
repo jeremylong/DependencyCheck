@@ -346,3 +346,10 @@
    <packageUrl regex="true">^pkg:maven/org\.clojure/data\.priority-map@.*$</packageUrl>
    <cpe>cpe:/a:priority-software:priority</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4693
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.zipkin\.reporter2/zipkin-reporter@.*$</packageUrl>
+   <cpe>cpe:/a:pki-core_project:pki-core</cpe>
+</suppress>
