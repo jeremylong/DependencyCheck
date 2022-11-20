@@ -326,4 +326,11 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.flink/flink-rpc-akka-loader@.*$</packageUrl>
    <cpe>cpe:/a:akka:akka</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4940
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.flink/flink-hadoop-fs@.*$</packageUrl>
+   <cpe>cpe:/a:apache:hadoop</cpe>
+</suppress>
 </suppressions>
