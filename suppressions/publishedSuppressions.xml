@@ -375,4 +375,11 @@
    <packageUrl regex="true">^pkg:maven/com\.google\.api\.grpc/grpc-google-iam-v1@.*$</packageUrl>
    <cpe>cpe:/a:grpc:grpc</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4681
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.amazonaws/aws-java-sdk-prometheus@.*$</packageUrl>
+   <cpe>cpe:/a:prometheus:prometheus</cpe>
+</suppress>
 </suppressions>
