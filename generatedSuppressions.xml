@@ -381,3 +381,4 @@
    <packageUrl regex="true">^pkg:maven/com\.amazonaws/aws-java-sdk-prometheus@.*$</packageUrl>
    <cpe>cpe:/a:prometheus:prometheus</cpe>
 </suppress>
+<!-- suppressions above this entry will be included in the 7.4.0 release as the result of #5070 -->
