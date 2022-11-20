@@ -311,3 +311,10 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.iceberg/iceberg-hive-metastore@.*$</packageUrl>
    <cpe>cpe:/a:apache:hive</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4942
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.hbase/hbase-hadoop-compat@.*$</packageUrl>
+   <cpe>cpe:/a:apache:hadoop</cpe>
+</suppress>
