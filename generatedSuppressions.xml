@@ -304,3 +304,10 @@
    <packageUrl regex="true">^pkg:maven/org\.pf4j/pf4j@.*$</packageUrl>
    <cpe>cpe:/a:sonatype:nexus</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4946
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.iceberg/iceberg-hive-metastore@.*$</packageUrl>
+   <cpe>cpe:/a:apache:hive</cpe>
+</suppress>
