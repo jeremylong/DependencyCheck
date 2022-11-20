@@ -340,4 +340,11 @@
    <packageUrl regex="true">^pkg:maven/com\.azure\.resourcemanager/azure-resourcemanager-appplatform@.*$</packageUrl>
    <cpe>cpe:/a:microsoft:platform_sdk</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4720
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.clojure/data\.priority-map@.*$</packageUrl>
+   <cpe>cpe:/a:priority-software:priority</cpe>
+</suppress>
 </suppressions>
