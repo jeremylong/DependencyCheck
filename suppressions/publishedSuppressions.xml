@@ -333,4 +333,11 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.flink/flink-hadoop-fs@.*$</packageUrl>
    <cpe>cpe:/a:apache:hadoop</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4931
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.azure\.resourcemanager/azure-resourcemanager-appplatform@.*$</packageUrl>
+   <cpe>cpe:/a:microsoft:platform_sdk</cpe>
+</suppress>
 </suppressions>
