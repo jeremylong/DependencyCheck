@@ -354,4 +354,11 @@
    <packageUrl regex="true">^pkg:maven/io\.zipkin\.reporter2/zipkin-reporter@.*$</packageUrl>
    <cpe>cpe:/a:pki-core_project:pki-core</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4692
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.zipkin\.zipkin2/zipkin@.*$</packageUrl>
+   <cpe>cpe:/a:pki-core_project:pki-core</cpe>
+</suppress>
 </suppressions>
