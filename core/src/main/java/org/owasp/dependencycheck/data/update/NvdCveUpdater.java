@@ -138,7 +138,14 @@ public class NvdCveUpdater implements CachedWebDataSource {
                 }
                 //all dates in the db are now stored in seconds as opposed to previously milliseconds.
                 dbProperties.save(DatabaseProperties.LAST_CHECKED, Long.toString(System.currentTimeMillis() / 1000));
-                cveDb.updateEcosystemCache();
+                if (updatesMade) {
+                    cveDb.persistEcosystemCache();
+                }
+                final int updateCount = cveDb.updateEcosystemCache();
+                LOGGER.debug("Corrected the ecosystem for {} ecoSystemCache entries", updateCount);
+                if (updatesMade || updateCount > 0) {
+                    cveDb.cleanupDatabase();
+                }
             }
         } catch (UpdateException ex) {
             if (ex.getCause() != null && ex.getCause() instanceof DownloadFailedException) {
@@ -328,11 +335,6 @@ public class NvdCveUpdater implements CachedWebDataSource {
             }
         }
 
-        try {
-            cveDb.cleanupDatabase();
-        } catch (DatabaseException ex) {
-            throw new UpdateException(ex.getMessage(), ex.getCause());
-        }
     }
 
     /**

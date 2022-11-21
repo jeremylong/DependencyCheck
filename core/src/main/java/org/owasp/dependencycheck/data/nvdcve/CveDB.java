@@ -132,16 +132,21 @@ public final class CveDB implements AutoCloseable {
 
     /**
      * Updates the EcoSystem Cache.
+     *
+     * @return The number of records updated by the DB_ECOSYSTEM_CACHE update script.
      */
-    public void updateEcosystemCache() {
+    public int updateEcosystemCache() {
         LOGGER.debug("Updating the ecosystem cache");
+        int updateCount = 0;
         try {
             final URL url = Resources.getResource(DB_ECOSYSTEM_CACHE);
-            final String sql = Resources.toString(url, StandardCharsets.UTF_8);
+            final List<String> sql = Resources.readLines(url, StandardCharsets.UTF_8);
 
             try (Connection conn = databaseManager.getConnection();
                     Statement statement = conn.createStatement()) {
-                statement.execute(sql);
+                for (String single : sql) {
+                    updateCount += statement.executeUpdate(single);
+                }
             } catch (SQLException ex) {
                 LOGGER.debug("", ex);
                 throw new DatabaseException("Unable to update the ecosystem cache", ex);
@@ -151,6 +156,7 @@ public final class CveDB implements AutoCloseable {
         } catch (LinkageError ex) {
             LOGGER.debug(new DefaultQuery(ex).call().toString());
         }
+        return updateCount;
     }
 
     /**
@@ -1288,8 +1294,6 @@ public final class CveDB implements AutoCloseable {
     public void cleanupDatabase() {
         LOGGER.info("Begin database maintenance");
         final long start = System.currentTimeMillis();
-        saveCpeEcosystemCache();
-        clearCache();
         try (Connection conn = databaseManager.getConnection();
                 PreparedStatement psOrphans = getPreparedStatement(conn, CLEANUP_ORPHANS);
                 PreparedStatement psEcosystem = getPreparedStatement(conn, UPDATE_ECOSYSTEM);
@@ -1320,6 +1324,14 @@ public final class CveDB implements AutoCloseable {
             LOGGER.debug("", ex);
             throw new DatabaseException("Unexpected SQL Exception", ex);
         }
+    }
+
+    /**
+     * Persist the EcosystemCache into the database.
+     */
+    public void persistEcosystemCache() {
+        saveCpeEcosystemCache();
+        clearCache();
     }
 
     /**
