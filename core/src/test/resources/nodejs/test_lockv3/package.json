@@ -1,0 +1,12 @@
+{
+  "name": "test",
+  "version": "0.0.1",
+  "requires": true,
+  "dependencies": {
+    "is-number": "2.1.0",
+    "isobject": "2.1.0"
+  },
+  "comments": {
+    "//": "fsevents will be installed only on macOS"
+  }
+}

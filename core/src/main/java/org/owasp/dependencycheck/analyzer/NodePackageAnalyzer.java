@@ -93,6 +93,10 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
      */
     public static final String SHRINKWRAP_JSON = "npm-shrinkwrap.json";
     /**
+     * The name of the directory that contains node modules
+     */
+    public static final String NODE_MODULES_DIRNAME = "node_modules";
+    /**
      * Filter that detects files named "package.json", "package-lock.json", or
      * "npm-shrinkwrap.json".
      */
@@ -303,6 +307,13 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                     name, version);
             return true;
         }
+
+        // Don't include package with empty name
+        if ("".equals(name)) {
+            LOGGER.debug("Empty dependency of package-lock v2+ removed");
+            return true;
+        }
+
         return false;
     }
 
@@ -334,16 +345,36 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
      */
     private void processDependencies(JsonObject json, File baseDir, File rootFile,
             String parentPackage, Engine engine) throws AnalysisException {
-        if (json.containsKey("dependencies")) {
-            final JsonObject deps = json.getJsonObject("dependencies");
-            final boolean skipDev = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, false);
+          final boolean skipDev = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, false);
+          final JsonObject deps;
+
+          final int lockJsonVersion = json.containsKey("lockfileVersion") ? json.getInt("lockfileVersion") : 1;
+          if (lockJsonVersion >= 2) {
+            deps = json.getJsonObject("packages");
+          } else if (json.containsKey("dependencies")) {
+            deps = json.getJsonObject("dependencies");
+          } else {
+            deps = null;
+          }
+
+          if (deps != null) {
             for (Map.Entry<String, JsonValue> entry : deps.entrySet()) {
-                final String name = entry.getKey();
+                String pathName = entry.getKey();
+                String name = pathName;
+                final File base;
+
+                final int indexOfNodeModule = name.lastIndexOf(NODE_MODULES_DIRNAME);
+                if (indexOfNodeModule >= 0) {
+                    name = name.substring(indexOfNodeModule + NODE_MODULES_DIRNAME.length() + 1);
+                    base = Paths.get(baseDir.getPath(), pathName).toFile();
+                } else {
+                    base = Paths.get(baseDir.getPath(), "node_modules", name).toFile();
+                }
+
                 final String version;
                 boolean optional = false;
                 boolean isDev = false;
 
-                final File base = Paths.get(baseDir.getPath(), "node_modules", name).toFile();
                 final File f = new File(base, PACKAGE_JSON);
                 JsonObject jo = null;
 
