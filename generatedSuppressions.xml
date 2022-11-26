@@ -390,3 +390,10 @@
    <packageUrl regex="true">^pkg:maven/com\.github\.pagehelper/pagehelper-spring-boot-autoconfigure@.*$</packageUrl>
    <cpe>cpe:/a:pagehelper_project:pagehelper</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4651
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.hibernate/hibernate-commons-annotations@.*$</packageUrl>
+   <cpe>cpe:/a:hibernate:hibernate_orm</cpe>
+</suppress>
