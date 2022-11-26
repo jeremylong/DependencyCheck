@@ -382,3 +382,11 @@
    <cpe>cpe:/a:prometheus:prometheus</cpe>
 </suppress>
 <!-- suppressions above this entry will be included in the 7.4.0 release as the result of #5070 -->
+
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5083
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.github\.pagehelper/pagehelper-spring-boot-autoconfigure@.*$</packageUrl>
+   <cpe>cpe:/a:pagehelper_project:pagehelper</cpe>
+</suppress>
