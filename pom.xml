@@ -125,7 +125,7 @@ Copyright (c) 2012 - Jeremy Long
         <logback.version>1.2.11</logback.version>
         
         <!-- Note that Maven will use classes from the distro, ignoring declared dependencies for Maven core... -->
-        <maven.api.version>3.1.0</maven.api.version>
+        <maven.api.version>3.8.1</maven.api.version>
         <reporting.checkstyle-plugin.version>3.2.0</reporting.checkstyle-plugin.version>
         <reporting.checkstyle.tool.version>9.3</reporting.checkstyle.tool.version>
         <doxia-module-markdown.version>1.11.1</doxia-module-markdown.version>
@@ -158,8 +158,7 @@ Copyright (c) 2012 - Jeremy Long
         <org.apache.maven.shared.file-management.version>3.1.0</org.apache.maven.shared.file-management.version>
         <maven-plugin-testing-harness.version>3.3.0</maven-plugin-testing-harness.version>
         <maven-plugin-annotations.version>3.7.0</maven-plugin-annotations.version>
-        <maven-reporting-api.version>3.1.1</maven-reporting-api.version>
-        <commons-collections.version>3.2.2</commons-collections.version>
+        <maven-reporting-api.version>3.1.1</maven-reporting-api.version>    
         <org.apache.velocity.version>2.3</org.apache.velocity.version>
         <plexus-sec-dispatcher.version>1.4</plexus-sec-dispatcher.version>
         <maven-dependency-tree.version>3.2.1</maven-dependency-tree.version>
@@ -1145,11 +1144,23 @@ Copyright (c) 2012 - Jeremy Long
                 <groupId>org.apache.ant</groupId>
                 <artifactId>ant</artifactId>
                 <version>${apache.ant.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun</groupId>
+                        <artifactId>tools</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.ant</groupId>
                 <artifactId>ant-testutil</artifactId>
                 <version>${apache.ant.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun</groupId>
+                        <artifactId>tools</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.lucene</groupId>
@@ -1185,6 +1196,11 @@ Copyright (c) 2012 - Jeremy Long
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-core</artifactId>
                 <version>${maven.api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.shared</groupId>
+                <artifactId>maven-shared-utils</artifactId>
+                <version>3.3.3</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
@@ -1234,6 +1250,7 @@ Copyright (c) 2012 - Jeremy Long
                 <groupId>org.apache.maven.plugin-tools</groupId>
                 <artifactId>maven-plugin-annotations</artifactId>
                 <version>${maven-plugin-annotations.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.reporting</groupId>
