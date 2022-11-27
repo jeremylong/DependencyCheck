@@ -1095,6 +1095,105 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per issue #5085
+        suppressing the liferay libraries that have a versioning scheme separate from the main framework version
+        but get linked to the framework CPE
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.liferay\.portal/com\.liferay\.portal\.impl@.*$</packageUrl>
+        <cpe>cpe:/a:liferay:liferay</cpe>
+        <cpe>cpe:/a:liferay:liferay_portal</cpe>
+        <cpe>cpe:/a:liferay:portal</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5085
+        suppressing the liferay libraries that have a versioning scheme separate from the main framework version
+        but get linked to the framework CPE
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.liferay\.portal/com\.liferay\.support\.tomcat@.*$</packageUrl>
+        <cpe>cpe:/a:liferay:liferay</cpe>
+        <cpe>cpe:/a:liferay:liferay_portal</cpe>
+        <cpe>cpe:/a:liferay:portal</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5085
+        suppressing the liferay libraries that have a versioning scheme separate from the main framework version
+        but get linked to the framework CPE
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.liferay\.portal/com\.liferay\.util\.bridges@.*$</packageUrl>
+        <cpe>cpe:/a:liferay:liferay</cpe>
+        <cpe>cpe:/a:liferay:liferay_portal</cpe>
+        <cpe>cpe:/a:liferay:portal</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5085
+        suppressing the liferay libraries that have a versioning scheme separate from the main framework version
+        but get linked to the framework CPE
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.liferay\.portal/com\.liferay\.util\.java@.*$</packageUrl>
+        <cpe>cpe:/a:liferay:liferay</cpe>
+        <cpe>cpe:/a:liferay:liferay_portal</cpe>
+        <cpe>cpe:/a:liferay:portal</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5085
+        suppressing the liferay libraries that have a versioning scheme separate from the main framework version
+        but get linked to the framework CPE
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.liferay\.portal/com\.liferay\.util\.taglib@.*$</packageUrl>
+        <cpe>cpe:/a:liferay:liferay</cpe>
+        <cpe>cpe:/a:liferay:liferay_portal</cpe>
+        <cpe>cpe:/a:liferay:portal</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5085
+        suppressing the liferay libraries that have a versioning scheme separate from the main framework version
+        but get linked to the framework CPE
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.liferay\.portal/com\.liferay\.portal\.test@.*$</packageUrl>
+        <cpe>cpe:/a:liferay:liferay</cpe>
+        <cpe>cpe:/a:liferay:liferay_portal</cpe>
+        <cpe>cpe:/a:liferay:portal</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5085
+        suppressing the liferay libraries that have a versioning scheme separate from the main framework version
+        but get linked to the framework CPE
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.liferay\.portal/com\.liferay\.portal\.kernel@.*$</packageUrl>
+        <cpe>cpe:/a:liferay:liferay</cpe>
+        <cpe>cpe:/a:liferay:liferay_portal</cpe>
+        <cpe>cpe:/a:liferay:portal</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5085
+        suppressing the liferay libraries that have a versioning scheme separate from the main framework version
+        but get linked to the framework CPE
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.liferay\.portletmvc4spring/com\.liferay\.portletmvc4spring\.test@.*$</packageUrl>
+        <cpe>cpe:/a:liferay:liferay</cpe>
+        <cpe>cpe:/a:liferay:liferay_portal</cpe>
+        <cpe>cpe:/a:liferay:portal</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5085
+        suppressing the liferay libraries that have a versioning scheme separate from the main framework version
+        but get linked to the framework CPE
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.liferay/biz\.aQute\.bnd\.annotation@.*$</packageUrl>
+        <cpe>cpe:/a:liferay:liferay</cpe>
+        <cpe>cpe:/a:liferay:liferay_portal</cpe>
+        <cpe>cpe:/a:liferay:portal</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Suppresses false positives per issue #1585
         ]]></notes>
         <gav regex="true">^org\.apache\.geronimo\.javamail:geronimo-javamail_1\.4_mail:.*$</gav>
