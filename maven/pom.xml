@@ -65,7 +65,6 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>${version.maven-plugin-plugin}</version>
                 <configuration>
-                    <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
                     <goalPrefix>dependency-check</goalPrefix>
                 </configuration>
                 <executions>
