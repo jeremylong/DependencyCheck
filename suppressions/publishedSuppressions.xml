@@ -413,4 +413,11 @@
    <packageUrl regex="true">^pkg:maven/org\.jfrog\.artifactory\.client/artifactory-java-client-httpClient@.*$</packageUrl>
    <cpe>cpe:/a:jfrog:artifactory</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5107
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.opentracing\.contrib/opentracing-apache-httpclient@.*$</packageUrl>
+   <cpe>cpe:/a:apache:httpclient</cpe>
+</suppress>
 </suppressions>
