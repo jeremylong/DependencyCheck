@@ -405,3 +405,10 @@
    <cpe>cpe:/a:mariadb:mariadb</cpe>
    <cpe>cpe:/a:mysql:mysql</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5108
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jfrog\.artifactory\.client/artifactory-java-client-httpClient@.*$</packageUrl>
+   <cpe>cpe:/a:jfrog:artifactory</cpe>
+</suppress>
