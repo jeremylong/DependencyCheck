@@ -105,7 +105,7 @@ $$ LANGUAGE plpgsql;
 GRANT EXECUTE ON FUNCTION public.merge_ecosystem(VARCHAR(255), VARCHAR(255), varchar(255)) TO dcuser;
 
 
-CREATE FUNCTION merge_knownexpoited (
+CREATE FUNCTION merge_knownexploited (
     IN p_cveID varchar(20),
     IN p_vendorProject VARCHAR(255),
     IN p_product VARCHAR(255),
