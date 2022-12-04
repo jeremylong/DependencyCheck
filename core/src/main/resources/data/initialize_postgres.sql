@@ -118,7 +118,7 @@ CREATE FUNCTION merge_knownexploited (
 RETURNS void
 AS $$
 BEGIN
-IF EXISTS(SELECT * FROM knownExploited WHERE cveID=p_cveID) THEN
+IF EXISTS(SELECT 1 FROM knownExploited WHERE cveID=p_cveID) THEN
     UPDATE knownExploited
     SET vendorProject=p_vendorProject, product=p_product, vulnerabilityName=p_vulnerabilityName, 
         dateAdded=p_dateAdded, shortDescription=p_shortDescription, requiredAction=p_requiredAction, 
