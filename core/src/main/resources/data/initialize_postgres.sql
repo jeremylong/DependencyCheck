@@ -50,7 +50,7 @@ INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('icu-project'
 CREATE TABLE cweEntry (cveid INT, cwe VARCHAR(20),
     CONSTRAINT fkCweEntry FOREIGN KEY (cveid) REFERENCES vulnerability(id) ON DELETE CASCADE);
 
-CREATE TABLE knownExploited (cveID varchar(20),
+CREATE TABLE knownExploited (cveID varchar(20) PRIMARY KEY,
     vendorProject VARCHAR(255),
     product VARCHAR(255),
     vulnerabilityName VARCHAR(500),
