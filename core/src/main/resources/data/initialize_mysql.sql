@@ -63,7 +63,7 @@ INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('scikit-learn
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('unicode', 'international_components_for_unicode', 'MULTIPLE');
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('icu-project', 'international_components_for_unicode', 'MULTIPLE');
 
-CREATE TABLE knownExploited (cveID varchar(20),
+CREATE TABLE knownExploited (cveID varchar(20) PRIMARY KEY ,
     vendorProject VARCHAR(255),
     product VARCHAR(255),
     vulnerabilityName VARCHAR(500),
