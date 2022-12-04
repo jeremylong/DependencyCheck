@@ -212,7 +212,7 @@ END;
 
 GRANT EXECUTE ON merge_ecosystem TO dcuser;
 
-CREATE OR REPLACE PROCEDURE merge_knownexpoited(
+CREATE OR REPLACE PROCEDURE merge_knownexploited(
     p_cveID IN knownExploited.cveID%type,
     p_vendorProject IN knownExploited.vendorProject%type,
     p_product IN knownExploited.product%type,
