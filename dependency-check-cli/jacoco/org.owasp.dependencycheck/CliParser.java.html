@@ -64,7 +64,7 @@ public final class CliParser {
     /**
      * The supported reported formats.
      */
-    private static final String SUPPORTED_FORMATS = &quot;HTML, XML, CSV, JSON, JUNIT, SARIF, or ALL&quot;;
+    private static final String SUPPORTED_FORMATS = &quot;HTML, XML, CSV, JSON, JUNIT, SARIF, JENKINS, or ALL&quot;;
 
     /**
      * Constructs a new CLI Parser object with the configured settings.
@@ -1243,6 +1243,10 @@ public final class CliParser {
          * Disables the Pipfile Analyzer.
          */
         public static final String DISABLE_PIPFILE = &quot;disablePipfile&quot;;
+        /**
+         * Disables the Poetry Analyzer.
+         */
+        public static final String DISABLE_POETRY = &quot;disablePoetry&quot;;
         /**
          * Disables the Cmake Analyzer.
          */

@@ -468,7 +468,7 @@ import org.owasp.dependencycheck.xml.assembly.GrokParseException;
     private boolean isDotnetPath() {
 <span class="fc" id="L469">        final String[] args = new String[2];</span>
 <span class="fc" id="L470">        args[0] = &quot;dotnet&quot;;</span>
-<span class="fc" id="L471">        args[1] = &quot;--version&quot;;</span>
+<span class="fc" id="L471">        args[1] = &quot;--info&quot;;</span>
 <span class="fc" id="L472">        final ProcessBuilder pb = new ProcessBuilder(args);</span>
         try {
 <span class="fc" id="L474">            final Process proc = pb.start();</span>

@@ -631,16 +631,16 @@ import org.slf4j.LoggerFactory;
 <span class="nc" id="L631">                LOGGER.trace(&quot;ignore&quot;, ex);</span>
 <span class="nc" id="L632">            }</span>
         } else {
-<span class="pc bpc" id="L634" title="1 of 2 branches missed.">            if (!left.matches(&quot;^\\d.*$&quot;)) {</span>
-<span class="nc" id="L635">                left = stripLeadingNonNumeric(left);</span>
-<span class="nc bnc" id="L636" title="All 4 branches missed.">                if (left == null || left.isEmpty()) {</span>
+<span class="fc bfc" id="L634" title="All 2 branches covered.">            if (!left.matches(&quot;^\\d.*$&quot;)) {</span>
+<span class="fc" id="L635">                left = stripLeadingNonNumeric(left);</span>
+<span class="pc bpc" id="L636" title="2 of 4 branches missed.">                if (left == null || left.isEmpty()) {</span>
 <span class="nc" id="L637">                    return false;</span>
                 }
             }
             try {
 <span class="fc" id="L641">                Semver v = new Semver(left, SemverType.NPM);</span>
-<span class="pc bpc" id="L642" title="2 of 4 branches missed.">                if (!right.isEmpty() &amp;&amp; v.satisfies(right)) {</span>
-<span class="nc" id="L643">                    return true;</span>
+<span class="pc bpc" id="L642" title="1 of 4 branches missed.">                if (!right.isEmpty() &amp;&amp; v.satisfies(right)) {</span>
+<span class="fc" id="L643">                    return true;</span>
                 }
 <span class="pc bpc" id="L645" title="1 of 2 branches missed.">                if (!right.contains(&quot; &quot;)) {</span>
 <span class="fc" id="L646">                    left = current;</span>
@@ -669,7 +669,7 @@ import org.slf4j.LoggerFactory;
      */
     private static String stripLeadingNonNumeric(String str) {
 <span class="pc bpc" id="L671" title="1 of 2 branches missed.">        for (int x = 0; x &lt; str.length(); x++) {</span>
-<span class="pc bpc" id="L672" title="1 of 2 branches missed.">            if (Character.isDigit(str.codePointAt(x))) {</span>
+<span class="fc bfc" id="L672" title="All 2 branches covered.">            if (Character.isDigit(str.codePointAt(x))) {</span>
 <span class="fc" id="L673">                return str.substring(x);</span>
             }
         }

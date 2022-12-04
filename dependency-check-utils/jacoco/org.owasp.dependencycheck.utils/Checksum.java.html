@@ -17,22 +17,18 @@
  */
 package org.owasp.dependencycheck.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.charset.UnsupportedCharsetException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import org.apache.commons.codec.digest.DigestUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Includes methods to generate the MD5 and SHA1 checksum.
@@ -46,6 +42,10 @@ public final class Checksum {
      * Hex code characters used in getHex.
      */
     private static final String HEXES = &quot;0123456789abcdef&quot;;
+    /**
+     * Buffer size for calculating checksums.
+     */
+    private static final int BUFFER_SIZE = 1024;
 
     /**
      * The logger.
@@ -58,7 +58,7 @@ public final class Checksum {
     /**
      * SHA1 constant.
      */
-    private static final String SHA1 = &quot;SHA1&quot;;
+    private static final String SHA1 = &quot;SHA-1&quot;;
     /**
      * SHA256 constant.
      */
@@ -66,13 +66,7 @@ public final class Checksum {
     /**
      * Cached file checksums for each supported algorithm.
      */
-<span class="fc" id="L69">    private static final Map&lt;String, Map&lt;File, String&gt;&gt; CHECKSUM_CACHES = new HashMap&lt;&gt;(3);</span>
-
-    static {
-<span class="fc" id="L72">        CHECKSUM_CACHES.put(MD5, new ConcurrentHashMap&lt;&gt;());</span>
-<span class="fc" id="L73">        CHECKSUM_CACHES.put(SHA256, new ConcurrentHashMap&lt;&gt;());</span>
-<span class="fc" id="L74">        CHECKSUM_CACHES.put(SHA1, new ConcurrentHashMap&lt;&gt;());</span>
-<span class="fc" id="L75">    }</span>
+<span class="fc" id="L69">    private static final Map&lt;File, FileChecksums&gt; CHECKSUM_CACHE = new ConcurrentHashMap&lt;&gt;();</span>
 
     /**
      * Private constructor for a utility class.
@@ -93,30 +87,39 @@ public final class Checksum {
      * specified that does not exist
      */
     public static String getChecksum(String algorithm, File file) throws NoSuchAlgorithmException, IOException {
-<span class="fc" id="L96">        final Map&lt;File, String&gt; checksumCache = CHECKSUM_CACHES.get(algorithm.toUpperCase());</span>
-<span class="fc bfc" id="L97" title="All 2 branches covered.">        if (checksumCache == null) {</span>
-<span class="fc" id="L98">            throw new NoSuchAlgorithmException(algorithm);</span>
-        }
-<span class="fc" id="L100">        String checksum = checksumCache.get(file);</span>
-<span class="fc" id="L101">        try (InputStream stream = new FileInputStream(file)) {</span>
-<span class="fc bfc" id="L102" title="All 2 branches covered.">            if (checksum == null) {</span>
-<span class="pc bpc" id="L103" title="2 of 4 branches missed.">                switch (algorithm.toUpperCase()) {</span>
-                    case MD5:
-<span class="fc" id="L105">                        checksum = DigestUtils.md5Hex(stream);</span>
-<span class="fc" id="L106">                        break;</span>
-                    case SHA1:
-<span class="fc" id="L108">                        checksum = DigestUtils.sha1Hex(stream);</span>
-<span class="fc" id="L109">                        break;</span>
-                    case SHA256:
-<span class="nc" id="L111">                        checksum = DigestUtils.sha256Hex(stream);</span>
-<span class="nc" id="L112">                        break;</span>
-                    default:
-<span class="nc" id="L114">                        throw new NoSuchAlgorithmException(algorithm);</span>
+<span class="fc" id="L90">        FileChecksums fileChecksums = CHECKSUM_CACHE.get(file);</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if (fileChecksums == null) {</span>
+<span class="fc" id="L92">            try (InputStream stream = Files.newInputStream(file.toPath())) {</span>
+<span class="fc" id="L93">                final MessageDigest md5Digest = getMessageDigest(MD5);</span>
+<span class="fc" id="L94">                final MessageDigest sha1Digest = getMessageDigest(SHA1);</span>
+<span class="fc" id="L95">                final MessageDigest sha256Digest = getMessageDigest(SHA256);</span>
+<span class="fc" id="L96">                final byte[] buffer = new byte[BUFFER_SIZE];</span>
+<span class="fc" id="L97">                int read = stream.read(buffer, 0, BUFFER_SIZE);</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">                while (read &gt; -1) {</span>
+                    // update all checksums together instead of reading the file multiple times
+<span class="fc" id="L100">                    md5Digest.update(buffer, 0, read);</span>
+<span class="fc" id="L101">                    sha1Digest.update(buffer, 0, read);</span>
+<span class="fc" id="L102">                    sha256Digest.update(buffer, 0, read);</span>
+<span class="fc" id="L103">                    read = stream.read(buffer, 0, BUFFER_SIZE);</span>
                 }
-<span class="fc" id="L116">                checksumCache.put(file, checksum);</span>
+<span class="fc" id="L105">                fileChecksums = new FileChecksums(</span>
+<span class="fc" id="L106">                    getHex(md5Digest.digest()),</span>
+<span class="fc" id="L107">                    getHex(sha1Digest.digest()),</span>
+<span class="fc" id="L108">                    getHex(sha256Digest.digest())</span>
+                );
+<span class="fc" id="L110">                CHECKSUM_CACHE.put(file, fileChecksums);</span>
             }
         }
-<span class="fc" id="L119">        return checksum;</span>
+<span class="pc bpc" id="L113" title="1 of 4 branches missed.">        switch (algorithm.toUpperCase()) {</span>
+            case MD5:
+<span class="fc" id="L115">                return fileChecksums.md5;</span>
+            case SHA1:
+<span class="fc" id="L117">                return fileChecksums.sha1;</span>
+            case SHA256:
+<span class="nc" id="L119">                return fileChecksums.sha256;</span>
+            default:
+<span class="fc" id="L121">                throw new NoSuchAlgorithmException(algorithm);</span>
+        }
     }
 
     /**
@@ -129,7 +132,7 @@ public final class Checksum {
      * not available
      */
     public static String getMD5Checksum(File file) throws IOException, NoSuchAlgorithmException {
-<span class="fc" id="L132">        return getChecksum(MD5, file);</span>
+<span class="fc" id="L135">        return getChecksum(MD5, file);</span>
     }
 
     /**
@@ -142,7 +145,7 @@ public final class Checksum {
      * not available
      */
     public static String getSHA1Checksum(File file) throws IOException, NoSuchAlgorithmException {
-<span class="fc" id="L145">        return getChecksum(SHA1, file);</span>
+<span class="fc" id="L148">        return getChecksum(SHA1, file);</span>
     }
 
     /**
@@ -155,7 +158,7 @@ public final class Checksum {
      * not available
      */
     public static String getSHA256Checksum(File file) throws IOException, NoSuchAlgorithmException {
-<span class="nc" id="L158">        return getChecksum(SHA256, file);</span>
+<span class="nc" id="L161">        return getChecksum(SHA256, file);</span>
     }
 
     /**
@@ -167,16 +170,7 @@ public final class Checksum {
      * @return the hex representation of the MD5 hash
      */
     public static String getChecksum(String algorithm, byte[] bytes) {
-<span class="pc bpc" id="L170" title="3 of 4 branches missed.">        switch (algorithm.toUpperCase()) {</span>
-            case MD5:
-<span class="nc" id="L172">                return DigestUtils.md5Hex(bytes);</span>
-            case SHA1:
-<span class="fc" id="L174">                return DigestUtils.sha1Hex(bytes);</span>
-            case SHA256:
-<span class="nc" id="L176">                return DigestUtils.sha256Hex(bytes);</span>
-            default:
-<span class="nc" id="L178">                return null;</span>
-        }
+<span class="fc" id="L173">        return getHex(getMessageDigest(algorithm).digest(bytes));</span>
     }
 
     /**
@@ -186,7 +180,7 @@ public final class Checksum {
      * @return the hex representation of the MD5
      */
     public static String getMD5Checksum(String text) {
-<span class="fc" id="L189">        return DigestUtils.md5Hex(text);</span>
+<span class="fc" id="L183">        return getChecksum(MD5, stringToBytes(text));</span>
     }
 
     /**
@@ -196,7 +190,7 @@ public final class Checksum {
      * @return the hex representation of the SHA1
      */
     public static String getSHA1Checksum(String text) {
-<span class="fc" id="L199">        return DigestUtils.sha1Hex(text);</span>
+<span class="fc" id="L193">        return getChecksum(SHA1, stringToBytes(text));</span>
     }
 
     /**
@@ -206,7 +200,7 @@ public final class Checksum {
      * @return the hex representation of the SHA1
      */
     public static String getSHA256Checksum(String text) {
-<span class="nc" id="L209">        return DigestUtils.sha256Hex(text);</span>
+<span class="nc" id="L203">        return getChecksum(SHA256, stringToBytes(text));</span>
     }
 
     /**
@@ -216,13 +210,7 @@ public final class Checksum {
      * @return the bytes
      */
     private static byte[] stringToBytes(String text) {
-        byte[] data;
-        try {
-<span class="nc" id="L221">            data = text.getBytes(Charset.forName(StandardCharsets.UTF_8.name()));</span>
-<span class="nc" id="L222">        } catch (UnsupportedCharsetException ex) {</span>
-<span class="nc" id="L223">            data = text.getBytes(Charset.defaultCharset());</span>
-<span class="nc" id="L224">        }</span>
-<span class="nc" id="L225">        return data;</span>
+<span class="fc" id="L213">        return text.getBytes(StandardCharsets.UTF_8);</span>
     }
 
     /**
@@ -237,14 +225,14 @@ public final class Checksum {
      * @return the hex representation of the byte array
      */
     public static String getHex(byte[] raw) {
-<span class="pc bpc" id="L240" title="1 of 2 branches missed.">        if (raw == null) {</span>
-<span class="nc" id="L241">            return null;</span>
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">        if (raw == null) {</span>
+<span class="nc" id="L229">            return null;</span>
         }
-<span class="fc" id="L243">        final StringBuilder hex = new StringBuilder(2 * raw.length);</span>
-<span class="fc bfc" id="L244" title="All 2 branches covered.">        for (final byte b : raw) {</span>
-<span class="fc" id="L245">            hex.append(HEXES.charAt((b &amp; 0xF0) &gt;&gt; 4)).append(HEXES.charAt(b &amp; 0x0F));</span>
+<span class="fc" id="L231">        final StringBuilder hex = new StringBuilder(2 * raw.length);</span>
+<span class="fc bfc" id="L232" title="All 2 branches covered.">        for (final byte b : raw) {</span>
+<span class="fc" id="L233">            hex.append(HEXES.charAt((b &amp; 0xF0) &gt;&gt; 4)).append(HEXES.charAt(b &amp; 0x0F));</span>
         }
-<span class="fc" id="L247">        return hex.toString();</span>
+<span class="fc" id="L235">        return hex.toString();</span>
     }
 
     /**
@@ -255,12 +243,27 @@ public final class Checksum {
      */
     private static MessageDigest getMessageDigest(String algorithm) {
         try {
-<span class="nc" id="L258">            return MessageDigest.getInstance(algorithm);</span>
-<span class="nc" id="L259">        } catch (NoSuchAlgorithmException e) {</span>
-<span class="nc" id="L260">            LOGGER.error(e.getMessage(), e);</span>
-<span class="nc" id="L261">            final String msg = String.format(&quot;Failed to obtain the %s message digest.&quot;, algorithm);</span>
-<span class="nc" id="L262">            throw new IllegalStateException(msg, e);</span>
+<span class="fc" id="L246">            return MessageDigest.getInstance(algorithm);</span>
+<span class="nc" id="L247">        } catch (NoSuchAlgorithmException e) {</span>
+<span class="nc" id="L248">            LOGGER.error(e.getMessage(), e);</span>
+<span class="nc" id="L249">            final String msg = String.format(&quot;Failed to obtain the %s message digest.&quot;, algorithm);</span>
+<span class="nc" id="L250">            throw new IllegalStateException(msg, e);</span>
         }
+    }
+
+    /**
+     * File checksums for each supported algorithm
+     */
+    private static class FileChecksums {
+        private final String md5;
+        private final String sha1;
+        private final String sha256;
+
+<span class="fc" id="L262">        public FileChecksums(String md5, String sha1, String sha256) {</span>
+<span class="fc" id="L263">            this.md5 = md5;</span>
+<span class="fc" id="L264">            this.sha1 = sha1;</span>
+<span class="fc" id="L265">            this.sha256 = sha256;</span>
+<span class="fc" id="L266">        }</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -476,7 +476,7 @@
 <a class="jxr_linenumber" name="L468" href="#L468">468</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> isDotnetPath() {
 <a class="jxr_linenumber" name="L469" href="#L469">469</a>         <strong class="jxr_keyword">final</strong> String[] args = <strong class="jxr_keyword">new</strong> String[2];
 <a class="jxr_linenumber" name="L470" href="#L470">470</a>         args[0] = <span class="jxr_string">"dotnet"</span>;
-<a class="jxr_linenumber" name="L471" href="#L471">471</a>         args[1] = <span class="jxr_string">"--version"</span>;
+<a class="jxr_linenumber" name="L471" href="#L471">471</a>         args[1] = <span class="jxr_string">"--info"</span>;
 <a class="jxr_linenumber" name="L472" href="#L472">472</a>         <strong class="jxr_keyword">final</strong> ProcessBuilder pb = <strong class="jxr_keyword">new</strong> ProcessBuilder(args);
 <a class="jxr_linenumber" name="L473" href="#L473">473</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L474" href="#L474">474</a>             <strong class="jxr_keyword">final</strong> Process proc = pb.start();
