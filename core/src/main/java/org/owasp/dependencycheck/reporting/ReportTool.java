@@ -198,7 +198,7 @@ public class ReportTool {
                 sb.append("Due Date").append(knownExploitedVulnerability.getDueDate()).append("\n");
             }
             if (knownExploitedVulnerability.getNotes() != null) {
-                sb.append("notes").append(knownExploitedVulnerability.getNotes()).append("\n");
+                sb.append("Notes: ").append(knownExploitedVulnerability.getNotes()).append("\n");
             }
             sb.append("\n");
         }
