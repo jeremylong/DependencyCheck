@@ -419,3 +419,10 @@
    <packageUrl regex="true">^pkg:maven/io\.opentracing\.contrib/opentracing-apache-httpclient@.*$</packageUrl>
    <cpe>cpe:/a:apache:httpclient</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4621
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.codehaus\.jackson/jackson-xc@.*$</packageUrl>
+   <cpe>cpe:/a:fasterxml:jackson-databind</cpe>
+</suppress>
