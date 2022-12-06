@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4852
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.graphql-java-kickstart/graphql-java-kickstart@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4803
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/net\.sourceforge\.htmlunit/htmlunit-cssparser@.*$</packageUrl>
+   <cpe>cpe:/a:htmlunit_project:htmlunit</cpe>
+</suppress>
+
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4853
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.graphql-java-kickstart/graphql-java-servlet@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4859
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.apollographql\.federation/federation-graphql-java-support@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4851
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.graphql-java/graphql-java-extended-scalars@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4860
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.apollographql\.federation/federation-graphql-java-support-api@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4862
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.github\.graphql-java/graphql-java-annotations@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4863
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.graphql-java/java-dataloader@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4854
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.graphql-java-kickstart/graphql-java-tools@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4806
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.vaadin\.addon/easyuploads@.*$</packageUrl>
+   <cpe>cpe:/a:vaadin:vaadin</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4790
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/ch\.qos\.logback/logback-classic@.*$</packageUrl>
+   <cpe>cpe:/a:qos:slf4j</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4781
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.eclipse\.microprofile\.config/microprofile-config-api@.*$</packageUrl>
+   <cpe>cpe:/a:payara:payara</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4777
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.james/apache-mime4j@.*$</packageUrl>
+   <cpe>cpe:/a:apache:james</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4755
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.postgresql/r2dbc-postgresql@.*$</packageUrl>
+   <cpe>cpe:/a:postgresql:postgresql</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4754
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.mockito/mockito-junit-jupiter@.*$</packageUrl>
+   <cpe>cpe:/a:junit:junit4</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4735
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.robolectric/junit@.*$</packageUrl>
+   <cpe>cpe:/a:junit:junit4</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4729
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.openhtmltopdf/openhtmltopdf-jsoup-dom-converter@.*$</packageUrl>
+   <cpe>cpe:/a:jsoup:jsoup</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4728
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.vladsch\.flexmark/flexmark-ext-xwiki-macros@.*$</packageUrl>
+   <cpe>cpe:/a:xwiki:xwiki</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4727
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.vladsch\.flexmark/flexmark-ext-macros@.*$</packageUrl>
+   <cpe>cpe:/a:processing:processing</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4726
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jfrog\.artifactory\.client/artifactory-java-client-api@.*$</packageUrl>
+   <cpe>cpe:/a:jfrog:artifactory</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4897
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlin/kotlin-annotation-processing-gradle@.*$</packageUrl>
+   <cpe>cpe:/a:processing:processing</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4900
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.testcontainers/mysql@.*$</packageUrl>
+   <cpe>cpe:/a:mysql:mysql</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4899
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.mariadb/r2dbc-mariadb@.*$</packageUrl>
+   <cpe>cpe:/a:mariadb:mariadb</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4898
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.testcontainers/mariadb@.*$</packageUrl>
+   <cpe>cpe:/a:mariadb:mariadb</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4907
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/net\.minidev/accessors-smart@.*$</packageUrl>
+   <cpe>cpe:/a:json-smart_project:json-smart-v1</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4721
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.camel/camel-activemq@.*$</packageUrl>
+   <cpe>cpe:/a:apache:activemq</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4652
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jruby\.rack/jruby-rack@.*$</packageUrl>
+   <cpe>cpe:/a:jruby:jruby</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4647
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jruby/dirgra@.*$</packageUrl>
+   <cpe>cpe:/a:jruby:jruby</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4932
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.datasketches/datasketches-java@.*$</packageUrl>
+   <cpe>cpe:/a:sketch:sketch</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4962
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.github\.pagehelper/pagehelper-spring-boot-starter@.*$</packageUrl>
+   <cpe>cpe:/a:pagehelper_project:pagehelper</cpe>
+</suppress>
+<!-- suppressions above this entry were included in the 7.3.1 release -->
+
+<suppress base="true">
+       <notes><![CDATA[
+           FP per issue https://github.com/jeremylong/DependencyCheck/issues/5060
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/org\.msgpack/.*@.*$</packageUrl>
+       <cpe>cpe:/a:messagepack_project:messagepack</cpe>
+    </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5038
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.locationtech\.spatial4j/spatial4j@.*$</packageUrl>
+   <cpe>cpe:/a:pro_search:pro_search</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5037
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.ko-sys\.av/airac@.*$</packageUrl>
+   <cpe>cpe:/a:keybase:keybase</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5027
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/software\.aws\.rds/aws-mysql-jdbc@.*$</packageUrl>
+   <cpe>cpe:/a:mysql:mysql</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5024
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/net\.openhft/chronicle-wire@.*$</packageUrl>
+   <cpe>cpe:/a:wire:wire</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5022
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.zendesk/mysql-binlog-connector-java@.*$</packageUrl>
+   <cpe>cpe:/a:mysql:mysql</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5021
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.debezium/debezium-connector-mysql@.*$</packageUrl>
+   <cpe>cpe:/a:mysql:mysql</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4944
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.hbase/hbase-zookeeper@.*$</packageUrl>
+   <cpe>cpe:/a:apache:zookeeper</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4949
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.curioswitch\.curiostack/protobuf-jackson@.*$</packageUrl>
+   <cpe>cpe:/a:grpc:grpc</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5014
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.ejbca\.cvc/cert-cvc@.*$</packageUrl>
+   <cpe>cpe:/a:primekey:ejbca</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4952
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.twill/twill-zookeeper@.*$</packageUrl>
+   <cpe>cpe:/a:apache:zookeeper</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4948
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.opentracing\.contrib/opentracing-grpc@.*$</packageUrl>
+   <cpe>cpe:/a:grpc:grpc</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4947
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.pf4j/pf4j@.*$</packageUrl>
+   <cpe>cpe:/a:sonatype:nexus</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4946
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.iceberg/iceberg-hive-metastore@.*$</packageUrl>
+   <cpe>cpe:/a:apache:hive</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4942
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.hbase/hbase-hadoop-compat@.*$</packageUrl>
+   <cpe>cpe:/a:apache:hadoop</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4941
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.flink/flink-rpc-akka-loader@.*$</packageUrl>
+   <cpe>cpe:/a:akka:akka</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4940
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.flink/flink-hadoop-fs@.*$</packageUrl>
+   <cpe>cpe:/a:apache:hadoop</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4931
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.azure\.resourcemanager/azure-resourcemanager-appplatform@.*$</packageUrl>
+   <cpe>cpe:/a:microsoft:platform_sdk</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4720
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.clojure/data\.priority-map@.*$</packageUrl>
+   <cpe>cpe:/a:priority-software:priority</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4693
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.zipkin\.reporter2/zipkin-reporter@.*$</packageUrl>
+   <cpe>cpe:/a:pki-core_project:pki-core</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4692
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.zipkin\.zipkin2/zipkin@.*$</packageUrl>
+   <cpe>cpe:/a:pki-core_project:pki-core</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4669
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.junit\.jupiter/junit-jupiter-engine@.*$</packageUrl>
+   <cpe>cpe:/a:fan_platform_project:fan_platform</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5017
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.google\.api\.grpc/grpc-google-iam-v1@.*$</packageUrl>
+   <cpe>cpe:/a:grpc:grpc</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4681
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.amazonaws/aws-java-sdk-prometheus@.*$</packageUrl>
+   <cpe>cpe:/a:prometheus:prometheus</cpe>
+</suppress>
+<!-- suppressions above this entry will be included in the 7.4.0 release as the result of #5070 -->
+
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5083
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.github\.pagehelper/pagehelper-spring-boot-autoconfigure@.*$</packageUrl>
+   <cpe>cpe:/a:pagehelper_project:pagehelper</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4651
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.hibernate/hibernate-commons-annotations@.*$</packageUrl>
+   <cpe>cpe:/a:hibernate:hibernate_orm</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5097
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/software\.aws\.rds/aws-mysql-jdbc@.*$</packageUrl>
+   <cpe>cpe:/a:mariadb:mariadb</cpe>
+   <cpe>cpe:/a:mysql:mysql</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5108
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jfrog\.artifactory\.client/artifactory-java-client-httpClient@.*$</packageUrl>
+   <cpe>cpe:/a:jfrog:artifactory</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5107
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.opentracing\.contrib/opentracing-apache-httpclient@.*$</packageUrl>
+   <cpe>cpe:/a:apache:httpclient</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4621
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.codehaus\.jackson/jackson-xc@.*$</packageUrl>
+   <cpe>cpe:/a:fasterxml:jackson-databind</cpe>
+</suppress>
+</suppressions>
