@@ -433,3 +433,10 @@
    <sha1>5b8f86fea035328fc9e8c660773037a3401ce25f</sha1>
    <cpe regex="true">.*</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #4575
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.wildfly\.wildfly-http-client/wildfly-http-ejb-client@.*$</packageUrl>
+   <cpe>cpe:/a:redhat:jboss-ejb-client</cpe>
+</suppress>
