@@ -15,4 +15,9 @@ Dependency-Check makes use of several other open source libraries. Please see th
 
 
   [wiki]: https://github.com/jeremylong/DependencyCheck/wiki
+<<<<<<< HEAD
+=======
+  [subscribe]: mailto:dependency-check+subscribe@googlegroups.com
+  [post]: mailto:dependency-check@googlegroups.com
+>>>>>>> 4c84d6d9c (Fix outdated LICENSE.txt and NOTICE.txt links)
   [notices]: https://github.com/jeremylong/DependencyCheck/blob/main/NOTICE.txt
