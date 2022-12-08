@@ -361,7 +361,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
             for (Map.Entry<String, JsonValue> entry : deps.entrySet()) {
                 String pathName = entry.getKey();
                 String name = pathName;
-                final File base;
+                File base;
 
                 final int indexOfNodeModule = name.lastIndexOf(NODE_MODULES_DIRNAME);
                 if (indexOfNodeModule >= 0) {
@@ -369,6 +369,11 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                     base = Paths.get(baseDir.getPath(), pathName).toFile();
                 } else {
                     base = Paths.get(baseDir.getPath(), "node_modules", name).toFile();
+                    if (!base.isFile()) {
+                        if ("node_modules".equals(baseDir.getParentFile().getName())) {
+                            base = Paths.get(baseDir.getParent(), name).toFile();
+                        }
+                    }
                 }
 
                 final String version;
