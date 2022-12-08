@@ -444,7 +444,7 @@ See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/
 
 - Updated the JSON report to include a new field for unscored vulnerabilities (see #2392).
 - Updated the XML report to include a new attribute to flag unscored vulnerabilities (see #2392)
-  - see https://github.com/jeremylong/DependencyCheck/blob/master/core/src/main/resources/schema/dependency-check.2.3.xsd
+  - see https://github.com/jeremylong/DependencyCheck/blob/main/core/src/main/resources/schema/dependency-check.2.3.xsd
 - Added an experimental analyzer that will lookup Node libraries in the NVD data feeds (see #1249)
   - `NpmCPEAnalyzer`, experimental analyzers must be enabled, controlled via property `analyzer.npm.cpe.enabled` which will be exposed as a configuration option in the next release.
 
@@ -706,7 +706,7 @@ See the full listing of [resolved issues](https://github.com/jeremylong/Dependen
 - An Artifactory Analyzer was added that can be used to in-place of the Central Analyzer for organizations that use Artifactory.
   - Note, for maven and gradle builds the Artifactory analyzer will not improve the analysis. The information gained by using the Central, Artifactory, or Nexus Analyzers is already obtained from the build system.
 - An experimental Retire JS analyzer has been added to analyze client side JavaScript.
-  - This utilizes information from the RetireJS repo on github. If you have a proxy that prevents access you will either need to have access granted to https://raw.githubusercontent.com/Retirejs/retire.js/master/repository/jsrepository.json or host the file internally, update the environment variable `analyzer.retirejs.repo.js.ur`, and periodically update the file.
+  - This utilizes information from the RetireJS repo on github. If you have a proxy that prevents access you will either need to have access granted to https://raw.githubusercontent.com/Retirejs/retire.js/main/repository/jsrepository.json or host the file internally, update the environment variable `analyzer.retirejs.repo.js.ur`, and periodically update the file.
   - This analyzer is considered experimental, but the team expects this to be promoted quickly.
 - NuGet dependencies contained in MSBuild files are now included in the scan. See [Issue #1131](https://github.com/jeremylong/DependencyCheck/issues/1131) for more details.
 - Cocoapod's Podfile.lock is now analyzed when present. See [PR #1324](https://github.com/jeremylong/DependencyCheck/pull/1324) for more information.
