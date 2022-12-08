@@ -5989,4 +5989,83 @@
         <packageUrl regex="true">^pkg:maven/com\.amazonaws/aws-java-sdk-prometheus@.*$</packageUrl>
         <cpe>cpe:/a:prometheus:prometheus</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5089
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.quarkus/quarkus\-keycloak\-authorization@.*$</packageUrl>
+        <cpe>cpe:/a:keycloak:keycloak</cpe>
+        <cpe>cpe:/a:redhat:keycloak</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #4653
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.eclipse\.angus/.*@.*$</packageUrl>
+        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5121 - fix for commons
+        ]]></notes>
+        <packageUrl regex="true">^(?!pkg:maven/commons-net/commons-net).*$</packageUrl>
+        <cpe>cpe:/a:apache:commons_net</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5083
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.github\.pagehelper/pagehelper-spring-boot-autoconfigure@.*$</packageUrl>
+        <cpe>cpe:/a:pagehelper_project:pagehelper</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #4651
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.hibernate/hibernate-commons-annotations@.*$</packageUrl>
+        <cpe>cpe:/a:hibernate:hibernate_orm</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5097
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/software\.aws\.rds/aws-mysql-jdbc@.*$</packageUrl>
+        <cpe>cpe:/a:mariadb:mariadb</cpe>
+        <cpe>cpe:/a:mysql:mysql</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5108
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.jfrog\.artifactory\.client/artifactory-java-client-httpClient@.*$</packageUrl>
+        <cpe>cpe:/a:jfrog:artifactory</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5107
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.opentracing\.contrib/opentracing-apache-httpclient@.*$</packageUrl>
+        <cpe>cpe:/a:apache:httpclient</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #4621
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.codehaus\.jackson/jackson-xc@.*$</packageUrl>
+        <cpe>cpe:/a:fasterxml:jackson-databind</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #5118
+        ]]></notes>
+        <sha1>5b8f86fea035328fc9e8c660773037a3401ce25f</sha1>
+        <cpe regex="true">.*</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #4575
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.wildfly\.wildfly-http-client/wildfly-http-ejb-client@.*$</packageUrl>
+        <cpe>cpe:/a:redhat:jboss-ejb-client</cpe>
+    </suppress>
 </suppressions>
