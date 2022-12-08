@@ -359,7 +359,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
 
           if (deps != null) {
             for (Map.Entry<String, JsonValue> entry : deps.entrySet()) {
-                String pathName = entry.getKey();
+                final String pathName = entry.getKey();
                 String name = pathName;
                 File base;
 
