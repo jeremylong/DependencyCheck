@@ -1133,6 +1133,13 @@ Copyright (c) 2012 - Jeremy Long
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <!-- deprecated coordinates, replaced by org.hamcrest:hamcrest -->
+                        <groupId>org.hamcrest</groupId>
+                        <artifactId>hamcrest-core</artifactId>
+                    </exclusion>
+                </exclusions>
                 <scope>test</scope>
             </dependency>
             <dependency>
