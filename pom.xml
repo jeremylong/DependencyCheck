@@ -150,7 +150,7 @@ Copyright (c) 2012 - Jeremy Long
         <commons-jcs-core.version>2.2.1</commons-jcs-core.version>
         <aho-corasick-double-array-trie.version>1.2.3</aho-corasick-double-array-trie.version>
         <junit.version>4.13.2</junit.version>
-        <hamcrest-core.version>2.2</hamcrest-core.version>
+        <hamcrest.version>2.2</hamcrest.version>
         <jmockit.version>1.49</jmockit.version>
         <mockito-core.version>4.9.0</mockito-core.version>
         <jsoup.version>1.15.3</jsoup.version>
@@ -1273,8 +1273,8 @@ Copyright (c) 2012 - Jeremy Long
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-core</artifactId>
-                <version>${hamcrest-core.version}</version>
+                <artifactId>hamcrest</artifactId>
+                <version>${hamcrest.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -1351,7 +1351,7 @@ Copyright (c) 2012 - Jeremy Long
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
+            <artifactId>hamcrest</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
