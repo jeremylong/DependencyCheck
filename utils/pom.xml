@@ -20,7 +20,7 @@ Copyright (c) 2014 - Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>7.4.1-SNAPSHOT</version>
+        <version>7.4.1</version>
     </parent>
 
     <artifactId>dependency-check-utils</artifactId>
@@ -30,7 +30,7 @@ Copyright (c) 2014 - Jeremy Long. All Rights Reserved.
         <connection>scm:git:https://github.com/jeremylong/DependencyCheck.git</connection>
         <url>https://github.com/jeremylong/DependencyCheck/tree/main/utils</url>
         <developerConnection>scm:git:git@github.com:jeremylong/DependencyCheck.git</developerConnection>
-        <tag>v6.4.1</tag>
+        <tag>v7.4.1</tag>
     </scm>
     <properties>
         <findbugs.onlyAnalyze>org.owasp.dependencycheck.utils.*</findbugs.onlyAnalyze>
