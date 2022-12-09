@@ -3,7 +3,6 @@ Dependency-Check-Core
 
 Dependency-Check-Core is the main engine used by all of the other modules to do the analysis and reporting.
 
-
 Copyright & License
 ------------
 
