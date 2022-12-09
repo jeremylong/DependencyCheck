@@ -185,25 +185,13 @@ jobs:
           prerelease: false
           draft: false
           body: |
-            ### Added
-
-            - Add support for npm package lock v2 and v3 (#5078)
-            - Added experimental support for Python Poetry (#5025)
-            - Added a vanilla HTML report for use in Jenkins (#5053)
-
-            ### Changed
-
-            - Renamed `RELEASE_NOTES.md` to `CHANGELOG.md` to be more conventional
-            - Optimized checksum calculation to improve performance (#5112)
-            - Added support for scanning .NET assemblies when only the dotnet runtime is installed (#5087)
-            - Bumped several dependencies
-
             ### Fixed
 
-            - Fixed bug when setting the proxy port (#5076)
-            - Resolved several FP and FN
+            - Fixed bug when setting the proxy port in gradle (#5123)
+            - Fixed issue with invalid `node_module` paths in some scans (#5127)
+            - Resolved several FP
 
-            See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/52?closed=1).
+            See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/53?closed=1).
 
       - name: Upload CLI
         id: upload-release-cli

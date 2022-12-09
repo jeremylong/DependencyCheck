@@ -1,5 +1,15 @@
 # Change Log
 
+## [Version 7.4.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.4.1) (2022-12-09)
+
+### Fixed
+
+- Fixed bug when setting the proxy port in gradle (#5123)
+- Fixed issue with invalid `node_module` paths in some scans (#5127)
+- Resolved several FP
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/53?closed=1).
+
 ## [Version 7.4.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.4.0) (2022-12-04)
 
 ### Added
