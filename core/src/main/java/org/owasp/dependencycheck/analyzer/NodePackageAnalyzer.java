@@ -347,7 +347,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
             String parentPackage, Engine engine) throws AnalysisException {
           final boolean skipDev = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, false);
           final JsonObject deps;
-          final File modules_root = new File(rootFile.getParentFile(), "node_modules");
+          final File modulesRoot = new File(rootFile.getParentFile(), "node_modules");
           final int lockJsonVersion = json.containsKey("lockfileVersion") ? json.getInt("lockfileVersion") : 1;
           if (lockJsonVersion >= 2) {
             deps = json.getJsonObject("packages");
@@ -370,7 +370,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                 } else {
                     base = Paths.get(baseDir.getPath(), "node_modules", name).toFile();
                     if (!base.isFile()) {
-                        final File test = new File(modules_root, name);
+                        final File test = new File(modulesRoot, name);
                         if (test.isDirectory()) {
                             base = test;
                         }
