@@ -92,6 +92,7 @@ nodeAnalyzerEnabled                 | Sets whether the [retired](../analyzers/in
 nodeAuditAnalyzerEnabled            | Sets whether the Node Audit Analyzer should be used. This analyzer requires an internet connection.                                                 | true
 nodeAuditAnalyzerUseCache           | Sets whether the Node Audit Analyzer will cache results. Cached results expire after 24 hours.                                                      | true
 nodeAuditSkipDevDependencies        | Sets whether the Node Audit Analyzer will skip devDependencies.                                                                                     | false
+nodeAuditAnalyzerUrl                | The Node Audit API URL for the Node Audit Analyzer.                                                                                                 | https://registry.npmjs.org/-/npm/v1/security/audits
 nodePackageSkipDevDependencies      | Sets whether the Node Package Analyzer will skip devDependencies.                                                                                   | false
 retireJsAnalyzerEnabled             | Sets whether the RetireJS Analyzer should be used.                                                                                                  | true
 retireJsForceUpdate                 | Sets whether the RetireJS Analyzer should update regardless of the `autoupdate` setting.                                                            | false
