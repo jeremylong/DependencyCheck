@@ -1393,7 +1393,7 @@ Copyright (c) 2012 - Jeremy Long
                 </property>
             </activation>
             <properties>
-                <maven.api.version>3.8.1</maven.api.version>
+                <maven.api.version>3.8.6</maven.api.version>
             </properties>
         </profile>
         <profile>
