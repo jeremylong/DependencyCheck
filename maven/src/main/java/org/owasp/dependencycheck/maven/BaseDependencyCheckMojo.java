@@ -2681,12 +2681,17 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 }
             }
             if (!isResolved) {
-                getLog().error("Unable to resolve system scoped dependency: " + dependencyNode.toNodeString());
+                final StringBuilder message = new StringBuilder("Unable to resolve system scoped dependency: ");
+                if (artifactFile != null) {
+                    message.append(dependencyNode.toNodeString()).append(" at path ").append(artifactFile);
+                } else {
+                    message.append(dependencyNode.toNodeString()).append(" at path ").append(a.getFile());
+                }
+                getLog().error(message);
                 if (exCol == null) {
                     exCol = new ExceptionCollection();
                 }
-                exCol.addException(new DependencyNotFoundException("Unable to resolve system scoped dependency: "
-                        + dependencyNode.toNodeString()));
+                exCol.addException(new DependencyNotFoundException(message.toString()));
             }
         } else {
             final Artifact dependencyArtifact = dependencyNode.getArtifact();
