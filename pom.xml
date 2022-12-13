@@ -1068,9 +1068,9 @@ Copyright (c) 2012 - Jeremy Long
                 <version>0.0.2.1</version>
             </dependency>
             <dependency>
-                <groupId>com.vdurmont</groupId>
+                <groupId>org.semver4j</groupId>
                 <artifactId>semver4j</artifactId>
-                <version>3.1.0</version>
+                <version>4.0.0</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains</groupId>
