@@ -2900,6 +2900,20 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #5155 #5153
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.vaadin/.*(collaboration|license|open|testbench).*$</packageUrl>
+        <cpe>cpe:/a:vaadin:vaadin</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #5153
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.vaadin\.servletdetector/throw-if.*$</packageUrl>
+        <cpe>cpe:/a:vaadin:vaadin</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2191
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.vaadin/.*(sass|flow|theme|mixin|style|widget).*$</packageUrl>
