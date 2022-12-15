@@ -494,6 +494,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private Boolean nodeAuditAnalyzerEnabled;
 
     /**
+     * The Node Audit API URL for the Node Audit Analyzer.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "nodeAuditAnalyzerUrl")
+    private String nodeAuditAnalyzerUrl;
+
+    /**
      * Sets whether or not the Yarn Audit Analyzer should be used.
      */
     @SuppressWarnings("CanBeFinal")
@@ -520,7 +527,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "nodeAuditSkipDevDependencies")
     private Boolean nodeAuditSkipDevDependencies;
     /**
-     * Sets whether or not the Node Audit Analyzer should skip devDependencies.
+     * Sets whether or not the Node.js Analyzer should skip devDependencies.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nodePackageSkipDevDependencies")
@@ -2151,6 +2158,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CPANFILE_ENABLED, cpanfileAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, nodeAuditAnalyzerEnabled);
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_URL, nodeAuditAnalyzerUrl);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, nodeAuditAnalyzerUseCache);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, nodePackageSkipDevDependencies);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, nodeAuditSkipDevDependencies);
