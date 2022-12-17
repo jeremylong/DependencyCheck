@@ -439,3 +439,11 @@
 </suppress>
 <!-- suppressions above this entry will be included in the 7.4.1 release -->
 
+
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5131
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.zipkin\.zipkin2/zipkin-collector@.*$</packageUrl>
+   <cpe>cpe:/a:pki-core_project:pki-core</cpe>
+</suppress>
