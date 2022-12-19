@@ -2253,6 +2253,14 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per issue #5086
+        suppressing the Apache Pluto library that is referenced as a parent dependency
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/javax\.portlet/portlet\-api@.*$</packageUrl>
+        <cpe>cpe:/a:apache:pluto</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         False positive per #1641
         ]]></notes>
         <gav regex="true">^org\.pac4j:pac4j-oidc:.*$</gav>
