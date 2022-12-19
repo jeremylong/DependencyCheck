@@ -447,3 +447,10 @@
    <packageUrl regex="true">^pkg:maven/io\.zipkin\.zipkin2/zipkin-collector@.*$</packageUrl>
    <cpe>cpe:/a:pki-core_project:pki-core</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5162
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jgroups\.kubernetes/jgroups-kubernetes@.*$</packageUrl>
+   <cpe>cpe:/a:redhat:jgroups</cpe>
+</suppress>
