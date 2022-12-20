@@ -37,13 +37,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-            FP per issue #4180, #4188, #4189, #4190
-            ]]></notes>
-        <packageUrl regex="true">^pkg:maven/com\.vaadin/vaadin-spring.*@.*$</packageUrl>
-        <cpe>cpe:/a:vaadin:vaadin</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
             FP per issue #4199
             ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.sonarsource\.scanner\.gradle/sonarqube-gradle-plugin@.*$</packageUrl>
@@ -2886,13 +2879,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per #2651
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/com\.vaadin/vaadin[^@]+testbench@.*$</packageUrl>
-        <cpe>cpe:/a:vaadin:vaadin</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
         FP per #2191
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.vaadin\.(addon|external).*$</packageUrl>
@@ -2900,16 +2886,9 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per #5155 #5153
+        FP per #5155 #5153 #4180 #4188 #4189 #4190 #2651 #2191
         ]]></notes>
         <packageUrl regex="true">^(?!pkg:maven/com\.vaadin/vaadin(-core)?@).*$</packageUrl>
-        <cpe>cpe:/a:vaadin:vaadin</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        FP per #2191
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/com\.vaadin/.*(sass|flow|theme|mixin|style|widget).*$</packageUrl>
         <cpe>cpe:/a:vaadin:vaadin</cpe>
     </suppress>
     <suppress base="true">
