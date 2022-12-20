@@ -454,3 +454,10 @@
    <packageUrl regex="true">^pkg:maven/org\.jgroups\.kubernetes/jgroups-kubernetes@.*$</packageUrl>
    <cpe>cpe:/a:redhat:jgroups</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5171
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.james/queue-activemq-guice@.*$</packageUrl>
+   <cpe>cpe:/a:apache:activemq</cpe>
+</suppress>
