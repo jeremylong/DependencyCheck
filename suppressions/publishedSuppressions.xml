@@ -476,4 +476,11 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.james/james-server-queue-activemq@.*$</packageUrl>
    <cpe>cpe:/a:apache:activemq</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5168
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.james/apache-jsieve-core@.*$</packageUrl>
+   <cpe>cpe:/a:apache:james</cpe>
+</suppress>
 </suppressions>
