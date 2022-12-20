@@ -468,3 +468,10 @@
    <packageUrl regex="true">^pkg:maven/io\.projectreactor\.rabbitmq/reactor-rabbitmq@.*$</packageUrl>
    <cpe>cpe:/a:vmware:rabbitmq</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5170
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.james/james-server-queue-activemq@.*$</packageUrl>
+   <cpe>cpe:/a:apache:activemq</cpe>
+</suppress>
