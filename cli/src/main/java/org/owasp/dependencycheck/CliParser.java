@@ -389,6 +389,8 @@ public final class CliParser {
                 .addOption(newOptionWithArg(ARGUMENT.PATH_TO_BUNDLE_AUDIT_WORKING_DIRECTORY, "path",
                         "The path to working directory that the bundle-audit command should be executed from when "
                         + "doing Gem bundle analysis."))
+                .addOption(newOptionWithArg(ARGUMENT.OSSINDEX_URL, "url",
+                        "Alternative URL for the OSS Index. If not set the public Sonatype OSS Index will be used."))
                 .addOption(newOptionWithArg(ARGUMENT.OSSINDEX_USERNAME, "username",
                         "The username to authenticate to Sonatype's OSS Index. If not set the Sonatype OSS Index "
                         + "Analyzer will use an unauthenticated connection."))
@@ -1304,6 +1306,10 @@ public final class CliParser {
          * locally.
          */
         public static final String DISABLE_OSSINDEX_CACHE = "disableOssIndexCache";
+        /**
+         * The alternative URL for the Sonatype OSS Index.
+         */
+        public static final String OSSINDEX_URL = "ossIndexUrl";
         /**
          * The username for the Sonatype OSS Index.
          */
