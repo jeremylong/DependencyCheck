@@ -252,13 +252,13 @@ mvn -s settings.xml install
 Running dependency-check on dependency-check
 --------------------------------------------
 
-Dependency-check references several vulnerables dependencies that are never used
+Dependency-check references several vulnerable dependencies that are never used
 except as test resources. All of these optional test dependencies are included in
 the `test-dependencies` profile. To run dependency-check against itself simple
-exclude the `test-dependencies` profile;
+exclude the `test-dependencies` profile:
 
 ```shell
-mvn org.owasp:dependency-check-maven:aggregate -P-test-dependencies
+mvn org.owasp:dependency-check-maven:aggregate -P-test-dependencies -DskipProvidedScope=true
 ```
 
 Building the documentation

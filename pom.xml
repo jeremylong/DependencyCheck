@@ -124,8 +124,7 @@ Copyright (c) 2012 - Jeremy Long
         <slf4j.version>1.7.36</slf4j.version>
         <logback.version>1.2.11</logback.version>
         
-        <!-- moved maven.api.version to the profile section -->
-        <!--maven.api.version>3.8.1</maven.api.version-->
+        <maven.api.version>3.1.0</maven.api.version>
         <reporting.checkstyle-plugin.version>3.2.0</reporting.checkstyle-plugin.version>
         <reporting.checkstyle.tool.version>9.3</reporting.checkstyle.tool.version>
         <doxia-module-markdown.version>1.11.1</doxia-module-markdown.version>
@@ -1380,22 +1379,6 @@ Copyright (c) 2012 - Jeremy Long
         </dependency>
     </dependencies>
     <profiles>
-        <profile>
-            <id>standard</id>
-            <!--
-            `releaseTesting` is used in the maven/pom.xml and downgrades the
-            Maven API to 3.1.0 during full refression testing to ensure that
-            no new Maven APIs were used and we maintain compatability with 3.1.
-            -->
-            <activation>
-                <property>
-                    <name>!releaseTesting</name>
-                </property>
-            </activation>
-            <properties>
-                <maven.api.version>3.8.6</maven.api.version>
-            </properties>
-        </profile>
         <profile>
             <id>release</id>
             <activation>
