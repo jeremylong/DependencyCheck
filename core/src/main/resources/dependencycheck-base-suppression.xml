@@ -627,6 +627,7 @@
             60. travis-ci:travis_ci is ci server software build in ruby/shell/go #4025
             61. cpe:/a:storage_project:storage is software build in go (the github.com/containers/storage project) #4436
             62. cpe:/a:pivotal_software:rabbitmq is software build in Erlang #4178
+            63. cpe:/a:saml_project:saml is a SAML implementation in Go #5167
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
@@ -691,6 +692,7 @@
         <cpe>cpe:/a:travis-ci:travis_ci</cpe>
         <cpe>cpe:/a:storage_project:storage</cpe>
         <cpe>cpe:/a:pivotal_software:rabbitmq</cpe>
+	<cpe>cpe:/a:saml_project:saml</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
