@@ -465,6 +465,7 @@ public final class CliParser {
                 .addOption(newOption(ARGUMENT.DISABLE_PIPFILE, "Disable the Pipfile Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_COMPOSER, "Disable the PHP Composer Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_CPAN, "Disable the Perl CPAN file Analyzer."))
+                .addOption(newOption(ARGUMENT.DISABLE_POETRY, "Disable the Poetry Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_GOLANG_MOD, "Disable the Golang Mod Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_DART, "Disable the Dart Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_OPENSSL, "Disable the OpenSSL Analyzer."))
