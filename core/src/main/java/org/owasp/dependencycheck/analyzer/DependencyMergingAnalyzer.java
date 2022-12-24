@@ -48,6 +48,10 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
      * The phase that this analyzer is intended to run in.
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.POST_INFORMATION_COLLECTION;
+    /**
+     * Used for synchronization when merging related dependencies.
+     */
+    private static final Object DEPENDENCY_LOCK = new Object();
 
     /**
      * Returns the name of the analyzer.
@@ -145,7 +149,7 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
      */
     public static void mergeDependencies(final Dependency dependency, final Dependency relatedDependency,
             final Set<Dependency> dependenciesToRemove) {
-        synchronized (dependency) {
+        synchronized (DEPENDENCY_LOCK) {
             LOGGER.debug("Merging '{}' into '{}'", relatedDependency.getFilePath(), dependency.getFilePath());
             dependency.addRelatedDependency(relatedDependency);
             relatedDependency.getEvidence(EvidenceType.VENDOR).forEach((e) -> dependency.addEvidence(EvidenceType.VENDOR, e));
