@@ -8,14 +8,16 @@ on:
       - synchronize
 
 permissions:
-  pull-requests: read
-  statuses: write
+  contents: read
 
 jobs:
   main:
     name: Validate PR title
+    permissions:
+      pull-requests: read
+      statuses: write
     runs-on: ubuntu-latest
     steps:
-      - uses: amannn/action-semantic-pull-request@v5
+      - uses: amannn/action-semantic-pull-request@v5.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
