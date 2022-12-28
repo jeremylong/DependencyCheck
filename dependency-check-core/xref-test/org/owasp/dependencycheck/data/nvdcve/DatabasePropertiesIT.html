@@ -25,7 +25,7 @@
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  <strong class="jxr_keyword">package</strong> org.owasp.dependencycheck.data.nvdcve;
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> com.vdurmont.semver4j.Semver;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> org.semver4j.Semver;
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.BaseDBTestCase;
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> java.util.Properties;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.junit.After;
@@ -107,7 +107,7 @@
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>          DatabaseProperties instance = cveDb.getDatabaseProperties();
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>         String result = instance.getProperty(key);
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>         
-<a class="jxr_linenumber" name="L102" href="#L102">102</a>         Semver ver = <strong class="jxr_keyword">new</strong> Semver(result, Semver.SemverType.LOOSE);
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>         Semver ver = <strong class="jxr_keyword">new</strong> Semver(result);
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>         assertTrue(ver.getMajor() &gt;= 5);
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>     }
 <a class="jxr_linenumber" name="L105" href="#L105">105</a> 
