@@ -1,5 +1,19 @@
 # Change Log
 
+## [Version 7.4.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.4.2) (2022-12-28)
+
+### Fixed
+
+- Fixes maven 3.1 compatibility issue (#5152)
+- Fixed issue with invalid `node_module` paths in some scans (#5135)
+- Fixed missing option to disable the Poetry Analyzer in the CLI (#5160)
+- Fixed missing option to configure the OSS Index URL in the CLI (#5180)
+- Fixed NPE when analyzing version ranges in NPM (#5158)
+- Fixed issue with non-proxy host in the gradle plugin (https://github.com/dependency-check/dependency-check-gradle/pull/298)
+- Resolved several FP
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/54?closed=1).
+
 ## [Version 7.4.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.4.1) (2022-12-09)
 
 ### Fixed
