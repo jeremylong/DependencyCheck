@@ -1,5 +1,14 @@
 # Change Log
 
+## [Version 7.4.3](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.4.3) (2022-12-29)
+
+### Fixed
+
+- Fixed NPE when analyzing version ranges in NPM (#5158 & #5190)
+- Resolved several FP (#5191)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/55?closed=1).
+
 ## [Version 7.4.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.4.2) (2022-12-28)
 
 ### Fixed
