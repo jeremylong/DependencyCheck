@@ -685,7 +685,7 @@
         <cpe>cpe:/a:travis-ci:travis_ci</cpe>
         <cpe>cpe:/a:storage_project:storage</cpe>
         <cpe>cpe:/a:pivotal_software:rabbitmq</cpe>
-	<cpe>cpe:/a:saml_project:saml</cpe>
+        <cpe>cpe:/a:saml_project:saml</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -1080,13 +1080,13 @@
         <cpe>cpe:/a:cm_project:cm</cpe>
     </suppress>
     <suppress base="true">
-       <notes><![CDATA[
+        <notes><![CDATA[
        Suppresses false positives per issue #5048
        ]]></notes>
-       <packageUrl regex="true">^pkg:maven/com\.liferay\.portal/com\.liferay\.util\.slf4j@.*$</packageUrl>
-       <cpe>cpe:/a:liferay:liferay</cpe>
-       <cpe>cpe:/a:liferay:liferay_portal</cpe>
-       <cpe>cpe:/a:liferay:portal</cpe>
+        <packageUrl regex="true">^pkg:maven/com\.liferay\.portal/com\.liferay\.util\.slf4j@.*$</packageUrl>
+        <cpe>cpe:/a:liferay:liferay</cpe>
+        <cpe>cpe:/a:liferay:liferay_portal</cpe>
+        <cpe>cpe:/a:liferay:portal</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -6063,5 +6063,47 @@
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.wildfly\.wildfly-http-client/wildfly-http-ejb-client@.*$</packageUrl>
         <cpe>cpe:/a:redhat:jboss-ejb-client</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5131
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.zipkin\.zipkin2/zipkin-collector@.*$</packageUrl>
+        <cpe>cpe:/a:pki-core_project:pki-core</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5162
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.jgroups\.kubernetes/jgroups-kubernetes@.*$</packageUrl>
+        <cpe>cpe:/a:redhat:jgroups</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5171
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.james/queue-activemq-guice@.*$</packageUrl>
+        <cpe>cpe:/a:apache:activemq</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5172
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.projectreactor\.rabbitmq/reactor-rabbitmq@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:rabbitmq</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5170
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.james/james-server-queue-activemq@.*$</packageUrl>
+        <cpe>cpe:/a:apache:activemq</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5168
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.james/apache-jsieve-core@.*$</packageUrl>
+        <cpe>cpe:/a:apache:james</cpe>
     </suppress>
 </suppressions>
