@@ -811,10 +811,10 @@ public class Dependency extends EvidenceCollection implements Serializable {
                          + &quot;obtained from different modules&quot;);
 <span class="nc" id="L812">            LOGGER.debug(&quot;this: {}&quot;, this);</span>
 <span class="nc" id="L813">            LOGGER.debug(&quot;dependency: {}&quot;, dependency);</span>
-<span class="pc bpc" id="L814" title="1 of 2 branches missed.">        } else if (!relatedDependencies.add(dependency)) {</span>
-<span class="nc" id="L815">            LOGGER.debug(&quot;Failed to add dependency, likely due to referencing the same file as another dependency in the set.&quot;);</span>
-<span class="nc" id="L816">            LOGGER.debug(&quot;this: {}&quot;, this);</span>
-<span class="nc" id="L817">            LOGGER.debug(&quot;dependency: {}&quot;, dependency);</span>
+<span class="fc bfc" id="L814" title="All 2 branches covered.">        } else if (!relatedDependencies.add(dependency)) {</span>
+<span class="fc" id="L815">            LOGGER.debug(&quot;Failed to add dependency, likely due to referencing the same file as another dependency in the set.&quot;);</span>
+<span class="fc" id="L816">            LOGGER.debug(&quot;this: {}&quot;, this);</span>
+<span class="fc" id="L817">            LOGGER.debug(&quot;dependency: {}&quot;, dependency);</span>
         }
 <span class="fc" id="L819">    }</span>
 
