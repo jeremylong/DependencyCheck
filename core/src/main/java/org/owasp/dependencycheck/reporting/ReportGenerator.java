@@ -46,6 +46,7 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -316,9 +317,10 @@ public class ReportGenerator {
         if (reportFormat != null) {
             write(outputLocation, reportFormat);
         } else {
-            final File out = getReportFile(outputLocation, null);
+            File out = getReportFile(outputLocation, null);
             if (out.isDirectory()) {
-                throw new ReportException("Unable to write non-standard VSL output to a directory, please specify a file name");
+            	out = new File(out, FilenameUtils.getBaseName(format));
+            	LOGGER.warn("Writing non-standard VSL output to a directory using template name as file name.");
             }
             processTemplate(format, out);
         }
