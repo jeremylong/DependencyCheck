@@ -1199,15 +1199,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Scans the project's artifacts and adds them to the engine's dependency
+     * Scans the project's artifacts for plugin-dependencies and adds them to the engine's dependency
      * list.
      *
-     * @param project the project to scan the dependencies of
-     * @param engine the engine to use to scan the dependencies
+     * @param project the project to scan the plugin-dependencies of
+     * @param engine the engine to use to scan the plugin-dependencies
      * @param exCollection the collection of exceptions that have previously
      * occurred
      * @return a collection of exceptions that may have occurred while resolving
-     * and scanning the dependencies
+     * and scanning the plugins and their dependencies
      */
     protected ExceptionCollection scanPlugins(MavenProject project, Engine engine, ExceptionCollection exCollection) {
         ExceptionCollection exCol = exCollection;
