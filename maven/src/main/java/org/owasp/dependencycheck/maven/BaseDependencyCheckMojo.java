@@ -2655,7 +2655,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
             if (aggregate && virtualSnapshotsFromReactor
                     && dependencyNode.getArtifact().isSnapshot()
-                    //TODO ensure root is passed in so we can assign parent
                     && addSnapshotReactorDependency(engine, dependencyNode.getArtifact(), project)) {
                 return exCol;
             }
