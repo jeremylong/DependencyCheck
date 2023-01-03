@@ -483,3 +483,11 @@
    <cpe>cpe:/a:apache:james</cpe>
 </suppress>
 <!-- suppressions above this entry will be included in the 7.4.3 release (see #5191) -->
+
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5169
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.google\.crypto\.tink/apps-webpush@.*$</packageUrl>
+   <cpe>cpe:/a:google:google_apps</cpe>
+</suppress>
