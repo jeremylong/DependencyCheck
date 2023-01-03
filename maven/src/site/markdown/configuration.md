@@ -60,6 +60,7 @@ dartAnalyzerEnabled                 | Sets whether the [experimental](../analyze
 ossindexAnalyzerEnabled             | Sets whether the [OSS Index Analyzer](../analyzers/oss-index-analyzer.html) will be enabled. This analyzer requires an internet connection.         | true
 ossindexAnalyzerUseCache            | Sets whether the OSS Index Analyzer will cache results. Cached results expire after 24 hours.                                                       | true
 ossindexServerId                    | The id of a server defined in the settings.xml to retrieve the credentials (username and password) to connect to OSS Index instance; not it is not required to have a registered account and use this configuration. | &nbsp;
+ossindexAnalyzerUrl                 | The OSS Index server URL | https://ossindex.sonatype.org
 ossIndexWarnOnlyOnRemoteErrors      | Sets whether remote errors from the OSS Index (e.g. BAD GATEWAY, RATE LIMIT EXCEEDED) will result in warnings only instead of failing execution.    | false
 nexusAnalyzerEnabled                | Sets whether Nexus Analyzer will be used (requires Nexus Pro). This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
 nexusUrl                            | Defines the Nexus Server's web service end point (example http://domain.enterprise/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
