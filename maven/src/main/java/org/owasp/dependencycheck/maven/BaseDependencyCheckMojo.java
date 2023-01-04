@@ -545,6 +545,23 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "retireJsUrl")
     private String retireJsUrl;
     /**
+     * The username to use when connecting to the CVE-URL.
+     */
+    @Parameter(property = "retireJsUser")
+    private String retireJsUser;
+    /**
+     * The password to authenticate to the CVE-URL.
+     */
+    @Parameter(property = "retireJsPassword")
+    private String retireJsPassword;
+    /**
+     * The server id in the settings.xml; used to retrieve encrypted passwords
+     * from the settings.xml for cve-URLs.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "retireJsUrlServerId")
+    private String retireJsUrlServerId;
+    /**
      * Whether the Retire JS repository will be updated regardless of the
      * `autoupdate` settings.
      */
@@ -2164,9 +2181,18 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, nodeAuditSkipDevDependencies);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, yarnAuditAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PNPM_AUDIT_ENABLED, pnpmAuditAnalyzerEnabled);
+        
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, retireJsUrl);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, retireJsForceUpdate);
+
+        if (retireJsUser == null && retireJsPassword == null && retireJsUrlServerId != null) {
+            configureServerCredentials(retireJsUrlServerId, Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_USER, Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD);
+        } else {
+            settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_USER, retireJsUser);
+            settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD, retireJsPassword);
+        }
+
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED, mixAuditAnalyzerEnabled);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_MIX_AUDIT_PATH, mixAuditPath);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, bundleAuditAnalyzerEnabled);

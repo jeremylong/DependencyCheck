@@ -98,6 +98,14 @@ public class Check extends Update {
      */
     private String retireJsUrl;
     /**
+     * The user to download URL to the RetireJS JSON data.
+     */
+    private String retireJsUrlUser;
+    /**
+     * The password to download URL to the RetireJS JSON data.
+     */
+    private String retireJsUrlPassword;
+    /**
      * Whether or not the RetireJS Analyzer will be updated regardless of the
      * `autoupdate` settings. Defaults to false.
      */
@@ -1252,6 +1260,42 @@ public class Check extends Update {
     }
 
     /**
+     * Get the value of User Retire JS repository URL.
+     *
+     * @return the value of retireJsUrlUser
+     */
+    public String getRetireJsUrlUser() {
+        return retireJsUrlUser;
+    }
+
+    /**
+     * Set the value of the User Retire JS repository URL.
+     *
+     * @param retireJsUrlUser new value of retireJsUrlUser
+     */
+    public void setRetireJsUrlUser(String retireJsUrlUser) {
+        this.retireJsUrlUser = retireJsUrlUser;
+    }
+
+    /**
+     * Get the value of Password Retire JS repository URL.
+     *
+     * @return the value of retireJsUrlPassword
+     */
+    public String getRetireJsUrlPassword() {
+        return retireJsUrlPassword;
+    }
+
+    /**
+     * Set the value of the Password Retire JS repository URL.
+     *
+     * @param retireJsUrlPassword new value of retireJsUrlPassword
+     */
+    public void setRetireJsUrlPassword(String retireJsUrlPassword) {
+        this.retireJsUrlPassword = retireJsUrlPassword;
+    }
+
+    /**
      * Get the value of retireJsAnalyzerEnabled.
      *
      * @return the value of retireJsAnalyzerEnabled
@@ -2053,6 +2097,8 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, nodeAuditSkipDevDependencies);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, retireJsUrl);
+        getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_USER, retireJsUrlUser);
+        getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD, retireJsUrlPassword);      
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, retireJsAnalyzerForceUpdate);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, retirejsFilterNonVulnerable);
         getSettings().setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, retirejsFilters);

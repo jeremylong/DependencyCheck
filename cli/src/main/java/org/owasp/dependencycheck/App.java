@@ -496,6 +496,10 @@ public class App {
                 cli.hasOption(CliParser.ARGUMENT.PRETTY_PRINT));
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL,
                 cli.getStringArgument(CliParser.ARGUMENT.RETIREJS_URL));
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_USER,
+                cli.getStringArgument(CliParser.ARGUMENT.RETIREJS_URL_USER));
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD,
+                cli.getStringArgument(CliParser.ARGUMENT.RETIREJS_URL_PASSWORD));                
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE,
                 cli.hasOption(CliParser.ARGUMENT.RETIRE_JS_FORCEUPDATE));
         settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED,
