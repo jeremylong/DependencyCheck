@@ -285,7 +285,7 @@ DELIMITER ;
 GRANT EXECUTE ON PROCEDURE dependencycheck.update_ecosystems2 TO 'dcuser';
 
 DELIMITER //
-CREATE PROCEDURE merge_knownexpoited
+CREATE PROCEDURE merge_knownexploited
 (IN p_cveID varchar(20),
  IN p_vendorProject VARCHAR(255),
  IN p_product VARCHAR(255),
