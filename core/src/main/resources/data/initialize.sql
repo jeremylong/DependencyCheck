@@ -65,7 +65,7 @@ CREATE INDEX idxCpe ON cpeEntry(vendor, product);
 CREATE ALIAS update_vulnerability FOR "org.owasp.dependencycheck.data.nvdcve.H2Functions.updateVulnerability";
 CREATE ALIAS insert_software FOR "org.owasp.dependencycheck.data.nvdcve.H2Functions.insertSoftware";
 
-CREATE ALIAS merge_knownexpoited FOR "org.owasp.dependencycheck.data.nvdcve.H2Functions.mergeKnownExploited";
+CREATE ALIAS merge_knownexploited FOR "org.owasp.dependencycheck.data.nvdcve.H2Functions.mergeKnownExploited";
 
 CREATE TABLE properties (id varchar(50) PRIMARY KEY, `value` varchar(500));
 INSERT INTO properties(id, `value`) VALUES ('version', '5.3');
