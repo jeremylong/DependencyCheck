@@ -211,4 +211,4 @@ GRANT EXECUTE ON FUNCTION public.insert_software (INT, CHAR(1), VARCHAR(255),
 
 
 
-INSERT INTO properties(id,value) VALUES ('version','5.2.1');
+INSERT INTO properties(id,value) VALUES ('version','5.2.2');

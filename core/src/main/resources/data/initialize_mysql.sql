@@ -274,4 +274,4 @@ GRANT EXECUTE ON PROCEDURE dependencycheck.update_ecosystems2 TO 'dcuser';
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON dependencycheck.* TO 'dcuser';
 
-INSERT INTO properties(id, value) VALUES ('version', '5.2.1');
+INSERT INTO properties(id, value) VALUES ('version', '5.2.2');

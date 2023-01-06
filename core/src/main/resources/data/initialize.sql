@@ -56,4 +56,4 @@ CREATE ALIAS update_vulnerability FOR "org.owasp.dependencycheck.data.nvdcve.H2F
 CREATE ALIAS insert_software FOR "org.owasp.dependencycheck.data.nvdcve.H2Functions.insertSoftware";
 
 CREATE TABLE properties (id varchar(50) PRIMARY KEY, `value` varchar(500));
-INSERT INTO properties(id, `value`) VALUES ('version', '5.2.1');
+INSERT INTO properties(id, `value`) VALUES ('version', '5.2.2');
