@@ -219,7 +219,7 @@ END;
 
 GO
 
-CREATE PROCEDURE merge_knownexpoited (@cveID varchar(20),
+CREATE PROCEDURE merge_knownexploited (@cveID varchar(20),
     @vendorProject VARCHAR(255),
     @product VARCHAR(255),
     @vulnerabilityName VARCHAR(500),
