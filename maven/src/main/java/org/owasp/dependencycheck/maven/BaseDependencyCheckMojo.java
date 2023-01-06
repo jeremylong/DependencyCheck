@@ -1564,7 +1564,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         boolean result = Objects.equals(res.getArtifact().getGroupId(), unresolvedArtifact.getGroupId());
         result &= Objects.equals(res.getArtifact().getArtifactId(), unresolvedArtifact.getArtifactId());
-        result &= Objects.equals(res.getArtifact().getBaseVersion(), unresolvedArtifact.getBaseVersion());
+        // accept any version as matching "LATEST" and any non-snapshot version as matching "RELEASE" meta-version
+        if ("RELEASE".equals(unresolvedArtifact.getBaseVersion())) {
+            result &= !res.getArtifact().isSnapshot();
+        } else if (!"LATEST".equals(unresolvedArtifact.getBaseVersion())) {
+            result &= Objects.equals(res.getArtifact().getBaseVersion(), unresolvedArtifact.getBaseVersion());
+        }
         result &= Objects.equals(res.getArtifact().getClassifier(), unresolvedArtifact.getClassifier());
         result &= Objects.equals(res.getArtifact().getType(), unresolvedArtifact.getType());
         return result;
