@@ -187,10 +187,9 @@ jobs:
           body: |
             ### Fixed
 
-            - Fixed NPE when analyzing version ranges in NPM (#5158 & #5190)
-            - Resolved several FP (#5191)
+            - Resolved issue processing NVD CVE data due to column width (#5229)
 
-            See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/55?closed=1).
+            See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/56?closed=1).
 
       - name: Upload CLI
         id: upload-release-cli
