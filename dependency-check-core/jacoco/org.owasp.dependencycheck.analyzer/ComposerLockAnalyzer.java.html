@@ -122,7 +122,7 @@ import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 <span class="fc" id="L122">                    d.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
 <span class="nc" id="L123">                } catch (MalformedPackageURLException ex) {</span>
 <span class="nc" id="L124">                    LOGGER.debug(&quot;Unable to build package url for composer&quot;, ex);</span>
-<span class="nc" id="L125">                    d.addSoftwareIdentifier(new GenericIdentifier(&quot;cocoapods:&quot; + dep.getGroup() + &quot;/&quot; + dep.getProject()</span>
+<span class="nc" id="L125">                    d.addSoftwareIdentifier(new GenericIdentifier(&quot;composer:&quot; + dep.getGroup() + &quot;/&quot; + dep.getProject()</span>
 <span class="nc" id="L126">                            + &quot;@&quot; + dep.getVersion(), Confidence.HIGHEST));</span>
 <span class="fc" id="L127">                }</span>
 <span class="fc" id="L128">                d.setPackagePath(String.format(&quot;%s:%s&quot;, dep.getProject(), dep.getVersion()));</span>

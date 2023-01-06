@@ -52,7 +52,7 @@ Dependency-Check Core,org.owasp.dependencycheck.exception,ScanAgentException,16,
 Dependency-Check Core,org.owasp.dependencycheck.exception,ReportException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Core,org.owasp.dependencycheck.reporting,ReportGenerator.Format,0,84,0,0,0,9,0,1,0,1
 Dependency-Check Core,org.owasp.dependencycheck.reporting,SarifRule,152,191,4,8,66,58,37,28,33,26
-Dependency-Check Core,org.owasp.dependencycheck.reporting,ReportGenerator,215,644,19,71,51,141,21,39,3,12
+Dependency-Check Core,org.owasp.dependencycheck.reporting,ReportGenerator,220,644,19,71,52,141,21,39,3,12
 Dependency-Check Core,org.owasp.dependencycheck.reporting,EscapeTool,26,159,7,39,10,43,6,27,1,9
 Dependency-Check Core,org.owasp.dependencycheck.reporting,ReportTool,23,238,12,31,9,51,11,20,0,8
 Dependency-Check Core,org.owasp.dependencycheck.data.cwe,CweHandler,41,0,4,0,8,0,5,0,3,0
@@ -64,7 +64,7 @@ Dependency-Check Core,org.owasp.dependencycheck.data.update,UpdateService,0,12,0
 Dependency-Check Core,org.owasp.dependencycheck.data.update,EngineVersionCheck,105,178,15,13,28,48,14,9,2,7
 Dependency-Check Core,org.owasp.dependencycheck.data.update,RetireJSDataSource,166,112,16,6,35,23,11,6,2,4
 Dependency-Check Core,org.owasp.dependencycheck.data.update,NvdCveUpdater,1090,106,126,4,239,30,73,7,8,7
-Dependency-Check Core,org.owasp.dependencycheck.data.lucene,UrlTokenizingFilter,15,72,1,9,4,17,1,7,0,3
+Dependency-Check Core,org.owasp.dependencycheck.data.lucene,UrlTokenizingFilter,11,76,0,10,3,18,0,8,0,3
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,LuceneUtils,0,61,1,11,0,17,1,8,0,3
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,TokenPairConcatenatingFilter,59,99,6,10,17,28,5,8,2,3
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,AlphaNumericFilter,51,114,6,14,15,28,5,11,2,4
@@ -168,7 +168,7 @@ Dependency-Check Core,org.owasp.dependencycheck.analyzer,PinnedMavenInstallAnaly
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,NodeAuditAnalyzer,184,133,9,11,45,31,7,12,1,8
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,AnalysisPhase,0,134,0,0,0,14,0,1,0,1
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,CMakeAnalyzer,115,562,9,47,18,138,8,33,0,13
-Dependency-Check Core,org.owasp.dependencycheck.analyzer,RetireJsAnalyzer,369,529,27,46,65,118,23,30,2,13
+Dependency-Check Core,org.owasp.dependencycheck.analyzer,RetireJsAnalyzer,354,544,25,48,63,120,22,31,2,13
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,YarnAuditAnalyzer,148,313,13,13,39,79,12,13,0,12
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,CPEAnalyzer,549,1970,87,229,105,418,76,133,6,45
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,ArchiveAnalyzer,539,827,72,88,114,177,64,43,6,21
