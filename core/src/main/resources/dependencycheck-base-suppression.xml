@@ -6106,4 +6106,11 @@
         <packageUrl regex="true">^pkg:maven/org\.apache\.james/apache-jsieve-core@.*$</packageUrl>
         <cpe>cpe:/a:apache:james</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5213, CVEs for scripting pet projects
+        ]]></notes>
+        <packageUrl regex="true">^.*$</packageUrl>
+        <cve>CVE-2021-4277</cve>
+    </suppress>
 </suppressions>
