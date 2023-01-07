@@ -506,3 +506,11 @@
    <packageUrl regex="true">^pkg:maven/com\.google\.crypto\.tink/apps-webpush@.*$</packageUrl>
    <cpe>cpe:/a:google:google_apps</cpe>
 </suppress>
+
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5212
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.github\.java-json-tools/json-patch@.*$</packageUrl>
+   <cpe>cpe:/a:json-patch_project:json-patch</cpe>
+</suppress>
