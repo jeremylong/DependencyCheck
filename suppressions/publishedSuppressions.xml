@@ -484,6 +484,21 @@
    <cpe>cpe:/a:apache:james</cpe>
 </suppress>
 <!-- suppressions above this entry will be included in the 7.4.3 release (see #5191) -->
+<suppress base="true">
+  <notes><![CDATA[
+  FP per issue #5213, CVEs for scripting pet projects
+  ]]></notes>
+  <packageUrl regex="true">^.*$</packageUrl>
+  <cve>CVE-2021-4277</cve>
+</suppress>
+<suppress base="true">
+  <notes><![CDATA[
+      cpe:/a:yaml_project:yaml is a YAML implementation in Go #5233 and #5234
+  ]]></notes>
+  <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
+  <cpe>cpe:/a:yaml_project:yaml</cpe>
+</suppress>
+<!-- suppressions above this entry will be included in the next release (see #5237 and #5240) -->
 
 <suppress base="true">
    <notes><![CDATA[
@@ -491,5 +506,13 @@
    ]]></notes>
    <packageUrl regex="true">^pkg:maven/com\.google\.crypto\.tink/apps-webpush@.*$</packageUrl>
    <cpe>cpe:/a:google:google_apps</cpe>
+</suppress>
+
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5212
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.github\.java-json-tools/json-patch@.*$</packageUrl>
+   <cpe>cpe:/a:json-patch_project:json-patch</cpe>
 </suppress>
 </suppressions>
