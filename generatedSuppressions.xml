@@ -514,3 +514,10 @@
    <packageUrl regex="true">^pkg:maven/com\.github\.java-json-tools/json-patch@.*$</packageUrl>
    <cpe>cpe:/a:json-patch_project:json-patch</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5217
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/net\.pwall\.json/json-pointer@.*$</packageUrl>
+   <cpe>cpe:/a:json-pointer_project:json-pointer</cpe>
+</suppress>
