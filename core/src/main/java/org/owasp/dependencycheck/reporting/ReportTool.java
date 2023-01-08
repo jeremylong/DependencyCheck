@@ -189,7 +189,7 @@ public class ReportTool {
                 sb.append("Date Added: ").append(knownExploitedVulnerability.getDateAdded()).append("\n");
             }
             if (knownExploitedVulnerability.getShortDescription() != null) {
-                sb.append("Short Description").append(knownExploitedVulnerability.getShortDescription()).append("\n");
+                sb.append("Short Description: ").append(knownExploitedVulnerability.getShortDescription()).append("\n");
             }
             if (knownExploitedVulnerability.getRequiredAction() != null) {
                 sb.append("Required Action: ").append(knownExploitedVulnerability.getRequiredAction()).append("\n");
